@@ -107,6 +107,46 @@ public class Utilities {
         
         return(messages);
     }
+
+    public static ArrayList<String> separateMessagesFromResponse(String olisResultString) {
+
+        ArrayList<String> messages = new ArrayList<String>();
+        boolean firstPIDflag = false; //true if the first PID segment has been processed false otherwise
+        boolean firstMSHflag = false; //true if the first MSH segment has been processed false otherwise
+        //String mshSeg = br.readLine();
+
+        StringBuilder sb = new StringBuilder();
+        String mshSeg = "";
+        
+        String[] resultLines = olisResultString.split("\n");
+
+        for (String line : resultLines) {
+            if (line.length() > 3){
+                if (line.substring(0, 3).equals("MSH")){
+                    if (firstMSHflag){
+                        messages.add(sb.toString());
+                        sb.delete(0, sb.length());
+                    }
+                    mshSeg = line;
+                    firstMSHflag = true;
+                    firstPIDflag = false;
+                } else if (line.substring(0, 3).equals("PID")){
+                    if (firstPIDflag){
+                        messages.add(sb.toString());
+                        sb.delete(0, sb.length());
+                        sb.append(mshSeg).append("\r\n");
+                    }
+                    firstPIDflag = true;
+                }
+                sb.append(line).append("\r\n");
+            }
+        }
+
+        // add the last message
+        messages.add(sb.toString());
+
+        return(messages);
+    }
     
     
     /**

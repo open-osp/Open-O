@@ -12,6 +12,7 @@ package com.indivica.olis.queries;
 import java.util.Date;
 
 import com.indivica.olis.parameters.ZPD1;
+import com.indivica.olis.parameters.ZSD;
 
 public abstract class Query implements Cloneable {
 
@@ -34,6 +35,10 @@ public abstract class Query implements Cloneable {
 	public abstract QueryType getQueryType();
 	
 	public abstract void setConsentToViewBlockedInformation(ZPD1 consentToViewBlockedInformation);
+	
+	public abstract boolean hasConsentOverride();
+	
+	public abstract void setSubstituteDecisionMaker(ZSD substituteDecisionMaker);
 	
 	 public Object clone() {
 	    try {

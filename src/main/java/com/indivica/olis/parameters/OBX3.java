@@ -9,6 +9,11 @@
 
 package com.indivica.olis.parameters;
 
+import org.oscarehr.olis.OLISUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Test Result Code
  * @author jen
@@ -16,20 +21,26 @@ package com.indivica.olis.parameters;
  */
 public class OBX3 implements Parameter {
 
-	private String identifier;
+	private List<String> codes = new ArrayList<>();
 	private String nameOfCodingSystem;
 	
-	public OBX3(String identifier, String nameOfCodingSystem) {
-	    this.identifier = identifier;
+	public OBX3(String nameOfCodingSystem) {
 	    this.nameOfCodingSystem = nameOfCodingSystem;
     }
 
 	@Override
 	public String toOlisString() {
-		return getQueryCode() + ".1^" + (identifier != null ? identifier : "") + "~" +
-			getQueryCode() + ".3^" + (nameOfCodingSystem != null ? nameOfCodingSystem : "");
+		return OLISUtils.createQueryStringForCodes(getQueryCode(), codes, nameOfCodingSystem);
 	}
 
+	public void addValue(String requestCode) {
+		codes.add(requestCode);
+	}
+
+	public void addAllValues(List<String> requestCodes) {
+		codes.addAll(requestCodes);
+	}
+	
 	@Override
 	public void setValue(Object value) {
 		throw new UnsupportedOperationException();
@@ -37,10 +48,7 @@ public class OBX3 implements Parameter {
 
 	@Override
 	public void setValue(Integer part, Object value) {
-		if (part == 1)
-			this.identifier = (String) value;
-		else if (part == 3)
-			this.nameOfCodingSystem = (String) value;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -51,6 +59,10 @@ public class OBX3 implements Parameter {
 	@Override
 	public String getQueryCode() {
 		return "@OBX.3";
+	}
+	
+	public boolean hasCodes() {
+		return !codes.isEmpty();
 	}
 
 }

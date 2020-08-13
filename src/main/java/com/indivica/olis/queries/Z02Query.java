@@ -15,18 +15,20 @@ import com.indivica.olis.parameters.ZBX1;
 import com.indivica.olis.parameters.ZPD1;
 import com.indivica.olis.parameters.ZPD3;
 import com.indivica.olis.parameters.ZRP1;
+import com.indivica.olis.parameters.ZSD;
 
 /**
  * Z02 - Retrieve Laboratory Information for Order ID
  * @author jen
  *
  */
-public class Z02Query extends Query {
+public class Z02Query extends Query implements RequestingHicQuery {
 
 	private ZBX1 retrieveAllTestResults = null;
 	private ZRP1 requestingHic = new ZRP1(); // mandatory
 	private ZPD1 consentToViewBlockedInformation = null;
 	private ZPD3 patientConsentBlockAllIndicator = null;
+	private ZSD substituteDecisionMaker = null;
 	private PID3 patientIdentifier = new PID3(); // mandatory
 	private ORC4 placerGroupNumber = new ORC4(); // mandatory
 	
@@ -46,6 +48,10 @@ public class Z02Query extends Query {
 		
 		if (patientConsentBlockAllIndicator != null)
 			query += patientConsentBlockAllIndicator.toOlisString() + "~";
+		
+		if (substituteDecisionMaker != null) {
+			query += substituteDecisionMaker.toOlisString() + "~";
+		}
 		
 		if (patientIdentifier != null)
 			query += patientIdentifier.toOlisString() + "~";
@@ -80,6 +86,10 @@ public class Z02Query extends Query {
 	public void setPatientConsentBlockAllIndicator(ZPD3 patientConsentBlockAllIndicator) {
     	this.patientConsentBlockAllIndicator = patientConsentBlockAllIndicator;
     }
+    
+	public void setSubstituteDecisionMaker(ZSD substituteDecisionMaker) {
+		this.substituteDecisionMaker = substituteDecisionMaker;
+	}
 
 	public void setPatientIdentifier(PID3 patientIdentifier) {
     	this.patientIdentifier = patientIdentifier;
@@ -89,5 +99,11 @@ public class Z02Query extends Query {
     	this.placerGroupNumber = placerGroupNumber;
     }
 
-
+    public boolean hasConsentOverride() {
+		return this.consentToViewBlockedInformation != null;
+	}
+    
+	public String getRequestingHicId() {
+		return requestingHic.getIdNumber();
+	}
 }

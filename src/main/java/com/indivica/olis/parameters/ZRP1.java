@@ -79,6 +79,10 @@ public class ZRP1 implements Parameter {
 	public String getQueryCode() {
 		return "@ZRP.1";
 	}
+	
+	public String getIdNumber() {
+		return idNumber;
+	}
 
 	public String getIdNumber() {
 		return this.idNumber;

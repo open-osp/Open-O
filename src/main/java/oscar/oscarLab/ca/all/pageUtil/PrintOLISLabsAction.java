@@ -25,7 +25,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.oscarehr.managers.SecurityInfoManager;
-import org.oscarehr.olis.OLISResultsAction;
+import org.oscarehr.olis.model.OlisLabResultDisplay;
+import org.oscarehr.olis.model.OlisSessionManager;
+import org.oscarehr.olis.model.ProviderOlisSession;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -33,6 +35,8 @@ import org.oscarehr.util.SpringUtils;
 import oscar.oscarLab.ca.all.Hl7textResultsData;
 import oscar.oscarLab.ca.all.parsers.Factory;
 import oscar.oscarLab.ca.all.parsers.OLISHL7Handler;
+
+import java.util.List;
 
 /**
  *
@@ -48,14 +52,14 @@ public class PrintOLISLabsAction extends Action{
     }
     
     public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response){
-        
-    	if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_lab", "r", null)) {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", "r", null)) {
 			throw new SecurityException("missing required security object (_lab)");
 		}
     	
     	try {
 	    	String segmentID = request.getParameter("segmentID");
-	    	String resultUuid = request.getParameter("uuid");
+	    	String resultPlacerGroupNo = request.getParameter("placerGroupNo");
 	    	
 	    	
 	    	int obr = Integer.valueOf(request.getParameter("obr"));
@@ -68,9 +72,11 @@ public class PrintOLISLabsAction extends Action{
 		    	
 	    	OLISHL7Handler handler = null;
 	    	
-	    	if(resultUuid != null && !"".equals(resultUuid)) {
-	    		handler = OLISResultsAction.searchResultsMap.get(resultUuid);
-		    	
+	    	if(resultPlacerGroupNo != null && !resultPlacerGroupNo.isEmpty()) {
+	    	    ProviderOlisSession providerOlisSession = OlisSessionManager.getSession(loggedInInfo);
+	    	    List<OlisLabResultDisplay> providerOlisLabs = providerOlisSession.getLabResultDisplayByPlacerGroupNo(resultPlacerGroupNo);
+	    	    // if viewing in preview from OLIS search, use placerGroupNo
+	    	    handler = providerOlisLabs.get(0).getOlisHl7Handler();
 	    	} else {
 	    		handler = (OLISHL7Handler) Factory.getHandler(segmentID);
 	    	}

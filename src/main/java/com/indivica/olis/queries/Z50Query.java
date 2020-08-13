@@ -14,6 +14,7 @@ import com.indivica.olis.parameters.PID52;
 import com.indivica.olis.parameters.PID7;
 import com.indivica.olis.parameters.PID8;
 import com.indivica.olis.parameters.ZPD1;
+import com.indivica.olis.parameters.ZSD;
 
 /**
  * Z50 - Identify Patient by Name, Sex, and Date of Birth
@@ -76,4 +77,12 @@ public class Z50Query extends Query {
 		throw new RuntimeException("Not valid for this type of query.");
     }
 
+	@Override
+	public void setSubstituteDecisionMaker(ZSD substituteDecisionMaker) {
+		throw new RuntimeException("Not valid for this type of query.");
+	}
+
+	public boolean hasConsentOverride() {
+		return false;
+	}
 }
