@@ -71,7 +71,7 @@ response.addCookie(prvCookie);
     </title>
     	
     <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/Oscar.ico" />
-	<link href='${pageContext.request.contextPath}/css/Roboto.css' rel='stylesheet' type='text/css' />
+<%--	<link href='${pageContext.request.contextPath}/css/Roboto.css' rel='stylesheet' type='text/css' />--%>
     <script type="text/javascript" src="${pageContext.request.contextPath}/library/jquery/jquery-1.12.0.min.js" ></script>
 		<script src="${pageContext.request.contextPath}/csrfguard"></script>
     <script type="text/javascript">
@@ -107,7 +107,7 @@ response.addCookie(prvCookie);
 			}
     </script>
        
-    <style type="text/css">
+    <style media="all" >
 		body, html {
 			height: 100%;
 		}

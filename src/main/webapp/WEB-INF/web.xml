@@ -233,11 +233,11 @@
     </listener>
     <context-param>
         <param-name>Owasp.CsrfGuard.Config.Print</param-name>
-        <param-value>false</param-value>
+        <param-value>true</param-value>
     </context-param>
     <filter>
         <filter-name>CSRFGuard</filter-name>
-        <filter-class>org.oscarehr.app.OscarCsrfGuardFilter</filter-class>
+        <filter-class>org.owasp.csrfguard.CsrfGuardFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CSRFGuard</filter-name>
@@ -260,7 +260,7 @@
         </init-param>
         <init-param>
             <param-name>domain-strict</param-name>
-            <param-value>false</param-value>
+            <param-value>true</param-value>
         </init-param>
         <init-param>
             <param-name>referer-pattern</param-name>

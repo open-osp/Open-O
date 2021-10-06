@@ -44,7 +44,7 @@ public class CsrfTokenService extends AbstractServiceImpl {
 		CsrfGuard csrfGuard = CsrfGuard.getInstance();
 		JSONObject token = new JSONObject();
 		token.put("name", csrfGuard.getTokenName());
-		token.put("value", csrfGuard.getTokenValue(getHttpServletRequest()));
+//		token.put("value", csrfGuard.getTokenService().getTokenValue());
 		return token.toString();
 	}
 }

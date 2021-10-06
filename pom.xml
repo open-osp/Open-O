@@ -1165,7 +1165,7 @@
         <dependency>
                 <groupId>org.oscarehr.integration.ebs</groupId>
                 <artifactId>ebs-client</artifactId>
-                <version>0.0.5</version>
+                <version>0.0.6</version>
                 <exclusions>
 						<exclusion>
 							<groupId>org.bouncycastle</groupId>
@@ -1198,8 +1198,22 @@
 	<dependency>
 		<groupId>org.owasp</groupId>
 		<artifactId>csrfguard</artifactId>
-		<version>3.1.0</version>
+		<version>4.0.0</version>
 	</dependency>
+
+		<!-- Stateful web application support -->
+		<dependency>
+			<groupId>org.owasp</groupId>
+			<artifactId>csrfguard-extension-session</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+
+		<!-- JSP TAG support -->
+		<dependency>
+			<groupId>org.owasp</groupId>
+			<artifactId>csrfguard-jsp-tags</artifactId>
+			<version>4.0.0</version>
+		</dependency>
 		<dependency>
 		<groupId>com.medseek.clinical.service</groupId>
 		<artifactId>SSOClinicalConnect</artifactId>
@@ -1531,8 +1545,14 @@
 				<artifactId>maven-compiler-plugin</artifactId>
                                 <version>2.5.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
+					<!-- version>3.8.1</version -->
+
+    			        <fork>true</fork>
+          			<meminitial>3048m</meminitial>
+         			<maxmem>8048m</maxmem>
+
 				</configuration>
 			</plugin>
 
