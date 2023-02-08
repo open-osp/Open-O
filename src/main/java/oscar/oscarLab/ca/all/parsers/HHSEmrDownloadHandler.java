@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.integration.hl7.model.PatientId;
 import org.oscarehr.util.MiscUtils;
 
@@ -53,7 +53,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class HHSEmrDownloadHandler extends DefaultGenericHandler implements MessageHandler {
 
-    Logger logger = Logger.getLogger(HHSEmrDownloadHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     ArrayList<String> headerList = null;
  //   Message msg = null;
  //   Terser terser;

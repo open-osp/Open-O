@@ -50,12 +50,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 public class OscarTrackingBasicDataSource extends BasicDataSource {
 
     public static final int MAX_CONNECTION_WARN_SIZE = 2;
-    public static final Logger logger = Logger.getLogger(OscarTrackingBasicDataSource.class);
+    public static final Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     public static final Map<Connection, StackTraceElement[]> debugMap = Collections.synchronizedMap(new WeakHashMap<Connection, StackTraceElement[]>());
     private static final ThreadLocal<HashSet<Connection>> connections = new ThreadLocal<HashSet<Connection>>();
 

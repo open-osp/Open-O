@@ -1,0 +1,81 @@
+<%--
+
+    Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
+    This software is published under the GPL GNU General Public License.
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+    This software was written for the
+    Department of Family Medicine
+    McMaster University
+    Hamilton
+    Ontario, Canada
+
+--%>
+<%-- 
+	This is a navigation bar overlay that sits in an absolute position at the bottom of its
+	target window. 
+	Imported solely into the eformsowform_data.jsp and eformadd_data.jsp pages. 
+--%>
+<div id="eform_floating_toolbar" class="no-print DoNotPrint hidden-print"> 
+	<nav id="eform_floating_toolbar_nav" class="navbar navbar-fixed-bottom navbar-default no-print DoNotPrint hidden-print">
+		<form class="navbar-form pull-left" >
+			<div class="input-group pull-left">			
+		  		<input type="text" class="form-control" aria-label="Subject" name="remote_eform_subject" id="remote_eform_subject" placeholder="Subject" required/>
+		  		<div class="input-group-btn">
+		  			<button type="button" class="btn btn-primary" value="Save" name="SubmitButton" title="Save only" id="remoteSubmitButton" onclick="remoteSave()" >
+		  				<span class="btn-label"><i class="glyphicon glyphicon-save"></i></span>
+		  				Save
+		  			</button>
+			   		<button type="button" class="btn btn-default" id="remotePrintButton" name="PrintButton" value="Print" title="Save and then print" onclick="remotePrint()">
+			   			<span class="btn-label"><i class="glyphicon glyphicon-print"></i></span>
+			   			Print
+			   		</button>
+	
+			   		<button type="button" class="btn btn-default" id="remoteFaxButton" name="FaxButton" title="Save and then send by fax" onclick="remoteFax()">
+			   			<span class="btn-label"><i class="glyphicon glyphicon-send"></i></span>
+			   			Fax
+			   		</button>
+		
+			   		<button type="button" class="btn btn-default" id="remoteSaveEdocumentButton" name="saveEdocumentButton" value="eDocument" title="Save and then save as PDF" onclick="remoteEdocument()">
+			   			<span class="btn-label"><i class="glyphicon glyphicon-import"></i></span>
+			   			eDocument
+			   		</button>
+			   		<button type="button" class="btn btn-danger " id="remoteCloseEformWindow" name="closeEformWindow" value="Close" title="Close this eForm" onclick="remoteClose()">
+			   			<span class="btn-label"><i class="glyphicon glyphicon-remove-circle"></i></span>
+			   			Close
+			   		</button>
+		  		</div>
+			</div>
+			<div class="pull-left">
+				<span id="required-warning" style="color:red;display:none;margin:5px;">Subject required</span>
+			</div>
+		</form>
+		
+  		<div class="pull-right">
+			<div class="input-group-btn">
+		  		<button type="button" class="btn btn-default pull-right" id="closeToolbarButton" name="closeToolbarButton" title="Close this toolbar" onclick="closeToolbar()">
+		   			<span class="btn-label"><i class="glyphicon glyphicon-remove"></i></span>
+		   		</button>
+		   	</div>
+		</div>
+	</nav>
+	<div class="pull-right no-print DoNotPrint hidden-print" style="border-top: #e7e7e7 thin solid;">
+		<div class="input-group-btn">
+			<button type="button" style="display:none;" class="btn btn-default pull-right" id="openToolbarButton" name="openToolbarButton" title="Open toolbar" onclick="openToolbar()">
+				<span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>
+			</button>
+		</div>
+	</div>
+</div>

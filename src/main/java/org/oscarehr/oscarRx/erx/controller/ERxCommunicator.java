@@ -42,7 +42,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.oscarRx.erx.model.ERxPatientData;
 import org.oscarehr.oscarRx.erx.model.ERxPrescription;
 import org.oscarehr.oscarRx.erx.model.PrescriptionFormat;

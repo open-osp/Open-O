@@ -79,6 +79,13 @@ sites = siteDao.getAllSites();
   String curDemoNo = request.getParameter("demographic_no")!=null?request.getParameter("demographic_no"):"";
   String curDemoName = request.getParameter("demographic_name")!=null?request.getParameter("demographic_name"):"";
   String [] param = new String[3];
+
+	String originalPage = request.getParameter("originalpage") != null ? request.getParameter("originalpage") : "schedule";
+	String originalPagePath = "../provider/providercontrol.jsp";
+
+	if (originalPage.equals("waitingList")) {
+		originalPagePath = "../oscarWaitingList/DisplayWaitingList.jsp";
+	}
 %>
 <%@ page
 	import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*"
@@ -94,7 +101,9 @@ sites = siteDao.getAllSites();
 <%@page import="org.oscarehr.common.model.Site"%>
 <%@page import="org.oscarehr.common.dao.SiteDao"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@page import="oscar.appt.ApptUtil"%><html:html locale="true">
+<%@page import="oscar.appt.ApptUtil"%>
+<%@ page import="org.owasp.encoder.Encode" %>
+<html:html locale="true">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="schedule.scheduleflipview.title" /></title>
@@ -103,11 +112,11 @@ sites = siteDao.getAllSites();
 <script language="JavaScript">
 <!--
 function changePro(providerno) {
-  a="scheduleflipview.jsp?originalpage=<%=request.getParameter("originalpage")%>&provider_no="+providerno+<%=request.getParameter("startDate")!=null?("\"&startDate="+request.getParameter("startDate")+"\""):"\""%>;
+  a="scheduleflipview.jsp?originalpage=<%=originalPage%>&provider_no="+providerno+<%=request.getParameter("startDate")!=null?("\"&startDate="+request.getParameter("startDate")+"\""):"\""%>;
   self.location.href = a;
 }
 function selectprovider(s) {
-  a="scheduleflipview.jsp?originalpage=<%=request.getParameter("originalpage")%>&provider_no="+s.options[s.selectedIndex].value+<%=request.getParameter("startDate")!=null?("\"&startDate="+request.getParameter("startDate")+"\""):"\""%>;
+  a="scheduleflipview.jsp?originalpage=<%=originalPage%>&provider_no="+s.options[s.selectedIndex].value+<%=request.getParameter("startDate")!=null?("\"&startDate="+request.getParameter("startDate")+"\""):"\""%>;
   self.location.href = a;
 }//-->
 
@@ -187,7 +196,7 @@ function t(s1,s2,s3,s4,s5,s6, doConfirm, allowDay, allowWeek) {
 	<tr align="center" bgcolor="#CCCCFF">
 <% if (bMultisites) out.print("<td>Site</td>"); %>	
 		<td width="15%" nowrap><a
-			href="scheduleflipview.jsp?originalpage=<%=request.getParameter("originalpage")%>&provider_no=<%=curProvider_no%>&startDate=<%=lastMonth.get(Calendar.YEAR)+"-"+(lastMonth.get(Calendar.MONTH)+1)+"-"+lastMonth.get(Calendar.DATE)%>"
+			href="scheduleflipview.jsp?originalpage=<%=originalPage%>&provider_no=<%=curProvider_no%>&startDate=<%=lastMonth.get(Calendar.YEAR)+"-"+(lastMonth.get(Calendar.MONTH)+1)+"-"+lastMonth.get(Calendar.DATE)%>"
 			title="<bean:message key="schedule.scheduleflipview.msgLastMonth"/>"
 			border='0'><img src="../images/previous.gif"></a> <select
 			name="provider_no" onChange="selectprovider(this)">
@@ -198,20 +207,20 @@ function t(s1,s2,s3,s4,s5,s6, doConfirm, allowDay, allowWeek) {
 				Provider p = providerDao.getProvider(curProvider_no);
 				if(p != null) {
 					%>
-					<option value="<%=p.getProviderNo()%>" <%=p.getProviderNo().equals(curProvider_no)?"selected":""%>><%=Misc.getShortStr( p.getFormattedName(),"",12)%></option>
+					<option value="<%=p.getProviderNo()%>" <%=p.getProviderNo().equals(curProvider_no)?"selected":""%>><%=Encode.forHtmlContent(Misc.getShortStr( p.getFormattedName(),"",12))%></option>
 					<%
 				}
 			} else {
 				List<MyGroup> mgs = myGroupDao.getGroupByGroupNo(mygroupno);
 				for(MyGroup mg:mgs) {
 					%>
-					<option value="<%=mg.getId().getProviderNo()%>" <%=mg.getId().getProviderNo().equals(curProvider_no)?"selected":""%>><%=Misc.getShortStr(mg.getLastName() + "," + mg.getFirstName(),"",12)%></option>
+					<option value="<%=mg.getId().getProviderNo()%>" <%=mg.getId().getProviderNo().equals(curProvider_no)?"selected":""%>><%=Encode.forHtmlContent(Misc.getShortStr(mg.getLastName() + "," + mg.getFirstName(),"",12))%></option>
 					<%
 				}
 			}
 %>
 		</select><a
-			href="scheduleflipview.jsp?originalpage=<%=request.getParameter("originalpage")%>&provider_no=<%=curProvider_no%>&startDate=<%=nextMonth.get(Calendar.YEAR)+"-"+(nextMonth.get(Calendar.MONTH)+1)+"-"+nextMonth.get(Calendar.DATE)%>"
+			href="scheduleflipview.jsp?originalpage=<%=originalPage%>&provider_no=<%=curProvider_no%>&startDate=<%=nextMonth.get(Calendar.YEAR)+"-"+(nextMonth.get(Calendar.MONTH)+1)+"-"+nextMonth.get(Calendar.DATE)%>"
 			title="<bean:message key="schedule.scheduleflipview.msgNextmonth"/>"
 			border='0'><img src="../images/next.gif"></a></td>
 		<% for(int j=0; j<colscode; j++) { %>
@@ -307,7 +316,7 @@ function t(s1,s2,s3,s4,s5,s6, doConfirm, allowDay, allowWeek) {
 	<tr align="center" bgcolor="<%=bgcolor%>">
 <% if (bMultisites) out.print("<td align='right'>"+getSiteHTML(strTempDate, curProvider_no, sites)+"</td>"); %>			
 		<td align="right" nowrap><a
-			href="<%=request.getParameter("originalpage")%>?year=<%=cal.get(Calendar.YEAR)%>&month=<%=cal.get(Calendar.MONTH)+1%>&day=<%=cal.get(Calendar.DATE)%>&view=0&displaymode=day&dboperation=searchappointmentday"><%=outform.format(inform.parse(strTempDate) )%>&nbsp;</a></td>
+			href="<%=originalPagePath%>?year=<%=cal.get(Calendar.YEAR)%>&month=<%=cal.get(Calendar.MONTH)+1%>&day=<%=cal.get(Calendar.DATE)%>&view=0&displaymode=day&dboperation=searchappointmentday"><%=outform.format(inform.parse(strTempDate) )%>&nbsp;</a></td>
 		<%
   String bookinglimit;
   String scheduleCode;
@@ -391,11 +400,11 @@ function t(s1,s2,s3,s4,s5,s6, doConfirm, allowDay, allowWeek) {
 
 </table>
 <a
-	href="scheduleflipview.jsp?originalpage=<%=request.getParameter("originalpage")%>&provider_no=<%=curProvider_no%>&startDate=<%=lastMonth.get(Calendar.YEAR)+"-"+(lastMonth.get(Calendar.MONTH)+1)+"-"+lastMonth.get(Calendar.DATE)%>"><bean:message
+	href="scheduleflipview.jsp?originalpage=<%=originalPage%>&provider_no=<%=curProvider_no%>&startDate=<%=lastMonth.get(Calendar.YEAR)+"-"+(lastMonth.get(Calendar.MONTH)+1)+"-"+lastMonth.get(Calendar.DATE)%>"><bean:message
 	key="schedule.scheduleflipview.btnLastMonth" /> </a>
 |
 <a
-	href="scheduleflipview.jsp?originalpage=<%=request.getParameter("originalpage")%>&provider_no=<%=curProvider_no%>&startDate=<%=nextMonth.get(Calendar.YEAR)+"-"+(nextMonth.get(Calendar.MONTH)+1)+"-"+nextMonth.get(Calendar.DATE)%>"><bean:message
+	href="scheduleflipview.jsp?originalpage=<%=originalPage%>&provider_no=<%=curProvider_no%>&startDate=<%=nextMonth.get(Calendar.YEAR)+"-"+(nextMonth.get(Calendar.MONTH)+1)+"-"+nextMonth.get(Calendar.DATE)%>"><bean:message
 	key="schedule.scheduleflipview.btnNextMonth" /></a>
 </body>
 </html:html>

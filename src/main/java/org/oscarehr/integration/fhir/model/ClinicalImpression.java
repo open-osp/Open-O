@@ -29,7 +29,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.hl7.fhir.dstu3.model.Attachment;
 import org.hl7.fhir.dstu3.model.ClinicalImpression.ClinicalImpressionStatus;
-import org.oscarehr.caisi_integrator.util.MiscUtils;
+import org.oscarehr.util.MiscUtils;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
 import org.oscarehr.common.model.AbstractModel;
 

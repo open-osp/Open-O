@@ -26,7 +26,6 @@
 
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="oscar.oscarRx.data.RxPatientData"%>
-<%@ taglib uri="http://www.caisi.ca/plugin-tag" prefix="plugin" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -98,22 +97,6 @@ You have no rights to access the data!
     return;
   }
 %>
-<!--add for special encounter-->
-<plugin:hideWhenCompExists componentName="specialencounterComp" reverse="true">
-<special:SpecialEncounterTag moduleName="eyeform">
-<%
-session.setAttribute("encounter_oscar_bean", bean);
-session.setAttribute("encounter_bean_flag", "true");
-String encounterurl=request.getContextPath()+"/mod/specialencounterComp/forward.jsp?method=view&demographicNo="+bean.demographicNo+"&providerNo="+bean.providerNo+"&providerName="+bean.userName;
-session.setAttribute("encounter_oscar_baseurl",request.getContextPath());
-if (request.getParameter("specalEncounter")==null)
-{
-	response.sendRedirect(encounterurl);
-    return;
-}
-%>
-</special:SpecialEncounterTag>
-</plugin:hideWhenCompExists>
 <!-- add by caisi  -->
 <caisi:isModuleLoad moduleName="caisi">
 	<%

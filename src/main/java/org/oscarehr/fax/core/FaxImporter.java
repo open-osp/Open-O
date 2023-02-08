@@ -45,7 +45,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.oscarehr.common.dao.FaxConfigDao;
@@ -58,7 +58,7 @@ import org.oscarehr.common.model.ProviderLabRoutingModel;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import com.lowagie.text.pdf.codec.Base64;
+import com.itextpdf.text.pdf.codec.Base64;
 
 import oscar.OscarProperties;
 import oscar.dms.EDoc;

@@ -18,7 +18,7 @@
 
 package oscar.appt;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.AppointmentArchiveDao;
 import org.oscarehr.common.dao.OscarAppointmentDao;
 import org.oscarehr.common.dao.RScheduleDao;
@@ -33,7 +33,7 @@ import oscar.util.ConversionUtils;
 import oscar.util.UtilDateUtilities;
 
 public class JdbcApptImpl {
-	private static final Logger _logger = Logger.getLogger(JdbcApptImpl.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
     OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
 

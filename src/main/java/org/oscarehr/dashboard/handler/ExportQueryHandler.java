@@ -26,7 +26,7 @@ package org.oscarehr.dashboard.handler;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.dashboard.query.Column;
 import org.oscarehr.util.MiscUtils;
 

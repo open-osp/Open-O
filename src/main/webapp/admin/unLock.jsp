@@ -33,7 +33,7 @@
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.Security" %>
 <%@ page import="org.oscarehr.common.dao.SecurityDao" %>
-
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%
 	SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
 	String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -59,12 +59,12 @@ if(!authed) {
 
 <%
   String ip = request.getRemoteAddr();
-  String msg = "Unlock";
+  String msg = "";
   LoginCheckLogin cl = new LoginCheckLogin();
   Vector vec = cl.findLockList();
   if(vec == null) vec = new Vector();
   
-  if (request.getParameter("submit") != null && request.getParameter("submit").equals("Unlock")) {
+  if (request.getParameter("submit") != null ){ 
     // unlock
     if(request.getParameter("userName") != null && request.getParameter("userName").length()>0) {
       String userName = request.getParameter("userName");
@@ -99,8 +99,9 @@ if(!authed) {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Unlock</title>
+    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+<title><bean:message key="admin.admin.unlockAcct" /></title>
 <script type="text/javascript" language="JavaScript">
 
       <!--
@@ -111,38 +112,28 @@ if(!authed) {
 
       </script>
 </head>
-<body bgcolor="ivory" onLoad="setfocus()" style="margin: 0px">
-<table BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
-	<tr>
-		<td align="left">&nbsp;</td>
-	</tr>
-</table>
+<body>
+<div width="100%">
+    <div id="header"><H4><i class="icon-unlock"></i>&nbsp;<bean:message key="admin.admin.unlockAcct" /></H4>
+    </div>
+</div>
 
-<center>
-<table BORDER="1" CELLPADDING="0" CELLSPACING="0" WIDTH="80%">
-	<tr BGCOLOR="#CCFFFF">
-		<th><%=msg%></th>
-	</tr>
-</table>
-</center>
 <form method="post" name="baseurl" action="unLock.jsp">
-<table width="100%" border="0" cellspacing="2" cellpadding="2">
-	<tr>
-		<td>&nbsp;</td>
-	</tr>
-	<tr bgcolor="#EEEEFF">
-		<td align="right"><b>Role name</b></td>
-		<td><select name="userName">
+<% if (!msg.equals("") ){ %>
+       <div class="alert alert-success" >
+			<%=msg%>
+        </div>
+<% } %>
+        <div class="well" >
+<b><bean:message key="admin.providersearchresults.ID" /></b>
+        <select name="userName">
 			<% for(int i=0; i<vec.size(); i++) { %>
 			<option value="<%=(String) vec.get(i) %>"><%=(String) vec.get(i) %></option>
 			<% } %>
-		</select> <input type="submit" name="submit" value="Unlock" /></td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-	</tr>
-</table>
+		</select> <input type="submit" name="submit" class="btn btn-primary" value="<bean:message key="admin.admin.unlockAcct" />" />			
+        </div>
+
+
 </form>
 
 </body>

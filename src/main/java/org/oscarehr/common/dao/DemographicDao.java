@@ -44,7 +44,7 @@ import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -91,7 +91,7 @@ public class DemographicDao extends HibernateDaoSupport implements ApplicationEv
 	private static final int MAX_SELECT_SIZE = 500;
 	
 	static Logger log = MiscUtils.getLogger();
-	
+
 	private ApplicationEventPublisher publisher;
     
 
@@ -187,6 +187,15 @@ public class DemographicDao extends HibernateDaoSupport implements ApplicationEv
 			q = "From Demographic d where d.ProviderNo = ? and d.PatientStatus = 'AC' ";
 		}
 		List<Demographic> rs = getHibernateTemplate().find(q, new Object[] { providerNo });
+		return rs;
+	}
+	
+	public List<Integer> getDemographicNosByProvider(String providerNo, boolean onlyActive) {
+		String q = "From Demographic d where d.ProviderNo = ? ";
+		if (onlyActive) {
+			q = "Select d.DemographicNo From Demographic d where d.ProviderNo = ?  ";
+		}
+		List<Integer> rs = getHibernateTemplate().find(q, new Object[] { providerNo });
 		return rs;
 	}
 
@@ -1021,7 +1030,7 @@ public class DemographicDao extends HibernateDaoSupport implements ApplicationEv
 
 	@SuppressWarnings("unchecked")
 	public List<String> getRosterStatuses() {
-		List<String> results = getHibernateTemplate().find("SELECT DISTINCT d.RosterStatus FROM Demographic d where d.RosterStatus != '' and d.RosterStatus != 'RO' and d.RosterStatus != 'NR' and d.RosterStatus != 'TE' and d.RosterStatus != 'FS'");
+		List<String> results = getHibernateTemplate().find("SELECT DISTINCT d.RosterStatus FROM Demographic d where d.RosterStatus != '' and d.RosterStatus != 'RO' and d.RosterStatus != 'TE' and d.RosterStatus != 'FS'");
 		return results;
 	}
 
@@ -2171,6 +2180,17 @@ public class DemographicDao extends HibernateDaoSupport implements ApplicationEv
 			this.releaseSession(session);
 		}
 		
+	}
+
+
+	public List<Demographic> getActiveDemographicAfter(Date afterDatetimeExclusive) {
+		String q = "From Demographic d where d.PatientStatus='AC'";
+		if (afterDatetimeExclusive!=null) q += " and d.lastUpdateDate > ?";
+		
+		List<Demographic> rs = null;
+		rs = afterDatetimeExclusive!=null ? getHibernateTemplate().find(q, afterDatetimeExclusive) : getHibernateTemplate().find(q);
+		
+		return rs;
 	}
 
 	public List<Demographic> searchDemographicByHIN(String hinStr) {

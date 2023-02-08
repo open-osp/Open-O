@@ -28,7 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.drools.RuleBase;
 import org.drools.io.RuleBaseLoader;
 import org.jdom.Element;

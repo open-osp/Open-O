@@ -34,7 +34,7 @@ import java.util.List;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.model.Program;
 import org.oscarehr.common.dao.AdmissionDao;

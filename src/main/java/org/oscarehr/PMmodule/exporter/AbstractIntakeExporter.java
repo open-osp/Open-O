@@ -30,7 +30,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.Intake;
 import org.oscarehr.PMmodule.model.IntakeAnswer;
 import org.oscarehr.PMmodule.service.GenericIntakeManager;
@@ -62,7 +62,7 @@ public abstract class AbstractIntakeExporter {
 	protected Intake intake;
 	protected List<DATISField> fields;
 
-	private static final Logger log = Logger.getLogger(AbstractIntakeExporter.class);
+	private static final Logger log = org.oscarehr.util.MiscUtils.getLogger();
 
 	public String export() throws ExportException {
 		StringBuilder buf = new StringBuilder();

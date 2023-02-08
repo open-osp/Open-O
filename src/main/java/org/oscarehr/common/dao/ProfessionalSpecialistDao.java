@@ -29,7 +29,6 @@ import java.util.List;
 import javax.persistence.Query;
 import org.apache.commons.lang.StringUtils;
 import org.oscarehr.common.model.ProfessionalSpecialist;
-import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -155,7 +154,7 @@ public class ProfessionalSpecialistDao extends AbstractDao<ProfessionalSpecialis
 		    }
 		}		
 		String sql = "SELECT c from ProfessionalSpecialist c where " + where.toString() + " order by " + orderBy;
-		MiscUtils.getLogger().info(sql);
+
 		Query query = entityManager.createQuery(sql);
 		for(int x=0;x<paramList.size();x++) {
 			query.setParameter(x+1,paramList.get(x));

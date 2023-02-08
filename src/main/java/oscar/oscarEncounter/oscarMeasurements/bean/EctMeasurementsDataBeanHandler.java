@@ -65,9 +65,7 @@ public class EctMeasurementsDataBeanHandler {
 
     public boolean init(Integer demo) {
         MeasurementDao dao = SpringUtils.getBean(MeasurementDao.class);
-        for(Object[] i : dao.findMeasurementsAndTypes(demo)) {
-        	MeasurementType mt = (MeasurementType) i[1];
-        	
+        for(MeasurementType mt : dao.findMeasurementsTypes(demo)) {
             EctMeasurementsDataBean data = new EctMeasurementsDataBean();
             data.setType(mt.getType());
             data.setTypeDisplayName(mt.getTypeDisplayName());
@@ -137,6 +135,10 @@ public class EctMeasurementsDataBeanHandler {
     }
 
     public Collection<EctMeasurementsDataBean> getMeasurementsDataVector(){
+        return measurementsDataVector;
+    }
+    
+    public Collection<EctMeasurementsDataBean> getMeasurementsDataCollection(){
         return measurementsDataVector;
     }
 

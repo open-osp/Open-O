@@ -101,6 +101,10 @@ public class PharmacyManager {
 		LogAction.addLogSynchronous(loggedInInfo, "PharmacyManager.removePharmacy", "demographicNo="+demographicId + ",pharmacyId="+pharmacyId);	
 	}
 	
+	public PharmacyInfo getPharmacy(LoggedInInfo loggedInInfo, Integer pharmacyId) {
+		return pharmacyInfoDao.find(pharmacyId);
+	}
+
 	public void setDoNotContact(LoggedInInfo loggedInInfo, Integer pharmacyId, boolean doNotContact) {
 		DemographicPharmacy pharmacy = demographicPharmacyDao.find(pharmacyId);
 		pharmacy.setConsentToContact(doNotContact);

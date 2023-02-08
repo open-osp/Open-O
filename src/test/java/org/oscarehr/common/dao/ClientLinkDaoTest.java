@@ -30,7 +30,7 @@ package org.oscarehr.common.dao;
 //import org.junit.Test;
 //import org.oscarehr.common.dao.utils.EntityDataGenerator;
 //import org.oscarehr.common.model.ClientLink;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.oscarehr.common.dao.utils.SchemaUtils;
 import org.oscarehr.util.MiscUtils;

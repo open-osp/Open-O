@@ -37,7 +37,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.casemgmt.dao.CaseManagementNoteDAO;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
 import org.oscarehr.common.dao.BillingONCHeader1Dao;
@@ -110,11 +110,7 @@ public class DSDemographicAccess {
     private List<Prescription> prescriptionData;
 
     private LoggedInInfo loggedInInfo;
-    
-    private DSDemographicAccess() {
-    	
-    }
-    
+
     public DSDemographicAccess(LoggedInInfo loggedInInfo, String demographicNo) {
     	this.loggedInInfo = loggedInInfo;
         this.demographicNo = demographicNo;

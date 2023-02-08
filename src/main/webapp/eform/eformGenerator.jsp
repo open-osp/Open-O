@@ -38,28 +38,55 @@
 		return;
 	}
 %>
-<%@ page import="oscar.eform.actions.DisplayImageAction,java.lang.*,java.io.File,oscar.OscarProperties,java.io.*,oscar.eform.*,oscar.eform.data.*,java.util.*,org.apache.log4j.Logger"%>
+<%@ page import="java.lang.*"%>
+<%@ page import="java.io.*"%>
+<%@ page import="java.io.File"%>
+<%@ page import="java.util.*"%>
+<%@ page import="oscar.eform.*"%>
+<%@ page import="oscar.eform.data.*"%>
+<%@ page import="oscar.eform.actions.DisplayImageAction"%>
+<%@ page import="oscar.OscarProperties"%>
+<%@ page import="org.apache.logging.log4j.Logger"%>
 <!--
-/*  eForm Generator v6.0l reimagined by Peter Hutten-Czapski 2017-2018
- *
- *  eformGenerator.jsp
- *
- *
- */
+eForm Generator version 7.1
+		7.1 bug fixes
+		7.0 Tickler support, refactored signatures to simplify, bug fixes
+		6.5 further adjusted defaults for width to 825
+		6.4 adjusted defaults for width to 825
+        6.3 selection for snappiness
+        added stamps.js as central location for stamps
+        6.2 file selector for images
+        revert changed relative to absolute positions for page ids
+        6.1 added some snap to form elements 
+	origional copyright by the OSCAR community including notably
+	Shelter Lee
+	Darius
+	Charlie Livingston
+	Adrian Starzynski
+	Peter Hutten-Czapski 2014-2022
+	released under 
+	AGPL v2+
+	and other liscences (MIT, LGPL etc) as indicated
 -->
 
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%
+	boolean eformGeneratorIndivicaPrintEnabled = OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled");
+	boolean eformGeneratorIndivicaFaxEnabled = OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled");
+	boolean eformGeneratorIndivicaSignatureEnabled = OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_signature_enabled");
+%>
 <html>
 <head>
 <title> <bean:message key="eFormGenerator.title"/></title>
+<script src="<%=request.getContextPath()%>/JavaScriptServlet" type="text/javascript"></script>
 
 <style type="text/css" media="print">
-<!-- CSS Script that removes the whole division when printing -->
+/*CSS Script that removes the whole division when printing*/
 .DoNotPrint {
 	display: none;
 }
-<!-- CSS Script that removes textarea and textbox borders when printing -->
+/*CSS Script that removes textarea and textbox borders when printing*/
 .noborder {
 	border : 0px;
 	background: transparent;
@@ -142,6 +169,13 @@ var PageNum = 0;
 var PageIterate = 1;
 var sigint = 0;
 var pageoffset = 0;
+var snap = 5;
+var boxleft = 0;
+var boxup = 0;
+var boxbottom = 0;
+var boxwidth = 0;
+var boxheight = 0;
+var file_selected = false;
 
 var SignatureHolderX = 0;
 var SignatureHolderY = 0;
@@ -178,24 +212,24 @@ function getCheckedValue(radioObj) {
 function loadImage(){
 	var img = document.getElementById('imageName');
 	var bg = document.getElementById('BGImage');
-	if ( img.value == "" ) {
-		return
+	if (img.value == "") {
+		return;
 	} 
-	if ( bg.src.indexOf(img.value)>0) {
-		var r=confirm('<bean:message key="eFormGenerator.loadFileAgain"/>'+img.value+'<bean:message key="eFormGenerator.Again"/>');
-		if (r!=true)  {
-		  	return
+	if (bg.src.indexOf(img.value) > 0) {
+		var r = confirm('<bean:message key="eFormGenerator.loadFileAgain"/> '+img.value+' <bean:message key="eFormGenerator.Again"/>');
+		if (r != true) {
+		  	return;
 		}
 	} 
 	//Boilerplate mod to set the path for image function
 	bg.src = ("<%=request.getContextPath()%>"+"/eform/displayImage.do?imagefile="+img.value);
 	PageNum = PageNum +1;
 
-	DrawPage(jg,PageNum,img.value,bg.width)
-	document.getElementById('page').value=PageNum;
-	document.getElementById('AutoNamePrefix').value="page"+PageNum+"_";
+	DrawPage(jg, PageNum, img.value, bg.width)
+	document.getElementById('page').value = PageNum;
+	document.getElementById('AutoNamePrefix').value = "page" + PageNum + "_";
 
-	loadInputList();	
+	loadInputList();
 }
 
 function finishLoadingImage() {
@@ -226,9 +260,9 @@ function finishLoadingImage() {
 }
 
 function drawPageOutline(){
-	if (BGWidth <= 800){
+	if (BGWidth <= 850){
 		drawPortraitOutline();
-	}else if (BGWidth >800) {
+	}else if (BGWidth >850) {
 		drawLandscapeOutline();
 	}
 }
@@ -246,7 +280,7 @@ function hide(x){
 	//collapse all if x=all
 	if (x == 'all'){
 		hide('Section1');hide('Section2');hide('Section3');hide('Section4');hide('Section5');hide('Section6');hide('Section7');hide('Section8');
-	}else {
+	} else {
 	//collapses section
 	document.getElementById(x).style.display = 'none';
 	}
@@ -323,8 +357,6 @@ function emptyUserSignaturelist(){
 	}
 }
 
-
-
 function uncheckList(x){
 	var List = document.getElementsByName(x);
 	for (i=0; i < List.length; i++){
@@ -347,7 +379,6 @@ var InputChecklist = document.getElementsByName('InputChecklist');
 		}
 	}
 }
-
 
 function TransformInput(n, d, p){
 //parses DrawData and find InputName = n,
@@ -537,7 +568,6 @@ function alignInput(edge){
 	RedrawAll();
 }
 
-
 function deleteInput(){
 	TempData = DrawData;
 	var InputChecklist = document.getElementsByName('InputChecklist');
@@ -568,9 +598,6 @@ function deleteInput(){
 					DataNumber = j;
 				}else if (InputType == 'Signature'){
 					InputName = new String(RedrawParameter[5]);
-					//document.getElementById('AddSignature').checked=false;
-					//document.getElementById('AddSignature').disabled=false;
-					//document.getElementById('AddSignatureBox1').disabled=false;
 					DataNumber = j;
 				}else if (InputType == 'Stamp'){
 					InputName = new String(RedrawParameter[5]);
@@ -632,6 +659,7 @@ function resetAll(){
 	document.getElementById('preCheckGender').checked = false;
 	document.getElementById('XboxType').checked = false;
 	document.getElementById('maximizeWindow').checked = false;
+	document.getElementById('removeHeadersFooters').checked = false;
 	var l = document.getElementById('oscarDB');
 		l[0].selected = true;
 	document.getElementById('AddSignature').checked = false;
@@ -642,15 +670,10 @@ function resetAll(){
 	document.getElementById('AddSignatureBox1').disabled=false;
 	document.getElementById('AddStamp').disabled=false; 
 	document.getElementById('AddSignatureBox2').disabled=false;
-	//document.getElementById('DefaultCheckmark').checked = false;
 
-	<% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>
-		document.getElementById('includePdfPrintControl').checked = false;
-	<%}%>
+	document.getElementById('includePdfPrintControl').checked = false;
+	document.getElementById('includeFaxControl').checked = false;
 	
-	<% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>
-		document.getElementById('includeFaxControl').checked = false;
-	<% } %>
 	document.getElementById('BlackBox').checked = false;
 	clearGraphics(jg);
 	PageNum=0;
@@ -666,10 +689,13 @@ function GetTextTop(){
     textTop += "&lt;/title&gt;\n"
     textTop += "&lt;style type=&quot;text/css&quot; media=&quot;screen&quot; &gt;\n";
     textTop += " input {\n\t-moz-box-sizing: content-box;\n\t-webkit-print-color-adjust: exact;\n\t-webkit-box-sizing: content-box;\n\tbox-sizing: content-box\n }\n"
+	textTop += " .noborder {\n\border: 1px solid #d2d2d2 !important;\n }\n"
+
     if (document.getElementById('AddSignature').checked){
         textTop += " .sig {\n\tborder: "+SignatureBorder+";\n\tcolor: "+SignatureColor+";\n\tbackground-color: white;\n }\n"
     }
-    textTop += "/* Drawing the 'gripper' for touch-enabled devices */\n html.touch #content {\n\tfloat:left;\n\twidth:92%;\n}\n html.touch #scrollgrabber {\n\tfloat:right;\n\twidth:4%;\n\tmargin-right:2%;\n\tbackground-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAFCAAAAACh79lDAAAAAXNSR0IArs4c6QAAABJJREFUCB1jmMmQxjCT4T/DfwAPLgOXlrt3IwAAAABJRU5ErkJggg==)\n }\n html.borderradius #scrollgrabber {\n\tborder-radius: 1em;\n }\n"
+    
+	textTop += "/* Drawing the 'gripper' for touch-enabled devices */\n html.touch #content {\n\tfloat:left;\n\twidth:92%;\n}\n html.touch #scrollgrabber {\n\tfloat:right;\n\twidth:4%;\n\tmargin-right:2%;\n\tbackground-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAFCAAAAACh79lDAAAAAXNSR0IArs4c6QAAABJJREFUCB1jmMmQxjCT4T/DfwAPLgOXlrt3IwAAAABJRU5ErkJggg==)\n }\n html.borderradius #scrollgrabber {\n\tborder-radius: 1em;\n }\n"
     textTop += "&lt;/style&gt;\n";
  
     textTop += "&lt;style type=&quot;text/css&quot; media=&quot;print&quot;&gt;\n"
@@ -680,6 +706,8 @@ function GetTextTop(){
     if (document.getElementById('AddSignature').checked){
         textTop += " .sig {\n\tborder-style: solid;\n\tborder-color: transparent;\n\tcolor: "+SignatureColor+";\n\tbackground-color: transparent;\n }\n\n "
     }
+    
+	
     textTop += "&lt;/style&gt;\n\n";
  
     
@@ -697,7 +725,18 @@ function GetTextTop(){
             xPresent=true;      
         }
     }
- 
+		if ( <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>(document.getElementById('includePdfPrintControl').checked) || <%}%> <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>(document.getElementById("includeFaxControl").checked) || <% } %> (document.getElementById('AddSignature').checked) ||
+		(document.getElementById('XboxType').checked) ||
+		(xPresent) ) {
+		textTop += "&lt;!-- jQuery for greater functionality --&gt;\n"
+		// dependency on jquery up to version 2.2.1 for pdf and faxing 
+		// ensure that we check the integrety of the CDN's version
+		textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;https://code.jquery.com/jquery-2.2.1.min.js&quot; integrity=&quot;sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=&quot; crossorigin=&quot;anonymous&quot; &gt;&lt;/script&gt;\n";	
+		// if unavailable reference the one in OSCAR
+		//textTop += "&lt;script&gt;\nwindow.jQuery || document.write('&lt;script src=&quot;../js/jquery-1.7.1.min.js&quot;&gt;&lt;\/script&gt;');\n\n"
+		 textTop += "&lt;script&gt; window.jQuery || document.write('&lt;script src=&quot;../js/jquery-1.7.1.min.js&quot;&gt;&lt; &#92;/script&gt;') &lt;/script&gt;\n";
+	}
+
 	if ( <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>(document.getElementById('includePdfPrintControl').checked) || <%}%> <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>(document.getElementById("includeFaxControl").checked) || <% } %> (document.getElementById('AddSignature').checked) || (document.getElementById('XboxType').checked) || (xPresent) ) {
      	textTop += "&lt;!-- jQuery for greater functionality --&gt;\n"
 	    // dependency on jquery up to version 2.2.1 for pdf and faxing hack. (3.1.1 does NOT work.)  Lets reference something off the OSCAR server
@@ -707,7 +746,7 @@ function GetTextTop(){
 	    // ole darn it, I knew I left a copy of jQuery lying around somewhere... perhaps under my nose?
 	    textTop += "&lt;script&gt; window.jQuery || document.write('&lt;script src=&quot;jquery-1.7.1.min.js&quot;&gt;&lt; &#92;/script&gt;') &lt;/script&gt;\n\n";
     }
-    	
+
     //Peter Hutten-Czapski's Xbox scripts   
     if (xPresent){
         textTop += "&lt;!-- scripts for Xbox functions --&gt;\n"
@@ -749,8 +788,9 @@ function GetTextTop(){
         textTop += "});\n"
         textTop += "&lt;/script&gt;\n\n"
     }
+        
     
-    if (parentPresent  || document.getElementById('radioX').checked){   
+    if (parentPresent  || document.getElementById('radioX').checked || document.getElementById('radio').checked || document.getElementById('preCheckGender').checked) {   
         // Adding jquery code for checkbox parent-child-fields (Bell Eapen, nuchange.ca)
         textTop += "\n&lt;!-- jQuery for parent-child and radio fields --&gt;\n"
         textTop += "&lt;script&gt;\n";
@@ -766,53 +806,70 @@ function GetTextTop(){
         textTop += "\n\t\t\t$( this ).val('X');\n\t\t}\n\t});\n});\n";
         textTop += "&lt;/script&gt;\n";       
     }
-    //  textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;jquery-1.7.1.min.js&quot;&gt;&lt;/script&gt;\n";
+
+	//  textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;jquery-1.7.1.min.js&quot;&gt;&lt;/script&gt;\n";
     //textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;${oscar_javascript_path}jquery/jquery-1.4.2.js&quot;&gt;&lt;/script&gt;\n";
- 
     //reference built in functions as desired
    
-<% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>
 	if (document.getElementById('includePdfPrintControl').checked) {
 		textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;$%7Boscar_javascript_path%7Deforms/printControl.js&quot;&gt;&lt;/script&gt;\n";
 	}
-<% }%>
 
 	//reference built in faxControl	
-<% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>
-        //fax number script
-        if ((document.getElementById('faxno').value.length > 0)){
-            textTop += "&lt;script language=&quot;javascript&quot;&gt;\n"
-            textTop += "function setFaxNo(){\n"
-            textTop += "\tsetTimeout('document.getElementById(&quot;otherFaxInput&quot;).value=&quot;"
-            textTop += document.getElementById('faxno').value
-            textTop += "&quot;',1000);\n"
-            textTop += "} \n"
-            textTop += "&lt;/script&gt;\n\n"  
-        }
-		if (document.getElementById("includeFaxControl").checked) {
-			textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;$%7Boscar_javascript_path%7Deforms/faxControl.js&quot;&gt;&lt;/script&gt;\n";
+	if (document.getElementById("includeFaxControl").checked) {
+		textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;$%7Boscar_javascript_path%7Deforms/faxControl.js&quot;&gt;&lt;/script&gt;\n";
 	}
-<% } %>
 
+	// Support for consult_sig_xxx.png signatures
+	if (document.getElementById('AddStamp2').checked){
+	textTop += "\n&lt;!-- Classic Signatures --&gt;\n\n"
+		textTop += "&lt;script type=&quot;text/javascript&quot;&gt;\n";	
+		textTop += "function SignForm2() {\n";
+		if (document.getElementById('Delegation').checked){
+			textTop += "\t//stamp by delegation model \n";
+			textTop += "\tvar provNum = '';\n";
+			textTop += "\tvar userBillingNo = document.getElementById('user_ohip_no').value;\n";	
+			textTop += "\tif (parseInt(userBillingNo) > 100) {\n";
+			textTop += "\t\t// then a valid billing number so use the current user id \n";
+			textTop += "\t\tprovNum = document.getElementById('user_id').value; \n";
+			textTop += "\t\tif (provNum != document.getElementById('doctor_no').value && !!document.getElementById('doctor')) {\n"
+			textTop += "\t\t\tdocument.getElementById('doctor').value=document.getElementById('CurrentUserName').value + ' CC: ' + document.getElementById('doctor').value;\n"
+			textTop += "\t\t}\n"			
+			textTop += "\t} else { \n";
+			textTop += "\t\tprovNum = document.getElementById('doctor_no').value; \n";
+			textTop += "\t}\n";
+		} else {
+			textTop += "\t//stamp by user model \n";
+			textTop += "\tvar provNum = document.getElementById('doctor_no').value; \n";
+		}
+		textTop += "\tdocument.getElementById('Stamp').src = '../eform/displayImage.do?imagefile=consult_sig_'+provNum+'.png';\n";              
+		textTop += "}\n";
+		textTop += "function toggleMe(){\n"
+		textTop += "\tif (document.getElementById(&quot;Stamp&quot;).src.indexOf(&quot;BNK.png&quot;)>0){\n"
+		textTop += "\t\tSignForm2()\n"
+		textTop += "\t} else {\n"
+		textTop += "\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;../eform/displayImage.do?imagefile=BNK.png&quot;;\n"
+		textTop += "\t}\n"
+		textTop += "}\n"
+ 		textTop += "&lt;/script&gt;\n\n";		
+	}
 
-	//reference built in signatureControl
+		//reference built in signatureControl
 	if (document.getElementById('AddSignatureClassic').checked){
-			
+		textTop += "\n&lt;!-- Classic Signatures --&gt;\n"	
 		textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;$%7Boscar_javascript_path%7Deforms/signatureControl.jsp&quot;&gt;&lt;/script&gt;\n";
 		textTop += "&lt;script type=&quot;text/javascript&quot;&gt;\n";	
 		textTop += "if (typeof jQuery != &quot;undefined&quot; &amp;&amp; typeof signatureControl != &quot;undefined&quot;) {";
 		textTop += "jQuery(document).ready(function() {";
 		var totalpx = SignatureHolderY + sigOffset;
 		textTop += "signatureControl.initialize({eform:true, height:"+SignatureHolderH+", width:"+SignatureHolderW+", top:"+totalpx+", left:"+SignatureHolderX+"});";
-		textTop += "});}";
-		textTop +="&lt;/script&gt;\n";
-		
+		textTop += "});}\n";
+		textTop += "\t \n";
+ 		textTop += "&lt;/script&gt;\n\n";		
 	}
-
 
 	//reference Signature library
 	if (document.getElementById('AddSignature').checked){
-
 		var sigArray = new Array();
 		for (j=0; (j < (DrawData.length) ); j++){
 			var P = DrawData[j].split("|");
@@ -820,7 +877,6 @@ function GetTextTop(){
 				sigArray.push(P[5]);		
 			}
 		}
-
 		textTop += "\n&lt;!-- Freeform Signatures --&gt;\n\n"
 
        //For external testing jSignature should be placed in the location as the images and the resultant html file 
@@ -838,10 +894,10 @@ function GetTextTop(){
         //In OSCAR 15 jSignature is available within the source  
 
 		textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;$%7Boscar_javascript_path%7Djquery/jSignature.min.js&quot;&gt;&lt;/script&gt;\n\n";
-		textTop += "&lt;!--[if lt IE 9]&gt;\n"
-		textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;$%7Boscar_javascript_path%7Dflashcanvas.js&quot;&gt;&lt;/script&gt;\n";
-		textTop += "&lt;![endif]--&gt;\n\n"
-
+		//flash and IE support deprecated
+		//textTop += "&lt;!--[if lt IE 9]&gt;\n"
+		//textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;$%7Boscar_javascript_path%7Dflashcanvas.js&quot;&gt;&lt;/script&gt;\n";
+		//textTop += "&lt;![endif]--&gt;\n\n"
 
 		textTop += "&lt;script type=&quot;text/javascript&quot;&gt;\n";	
 		textTop += "jQuery(document).ready(function() {\n";
@@ -879,27 +935,42 @@ function GetTextTop(){
 		textTop += "}\n";
 
 		textTop += "function loadSig(){\n"
+		if (document.getElementById('Delegation').checked){
+			textTop += "\tvar provNum = '';\n";
+			textTop += "\tvar userBillingNo = $('#user_ohip_no').val();\n";
+			textTop += "\tif (parseInt(userBillingNo) > 100) {\n";
+			textTop += "\t\t// then a valid billing number so use the current user id \n";
+			textTop += "\t\tprovNum = $('#user_id').val(); \n";
+			textTop += "\t} else { \n";
+			textTop += "\t\tprovNum = $('#doctor_no').val(); \n";
+			textTop += "\t}\n"; 
+		}
 		for (j=0; (j < (sigArray.length) ); j++){
 			textTop += "\tvar $sig=$(&quot;#Canvas"+sigArray[j]+"&quot;);\n"
 			textTop += "\tvar data\n"
-			textTop += "\tdata=document.getElementById(&quot;Store"+sigArray[j]+"&quot;).value;\n"
+			textTop += "\tdata=document.getElementById(&quot;Store"+sigArray[j]+"&quot;).value;\n"	
 			textTop += "\t$sig.jSignature(&quot;setData&quot;,&quot;data:&quot;+ data) ;\n"
 		}
 		textTop += "}\n";
 		textTop += "&lt;/script&gt;\n\n"
 	}
 
-
 	//auto ticking gender Xboxes OR checkboxes
 	if ((document.getElementById('preCheckGender').checked)||(document.getElementById('XboxType').checked)){
 		textTop += "&lt;!-- auto ticking gender Xboxes OR checkboxes --&gt;\n"	
 		textTop += "&lt;script type=&quot;text/javascript&quot; language=&quot;javascript&quot;&gt;\n"
-		textTop += "function checkGender(){\n"
-		textTop += "\t if (document.getElementById(&quot;PatientGender&quot;).value == &quot;M&quot;){\n"
-		textTop += "\t document.getElementById(&quot;Male&quot;).click();\n"
-		textTop += "\t }else if (document.getElementById(&quot;PatientGender&quot;).value == &quot;F&quot;){\n"
-		textTop += "\t document.getElementById(&quot;Female&quot;).click();\n"
-		textTop += "\t}\n }\n"
+		textTop += "function checkGender(){\n" +
+				"\tlet patientGenderVal = document.getElementById(\"PatientGender\").value;\n" +
+				"\tif (patientGenderVal == \"M\" || patientGenderVal == \"F\") {\n" +
+				"\t\tlet inputCheckEle = document.getElementById(patientGenderVal == \"M\" ? \"Male\" : \"Female\");\n" +
+				"\t\tif (inputCheckEle.classList.contains(\"Xbox\")) {\n" +
+				"\t\t// xbox\n" +
+				"\t\tinputCheckEle.value = \"X\";\n" +
+				"\t\t} else {\n" +
+				"\t\t// checkbox\n" +
+				"\t\tinputCheckEle.checked = true;\n" +
+				"\t\t}\n" +
+				"\t}\n }\n";
 		textTop += "&lt;/script&gt;\n\n"
 	}
 
@@ -911,7 +982,7 @@ function GetTextTop(){
 	textTop += "&lt;/script&gt;\n\n"
 
 	//reference built in faxControl	
-<% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>
+<% if (eformGeneratorIndivicaFaxEnabled) { %>
            //fax number script
     if ((document.getElementById('faxno').value.length > 0)){
         textTop += "&lt;script language=&quot;javascript&quot;&gt;\n"
@@ -925,20 +996,65 @@ function GetTextTop(){
 
 <% } %>
 
+	// Tickler Support
+	if (document.getElementById('includeTicklerControl').checked){
+		textTop += "\n&lt;!-- Tickler Support --&gt;\n\n"	
+		textTop += "&lt;script language=&quot;javascript&quot;&gt;\n"
+		textTop += "function setDate(weeks){\n"
+		textTop += "\tvar now = new Date();\n"
+		textTop += "\tnow.setDate(now.getDate() + weeks * 7);\n"
+		textTop += "\treturn (now.toISOString().substring(0,10));\n"
+		textTop += "\t}\n\n"	
+		textTop += "function setAtickler(){\n"
+		textTop += "\tvar today = new Date().toISOString().slice(0, 10);\n"
+		textTop += "\tvar subject=( $('#subject').val() ? $('#subject').val() : 'test');\n"
+		textTop += "\tvar demographicNo = ($('#tickler_patient_id').val() ? $('#tickler_patient_id').val() : '-1'); // patient_id\n"
+		textTop += "\tvar taskAssignedTo = ($('#tickler_send_to').val() ? $('#tickler_send_to').val() : '-1'); // -1 is reserved for the system user\n"
+		textTop += "\tvar weeks = ($('#tickler_weeks').val() ? $('#tickler_weeks').val() : '6');\n"
+		textTop += "\tvar message = ($('#tickler_message').val() ? $('#tickler_message').val() : 'Check for results of '+subject+' ordered ' + today);\n"
+		textTop += "\tvar ticklerDate = setDate(weeks);\n"
+		textTop += "\tvar urgency = ($('#tickler_priority').val() ? $('#ticklerpriority').val() : 'Normal'); // case sensitive: Low Normal High\n"
+		textTop += "\tvar ticklerToSend = {};\n"
+		textTop += "\tticklerToSend.demographicNo = demographicNo;\n"
+		textTop += "\tticklerToSend.message = message;\n"
+		textTop += "\tticklerToSend.taskAssignedTo = taskAssignedTo;\n"
+		textTop += "\tticklerToSend.serviceDate = ticklerDate;\n"
+		textTop += "\tticklerToSend.priority = urgency;\n"
+		textTop += "\treturn $.ajax({\n"
+		textTop += "\t\ttype: 'POST',\n"
+		textTop += "\t\turl: '../ws/rs/tickler/add',\n"
+		textTop += "\t\tdataType:'json',\n"
+		textTop += "\t\tcontentType:'application/json',\n"
+		textTop += "\t\tdata: JSON.stringify(ticklerToSend)\n"
+		textTop += "\t\t});\n"
+		textTop += "\t}\n"
+		textTop += "&lt;/script&gt;\n\n"				
+	}
+
 	//Peter Hutten-Czapski's script to confirm closing of window if eform changed
 	textTop += "&lt;!-- scripts to confirm closing of window if it hadnt been saved yet --&gt;\n"
 	textTop += "&lt;script language=&quot;javascript&quot;&gt;\n"
 	textTop += "//keypress events trigger dirty flag\n"
 	textTop += "var needToConfirm = false;\n"
 	textTop += "document.onkeyup=setDirtyFlag;\n"
+	
 	textTop += "function setDirtyFlag(){\n"
 	textTop += "\tneedToConfirm = true;\n"
 	textTop += "}\n"
+	
 	textTop += "function releaseDirtyFlag(){\n"
 	textTop += "\tneedToConfirm = false; //Call this function to prevent an alert.\n"
-	textTop += "//this could be called when save button is clicked\n"
+	if (document.getElementById('includeTicklerControl').checked){
+	textTop += "\t$.when(setAtickler()).then(function( data, textStatus, jqXHR ) {\n"
+		textTop += "\t\tif ( jqXHR.status != 200 ){ alert('ERROR ('+jqXHR.status+') automatic tickler FAILED to be set');}\n"
+		textTop += "\t\tdocument.getElementById('FormName').submit()\n"		
+		textTop += "\t});\n"
+	} else {
+	textTop += "\tdocument.getElementById('FormName').submit()\n"
+	}
 	textTop += "}\n"
 	textTop += "window.onbeforeunload = confirmExit;\n"
+	
 	textTop += "function confirmExit(){\n"
 	textTop += "\tif (needToConfirm){\n"
 	textTop += "\t\t return &quot;You have attempted to leave this page. If you have made any changes to the fields without clicking the Save button, your changes will be lost. Are you sure you want to exit this page?&quot;;\n"
@@ -948,17 +1064,30 @@ function GetTextTop(){
 
 	//maximize window script
 	if (document.getElementById('maximizeWindow').checked){
-		textTop += "&lt;script language=&quot;JavaScript&quot;&gt;\n"
-		textTop += "\t top.window.moveTo(0,0);\n"
-		textTop += "\t if (document.all) {\n"
-		textTop += "\t top.window.resizeTo(screen.availWidth,screen.availHeight);\n"
-		textTop += "\t }\n"
-		textTop += "\t else if (document.layers||document.getElementById) {\n"
-		textTop += "\t if (top.window.outerHeight&lt;screen.availHeight||top.window.outerWidth&lt;screen.availWidth){\n"
-		textTop += "\t\t top.window.outerHeight = screen.availHeight;\n"
-		textTop += "\t\t top.window.outerWidth = screen.availWidth;\n"
-		textTop += "\t}\n}\n &lt;/script&gt;\n\n"
+		textTop += "&lt;!-- scripts to maximise window on load --&gt;\n"
+        textTop += "&lt;script language=&quot;JavaScript&quot;&gt;\n"
+        textTop += "\t top.window.moveTo(0,0);\n"
+        textTop += "\t top.window.resizeTo(screen.availWidth,screen.availHeight);\n"
+        textTop += "\t\n\n &lt;/script&gt;\n\n"
 	}
+	
+	//By Adrian Starzynski: Option to remove headers and footers on print
+	if (document.getElementById('maximizeWindow').checked){
+		textTop += "&lt;!-- style to remove headers and footers on print --&gt;\n"
+        textTop += "&lt;style type=&quot;text/css&quot; media=&quot;print&quot;&gt;\n"
+        textTop += "\t &commat;media print {\n"
+        textTop += "\t &commat;page &#123;\n"
+		textTop += "\t margin-top: 0;\n"
+		textTop += "\t margin-bottom: 0;\n"
+		textTop += "\t &#125;\n"
+		textTop += "\t body &#123;\n"
+		textTop += "\t padding-top: 36px;\n"
+		textTop += "\t padding-bottom: 36px;\n"
+		textTop += "\t &#125;\n"
+		textTop += "\t &#125;\n"
+		textTop += "\t\n\n &lt;/style&gt;\n\n"
+	}
+	
 	//scripts for scaling up checkboxes
 	if (document.getElementById('ScaleCheckmark').checked){
 		textTop += "&lt;!-- scripts for scaling up checkboxes --&gt;\n"	
@@ -992,37 +1121,33 @@ function GetTextTop(){
 
 		textTop += "&lt;!-- Stamped Signatures --&gt;\n"
 		textTop += "&lt;script type=&quot;text/javascript&quot;&gt;\n"
+		textTop += "var ImgArray = [];\n"
+		textTop += "&lt;/script&gt;\n\n"
+
+		textTop += "&lt;script src='../eform/displayImage.do?imagefile=stamps.js'&gt;&lt;/script&gt;\n"
+		textTop += "&lt;script type=&quot;text/javascript&quot;&gt;\n"
 		textTop += "//autoloading signature images\n"
-		textTop += "var ImgArray = [\n\t&quot;anonymous|BNK.png&quot;"
+		textTop += "ImgArray.push(\n\t&quot;anonymous|BNK.png&quot;"
 		for (i=0; i<List.length;i++){
 			textTop +=",\n\t&quot;"+List[i].innerHTML.trim()+"&quot;"
 		}
-		textTop += "\n\t];\n\n"
+		textTop += "\n\t);\n\n"
 		textTop += "function SignForm(){\n"
-		textTop += "\tvar ListItemArr =  [&quot;&quot;];\n"
-		textTop += "\tvar UserName = &quot;&quot;;\n"
-		textTop += "\tvar FileName = &quot;&quot;;\n"
-		textTop += "\n"
 		textTop += "\t//first look for the current users stamp\n"
 		textTop += "\tfor (i=0; i&lt;ImgArray.length;i++){\n"
-		textTop += "\t\tListItemArr =  ImgArray[i].split(&quot;|&quot;);\n"
-		textTop += "\t\tUserName = ListItemArr[0];\n"
-		textTop += "\t\tFileName = ListItemArr[1];\n"
+		textTop += "\t\tvar ListItemArr =  ImgArray[i].split(&quot;|&quot;);\n"
+		textTop += "\t\tvar UserName = ListItemArr[0];\n"
+		textTop += "\t\tvar FileName = ListItemArr[1];\n"
 		textTop += "\t\tif (document.getElementById(&quot;CurrentUserName&quot;).value.indexOf(UserName)>=0){\n"
 		textTop += "\t\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;../eform/displayImage.do?imagefile=&quot;+FileName;\n"
-		textTop += "\t\t\tif (document.getElementById(&quot;DoctorName&quot;).value!=document.getElementById(&quot;CurrentUserName&quot;).value){\n"
-		textTop += "\t\t\t\tif (document.contains(document.getElementById(&quot;doctor&quot;))){\n"
-		textTop += "\t\t\t\t\tdocument.getElementById(&quot;doctor&quot;).value=document.getElementById(&quot;CurrentUserName&quot;).value+&quot; CC: &quot;+document.getElementById(&quot;DoctorName&quot;).value;\n"
-		textTop += "\t\t\t\t}\n"
-		textTop += "\t\t\t}\n"
 		textTop += "\t\t}\n"
 		textTop += "\t}\n"
 		textTop += "\t//hmm not found so lets try the MRPs stamp\n"
 		textTop += "\tif (document.getElementById(&quot;Stamp&quot;).src.indexOf(&quot;BNK.png&quot;)>0){\n"
 		textTop += "\t\tfor (i=0; i&lt;ImgArray.length;i++){\n"
-		textTop += "\t\t\tListItemArr =  ImgArray[i].split(&quot;|&quot;);\n"
-		textTop += "\t\t\tUserName = ListItemArr[0];\n"
-		textTop += "\t\t\tFileName = ListItemArr[1];\n"
+		textTop += "\t\t\tvar ListItemArr =  ImgArray[i].split(&quot;|&quot;);\n"
+		textTop += "\t\t\tvar UserName = ListItemArr[0];\n"
+		textTop += "\t\t\tvar FileName = ListItemArr[1];\n"
 		textTop += "\t\t\tif (document.getElementById(&quot;DoctorName&quot;).value.indexOf(UserName)>=0){\n"
 		textTop += "\t\t\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;../eform/displayImage.do?imagefile=&quot;+FileName;\n"
 		textTop += "\t\t\t}\n"
@@ -1040,14 +1165,15 @@ function GetTextTop(){
 		textTop += "&lt;/script&gt;\n\n"
 	
 	}
+	
 	if (document.getElementById('AddDate').checked){
-        for (j=0; (j < (DrawData.length) ); j++){
-            var P = DrawData[j].split("|");
-            if ((P[0]=="Text") && ((P[5].indexOf("day") >-1)||(P[5].indexOf("date") >-1)) && (P[5]!=="dob_day") && (P[5]!=="today_rx"))  {
-                calendars=true      
-            }
-        }
-    }
+		for (j=0; (j < (DrawData.length) ); j++){
+			var P = DrawData[j].split("|");
+			if ((P[0]=="Text") && ((P[5].indexOf("day") >-1)||(P[5].indexOf("date") >-1)) && (P[5]!=="dob_day") && (P[5]!=="today_rx"))  {
+				calendars=true		
+			}
+		}
+	}
     
     if (calendars){
 		textTop +="\n&lt;!-- main calendar program --&gt;\n"
@@ -1078,28 +1204,29 @@ function GetTextTop(){
     //}
     //textTop += "\t}\n"
     //textTop += "}\n&lt;/script&gt\n"
- 
-    
- 
-
 	//</head>
 	textTop += "&lt;/head&gt;\n\n"
 	//<body>
 	textTop += "&lt;body"
 	textTop += " onload=&quot;"
-	//auto check gender boxes
-	if ((document.getElementById('preCheckGender').checked)||(document.getElementById('XboxType').checked)){
-		textTop += "checkGender();"
-	}
     //textTop += "reImg();"
 	//auto load signature stamp image, default to 'current_user'
 	if (document.getElementById('AddStamp').checked){
 		textTop += "SignForm();"
 	}
+    if (document.getElementById('AddStamp2').checked){
+		textTop += "SignForm2();"
+	}
 	if (document.getElementById('AddSignature').checked){
 		textTop += "loadSig();"
+	} 
+	//auto check gender boxes
+	if ((document.getElementById('preCheckGender').checked)||(document.getElementById('XboxType').checked)){
+		textTop += "checkGender();"
 	}
+
 	<% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>
+
 	if ((document.getElementById('faxno').value.length >0)){
 		textTop += "setFaxNo();"
 	}
@@ -1122,11 +1249,11 @@ var InputType = P[0];
 		var im = P[2];
 		var width = parseInt(P[3]);
 		m = "";
-		if (PageNum > 1){m = "&lt;/div&gt;\n\n";}
+		if (pg > 1){m = "&lt;/div&gt;\n\n";}
 		m += "&lt;div id=&quot;page"
 		m += pg
         m += "&quot; style=&quot;"
-        if (PageNum > 1){m +="page-break-after:always;"}
+		if ((PageNum > 1)&&(pg < PageNum)){m +="page-break-after:always;"}
         m += "position:relative;&quot; &gt;\n"
 		m += "&lt;img id=&quot;BGImage"
 		m += pg
@@ -1159,7 +1286,7 @@ var InputType = P[0];
 		m += inputName
 		m += "&quot; type=&quot;text&quot; class=&quot;"
 		m += inputClassValue
-		m += " noborder&quot; style=&quot;position:absolute; left:"
+		m += "noborder&quot; style=&quot;position:absolute; left:"
 		m += x0
 		m += "px; top:"
 		m += y0
@@ -1314,34 +1441,43 @@ var InputType = P[0];
 		} else {
 			m += bgColor
 		}
-        m += ";&quot; "
-        if (inputValue){
-            m += "value=&quot;"
-            m += inputValue
-            m += "&quot;"
-        }
-        m += "&gt;"
+		m += ";&quot; "
+		if (inputValue){
+			m += "value=&quot;"
+			m += inputValue
+			m += "&quot;"
+		}
+		m += "&gt;"
 
-	} else if (InputType == "Signature"){
+		} else if (InputType == "Signature"){
+		var x0 = parseInt(P[1]);
+		var y0 = parseInt(P[2]);
+		var width = parseInt(P[3]);
+		var height = parseInt(P[4]);
+		m = "";
+		var mstyle = " style=&quot;position:absolute; left:";
+		mstyle += x0;
+		mstyle += "px; top:"
+		mstyle += y0
+		mstyle += "px; width:"
+		mstyle += width
+		mstyle += "px; height:"
+		mstyle += height
+		mstyle += "px;";
+		
 		if (P[5] == "ClassicSignature"){
-			m="";
+			m = "&lt;img id=&quot;signature&quot; src=&quot;${oscar_image_path}BNK.png&quot;"
+			m += mstyle;
+			m += "&quot; &gt;";
 		} else {
-			var x0 = parseInt(P[1]);
-			var y0 = parseInt(P[2]);
-			var width = parseInt(P[3]);
-			var height = parseInt(P[4]);
-			m ="";
-			m +="\t&lt;div id=&quot;Canvas"+P[5]+"&quot; class=&quot;sig&quot; style=&quot;position:absolute; left:";
-			m += x0;
-			m += "px; top:"
-			m += y0;
-			m += "px; width:"
-			m += width;
-			m += "px; height:"
-			m += height;
+			m +="&lt;div id=&quot;Canvas"+P[5]+"&quot; class=&quot;sig&quot;"
+			m += mstyle;
 			m += "; z-index:10;&quot;&gt;\n";
-	 		m +="\t&lt;/div&gt;\n\n";
-			m +="\t&lt;input type=&quot;hidden&quot; name=&quot;Store"+P[5]+"&quot; id=&quot;Store"+P[5]+"&quot; value=&quot;&quot;&gt;";
+	 		m +="&lt;/div&gt;\n";
+			m +="&lt;input type=&quot;hidden&quot; name=&quot;Store"+P[5]+"&quot; id=&quot;Store"+P[5]+"&quot; value=&quot;&quot;&gt;\n";
+			m += "&lt;img id=&quot;"+P[5]+"&quot; src=&quot;${oscar_image_path}BNK.png&quot;"
+			m += mstyle;
+			m += "; z-index:12;&quot;&gt;\n";			
 		}
 
 	} else if (InputType == "Stamp"){
@@ -1372,27 +1508,58 @@ function GetTextBottom(){
 	}
 
 	//auto load signature images
-	if (document.getElementById('AddStamp').checked){
+	if ((document.getElementById('AddStamp').checked)||(document.getElementById('AddStamp2').checked)||(document.getElementById('AddSignatureClassic').checked)||(document.getElementById('AddSignature').checked)){
 		textBottom +="&lt;input type=&quot;hidden&quot; name=&quot;DoctorName&quot; id=&quot;DoctorName&quot; oscarDB=doctor&gt;\n"
 		textBottom +="&lt;input type=&quot;hidden&quot; name=&quot;CurrentUserName&quot; id=&quot;CurrentUserName&quot; oscarDB=current_user&gt;\n"
 		textBottom +="&lt;input type=&quot;hidden&quot; name=&quot;SubmittedBy&quot; id=&quot;SubmittedBy&quot;&gt;\n"
+		textBottom +="&lt;input type=&quot;hidden&quot; name=&quot;user_id&quot; id=&quot;user_id&quot; oscarDB=current_user_id&gt;\n"
+		textBottom +="&lt;input type=&quot;hidden&quot; name=&quot;user_ohip_no&quot; id=&quot;user_ohip_no&quot; oscarDB=current_user_ohip_no&gt;\n"
+		textBottom +="&lt;input type=&quot;hidden&quot; name=&quot;doctor_no&quot; id=&quot;doctor_no&quot; oscarDB=doctor_provider_no&gt;\n"
+		textBottom +="&lt;div id=&quot;signatureDisplay&quot;&gt;&lt;&#47;div&gt;\n"
+        textBottom +="&lt;input type=&quot;hidden&quot; name=&quot;signatureValue&quot; id=&quot;signatureValue&quot;&gt;\n"
 	}
+	//tickler settings
+	if (document.getElementById('includeTicklerControl').checked){
+		textBottom += "&lt;input id=&quot;tickler_patient_id&quot; type=&quot;hidden&quot; oscarDB=patient_id&gt;\n"
+		textBottom += "&lt;input id=&quot;tickler_send_to&quot; type=&quot;hidden&quot; oscarDB=" + document.getElementById('tickler_send_to').value + "&gt;\n"
+		if (!document.getElementById('endUserTicklerWeekAdj').checked){
+			textBottom += "&lt;input id=&quot;tickler_weeks&quot; type=&quot;hidden&quot; value=&quot;" + document.getElementById('tickler_weeks').value + "&quot;&gt;\n"
+		}
+		textBottom += "&lt;input id=&quot;tickler_priority&quot; type=&quot;hidden&quot; value=&quot;" + document.getElementById('tickler_priority').value + "&quot;&gt;\n"
+		if (document.getElementById('tickler_message').value.length > 0 ){
+			textBottom += "&lt;input id=&quot;tickler_message&quot; type=&quot;hidden&quot; value=&quot;" + document.getElementById('tickler_message').value + "&quot;&gt;\n"
+		}
+	}	
 
 	//classic signature
-	if (document.getElementById('AddSignatureClassic').checked){
-		textBottom +="&lt;div id=&quot;signatureDisplay&quot;&gt;&lt;/div&gt;&lt;input type=&quot;hidden&quot; name=&quot;signatureValue&quot; id=&quot;signatureValue&quot; value=&quot;&quot; &gt;&lt;/input&gt;\n"	
-	}
+	//if (document.getElementById('AddSignatureClassic').checked){
+	//	textBottom +="&lt;div id=&quot;signatureDisplay&quot;&gt;&lt;/div&gt;&lt;input type=&quot;hidden&quot; name=&quot;signatureValue&quot; id=&quot;signatureValue&quot; value=&quot;&quot; &gt;&lt;/input&gt;\n"	
+	//}
 
 	//bottom submit boxes
-    textBottom += "\n\n&lt;div class=&quot;DoNotPrint&quot; id=&quot;BottomButtons&quot; style=&quot;position: absolute; top:"
- 
-    textBottom += parseInt(BGHeight);
-	textBottom += "px; left:0px;&quot;&gt;\n"
-
-	textBottom += "\t &lt;table&gt;&lt;tr&gt;&lt;td&gt;\n"
-	textBottom += "\t\t Subject: &lt;input name=&quot;subject&quot; size=&quot;40&quot; type=&quot;text&quot;&gt; &lt;br&gt; \n"
-	textBottom += "\t\t&lt;input value=&quot;Submit&quot; name=&quot;SubmitButton&quot; id=&quot;SubmitButton&quot; type=&quot;submit&quot; onclick=&quot;"
-
+	textBottom += "\n\n&lt;div class=&quot;DoNotPrint&quot; id=&quot;BottomButtons&quot; style=&quot;position: absolute; top:"
+	textBottom += parseInt(BGHeight);
+	textBottom += "px; left:0px;&quot;&gt;\n";
+	textBottom += "\t&lt;table&gt;&lt;tr&gt;&lt;td&gt;\n";
+	textBottom += "\t\tSubject: &lt;input name=&quot;subject&quot; id=&quot;subject&quot; size=&quot;40&quot; type=&quot;text&quot;&gt; &lt;br&gt; \n";
+	//tickler settings
+	if (document.getElementById('includeTicklerControl').checked){
+		textBottom += "On Save this form will create a tickler for the ";
+		if (document.getElementById('tickler_send_to').value == "current_user_id"){
+			textBottom += "current user";
+		} else {
+			textBottom += "MRP";
+		}
+		textBottom += " of " + document.getElementById('tickler_priority').value + " urgency for ";
+		if (!document.getElementById('endUserTicklerWeekAdj').checked){
+			textBottom += document.getElementById('tickler_weeks').value;
+		} else {
+			textBottom += "&lt;input id=&quot;tickler_weeks&quot; size=&quot;3&quot; type=&quot;number&quot; value=&quot;" + document.getElementById('tickler_weeks').value + "&quot;&gt;";
+		}
+		textBottom += " weeks time. &lt;br&gt;\n";
+	}			
+	//buttons
+	textBottom += "\t\t&lt;input value=&quot;Submit&quot; name=&quot;SubmitButton&quot; id=&quot;SubmitButton&quot; type=&quot;button&quot; onclick=&quot;"
     if (document.getElementById('AddSignature').checked){
         textBottom += " saveSig(); releaseDirtyFlag();&quot;&gt; \n"
         textBottom += "\t\t&lt;input value=&quot;Save Sig&quot; name=&quot;SaveSigButton&quot; id=&quot;SaveSigButton&quot; type=&quot;button&quot; onclick=&quot;saveSig();&quot;&gt; \n"
@@ -1402,10 +1569,12 @@ function GetTextBottom(){
 	}
 	textBottom += "\t\t &lt;input value=&quot;Reset&quot; name=&quot;ResetButton&quot; id=&quot;ResetButton&quot; type=&quot;reset&quot;&gt; \n"
 	textBottom += "\t\t	&lt;input value=&quot;Print&quot; name=&quot;PrintButton&quot; id=&quot;PrintButton&quot; type=&quot;button&quot; onclick=&quot;formPrint();&quot;&gt; \n"
-	textBottom += "\t\t	&lt;input value=&quot;Print &amp; Submit&quot; name=&quot;PrintSubmitButton&quot; id=&quot;PrintSubmitButton&quot; type=&quot;button&quot; onclick=&quot;formPrint();releaseDirtyFlag();setTimeout('SubmitButton.click()',1000);&quot;&gt; \n"
+	//textBottom += "\t\t	&lt;input value=&quot;Print &amp; Submit&quot; name=&quot;PrintSubmitButton&quot; id=&quot;PrintSubmitButton&quot; type=&quot;button&quot; onclick=&quot;formPrint();releaseDirtyFlag();setTimeout('SubmitButton.click()',1800);&quot;&gt; \n"
 
-	textBottom += "\t &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n"
-	textBottom += " &lt;/div&gt;\n"
+	textBottom += "\t&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n"
+	textBottom += "\n&lt;!-- Copy Left --&gt;\n"
+	textBottom += "&lt;a rel=&quot;liscence&quot; href=&quot;http://creativecommons.org/licenses/by-sa/3.0/deed.en_US&quot; target=&quot;blank&quot;&gt;&lt;img alt=&quot;Creative Commons License&quot; src=&quot;http://i.creativecommons.org/l/by-sa/3.0/80x15.png&quot;/&gt;&lt;/a&gt;&lt;br&gt;\n"	
+	textBottom += "&lt;/div&gt;\n"
 	//close pagation
 	textBottom += "&lt;/div&gt;\n"
 	textBottom += " &lt;/form&gt;\n"
@@ -1453,6 +1622,7 @@ return unescape(text);
 //this function used for injecting html in to Edit E-Form in efmformmanageredit.jsp w/ variable formHtml
 function injectHtml(){
     document.getElementById('formHtmlG').value = popUp();
+    document.getElementById('formHtmlName').value = document.getElementById('eFormName').value;
     document.getElementById('toSave').submit();
 }
 
@@ -1563,1126 +1733,11 @@ function update(e)
 <!-- js graphics scripts -->
 <script type="text/javascript" src= "<%=request.getContextPath()%>/share/javascript/eforms/jsgraphics.js" ></script>
 
-<!-- 
-<script type="text/javascript">
-/* This notice must be untouched at all times.
-
-wz_jsgraphics.js    v. 3.05
-The latest version is available at
-http://www.walterzorn.com
-or http://www.devira.com
-or http://www.walterzorn.de
-
-Copyright (c) 2002-2009 Walter Zorn. All rights reserved.
-Created 3. 11. 2002 by Walter Zorn (Web: http://www.walterzorn.com )
-Last modified: 2. 2. 2009
-
-Performance optimizations for Internet Explorer
-by Thomas Frank and John Holdsworth.
-fillPolygon method implemented by Matthieu Haller.
-
-High Performance JavaScript Graphics Library.
-Provides methods
-- to draw lines, rectangles, ellipses, polygons
-	with specifiable line thickness,
-- to fill rectangles, polygons, ellipses and arcs
-- to draw text.
-NOTE: Operations, functions and branching have rather been optimized
-to efficiency and speed than to shortness of source code.
-
-LICENSE: LGPL
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License (LGPL) as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA,
-or see http://www.gnu.org/copyleft/lesser.html
-*/
-
-
-var jg_ok, jg_ie, jg_fast, jg_dom, jg_moz;
-
-
-function _chkDHTM(wnd, x, i)
-// Under XUL, owner of 'document' must be specified explicitly
-{
-	x = wnd.document.body || null;
-	jg_ie = x && typeof x.insertAdjacentHTML != "undefined" && wnd.document.createElement;
-	jg_dom = (x && !jg_ie &&
-		typeof x.appendChild != "undefined" &&
-		typeof wnd.document.createRange != "undefined" &&
-		typeof (i = wnd.document.createRange()).setStartBefore != "undefined" &&
-		typeof i.createContextualFragment != "undefined");
-	jg_fast = jg_ie && wnd.document.all && !wnd.opera;
-	jg_moz = jg_dom && typeof x.style.MozOpacity != "undefined";
-	jg_ok = !!(jg_ie || jg_dom);
-}
-
-function _pntCnvDom()
-{
-	var x = this.wnd.document.createRange();
-	x.setStartBefore(this.cnv);
-	x = x.createContextualFragment(jg_fast? this._htmRpc() : this.htm);
-	if(this.cnv) this.cnv.appendChild(x);
-	this.htm = "";
-}
-
-function _pntCnvIe()
-{
-	if(this.cnv) this.cnv.insertAdjacentHTML("BeforeEnd", jg_fast? this._htmRpc() : this.htm);
-	this.htm = "";
-}
-
-function _pntDoc()
-{
-	this.wnd.document.write(jg_fast? this._htmRpc() : this.htm);
-	this.htm = '';
-}
-
-function _pntN()
-{
-	;
-}
-
-function _mkDiv(x, y, w, h)
-{
-	this.htm += '<div style="position:absolute;'+
-		'left:' + x + 'px;'+
-		'top:' + y + 'px;'+
-		'width:' + w + 'px;'+
-		'height:' + h + 'px;'+
-		'clip:rect(0,'+w+'px,'+h+'px,0);'+
-		'background-color:' + this.color +
-		(!jg_moz? ';overflow:hidden' : '')+
-		';"><\/div>';
-}
-
-function _mkDivIe(x, y, w, h)
-{
-	this.htm += '%%'+this.color+';'+x+';'+y+';'+w+';'+h+';';
-}
-
-function _mkDivPrt(x, y, w, h)
-{
-	this.htm += '<div style="position:absolute;'+
-		'border-left:' + w + 'px solid ' + this.color + ';'+
-		'left:' + x + 'px;'+
-		'top:' + y + 'px;'+
-		'width:0px;'+
-		'height:' + h + 'px;'+
-		'clip:rect(0,'+w+'px,'+h+'px,0);'+
-		'background-color:' + this.color +
-		(!jg_moz? ';overflow:hidden' : '')+
-		';"><\/div>';
-}
-
-var _regex =  /%%([^;]+);([^;]+);([^;]+);([^;]+);([^;]+);/g;
-function _htmRpc()
-{
-	return this.htm.replace(
-		_regex,
-		'<div style="overflow:hidden;position:absolute;background-color:'+
-		'$1;left:$2px;top:$3px;width:$4px;height:$5px"></div>\n');
-}
-
-function _htmPrtRpc()
-{
-	return this.htm.replace(
-		_regex,
-		'<div style="overflow:hidden;position:absolute;background-color:'+
-		'$1;left:$2px;top:$3px;width:$4px;height:$5px;border-left:$4px solid $1"></div>\n');
-}
-
-function _mkLin(x1, y1, x2, y2)
-{
-	if(x1 > x2)
-	{
-		var _x2 = x2;
-		var _y2 = y2;
-		x2 = x1;
-		y2 = y1;
-		x1 = _x2;
-		y1 = _y2;
-	}
-	var dx = x2-x1, dy = Math.abs(y2-y1),
-	x = x1, y = y1,
-	yIncr = (y1 > y2)? -1 : 1;
-
-	if(dx >= dy)
-	{
-		var pr = dy<<1,
-		pru = pr - (dx<<1),
-		p = pr-dx,
-		ox = x;
-		while(dx > 0)
-		{--dx;
-			++x;
-			if(p > 0)
-			{
-				this._mkDiv(ox, y, x-ox, 1);
-				y += yIncr;
-				p += pru;
-				ox = x;
-			}
-			else p += pr;
-		}
-		this._mkDiv(ox, y, x2-ox+1, 1);
-	}
-
-	else
-	{
-		var pr = dx<<1,
-		pru = pr - (dy<<1),
-		p = pr-dy,
-		oy = y;
-		if(y2 <= y1)
-		{
-			while(dy > 0)
-			{--dy;
-				if(p > 0)
-				{
-					this._mkDiv(x++, y, 1, oy-y+1);
-					y += yIncr;
-					p += pru;
-					oy = y;
-				}
-				else
-				{
-					y += yIncr;
-					p += pr;
-				}
-			}
-			this._mkDiv(x2, y2, 1, oy-y2+1);
-		}
-		else
-		{
-			while(dy > 0)
-			{--dy;
-				y += yIncr;
-				if(p > 0)
-				{
-					this._mkDiv(x++, oy, 1, y-oy);
-					p += pru;
-					oy = y;
-				}
-				else p += pr;
-			}
-			this._mkDiv(x2, oy, 1, y2-oy+1);
-		}
-	}
-}
-
-function _mkLin2D(x1, y1, x2, y2)
-{
-	if(x1 > x2)
-	{
-		var _x2 = x2;
-		var _y2 = y2;
-		x2 = x1;
-		y2 = y1;
-		x1 = _x2;
-		y1 = _y2;
-	}
-	var dx = x2-x1, dy = Math.abs(y2-y1),
-	x = x1, y = y1,
-	yIncr = (y1 > y2)? -1 : 1;
-
-	var s = this.stroke;
-	if(dx >= dy)
-	{
-		if(dx > 0 && s-3 > 0)
-		{
-			var _s = (s*dx*Math.sqrt(1+dy*dy/(dx*dx))-dx-(s>>1)*dy) / dx;
-			_s = (!(s-4)? Math.ceil(_s) : Math.round(_s)) + 1;
-		}
-		else var _s = s;
-		var ad = Math.ceil(s/2);
-
-		var pr = dy<<1,
-		pru = pr - (dx<<1),
-		p = pr-dx,
-		ox = x;
-		while(dx > 0)
-		{--dx;
-			++x;
-			if(p > 0)
-			{
-				this._mkDiv(ox, y, x-ox+ad, _s);
-				y += yIncr;
-				p += pru;
-				ox = x;
-			}
-			else p += pr;
-		}
-		this._mkDiv(ox, y, x2-ox+ad+1, _s);
-	}
-
-	else
-	{
-		if(s-3 > 0)
-		{
-			var _s = (s*dy*Math.sqrt(1+dx*dx/(dy*dy))-(s>>1)*dx-dy) / dy;
-			_s = (!(s-4)? Math.ceil(_s) : Math.round(_s)) + 1;
-		}
-		else var _s = s;
-		var ad = Math.round(s/2);
-
-		var pr = dx<<1,
-		pru = pr - (dy<<1),
-		p = pr-dy,
-		oy = y;
-		if(y2 <= y1)
-		{
-			++ad;
-			while(dy > 0)
-			{--dy;
-				if(p > 0)
-				{
-					this._mkDiv(x++, y, _s, oy-y+ad);
-					y += yIncr;
-					p += pru;
-					oy = y;
-				}
-				else
-				{
-					y += yIncr;
-					p += pr;
-				}
-			}
-			this._mkDiv(x2, y2, _s, oy-y2+ad);
-		}
-		else
-		{
-			while(dy > 0)
-			{--dy;
-				y += yIncr;
-				if(p > 0)
-				{
-					this._mkDiv(x++, oy, _s, y-oy+ad);
-					p += pru;
-					oy = y;
-				}
-				else p += pr;
-			}
-			this._mkDiv(x2, oy, _s, y2-oy+ad+1);
-		}
-	}
-}
-
-function _mkLinDott(x1, y1, x2, y2)
-{
-	if(x1 > x2)
-	{
-		var _x2 = x2;
-		var _y2 = y2;
-		x2 = x1;
-		y2 = y1;
-		x1 = _x2;
-		y1 = _y2;
-	}
-	var dx = x2-x1, dy = Math.abs(y2-y1),
-	x = x1, y = y1,
-	yIncr = (y1 > y2)? -1 : 1,
-	drw = true;
-	if(dx >= dy)
-	{
-		var pr = dy<<1,
-		pru = pr - (dx<<1),
-		p = pr-dx;
-		while(dx > 0)
-		{--dx;
-			if(drw) this._mkDiv(x, y, 1, 1);
-			drw = !drw;
-			if(p > 0)
-			{
-				y += yIncr;
-				p += pru;
-			}
-			else p += pr;
-			++x;
-		}
-	}
-	else
-	{
-		var pr = dx<<1,
-		pru = pr - (dy<<1),
-		p = pr-dy;
-		while(dy > 0)
-		{--dy;
-			if(drw) this._mkDiv(x, y, 1, 1);
-			drw = !drw;
-			y += yIncr;
-			if(p > 0)
-			{
-				++x;
-				p += pru;
-			}
-			else p += pr;
-		}
-	}
-	if(drw) this._mkDiv(x, y, 1, 1);
-}
-
-function _mkOv(left, top, width, height)
-{
-	var a = (++width)>>1, b = (++height)>>1,
-	wod = width&1, hod = height&1,
-	cx = left+a, cy = top+b,
-	x = 0, y = b,
-	ox = 0, oy = b,
-	aa2 = (a*a)<<1, aa4 = aa2<<1, bb2 = (b*b)<<1, bb4 = bb2<<1,
-	st = (aa2>>1)*(1-(b<<1)) + bb2,
-	tt = (bb2>>1) - aa2*((b<<1)-1),
-	w, h;
-	while(y > 0)
-	{
-		if(st < 0)
-		{
-			st += bb2*((x<<1)+3);
-			tt += bb4*(++x);
-		}
-		else if(tt < 0)
-		{
-			st += bb2*((x<<1)+3) - aa4*(y-1);
-			tt += bb4*(++x) - aa2*(((y--)<<1)-3);
-			w = x-ox;
-			h = oy-y;
-			if((w&2) && (h&2))
-			{
-				this._mkOvQds(cx, cy, x-2, y+2, 1, 1, wod, hod);
-				this._mkOvQds(cx, cy, x-1, y+1, 1, 1, wod, hod);
-			}
-			else this._mkOvQds(cx, cy, x-1, oy, w, h, wod, hod);
-			ox = x;
-			oy = y;
-		}
-		else
-		{
-			tt -= aa2*((y<<1)-3);
-			st -= aa4*(--y);
-		}
-	}
-	w = a-ox+1;
-	h = (oy<<1)+hod;
-	y = cy-oy;
-	this._mkDiv(cx-a, y, w, h);
-	this._mkDiv(cx+ox+wod-1, y, w, h);
-}
-
-function _mkOv2D(left, top, width, height)
-{
-	var s = this.stroke;
-	width += s+1;
-	height += s+1;
-	var a = width>>1, b = height>>1,
-	wod = width&1, hod = height&1,
-	cx = left+a, cy = top+b,
-	x = 0, y = b,
-	aa2 = (a*a)<<1, aa4 = aa2<<1, bb2 = (b*b)<<1, bb4 = bb2<<1,
-	st = (aa2>>1)*(1-(b<<1)) + bb2,
-	tt = (bb2>>1) - aa2*((b<<1)-1);
-
-	if(s-4 < 0 && (!(s-2) || width-51 > 0 && height-51 > 0))
-	{
-		var ox = 0, oy = b,
-		w, h,
-		pxw;
-		while(y > 0)
-		{
-			if(st < 0)
-			{
-				st += bb2*((x<<1)+3);
-				tt += bb4*(++x);
-			}
-			else if(tt < 0)
-			{
-				st += bb2*((x<<1)+3) - aa4*(y-1);
-				tt += bb4*(++x) - aa2*(((y--)<<1)-3);
-				w = x-ox;
-				h = oy-y;
-
-				if(w-1)
-				{
-					pxw = w+1+(s&1);
-					h = s;
-				}
-				else if(h-1)
-				{
-					pxw = s;
-					h += 1+(s&1);
-				}
-				else pxw = h = s;
-				this._mkOvQds(cx, cy, x-1, oy, pxw, h, wod, hod);
-				ox = x;
-				oy = y;
-			}
-			else
-			{
-				tt -= aa2*((y<<1)-3);
-				st -= aa4*(--y);
-			}
-		}
-		this._mkDiv(cx-a, cy-oy, s, (oy<<1)+hod);
-		this._mkDiv(cx+a+wod-s, cy-oy, s, (oy<<1)+hod);
-	}
-
-	else
-	{
-		var _a = (width-(s<<1))>>1,
-		_b = (height-(s<<1))>>1,
-		_x = 0, _y = _b,
-		_aa2 = (_a*_a)<<1, _aa4 = _aa2<<1, _bb2 = (_b*_b)<<1, _bb4 = _bb2<<1,
-		_st = (_aa2>>1)*(1-(_b<<1)) + _bb2,
-		_tt = (_bb2>>1) - _aa2*((_b<<1)-1),
-
-		pxl = new Array(),
-		pxt = new Array(),
-		_pxb = new Array();
-		pxl[0] = 0;
-		pxt[0] = b;
-		_pxb[0] = _b-1;
-		while(y > 0)
-		{
-			if(st < 0)
-			{
-				pxl[pxl.length] = x;
-				pxt[pxt.length] = y;
-				st += bb2*((x<<1)+3);
-				tt += bb4*(++x);
-			}
-			else if(tt < 0)
-			{
-				pxl[pxl.length] = x;
-				st += bb2*((x<<1)+3) - aa4*(y-1);
-				tt += bb4*(++x) - aa2*(((y--)<<1)-3);
-				pxt[pxt.length] = y;
-			}
-			else
-			{
-				tt -= aa2*((y<<1)-3);
-				st -= aa4*(--y);
-			}
-
-			if(_y > 0)
-			{
-				if(_st < 0)
-				{
-					_st += _bb2*((_x<<1)+3);
-					_tt += _bb4*(++_x);
-					_pxb[_pxb.length] = _y-1;
-				}
-				else if(_tt < 0)
-				{
-					_st += _bb2*((_x<<1)+3) - _aa4*(_y-1);
-					_tt += _bb4*(++_x) - _aa2*(((_y--)<<1)-3);
-					_pxb[_pxb.length] = _y-1;
-				}
-				else
-				{
-					_tt -= _aa2*((_y<<1)-3);
-					_st -= _aa4*(--_y);
-					_pxb[_pxb.length-1]--;
-				}
-			}
-		}
-
-		var ox = -wod, oy = b,
-		_oy = _pxb[0],
-		l = pxl.length,
-		w, h;
-		for(var i = 0; i < l; i++)
-		{
-			if(typeof _pxb[i] != "undefined")
-			{
-				if(_pxb[i] < _oy || pxt[i] < oy)
-				{
-					x = pxl[i];
-					this._mkOvQds(cx, cy, x, oy, x-ox, oy-_oy, wod, hod);
-					ox = x;
-					oy = pxt[i];
-					_oy = _pxb[i];
-				}
-			}
-			else
-			{
-				x = pxl[i];
-				this._mkDiv(cx-x, cy-oy, 1, (oy<<1)+hod);
-				this._mkDiv(cx+ox+wod, cy-oy, 1, (oy<<1)+hod);
-				ox = x;
-				oy = pxt[i];
-			}
-		}
-		this._mkDiv(cx-a, cy-oy, 1, (oy<<1)+hod);
-		this._mkDiv(cx+ox+wod, cy-oy, 1, (oy<<1)+hod);
-	}
-}
-
-function _mkOvDott(left, top, width, height)
-{
-	var a = (++width)>>1, b = (++height)>>1,
-	wod = width&1, hod = height&1, hodu = hod^1,
-	cx = left+a, cy = top+b,
-	x = 0, y = b,
-	aa2 = (a*a)<<1, aa4 = aa2<<1, bb2 = (b*b)<<1, bb4 = bb2<<1,
-	st = (aa2>>1)*(1-(b<<1)) + bb2,
-	tt = (bb2>>1) - aa2*((b<<1)-1),
-	drw = true;
-	while(y > 0)
-	{
-		if(st < 0)
-		{
-			st += bb2*((x<<1)+3);
-			tt += bb4*(++x);
-		}
-		else if(tt < 0)
-		{
-			st += bb2*((x<<1)+3) - aa4*(y-1);
-			tt += bb4*(++x) - aa2*(((y--)<<1)-3);
-		}
-		else
-		{
-			tt -= aa2*((y<<1)-3);
-			st -= aa4*(--y);
-		}
-		if(drw && y >= hodu) this._mkOvQds(cx, cy, x, y, 1, 1, wod, hod);
-		drw = !drw;
-	}
-}
-
-function _mkRect(x, y, w, h)
-{
-	var s = this.stroke;
-	this._mkDiv(x, y, w, s);
-	this._mkDiv(x+w, y, s, h);
-	this._mkDiv(x, y+h, w+s, s);
-	this._mkDiv(x, y+s, s, h-s);
-}
-
-function _mkRectDott(x, y, w, h)
-{
-	this.drawLine(x, y, x+w, y);
-	this.drawLine(x+w, y, x+w, y+h);
-	this.drawLine(x, y+h, x+w, y+h);
-	this.drawLine(x, y, x, y+h);
-}
-
-function jsgFont()
-{
-	this.PLAIN = 'font-weight:normal;';
-	this.BOLD = 'font-weight:bold;';
-	this.ITALIC = 'font-style:italic;';
-	this.ITALIC_BOLD = this.ITALIC + this.BOLD;
-	this.BOLD_ITALIC = this.ITALIC_BOLD;
-}
-var Font = new jsgFont();
-
-function jsgStroke()
-{
-	this.DOTTED = -1;
-}
-var Stroke = new jsgStroke();
-
-function jsGraphics(cnv, wnd)
-{
-	this.setColor = function(x)
-	{
-		this.color = x.toLowerCase();
-	};
-
-	this.setStroke = function(x)
-	{
-		this.stroke = x;
-		if(!(x+1))
-		{
-			this.drawLine = _mkLinDott;
-			this._mkOv = _mkOvDott;
-			this.drawRect = _mkRectDott;
-		}
-		else if(x-1 > 0)
-		{
-			this.drawLine = _mkLin2D;
-			this._mkOv = _mkOv2D;
-			this.drawRect = _mkRect;
-		}
-		else
-		{
-			this.drawLine = _mkLin;
-			this._mkOv = _mkOv;
-			this.drawRect = _mkRect;
-		}
-	};
-
-	this.setPrintable = function(arg)
-	{
-		this.printable = arg;
-		if(jg_fast)
-		{
-			this._mkDiv = _mkDivIe;
-			this._htmRpc = arg? _htmPrtRpc : _htmRpc;
-		}
-		else this._mkDiv = arg? _mkDivPrt : _mkDiv;
-	};
-
-	this.setFont = function(fam, sz, sty)
-	{
-		this.ftFam = fam;
-		this.ftSz = sz;
-		this.ftSty = sty || Font.PLAIN;
-	};
-
-	this.drawPolyline = this.drawPolyLine = function(x, y)
-	{
-		for (var i=x.length - 1; i;)
-		{--i;
-			this.drawLine(x[i], y[i], x[i+1], y[i+1]);
-		}
-	};
-
-	this.fillRect = function(x, y, w, h)
-	{
-		this._mkDiv(x, y, w, h);
-	};
-
-	this.drawPolygon = function(x, y)
-	{
-		this.drawPolyline(x, y);
-		this.drawLine(x[x.length-1], y[x.length-1], x[0], y[0]);
-	};
-
-	this.drawEllipse = this.drawOval = function(x, y, w, h)
-	{
-		this._mkOv(x, y, w, h);
-	};
-
-	this.fillEllipse = this.fillOval = function(left, top, w, h)
-	{
-		var a = w>>1, b = h>>1,
-		wod = w&1, hod = h&1,
-		cx = left+a, cy = top+b,
-		x = 0, y = b, oy = b,
-		aa2 = (a*a)<<1, aa4 = aa2<<1, bb2 = (b*b)<<1, bb4 = bb2<<1,
-		st = (aa2>>1)*(1-(b<<1)) + bb2,
-		tt = (bb2>>1) - aa2*((b<<1)-1),
-		xl, dw, dh;
-		if(w) while(y > 0)
-		{
-			if(st < 0)
-			{
-				st += bb2*((x<<1)+3);
-				tt += bb4*(++x);
-			}
-			else if(tt < 0)
-			{
-				st += bb2*((x<<1)+3) - aa4*(y-1);
-				xl = cx-x;
-				dw = (x<<1)+wod;
-				tt += bb4*(++x) - aa2*(((y--)<<1)-3);
-				dh = oy-y;
-				this._mkDiv(xl, cy-oy, dw, dh);
-				this._mkDiv(xl, cy+y+hod, dw, dh);
-				oy = y;
-			}
-			else
-			{
-				tt -= aa2*((y<<1)-3);
-				st -= aa4*(--y);
-			}
-		}
-		this._mkDiv(cx-a, cy-oy, w, (oy<<1)+hod);
-	};
-
-	this.fillArc = function(iL, iT, iW, iH, fAngA, fAngZ)
-	{
-		var a = iW>>1, b = iH>>1,
-		iOdds = (iW&1) | ((iH&1) << 16),
-		cx = iL+a, cy = iT+b,
-		x = 0, y = b, ox = x, oy = y,
-		aa2 = (a*a)<<1, aa4 = aa2<<1, bb2 = (b*b)<<1, bb4 = bb2<<1,
-		st = (aa2>>1)*(1-(b<<1)) + bb2,
-		tt = (bb2>>1) - aa2*((b<<1)-1),
-		// Vars for radial boundary lines
-		xEndA, yEndA, xEndZ, yEndZ,
-		iSects = (1 << (Math.floor((fAngA %= 360.0)/180.0) << 3))
-				| (2 << (Math.floor((fAngZ %= 360.0)/180.0) << 3))
-				| ((fAngA >= fAngZ) << 16),
-		aBndA = new Array(b+1), aBndZ = new Array(b+1);
-		
-		// Set up radial boundary lines
-		fAngA *= Math.PI/180.0;
-		fAngZ *= Math.PI/180.0;
-		xEndA = cx+Math.round(a*Math.cos(fAngA));
-		yEndA = cy+Math.round(-b*Math.sin(fAngA));
-		_mkLinVirt(aBndA, cx, cy, xEndA, yEndA);
-		xEndZ = cx+Math.round(a*Math.cos(fAngZ));
-		yEndZ = cy+Math.round(-b*Math.sin(fAngZ));
-		_mkLinVirt(aBndZ, cx, cy, xEndZ, yEndZ);
-
-		while(y > 0)
-		{
-			if(st < 0) // Advance x
-			{
-				st += bb2*((x<<1)+3);
-				tt += bb4*(++x);
-			}
-			else if(tt < 0) // Advance x and y
-			{
-				st += bb2*((x<<1)+3) - aa4*(y-1);
-				ox = x;
-				tt += bb4*(++x) - aa2*(((y--)<<1)-3);
-				this._mkArcDiv(ox, y, oy, cx, cy, iOdds, aBndA, aBndZ, iSects);
-				oy = y;
-			}
-			else // Advance y
-			{
-				tt -= aa2*((y<<1)-3);
-				st -= aa4*(--y);
-				if(y && (aBndA[y] != aBndA[y-1] || aBndZ[y] != aBndZ[y-1]))
-				{
-					this._mkArcDiv(x, y, oy, cx, cy, iOdds, aBndA, aBndZ, iSects);
-					ox = x;
-					oy = y;
-				}
-			}
-		}
-		this._mkArcDiv(x, 0, oy, cx, cy, iOdds, aBndA, aBndZ, iSects);
-		if(iOdds >> 16) // Odd height
-		{
-			if(iSects >> 16) // Start-angle > end-angle
-			{
-				var xl = (yEndA <= cy || yEndZ > cy)? (cx - x) : cx;
-				this._mkDiv(xl, cy, x + cx - xl + (iOdds & 0xffff), 1);
-			}
-			else if((iSects & 0x01) && yEndZ > cy)
-				this._mkDiv(cx - x, cy, x, 1);
-		}
-	};
-
-/* fillPolygon method, implemented by Matthieu Haller.
-This javascript function is an adaptation of the gdImageFilledPolygon for Walter Zorn lib.
-C source of GD 1.8.4 found at http://www.boutell.com/gd/
-
-THANKS to Kirsten Schulz for the polygon fixes!
-
-The intersection finding technique of this code could be improved
-by remembering the previous intertersection, and by using the slope.
-That could help to adjust intersections to produce a nice
-interior_extrema. */
-	this.fillPolygon = function(array_x, array_y)
-	{
-		var i;
-		var y;
-		var miny, maxy;
-		var x1, y1;
-		var x2, y2;
-		var ind1, ind2;
-		var ints;
-
-		var n = array_x.length;
-		if(!n) return;
-
-		miny = array_y[0];
-		maxy = array_y[0];
-		for(i = 1; i < n; i++)
-		{
-			if(array_y[i] < miny)
-				miny = array_y[i];
-
-			if(array_y[i] > maxy)
-				maxy = array_y[i];
-		}
-		for(y = miny; y <= maxy; y++)
-		{
-			var polyInts = new Array();
-			ints = 0;
-			for(i = 0; i < n; i++)
-			{
-				if(!i)
-				{
-					ind1 = n-1;
-					ind2 = 0;
-				}
-				else
-				{
-					ind1 = i-1;
-					ind2 = i;
-				}
-				y1 = array_y[ind1];
-				y2 = array_y[ind2];
-				if(y1 < y2)
-				{
-					x1 = array_x[ind1];
-					x2 = array_x[ind2];
-				}
-				else if(y1 > y2)
-				{
-					y2 = array_y[ind1];
-					y1 = array_y[ind2];
-					x2 = array_x[ind1];
-					x1 = array_x[ind2];
-				}
-				else continue;
-
-				 //  Modified 11. 2. 2004 Walter Zorn
-				if((y >= y1) && (y < y2))
-					polyInts[ints++] = Math.round((y-y1) * (x2-x1) / (y2-y1) + x1);
-
-				else if((y == maxy) && (y > y1) && (y <= y2))
-					polyInts[ints++] = Math.round((y-y1) * (x2-x1) / (y2-y1) + x1);
-			}
-			polyInts.sort(_CompInt);
-			for(i = 0; i < ints; i+=2)
-				this._mkDiv(polyInts[i], y, polyInts[i+1]-polyInts[i]+1, 1);
-		}
-	};
-
-	this.drawString = function(txt, x, y)
-	{
-		this.htm += '<div style="position:absolute;white-space:nowrap;'+
-			'left:' + x + 'px;'+
-			'top:' + y + 'px;'+
-			'font-family:' +  this.ftFam + ';'+
-			'font-size:' + this.ftSz + ';'+
-			'color:' + this.color + ';' + this.ftSty + '">'+
-			txt +
-			'<\/div>';
-	};
-
-/* drawStringRect() added by Rick Blommers.
-Allows to specify the size of the text rectangle and to align the
-text both horizontally (e.g. right) and vertically within that rectangle */
-	this.drawStringRect = function(txt, x, y, width, halign)
-	{
-		this.htm += '<div style="position:absolute;overflow:hidden;'+
-			'left:' + x + 'px;'+
-			'top:' + y + 'px;'+
-			'width:'+width +'px;'+
-			'text-align:'+halign+';'+
-			'font-family:' +  this.ftFam + ';'+
-			'font-size:' + this.ftSz + ';'+
-			'color:' + this.color + ';' + this.ftSty + '">'+
-			txt +
-			'<\/div>';
-	};
-
-	this.drawImage = function(imgSrc, x, y, w, h, a)
-	{
-		this.htm += '<div style="position:absolute;'+
-			'left:' + x + 'px;'+
-			'top:' + y + 'px;'+
-			// w (width) and h (height) arguments are now optional.
-			// Added by Mahmut Keygubatli, 14.1.2008
-			(w? ('width:' +  w + 'px;') : '') +
-			(h? ('height:' + h + 'px;'):'')+'">'+
-			'<img src="' + imgSrc +'"'+ (w ? (' width="' + w + '"'):'')+ (h ? (' height="' + h + '"'):'') + (a? (' '+a) : '') + '>'+
-			'<\/div>';
-	};
-
-	this.clear = function()
-	{
-		this.htm = "";
-		if(this.cnv) this.cnv.innerHTML = "";
-	};
-
-	this._mkOvQds = function(cx, cy, x, y, w, h, wod, hod)
-	{
-		var xl = cx - x, xr = cx + x + wod - w, yt = cy - y, yb = cy + y + hod - h;
-		if(xr > xl+w)
-		{
-			this._mkDiv(xr, yt, w, h);
-			this._mkDiv(xr, yb, w, h);
-		}
-		else
-			w = xr - xl + w;
-		this._mkDiv(xl, yt, w, h);
-		this._mkDiv(xl, yb, w, h);
-	};
-	
-	this._mkArcDiv = function(x, y, oy, cx, cy, iOdds, aBndA, aBndZ, iSects)
-	{
-		var xrDef = cx + x + (iOdds & 0xffff), y2, h = oy - y, xl, xr, w;
-
-		if(!h) h = 1;
-		x = cx - x;
-
-		if(iSects & 0xff0000) // Start-angle > end-angle
-		{
-			y2 = cy - y - h;
-			if(iSects & 0x00ff)
-			{
-				if(iSects & 0x02)
-				{
-					xl = Math.max(x, aBndZ[y]);
-					w = xrDef - xl;
-					if(w > 0) this._mkDiv(xl, y2, w, h);
-				}
-				if(iSects & 0x01)
-				{
-					xr = Math.min(xrDef, aBndA[y]);
-					w = xr - x;
-					if(w > 0) this._mkDiv(x, y2, w, h);
-				}
-			}
-			else
-				this._mkDiv(x, y2, xrDef - x, h);
-			y2 = cy + y + (iOdds >> 16);
-			if(iSects & 0xff00)
-			{
-				if(iSects & 0x0100)
-				{
-					xl = Math.max(x, aBndA[y]);
-					w = xrDef - xl;
-					if(w > 0) this._mkDiv(xl, y2, w, h);
-				}
-				if(iSects & 0x0200)
-				{
-					xr = Math.min(xrDef, aBndZ[y]);
-					w = xr - x;
-					if(w > 0) this._mkDiv(x, y2, w, h);
-				}
-			}
-			else
-				this._mkDiv(x, y2, xrDef - x, h);
-		}
-		else
-		{
-			if(iSects & 0x00ff)
-			{
-				if(iSects & 0x02)
-					xl = Math.max(x, aBndZ[y]);
-				else
-					xl = x;
-				if(iSects & 0x01)
-					xr = Math.min(xrDef, aBndA[y]);
-				else
-					xr = xrDef;
-				y2 = cy - y - h;
-				w = xr - xl;
-				if(w > 0) this._mkDiv(xl, y2, w, h);
-			}
-			if(iSects & 0xff00)
-			{
-				if(iSects & 0x0100)
-					xl = Math.max(x, aBndA[y]);
-				else
-					xl = x;
-				if(iSects & 0x0200)
-					xr = Math.min(xrDef, aBndZ[y]);
-				else
-					xr = xrDef;
-				y2 = cy + y + (iOdds >> 16);
-				w = xr - xl;
-				if(w > 0) this._mkDiv(xl, y2, w, h);
-			}
-		}
-	};
-
-	this.setStroke(1);
-	this.setFont("verdana,geneva,helvetica,sans-serif", "12px", Font.PLAIN);
-	this.color = "#000000";
-	this.htm = "";
-	this.wnd = wnd || window;
-
-	if(!jg_ok) _chkDHTM(this.wnd);
-	if(jg_ok)
-	{
-		if(cnv)
-		{
-			if(typeof(cnv) == "string")
-				this.cont = document.all? (this.wnd.document.all[cnv] || null)
-					: document.getElementById? (this.wnd.document.getElementById(cnv) || null)
-					: null;
-			else if(cnv == window.document)
-				this.cont = document.getElementsByTagName("body")[0];
-			// If cnv is a direct reference to a canvas DOM node
-			// (option suggested by Andreas Luleich)
-			else this.cont = cnv;
-			// Create new canvas inside container DIV. Thus the drawing and clearing
-			// methods won't interfere with the container's inner html.
-			// Solution suggested by Vladimir.
-			this.cnv = this.wnd.document.createElement("div");
-			this.cnv.style.fontSize=0;
-			this.cont.appendChild(this.cnv);
-			this.paint = jg_dom? _pntCnvDom : _pntCnvIe;
-		}
-		else
-			this.paint = _pntDoc;
-	}
-	else
-		this.paint = _pntN;
-
-	this.setPrintable(false);
-}
-
-function _mkLinVirt(aLin, x1, y1, x2, y2)
-{
-	var dx = Math.abs(x2-x1), dy = Math.abs(y2-y1),
-	x = x1, y = y1,
-	xIncr = (x1 > x2)? -1 : 1,
-	yIncr = (y1 > y2)? -1 : 1,
-	p,
-	i = 0;
-	if(dx >= dy)
-	{
-		var pr = dy<<1,
-		pru = pr - (dx<<1);
-		p = pr-dx;
-		while(dx > 0)
-		{--dx;
-			if(p > 0)    //  Increment y
-			{
-				aLin[i++] = x;
-				y += yIncr;
-				p += pru;
-			}
-			else p += pr;
-			x += xIncr;
-		}
-	}
-	else
-	{
-		var pr = dx<<1,
-		pru = pr - (dy<<1);
-		p = pr-dy;
-		while(dy > 0)
-		{--dy;
-			y += yIncr;
-			aLin[i++] = x;
-			if(p > 0)    //  Increment x
-			{
-				x += xIncr;
-				p += pru;
-			}
-			else p += pr;
-		}
-	}
-	for(var len = aLin.length, i = len-i; i;)
-		aLin[len-(i--)] = x;
-};
-
-function _CompInt(x, y)
-{
-	return(x - y);
-}
-
-
-</script>
--->
-
-
 </head>
 
 <!-- resetAll() -->
 <body onload="init(); resetAll(); hide('all');
-<% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_signature_enabled")) { %>
+<% if (eformGeneratorIndivicaSignatureEnabled) { %>
 show('classic');
 <% } %> ">
 
@@ -2694,10 +1749,11 @@ show('classic');
 	onmouseup="SetMouseUp(); DrawMarker();loadInputList();"
 	onload="finishLoadingImage()">
 
-<h1><bean:message key="eFormGenerator.title"/> 6.0</h1>
+<h1><bean:message key="eFormGenerator.title"/> 7.1</h1>
 
 <!-- this form  used for injecting html in to Edit E-Form  efmformmanageredit.jsp -->
 <form method="post" action="efmformmanageredit.jsp" id="toSave">
+	<input type="hidden" name="formHtmlName" id="formHtmlName" />
     <input type="hidden" name="formHtmlG" id="formHtmlG" />
 </form>
 
@@ -2708,12 +1764,23 @@ show('classic');
 <span class="h1"><bean:message key="eFormGenerator.title"/></span>
 	<a onclick="show('all');"><bean:message key="eFormGenerator.expandAll"/></a>/
 	<a onclick="hide('all');"><bean:message key="eFormGenerator.collapseAll"/></a>
-
+  <p><label for="snappiness">Snap to grid (0 is off)</label>
+  <select name="snappiness" id="snappiness" onchange='snap = document.getElementById("snappiness").value; console.log(snap)'>
+    <option>0</option>
+    <option>4</option>
+    <option>5</option>
+    <option selected>6</option>
+    <option>7</option>
+	<option>8</option>
+	<option>9</option>
+	<option>10</option>
+  </select>
+	 
 <hr>
 <span class="h2">1. <bean:message key="eFormGenerator.loadImage"/>:</span> <a onclick="show('Section1');"><bean:message key="eFormGenerator.expand"/></a>/<a onclick="hide('Section1');"><bean:message key="eFormGenerator.collapse"/></a>
 <div id="Section1">
  <p><select name="imageName" id="imageName">
-                 <option value=""                    ><bean:message key="eFormGenerator.imageChooseSelect"/>...</option>
+                 <option value=""><bean:message key="eFormGenerator.imageChooseSelect"/>...</option>
                     <%
                     /**
                         this function/scriplet look in images directory and populate the selection
@@ -2721,12 +1788,12 @@ show('classic');
                     */
                     String imagePath = OscarProperties.getInstance().getProperty("eform_image");
                     if (imagePath == null) { 
-			MiscUtils.getLogger().debug("Please provide a valid image path for eform_image in properties");  
-			}
+                        MiscUtils.getLogger().debug("Please provide a valid image path for eform_image in properties"); 
+                    }
                     String[] fileINames = new File(imagePath).list();
                     if (fileINames == null) { 
-			MiscUtils.getLogger().debug("Strange, no files found in the supplied eform_image directory");  
-			}
+                        MiscUtils.getLogger().debug("Strange, no files found in the supplied eform_image directory"); 
+                    }
                     Arrays.sort(fileINames);
 
                     for (int i = 0; i < fileINames.length; i++) {  %>
@@ -2741,7 +1808,7 @@ show('classic');
 	<!-- <p><b>Image Name:</b><input type="text" name="imageName" id="imageName"></p> -->
 	<p>	- <bean:message key="eFormGenerator.imageUploadPrompt"/> <bean:message key="eFormGenerator.imageUploadLink"/> </p>
 	<p><b>Orientation of form:</b><br>
-			<input type="radio" name="Orientation" id="OrientPortrait" value="750" checked><bean:message key="eFormGenerator.imagePortrait"/><br>
+			<input type="radio" name="Orientation" id="OrientPortrait" value="825" checked><bean:message key="eFormGenerator.imagePortrait"/><br>
 			<input type="radio" name="Orientation" id="OrientLandscape" value="1000"><bean:message key="eFormGenerator.imageLandscape"/><br>
 			<input type="radio" name="Orientation" id="OrientCustom" value="CustomWidth"><bean:message key="eFormGenerator.imageCustom"/> <input type="text" name="OrientCustomValue" id="OrientCustomValue" width="100"> <bean:message key="eFormGenerator.imageEnterInteger"/><br>
 			<input type="button" value=<bean:message key="eFormGenerator.imageLoadButton"/> onClick="loadImage();">
@@ -2806,8 +1873,29 @@ show('classic');
 
 <span class='h2'>4. <bean:message key="eFormGenerator.signature"/></span><a onclick="show('Section4');"><bean:message key="eFormGenerator.expand"/></a>/<a onclick="hide('Section4');"><bean:message key="eFormGenerator.collapse"/></a>
 <div id="Section4">
+	<input type="checkbox" name="AddStamp2" id="AddStamp2" 
+		onclick="toggleView(this.checked,'Section4e');toggleView(this.checked,'Section4f');"><span><b>Add Signature Stamps to this form<b></span><br>
+		<div id="Section4e" style="display:none">			
+			<input type="radio" name="D" id="Delegation" checked ><span><b>MRP Signature by Delegation</b> If no sig file Sig of MRP used</span><br>
+			<input type="radio" name="D" id="Strict" ><span><i>Strict User Signatures</i> Only signed in users can stamp</span>			
+		</div>
+		<div id="Section4f" style="display:none">
+			<input type="button" name="AddSignatureBox3" id="AddSignatureBox3" style="width:400px; color:red" value="Click here, then drag a box around the signature area" 
+onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp2').disabled=true; document.getElementById('AddSignatureBox3').disabled=true;"><br>
+			<span>Signatures image files <code>consult_sig_xxx.png</code> where xxx is the OSCAR provider no., are uploaded to eform images</span><br>	
+		</div>
+	<span id="classic" style="display:none">
+		<p>
+		<input type="checkbox" name="AddSignatureClassic" id="AddSignatureClassic" 
+			onclick="	toggleView(this.checked,'Section4d');"><bean:message key="eFormGenerator.classic"/>
+		<br>
+	</span>
+		<div id="Section4d" style="display:none"> 
+			<input type="button" name="AddClassicSignatureBox" id="AddClassicSignatureBox" style="width:400px" value="<bean:message key="eFormGenerator.signatureLocationButton"/>" onclick="SetSwitchOn('ClassicSignature');document.getElementById('AddSignatureClassic').disabled=true; document.getElementById('AddClassicSignatureBox').disabled=true;">
+			<br>
+		</div> 
 	<p>
-		<input type="checkbox" name="AddSignature" id="AddSignature" 
+	<input type="checkbox" name="AddSignature" id="AddSignature" 
 			onclick="	toggleView(this.checked,'Section4a');"><bean:message key="eFormGenerator.freehand"/>
 <!-- Add A Freehand Signature area to this form--> <br>
 			<div id="Section4a" style="display:none"> 
@@ -2871,33 +1959,28 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 						<li name="UserSignatureListItem">
 						      zapski|PHC.png
 						</li><li name="UserSignatureListItem">
-						      hurman|MCH.png
+						      acasse|MLL.png
 						</li><li name="UserSignatureListItem">
 						      mith|PJS.png
 						</li><li name="UserSignatureListItem">
-						      urie|LNC.png
+						      arron|BAB.png
 						</li><li name="UserSignatureListItem">
-						      esilet|SAD.png
+						      urrie|LNC.png
+						</li><li name="UserSignatureListItem">
+						      awson|HAL.png
 						</li><li name="UserSignatureListItem">
 						      lgadi|KME.png
 						</li><li name="UserSignatureListItem">
 						      ears|STS.png
 						</li><li name="UserSignatureListItem">
-						      arron|BAB.png
+						      eller|MKK.png
 						</li>
 					</ul>
 				</ul>
 			</div>
 	</p>
 
-	<span id="classic" style="display:none">
-	<p>
-		<input type="checkbox" name="AddSignatureClassic" id="AddSignatureClassic" 
-			onclick="	toggleView(this.checked,'Section4d');"><bean:message key="eFormGenerator.classic"/>
-<br>	</span>
-			<div id="Section4d" style="display:none"> 
-				<input type="button" name="AddClassicSignatureBox" id="AddClassicSignatureBox" style="width:400px" value="<bean:message key="eFormGenerator.signatureLocationButton"/>" onclick="SetSwitchOn('ClassicSignature');document.getElementById('AddSignatureClassic').disabled=true; document.getElementById('AddClassicSignatureBox').disabled=true;">
-			</div> 
+
 
 
 </div>
@@ -2939,8 +2022,7 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 				<input type="radio" name="AutoPopType" id="AutoPopMeasurements" value="measurements"><bean:message key="eFormGenerator.inputTypeMeasurements"/><br>
 				<table>
 					<tr>
-						<td><p><bean:message key="eFormGenerator.inputTypeMeasurementsType"/></p></td>
-						<td><p>
+						<td><p><bean:message key="eFormGenerator.inputTypeMeasurementsType"/><br>
 							<select name="MeasurementList" id="MeasurementList">
 								<option value="" selected="selected"><bean:message key="eFormGenerator.inputTypeMeasurementsButton"/></option>
 								<option value="HT">HT</option>
@@ -2963,13 +2045,16 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 								<option value="TCHL">TCHL</option>
 								<option value="EGFR">EGFR</option>
 								<option value="SCR">SCR (Cr)</option>
-								<option value="ACR">ACR</option>								</select>
-							<br>
-						<bean:message key="eFormGenerator.inputTypeMeasurementsCustom"/><input type="text" name="MeasurementCustom" id="MeasurementCustom" style="width:50px;">
+								<option value="ACR">ACR</option>
+							</select>
 						</p>
 						</td>
+						<td><p><bean:message key="eFormGenerator.inputTypeMeasurementsCustom"/><br>
+						       <input type="text" name="MeasurementCustom" id="MeasurementCustom" style="width:50px;">
+						    </p>
+						</td>
 						<td>
-							<p><bean:message key="eFormGenerator.inputTypeMeasurementsField"/>
+							<p><bean:message key="eFormGenerator.inputTypeMeasurementsField"/><br>
 								<select name="MeasurementField" id="MeasurementField">
 									<option value="value"><bean:message key="eFormGenerator.inputTypeMeasurementsFieldButtonValue"/></option>
 									<option value="dateObserved"><bean:message key="eFormGenerator.inputTypeMeasurementsFieldButtonDateObserved"/></option>
@@ -3047,8 +2132,7 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 			<span id="iiimeasures"><input type="radio" name="InputNameType" id="InputNameMeasurement" value="Measurement"><bean:message key="eFormGenerator.inputNameMeasurement"/><br>
 			<table>
 				<tr>
-					<td><p><bean:message key="eFormGenerator.inputNameMeasurementType"/></p></td>
-					<td><p>
+					<td><p><bean:message key="eFormGenerator.inputNameMeasurementType"/><br>
 						<select name="ExportMeasurementList" id="ExportMeasurementList">
 							<option value="" selected="selected"><bean:message key="eFormGenerator.inputNameMeasurementButton"/></option>
 								<option value="HT">HT</option>
@@ -3073,12 +2157,14 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 								<option value="SCR">SCR (Cr)</option>
 								<option value="ACR">ACR</option>	
 						</select>
-						<br>
-				&nbsp;<bean:message key="eFormGenerator.inputNameMeasurementsCustom"/>&nbsp;<input type="text" name="ExportMeasurementCustom" id="ExportMeasurementCustom" style="width:50px;">
 					</p>
 					</td>
+					<td><p><bean:message key="eFormGenerator.inputNameMeasurementsCustom"/><br>
+					       <input type="text" name="ExportMeasurementCustom" id="ExportMeasurementCustom" style="width:50px;">
+					    </p>
+					</td>
 					<td>
-						<p><bean:message key="eFormGenerator.inputNameMeasurementsField"/>
+						<p><bean:message key="eFormGenerator.inputNameMeasurementsField"/><br>
 							<select name="ExportMeasurementField" id="ExportMeasurementField">
 								<option value="value"><bean:message key="eFormGenerator.inputTypeMeasurementsFieldButtonValue"/></option>
 								<option value="dateObserved"><bean:message key="eFormGenerator.inputTypeMeasurementsFieldButtonDateObserved"/></option>
@@ -3129,8 +2215,8 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 		<td>
 			<span><bean:message key="eFormGenerator.tuningUpButton"/></span><br>
 			<input type="button" value='<bean:message key="eFormGenerator.tuningAlignButton"/>' style="width:100px;" onclick="alignInput('top');"><br>
-			<input type="button" value='<bean:message key="eFormGenerator.tuningShiftButton"/> [alt]↑' style="width:100px;" onclick="changeInput('up',10);"><br>
-			<input type="button" value='<bean:message key="eFormGenerator.tuningNudgeButton"/> ↑' style="width:100px;" onclick="changeInput('up',1);">
+			<input type="button" value='<bean:message key="eFormGenerator.tuningShiftButton"/> [alt]&uarr;' style="width:100px;" onclick="changeInput('up',10);"><br>
+			<input type="button" value='<bean:message key="eFormGenerator.tuningNudgeButton"/> &uarr;' style="width:100px;" onclick="changeInput('up',1);">
 		</td>
 		<td style="background-color:#dddddd;">
 			<input type="button" value='<bean:message key="eFormGenerator.tuningDeleteButton"/>' Style="width:100px;" onclick="deleteInput();">
@@ -3156,20 +2242,19 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 	<tr>
 		<td style="background-color:#dddddd;">
 			<span><bean:message key="eFormGenerator.tuningWidth"/></span><br>
-			<input type="button" value='<bean:message key="eFormGenerator.tuningIncreaseButton"/>  ⇑+→' style="width:120px;" onclick="changeInput('width',1);"><br>
-			<input type="button" value='<bean:message key="eFormGenerator.tuningDecreaseButton"/>  ⇑+←"' style="width:120px;" onclick="changeInput('width',-1);">
+			<input type="button" value='<bean:message key="eFormGenerator.tuningIncreaseButton"/>  &uArr;+&rarr;' style="width:120px;" onclick="changeInput('width',1);"><br>
+			<input type="button" value='<bean:message key="eFormGenerator.tuningDecreaseButton"/>  &uArr;+&larr;' style="width:120px;" onclick="changeInput('width',-1);">
 		</td>
 		<td>
-
-			<input type="button" value='<bean:message key="eFormGenerator.tuningNudgeButton"/> ↓' style="width:100px;" onclick="changeInput('down',1);"><br>
-			<input type="button" value='<bean:message key="eFormGenerator.tuningShiftButton"/> [alt]↓' style="width:100px;" onclick="changeInput('down',10);"><br>
+			<input type="button" value='<bean:message key="eFormGenerator.tuningNudgeButton"/> &darr;' style="width:100px;" onclick="changeInput('down',1);"><br>
+			<input type="button" value='<bean:message key="eFormGenerator.tuningShiftButton"/> [alt]&darr;' style="width:100px;" onclick="changeInput('down',10);"><br>
 			<input type="button" value='<bean:message key="eFormGenerator.tuningAlignButton"/>' style="width:100px;" onclick="alignInput('bottom');"><br>
 			<span><bean:message key="eFormGenerator.tuningDown"/></span>
-			</td>
+		</td>
 		<td style="background-color:#dddddd;">
 			<span><bean:message key="eFormGenerator.tuningHeight"/></span><br>
-			<input type="button" value='<bean:message key="eFormGenerator.tuningIncreaseButton"/> ⇑+↓' style="width:120px;" onclick="changeInput('height',1);"><br>
-			<input type="button" value='<bean:message key="eFormGenerator.tuningDecreaseButton"/> ⇑+↑' style="width:120px;" onclick="changeInput('height',-1);">
+			<input type="button" value='<bean:message key="eFormGenerator.tuningIncreaseButton"/> &uArr;+&darr;' style="width:120px;" onclick="changeInput('height',1);"><br>
+			<input type="button" value='<bean:message key="eFormGenerator.tuningDecreaseButton"/> &uArr;+&uarr;' style="width:120px;" onclick="changeInput('height',-1);">
 		</td>
 	</tr>
 </table>
@@ -3180,6 +2265,9 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 <div id="Section7">
 <p><span class="h2"><bean:message key="eFormGenerator.miscMax"/></span><br>
 	<input name="maximizeWindow" id="maximizeWindow" type="checkbox"><bean:message key="eFormGenerator.miscMaxhint"/>
+</p>
+<p><span class="h2">Hide Headers/Footers on Print</span><br>
+	<input name="removeHeadersFooters" id="removeHeadersFooters" type="checkbox">Removes headers/footers on print (so your OSCAR link isn't displayed on the printed eForm...)
 </p>
 <p><span class='h2'><bean:message key="eFormGenerator.date"/></span><br>
 	<input name="AddDate" id="AddDate" type="checkBox" checked><bean:message key="eFormGenerator.dateDescription"/>
@@ -3192,22 +2280,52 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 	<input name="ScaleCheckmark" id="ScaleCheckmark" type="checkbox"><bean:message key="eFormGenerator.miscCheckmarksScale"/><br>
 	<input name="DefaultCheckmark" id="DefaultCheckmark" type="checkbox" style="display:none"><span style="display:none"><bean:message key="eFormGenerator.miscCheckmarksDraw"/></span>
 </p>
-<% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>
-<p><span class='h2'><bean:message key="eFormGenerator.fax"/></span><br>
+<p <%=eformGeneratorIndivicaFaxEnabled ? "" : "style=\"display: none;\"" %>>
+	<span class='h2'><bean:message key="eFormGenerator.fax"/></span><br>
 	<input name="includeFaxControl" id="includeFaxControl" type="checkBox"><bean:message key="eFormGenerator.faxDescription"/><br>
-	<bean:message key="eFormGenerator.faxnumber"/>:
-						<input type="text" name="faxno" id="faxno" style="width:200px;">
+	<bean:message key="eFormGenerator.faxnumber"/>: <input type="text" name="faxno" id="faxno" style="width:200px;">
 </p>
-<% } %>
 
-<% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>
-<div id='pdfOption'>
+<div id='pdfOption' <%=eformGeneratorIndivicaPrintEnabled ? "" : "style=\"display: none;\"" %>>
 <p><span class='h2'><bean:message key="eFormGenerator.PDFprint"/></span><br>
-	<input name="includePdfPrintControl" id="includePdfPrintControl" type="checkBox">
+	<input name="includePdfPrintControl" id="includePdfPrintControl" type="checkBox" checked>
 <bean:message key="eFormGenerator.includePDFprint"/>
 </p>
 </div>
-<% } %>
+<div id='ticklerOptions'>
+<p><span class='h2'>Tickler Options</span><br>
+	<input name="includeTicklerControl" id="includeTicklerControl" type="checkBox">
+Include automatic ticklers (requires PDF print)<br>
+Priority
+<select name="tickler_priority" id="tickler_priority">
+	<option value="Normal">Normal</option>
+	<option value="High">High</option>
+	<option value="Low">Low</option>
+</select><br>
+Assign to
+<select name="tickler_send_to" id="tickler_send_to">
+	<option value="doctor_provider_no">Patients MRP</option>
+	<option value="current_user_id">Current User</option>
+</select><br>
+Due in 
+	<select name="tickler_weeks" id="tickler_weeks">
+	<option value="6">6 weeks</option>
+	<option value="1">1 week</option>
+	<option value="2">2 weeks</option>
+	<option value="3">3 weeks</option>
+	<option value="4">4 weeks</option>
+	<option value="8">2 months</option>
+	<option value="12">3 months</option>
+	<option value="16">4 months</option>
+	<option value="24">6 months</option>
+	<option value="36">9 months</option>
+	<option value="52">1 year</option>
+</select>&nbsp;&nbsp;allow end user to adjust<input name="endUserTicklerWeekAdj" id="endUserTicklerWeekAdj" type="checkBox">
+<br>
+Tickler message <input type="text" name="tickler_message" id="tickler_message" style="width:200px;"> <br>
+(leave blank to have the message read "Check for results of [subject] ordered [today]")	<br>
+</p>
+</div>
 
 </div>
 <hr>
@@ -3298,7 +2416,7 @@ function SetSwitchesOff(){
 	SignatureBoxSwitch = false;
 	StampSwitch = false;
 	ClassicSignatureSwitch = false;
-    RadioButtonSwitch = false;
+	RadioButtonSwitch = false;
 }
 
 var DrawTool = "Text";
@@ -3424,7 +2542,6 @@ function DrawCheckbox(canvas,x0,y0,inputName,preCheck,inputClass,inputParentclas
 }
 
 function DrawXbox(canvas,x0,y0,width,height,inputName,fontFamily,fontStyle,fontWeight,fontSize,textAlign,bgColor,oscarDB,inputValue,inputClass,inputParentclass){
-
 	// draw Rectangle
 	if ( PageIterate == PageNum ) {
 		var x0 = parseInt(x0);
@@ -3584,15 +2701,15 @@ function DrawMarker(){
 	var inputNameType = getCheckedValue(document.getElementsByName('InputNameType'));  // inputNameType = Auto/Custom
 	if (inputNameType == "Custom"){
 		e = document.getElementById('inputName').value
-        if (e){
-            if (isValid(e)){
-                inputName = e
-            } else {
-                alert("The custom input name field can only contain\n letters A-Z a-z numbers 0-9 and underline _");
-                return false;
-            }
-        } else if (!e){
-			alert("<bean:message key="eFormGenerator.emptyInput"/>");	//reminds user to put in mandatory name for input field
+		if (e){
+			if (isValid(e)){
+				inputName = e
+			} else {
+				alert("The custom input name field can only contain\n letters A-Z a-z numbers 0-9 and underline _");
+				return false;
+			}
+		} else if (!e){
+			alert("Please enter in a value for the custom input name field");	//reminds user to put in mandatory name for input field
 			return false;
 		}
 	} else if(inputNameType == "Measurement"){
@@ -3624,12 +2741,18 @@ function DrawMarker(){
 	for (i=0; i < document.getElementsByName('InputChecklist').length; i++){
 		var InputItem = document.getElementsByName('InputChecklist')[i].value;
 		if (inputName == InputItem){
-			alert("<bean:message key="eFormGenerator.duplicateName"/>");
+			alert("Name already in use, please enter in another UNIQUE input name");
 		}
 	}
 	
 	
 	if(DrawSwitch){
+	console.log("boxleft="+boxleft +" x0="+x0+" boxup="+boxup +" y0="+y0+"  boxwidth=" + boxwidth +" width="+width+" boxheight="+boxheight +" height="+height);
+		if ((x0 < boxleft + (snap*2))&&(x0 > boxleft - (snap*2))) {x0 = boxleft;} else { boxleft = x0;}
+		if ((y0 < boxup + (snap*2))&&(y0 > boxup - (snap*2))) {y0 = boxup;} else { boxup = y0;}		
+		if ((width < boxwidth + snap)&&(width > boxwidth - snap)) {width = boxwidth;}  else { boxwidth = width;}
+		if ((height < boxheight + snap)&&(height > boxheight - snap)) {height = boxheight;}  else { boxheight = height;}
+	console.log("boxleft="+boxleft +" x0="+x0+" boxup="+boxup +" y0="+y0+"  boxwidth=" + boxwidth +" width="+width+" boxheight="+boxheight +" height="+height);		
 		if (TextSwitch){
 			DrawText(jg,x0,y0,width,height,inputName,fontFamily,fontStyle,fontWeight,fontSize,textAlign,bgColor,oscarDB,inputValue,inputClass,inputParentclass);
 		}else if (TextboxSwitch){
@@ -3664,13 +2787,13 @@ function DrawMarker(){
 			DrawSignatureBox(jg,x0,y0,width,height,sigtext);
 		}else if (RadioButtonSwitch){
 			if (document.getElementById('radioX').checked) {
-                DrawXbox(jg,x0,y0,width,height,inputName,fontFamily,fontStyle,fontWeight,fontSize,textAlign,bgColor,oscarDB,inputValue,"only-one-",document.getElementById('RadioName').value);
-            } else {
-                DrawCheckbox(jg,x0,y0,inputName,false,"only-one-",document.getElementById('RadioName').value);
-            }
-		} else {
-            alert("nothing selected!");
-        }	
+				DrawXbox(jg,x0,y0,width,height,inputName,fontFamily,fontStyle,fontWeight,fontSize,textAlign,bgColor,oscarDB,inputValue,"only-one-",document.getElementById('RadioName').value);
+			} else {
+				DrawCheckbox(jg,x0,y0,inputName,false,"only-one-",document.getElementById('RadioName').value);
+			}
+		} else
+			alert("nothing selected!");
+		
 	}
 	
 	//reset input data
@@ -3684,7 +2807,8 @@ function DrawMarker(){
 	document.getElementById('MeasurementCustom').value = "";
 	document.getElementById('ExportMeasurementCustom').value = "";
 	document.getElementById('inputClass')[0].selected = true;
-	document.getElementById('inputParentclass').value = "";	
+	document.getElementById('inputParentclass').value = "";
+	
 }
 
 function ToggleInputName(){
@@ -3800,7 +2924,7 @@ function RedrawImage(RedrawParameter){
 		PageIterate = pnum;
 		var pimage = RedrawParameter[2];
 		var bwidth = parseInt(RedrawParameter[3]);
-		DrawPage(jg,pnum,pimage,bwidth);
+		DrawPage(jg, pnum, pimage, bwidth);
 	}else if (InputType == "Signature"){
 		var x0 = parseInt(RedrawParameter[1]);
 		var y0 = parseInt(RedrawParameter[2]);
@@ -3821,13 +2945,13 @@ function RedrawImage(RedrawParameter){
 function drawPortraitOutline(){
 	jg.setColor('red');
 	jg.setStroke(StrokeThickness);
-	jg.drawRect(0,0,750,1000);
+	jg.drawRect(0,0,825,1100);
 	jg.paint();
 }
 function drawLandscapeOutline(){
 	jg.setColor('red');
 	jg.setStroke(StrokeThickness);
-	jg.drawRect(0,0,1000,750);
+	jg.drawRect(0,0,1100,825);
 	jg.paint();
 }
 <!-- Drawing code ends -->

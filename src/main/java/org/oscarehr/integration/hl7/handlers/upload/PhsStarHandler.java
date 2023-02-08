@@ -28,7 +28,7 @@ package org.oscarehr.integration.hl7.handlers.upload;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 

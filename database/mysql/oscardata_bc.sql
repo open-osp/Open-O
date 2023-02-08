@@ -17,8 +17,10 @@ INSERT INTO encounterForm VALUES ('BC-NewBorn 2008','../form/formBCNewBorn2008.j
 INSERT INTO encounterForm VALUES ('BC Birth Sum 2008','../form/formbcbirthsummo2008.jsp?demographic_no=','formBCBirthSumMo2008',2);
 insert into encounterForm values ('Chart Checklist', '../form/formbcclientchartchecklist.jsp?demographic_no=', 'formBCClientChartChecklist', 0);                                       
 insert into encounterForm values ('BPMH', '../formBPMH.do?demographic_no=', 'formBPMH', 0);                                       
-INSERT INTO `encounterForm`(`form_name`, `form_value`, `form_table`, `hidden`) VALUES ('Rourke2009', '../form/formrourke2009complete.jsp?demographic_no=', 'formRourke2009', 0);
+INSERT INTO encounterForm VALUES ('BC-AR 2020', '../form/formBCAR2020pg1.jsp?demographic_no=', 'formBCAR2020', 0);
 
+INSERT INTO `encounterForm`(`form_name`, `form_value`, `form_table`, `hidden`) VALUES ('Rourke2009', '../form/formrourke2009complete.jsp?demographic_no=', 'formRourke2009', 0);
+INSERT INTO `encounterForm`(`form_name`, `form_value`, `form_table`, `hidden`) VALUES ('ECARES', '../formeCARES.do?method=fetch&demographicNo=', 'formECARES', 0);
 
 INSERT INTO billinglocation VALUES ('00','ABBOTSFORD','BC');
 INSERT INTO billinglocation VALUES ('00','AGASSIZ/HARRISON','BC');

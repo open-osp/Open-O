@@ -24,17 +24,19 @@
 
 package org.oscarehr.casemgmt.service;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.Rectangle;
+import org.apache.commons.lang.StringUtils;
 import org.oscarehr.PMmodule.model.Program;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
@@ -45,15 +47,6 @@ import org.oscarehr.managers.ProgramManager2;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.HeaderFooter;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -144,7 +137,7 @@ public class CaseManagementPrintPdf {
         String dob = propResource.getString("oscarEncounter.pdfPrint.dob") + " " + (String)request.getAttribute("demoDOB") + "\n";
         String age = propResource.getString("oscarEncounter.pdfPrint.age") + " " + (String)request.getAttribute("demoAge") + "\n";
         String mrp = propResource.getString("oscarEncounter.pdfPrint.mrp") + " " + (String)request.getAttribute("mrp") + "\n";
-        String[] info = null;
+        String[] info;
         if("true".equals(OscarProperties.getInstance().getProperty("print.includeMRP", "true"))) {
         	info = new String[] { title, gender, dob, age, mrp };
         } else {
@@ -155,7 +148,7 @@ public class CaseManagementPrintPdf {
         clinicData.refreshClinicData();
         String[] clinic = new String[] {clinicData.getClinicName(), clinicData.getClinicAddress(),
         clinicData.getClinicCity() + ", " + clinicData.getClinicProvince(),
-        clinicData.getClinicPostal(), clinicData.getClinicPhone()};
+        clinicData.getClinicPostal(), "Phone: " + clinicData.getClinicPhone(), "Fax: " + clinicData.getClinicFax()};
 
         if("true".equals(OscarProperties.getInstance().getProperty("print.useCurrentProgramInfoInHeader", "false"))) {
         	ProgramManager2 programManager2 = SpringUtils.getBean(ProgramManager2.class);
@@ -172,9 +165,7 @@ public class CaseManagementPrintPdf {
         }
         //Header will be printed at top of every page beginning with p2
         Phrase headerPhrase = new Phrase(LEADING, title, font);
-        HeaderFooter header = new HeaderFooter(headerPhrase,false);
-        header.setAlignment(HeaderFooter.ALIGN_CENTER);
-        document.setHeader(header);
+        document.addHeader("", headerPhrase.getContent());
 
         //Write title with top and bottom borders on p1
         cb = writer.getDirectContent();
@@ -192,18 +183,27 @@ public class CaseManagementPrintPdf {
         Paragraph p = new Paragraph();
         p.setAlignment(Paragraph.ALIGN_LEFT);
         Phrase phrase = new Phrase();
-        Phrase dummy = new Phrase();
-        for( int idx = 0; idx < clinic.length; ++idx ) {
-            phrase.add(clinic[idx] + "\n");
-            dummy.add("\n");
-            upperYcoord -= phrase.getLeading();
-        }
 
-        dummy.add("\n");
+        float rowCount = Math.max(info.length, clinic.length);
+        // Calculates header height based on the leading line space * rowCount
+        upperYcoord -= phrase.getLeading() * rowCount;
+
+        String del = "";
+        for( int idx = 0; idx < clinic.length; ++idx ) {
+            String clinicItem = del + StringUtils.trimToEmpty(clinic[idx]);
+            phrase.add(clinicItem);
+            del = "\n";
+        }
         ct.setSimpleColumn(document.left(), upperYcoord, document.right()/2f, document.top());
         ct.addElement(phrase);
         ct.go();
 
+        // Create and fill a dummy phrase with only new lines to keep the left column the
+        // appropriate size in relation to the right column in the event the right column is larger.
+        // rowCount has + 1 to account for the blank line created by the getCalculatedLeading above.
+        Phrase dummy = new Phrase();
+        Collection dummyphrase = Collections.nCopies((int)rowCount + 1, "\n");
+        dummy.addAll(dummyphrase);
         p.add(dummy);
         document.add(p);
 
@@ -378,73 +378,6 @@ public class CaseManagementPrintPdf {
             newPage = false;
             this.printNotes(cpp.get(issueCodes[idx]));
         }
-            //phrase.add(content[idx]);
-            //ct.addText(phrase);
-
-//            //do we need a page break?  check if we're within a fudge factor of the bottom
-//            if( lworkingYcoord <= (bottom * 1.1) && rworkingYcoord <= (bottom*1.1) ) {
-//                document.newPage();
-//                rworkingYcoord = lworkingYcoord = document.top();
-//            }
-//
-//            //Are we in right column?  if so, flip over to left column if there is room
-//            if( column % 2 == 1 ) {
-//                if( lworkingYcoord > bottom ) {
-//                    ct.setSimpleColumn(document.left(), bottom, (document.right()/2f)-10f, lworkingYcoord);
-//                    ++column;
-//                }
-//            }
-//            //Are we in left column?  if so, flip over to right column only if text will fit
-//            else {
-//                ct.setSimpleColumn((document.right()/2f)+10f, bottom, document.right(), rworkingYcoord);
-//
-//                if( ct.go(true) == ColumnText.NO_MORE_COLUMN ) {
-//                    ct.setSimpleColumn(document.left(), bottom, (document.right()/2f)-10f, lworkingYcoord);
-//                }
-//                else {
-//                    ct.setYLine(rworkingYcoord);
-//                    ++column;
-//                }
-//
-//                //ct.go(true) consumes input so we reload
-//                phrase = new Phrase(LEADING, "", font);
-//                chunk = new Chunk(headings[idx], obsfont);
-//                phrase.add(chunk);
-//                phrase.add(content[idx]);
-//                ct.setText(phrase);
-//            }
-//
-//            //while there is text to write, fill columns/page break when page full
-//            while( ct.go() == ColumnText.NO_MORE_COLUMN ) {
-//                if( column % 2 == 0 ) {
-//                    lworkingYcoord = bottom;
-//                    middle = (document.right()/4f)*3f;
-//                    headerContd = headings[idx] + " cont'd";
-//                    cb.setFontAndSize(bf, FONTSIZE);
-//                    cb.showTextAligned(PdfContentByte.ALIGN_CENTER, headerContd, middle, rworkingYcoord-phrase.leading(), 0f);
-//                    //cb.showTextAligned(PdfContentByte.ALIGN_CENTER, headings[idx] + " cont'd", middle, rworkingYcoord, 0f);
-//                    rworkingYcoord -= phrase.leading();
-//                    ct.setSimpleColumn((document.right()/2f)+10f, bottom, document.right(), rworkingYcoord);
-//                }
-//                else {
-//                    document.newPage();
-//                    rworkingYcoord = lworkingYcoord = document.top();
-//                    middle = (document.right()/4f);
-//                    headerContd = headings[idx] + " cont'd";
-//                    cb.setFontAndSize(bf, FONTSIZE);
-//                    cb.showTextAligned(PdfContentByte.ALIGN_CENTER, headerContd, middle, lworkingYcoord-phrase.leading(), 0f);
-//                    lworkingYcoord -= phrase.leading();
-//                    ct.setSimpleColumn(document.left(), bottom, (document.right()/2f)-10f, lworkingYcoord);
-//                }
-//                ++column;
-//            }
-//
-//            if( column % 2 == 0 )
-//                lworkingYcoord -= (ct.getLinesWritten() * ct.getLeading() + (ct.getLeading() * 2f));
-//            else
-//                rworkingYcoord -= (ct.getLinesWritten() * ct.getLeading() + (ct.getLeading() * 2f));
-//        }
-//        cb.endText();
     }
 
     public void printNotes(List<CaseManagementNote>notes) throws DocumentException{

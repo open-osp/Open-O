@@ -26,7 +26,7 @@ package org.oscarehr.PMmodule.exporter;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.IntakeAnswer;
 import org.oscarehr.PMmodule.model.IntakeNode;
 
@@ -34,7 +34,7 @@ public class DATISListOfPrograms extends AbstractIntakeExporter {
 
 	private static final String FILE_PREFIX = "List of Programs";
 	
-	private static final Logger log = Logger.getLogger(DATISListOfPrograms.class);
+	private static final Logger log = org.oscarehr.util.MiscUtils.getLogger();
 	
 	@Override
 	protected String exportData() throws ExportException {

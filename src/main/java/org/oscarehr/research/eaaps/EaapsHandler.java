@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.PMmodule.model.Program;
@@ -64,7 +64,7 @@ import oscar.oscarMessenger.data.MessengerSystemMessage;
 import oscar.util.ConversionUtils;
 import ca.uhn.hl7v2.HL7Exception;
 
-import com.lowagie.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfReader;
 import org.oscarehr.common.model.OscarMsgType;
 
 /**
@@ -76,7 +76,7 @@ public class EaapsHandler extends DefaultGenericHandler implements oscar.oscarLa
 
 	private static final String SYSTEM_PROVIDER = SYSTEM_USER_ID;
 
-	private static Logger logger = Logger.getLogger(EaapsHandler.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 
@@ -155,7 +155,7 @@ public class EaapsHandler extends DefaultGenericHandler implements oscar.oscarLa
 		if (fileName != null) {
 			String provider = getProvider(message, demo); 
 						
-			String description = "eAAPS Action plan for " + demo.getFormattedName();
+			String description = "Asthma Action Plan for " + demo.getFormattedName();
 
 			EDoc doc = createEDoc(message, fileName, demo, description);
 			// save edoc

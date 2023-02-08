@@ -24,7 +24,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -35,7 +35,7 @@ import org.apache.struts.action.ActionMessages;
 * @author Eugene Katyukhin
 */
 public final class PatientEndYearStatementForm extends ActionForm {
-    private static Logger logger = Logger.getLogger(PatientEndYearStatementForm.class);
+    private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private String firstNameParam;
     private String lastNameParam;
     private String fromDateParam;

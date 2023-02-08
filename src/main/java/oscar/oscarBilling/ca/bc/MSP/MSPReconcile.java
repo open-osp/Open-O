@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.billing.CA.BC.dao.BillRecipientsDao;
 import org.oscarehr.billing.CA.BC.dao.BillingHistoryDao;

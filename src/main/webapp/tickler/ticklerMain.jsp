@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
@@ -169,25 +170,31 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 
-<c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" />
-
 <html:html locale="true">
 <head>
-<title><bean:message key="tickler.ticklerMain.title"/></title>
+<title><bean:message key="tickler.ticklerMain.title"/> Manager</title>
 
-<link rel="stylesheet" type="text/css" media="all" href="<c:out value="${ctx}"/>/css/print.css" />
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-1.12.0.min.js" type="text/javascript"></script>
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js"></script>
+    <script src="${pageContext.request.contextPath}/share/javascript/prototype.js" type="text/javascript"></script>
+    <script src="${pageContext.request.contextPath}/share/javascript/scriptaculous.js" type="text/javascript"></script>
+    <script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js" type="text/javascript"></script>
 
-<!-- Prototype and scriptaculous -->
-<script src="<c:out value="${ctx}"/>/share/javascript/prototype.js" type="text/javascript"></script>
-<script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
+    <link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" media="all" href="${pageContext.request.contextPath}/css/print.css" />
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css">
+    <link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet" type="text/css">
 
-<script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/font-awesome.min.css" type="text/css">
+<style>
+    tr.error td {
+        color:red !important;
+    }
+</style>
+    <script type="application/javascript">
 jQuery.noConflict();
-</script>
-<script>
+
 jQuery(document).ready(function() {
 	jQuery( "#note-form" ).dialog({
 		autoOpen: false,
@@ -198,7 +205,11 @@ jQuery(document).ready(function() {
 		close: function() {
 			
 		}
-	});		
+	});
+
+    jQuery("#ticklerResults").dataTable({
+        "searching": false
+    })
 		
 });
 
@@ -255,10 +266,6 @@ function saveNoteDialog() {
 	jQuery( "#note-form" ).dialog( "close" );
 }
 
-
-
-</script>
-<script language="JavaScript">
 function popupPage(vheight,vwidth,varpage) { //open a new popup window
   var page = "" + varpage;
   windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
@@ -298,9 +305,6 @@ var beginD = "1900-01-01"
 	document.serviceform.xml_appointment_date.value = newD;
 		document.serviceform.xml_vdate.value = beginD;
 }
-
-</script>
-<script>
 
     function Check(e)
     {
@@ -457,7 +461,11 @@ var beginD = "1900-01-01"
         var url = "<c:out value="${ctx}"/>/saveWorkView.do";
         var role = "<%=(String)session.getAttribute("userrole")%>";
         var provider_no = "<%=(String) session.getAttribute("user")%>";
-        var params = "method=save&view_name=tickler&userrole=" + role + "&providerno=" + provider_no + "&name=ticklerview&value=" + $F("ticklerview") + "&name=dateBegin&value=" + $F("xml_vdate") + "&name=dateEnd&value=" + $F("xml_appointment_date") + "&name=providerview&value=" + encodeURI($F("providerview")) + "&name=assignedTo&value=" + encodeURI($F("assignedTo"))  + "&name=mrpview&value=" + encodeURI($F("mrpview"));
+        var params = "method=save&view_name=tickler&userrole=" + role + "&providerno=" + provider_no +
+            "&name=ticklerview&value=" + $F("ticklerview") +
+            // "&name=dateBegin&value=" + $F("xml_vdate") + "&name=dateEnd&value=" + $F("xml_appointment_date") +
+            "&name=providerview&value=" + encodeURI($F("providerview")) +
+            "&name=assignedTo&value=" + encodeURI($F("assignedTo"))  + "&name=mrpview&value=" + encodeURI($F("mrpview"));
         var sortables = document.getElementsByClassName('tableSortArrow');
 
         var attrib = null;
@@ -492,155 +500,89 @@ var beginD = "1900-01-01"
     }
     
     function generateRenalLabReq(demographicNo) {
-		var url = '<%=request.getContextPath()%>/form/formlabreq<%=labReqVer%>.jsp?demographic_no='+demographicNo+'&formId=0&provNo=<%=session.getAttribute("user")%>&fromSession=true';
-		jQuery.ajax({url:'<%=request.getContextPath()%>/renal/Renal.do?method=createLabReq&demographicNo='+demographicNo,async:false, success:function(data) {
+		var url = '${pageContext.request.contextPath}/form/formlabreq<%=labReqVer%>.jsp?demographic_no='+demographicNo+'&formId=0&provNo=<%=session.getAttribute("user")%>&fromSession=true';
+		jQuery.ajax({url:'${pageContext.request.contextPath}/renal/Renal.do?method=createLabReq&demographicNo='+demographicNo,async:false, success:function(data) {
 			popupPage(900,850,url);
 		}});
 	}
 
 </script>
-<style type="text/css">
-	<!--
-        th {text-align: left; border-bottom: 1px solid black; padding-top:5px; padding-bottom:5px; }
-	A, BODY, INPUT, OPTION ,SELECT , TABLE, TEXTAREA, TD, TR {font-family:tahoma,sans-serif; font-size:11px;}
 
-	TD.black              {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FFFFFF; background-color: #666699   ;}
-	TD.lilac              {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #EEEEFF  ;  padding-top: 4px;padding-bottom: 4px;}
-	TD.lilacRed              {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #EEEEFF  ;  padding-top: 4px;padding-bottom: 4px;}
-        
-	TD.boldlilac          {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #EEEEFF  ;}
-	TD.lilac A:link       {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #EEEEFF  ;}
-	TD.lilac A:visited    {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #EEEEFF  ;}
-	TD.lilac A:hover      {font-weight: normal;                                                                            color: #000000; background-color: #CDCFFF  ;}
-        TD.lilac A:focus    {font-weight: bold; font-size: 8pt ; font-family: verdana,arial,helvetica; color: white; background-color: #666699  ;}
-        
-	TD.lilacRed A:link       {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #EEEEFF  ;}
-	TD.lilacRed A:visited    {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #EEEEFF  ;}
-	TD.lilacRed A:hover      {font-weight: normal;                                                                            color: red; background-color: #CDCFFF  ;}
-        TD.lilacRed A:focus    {font-weight: bold; font-size: 8pt ; font-family: verdana,arial,helvetica; color: white; background-color: #666699  ;}
-        
-	TD.whiteRed              {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #FFFFFF;  padding-top: 4px;padding-bottom: 4px;}
-
-	TD.white              {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;  padding-top: 4px;padding-bottom: 4px;}
-	TD.heading            {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FDCB03; background-color: #666699   ;}
-	H2                    {font-weight: bold  ; font-size: 12pt; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	H3                    {font-weight: bold  ; font-size: 10pt; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	H4                    {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	H6                    {font-weight: bold  ; font-size: 7pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	A:link                {                     font-size: 8pt ; font-family: verdana,arial,helvetica; color: #336666; }
-	A:visited             {                     font-size: 8pt ; font-family: verdana,arial,helvetica; color: #336666; }
-	A:hover               {                                                                            color: red; background-color: #CDCFFF  ;}
-	TD.cost               {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #FFFFFF;}
-	TD.black A:link       {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FFFFFF; background-color: #FFFFFF;}
-	TD.black A:visited    {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FFFFFF; background-color: #FFFFFF;}
-	TD.black A:hover      {                                                                            color: #FDCB03; background-color: #FFFFFF;}
-        TD.title              {font-weight: bold  ; font-size: 10pt; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-        
-        TD.white A:link       {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	TD.white A:visited    {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #FFFFFF;}
-	TD.white A:hover      {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #000000; background-color: #CDCFFF  ;}
-        TD.white A:focus    {font-weight: bold; font-size: 8pt ; font-family: verdana,arial,helvetica; color: white; background-color: #666699  ;}
-	
-        TD.whiteRed A:link       {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #FFFFFF;}
-		TD.whiteRed A:visited    {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #FFFFFF;}
-		TD.whiteRed A:hover      {font-weight: normal; font-size: 8pt ; font-family: verdana,arial,helvetica; color: red; background-color: #CDCFFF  ;}
-        TD.whiteRed A:focus    {font-weight: bold; font-size: 8pt ; font-family: verdana,arial,helvetica; color: white; background-color: #666699  ;}
-	#navbar               {                     font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FDCB03; background-color: #666699   ;}
-	SPAN.navbar A:link    {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #FFFFFF; background-color: #666699   ;}
-	SPAN.navbar A:visited {font-weight: bold  ; font-size: 8pt ; font-family: verdana,arial,helvetica; color: #EFEFEF; background-color: #666699   ;}
-	SPAN.navbar A:hover   {                                                                            color: #FDCB03; background-color: #666699   ;}
-	SPAN.bold             {font-weight: bold  ;                                                                                            background-color: #666699   ;}
-	.sbttn {background: #EEEEFF;border-bottom: 1px solid #104A7B;border-right: 1px solid #104A7B;border-left: 1px solid #AFC4D5;border-top:1px solid #AFC4D5;color:#000066;height:19px;text-decoration:none;cursor: hand}
-.mbttn {background: #D7DBF2;border-bottom: 1px solid #104A7B;border-right: 1px solid #104A7B;border-left: 1px solid #AFC4D5;border-top:1px solid #AFC4D5;color:#000066;height:19px;text-decoration:none;cursor: hand}
-
-	-->
-</style>
 </head>
 
-<oscar:customInterface section="ticklerMain"/>
-<body bgcolor="#FFFFFF" text="#000000" leftmargin="0" rightmargin="0" topmargin="10">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr bgcolor="#FFFFFF">
-    <td height="10" width="70%"> </td>
-    <td height="10" width="30%" align=right></td>
-</tr>
-</table>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr bgcolor="#000000" class="noprint">
-    <td height="40" width="10%"><input type='button' name='print' value='<bean:message key="global.btnPrint"/>' onClick='window.print()' class="sbttn"></td>
-    <td width="80%" align="left">
-      <p><font face="Verdana, Arial, Helvetica, sans-serif" color="#FFFFFF"><b><font face="Arial, Helvetica, sans-serif" size="4"><bean:message key="tickler.ticklerMain.msgTickler"/></font></b></font>
-      </p>
+
+<body>
+<div class="container">
+<table>
+  <tr class="noprint">
+    <td>
+      <h2><bean:message key="tickler.ticklerMain.msgTickler"/> Manager
+      </h2>
     </td>
-	<td align = right>
-		<span class="HelpAboutLogout">
-			<oscar:help keywords="&Title=Tickler&portal_type%3Alist=Document" key="app.top1" style="color:white; font-size:10px;font-style:normal;"/>&nbsp;|
-        		<a style="color:white; font-size:10px;font-style:normal;" href="<%=request.getContextPath()%>/oscarEncounter/About.jsp" target="_new"><bean:message key="global.about" /></a>
-		</span>                        
-	</td>
+<%--	<td>--%>
+<%--            <i class="icon-question-sign"></i>--%>
+<%--            <a href="#" target="_blank"><bean:message key="app.top1"/></a>--%>
+<%--            <i class=" icon-info-sign" style="margin-left:10px;"></i>--%>
+<%--            <a href="javascript:void(0)"  onClick="window.open('${pageContext.request.contextPath}/oscarEncounter/About.jsp','About OSCAR','scrollbars=1,resizable=1,width=800,height=600,left=0,top=0')" ><bean:message key="global.about" /></a>--%>
+<%--    </td>--%>
   </tr>        
 </table>
              
-<form name="serviceform" method="get" action="ticklerMain.jsp">
-<table width="100%" border="0" bgcolor="#EEEEFF">  
-    <tr>
-      <td width="19%">
-        <div align="right"> <font color="#003366"><font face="Arial, Helvetica, sans-serif" size="2"><b>
-          <font color="#333333"><bean:message key="tickler.ticklerMain.formDateRange"/></font></b></font></font> </div>
-      </td>
-      <td width="41%">
-        <div align="center">
-          <input type="text" id="xml_vdate" name="xml_vdate" value="<%=xml_vdate%>">
-          <font size="1" face="Arial, Helvetica, sans-serif"><a href="#" onClick="openBrWindow('../billing/billingCalendarPopup.jsp?type=admission&amp;year=<%=curYear%>&amp;month=<%=curMonth%>','','width=300,height=300')"><bean:message key="tickler.ticklerMain.btnBegin"/>:</a></font>
+<form name="serviceform" method="get" action="ticklerMain.jsp" class="form-inline">
+    <div class="control-container">
+    <label for=""><bean:message key="tickler.ticklerMain.formDateRange"/>  <a href="#" onClick="allYear()"><bean:message key="tickler.ticklerMain.btnViewAll"/></a></label>
+    <div class="form-group">
+        <label for="xml_vdate">From</label>
+        <input type="date" class="form-control" name="xml_vdate" id="xml_vdate">
+    </div>
+    <div class="form-group">
+        <label for="xml_appointment_date">To</label>
+        <input type="date" class="form-control" name="xml_appointment_date" id="xml_appointment_date" value="<%=xml_appointment_date%>">
+    </div>
+
+
+            <div class="form-group">
+                <label for="ticklerview"><bean:message key="tickler.ticklerMain.formMoveTo"/></label>
+                <select id="ticklerview" class="form-control" name="ticklerview">
+                <option value="A" <%=ticklerview.equals("A")?"selected":""%>><bean:message key="tickler.ticklerMain.formActive"/></option>
+                <option value="C" <%=ticklerview.equals("C")?"selected":""%>><bean:message key="tickler.ticklerMain.formCompleted"/></option>
+                <option value="D" <%=ticklerview.equals("D")?"selected":""%>><bean:message key="tickler.ticklerMain.formDeleted"/></option>
+                </select>
+            </div>
+            <div class="form-group">
+                 <label for="mrpview"> <bean:message key="tickler.ticklerMain.MRP"/></label>
+                <select id="mrpview" class="form-control" name="mrpview">
+                <option value="all" <%=mrpview.equals("all")?"selected":""%>><bean:message key="tickler.ticklerMain.formAllProviders"/></option>
+                <%
+                    ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+                                        List<Provider> providers = providerDao.getActiveProviders();
+                                        for (Provider p : providers) {
+                %>
+                <option value="<%=p.getProviderNo()%>" <%=mrpview.equals(p.getProviderNo())?"selected":""%>><%=p.getLastName()%>,<%=p.getFirstName()%></option>
+                <%
+                    }
+                %>
+                  </select>
+            </div>
+        <div class="form-group">
+              <label for="providerview"><bean:message key="tickler.ticklerMain.msgCreator"/></label>
+
+            <select id="providerview" class="form-control" name="providerview">
+            <option value="all" <%=providerview.equals("all")?"selected":""%>><bean:message key="tickler.ticklerMain.formAllProviders"/></option>
+            <%
+                for (Provider p : providers) {
+            %>
+            <option value="<%=p.getProviderNo()%>" <%=providerview.equals(p.getProviderNo())?"selected":""%>><%=p.getLastName()%>,<%=p.getFirstName()%></option>
+            <%
+                }
+            %>
+              </select>
         </div>
-      </td>
-      <td width="40%">
-        <input type="text" id="xml_appointment_date" name="xml_appointment_date" value="<%=xml_appointment_date%>">
-        <font size="1" face="Arial, Helvetica, sans-serif"><a href="#" onClick="openBrWindow('../billing/billingCalendarPopup.jsp?type=end&amp;year=<%=curYear%>&amp;month=<%=curMonth%>','','width=300,height=300')"><bean:message key="tickler.ticklerMain.btnEnd"/>:</a> &nbsp; &nbsp; <a href="#" onClick="allYear()"><bean:message key="tickler.ticklerMain.btnViewAll"/></a></font>
-      </td>
-    </tr>
-    <tr>
-
-        <td colspan="3">
-        <font face="Verdana, Arial, Helvetica, sans-serif" size="2" color="#333333"><b><bean:message key="tickler.ticklerMain.formMoveTo"/> </b>
-        <select id="ticklerview" name="ticklerview">
-        <option value="A" <%=ticklerview.equals("A")?"selected":""%>><bean:message key="tickler.ticklerMain.formActive"/></option>
-        <option value="C" <%=ticklerview.equals("C")?"selected":""%>><bean:message key="tickler.ticklerMain.formCompleted"/></option>
-        <option value="D" <%=ticklerview.equals("D")?"selected":""%>><bean:message key="tickler.ticklerMain.formDeleted"/></option>                   
-        </select>
-        &nbsp; &nbsp; <font face="Verdana, Arial, Helvetica, sans-serif" size="2" color="#333333"><b>MRP</b></font> 
-        <select id="mrpview" name="mrpview">
-        <option value="all" <%=mrpview.equals("all")?"selected":""%>><bean:message key="tickler.ticklerMain.formAllProviders"/></option>
-        <%
-        	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-                                List<Provider> providers = providerDao.getActiveProviders(); 
-                                for (Provider p : providers) {
-        %>
-        <option value="<%=p.getProviderNo()%>" <%=mrpview.equals(p.getProviderNo())?"selected":""%>><%=p.getLastName()%>,<%=p.getFirstName()%></option>
-        <%
-        	}
-        %>
-          </select>
-        
-        &nbsp; &nbsp; <font face="Verdana, Arial, Helvetica, sans-serif" size="2" color="#333333"><b><bean:message key="tickler.ticklerMain.msgCreator"/> </b></font>
-
-        <select id="providerview" name="providerview">
-        <option value="all" <%=providerview.equals("all")?"selected":""%>><bean:message key="tickler.ticklerMain.formAllProviders"/></option>
-        <%
-        	for (Provider p : providers) {
-        %>
-        <option value="<%=p.getProviderNo()%>" <%=providerview.equals(p.getProviderNo())?"selected":""%>><%=p.getLastName()%>,<%=p.getFirstName()%></option>
-        <%
-        	}
-        %>
-          </select>
-
-
-          <!-- -->
-          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<font face="Verdana, Arial, Helvetica, sans-serif" size="2" color="#333333"><b><bean:message key="tickler.ticklerMain.msgAssignedTo"/></b></font>
+    <div class="form-group">
+          <label for="assignedTo"><bean:message key="tickler.ticklerMain.msgAssignedTo"/></label>
 <%
 	if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable())
-{ // multisite start ==========================================
+{
         	SiteDao siteDao = (SiteDao)SpringUtils.getBean("siteDao");
           	List<Site> sites = siteDao.getActiveSitesByProviderNo(user_no);
 %>
@@ -656,7 +598,7 @@ function changeSite(sel) {
 	sel.form.assignedTo.innerHTML=sel.value=="none"?"":_providers[sel.value];
 }
       </script>
-      	<select id="site" name="site" onchange="changeSite(this)">
+      	<select id="site" class="form-control" name="site" onchange="changeSite(this)">
       		<option value="none">---select clinic---</option>
       	<%
       		for (int i=0; i<sites.size(); i++) {
@@ -675,10 +617,10 @@ function changeSite(sel) {
       	document.getElementById("assignedTo").value='<%=request.getParameter("assignedTo")%>';
       	</script>
 <%
-	} // multisite end ==========================================
+	}
 } else {
 %>
-        <select id="assignedTo" name="assignedTo">
+        <select id="assignedTo" class="form-control" name="assignedTo">
         <% 
         // Check for property to default assigned provider and if present - default to user logged in
         	boolean ticklerDefaultAssignedProvier = OscarProperties.getInstance().isPropertyActive("tickler_default_assigned_provider");
@@ -701,117 +643,65 @@ function changeSite(sel) {
 <%
 	}
 %>
-
-
-      <!--/td>
-      <td -->
-        <font color="#333333" size="2" face="Verdana, Arial, Helvetica, sans-serif">
+    </div>
+    </div>
+        <div class="button-container pull-right">
         <input type="hidden" name="Submit" value="">
-        <input type="button" value="<bean:message key="tickler.ticklerMain.btnCreateReport"/>" class="mbttn noprint" onclick="document.forms['serviceform'].Submit.value='Create Report'; document.forms['serviceform'].submit();">
-        <oscar:oscarPropertiesCheck property="TICKLERSAVEVIEW" value="yes">
-        &nbsp;
-        <input type="button" value="<bean:message key="tickler.ticklerMain.msgSaveView"/>" class="mbttn" onclick="saveView();">
-        </oscar:oscarPropertiesCheck>
-        </font>
-        </td>
-    </tr>  
-</table>
+        <input type="button" class="btn btn-primary" value="<bean:message key="tickler.ticklerMain.btnCreateReport"/>" class="mbttn noprint" onclick="document.forms['serviceform'].Submit.value='Create Report'; document.forms['serviceform'].submit();">
+        <input type="button" class="btn" value="<bean:message key="tickler.ticklerMain.msgSaveView"/>" class="mbttn" onclick="saveView();">
+        </div>
+
 </form>
-        
+
 <form name="ticklerform" method="post" action="dbTicklerMain.jsp">
-		
-<%
-        Locale locale = request.getLocale();
-        String sortImage = "uparrow_inv.gif";
-        String sortDirection = LocaleUtils.getMessage(locale, "tickler.ticklerMain.sortUp");
-        String sortOrderStr = request.getParameter("sort_order");
-        boolean isSortAscending = true;
+		<% Locale locale = request.getLocale();%>
 
-        if(sortOrderStr == null) {
-        	sortOrderStr = OscarProperties.getInstance().getProperty("tickler.default_sort_order","asc");
-        }
-        if (sortOrderStr == null || sortOrderStr.equals("asc")) {
-            isSortAscending = false;
-            sortOrderStr = TicklerManager.SORT_DESC;
-            sortImage = "downarrow_inv.gif";
-            sortDirection = LocaleUtils.getMessage(locale, "tickler.ticklerMain.sortDown");
-        } else {
-            sortOrderStr = TicklerManager.SORT_ASC;
-        } 
-
-        String sortColumn = request.getParameter("sort_column");
-        if (sortColumn == null) {
-            sortColumn = TicklerManager.SERVICE_DATE;
-        }
-%>
-
-	<input type="hidden" name="sort_order" id="sort_order" value="<%=sortOrderStr%>"/>
-        <input type="hidden" name="sort_column" id="sort_column" value=""/>
-				
-        <c:set var="imgTag" scope="request"><img src="<c:out value="${ctx}"/>/images/<%=sortImage%>" alt="Sort Arrow <%=sortDirection%>"/></c:set>
-        <c:set var="sortColumn" scope="request"><%=sortColumn%></c:set>
-        <c:set var="sortByDemoName" scope="request"><%=TicklerManager.DEMOGRAPHIC_NAME%></c:set>
-        <c:set var="sortByCreator" scope="request"><%=TicklerManager.CREATOR%></c:set>
-        <c:set var="sortByServiceDate" scope="request"><%=TicklerManager.SERVICE_DATE%></c:set>
-        <c:set var="sortByCreationDate" scope="request"><%=TicklerManager.CREATION_DATE%></c:set>
-        <c:set var="sortByPriority" scope="request"><%=TicklerManager.PRIORITY%></c:set>
-        <c:set var="sortByTAT" scope="request"><%=TicklerManager.TASK_ASSIGNED_TO%></c:set>
-                        
-<table bgcolor=#666699 border="0" cellpadding="0" cellspacing="0" width="100%">
+<table id="ticklerResults" class="table table-striped table-compact" >
     <thead>
-        <TR bgcolor=#EEEEFF>
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="3%">&nbsp;</th>
+        <tr>
+            <th>&nbsp;</th>
 <% 
             boolean ticklerEditEnabled = Boolean.parseBoolean(OscarProperties.getInstance().getProperty("tickler_edit_enabled")); 
             if (ticklerEditEnabled) { 
 %>
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="3%">&nbsp;</th>
+            <th>&nbsp;</th>
 <%          
             }
 %>            
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="15%"> 
-                <a href="#" onClick="document.forms['ticklerform'].sort_order.value='<%=sortOrderStr%>';document.forms['ticklerform'].sort_column.value='<c:out value="${sortByDemoName}"/>'; document.forms['ticklerform'].submit();"><bean:message key="tickler.ticklerMain.msgDemographicName"/></a>                
-                <c:if test="${sortColumn == sortByDemoName}">
-                    <c:out value="${imgTag}" escapeXml="false"/>                    
-                </c:if>
+            <th>
+
+                    <bean:message key="tickler.ticklerMain.msgDemographicName"/>
             </th>
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="8%">
-                <a href="#" onClick="document.forms['ticklerform'].sort_order.value='<%=sortOrderStr%>';document.forms['ticklerform'].sort_column.value='<c:out value="${sortByCreator}"/>'; document.forms['ticklerform'].submit();"><bean:message key="tickler.ticklerMain.msgCreator"/></a>               
-                <c:if test="${sortColumn == sortByCreator}">
-                    <c:out value="${imgTag}" escapeXml="false"/>                    
-                </c:if>
+            <th>
+                    <bean:message key="tickler.ticklerMain.msgCreator"/>
             </th>           
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="12%">
-                <a href="#" onClick="document.forms['ticklerform'].sort_order.value='<%=sortOrderStr%>';document.forms['ticklerform'].sort_column.value='<c:out value="${sortByServiceDate}"/>'; document.forms['ticklerform'].submit();"><bean:message key="tickler.ticklerMain.msgDate"/></a>
-                 <c:if test="${sortColumn == sortByServiceDate}">
-                    <c:out value="${imgTag}" escapeXml="false"/>                    
-                </c:if>
+            <th>
+                    <bean:message key="tickler.ticklerMain.msgDate"/>
+
             </th>
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="15%">  
-                <a href="#" onClick="document.forms['ticklerform'].sort_order.value='<%=sortOrderStr%>';document.forms['ticklerform'].sort_column.value='<c:out value="${sortByCreationDate}"/>'; document.forms['ticklerform'].submit();"><bean:message key="tickler.ticklerMain.msgCreationDate"/></a> 
-                <c:if test="${sortColumn == sortByCreationDate}">
-                    <c:out value="${imgTag}" escapeXml="false"/>                   
-                </c:if> 
+            <th >
+                <bean:message key="tickler.ticklerMain.msgCreationDate"/>
             </th>
 
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="8%">
-                <a href="#" onClick="document.forms['ticklerform'].sort_order.value='<%=sortOrderStr%>';document.forms['ticklerform'].sort_column.value='<c:out value="${sortByPriority}"/>'; document.forms['ticklerform'].submit();"><bean:message key="tickler.ticklerMain.Priority"/></a>  
-                <c:if test="${sortColumn == sortByPriority}">
-                    <c:out value="${imgTag}" escapeXml="false"/>                   
-                </c:if>
+            <th >
+                <bean:message key="tickler.ticklerMain.Priority"/>
             </th>
 
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="15%">
-                <a href="#" onClick="document.forms['ticklerform'].sort_order.value='<%=sortOrderStr%>';document.forms['ticklerform'].sort_column.value='<c:out value="${sortByTAT}"/>'; document.forms['ticklerform'].submit();"><bean:message key="tickler.ticklerMain.taskAssignedTo"/></a>
-                <c:if test="${sortColumn == sortByTAT}">
-                    <c:out value="${imgTag}" escapeXml="false"/>                   
-                </c:if>
+            <th >
+                <bean:message key="tickler.ticklerMain.taskAssignedTo"/>
+
             </th>
 
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="6%"><bean:message key="tickler.ticklerMain.msgStatus"/></th>
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="39%"><bean:message key="tickler.ticklerMain.msgMessage"/></th>
-            <th style="color:#000000; font-size:xsmall; font-family:verdana,arial,helvetica;" width="4%">&nbsp;</th>
-        </TR>
+            <th>
+
+                    <bean:message key="tickler.ticklerMain.status"/>
+            </th>
+            <th>
+                Comment
+
+            </th>
+            <th></th>
+        </tr>
     </thead>
     <tfoot>
 <%
@@ -820,22 +710,22 @@ function changeSite(sel) {
                                     footerColSpan = 11;
                                 }
 %>
-                                <tr class="noprint"><td colspan="<%=footerColSpan%>" class="white"><a id="checkAllLink" name="checkAllLink" href="javascript:CheckAll();"><bean:message key="tickler.ticklerMain.btnCheckAll"/></a> - <a href="javascript:ClearAll();"><bean:message key="tickler.ticklerMain.btnClearAll"/></a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                    <input type="button" name="button" value="<bean:message key="tickler.ticklerMain.btnAddTickler"/>" onClick="popupPage('400','600', 'ticklerAdd.jsp')" class="sbttn">
+                                <tr class="noprint"><td colspan="<%=footerColSpan%>" class="white"><a id="checkAllLink" name="checkAllLink" href="javascript:CheckAll();"><bean:message key="tickler.ticklerMain.btnCheckAll"/></a> - <a href="javascript:ClearAll();"><bean:message key="tickler.ticklerMain.btnClearAll"/></a>     
+                                    <input type="button" class="btn" name="button" value="<bean:message key="tickler.ticklerMain.btnAddTickler"/>" onClick="window.open('ticklerAdd.jsp')" class="sbttn">
                                     <input type="hidden" name="submit_form" value="">
                                     <%
                                     	if (ticklerview.compareTo("D") == 0){
                                     %>
-                                    <input type="button" value="<bean:message key="tickler.ticklerMain.btnEraseCompletely"/>" class="sbttn" onclick="document.forms['ticklerform'].submit_form.value='Erase Completely'; document.forms['ticklerform'].submit();">
+                                    <input type="button" class="btn" value="<bean:message key="tickler.ticklerMain.btnEraseCompletely"/>" class="sbttn" onclick="document.forms['ticklerform'].submit_form.value='Erase Completely'; document.forms['ticklerform'].submit();">
                                     <%
                                     	} else{
                                     %>
-                                    <input type="button" value="<bean:message key="tickler.ticklerMain.btnComplete"/>" class="sbttn" onclick="document.forms['ticklerform'].submit_form.value='Complete'; document.forms['ticklerform'].submit();">
-                                    <input type="button" value="<bean:message key="tickler.ticklerMain.btnDelete"/>" class="sbttn" onclick="document.forms['ticklerform'].submit_form.value='Delete'; document.forms['ticklerform'].submit();">
+                                    <input type="button" class="btn" value="<bean:message key="tickler.ticklerMain.btnComplete"/>" class="sbttn" onclick="document.forms['ticklerform'].submit_form.value='Complete'; document.forms['ticklerform'].submit();">
+                                    <input type="button" class="btn btn-danger" value="<bean:message key="tickler.ticklerMain.btnDelete"/>" class="sbttn" onclick="document.forms['ticklerform'].submit_form.value='Delete'; document.forms['ticklerform'].submit();">
                                     <%
                                     	}
                                     %>
-                            <input type="button" name="button" value="<bean:message key="global.btnCancel"/>" onClick="window.close()" class="sbttn"> </td></tr>
+                            <input type="button" name="button" class="btn" value="<bean:message key="global.btnCancel"/>" onClick="window.close()" class="sbttn"> </td></tr>
                         </tfoot>
 
 
@@ -872,14 +762,12 @@ function changeSite(sel) {
 								      filter.setAssignee(assignedTo);
 								  }
                                                  
-                                                                  filter.setSort_order("desc");
+                                  filter.setSort_order("desc");
                                                                   
 								  List<Tickler> ticklers = ticklerManager.getTicklers(loggedInInfo, filter);
 								  
-                                                                  if (sortColumn != null) {
-                                                                       ticklers = ticklerManager.sortTicklerList(isSortAscending,sortColumn, ticklers);	
-                                                                  }
-								  String rowColour = "lilac";
+
+								  String rowColour = "white";
 								
 								  for (Tickler t : ticklers) {
 								      Demographic demo = t.getDemographic(); 
@@ -895,40 +783,35 @@ function changeSite(sel) {
 								      String numDaysUntilWarn = OscarProperties.getInstance().getProperty("tickler_warn_period");
 								      long ticklerWarnDays = Long.parseLong(numDaysUntilWarn);
 								      boolean ignoreWarning = (ticklerWarnDays < 0);
-								      
+								      boolean warning = false;
 								      
 								      //Set the colour of the table cell 
 								      String warnColour = "";
 								      if (!ignoreWarning && (daysDifference >= ticklerWarnDays)){
 								          warnColour = "Red";
+                                          warning = true;
 								      }
-								      
-								      if (rowColour.equals("lilac")){
-								          rowColour = "white";
-								      }else {
-								          rowColour = "lilac";
-								      }
-								      
+
 								      String cellColour = rowColour + warnColour;
                             %>
 
-                                <tr >
-                                    <TD width="3%"  ROWSPAN="1" class="<%=cellColour%>"><input type="checkbox" name="checkbox" value="<%=t.getId()%>" class="noprint"></TD>
+                                <tr <%=warning?"class='error'":""%>>
+                                    <td class="<%=cellColour%>"><input type="checkbox" name="checkbox" value="<%=t.getId()%>" class="noprint"></td>
                                     <%
                                     	if (ticklerEditEnabled) {
                                     %>
-                                    <td width="3%" ROWSPAN="1" class="<%=cellColour%>"><a href=#  onClick="popupPage(600,800, '../tickler/ticklerEdit.jsp?tickler_no=<%=t.getId()%>')"><bean:message key="tickler.ticklerMain.editTickler"/></a></td>
+                                    <td width="3%" ROWSPAN="1" class="<%=cellColour%>"><a href=# title="<bean:message key="tickler.ticklerMain.editTickler"/>" onClick="window.open('../tickler/ticklerEdit.jsp?tickler_no=<%=t.getId()%>')"><i class="icon-pencil"></i></a></td>
                                     <%
                                     	}
                                     %>                                    
-                                    <TD width="12%" ROWSPAN="1" class="<%=cellColour%>"><a href=# onClick="popupPage(600,800,'../demographic/demographiccontrol.jsp?demographic_no=<%=demo.getDemographicNo()%>&displaymode=edit&dboperation=search_detail')"><%=demo.getLastName()%>,<%=demo.getFirstName()%></a></TD>                                                                       
-                                    <TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getProvider() == null ? "N/A" : t.getProvider().getFormattedName()%></TD>
-                                    <TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getServiceDate()%></TD>
-                                    <TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getUpdateDate()%></TD>
-                                    <TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getPriority()%></TD>
-                                    <TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getAssignee() != null ? t.getAssignee().getLastName() + ", " + t.getAssignee().getFirstName() : "N/A"%></TD>
-                                    <TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getStatusDesc(locale)%></TD>
-                                    <TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getMessage()%>
+                                    <TD  class="<%=cellColour%>"><a href=# onClick="popupPage(600,800,'../demographic/demographiccontrol.jsp?demographic_no=<%=demo.getDemographicNo()%>&displaymode=edit&dboperation=search_detail')"><%=demo.getLastName()%>,<%=demo.getFirstName()%></a></TD>
+                                    <TD  class="<%=cellColour%>"><%=t.getProvider() == null ? "N/A" : t.getProvider().getFormattedName()%></TD>
+                                    <TD  class="<%=cellColour%>"><%=t.getServiceDate()%></TD>
+                                    <TD  class="<%=cellColour%>"><%=t.getUpdateDate()%></TD>
+                                    <TD  class="<%=cellColour%>"><%=t.getPriority()%></TD>
+                                    <TD  class="<%=cellColour%>"><%=t.getAssignee() != null ? t.getAssignee().getLastName() + ", " + t.getAssignee().getFirstName() : "N/A"%></TD>
+                                    <TD  class="<%=cellColour%>"><%=t.getStatusDesc(locale)%></TD>
+                                    <TD  class="<%=cellColour%>"><%=t.getMessage()%>
                                         
                                         <%
                                                                                 	List<TicklerLink> linkList = ticklerLinkDao.getLinkByTickler(t.getId().intValue());
@@ -969,10 +852,10 @@ function changeSite(sel) {
                                                                                 }
                                         %>
                                         
-                                    </TD>
-                                    <td ROWSPAN="1" class="<%=cellColour%> noprint">
-                                    	<a href="#" onClick="return openNoteDialog('<%=demo.getDemographicNo() %>','<%=t.getId() %>');return false;">
-                                    		<img border="0" src="<%=request.getContextPath()%>/images/notepad.gif"/>
+                                    </td>
+                                    <td  class="<%=cellColour%> noprint">
+                                    	<a href="#" onClick="return openNoteDialog('<%=demo.getDemographicNo() %>','<%=t.getId() %>');return false;" title="note">
+                                    		<i class="icon-comment"></i>
                                     	</a>
                                     </td>
                                 </tr>
@@ -982,21 +865,21 @@ function changeSite(sel) {
                                                                         for(TicklerComment tc : tcomments) {
                                 %>
                                     <tr>
-                                        <td width="3%"  ROWSPAN="1" class="<%=cellColour%>"></td>
-                                        <td width="3%" ROWSPAN="1" class="<%=cellColour%>"></td>
-                                        <td width="12%" ROWSPAN="1" class="<%=cellColour%>"></td>
-                                        <td ROWSPAN="1" class="<%=cellColour%>"><%=tc.getProvider().getLastName()%>,<%=tc.getProvider().getFirstName()%></td>
-                                        <td ROWSPAN="1" class="<%=cellColour%>"></td>
+                                        <td class="<%=cellColour%>"></td>
+                                        <td class="<%=cellColour%>"></td>
+                                        <td class="<%=cellColour%>"></td>
+                                        <td  class="<%=cellColour%>"><%=tc.getProvider().getLastName()%>,<%=tc.getProvider().getFirstName()%></td>
+                                        <td  class="<%=cellColour%>"></td>
                                         <% if (tc.isUpdateDateToday()) { %>
-                                        <td ROWSPAN="1" class="<%=cellColour%>"><%=tc.getUpdateTime(locale)%></td>
+                                        <td  class="<%=cellColour%>"><%=tc.getUpdateTime(locale)%></td>
                                         <% } else { %>
-                                        <td ROWSPAN="1" class="<%=cellColour%>"><%=tc.getUpdateDate(locale)%></td>
+                                        <td  class="<%=cellColour%>"><%=tc.getUpdateDate(locale)%></td>
                                         <% } %>
-                                        <td ROWSPAN="1" class="<%=cellColour%>"></td>
-                                        <td ROWSPAN="1" class="<%=cellColour%>"></td>
-                                        <td ROWSPAN="1" class="<%=cellColour%>"></td>
-                                        <td ROWSPAN="1" class="<%=cellColour%>"><%=tc.getMessage()%></td>
-                                        <td ROWSPAN="1" class="<%=cellColour%>">&nbsp;</td>
+                                        <td  class="<%=cellColour%>"></td>
+                                        <td  class="<%=cellColour%>"></td>
+                                        <td  class="<%=cellColour%>"></td>
+                                        <td  class="<%=cellColour%>"><%=tc.getMessage()%></td>
+                                        <td  class="<%=cellColour%>"></td>
                                     </tr>
                                 <%      }                                        
                                     }
@@ -1010,18 +893,10 @@ function changeSite(sel) {
 
         
 </table></form>
-                        
-<p><font face="Arial, Helvetica, sans-serif" size="2"> </font></p>
-  <p></p>
-<%@ include file="../demographic/zfooterbackclose.jsp" %>
-  
-  
+    
 <p class="yesprint">
 	<%=OscarProperties.getConfidentialityStatement()%>
 </p>
-
-
-
 
 <div id="note-form" title="Tickler Note">
 	<form>
@@ -1038,11 +913,11 @@ function changeSite(sel) {
 			<table>
 				<tr>
 					<td >
-						<a href="javascript:void()" onclick="saveNoteDialog();return false;">
-							<img src="<%=request.getContextPath()%>/oscarEncounter/graphics/note-save.png"/>
+						<a href="javascript:void(0)" onclick="saveNoteDialog();return false;">
+							<img src="${pageContext.request.contextPath}/oscarEncounter/graphics/note-save.png"/>
 						</a>
-						<a href="javascript:void()" onclick="closeNoteDialog();return false;">
-							<img src="<%=request.getContextPath()%>/oscarEncounter/graphics/system-log-out.png"/>
+						<a href="javascript:void(0)" onclick="closeNoteDialog();return false;">
+							<img src="${pageContext.request.contextPath}/oscarEncounter/graphics/system-log-out.png"/>
 						</a>
 					</td>
 					<td style="width:40%" nowrap="nowrap">
@@ -1052,10 +927,10 @@ function changeSite(sel) {
 				</tr>
 			
 			</table>
-			
+	<input type='button' class="btn" name='print' value='<bean:message key="global.btnPrint"/>' onClick='window.print()' class="sbttn">
 	</form>	
 </div>
 
-
+</div>
 </body>
 </html:html>

@@ -536,7 +536,7 @@ function showHideLayers() { //v3.0
   String addBrackets(String str){
       String ret = "";
       if (str != null && str.trim().length() != 0){
-          ret = "{"+str+")";
+          ret = "("+str+")";
       }
       return ret;
   }

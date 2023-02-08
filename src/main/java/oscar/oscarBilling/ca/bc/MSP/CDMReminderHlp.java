@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtilsOld;
+import org.oscarehr.util.MiscUtils;
 
 import oscar.oscarTickler.TicklerCreator;
 import oscar.util.SqlUtils;
@@ -41,7 +41,7 @@ public class CDMReminderHlp {
     crt.resolveTicklers(loggedInInfo, providerNo, cdmPatientNos, remString);
 
     for (Iterator iter = cdmPatients.iterator(); iter.hasNext(); ) {
-    	MiscUtilsOld.checkShutdownSignaled();
+    	MiscUtils.checkShutdownSignaled();
 
       String[] dxRecord = (String[]) iter.next();
       String demoNo = dxRecord[0];
@@ -88,7 +88,6 @@ public class CDMReminderHlp {
   /**
    * Returns a String list of demographic numbers for patients that are associated with the
    * specified provider number and who have been diagnosed with a chronic disease
-   * @param provNo String
    * @return ArrayList
    */
   private List<String[]> getCDMPatients(String[] codes) {

@@ -27,7 +27,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.util.LabelValueBean;
 import org.oscarehr.PMmodule.dao.SurveySecurityDao;
 import org.oscarehr.PMmodule.web.reports.custom.CustomReportDataSource;

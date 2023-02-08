@@ -26,7 +26,7 @@ package oscar.oscarLab.ca.all.parsers;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 
 import oscar.util.UtilDateUtilities;

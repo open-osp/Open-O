@@ -35,11 +35,10 @@ import java.util.TimerTask;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.service.GenericIntakeManager;
 import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.MiscUtilsOld;
 import org.oscarehr.util.ShutdownException;
 
 import oscar.ocan.service.OcanDataProcessor;
@@ -47,7 +46,7 @@ import oscar.ocan.service.OcanDataProcessor.OcanProcess;
 
 public class OcanSubmissionTask extends TimerTask {
 
-	private static final Logger logger = MiscUtils.getLogger();
+	private static final Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private GenericIntakeManager genericIntakeManager;
 	private OcanDataProcessor ocanDataProcessor;
@@ -89,7 +88,7 @@ public class OcanSubmissionTask extends TimerTask {
 				}
 
 				for (Map<String, String> intakeMap : intakes) {
-					MiscUtilsOld.checkShutdownSignaled();
+					MiscUtils.checkShutdownSignaled();
 
 					try {
 						ocanDataProcessor.createOcanRecord(process,

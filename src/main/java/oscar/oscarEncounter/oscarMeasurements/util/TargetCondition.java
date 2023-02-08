@@ -27,7 +27,7 @@ package oscar.oscarEncounter.oscarMeasurements.util;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.jdom.Element;
 import org.oscarehr.util.MiscUtils;
 
@@ -87,17 +87,27 @@ public class TargetCondition {
                     list.add(new DSCondition("getDataAsDouble", "", "<=", betweenVals[1]));
                 }
 //TODO: how to handle = sign in greater than or equal too.
+            }else if (toParse.indexOf("&gt;=") != -1 ||  toParse.indexOf(">=") != -1 ){ // greater than style
+                toParse = toParse.replaceFirst("&gt;=","");
+                toParse = toParse.replaceFirst(">=","");
+                double gt = Double.parseDouble(toParse.trim());
+                list.add(new DSCondition("getDataAsDouble", "", ">=", ""+gt));
             }else if (toParse.indexOf("&gt;") != -1 ||  toParse.indexOf(">") != -1 ){ // greater than style
                 toParse = toParse.replaceFirst("&gt;","");
                 toParse = toParse.replaceFirst(">","");
                 double gt = Double.parseDouble(toParse.trim());
                 list.add(new DSCondition("getDataAsDouble", "", ">", ""+gt));
+            }else if (toParse.indexOf("&lt;=") != -1  ||  toParse.indexOf("<=") != -1 ){ // less than style
+                toParse = toParse.replaceFirst("&lt;=","");
+                toParse = toParse.replaceFirst("<=","");
+                double lt = Double.parseDouble(toParse.trim());
+                list.add(new DSCondition("getDataAsDouble", "", "<=", ""+lt));
             }else if (toParse.indexOf("&lt;") != -1  ||  toParse.indexOf("<") != -1 ){ // less than style
                 toParse = toParse.replaceFirst("&lt;","");
                 toParse = toParse.replaceFirst("<","");
                 double lt = Double.parseDouble(toParse.trim());
-                list.add(new DSCondition("getDataAsDouble", "", "<=", ""+lt));
-            }else if (!toParse.equals("")){ // less than style
+                list.add(new DSCondition("getDataAsDouble", "", "<", ""+lt));    
+            }else if (!toParse.equals("")){ // equal style
                 double eq = Double.parseDouble(toParse.trim());
                 list.add(new DSCondition("getDataAsDouble", "", "==", ""+eq));
             }
@@ -154,7 +164,7 @@ public class TargetCondition {
                         toParse = toParse.replaceFirst("<","");
                         int lt = Integer.parseInt(toParse);
                         list.add(new DSCondition("getNumberFromSplit(\"/\","+i+")", param, "<=", ""+lt));
-                    }else if (!toParse.equals("")){ // less than style
+                    }else if (!toParse.equals("")){ // equal style
                         int eq = Integer.parseInt(toParse);
                         list.add(new DSCondition("getNumberFromSplit(\"/\","+i+")", param, "==", ""+eq));
                     }

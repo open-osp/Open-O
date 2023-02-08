@@ -31,7 +31,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -45,7 +45,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class FollowUpAction extends DispatchAction {
 
-	static Logger logger = Logger.getLogger(FollowUpAction.class);
+	static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	static EyeformFollowUpDao dao = (EyeformFollowUpDao)SpringUtils.getBean(EyeformFollowUpDao.class);
 	
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

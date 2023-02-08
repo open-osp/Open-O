@@ -30,6 +30,7 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ page
 	import="java.util.*, oscar.oscarEncounter.oscarMeasurements.data.MeasurementMapConfig, oscar.OscarProperties, oscar.util.StringUtils"%>
+<%@ page import="org.oscarehr.common.model.MeasurementMap" %>
 
 <%
 
@@ -72,7 +73,7 @@ MeasurementMapConfig mmc = new MeasurementMapConfig();
                     <%
                 }else if (outcome.equals("failedcheck")){
                     %>
-                      alert("Unable to update measurement mappings: A message is already mapped to the specified code for that message type");
+                      alert("Unable to update measurement mappings: A measurement is already mapped to the specified code for that measurement type");
                     <%
                 }else{    
                     %>
@@ -119,7 +120,7 @@ MeasurementMapConfig mmc = new MeasurementMapConfig();
                                                 if (identifier == null) identifier = "";
                                                 ArrayList measurements = mmc.getUnmappedMeasurements("");
                                                 for (int i=0; i < measurements.size(); i++) { 
-                                                Hashtable ht = (Hashtable) measurements.get(i);  
+                                                HashMap ht = (HashMap) measurements.get(i);
                                                 String value = (String) ht.get("identifier")+","+(String) ht.get("type")+","+(String) ht.get("name");%>
 					<option value="<%= value %>"
 						<%= value.equals(identifier) ? "selected" : "" %>><%= "("+(String) ht.get("type")+") "+(String) ht.get("identifier")+" - "+((String) ht.get("name")).trim() %></option>
@@ -139,10 +140,9 @@ MeasurementMapConfig mmc = new MeasurementMapConfig();
 				<td class="Cell" width="20%">Select code to map to:</td>
 				<td class="Cell" width="80%"><select name="loinc_code">
 					<option value="0">None Selected</option>
-					<%ArrayList loincCodes = mmc.getLoincCodes(searchstring);
-                                                for (int i=0; i < loincCodes.size(); i++) { 
-                                                Hashtable ht = (Hashtable) loincCodes.get(i);%>
-					<option value="<%= (String) ht.get("code") %>"><%= (String) ht.get("code")+" - "+((String) ht.get("name")).trim()%></option>
+					<% List<MeasurementMap> loincCodes = mmc.getLoincCodes(searchstring);
+					for (MeasurementMap loincCode : loincCodes) {%>
+						<option value="<%= loincCode.getLoincCode() %>"><%= loincCode.getLoincCode()+" - " + loincCode.getName().trim()%></option>
 					<% }%>
 				</select></td>
 			</tr>

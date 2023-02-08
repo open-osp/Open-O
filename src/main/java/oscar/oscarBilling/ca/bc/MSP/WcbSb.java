@@ -25,7 +25,7 @@ package oscar.oscarBilling.ca.bc.MSP;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.model.Wcb;
 import org.oscarehr.common.dao.BillingServiceDao;
 import org.oscarehr.util.MiscUtils;

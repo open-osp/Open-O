@@ -26,7 +26,7 @@ package org.oscarehr.myoscar.utils;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.myoscar_server.myoscar_server_client_stubs2.AccountWs;
 import org.oscarehr.myoscar_server.myoscar_server_client_stubs2.AddressException_Exception;
 import org.oscarehr.myoscar_server.myoscar_server_client_stubs2.Dimension;

@@ -42,7 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.util.StringUtils;
 import oscar.util.UtilDateUtilities;
@@ -63,7 +63,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class CMLHandler implements MessageHandler {
 
     ORU_R01 msg = null;
-    Logger logger = Logger.getLogger(CMLHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
     /** Creates a new instance of CMLHandler */
     public CMLHandler(){
@@ -145,6 +145,14 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    public String getOBXBlocked(int i, int j){
+        try{
+            return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getUserDefinedAccessChecks().getValue()));
+        }catch(Exception e){
+            return("");
+        }
+    }
+
     public String getObservationHeader(int i, int j){
         try{
             return (getString(Terser.get(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX(),4,0,1,1))+" "+
@@ -179,6 +187,14 @@ public class CMLHandler implements MessageHandler {
     public String getOBXName(int i, int j){
         try{
             return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getObservationIdentifier().getText().getValue()));
+        }catch(Exception e){
+            return("");
+        }
+    }
+
+    public String getOBXNameLong(int i, int j){
+        try{
+            return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getObservationIdentifier().getComponent(2).toString()));
         }catch(Exception e){
             return("");
         }
@@ -625,5 +641,21 @@ public class CMLHandler implements MessageHandler {
     }
     public String getNteForPID() {
     	return "";
+    }
+    
+    
+    
+    /*
+     * for OMD validation (imported files)
+     */
+    public boolean isTestResultBlocked(int i, int j){
+        try{
+            String status = getOBXBlocked(i, j);
+            return "BLOCKED".equals(status);
+            
+        }catch(Exception e){
+            logger.error("error returning obx identifier", e);
+            return false;
+        }
     }
 }

@@ -25,12 +25,12 @@
 --%>
 <%@page import="org.oscarehr.managers.IntegratorFileLogManager"%>
 <%@page import="org.oscarehr.common.model.IntegratorFileLog"%>
-<%@page import="org.apache.commons.lang.time.DateFormatUtils"%>
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="org.oscarehr.util.MiscUtils"%>
+<%@page import="org.apache.logging.log4j.Logger"%>
 <%@page import="org.oscarehr.common.dao.IntegratorControlDao"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.common.dao.FacilityDao"%>

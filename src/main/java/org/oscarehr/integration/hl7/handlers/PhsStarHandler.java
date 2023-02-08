@@ -34,8 +34,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -79,7 +78,7 @@ public class PhsStarHandler extends BasePhsStarHandler {
 	OscarLogDao logDao = (OscarLogDao)SpringUtils.getBean("oscarLogDao");
 
 	public PhsStarHandler() {
-		logger.setLevel(Level.DEBUG);
+		// default
 	}
 
 

@@ -79,6 +79,7 @@ import org.oscarehr.ws.rest.to.model.ConsultationResponseSearchResult;
 import org.oscarehr.ws.rest.to.model.ConsultationResponseTo1;
 import org.oscarehr.ws.rest.to.model.FaxConfigTo1;
 import org.oscarehr.ws.rest.to.model.LetterheadTo1;
+import org.oscarehr.ws.rest.to.model.OtnEconsult;
 import org.oscarehr.ws.rest.to.model.ProfessionalSpecialistTo1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -382,7 +383,27 @@ public class ConsultationWebService extends AbstractServiceImpl {
 		return null;
 	}
 	
-	
+	@POST
+	@Path("/importEconsult")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public GenericRESTResponse importEconsult(OtnEconsult data) {
+		GenericRESTResponse response = new GenericRESTResponse();
+		
+		if(data != null && data.getDemographicNo() > 0)
+		{
+			try {
+				consultationManager.importEconsult(getLoggedInInfo(), data);
+				response.setSuccess(true);
+				response.setMessage("File " + data.getFileName() + " imported.");
+			} catch (Exception e) {
+				response.setSuccess(false);
+				response.setMessage(e.getMessage());				
+				MiscUtils.getLogger().error("Exception", e);
+			}
+		}
+		return response;
+	}
 	
 	/*******************
 	 * private methods *

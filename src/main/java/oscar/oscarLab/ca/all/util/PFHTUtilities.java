@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.OscarProperties;
 
@@ -33,7 +33,7 @@ import oscar.OscarProperties;
  * @author Divya Mantha, Indivica
  */
 public class PFHTUtilities {
-	 private static Logger logger = Logger.getLogger(PFHTUtilities.class);
+	 private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     /**
      * Creates a new instance of ICLUtilities
      */

@@ -34,6 +34,8 @@ import javax.persistence.Table;
 @Table(name="measurementMap")
 public class MeasurementMap extends AbstractModel<Integer>{
 
+	public enum LAB_TYPE {PATHL7, FLOWSHEET, CML, GDML, ICL}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;

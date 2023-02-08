@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
 import org.oscarehr.PMmodule.model.Agency;
 import org.oscarehr.PMmodule.model.IntakeAnswerElement;

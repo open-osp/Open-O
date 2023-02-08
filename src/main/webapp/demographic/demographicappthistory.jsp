@@ -73,7 +73,6 @@
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="http://www.caisi.ca/plugin-tag" prefix="plugin" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/special_tag.tld" prefix="special" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -261,11 +260,6 @@ for(LookupListItem lli:reasonCodes.getItems()) {
 				<TH width="10%"><b><bean:message key="demographic.demographicappthistory.msgType" /></b></TH>
 				<TH width="15%"><b><bean:message key="demographic.demographicappthistory.msgReason" /></b></TH>
 				<TH width="15%"><b><bean:message key="demographic.demographicappthistory.msgProvider" /></b></TH>
-				<plugin:hideWhenCompExists componentName="specialencounterComp" reverse="true">
-				<special:SpecialEncounterTag moduleName="eyeform">   
-					<TH width="5%"><b>EYE FORM</b></TH>
-				</special:SpecialEncounterTag>
-				</plugin:hideWhenCompExists>
 				<TH><b><bean:message key="demographic.demographicappthistory.msgComments" /></b></TH>
 				
 				<% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) { %>
@@ -374,12 +368,7 @@ for(LookupListItem lli:reasonCodes.getItems()) {
 	  	else { %>
 	  	<td>N/A</td>
 	  <%}%>
-      
-      <plugin:hideWhenCompExists componentName="specialencounterComp" reverse="true">
-      <special:SpecialEncounterTag moduleName="eyeform">      
-      <td><a href="#" onclick="popupPage(800,1000,'<%=request.getContextPath()%>/mod/specialencounterComp/EyeForm.do?method=view&appHis=true&demographicNo=<%=demographic_no%>&appNo=<%=appointment.getId().toString()%>')">eyeform</a></td>
-      </special:SpecialEncounterTag>
-      </plugin:hideWhenCompExists>
+
 
 <% 
       String remarks = appointment.getRemarks();

@@ -33,7 +33,7 @@ import java.util.WeakHashMap;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;

@@ -29,7 +29,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,7 +43,7 @@ import oscar.util.ConversionUtils;
 @Ignore
 public class EaapsIntegrationTest extends DaoTestFixtures {
 
-	private static Logger logger = Logger.getLogger(EaapsIntegrationTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	/* SYSTEM-SPECIFIC TEST VALUES */
 	

@@ -28,7 +28,7 @@ package oscar.oscarBilling.ca.bc.Teleplan;
 import java.util.Arrays;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 
 import oscar.OscarProperties;

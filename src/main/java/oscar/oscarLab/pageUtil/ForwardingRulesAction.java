@@ -42,7 +42,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -60,7 +60,7 @@ import oscar.oscarLab.ForwardingRules;
  */
 public class ForwardingRulesAction extends Action{
 
-    Logger logger = Logger.getLogger(ForwardingRulesAction.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     private IncomingLabRulesDao dao = SpringUtils.getBean(IncomingLabRulesDao.class);
     
 

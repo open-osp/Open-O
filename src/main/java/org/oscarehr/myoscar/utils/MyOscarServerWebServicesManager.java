@@ -32,7 +32,7 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.common.gzip.GZIPInInterceptor;
 import org.apache.cxf.transport.common.gzip.GZIPOutInterceptor;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.myoscar_server.myoscar_server_client_stubs2.AccountWs;
 import org.oscarehr.myoscar_server.myoscar_server_client_stubs2.AccountWsService;
 import org.oscarehr.myoscar_server.myoscar_server_client_stubs2.CalendarWs;

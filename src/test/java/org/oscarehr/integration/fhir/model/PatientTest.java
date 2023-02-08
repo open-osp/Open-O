@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 
 import java.util.Calendar;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.hl7.fhir.dstu3.model.Enumerations.AdministrativeGender;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

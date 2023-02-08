@@ -36,7 +36,7 @@ import net.sf.json.JSONArray;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionMessages;
 import org.oscarehr.common.OtherIdManager;
 import org.oscarehr.common.dao.EFormDataDao;
@@ -386,6 +386,10 @@ public class EForm extends EFormBase {
 		this.formHtml = this.formHtml.replace(jsMarker, oscarJS);
 	}
 	
+	public void setFdid(String fdid) {
+		this.formHtml = this.formHtml.replace(fdidMarker, fdid);
+	}
+	
 	public void setSource(String source) {
 		if (StringUtils.isBlank(source)) source="";
 
@@ -538,7 +542,7 @@ public class EForm extends EFormBase {
                 } else if (type.equals(OPENER_VALUE)) {
 			html.insert(pointer, " "+OPENER_VALUE+"=\""+value+"\"");
 		} else if (type.equals("text") || type.equals("hidden")) {
-			html.insert(pointer, " value=\""+value+"\"");
+			html.insert(pointer, " value=\""+value.replace("\"", "&quot;")+"\"");
                 } else if(type.equals("textarea")) {
 			pointer = html.indexOf(">", pointer) + 1;
 			int endPointer = html.indexOf("<", pointer);

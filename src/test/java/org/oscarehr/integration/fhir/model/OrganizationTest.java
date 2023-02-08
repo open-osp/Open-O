@@ -24,7 +24,7 @@ package org.oscarehr.integration.fhir.model;
  */
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

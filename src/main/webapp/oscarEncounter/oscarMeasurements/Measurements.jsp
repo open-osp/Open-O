@@ -93,9 +93,16 @@ function check() {
     if(ret) {
 
       	 $.post('<%=request.getContextPath()%>/oscarEncounter/Measurements.do?ajax=true&skipCreateNote=true',$('#theForm').serialize(),function(data){
-			opener.postMessage(data,"*");
-      		window.close();
-      	 });
+      		$("#errors_list").empty();
+      		 if(data.errors) {
+      			 for(var x=0;x<data.errors.length;x++) {
+      				 $("#errors_list").append(data.errors[x]);
+      			 }
+      		 } else {
+				opener.postMessage(data,"*");
+      			window.close();
+      		 }
+      	 },'json');
 
     }
 }
@@ -103,12 +110,10 @@ function check() {
 <body class="BodyStyle" vlink="#0000FF" onload="window.focus();">
 <html:form action="/oscarEncounter/Measurements" styleId="theForm">
 	<logic:present name="css">
-		<link rel="stylesheet" type="text/css"
-			href="<bean:write name="css" />">
+		<link rel="stylesheet" type="text/css" href="<bean:write name="css" />">
 	</logic:present>
 	<logic:notPresent name="css">
-		<link rel="stylesheet" type="text/css"
-			href="styles/measurementStyle.css">
+		<link rel="stylesheet" type="text/css" href="styles/measurementStyle.css">
 	</logic:notPresent>
 		
 	<table class="MainTable" id="scrollNumber1" name="encounterTable">
@@ -117,11 +122,10 @@ function check() {
 				name="groupName">
 				<bean:write name="groupName" />
 			</logic:present></td>
-			<td class="MainTableTopRowRightColumn">
-			<table class="TopStatusBar">
+			<td class="MainTableTopRowRightColumn" style="padding:0px">
+			<table class="TopStatusBar" style="width:100%; height:100%;">
 				<tr>
-					<td width=70% class="Header" NOWRAP><oscar:nameage
-						demographicNo="<%=demo%>" /></td>
+					<td class="Header"><oscar:nameage demographicNo="<%=demo%>" /></td>
 				</tr>
 			</table>
 			</td>
@@ -139,6 +143,8 @@ function check() {
 			</td>
 			<td class="MainTableRightColumn">
 			<%=measurementManager.getDShtml(groupName)%>
+			<ul id="errors_list" style="color:red">
+			</ul>
 			<table border=0 cellspacing=0>
 				<tr>
 					<td>
@@ -170,7 +176,7 @@ function check() {
 								<% int i = 0;%>
 								<logic:iterate id="measurementType" name="measurementTypes"
 									property="measurementTypeVector" indexId="ctr">
-									<tr class="data">
+									<tr class="data" id="row-<bean:write name="measurementType" property="type" />">
 										<td width="5"><a
 											title="<bean:write name="measurementType" property="typeDesc" />"><bean:write
 											name="measurementType" property="typeDisplayName" /></a></td>
@@ -204,8 +210,7 @@ function check() {
 										<%}%>
 										</td>
 										<%}else { %>
-										<td><html:text
-											property='<%= "value(inputValue-" + ctr + ")" %>' size="5" /></td>
+										<td><html:text property='<%= "value(inputValue-" + ctr + ")" %>' size="5" /></td>
 										<%} %>
 										<td><html:text
 											property='<%= "value(date-" + ctr + ")" %>' size="20" /></td>
@@ -283,5 +288,36 @@ function check() {
 		</tr>
 	</table>
 </html:form>
+
+<script>
+$( document ).ready(function() {
+
+//if WT, HT and BMI exists then allow the link
+if($('#row-WT').length && $('#row-HT').length && $('#row-BMI').length){
+
+$('#row-WT td:eq(2) input').keyup(function(){
+  calcBMI( $(this).val(),$('#row-HT td:eq(2) input').val() );
+});
+
+$('#row-HT td:eq(2) input').keyup(function(){
+  calcBMI( $('#row-WT td:eq(2) input').val(),$(this).val() );
+});  
+}
+
+});
+
+
+function calcBMI(w,h) {
+b = '';
+
+if ( $.isNumeric(w) && $.isNumeric(h) && h!=="" && w!=="" ) {
+  if (h > 0) {
+    b = (w/Math.pow(h/100,2)).toFixed(1);
+    $('#row-BMI td:eq(2) input').val(b);
+    $('#row-BMI').css("background-color", "#d9e6f2");
+  }
+ }
+}
+</script>
 </body>
 </html:html>

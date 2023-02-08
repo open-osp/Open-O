@@ -40,7 +40,7 @@ public class FaxClientLogDao extends AbstractDao<FaxClientLog>{
 		super(FaxClientLog.class);
 	}
 
-	public FaxClientLog findClientLogbyFaxId(String faxId) {
+	public FaxClientLog findClientLogbyFaxId(int faxId) {
     	Query query = entityManager.createQuery("select log from FaxClientLog log where log.faxId = :id");
 
     	// faxId is the id for an entry in the Faxes table.
@@ -50,7 +50,7 @@ public class FaxClientLogDao extends AbstractDao<FaxClientLog>{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<FaxClientLog> findClientLogbyRequestId(String requestId) {
+	public List<FaxClientLog> findClientLogbyRequestId(int requestId) {
 		
 		// only the most recent entries
     	Query query = entityManager.createQuery("select log from FaxClientLog log where log.requestId = :requestId order by log.startTime desc");

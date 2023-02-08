@@ -31,18 +31,20 @@ import org.oscarehr.common.model.CasemgmtNoteLock;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
+import java.util.Enumeration;
+
 public class OscarSessionListener implements HttpSessionListener {
 
 	@Override
 	public void sessionCreated(HttpSessionEvent se) {
-		// TODO Auto-generated method stub
-
+		MiscUtils.getLogger().info("Creating new OSCAR session.");
+		MiscUtils.getLogger().info("Session id: " + se.getSession().getId());
 	}
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
 		String id = se.getSession().getId();
-		MiscUtils.getLogger().debug("session is being destroyed - " + id);
+		MiscUtils.getLogger().info("session is being destroyed - " + id);
 
 		CasemgmtNoteLockDao casemgmtNoteLockDao = SpringUtils.getBean(CasemgmtNoteLockDao.class);
 		

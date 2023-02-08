@@ -45,6 +45,7 @@ import org.oscarehr.util.MiscUtils;
  *
  * @author  Jay
  */
+@Deprecated
 public class OSCARFAXClient {
     SOAPConnectionFactory scf;
     SOAPConnection connection;

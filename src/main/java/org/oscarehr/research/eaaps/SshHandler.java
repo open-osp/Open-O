@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.OscarProperties;
 
@@ -49,7 +49,7 @@ import com.jcraft.jsch.SftpException;
  */
 public class SshHandler {
 
-	private static Logger logger = Logger.getLogger(SshHandler.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private JSch jsch = new JSch();
 	private String userName;

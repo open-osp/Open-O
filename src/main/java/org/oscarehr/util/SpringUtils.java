@@ -22,7 +22,8 @@
  */
 package org.oscarehr.util;
 
-import org.apache.commons.lang.WordUtils;
+
+import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -36,13 +37,22 @@ public class SpringUtils {
     /**
      * This variable is populated by one of the context listeners.
      */
-    public static BeanFactory beanFactory = null;
+    private static BeanFactory beanFactory;
 
     public static Object getBean(String beanName)
     {
         return(beanFactory.getBean(beanName));
     }
-    
+
+	public static void setBeanFactory(BeanFactory beanFactory) {
+		if(SpringUtils.beanFactory == null) {
+			SpringUtils.beanFactory = beanFactory;
+		}
+	}
+
+	public static BeanFactory getBeanFactory() {
+		return SpringUtils.beanFactory;
+	}
 	/**
 	 * Attempts to find a Spring bean based of the specified class. This method first attempts to load a bean
 	 * following the default Spring auto-naming conventions (de-capitalizing class simple name). In case the bean with 

@@ -47,7 +47,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.xmlbeans.XmlOptions;
 import org.oscarehr.PMmodule.dao.OcanSubmissionLogDao;
@@ -179,6 +179,7 @@ import org.oscarehr.ocan.SymptomDocument.Symptom;
 import org.oscarehr.ocan.SymptomListDocument.SymptomList;
 import org.oscarehr.ocan.TimeLivedInCanadaDocument.TimeLivedInCanada;
 import org.oscarehr.ocan.VisitEmergencyDepartmentDocument.VisitEmergencyDepartment;
+import org.oscarehr.util.CxfClientUtils;
 import org.oscarehr.util.CxfClientUtilsOld;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -512,7 +513,7 @@ public class OcanReportUIBean implements CallbackHandler {
 			SubmissionPortType port =  service.getSubmissionPort();
 			((BindingProvider)port).getRequestContext().put(
 				    BindingProvider.ENDPOINT_ADDRESS_PROPERTY,url);
-			CxfClientUtilsOld.configureClientConnection(port);
+			CxfClientUtils.configureClientConnection(port);
 			CxfClientUtilsOld.configureWSSecurity(port,user,new OcanReportUIBean());
 			CxfClientUtilsOld.configureLogging(port);
 

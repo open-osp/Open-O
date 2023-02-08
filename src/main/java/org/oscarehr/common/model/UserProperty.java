@@ -68,9 +68,9 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     public static final String OFFICIAL_LAST_NAME="official_last_name";
     public static final String OFFICIAL_OLIS_IDTYPE="official_olis_idtype";
     public static final String OSCAR_MSG_RECVD="oscarMsgRecvd";
-    
     public static final String CLINICALCONNECT_DISABLE_CLOSE_WINDOW = "clinicalConnectDisableCloseWindow";
     public static final String CLINICALCONNECT_DISABLE_LOGOUT_WARNING = "clinicalConnectDisableLogoutWarning";
+    public static final String LAB_MACRO_JSON = "labMacroJSON";
     
     //added to user properties with new interface
     public static final String FAX = "fax";
@@ -169,6 +169,10 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
 	public static final String CLINICALCONNECT_SERVICE_USERNAME = "clinicalconnect_service_username";
 	public static final String CLINICALCONNECT_SERVICE_PASSWORD = "clinicalconnect_service_password";
 	public static final String CLINICALCONNECT_SERVICE_LOCATION = "clinicalconnect_service_location";
+        public static final String QUESTIMED_USERNAME = "questimed_username";
+	public static final String QUESTIMED_SERVICE_USERNAME = "questimed_service_username";
+	public static final String QUESTIMED_SERVICE_PASSWORD = "questimed_service_password";
+	public static final String QUESTIMED_SERVICE_LOCATION = "questimed_service_location";
 	public static final String DASHBOARD_SHARE = "dashboard_share";
 	
 	public static final String CODE_TO_ADD_PATIENTDX = "code_to_add_patientDx";
@@ -178,6 +182,7 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
 	public static final String PREVENTION_ISPA_WARNING = "prevention_ispa_warning";
 	public static final String PREVENTION_NON_ISPA_WARNING = "prevention_non_ispa_warning";
 	
+	public static final String TICKLER_TASK_ASSIGNEE = "tickler_task_assignee";
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

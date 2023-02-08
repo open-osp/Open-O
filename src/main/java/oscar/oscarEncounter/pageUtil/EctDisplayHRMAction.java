@@ -13,29 +13,28 @@ package oscar.oscarEncounter.pageUtil;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.util.MessageResources;
 import org.oscarehr.common.dao.OscarLogDao;
 import org.oscarehr.hospitalReportManager.HRMReport;
 import org.oscarehr.hospitalReportManager.HRMReportParser;
 import org.oscarehr.hospitalReportManager.dao.HRMDocumentDao;
+import org.oscarehr.hospitalReportManager.dao.HRMDocumentSubClassDao;
 import org.oscarehr.hospitalReportManager.dao.HRMDocumentToDemographicDao;
+import org.oscarehr.hospitalReportManager.dao.HRMSubClassDao;
 import org.oscarehr.hospitalReportManager.model.HRMDocument;
+import org.oscarehr.hospitalReportManager.model.HRMDocumentSubClass;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
+import org.oscarehr.hospitalReportManager.model.HRMSubClass;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
-import oscar.oscarLab.ca.on.HRMResultsData;
 import oscar.util.DateUtils;
 import oscar.util.StringUtils;
 
@@ -45,6 +44,8 @@ public class EctDisplayHRMAction extends EctDisplayAction {
 	private static final String cmd = "HRM";
 	private HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean("HRMDocumentToDemographicDao");
 	private HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
+	private HRMDocumentSubClassDao hrmDocumentSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean("HRMDocumentSubClassDao");
+	private HRMSubClassDao hrmSubClassDao = (HRMSubClassDao) SpringUtils.getBean("HRMSubClassDao");
 	private OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
 	
 	public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao, MessageResources messages) {
@@ -78,98 +79,50 @@ public class EctDisplayHRMAction extends EctDisplayAction {
 				allHrmDocsForDemo.addAll(hrmDoc);
 			}
 
-
-			List<Integer> doNotShowList = new LinkedList<Integer>();
-			// the key = SendingFacility+':'+ReportNumber+':'+DeliverToUserID as per HRM spec can be used to signify duplicate report
-			HashMap<String,HRMDocument> docsToDisplay = new HashMap<String,HRMDocument>();
-			HashMap<String,HRMReport> labReports=new HashMap<String,HRMReport>();
-			HashMap<String,ArrayList<Integer>> duplicateLabIds=new HashMap<String,ArrayList<Integer>>();
-			for (HRMDocument doc : allHrmDocsForDemo) {
+			for (HRMDocument hrmDocument : allHrmDocsForDemo) {
 				// filter duplicate reports
-				HRMReport hrmReport = HRMReportParser.parseReport(loggedInInfo, doc.getReportFile());
+				HRMReport hrmReport = HRMReportParser.parseReport(loggedInInfo, hrmDocument.getReportFile());
 				if (hrmReport == null) continue;
-				hrmReport.setHrmDocumentId(doc.getId());
-				String duplicateKey=hrmReport.getSendingFacilityId()+':'+hrmReport.getSendingFacilityReportNo()+':'+hrmReport.getDeliverToUserId();
+				hrmReport.setHrmDocumentId(hrmDocument.getId());
 
-				
-				List<HRMDocument> relationshipDocs = hrmDocumentDao.findAllDocumentsWithRelationship(doc.getId());
-
-				HRMDocument oldestDocForTree = doc;
-				for (HRMDocument relationshipDoc : relationshipDocs) {
-					if (relationshipDoc.getId().intValue() != doc.getId().intValue()) {
-						if (relationshipDoc.getReportDate().compareTo(oldestDocForTree.getReportDate()) >= 0 || relationshipDoc.getReportStatus().equalsIgnoreCase("C")) {
-							doNotShowList.add(oldestDocForTree.getId());
-							oldestDocForTree = relationshipDoc;
-						}
-					}
-				}
-
-				boolean addToList = true;
-				for (HRMDocument displayDoc : docsToDisplay.values()) {
-					if (displayDoc.getId().intValue() == oldestDocForTree.getId().intValue()) {
-						addToList = false;
-					}
-				}
-				
-				for (Integer doNotShowId : doNotShowList) {
-					if (doNotShowId.intValue() == oldestDocForTree.getId().intValue()) {
-						addToList = false;
-					}
-				}
-
-				if (addToList)
-				{
-					// if no duplicate
-					if (!docsToDisplay.containsKey(duplicateKey))
-					{
-						docsToDisplay.put(duplicateKey,oldestDocForTree);
-						labReports.put(duplicateKey, hrmReport);
-					}
-					else // there exists an entry like this one
-					{
-						HRMReport previousHrmReport=labReports.get(duplicateKey);
-						
-						logger.debug("Duplicate report found : previous="+previousHrmReport.getHrmDocumentId()+", current="+hrmReport.getHrmDocumentId());
-						
-						Integer duplicateIdToAdd;
-						
-						// if the current entry is newer than the previous one then replace it, other wise just keep the previous entry
-						if (HRMResultsData.isNewer(hrmReport, previousHrmReport))
-						{
-							HRMDocument previousHRMDocument = docsToDisplay.get(duplicateKey);
-							duplicateIdToAdd=previousHRMDocument.getId();
-							
-							docsToDisplay.put(duplicateKey,oldestDocForTree);
-							labReports.put(duplicateKey, hrmReport);
-						}
-						else
-						{
-							duplicateIdToAdd=doc.getId();
-						}
-
-						ArrayList<Integer> duplicateIds=duplicateLabIds.get(duplicateKey);
-						if (duplicateIds==null)
-						{
-							duplicateIds=new ArrayList<Integer>();
-							duplicateLabIds.put(duplicateKey, duplicateIds);
-						}
-						
-						duplicateIds.add(duplicateIdToAdd);						
-					}
-				}
-			}
-
-			for (Map.Entry<String, HRMDocument> entry : docsToDisplay.entrySet()) {
-				
-				String duplicateKey=entry.getKey();
-				HRMDocument hrmDocument=entry.getValue();
-				
+				List<HRMDocumentSubClass> hrmDocumentSubClassList = hrmDocumentSubClassDao.getSubClassesByDocumentId(hrmDocument.getId());
 				String reportStatus = hrmDocument.getReportStatus();
 				String dispFilename = hrmDocument.getReportType();
-				String dispDocNo    = hrmDocument.getId().toString();
+				String dispSubClass ="";
+				HRMSubClass subClass;
+				String dispDocNo = hrmDocument.getId().toString();
 				String description = hrmDocument.getDescription();
-				
-				String t = StringUtils.isNullOrEmpty(description)?dispFilename:description;
+
+				if (hrmReport.getFirstReportClass().equalsIgnoreCase("Diagnostic Imaging Report") || hrmReport.getFirstReportClass().equalsIgnoreCase("Cardio Respiratory Report")) {
+					//Get first sub class to display on eChart
+					if (hrmDocumentSubClassList != null && hrmDocumentSubClassList.size()>0) {
+						HRMDocumentSubClass firstSubClass = hrmDocumentSubClassList.get(0);
+						subClass = hrmSubClassDao.findApplicableSubClassMapping(hrmReport.getFirstReportClass(), firstSubClass.getSubClass(), firstSubClass.getSubClassMnemonic(), hrmReport.getSendingFacilityId());
+						dispSubClass = subClass!=null?subClass.getSubClassDescription():"";
+					}
+
+					if ((StringUtils.isNullOrEmpty(dispSubClass)) && hrmReport.getAccompanyingSubclassList().size()>0){
+						// if sub class doesn't exist, display the accompanying subclass
+						dispSubClass = hrmReport.getFirstAccompanyingSubClass();
+					}
+				} else {
+					//Medical Records Report
+					String[] reportSubClass = hrmReport.getFirstReportSubClass().split("\\^");
+					dispSubClass = reportSubClass!=null&&reportSubClass.length>1?reportSubClass[1]:"";
+				}
+
+				// Determine text to display on eChart
+				String t = "";
+				if(!StringUtils.isNullOrEmpty(description)){
+					t = description; //custom label
+				}
+				else if(!StringUtils.isNullOrEmpty(dispSubClass)){
+					t = dispSubClass; // subclass
+				}
+				else {
+					t = dispFilename; // report class
+				}
+
 				if (reportStatus != null && reportStatus.equalsIgnoreCase("C")) {
 					t = "(Cancelled) " + t;
 				}
@@ -192,19 +145,8 @@ public class EctDisplayHRMAction extends EctDisplayAction {
 				String user = (String) request.getSession().getAttribute("user");
 				item.setDate(date);
 				hash = Math.abs(winName.hashCode());
-
-				StringBuilder duplicateLabIdQueryString=new StringBuilder();
-				ArrayList<Integer> duplicateIdList=duplicateLabIds.get(duplicateKey);
-            	if (duplicateIdList!=null)
-            	{
-					for (Integer duplicateLabIdTemp : duplicateIdList)
-	            	{
-	            		if (duplicateLabIdQueryString.length()>0) duplicateLabIdQueryString.append(',');
-	            		duplicateLabIdQueryString.append(duplicateLabIdTemp);
-	            	}
-				}
-
-				url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/hospitalReportManager/Display.do?id="+dispDocNo+"&duplicateLabIds="+duplicateLabIdQueryString+"');";
+				
+				url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/hospitalReportManager/Display.do?id="+dispDocNo+"&segmentID="+dispDocNo+"');";
 
 				String labRead = "";
 				if(!oscarLogDao.hasRead(( (String) request.getSession().getAttribute("user")   ),"hrm",dispDocNo)){
@@ -228,6 +170,8 @@ public class EctDisplayHRMAction extends EctDisplayAction {
 			javascript.append("</script>");
 
 			Dao.setJavaScript(javascript.toString());
+			Dao.sortItems(NavBarDisplayDAO.DATESORT_ASC);
+			
 			return true;
 		}
 	}

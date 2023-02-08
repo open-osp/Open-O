@@ -23,9 +23,10 @@
 
 package org.caisi.wl;
 
+import org.apache.logging.log4j.Logger;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -51,8 +52,7 @@ import javax.xml.ws.WebServiceClient;
 public class WaitListService_Service extends Service {
 
 	private final static URL WAITLISTSERVICE_WSDL_LOCATION;
-	private final static Logger logger = Logger
-			.getLogger(org.caisi.wl.WaitListService_Service.class.getName());
+	private final static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	static {
 		URL url = null;
@@ -63,8 +63,7 @@ public class WaitListService_Service extends Service {
 			url = new URL(baseUrl,
 					"http://localhost:8080/wlws/WaitListServicePort?wsdl");
 		} catch (MalformedURLException e) {
-			logger.warning("Failed to create URL for the wsdl Location: 'http://localhost:8080/wlws/WaitListServicePort?wsdl', retrying as a local file");
-			logger.warning(e.getMessage());
+			logger.warn("Failed to create URL for the wsdl Location: 'http://localhost:8080/wlws/WaitListServicePort?wsdl', retrying as a local file", e.getMessage());
 		}
 		WAITLISTSERVICE_WSDL_LOCATION = url;
 	}

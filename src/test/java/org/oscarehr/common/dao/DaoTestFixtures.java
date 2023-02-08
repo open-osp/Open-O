@@ -59,7 +59,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.ConfigUtils;
@@ -88,10 +88,6 @@ public abstract class DaoTestFixtures
 	@BeforeClass
 	public static void classSetUp() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException, IOException
 	{
-		
-		
-		Logger.getRootLogger().setLevel(Level.WARN);
-		
 		long start = System.currentTimeMillis();
 		if(!SchemaUtils.inited) {
 			logger.info("dropAndRecreateDatabase");
@@ -104,18 +100,18 @@ public abstract class DaoTestFixtures
 		}
 
 		start = System.currentTimeMillis();
-		if(SpringUtils.beanFactory==null) {
-			oscar.OscarProperties p = oscar.OscarProperties.getInstance();
-			p.setProperty("db_name", ConfigUtils.getProperty("db_schema") + ConfigUtils.getProperty("db_schema_properties"));
-			p.setProperty("db_username", ConfigUtils.getProperty("db_user"));
-			p.setProperty("db_password", ConfigUtils.getProperty("db_password"));
-			p.setProperty("db_uri", ConfigUtils.getProperty("db_url_prefix"));
-			p.setProperty("db_driver", ConfigUtils.getProperty("db_driver"));
-			ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
-			context.setConfigLocations(new String[]{"/applicationContext.xml","/applicationContextBORN.xml"});
-			context.refresh();
-			SpringUtils.beanFactory = context;
-		}
+
+		oscar.OscarProperties p = oscar.OscarProperties.getInstance();
+		p.setProperty("db_name", ConfigUtils.getProperty("db_schema") + ConfigUtils.getProperty("db_schema_properties"));
+		p.setProperty("db_username", ConfigUtils.getProperty("db_user"));
+		p.setProperty("db_password", ConfigUtils.getProperty("db_password"));
+		p.setProperty("db_uri", ConfigUtils.getProperty("db_url_prefix"));
+		p.setProperty("db_driver", ConfigUtils.getProperty("db_driver"));
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
+		context.setConfigLocations(new String[]{"/applicationContext.xml","/applicationContextBORN.xml"});
+		context.refresh();
+		SpringUtils.setBeanFactory(context);
+
 		end = System.currentTimeMillis();
 		secsTaken = (end-start)/1000;
 		logger.info("Setting up spring took " + secsTaken + " seconds.");

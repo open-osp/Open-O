@@ -25,6 +25,8 @@ package org.oscarehr.managers;
 
 
 
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.oscarehr.common.dao.EFormDao;
@@ -38,7 +40,13 @@ import org.oscarehr.common.model.EncounterForm;
 import org.oscarehr.util.LoggedInInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import oscar.dms.ConvertToEdoc;
+import oscar.dms.EDoc;
+import oscar.form.util.FormTransportContainer;
 import oscar.log.LogAction;
+import oscar.oscarEncounter.data.EctFormData;
+import oscar.oscarEncounter.data.EctFormData.PatientForm;
 
 /**
  * 
@@ -60,6 +68,12 @@ public class FormsManager {
 	
 	@Autowired
 	private EncounterFormDao encounterFormDao;
+	
+	@Autowired
+	DocumentManager documentManager;
+	
+	@Autowired
+	private SecurityInfoManager securityInfoManager;
 
 	public static final String EFORM = "eform"; 
 	public static final String FORM = "form";
@@ -120,7 +134,7 @@ public class FormsManager {
 		return (results);
     	
     }
-    
+      
 	public List<EncounterForm> getAllEncounterForms() {
 		List<EncounterForm> results = encounterFormDao.findAll();
 		Collections.sort(results, EncounterForm.FORM_NAME_COMPARATOR);
@@ -133,4 +147,65 @@ public class FormsManager {
 		return (results);
 	}
 	
+	public List<PatientForm> getEncounterFormsbyDemographicNumber(LoggedInInfo loggedInInfo, Integer demographicId) {
+  		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", SecurityInfoManager.READ, null)) {
+			throw new RuntimeException("missing required security object (_form)");
+		}
+  		
+  		List<PatientForm> patientFormList = new ArrayList<PatientForm>();
+  		
+  		List<EncounterForm> encounterFormList = getAllEncounterForms();
+  		for(EncounterForm encounterForm : encounterFormList) {
+  			String table = encounterForm.getFormTable();
+  			PatientForm[] patientFormArray = EctFormData.getPatientForms(demographicId+"", table);
+  			if(patientFormArray.length > 0) {
+	  			PatientForm patientForm = patientFormArray[0];
+	  			patientForm.setTable(table);
+	  			patientForm.setFormName(encounterForm.getFormName());
+	  			patientFormList.add(patientForm);
+  			}
+  		}
+
+    	if (patientFormList != null && patientFormList.size() > 0) {
+			LogAction.addLogSynchronous(loggedInInfo, "FormsManager.getEncounterFormsbyDemographicNumber", "demo" + demographicId);
+		}
+    	
+    	return patientFormList;
+	}
+		
+	/**
+	 * Saves a form as PDF EDoc. 
+	 * Returns the id of the converted document. 
+	 */
+	public Integer saveFormDataAsEDoc( LoggedInInfo loggedInInfo, FormTransportContainer formTransportContainer ) {
+		
+  		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", SecurityInfoManager.WRITE, null)) {
+			throw new RuntimeException("missing required security object (_eform)");
+		}
+		
+		EDoc edoc = ConvertToEdoc.from( formTransportContainer );
+		documentManager.moveDocument( loggedInInfo, edoc.getDocument(), edoc.getFilePath(), null );
+		edoc.setFilePath(null);
+		Integer documentId = documentManager.saveDocument( loggedInInfo, edoc );
+
+		if( documentId != null ) {
+			LogAction.addLogSynchronous(loggedInInfo, "FormsManager.saveFormDataAsEDoc", "Document ID saved: " + documentId );
+		} else {
+			LogAction.addLogSynchronous(loggedInInfo, "FormsManager.saveFormDataAsEDoc", "Document conversion for Form " + edoc.getFileName() + " failed.");
+		}
+		
+		return documentId;
+	}
+
+	public Path saveFormAsTempPdf(LoggedInInfo loggedInInfo, FormTransportContainer formTransportContainer ) {
+  		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", SecurityInfoManager.WRITE, null)) {
+			throw new RuntimeException("missing required security object (_edoc)");
+		}
+  		
+  		LogAction.addLogSynchronous(loggedInInfo, "FormsManager.saveFormAsTempPdf", "" );
+  		
+		return ConvertToEdoc.saveAsTempPDF(formTransportContainer);
+	}
+
 }
+

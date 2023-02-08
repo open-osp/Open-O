@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,12 +25,14 @@ package org.oscarehr.hospitalReportManager;
 
 
 import com.itextpdf.text.Element;
-import com.lowagie.text.*;
-import com.lowagie.text.Font;
-import com.lowagie.text.pdf.*;
-import org.apache.log4j.Logger;
+import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.pdf.*;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.hospitalReportManager.dao.HRMDocumentDao;
+
 import org.oscarehr.hospitalReportManager.dao.HRMProviderConfidentialityStatementDao;
+
 import org.oscarehr.hospitalReportManager.model.HRMDocument;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -48,7 +50,9 @@ public class HRMPDFCreator extends PdfPageEventHelper {
     private Document document;
     private LoggedInInfo loggedInInfo;
 
+
     public HRMPDFCreator(OutputStream outputStream, Integer hrmId, LoggedInInfo loggedInInfo) {
+
         //Gets the HRMDocumentDao
         HRMDocumentDao hrmDocumentDao = SpringUtils.getBean(HRMDocumentDao.class);
         //Stores the output stream and hrmId
@@ -57,7 +61,9 @@ public class HRMPDFCreator extends PdfPageEventHelper {
 
         try {
             //Gets the HRMDocument by the provided Id
+
             List<HRMDocument> hrmDocuments = hrmDocumentDao.findById(hrmId);
+
             //If the list is not null and it has items in it
             if (hrmDocuments != null && hrmDocuments.size() > 0) {
                 hrmDocument =  hrmDocuments.get(0);
@@ -103,8 +109,7 @@ public class HRMPDFCreator extends PdfPageEventHelper {
                 //Sets the margins to 0 so that the entire page is used
                 document.setMargins(0, 0, 0, 0);
                 document.open();
-
-                
+      
                 //Add confidentiality statement to PDF
                 float footerHeight = 0f;
                 HRMProviderConfidentialityStatementDao hrmProviderConfidentialityStatementDao = SpringUtils.getBean(HRMProviderConfidentialityStatementDao.class);
@@ -138,22 +143,25 @@ public class HRMPDFCreator extends PdfPageEventHelper {
 
                     footerHeight += confidentialityStatementTable.getTotalHeight() + 5;
                 }
-                
+
                 //Translates the binary content into an image
                 Image image = Image.getInstance(hrmReport.getBinaryContent());
                 //Scales the image in case one of the dimensions is bigger than the document
+
                 image.scaleToFit(document.getPageSize().getWidth(), document.getPageSize().getHeight() - footerHeight);
-                
+
                 //Checks if the scaled width is bigger than the document width and that the height can fit the width
                 if (image.getScaledWidth() >= document.getPageSize().getWidth() && image.getScaledHeight() <= document.getPageSize().getWidth()) {
                     //Rotates the image 90 degrees so that it displays portrait style on the document
                     image.setRotationDegrees(90);
                     //Rescales the image so that it fits the page better
+
                     image.scaleToFit(document.getPageSize().getWidth(), document.getPageSize().getHeight() - footerHeight);
+
                 }
                 
                 document.add(image);
-                
+
                 if (confidentialityStatementTable != null) {
                     //Adds the table to the document
                     document.add(confidentialityStatementTable);
@@ -234,7 +242,7 @@ public class HRMPDFCreator extends PdfPageEventHelper {
         cell.setPhrase(new Phrase(hrmReport.getFirstReportTextContent(), font));
         mainPage.addCell(cell);
         mainPage.addCell(space);
-        
+
         //Add confidentiality statement to PDF
         HRMProviderConfidentialityStatementDao hrmProviderConfidentialityStatementDao = SpringUtils.getBean(HRMProviderConfidentialityStatementDao.class);
         String confidentialityStatement = hrmProviderConfidentialityStatementDao.getConfidentialityStatementForProvider(loggedInInfo.getLoggedInProviderNo());
@@ -280,6 +288,7 @@ public class HRMPDFCreator extends PdfPageEventHelper {
         metaDataBox.addCell(cell);
 
         cell.setPhrase(new Phrase(HRMReportParser.getAppropriateDateStringFromReport(hrmReport), font));
+
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         metaDataBox.addCell(cell);
 

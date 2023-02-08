@@ -47,6 +47,13 @@ public class MeasurementsExtDao extends AbstractDao<MeasurementsExt>{
 
 		return rs;
 	}
+
+	public List<MeasurementsExt> getMeasurementsExtListByMeasurementIdList(List<Integer> measurementIdList) {
+		String queryStr = "select m FROM MeasurementsExt m WHERE m.measurementId IN (?1) order by m.measurementId";
+		Query q = entityManager.createQuery(queryStr);
+		q.setParameter(1, measurementIdList);
+		return q.getResultList();
+	}
 	
 	public MeasurementsExt getMeasurementsExtByMeasurementIdAndKeyVal(Integer measurementId, String keyVal) {
 		String queryStr = "select m FROM MeasurementsExt m WHERE m.measurementId = ?1 AND m.keyVal = ?2";
@@ -86,5 +93,16 @@ public class MeasurementsExtDao extends AbstractDao<MeasurementsExt>{
 		List<MeasurementsExt> rs = q.getResultList();
 		
 		return rs;
+	}
+
+	/**
+	 *  Find an example of a single measurement id where the LOINC identifier is
+	 *  NOT mapped in OSCAR's measurement map.
+	 */
+	public List<Integer> findUnmappedMeasuremntIds(List<String> excludeList) {
+		String queryStr = "SELECT MAX(m.measurementId) FROM MeasurementsExt m WHERE m.keyVal LIKE 'identifier' AND m.val NOT IN (?1)";
+		Query q = entityManager.createQuery(queryStr);
+		q.setParameter(1, excludeList);
+		return q.getResultList();
 	}
 }

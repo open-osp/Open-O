@@ -45,7 +45,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.PMmodule.service.AdmissionManager;
 import org.oscarehr.PMmodule.service.ProgramManager;
@@ -1011,6 +1011,14 @@ public class NotesService extends AbstractServiceImpl {
 			cme.setKeyVal(NoteExtTo1.PROBLEMDESC);
 			cme.setDateValue((Date) null);
 			cme.setValue(noteExt.getProblemDesc());
+			caseManagementMgr.saveNoteExt(cme);
+		}
+		
+		if(noteExt.getProcedure()!=null){
+			cme.setNoteId(newNoteId);
+			cme.setKeyVal(NoteExtTo1.PROCEDURE);
+			cme.setDateValue((Date) null);
+			cme.setValue(noteExt.getProcedure());
 			caseManagementMgr.saveNoteExt(cme);
 		}
 		

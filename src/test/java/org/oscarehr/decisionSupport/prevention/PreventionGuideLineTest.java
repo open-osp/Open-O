@@ -26,7 +26,7 @@ package org.oscarehr.decisionSupport.prevention;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.drools.RuleBase;
 
 import org.junit.Test;

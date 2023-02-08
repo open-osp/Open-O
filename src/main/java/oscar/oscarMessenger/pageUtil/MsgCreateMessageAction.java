@@ -32,6 +32,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -46,8 +48,6 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
-import com.google.gson.Gson;
 
 import oscar.oscarMessenger.data.ContactIdentifier;
 import oscar.oscarMessenger.data.MsgProviderData;
@@ -156,7 +156,8 @@ public class MsgCreateMessageAction extends Action {
 			request.setAttribute("messageBody", form.getMessage());
 			request.setAttribute("demographic_no", form.getDemographic_no());
 			List<ContactIdentifier> replyList = MessagingManager.createContactIdentifierList(form.getProvider());
-			request.setAttribute("replyList", new Gson().toJson(replyList));
+            JSONArray jsonArray = new JSONArray();
+			request.setAttribute("replyList", jsonArray.addAll(replyList));
 	    	return mapping.findForward("error");
     }
 

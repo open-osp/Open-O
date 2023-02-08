@@ -1,0 +1,1 @@
+insert into appointment_status (status, description, color, icon, active,editable) values ('h','Confirmed','#2fcccf','thumb.png',true,false);

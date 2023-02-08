@@ -33,7 +33,7 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.model.Hl7Obx;
 import org.oscarehr.billing.CA.BC.model.Hl7Orc;
 import org.oscarehr.billing.CA.BC.model.Hl7Pid;

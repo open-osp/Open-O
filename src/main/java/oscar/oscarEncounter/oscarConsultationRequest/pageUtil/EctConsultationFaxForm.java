@@ -31,6 +31,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
+import org.oscarehr.fax.core.FaxAccount;
+import org.oscarehr.fax.core.FaxRecipient;
 
 import net.sf.json.JSONObject;
 
@@ -50,6 +52,7 @@ public final class EctConsultationFaxForm extends ActionForm {
     private Set<FaxRecipient> allFaxRecipients;
     private Set<FaxRecipient> copiedTo;
     private HttpServletRequest request;
+	private FaxAccount sender;
     
 	public String getRecipient() {
 		return recipient;
@@ -137,10 +140,8 @@ public final class EctConsultationFaxForm extends ActionForm {
 		if(copiedTo == null) {
 			copiedTo = new HashSet<FaxRecipient>();
 			for(String faxRecipient : getFaxRecipients()) {
-				JSONObject jsonObject = JSONObject.fromObject(faxRecipient);
-				String fax = jsonObject.getString("fax");
-				String name = jsonObject.getString("name");
-				copiedTo.add(new FaxRecipient(name, fax));
+				JSONObject jsonObject = JSONObject.fromObject("{" + faxRecipient + "}");
+				copiedTo.add(new FaxRecipient(jsonObject));
 			}
 		}
 		return copiedTo;
@@ -151,5 +152,17 @@ public final class EctConsultationFaxForm extends ActionForm {
 	}
 	public void setRequest(HttpServletRequest request) {
 		this.request = request;
+	}
+
+	public FaxAccount getSender() {
+		if(sender == null) {
+			sender = new FaxAccount();
+		}
+
+		sender.setFax(getSendersFax());
+		sender.setLetterheadName(getFrom());
+		sender.setPhone(getSendersPhone());
+
+		return sender;
 	}
 }

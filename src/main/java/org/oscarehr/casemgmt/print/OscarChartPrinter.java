@@ -25,7 +25,6 @@
 
 package org.oscarehr.casemgmt.print;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -39,6 +38,9 @@ import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
+
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.casemgmt.dao.CaseManagementIssueDAO;
@@ -72,23 +74,6 @@ import oscar.OscarProperties;
 import oscar.SxmlMisc;
 import oscar.oscarClinic.ClinicData;
 import oscar.oscarDemographic.data.DemographicRelationship;
-
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.HeaderFooter;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfPageEventHelper;
-import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * This will create a PDF + assemble e-forms,documents,labs into a package
@@ -212,10 +197,8 @@ public class OscarChartPrinter {
         }
 
         //Header will be printed at top of every page beginning with p2
-        Phrase headerPhrase = new Phrase(LEADING, headerTitle, boldFont);
-        HeaderFooter header = new HeaderFooter(headerPhrase,false);
-        header.setAlignment(HeaderFooter.ALIGN_CENTER);
-        document.setHeader(header);
+        Phrase headerPhrase = new Phrase(LEADING, title, font);
+        document.addHeader("", headerPhrase.getContent());
 
         getDocument().add(headerPhrase);
         getDocument().add(new Phrase("\n"));
@@ -262,7 +245,7 @@ public class OscarChartPrinter {
 
         //Write title with top and bottom borders on p1
         cb = writer.getDirectContent();
-        cb.setColorStroke(new Color(0,0,0));
+        cb.setColorStroke(new BaseColor(0,0,0));
         cb.setLineWidth(0.5f);
 
         cb.moveTo(document.left(), document.top() - (font.getCalculatedLeading(LINESPACING)*5f));

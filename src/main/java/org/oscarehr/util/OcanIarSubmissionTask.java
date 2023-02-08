@@ -26,7 +26,7 @@ package org.oscarehr.util;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.FacilityDao;
 import org.oscarehr.common.model.Facility;
 import org.oscarehr.web.OcanReportUIBean;

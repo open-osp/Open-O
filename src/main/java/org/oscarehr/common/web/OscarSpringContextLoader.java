@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 import org.springframework.beans.BeanUtils;
@@ -36,13 +36,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
-import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import oscar.OscarProperties;
 
-public final class OscarSpringContextLoader extends ContextLoader {
+public final class OscarSpringContextLoader extends ContextLoaderListener {
 	
 	private static final Logger log = MiscUtils.getLogger();
 	private static final String CONTEXTNAME = "classpath:applicationContext";
@@ -51,7 +51,7 @@ public final class OscarSpringContextLoader extends ContextLoader {
 	@Override
     protected WebApplicationContext createWebApplicationContext(ServletContext servletContext, ApplicationContext parent) throws BeansException {
 		String contextClassName = servletContext.getInitParameter(CONTEXT_CLASS_PARAM);
-
+		log.info("Creating Spring context");
         Class<?> contextClass;
         if (contextClassName != null) {
 			try {
@@ -100,7 +100,9 @@ public final class OscarSpringContextLoader extends ContextLoader {
 		wac.setConfigLocations(configLocations.toArray(new String[0]));
 		wac.refresh();
 		
-        if (SpringUtils.beanFactory==null) SpringUtils.beanFactory=wac;
+        if (SpringUtils.getBeanFactory() == null) {
+			SpringUtils.setBeanFactory(wac);
+		}
         
 		return wac;
 	}

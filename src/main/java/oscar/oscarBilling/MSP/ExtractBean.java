@@ -35,7 +35,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.dao.LogTeleplanTxDao;
 import org.oscarehr.billing.CA.BC.model.LogTeleplanTx;
 import org.oscarehr.common.dao.BillingDao;

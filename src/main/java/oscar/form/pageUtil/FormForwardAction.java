@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.CharEncoding;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -48,8 +48,8 @@ import oscar.form.data.FrmData;
 
 public class FormForwardAction extends Action {
 	
-	private static Logger logger = MiscUtils.getLogger();
-	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+	private final Logger logger = MiscUtils.getLogger();
+	private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	
 	/**
 	 * forward to the current specified form, e.g. ../form/formar.jsp?demographic_no=
@@ -97,6 +97,21 @@ public class FormForwardAction extends Action {
 		    {
 		    	formPath[0] = formPath[0].replace("?demographic_no=", "");
 		    }
+
+			if(formPath[0].endsWith("?demographicNo="))
+			{
+				formPath[0] = formPath[0].replace("?demographicNo=", "");
+			}
+
+			if(formPath[0].endsWith("&demographic_no="))
+			{
+				formPath[0] = formPath[0].replace("&demographic_no=", "");
+			}
+
+			if(formPath[0].endsWith("&demographicNo="))
+			{
+				formPath[0] = formPath[0].replace("&demographicNo=", "");
+			}
 		} 
 		catch (SQLException e) 
 		{
@@ -151,11 +166,18 @@ public class FormForwardAction extends Action {
 		{
 			redirect.addParameter("warning", "history");
 		}
-		
-		redirect.addParameter("remoteFacilityId", remoteFacilityIdString);		
-		redirect.addParameter("appointmentNo", appointmentNo);
-		redirect.addParameter("provNo", provNo);
-				
+
+		if(remoteFacilityIdString != null && ! remoteFacilityIdString.isEmpty()) {
+			redirect.addParameter("remoteFacilityId", remoteFacilityIdString);
+		}
+
+		if(appointmentNo != null && ! appointmentNo.isEmpty()) {
+			redirect.addParameter("appointmentNo", appointmentNo);
+		}
+		if(provNo != null && ! provNo.isEmpty()) {
+			redirect.addParameter("provNo", provNo);
+		}
+
 		return redirect;
 	}
 

@@ -9,29 +9,35 @@
 
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.oscarehr.common.dao.ClinicDAO;
 import org.oscarehr.common.dao.FaxClientLogDao;
 import org.oscarehr.common.dao.FaxConfigDao;
 import org.oscarehr.common.dao.FaxJobDao;
+import org.oscarehr.common.model.Clinic;
 import org.oscarehr.common.model.FaxClientLog;
 import org.oscarehr.common.model.FaxConfig;
 import org.oscarehr.common.model.FaxJob;
-import org.oscarehr.fax.util.PdfCoverPageCreator;
+import org.oscarehr.fax.core.FaxAccount;
+import org.oscarehr.fax.core.FaxRecipient;
+
+import org.oscarehr.managers.FaxManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -46,7 +52,6 @@ import oscar.oscarLab.ca.all.pageUtil.LabPDFCreator;
 import oscar.oscarLab.ca.on.CommonLabResultData;
 import oscar.oscarLab.ca.on.LabResultData;
 import oscar.util.ConcatPDF;
-
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.DocumentException;
 import com.sun.xml.messaging.saaj.util.ByteInputStream;
@@ -59,6 +64,8 @@ public class EctConsultationFormFaxAction extends Action {
     private static FaxClientLogDao faxClientLogDao = SpringUtils.getBean(FaxClientLogDao.class);
 	private static FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);				
 	private static FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
+	private static FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
+	private static ClinicDAO clinicDAO = SpringUtils.getBean(ClinicDAO.class);
     
 	public EctConsultationFormFaxAction() {
 	}
@@ -79,6 +86,19 @@ public class EctConsultationFormFaxAction extends Action {
 		String faxNumber = ectConsultationFaxForm.getSendersFax();
 		String consultResponsePage = request.getParameter("consultResponsePage");
 		boolean doCoverPage = ectConsultationFaxForm.isCoverpage();
+		String note = "";
+		if( doCoverPage ) {
+			note = request.getParameter("note") == null ? "" : request.getParameter("note");
+			// dont ask!
+			if (note.isEmpty()) {
+				note = ectConsultationFaxForm.getComments();
+			}
+		}
+		FaxAccount sender = ectConsultationFaxForm.getSender();
+		Clinic clinic = clinicDAO.getClinic();
+		sender.setSubText(clinic.getClinicName());
+		sender.setAddress(clinic.getClinicAddress());
+		sender.setFacilityName(clinic.getClinicName());
 
 		ArrayList<EDoc> docs;
 		if (consultResponsePage==null) {
@@ -110,22 +130,6 @@ public class EctConsultationFormFaxAction extends Action {
 		String error = "";
 		Exception exception = null;
 		try {
-			
-			if( doCoverPage ) {
-				String note = request.getParameter("note") == null ? "" : request.getParameter("note");
-				// dont ask!
-				if( note.isEmpty() ) {
-					note = ectConsultationFaxForm.getComments();
-				}
-				
-				PdfCoverPageCreator pdfCoverPageCreator = new PdfCoverPageCreator(note);
-				
-				buffer = pdfCoverPageCreator.createCoverPage();
-				bis = new ByteInputStream(buffer, buffer.length);
-				streams.add(bis);
-				pdfDocumentList.add(bis);
-				
-			}
 
 			if (consultResponsePage==null) { //fax for consultation request
 				bos = new ByteOutputStream();
@@ -194,21 +198,22 @@ public class EctConsultationFormFaxAction extends Action {
 				// Writing consultation request to disk as a pdf.
 				String faxPath = path;
 				String filename = "Consult_" + reqId + System.currentTimeMillis() + ".pdf";
-				String faxPdf = String.format("%s%s", faxPath, filename);
-				
-				FileOutputStream fos = new FileOutputStream(faxPdf);				
-				ConcatPDF.concat(pdfDocumentList, fos);				
-				fos.close();
-				
-				PdfReader pdfReader = new PdfReader(faxPdf);
-				int numPages = pdfReader.getNumberOfPages();
-				pdfReader.close();
+//				String faxPdf = String.format("%s%s%s", faxPath, File.separator, filename);
+				Path faxPdf = Paths.get(faxPath, filename);
+				try(FileOutputStream pdfOut = new FileOutputStream(faxPdf.toString())) {
+					ConcatPDF.concat(pdfDocumentList, pdfOut);
+				}
 
+				Path pdfToFax;
 				List<FaxConfig> faxConfigs = faxConfigDao.findAll(null, null);
 				boolean validFaxNumber;
-				
-				for (FaxRecipient faxRecipient : ectConsultationFaxForm.getAllFaxRecipients()) {	
-					
+				int count = 0;
+				Set<FaxRecipient> faxRecipients = ectConsultationFaxForm.getAllFaxRecipients();
+				for (FaxRecipient faxRecipient : faxRecipients) {
+
+					// reset target pdf.
+					pdfToFax = faxPdf;
+
 				    String faxNo = faxRecipient.getFax();
 				    
 				    if(faxNo == null) {
@@ -228,20 +233,17 @@ public class EctConsultationFormFaxAction extends Action {
 				    FaxJob faxJob = new FaxJob();
 		    		faxJob.setDestination(faxNo);
 		    		faxJob.setRecipient(faxRecipient.getName());
-		    		faxJob.setFile_name(filename);
-		    		faxJob.setNumPages(numPages);
 		    		faxJob.setFax_line(faxNumber);
 		    		faxJob.setStamp(new Date());
 		    		faxJob.setOscarUser(provider_no);
 		    		faxJob.setDemographicNo(Integer.parseInt(demoNo));
 				    
 				    inner : for( FaxConfig faxConfig : faxConfigs ) {
-				    	
 				    	if( faxConfig.getFaxNumber().equals(faxNumber) ) {
 				    						    		
 				    		faxJob.setStatus(FaxJob.STATUS.WAITING);
 				    		faxJob.setUser(faxConfig.getFaxUser());
-				    
+							sender.setFaxNumberOwner(faxConfig.getAccountName());
 				    		validFaxNumber = true;
 				    		break inner;
 				    	}
@@ -250,22 +252,40 @@ public class EctConsultationFormFaxAction extends Action {
 				    if( !validFaxNumber ) {
 				    	
 				    	faxJob.setStatus(FaxJob.STATUS.ERROR);
+				    	faxJob.setStatusString("Document outgoing fax number '"+faxNumber+"' is invalid.");
 				    	logger.error("PROBLEM CREATING FAX JOB", new DocumentException("Document outgoing fax number '"+faxNumber+"' is invalid."));
 				    }
 				    else {
 				    	// redundant, but, what the heck!
 				    	faxJob.setStatus(FaxJob.STATUS.WAITING);
 				    }
-				    				    
+
+					//todo rethink this process.  It takes up too much disc space.
+					if( doCoverPage ) {
+						pdfToFax = faxManager.addCoverPage(loggedInInfo, note, faxRecipient, sender, faxPdf);
+
+						// delete the source file to save some disc space
+						if(count == (faxRecipients.size() -1)) {
+							Files.deleteIfExists(faxPdf);
+						}
+					}
+
+					int numPages = EDocUtil.getPDFPageCount(pdfToFax.toString());
+
+					faxJob.setFile_name(pdfToFax.getFileName().toString());
+					faxJob.setNumPages(numPages);
+
 				    faxJobDao.persist(faxJob);
 				    
 				    // start up a log track each time the CLIENT was run.
 					FaxClientLog faxClientLog = new FaxClientLog();
-					faxClientLog.setFaxId(faxJob.getId()+""); // IMPORTANT! this is the id of the FaxJobID from the Faxes table. A 1:1 cardinality.
+					faxClientLog.setFaxId(faxJob.getId()); // IMPORTANT! this is the id of the FaxJobID from the Faxes table. A 1:1 cardinality.
 					faxClientLog.setProviderNo(faxJob.getOscarUser()); // the provider that sent this fax
 					faxClientLog.setStartTime(new Date(System.currentTimeMillis())); // the exact time the fax was sent
-					faxClientLog.setRequestId(reqId);
-					faxClientLogDao.persist(faxClientLog);    
+					faxClientLog.setRequestId(Integer.parseInt(reqId));
+					faxClientLogDao.persist(faxClientLog);
+
+					count++;
 				}
 
 				LogAction.addLog(provider_no, LogConst.SENT, LogConst.CON_FAX, "CONSULT "+ reqId);
@@ -280,9 +300,8 @@ public class EctConsultationFormFaxAction extends Action {
 			error = "IOException";
 			exception = ioe;
 		} catch (com.lowagie.text.DocumentException e) {
-			error = "DocumentException";
-			exception = e;
-		} finally { 
+			logger.error("error", e);
+		} finally {
 			// Cleaning up InputStreams created for concatenation.
 			for (InputStream is : streams) {
 				try {
@@ -298,5 +317,5 @@ public class EctConsultationFormFaxAction extends Action {
 			return mapping.findForward("error");
 		}
 		return null;		
-    }   
+    }
 }

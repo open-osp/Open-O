@@ -32,7 +32,7 @@
 package oscar.oscarSurveillance;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.oscarehr.util.MiscUtils;
 

@@ -1,0 +1,23 @@
+<%@page import="net.sf.json.JSONObject"%>
+<%@page import="net.sf.json.JSONArray"%>
+<%@page import="net.sf.json.JSONSerializer"%>
+<%@page import="org.oscarehr.common.model.ProfessionalSpecialist"%>
+<%@page import="java.util.List"%>
+<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao"%><%
+	ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao)SpringUtils.getBean("professionalSpecialistDao");
+
+	String search_keyword = request.getParameter("keyword");
+	List<ProfessionalSpecialist> professionalSpecialists = professionalSpecialistDao.search( search_keyword );
+
+	
+
+	if(professionalSpecialists != null) {
+	    response.setContentType("text/x-json");
+
+	    JSONArray x = JSONArray.fromObject(professionalSpecialists);
+
+	    
+	    x.write(out);
+	}
+%>

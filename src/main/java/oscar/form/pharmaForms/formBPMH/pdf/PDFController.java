@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
+ * Copyright (c) 2015-2019. The Pharmacists Clinic, Faculty of Pharmaceutical Sciences, University of British Columbia. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,10 +16,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * This software was written for the
- * Department of Family Medicine
- * McMaster University
- * Hamilton
- * Ontario, Canada
+ * The Pharmacists Clinic
+ * Faculty of Pharmaceutical Sciences
+ * University of British Columbia
+ * Vancouver, British Columbia, Canada
  */
 package oscar.form.pharmaForms.formBPMH.pdf;
 
@@ -36,16 +36,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.AcroFields;
-import com.lowagie.text.pdf.AcroFields.Item;
-import com.lowagie.text.pdf.PdfDictionary;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.AcroFields.Item;
+import com.itextpdf.text.pdf.PdfDictionary;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 
 /*
 FIELD_TYPE_CHECKBOX 	2
@@ -151,7 +152,7 @@ public class PDFController {
 				this.pdfreader = reader;
 			}
 		} catch (IOException e) {
-			_Logger.log(Level.FATAL, null, e);
+			_Logger.log(Level.FATAL, e);
 		}
 
 	}
@@ -240,8 +241,6 @@ public class PDFController {
 	 * extract the property values from a POJO Object.
 	 * 
 	 * Assuming that the pdf input path has been preset.
-	 * 
-	 * @param data : data object that contains data.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addDataToPDF() {
@@ -317,9 +316,7 @@ public class PDFController {
 	 * has been set on instantiation.
 	 * 
 	 * See test class with same name for example.
-	 * 
-	 * @param Data : object or bean containing data to stamp.
-	 * @param Pages : page numbers to stamp data onto
+	 *
 	 * @param fileId : An id, such as demographic number, to identify the file.
 	 */
 	public void writeDataToPDF( Object data, String[] pages, String fileId ) {
@@ -342,9 +339,6 @@ public class PDFController {
 	 * PDF should be preset with instantiation of this class.
 	 * 
 	 * See test class with same name for example.
-	 * 
-	 * @param Data : object or bean containing data to stamp.
-	 * @param Pages : page numbers to stamp data onto
 	 * @param outPath : outPut path for completed PDF.
 	 * @param pdfPath : the absolute path to an editable pdf template. 
 	 */
@@ -400,19 +394,19 @@ public class PDFController {
 				getStamper().setFreeTextFlattening(true);
 
 			} catch (FileNotFoundException e1) {
-				_Logger.log(Level.FATAL, null, e1);
+				_Logger.log(Level.FATAL,e1);
 			} catch (DocumentException e1) {
-				_Logger.log(Level.FATAL, null, e1);
+				_Logger.log(Level.FATAL, e1);
 			} catch (IOException e1) {
-				_Logger.log(Level.FATAL, null, e1);
+				_Logger.log(Level.FATAL, e1);
 			} finally {	
 				if(getStamper() != null) {
 					try {
 						getStamper().close();
 					} catch (DocumentException e) {
-						_Logger.log(Level.FATAL, null, e);
+						_Logger.log(Level.FATAL, e);
 					} catch (IOException e) {
-						_Logger.log(Level.FATAL, null, e);
+						_Logger.log(Level.FATAL, e);
 					}
 				}
 			}
@@ -555,8 +549,7 @@ public class PDFController {
 	 * This method will return data 2 methods deep from the 
 	 * Method Map and POJO Object set in current Object state.  
 	 * ie: demographic.phoneNumber
-	 * 
-	 * @param key
+	 *
 	 * @return
 	 */
 	public String invokeValue(String methodName) {
@@ -571,7 +564,6 @@ public class PDFController {
 
 	/**
 	 * String return values only.
-	 * @param <E>
 	 * @param methodName
 	 * @param methodMap
 	 * @param data

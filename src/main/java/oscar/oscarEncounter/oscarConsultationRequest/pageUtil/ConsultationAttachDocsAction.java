@@ -60,7 +60,7 @@ public class ConsultationAttachDocsAction extends DispatchAction {
         List<LabResultData> attachedLabs = commonLabResultData.populateLabResultsData(loggedInInfo, demographicNo, requestId, CommonLabResultData.ATTACHED);
         List<String> attachedDocumentIds = new ArrayList<String>();
         List<String> attachedLabIds = new ArrayList<String>();
-        
+
         if(attachedDocuments != null) {      	
         	for(EDoc document : attachedDocuments) {
         		attachedDocumentIds.add(document.getDocId());

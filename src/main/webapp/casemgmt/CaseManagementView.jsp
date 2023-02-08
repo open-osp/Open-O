@@ -37,11 +37,11 @@
 <%@page import="org.springframework.web.context.WebApplicationContext"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@ page import="oscar.OscarProperties"%>
-<%@ page import="org.apache.log4j.Logger"%>
+<%@ page import="org.apache.logging.log4j.Logger"%>
 <%@page import="org.oscarehr.casemgmt.web.CaseManagementViewAction"%>
 <%@page import="org.oscarehr.casemgmt.web.NoteDisplay"%>
 <%
-	Logger logger=Logger.getLogger("CaseManagementView.jsp");
+	Logger logger=org.oscarehr.util.MiscUtils.getLogger();
 	
 	@SuppressWarnings("unchecked")
 	java.util.List<NoteDisplay> noteList=(java.util.List<NoteDisplay>)request.getAttribute("Notes");

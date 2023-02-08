@@ -24,10 +24,10 @@
 
 --%>
 
-<%@page import="java.util.HashMap, oscar.log.*"
-	errorPage="errorpage.jsp"%>
+<%@page import="oscar.log.*"%>
 <%
-  if(oscar.oscarSecurity.CRHelper.isCRFrameworkEnabled()) net.sf.cookierevolver.CRFactory.getManager().recordLogout(request);
+//  if(oscar.oscarSecurity.CRHelper.isCRFrameworkEnabled()) net.sf.cookierevolver.CRFactory.getManager().recordLogout(request);
+//
   if(session != null) {
     Object user = session.getAttribute("user");
     if (user != null) {

@@ -29,7 +29,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -59,7 +59,7 @@ import cdsDt.ResidualInformation.DataElement;
  */
 public class EaapsExportAction extends Action {
 
-	private static Logger logger = Logger.getLogger(EaapsExportAction.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private boolean debugEnabled = Boolean.parseBoolean(OscarProperties.getInstance().getProperty("eaaps.debug", "false"));
 	

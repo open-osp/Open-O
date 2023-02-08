@@ -26,7 +26,7 @@ package org.oscarehr.PMmodule.web.reports.custom;
 import java.io.File;
 
 import org.apache.commons.digester.Digester;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 
 public class UCRConfigurationManager {

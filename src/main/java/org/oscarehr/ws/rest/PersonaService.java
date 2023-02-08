@@ -38,7 +38,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import oscar.OscarProperties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.Dashboard;

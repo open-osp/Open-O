@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -50,7 +50,7 @@ import oscar.log.LogAction;
 @Component
 public class WebServiceLoggingAdvice {
 
-	private static Logger logger = Logger.getLogger(WebServiceLoggingAdvice.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	@Pointcut("execution(public * org.oscarehr.ws.rest.*.*(..))")
 	public void pointcut() {

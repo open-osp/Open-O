@@ -31,7 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -127,7 +127,7 @@ public class EctConAddSpecialistAction extends Action {
 
 	private boolean referralNoValid(String referralNo) {
 		
-		String pattern = OscarProperties.getInstance().getProperty("referral_no.pattern", "^\\d+$");
+		String pattern = OscarProperties.getInstance().getProperty("referral_no.pattern", "^[a-zA-Z0-9]*$");
 		
 		try {
 			if (referralNo.matches(pattern))
@@ -143,6 +143,7 @@ public class EctConAddSpecialistAction extends Action {
 		professionalSpecialist.setFirstName(addSpecailistForm.getFirstName());
 		professionalSpecialist.setLastName(addSpecailistForm.getLastName());
 		professionalSpecialist.setProfessionalLetters(addSpecailistForm.getProLetters());
+
 		professionalSpecialist.setStreetAddressFromForm(addSpecailistForm.getAddress());
 	
 		professionalSpecialist.setPhoneNumber(addSpecailistForm.getPhone());

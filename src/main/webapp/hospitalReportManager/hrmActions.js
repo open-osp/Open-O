@@ -1,9 +1,10 @@
 function addComment(reportId) {
-    var comment = jQuery("#commentField_" + reportId + "_hrm").val();
+    let comment = jQuery("#commentField_" + reportId + "_hrm").val();
+    let data = {method: "addComment", reportId: reportId, comment: comment};
     jQuery.ajax({
         type: "POST",
         url: contextpath+"/hospitalReportManager/Modify.do",
-        data: "method=addComment&reportId=" + reportId + "&comment=" + comment,
+        data: data,
         success: function(data) {
             if (data != null)
                 $("commentstatus" + reportId).innerHTML = data;
@@ -73,15 +74,23 @@ function makeIndependent(reportId) {
     });
 }
 
-function addDemoToHrm(reportId) {
+function addDemoToHrm(reportId, csrfToken) {
+    let headers = {};
+    if (typeof csrfToken !== 'undefined' && csrfToken !== null) {
+        headers = csrfToken;
+    }
     var demographicNo = $("demofind" + reportId + "hrm").value;
     jQuery.ajax({
         type: "POST",
         url:  contextpath +"/hospitalReportManager/Modify.do",
         data: "method=assignDemographic&reportId=" + reportId + "&demographicNo=" + demographicNo,
+        headers: headers,
         success: function(data) {
-            if (data != null) {
-                $("demostatus" + reportId).innerHTML = data;
+            if (data != null && data.indexOf('Success') !== -1) {
+                $("demostatus" + reportId).innerHTML = data + "<br/>" +
+                    $('autocompletedemo' + reportId + 'hrm').value.split('(')[0] +
+                    "<a href=\"#\" onclick=\"removeDemoFromHrm('" + reportId + "')\">(remove)</a>";
+                $('autocompletedemo' + reportId + 'hrm').hide();
                 toggleButtonBar(true,reportId);
             }
         }
@@ -97,14 +106,23 @@ function toggleButtonBar(show, reportId) {
 
 }
 
-function removeDemoFromHrm(reportId) {
+function removeDemoFromHrm(reportId, csrfToken) {
+    let headers = {};
+    if (typeof csrfToken !== 'undefined' && csrfToken !== null) {
+        headers = csrfToken;
+    }
     jQuery.ajax({
         type: "POST",
         url:  contextpath +"/hospitalReportManager/Modify.do",
         data: "method=removeDemographic&reportId=" + reportId,
+        headers: headers,
         success: function(data) {
-            if (data != null) {
-                $("demostatus" + reportId).innerHTML = data;
+            if (data != null && data.indexOf('Success') !== -1) {
+                $("demostatus" + reportId).innerHTML = data + "<br/>" +
+                    "<i>Not currently linked</i>";
+                $('autocompletedemo' + reportId + 'hrm').value = "";
+                $('autocompletedemo' + reportId + 'hrm').show();
+                $('demofind' + reportId + 'hrm').value = null;
                 toggleButtonBar(false,reportId);
             }
         }
@@ -156,11 +174,12 @@ function printHrm(hrmReportId){
 }
 
 function setDescription(reportId) {
-    var comment = jQuery("#descriptionField_" + reportId + "_hrm").val();
+    let comment = jQuery("#descriptionField_" + reportId + "_hrm").val();
+    let data = {method: "setDescription", reportId: reportId, description: comment};
     jQuery.ajax({
         type: "POST",
         url: contextpath+"/hospitalReportManager/Modify.do",
-        data: "method=setDescription&reportId=" + reportId + "&description=" + comment,
+        data: data,
         success: function(data) {
             if (data != null)
                 $("descriptionstatus" + reportId).innerHTML = data;
@@ -203,4 +222,31 @@ function updateCategory(reportId) {
         });
     }
 
+}
+
+function setupHrmDemoAutoCompletion(docId, csrfToken) {
+    if (jQuery("#autocompletedemo" + docId + "hrm")) {
+
+        let url = window.contextpath + "/demographic/SearchDemographic.do?jqueryJSON=true";
+        if (jQuery("#activeOnly" + docId + "hrm").is(":checked")) {
+            url = window.contextpath + "/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=true";
+        }
+
+        jQuery( "#autocompletedemo" + docId + "hrm" ).autocomplete({
+            source: url,
+            minLength: 2,
+            focus: function( event, ui ) {
+                jQuery( "#autocompletedemo" + docId + "hrm" ).val( ui.item.label);
+                return false;
+            },
+            select: function(event, ui) {
+                jQuery( "#autocompletedemo" + docId + "hrm").val(ui.item.label);
+                jQuery( "#demofind" + docId + "hrm").val(ui.item.value);
+                jQuery("routetodemo" + docId + "hrm").value = ui.item.value;
+
+                addDemoToHrm(docId, csrfToken);
+                return false;
+            }
+        });
+    }
 }

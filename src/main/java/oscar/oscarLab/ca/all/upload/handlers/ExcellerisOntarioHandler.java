@@ -29,7 +29,7 @@ import java.io.FileInputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.w3c.dom.Document;
@@ -42,7 +42,7 @@ import oscar.oscarLab.ca.all.upload.RouteReportResults;
 
 public class ExcellerisOntarioHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(ExcellerisOntarioHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {
 		Document doc = null;

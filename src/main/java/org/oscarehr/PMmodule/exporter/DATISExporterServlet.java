@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -45,7 +45,7 @@ public class DATISExporterServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -3152671093057808424L;
 
-	private static final Logger log = Logger.getLogger(DATISExporterServlet.class);
+	private static final Logger log = org.oscarehr.util.MiscUtils.getLogger();
 
 	private static final String RESPONSE_MIME_TYPE = "application/x-zip-compressed";
 	private static final String EXPORT_PATH = "WEB-INF/datisexport";

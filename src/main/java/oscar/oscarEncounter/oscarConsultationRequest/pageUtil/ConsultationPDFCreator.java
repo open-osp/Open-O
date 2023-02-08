@@ -21,7 +21,12 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Logger;
+
+import com.itextpdf.text.*;
+
+import com.itextpdf.text.pdf.*;
+import org.apache.logging.log4j.Logger;
+
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.DigitalSignatureDao;
@@ -31,24 +36,12 @@ import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.DigitalSignature;
 import org.oscarehr.common.model.ProfessionalSpecialist;
 import org.oscarehr.common.model.Site;
-import org.oscarehr.common.printing.FontSettings;
-import org.oscarehr.common.printing.PdfWriterFactory;
+import org.oscarehr.fax.core.FaxRecipient;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfPageEventHelper;
 import oscar.OscarProperties;
 import oscar.oscarClinic.ClinicData;
 import oscar.oscarRx.data.RxProviderData;
@@ -109,7 +102,8 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 
 		// Create the document we are going to write to
 		document = new Document();
-		PdfWriterFactory.newInstance( document, os, FontSettings.HELVETICA_10PT );
+		PdfWriter.getInstance(document, os);
+//		PdfWriterFactory.newInstance( document, os, FontSettings.HELVETICA_10PT );
 		document.setPageSize( PageSize.LETTER );
 		document.addTitle( getResource("msgConsReq") );
 		document.addCreator( "OSCAR" );
@@ -251,7 +245,7 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 		PdfPTable datelineborder = new PdfPTable(1);
 		datelineborder.setWidthPercentage(100f);
 		PdfPCell datecell = new PdfPCell();
-		datecell.setPhrase( new Phrase( String.format("%s %s", getResource("msgDate"), reqFrm.pwb.equals("1") ? getResource("pwb") : reqFrm.referalDate) ) ); 
+		datecell.setPhrase( new Phrase( String.format("%s %s", getResource("msgDate"), reqFrm.pwb.equals("1") ? getResource("pwb") : reqFrm.referalDate) ) );
 		datecell.setBorder(0);
 		datecell.setColspan(1);
 		datecell.setPaddingTop(5f);
@@ -266,6 +260,9 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 		return datelineborder;		
 	}
 
+	/**
+	 * @deprecated use the createLogo method in the ClinicLogoUtility at org.oscarehr.util
+	 */
 	private PdfPTable createLogoHeader() {
 
 		PdfPTable infoTable = new PdfPTable(1);
@@ -289,7 +286,6 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 			filename = props.getProperty("faxLogoInConsultation");	
 		}
 
-		//TODO: tiff, png, jpeg, epg, 
 		Path path = Paths.get(filename);
 		if(Files.exists(path))
 		{
@@ -322,7 +318,7 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 			logger.error("This image location is malformed " + filename, e);
 		} catch (IOException e) {
 			logger.error("Unexpected error.", e);
-		} 	
+		}
 	}
 
 	protected PdfPTable createReplyHeader( Integer alignment ) {
@@ -414,9 +410,9 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 		// add the address details
 		Phrase addressPhrase = new Phrase("");
 		if( reqFrm.letterheadAddress != null && reqFrm.letterheadAddress.trim().length() > 0 ) {
-			addressPhrase.add( String.format("%s", reqFrm.letterheadAddress) );
+			addressPhrase.add( reqFrm.getLetterheadAddress() );
 		} else {
-			addressPhrase.add( String.format("%s",clinic.getClinicAddress() ) );
+			addressPhrase.add( clinic.getClinicAddress() );
 			
 			addressPhrase.add(String.format("%s, %s. %s", clinic.getClinicCity(),
 					clinic.getClinicProvince(), 
@@ -429,13 +425,13 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 		// add the telecom info
 		Phrase telecomPhrase = new Phrase("");
 		if( reqFrm.letterheadPhone != null && reqFrm.letterheadPhone.trim().length() > 0 ) {
-			telecomPhrase.add( String.format("Phone: %s", reqFrm.letterheadPhone ) );
+			telecomPhrase.add( String.format("Phone: %s", reqFrm.getLetterheadPhone()) );
 		} else {
 			telecomPhrase.add( String.format("Phone: %s", clinic.getClinicPhone() ) );
 		}
 		
 		if( reqFrm.letterheadFax != null && reqFrm.letterheadFax.trim().length() > 0 ) {
-			telecomPhrase.add( String.format(" Fax: %s", reqFrm.letterheadFax ) );
+			telecomPhrase.add( String.format(" Fax: %s", reqFrm.getLetterheadFax() ) );
 		} else {
 			telecomPhrase.add( String.format(" Fax: %s", clinic.getClinicFax() ) );
 		}
@@ -595,7 +591,7 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 			infoTable.addCell(setDataCell(cell, divy(reqFrm.clinicalInformation)));
 		}
 
-		if(getlen(reqFrm.concurrentProblems) > 1) {
+		if(getlen(reqFrm.concurrentProblems) > 0) {
 			if (props.getProperty("significantConcurrentProblemsTitle", "")
 					.length() > 1) {
 				infoTable.addCell(setInfoCell(cell, props.getProperty("significantConcurrentProblemsTitle", ""), heading));

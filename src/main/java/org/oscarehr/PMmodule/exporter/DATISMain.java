@@ -28,13 +28,13 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.IntakeAnswer;
 import org.oscarehr.PMmodule.model.IntakeNode;
 
 public class DATISMain extends AbstractIntakeExporter {
 
-	private static final Logger log = Logger.getLogger(DATISMain.class);
+	private static final Logger log = org.oscarehr.util.MiscUtils.getLogger();
 	
 	private static final String FILE_PREFIX_MAIN = "Main";
 	private static final String FILE_PREFIX_GAMBLING = "GAMBLING";

@@ -20,7 +20,7 @@ package oscar.oscarProvider.data;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.BillCenterDao;
 import org.oscarehr.common.dao.ProviderBillCenterDao;
 import org.oscarehr.common.model.BillCenter;

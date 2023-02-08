@@ -42,7 +42,7 @@ import java.util.Random;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.SurveyDataDao;
 import org.oscarehr.common.model.SurveyData;
 import org.oscarehr.util.DbConnectionFilter;

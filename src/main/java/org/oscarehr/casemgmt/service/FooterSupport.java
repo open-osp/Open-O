@@ -23,8 +23,8 @@
  */
 package org.oscarehr.casemgmt.service;
 
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
 
 public class FooterSupport extends PdfPageEventHelper {
 

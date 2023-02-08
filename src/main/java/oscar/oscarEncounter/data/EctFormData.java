@@ -40,7 +40,7 @@ import java.util.List;
 import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.PMmodule.caisi_integrator.IntegratorFallBackManager;
 import org.oscarehr.caisi_integrator.ws.CachedDemographicForm;
@@ -206,6 +206,10 @@ public class EctFormData {
 
 				while (rs.next()) {
 					PatientForm frm = new PatientForm(formName, rs.getInt("ID"), rs.getInt("demographic_no"), rs.getDate("formCreated"), rs.getTimestamp("formEdited"));
+					
+					// identify the source table for this form
+					frm.setTable(table);
+					
 					forms.add(frm);
 				}
 			} else {
@@ -216,6 +220,10 @@ public class EctFormData {
 
 				while (rs.next()) {
 					PatientForm frm = new PatientForm(formName, rs.getInt("form_no"), rs.getInt("demographic_no"), rs.getDate("form_date"), rs.getDate("form_date"));
+					
+					// identify the source table for this form
+					frm.setTable(table);
+					
 					forms.add(frm);
 				}
 			}
@@ -341,6 +349,7 @@ public class EctFormData {
 		public Date edited;
 		public String formName;
 		public String jsp;
+		public String table;
 
 		// Constructor
 		public PatientForm(String formName, Integer formId, Integer demographicId, Date created, Date edited) {
@@ -386,6 +395,10 @@ public class EctFormData {
 		public String getFormName() {
 			return formName;
 		}
+		
+		public void setFormName(String formName) {
+			this.formName = formName;
+		}
 
 		public Integer getRemoteFacilityId() {
 			return (remoteFacilityId);
@@ -393,6 +406,21 @@ public class EctFormData {
 
 		public void setRemoteFacilityId(Integer remoteFacilityId) {
 			this.remoteFacilityId = remoteFacilityId;
+		}
+
+		/**
+		 * Get the database table name where this PatientForm is stored.
+		 * This table name can be used to fetch the form data.
+		 */
+		public String getTable() {
+			return table;
+		}
+
+		/**
+		 * Set the database table name where this PatientForm is stored.
+		 */
+		public void setTable(String table) {
+			this.table = table;
 		}
 
 	}

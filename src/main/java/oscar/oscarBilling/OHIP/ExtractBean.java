@@ -31,7 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.dao.BillingDetailDao;
 import org.oscarehr.billing.CA.model.BillingDetail;
 import org.oscarehr.common.dao.BillingDao;

@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -53,7 +53,7 @@ import oscar.util.UtilDateUtilities;
 
 public final class WLSetupDisplayWaitingListAction extends Action {
 
-	private Logger log = Logger.getLogger(WLSetupDisplayWaitingListAction.class);
+	private Logger log = org.oscarehr.util.MiscUtils.getLogger();
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,

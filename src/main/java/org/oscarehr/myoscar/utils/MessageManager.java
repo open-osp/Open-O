@@ -29,7 +29,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.myoscar_server.myoscar_server_client_stubs2.InvalidRequestException_Exception;
 import org.oscarehr.myoscar_server.myoscar_server_client_stubs2.MessageAndRecipientAtrributesTransfer;
 import org.oscarehr.myoscar_server.myoscar_server_client_stubs2.MessagePartTransfer;

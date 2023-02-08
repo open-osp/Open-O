@@ -23,6 +23,7 @@ Varicella Immunoglobulin	VarIg
 
 <preventions>
 	<!-- Immunizations -->
+
 	<item
 			resultDesc=""
 			desc="DTaP=Diphtheria, Tetanus, Acellular Pertussis - pediatric"
@@ -686,4 +687,3 @@ Varicella Immunoglobulin	VarIg
 			showIfMinRecordNum="1" />
 
 </preventions>
-

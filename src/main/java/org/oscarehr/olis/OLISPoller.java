@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.impl.cookie.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.Provider;
@@ -114,7 +114,7 @@ public class OLISPoller {
 						userPropertyDAO.getStringValue(provider.getProviderNo(),UserProperty.OFFICIAL_FIRST_NAME), 
 						userPropertyDAO.getStringValue(provider.getProviderNo(),UserProperty.OFFICIAL_SECOND_NAME));
 				providerQuery.setRequestingHic(zrp1);
-				String response = Driver.submitOLISQuery(null, providerQuery);
+				String response = Driver.submitOLISQuery(loggedInInfo, null, providerQuery);
 				if (!response.matches("<Request xmlns=\"http://www.ssha.ca/2005/HIAL\"><Content><![CDATA[.*]]></Content></Request>")) {
 					break;
 				}
@@ -168,7 +168,7 @@ public class OLISPoller {
 	    	orc21.setValue(6, 3, "X500");    	
 	    	facilityQuery.setOrderingFacilityId(orc21);
 	    	
-	    	String response = Driver.submitOLISQuery(null, facilityQuery);
+	    	String response = Driver.submitOLISQuery(loggedInInfo, null, facilityQuery);
 	    	if (!response.matches("<Request xmlns=\"http://www.ssha.ca/2005/HIAL\"><Content><![CDATA[.*]]></Content></Request>")) {
 				return;
 			}

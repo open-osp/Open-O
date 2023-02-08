@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.BillingONCHeader1Dao;
 import org.oscarehr.common.dao.RaDetailDao;
 import org.oscarehr.common.dao.RaHeaderDao;
@@ -45,7 +45,7 @@ import oscar.util.ConversionUtils;
 import oscar.util.UtilDateUtilities;
 
 public class JdbcBillingRAImpl {
-	private static final Logger _logger = Logger.getLogger(JdbcBillingRAImpl.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private RaDetailDao raDetailDao = SpringUtils.getBean(RaDetailDao.class);
 	private RaHeaderDao raHeaderDao = SpringUtils.getBean(RaHeaderDao.class);

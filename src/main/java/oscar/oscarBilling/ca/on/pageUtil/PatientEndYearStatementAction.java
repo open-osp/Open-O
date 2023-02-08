@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -58,7 +58,7 @@ import oscar.OscarDocumentCreator;
  */
 public class PatientEndYearStatementAction extends OscarAction {
 	
-	private static final Logger _logger = Logger.getLogger(BillingStatusPrep.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static final String RES_SUCCESS = "success";
 	private static final String RES_FAILURE = "failure";
 	

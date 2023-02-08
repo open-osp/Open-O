@@ -31,7 +31,7 @@ import java.util.List;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.net.util.TrustManagerUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.SurveillanceDataDao;
 import org.oscarehr.common.jobs.OscarRunnable;
 import org.oscarehr.common.model.Provider;

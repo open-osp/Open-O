@@ -197,13 +197,13 @@ window.onload = stripe;
                         boolean odd = true;
                         for(String s:list){
 
-                        	List<Hashtable<String,String>> codesHash = map.getMappedCodesFromLoincCodes(s);
+                        	List<HashMap<String,String>> codesHash = map.getMappedCodesFromLoincCodes(s);
                             String desc = "";
                             if (codesHash.size() > 0 ){
                                 desc = getDesc(codesHash.get(0));
                             }
-                            String mappings = getCodeMap(codesHash);
-                            Hashtable<String, Hashtable<String,String>> h = map.getMappedCodesFromLoincCodesHash(s);
+
+                            HashMap<String, HashMap<String,String>> h = map.getMappedCodesFromLoincCodesHash(s);
 
                             String measurement = getDisplay(h,"FLOWSHEET");
 
@@ -220,7 +220,6 @@ window.onload = stripe;
                             <td class="Cell" ><%=s%></td>
                             <td class="Cell" ><%=desc%></td>
                             <td class="Cell">&nbsp;</td>
-                            <%-- td class="Cell" ><%=mappings%></td --%>
 
                             <%for(String type:types){%>
                                 <td class="Cell" ><%=getDisplay(h,type)%></td>
@@ -248,8 +247,8 @@ window.onload = stripe;
                                     <ul>
                                     <li>test</li>
                                     <%
-                                    ArrayList<Hashtable<String,Object>> unList = map.getUnmappedMeasurements(type);
-                                    for (Hashtable<String,Object> h:unList){
+                                    ArrayList<HashMap<String,String>> unList = map.getUnmappedMeasurements(type);
+                                    for (HashMap<String,String> h:unList){
                                     %>
                                        <li><%=h.get(("name"))%></li>
                                     <%}%>
@@ -280,20 +279,20 @@ window.onload = stripe;
 
 
 
-  String getDesc(Hashtable<String,String> h){
+  String getDesc(HashMap<String,String> h){
       return h.get("name");
   }
 
-  String getDisplay(Hashtable<String, Hashtable<String,String>> h, String type){
-      Hashtable<String,String> data = h.get(type);
+  String getDisplay(HashMap<String, HashMap<String,String>> h, String type){
+      HashMap<String,String> data = h.get(type);
       if (data == null ){ return "&nbsp;";}
       return data.get("name")+": "+data.get("ident_code");
   }
 
-  String getCodeMap(List<Hashtable<String,String>> list){
+  String getCodeMap(List<HashMap<String,String>> list){
       StringBuffer sb = new StringBuffer();
 
-        for(Hashtable<String,String> h : list){
+        for(HashMap<String,String> h : list){
             sb.append(h.get("name")+" : "+h.get("lab_type")+"("+h.get("ident_code")+ ")   |  ");
         }
         return sb.toString();

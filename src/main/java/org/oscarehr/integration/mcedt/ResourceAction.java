@@ -33,7 +33,7 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -50,7 +50,7 @@ import ca.ontario.health.edt.TypeListResult;
 
 public class ResourceAction extends DispatchAction {
 
-	private static Logger logger = Logger.getLogger(ResourceAction.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	@Override
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, 

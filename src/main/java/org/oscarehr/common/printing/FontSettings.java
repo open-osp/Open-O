@@ -23,7 +23,7 @@
  */
 package org.oscarehr.common.printing;
 
-import com.lowagie.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.BaseFont;
 
 public class FontSettings {
 

@@ -22,7 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.util.UtilDateUtilities;
 import ca.uhn.hl7v2.HL7Exception;
@@ -39,7 +39,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class ICLHandler extends DefaultGenericHandler implements MessageHandler {
 
-    Logger logger = Logger.getLogger(ICLHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     ORU_R01 msg = null;
 
     /** Creates a new instance of ICLHandler */

@@ -26,14 +26,14 @@ package org.oscarehr.PMmodule.common;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.TagSupport;
 import org.oscarehr.PMmodule.model.Intake;
 import org.oscarehr.PMmodule.model.IntakeNode;
 import org.oscarehr.PMmodule.web.adapter.HtmlAdapterFactory;
 import org.oscarehr.PMmodule.web.adapter.IntakeNodeHtmlAdapter;
 
-public class IntakeTag extends SimpleTagSupport {
+public class IntakeTag extends TagSupport {
 
 	private int base;
 	private Intake intake;
@@ -51,9 +51,10 @@ public class IntakeTag extends SimpleTagSupport {
 		this.intake = intake;
 	}
 
-	@Override
+
 	public void doTag() throws JspException, IOException {
-		getJspContext().getOut().print(toHtml());
+		JspWriter out = super.pageContext.getOut();
+		out.write(toHtml());
 	}
 	
 	String toHtml() {

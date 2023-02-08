@@ -38,7 +38,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.commons.validator.EmailValidator;
 import oscar.OscarProperties;
 

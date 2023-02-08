@@ -20,13 +20,14 @@
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-	<!-- interceptors --> 
+	<!-- interceptors  --> 
 	<bean id="abstractLoggingInterceptor" abstract="true">
 		<property name="prettyLogging" value="true" />
 	</bean>
 	<bean id="loggingInInterceptor" class="org.apache.cxf.interceptor.LoggingInInterceptor" parent="abstractLoggingInterceptor">
 		<property name="limit" value="1024000" />
 	</bean>
+
 	<bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor" parent="abstractLoggingInterceptor" />
 
     <cxf:bus>
@@ -41,7 +42,7 @@
 			<ref bean="loggingOutInterceptor" />
 		</cxf:outInterceptors>
 		
-		<!-- logging interceptors -->
+		<!-- logging interceptors 
 		 
 		<cxf:inInterceptors>
 			<ref bean="loggingInInterceptor" />
@@ -53,6 +54,7 @@
 		<cxf:inFaultInterceptors>
 			<ref bean="loggingInInterceptor" />
 		</cxf:inFaultInterceptors>
+		-->
 		 
     </cxf:bus>
 
@@ -67,6 +69,12 @@
 	<jaxws:endpoint implementor="#loginWs" address="/LoginService" />	
 	
 	<jaxws:endpoint implementor="#scheduleWs" address="/ScheduleService">
+		<jaxws:inInterceptors>
+			<ref bean="authenticationInWSS4JInterceptor"/>
+		</jaxws:inInterceptors>
+	</jaxws:endpoint>	
+
+	<jaxws:endpoint implementor="#bookingWs" address="/BookingService">
 		<jaxws:inInterceptors>
 			<ref bean="authenticationInWSS4JInterceptor"/>
 		</jaxws:inInterceptors>
@@ -193,6 +201,7 @@
 <!--			<bean class="org.oscarehr.ws.rest.SystemInfoService" autowire="byName" /> -->
 			<bean class="org.oscarehr.ws.rest.LabService" autowire="byName" />
 			<bean class="org.oscarehr.ws.rest.MeasurementService" autowire="byName" />
+			<bean class="org.oscarehr.ws.rest.ConsentService" autowire="byName" />
 		</jaxrs:serviceBeans>
 
 		<jaxrs:extensionMappings>

@@ -187,10 +187,10 @@ jQuery(document).ready( function() {
 		%> <input
 			type="text" name="provider_no" maxlength="6" readonly="readonly"
 			value="-new-"> <%
- 	} else {
- %> <input type="text"
-			name="provider_no" maxlength="6"> <input type="button" value=<bean:message key="admin.provideraddrecordhtm.suggest"/>
-                        onclick="provider_no.value='<%=suggestProviderNo%>'"<%}%>
+ 	} else {%>
+			<input type="text" name="provider_no" maxlength="6" />
+			<input type="button" value='<bean:message key="admin.provideraddrecordhtm.suggest"/>' onclick="provider_no.value='<%=suggestProviderNo%>'"
+			<%}%>
 		</td>
 	</tr>
 	<tr>
@@ -251,8 +251,7 @@ for (int i=0; i<sites.size(); i++) {
 			<option value="admin"><bean:message
 				key="admin.provider.formType.optionAdmin" /></option>
 			<caisi:isModuleLoad moduleName="survey">
-				<option value="er_clerk"><bean:message
-					key="admin.provider.formType.optionErClerk" /></option>
+				<option value="er_clerk"><bean:message key="admin.provider.formType.optionErClerk" /></option>
 			</caisi:isModuleLoad>
 		</select> 
 		</td>
@@ -394,10 +393,10 @@ for (int i=0; i<sites.size(); i++) {
 								<option value="<%=llItem.getValue()%>"><%=llItem.getLabel()%></option>
 							<%
 						}
-					
+
 					%>
 				</select>
-				
+
 			</td>
 		</tr>
 		<tr>
@@ -439,15 +438,15 @@ for (int i=0; i<sites.size(); i++) {
                     String codeDesc = "";
                     Enumeration<?> keys = billCenter.getAllBillCenter().propertyNames();
                     String defaultBillCenter = OscarProperties.getInstance().getProperty("default_bill_center","");
-                                            
+
                     for(int i=0;i<billCenter.getAllBillCenter().size();i++){
-                        
+
                         billCode=(String)keys.nextElement();
-                        
+
                         String selectedBillCenter = "";
                         if (billCode.equalsIgnoreCase(defaultBillCenter))
                             selectedBillCenter = "selected=\"selected\"";
-                        
+
                         codeDesc=billCenter.getAllBillCenter().getProperty(billCode);
                 %>
 				<option value=<%= billCode %> <%=selectedBillCenter%>><%= codeDesc%></option>
@@ -458,7 +457,7 @@ for (int i=0; i<sites.size(); i++) {
 		</tr>
 
 		<input type="hidden" name="provider_activity" value="">
-		
+
 		<tr>
 			<td align="right"><bean:message
 				key="admin.provider.formSlpUsername" />:</td>
@@ -472,10 +471,12 @@ for (int i=0; i<sites.size(); i++) {
 		<tr>
 			<td align="right"><bean:message key="admin.provider.formStatus" />:
 			</td>
-			<td><input type="text" name="status" value='1' maxlength="1">
+			<td>
+				<input type="radio" id="statusActive" name="status" value="1" checked><label for="statusActive"><bean:message key="admin.provider.formStatusActive"/></label>
+				<input type="radio" id="statusInactive" name="status" value="0"><label for="statusInactive"><bean:message key="admin.provider.formStatusInactive"/></label>
 			</td>
 		</tr>
-			
+
 	</caisi:isModuleLoad>
 	<tr>
 		<td colspan="2">

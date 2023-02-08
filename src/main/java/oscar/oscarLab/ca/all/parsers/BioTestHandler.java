@@ -35,7 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.Hl7TextInfoDao;
 import org.oscarehr.common.model.Hl7TextMessageInfo;
 import org.oscarehr.util.SpringUtils;
@@ -58,7 +58,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class BioTestHandler implements MessageHandler {
 
-    Logger logger = Logger.getLogger(BioTestHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     ORU_R01 msg = null;
     ArrayList<String> headers = null;
     HashMap<OBR,ArrayList<OBX>> obrSegMap = null;
@@ -264,8 +264,29 @@ public class BioTestHandler implements MessageHandler {
             // leave the name blank if the value type is 'FT' this is because it
             // is a comment, if the name is blank the obx segment will not be displayed
             OBX obxSeg =  ( obrSegMap.get(obrSegKeySet.get(i))).get(j);
-            if (!obxSeg.getValueType().getValue().equals("FT"))
-                ret = getString(obxSeg.getObservationIdentifier().getText().getValue());
+            if (!obxSeg.getValueType().getValue().equals("FT")){
+                ret = getString(obxSeg.getObservationIdentifier().getComponent(3).toString());
+                if (ret == null || "".equals(ret)){
+                    ret = getString(obxSeg.getObservationIdentifier().getText().getValue());
+                }
+            }
+        }catch(Exception e){
+            logger.error("Error returning OBX name", e);
+        }
+
+        return ret;
+    }
+
+    @Override
+    public String getOBXNameLong(int i, int j) {
+        String ret = "";
+        try{
+            // leave the name blank if the value type is 'FT' this is because it
+            // is a comment, if the name is blank the obx segment will not be displayed
+            OBX obxSeg =  ( obrSegMap.get(obrSegKeySet.get(i))).get(j);
+            if (!obxSeg.getValueType().getValue().equals("FT")){
+                ret = getString(obxSeg.getObservationIdentifier().getComponent(2).toString());
+            }
         }catch(Exception e){
             logger.error("Error returning OBX name", e);
         }
@@ -825,5 +846,10 @@ public class BioTestHandler implements MessageHandler {
     }
     public String getNteForPID() {
     	return "";
+    }
+    
+    //for OMD validation
+    public boolean isTestResultBlocked(int i, int j) {
+    	return false;
     }
 }

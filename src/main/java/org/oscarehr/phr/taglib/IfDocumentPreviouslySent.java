@@ -37,7 +37,7 @@ package org.oscarehr.phr.taglib;
 
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.myoscar.commons.MedicalDataType;
 import org.oscarehr.phr.service.PHRService;
 import org.oscarehr.util.SpringUtils;
@@ -49,7 +49,7 @@ import org.oscarehr.util.SpringUtils;
  * @author Paul
  */
 public class IfDocumentPreviouslySent extends TagSupport {
-    Logger log = Logger.getLogger(this.getClass());
+    Logger log = org.oscarehr.util.MiscUtils.getLogger();
     private String documentOscarId;
     private String recipientDemographicNo;
     private boolean invertResult = false;

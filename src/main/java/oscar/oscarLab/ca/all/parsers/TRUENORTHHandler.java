@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.util.UtilDateUtilities;
 import ca.uhn.hl7v2.HL7Exception;
@@ -46,7 +46,7 @@ import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public class TRUENORTHHandler implements MessageHandler {
-    Logger logger = Logger.getLogger(TRUENORTHHandler.class);	
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();	
 	ORU_R01 msg = null;
     ArrayList<String> headers = null;
     HashMap<OBR, ArrayList<OBX>> obrSegMap = null;
@@ -227,6 +227,20 @@ public class TRUENORTHHandler implements MessageHandler {
             logger.error("Error returning OBX name", e);
         }
 
+        return ret;
+    }
+
+    @Override
+    public String getOBXNameLong(int i, int j) {
+        String ret = "";
+        try{
+            OBX obxSeg = (obrSegMap.get(obrSegKeySet.get(i))).get(j);
+            if (obxSeg.getValueType().getValue()!=null && (!obxSeg.getValueType().getValue().equals("FT"))) {
+                ret = getString(obxSeg.getObservationIdentifier().getComponent(2).toString());
+            }
+        }catch(Exception e){
+            logger.error("Error returning OBX name", e);
+        }
         return ret;
     }
 
@@ -734,5 +748,10 @@ public class TRUENORTHHandler implements MessageHandler {
     public String getNteForPID() {
 	    // TODO Auto-generated method stub
 	    return "";
+    }
+    
+    //for OMD validation
+    public boolean isTestResultBlocked(int i, int j) {
+    	return false;
     }
 }

@@ -172,6 +172,8 @@
 			<bean:message key="admin.providersearchresults.phone" /></B></TH>
 		<TH align="center" width="15%"><b>
 			<bean:message key="admin.provider.formStatus" /></B></TH>
+		<TH align="center" width="15%"><b>
+			</B></TH>
 	</tr>
 <%
 	List<ProviderData> providerList = null;
@@ -215,7 +217,8 @@
 		<td><%= provider.getTeam() %></td>
 		<td align="center"><%= provider.getSex() %></td>
 		<td><%= provider.getPhone() %></td>
-		<td><%= provider.getStatus().equals("1")?"Active":"Inactive" %></td>
+		<td><% if ("1".equals(provider.getStatus())) { %><bean:message key="admin.provider.formStatusActive" /><% } else {%><bean:message key="admin.provider.formStatusInactive" /><% }%></td>
+		<td><input type="button" value="Audit Info" onClick="window.open('providerAudit.jsp?provider_no=<%=provider.getId() %>','pwin','width=800,height=1000');"></td>
 	</tr>
 	<%
     }

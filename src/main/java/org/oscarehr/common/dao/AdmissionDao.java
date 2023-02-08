@@ -31,7 +31,7 @@ import java.util.ListIterator;
 
 import javax.persistence.Query;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.model.AdmissionSearchBean;
 import org.oscarehr.common.model.Admission;

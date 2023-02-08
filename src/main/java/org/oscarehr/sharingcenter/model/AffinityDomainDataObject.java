@@ -33,7 +33,7 @@ import java.util.Set;
 
 import javax.persistence.*;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Cascade;
 import org.marc.shic.core.configuration.IheActorConfiguration;
 import org.marc.shic.core.configuration.IheAffinityDomainConfiguration;

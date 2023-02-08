@@ -24,7 +24,7 @@
 
 package org.oscarehr.oscarRx.erx.listeners;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.DemographicDao;
 import org.oscarehr.common.dao.OscarAppointmentDao;
 import org.oscarehr.common.dao.ProviderPreferenceDao;

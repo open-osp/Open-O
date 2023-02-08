@@ -34,7 +34,7 @@ import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.net.util.TrustManagerUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import org.junit.Test;
 

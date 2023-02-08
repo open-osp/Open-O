@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -44,7 +44,7 @@ import oscar.OscarProperties;
 
 
 public abstract class OscarAction extends Action {
-    private static Logger logger=Logger.getLogger(OscarAction.class);
+    private static Logger logger=org.oscarehr.util.MiscUtils.getLogger();
     protected static int PAGE_LENGTH = 20;
 
     static {

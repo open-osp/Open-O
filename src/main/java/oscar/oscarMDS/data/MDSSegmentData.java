@@ -32,7 +32,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.MdsMSHDao;
 import org.oscarehr.common.dao.MdsNTEDao;
 import org.oscarehr.common.dao.MdsOBRDao;
@@ -57,7 +57,7 @@ import oscar.util.ConversionUtils;
 
 public class MDSSegmentData {
 
-	static Logger logger = Logger.getLogger(MDSSegmentData.class);
+	static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public String segmentID;
 	public String reportDate;

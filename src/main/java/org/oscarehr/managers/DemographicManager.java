@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.caisi_integrator.ws.DemographicTransfer;
@@ -40,6 +40,7 @@ import org.oscarehr.caisi_integrator.ws.DemographicWs;
 import org.oscarehr.caisi_integrator.ws.GetConsentTransfer;
 import org.oscarehr.common.Gender;
 import org.oscarehr.common.dao.AdmissionDao;
+import org.oscarehr.common.dao.ConsentDao;
 import org.oscarehr.common.dao.ContactSpecialtyDao;
 import org.oscarehr.common.dao.DemographicArchiveDao;
 import org.oscarehr.common.dao.DemographicContactDao;
@@ -52,6 +53,7 @@ import org.oscarehr.common.dao.DemographicMergedDao;
 import org.oscarehr.common.dao.PHRVerificationDao;
 import org.oscarehr.common.exception.PatientDirectiveException;
 import org.oscarehr.common.model.Admission;
+import org.oscarehr.common.model.Consent;
 import org.oscarehr.common.model.ConsentType;
 import org.oscarehr.common.model.ContactSpecialty;
 import org.oscarehr.common.model.Demographic;
@@ -120,10 +122,16 @@ public class DemographicManager {
 	private SecurityInfoManager securityInfoManager;
 	
 	@Autowired
+	AppManager appManager;
+	
+	@Autowired
 	private ContactSpecialtyDao contactSpecialtyDao;
 
 	@Autowired
 	PatientConsentManager patientConsentManager;
+	
+	@Autowired
+	ConsentDao consentDao;
 	
 	@Autowired
 	ProgramManager2 programManager;
@@ -204,6 +212,21 @@ public class DemographicManager {
 		}
 
 		return (results);
+	}
+	
+	public List<Demographic> getActiveDemographicAfter(LoggedInInfo loggedInInfo, Date afterDateExclusive) {
+		// lastDate format: yyyy-MM-dd HH:mm:ss
+		checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
+		List<Demographic> results = demographicDao.getActiveDemographicAfter(afterDateExclusive);
+		
+		//--- log action ---
+		if (results != null) {
+			for (Demographic item : results) {
+				LogAction.addLogSynchronous(loggedInInfo, "DemographicManager.getActiveDemographicAfter(date)", "id=" + item.getId());
+			}
+		}
+
+		return results;
 	}
 
 	public List<DemographicExt> getDemographicExts(LoggedInInfo loggedInInfo, Integer id) {
@@ -615,42 +638,29 @@ public class DemographicManager {
 		return (result);
 	}
 
-	public String getPhrVerificationLevelByDemographicId(LoggedInInfo loggedInInfo, Integer demographicId) {
-		PHRVerification phrVerification = getLatestPhrVerificationByDemographicId(loggedInInfo, demographicId);
-
-		if (phrVerification != null) {
-			String authLevel = phrVerification.getVerificationLevel();
-			if (PHRVerification.VERIFICATION_METHOD_FAX.equals(authLevel) || PHRVerification.VERIFICATION_METHOD_MAIL.equals(authLevel) || PHRVerification.VERIFICATION_METHOD_EMAIL.equals(authLevel)) {
-				return PHR_VERIFICATION_LEVEL_1;
-			} else if (PHRVerification.VERIFICATION_METHOD_TEL.equals(authLevel) || PHRVerification.VERIFICATION_METHOD_VIDEOPHONE.equals(authLevel)) {
-				return PHR_VERIFICATION_LEVEL_2;
-			} else if (PHRVerification.VERIFICATION_METHOD_INPERSON.equals(authLevel)) {
-				return PHR_VERIFICATION_LEVEL_3;
+	public boolean getPhrVerificationLevelByDemographicId(LoggedInInfo loggedInInfo, Integer demographicId) {
+		Integer consentId = appManager.getAppDefinitionConsentId(loggedInInfo, "PHR");
+		if(consentId != null) {
+			Consent consent = consentDao.findByDemographicAndConsentTypeId( demographicId,  consentId  ) ;
+			if(consent != null && consent.getPatientConsented()) {
+				return true;
 			}
 		}
-
-		// blank string because preserving existing behaviour moved from PHRVerificationDao, I would have preferred returnning null on a new method...
-		return ("");
+		return false;
 	}
 
 	/**
 	 * This method should only return true if the demographic passed in is "phr verified" to a sufficient level to allow a provider to send this phr account messages.
 	 */
 	public boolean isPhrVerifiedToSendMessages(LoggedInInfo loggedInInfo, Integer demographicId) {
-		String level = getPhrVerificationLevelByDemographicId(loggedInInfo, demographicId);
-		// hard coded to 3 until some one tells me how to configure/check this
-		if (PHR_VERIFICATION_LEVEL_3.equals(level)) return (true);
-		else return (false);
+		return getPhrVerificationLevelByDemographicId(loggedInInfo, demographicId);
 	}
 
 	/**
 	 * This method should only return true if the demographic passed in is "phr verified" to a sufficient level to allow a provider to send this phr account medicalData.
 	 */
 	public boolean isPhrVerifiedToSendMedicalData(LoggedInInfo loggedInInfo, Integer demographicId) {
-		String level = getPhrVerificationLevelByDemographicId(loggedInInfo, demographicId);
-		// hard coded to 3 until some one tells me how to configure/check this
-		if (PHR_VERIFICATION_LEVEL_3.equals(level)) return (true);
-		else return (false);
+		return getPhrVerificationLevelByDemographicId(loggedInInfo, demographicId);
 	}
 
 	/**
@@ -854,6 +864,7 @@ public class DemographicManager {
 			return demographic;
 		}
 		
+
 		/**
 		 * Copies the given remotely Integrated demographic file into this local facility.
 		 * 
@@ -902,6 +913,17 @@ public class DemographicManager {
 			ConsentType patientConsentType = patientConsentManager.getConsentType( consentType );
 			patientConsentManager.setConsent( loggedInInfo, demographic_no, patientConsentType.getId(), consented );
 		}
+
+		public List<DemographicContact> findSDMByDemographicNo(LoggedInInfo loggedInInfo,int demographicNo){
+			if (loggedInInfo == null) throw (new SecurityException("user not logged in?"));
+			checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
+			List<DemographicContact> results =  demographicContactDao.findSDMByDemographicNo(demographicNo);
+
+			LogAction.addLog(loggedInInfo, "DemographicManager.findSDMByDemographicNo", null, null, ""+demographicNo, null);
+			
+			return results; 
+		}
+		
 		
 		/**
 		 * Checks to see if this patient has consented to the given consent type

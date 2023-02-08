@@ -29,6 +29,7 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ page
 	import="java.util.*, oscar.oscarEncounter.oscarMeasurements.data.MeasurementMapConfig, oscar.OscarProperties, oscar.util.StringUtils"%>
+<%@ page import="org.oscarehr.common.model.MeasurementMap" %>
 
 <%
 
@@ -82,7 +83,7 @@ if (type == null) type = "";
                     <%
                 }else if (outcome.equals("failedcheck")){
                     %>
-                      alert("Unable to remap the measurement: A message is already mapped to the specified code for that message type");
+                      alert("Unable to remap the measurement: A measurement is already mapped to the specified code for that measurement type");
                     <%
                 }else{    
                     %>
@@ -151,10 +152,9 @@ if (type == null) type = "";
 				<td class="Cell" width="20%">Select code to map to:</td>
 				<td class="Cell" width="80%"><select name="loinc_code">
 					<option value="0">None Selected</option>
-					<%ArrayList loincCodes = mmc.getLoincCodes(searchstring);
-                                                for (int i=0; i < loincCodes.size(); i++) { 
-                                                Hashtable ht = (Hashtable) loincCodes.get(i);%>
-					<option value="<%= (String) ht.get("code") %>"><%= (String) ht.get("code")+" - "+((String) ht.get("name")).trim()%></option>
+					<%List<MeasurementMap> loincCodes = mmc.getLoincCodes(searchstring);
+                                                for (MeasurementMap loincCode : loincCodes) {%>
+					<option value="<%= loincCode.getLoincCode() %>"><%= loincCode.getLoincCode()+" - "+loincCode.getName()%></option>
 					<% }%>
 				</select></td>
 			</tr>

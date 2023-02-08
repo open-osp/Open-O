@@ -26,7 +26,7 @@ package org.oscarehr.integration.mcedt.mailbox;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -39,7 +39,7 @@ import oscar.OscarProperties;
 import oscar.login.LoginForm;
 
 public class UserAction extends DispatchAction{
-	private static Logger logger = Logger.getLogger(UserAction.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
 
 	@Override

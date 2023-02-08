@@ -26,7 +26,7 @@ package org.oscarehr.admin.job;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.jobs.OscarRunnable;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.Security;

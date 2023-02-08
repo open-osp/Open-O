@@ -57,6 +57,7 @@ String id = request.getParameter("id");
 String disabled = oscar.OscarProperties.getInstance().getProperty("rx3.disable_allergy_warnings","false");
 if(disabled.equals("false")) {
 
+
 oscar.oscarRx.pageUtil.RxSessionBean rxSessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
 Allergy[] allergies = RxPatientData.getPatient(loggedInInfo, rxSessionBean.getDemographicNo()).getActiveAllergies();
 
@@ -109,5 +110,6 @@ Allergy[] allergyWarnings = null;
 	}
 	result.put("results", allergyResultArray);
 	result.write(out);
+
 }
 %>

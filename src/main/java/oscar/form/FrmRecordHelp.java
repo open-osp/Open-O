@@ -63,7 +63,7 @@ public class FrmRecordHelp {
                 String name = md.getColumnName(i);
                 String value;
 
-                if (md.getColumnTypeName(i).startsWith("TINY")) {
+                if ( "TINYINT".equalsIgnoreCase(md.getColumnTypeName(i)) || "BIT".equalsIgnoreCase(md.getColumnTypeName(i)) || md.getColumnTypeName(i).toUpperCase().startsWith("TINY")) {
                     if (rs.getInt(i) == 1)
                         value = "checked='checked'";
                     else
@@ -137,9 +137,19 @@ public class FrmRecordHelp {
 
             String value = props.getProperty(name, null);
 
-            if (md.getColumnTypeName(i).startsWith("TINY")) {
+            System.out.println("FORM TABLE: " + md.getTableName(i) + "; COLUMN: " + md.getColumnName(i) + "; TYPE: " + md.getColumnTypeName(i) + "; VALUE: " + value);
+
+            /* To whomever sees this:
+             * Don't ever ever ever filter column types with a string comparator in order to translate "hacked"
+             * column values such as "on" for boolean true and "off" for boolean false.
+             * Use proper data types and values and let the JDBC driver do the work.
+             * This developer cause a bucket load of un-safe maintenance issues by doing this. This is an
+             * expensive job to fix correctly.
+             */
+            if ("TINYINT".equalsIgnoreCase(md.getColumnTypeName(i)) || "BIT".equalsIgnoreCase(md.getColumnTypeName(i)) || md.getColumnTypeName(i).startsWith("TINY")) {
                 if (value != null) {
-                    if (value.equalsIgnoreCase("on") || value.equalsIgnoreCase("checked='checked'")) {
+                    if ("on".equalsIgnoreCase(value) || "checked='checked'".equalsIgnoreCase(value) || "checked=\"checked\"".equalsIgnoreCase(value)
+                            || "1".equals(value) || "checked='true'".equalsIgnoreCase(value) || "checked=\"true\"".equalsIgnoreCase(value)) {
                         rs.updateInt(name, 1);
 
                     } else {
@@ -234,7 +244,7 @@ public class FrmRecordHelp {
             String name = md.getColumnName(i);
             String value;
 
-            if (md.getColumnTypeName(i).startsWith("TINY") && md.getScale(i) == 1) {
+            if (( "TINYINT".equalsIgnoreCase(md.getColumnTypeName(i)) || "bit".equalsIgnoreCase(md.getColumnTypeName(i)) || md.getColumnTypeName(i).toUpperCase().startsWith("TINY")) && md.getScale(i) == 1) {
                 if (rs.getInt(i) == 1)
                     value = "on";
                 else

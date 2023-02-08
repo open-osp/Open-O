@@ -40,7 +40,7 @@ import org.apache.cxf.rs.security.oauth.data.Token;
 import org.apache.cxf.rs.security.oauth.data.UserSubject;
 import org.apache.cxf.rs.security.oauth.provider.OAuthDataProvider;
 import org.apache.cxf.rs.security.oauth.provider.OAuthServiceException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.ServiceAccessTokenDao;
 import org.oscarehr.common.dao.ServiceClientDao;
 import org.oscarehr.common.dao.ServiceRequestTokenDao;
@@ -188,7 +188,7 @@ public class OscarOAuthDataProvider implements OAuthDataProvider {
         sat.setClientId(sc.getId());
         sat.setDateCreated(new Date());
         sat.setIssued(issuedAt);
-        sat.setLifetime(-1);
+        sat.setLifetime(sc.getLifetime());
         sat.setTokenId(accessTokenString);
         sat.setTokenSecret(tokenSecretString);
         sat.setProviderNo(srt.getProviderNo());

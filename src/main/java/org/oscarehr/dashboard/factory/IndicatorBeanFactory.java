@@ -24,7 +24,7 @@
 package org.oscarehr.dashboard.factory;
 
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.dashboard.display.beans.GraphPlot;
 import org.oscarehr.dashboard.display.beans.IndicatorBean;
 import org.oscarehr.dashboard.handler.IndicatorQueryHandler;

@@ -264,9 +264,11 @@ if (userAgent != null) {
             }
 <%       }
       }%>
-              var action="../form/createcustomedpdf?__title=Rx&__method=" +  method+"&useSC="+useSC+"&scAddress="+scAddress+"&rxPageSize="+rxPageSize+"&scriptId="+scriptId;
+            const action="../form/createcustomedpdf?__title=Rx&__method=" +  method+"&useSC="+useSC+"&scAddress="+scAddress+"&rxPageSize="+rxPageSize+"&scriptId="+scriptId;
             document.getElementById("preview").contentWindow.document.getElementById("preview2Form").action = action;
-            document.getElementById("preview").contentWindow.document.getElementById("preview2Form").target="_blank";
+            if (method!="oscarRxFax"){
+                document.getElementById("preview").contentWindow.document.getElementById("preview2Form").target="_blank";
+            }
             document.getElementById("preview").contentWindow.document.getElementById("preview2Form").submit();
        return true;
     }
@@ -412,7 +414,7 @@ function refreshImage()
 {
 	counter=counter+1;
 	frames["preview"].document.getElementById("signature").src="<%=imageUrl%>&rand="+counter;
-	frames['preview'].document.getElementById('imgFile').value='<%=System.getProperty("java.io.tmpdir")%>/signature_<%=signatureRequestId%>.jpg';	
+	frames['preview'].document.getElementById('imgFile').value='<%=System.getProperty("java.io.tmpdir").replace("\\","\\\\")%>/signature_<%=signatureRequestId%>.jpg';	
 }
 
 function sendFax()

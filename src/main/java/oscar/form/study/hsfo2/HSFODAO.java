@@ -45,7 +45,7 @@ import oscar.form.study.hsfo2.pageUtil.ConvertUtil;
  */
 public class HSFODAO
 {
-	//private static org.apache.log4j.Logger logger = MiscUtils.getLogger();
+	//private static org.apache.logging.log4j.Logger logger = MiscUtils.getLogger();
 	
 	private static Hsfo2VisitDao visitDao = (Hsfo2VisitDao) SpringUtils.getBean("hsfo2VisitDao");
 	private static Hsfo2PatientDao patientDao = (Hsfo2PatientDao) SpringUtils.getBean("hsfo2PatientDao");

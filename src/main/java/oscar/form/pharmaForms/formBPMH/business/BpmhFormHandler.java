@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
+ * Copyright (c) 2015-2019. The Pharmacists Clinic, Faculty of Pharmaceutical Sciences, University of British Columbia. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,10 +16,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * This software was written for the
- * Department of Family Medicine
- * McMaster University
- * Hamilton
- * Ontario, Canada
+ * The Pharmacists Clinic
+ * Faculty of Pharmaceutical Sciences
+ * University of British Columbia
+ * Vancouver, British Columbia, Canada
  */
 package oscar.form.pharmaForms.formBPMH.business;
 
@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.AllergyDao;
 import org.oscarehr.common.dao.ContactSpecialtyDao;
@@ -104,7 +104,7 @@ import oscar.oscarRx.data.RxDrugData;
  */
 public class BpmhFormHandler {
 
-	private static final Logger logger = Logger.getLogger("BpmhFormHandler");
+	private static final Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static final String[] IGNORE_METHODS = new String [] {
 		"handler", 
 		"hibernateLazyInitializer",

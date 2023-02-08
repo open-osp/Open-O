@@ -208,6 +208,25 @@
         <ap-output>${value}</ap-output>
     </databaseap>
     <databaseap>
+        <ap-name>preferredPhone</ap-name>
+        <ap-sql>
+        SELECT
+        (CASE
+            WHEN LOCATE("*", d.phone) > 0 THEN d.phone
+            WHEN LOCATE("*", COALESCE(de.value, '')) > 0 THEN de.value
+            WHEN LOCATE("*", d.phone2) > 0 THEN d.phone
+            WHEN TRIM(d.phone) &lt;> '' THEN d.phone
+            WHEN TRIM(COALESCE(de.value, '')) &lt;> '' THEN de.value
+            WHEN TRIM(d.phone2) &lt;> '' THEN d.phone2
+        ELSE ''
+        END) AS preferredPhone
+        FROM demographic d
+        LEFT JOIN demographicExt de ON d.demographic_no = de.demographic_no AND de.key_val = 'demo_cell'
+        WHERE d.demographic_no=${demographic}
+        </ap-sql>
+        <ap-output>${preferredPhone}</ap-output>
+    </databaseap>
+    <databaseap>
         <ap-name>age</ap-name>
         <ap-sql>SELECT (YEAR(CURRENT_DATE)-YEAR(DATE_FORMAT(CONCAT((demographic.year_of_birth), '-', (demographic.month_of_birth), '-', (demographic.date_of_birth)),'%Y-%m-%d')))-(RIGHT(CURRENT_DATE, 5) &lt; RIGHT(DATE_FORMAT(CONCAT((demographic.year_of_birth), '-', (demographic.month_of_birth), '-', (demographic.date_of_birth)),'%Y-%m-%d'),5))  AS 'age' FROM demographic WHERE demographic_no=${demographic}</ap-sql>
         <ap-output>${age}</ap-output>

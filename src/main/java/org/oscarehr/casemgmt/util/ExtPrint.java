@@ -31,9 +31,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.oscarehr.casemgmt.service.CaseManagementPrintPdf;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 
 public interface ExtPrint  {
 
-	public void printExt(CaseManagementPrintPdf engine, HttpServletRequest request) throws IOException, DocumentException;
+	public void printExt(CaseManagementPrintPdf engine, HttpServletRequest request) throws IOException, DocumentException, com.lowagie.text.DocumentException;
 }

@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import noNamespace.HsfoHbpsDataDocument;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -60,7 +60,7 @@ import oscar.form.study.HSFO.RecommitSchedule;
 
 public class RecommitHSFOAction extends DispatchActionSupport {
 
-    protected static Logger logger = Logger.getLogger(RecommitHSFOAction.class);
+    protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
     public ActionForward showSchedule(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)  {
         LazyValidatorForm sform = (LazyValidatorForm)form;

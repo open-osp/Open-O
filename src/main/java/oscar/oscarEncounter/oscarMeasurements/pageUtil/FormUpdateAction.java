@@ -54,7 +54,7 @@ import oscar.oscarEncounter.data.EctProgram;
 
 import org.oscarehr.casemgmt.model.CaseManagementNote;
 import org.oscarehr.casemgmt.service.CaseManagementManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 public class FormUpdateAction extends Action {
 	

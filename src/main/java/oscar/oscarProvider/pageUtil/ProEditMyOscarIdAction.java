@@ -36,7 +36,6 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
 import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtilsOld;
 
 import oscar.oscarProvider.data.ProviderMyOscarIdData;
 
@@ -54,8 +53,14 @@ public class ProEditMyOscarIdAction extends Action {
 
         DynaActionForm frm = (DynaActionForm)form;
         String loginId = (String)frm.get("myOscarLoginId");
-        loginId=MiscUtilsOld.getUserNameNoDomain(loginId);
-                
+
+        if (loginId != null) {
+            int indexOfAt = loginId.indexOf('@');
+            if (indexOfAt!=-1) {
+                loginId = loginId.substring(0,indexOfAt);
+            }
+        }
+
         if( ProviderMyOscarIdData.getMyOscarId(providerNo).equals(loginId) ) {
             ActionMessages errors = new ActionMessages();
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("provider.setPHRLogin.msgNotUnique"));

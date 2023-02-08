@@ -16,13 +16,14 @@ package oscar.oscarLab.ca.all.upload.handlers;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.Hl7TextInfoDao;
 import org.oscarehr.olis.OLISUtils;
 import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
+import oscar.log.LogAction;
 import oscar.oscarLab.ca.all.parsers.Factory;
 import oscar.oscarLab.ca.all.upload.MessageUploader;
 import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
@@ -34,7 +35,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
  */
 public class OLISHL7Handler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(OLISHL7Handler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean("hl7TextInfoDao");
 	
 	private int lastSegmentId = 0;
@@ -61,14 +62,16 @@ public class OLISHL7Handler implements MessageHandler {
 				lastTimeStampAccessed = getLastUpdateInOLIS(msg) ;
 				
 				if(OLISUtils.isDuplicate(loggedInInfo, msg)) {
+					LogAction.addLog(loggedInInfo.getLoggedInProviderNo(), "OLIS","DUPLICATE", fileName , null);
 					continue; 
 				}
 				MessageUploader.routeReport(loggedInInfo, serviceName,"OLIS_HL7", msg.replace("\\E\\", "\\SLASHHACK\\").replace("µ", "\\MUHACK\\").replace("\\H\\", "\\.H\\").replace("\\N\\", "\\.N\\"), fileId, results);
 				if (routeToCurrentProvider) {
 					ProviderLabRouting routing = new ProviderLabRouting();
 					routing.route(results.segmentId, loggedInInfo.getLoggedInProviderNo(), DbConnectionFilter.getThreadLocalDbConnection(), "HL7");
-					this.lastSegmentId = results.segmentId;
+					
 				}
+				this.lastSegmentId = results.segmentId;
 			}
 			logger.info("Parsed OK");
 		} catch (Exception e) {

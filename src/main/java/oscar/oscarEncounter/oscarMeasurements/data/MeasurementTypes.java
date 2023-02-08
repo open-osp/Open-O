@@ -27,7 +27,7 @@ package oscar.oscarEncounter.oscarMeasurements.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.MeasurementTypeDao;
 import org.oscarehr.common.dao.ValidationsDao;
 import org.oscarehr.common.model.MeasurementType;

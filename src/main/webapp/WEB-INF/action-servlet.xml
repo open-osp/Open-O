@@ -172,6 +172,10 @@
 		<property name="dxresearchdao" ref="DxresearchDAO" />
 	</bean>
 
+	<bean name="/setTicklerPreferences" class="org.oscarehr.provider.web.ProviderPropertyAction" singleton="false">
+		<property name="userPropertyDAO" ref="UserPropertyDAO" />
+	</bean>
+
 	<!-- Indivo -->
 
 	<bean name="/phr/PhrMessage" class="org.oscarehr.phr.web.PHRMessageAction" singleton="false"/> 

@@ -25,7 +25,7 @@
 
 package oscar;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.BillingServiceDao;
 import org.oscarehr.common.model.BillingService;
 import org.oscarehr.util.MiscUtils;

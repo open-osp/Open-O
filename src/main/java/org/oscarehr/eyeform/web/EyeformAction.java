@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -112,8 +112,8 @@ import oscar.OscarProperties;
 import oscar.SxmlMisc;
 import oscar.util.UtilDateUtilities;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfCopyFields;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfCopyFields;
 
 public class EyeformAction extends DispatchAction {
 

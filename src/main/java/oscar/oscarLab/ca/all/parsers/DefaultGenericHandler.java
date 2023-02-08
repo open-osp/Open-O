@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.util.UtilDateUtilities;
 import ca.uhn.hl7v2.HL7Exception;
@@ -58,7 +58,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class DefaultGenericHandler implements MessageHandler {
 
-    Logger logger = Logger.getLogger(DefaultGenericHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
     protected Message msg = null;
     protected Terser terser;
@@ -241,6 +241,11 @@ public class DefaultGenericHandler implements MessageHandler {
     }
 
     public String getOBXName(int i, int j){
+        return(getOBXField(i, j, 3, 0, 2));
+    }
+
+    @Override
+    public String getOBXNameLong(int i, int j) {
         return(getOBXField(i, j, 3, 0, 2));
     }
 
@@ -677,5 +682,10 @@ public class DefaultGenericHandler implements MessageHandler {
 
     public String getNteForPID() {
     	return "";
+    }
+    
+    //for OMD validation
+    public boolean isTestResultBlocked(int i, int j) {
+    	return false;
     }
 }

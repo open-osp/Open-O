@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -60,7 +60,7 @@ public class EctDisplayEaapsAction extends EctDisplayAction {
 	
 	private static final String EAAPS_ERROR_MESSAGE = "Patient not found in eAAPS database";
 
-	private static Logger logger = Logger.getLogger(EctDisplayEaapsAction.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 	

@@ -59,9 +59,10 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 	public static final String ANONYMOUS = "ANONYMOUS";
 	public static final String UNIQUE_ANONYMOUS = "UNIQUE_ANONYMOUS";
 	
-	private final static Pattern FD_LAST_NAME = Pattern.compile(".*<rd>([^,]*),.*</rd>.*");
-	private final static Pattern FD_FIRST_NAME = Pattern.compile(".*<rd>[^,]*,(.*)</rd>.*");
-	private final static Pattern FD_OHIP = Pattern.compile("<rdohip>(.*)</rdohip>.*");
+	private final static Pattern FD_LAST_NAME = Pattern.compile(".*<([fr])d>([^,]*),.*</([fr])d>.*");
+	private final static Pattern FD_FIRST_NAME = Pattern.compile(".*<([fr])d>[^,]*,(.*)</([fr])d>.*");
+	private final static Pattern FD_FULL_NAME = Pattern.compile(".*<([fr])d>(.*)</([fr])d>.*");
+	private final static Pattern FD_OHIP = Pattern.compile("<([fr])dohip>(.*)</[fr]dohip>.*");
 	
 	
 	private int hashCode = Integer.MIN_VALUE;// primary key
@@ -82,8 +83,11 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 	private String sexDesc;
 	private Date dateJoined;
 	private String familyDoctor;
+    private String familyPhysician;
 	private String city;
 	private String firstName;
+	private String prefName = "";
+	private String middleName;
 	private String postal;
 	private Date hcRenewDate;
 	private String phone2;
@@ -93,6 +97,7 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 	private String hcType;
 	private String chartNo;
 	private String email;
+	private Boolean consentToUseEmailForCare;
 	private String yearOfBirth;
 	private Date effDate;
 	private Date rosterDate;
@@ -128,6 +133,14 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
     private String cellPhone;
     private String phoneComment;
 
+    private String middleNames;
+    private String rosterEnrolledTo;
+    
+    private String residentialAddress;
+    private String residentialCity;
+	private String residentialProvince;
+	private String residentialPostal;
+	
     public String getTitle() {
     	return title;
     }
@@ -521,6 +534,22 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 	}
 
 	/**
+	 * Set the value related to the column: family_physician
+	 *
+	 * @param familyPhysician the family_doctor value
+	 */
+	public void setFamilyPhysician(String familyPhysician) {
+		this.familyPhysician = familyPhysician;
+	}
+
+    /**
+     * Return the value associated with the column: family_physician
+     */
+    public String getFamilyPhysician() {
+        return familyPhysician;
+    }
+
+	/**
 	 * Return the last name as parsed from column: family_doctor
 	 */
 	public String getFamilyDoctorLastName() {
@@ -528,8 +557,8 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 		Matcher m = FD_LAST_NAME.matcher(getFamilyDoctor());
 
 		if( m.find() ) {
-			if(! "null".equalsIgnoreCase(m.group(1))){
-				doctorName = m.group(1);
+			if(! "null".equalsIgnoreCase(m.group(2))){
+				doctorName = m.group(2);
 			}
 		}
 		return doctorName;
@@ -543,8 +572,23 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 		Matcher m = FD_FIRST_NAME.matcher(getFamilyDoctor());
 
 		if( m.find()) {
-			if(! "null".equalsIgnoreCase(m.group(1))){
-				doctorName = m.group(1);
+			if(! "null".equalsIgnoreCase(m.group(2))){
+				doctorName = m.group(2);
+			}
+		}
+		return doctorName;
+	}
+
+	public String getFamilyDoctorName(){
+		String doctorName = "";
+
+		if(! getFamilyDoctorLastName().isEmpty() && ! getFamilyDoctorFirstName().isEmpty()) {
+			doctorName = getFamilyDoctorLastName() + ", " + getFamilyDoctorFirstName();
+		}
+		else {
+			Matcher m = FD_FULL_NAME.matcher(getFamilyDoctor());
+			if(m.find() && ! "null".equalsIgnoreCase(m.group(2))) {
+				doctorName = m.group(2);
 			}
 		}
 		return doctorName;
@@ -554,16 +598,42 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 	 * Return the doctor number as parsed from column: family_doctor
 	 */
 	public String getFamilyDoctorNumber() {
-		String doctorNumber = "";
+
 		Matcher m = FD_OHIP.matcher(getFamilyDoctor());
 
 		if( m.find() ) {
-			if(! "null".equalsIgnoreCase(m.group(1))){
-				doctorNumber = m.group(1);
-			}
+			return m.group(2);
 		}
-		
-		return doctorNumber;
+		return "";
+	}
+	public String getFamilyPhysicianLastName() {
+		Matcher m = FD_LAST_NAME.matcher(getFamilyPhysician());
+		if(m.find()) {
+			return m.group(2);
+		}
+		return "";
+	}
+	public String getFamilyPhysicianFirstName() {
+		Matcher m = FD_FIRST_NAME.matcher(getFamilyPhysician());
+		if(m.find()) {
+			return m.group(2);
+		}
+		return "";
+	}
+	public String getFamilyPhysicianFullName() {
+		Matcher m = FD_FULL_NAME.matcher(getFamilyPhysician());
+		if(m.find()) {
+			return m.group(2);
+		}
+		return "";
+	}
+	public String getFamilyPhysicianNumber() {
+		Matcher m = FD_OHIP.matcher(getFamilyPhysician());
+		if(m.find()) {
+			return m.group(2);
+		}
+
+		return "";
 	}
 
 	/**
@@ -607,6 +677,21 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
+
+	/**
+	 * Gets demographic's preferred name.
+	 *
+	 * @return
+	 * 		Returns the preferred name.
+	 */
+	public String getPrefName() {return prefName;}
+
+	/**
+	 * Set the value related to the column: pref_name
+	 *
+	 * @param prefName the pref_name value
+	 */
+	public void setPrefName(String prefName) {this.prefName = prefName;}
 
 	/**
 	 * Return the value associated with the column: postal
@@ -1202,6 +1287,26 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
     	this.newsletter = newsletter;
     }
 
+	public String getMiddleNames() {
+		return middleNames;
+	}
+
+	public void setMiddleNames(String middleNames) {
+		this.middleNames = middleNames;
+	}
+
+	
+
+	public String getRosterEnrolledTo() {
+		return rosterEnrolledTo;
+	}
+
+	public void setRosterEnrolledTo(String rosterEnrolledTo) {
+		this.rosterEnrolledTo = rosterEnrolledTo;
+	}
+
+
+
 	public static final Comparator<Demographic> FormattedNameComparator = new Comparator<Demographic>() {	
         @Override	
         public int compare(Demographic dm1, Demographic dm2) {	
@@ -1299,5 +1404,65 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 	public Integer getId() {
 		return this.getDemographicNo();
 	}
+	
+	
+	public String getRosterStatusDisplay() {
+		String rs = StringUtils.trimToNull(this.getRosterStatus());
+		if(rs != null) {
+			if("RO".equals(rs)) {
+				return "ROSTERED";
+			}
+			if("TE".equals(rs)) {
+				return "TERMINATED";
+			}
+			if("FS".equals(rs)) {
+				return "FEE FOR SERVICE";
+			}
+			return rs;
+		}else {
+			return "";
+		}
+	}
+
+	public String getResidentialAddress() {
+		return residentialAddress;
+	}
+
+	public void setResidentialAddress(String residentialAddress) {
+		this.residentialAddress = residentialAddress;
+	}
+
+	public String getResidentialCity() {
+		return residentialCity;
+	}
+
+	public void setResidentialCity(String residentialCity) {
+		this.residentialCity = residentialCity;
+	}
+
+	public String getResidentialProvince() {
+		return residentialProvince;
+	}
+
+	public void setResidentialProvince(String residentialProvince) {
+		this.residentialProvince = residentialProvince;
+	}
+
+	public String getResidentialPostal() {
+		return residentialPostal;
+	}
+
+	public void setResidentialPostal(String residentialPostal) {
+		this.residentialPostal = residentialPostal;
+	}
+
+	public Boolean getConsentToUseEmailForCare() {
+		return consentToUseEmailForCare;
+	}
+
+	public void setConsentToUseEmailForCare(Boolean consentToUseEmailForCare) {
+		this.consentToUseEmailForCare = consentToUseEmailForCare;
+	}
+	
 	
 }

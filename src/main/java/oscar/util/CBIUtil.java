@@ -53,7 +53,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.OcanSubmissionLogDao;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProviderDao;
@@ -79,7 +79,7 @@ import com.cbi.ws.CbiServiceResult;
 
 public class CBIUtil
 {
-	private static Logger logger = Logger.getLogger(CBIUtil.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static OscarProperties oscarProperties = OscarProperties.getInstance();
 	
 	// submit cbi data to cbi web service

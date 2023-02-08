@@ -18,46 +18,15 @@
 			<param name="ConversionPattern" value="%d %-5p [%c{1}:%L] %m%n" />
 		</layout>
 	</appender>
-	
-	<appender name="INTEGRATOR_FILE" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="${catalina.base}/logs/integrator.log" />
-		<param name="Append" value="true" />
-		<param name="DatePattern" value="'.'yyyy-MM" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d %-5p [%c{1}:%L] %m%n" />
-		</layout>
-	</appender>
-	
-	<!-- Example gmail appender (can be used for any smtp ssl) -->
-	<!-- 
-	<appender name="GMAIL" class="org.oscarehr.util.Log4JGmailErrorAppender">
-		<param name="SmtpUser" value="application_emails@example.com" />
-		<param name="SmtpPassword" value="my_password" />
-		<param name="RecipientEmailAddress" value="system_administrator@example.com" />
-	</appender>
- 	-->
- 	
-	<!-- Example regular email appender -->
-	<!-- 
-	<appender name="EMAIL" class="org.apache.log4j.net.SMTPAppender">
-		<param name="BufferSize" value="4" />
-		<param name="From" value="from@example.com" />
-		<param name="SMTPHost" value="my_smtp_server.example.com" />
-		<param name="SMTPPassword" value="my_password" />
-		<param name="SMTPUsername" value="my_smtp_user" />
-		<param name="Subject" value="Server Error" />
-		<param name="To" value="to@example.com" />
-	</appender>
- 	-->
-
-	<appender name="VMSTAT_FILE" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="${catalina.base}/logs/vmstat.log" />
-		<param name="Append" value="true" />
-		<param name="DatePattern" value="'.'yyyy-MM" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d %-5p [%c{1}:%L] %m%n" />
-		</layout>
-	</appender>
+<!--	-->
+<!--	<appender name="INTEGRATOR_FILE" class="org.apache.log4j.DailyRollingFileAppender">-->
+<!--		<param name="File" value="${catalina.base}/logs/integrator.log" />-->
+<!--		<param name="Append" value="true" />-->
+<!--		<param name="DatePattern" value="'.'yyyy-MM" />-->
+<!--		<layout class="org.apache.log4j.PatternLayout">-->
+<!--			<param name="ConversionPattern" value="%d %-5p [%c{1}:%L] %m%n" />-->
+<!--		</layout>-->
+<!--	</appender>-->
 
 	<!-- ############################# -->
 
@@ -81,21 +50,6 @@
 		<priority value="DEBUG" />
 	</category>
 	-->
-	
-	<!-- uncomment for deployments -->
-		
-	<!-- 
-	<category name="org.oscarehr.util.VmStat" additivity="false">
-		<level value="INFO" />
-		
-		<appender-ref ref="VMSTAT_FILE" />
-		
-	</category>
-	-->
-	
-	<category name="org.oscarehr.util.VmStat" >
-		<priority value="ERROR"/>
-	</category>
 
 	<category name="org.apache.cxf.transport.https.HttpsURLConnectionFactory">
 		<priority value="WARN" />
@@ -127,6 +81,11 @@
 	<category name="org.oscarehr.integration.born">
 		<priority value="INFO" />
 	</category>
+<!--	
+	<category name="oscar.oscarEncounter.oscarMeasurements">
+		<priority value="DEBUG" />
+	</category>
+-->
 
 
 	<!-- HAPI is logging an info message at error level which isn't an error, this will squelch it -->	
@@ -159,6 +118,13 @@
 	
 	<category name="ca.uhn.hl7v2.parser.Parser">
 		<priority value="WARN" />
+	</category>
+	
+	<category name="oscar.oscarReport.ClinicalReports">
+		<priority value="DEBUG" />
+	</category>
+	<category name="org.oscarehr.hospitalReportManager">
+		<priority value="INFO" />
 	</category>
 	
 	

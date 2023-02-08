@@ -40,7 +40,7 @@ import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.jaxrs.client.ClientConfiguration;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.Demographic;
 
 import oscar.OscarProperties;
@@ -51,7 +51,7 @@ import oscar.OscarProperties;
  */
 public class EaapsServiceClient {
 
-	private static Logger logger = Logger.getLogger(EaapsServiceClient.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private String host;
 	private String userName;

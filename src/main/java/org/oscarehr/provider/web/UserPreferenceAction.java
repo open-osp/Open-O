@@ -39,7 +39,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -153,10 +153,10 @@ public class UserPreferenceAction extends DispatchAction {
 				logger.error("Error",e);
 			}
 		}
-		
-		Iterator iter = request.getParameterMap().keySet().iterator();
+
+		Iterator<String> iter = request.getParameterMap().keySet().iterator();
 		while(iter.hasNext()) {			
-			String key = (String)iter.next();
+			String key = iter.next();
 			if(!key.startsWith("pref.")) continue;
 			
 			String value = request.getParameter(key);

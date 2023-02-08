@@ -236,6 +236,11 @@ function setSelect(id,type,name,val) {
 	jQuery("select[name='"+type+"_"+id+"."+name+"']").each(function() {
 		jQuery(this).val(val);
 	});
+	if(jQuery("select[name='"+type+"_"+id+"."+name+"']").val() !=val) {
+		jQuery("select[name='"+type+"_"+id+"."+name+"']").each(function() {
+			jQuery(this).val('');
+		});
+	}
 }
 
 function setSelectExisting(id,type,name,val) {
@@ -278,7 +283,8 @@ jQuery(document).ready(function() {
 					setSelect(num,'contact','active','<%=dc.isActive()?"1":"0"%>');
 					setInput(num,'contact','contactId','<%=dc.getContactId()%>');
 					setInput(num,'contact','contactName','<%=dc.getContactName()%>');
-					setTextarea(num,'contact','note','<%=dc.getNote()!=null?dc.getNote():""%>');
+					setTextarea(num,'contact','note',`<%=dc.getNote()!=null?dc.getNote():""%>`);
+					
 					<%if(dc.getSdm() != null && dc.getSdm().equals("true")) {%>setChecked(num,'contact','sdm');<%}%>
 					<%if(dc.getEc() != null && dc.getEc().equals("true")) {%>setChecked(num,'contact','ec');<%}%>
 			    <%

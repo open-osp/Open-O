@@ -78,12 +78,17 @@ else
 <%@ page import="org.oscarehr.common.model.TicklerComment" %>
 <%@ page import="org.oscarehr.common.model.TicklerUpdate" %>
 <%@ page import="org.oscarehr.managers.TicklerManager" %>
+<%@ page import="org.oscarehr.common.model.TicklerLink" %>
+<%@ page import="org.oscarehr.common.dao.TicklerLinkDao" %>
+<%@ page import="oscar.oscarLab.ca.on.*"%>
 
 <%
 	TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 	OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+	
+	TicklerLinkDao ticklerLinkDao = (TicklerLinkDao) SpringUtils.getBean("ticklerLinkDao");
 %>
 
 
@@ -381,6 +386,11 @@ function generateRenalLabReq(demographicNo) {
 	}});
 }
 
+function reportWindow(page) {
+    windowprops="height=660, width=960, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
+    var popup = window.open(page, "labreport", windowprops);
+    popup.focus();
+}
 </script>
 <style type="text/css">
 	<!--
@@ -551,7 +561,7 @@ function generateRenalLabReq(demographicNo) {
 				String taskAssignedTo = "";
 
 				if (dateEnd.compareTo("") == 0) dateEnd = "8888-12-31";
-				if (dateBegin.compareTo("") == 0) dateBegin="1900-01-01";
+				if (dateBegin.compareTo("") == 0) dateBegin="0001-01-01";
 
 				List<Tickler> ticklers = ticklerManager.search_tickler_bydemo(loggedInInfo, request.getParameter("demoview")==null?null: Integer.parseInt(request.getParameter("demoview")),ticklerview,ConversionUtils.fromDateString(dateBegin),ConversionUtils.fromDateString(dateEnd));
 				String rowColour = "lilac";
@@ -643,7 +653,51 @@ function generateRenalLabReq(demographicNo) {
 				<TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getPriority()%></TD>
 				<TD ROWSPAN="1" class="<%=cellColour%>"><%=taskAssignedTo%></TD>
 				<TD ROWSPAN="1" class="<%=cellColour%>"><%=String.valueOf(t.getStatus()).equals("A")?"Active":String.valueOf(t.getStatus()).equals("C")?"Completed":String.valueOf(t.getStatus()).equals("D")?"Deleted":String.valueOf(t.getStatus())%></TD>
-				<TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getMessage()%></TD>
+				<TD ROWSPAN="1" class="<%=cellColour%>"><%=t.getMessage()%>
+
+<%
+                                             	List<TicklerLink> linkList = ticklerLinkDao.getLinkByTickler(t.getId().intValue());
+                                                if (linkList != null){
+                                                    for(TicklerLink tl : linkList){
+                                                        String type = tl.getTableName();
+%>
+
+                                                <%
+                                                	if ( LabResultData.isMDS(type) ){
+                                                %>
+                                                <a href="javascript:reportWindow('SegmentDisplay.jsp?segmentID=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')">ATT</a>
+                                                <%
+                                                	}else if (LabResultData.isCML(type)){
+                                                %>
+                                                <a href="javascript:reportWindow('../lab/CA/ON/CMLDisplay.jsp?segmentID=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')">ATT</a>
+                                                <%
+                                                	}else if (LabResultData.isHL7TEXT(type)){
+                                                %>
+                                                <a href="javascript:reportWindow('../lab/CA/ALL/labDisplay.jsp?segmentID=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')">ATT</a>
+                                                <%
+                                                	}else if (LabResultData.isDocument(type)){
+                                                %>
+                                                <a href="javascript:reportWindow('../dms/ManageDocument.do?method=display&doc_no=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')">ATT</a>
+                                                <%
+                                                	}else if (LabResultData.isHRM(type)){
+                                                %>
+                                                <a href="javascript:reportWindow('../hospitalReportManager/Display.do?id=<%=tl.getTableId()%>')">ATT</a>                                                
+                                                <%
+                                                	}else {
+                                                %>
+                                                <a href="javascript:reportWindow('../lab/CA/BC/labDisplay.jsp?segmentID=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')">ATT</a>
+                                                <%
+                                                	}
+                                                %>
+                                        <%
+                                        	}
+                                                                                }
+                                        %>				
+				
+				
+				
+				
+				</TD>
 				  <td ROWSPAN="1" class="<%=cellColour%> noprint">
                 	<a href="javascript:void(0)" onClick="openNoteDialog('<%=t.getDemographicNo() %>','<%=t.getId() %>');return false;">
                 		<img border="0" src="<%=request.getContextPath()%>/images/notepad.gif"/>

@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.ProviderDataDao;
 import org.oscarehr.common.dao.ResidentOscarMsgDao;
 import org.oscarehr.common.dao.UserPropertyDAO;

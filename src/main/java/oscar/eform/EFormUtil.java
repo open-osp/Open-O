@@ -49,7 +49,7 @@ import javax.persistence.PersistenceException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.casemgmt.dao.CaseManagementNoteLinkDAO;
@@ -71,6 +71,7 @@ import org.oscarehr.common.model.ConsultationRequest;
 import org.oscarehr.common.model.EFormData;
 import org.oscarehr.common.model.EFormGroup;
 import org.oscarehr.common.model.EFormValue;
+import org.oscarehr.common.model.OscarMsgType;
 import org.oscarehr.common.model.Prevention;
 import org.oscarehr.common.model.ProfessionalSpecialist;
 import org.oscarehr.common.model.SecRole;
@@ -87,7 +88,6 @@ import com.quatro.model.security.Secobjprivilege;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.oscarehr.common.model.OscarMsgType;
 import oscar.OscarProperties;
 import oscar.dms.EDoc;
 import oscar.dms.EDocUtil;
@@ -247,8 +247,15 @@ public class EFormUtil {
 	public static List<EFormData> listPatientEformsCurrent(Integer demographicNo, Boolean current, int startIndex, int numToReturn) {
 		return eFormDataDao.findByDemographicIdCurrent(demographicNo, current, startIndex, numToReturn);
 	}
-	
-	public static ArrayList<HashMap<String, ? extends Object>> listPatientEForms(String sortBy, String deleted, String demographic_no, String userRoles, int offset, int itemsToReturn) {
+    public static List<EFormData> listPatientEformsCurrentAttachedToConsult(String consultationId) {
+        return eFormDataDao.findByDemographicIdCurrentAttachedToConsult(consultationId);
+    }
+    
+    public static List<EFormData> listPatientEformsCurrentAttachedToEForm(String fdid) {
+        return eFormDataDao.findByDemographicIdCurrentAttachedToEForm(fdid);
+    }
+
+    public static ArrayList<HashMap<String, ? extends Object>> listPatientEForms(String sortBy, String deleted, String demographic_no, String userRoles, int offset, int itemsToReturn) {
 
 		Boolean current = null;
 		if (deleted.equals("deleted")) current = false;
@@ -1579,5 +1586,26 @@ public class EFormUtil {
 			if (str.trim().equalsIgnoreCase(strLst.trim())) return strLst.trim();
 		}
 		return null;
+	}
+	
+	/** 
+	 * Local EFormData Factory
+	 */
+	public static EFormData toEFormData( EForm eForm ) {
+		EFormData eFormData=new EFormData();
+		eFormData.setFormId(Integer.parseInt(eForm.getFid()));
+		eFormData.setFormName(eForm.getFormName());
+		eFormData.setSubject(eForm.getFormSubject());
+		eFormData.setDemographicId(Integer.parseInt(eForm.getDemographicNo()));
+		eFormData.setCurrent(true);
+		eFormData.setFormDate(new Date());
+		eFormData.setFormTime(eFormData.getFormDate());
+		eFormData.setProviderNo(eForm.getProviderNo());
+		eFormData.setFormData(eForm.getFormHtml());
+		eFormData.setShowLatestFormOnly(eForm.isShowLatestFormOnly());
+		eFormData.setPatientIndependent(eForm.isPatientIndependent());
+		eFormData.setRoleType(eForm.getRoleType());
+
+		return(eFormData);
 	}
 }

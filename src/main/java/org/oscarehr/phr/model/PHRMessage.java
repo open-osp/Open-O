@@ -38,7 +38,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.indivo.IndivoException;
 import org.indivo.xml.JAXBUtils;
 import org.indivo.xml.phr.DocumentGenerator;

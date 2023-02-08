@@ -114,6 +114,11 @@ public class ManageEFormAction extends DispatchAction {
         return mapping.findForward("success");
     }
 
+    /**
+     * @deprecated
+     * 
+     * No more eForm emporium or Know2Act
+     */
     public ActionForward exportEFormSend(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
     	

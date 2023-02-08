@@ -23,9 +23,9 @@
  */
 package org.oscarehr.casemgmt.service;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class PromoTextStamper extends FooterSupport {
 
@@ -58,5 +58,7 @@ public class PromoTextStamper extends FooterSupport {
 		cb.endText();
 		cb.restoreState();
 	}
+
+
 
 }

@@ -265,6 +265,10 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
    function removeCppRow(rowNumber) {
 	   jQuery("#divR"+rowNumber).remove();
    }
+   
+   function hideCpp(title) {
+	   jQuery("#"+title).remove();
+   }
 
    function popColumn(url,div,params, navBar, navBarObj) {
 	   params = "reloadURL=" + url + "&numToDisplay=6&cmd=" + params;
@@ -386,7 +390,6 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	}
 %>
 <oscar:customInterface section="cme" />
-
 <style type="text/css">
 
 /*CPP Format */
@@ -867,6 +870,12 @@ window.onbeforeunload = onClosing;
 					</td>
 					<td><input type="text" id="resolutiondate"
 						name="resolutiondate" value="" size="12"> (YYYY-MM-DD)</td>
+				</tr>
+				<tr id="Itemprocedure">
+					<td><bean:message
+							key="oscarEncounter.procedure.title" />:</td>
+					<td><input type="text" id="procedure"
+						name="procedure" value=""></td>
 				</tr>
 				<tr id="Itemageatonset">
 					<td><bean:message key="oscarEncounter.ageAtOnset.title" />:</td>

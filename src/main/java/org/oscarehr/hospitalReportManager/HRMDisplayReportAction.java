@@ -34,8 +34,7 @@ public class HRMDisplayReportAction extends DispatchAction {
 		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_hrm", "r", null)) {
         	throw new SecurityException("missing required security object (_hrm)");
         }
-		
-		
+
 		return mapping.findForward("display");
 	}
 	

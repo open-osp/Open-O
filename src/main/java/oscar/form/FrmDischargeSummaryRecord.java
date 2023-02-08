@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.AllergyDao;
 import org.oscarehr.common.model.Allergy;
 import org.oscarehr.util.LoggedInInfo;

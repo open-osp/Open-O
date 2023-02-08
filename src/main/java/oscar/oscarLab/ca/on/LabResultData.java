@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.LabReportInformationDao;
 import org.oscarehr.common.model.LabReportInformation;
 import org.oscarehr.util.MiscUtils;
@@ -310,6 +310,7 @@ public class LabResultData implements Comparable<LabResultData> {
 			if(time == null) {
 				return null;
 			}
+			time = time.trim();
 			String dateFormat = "yyyy-MM-dd HH:mm:ss".substring( 0, time.length() );
 			this.dateTimeObr = UtilDateUtilities.getDateFromString(time, dateFormat);
 		}else if(CML.equals(this.labType)){

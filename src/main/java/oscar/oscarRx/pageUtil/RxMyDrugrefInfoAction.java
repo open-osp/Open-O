@@ -44,7 +44,7 @@ import org.codehaus.jettison.json.JSONObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -540,7 +540,8 @@ public final class RxMyDrugrefInfoAction extends DispatchAction {
 		    	        			Date date = formatter.parse(eform.get(key).toString());
 		    	        			drugInfo.put(key, date);
 		    	        		} else {
-		    	        			drugInfo.put(key, eform.get(key));
+		    	        			
+		    	        			drugInfo.put(key.toLowerCase(), eform.get(key));
 		    	        		}
 		    	        	}
 		    	     

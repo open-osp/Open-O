@@ -286,7 +286,14 @@ if(!authed) {
 		$(div).find("#id").val("-1");
 		$(div).find("select").val("-1");
 		
-		$(div).appendTo("#content");
+		var theSpan = document.createElement("span");
+		//<div class="span12">
+		theSpan.setAttribute("class","span12");
+		$(div).appendTo(theSpan);
+		
+		$("#content").append(theSpan);
+		
+		//$(div).appendTo("#content");
 		$("#faxUser"+userCount).focus();	
 		$("#submit").prop("disabled", false);
 	}
@@ -352,6 +359,7 @@ if(!authed) {
 		<form id="configFrm" method="post" onSubmit="return verify()"> 
 		<input type="hidden" name="method" value="configure"/> 
 		<div id="bodyrow" class="row">
+
 			<legend>Fax Server Credentials</legend>
 			<div class="span12">
 			
@@ -381,6 +389,7 @@ if(!authed) {
 					<label for="faxServicePasswd">Fax Server Password</label>
 					<input class="span6" id="faxServicePasswd" type="password" name="sitePasswd" value="<%=faxServicePassword%>" />
 				</div>
+
 			</div>
 
 			</div>
@@ -414,17 +423,18 @@ if(!authed) {
 						
 						%>
 						<input class="span6" type="password" id="faxPasswd<%=count == 0 ? "" : count%>" name="faxPassword" value="<%=faxPassword%>"/>
-
 					</div>
 				</div>
 				<div class="row">
 					<div class="span6">
+
 						<label for="faxNumber<%=count == 0 ? "" : count%>" >Fax Number</label>
 						<input class="span6" type="text" id="faxNumber<%=count == 0 ? "" : count%>" name="faxNumber" value="<%=faxConfigList.isEmpty() ? "Clinic Fax Number" : faxConfigList.get(count).getFaxNumber()%>"/>
 					</div>	
 					
 					<div class="span6">
 					<label for="senderEmail<%=count == 0 ? "" : count%>">Email</label>
+
 					<input class="span6" type="email" id="senderEmail<%=count == 0 ? "" : count%>" name="senderEmail" placeholder="Account email" value="<%=faxConfigList.get(count).getSenderEmail()%>" />
 				</div>
 				</div>

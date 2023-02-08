@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.dashboard.display.beans.GraphPlot;
 import org.oscarehr.managers.DashboardManager;
 import org.oscarehr.util.MiscUtils;

@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlOptions;
 import org.marc.shic.cda.datatypes.CDAStandard;
 import org.marc.shic.cda.utils.CdaUtils;

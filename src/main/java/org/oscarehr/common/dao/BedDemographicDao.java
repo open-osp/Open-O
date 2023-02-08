@@ -29,7 +29,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.BedDemographic;
 import org.oscarehr.common.model.BedDemographicHistorical;
 import org.oscarehr.common.model.BedDemographicPK;

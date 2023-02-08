@@ -25,7 +25,7 @@
 
 package org.oscarehr.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 

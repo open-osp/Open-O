@@ -36,7 +36,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.LoggedInInfo;
 
@@ -49,7 +49,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
  */
 public class HL7Handler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(HL7Handler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public HL7Handler() {
 		logger.info("NEW HL7Handler UPLOAD HANDLER instance just instantiated. ");

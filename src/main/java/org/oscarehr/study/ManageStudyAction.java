@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -59,7 +59,7 @@ import oscar.util.ConversionUtils;
 
 public class ManageStudyAction extends DispatchAction {
 	
-	private static Logger logger = Logger.getLogger(Logger.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	
 	public ActionForward saveUpdateStudy(ActionMapping mapping, ActionForm form,

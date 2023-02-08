@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import org.apache.cxf.common.util.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlOptions;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;

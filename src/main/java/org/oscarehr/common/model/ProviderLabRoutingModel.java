@@ -17,8 +17,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -51,16 +49,20 @@ public class ProviderLabRoutingModel extends AbstractModel<Integer> implements S
 	
 	@Column(name = "lab_type")
 	private String labType;
-	
-	@Override
-	public Integer getId() {
-		return id;
-	}
-	
+
 	public ProviderLabRoutingModel() {
 		//default
 	}
-	
+
+	public ProviderLabRoutingModel(String providerNo, Integer labNo, String status, String comment, Date timestamp, String labType) {
+		this.providerNo = providerNo;
+		this.labNo = labNo;
+		this.status = status;
+		this.comment = comment;
+		this.timestamp = timestamp;
+		this.labType = labType;
+	}
+
 	public ProviderLabRoutingModel(ProviderLabRoutingModel providerLabRoutingModel) {
 		this.id = providerLabRoutingModel.getId();
 		this.providerNo = providerLabRoutingModel.getProviderNo();
@@ -70,7 +72,12 @@ public class ProviderLabRoutingModel extends AbstractModel<Integer> implements S
 		this.timestamp = providerLabRoutingModel.getTimestamp();
 		this.labType = providerLabRoutingModel.getLabType();
 	}
-	
+
+	@Override
+	public Integer getId() {
+		return id;
+	}
+
 	public String getProviderNo() {
 		return providerNo;
 	}
@@ -118,11 +125,5 @@ public class ProviderLabRoutingModel extends AbstractModel<Integer> implements S
 	public void setLabType(String labType) {
 		this.labType = StringUtils.trimToNull(labType);
 	}
-	
-	@PrePersist
-	@PreUpdate
-	protected void jpa_setTimestamp() {
-		this.timestamp = new Date();
-	}
-	
+
 }

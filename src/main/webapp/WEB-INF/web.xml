@@ -10,6 +10,7 @@
 		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
 	<display-name>oscar_mcmaster</display-name>
+	<absolute-ordering />
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -28,7 +29,7 @@
 			</init-param>
 			<init-param>
 				<param-name>disabled</param-name>
-				<param-value>true</param-value>
+				<param-value>false</param-value>
 			</init-param>
         </filter>
         <filter-mapping>
@@ -46,12 +47,6 @@
             <filter-name>WebServiceSessionInvalidatingFilter</filter-name>
             <url-pattern>/ws/*</url-pattern>
     </filter-mapping>
- 
-	<filter>
-		<filter-name>ProblemCheckFilter</filter-name>
-		<filter-class>org.oscarehr.util.ProblemCheckFilter</filter-class>
-	</filter>
-	
     <filter>
         <filter-name>ResponseDefaultsFilter</filter-name>
         <filter-class>org.oscarehr.util.ResponseDefaultsFilter</filter-class>
@@ -74,11 +69,6 @@
 		</init-param>
 	</filter>
 
-    <filter-mapping>
-		<filter-name>ProblemCheckFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
 	<filter-mapping>
 		<filter-name>PrivacyStatementAppendingFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
@@ -109,11 +99,6 @@
     </filter-mapping>
 
 	<filter>
-		<filter-name>ComponentFilter</filter-name>
-		<filter-class>org.caisi.comp.web.WebComponentFilter</filter-class>
-	</filter>
-
-	<filter>
 		<filter-name>DbConnectionFilter</filter-name>
 		<filter-class>org.oscarehr.util.DbConnectionFilter</filter-class>
 	</filter>
@@ -126,42 +111,6 @@
 		<filter-class>oscar.oscarSecurity.LoginFilter</filter-class>
 	</filter>
 	<filter>
-		<filter-name>CRFilter</filter-name>
-		<filter-class>net.sf.cookierevolver.CRFilter</filter-class>
-		<init-param>
-			<param-name>cr.filter.ignore</param-name>
-			<param-value>/login.do /images/* /lab/CMLlabUpload.do /lab/CA/ON/uploadComplete.jsp /logout.jsp /PopulationReport.do</param-value>
-		</init-param>
-		<init-param>
-			<param-name>cr.auth.method</param-name>
-			<param-value>CUSTOM</param-value>
-		</init-param>
-		<init-param>
-			<param-name>cr.auth.loginURL</param-name>
-			<param-value>index.jsp</param-value>
-		</init-param>
-		<init-param>
-			<param-name>cr.policy.default</param-name>
-			<param-value>REMOTE-ACCESS</param-value>
-		</init-param>
-		<init-param>
-			<param-name>cr.rolesProvider</param-name>
-			<param-value>oscar.oscarSecurity.CRHelper</param-value>
-		</init-param>
-		<init-param>
-			<param-name>cr.config.provider</param-name>
-			<param-value>oscar.oscarDB.OscarHibernateProperties</param-value>
-		</init-param>
-		<init-param>
-			<param-name>hibernate.connection.pool_size</param-name>
-			<param-value>10</param-value>
-		</init-param>
-		<init-param>
-			<param-name>hibernate.connection.autocommit</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter>
-	<filter>
 		<filter-name>ResponseOverrideFilter</filter-name>
 		<filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
 	</filter>
@@ -170,10 +119,6 @@
 		<filter-class>org.oscarehr.PMmodule.web.PMMFilter</filter-class>
 	</filter>
 
-	<filter-mapping>
-		<filter-name>ComponentFilter</filter-name>
-		<url-pattern>/mod/*</url-pattern>
-	</filter-mapping>
 	<filter-mapping>
 		<filter-name>DbConnectionFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -195,10 +140,6 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
-		<filter-name>CRFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
 		<filter-name>LoginFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
@@ -211,7 +152,7 @@
 		<listener-class>oscar.login.Startup</listener-class>
 	</listener>
 	<listener>
-		<listener-class>org.oscarehr.common.web.OscarSpringContextLoaderListener</listener-class>
+		<listener-class>org.oscarehr.common.web.OscarSpringContextLoader</listener-class>
 	</listener>
 	<listener>
 		<listener-class>org.oscarehr.util.ContextStartupListener</listener-class>

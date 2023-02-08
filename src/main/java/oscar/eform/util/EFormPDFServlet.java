@@ -47,11 +47,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.itextpdf.text.*;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.printing.FontSettings;
 import org.oscarehr.common.printing.PdfWriterFactory;
 import org.oscarehr.util.LoggedInInfo;
@@ -64,18 +65,12 @@ import oscar.form.pdfservlet.FrmPDFPostValueProcessor;
 import oscar.form.pdfservlet.HsfoRxDataHolder;
 import oscar.util.ConcatPDF;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  *
@@ -84,7 +79,7 @@ import com.lowagie.text.pdf.PdfWriter;
 public class EFormPDFServlet extends HttpServlet {
 
     public static final String HSFO_RX_DATA_KEY = "hsfo.rx.data";
-    Logger log = Logger.getLogger(EFormPDFServlet.class);
+    Logger log = org.oscarehr.util.MiscUtils.getLogger();
     /**
      *
      *
@@ -600,7 +595,7 @@ public class EFormPDFServlet extends HttpServlet {
             	float ury = Float.parseFloat(cfgVal[3].trim());
             	
                 Rectangle rec = new Rectangle(llx, lly, urx, ury);
-                rec.setBackgroundColor(java.awt.Color.WHITE);
+                rec.setBackgroundColor(BaseColor.WHITE);
                 cb.rectangle(rec);
             	
             } else if (temp.toString().startsWith("__$line")) {

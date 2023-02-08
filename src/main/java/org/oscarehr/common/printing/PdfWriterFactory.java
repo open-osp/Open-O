@@ -33,18 +33,63 @@ import org.oscarehr.util.MiscUtils;
 
 import oscar.OscarProperties;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfWriter;
-
 public class PdfWriterFactory {
 
-	public static PdfContentByte setFont(PdfContentByte pdfContentByte, FontSettings settings) {
-		pdfContentByte.setFontAndSize(settings.createFont(), settings.getFontSize());
+	private static String confidentialtyStatement = OscarProperties.getConfidentialityStatement();
+	private static String promoText = OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT");
+
+	/**
+	 * @Deprecated:  use the newer Itext PDF method with the same signature.
+	 * @param pdfContentByte
+	 * @param settings
+	 * @return
+	 */
+	@Deprecated
+	public static com.lowagie.text.pdf.PdfContentByte setFont(com.lowagie.text.pdf.PdfContentByte pdfContentByte, FontSettings settings) {
+		try {
+			com.lowagie.text.pdf.BaseFont baseFont = com.lowagie.text.pdf.BaseFont.createFont(settings.getFont(), settings.getCodePage(), settings.isEmbedded());
+			pdfContentByte.setFontAndSize(baseFont, settings.getFontSize());
+		} catch (Exception e) {
+			MiscUtils.getLogger().error("Failed creation of PDF Base Font ", e);
+		}
 		return pdfContentByte;
 	}
-	
+
+	/**
+	 * @Deprecated:  use the newer Itext PDF method with the same signature.
+	 * @param document
+	 * @param stream
+	 * @param settings
+	 * @return
+	 */
+	@Deprecated
+	public static com.lowagie.text.pdf.PdfWriter newInstance(com.lowagie.text.Document document, OutputStream stream, FontSettings settings) {
+		com.lowagie.text.pdf.PdfWriter result;
+		try {
+			result = com.lowagie.text.pdf.PdfWriter.getInstance(document, stream);
+		} catch (com.lowagie.text.DocumentException e) {
+			MiscUtils.getLogger().error("Unable to create new PdfWriter instance", e);
+			return null;
+		}
+
+//		String confidentialtyStatement = OscarProperties.getConfidentialityStatement();
+//		PromoTextStamper pts = new PromoTextStamper(confidentialtyStatement, 30);
+//		pts.setFontSize(settings.getFontSize());
+//		result.setPageEvent(pts);
+//
+//		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+//		String promoText = OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") + " " + f.format(new Date());
+//		pts = new PromoTextStamper(promoText, 20);
+//		pts.setFontSize(settings.getFontSize());
+//		result.setPageEvent(pts);
+
+//		PageNumberStamper pns = new PageNumberStamper(10);
+//		pns.setFontSize(settings.getFontSize());
+//		result.setPageEvent(pns);
+
+		return result;
+	}
+
 	/**
 	 * Creates a new instance of the PDF writer.
 	 * 
@@ -53,25 +98,28 @@ public class PdfWriterFactory {
 	 * @param settings
 	 * @return PdfWriter
 	 */
-	public static PdfWriter newInstance(Document document, OutputStream stream, FontSettings settings) {
-		PdfWriter result;
+	public static com.itextpdf.text.pdf.PdfWriter newInstance(com.itextpdf.text.Document document, OutputStream stream, FontSettings settings) {
+		com.itextpdf.text.pdf.PdfWriter result;
 		try {
-			result = PdfWriter.getInstance(document, stream);
-		} catch (DocumentException e) {
+			result = com.itextpdf.text.pdf.PdfWriter.getInstance(document, stream);
+		} catch (com.itextpdf.text.DocumentException e) {
 			MiscUtils.getLogger().error("Unable to create new PdfWriter instance", e);
 			return null;
 		}
+		PromoTextStamper pts;
 
-		String confidentialtyStatement = OscarProperties.getConfidentialityStatement();
-		PromoTextStamper pts = new PromoTextStamper(confidentialtyStatement, 30);
-		pts.setFontSize(settings.getFontSize());
-		result.setPageEvent(pts);
-
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-		String promoText = OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") + " " + f.format(new Date());
-		pts = new PromoTextStamper(promoText, 20);
-		pts.setFontSize(settings.getFontSize());
-		result.setPageEvent(pts);
+		if(confidentialtyStatement != null && ! confidentialtyStatement.isEmpty()) {
+			pts = new PromoTextStamper(confidentialtyStatement, 30);
+			pts.setFontSize(settings.getFontSize());
+			result.setPageEvent(pts);
+		}
+		if(promoText != null && ! promoText.isEmpty()) {
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String promoTextDate = promoText + " " + simpleDateFormat.format(new Date());
+			pts = new PromoTextStamper(promoTextDate, 20);
+			pts.setFontSize(settings.getFontSize());
+			result.setPageEvent(pts);
+		}
 
 		PageNumberStamper pns = new PageNumberStamper(10);
 		pns.setFontSize(settings.getFontSize());

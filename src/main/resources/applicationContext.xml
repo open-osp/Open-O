@@ -104,7 +104,8 @@
 
 	<bean id="caseloadDao" class="org.oscarehr.common.dao.CaseloadDao" autowire="byName" />
 	<bean id="inboxResultsDao" class="org.oscarehr.common.dao.InboxResultsDao" autowire="byName" />
-	
+    <bean id="inboxResultsRepository" class="org.oscarehr.common.dao.InboxResultsRepository" autowire="byName" />
+
 	<!-- Dao classes that implement OscarSuperDao -->
 	<bean id="providerSuperDao" class="oscar.dao.ProviderDao" autowire="byName" />
 	
@@ -244,9 +245,12 @@
 
 	<!-- Encounter Form DAO -->
 	<bean id="Rourke2009DAO" class="oscar.form.dao.Rourke2009DAO" autowire="byName"/>
+	<bean id="FormBCAR2020Dao" class="oscar.form.dao.FormBCAR2020Dao" autowire="byName"/>
+	<bean id="FormBCAR2020DataDao" class="oscar.form.dao.FormBCAR2020DataDao" autowire="byName"/>
+	<bean id="FormBCAR2020TextDao" class="oscar.form.dao.FormBCAR2020TextDao" autowire="byName"/>
 
 
-        <!--Email Support -->
+	<!--Email Support -->
         <context:component-scan base-package="oscar.service"/>
 
         <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" p:corePoolSize="5"

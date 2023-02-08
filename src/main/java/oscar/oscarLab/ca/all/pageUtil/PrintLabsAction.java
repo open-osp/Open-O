@@ -39,7 +39,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -47,8 +47,6 @@ import org.apache.struts.action.ActionMapping;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
-
-import com.lowagie.text.DocumentException;
 
 import oscar.log.LogAction;
 import oscar.log.LogConst;
@@ -61,7 +59,7 @@ import oscar.oscarLab.ca.all.parsers.MessageHandler;
  */
 public class PrintLabsAction extends Action{
     
-    Logger logger = Logger.getLogger(PrintLabsAction.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     
     /** Creates a new instance of PrintLabsAction */
@@ -96,10 +94,6 @@ public class PrintLabsAction extends Action{
 	            
 	            f.delete();
             }
-        }catch(DocumentException de) {
-            logger.error("DocumentException occured insided PrintLabsAction", de);
-            request.setAttribute("printError", new Boolean(true));
-            return mapping.findForward("error");
         }catch(IOException ioe) {
             logger.error("IOException occured insided PrintLabsAction", ioe);
             request.setAttribute("printError", new Boolean(true));

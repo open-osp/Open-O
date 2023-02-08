@@ -32,7 +32,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -54,7 +54,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class NoteAddonAction extends DispatchAction {
 
-	static Logger logger = Logger.getLogger(NoteAddonAction.class);
+	static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
 	protected EyeformProcedureBookDao procedureBookDao = SpringUtils.getBean(EyeformProcedureBookDao.class);

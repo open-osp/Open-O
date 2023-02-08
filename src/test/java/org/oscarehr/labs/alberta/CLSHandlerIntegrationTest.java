@@ -30,7 +30,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -48,7 +48,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 @Ignore
 public class CLSHandlerIntegrationTest {
 
-	private static Logger logger = Logger.getLogger(EaapsIntegrationTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	/* SYSTEM-SPECIFIC TEST VALUES */
 	
@@ -66,20 +66,18 @@ public class CLSHandlerIntegrationTest {
 	@BeforeClass
 	public static void init() throws Exception {
 		SchemaUtils.restoreAllTables();
-		
-		if(SpringUtils.beanFactory==null) {
-			oscar.OscarProperties p = oscar.OscarProperties.getInstance();
-			p.setProperty("db_name", ConfigUtils.getProperty("db_schema") + ConfigUtils.getProperty("db_schema_properties"));
-			p.setProperty("db_username", ConfigUtils.getProperty("db_user"));
-			p.setProperty("db_password", ConfigUtils.getProperty("db_password"));
-			p.setProperty("db_uri", ConfigUtils.getProperty("db_url_prefix"));
-			p.setProperty("db_driver", ConfigUtils.getProperty("db_driver"));
-			ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
-			context.setConfigLocations(new String[]{"/applicationContext.xml","/applicationContextBORN.xml"});
-			context.refresh();
-			SpringUtils.beanFactory = context;
-		}
-		
+
+		oscar.OscarProperties p = oscar.OscarProperties.getInstance();
+		p.setProperty("db_name", ConfigUtils.getProperty("db_schema") + ConfigUtils.getProperty("db_schema_properties"));
+		p.setProperty("db_username", ConfigUtils.getProperty("db_user"));
+		p.setProperty("db_password", ConfigUtils.getProperty("db_password"));
+		p.setProperty("db_uri", ConfigUtils.getProperty("db_url_prefix"));
+		p.setProperty("db_driver", ConfigUtils.getProperty("db_driver"));
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
+		context.setConfigLocations(new String[]{"/applicationContext.xml","/applicationContextBORN.xml"});
+		context.refresh();
+		SpringUtils.setBeanFactory(context);
+
 		AuthUtils.initLoginContext();
 		
 	}

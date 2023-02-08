@@ -61,7 +61,7 @@
 <%@page import="org.oscarehr.common.dao.BillingONExtDao" %>
 <%@page import="org.oscarehr.common.model.BillingONExt" %>
 
-<%@page import="org.apache.log4j.Logger" %>
+<%@page import="org.apache.logging.log4j.Logger" %>
 
 <html:html locale="true">
 <head>

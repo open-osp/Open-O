@@ -1377,6 +1377,7 @@ CREATE TABLE billing_on_cheader1 (
   creator varchar(6) default NULL,
   timestamp1 timestamp,
   clinic varchar(30) default NULL,
+  `programNo` int(10) DEFAULT NULL,
 
   PRIMARY KEY  (id),
   KEY appointment_no (appointment_no,demographic_no),
@@ -1387,7 +1388,8 @@ CREATE TABLE billing_on_cheader1 (
   KEY apptProvider_no (apptProvider_no),
   KEY creator (creator),
   KEY clinic (clinic),
-  KEY status (status)
+  KEY status (status),
+  KEY `billing_on_cheader1_ikey` (`timestamp1`)
 ) ;
 
 CREATE TABLE billing_on_cheader2 (
@@ -1493,7 +1495,7 @@ CREATE TABLE ctl_billingtype (
 );
 
 CREATE TABLE `formLabReq07` (
-  	`ID` int(10) NOT NULL auto_increment,
+  `ID` int(10) NOT NULL auto_increment,
 	`formEdited` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 	`b_glucose` tinyint(1) default NULL,
 	`b_glucose_random` tinyint(1) default NULL,
@@ -1522,7 +1524,7 @@ CREATE TABLE `formLabReq07` (
 	`healthNumber` varchar(20) default NULL,
 	`patientCity` varchar(40) default NULL,
 	`b_patientsTelNo` varchar(40) default NULL,
-        `clinicianContactUrgent` varchar(40) default NULL,
+  `clinicianContactUrgent` varchar(40) default NULL,
 	`b_childsAgeDays` varchar(20) default NULL,
 	`b_tsh` tinyint(1) default NULL,
 	`b_timeCollected2` varchar(20) default NULL,
@@ -1561,7 +1563,7 @@ CREATE TABLE `formLabReq07` (
 	`b_neonatalBilirubin` tinyint(1) default NULL,
 	`m_fecalOccultBlood` tinyint(1) default NULL,
 	`m_urine` tinyint(1) default NULL,
-        `m_blankText` varchar(100) default NULL,
+  `m_blankText` varchar(100) default NULL,
 	`b_nameDrug2` varchar(100) default NULL,
 	`m_stoolOvaParasites` tinyint(1) default NULL,
 	`b_nameDrug1` varchar(100) default NULL,
@@ -1586,7 +1588,7 @@ CREATE TABLE `formLabReq07` (
 	`thirdParty` tinyint(1) default NULL,
 	`clinicName` varchar(60) default NULL,
 	`b_bilirubin` tinyint(1) default NULL,
-        `m_specimenCollectionTime` varchar(15) default NULL,
+  `m_specimenCollectionTime` varchar(15) default NULL,
 	`o_otherTests16` varchar(150) default NULL,
 	`o_otherTests15` varchar(150) default NULL,
 	`o_otherTests14` varchar(150) default NULL,
@@ -1613,8 +1615,9 @@ CREATE TABLE `formLabReq07` (
 	`v_immune_HepatitisC` tinyint(1) default NULL,
 	`v_immune_HepatitisB` tinyint(1) default NULL,
 	`v_immune_HepatitisA` tinyint(1) default NULL,
-        `patientChartNo` varchar(20),
-	PRIMARY KEY  (`ID`)
+  `patientChartNo` varchar(20),
+	PRIMARY KEY  (`ID`),
+  KEY `formLabReq07_ikey` (`demographic_no`,`formEdited`)
 ) ;
 
 CREATE TABLE `formRourke2009` (

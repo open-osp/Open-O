@@ -61,6 +61,14 @@ public class PatientLabRouting extends AbstractModel<Integer> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date created = new Date();
 	
+	public PatientLabRouting() {}
+
+	public PatientLabRouting(int labNo, String labType, Integer demographicNo) {
+		this.labNo = labNo;
+		this.labType = labType;
+		this.demographicNo = demographicNo;
+	}
+
 	public int getLabNo() {
     	return labNo;
     }

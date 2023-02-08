@@ -36,7 +36,7 @@ package oscar.oscarLab;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.IncomingLabRulesDao;
 import org.oscarehr.common.model.IncomingLabRules;
 import org.oscarehr.common.model.Provider;
@@ -48,7 +48,7 @@ import org.oscarehr.util.SpringUtils;
  */
 public class ForwardingRules {
 
-	Logger logger = Logger.getLogger(ForwardingRules.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	/** Creates a new instance of ForwardingRules */
 	public ForwardingRules() {

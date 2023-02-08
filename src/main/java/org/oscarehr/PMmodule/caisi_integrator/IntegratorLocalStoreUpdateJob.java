@@ -30,7 +30,7 @@ import java.util.List;
 
 import javax.xml.ws.WebServiceException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.caisi_integrator.ws.DemographicWs;
 import org.oscarehr.common.dao.DemographicExtDao;
 import org.oscarehr.common.dao.FacilityDao;
@@ -41,11 +41,7 @@ import org.oscarehr.common.model.Facility;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.Security;
 import org.oscarehr.common.model.UserProperty;
-import org.oscarehr.util.BenchmarkTimer;
-import org.oscarehr.util.CxfClientUtilsOld;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import org.oscarehr.util.*;
 
 import oscar.OscarProperties;
 

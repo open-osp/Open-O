@@ -23,7 +23,7 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.oscarBilling.ca.on.data.BillingClaimHeader1Data;
 import oscar.oscarBilling.ca.on.data.BillingDataHlp;
@@ -33,7 +33,7 @@ import oscar.oscarBilling.ca.on.data.JdbcBillingCodeImpl;
 import oscar.util.UtilDateUtilities;
 
 public class BillingSpecPrep {
-	private static final Logger _logger = Logger.getLogger(BillingSpecPrep.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 	JdbcBillingClaimImpl dbObj = new JdbcBillingClaimImpl();
 
 	// save a billing record

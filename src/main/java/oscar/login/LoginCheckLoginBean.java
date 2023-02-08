@@ -27,9 +27,8 @@ package oscar.login;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.PMmodule.dao.SecUserRoleDao;
 import org.oscarehr.PMmodule.model.SecUserRole;
@@ -38,13 +37,11 @@ import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.Security;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
+import com.quatro.model.security.LdapSecurity;
 import org.owasp.encoder.Encode;
 import oscar.OscarProperties;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
-
-import com.quatro.model.security.LdapSecurity;
 
 public final class LoginCheckLoginBean {
 	private static final Logger logger = MiscUtils.getLogger();
@@ -248,8 +245,9 @@ public final class LoginCheckLoginBean {
 
 	public boolean isWAN() {
 		boolean bWAN = true;
-		Properties p = OscarProperties.getInstance();
-		if (ip.startsWith(p.getProperty("login_local_ip"))) bWAN = false;
+		//Properties p = OscarProperties.getInstance();
+		//if (ip.startsWith(p.getProperty("login_local_ip"))) bWAN = false;
+		if(LoginCheckLogin.ipFound(ip)) bWAN = false;
 		return bWAN;
 	}
 

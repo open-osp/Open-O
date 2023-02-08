@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.integration.hl7.model.PatientId;
 import org.oscarehr.integration.hl7.model.StaffId;
 import org.oscarehr.util.MiscUtils;

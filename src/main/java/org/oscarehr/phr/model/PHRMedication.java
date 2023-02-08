@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -40,7 +39,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.indivo.IndivoException;
 import org.indivo.xml.JAXBUtils;
 import org.indivo.xml.phr.DocumentGenerator;
@@ -199,10 +198,10 @@ public class PHRMedication extends PHRDocument {
 			try {
 				med = (MedicationType) org.indivo.xml.phr.DocumentUtils.getDocumentAnyObject(doc, medContext.createUnmarshaller());
 			} catch (IndivoException ex) {
-				java.util.logging.Logger.getLogger(PHRMedication.class.getName()).log(Level.SEVERE, null, ex);
+				org.oscarehr.util.MiscUtils.getLogger().error("",ex);
 			}
 		} catch (JAXBException ex) {
-			java.util.logging.Logger.getLogger(PHRMedication.class.getName()).log(Level.SEVERE, null, ex);
+			org.oscarehr.util.MiscUtils.getLogger().error("",ex);
 		}
 	}
 
@@ -434,8 +433,8 @@ public class PHRMedication extends PHRDocument {
 
 			medType.setCustomInstructions(drug.isCustomInstructions());
 			medType.setCustomNote(drug.isCustomNote());
-			medType.setLongTerm(drug.isLongTerm());
-			medType.setPastMed(drug.getPastMed());
+			medType.setLongTerm(drug.getLongTerm());
+			medType.setPastMed(drug.isPastMed());
 			medType.setPatientCompliance(drug.getPatientCompliance());
 			medType.setOutsideProviderName(drug.getOutsideProviderName());
 			medType.setOutsideProviderOhip(drug.getOutsideProviderOhip());

@@ -26,7 +26,7 @@ package org.oscarehr.dashboard.handler;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.DxresearchDAO;
 import org.oscarehr.common.model.Dxresearch;
 import org.oscarehr.util.LoggedInInfo;

@@ -23,11 +23,11 @@
  */
 package oscar.oscarLab.ca.all.upload.handlers;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 
 public class AlphaHandler extends DefaultHandler implements MessageHandler {
-    Logger logger = Logger.getLogger(AlphaHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     
     @Override
     String getHl7Type(){

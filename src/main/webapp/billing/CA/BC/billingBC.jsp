@@ -143,7 +143,7 @@ if(!authed) {
   String mRecRefDoctorNum = "";
 
   if(! "".equals(demo.getFamilyDoctorNumber())){
-   mRecRefDoctor = demo.getFamilyDoctorLastName() + ", " + demo.getFamilyDoctorFirstName();
+   mRecRefDoctor = demo.getFamilyDoctorName();
    mRecRefDoctorNum = demo.getFamilyDoctorNumber();
   }else{
    mRecRefDoctor = "none";
@@ -896,11 +896,11 @@ jQuery(document).ready(function(jQuery){
 			  * Referral provider codes must be numeric
 			  */
 			 xml_refer1: {
-				 number: true
+				 alphanumeric: true
 			 },
-			 
+
 			 xml_refer2: {
-				 number: true
+                 alphanumeric: true
 			 },
 			 
 			 /*
@@ -1442,10 +1442,13 @@ if(wcbneeds != null){%>
                 }
               }
               request.setAttribute("paymentMethodList", types);
+              request.setAttribute("defaultPaymentMethod" , OscarProperties.getInstance().getProperty("DEFAULT_PAYMENT_METHOD",""));
             %>
-              <html:select styleClass="form-control" property="xml_encounter">
-                <html:options collection="paymentMethodList" property="id" labelProperty="paymentType"/>
-              </html:select>
+                <select class="form-control" id="xml_encounter" name="xml_encounter">
+                    <c:forEach items="${paymentMethodList}" var="paymentMethod" >
+                        <option value="${paymentMethod.id}" ${ defaultPaymentMethod eq paymentMethod.id ? 'selected' : ''}>${paymentMethod.paymentType}</option>
+                    </c:forEach>
+                </select>
               </div>
             
             </td>

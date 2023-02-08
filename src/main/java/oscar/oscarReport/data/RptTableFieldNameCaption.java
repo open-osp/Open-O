@@ -36,7 +36,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.EncounterFormDao;
 import org.oscarehr.common.dao.ReportTableFieldCaptionDao;
 import org.oscarehr.common.model.EncounterForm;

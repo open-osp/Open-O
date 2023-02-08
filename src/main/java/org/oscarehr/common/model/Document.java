@@ -33,22 +33,28 @@ package org.oscarehr.common.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.io.FileUtils;
 
@@ -129,7 +135,12 @@ public class Document extends AbstractModel<Integer> implements Serializable {
     private String contenttype;
     @Column(name = "contentdatetime")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date contentdatetime;    
+    private Date contentdatetime;
+    @Column(name = "report_media")
+    private String reportMedia;
+    @Column(name = "sent_date_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date sentDateTime;
     @Basic(optional = false)
     @Column(name = "public1")
     private int public1;
@@ -145,8 +156,18 @@ public class Document extends AbstractModel<Integer> implements Serializable {
     private Integer numberofpages;
     @Column(name="appointment_no")
     private Integer appointmentNo;
+    @Column(name="abnormal", columnDefinition = "integer default 0")
+    private boolean abnormal;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "document_no", insertable = false, updatable = false)
+    private List<DocumentReview> reviews = new ArrayList<DocumentReview>();
 
     private Boolean restrictToProgram=false;
+    @Temporal(TemporalType.DATE)
+    private Date receivedDate;
+
+    @Transient
+    private byte[] base64Binary;
     
     public Document() {
     }
@@ -227,7 +248,22 @@ public class Document extends AbstractModel<Integer> implements Serializable {
     public void setContentdatetime(Date contentdatetime) {
         this.contentdatetime = contentdatetime;
     }
-    
+
+    public String getReportMedia() {
+        return reportMedia;
+    }
+
+    public void setReportMedia(String reportMedia) {
+        this.reportMedia = reportMedia;
+    }
+
+    public Date getSentDateTime() {
+        return sentDateTime;
+    }
+    public void setSentDateTime(Date sentDateTime) {
+        this.sentDateTime = sentDateTime;
+    }
+
     public String getResponsible() {
         return responsible;
     }
@@ -292,18 +328,32 @@ public class Document extends AbstractModel<Integer> implements Serializable {
         this.observationdate = observationdate;
     }
 
+    /**
+     * @deprecated replacedBy <code>DocumentReview.getProviderNo()</code>.
+     */
+    @Deprecated
     public String getReviewer() {
         return reviewer;
     }
 
+    /**
+     * @deprecated replaced by replaced by <code>DocumentReview.setProviderNo(String providerNo)</code>.
+     */
+    @Deprecated
     public void setReviewer(String reviewer) {
         this.reviewer = reviewer;
     }
 
+    /**
+     * @deprecated replaced by <code>DocumentReview.getDateTimeReviewed()</code>.
+     */
     public Date getReviewdatetime() {
         return reviewdatetime;
     }
 
+    /**
+     * @deprecated replaced by <code>DocumentReview.setDateTimeReviewed(Date dateTimeReviewed)</code>.
+     */
     public void setReviewdatetime(Date reviewdatetime) {
         this.reviewdatetime = reviewdatetime;
     }
@@ -322,6 +372,13 @@ public class Document extends AbstractModel<Integer> implements Serializable {
 
 	public void setAppointmentNo(Integer appointmentNo) {
 		this.appointmentNo = appointmentNo;
+	}
+
+	public boolean isAbnormal() {
+		return abnormal;
+	}
+	public void setAbnormal(boolean abnormal) {
+		this.abnormal = abnormal;
 	}
 
 	public String getDocClass() {
@@ -348,7 +405,15 @@ public class Document extends AbstractModel<Integer> implements Serializable {
     	this.sourceFacility = sourceFacility;
     }
 
-	/**
+    public List<DocumentReview> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<DocumentReview> reviews) {
+        this.reviews = reviews;
+    }
+
+    /**
 	 * @returns a string representing the path of the file on disk, i.e. document_dir+'/'+filename
 	 */
 	public String getDocumentFileFullPath()
@@ -361,12 +426,19 @@ public class Document extends AbstractModel<Integer> implements Serializable {
 	{
 		return(FileUtils.readFileToByteArray(new File(getDocumentFileFullPath())));
 	}
-	
-	@PrePersist
+
 	@PreUpdate
 	protected void jpaUpdateDate() {
 		this.updatedatetime = new Date();
 	}
+
+    @PrePersist
+    protected void jpaContentDate() {
+	    if (this.contentdatetime == null) {
+            this.contentdatetime = new Date();
+        }
+        this.updatedatetime = new Date();
+    }
 
 	public Boolean isRestrictToProgram() {
 		return restrictToProgram;
@@ -375,6 +447,21 @@ public class Document extends AbstractModel<Integer> implements Serializable {
 	public void setRestrictToProgram(Boolean restrictToProgram) {
 		this.restrictToProgram = restrictToProgram;
 	}
-	
+
+	public Date getReceivedDate() {
+		return receivedDate;
+	}
+
+	public void setReceivedDate(Date receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+
+    public byte[] getBase64Binary() {
+		return base64Binary;
+	}
+
+	public void setBase64Binary(byte[] base64Binary) {
+		this.base64Binary = base64Binary;
+	}
 	
 }

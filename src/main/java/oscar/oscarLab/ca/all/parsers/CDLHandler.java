@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.util.UtilDateUtilities;
 import ca.uhn.hl7v2.HL7Exception;
@@ -57,7 +57,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class CDLHandler implements MessageHandler {
 
     ORU_R01 msg = null;
-    Logger logger = Logger.getLogger(CDLHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private OBR obrseg = null;
 	private OBX obxseg = null;
@@ -189,6 +189,19 @@ public class CDLHandler implements MessageHandler {
             return("");
         }
     }
+
+    @Override
+    public String getOBXNameLong(int i, int j) {
+	String ret = "";
+        try{
+            ret = getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getObservationIdentifier().getComponent(2).toString());
+        }catch(Exception e){
+            logger.error("Error returning OBX test name", e);
+        }
+
+        return ret;
+    }
+
 
     public String getOBXResult(int i, int j){
         try{
@@ -597,6 +610,11 @@ public class CDLHandler implements MessageHandler {
 
     public String getNteForPID() {
 	    return "";
+    }
+    
+    //for OMD validation
+    public boolean isTestResultBlocked(int i, int j) {
+    	return false;
     }
 }
 

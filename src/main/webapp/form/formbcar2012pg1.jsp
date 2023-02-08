@@ -103,7 +103,7 @@ if (request.getParameter("view") != null && request.getParameter("view").equals(
  * JQuery dirty form check
  */
 $(function() {
-    $('form').areYouSure({'addRemoveFieldsMarksDirty':true});
+	$('form').areYouSure({'addRemoveFieldsMarksDirty':true});
     
   	//dirty form enable/disable save button.
  	$("form").find('input[value="Save"]').attr('disabled', 'disabled');

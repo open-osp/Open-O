@@ -28,7 +28,7 @@ package org.oscarehr.oscarRx.erx;
 import java.net.MalformedURLException;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.DemographicDao;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.oscarRx.erx.controller.ERxCommunicator;

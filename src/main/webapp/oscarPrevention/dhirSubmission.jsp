@@ -49,7 +49,7 @@
 <%@page import="org.apache.http.entity.ByteArrayEntity"%>
 <%@page import="org.apache.http.HttpEntity"%>
 <%@page import="org.apache.http.client.methods.HttpPost"%>
-<%@page import="org.apache.log4j.Logger"%>
+<%@page import="org.apache.logging.log4j.Logger"%>
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%@page import="java.io.UnsupportedEncodingException"%>
 <%@page import="java.io.IOException"%>

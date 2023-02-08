@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.util.DateUtils;
 import org.oscarehr.integration.mcedt.DelegateFactory;
 import org.oscarehr.util.MiscUtils;

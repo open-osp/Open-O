@@ -25,7 +25,7 @@ package org.oscarehr.managers;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.BedDemographicDao;
 import org.oscarehr.common.dao.DemographicDao;

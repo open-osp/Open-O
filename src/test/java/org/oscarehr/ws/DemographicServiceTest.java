@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.oscarehr.ws.rest.DemographicMergeService;
 import org.oscarehr.ws.rest.DemographicService;
@@ -40,7 +40,7 @@ import org.oscarehr.ws.rest.to.model.DemographicTo1;
 
 public class DemographicServiceTest extends BaseRestServiceTest {
 
-	private static Logger logger = Logger.getLogger(DemographicServiceTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	/**
 	 * Generates a new pre-populated random demographic

@@ -26,7 +26,7 @@
 
 
 
-<%@page import="org.oscarehr.util.WebUtilsOld"%>
+<%@page import="org.oscarehr.util.WebUtils"%>
 <%@page import="org.oscarehr.common.model.Provider"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
@@ -66,7 +66,7 @@
 	}
 </script>
 
-<%=WebUtilsOld.popErrorMessagesAsHtml(session)%>
+<%=WebUtils.popErrorMessagesAsHtml(session)%>
 
 <html:hidden property="program.id" />
 <html:hidden property="program.vacancyId" />

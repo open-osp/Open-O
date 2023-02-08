@@ -25,7 +25,7 @@ package org.oscarehr.common.model;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.oscarehr.util.MiscUtils;

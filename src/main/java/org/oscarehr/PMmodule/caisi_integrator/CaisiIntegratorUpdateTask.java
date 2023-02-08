@@ -73,7 +73,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.tika.io.IOUtils;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProviderDao;
@@ -181,13 +181,7 @@ import org.oscarehr.managers.IntegratorFileLogManager;
 import org.oscarehr.managers.IntegratorPushManager;
 import org.oscarehr.managers.MessengerIntegratorManager;
 import org.oscarehr.managers.PatientConsentManager;
-import org.oscarehr.util.BenchmarkTimer;
-import org.oscarehr.util.CxfClientUtilsOld;
-import org.oscarehr.util.DbConnectionFilter;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
-import org.oscarehr.util.XmlUtils;
+import org.oscarehr.util.*;
 import org.springframework.beans.BeanUtils;
 import org.w3c.dom.Document;
 
@@ -213,7 +207,7 @@ public class CaisiIntegratorUpdateTask extends TimerTask {
 	
 	private ObjectOutputStream out = null;
 
-	private static String outputDirectory = OscarProperties.getInstance().getProperty("DOCUMENT_DIR").trim();
+	private static String outputDirectory = (OscarProperties.getInstance().getProperty("DOCUMENT_DIR") != null) ? OscarProperties.getInstance().getProperty("DOCUMENT_DIR").trim() : System.getProperty("java.io.tmpdir");
 	
 	private PrintWriter documentMetaWriter;
 	

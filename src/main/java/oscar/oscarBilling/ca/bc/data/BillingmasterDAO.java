@@ -31,7 +31,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.NativeSql;
 import org.oscarehr.common.model.Billing;
 import org.oscarehr.util.MiscUtils;

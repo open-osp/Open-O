@@ -23,11 +23,6 @@
  */
 package org.oscarehr.fax.admin;
 
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -35,7 +30,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -51,109 +45,31 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
-import org.jpedal.PdfDecoder;
-import org.jpedal.exception.PdfException;
-import org.jpedal.fonts.FontMappings;
 import org.oscarehr.common.dao.FaxConfigDao;
 import org.oscarehr.common.dao.FaxJobDao;
 import org.oscarehr.common.model.FaxConfig;
 import org.oscarehr.common.model.FaxJob;
+import org.oscarehr.fax.action.FaxAction;
+import org.oscarehr.managers.FaxManager;
+import org.oscarehr.managers.NioFileManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import oscar.log.LogAction;
-import oscar.log.LogConst;
-
-public class ManageFaxes extends DispatchAction {
+public class ManageFaxes extends FaxAction {
 	
 	private Logger log = MiscUtils.getLogger();
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-	 
-	
-	private File hasCacheVersion2(FaxJob faxJob, Integer pageNum) {
-		int index;
-		String filename;
-		if( (index = faxJob.getFile_name().lastIndexOf("/")) > -1 ) {
-			filename = faxJob.getFile_name().substring(index+1);
-		}
-		else {
-			filename = faxJob.getFile_name();
-		}
-		File documentCacheDir = getDocumentCacheDir(oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR"));
-		File outfile = new File(documentCacheDir, filename + "_" + pageNum + ".png");
-		if (!outfile.exists()) {
-			outfile = null;
-		}
-		return outfile;
-	}
-	
-	private File getDocumentCacheDir(String docdownload) {
-	
-		File docDir = new File(docdownload);
-		String documentDirName = docDir.getName();
-		File parentDir = docDir.getParentFile();
 
-		File cacheDir = new File(parentDir, documentDirName + "_cache");
+	private NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
+	private FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
 
-		if (!cacheDir.exists()) {
-			cacheDir.mkdir();
-		}
-		return cacheDir;
-	}
-	
-	private File createCacheVersion2(FaxJob faxJob, Integer pageNum) {
-		
-		String docdownload = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-		File documentDir = new File(docdownload);
-		File documentCacheDir = getDocumentCacheDir(docdownload);
-		
-		log.debug("Document Dir is a dir" + documentDir.isDirectory());
-		
-		int index;
-		String filename;
-		
-		if( (index = faxJob.getFile_name().lastIndexOf("/")) > -1 ) {
-			filename = faxJob.getFile_name().substring(index+1);
-		}else {
-			filename = faxJob.getFile_name();
-		}
-		
-		File file = new File(documentDir, filename);
-		PdfDecoder decode_pdf  = new PdfDecoder(true);
-		File ofile = null;
-		
-		FontMappings.setFontReplacements();
-
-		decode_pdf.useHiResScreenDisplay(true);
-		decode_pdf.setExtractionMode(0, 96, 96/72f);
-
-		try {
-			FileInputStream is = new FileInputStream(file);
-			decode_pdf.openPdfFileFromInputStream(is, false);
-			BufferedImage image_to_save = decode_pdf.getPageAsImage(pageNum);
-			decode_pdf.getObjectStore().saveStoredImage( documentCacheDir.getCanonicalPath() + "/" + filename + "_" + pageNum + ".png", image_to_save, true, false, "png");
-			ofile = new File(documentCacheDir, filename + "_" + pageNum + ".png");
-		} catch (FileNotFoundException e) {
-			log.error("PDF file not found " + filename, e);
-		} catch (PdfException e) {
-			log.error("PDF error during file decode of " + filename, e);
-		} catch (IOException e) {
-			log.error("IO error during file decode of " + filename, e);
-		} finally {
-			decode_pdf.flushObjectValues(true);
-			decode_pdf.closePdfFile();
-		}			
-
-		return ofile;
-	}
-	
+	@SuppressWarnings("unused")
 	public ActionForward CancelFax(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		
 		String jobId = request.getParameter("jobId");
@@ -233,6 +149,7 @@ public class ManageFaxes extends DispatchAction {
 		
 	}
 	
+	@SuppressWarnings("unused")
 	public ActionForward ResendFax(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		
 		String JobId = request.getParameter("jobId");
@@ -242,120 +159,42 @@ public class ManageFaxes extends DispatchAction {
 		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin", "w", null)) {
         	throw new SecurityException("missing required security object (_admin)");
         }
-
-		
-		try {
-		
-			FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
-		
-		
-			FaxJob faxJob = faxJobDao.find(Integer.parseInt(JobId));
 			
-			faxJob.setDestination(faxNumber);
-			faxJob.setStatus(FaxJob.STATUS.SENT);
-			faxJob.setStamp(new Date());
-			faxJob.setJobId(null);
+		FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);		
+		FaxJob faxJob = faxJobDao.find(Integer.parseInt(JobId));
+		
+		faxJob.setDestination(faxNumber);
+		faxJob.setStatus(FaxJob.STATUS.SENT);
+		faxJob.setStamp(new Date());
+		faxJob.setJobId(null);
+		
+		faxJobDao.merge(faxJob);
 			
-			faxJobDao.merge(faxJob);
-			
+		try {	
 			jsonObject = JSONObject.fromObject("{success:true}");
-		
-		}catch( Exception e ) {
-			
-			jsonObject = JSONObject.fromObject("{success:false}");
-			log.error("ERROR RESEND FAX " + JobId);
-			
-		}
-		
-		try {		
-			
 			jsonObject.write(response.getWriter());
-			
-        } catch (IOException e) {
-	        MiscUtils.getLogger().error("JSON WRITER ERROR", e);
+		} catch ( IOException e ) {	
+			 MiscUtils.getLogger().error("JSON WRITER ERROR", e);
+		} catch (Exception e) {
+			jsonObject = JSONObject.fromObject("{success:false}");
+			log.error("ERROR RESEND FAX " + JobId);	
         }
+		
 		return null;
 	}
 	
 
-	public ActionForward viewFax(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-		
-		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_edoc", "r", null)) {
+	@SuppressWarnings("unused")
+	public void viewFax(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		if(!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "r", null)) {
         	throw new SecurityException("missing required security object (_edoc)");
         }
 
-		
-		try {
-			String doc_no = request.getParameter("jobId");
-			String pageNum = request.getParameter("curPage");
-			if (pageNum == null) {
-				pageNum = "0";
-			}
-			Integer pn = Integer.parseInt(pageNum);
-			log.debug("Document No :" + doc_no);
-			LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.READ, LogConst.CON_DOCUMENT, doc_no, request.getRemoteAddr());
-
-			FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
-			FaxJob faxJob = faxJobDao.find(Integer.parseInt(doc_no));
-			
-			int index;
-			String filename;
-			if( (index = faxJob.getFile_name().lastIndexOf("/")) > -1 ) {
-				filename = faxJob.getFile_name().substring(index+1);
-			}
-			else {
-				filename = faxJob.getFile_name();
-			}
-			
-			String name = filename + "_" + pn + ".png";
-			log.debug("name " + name);
-
-			File outfile = null;
-
-			outfile = hasCacheVersion2(faxJob, pn);
-			if (outfile != null) {
-				log.debug("got doc from local cache   ");
-			} else {
-				outfile = createCacheVersion2(faxJob, pn);
-				if (outfile != null) {
-					log.debug("create new doc  ");
-				}
-			}
-			response.setContentType("image/png");
-			ServletOutputStream outs = response.getOutputStream();
-			response.setHeader("Content-Disposition", "attachment;filename=" + name);
-
-			BufferedInputStream bfis = null;
-			try {
-				if (outfile != null) {
-					bfis = new BufferedInputStream(new FileInputStream(outfile));
-					int data;
-					while ((data = bfis.read()) != -1) {
-						outs.write(data);
-						// outs.flush();
-					}
-				} else {
-					log.info("Unable to retrieve content for " + faxJob + ". This may indicate previous upload or save errors...");
-				}
-			} finally {
-				if (bfis!=null) {
-					bfis.close();
-				}
-			}
-
-			outs.flush();
-			outs.close();
-		} catch (java.net.SocketException se) {
-			MiscUtils.getLogger().error("Error", se);
-		} catch (Exception e) {
-			MiscUtils.getLogger().error("Error", e);
-		}
-		return null;
-		
-		
-		
+		getPreview(mapping, form, request, response);
 	}
 	
+	@SuppressWarnings("unused")
 	public ActionForward fetchFaxStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		
 		String statusStr = request.getParameter("status");
@@ -426,7 +265,8 @@ public class ManageFaxes extends DispatchAction {
 		return mapping.findForward("faxstatus");
 	}
 	
-	public ActionForward SetCompleted(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+	@SuppressWarnings("unused")
+	public void SetCompleted(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		
 		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin", "w", null)) {
         	throw new SecurityException("missing required security object (_admin)");
@@ -439,7 +279,6 @@ public class ManageFaxes extends DispatchAction {
 		FaxJob faxJob = faxJobDao.find(Integer.parseInt(id));		
 		faxJob.setStatus(FaxJob.STATUS.RESOLVED);		
 		faxJobDao.merge(faxJob);
-		
-		return null;
 	}
+
 }

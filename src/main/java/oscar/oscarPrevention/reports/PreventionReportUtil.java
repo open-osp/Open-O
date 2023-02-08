@@ -28,7 +28,7 @@ package oscar.oscarPrevention.reports;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.DemographicArchiveDao;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.DemographicArchive;
@@ -52,6 +52,27 @@ public final class PreventionReportUtil {
 		List<DemographicArchive> archives = demographicArchiveDao.findByDemographicNo(demographicId);
 		for (DemographicArchive archive : archives) {
 			if (rosteredDuringThisTimeDemographicArchive(onThisDate, archive.getRosterDate(), archive.getRosterTerminationDate())) return (true);
+		}
+
+		return (false);
+	}
+	
+	
+	
+	public static boolean wasEnrolledToThisProvider(LoggedInInfo loggedInInfo, Integer demographicId, Date onThisDate,String providerNo) {
+		logger.debug("Checking rosterd:" + demographicId+ " for this date "+onThisDate+" for this providerNo "+providerNo);
+		if(providerNo == null){
+			return false;
+		}
+		
+		
+		Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographicId);
+
+		if (rosteredDuringThisTimeDemographic(onThisDate, demographic.getRosterDate(), demographic.getRosterTerminationDate()) && providerNo.equals(demographic.getRosterEnrolledTo())) return (true);
+
+		List<DemographicArchive> archives = demographicArchiveDao.findByDemographicNo(demographicId);
+		for (DemographicArchive archive : archives) {
+			if (rosteredDuringThisTimeDemographicArchive(onThisDate, archive.getRosterDate(), archive.getRosterTerminationDate()) && providerNo.equals(demographic.getRosterEnrolledTo())) return (true);
 		}
 
 		return (false);

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.BillingONCHeader1Dao;
 import org.oscarehr.common.model.BillingONCHeader1;
 import org.oscarehr.util.SpringUtils;
@@ -30,7 +30,7 @@ import org.oscarehr.util.SpringUtils;
 import oscar.util.ConversionUtils;
 
 public class BillingStatusData {
-	private static final Logger _logger = Logger.getLogger(BillingStatusData.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public BillingStatusData() {
 	}

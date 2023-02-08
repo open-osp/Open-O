@@ -27,7 +27,7 @@ package oscar.oscarLab.ca.all.upload.handlers;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.Hl7TextInfoDao;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
@@ -39,7 +39,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
 
 public class CLSHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(CLSHandler.class);	
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();	
 	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean("hl7TextInfoDao");
 	
 

@@ -30,10 +30,14 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.oscarehr.common.dao.ViewDao;
+import org.oscarehr.common.model.View;
 import org.oscarehr.managers.TicklerManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+
+import java.util.Map;
 
 
 /**
@@ -52,8 +56,18 @@ public class TicklerTag extends TagSupport {
 		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 
 		if(providerNo!=null){
+            String assignedTo = providerNo;
+            // get the tickler default setting for task assigned to
+            ViewDao viewDao = SpringUtils.getBean(ViewDao.class);
+            Map<String, View> settingsMap = viewDao.getView("tickler", (String) loggedInInfo.getSession().getAttribute("userrole"), providerNo);
+            if(settingsMap != null && ! settingsMap.isEmpty()) {
+                String assignedProvider = settingsMap.get("assignedTo").getValue();
+                if(assignedProvider != null && ! assignedProvider.isEmpty()) {
+                    assignedTo = assignedProvider;
+                }
+            }
 	    	TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
-	       numNewLabs = ticklerManager.getActiveTicklerCount(loggedInInfo, providerNo);
+	        numNewLabs = ticklerManager.getActiveTicklerCount(loggedInInfo, assignedTo);
 	    }  
 	   
         try        {

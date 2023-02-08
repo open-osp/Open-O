@@ -50,9 +50,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itextpdf.text.Document;
 import org.oscarehr.util.MiscUtils;
 
-import com.itextpdf.text.Document;
+
 import com.itextpdf.text.pdf.PRAcroForm;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfImportedPage;
@@ -63,7 +64,8 @@ public class ConcatPDF {
 
 
     public static void concat (ArrayList<Object> alist,String filename){
-        try(OutputStream os = new FileOutputStream(filename);) {        	
+        try(OutputStream os = new FileOutputStream(filename);) {
+
         	concat(alist,os);
         }catch(Exception e){
             MiscUtils.getLogger().error("Error", e);
@@ -82,6 +84,7 @@ public class ConcatPDF {
             int pageOffset = 0;
             ArrayList master = new ArrayList();
             int f =0;
+
             boolean fileAsStream = false;
 			String name = "";
 
@@ -145,7 +148,7 @@ public class ConcatPDF {
                 }
                 PRAcroForm form = reader.getAcroForm();
                 if (form != null)
-                    writer.copyAcroForm(reader);
+                    writer.copyDocumentFields(reader);
                 f++;
             }
             if (master.size() > 0)

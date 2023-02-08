@@ -7,6 +7,7 @@
 // form/createpdf?__title=British+Columbia+Antenatal+Record+Part+1&__cfgfile=bcar1PrintCfgPg1&__cfgfile=bcar1PrintCfgPg2&__template=bcar1
 package oscar.form.pdfservlet;
 
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,18 +28,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Rectangle;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.printing.FontSettings;
 import org.oscarehr.common.printing.PdfWriterFactory;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 
-import oscar.OscarProperties;
 import oscar.form.FrmRecord;
 import oscar.form.FrmRecordFactory;
 import oscar.form.graphic.FrmGraphicFactory;
@@ -46,19 +49,12 @@ import oscar.form.graphic.FrmPdfGraphic;
 import oscar.log.LogAction;
 import oscar.util.ConcatPDF;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 
 /**
  *
@@ -67,7 +63,7 @@ import com.lowagie.text.pdf.PdfWriter;
 public class FrmPDFServlet extends HttpServlet {
 
     public static final String HSFO_RX_DATA_KEY = "hsfo.rx.data";
-    Logger log = Logger.getLogger(FrmPDFServlet.class);
+    Logger log = org.oscarehr.util.MiscUtils.getLogger();
     /**
      *
      *
@@ -534,7 +530,12 @@ public class FrmPDFServlet extends HttpServlet {
 	                    
 	                    // write in a rectangle area
 	                    if (cfgVal.length >= 9) {
-	                        Font font = new Font(bf, Integer.parseInt(cfgVal[5].trim()), fontFlags);
+                            Font font;
+	                        if (fontFlags == Font.BOLD) { // Hack to stop blue outline from bold text
+                                font = new Font(bf, Integer.parseInt(cfgVal[5].trim()), fontFlags, BaseColor.BLACK);
+                            } else {
+                                font = new Font(bf, Integer.parseInt(cfgVal[5].trim()), fontFlags);
+                            }
 	                        //ct.setSimpleColumn(60, 300, 200, 500, 10,
 	                        // Element.ALIGN_LEFT);
 	                        //ct.addText(new Phrase(15, "xxxx xxxxx xxxxx xxxxx xxx
@@ -566,7 +567,7 @@ public class FrmPDFServlet extends HttpServlet {
 		                	float ury = Float.parseFloat(cfgVal[3].trim());
 		                	
 		                    Rectangle rec = new Rectangle(llx, lly, urx, ury);
-		                    rec.setBackgroundColor(java.awt.Color.WHITE);
+		                    rec.setBackgroundColor(BaseColor.WHITE);
 		                    cb.rectangle(rec);
 	                    	
 	                    } else if (tempName.toString().startsWith("__$line")) {
@@ -611,24 +612,9 @@ public class FrmPDFServlet extends HttpServlet {
 	                    }
 	
 	                }
-	
-	                //----------
-	                if ( OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") != null && printCfg[i-1].getProperty("forms_promotext") == null){
-//	                    log.info("adding forms_promotext");
-//	
-//	                    // remove elements of the PDF file
-//	                    Rectangle rec = new Rectangle(160, 12, 465, 21);
-//	                    rec.setBackgroundColor(java.awt.Color.WHITE);
-//	                    cb.rectangle(rec);
-//	
-//	                    cb.beginText();
-//	                    cb.setFontAndSize(BaseFont.createFont(BaseFont.HELVETICA,BaseFont.CP1252,BaseFont.NOT_EMBEDDED), 6);
-//	                    cb.showTextAligned(PdfContentByte.ALIGN_CENTER, OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT"), width/2, 16, 0);
-//	                    cb.endText();
-	                }
 	                
-	                
-                	
+
+
                 } //end if there are print properties
 
                 //graphic

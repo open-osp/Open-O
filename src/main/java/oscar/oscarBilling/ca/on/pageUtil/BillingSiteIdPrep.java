@@ -23,7 +23,7 @@ import oscar.appt.JdbcApptImpl;
 
 public class BillingSiteIdPrep {
 	private final String NO_SITE = "NONE";
-	//private static final Logger _logger = Logger.getLogger(BillingSiteIdPrep.class);
+	//private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 	JdbcApptImpl dbObj = new JdbcApptImpl();
 
 	public String[] getSiteList() {

@@ -28,7 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.IntakeAnswer;
 import org.oscarehr.PMmodule.model.IntakeNode;
 
@@ -36,7 +36,7 @@ public class DATISProgramInformation extends AbstractIntakeExporter {
 	
 	private static final String FILE_PREFIX = "File4";
 	
-	private static final Logger log = Logger.getLogger(DATISProgramInformation.class);
+	private static final Logger log = org.oscarehr.util.MiscUtils.getLogger();
 
 	@Override
 	protected String exportData() throws ExportException {

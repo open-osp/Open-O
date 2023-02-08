@@ -25,7 +25,7 @@ package oscar.oscarLab.ca.all.parsers;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Segment;
@@ -39,7 +39,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public class AlphaHandler extends DefaultGenericHandler implements MessageHandler {
 
-    Logger logger = Logger.getLogger(AlphaHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     ca.uhn.hl7v2.model.v22.message.ORU_R01 msg22 = null;
     ca.uhn.hl7v2.model.v23.message.ORU_R01 msg23 = null;
     String version=null;
@@ -287,7 +287,28 @@ public class AlphaHandler extends DefaultGenericHandler implements MessageHandle
             return("");
         }
     }
-    
+
+    @Override
+    public String getOBXNameLong(int i, int j) {
+        try{
+            if (version.equals("2.2")) {
+                OBX obx = msg22.getPATIENT_RESULT().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX();
+                if (!obx.getValueType().getValue().equals("CE") && !obx.getValueType().getValue().equals("FT") && !oBXHasForm(i,j) ||
+                        obx.getValueType().getValue().equals("FT") && oBXHasForm(i,j)) {
+                    return(getString(obx.getObservationIdentifier().getComponent(2).toString()));
+                }
+                else {
+                    return "";
+                }
+            } else {
+                return(getString(msg23.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getObservationIdentifier().getComponent(2).toString()));
+            }
+        }catch(Exception e){
+            logger.error("Error retrieving obx name", e);
+            return("");
+        }
+    }
+
     public String getOBXValueType(int i, int j){
         try{
         	if (version.equals("2.2")) {

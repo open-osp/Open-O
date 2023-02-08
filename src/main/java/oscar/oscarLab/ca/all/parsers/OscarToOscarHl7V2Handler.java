@@ -27,7 +27,7 @@ package oscar.oscarLab.ca.all.parsers;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.hl7.v2.oscar_to_oscar.OscarToOscarUtils;
 import org.oscarehr.util.MiscUtils;
 
@@ -172,6 +172,11 @@ public final class OscarToOscarHl7V2Handler implements MessageHandler {
 	    return chainnedMessageAdapter.getOBXName(i, j);
     }
 
+	@Override
+	public String getOBXNameLong(int i, int j) {
+		return chainnedMessageAdapter.getOBXNameLong(i, j);
+	}
+
 	public String getOBXReferenceRange(int i, int j) {
 	    return chainnedMessageAdapter.getOBXReferenceRange(i, j);
     }
@@ -250,6 +255,11 @@ public final class OscarToOscarHl7V2Handler implements MessageHandler {
     public String getNteForPID(){
     	
     	return "";
+    }
+    
+    //for OMD validation
+    public boolean isTestResultBlocked(int i, int j) {
+    	return false;
     }
 
 }

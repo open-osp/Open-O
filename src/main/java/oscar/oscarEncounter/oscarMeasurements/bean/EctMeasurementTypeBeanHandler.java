@@ -25,7 +25,7 @@
 
 package oscar.oscarEncounter.oscarMeasurements.bean;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.ValidationsDao;
 import org.oscarehr.common.model.Validations;
 import org.oscarehr.util.MiscUtils;

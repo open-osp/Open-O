@@ -34,8 +34,6 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -85,7 +83,7 @@ public class ReadHRMFile {
             transactionInformation = pr.getTransactionInformation();
             
         } catch (JAXBException ex) {
-            Logger.getLogger(ReadHRMFile.class.getName()).log(Level.SEVERE, null, ex);
+            org.oscarehr.util.MiscUtils.getLogger();
         }
     }
 

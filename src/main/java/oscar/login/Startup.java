@@ -33,7 +33,7 @@ import java.util.Collections;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 
 /**
@@ -46,6 +46,8 @@ public class Startup implements ServletContextListener {
 	private oscar.OscarProperties p = oscar.OscarProperties.getInstance();
 
 	public void contextInitialized(ServletContextEvent sc) {
+		logger.info( "Starting OSCAR application " );
+
 		try {
 			logger.debug("contextInit");
 

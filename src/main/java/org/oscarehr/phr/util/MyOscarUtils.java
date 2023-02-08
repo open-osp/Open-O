@@ -36,7 +36,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.DemographicDao;
 import org.oscarehr.common.dao.PropertyDao;
 import org.oscarehr.common.dao.ProviderPreferenceDao;
@@ -70,7 +70,7 @@ public final class MyOscarUtils {
 
 	public static boolean isMyOscarEnabled(String providerNo)
 	{
-		return isMyOscarUserNameSet(providerNo);
+		return isMyOscarUserNameSet(providerNo) && MyOscarLoggedInInfo.getMyOscarServerBaseUrl() != null;
 	}
 	
 	public static String getDisabledStringForMyOscarSendButton(MyOscarLoggedInInfo myOscarLoggedInInfo, Integer demographicId) {
@@ -147,6 +147,10 @@ public final class MyOscarUtils {
 	}
 	
 	public static void attemptMyOscarAutoLoginIfNotAlreadyLoggedIn(LoggedInInfo loggedInInfo, boolean forceReLogin) {
+		
+		if(!isMyOscarEnabled(loggedInInfo.getLoggedInProviderNo())) {
+			return;
+		}
 		HttpSession session = loggedInInfo.getSession();
 
 		ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean("providerPreferenceDao");

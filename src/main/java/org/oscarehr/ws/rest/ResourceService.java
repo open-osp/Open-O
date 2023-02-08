@@ -38,7 +38,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -379,7 +379,9 @@ public class ResourceService extends AbstractServiceImpl {
 			LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 			String notificationStr = getResource(loggedInInfo,"/ws/api/notification","/ws/api/notification");
 			JSONObject notifyObject = JSONObject.fromObject(notificationStr);
-			k2aNoficationCount = notifyObject.getString("numberOfNotifications");
+			if(notifyObject.has("numberOfNotifications")) {
+				k2aNoficationCount = notifyObject.getString("numberOfNotifications");
+			}
 		}catch(Exception e){
 			logger.error("Error geting notifcations",e);
 		}

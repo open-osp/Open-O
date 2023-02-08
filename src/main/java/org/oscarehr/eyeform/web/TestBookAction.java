@@ -31,7 +31,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -44,7 +44,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class TestBookAction extends DispatchAction {
 
-	static Logger logger = Logger.getLogger(TestBookAction.class);
+	static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	static EyeformTestBookDao dao = SpringUtils.getBean(EyeformTestBookDao.class);
 	
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

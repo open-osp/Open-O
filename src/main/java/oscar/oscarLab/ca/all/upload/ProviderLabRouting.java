@@ -36,11 +36,12 @@ package oscar.oscarLab.ca.all.upload;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.ProviderLabRoutingDao;
 import org.oscarehr.common.model.ProviderLabRoutingModel;
 import org.oscarehr.util.SpringUtils;
@@ -55,7 +56,7 @@ import oscar.util.ConversionUtils;
  */
 public class ProviderLabRouting {
 
-	Logger logger = Logger.getLogger(ProviderLabRouting.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
 
 	public ProviderLabRouting() {
@@ -117,6 +118,7 @@ public class ProviderLabRouting {
 				ProviderLabRoutingModel plr = providerLabRoutingDao.findByLabNoAndLabType(labId, labType);
 				if (plr != null) {
 					plr.setStatus("N");
+					plr.setTimestamp(new Date());
 					providerLabRoutingDao.merge(plr);
 				}
 			}

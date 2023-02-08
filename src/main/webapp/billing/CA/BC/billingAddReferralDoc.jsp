@@ -87,10 +87,6 @@ function checkBillingNumber(){
     if( document.AddReferralDocForm.referral_no.value.length == 0){
         alert("You must enter a Billing Number");
         return false;
-    }else if  (!isNumeric(document.AddReferralDocForm.referral_no.value)){
-        alert("Billing Number has to be a numeric value");
-	document.AddReferralDocForm.referral_no.value.focus();
-        return false;
     }else if( document.AddReferralDocForm.referral_no.value.length != 5){
        if( document.AddReferralDocForm.referral_no.value.length < 5){
           //need to addzeros

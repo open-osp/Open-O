@@ -29,6 +29,7 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ page
 	import="java.util.*, oscar.oscarEncounter.oscarMeasurements.data.MeasurementMapConfig, oscar.OscarProperties"%>
+<%@ page import="org.oscarehr.common.model.MeasurementMap" %>
 
 <%
 
@@ -141,18 +142,17 @@
 				<th class="HeaderCell" width="15%">Lab Type</th>
 			</tr>
 			<%MeasurementMapConfig mmc = new MeasurementMapConfig();
-                                ArrayList mappings = mmc.getMeasurementMap(searchstring);
-                                for (int i=0; i < mappings.size(); i++){
-                                    Hashtable ht = (Hashtable) mappings.get(i);%>
+                                List<MeasurementMap> mappings = mmc.getMeasurementMap(searchstring);
+                                for (MeasurementMap mapping : mappings){%>
 			<tr>
 				<td class="ButtonCell"><input type="submit" value="DELETE"
-					onclick="deleteMapping(<%= (String) ht.get("id") %>)"></td>
+					onclick="deleteMapping(<%= mapping.getId() %>)"></td>
 				<td class="ButtonCell"><input type="button" value="REMAP"
-					onclick="remap(<%= "'"+ (String) ht.get("id") +"','"+ (String) ht.get("ident_code") +"','"+ (String) ht.get("name") +"','"+ (String) ht.get("lab_type")+"'" %>)"></td>
-				<td class="TableCell"><%= (String) ht.get("ident_code") %></td>
-				<td class="TableCell"><%= (String) ht.get("loinc_code") %></td>
-				<td class="TableCell"><%= (String) ht.get("name") %></td>
-				<td class="TableCell"><%= (String) ht.get("lab_type") %></td>
+					onclick="remap(<%= "'"+ mapping.getId() +"','"+ mapping.getIdentCode() +"','"+ mapping.getName() +"','"+ mapping.getLabType()+"'" %>)"></td>
+				<td class="TableCell"><%= mapping.getIdentCode() %></td>
+				<td class="TableCell"><%= mapping.getLoincCode() %></td>
+				<td class="TableCell"><%= mapping.getName() %></td>
+				<td class="TableCell"><%= mapping.getLabType() %></td>
 			</tr>
 			<%}%>
 

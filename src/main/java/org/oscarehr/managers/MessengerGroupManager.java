@@ -31,10 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.PMmodule.dao.ProviderDao;
-import org.oscarehr.caisi_integrator.util.MiscUtils;
+import org.oscarehr.util.MiscUtils;
 import org.oscarehr.caisi_integrator.ws.CachedFacility;
 import org.oscarehr.caisi_integrator.ws.CachedProvider;
 import org.oscarehr.caisi_integrator.ws.FacilityIdStringCompositePk;
@@ -188,7 +188,6 @@ public class MessengerGroupManager {
 	 * Get all groups that contain all local and remote members.
 	 * All members from all local and remote locations sorted alphabetically into groups of assigned groups.  
 	 * @param loggedInInfo
-	 * @param groupId
 	 * @return
 	 */
 	public Map<Groups, List<MsgProviderData>> getAllGroupsWithMembers(LoggedInInfo loggedInInfo) {

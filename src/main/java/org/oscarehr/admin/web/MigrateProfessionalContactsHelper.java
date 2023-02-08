@@ -25,7 +25,7 @@ package org.oscarehr.admin.web;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.DemographicContactDao;
 import org.oscarehr.common.dao.ProfessionalContactDao;
 import org.oscarehr.common.dao.ProfessionalSpecialistDao;

@@ -54,7 +54,7 @@ import com.sun.pdfview.PDFPage;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.io.RandomAccessFile;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -746,9 +746,9 @@ public class ManageDocumentAction extends DispatchAction {
 			String docdownload = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
 
 			File documentDir = new File(docdownload);
-			log.debug("Document Dir is a dir" + documentDir.isDirectory());
-
+		
 			Document d = documentDao.getDocument(doc_no);
+
 			log.debug("Document Name :" + d.getDocfilename());
 
 			docxml = d.getDocxml();
@@ -825,10 +825,10 @@ public class ManageDocumentAction extends DispatchAction {
 		response.setContentLength(contentBytes.length);
 		response.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
 		log.debug("about to Print to stream");
-		ServletOutputStream outs = response.getOutputStream();
-		outs.write(contentBytes);
-		outs.flush();
-		outs.close();
+		try(ServletOutputStream outs = response.getOutputStream()) {
+			outs.write(contentBytes);
+			outs.flush();
+		}
 	}
 
         public void viewDocumentInfo(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {

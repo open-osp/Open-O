@@ -48,7 +48,7 @@ public class FaxConfig extends AbstractModel<Integer> {
 	private String senderEmail;
 	private Boolean active;
 	private Integer queue;
-	
+	private String accountName;
 
 	@Override
     public Integer getId() {
@@ -217,4 +217,11 @@ public class FaxConfig extends AbstractModel<Integer> {
 		this.queue = queue;
 	}
 
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
 }

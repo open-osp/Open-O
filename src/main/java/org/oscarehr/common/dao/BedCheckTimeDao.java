@@ -29,7 +29,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.BedCheckTime;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;

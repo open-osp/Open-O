@@ -34,7 +34,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.caisi_integrator.ws.CachedDemographicForm;
@@ -170,7 +170,7 @@ public class FrmLabReq10Record extends FrmRecord {
                 String strSpecialtyCode = "00";
                 String comments = provider.getComments();     
 
-                if( comments.indexOf(xmlSpecialtyCode) != -1 ) {                                    
+                if( comments != null &&  comments.indexOf(xmlSpecialtyCode) != -1 ) {                                    
                     String specialtyCode = comments.substring(comments.indexOf(xmlSpecialtyCode)+xmlSpecialtyCode.length(), comments.indexOf(xmlSpecialtyCode2));
                     specialtyCode = specialtyCode.trim();
                     if(!specialtyCode.isEmpty()) {

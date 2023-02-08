@@ -23,7 +23,22 @@
     Ontario, Canada
 
 --%>
-<%@ page import="java.sql.*, oscar.eform.data.*"%>
+<%@ page import="java.sql.*, oscar.eform.data.*, org.oscarehr.managers.FaxManager, org.oscarehr.util.LoggedInInfo"%>
+<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+
+<%
+  LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+  pageContext.setAttribute("faxActive", FaxManager.isEnabled(loggedInInfo));
+%>
+
+<%--
+	Addition of a floating global toolbar specifically for activation of the 
+	Fax and eDocument functions.
+--%>
+<c:if test="${ faxActive }">
+	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/eform/eformFloatingToolbar/eform_floating_toolbar.js" ></script>
+</c:if>
+
 <%
 	String id = request.getParameter("fid");
 	String messageOnFailure = "No eform or appointment is available";
@@ -35,6 +50,8 @@
       EForm eForm = new EForm(id);
       eForm.setContextPath(request.getContextPath());
       eForm.setOscarOPEN(request.getRequestURI());
+      eForm.setFdid(id);
+      
       if ( appointmentNo != null ) eForm.setAppointmentNo(appointmentNo);
       if ( eformLink != null ) eForm.setEformLink(eformLink);
 
@@ -47,14 +64,14 @@
       eForm.setupInputFields();
       eForm.setOscarOPEN(request.getRequestURI());
       eForm.setImagePath();
+      eForm.setFdid("");
       out.print(eForm.getFormHtml());
   }
 %>
-<%
-String iframeResize = (String) session.getAttribute("useIframeResizing");
-if(iframeResize !=null && "true".equalsIgnoreCase(iframeResize)){ %>
-<script src="<%=request.getContextPath() %>/library/pym.js"></script>
-<script>
-    var pymChild = new pym.Child({ polling: 500 });
-</script>
-<%}%>
+
+<c:if test="${ sessionScope.useIframeResizing }" >
+	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/library/pym.js"></script>
+	<script type="text/javascript">
+	    var pymChild = new pym.Child({ polling: 500 });
+	</script>
+</c:if>

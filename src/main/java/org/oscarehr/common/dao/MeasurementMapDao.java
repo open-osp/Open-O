@@ -73,7 +73,7 @@ public class MeasurementMapDao extends AbstractDao<MeasurementMap> {
 	}
 
 	public List<MeasurementMap> getMapsByLoinc(String loinc) {   
-		String queryStr = "select m FROM MeasurementMap m WHERE m.loincCode=?";
+		String queryStr = "select m FROM MeasurementMap m WHERE m.loincCode=?1";
 		Query q = entityManager.createQuery(queryStr);
 		q.setParameter(1, loinc);
             
@@ -82,7 +82,7 @@ public class MeasurementMapDao extends AbstractDao<MeasurementMap> {
 
 		return rs;    
 	}
-	
+
 	public List<MeasurementMap> findByLoincCodeAndLabType(String loincCode,String labType) {   
 		String queryStr = "select m FROM MeasurementMap m WHERE m.loincCode=? and m.labType=?";
 		Query q = entityManager.createQuery(queryStr);
@@ -129,6 +129,16 @@ public class MeasurementMapDao extends AbstractDao<MeasurementMap> {
 		return rs;    
 	}
 
+	public List<String> findDistinctLoincCodesByLabType(MeasurementMap.LAB_TYPE lab_type) {
+		String queryStr = "select distinct(m.loincCode) FROM MeasurementMap m WHERE m.labType LIKE :labType";
+		Query q = entityManager.createQuery(queryStr);
+		q.setParameter("labType", lab_type.name());
+		@SuppressWarnings("unchecked")
+		List<String> rs = q.getResultList();
+
+		return rs;
+	}
+
 	/**
 	 * Finds measurements for the specified lab type and ident code
 	 * 
@@ -153,5 +163,21 @@ public class MeasurementMapDao extends AbstractDao<MeasurementMap> {
 		q.setParameter("name", name);
 		return q.getResultList();
     }
+
+	public List<MeasurementMap> findMeasurementsByName(String searchString) {
+		String sql = "SELECT DISTINCT b FROM MeasurementMap b WHERE b.name LIKE ?1 ORDER BY b.name";
+		Query q = entityManager.createQuery(sql);
+		q.setParameter(1, searchString);
+
+		return q.getResultList();
+	}
+
+	public List<MeasurementMap> searchMeasurementsByName(String searchString) {
+		String sql = "SELECT DISTINCT b FROM MeasurementMap b WHERE b.loincCode = b.identCode and b.name LIKE ?1 ORDER BY b.name";
+		Query q = entityManager.createQuery(sql);
+		q.setParameter(1, searchString);
+
+		return q.getResultList();
+	}
 
 }

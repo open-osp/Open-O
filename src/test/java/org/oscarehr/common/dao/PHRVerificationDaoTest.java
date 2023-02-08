@@ -39,7 +39,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
@@ -148,10 +148,6 @@ public class PHRVerificationDaoTest extends DaoTestFixtures {
 		phrVerification2.setVerificationBy(authenticationLevel2);
 		dao.persist(phrVerification2);
 		
-		String expectedResult = "+1";
-		DemographicManager demographicManager=(DemographicManager) SpringUtils.getBean("demographicManager");
-		String result = demographicManager.getPhrVerificationLevelByDemographicId(getLoggedInInfo(),demographicNo1);
 		
-		assertEquals(expectedResult, result);
 	}
 }

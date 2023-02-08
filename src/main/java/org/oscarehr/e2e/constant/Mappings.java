@@ -39,8 +39,8 @@ import org.marc.everest.datatypes.generic.IVL;
 import org.marc.everest.datatypes.generic.PIVL;
 import org.marc.everest.datatypes.interfaces.ISetComponent;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.AdministrativeGender;
-import org.oscarehr.e2e.constant.Constants.IssueCodes;
-import org.oscarehr.e2e.util.EverestUtils;
+//import org.oscarehr.e2e.constant.Constants.IssueCodes;
+//import org.oscarehr.e2e.util.EverestUtils;
 
 public class Mappings {
 	Mappings() {
@@ -125,18 +125,18 @@ public class Mappings {
 		allergyTestName = Collections.unmodifiableMap(map);
 	}
 
-	public static final Map<IssueCodes, Long> issueId;
-	static {
-		Map<IssueCodes, Long> map = new HashMap<IssueCodes, Long>();
-		map.put(Constants.IssueCodes.OMeds, EverestUtils.getIssueID(Constants.IssueCodes.OMeds.toString()));
-		map.put(Constants.IssueCodes.SocHistory, EverestUtils.getIssueID(Constants.IssueCodes.SocHistory.toString()));
-		map.put(Constants.IssueCodes.MedHistory, EverestUtils.getIssueID(Constants.IssueCodes.MedHistory.toString()));
-		map.put(Constants.IssueCodes.Concerns, EverestUtils.getIssueID(Constants.IssueCodes.Concerns.toString()));
-		map.put(Constants.IssueCodes.Reminders, EverestUtils.getIssueID(Constants.IssueCodes.Reminders.toString()));
-		map.put(Constants.IssueCodes.FamHistory, EverestUtils.getIssueID(Constants.IssueCodes.FamHistory.toString()));
-		map.put(Constants.IssueCodes.RiskFactors, EverestUtils.getIssueID(Constants.IssueCodes.RiskFactors.toString()));
-		issueId = Collections.unmodifiableMap(map);
-	}
+//	public static final Map<IssueCodes, Long> issueId;
+//	static {
+//		Map<IssueCodes, Long> map = new HashMap<IssueCodes, Long>();
+//		map.put(Constants.IssueCodes.OMeds, EverestUtils.getIssueID(Constants.IssueCodes.OMeds.toString()));
+//		map.put(Constants.IssueCodes.SocHistory, EverestUtils.getIssueID(Constants.IssueCodes.SocHistory.toString()));
+//		map.put(Constants.IssueCodes.MedHistory, EverestUtils.getIssueID(Constants.IssueCodes.MedHistory.toString()));
+//		map.put(Constants.IssueCodes.Concerns, EverestUtils.getIssueID(Constants.IssueCodes.Concerns.toString()));
+//		map.put(Constants.IssueCodes.Reminders, EverestUtils.getIssueID(Constants.IssueCodes.Reminders.toString()));
+//		map.put(Constants.IssueCodes.FamHistory, EverestUtils.getIssueID(Constants.IssueCodes.FamHistory.toString()));
+//		map.put(Constants.IssueCodes.RiskFactors, EverestUtils.getIssueID(Constants.IssueCodes.RiskFactors.toString()));
+//		issueId = Collections.unmodifiableMap(map);
+//	}
 
 	public static final Map <String, String> formCode;
 	static {

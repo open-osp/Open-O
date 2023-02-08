@@ -25,7 +25,7 @@ package org.oscarehr.survey.service.impl;
 
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.SurveyTestDataDao;
 import org.oscarehr.common.dao.SurveyTestInstanceDao;
 import org.oscarehr.common.model.SurveyTestData;

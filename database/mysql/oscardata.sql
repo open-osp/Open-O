@@ -342,7 +342,7 @@ insert into encounterForm values ('ON AR Enhanced','../form/formonarenhanced.jsp
 INSERT INTO `encounterForm` (`form_name`, `form_value`, `form_table`, `hidden`) VALUES ('HMP Form','../form/HSFOForm2.do?demographic_no=','form_hsfo2_visit',1);
 INSERT INTO encounterForm VALUES ('Student Intake Hx','../form/formIntakeHx.jsp?demographic_no=','formIntakeHx', '0');
 insert into encounterForm (`form_name`, `form_value`, `form_table`, `hidden`) values('Patient Encounter Worksheet','../form/patientEncounterWorksheet.jsp?demographic_no=','',0);
-
+INSERT INTO `encounterForm`(`form_name`, `form_value`, `form_table`, `hidden`) VALUES ('Growth Charts', '../form/formGrowthChart.jsp?demographic_no=', 'formGrowthChart', 0);
 --
 -- Dumping data for table 'encountertemplate'
 --
@@ -1500,9 +1500,9 @@ insert into `secRole` (role_name, description) values('property staff','property
 insert into `secRole` (role_name, description) values('Support Counsellor','Support Counsellor');
 insert into `secRole` (role_name, description) values('Counselling Intern', 'Counselling Intern');
 insert into `secRole` (role_name, description) values('Field Note Admin', 'Field Note Admin');
-INSERT INTO `secRole` (`role_name`, `description` ) VALUES ('student', 'Student (OSCAR Learning)');
-INSERT INTO `secRole` (`role_name`, `description` ) VALUES ('moderator', 'Moderator (OSCAR Learning)');
-
+insert into `secRole` (role_name, description) values('student', 'Student (OSCAR Learning)');
+insert into `secRole` (role_name, description) values('moderator', 'Moderator (OSCAR Learning)');
+insert into `secRole` (role_name, description) values('HRMAdmin','HRM Administator');
 
 insert into `secUserRole` (`provider_no`,`role_name`,`orgcd`,`activeyn`,lastUpdateDate) values('999998', 'doctor', 'R0000001',1,now());
 insert into `secUserRole` (`provider_no`,`role_name`,`orgcd`,`activeyn`,lastUpdateDate) values('999998', 'admin', 'R0000001',1,now());
@@ -1614,6 +1614,11 @@ insert into `secObjectName` (`objectName`) values ('_dashboardDrilldown');
 insert into `secObjectName` (`objectName`) values ('_dashboardChgUser');
 
 insert into `secObjectName` (`objectName`) values ('_admin.demographic');
+
+insert into `secObjectName` (`objectName`)  values ('_admin.hrm');
+insert into `secObjectName` (`objectName`)  values ('_hrm.administrator');
+
+insert into `secObjectName` (`objectName`) values ('_newCasemgmt.eaaps');
 
 insert into `secObjPrivilege` values('receptionist', '_appointment', 'x', 0, '999998');
 insert into `secObjPrivilege` values('receptionist', '_demographic', 'x', 0, '999998');
@@ -1730,6 +1735,7 @@ insert into `secObjPrivilege` values('doctor','_eyeform','x',0,'999998');
 insert into `secObjPrivilege` values('doctor','_phr','o',0,'999998');
 insert into `secObjPrivilege` values('doctor','_admin.document','x',0,'999998');
 
+insert into `secObjPrivilege` values('doctor','_newCasemgmt.eaaps','x',0,'999998');
 
 insert into `secObjPrivilege` values('admin', '_admin', 'x', 0, '999998');
 insert into `secObjPrivilege` values('admin','_masterLink','x',0,999998);
@@ -1810,7 +1816,8 @@ insert into `secObjPrivilege` values('admin','_demographicExport','x',0,'999998'
 insert into `secObjPrivilege` values('admin','_admin.document','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_admin.demographic','u',0,'999998');
 
-
+insert into `secObjPrivilege` values('admin','_admin.hrm','x',0,'999998');
+insert into `secObjPrivilege` values('HRMAdmin','_hrm.administrator','x',0,'999998');
 
 -- for defaultqueue
 insert into queue values(1,'default');
@@ -2203,7 +2210,7 @@ VALUES
         ('eyeformProblem', 'Problem List Item for Eyeform', 'nurse', NOW(), NULL, 'system',0);
 
 
-insert into HRMCategory values (null, 'General Oscar Lab', 'DEFAULT',null);
+insert into HRMCategory values (null, 'Oscar HRM Category Uncategorized', 'DEFAULT',null);
 insert into HRMCategory values (null, 'Oscar HRM Category CT:ABDW' ,'CT:ABDW',null);
 insert into HRMCategory values (null, 'Oscar HRM Category RAD:CSP5' ,'RAD:CSP5',null);
 insert into HRMCategory values (null, 'Oscar HRM Category NM:THYSAN' ,'NM:THYSAN',null);
@@ -2563,7 +2570,8 @@ insert into ProductLocation (name) values ('Default');
 
 INSERT INTO `OscarJobType` VALUES (null,'OSCAR MSG REVIEW','Sends OSCAR Messages to Residents Supervisors when charts need to be reviewed','org.oscarehr.jobs.OscarMsgReviewSender',0,now());
 INSERT INTO `OscarJob` VALUES (null,'OSCAR Message Review','',(select id from OscarJobType where name = 'OSCAR MSG REVIEW') ,'0 0/30 * * * *','999998',0,now(),null);
-INSERT INTO `consentType` VALUES ('1', 'default_consent_entry', 'Demonstraton Consent', 'This is a demonstration consent. Modify the consentType and Consent tables to replace this message with a desired consent description, or to add new consents.', '0');
+
+INSERT INTO `consentType`(`id`, `type`, `name`, `description`, `active`) VALUES ('1', 'default_consent_entry', 'Demonstraton Consent', 'This is a demonstration consent. Modify the consentType and Consent tables to replace this message with a desired consent description, or to add new consents.', '0');
 INSERT INTO `consentType`(`type`, `name`, `description`, `active`) VALUES ( 'electronic_communication_consent', 'Electronic Communication Consent', 'This patient has consented to being contacted by all forms of electronic communication including, but not limited to, email, telephone, and video conferencing.', 1);
 
 INSERT INTO `LookupList` (`listTitle`,`name`, description, categoryId, active, createdBy, dateCreated) VALUES('Consultation Request Appointment Instructions List', 'consultApptInst', 'Select list for the consultation appointment instruction select list', NULL, '1', 'oscar', NOW() );
@@ -2607,3 +2615,16 @@ INSERT INTO `oscarcommlocations`(`locationId`, `locationDesc`, `locationAuth`, `
 
 INSERT INTO `fax_config`(`id`, `url`, `siteUser`, `passwd`, `faxUser`, `faxPasswd`, `queue`, `active`, `faxNumber`, `senderEmail`) VALUES (1, '', '', '', '', '', '', 0, '', '');
 
+INSERT INTO `dxCodeTranslations` VALUES ('172', 'Skin Cancer', '1'), ('173', 'basal cell carcinoma', '2'), ('2429', 'Hyperthyroid', '3'), ('2449', 'Hypothyroid', '4'), ('2564', 'polycystic ovarian synd
+rome', '5'), ('2720', 'Hypercholesterolemia', '6'), ('2722', 'Mixed hyperlipidemia', '7'), ('2724', 'Cholesterol', '8'), ('274', 'Gout', '9'), ('2768', 'hypokalemia', '10'), ('2778', 'Retinitis pigment
+osa', '11'), ('2901', 'Dementia', '12'), ('2963', 'Depression/Mood', '13'), ('2967', 'Bipolar', '14'), ('3000', 'Anxiety', '15'), ('3003', 'OCD', '16'), ('30981', 'PTSD', '17'), ('3339', 'Restless leg 
+syndrome', '18'), ('3540', 'carpal tunnel syndrome', '19'), ('356', 'Neuropathy/Neuropathic pain', '20'), ('401', 'Hypertension', '21'), ('4140', 'CAD', '22'), ('4273', 'Atrial Fibrilation', '23'), ('4
+53', 'Deep vein thrombosis', '24'), ('4781', 'Nasal congestion', '25'), ('4912', 'COPD', '26'), ('530', 'Barret\'s esophagus', '27'), ('53081', 'GERD/Reflux', '28'), ('555', 'Cholitis/Crohn\'s', '29'),
+ ('5718', 'Fatty liver', '30'), ('59651', 'Overactive bladder', '31'), ('600', 'Enlarged prostate', '32'), ('607', 'ED/Libido', '33'), ('627', 'Menopause', '34'), ('6929', 'Dermatitis/Eczema', '35'), (
+'6960', 'Psoriatic arthritis', '36'), ('715', 'Arthritis/Osteoarthritis', '37'), ('722', 'degenerative disc disorder', '38'), ('7245', 'Back Pain', '39'), ('72885', 'Muscle Spasms', '40'), ('7291', 'Fi
+bromyalgia', '41'), ('73390', 'osteopenia', '42'), ('7506', 'Hiatis Hernia', '43'), ('7804', 'Dizziness', '44'), ('7805', 'sleep', '45'), ('78051', 'Sleep apnea', '46'), ('78052', 'insomnia', '47'), ('
+78605', 'Difficulty breathing', '48'), ('7865', 'Chest pain', '49'), ('78841', 'Frequent Urination', '50'), ('8470', 'whiplash', '51'), ('O54', 'Herpes', '52'), ('V433', 'Aortic valve replacement', '53
+'), ('V450', 'Cardiac pace maker', '54');
+
+-- From update-2019-06-13.sql
+update ServiceClient set lifetime = -1 where lifetime is null;

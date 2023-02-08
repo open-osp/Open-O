@@ -39,7 +39,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.caisi_integrator.ws.DemographicTransfer;
 import org.oscarehr.caisi_integrator.ws.DemographicWs;
@@ -205,6 +205,7 @@ public final class ImageRenderingServlet extends HttpServlet {
 				return;
 			} else {
 				renderImage(response, getDefaultImage(request), "jpeg");
+				return;
 			}
 		} catch (Exception e) {
 			logger.error("Unexpected error.", e);

@@ -77,11 +77,7 @@ import org.oscarehr.common.model.IntegratorConsent.SignatureStatus;
 import org.oscarehr.common.model.OscarMsgType;
 import org.oscarehr.hnr.ws.MatchingClientParameters;
 import org.oscarehr.hnr.ws.MatchingClientScore;
-import org.oscarehr.util.CxfClientUtilsOld;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.QueueCache;
-import org.oscarehr.util.SessionConstants;
+import org.oscarehr.util.*;
 import org.oscarehr.ws.rest.to.model.DemographicSearchRequest;
 import org.oscarehr.ws.rest.to.model.DemographicSearchRequest.SEARCHMODE;
 
@@ -642,6 +638,7 @@ public class CaisiIntegratorManager {
 		Demographic demographic = new Demographic();
 		demographic.setFirstName(demographicTransfer.getFirstName());
 		demographic.setLastName(demographicTransfer.getLastName());
+		demographic.setMiddleNames("");
 		
 		if (demographicTransfer.getBirthDate()!=null) demographic.setBirthDay(demographicTransfer.getBirthDate());		
 		if (demographicTransfer.getGender()!=null) demographic.setSex(demographicTransfer.getGender().name());

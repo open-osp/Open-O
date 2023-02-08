@@ -38,7 +38,7 @@ import java.util.Properties;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.utility.DateUtils;
 import org.oscarehr.common.dao.ClinicDAO;
 import org.oscarehr.common.dao.OscarAppointmentDao;

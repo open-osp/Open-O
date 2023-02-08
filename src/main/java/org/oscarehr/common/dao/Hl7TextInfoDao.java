@@ -26,6 +26,8 @@
 package org.oscarehr.common.dao;
 
 import java.io.UnsupportedEncodingException;
+
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
@@ -113,6 +115,21 @@ public class Hl7TextInfoDao extends AbstractDao<Hl7TextInfo> {
         query.setParameter("accessionNumber", accessionNumber);
         return query.getResultList();
     }
+                                                                                
+    // Calgary labs are associated by Accession number usually. Glucose labs are not, but can be 
+    // found by filler number                                                   
+    public Hl7TextInfo findLatestVersionByAccessionNumberOrFillerNumber(
+		String acc, String fillerNumber) {
+
+		String sqlCommand="select x from Hl7TextInfo x where x.accessionNumber = ?1 " +
+			"OR x.fillerOrderNum = ?2 order by lab_no DESC";
+
+		Query query = entityManager.createQuery(sqlCommand);
+		query.setParameter(1, acc);
+		query.setParameter(2, fillerNumber);
+
+		return (getSingleResultOrNull(query));
+    }
 
     public List<Hl7TextInfo> searchByFillerOrderNumber(String fon, String sending_facility){
     	String sql = "select x from Hl7TextInfo x where x.fillerOrderNum=?1 and sendingFacility=?2";
@@ -167,7 +184,7 @@ public class Hl7TextInfoDao extends AbstractDao<Hl7TextInfo> {
     	return null;
     }
 
-    
+
     public List<Hl7TextInfo> getAllLabsByLabNumberResultStatus() {
     	String sql = "SELECT x FROM Hl7TextInfo x";
     	Query query = entityManager.createQuery(sql);
@@ -231,6 +248,24 @@ public class Hl7TextInfoDao extends AbstractDao<Hl7TextInfo> {
 		q.setParameter("dNo", demographicNo);
 		return q.getResultList();
     }
+    
+	@SuppressWarnings("unchecked")
+    public List<Hl7TextInfo> findByLabIdList(List<Integer> labIds) {
+    	
+    	StringBuilder stringBuilder = new StringBuilder();
+    	for(Integer labId : labIds) {
+    		stringBuilder.append("'" + labId + "'");
+    	}
+
+    	String sql = "SELECT x FROM " + modelClass.getName() + " x WHERE x.labNumber IN ("+ stringBuilder.toString() +") ORDER BY x.labNumber DESC";
+    	Query query = entityManager.createQuery(sql);
+    	List<Hl7TextInfo> resultList = query.getResultList();
+    	if(resultList == null) {
+    		resultList = Collections.emptyList();
+    	}
+    	return resultList;
+    }
+
 
 	public List<Object[]> findLabsViaMagic(String status, String providerNo, String patientFirstName, String patientLastName, String patientHealthNumber) {
 		String sql = "FROM Hl7TextInfo info, ProviderLabRoutingModel p " +

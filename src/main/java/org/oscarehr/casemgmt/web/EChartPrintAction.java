@@ -50,7 +50,7 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.log.LogAction;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 
 public class EChartPrintAction extends DispatchAction {
 

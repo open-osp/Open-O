@@ -42,7 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.util.LabelValueBean;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.PMmodule.caisi_integrator.IntegratorFallBackManager;
@@ -541,6 +541,7 @@ public class CaseManagementManager {
 		else if (disp.equals(CaseManagementNoteLink.DISP_PRESCRIP)) tName = CaseManagementNoteLink.DRUGS;
 		else if (disp.equals(CaseManagementNoteLink.DISP_DEMO)) tName = CaseManagementNoteLink.DEMOGRAPHIC;
 		else if (disp.equals(CaseManagementNoteLink.DISP_PREV)) tName = CaseManagementNoteLink.PREVENTIONS;
+		else if (disp.equals(CaseManagementNoteLink.DISP_APPOINTMENT)) tName = CaseManagementNoteLink.APPOINTMENT;
 
 		return tName;
 	}
@@ -724,6 +725,10 @@ public class CaseManagementManager {
 
 	public Issue getIssueInfoByCode(String code) {
 		return issueDAO.findIssueByCode(code);
+	}
+	
+	public Issue getIssueInfoByTypeAndCode(String type, String code) {
+		return issueDAO.findIssueByTypeAndCode(type, code);
 	}
 
 	public List<Issue> getIssueInfoBySearch(String providerNo, String search, List accessRight) {
@@ -2317,6 +2322,29 @@ private String updateApptStatus(String status, String type) {
 			}
 			cpp.setMedicalHistory(mHis);
 		}
+	}
+
+	public String listNotes(String code, String providerNo, String demoNo)
+	{
+		// filter the notes by the checked issues
+		List<Issue> issues = getIssueInfoByCode(providerNo, code);
+
+		String[] issueIds = new String[issues.size()];
+		int idx = 0;
+		for (Issue issue : issues)
+		{
+			issueIds[idx] = String.valueOf(issue.getId());
+		}
+
+		// need to apply issue filter
+		List<CaseManagementNote> notes = getNotes(demoNo, issueIds);
+		StringBuffer noteStr = new StringBuffer();
+		for (CaseManagementNote n : notes)
+		{
+			if (!n.isLocked() && !n.isArchived()) noteStr.append(n.getNote() + "\n");
+		}
+
+		return noteStr.toString();
 	}
 
 }

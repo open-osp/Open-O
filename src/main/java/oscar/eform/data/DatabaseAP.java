@@ -30,10 +30,10 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringEscapeUtils;
 
 public class DatabaseAP {
-    private String apName = null;
-    private String apSQL = null;
-    private String apOutput = null;
-    private String apInSQL = null;
+    private String apName;
+    private String apSQL;
+    private String apOutput;
+    private String apInSQL;
     private boolean apJsonOutput = false;
     private boolean isInputField = false;
     private String archive;
@@ -83,12 +83,30 @@ public class DatabaseAP {
     public void setApSQL(String apSQL) { this.apSQL = apSQL; }
     public void setApOutput(String apOutput) { this.apOutput = apOutput; }
 
-    public String getApName() { return(apName); }
-    public String getApSQL() { return(apSQL); }
-    public String getApOutput() { return(apOutput); }
+    public String getApName() {
+        if(apName == null) {
+            return "";
+        }
+        return apName;
+    }
+    public String getApSQL() {
+        if(apSQL == null) {
+            return "";
+        }
+        return apSQL;
+    }
+    public String getApOutput() {
+        if(apOutput == null) {
+            return "";
+        }
+        return apOutput;
+    }
 
 
     public String getApInSQL() {
+        if(apInSQL == null) {
+            return "";
+        }
 		return apInSQL;
 	}
 

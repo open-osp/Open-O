@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.IntakeAnswer;
 import org.oscarehr.PMmodule.model.IntakeNode;
 
 public class DATISGamingForm extends AbstractIntakeExporter {
 
-	private static final Logger log = Logger.getLogger(DATISGamingForm.class);
+	private static final Logger log = org.oscarehr.util.MiscUtils.getLogger();
 	
 	private static final String FILE_PREFIX = "File5";
 	private static final String EMPTY_FIELD_Q3_3 = "Q3_3";

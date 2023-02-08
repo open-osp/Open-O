@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -57,7 +57,7 @@ import ca.ontario.health.edt.TypeListData;
 import ca.ontario.health.edt.TypeListResult;
 
 public class DownloadAction extends DispatchAction{
-	private static Logger logger = Logger.getLogger(DownloadAction.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private boolean isFileToDownload=false;
 
 

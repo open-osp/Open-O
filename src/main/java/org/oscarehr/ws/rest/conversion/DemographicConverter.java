@@ -23,7 +23,7 @@
  */
 package org.oscarehr.ws.rest.conversion;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.DemographicExt;
 import org.oscarehr.util.AgeCalculator;
@@ -33,10 +33,11 @@ import org.oscarehr.ws.rest.to.model.DemographicTo1;
 
 public class DemographicConverter extends AbstractConverter<Demographic, DemographicTo1> {
 	
-	private static Logger logger = Logger.getLogger(DemographicConverter.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	private DemographicExtConverter demoExtConverter = new DemographicExtConverter();
 	private ProviderConverter providerConverter = new ProviderConverter();
+
 
 	/**
 	 * Converts TO, excluding provider and extras.
@@ -97,7 +98,8 @@ public class DemographicConverter extends AbstractConverter<Demographic, Demogra
 		d.setOfficialLanguage(t.getOfficialLanguage());
 		d.setCountryOfOrigin(t.getCountryOfOrigin());
 		d.setNewsletter(t.getNewsletter());
-
+		d.setMiddleNames(t.getMiddleNames());
+		
 		DemographicExt[] exts = new DemographicExt[t.getExtras().size()];
 		for (int i = 0; i < t.getExtras().size(); i++) {
 			exts[i] = demoExtConverter.getAsDomainObject(loggedInInfo,t.getExtras().get(i));
@@ -173,7 +175,8 @@ public class DemographicConverter extends AbstractConverter<Demographic, Demogra
 		t.setOfficialLanguage(d.getOfficialLanguage());
 		t.setCountryOfOrigin(d.getCountryOfOrigin());
 		t.setNewsletter(d.getNewsletter());
-
+		t.setMiddleNames(d.getMiddleNames());
+		
 		if (d.getExtras() != null) {
 			for (DemographicExt ext : d.getExtras()) {
 				t.getExtras().add(demoExtConverter.getAsTransferObject(loggedInInfo,ext));

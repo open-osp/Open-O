@@ -29,7 +29,7 @@ import java.util.Vector;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.ON.dao.BillingONDiskNameDao;
 import org.oscarehr.billing.CA.ON.dao.BillingONFilenameDao;
 import org.oscarehr.billing.CA.ON.dao.BillingONHeaderDao;
@@ -58,7 +58,7 @@ import org.oscarehr.util.SpringUtils;
 import oscar.util.UtilDateUtilities;
 
 public class JdbcBillingClaimImpl {
-	private static final Logger _logger = Logger.getLogger(JdbcBillingClaimImpl.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 	private BillingONHeaderDao dao = SpringUtils.getBean(BillingONHeaderDao.class);
 	private BillingONCHeader1Dao cheaderDao = SpringUtils.getBean(BillingONCHeader1Dao.class);
 	private BillingONItemDao itemDao = SpringUtils.getBean(BillingONItemDao.class);

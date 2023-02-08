@@ -32,7 +32,6 @@
 <%@page import="java.util.List"%>
 <%@page import="org.oscarehr.web.DemographicSearchHelper"%>
 <%@page import="java.util.GregorianCalendar"%>
-<%@page import="org.apache.commons.lang.StringUtils"%>
 <%@page import="org.oscarehr.caisi_integrator.ws.MatchingDemographicParameters"%>
 
 
@@ -185,7 +184,7 @@
 			MiscUtils.getLogger().debug("Integrator search results : "+(integratorSearchResults==null?"null":String.valueOf(integratorSearchResults.size())));
 			request.setAttribute("integratorSearchResults", integratorSearchResults);
 		}catch(Exception e){
-			log("error searching integrator", e);
+			MiscUtils.getLogger().error("error searching integrator", e);
 		}
 	}
 

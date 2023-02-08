@@ -83,6 +83,17 @@ function popupOscarRx(vheight,vwidth,varpage) { //open a new popup window
     popup.focus();
   }
 }
+function popupQuestimed(vheight,vwidth,varpage) { //open a new popup window
+  var page = varpage;
+  windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
+  var popup=window.open(varpage, "Questimed", windowprops);
+  if (popup != null) {
+    if (popup.opener == null) {
+      popup.opener = self;
+    }
+    popup.focus();
+  }
+}
 function popupS(varpage) {
 	if (! window.focus)return true;
 	var href;
@@ -93,20 +104,32 @@ function popupS(varpage) {
 	window.open(href, "fullwin", ',type=fullWindow,fullscreen,scrollbars=yes');
 	return false;
 }
+
+
 function checkRosterStatus() {
 	if (rosterStatusChangedNotBlank()) {
 		if (document.updatedelete.roster_status.value=="RO") { //Patient rostered
 			if (!rosterStatusDateValid(false)) return false;
-		}
-		else {
+			if (!rosterEnrolledToValid(false)) return false;
+			if(rosterStatusTerminationDateFilled() || rosterStatusTerminationReasonFilled() ) {
+				alert('Please clear the roster termination date and roster termination reason fields');
+				return false;
+			}
+			return true;
+		} else if(document.updatedelete.roster_status.value=="TE") {
+			if (!rosterStatusDateValid(false)) return false;
 			if (!rosterStatusTerminationDateValid(false)) return false;
 			if (!rosterStatusTerminationReasonNotBlank()) return false;
+			return true;
+		} else {
+			return true;
 		}
 	}
 
 	if (rosterStatusDateAllowed()) {
 		if (document.updatedelete.roster_status.value=="RO") { //Patient rostered
 			if (!rosterStatusDateValid(false)) return false;
+			if (!rosterEnrolledToValid(false)) return false;
 		}
 		else {
 			if (!rosterStatusTerminationDateValid(true)) return false;
@@ -114,8 +137,10 @@ function checkRosterStatus() {
 	} else {
 		return false;
 	}
+	
 	if (!rosterStatusDateValid(true)) return false;
 	if (!rosterStatusTerminationDateValid(true)) return false;
+	if (!rosterEnrolledToValid(true)) return false;
 	return true;
 }
 
@@ -219,12 +244,148 @@ function isPostalCode()
 return true;
 }
 
+function isPostalCode2()
+{
+    if(isCanadian()){
+         e = document.updatedelete.residentialPostal;
+         postalcode = e.value;
+        	
+         rePC = new RegExp(/(^s*([a-z](\s)?\d(\s)?){3}$)s*/i);
+    
+         if (!rePC.test(postalcode)) {
+              e.focus();
+              alert("The entered residential Postal Code is not valid");
+              return false;
+         }
+    }//end cdn check
+
+return true;
+}
+
 function isCanadian(){
 	e = document.updatedelete.province;
-    var province = e.options[e.selectedIndex].value;
-    
-    if ( province.indexOf("US")>-1 || province=="OT"){ //if not canadian
-            return false;
+    try {
+        var province = e.options[e.selectedIndex].value;
+
+        if ( province.indexOf("US")>-1 || province=="OT"){ //if not canadian
+                return false;
+        }
+        return true;
+    } catch {
+        return false;
     }
-    return true;
+}
+
+
+function setProvince(sdCode) {
+	jQuery("#country").bind('change',function(){
+		updateProvinces('');
+	});
+	
+    jQuery.ajax({
+        type: "POST",
+        url:  ctx + '/demographicSupport.do',
+        data: 'method=getCountryAndProvinceCodes',
+        dataType: 'json',
+        success: function (data) {
+        	jQuery('#country').append(jQuery('<option>').text('').attr('value', ''));
+        	jQuery.each(data, function(i, value) {
+                 jQuery('#country').append(jQuery('<option>').text(value.label).attr('value', value.value));
+             });
+        	
+        	 if(sdCode.indexOf('-') != -1) {
+            	 jQuery("#country").val(sdCode.split("-")[0]);
+             } else {
+           	//  jQuery("#country").val('CA');
+             }
+        	
+        	updateProvinces(sdCode);
+        }
+	});
+  }
+
+
+function updateProvinces(province) {
+	var country = jQuery("#country").val();
+	console.log('country is ' + country );
+	if(country == '') {
+		console.log('t1');
+		return;
+	}
+	
+	jQuery.ajax({
+        type: "POST",
+        url:  ctx + '/demographicSupport.do',
+        data: 'method=getCountryAndProvinceCodes&country=' + country,
+        dataType: 'json',
+        success: function (data) {
+        	jQuery('#province').empty();
+        	jQuery.each(data, function(i, value) {
+                 jQuery('#province').append(jQuery('<option>').text(value.label).attr('value', value.value));
+             });
+        	
+        	
+        	if(province != null) {
+        		jQuery("#province").val(province);
+        	}
+        	
+        	
+        }
+	});
+}
+
+
+function setResidentialProvince(sdCode) {
+	jQuery("#residentialCountry").bind('change',function(){
+		updateResidentialProvinces('');
+	});
+	
+    jQuery.ajax({
+        type: "POST",
+        url:  ctx + '/demographicSupport.do',
+        data: 'method=getCountryAndProvinceCodes',
+        dataType: 'json',
+        success: function (data) {
+        	jQuery('#residentialCountry').append(jQuery('<option>').text('').attr('value', ''));
+        	jQuery.each(data, function(i, value) {
+                 jQuery('#residentialCountry').append(jQuery('<option>').text(value.label).attr('value', value.value));
+             });
+             
+             if(sdCode.indexOf('-') != -1) {
+            	 jQuery("#residentialCountry").val(sdCode.split("-")[0]);
+             } else {
+           	//  jQuery("#residentialCountry").val('CA');
+             }
+        	
+        	updateResidentialProvinces(sdCode);
+        }
+	});
+  }
+
+
+function updateResidentialProvinces(province) {
+	var country = jQuery("#residentialCountry").val();
+	if(country == '') {
+		return;
+	}
+	jQuery.ajax({
+        type: "POST",
+        url:  ctx + '/demographicSupport.do',
+        data: 'method=getCountryAndProvinceCodes&country=' + country,
+        dataType: 'json',
+        success: function (data) {
+        	jQuery('#residentialProvince').empty();
+        	 
+        	jQuery.each(data, function(i, value) {
+                 jQuery('#residentialProvince').append(jQuery('<option>').text(value.label).attr('value', value.value));
+             });
+        	
+        	
+        	if(province != null) {
+        		jQuery("#residentialProvince").val(province);
+        	}
+        	
+        	
+        }
+	});
 }

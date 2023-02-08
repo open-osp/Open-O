@@ -36,7 +36,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.Hl7TextInfoDao;
 import org.oscarehr.common.model.Hl7TextMessageInfo;
 import org.oscarehr.hospitalReportManager.SFTPConnector;
@@ -212,6 +212,11 @@ public class HRMXMLHandler implements MessageHandler {
 
 	public String getOBXName(int i, int j) {
 		return getOBXName(i, j, false);
+	}
+
+	@Override
+	public String getOBXNameLong(int i, int j) {
+		return "";
 	}
 
 	/**
@@ -489,5 +494,10 @@ public class HRMXMLHandler implements MessageHandler {
 	    }
 	    public String getNteForPID() {
 	    	return "";
+	    }
+	    
+	    //for OMD validation
+	    public boolean isTestResultBlocked(int i, int j) {
+	    	return false;
 	    }
 }

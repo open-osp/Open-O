@@ -40,6 +40,18 @@ public class MessageHandler {
 	private static final String SYSTEM_USER_ID = "-1";
 	private static final String SYSTEM_USER_NAME = "System";
 
+	public void notifyProvider(
+			String subject,
+			String messageBody,
+			String providerNo
+	) {
+		notifyProvider(
+				subject,
+				messageBody,
+				providerNo,
+				null);
+	}
+
 	// This is based on EaapsHandler.notifyProvider
 	public void notifyProvider(
 		String subject,
@@ -64,8 +76,11 @@ public class MessageHandler {
         systemMessage.setSentBy(userName);
         systemMessage.setSubject(subject);
         systemMessage.setMessage(messageBody);
-        systemMessage.setAttachedDemographicNo(linkedDemographicNumbers.toArray(new Integer[linkedDemographicNumbers.size()]));
-        
+
+		if(linkedDemographicNumbers != null && ! linkedDemographicNumbers.isEmpty()) {
+			systemMessage.setAttachedDemographicNo(linkedDemographicNumbers.toArray(new Integer[linkedDemographicNumbers.size()]));
+		}
+
         messagingManager.sendSystemMessage(loggedInInfo, systemMessage);
 
 	}

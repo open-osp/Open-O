@@ -41,7 +41,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.drools.RuleBase;
 import org.jdom.Attribute;
 import org.jdom.Document;
@@ -82,11 +82,17 @@ public class MeasurementTemplateFlowSheetConfig implements InitializingBean {
     Hashtable<String, String> flowsheetDisplayNames = new Hashtable<String, String>();
     ArrayList<String> universalFlowSheets = new ArrayList<String>();
 
+    Hashtable<String, File> flowsheetFiles = new Hashtable<String, File>();
+
     static MeasurementTemplateFlowSheetConfig measurementTemplateFlowSheetConfig;
 
     Hashtable<String, MeasurementFlowSheet> flowsheets = null;
 
     HashMap<String,Flowsheet> flowsheetSettings = null;
+
+    public Hashtable<String,File> getFileMap() {
+    	return flowsheetFiles;
+    }
 
     public void afterPropertiesSet() throws Exception {
         measurementTemplateFlowSheetConfig = this;

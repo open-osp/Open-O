@@ -27,7 +27,7 @@ package oscar.oscarLab.ca.bc.PathNet.HL7.V2_3;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.dao.Hl7PidDao;
 import org.oscarehr.billing.CA.BC.model.Hl7Pid;
 import org.oscarehr.util.MiscUtils;

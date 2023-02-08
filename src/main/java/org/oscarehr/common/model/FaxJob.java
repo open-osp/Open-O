@@ -23,6 +23,9 @@
  */
 package org.oscarehr.common.model;
 
+import org.oscarehr.fax.core.FaxAccount;
+import org.oscarehr.fax.core.FaxRecipient;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -46,27 +49,11 @@ public class FaxJob extends AbstractModel<Integer> implements Comparable<FaxJob>
 	public enum STATUS {RECEIVED,SENT,COMPLETE,ERROR,WAITING,CANCELLED,RESOLVED,UNKNOWN}
 	public static enum Direction {IN, OUT}
 	
-	public FaxJob() {		
-		this.id = null;
-		this.user = null;
-		this.password = null;
-		this.file_name = null;
-		this.fax_line = null;
-		this.destination = null;
-		this.recipient = null;
-		this.status = null;
-		this.statusString = null;
-		this.numPages = null;
-		this.stamp = null;
-		this.document = null;
-		this.jobId = null;
-		this.senderEmail = null;
-		this.direction = null;
-
+	public FaxJob() {
+		// default
 	}
-	
+
 	public FaxJob( FaxJob faxJob ) {		
-		this.id = null;
 		this.user = faxJob.getUser();
 		this.password = faxJob.getPassword();
 		this.file_name = faxJob.getFile_name();
@@ -81,11 +68,10 @@ public class FaxJob extends AbstractModel<Integer> implements Comparable<FaxJob>
 		this.jobId = faxJob.getJobId();
 		this.senderEmail = faxJob.getSenderEmail();
 		this.direction = faxJob.getDirection();
-
+		this.demographicNo = faxJob.getDemographicNo();
+		this.oscarUser = faxJob.getOscarUser();
+        this.faxAccount = faxJob.getFaxAccount();
 	}
-
-    
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -130,7 +116,10 @@ public class FaxJob extends AbstractModel<Integer> implements Comparable<FaxJob>
     
     @Transient
     private Direction direction;
-    
+
+    @Transient
+    private FaxAccount faxAccount;
+
     /**
      * @return the id
      */
@@ -343,5 +332,19 @@ public class FaxJob extends AbstractModel<Integer> implements Comparable<FaxJob>
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
+
+    @Transient
+    public FaxRecipient getFaxRecipient() {
+        return new FaxRecipient(this.getRecipient(), this.getDestination());
+    }
+
+
+    public FaxAccount getFaxAccount() {
+        return this.faxAccount;
+    }
+
+    public void setFaxAccount(FaxAccount faxAccount) {
+        this.faxAccount = faxAccount;
+    }
 
 }

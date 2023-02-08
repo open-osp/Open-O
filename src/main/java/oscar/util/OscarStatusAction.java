@@ -62,7 +62,7 @@ public class OscarStatusAction extends Action {
 		servletRequest.setAttribute("sqlSlaveStatusText", getOscarSQLSlaveStatus());
 		servletRequest.setAttribute("filesystemStatusText", getFilesystemStatus());
 		servletRequest.setAttribute("uptimeText", uptime());
-		servletRequest.setAttribute("vmstatText", vmstat());
+//		servletRequest.setAttribute("vmstatText", vmstat());
 		
 		return actionMapping.findForward("success");
 
@@ -194,32 +194,32 @@ public class OscarStatusAction extends Action {
 		return output;
 	}
 	
-	private String vmstat() 
-	{
-		String output = "$ vmstat\n";
-		
-		Runtime r = Runtime.getRuntime();
-		try 
-		{
-			Process p = r.exec("vmstat");
-			InputStream in = p.getInputStream();
-			InputStreamReader isr = new InputStreamReader(in);
-			BufferedReader br = new BufferedReader(isr);
-			String line;
-
-			while ((line = br.readLine()) != null) 
-			{
-				output += line + "\n";
-			}
-
-		} catch (IOException e) 
-		{
-			output += "[An error has been encountered.]\n";
-			output += "[" + e.getMessage() + "]\n";
-		}
-			
-		return output;
-	}
+//	private String vmstat()
+//	{
+//		String output = "$ vmstat\n";
+//
+//		Runtime r = Runtime.getRuntime();
+//		try
+//		{
+//			Process p = r.exec("vmstat");
+//			InputStream in = p.getInputStream();
+//			InputStreamReader isr = new InputStreamReader(in);
+//			BufferedReader br = new BufferedReader(isr);
+//			String line;
+//
+//			while ((line = br.readLine()) != null)
+//			{
+//				output += line + "\n";
+//			}
+//
+//		} catch (IOException e)
+//		{
+//			output += "[An error has been encountered.]\n";
+//			output += "[" + e.getMessage() + "]\n";
+//		}
+//
+//		return output;
+//	}
 	
 	private String documentStorage() 
 	{

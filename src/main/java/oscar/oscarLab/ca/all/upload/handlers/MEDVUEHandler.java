@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.Hl7TextInfoDao;
 import org.oscarehr.common.model.Hl7TextInfo;
 import org.oscarehr.util.LoggedInInfo;
@@ -25,7 +25,7 @@ import oscar.oscarLab.ca.all.util.MEDVUEUtilities;
 
 public class MEDVUEHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(MEDVUEHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public MEDVUEHandler() {
 		logger.info("NEW MEDVUEHandler UPLOAD HANDLER instance just instantiated. ");

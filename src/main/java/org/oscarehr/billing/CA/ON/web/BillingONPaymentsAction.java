@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -69,8 +69,7 @@ import oscar.oscarBilling.ca.on.data.JdbcBilling3rdPartImpl;
  * @author rjonasz
  */
 public class BillingONPaymentsAction extends DispatchAction {
-	private static Logger logger = Logger
-			.getLogger(BillingONPaymentsAction.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private BillingONItemDao billingONItemDao;
 	private BillingONPaymentDao billingONPaymentDao;

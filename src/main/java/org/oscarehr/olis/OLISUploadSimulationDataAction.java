@@ -19,11 +19,12 @@ import org.apache.commons.fileupload.DefaultFileItemFactory;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
+import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 
 import com.indivica.olis.Driver;
@@ -60,7 +61,7 @@ public class OLISUploadSimulationDataAction extends DispatchAction {
 		    
 		    if(simulationData != null && simulationData.length()>0) {
 		    	if(simulationError) {
-		    		Driver.readResponseFromXML(request, simulationData);
+		    		Driver.readResponseFromXML(LoggedInInfo.getLoggedInInfoFromSession(request), request, simulationData);
 		    		simulationData = (String)request.getAttribute("olisResponseContent");
 		    		request.getSession().setAttribute("errors",request.getAttribute("errors"));
 		    	}

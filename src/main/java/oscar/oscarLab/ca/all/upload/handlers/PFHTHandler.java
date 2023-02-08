@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.Hl7TextInfoDao;
 import org.oscarehr.common.model.Hl7TextInfo;
 import org.oscarehr.util.LoggedInInfo;
@@ -26,7 +26,7 @@ import oscar.oscarLab.ca.all.util.PFHTUtilities;
 
 public class PFHTHandler implements MessageHandler {
 
-	 Logger logger = Logger.getLogger(PFHTHandler.class);
+	 Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	    public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName,int fileId, String ipAddr){
 

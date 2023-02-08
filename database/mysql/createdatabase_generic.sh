@@ -12,60 +12,61 @@ LOCATION=$4
 # should be "9" or "10" corresponding to the icdXX.sql qualifier
 ICD=$5
 
-mysqladmin -u${USER} -p$PASSWORD create $DATABASE_NAME
+mysqladmin -u$USER -p$PASSWORD create $DATABASE_NAME
 
-echo "grant all on ${DATABASE_NAME}.* to ${USER}@localhost identified by \"$PASSWORD\"" |  mysql -u${USER} -p$PASSWORD  $DATABASE_NAME
+mysql_cmd="mysql -u$USER -p$PASSWORD $DATABASE_NAME"
 
-echo updating character set to utf8
-echo "alter database $DATABASE_NAME DEFAULT CHARACTER SET utf8  DEFAULT COLLATE utf8_general_ci" | mysql -u${USER} -p$PASSWORD  $DATABASE_NAME
+echo "grant all on $DATABASE_NAME.* to $USER@localhost identified by \"$PASSWORD\"" | $mysql_cmd
 
-echo loading oscarinit.sql...
-mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < oscarinit.sql
-echo loading oscarinit_${LOCATION}.sql...
-mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < oscarinit_${LOCATION}.sql
-echo loading oscardata.sql...
-mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < oscardata.sql
-echo loading oscardata_${LOCATION}.sql...
-mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < oscardata_${LOCATION}.sql
+echo 'updating character set to utf8'
+echo "alter database $DATABASE_NAME DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci" | $mysql_cmd
 
-if [ -e ${LOCATION}_billingServiceCodes.sql ] 
-	then
-		echo loading ${LOCATION}_billingServiceCodes.sql...
-		mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < ${LOCATION}_billingServiceCodes.sql
+echo 'loading oscarinit.sql...'
+$mysql_cmd < oscarinit.sql
+echo "loading oscarinit_$LOCATION.sql..."
+$mysql_cmd < oscarinit_$LOCATION.sql
+echo 'loading oscardata.sql...'
+$mysql_cmd < oscardata.sql
+echo 'loading oscardata_additional.sql...'
+$mysql_cmd < oscardata_additional.sql
+echo "loading oscardata_$LOCATION.sql..."
+$mysql_cmd < oscardata_$LOCATION.sql
+
+if [ $LOCATION = 'bc' ]; then
+  echo 'loading bc_billingServiceCodes.sql...'
+  $mysql_cmd < bc_billingServiceCodes.sql
+
+  echo 'loading bc_professionalSpecialists.sql...'
+  $mysql_cmd < bc_professionalSpecialists.sql
+
+  echo 'loading bc_pharmacies.sql...'
+  $mysql_cmd < bc_pharmacies.sql
+else
+  echo 'loading olisinit.sql...'
+  cd olis
+  $mysql_cmd < olisinit.sql
+  cd ..
 fi
 
-if [ -e ${LOCATION}_professionalSpecialists.sql ] 
-	then
-		echo loading ${LOCATION}_professionalSpecialists.sql...
-		mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < ${LOCATION}_professionalSpecialists.sql
-fi
+echo "loading icd$ICD.sql..."
+$mysql_cmd < icd$ICD.sql
 
-if [ -e ${LOCATION}_pharmacies.sql ] 
-	then
-		echo loading ${LOCATION}_pharmacies.sql...
-		mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < ${LOCATION}_pharmacies.sql
-fi
-
-echo loading icd${ICD}.sql...
-mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < icd${ICD}.sql
-
-echo changing to caisi directory...
 cd caisi
-echo loading initcaisi.sql...
-mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < initcaisi.sql
-echo loading initcaisidata.sql...
-mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < initcaisidata.sql
-echo changing back to the mysql directory...
+echo 'loading initcaisi.sql...'
+$mysql_cmd < initcaisi.sql
+echo 'loading initcaisidata.sql...'
+$mysql_cmd < initcaisidata.sql
 cd ..
 
-echo loading icd${ICD}_issue_groups.sql...
-mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < icd${ICD}_issue_groups.sql
-echo loading measurementMapData.sql...
-mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < measurementMapData.sql
-echo loading expire_oscardoc.sql
-mysql -u${USER} -p$PASSWORD  $DATABASE_NAME  < expire_oscardoc.sql
-echo all done!
-echo the default user is oscardoc
-echo password mac2002
-echo pin 1117
-echo For security reasons these credentials are set to expire in a month!
+echo "loading icd${ICD}_issue_groups.sql..."
+$mysql_cmd < icd${ICD}_issue_groups.sql
+echo 'loading measurementMapData.sql...'
+$mysql_cmd < measurementMapData.sql
+echo 'loading expire_oscardoc.sql'
+$mysql_cmd < expire_oscardoc.sql
+
+echo 'all done!'
+echo 'the default user is oscardoc'
+echo 'password mac2002'
+echo 'pin 1117'
+echo 'For security reasons these credentials are set to expire in a month!'

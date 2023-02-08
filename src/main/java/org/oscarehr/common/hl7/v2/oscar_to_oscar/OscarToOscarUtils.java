@@ -27,7 +27,7 @@ package org.oscarehr.common.hl7.v2.oscar_to_oscar;
 
 import java.io.FileOutputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 
 import ca.uhn.hl7v2.HL7Exception;

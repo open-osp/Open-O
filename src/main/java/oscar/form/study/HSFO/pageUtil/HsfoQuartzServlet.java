@@ -34,7 +34,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -51,7 +51,7 @@ public class HsfoQuartzServlet implements Servlet
 {
 	public static final String RESUBMIT_JOB = "hsfoResubmitJob";
 
-	protected static Logger logger = Logger.getLogger(HsfoQuartzServlet.class);
+	protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public static final String RESUBMIT_TRIGGER = "hsfoResubmitTrigger";
 

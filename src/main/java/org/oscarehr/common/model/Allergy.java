@@ -40,12 +40,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
-import org.oscarehr.util.MiscUtils;
-import oscar.oscarRx.data.RxDrugData;
+
 
 @Entity
 @Table(name = "allergies")
-public class Allergy extends AbstractModel<Integer> {
+public class Allergy extends AbstractModel<Integer> implements DemographicData {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,7 +64,10 @@ public class Allergy extends AbstractModel<Integer> {
 	private String reaction;
 	
 	private boolean archived=false;
-
+	
+	private Boolean nonDrug=false;
+	
+	
 	@Column(name = "HICL_SEQNO")
 	private Integer hiclSeqno;
 
@@ -144,7 +146,7 @@ public class Allergy extends AbstractModel<Integer> {
 		this.id = id;
 	}
 
-	public Integer getDemographicNo() {
+	public int getDemographicNo() {
 		return demographicNo;
 	}
 
@@ -436,7 +438,8 @@ public class Allergy extends AbstractModel<Integer> {
         if ("1".equals(severityCode)) return("Mild");
         if ("2".equals(severityCode)) return("Moderate");
         if ("3".equals(severityCode)) return("Severe");
-        else return("Unknown "+severityCode);
+        if ("5".equals(severityCode)) return("No Reaction");
+        else return("Unknown");
     }
 
     public String getAuditString() {
@@ -447,37 +450,13 @@ public class Allergy extends AbstractModel<Integer> {
         return this.getDescription() + " (" + getTypeDesc(getTypeCode()) + ")";
     }
 
-    public String getDatePattern(String startDate) {
-    	String datePattern = null;
-		if (startDate.length()>=8 && getCharOccur(startDate,'-')==2) {
-			datePattern = "yyyy-MM-dd";
-		} else if (startDate.length()>=6 && getCharOccur(startDate,'-')>=1) {
-			datePattern = "yyyy-MM";
-		} else if (startDate.length()>=4) {
-			datePattern = "yyyy";
-		}
-		return datePattern;
+	public Boolean isNonDrug() {
+		return nonDrug;
 	}
 
-	public RxDrugData.DrugMonograph isDrug(Integer type){
-		RxDrugData.DrugMonograph drugMonograph= null;
-		if (type != null && type > 0){
-			RxDrugData drugData = new RxDrugData();
-			try{
-				drugMonograph = drugData.getDrug(drugrefId);
-			}catch(Exception e){
-				MiscUtils.getLogger().error("Error", e);
-			}
-		}
-		return drugMonograph;
+	public void setNonDrug(Boolean nonDrug) {
+		this.nonDrug = nonDrug;
 	}
 
-	private int getCharOccur(String str, char ch) {
-		int occurence=0, from=0;
-		while (str.indexOf(ch,from)>=0) {
-			occurence++;
-			from = str.indexOf(ch,from)+1;
-		}
-		return occurence;
-	}
+
 }

@@ -24,14 +24,14 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.WebUtilsOld"%>
+<%@page import="org.oscarehr.util.WebUtils"%>
 <%@page import="org.oscarehr.util.WebUtils"%>
 
 <%@include file="/layouts/html_top.jspf"%>
 
 <div style="border:solid gray 1px; text-align:center">
-	<%=WebUtilsOld.popInfoMessagesAsHtml(session)%>
-	<%=WebUtilsOld.popErrorMessagesAsHtml(session)%>
+	<%=WebUtils.popInfoMessagesAsHtml(session)%>
+	<%=WebUtils.popErrorMessagesAsHtml(session)%>
 	
 	<br />
 	<input type="button" value="close" onclick='window.close()' />

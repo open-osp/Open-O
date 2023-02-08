@@ -46,8 +46,8 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.oscarehr.caisi_integrator.util.MiscUtils;
-import com.lowagie.text.DocumentException;
+import org.oscarehr.util.MiscUtils;
+import com.itextpdf.text.DocumentException;
 
 import ca.uhn.hl7v2.HL7Exception;
 import oscar.oscarLab.ca.all.parsers.IHAPOIHandler;
@@ -156,7 +156,7 @@ public class LabPDFCreatorTest {
 		       e.printStackTrace();
 	        } catch (IOException e) {
 				e.printStackTrace();
-			} catch (DocumentException e) {
+			} catch (com.lowagie.text.DocumentException e) {
 				e.printStackTrace();
 			} finally {
 				try {

@@ -97,4 +97,9 @@ public class SystemPreferencesDao extends AbstractDao<SystemPreferences>
         SystemPreferences preference = findPreferenceByName(name);
         return (preference != null && Boolean.parseBoolean(preference.getValue()));
     }
+
+    public boolean isPreferenceValueEquals(String preferenceName, String trueValueStr) {
+        SystemPreferences preference = findPreferenceByName(preferenceName);
+        return (preference != null && trueValueStr.equals(preference.getValue()));
+    }
 }

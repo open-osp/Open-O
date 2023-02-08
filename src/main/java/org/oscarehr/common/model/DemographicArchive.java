@@ -145,6 +145,15 @@ public class DemographicArchive extends AbstractModel<Long> implements Serializa
 	@Column(name = "lastUpdateDate")
 	@Temporal(TemporalType.DATE)
 	private Date lastUpdateDate = null;
+	
+	private String middleNames;
+	@Column(name="roster_enrolled_to")
+	private String rosterEnrolledTo;
+	
+	private String residentialAddress;
+    private String residentialCity;
+	private String residentialProvince;
+	private String residentialPostal;
 
 	public DemographicArchive() {}
 	
@@ -195,6 +204,12 @@ public class DemographicArchive extends AbstractModel<Long> implements Serializa
 		this.title = demographic.getTitle();
 		this.ver = demographic.getVer();
 		this.yearOfBirth = demographic.getYearOfBirth();
+		this.middleNames = demographic.getMiddleNames();
+		this.rosterEnrolledTo = demographic.getRosterEnrolledTo();
+		this.residentialAddress = demographic.getResidentialAddress();
+		this.residentialCity = demographic.getResidentialCity();
+		this.residentialProvince = demographic.getResidentialProvince();
+		this.residentialPostal = demographic.getResidentialPostal();
 	}
 
 	public Integer getDemographicNo() {
@@ -522,6 +537,24 @@ public class DemographicArchive extends AbstractModel<Long> implements Serializa
 		public void setLastUpdateDate(Date d) {
 		    this.lastUpdateDate = d;
 		}
+		
+		
+
+		public String getMiddleNames() {
+			return middleNames;
+		}
+
+		public void setMiddleNames(String middleNames) {
+			this.middleNames = middleNames;
+		}
+
+		public String getRosterEnrolledTo() {
+			return rosterEnrolledTo;
+		}
+
+		public void setRosterEnrolledTo(String rosterEnrolledTo) {
+			this.rosterEnrolledTo = rosterEnrolledTo;
+		}
 
 		@Override
 		public Long getId() {
@@ -530,4 +563,38 @@ public class DemographicArchive extends AbstractModel<Long> implements Serializa
 		public void setId(Long id) {
 		    this.id = id;
 		}
+
+		public String getResidentialAddress() {
+			return residentialAddress;
+		}
+
+		public void setResidentialAddress(String residentialAddress) {
+			this.residentialAddress = residentialAddress;
+		}
+
+		public String getResidentialCity() {
+			return residentialCity;
+		}
+
+		public void setResidentialCity(String residentialCity) {
+			this.residentialCity = residentialCity;
+		}
+
+		public String getResidentialProvince() {
+			return residentialProvince;
+		}
+
+		public void setResidentialProvince(String residentialProvince) {
+			this.residentialProvince = residentialProvince;
+		}
+
+		public String getResidentialPostal() {
+			return residentialPostal;
+		}
+
+		public void setResidentialPostal(String residentialPostal) {
+			this.residentialPostal = residentialPostal;
+		}
+		
+		
 }

@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.WebUtilsOld"%>
+<%@page import="org.oscarehr.util.WebUtils"%>
 <%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
 <%@page import="org.oscarehr.util.LocaleUtils"%>
 <%@page import="org.oscarehr.phr.util.MyOscarUtils"%>
@@ -67,7 +67,7 @@
 <body topmargin="0" leftmargin="0" vlink="#0000FF"
 	onload="window.focus();">
 <html:errors />
-<%=WebUtilsOld.popErrorAndInfoMessagesAsHtml(session)%>
+<%=WebUtils.popErrorAndInfoMessagesAsHtml(session)%>
 
 <div style="display:inline-block; text-align:center">
 	<bean:message key="oscarEncounter.oscarMeasurements.oldmesurementindex"/>

@@ -32,8 +32,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.LabPatientPhysicianInfoDao;
 import org.oscarehr.common.dao.LabReportInformationDao;
 import org.oscarehr.common.dao.LabTestResultsDao;
@@ -53,7 +53,7 @@ import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
  * @author  root
  */
 public class ABCDParser {
-   Logger logger = Logger.getLogger("cmlFileManagement.ABCDLogger");
+   Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
    Atype reportFile = null;
    ArrayList<Atype> atypes = new ArrayList<Atype>();

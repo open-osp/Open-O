@@ -39,8 +39,6 @@
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="myoscar" %>
-<%@ taglib uri="http://www.caisi.ca/plugin-tag" prefix="plugin" %>
-
 
 <% 
 LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -312,21 +310,6 @@ function popupPage2(varpage) {
 	  
 	</security:oscarSec>
 </caisi:isModuleLoad>
-
-<!-- plugins menu extension point add -->
-<%int pluginMenuTagNumber=0; %>
-<plugin:pageContextExtension serviceName="oscarMenuExtension" stemFromPrefix="Oscar"/>
-<logic:iterate name="oscarMenuExtension.points" id="pt" scope="page" type="oscar.caisi.OscarMenuExtension">
-<%if (oscar.util.plugin.IsPropertiesOn.propertiesOn(pt.getName().toLowerCase())) {
-	pluginMenuTagNumber++;
-%>
-
-       <li><a href='<html:rewrite page="<%= pt.getLink() %>"/>'>
-       <%= pt.getName() %></a></li>
-<%} %>
-</logic:iterate>
-
-<!-- plugin menu extension point add end-->
 
 <%int menuTagNumber=0; %>
 <caisi:isModuleLoad moduleName="caisi">

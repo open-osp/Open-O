@@ -43,7 +43,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Varies;
@@ -62,7 +62,7 @@ import oscar.util.UtilDateUtilities;
 
 public class ExcellerisOntarioHandler implements MessageHandler {
 
-    Logger logger = Logger.getLogger(ExcellerisOntarioHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     ORU_R01 msg = null;
 
 	private static List<String> labDocuments = Arrays.asList("BCCACSP","BCCASMP","BLOODBANKT",
@@ -524,6 +524,14 @@ X = deleted (available on request; not always preceded by non-X OBRs in an earli
         }
     }
 
+
+    public String getOBXNameLong(int i, int j){
+        try{
+            return(getString(msg.getPIDPD1NK1NTEPV1PV2ORCOBRNTEOBXNTECTI().getORCOBRNTEOBXNTECTI(i).getOBXNTE(j).getOBX().getObservationIdentifier().getText().getValue()));
+        }catch(Exception e){
+            return("");
+        }
+    }
     
     public String getOBXResult(int i, int j){
         try{
@@ -817,5 +825,10 @@ X = deleted (available on request; not always preceded by non-X OBRs in an earli
 		return ( OBX_DATA_TYPES.TX.name().equals( getOBXValueType(0, 0) ) 
 				|| OBX_DATA_TYPES.FT.name().equals( getOBXValueType(0, 0) )  );		
 	}
+    
+    //for OMD validation
+    public boolean isTestResultBlocked(int i, int j) {
+    	return false;
+    }
     
 }

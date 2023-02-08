@@ -48,8 +48,9 @@ public class FaxClientLog extends AbstractModel<Integer>{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date endTime;
 	private String result;
-	private String requestId;
-	private String faxId;
+	private int requestId;
+	private int faxId;
+	private String transactionType;
 
 
 	@Override
@@ -98,25 +99,33 @@ public class FaxClientLog extends AbstractModel<Integer>{
     }
 
 
-	public String getRequestId() {
+	public int getRequestId() {
     	return requestId;
     }
 
 
-	public void setRequestId(String requestId) {
+	public void setRequestId(int requestId) {
     	this.requestId = requestId;
     }
 
 
-	public String getFaxId() {
+	public int getFaxId() {
     	return faxId;
     }
 
 
-	public void setFaxId(String faxId) {
+	public void setFaxId(int faxId) {
     	this.faxId = faxId;
     }
 
 
+	public String getTransactionType() {
+		return transactionType;
+	}
+
+
+	public void setTransactionType(String transactionType) {
+		this.transactionType = transactionType;
+	}
 
 }

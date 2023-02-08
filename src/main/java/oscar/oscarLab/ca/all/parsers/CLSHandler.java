@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.util.ConversionUtils;
 import oscar.util.UtilDateUtilities;
@@ -57,7 +57,7 @@ public class CLSHandler implements MessageHandler {
 		FIRST, MIDDLE, LAST;
 	}
 
-	private static Logger logger = Logger.getLogger(CLSHandler.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private ORU_R01 msg;
 
@@ -202,6 +202,15 @@ public class CLSHandler implements MessageHandler {
 	public String getOBXName(int i, int j) {
 		try {
 			return (getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getObservationIdentifier().getText().getValue()));
+		} catch (Exception e) {
+			return ("");
+		}
+	}
+
+	@Override
+	public String getOBXNameLong(int i, int j) {
+		try {
+			return (getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getObservationIdentifier().getComponent(2).toString()));
 		} catch (Exception e) {
 			return ("");
 		}
@@ -710,5 +719,10 @@ public class CLSHandler implements MessageHandler {
 
     public String getNteForPID() {
 	    return "";
+    }
+    
+    //for OMD validation
+    public boolean isTestResultBlocked(int i, int j) {
+    	return false;
     }
 }

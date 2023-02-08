@@ -34,13 +34,18 @@ import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.upload.FormFile;
+import org.oscarehr.common.model.CtlDocument;
+import org.oscarehr.common.model.CtlDocumentPK;
+import org.oscarehr.common.model.Document;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.MiscUtils;
 
+import oscar.MyDateFormat;
 import oscar.OscarProperties;
 import oscar.oscarTags.TagObject;
+import oscar.util.ConversionUtils;
 import oscar.util.UtilDateUtilities;
 
 public class EDoc extends TagObject implements Comparable<EDoc> {
@@ -77,7 +82,13 @@ public class EDoc extends TagObject implements Comparable<EDoc> {
 	private int numberOfPages = 0;
 	private Integer appointmentNo = -1;
 	private boolean restrictToProgram=false;
-	
+	private String fileSignature;
+
+	private org.oscarehr.common.model.Document document;
+	private CtlDocument ctlDocument;
+	private String filePath;
+	private String abnormal = "0";
+	private String receivedDate = "";
 
 	/** Creates a new instance of EDoc */
 	public EDoc() {
@@ -154,12 +165,25 @@ public class EDoc extends TagObject implements Comparable<EDoc> {
 		return ret;
 	}
 
-	public boolean equals(Object o) {
-		if (o == null || !(o instanceof EDoc)) {
-			return false;
-		}
+	
+	@Override
+		public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((docId == null) ? 0 : docId.hashCode());
+		return result;
+	}
 
-		return (compareTo((EDoc) o) == 0);
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		EDoc other = (EDoc) obj;
+		if (docId == null) {
+			if (other.docId != null) return false;
+		} else if (!docId.equals(other.docId)) return false;
+		return true;
 	}
 
 	private void preliminaryProcessing() {
@@ -173,9 +197,17 @@ public class EDoc extends TagObject implements Comparable<EDoc> {
 	}
 
 	public String getFilePath() {
-		String path = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-		return (path + "/" + this.getFileName());
+		
+		if(this.filePath == null) {
+			this.filePath = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+			this.filePath = String.format("%1$s%2$s%3$s", this.filePath, File.separator, this.getFileName());
+		}
+		return this.filePath;
 
+	}
+	
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 
 	public OutputStream getFileOutputStream() throws FileNotFoundException {
@@ -391,6 +423,30 @@ public class EDoc extends TagObject implements Comparable<EDoc> {
 		else this.docPublic = docPublic;
 	}
 
+	
+	public String getAbnormal() {
+		return abnormal;
+	}
+
+	public void setAbnormal(String abnormal) {
+		if (abnormal.equalsIgnoreCase("checked")) this.abnormal = "1";
+		else if (abnormal == null || abnormal.length() == 0) this.abnormal = "0";
+		else this.abnormal = abnormal;
+	}
+
+	public String getReceivedDate() {
+		return receivedDate;
+	}
+
+	public void setReceivedDate(String receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+	
+	public void setReceivedDate(Date receivedDate) {
+		String formattedDate = UtilDateUtilities.DateToString(receivedDate, EDocUtil.DMS_DATE_FORMAT);
+		this.receivedDate = formattedDate;
+	}
+
 	/**
 	 *Returns true if document a PDF.
 	 */
@@ -507,8 +563,14 @@ public class EDoc extends TagObject implements Comparable<EDoc> {
 	public void setNumberOfPages(int n) {
 		this.numberOfPages = n;
 	}
-	
-	
+
+	public String getFileSignature() {
+		return fileSignature;
+	}
+
+	public void setFileSignature(String fileSignature) {
+		this.fileSignature = fileSignature;
+	}
 
 	public boolean isRestrictToProgram() {
 		return restrictToProgram;
@@ -516,6 +578,45 @@ public class EDoc extends TagObject implements Comparable<EDoc> {
 
 	public void setRestrictToProgram(boolean restrictToProgram) {
 		this.restrictToProgram = restrictToProgram;
+	}
+
+	public Document getDocument() {
+		
+		document = new Document();
+		document.setDoctype(this.getType());
+		document.setDocClass(this.getDocClass());
+		document.setDocSubClass(this.getDocSubClass());
+		document.setDocdesc(this.getDescription());
+		document.setDocxml(this.getHtml());
+		document.setDocfilename(this.getFileName());
+		document.setDoccreator(this.getCreatorId());
+		document.setSource(this.getSource());
+		document.setSourceFacility(this.getSourceFacility());
+		document.setResponsible(this.getResponsibleId());
+		document.setProgramId(this.getProgramId());
+		document.setUpdatedatetime(this.getDateTimeStampAsDate());
+        document.setContentdatetime(this.getContentDateTime());
+		document.setStatus(this.getStatus());
+		document.setContenttype(this.getContentType());
+		document.setPublic1(ConversionUtils.fromIntString(this.getDocPublic()));
+		document.setObservationdate(MyDateFormat.getSysDate(this.getObservationDate()));
+		document.setNumberofpages(this.getNumberOfPages());
+		document.setAppointmentNo(this.getAppointmentNo());
+		document.setRestrictToProgram(this.isRestrictToProgram());
+		return document;
+	}
+
+	public CtlDocument getCtlDocument() {
+		
+		ctlDocument = new CtlDocument();
+		CtlDocumentPK cdpk = new CtlDocumentPK();
+		cdpk.setModule( this.getModule() );
+		cdpk.setModuleId( Integer.parseInt( this.getModuleId() ) );
+		
+		ctlDocument.setId(cdpk);
+		ctlDocument.setStatus( String.valueOf( this.getStatus() ) );
+
+		return ctlDocument;
 	}
 
 	@Override

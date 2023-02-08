@@ -787,37 +787,37 @@ div.logoutBox {
 	            </li>
             </oscar:oscarPropertiesCheck>	
             
-		 	<%
-				if (oscar.oscarSecurity.CRHelper.isCRFrameworkEnabled())
-						{
-			%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_admin.cookieRevolver" rights="r">
-		
-				<li>&nbsp; <bean:message key="admin.admin.titleFactorAuth"/>
-				<ul>
-					<li><a href="#"
-						onclick="popupPage(500,700,'../gatekeeper/ip/show');return false;"><bean:message key="admin.admin.ipFilter"/></a></li>
-					<li><a href="#"
-						onclick="popupPage(500,700,'../gatekeeper/cert/?act=super');return false;"><bean:message key="admin.admin.setCert"/></a></li>
-					<li><a href="#"
-						onclick="popupPage(500,700,'../gatekeeper/supercert');return false;"><bean:message key="admin.admin.genCert"/></a></li>
-					<li><a href="#"
-						onclick="popupPage(500,700,'../gatekeeper/clear');return false;"><bean:message key="admin.admin.clearCookie"/></a></li>
-					<li><a href="#"
-						onclick="popupPage(500,700,'../gatekeeper/quest/adminQuestions');return false;"><bean:message key="admin.admin.adminSecQuestions"/></a></li>
-					<li><a href="#"
-						onclick="popupPage(500,700,'../gatekeeper/policyadmin/select');return false;"><bean:message key="admin.admin.adminSecPolicies"/></a></li>
-					<li><a href="#"
-						onclick="popupPage(500,700,'../gatekeeper/banremover/show');return false;"><bean:message key="admin.admin.removeBans"/></a></li>
-					<li><a href="#"
-						onclick="popupPage(500,700,'../gatekeeper/matrixadmin/show');return false;"><bean:message key="admin.admin.genMatrixCards"/></a></li>
-				</ul>
-				</li>
-			</security:oscarSec>
-			<%
-				}
-			%>           	
+<%--		 	<%--%>
+<%--				if (oscar.oscarSecurity.CRHelper.isCRFrameworkEnabled())--%>
+<%--						{--%>
+<%--			%>--%>
+<%--			<security:oscarSec roleName="<%=roleName$%>"--%>
+<%--				objectName="_admin.cookieRevolver" rights="r">--%>
+<%--		--%>
+<%--				<li>&nbsp; <bean:message key="admin.admin.titleFactorAuth"/>--%>
+<%--				<ul>--%>
+<%--					<li><a href="#"--%>
+<%--						onclick="popupPage(500,700,'../gatekeeper/ip/show');return false;"><bean:message key="admin.admin.ipFilter"/></a></li>--%>
+<%--					<li><a href="#"--%>
+<%--						onclick="popupPage(500,700,'../gatekeeper/cert/?act=super');return false;"><bean:message key="admin.admin.setCert"/></a></li>--%>
+<%--					<li><a href="#"--%>
+<%--						onclick="popupPage(500,700,'../gatekeeper/supercert');return false;"><bean:message key="admin.admin.genCert"/></a></li>--%>
+<%--					<li><a href="#"--%>
+<%--						onclick="popupPage(500,700,'../gatekeeper/clear');return false;"><bean:message key="admin.admin.clearCookie"/></a></li>--%>
+<%--					<li><a href="#"--%>
+<%--						onclick="popupPage(500,700,'../gatekeeper/quest/adminQuestions');return false;"><bean:message key="admin.admin.adminSecQuestions"/></a></li>--%>
+<%--					<li><a href="#"--%>
+<%--						onclick="popupPage(500,700,'../gatekeeper/policyadmin/select');return false;"><bean:message key="admin.admin.adminSecPolicies"/></a></li>--%>
+<%--					<li><a href="#"--%>
+<%--						onclick="popupPage(500,700,'../gatekeeper/banremover/show');return false;"><bean:message key="admin.admin.removeBans"/></a></li>--%>
+<%--					<li><a href="#"--%>
+<%--						onclick="popupPage(500,700,'../gatekeeper/matrixadmin/show');return false;"><bean:message key="admin.admin.genMatrixCards"/></a></li>--%>
+<%--				</ul>--%>
+<%--				</li>--%>
+<%--			</security:oscarSec>--%>
+<%--			<%--%>
+<%--				}--%>
+<%--			%>           	--%>
 						
 		</ul>
 		</div>

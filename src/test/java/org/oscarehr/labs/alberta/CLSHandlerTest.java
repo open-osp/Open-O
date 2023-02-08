@@ -26,7 +26,7 @@ package org.oscarehr.labs.alberta;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.oscarehr.util.MiscUtils;
 

@@ -27,7 +27,6 @@ package oscar.eform.actions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -35,17 +34,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.oscarehr.common.dao.EFormDataDao;
+import org.apache.struts.action.ActionRedirect;
+
 import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.EFormData;
 import org.oscarehr.managers.DemographicManager;
+
+import org.oscarehr.managers.EformDataManager;
+import org.oscarehr.managers.FaxManager.TransactionType;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.match.IMatchManager;
 import org.oscarehr.match.MatchManager;
@@ -54,6 +56,10 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
+import oscar.eform.EFormAttachDocs;
+import oscar.eform.EFormAttachEForms;
+import oscar.eform.EFormAttachHRMReports;
+import oscar.eform.EFormAttachLabs;
 import oscar.eform.EFormLoader;
 import oscar.eform.EFormUtil;
 import oscar.eform.data.DatabaseAP;
@@ -66,6 +72,7 @@ public class AddEFormAction extends Action {
 
 	private static final Logger logger=MiscUtils.getLogger();
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+	private EformDataManager eformDataManager = SpringUtils.getBean( EformDataManager.class );
 	
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response) {
@@ -82,6 +89,7 @@ public class AddEFormAction extends Action {
 
 		boolean fax = "true".equals(request.getParameter("faxEForm"));
 		boolean print = "true".equals(request.getParameter("print"));
+		boolean saveAsEdoc = "true".equals( request.getParameter("saveAsEdoc") );
 
 		@SuppressWarnings("unchecked")
 		Enumeration<String> paramNamesE = request.getParameterNames();
@@ -92,6 +100,13 @@ public class AddEFormAction extends Action {
 		String demographic_no = request.getParameter("efmdemographic_no");
 		String eform_link = request.getParameter("eform_link");
 		String subject = request.getParameter("subject");
+		
+		/*
+		 * An eform developer may add these to the eForm in order to auto 
+		 * populate fax information. 
+		 */
+		String recipient = request.getParameter("recipient");
+		String recipientFaxNumber = request.getParameter("recipientFaxNumber");
 
 		boolean doDatabaseUpdate = false;
 
@@ -205,21 +220,70 @@ public class AddEFormAction extends Action {
 			}			
 		}
 		if (!sameform) { //save eform data
-			EFormDataDao eFormDataDao=(EFormDataDao)SpringUtils.getBean("EFormDataDao");
-			EFormData eFormData=toEFormData(curForm);
-			eFormDataDao.persist(eFormData);
-			String fdid = eFormData.getId().toString();
+			
+			String fdid = eformDataManager.saveEformData( loggedInInfo, curForm ) + "";
+
+			if( saveAsEdoc ) {
+				eformDataManager.saveEformDataAsEDoc( loggedInInfo, fdid ); 
+			}
 
 			EFormUtil.addEFormValues(paramNames, paramValues, new Integer(fdid), new Integer(fid), new Integer(demographic_no)); //adds parsed values
 
+			if(!StringUtils.isNullOrEmpty(request.getParameter("selectDocs"))) {
+				String docs = request.getParameter("selectDocs");
+				String[] parsedDocs = docs.split("\\|");
+				List<String> dList = new ArrayList<String>();
+				List<String> lList = new ArrayList<String>();
+				List<String> hList = new ArrayList<String>();
+				List<String> eList = new ArrayList<String>();
+				for(String d:parsedDocs) {
+					logger.info("need to save " + d + " to fdid " + fdid);
+					if(d.startsWith("D")) {
+						dList.add(d.substring(1));
+					}
+					if(d.startsWith("L")) {
+						lList.add(d.substring(1));
+					}
+					if(d.startsWith("H")) {
+						hList.add(d.substring(1));
+					}
+					if(d.startsWith("E")) {
+						eList.add(d.substring(1));
+					}
+				}
+				
+				EFormAttachDocs Doc = new EFormAttachDocs(providerNo,demographic_no,fdid,dList.toArray(new String[dList.size()]));
+		        Doc.attach(loggedInInfo);
+		        
+		        EFormAttachLabs Lab = new EFormAttachLabs(providerNo,demographic_no,fdid,lList.toArray(new String[lList.size()]));
+		        Lab.attach(loggedInInfo);
+		        
+				EFormAttachHRMReports hrmReports = new EFormAttachHRMReports(providerNo, demographic_no, fdid, hList.toArray(new String[hList.size()]));
+				hrmReports.attach();
+
+				EFormAttachEForms eForms = new EFormAttachEForms(providerNo, demographic_no, fdid, eList.toArray(new String[eList.size()]));
+	            eForms.attach(loggedInInfo);
+	            
+			}
 			//post fdid to {eform_link} attribute
 			if (eform_link!=null) {
 				se.setAttribute(eform_link, fdid);
 			}
 			
 			if (fax) {
-				request.setAttribute("fdid", fdid);
-				return(mapping.findForward("fax"));
+				ActionRedirect faxForward = new ActionRedirect(mapping.findForward("fax"));
+				faxForward.addParameter("method", "prepareFax");
+				faxForward.addParameter("transactionId", fdid);
+				faxForward.addParameter("transactionType", TransactionType.EFORM.name());
+				faxForward.addParameter("demographicNo", demographic_no);
+				
+				/*
+				 * Added incase the eForm developer adds these elements to the 
+				 * eform.
+				 */
+				faxForward.addParameter("recipient", recipient);
+				faxForward.addParameter("recipientFaxNumber", recipientFaxNumber);
+				return faxForward;
 			}
 			
 			else if (print) {
@@ -242,13 +306,32 @@ public class AddEFormAction extends Action {
 		else {
 			logger.debug("Warning! Form HTML exactly the same, new form data not saved.");
 			if (fax) {
-				request.setAttribute("fdid", prev_fdid);
-				return(mapping.findForward("fax"));
+				/*
+				 * This form id is sent to the fax action to render it as a faxable PDF.
+				 * A preview is returned to the user once the form is rendered.
+				 */
+				ActionRedirect faxForward = new ActionRedirect(mapping.findForward("fax"));
+				faxForward.addParameter("method", "prepareFax");
+				faxForward.addParameter("transactionId", prev_fdid);
+				faxForward.addParameter("transactionType", TransactionType.EFORM.name());
+				faxForward.addParameter("demographicNo", demographic_no);
+				
+				/*
+				 * Added incase the eForm developer adds these elements to the 
+				 * eform.
+				 */
+				faxForward.addParameter("recipient", recipient);
+				faxForward.addParameter("recipientFaxNumber", recipientFaxNumber);
+				return faxForward;
 			}
 			
 			else if (print) {
 				request.setAttribute("fdid", prev_fdid);
 				return(mapping.findForward("print"));
+			}
+			
+			if( saveAsEdoc ) {
+				eformDataManager.saveEformDataAsEDoc( loggedInInfo, prev_fdid ); 
 			}
 		}
 		
@@ -267,21 +350,4 @@ public class AddEFormAction extends Action {
 		return(mapping.findForward("close"));
 	}
 
-	private EFormData toEFormData(EForm eForm) {
-		EFormData eFormData=new EFormData();
-		eFormData.setFormId(Integer.parseInt(eForm.getFid()));
-		eFormData.setFormName(eForm.getFormName());
-		eFormData.setSubject(eForm.getFormSubject());
-		eFormData.setDemographicId(Integer.parseInt(eForm.getDemographicNo()));
-		eFormData.setCurrent(true);
-		eFormData.setFormDate(new Date());
-		eFormData.setFormTime(eFormData.getFormDate());
-		eFormData.setProviderNo(eForm.getProviderNo());
-		eFormData.setFormData(eForm.getFormHtml());
-		eFormData.setShowLatestFormOnly(eForm.isShowLatestFormOnly());
-		eFormData.setPatientIndependent(eForm.isPatientIndependent());
-		eFormData.setRoleType(eForm.getRoleType());
-
-		return(eFormData);
-	}
 }

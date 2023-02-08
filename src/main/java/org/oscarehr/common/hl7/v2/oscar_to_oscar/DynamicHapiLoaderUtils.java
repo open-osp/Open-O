@@ -34,7 +34,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 
 public final class DynamicHapiLoaderUtils {

@@ -23,21 +23,22 @@
  */
 package org.oscarehr.fax.core;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.cxf.common.util.Base64Utility;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.http.HttpStatus;
 import org.apache.http.conn.HttpHostConnectException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.FaxClientLogDao;
 import org.oscarehr.common.dao.FaxConfigDao;
 import org.oscarehr.common.dao.FaxJobDao;
@@ -65,7 +66,9 @@ public class FaxSender {
 		List<FaxJob> faxJobList;
 		
 		WebClient client;
-		
+
+		String document_dir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+
 		for( FaxConfig faxConfig : faxConfigList ) {
 			if( faxConfig.isActive() ) {
 				
@@ -80,39 +83,75 @@ public class FaxSender {
 
 				faxJobList = faxJobDao.getReadyToSendFaxes(faxConfig.getFaxNumber());
 				FaxJob faxJobId;
-				
-				log.info("SENDING " + faxJobList.size() + " FAXES");
-				
-				String path = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-				if(! path.endsWith(File.separator))
-				{
-					path = path + File.separator;
-				}
+
+				log.info("SENDING " + faxJobList.size() + " faxes from fax account " + faxConfig.getSiteUser());
+
 				String filename;
+				Path filePath;
 
 				for( FaxJob faxJob : faxJobList ) {
-					
-					FaxClientLog faxClientLog = faxClientLogDao.findClientLogbyFaxId(faxJob.getId()+"");
-					STATUS faxStatus = STATUS.ERROR;
-					
-					try(ByteArrayOutputStream pdfStream = new ByteArrayOutputStream()) {
 
-						client.header("user", faxJob.getUser());
-						client.header("passwd", faxConfig.getFaxPasswd());
-						
-						faxJob.setSenderEmail( faxConfig.getSenderEmail() );
-						filename = faxJob.getFile_name();
-						
+					FaxClientLog faxClientLog = faxClientLogDao.findClientLogbyFaxId(faxJob.getId());
+					STATUS faxStatus = STATUS.ERROR;
+
+					client.header("user", faxJob.getUser());
+					client.header("passwd", faxConfig.getFaxPasswd());
+
+					faxJob.setSenderEmail( faxConfig.getSenderEmail() );
+					filename = faxJob.getFile_name();
+					filePath = Paths.get(filename);
+
+					/*
+					 * the filename variable may be an absolute path to a temp directory
+					 * at this point. Do a check to verify
+					 */
+					if(! Files.exists(filePath)) {
+
+						/*
+						 * The filename variable must point to a file name, not a file path
+						 * Remove any file separators that may have slipped into the filename.
+						 */
 						if(filename.contains(File.separator))
 						{
-							filename.replace(File.separator, "");
+							filename.replaceAll(File.separator, "");
 						}
 
-						FileUtils.copyFile(new File(path+filename), pdfStream);
-						
-						String base64 = Base64Utility.encode(pdfStream.toByteArray());
-						faxJob.setDocument(base64);
-						
+						/*
+						 * the file may be located in the default documents directory if the filename
+						 * is not a path to a temp directory
+						 */
+						filePath = Paths.get(document_dir, filename);
+					}
+
+					log.info("sending fax from file path " + filePath);
+
+					try {
+
+						/*
+						 * If the filepath still does not exist at this point; it is possible that
+						 * the file was removed from the temp directory or document directory
+						 * before a second or 3rd attempt to send this document out.
+						 * A backup copy of the document should still exist in the database table
+						 * This condition avoids overwriting
+						 */
+						if(Files.exists(filePath) && Files.isReadable(filePath)) {
+							String base64 = Base64Utility.encode(Files.readAllBytes(filePath));
+
+							/*
+							 * The database will hol\d a temp backup copy of the document
+							 * until a successful send is done.
+							 */
+							faxJob.setDocument(base64);
+						}
+
+						/*
+						 * It's very bad if the document does not exist at this point.
+						 */
+						if(faxJob.getDocument() == null) {
+							log.error("Fatal error locating document. Not found in any directory or database.");
+							throw new IOException();
+						}
+
 						Response httpResponse = client.post(faxJob);
 						
 						if( httpResponse.getStatus() == HttpStatus.SC_OK ) {							
@@ -132,13 +171,13 @@ public class FaxSender {
 					catch(HttpHostConnectException e) 
 					{
 						faxStatus = FaxJob.STATUS.WAITING;
-						faxJob.setStatusString("Connection error. Check internet connection " + faxJob.getFile_name());
-						log.error("Connection error. Check internet connection " + faxJob.getFile_name());
+						faxJob.setStatusString("Connection error. Check internet connection. Filepath: " + filePath);
+						log.error("Connection error. Check internet connection Filepath: " + filePath);
 					}
 					catch(IOException e ) 
 					{
-						faxJob.setStatusString("CANNOT FIND " + faxJob.getFile_name());
-						log.error("CANNOT FIND " + faxJob.getFile_name());
+						faxJob.setStatusString("CANNOT FIND Filepath: " + filePath);
+						log.error("CANNOT FIND Filepath: " + filePath);
 					}
 					catch( Exception e ) {
 						faxJob.setStatusString("PROBLEM COMMUNICATING WITH WEB SERVICE");

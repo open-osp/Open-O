@@ -34,7 +34,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -64,7 +64,7 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public class MeasurementHL7UploaderAction extends DispatchActionSupport {
-	private static Logger logger = Logger.getLogger(MeasurementHL7UploaderAction.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	private static SimpleDateFormat sdf = new SimpleDateFormat(OscarProperties.getInstance().getProperty("oscar.measurements.hl7.datetime.format", "yyyyMMddHHmmss"));
 
 	private static MeasurementDao measurementsDao = SpringUtils.getBean(MeasurementDao.class);

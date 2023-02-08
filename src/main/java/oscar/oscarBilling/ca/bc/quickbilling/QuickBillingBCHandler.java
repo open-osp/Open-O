@@ -39,7 +39,7 @@ import java.util.Properties;
 
 import net.sf.json.JSONObject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.ProviderDataDao;
 import org.oscarehr.common.model.Billing;
 import org.oscarehr.common.model.Demographic;
@@ -55,7 +55,6 @@ import oscar.oscarBilling.ca.bc.data.BillingNote;
 import oscar.oscarBilling.ca.bc.data.BillingmasterDAO;
 import oscar.oscarBilling.ca.bc.pageUtil.BillingBillingManager;
 import oscar.oscarBilling.ca.bc.pageUtil.BillingBillingManager.BillingItem;
-import oscar.oscarBilling.ca.bc.pageUtil.BillingSaveBillingAction;
 import oscar.oscarBilling.ca.bc.pageUtil.BillingSessionBean;
 
 
@@ -68,7 +67,7 @@ import oscar.oscarBilling.ca.bc.pageUtil.BillingSessionBean;
 public class QuickBillingBCHandler {
 	
 	// full logging to be added later. too pressed for time.
-	private static Logger log = Logger.getLogger(BillingSaveBillingAction.class);
+	private static Logger log = org.oscarehr.util.MiscUtils.getLogger();
 
 	// default attributes for MSP billing. 
 	// create new attributes for dynamic form input.

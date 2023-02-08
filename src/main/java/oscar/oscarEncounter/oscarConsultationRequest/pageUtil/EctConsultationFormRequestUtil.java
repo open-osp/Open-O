@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -52,6 +52,7 @@ import org.oscarehr.common.model.FaxJob;
 import org.oscarehr.common.model.ProfessionalContact;
 import org.oscarehr.common.model.ProfessionalSpecialist;
 import org.oscarehr.common.model.Provider;
+import org.oscarehr.fax.core.FaxRecipient;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.DemographicContactCreator;
 import org.oscarehr.util.LoggedInInfo;
@@ -119,13 +120,13 @@ public class EctConsultationFormRequestUtil {
 	private String appointmentInstructions;
 	private String appointmentInstructionsLabel;
 	
-	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao) SpringUtils.getBean("consultationServiceDao");
-	private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
-	private ContactDao contactDao = SpringUtils.getBean(ContactDao.class);
-	private FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
-    private FaxClientLogDao faxClientLogDao = SpringUtils.getBean(FaxClientLogDao.class);
+	private final ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao) SpringUtils.getBean("consultationServiceDao");
+	private final DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+	private final ContactDao contactDao = SpringUtils.getBean(ContactDao.class);
+	private final FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
+    private final FaxClientLogDao faxClientLogDao = SpringUtils.getBean(FaxClientLogDao.class);
 
-	private boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+	private final boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
 	
 	private FaxRecipient specialistFaxLog;
 	private Set<FaxRecipient> copyToFaxLog;
@@ -178,7 +179,7 @@ public class EctConsultationFormRequestUtil {
 
 		ProviderDao dao = SpringUtils.getBean(ProviderDao.class);
 		for (String teamName : dao.getActiveTeams()) {
-			if (!teamName.equals("")) {
+			if (teamName != null && !teamName.equals("")) {
 				teamVec.add(teamName);
 			}
 		}
@@ -191,7 +192,7 @@ public class EctConsultationFormRequestUtil {
 
 		ProviderDao dao = SpringUtils.getBean(ProviderDao.class);
 		for (String teamName : dao.getActiveTeams()) {
-			if (!teamName.equals("")) {
+			if (teamName != null && !teamName.equals("")) {
 				teamVec.add(teamName);
 			}
 		}
@@ -203,7 +204,7 @@ public class EctConsultationFormRequestUtil {
 		teamVec = new Vector();
 		ProviderDao dao = SpringUtils.getBean(ProviderDao.class);
 		for (String teamName : dao.getActiveTeamsViaSites(providerNo)) {
-			if (!teamName.equals("")) {
+			if (teamName!= null && !teamName.equals("")) {
 				teamVec.add(teamName);
 			}
 		}
@@ -217,7 +218,7 @@ public class EctConsultationFormRequestUtil {
 
 		ProviderDao dao = SpringUtils.getBean(ProviderDao.class);
 		for (String teamName : dao.getUniqueTeams()) {
-			if (!teamName.equals("")) {
+			if (teamName != null && !teamName.equals("")) {
 				teamVec.add(teamName);
 			}
 		}
@@ -353,7 +354,7 @@ public class EctConsultationFormRequestUtil {
 					else
 						appointmentHour = String.valueOf(cal.get(Calendar.HOUR));
 					if(cal.get(Calendar.MINUTE)<10)
-						appointmentMinute = "0" + String.valueOf(cal.get(Calendar.MINUTE));
+						appointmentMinute = "0" + cal.get(Calendar.MINUTE);
 					else
 						appointmentMinute = String.valueOf(cal.get(Calendar.MINUTE));
 				} else {
@@ -371,9 +372,9 @@ public class EctConsultationFormRequestUtil {
 	
 	private void getFaxLogs(String requestId) {
 
-		List<FaxClientLog> faxClientLogs = faxClientLogDao.findClientLogbyRequestId(requestId);
+		List<FaxClientLog> faxClientLogs = faxClientLogDao.findClientLogbyRequestId(Integer.parseInt(requestId));
 		for(FaxClientLog faxClientLog : faxClientLogs) {
-			FaxJob faxJob = faxJobDao.find(Integer.parseInt(faxClientLog.getFaxId()));
+			FaxJob faxJob = faxJobDao.find(faxClientLog.getFaxId());
 			FaxRecipient faxRecipient = null;
 			String specialistFax = "";
 			
@@ -381,8 +382,13 @@ public class EctConsultationFormRequestUtil {
 			{
 				specialistFax = this.professionalSpecialist.getFaxNumber();
 			}
-			
-			if(specialistFax != null && ! specialistFax.isEmpty())
+
+			// overcome those silly default nulls in the database.
+			if(specialistFax == null) {
+				specialistFax = "";
+			}
+
+			if(! specialistFax.isEmpty())
 			{
 				specialistFax = specialistFax.trim().replaceAll("\\D", "");
 			}
@@ -393,12 +399,13 @@ public class EctConsultationFormRequestUtil {
 				faxRecipient.setName(faxJob.getRecipient());
 				faxRecipient.setStatus(faxJob.getStatus());
 				faxRecipient.setSent(faxClientLog.getStartTime());
+
+				MiscUtils.getLogger().debug("Does this fax number " + specialistFax + " equal this fax number " + faxRecipient.getFax());
 			}
 			
-			MiscUtils.getLogger().debug("Does this fax number " + specialistFax + " equal this fax number " + faxRecipient.getFax());
-			
+
 			// isolate the main specialist fax log
-			if(faxRecipient != null && specialistFax.equals(faxRecipient.getFax())) {
+			if(faxRecipient != null && faxRecipient.getFax().equals(specialistFax)) {
 				setSpecialistFaxLog(faxRecipient);
 			} 
 			

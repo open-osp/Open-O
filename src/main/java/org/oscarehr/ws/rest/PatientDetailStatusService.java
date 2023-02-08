@@ -31,7 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.integration.mchcv.HCValidationFactory;
@@ -100,14 +100,12 @@ public class PatientDetailStatusService extends AbstractServiceImpl {
 		
 		if (ProviderMyOscarIdData.idIsSet(getLoggedInInfo().getLoggedInProviderNo())) {
 		    if( demographicNo>0 ) {
-		    	Demographic demo = new DemographicData().getDemographic(getLoggedInInfo(), demographicNo.toString()); 
-		    	String myOscarUserName = demo.getMyOscarUserName();
-		    	if(myOscarUserName!=null && !myOscarUserName.equals("")) {
-		    		status.setMacPHRIdsSet(true);
-		    		
-		    		String verificationLevel = demographicManager.getPhrVerificationLevelByDemographicId(getLoggedInInfo(),demographicNo);
-		    		status.setMacPHRVerificationLevel(verificationLevel);
-		    	}
+			    	Demographic demo = new DemographicData().getDemographic(getLoggedInInfo(), demographicNo.toString()); 
+			    	String myOscarUserName = demo.getMyOscarUserName();
+			    	if(myOscarUserName!=null && !myOscarUserName.equals("")) {
+			    		status.setMacPHRIdsSet(true);
+			    		status.setMacPHRVerificationLevel(demographicManager.getPhrVerificationLevelByDemographicId(getLoggedInInfo(),demographicNo));
+			    	}
 		    }
 		}
 		

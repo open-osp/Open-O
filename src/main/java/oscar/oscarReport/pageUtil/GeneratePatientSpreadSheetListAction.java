@@ -44,8 +44,8 @@ import org.oscarehr.util.SpringUtils;
 import oscar.oscarDemographic.data.DemographicData;
 import oscar.util.UtilDateUtilities;
 
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.Paragraph;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
 
 /**
  *

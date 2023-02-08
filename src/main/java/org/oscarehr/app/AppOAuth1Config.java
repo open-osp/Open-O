@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.XmlUtils;
 import org.w3c.dom.Document;

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 
 import oscar.oscarBilling.ca.on.data.BillingBatchHeaderData;
 import oscar.oscarBilling.ca.on.data.BillingDataHlp;
@@ -35,7 +35,7 @@ import oscar.oscarBilling.ca.on.data.JdbcBillingPageUtil;
 import oscar.util.UtilDateUtilities;
 
 public class BillingDiskCreatePrep {
-	private static final Logger _logger = Logger.getLogger(BillingDiskCreatePrep.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 	JdbcBillingClaimImpl dbObj = new JdbcBillingClaimImpl();
 	Properties propProOHIP = null;
 

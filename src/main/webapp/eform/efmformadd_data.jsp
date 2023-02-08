@@ -24,34 +24,48 @@
 
 --%>
 
-<%@ page import="oscar.util.*, oscar.eform.data.*"%>
-<%@ page import="java.util.*"%>
-<%@taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ page import="oscar.eform.data.*"%>
+<%@ page import="org.oscarehr.managers.FaxManager, org.oscarehr.util.LoggedInInfo"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%
-  if (request.getAttribute("page_errors") != null) {
+  LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+  pageContext.setAttribute("faxActive", FaxManager.isEnabled(loggedInInfo));
 %>
-<script language=javascript type='text/javascript'>
-function hideDiv() {
-    if (document.getElementById) { // DOM3 = IE5, NS6
-        document.getElementById('hideshow').style.display = 'none';
-    }
-    else {
-        if (document.layers) { // Netscape 4
-            document.hideshow.display = 'none';
-        }
-        else { // IE 4
-            document.all.hideshow.style.display = 'none';
-        }
-    }
-}
-</script>
-<div id="hideshow" style="position: relative; z-index: 999;"><a
-	href="javascript:hideDiv()">Hide Errors</a> <font
-	style="font-size: 10; font-color: darkred;"> <html:errors /> </font></div>
-<% } %>
+
+<%--
+	Addition of a floating global toolbar specifically for activation of the 
+	Fax and eDocument functions.
+--%>
+<c:if test="${ faxActive }">
+	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/eform/eformFloatingToolbar/eform_floating_toolbar.js" ></script>
+</c:if>
+
+<c:if test="${ not empty reqestScope.page_errors }">
+	<script type='text/javascript'>
+		function hideDiv() {
+		    if (document.getElementById) { // DOM3 = IE5, NS6
+		        document.getElementById('hideshow').style.display = 'none';
+		    }
+		    else {
+		        if (document.layers) { // Netscape 4
+		            document.hideshow.display = 'none';
+		        }
+		        else { // IE 4
+		            document.all.hideshow.style.display = 'none';
+		        }
+		    }
+		}
+	</script>
+	
+	<div id="hideshow" style="position: relative; z-index: 999;">
+		<a href="javascript:hideDiv()">Hide Errors</a> 
+		<span style="font-size: 10px; font-color: darkred;"> <html:errors /> </span>
+	</div>
+</c:if>
 
 <%
-	String provider_no = (String) session.getValue("user");
+  String provider_no = (String) session.getValue("user");
   String demographic_no = request.getParameter("demographic_no");
   String appointment_no = request.getParameter("appointment");
   String fid = request.getParameter("fid");
@@ -60,17 +74,28 @@ function hideDiv() {
   
 
   EForm thisEForm = null;
-  if (fid == null || demographic_no == null) {
+  if (fid == null || demographic_no == null) 
+  {
       //if the info is in the request attribute
       thisEForm = (EForm) request.getAttribute("curform");
-  } else {
+  } 
+  else 
+  {
       //if the info is in the request parameter
       thisEForm = new EForm(fid, demographic_no);
       thisEForm.setProviderNo(provider_no);  //needs provider for the action
   }
 
-  if (appointment_no!=null) thisEForm.setAppointmentNo(appointment_no);
-  if (eform_link!=null) thisEForm.setEformLink(eform_link);
+  if (appointment_no!=null) 
+  {
+	  thisEForm.setAppointmentNo(appointment_no);
+  }
+  
+  if (eform_link!=null) 
+  {
+	  thisEForm.setEformLink(eform_link);
+  }
+  
   thisEForm.setContextPath(request.getContextPath());
   thisEForm.setupInputFields();
   thisEForm.setImagePath();
@@ -78,13 +103,14 @@ function hideDiv() {
   thisEForm.setOscarOPEN(request.getRequestURI());
   thisEForm.setAction();
   thisEForm.setSource(source);
+
   out.print(thisEForm.getFormHtml());
 %>
-<%
-String iframeResize = (String) session.getAttribute("useIframeResizing");
-if(iframeResize !=null && "true".equalsIgnoreCase(iframeResize)){ %>
-<script src="<%=request.getContextPath() %>/library/pym.js"></script>
-<script>
-    var pymChild = new pym.Child({ polling: 500 });
-</script>
-<%}%>
+
+
+<c:if test="${ sessionScope.useIframeResizing }" >
+	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/library/pym.js"></script>
+	<script type="text/javascript">
+	    var pymChild = new pym.Child({ polling: 500 });
+	</script>
+</c:if>

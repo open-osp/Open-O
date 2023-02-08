@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.dao.Hl7ObrDao;
 import org.oscarehr.billing.CA.BC.dao.Hl7ObxDao;
 import org.oscarehr.billing.CA.BC.dao.Hl7PidDao;
@@ -56,7 +56,7 @@ import oscar.util.UtilDateUtilities;
  */
 public class PathnetLabTest {
 
-    Logger logger = Logger.getLogger(PathnetLabTest.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
     public String pName = "";          //  5. Patient: First name
     public String pSex = "";                //  7. Sex F or M

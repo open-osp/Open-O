@@ -36,7 +36,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
-import org.oscarehr.caisi_integrator.util.MiscUtils;
+import org.oscarehr.util.MiscUtils;
 import org.oscarehr.caisi_integrator.ws.CachedFacility;
 import org.oscarehr.caisi_integrator.ws.ProviderCommunicationTransfer;
 import org.oscarehr.common.dao.MessageListDao;

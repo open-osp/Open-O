@@ -40,7 +40,7 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -67,7 +67,6 @@ import com.quatro.model.security.LdapSecurity;
 import oscar.OscarProperties;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
-import oscar.oscarSecurity.CRHelper;
 import oscar.util.AlertTimer;
 import oscar.util.CBIUtil;
 import oscar.util.ParameterActionForward;
@@ -415,7 +414,7 @@ public final class LoginAction extends DispatchAction {
                     AlertTimer.getInstance(alertCodes, longFreq.longValue());
                 }
             }
-            CRHelper.recordLoginSuccess(userName, strAuth[0], request);
+//            CRHelper.recordLoginSuccess(userName, strAuth[0], request);
 
             String username = (String) session.getAttribute("user");
             Provider provider = providerManager.getProvider(username);
@@ -471,9 +470,11 @@ public final class LoginAction extends DispatchAction {
 			}
             
             //are they using the new UI?
-            UserProperty prop = propDao.getProp(provider.getProviderNo(), UserProperty.COBALT);
-            if(prop != null && prop.getValue() != null && prop.getValue().equals("yes")) {
-            	where="cobalt";
+            if("true".equals(OscarProperties.getInstance().getProperty("newui.enabled", "false"))) {
+	            UserProperty prop = propDao.getProp(provider.getProviderNo(), UserProperty.COBALT);
+	            if(prop != null && prop.getValue() != null && prop.getValue().equals("yes")) {
+	            	where="cobalt";
+	            }
             }
 
         }
@@ -499,7 +500,7 @@ public final class LoginAction extends DispatchAction {
         	logger.debug("go to normal directory");
 
             cl.updateLoginList(ip, userName);
-            CRHelper.recordLoginFailure(userName, request);
+//            CRHelper.recordLoginFailure(userName, request);
             
             if(ajaxResponse) {
             	JSONObject json = new JSONObject();

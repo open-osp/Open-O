@@ -31,7 +31,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.FastDateFormat;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.ConsultationResponse;
 import org.oscarehr.consultations.ConsultationResponseSearchFilter;
 import org.oscarehr.consultations.ConsultationResponseSearchFilter.SORTMODE;

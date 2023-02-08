@@ -53,4 +53,5 @@ public class CtlDocumentDao extends AbstractDao<CtlDocument>{
         List<CtlDocument> cList = query.getResultList();
 		return cList;
     }
+
 }

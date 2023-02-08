@@ -26,7 +26,7 @@ package oscar.form.study.hsfo2.pageUtil;
 
 import java.io.IOException;
 import java.util.Calendar;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.Hsfo2RecommitScheduleDao;
 import org.oscarehr.common.model.Hsfo2RecommitSchedule;
 import org.oscarehr.util.SpringUtils;
@@ -47,7 +47,7 @@ public class HsfoQuartzServlet implements Servlet
 {
 	public static final String RESUBMIT_JOB = "hsfoResubmitJob";
 
-	protected static Logger logger = Logger.getLogger(HsfoQuartzServlet.class);
+	protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public static final String RESUBMIT_TRIGGER = "hsfoResubmitTrigger";
 

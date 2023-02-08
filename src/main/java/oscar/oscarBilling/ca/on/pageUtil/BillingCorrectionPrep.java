@@ -28,7 +28,7 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.BillingONCHeader1Dao;
 import org.oscarehr.common.dao.BillingONExtDao;
 import org.oscarehr.common.dao.BillingONItemDao;
@@ -56,8 +56,7 @@ import oscar.oscarBilling.ca.on.data.JdbcBillingReviewImpl;
 import oscar.util.StringUtils;
 
 public class BillingCorrectionPrep {
-	private static final Logger _logger = Logger
-			.getLogger(BillingCorrectionPrep.class);
+	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	JdbcBillingCorrection dbObj = new JdbcBillingCorrection();
 	BillingONCHeader1Dao cheader1Dao = (BillingONCHeader1Dao)SpringUtils.getBean(BillingONCHeader1Dao.class);

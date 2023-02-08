@@ -37,7 +37,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlOptions;
 import org.oscarehr.common.dao.BornTransmissionLogDao;
 import org.oscarehr.common.dao.DemographicDao;

@@ -13,7 +13,7 @@ package oscar.oscarLab.ca.on;
 import java.util.*;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.hospitalReportManager.HRMReport;
 import org.oscarehr.hospitalReportManager.HRMReportParser;
@@ -57,8 +57,8 @@ public class HRMResultsData {
 			providerNo = "-1";
 		}
 
-		Integer viewed = 1;
-		Integer signedOff = 0;
+		int viewed = 1;
+		int signedOff = 0;
 		if (status == null || status.equalsIgnoreCase("N")) {
 			viewed = 2;
 		} else if (status != null && (status.equalsIgnoreCase("A") || status.equalsIgnoreCase("F"))) {
@@ -176,6 +176,17 @@ public class HRMResultsData {
 		}
 
 		return labResults.values();
+	}
+
+	public static LabResultData populateHrmResultWithDemographicFromReport(LoggedInInfo loggedInInfo, LabResultData resultData) {
+		HRMReport report = HRMReportParser.parseReport(loggedInInfo, Integer.parseInt(resultData.segmentID));
+		if (report != null) {
+			if (report.getLegalName() != null && !report.getLegalName().replaceAll(",", "").trim().isEmpty()) {
+				resultData.patientName = report.getLegalName();
+			}
+		}
+
+		return resultData;
 	}
 
 	public static String getMessageDate(String messageUniqueId) {

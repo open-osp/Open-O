@@ -20,7 +20,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.http.impl.cookie.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.SystemPreferences;
 import org.oscarehr.util.SpringUtils;
 
@@ -29,7 +29,7 @@ import oscar.util.StringUtils;
 
 public class InboxResultsDao {
 
-	Logger logger = Logger.getLogger(InboxResultsDao.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	@PersistenceContext
 	protected EntityManager entityManager = null;

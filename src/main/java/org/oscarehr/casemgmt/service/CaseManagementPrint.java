@@ -43,7 +43,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import com.lowagie.text.DocumentException;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.PMmodule.service.ProgramManager;
@@ -62,12 +63,12 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import com.lowagie.text.DocumentException;
-
 import oscar.OscarProperties;
 import oscar.oscarLab.ca.all.pageUtil.LabPDFCreator;
+import oscar.oscarLab.ca.all.pageUtil.OLISLabPDFCreator;
 import oscar.oscarLab.ca.all.parsers.Factory;
 import oscar.oscarLab.ca.all.parsers.MessageHandler;
+import oscar.oscarLab.ca.all.parsers.OLISHL7Handler;
 import oscar.oscarLab.ca.on.CommonLabResultData;
 import oscar.oscarLab.ca.on.LabResultData;
 import oscar.util.ConcatPDF;
@@ -94,7 +95,7 @@ public class CaseManagementPrint {
 	 *This method was in CaseManagementEntryAction but has been moved out so that both the classic Echart and the flat echart can use the same printing method.
 	 * 
 	 */
-	public void doPrint(LoggedInInfo loggedInInfo,Integer demographicNo, boolean printAllNotes,String[] noteIds,boolean printCPP,boolean printRx,boolean printLabs, boolean printPreventions, boolean useDateRange, Calendar startDate, Calendar endDate,   HttpServletRequest request, OutputStream os) throws IOException, DocumentException {
+	public void doPrint(LoggedInInfo loggedInInfo,Integer demographicNo, boolean printAllNotes,String[] noteIds,boolean printCPP,boolean printRx,boolean printLabs, boolean printPreventions, boolean useDateRange, Calendar startDate, Calendar endDate,   HttpServletRequest request, OutputStream os) throws IOException, com.lowagie.text.DocumentException, com.itextpdf.text.DocumentException{
 		
 		String providerNo=loggedInInfo.getLoggedInProviderNo();
 
@@ -129,7 +130,10 @@ public class CaseManagementPrint {
 			} else {
 				Long noteId = ConversionUtils.fromLongString(noteIds[idx]);
 				if (noteId > 0) {
-					notes.add(this.caseManagementMgr.getNote(noteId.toString()));
+					CaseManagementNote note = this.caseManagementMgr.getNote(noteId.toString());
+					if (note!=null && note.getProviderNo()!=null && Integer.parseInt(note.getProviderNo())!=-1){
+						notes.add(note);
+					}
 				}
 			}
 		}
@@ -185,7 +189,7 @@ public class CaseManagementPrint {
 				tmpNotes = caseManagementMgr.getNotes(demono, issueIds);
 				issueNotes = new ArrayList<CaseManagementNote>();
 				for (int k = 0; k < tmpNotes.size(); ++k) {
-					if (!tmpNotes.get(k).isLocked()) {
+					if (!tmpNotes.get(k).isLocked() && !tmpNotes.get(k).isArchived()) {
 						List<CaseManagementNoteExt> exts = caseManagementMgr.getExtByNote(tmpNotes.get(k).getId());
 						boolean exclude = false;
 						for (CaseManagementNoteExt ext : exts) {
@@ -237,104 +241,114 @@ public class CaseManagementPrint {
                 List<Object> pdfDocs = new ArrayList<Object>();
         		
                 
-                try {
-                	
-                	
-                file= new File(fileName);
-		out = new FileOutputStream(file);
+		try {
 
-		CaseManagementPrintPdf printer = new CaseManagementPrintPdf(request, out);
-		printer.printDocHeaderFooter();
-		printer.printCPP(cpp);
-		printer.printRx(demoNo, othermeds);
-		printer.printPreventions(preventions);
-		printer.printNotes(notes);
+			file= new File(fileName);
+			out = new FileOutputStream(file);
 
-		/* check extensions */
-		Enumeration<String> e = request.getParameterNames();
-		while (e.hasMoreElements()) {
-			String name = e.nextElement();
-			if (name.startsWith("extPrint")) {
-				if (request.getParameter(name).equals("true")) {
-					ExtPrint printBean = (ExtPrint) SpringUtils.getBean(name);
-					if (printBean != null) {
-						printBean.printExt(printer, request);
+			CaseManagementPrintPdf printer = new CaseManagementPrintPdf(request, out);
+			printer.printDocHeaderFooter();
+			printer.printCPP(cpp);
+			printer.printRx(demoNo, othermeds);
+			printer.printPreventions(preventions);
+			printer.printNotes(notes);
+
+			/* check extensions */
+			Enumeration<String> e = request.getParameterNames();
+			while (e.hasMoreElements()) {
+				String name = e.nextElement();
+				if (name.startsWith("extPrint")) {
+					if (request.getParameter(name).equals("true")) {
+						ExtPrint printBean = (ExtPrint) SpringUtils.getBean(name);
+						if (printBean != null) {
+							printBean.printExt(printer, request);
+						}
 					}
 				}
 			}
-		}
-		printer.finish();
+			printer.finish();
 
-		pdfDocs.add(fileName);
+			pdfDocs.add(fileName);
 
-		if (printLabs) {
-			// get the labs which fall into the date range which are attached to this patient
-			CommonLabResultData comLab = new CommonLabResultData();
-			ArrayList<LabResultData> labs = comLab.populateLabResultsData(loggedInInfo, "", demono, "", "", "", "U");
-			
-			Collections.sort(labs);
-			
-			LinkedHashMap<String, LabResultData> accessionMap = new LinkedHashMap<String, LabResultData>();
-			for (int i = 0; i < labs.size(); i++) {
-				LabResultData result = labs.get(i);
-				if (result.isHL7TEXT()) {
-					if (result.accessionNumber == null || result.accessionNumber.equals("")) {
-						accessionMap.put("noAccessionNum" + i + result.labType, result);
+			if (printLabs) {
+				// get the labs which fall into the date range which are attached to this patient
+				CommonLabResultData comLab = new CommonLabResultData();
+				ArrayList<LabResultData> labs = comLab.populateLabResultsData(loggedInInfo, "", demono, "", "", "", "U");
+
+				Collections.sort(labs);
+
+				LinkedHashMap<String, LabResultData> accessionMap = new LinkedHashMap<String, LabResultData>();
+				for (int i = 0; i < labs.size(); i++) {
+					LabResultData result = labs.get(i);
+					if (result.isHL7TEXT()) {
+						if (result.accessionNumber == null || result.accessionNumber.equals("")) {
+							accessionMap.put("noAccessionNum" + i + result.labType, result);
+						} else {
+							if (!accessionMap.containsKey(result.accessionNumber + result.labType)) accessionMap.put(result.accessionNumber + result.labType, result);
+						}
+					}
+				}
+
+				for (LabResultData result : accessionMap.values()) {
+					//Date d = result.getDateObj();
+					// TODO:filter out the ones which aren't in our date range if there's a date range????
+					String segmentId = result.segmentID;
+					MessageHandler handler = Factory.getHandler(segmentId);
+					String fileName2 = OscarProperties.getInstance().getProperty("DOCUMENT_DIR") + "//" + handler.getPatientName().replaceAll("\\s", "_") + "_" + handler.getMsgDate() + "_LabReport.pdf";
+					file2 = new File(fileName2);
+					os2 = new FileOutputStream(file2);
+
+					if (handler instanceof OLISHL7Handler) {
+						OLISLabPDFCreator olisLabPdfCreator = new OLISLabPDFCreator(os2, request, segmentId);
+						olisLabPdfCreator.printPdf();
+						os2.close();
+						pdfDocs.add(fileName2);
 					} else {
-						if (!accessionMap.containsKey(result.accessionNumber + result.labType)) accessionMap.put(result.accessionNumber + result.labType, result);
+
+						LabPDFCreator pdfCreator = new LabPDFCreator(os2, segmentId, loggedInInfo.getLoggedInProviderNo());
+						try {
+							pdfCreator.printPdf();
+						} catch (DocumentException documentException) {
+							throw new DocumentException(documentException);
+						}
+						os2.close();
+
+						String fileName3 = OscarProperties.getInstance().getProperty("DOCUMENT_DIR") + "//" + handler.getPatientName().replaceAll("\\s", "_") + "_" + handler.getMsgDate() + "_LabReport.1.pdf";
+						File file3 = new File(fileName3);
+						fos = new FileOutputStream(file3);
+						pdfCreator.addEmbeddedDocuments(file2, fos);
+						pdfDocs.add(fileName3);
+
 					}
 				}
+
 			}
-			
-			for (LabResultData result : accessionMap.values()) {
-				//Date d = result.getDateObj();
-				// TODO:filter out the ones which aren't in our date range if there's a date range????
-				String segmentId = result.segmentID;
-				MessageHandler handler = Factory.getHandler(segmentId);
-				String fileName2 = OscarProperties.getInstance().getProperty("DOCUMENT_DIR") + "//" + handler.getPatientName().replaceAll("\\s", "_") + "_" + handler.getMsgDate() + "_LabReport.pdf";
-                                file2= new File(fileName2);
-				os2 = new FileOutputStream(file2);
-				LabPDFCreator pdfCreator = new LabPDFCreator(os2, segmentId, loggedInInfo.getLoggedInProviderNo());
-				pdfCreator.printPdf();
-				os2.close();
-				
-				String fileName3 = OscarProperties.getInstance().getProperty("DOCUMENT_DIR") + "//" + handler.getPatientName().replaceAll("\\s", "_") + "_" + handler.getMsgDate() + "_LabReport.1.pdf";
-                File file3= new File(fileName3);
-                
-                fos = new FileOutputStream(file3);
-				pdfCreator.addEmbeddedDocuments(file2,fos);
-				
-				
-				pdfDocs.add(fileName3);
-			}
+			ConcatPDF.concat(pdfDocs, os);
+		} catch (IOException e)
+		{
+			logger.error("Error ",e);
 
 		}
-		ConcatPDF.concat(pdfDocs, os);
-                } catch (IOException e)
-                {
-                    logger.error("Error ",e);
-                    
-                }
-                finally {
-                  if (out!=null) {
-                      out.close();
-                  }
-                  if (os2!=null) {
-                      os2.close();
-                  }
-                  if (fos!=null) {
-                      fos.close();
-                  }
-                  if (file!=null) {
-                      file.delete();
-                  }
-                  if (file2!=null) {
-                      file2.delete();
-                  }
-                  for(Object o:pdfDocs) {
-                	  new File((String)o).delete();
-                  }
-                }
+		finally {
+		  if (out!=null) {
+			  out.close();
+		  }
+		  if (os2!=null) {
+			  os2.close();
+		  }
+		  if (fos!=null) {
+			  fos.close();
+		  }
+		  if (file!=null) {
+			  file.delete();
+		  }
+		  if (file2!=null) {
+			  file2.delete();
+		  }
+		  for(Object o:pdfDocs) {
+			  new File((String)o).delete();
+		  }
+		}
                
 	}
 	

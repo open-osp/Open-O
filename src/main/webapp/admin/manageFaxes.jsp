@@ -52,17 +52,14 @@
 <title>Manage Faxes</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">                                
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap.min.css" type="text/css" />
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css" type="text/css" />
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" type="text/css" />
+<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="<%=request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css" />
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js" ></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-
 
 <script type="text/javascript">
 	
@@ -98,45 +95,62 @@
 			
 			post.done(function( resultdata ) {				
 				$("#results").empty().append(resultdata);
-				$("#preview").empty();
 			});
 			
 			return false;
 		});
 	});
-	
-	function view(id) {
-		var url = "<%=request.getContextPath()%>/admin/viewFax.jsp";
-		var data = "jobId=" + id;
-		
-		var post = $.post(url,data);
-		
-		post.done(function( resultdata ) {
-			$("#preview").empty().append( resultdata );
-		});
-		
-		return false;
+
+	function getPageCount(id, callback) {
+	    var url = "<%=request.getContextPath()%>/admin/ManageFaxes.do?method=getPageCount&jobId="+id;
+        var post = $.post(url, function( resultdata ) {
+             if(id == resultdata.jobId && typeof callback == "function") {
+                 callback(resultdata.pageCount);
+             }
+         });
 	}
-	
-	function _zoom(d) {
-		var img = $(d).attr('src');
-		var modal = $('img[src$="' + img + '"]').clone();
-		modal.attr("ondblclick", "");
-		modal.wrap( "<div title='Zoom Image' ></div>" );
 
-		var t = new Image();
-		t.src = img;
-		
-		var height = t.height;
-		var width = t.width;
+	function view(id) {
 
-		modal.dialog({
-			height: height,
-			modal: true,
-			draggable: false,
-			resizable: false,
-			width: width 
-		});
+        getPageCount(id, function(pageCount) {
+
+            var url = "<%=request.getContextPath()%>/admin/ManageFaxes.do?method=viewFax&jobId="+id;
+            var imageContainer = $("<ul />")
+                    .css("list-style-type", "none")
+                    .css("padding","0px")
+                    .css("margin","0px");
+
+             // run loop for number of pages in PDF
+             for(var i = 0; i < pageCount; i++) {
+                 var imageItem = $("<li />");
+                 var image = $("<img />")
+                     .attr("src", url + "&pageNumber=" + (i+1))
+                     .css("background-image", "url('<%=request.getContextPath()%>/images/loader.gif')")
+                     .css("background-position", "50% 50%")
+                     .css("background-repeat", "no-repeat");
+
+                 image.appendTo(imageItem);
+                 imageItem.appendTo(imageContainer);
+             }
+
+            var modal = $("<div />")
+                .attr("id", "viewFaxModal")
+                .html(imageContainer);
+
+             const documentTitle = $("#faxType_" + id).text() + ": " + $("#patientName_" + id).text();
+
+            modal.dialog({
+                title: documentTitle,
+                height: 600,
+                modal: true,
+                draggable: false,
+                resizable: false,
+                width: 750
+            });
+
+            modal.dialog("open");
+
+        });
 	}
 	
 	function resend(id, faxNumber, status) {
@@ -229,11 +243,8 @@
 
 	function resetForm() {
 		$("#demographic_no").val( "" );
-		$("#reportForm").trigger("reset");	
-		$("#preview").empty();
+		$("#reportForm").trigger("reset");
 		$("#results").empty();
-
-		
 		return false;
 	}
 	
@@ -250,8 +261,8 @@
 <body>
 
 <div id="bodyrow" class="container-fluid">
-	<div id="bodycolumn" class="span12">
-	
+	<div id="bodycolumn">
+
 		<form id="reportForm" action="<%=request.getContextPath()%>/admin/ManageFaxes.do">
 
 		<input type="hidden" name="method" value="fetchFaxStatus" />
@@ -260,7 +271,7 @@
 			<legend>Search Faxes</legend>
 			 <div class="input-append span3" >
 
-                	<input class="span2" type="text" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" placeholder="From" id="dateBegin" name="dateBegin" />
+                	<input class="span2" type="text" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" placeholder="From" id="dateBegin" name="dateBegin" required/>
                 	<span class="add-on">
                 		<i class="icon-calendar"></i>
                 	</span> 
@@ -268,7 +279,7 @@
                 
               <div class="input-append span3" >  
                             
-                	<input class="span2" type="text" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" placeholder="To" id="dateEnd" name="dateEnd" />
+                	<input class="span2" type="text" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" placeholder="To" id="dateEnd" name="dateEnd" required/>
                 	<span class="add-on">
                 		<i class="icon-calendar"></i>
                 	</span>
@@ -339,21 +350,10 @@
 		</form>
 		
 		<div class="row">
-			<div class="span8">
-				<div class="row">
-					<legend>Results</legend>
-					<div id="results">
+			<div class="span12">
+					<div id="results" style="margin-top:20px;">
 					<!-- container -->
 					</div>
-				</div>
-			</div>
-			<div class="span4" >
-				<div class="row">
-					<legend>Preview</legend>
-					<div id="preview">
-					<!-- container -->
-					</div>
-				</div>
 			</div>
 		</div>	
 

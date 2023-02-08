@@ -19,7 +19,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <!--add for con report-->
-<%@ taglib uri="http://www.caisi.ca/plugin-tag" prefix="plugin" %>
 <%@page import="org.oscarehr.util.LoggedInInfo" %>
 
 
@@ -431,13 +430,6 @@ function calByLMP(obj) {
 %> <input type="submit" value="Exit"
 				onclick="javascript:return onExit();" /> <input type="submit"
 				value="Print" onclick="javascript:return onPrint();" />
-            <plugin:hideWhenCompExists componentName="specialencounterComp" reverse="true">
-            <%if (formId!=0) {%>
-<a style="font-weight: bold; color: red;" href="javascript: popupPageFull('<%=request.getContextPath()%>
-/mod/specialencounterComp/EyeForm.do?method=conReportHis&demographicNo=<%=demoNo%>&ARformId=<%=formId%>&provNo=<%=provNo%>');">
-Con Report</a> |
-            <%} %>
-			</plugin:hideWhenCompExists>
 </td>
 			<%
   if (!bView) {

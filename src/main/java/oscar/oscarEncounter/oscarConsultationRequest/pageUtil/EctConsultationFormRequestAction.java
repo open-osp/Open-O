@@ -46,7 +46,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -66,10 +66,15 @@ import org.oscarehr.common.model.ConsultationRequestExt;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.DemographicContact;
 import org.oscarehr.common.model.DigitalSignature;
+import org.oscarehr.common.model.FaxConfig;
 import org.oscarehr.common.model.Hl7TextInfo;
 import org.oscarehr.common.model.ProfessionalSpecialist;
 import org.oscarehr.common.model.Provider;
+import org.oscarehr.managers.ConsultationManager;
+import org.oscarehr.fax.core.FaxRecipient;
 import org.oscarehr.managers.DemographicManager;
+import org.oscarehr.managers.FaxManager;
+import org.oscarehr.managers.FaxManager.TransactionType;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.DigitalSignatureUtils;
 import org.oscarehr.util.LoggedInInfo;
@@ -89,13 +94,13 @@ import ca.uhn.hl7v2.model.v26.message.ORU_R01;
 import ca.uhn.hl7v2.model.v26.message.REF_I12;
 import net.sf.json.JSONObject;
 
-import com.lowagie.text.DocumentException;
-
 public class EctConsultationFormRequestAction extends Action {
 
 	private static final Logger logger=MiscUtils.getLogger();
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-	
+	private ConsultationManager consultationManager = SpringUtils.getBean(ConsultationManager.class);
+	private FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -256,28 +261,31 @@ public class EctConsultationFormRequestAction extends Action {
                                 		consultationRequestExtDao.persist(createExtEntry(requestId,name.substring(name.indexOf("_")+1),value));
                                 	}
                                 }
+
                                 // now that we have consultation id we can save any attached docs as well  
                                 
                                 ConsultationAttachDocs consultationAttachDocs = new ConsultationAttachDocs(providerNo,demographicNo,requestId,attachedDocuments);
                                 consultationAttachDocs.attach(loggedInInfo);
             				  	ConsultationAttachLabs consultationAttachLabs = new ConsultationAttachLabs(providerNo,demographicNo,requestId,attachedLabs);
             				  	consultationAttachLabs.attach(loggedInInfo);
-  
-								
+
 			}
 	        catch (ParseException e) {
 	                MiscUtils.getLogger().error("Invalid Date", e);
 	        }
 
-
+	        request.setAttribute("reqId", requestId);
 			request.setAttribute("transType", "2");
 
 		} else
 
 		if (submission.startsWith("Update")) {
 
+		
 			requestId = frm.getRequestId();
 
+			consultationManager.archiveConsultationRequest(Integer.parseInt(requestId));
+			
 			try {				     
 				
 				if (newSignature) {
@@ -296,6 +304,7 @@ public class EctConsultationFormRequestAction extends Action {
                 consult.setReferralDate(date);
                 consult.setServiceId(new Integer(frm.getService()));
                 consult.setSignatureImg(signatureId);
+                consult.setProviderNo(frm.getProviderNo());
         		consult.setLetterheadName(frm.getLetterheadName());
         		consult.setLetterheadAddress(frm.getLetterheadAddress());
         		consult.setLetterheadPhone(frm.getLetterheadPhone());
@@ -437,10 +446,15 @@ public class EctConsultationFormRequestAction extends Action {
 	           		documents.add(labResultData.getDisciplineDisplayString());
 	        	}
 	        }
+	        
+			List<FaxConfig>	accounts = faxManager.getFaxGatewayAccounts(loggedInInfo);
 			
+	        request.setAttribute("letterheadFax", frm.getLetterheadFax());
 		  	request.setAttribute("documents", documents);			
-			request.setAttribute("copytoRecipients", copytoRecipients);
+			request.setAttribute("copyToRecipients", copytoRecipients);
 			request.setAttribute("reqId", requestId);
+			request.setAttribute("accounts", accounts);
+			request.setAttribute("transactionType", TransactionType.CONSULTATION.name());
 			request.setAttribute("transType", "consultRequest");
 			
 			return mapping.findForward("fax");
@@ -537,7 +551,7 @@ public class EctConsultationFormRequestAction extends Action {
 	            ORU_R01 hl7Message=OruR01.makeOruR01(clinic, demographic, observationData, sendingProvider, professionalSpecialist);        
 	            int statusCode=SendingUtils.send(loggedInInfo, hl7Message, professionalSpecialist);
 	            if (HttpServletResponse.SC_OK!=statusCode) throw(new ServletException("Error, received status code:"+statusCode));
-            } catch (DocumentException e) {
+            } catch (com.lowagie.text.DocumentException e) {
 	            logger.error("Unexpected error.", e);
             }	    	
 	    }

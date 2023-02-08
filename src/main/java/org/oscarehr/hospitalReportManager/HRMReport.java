@@ -271,14 +271,38 @@ public class HRMReport {
 
 	public List<String> getFirstReportAuthorPhysician() {
 		List<String> physicianName = new ArrayList<String>();
-		String physicianHL7String = hrmReport.getPatientRecord().getReportsReceived().get(0).getAuthorPhysician().getLastName();
-		String[] physicianNameArray = physicianHL7String.split("^");
-		physicianName.add(physicianNameArray[0]);
-		physicianName.add(physicianNameArray[1]);
-		physicianName.add(physicianNameArray[2]);
-		physicianName.add(physicianNameArray[3]);
-		physicianName.add(physicianNameArray[6]);
-
+		
+		
+		if(hrmReport.getPatientRecord().getReportsReceived().get(0).getAuthorPhysician() != null) {
+		
+			String physicianHL7String = hrmReport.getPatientRecord().getReportsReceived().get(0).getAuthorPhysician().getLastName();
+			if(physicianHL7String != null) {
+			
+				if(physicianHL7String.split("\\^").length == 7) {
+					String[] physicianNameArray = physicianHL7String.split("\\^");
+		               physicianName.add(physicianNameArray[0]);
+		                physicianName.add(physicianNameArray[1]);
+		                physicianName.add(physicianNameArray[2]);
+		                physicianName.add(physicianNameArray[3]);
+		                physicianName.add(physicianNameArray[6]);
+		                return physicianName;
+	
+				}
+				
+				for(String n:physicianHL7String.split("\\^")) {
+					physicianName.add(n);
+				}
+			}
+		
+			physicianHL7String = hrmReport.getPatientRecord().getReportsReceived().get(0).getAuthorPhysician().getFirstName();
+			if(physicianHL7String != null) {
+				for(String n:physicianHL7String.split("\\^")) {
+					physicianName.add(n);
+				}
+			}
+		
+		}
+		
 		return physicianName;
 	}
 
@@ -405,6 +429,22 @@ public class HRMReport {
 		if(hrmReport.getPatientRecord().getTransactionInformation().get(0).getProvider() == null)
 			return null;
 		return hrmReport.getPatientRecord().getTransactionInformation().get(0).getProvider().getLastName();
+	}
+	
+	public String getDeliveryToUserIdFormattedName() {
+		String name = "";
+		if(getDeliverToUserIdLastName() != null) {
+			name = getDeliverToUserIdLastName();
+		}
+		if(getDeliverToUserIdFirstName() != null) {
+			if(!name.isEmpty()) {
+				name = name + ", " + getDeliverToUserIdFirstName();
+			} else {
+				name = getDeliverToUserIdFirstName();
+			}
+		}
+
+		return name;
 	}
 
 	public Integer getHrmDocumentId() {

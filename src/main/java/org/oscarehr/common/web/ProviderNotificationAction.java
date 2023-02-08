@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -48,7 +48,7 @@ import org.oscarehr.util.SpringUtils;
  */
 public class ProviderNotificationAction extends Action {
 
-	private static Logger logger = Logger.getLogger(ProviderNotificationAction.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private UserDSMessagePrefsDao userDsMessagePrefsDao = SpringUtils.getBean(UserDSMessagePrefsDao.class);
 

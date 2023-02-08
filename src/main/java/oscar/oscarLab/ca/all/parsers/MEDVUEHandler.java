@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.Hl7TextInfoDao;
 import org.oscarehr.common.model.Hl7TextMessageInfo;
 import org.oscarehr.util.SpringUtils;
@@ -40,7 +40,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public class MEDVUEHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(MEDVUEHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
 	private ca.uhn.hl7v2.model.v23.message.ORU_R01 msg = null;
 	private ArrayList<String> headers = null;
@@ -245,6 +245,15 @@ public class MEDVUEHandler implements MessageHandler {
 
 	public String getOBXName(int i, int j) {
 		return getString(obxseg.getObservationIdentifier().getText().getValue());
+	}
+
+	@Override
+	public String getOBXNameLong(int i, int j) {
+		try{
+			return getString(obxseg.getObservationIdentifier().getComponent(2).toString());
+		} catch (Exception e) {
+			return "";
+		}
 	}
 
 
@@ -705,6 +714,11 @@ public class MEDVUEHandler implements MessageHandler {
 	
 	public String getNteForPID() {
     	return "";
+    }
+    
+    //for OMD validation
+    public boolean isTestResultBlocked(int i, int j) {
+    	return false;
     }
 	
 }

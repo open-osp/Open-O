@@ -250,6 +250,7 @@ try
 			<nested:iterate type="String" id="filter_issue" property="issues">
 				<c:choose>
 					<c:when test="${filter_issue == 'a'}">All</c:when>
+					<c:when test="${filter_issue == 'n'}">None</c:when>
 					<c:otherwise>
 						<nested:iterate id="issue" name="cme_issues">
 							<c:if test="${filter_issue==issue.issue.id}">
@@ -280,6 +281,7 @@ try
 					<td style="font-size:inherit;background-color:#bbbbff;font-weight:bold">
 						<bean:message key="oscarEncounter.issues.title" />
 					</td>
+					
 				</tr>
 				<tr>
 					<td style="font-size:inherit;background-color:#ccccff">
@@ -323,6 +325,7 @@ try
 							</ul>
 						</div>
 					</td>
+					
 					<td style="font-size:inherit;background-color:#ccccff">
 						<div style="height:150px;overflow:auto">
 							<ul style="padding:0px;margin:0px;list-style:none inside none">
@@ -348,6 +351,8 @@ try
 						<div style="height:150px;overflow:auto">
 							<ul style="padding:0px;margin:0px;list-style:none inside none">
 								<li><html:multibox property="issues" value="a" onclick="filterCheckBox(this)"></html:multibox><bean:message key="oscarEncounter.sortAll.title" /></li>
+								<li><html:multibox property="issues" value="n" onclick="filterCheckBox(this)"></html:multibox>None</li>
+								
 								<%
 									@SuppressWarnings("unchecked")
 										List issues = (List)request.getAttribute("cme_issues");
@@ -395,6 +400,7 @@ try
 					<option value="http://search.nlm.nih.gov/medlineplus/query?DISAMBIGUATION=true&amp;FUNCTION=search&amp;SERVER2=server2&amp;SERVER1=server1&amp;PARAMETER="><bean:message key="global.medlineplus" /></option>
                     <option value="tripsearch.jsp?searchterm=">Trip Database</option>
                     <option value="macplussearch.jsp?searchterm=">MacPlus Database</option>
+                    <option value="https://empendium.com/mcmtextbook/search?type=textbook&q=">McMaster Text Book</option>
     	        </select>
 				</div>
 
@@ -445,11 +451,33 @@ try
 					</select>
 				</security:oscarSec>
 				
+				<span id="phrButtonArea">
+				</span>
 				<script>
 				function updateMYOSCAR(){
 					jQuery.getScript('phrLinks.jsp?demographicNo=<%=demographicNo%>');
 				}
 				updateMYOSCAR();
+				
+				jQuery(document).ready(function(){
+		    			jQuery.ajax({
+			  			type: "GET",
+		    		        url: "<%=request.getContextPath()%>/ws/rs/app/providerChartLaunchItems",
+				        dataType: 'json',
+				        success: function (data) {
+					
+				       		for(i =0; i < data.length; i++){
+				        			d = data[i];
+				       			jQuery("#phrButtonArea").append(
+				       			jQuery("<button/>")
+				       		    .text(d.heading)
+				       		    .click(function () { window.open('../ws/rs/app/openProviderPHRWindow/'+d.link+'<%=demographicNo%>'); }));
+
+				       		}
+				    		}
+					});
+			    });
+				
 				</script>
 				
 			</div>	

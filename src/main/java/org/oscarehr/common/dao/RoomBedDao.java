@@ -27,7 +27,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.RoomBed;
 import org.oscarehr.common.model.RoomBedPK;
 import org.oscarehr.util.MiscUtils;

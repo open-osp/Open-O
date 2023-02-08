@@ -31,7 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -49,7 +49,7 @@ import oscar.log.LogConst;
  * @author rjonasz
  */
 public class LoginAgreementAction extends DispatchAction {
-    private static final Logger _logger = Logger.getLogger(LoginAgreementAction.class);
+    private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
     private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     

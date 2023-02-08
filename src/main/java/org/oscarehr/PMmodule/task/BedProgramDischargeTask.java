@@ -26,7 +26,7 @@ package org.oscarehr.PMmodule.task;
 import java.util.Date;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.exception.AdmissionException;
 import org.oscarehr.PMmodule.model.Program;
 import org.oscarehr.PMmodule.service.AdmissionManager;
@@ -39,12 +39,11 @@ import org.oscarehr.managers.BedDemographicManager;
 import org.oscarehr.managers.BedManager;
 import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.MiscUtilsOld;
 import org.oscarehr.util.ShutdownException;
 
 public class BedProgramDischargeTask extends TimerTask {
 
-	private static final Logger log=MiscUtils.getLogger();
+	private static final Logger log= org.oscarehr.util.MiscUtils.getLogger();
 
 	// TODO IC Bedlog bedProgram.getDischargeTime();
 	private static final String DISCHARGE_TIME = "8:00 AM";
@@ -80,7 +79,7 @@ public class BedProgramDischargeTask extends TimerTask {
             }
             
             for (Program bedProgram : bedPrograms) {
-            	MiscUtilsOld.checkShutdownSignaled();
+            	MiscUtils.checkShutdownSignaled();
             	
                 Date dischargeTime = DateTimeFormatUtils.getTimeFromString(DISCHARGE_TIME);
                 Date previousExecutionTime = DateTimeFormatUtils.getTimeFromLong(scheduledExecutionTime() - PERIOD);
@@ -96,7 +95,7 @@ public class BedProgramDischargeTask extends TimerTask {
                     }
                     
                     for (Bed reservedBed : reservedBeds) {
-                    	MiscUtilsOld.checkShutdownSignaled();
+                    	MiscUtils.checkShutdownSignaled();
                     	
                         BedDemographic bedDemographic = bedDemographicManager.getBedDemographicByBed(reservedBed.getId());
                         

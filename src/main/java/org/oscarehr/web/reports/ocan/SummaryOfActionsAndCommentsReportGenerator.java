@@ -25,30 +25,22 @@
 
 package org.oscarehr.web.reports.ocan;
 
-import java.awt.Color;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import com.itextpdf.text.*;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.web.reports.ocan.beans.SummaryOfActionsAndCommentsDomainBean;
 import org.oscarehr.web.reports.ocan.beans.SummaryOfActionsAndCommentsOCANBean;
 import org.oscarehr.web.reports.ocan.beans.SummaryOfActionsAndCommentsReportBean;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class SummaryOfActionsAndCommentsReportGenerator {
 
@@ -57,9 +49,9 @@ public class SummaryOfActionsAndCommentsReportGenerator {
 
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-	private Font titleFont = new Font(Font.TIMES_ROMAN, 30,Font.BOLD);
-	private Font boldText = new Font(Font.HELVETICA,10,Font.BOLD);
-	private Font normalText = new Font(Font.HELVETICA,10,Font.NORMAL);
+	private Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 30,Font.BOLD);
+	private Font boldText = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD);
+	private Font normalText = new Font(Font.FontFamily.HELVETICA,10,Font.NORMAL);
 
 	private String consumerName;
 	private String staffName;
@@ -203,27 +195,27 @@ public class SummaryOfActionsAndCommentsReportGenerator {
 	}
 
 	private void createOcanEntry(PdfPTable table, SummaryOfActionsAndCommentsOCANBean ocanBean) {
-		Font f = new Font(Font.HELVETICA,12,Font.BOLD,Color.BLACK);
+		Font f = new Font(Font.FontFamily.HELVETICA,12,Font.BOLD, BaseColor.BLACK);
 		//header
 		PdfPCell c1 = new PdfPCell();
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 		c1.setPhrase(new Phrase("Rating",f));
 		table.addCell(c1);
 		c1 = new PdfPCell();
 		c1.setColspan(2);
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setPhrase(new Phrase(ocanBean.getOcanName() + " - " + dateFormatter.format(ocanBean.getOcanDate()),f));
 		table.addCell(c1);
 
 		//actions
 		c1 = new PdfPCell();
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setBorderWidthBottom(0);
 		table.addCell(c1);
 		c1 = new PdfPCell();
 		c1.setColspan(1);
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setPhrase(new Phrase("Actions",f));
 		table.addCell(c1);
 		c1 = new PdfPCell();
@@ -233,12 +225,12 @@ public class SummaryOfActionsAndCommentsReportGenerator {
 
 		//By Whom
 		c1 = new PdfPCell();
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setBorderWidthBottom(0);
 		table.addCell(c1);
 		c1 = new PdfPCell();
 		c1.setColspan(1);
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setPhrase(new Phrase("By Whom",f));
 		table.addCell(c1);
 		c1 = new PdfPCell();
@@ -248,12 +240,12 @@ public class SummaryOfActionsAndCommentsReportGenerator {
 
 		//review date
 		c1 = new PdfPCell();
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setBorderWidthBottom(0);
 		table.addCell(c1);
 		c1 = new PdfPCell();
 		c1.setColspan(1);
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setPhrase(new Phrase("Review Date",f));
 		table.addCell(c1);
 		c1 = new PdfPCell();
@@ -263,12 +255,12 @@ public class SummaryOfActionsAndCommentsReportGenerator {
 
 		//consumer
 		c1 = new PdfPCell();
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setPhrase(new Phrase(convertNeedToWord(ocanBean.getConsumerNeedRating()),boldText));
 		table.addCell(c1);
 		c1 = new PdfPCell();
 		c1.setColspan(1);
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setPhrase(new Phrase("Consumer Comments",f));
 		table.addCell(c1);
 		c1 = new PdfPCell();
@@ -278,12 +270,12 @@ public class SummaryOfActionsAndCommentsReportGenerator {
 
 		//staff
 		c1 = new PdfPCell();
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setPhrase(new Phrase(convertNeedToWord(ocanBean.getStaffNeedRating()),boldText));
 		table.addCell(c1);
 		c1 = new PdfPCell();
 		c1.setColspan(1);
-		c1.setBackgroundColor(Color.LIGHT_GRAY);
+		c1.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		c1.setPhrase(new Phrase("Staff Comments",f));
 		table.addCell(c1);
 		c1 = new PdfPCell();
@@ -293,7 +285,7 @@ public class SummaryOfActionsAndCommentsReportGenerator {
 	}
 
 	private void createDomainHeader(PdfPTable table, String name) {
-		Font f = new Font(Font.HELVETICA,14,Font.BOLD,Color.BLACK);
+		Font f = new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.BLACK);
 		PdfPCell emptyCell = new PdfPCell();
 		emptyCell.setBorder(0);
 		table.addCell(emptyCell);
@@ -302,12 +294,12 @@ public class SummaryOfActionsAndCommentsReportGenerator {
 		headerCell.setColspan(2);
 		headerCell.setPhrase(new Phrase(name,f));
 		headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-		headerCell.setBackgroundColor(Color.LIGHT_GRAY);
+		headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		table.addCell(headerCell);
 	}
 
 	private PdfPTable createNeedHeader(String name) throws DocumentException {
-		Font whiteFont = new Font(Font.HELVETICA,14,Font.BOLD,Color.WHITE);
+		Font whiteFont = new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.WHITE);
 		PdfPTable table = new PdfPTable(3);
 		table.setWidthPercentage(100);
 		table.setWidths(new float[]{0.10f,0.20f,0.70f});
@@ -319,7 +311,7 @@ public class SummaryOfActionsAndCommentsReportGenerator {
 		headerCell.setColspan(2);
 		headerCell.setPhrase(new Phrase(name,whiteFont));
 		headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-		headerCell.setBackgroundColor(Color.LIGHT_GRAY);
+		headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		table.addCell(headerCell);
 		return table;
 	}

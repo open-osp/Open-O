@@ -23,7 +23,7 @@
 
 package org.oscarehr.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorUpdateTask;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProgramProviderDAO;
@@ -38,36 +38,39 @@ import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
 import com.quatro.dao.security.SecroleDao;
-
 import oscar.OscarProperties;
 
 public class ContextStartupListener implements javax.servlet.ServletContextListener {
-	private static final Logger logger = MiscUtils.getLogger();
-
+	private static final Logger logger = org.oscarehr.util.MiscUtils.getLogger();
+	private static final OscarProperties oscarProperties = OscarProperties.getInstance();
 	@Override
 	public void contextInitialized(javax.servlet.ServletContextEvent sce) {
-		try {
-			// ensure cxf uses log4j
-			System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
 
+		// ensure cxf uses log4j2
+		System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4j2Logger");
+
+		/*
+		 * Map log4j version 1 to version 2
+		 */
+		System.setProperty("log4j1.compatibility", "true");
+
+		try {
 			String contextPath=sce.getServletContext().getContextPath();
 
-			logger.info("Server processes starting. context=" + contextPath);
+			logger.info("Starting OSCAR context. context=" + contextPath);
 			
-			MiscUtils.addLoggingOverrideConfiguration(contextPath);
+			org.oscarehr.util.MiscUtils.addLoggingOverrideConfiguration(contextPath);
 
 			LocaleUtils.BASE_NAME="oscarResources";
-			
-			OscarProperties properties = OscarProperties.getInstance();
-			String vmstatLoggingPeriod = properties.getProperty("VMSTAT_LOGGING_PERIOD");
-			VmStat.startContinuousLogging(Long.parseLong(vmstatLoggingPeriod));
 
-			MiscUtilsOld.setShutdownSignaled(false);
-			MiscUtilsOld.registerShutdownHook();
+			MiscUtils.setShutdownSignaled(false);
+			MiscUtils.registerShutdownHook();
 
 			createOscarProgramIfNecessary();
-			
-			CaisiIntegratorUpdateTask.startTask();
+
+			if(oscarProperties.getBooleanProperty("INTEGRATOR_ENABLED", "true")){
+				CaisiIntegratorUpdateTask.startTask();
+			}
 
 			OscarJobUtils.initializeJobExecutionFramework();
 			
@@ -75,7 +78,8 @@ public class ContextStartupListener implements javax.servlet.ServletContextListe
 						
 			//Run some optimizations
 			loadCaches();
-			logger.info("Server processes starting completed. context=" + contextPath);
+
+			logger.info("OSCAR server processes started. context=" + contextPath);
 			
 			//bug 4195 - only runs once so long as it finishes..if you want it to not run, add entry
 			//try your property table called "HRMFixMissingReportHelper.Run" with value = 1
@@ -129,7 +133,6 @@ public class ContextStartupListener implements javax.servlet.ServletContextListe
 
 		WaitListEmailThread.stopTask();
 		CaisiIntegratorUpdateTask.stopTask();
-		VmStat.stopContinuousLogging();
 
 		try {
 			 StdSchedulerFactory.getDefaultScheduler().shutdown();
@@ -137,9 +140,9 @@ public class ContextStartupListener implements javax.servlet.ServletContextListe
 			 logger.error("Error",e);
 		 }
 		try {
-			MiscUtilsOld.checkShutdownSignaled();
-			MiscUtilsOld.deregisterShutdownHook();
-			MiscUtilsOld.setShutdownSignaled(true);
+			MiscUtils.checkShutdownSignaled();
+			MiscUtils.deregisterShutdownHook();
+			MiscUtils.setShutdownSignaled(true);
 		} catch (ShutdownException e) {
 			// do nothing it's okay.
 		}

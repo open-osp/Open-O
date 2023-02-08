@@ -34,7 +34,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.cxf.helpers.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.DemographicCustDao;
 import org.oscarehr.common.dao.DemographicDao;
@@ -57,6 +57,7 @@ import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXException;
+
 import oscar.OscarProperties;
 
 
@@ -66,8 +67,23 @@ public class HRMReportParser {
 	
 	private HRMReportParser() {}
 
+	public static HRMReport parseReport(LoggedInInfo loggedInInfo, Integer hrmDocumentId) {
+		HRMDocumentDao hrmDocumentDao = SpringUtils.getBean(HRMDocumentDao.class);
+		HRMDocument hrmDocument = hrmDocumentDao.find(hrmDocumentId);
+		if (hrmDocument != null) {
+			return parseReport(loggedInInfo, hrmDocument.getReportFile());
+		}
+		return null;
+	}
 
-	public static HRMReport parseReport(LoggedInInfo loggedInInfo, String hrmReportFileLocation) {
+	public static HRMReport parseReport(LoggedInInfo loggedInInfo, String hrmReportFileLocation)  {
+		return parseReport(loggedInInfo, hrmReportFileLocation,null);
+	}
+	
+	/*
+	 * Called when a report is added to system
+	 */
+	public static HRMReport parseReport(LoggedInInfo loggedInInfo, String hrmReportFileLocation, List<Throwable> errors)  {
 		OmdCds root = null;
 		
 		logger.info("Parsing the Report in the location:"+hrmReportFileLocation);
@@ -112,13 +128,19 @@ public class HRMReportParser {
 				root = (OmdCds) u.unmarshal(new FileInputStream(tmpXMLholder));
 
 				tmpXMLholder = null;
-
+			}  catch (FileNotFoundException e) {
+				logger.error("File Not Found " + e);
+				if(errors!=null) {
+					errors.add(e);
+				}
 			} catch (SAXException e) {
 				logger.error("SAX ERROR PARSING XML " + e);
+				if(errors!=null) {
+					errors.add(e);
+				}
 			} catch (ParserConfigurationException e) {
 				logger.error("PARSER ERROR PARSING XML " + e);
-			} catch (FileNotFoundException e) {
-				logger.error("FILE ERROR PARSING XML " + e);
+
 			} catch (JAXBException e) {
 				// TODO Auto-generated catch block
 				logger.error("error", e);
@@ -156,7 +178,9 @@ public class HRMReportParser {
 		document.setReportStatus(report.getResultStatus());
 		document.setReportType(report.getFirstReportClass());
 		document.setTimeReceived(new Date());
-
+		document.setSourceFacility(report.getSendingFacilityId());
+		document.setSourceFacilityReportNo(report.getSendingFacilityReportNo());
+		
 		String reportFileData = report.getFileData();
 
 		String noMessageIdFileData = reportFileData.replaceAll("<MessageUniqueID>.*?</MessageUniqueID>", "<MessageUniqueID></MessageUniqueID>");
@@ -175,6 +199,21 @@ public class HRMReportParser {
 
 		document.setDescription("");
 		
+		String name = report.getLegalLastName() + ", " + report.getLegalFirstName();
+		for(String iName : report.getLegalOtherNames()) {
+			name  = name + " " + iName; 
+		}
+		document.setFormattedName(name);
+		document.setDob(report.getDateOfBirthAsString());
+		document.setGender(report.getGender());
+		document.setHcn(report.getHCN());
+		
+		document.setClassName(report.getFirstReportClass());
+		document.setSubClassName(report.getFirstReportSubClass());
+		
+		document.setRecipientId(report.getDeliverToUserId());
+		document.setRecipientName(report.getDeliveryToUserIdFormattedName());
+		
 		// We're going to check to see if there's a match in the database already for either of these
 		// report hash matches = duplicate report for same recipient
 		// no transaction info hash matches = duplicate report, but different recipient
@@ -188,7 +227,7 @@ public class HRMReportParser {
 				logger.info("Same Report Different Recipient, for file:"+report.getFileLocation());
 				HRMReportParser.routeReportToProvider(sameReportDifferentRecipientReportList.get(0), report);
 			} else {
-				// New report
+				// New report or changed report
 				hrmDocumentDao.persist(document);
 				logger.debug("MERGED DOCUMENTS ID"+document.getId());
 
@@ -212,8 +251,8 @@ public class HRMReportParser {
 			}
 		} else if (exactMatchList != null && exactMatchList.size() > 0) {
 			// We've seen this one before.  Increment the counter on how many times we've seen it before
-			
-			logger.info("We've seen this report before. Increment the counter on how many times we've seen it before, for file:"+report.getFileLocation());
+			//TODO: do we need to save more info about when we saw the duplicates!
+			logger.debug("We've seen this report before. Increment the counter on how many times we've seen it before, for file:"+report.getFileLocation());
 			
 			HRMDocument existingDocument = hrmDocumentDao.findById(exactMatchList.get(0)).get(0);
 			existingDocument.setNumDuplicatesReceived((existingDocument.getNumDuplicatesReceived() != null ? existingDocument.getNumDuplicatesReceived() : 0) + 1);
@@ -266,6 +305,14 @@ public class HRMReportParser {
 		 
 		return true;
 	}
+
+	/*
+	 * this only gets called for new or changed reports being added to DB. We already know this isn't
+	 * an exact duplicate report.
+	 * 
+	 * 1) If this report was sent to another patient before, then we set the parentId of this report to that one
+	 * 
+	 */
 	private static void doSimilarReportCheck(LoggedInInfo loggedInInfo, HRMReport report, HRMDocument mergedDocument) {
 		
 		if(report == null) {
@@ -276,7 +323,8 @@ public class HRMReportParser {
 		
 		HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
 
-		// Check #1: Identify if this is a report that we received before, but was sent to the wrong demographic
+		// Check #1: Identify if this is a report that we received before, but was sent to the wrong demographic.
+		// we set the parent on those other reports to this one. this way we can display the other versions when viewing.
 		List<Integer> parentReportList = hrmDocumentDao.findAllWithSameNoDemographicInfoHash(mergedDocument.getReportLessDemographicInfoHash());
 		if (parentReportList != null && parentReportList.size() > 0) {
 			for (Integer id : parentReportList) {
@@ -352,9 +400,11 @@ public class HRMReportParser {
 				HRMDocument hrmDocument = hrmDocumentDao.find(matchingHrmDocument.getHrmDocumentId());
 
 				HRMReport hrmReport = HRMReportParser.parseReport(loggedInInfo, hrmDocument.getReportFile());
+				if (hrmReport != null) {
 				hrmReport.setHrmDocumentId(hrmDocument.getId());
 				hrmReport.setHrmParentDocumentId(hrmDocument.getParentReport());
 				allRoutedReports.add(hrmReport);
+				}
 			}
 		}
 

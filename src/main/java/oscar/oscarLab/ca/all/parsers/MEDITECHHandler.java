@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v23.datatype.XCN;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
@@ -69,7 +69,7 @@ public class MEDITECHHandler implements MessageHandler {
 	public static String DATE_FORMAT = "yyyyMMddHHmmss";
 	public static String DATE_STRING_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-	protected static Logger logger = Logger.getLogger(MEDITECHHandler.class);
+	protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	protected ORU_R01 msg = null;
 	private Terser terser;
 
@@ -382,6 +382,15 @@ public class MEDITECHHandler implements MessageHandler {
 	public String getOBXName(int i, int j){
 		try{
 			return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getObservationIdentifier().getText().getValue()));
+		}catch(Exception e){
+			return("");
+		}
+	}
+
+	@Override
+	public String getOBXNameLong(int i, int j) {
+		try{
+			return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getObservationIdentifier().getComponent(2).toString()));
 		}catch(Exception e){
 			return("");
 		}
@@ -1084,5 +1093,10 @@ public class MEDITECHHandler implements MessageHandler {
 
 		return (docName);
 	}
+    
+    //for OMD validation
+    public boolean isTestResultBlocked(int i, int j) {
+    	return false;
+    }
 
 }

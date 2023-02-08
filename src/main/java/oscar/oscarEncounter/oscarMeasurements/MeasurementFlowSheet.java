@@ -41,7 +41,7 @@ import java.util.Map;
 import org.apache.commons.collections.OrderedMapIterator;
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.drools.RuleBase;
 import org.drools.WorkingMemory;
 import org.drools.io.RuleBaseLoader;
@@ -74,6 +74,7 @@ public class MeasurementFlowSheet {
     private String topHTMLFileName = null;
     private boolean universal;
     private boolean isMedical = true;
+    private boolean custom = false;
 
 
     //ArrayList list = null;  // list of the measurements  ** replace with a asList Items. (maybe for first iteration condence down to string
@@ -142,6 +143,7 @@ public class MeasurementFlowSheet {
                     sb.append(",");
                 }
                 sb.append(s);
+                firstElement=false;
            }
        }
        return sb.toString();
@@ -571,7 +573,17 @@ public class MeasurementFlowSheet {
         this.topHTMLFileName = topHTMLFileName;
     }
 
-    class FlowSheetSort implements Comparator {
+    
+    public boolean isCustom() {
+		return custom;
+	}
+
+	public void setCustom(boolean custom) {
+		this.custom = custom;
+	}
+
+
+	class FlowSheetSort implements Comparator {
 
         List list = null;
 

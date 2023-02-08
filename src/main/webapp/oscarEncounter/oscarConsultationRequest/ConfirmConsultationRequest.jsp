@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.WebUtilsOld"%>
+<%@page import="org.oscarehr.util.WebUtils"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -92,7 +92,7 @@ function finishPage(secs){
 					key="oscarEncounter.oscarConsultationRequest.ConfirmConsultationRequest.msgCreated" />
 				<% } %>
 				
-				<%=WebUtilsOld.popInfoMessagesAsHtml(session)%>
+				<%=WebUtils.popInfoMessagesAsHtml(session)%>
 				</td>
 			</tr>
 			<tr>

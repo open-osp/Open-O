@@ -41,7 +41,7 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.LoggedInInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -50,7 +50,7 @@ import oscar.oscarLab.ca.all.upload.MessageUploader;
 import oscar.oscarLab.ca.all.util.Utilities;
 
 public class DefaultHandler implements MessageHandler {
-    Logger logger = Logger.getLogger(DefaultHandler.class);
+    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     String hl7Type = null;
 
     String getHl7Type(){

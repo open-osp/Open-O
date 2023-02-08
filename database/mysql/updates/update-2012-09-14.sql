@@ -1,1 +1,2 @@
 alter table provider change signed_confidentiality signed_confidentiality datetime;
+alter table providerArchive change signed_confidentiality signed_confidentiality datetime;

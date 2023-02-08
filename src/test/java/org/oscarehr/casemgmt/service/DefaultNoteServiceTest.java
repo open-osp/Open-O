@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,7 +51,7 @@ import org.oscarehr.util.SpringUtils;
 //Ignored until we fix foreign keys with tests
 @Ignore
 public class DefaultNoteServiceTest extends DaoTestFixtures {
-	private static Logger logger = Logger.getLogger(DefaultNoteServiceTest.class);
+	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	private NoteService service = SpringUtils.getBean(DefaultNoteService.class);
 

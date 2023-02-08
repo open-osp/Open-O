@@ -39,14 +39,12 @@ if(!authed) {
 }
 %>
 
-<%@page import="org.oscarehr.util.WebUtilsOld"%>
+<%@page import="org.oscarehr.util.WebUtils"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<!-- add for special encounter -->
-<%@ taglib uri="http://www.caisi.ca/plugin-tag" prefix="plugin" %>
 <%@ taglib uri="/WEB-INF/special_tag.tld" prefix="special" %>
 <!-- end -->
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
@@ -1423,7 +1421,7 @@ function updateFaxButton() {
 }
 </script>
 
-<%=WebUtilsOld.popErrorMessagesAsAlert(session)%>
+<%=WebUtils.popErrorMessagesAsAlert(session)%>
 
 <body topmargin="0" leftmargin="0" vlink="#0000FF" 
 	onload="window.focus();disableDateFields();disableEditing();showSignatureImage();">
@@ -2015,19 +2013,6 @@ function updateFaxButton() {
 							</html:select></td>
 						</tr>
 
-<!--add for special encounter-->
-<plugin:hideWhenCompExists componentName="specialencounterComp" reverse="true">
-<special:SpecialEncounterTag moduleName="eyeform">
-
-<%
-	String aburl1 = "/EyeForm.do?method=addCC&demographicNo=" + demo;
-					if (requestId != null) aburl1 += "&requestId=" + requestId;
-%>
-<plugin:include componentName="specialencounterComp" absoluteUrl="<%=aburl1 %>"></plugin:include>
-</special:SpecialEncounterTag>
-</plugin:hideWhenCompExists>
-<!-- end -->
-
 						<tr>
 							<td colspan="2" class="tite4"><bean:message
 								key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formAppointmentNotes" />
@@ -2279,18 +2264,6 @@ function updateFaxButton() {
 					<html:textarea rows="10" styleId="concurrentProblems" property="concurrentProblems"></html:textarea>
 					</td>
 				</tr>
- <!--add for special encounter-->
-<plugin:hideWhenCompExists componentName="specialencounterComp" reverse="true">
-<special:SpecialEncounterTag moduleName="eyeform">
-<%
-	String aburl2 = "/EyeForm.do?method=specialConRequest&demographicNo=" + demo + "&appNo=" + request.getParameter("appNo");
-					if (requestId != null) aburl2 += "&requestId=" + requestId;
-if (defaultSiteId!=0) aburl2+="&site="+defaultSiteId;
-%>
-<html:hidden property="specialencounterFlag" value="true"/>
-<plugin:include componentName="specialencounterComp" absoluteUrl="<%=aburl2 %>"></plugin:include>
-</special:SpecialEncounterTag>
-</plugin:hideWhenCompExists>
 				<tr>
 					<td colspan="2">
 					<table style="border-collapse: collapse;" width="100%">
@@ -2517,6 +2490,7 @@ if (defaultSiteId!=0) aburl2+="&site="+defaultSiteId;
 
 <script type="text/javascript" >
 jQuery(document).ready( function() {
+	var ctx = "${pageContext.request.contextPath}";
 	//--> Autocomplete searches
 	jQuery( "#searchHealthCareTeamInput" ).autocomplete({				
 		source: function( request, response ) { 

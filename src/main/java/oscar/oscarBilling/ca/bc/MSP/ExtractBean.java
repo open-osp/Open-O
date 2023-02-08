@@ -31,7 +31,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.dao.LogTeleplanTxDao;
 import org.oscarehr.billing.CA.BC.model.LogTeleplanTx;
 import org.oscarehr.billing.CA.BC.model.Wcb;

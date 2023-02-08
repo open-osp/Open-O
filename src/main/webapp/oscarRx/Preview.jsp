@@ -30,7 +30,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page import="oscar.oscarProvider.data.*, oscar.log.*"%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@ page import="org.apache.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
 <%@ page import="oscar.*,java.lang.*,java.util.Date"%>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
 
@@ -234,7 +234,7 @@ ProviderData user = new ProviderData(strUser);
 						
 						if (fullOutLine==null || fullOutLine.length()<=6)
 						{
-							Logger.getLogger("preview_jsp").error("drug full outline was null");
+							org.oscarehr.util.MiscUtils.getLogger();
 							fullOutLine="<span style=\"color:red;font-size:16;font-weight:bold\">An error occurred, please write a new prescription.</span><br />"+fullOutLine;
 						}
                         %>

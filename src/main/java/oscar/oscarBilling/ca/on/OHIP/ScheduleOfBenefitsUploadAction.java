@@ -38,7 +38,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -56,7 +56,7 @@ import oscar.oscarLab.ca.bc.PathNet.pageUtil.LabUploadForm;
  * @author Jay Gallagher
  */
 public class ScheduleOfBenefitsUploadAction extends Action {
-	Logger _logger = Logger.getLogger(this.getClass());
+	Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	boolean checkBox (String str){
 		boolean check = false;
@@ -94,6 +94,7 @@ public class ScheduleOfBenefitsUploadAction extends Action {
 
 			warnings = sob.processNewFeeSchedule(is,showNewCodes,showChangedCodes,forceUpdate, updateAssistantFeesValue, updateAnaesthetistFeesValue);
 
+			outcome = "success";
 		}catch(Exception e){ 
 			MiscUtils.getLogger().error("Error", e); 
 			outcome = "exception";

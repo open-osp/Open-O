@@ -27,7 +27,7 @@ package com.quatro.dao.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.oscarehr.util.MiscUtils;

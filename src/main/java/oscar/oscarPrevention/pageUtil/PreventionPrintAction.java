@@ -37,7 +37,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -47,7 +47,6 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import com.lowagie.text.DocumentException;
 
 /**
  *
@@ -73,7 +72,7 @@ public class PreventionPrintAction extends Action {
            PreventionPrintPdf pdf = new PreventionPrintPdf();
            pdf.printPdf(request, response);
            
-       }catch(DocumentException de) {            
+       }catch(com.lowagie.text.DocumentException de) {
             logger.error("", de);
             request.setAttribute("printError", new Boolean(true));
             return mapping.findForward("error");
@@ -82,8 +81,8 @@ public class PreventionPrintAction extends Action {
             logger.error("", ioe);
             request.setAttribute("printError", new Boolean(true));
             return mapping.findForward("error");
-       } 
-              
+       }
+
        return null;
    }   
                                     

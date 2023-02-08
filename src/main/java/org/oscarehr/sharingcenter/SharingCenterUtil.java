@@ -46,7 +46,7 @@ import java.util.Map;
 import org.apache.tika.mime.MimeType;
 import org.apache.commons.io.IOUtils;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.mime.MimeTypeException;
 import org.marc.everest.datatypes.II;

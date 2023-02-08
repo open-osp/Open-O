@@ -33,23 +33,14 @@
  */
 package oscar.oscarEncounter.oscarMeasurements.data;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-import org.apache.log4j.Logger;
 import org.oscarehr.common.dao.MeasurementMapDao;
+import org.oscarehr.common.dao.MeasurementsExtDao;
 import org.oscarehr.common.dao.RecycleBinDao;
 import org.oscarehr.common.model.MeasurementMap;
+import org.oscarehr.common.model.MeasurementsExt;
 import org.oscarehr.common.model.RecycleBin;
-import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.SpringUtils;
 
 /**
@@ -58,22 +49,21 @@ import org.oscarehr.util.SpringUtils;
  */
 public class MeasurementMapConfig {
 
-    Logger logger = Logger.getLogger(MeasurementMapConfig.class);
-    private MeasurementMapDao dao = SpringUtils.getBean(MeasurementMapDao.class);
-
+    private final MeasurementMapDao measurementMapDao = SpringUtils.getBean(MeasurementMapDao.class);
+    private final MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
 
     public MeasurementMapConfig() {
     }
 
     public List<String> getLabTypes() {
-       return dao.findDistinctLabTypes();
+       return measurementMapDao.findDistinctLabTypes();
     }
 
-    public List<Hashtable<String,String>> getMappedCodesFromLoincCodes(String loincCode) {
-        List<Hashtable<String,String>> ret = new LinkedList<Hashtable<String,String>>();
+    public List<HashMap<String,String>> getMappedCodesFromLoincCodes(String loincCode) {
+        List<HashMap<String,String>> ret = new LinkedList<>();
         
-        for(MeasurementMap map:dao.findByLoincCode(loincCode)) {
-        	Hashtable<String, String> ht = new Hashtable<String,String>();
+        for(MeasurementMap map: measurementMapDao.findByLoincCode(loincCode)) {
+        	HashMap<String, String> ht = new HashMap<String,String>();
             ht.put("id", map.getId().toString());
             ht.put("loinc_code", map.getLoincCode());
             ht.put("ident_code", map.getIdentCode());
@@ -84,11 +74,11 @@ public class MeasurementMapConfig {
         return ret;
     }
 
-    public Hashtable<String, Hashtable<String,String>> getMappedCodesFromLoincCodesHash(String loincCode) {
-        Hashtable<String, Hashtable<String,String>> ret = new Hashtable<String,Hashtable<String,String>>();
+    public HashMap<String, HashMap<String,String>> getMappedCodesFromLoincCodesHash(String loincCode) {
+        HashMap<String, HashMap<String,String>> ret = new HashMap<String,HashMap<String,String>>();
         
-        for(MeasurementMap map:dao.findByLoincCode(loincCode)) {
-        	Hashtable<String, String> ht = new Hashtable<String,String>();
+        for(MeasurementMap map: measurementMapDao.findByLoincCode(loincCode)) {
+        	HashMap<String, String> ht = new HashMap<String,String>();
             ht.put("id", map.getId().toString());
             ht.put("loinc_code", map.getLoincCode());
             ht.put("ident_code", map.getIdentCode());
@@ -100,7 +90,7 @@ public class MeasurementMapConfig {
     }
 
     public List<String> getDistinctLoincCodes() {
-    	List<String> results = dao.findDistinctLoincCodes();
+    	List<String> results = measurementMapDao.findDistinctLoincCodes();
     	Collections.sort(results);
     	return results;
     }
@@ -108,7 +98,7 @@ public class MeasurementMapConfig {
     public String getLoincCodeByIdentCode(String identifier) {
         if (identifier != null && identifier.trim().length() > 0) {
 
-        	for(MeasurementMap map:dao.getMapsByIdent(identifier)) {
+        	for(MeasurementMap map: measurementMapDao.getMapsByIdent(identifier)) {
         		return map.getLoincCode();
         	}
         }
@@ -116,14 +106,14 @@ public class MeasurementMapConfig {
     }
 
     public boolean isTypeMappedToLoinc(String measurementType) {
-    	int size = dao.getMapsByIdent(measurementType).size();
+    	int size = measurementMapDao.getMapsByIdent(measurementType).size();
     	if(size>0)
     		return true;
         return false;
     }
 
     public LoincMapEntry getLoincMapEntryByIdentCode(String identCode) {
-    	for(MeasurementMap map:dao.getMapsByIdent(identCode)) {
+    	for(MeasurementMap map: measurementMapDao.getMapsByIdent(identCode)) {
     		LoincMapEntry loincMapEntry = new LoincMapEntry();
             loincMapEntry.setId(map.getId().toString());
             loincMapEntry.setLoincCode(map.getLoincCode());
@@ -136,105 +126,67 @@ public class MeasurementMapConfig {
         return null;
     }
 
-    public ArrayList<Hashtable<String,Object>> getLoincCodes(String searchString) {
+    public List<MeasurementMap> getLoincCodes(String searchString) {
         searchString = "%" + searchString.replaceAll("\\s", "%") + "%";
-        ArrayList<Hashtable<String,Object>> ret = new ArrayList<Hashtable<String,Object>>();
-        String sql = "SELECT DISTINCT loinc_code, name FROM measurementMap WHERE loinc_code=ident_code and name like '" + searchString + "' ORDER BY name";
-
-        try {
-
-            Connection conn = DbConnectionFilter.getThreadLocalDbConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            logger.info(sql);
-
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                Hashtable<String,Object> ht = new Hashtable<String,Object>();
-                ht.put("code", oscar.Misc.getString(rs, "loinc_code"));
-                ht.put("name", oscar.Misc.getString(rs, "name"));
-                ret.add(ht);
-            }
-
-            pstmt.close();
-        } catch (SQLException e) {
-            logger.error("Exception in getLoincCodes", e);
-        }
-
-        return ret;
-
+        return measurementMapDao.searchMeasurementsByName(searchString);
     }
 
-    public ArrayList<Hashtable<String,Object>> getMeasurementMap(String searchString) {
+    public List<MeasurementMap> getMeasurementMap(String searchString) {
         searchString = "%" + searchString.replaceAll("\\s", "%") + "%";
-        ArrayList<Hashtable<String,Object>> ret = new ArrayList<Hashtable<String,Object>>();
-        String sql = "SELECT DISTINCT * FROM measurementMap WHERE name LIKE '" + searchString + "' ORDER BY name";
-
-        try {
-
-            Connection conn = DbConnectionFilter.getThreadLocalDbConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            logger.info(sql);
-
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-            	Hashtable<String,Object> ht = new Hashtable<String,Object>();
-                ht.put("id", getString(oscar.Misc.getString(rs, "id")));
-                ht.put("loinc_code", getString(oscar.Misc.getString(rs, "loinc_code")));
-                ht.put("ident_code", getString(oscar.Misc.getString(rs, "ident_code")));
-                ht.put("name", getString(oscar.Misc.getString(rs, "name")));
-                ht.put("lab_type", getString(oscar.Misc.getString(rs, "lab_type")));
-                ret.add(ht);
-            }
-
-            pstmt.close();
-        } catch (SQLException e) {
-            logger.error("Exception in getMeasurementMap", e);
-        }
-
-        return ret;
+        return measurementMapDao.findMeasurementsByName(searchString);
     }
 
-    public ArrayList<Hashtable<String,Object>> getUnmappedMeasurements(String type) {
-        ArrayList<Hashtable<String,Object>> ret = new ArrayList<Hashtable<String,Object>>();
-        String sql = "SELECT DISTINCT h.type, me1.val AS identifier, me2.val AS name " +
-                "FROM measurementsExt me1 " +
-                "JOIN measurementsExt me2 ON me1.measurement_id = me2.measurement_id AND me2.keyval='name' " +
-                "JOIN measurementsExt me3 ON me1.measurement_id = me3.measurement_id AND me3.keyval='lab_no' " +
-                "JOIN hl7TextMessage h ON me3.val = h.lab_id " +
-                "WHERE me1.keyval='identifier' AND h.type LIKE '" + type + "%' " +
-                "AND me1.val NOT IN (SELECT ident_code FROM measurementMap) ORDER BY h.type";
+    /**
+     * Return List of maps containing an identifier and association object.
+     * ie: List["type": type, "identifier": identifier, "name": name]
+     */
+    public ArrayList<HashMap<String,String>> getUnmappedMeasurements(String type) {
 
-        try {
-
-            Connection conn = DbConnectionFilter.getThreadLocalDbConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            logger.info(sql);
-
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-            	Hashtable<String,Object> ht = new Hashtable<String,Object>();
-                ht.put("type", getString(oscar.Misc.getString(rs, "type")));
-                ht.put("identifier", getString(oscar.Misc.getString(rs, "identifier")));
-                ht.put("name", getString(oscar.Misc.getString(rs, "name")));
-                ret.add(ht);
-            }
-
-            pstmt.close();
-        } catch (SQLException e) {
-            logger.error("Exception in getUnmappedMeasurements", e);
+        ArrayList<HashMap<String,String>> unmappedLabList = new ArrayList<>();
+        // get all currently mapped measurements. Only PATHL7 for now
+        List<String> measurementMap = measurementMapDao.findDistinctLoincCodesByLabType(MeasurementMap.LAB_TYPE.PATHL7);
+        if(measurementMap == null) {
+            measurementMap = Collections.emptyList();
         }
 
-        return ret;
+        // eliminate the mapped measurements from measurementsExt to get the unmapped result
+        List<Integer> measurementIdList = measurementsExtDao.findUnmappedMeasuremntIds(measurementMap);
+        if(measurementIdList == null) {
+            measurementIdList = Collections.emptyList();
+        }
+
+        List<MeasurementsExt> unmappedLabs = measurementsExtDao.getMeasurementsExtListByMeasurementIdList(measurementIdList);
+        int currentId = 0;
+        HashMap<String,String> labtable = null;
+        int count = 0;
+        for(MeasurementsExt unmappedLab : unmappedLabs) {
+            int selectedId = unmappedLab.getMeasurementId();
+            if(currentId != selectedId || count == (unmappedLabs.size() -1) ) {
+                if(currentId > 0) {
+                    labtable.put("type", MeasurementMap.LAB_TYPE.PATHL7.name());
+                    unmappedLabList.add(labtable);
+                }
+                labtable = new HashMap<>();
+            }
+            if("identifier".equalsIgnoreCase(unmappedLab.getKeyVal())) {
+                labtable.put("identifier", unmappedLab.getVal());
+            }
+            if("name".equalsIgnoreCase(unmappedLab.getKeyVal())) {
+                labtable.put("name", unmappedLab.getVal());
+            }
+            currentId = selectedId;
+            count++;
+        }
+        return unmappedLabList;
     }
 
     public void mapMeasurement(String identifier, String loinc, String name, String type)  {
-    	MeasurementMapDao dao = SpringUtils.getBean(MeasurementMapDao.class);
     	MeasurementMap mm = new MeasurementMap();
     	mm.setLoincCode(loinc);
     	mm.setIdentCode(identifier);
     	mm.setName(name);
     	mm.setLabType(type);
-    	dao.persist(mm);
+        measurementMapDao.persist(mm);
     }
 
     public void removeMapping(String id, String provider_no)  {
@@ -243,7 +195,7 @@ public class MeasurementMapConfig {
          String name = "";
          String lab_type = "";
          
-    	MeasurementMap map = dao.find(Integer.parseInt(id));
+    	MeasurementMap map = measurementMapDao.find(Integer.parseInt(id));
     	if(map != null) {
     		ident_code = map.getIdentCode();
     		loinc_code = map.getLoincCode();
@@ -251,7 +203,7 @@ public class MeasurementMapConfig {
     		lab_type = map.getLabType();
     	
        
-	    	dao.remove(map.getId());
+	    	measurementMapDao.remove(map.getId());
 	    	
 	    	RecycleBin rb = new RecycleBin();
 	        rb.setProviderNo(provider_no);
@@ -270,7 +222,7 @@ public class MeasurementMapConfig {
      *  Return true if there is already an identifier mapped to the loinc code.
      */
     public boolean checkLoincMapping(String loinc, String type) {
-    	List<MeasurementMap> maps = dao.findByLoincCodeAndLabType(loinc,type);
+    	List<MeasurementMap> maps = measurementMapDao.findByLoincCodeAndLabType(loinc,type);
     	return maps.size()>0;   	
     }
 

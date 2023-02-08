@@ -24,7 +24,7 @@
 
 package org.oscarehr.ws.rest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.managers.DrugLookUp;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.MiscUtils;

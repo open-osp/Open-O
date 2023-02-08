@@ -37,7 +37,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.helpers.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlOptions;
 import org.marc.shic.cda.datatypes.CDAStandard;
 import org.marc.shic.cda.utils.CdaUtils;

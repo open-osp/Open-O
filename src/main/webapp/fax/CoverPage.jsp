@@ -1,4 +1,4 @@
-<%--
+<%@ page import="oscar.OscarProperties" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -30,6 +30,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib prefix="html" uri="http://www.springframework.org/tags/form" %>
 
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -49,15 +50,124 @@
 <head>
 <title>OSCAR Fax</title>
 
-<c:set var="ctx" value="${ pageContext.request.contextPath }" scope="page" />
+	<c:set var="ctx" value="${ pageContext.request.contextPath }" scope="page" />
+	<link rel="stylesheet" href="${ctx}/library/bootstrap/3.0.0/css/bootstrap.min.css" type="text/css" />
+    <link href="${ctx}/library/jquery/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
 
-<link rel="stylesheet" type="text/css" href="${ctx}/css/encounterStyles.css" />
-<link rel="stylesheet" href="${ctx}/library/bootstrap/3.0.0/css/bootstrap.min.css" type="text/css" />
-<link rel="stylesheet" href="${ctx}/css/font-awesome.min.css" type="text/css" />
-<link rel="stylesheet" type="text/css" href="${ctx}/share/css/OscarStandardLayout.css" />
+	<script type="text/javascript" src="${ctx}/library/jquery/jquery-1.12.0.min.js" ></script>  
+	<script type="text/javascript" src="${ctx}/library/jquery/jquery.validate.min.js" ></script> 	              
+	<script type="text/javascript" src="${ctx}/library/jquery/jquery-ui.min.js" ></script>	
+	<script type="text/javascript" src="${ctx}/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script> 
 
-<script type="text/javascript" src="${ctx}/library/jquery/jquery-1.12.0.min.js"></script>
-<script type="text/javascript" src="${ctx}/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
+	<%-- 
+		Action to remove additional recipients from the form.
+	--%>
+	<script type="text/javascript">
+	
+		top.window.resizeTo("800","850");
+	
+		function removeRecipient(element) {
+			$(element).parent().parent().parent().remove();
+		}
+	</script>
+	
+	<%-- 
+		Action return flashy confirmation messages.
+	--%>
+	<c:if test="${ not empty faxSuccessful }">
+		<script type="text/javascript" >
+			$(document).ready(function() {
+				$("#page-body").slideUp("slow");
+			})
+		</script>
+	</c:if>
+	
+	<style type="text/css">
+	
+	* {
+		font-family: Arial,Helvetica,sans-serif;
+		font-size: small;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+		width: auto\9;
+	}
+	
+	#additionalRecipientControlPanel, #form-control-buttons {
+		margin-bottom: 15px;
+	}
+	
+	#form-control-buttons button {
+		margin-left: 15px;
+	}
+	
+	ul.ui-widget {
+		margin: 10px;
+		max-width: 100%;
+		height: auto;
+		max-height: 400px;
+		overflow-y: scroll;
+	}
+	
+	.recipientGroup {
+		margin-bottom: 3px;
+	}
+		
+	#oscarFaxHeader {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: .5%;
+		margin-bottom: 15px;
+	}
+	
+	table#oscarFaxHeader tr td {
+		padding: 1px 5px;
+		background-color: #F3F3F3;
+	}
+	
+	#oscarFaxHeader #oscarFaxHeaderLeftColumn {
+		width: 19.5% !important;
+		background-color: white;
+		padding: 0px;
+		padding-right: .5% !important;
+		width: 20%;
+	}
+	
+	#oscarFaxHeader #oscarFaxHeaderLeftColumn h1 {
+		margin: 0px;
+		padding: 7px !important;
+		display: block;
+		font-size: large !important;
+		background-color: black;
+		color: white;
+		font-weight: bold;
+	}
+	#oscarFaxHeaderRightColumn {
+		vertical-align: top;
+		text-align: right;
+		padding-top: 3px;
+		padding-right: 3px;
+	}
+
+	span.HelpAboutLogout a {
+		font-size: x-small;
+		color: black;
+		float: right;
+		padding: 0 3px;
+	}
+	
+	label.invalid {
+		color:red;
+		font-weight: normal;
+	}
+	
+	input.invalid {
+		border-color:red;
+	}
+
+</style>
 
 </head>
 <body>
@@ -65,95 +175,391 @@
 <div id="bodyrow" class="container-fluid">
 
 	<div id="bodycolumn" class="col-sm-12">
-	
-	<div class="page-header">
-	  <h1>OSCAR Fax <small>${ transType }</small></h1>
-	</div>
 
-	<form class="form-horizontal" action='${ctx}/oscarEncounter/oscarConsultationRequest/ConsultationFormFax.do' method="post">
+		<div id="page-header">
 	
-			<input type="hidden" name="requestId" value="${ reqId }" />
-			<input type="hidden" name="reqId" value="${ reqId }" />
-			<input type="hidden" name="transType" value="${ transType }" />
-			<input type="hidden" name="demographicNo" value="${ not empty demographicNo ? demographicNo : param.demographicNo }" />
-			<input type="hidden" name="sendersFax" value="${ not empty letterheadFax ? letterheadFax : param.letterheadFax }" />
+			<table id="oscarFaxHeader">
+				<tr>
+					<td id="oscarFaxHeaderLeftColumn"><h1>OSCAR Fax</h1></td>
+	
+					<td id="oscarFaxHeaderCenterColumn">${ transactionType }</td>
+					<td id="oscarFaxHeaderRightColumn" align=right>
+						<span class="HelpAboutLogout"> 
+							<a style="font-size: 10px; font-style: normal;" href="${ ctx }oscarEncounter/About.jsp" target="_new">About</a>
+							<a style="font-size: 10px; font-style: normal;" target="_blank"
+										href="http://www.oscarmanual.org/search?SearchableText=&Title=Chart+Interface&portal_type%3Alist=Document">Help</a>		
+						</span>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		<div id="page-body">
+		
+			<c:set var="formAction" value="${ctx}/fax/faxAction.do" />
+			<c:if test="${ transactionType eq 'CONSULTATION' }">
+				<c:set var="formAction" value="${ctx}/oscarEncounter/oscarConsultationRequest/ConsultationFormFax.do" />
+			</c:if>
 			
-			<div class="panel panel-default">
-			  	<div class="panel-heading">
-					<h3 class="panel-title">Fax to</h3>
-				</div>
-			  	<div class="panel-body">
-					<c:out value="${ professionalSpecialistName }" />
-					<c:out value="${ not empty fax ? fax : param.fax }" />
-					<input type="hidden" name="recipient" value="${ professionalSpecialistName }" />	
-					<input type="hidden" name="recipientsFaxNumber" value="${ not empty fax ? fax : param.fax }" />		
-				</div>
-			</div>
-	
-			<div class="panel panel-default">
-			  	<div class="panel-heading">
-					<h3 class="panel-title">Copy(s) to</h3>
-				</div>
-			  	<div class="panel-body">
-			  		<ol class="list-group col-sm-12" >
-			  			<c:forEach items="${ copytoRecipients }" var="recipient">
-							<li class="list-group-item"> 
-								<c:out value="${ recipient.name }" /> <c:out value="${ recipient.fax }" />
-							</li>
-						</c:forEach>
-						<c:forEach items="${ paramValues.faxRecipients }" var="recipient">
-							<input type="hidden" name="faxRecipients" value='<c:out value="${ recipient }" />' />
-						</c:forEach>
-					</ol>
-				</div>
-			</div>
-	
-			<div class="panel panel-default">
-			  	<div class="panel-heading">
-					<h3 class="panel-title">Attachments</h3>
-				</div>
-			  	<div class="panel-body">
-					<ol class="list-group col-sm-12">
-						<c:if test="${ not empty documents }">
-							<c:forEach items="${ documents }" var="document">
-								<li class="list-group-item"><c:out value="${ document }" /></li>
-							</c:forEach>
-						</c:if>
-					</ol>
-				</div>
-			</div>
+			<form id="coverPageForm" class="form-inline" action='${ formAction }' method="post" novalidate>
 			
-			<div class="panel panel-default">
-			  	<div class="panel-heading">
-					<h3 class="panel-title">Add cover page</h3>
-				</div>
-			  	<div class="panel-body">
-					<label class="radio-inline" for="coverpageyes">
-						<input type="radio" name="coverpage" id="coverpageyes" value="true" 
-							onchange="document.getElementById('comments_container').style.display = 'block';"  />Yes
-					</label>
-					<label class="radio-inline" for="coverpageno">
-						<input type="radio" checked="checked" name="coverpage" id="coverpageno" 
-							value="false" onchange="document.getElementById('comments_container').style.display = 'none';" />No
-					</label>
-					<div class="row" id="comments_container" style="display:none;" >
-						<div class="col-sm-12">
-							<label for="form-control">Comments</label>
-							<textarea class="form-control" name="comments" rows="10" ></textarea>
+				<input type="hidden" name="requestId" value="${ reqId }" />
+				<input type="hidden" name="reqId" value="${ reqId }" />
+				<input type="hidden" name="transactionId" value="${ not empty reqId ? reqId : transactionId }" />
+				<input type="hidden" name="transactionType" value="${ transactionType }" />
+				<input type="hidden" name="demographicNo" value="${ not empty demographicNo ? demographicNo : param.demographicNo }" />
+		  		<input type="hidden" name="faxFilePath" value="${ faxFilePath }" />
+		  		
+		  		<%-- to be removed soon below --%>
+		  		<input type="hidden" name="documents" value="${ documents }" />		  		
+		  		<input type="hidden" name="transType" value="${ transType }" />
+							
+				<div class="panel panel-default">
+				  	<div class="panel-heading">
+						<h3 class="panel-title">From</h3>
+					</div>
+					<div class="panel-body">
+						<div class="container">
+							<div class="row">	
+							<div class="col-sm-12">				
+							  <label for="senderFaxAccount">Fax account</label>
+							  <select class="form-control" name="senderFaxNumber"  id="senderFaxAccount">
+									<c:forEach items="${ accounts }" var="account">
+							    		<option value="${ account.faxNumber }" ${ account.faxNumber eq letterheadFax or account.faxNumber eq param.letterheadFax ? 'selected' : '' } >
+							    			<c:out value="${ account.senderEmail }"/> <c:out value="(${ account.faxNumber })"/>
+							    		</option>
+									</c:forEach>
+							  </select>
+	
+							  <%-- to be removed soon below --%>
+							  <input type="hidden" name="sendersFax" value="${ not empty letterheadFax ? letterheadFax : param.letterheadFax }" />
+							</div>
+							</div>
+							<!-- <div class="row">
+								<label >Override Return Fax Number?</label>
+							</div>
+							<div class="row">
+							
+								<label class="radio-inline" for="overridefaxyes">
+									<input type="radio" name="isOverrideFaxNumber" id="overridefaxyes" value="true" 
+										onchange="document.getElementById('overridefax_container').style.display = 'block';" />Yes
+								</label>
+								<label class="radio-inline" for="overridefaxno">
+									<input type="radio" checked="checked" name="isOverrideFaxNumber" id="overridefaxno" 
+										value="false" onchange="document.getElementById('overridefax_container').style.display = 'none';" />No
+								</label>
+							</div>
+							<div class="row" id="overridefax_container" style="display:none;">
+								<input type="text" class="form-control" name="overrideFaxNumber" value="" placeholder="xxx-xxx-xxxx"/>
+							</div> -->
 						</div>
-					</div>				
+					</div>
 				</div>
-			</div>
+				
+				<div class="panel panel-default">
+				  	<div class="panel-heading">
+						<h3 class="panel-title">To</h3>
+					</div>
+				  	<div class="panel-body">
+						<div class="container">
+						  	<div class="row" id="fax-recipients">	
+								<div class="col-sm-6 form-group">
+									<label for="searchProfessionalSpecialist_name">Name</label>
+								 	<input class="autocomplete form-control" type="text" name="recipient" value="${ professionalSpecialistName }"
+								 		id="searchProfessionalSpecialist_name" placeholder="Search: last, first" required/>
+								 </div>	
+								 <div class="col-sm-6 form-group">
+									<label for="searchProfessionalSpecialist_fax">Fax</label>
+									<input class="form-control" type="text" name="recipientFaxNumber" value="${ not empty fax ? fax : param.fax }"
+										id="searchProfessionalSpecialist_fax" placeholder="xxx-xxx-xxxx"  required/>
+									<%-- to be removed soon below --%>
+							  		<input type="hidden" name="recipientsFaxNumber" value="${ not empty fax ? fax : param.fax }" />
+								</div>				
+							</div>
+						</div>
+					</div>
+				</div>
+		
+				<div class="panel panel-default">
+				  	<div class="panel-heading">
+						<h3 class="panel-title">Copy(s) to</h3>
+					</div>
+				  	<div class="panel-body">
+				  		<div class="container" id="fax-additional-recipients" >
 	
-			<div class="form-group">
-				<div class="col-sm-12">
-					<input class="btn btn-default pull-right" type="submit" value="Send" />
-					<a href="${ ctx }/oscarEncounter/ViewRequest.do?de=${ param.demographicNo }&requestId=${ reqId }" 
-						class="btn btn-default btn-md pull-right" role="button" aria-pressed="true">Cancel</a>
+				  			<div class="row" id="additionalRecipientControlPanel">			  			
+				  				<div class="col-sm-5 form-group">
+						  			<label for="additionalRecipient_name" >Name</label>
+								 	<input class="autocomplete form-control" type="text" value=""  
+								 		id="additionalRecipient_name" name="additionalRecipient_name" placeholder="Search: last, first"  />
+								</div>
+									<div class="col-sm-5 form-group">	
+								 	<label for="additionalRecipient_fax">Fax</label>
+								 	<input class="autocomplete form-control" name="additionalRecipient_fax" type="text" value=""  
+								 		id="additionalRecipient_fax" placeholder="xxx-xxx-xxxx"  />
+								</div>
+								<div class="col-sm-2 form-group">
+									<label for="additionalRecipient_fax_btn">&nbsp;</label>
+							        <button class="btn btn-primary form-control" id="additionalRecipient_fax_btn" title="Add recipient to list" type="button">
+							        	<span class="glyphicon glyphicon-plus"></span>
+							        </button>
+							   </div>
+						 	</div>
+						
+					  		<c:forEach items="${ copyToRecipients }" var="recipient" >
+						  			<div class="row">							  			
+							  			<div class="col-sm-12 input-group recipientGroup">
+							  				<label></label>
+										      <input type="text" class="form-control" value="${ recipient.name } ${ recipient.fax }" disabled/>
+										      <span class="input-group-btn">
+										        <button class="btn btn-danger" type="button">
+										        	<span class="glyphicon glyphicon-remove"></span>
+										        </button>
+										      </span>
+									    </div>
+										<input type="hidden" name="copyToRecipients" value="'name':'${ recipient.name }','fax':'${ recipient.fax }'" />
+										
+										<%-- to be removed below --%>
+										<input type="hidden" name="faxRecipients" value="'name':'${ recipient.name }','fax':'${ recipient.fax }'" />
+									</div>
+							</c:forEach>
+						</div>
+					</div>
+				</div>
+		
+				<c:if test="${ not empty documents and transactionType eq 'CONSULTATION' }"> 
+		 			<div class="panel panel-default">
+					  	<div class="panel-heading">
+							<h3 class="panel-title">Attachments</h3>
+						</div>
+					  	<div class="panel-body">
+					  	  	<div class="container">
+					  	  		<div class="row">
+									<ol class="list-group col-sm-12">
+										<c:forEach items="${ documents }" var="document">
+											<li class="list-group-item"><c:out value="${ document }" /></li>
+											<input type="hidden" name="documents" value=${ document } />
+										</c:forEach>
+									</ol>
+								</div>
+							</div>
+						</div>
+					</div>
+				</c:if>
+				
+				<div class="panel panel-default">
+				  	<div class="panel-heading">
+						<h3 class="panel-title">Cover page</h3>
+					</div>
+				  	<div class="panel-body">
+					  	<div class="container">
+						  	<div class="row" >
+								<div class="col-sm-12">
+									<label class="radio-inline" for="coverpageyes">
+										<input type="radio" name="coverpage" id="coverpageyes" value="true"
+											onchange="document.getElementById('comments_container').style.display = 'block';"  />Yes
+									</label>
+									<label class="radio-inline" for="coverpageno">
+										<input type="radio" checked="checked" name="coverpage" id="coverpageno"
+											value="false" onchange="document.getElementById('comments_container').style.display = 'none';" />No
+									</label>
+								</div>
+							</div>
+							<div class="row" id="comments_container" style="display:none;" >
+								<div class="col-sm-12">
+									<label for="commentsTextArea">Comments</label>
+									<textarea class="form-control" name="comments" id="commentsTextArea" rows="5"><%= OscarProperties.getInstance().getProperty("DEFAULT_FAX_COVERPAGE_COMMENT" ,"") %></textarea>
+								</div>
+							</div>
+						</div>				
+					</div>
+				</div>
+				<div class="container" id="form-control-buttons">
+					<div class="row">
+					<div class="col-sm-12">
+						<input type="hidden" id="submitMethod" name="method" value="queue" />
+						<button type="submit" class="btn btn-primary btn-md pull-right" value="Send">
+							<span class="btn-label"><i class="glyphicon glyphicon-send"></i></span>
+							Send
+						</button>					
+						<button formnovalidate="formnovalidate" type="submit" class="btn btn-danger btn-md pull-right" value="Cancel" 
+							onclick="document.getElementById('submitMethod').value = 'cancel'" >
+							<span class="btn-label"><i class="glyphicon glyphicon-remove-circle"></i></span>
+							Cancel
+						</button>
+					</div>
+					</div>
+				</div>
+		</form>
+		<c:if test="${ transactionType ne 'CONSULTATION' }">
+			<div class="panel panel-default" id="preview-panel">
+			  	<div class="panel-heading">
+					<h3 class="panel-title">Preview</h3>
+				</div>
+			  	<div class="panel-body">
+			  		<div class="container">
+						<img src="${ ctx }/fax/faxAction.do?method=getPreview&faxFilePath=${ faxFilePath }" 
+							onerror="document.getElementById('preview-panel').style.display='block'; this.style.display='none'; "/>
+					</div>
 				</div>
 			</div>
-	</form>
+		</c:if>
+	</div>
+	
+	<%-- the confirmation tags. --%>
+	<c:if test="${ not empty faxSuccessful }">
+		<c:forEach items="${ faxJobList }" var="faxJob">
+			<c:choose>
+				<c:when test="${ faxJob.status eq 'ERROR' }">
+					<div class="alert alert-success" role="alert">
+						Fax failed for <c:out value="${ faxJob.recipient } at ${ faxJob.destination } ${ faxJob.status }: ${ faxJob.statusString }" />									
+					</div>								
+				</c:when>
+				<c:otherwise>
+					<div class="alert alert-success" role="alert">
+						Fax successfully sent to <c:out value="${ faxJob.recipient } at ${ faxJob.destination }" />								
+					</div>	
+				</c:otherwise>				
+			</c:choose>
+		</c:forEach>
+		<input type="button" class="btn btn-danger btn-md pull-right" value="Close" onclick="window.close();" />
+	</c:if>
 </div>
 </div>
+
+<script type="text/javascript" >
+var ctx = "${ ctx }";
+
+$(document).ready(function() {
+
+	/*
+	* Auto complete methods.
+	*/
+	$( "#fax-additional-recipients .autocomplete, #fax-recipients .autocomplete" ).autocomplete({				
+		source: function( request, response ) { 
+			var url = ctx + "/demographic/Contact.do?method=searchAllContacts&searchMode=search_name&orderBy=c.lastName,c.firstName";
+			jQuery.ajax({
+				url: url,
+				type: "GET",
+				dataType: "json",
+				data: {
+				 	term: request.term   			  
+				},
+				contentType: "application/json",
+				success: function( data ) {
+					response(jQuery.map(data, function( item ) {					
+						return {
+						  label: item.lastName + ", " 
+						  + item.firstName + " :: "
+						  + item.residencePhone
+						  + " :: " + item.address 
+						  + " " + item.city,
+						  value: item.id,
+						  contact: item
+						 }						 
+					}));
+				}
+			});
+	    },
+	    minLength: 2,  
+	    focus: function( event, ui ) {
+	    		event.preventDefault();
+	        return false;
+	    },
+	    select: function(event, ui) { 
+	    		event.preventDefault(); 
+	    		$("#" + this.id).val(ui.item.contact.lastName + ", " + ui.item.contact.firstName);
+	           	$("#" + this.id.split("_")[0] + "_fax").val(ui.item.contact.fax);
+	    }
+	});
+	
+	/*
+	* Action to add additional recipients to this fax transmission
+	*/
+	$("#additionalRecipient_fax_btn").click(function() {
+		
+			var nameElement = $("#additionalRecipient_name");
+			var faxElement = $("#additionalRecipient_fax");
+			var name = nameElement.val();
+			var fax = faxElement.val();
+			
+			if(!fax)
+			{
+				faxElement.addClass('invalid').focus();
+				return;
+			}
+			
+			var inputValue = name + " " + fax;
+			var submitValue = "'name':'" + name + "','fax':'" + fax + "'";
+		
+			$("#fax-additional-recipients").append(	    					
+			  		'<div class="row">\
+			  			<div class="col-sm-12 input-group recipientGroup">\
+						      <input type="text" class="form-control" value="' + inputValue + '" disabled/>\
+						      <span class="input-group-btn">\
+						        <button class="btn btn-danger remove-additional-recipient-btn" type="button" onclick="removeRecipient(this)" >\
+						        	<span class="glyphicon glyphicon-trash"></span>\
+						        </button>\
+						      </span>\
+					    </div>\
+						<input type="hidden" name="copyToRecipients" value="' + submitValue + '" />\
+						<input type="hidden" name="faxRecipients" value="' + submitValue + '" />\
+					</div>'
+			);
+			
+			faxElement.val("");
+			nameElement.val("");
+		
+	})
+	
+	/*
+	* Clear the add recipient fields. 
+	*/
+	$('#coverPageForm').submit(function(){
+		if($("#additionalRecipient_name").val().length > 0 && $("#additionalRecipient_fax").val().length > 6)
+		{
+			$('#additionalRecipient_fax_btn').trigger('click');
+		}
+	})
+	
+	/*
+	 * Validate the form before submission 
+	 */
+ 	$('#coverPageForm').validate({		
+		rules: {
+			recipientFaxNumber: {
+				required: true,
+				minlength: 7
+			},	
+			recipient: {
+				required: true
+			},
+			additionalRecipient_fax: {
+				required: {
+					depends: function(element){
+						return $("#additionalRecipient_name").val().length > 0;
+					}
+				},
+				minlength: 7
+			}
+		},		
+		messages: {
+			additionalRecipient_fax: {
+				required: "Recipient fax number required"
+			},
+			recipientFaxNumber: {
+				required: "Recipient fax number required",
+				minlength: "Recipient fax is invalid"
+			},
+			recipient: "Recipient name required"
+		},
+		errorClass: 'invalid',
+		validClass: 'valid'
+		
+	})
+	 
+})
+
+</script>
 </body>
 </html>

@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.Hl7TextInfoDao;
 import org.oscarehr.common.model.Hl7TextInfo;
 import org.oscarehr.util.LoggedInInfo;
@@ -35,7 +35,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
  */
 public class TDISHandler implements MessageHandler {
 
-	Logger logger = Logger.getLogger(TDISHandler.class);
+	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	public TDISHandler() {
 		logger.info("NEW TDISHandler UPLOAD HANDLER instance just instantiated. ");

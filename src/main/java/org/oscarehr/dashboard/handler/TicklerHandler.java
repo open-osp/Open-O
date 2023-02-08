@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.Tickler;
 import org.oscarehr.managers.TicklerManager;
 import org.oscarehr.util.LoggedInInfo;
@@ -63,7 +63,7 @@ public class TicklerHandler {
 	 *	String ticklerCategoryId
 	 *  
 	 */
-	public void createMasterTickler( Map<String, ?> ticklerParameters ) {
+	public void createMasterTickler( Map<String,String[]> ticklerParameters ) {
 
 		Tickler tickler = new Tickler();
 		Date serviceDate = null;

@@ -28,7 +28,7 @@ package org.oscarehr.common.hl7.v2.oscar_to_oscar;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.DemographicDao;
 import org.oscarehr.common.dao.ProfessionalSpecialistDao;

@@ -43,4 +43,12 @@ public class FaxConfigDao extends AbstractDao<FaxConfig> {
 		
 		return getSingleResultOrNull(query);
 	}
+	
+	public FaxConfig getActiveConfigByNumber(String number) {
+		Query query = entityManager.createQuery("select config from FaxConfig config where config.faxNumber = :number and config.active = 1");
+		
+		query.setParameter("number", number);
+		
+		return getSingleResultOrNull(query);
+	}
 }

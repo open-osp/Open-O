@@ -35,7 +35,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import com.itextpdf.text.*;
+import org.apache.logging.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
@@ -59,17 +60,9 @@ import org.oscarehr.web.reports.ocan.beans.OcanConsumerStaffNeedBean;
 import org.oscarehr.web.reports.ocan.beans.OcanNeedRatingOverTimeNeedBreakdownBean;
 import org.oscarehr.web.reports.ocan.beans.OcanNeedRatingOverTimeSummaryOfNeedsBean;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class NeedRatingOverTimeReportGenerator {
 
@@ -78,9 +71,9 @@ public class NeedRatingOverTimeReportGenerator {
 
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-	private Font titleFont = new Font(Font.TIMES_ROMAN, 30,Font.BOLD);
-	private Font boldText = new Font(Font.HELVETICA,10,Font.BOLD);
-	private Font normalText = new Font(Font.HELVETICA,10,Font.NORMAL);
+	private Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 30,Font.BOLD);
+	private Font boldText = new Font(Font.FontFamily.HELVETICA,10,Font.BOLD);
+	private Font normalText = new Font(Font.FontFamily.HELVETICA,10,Font.NORMAL);
 
 	private String consumerName;
 	private String staffName;
@@ -265,7 +258,7 @@ public class NeedRatingOverTimeReportGenerator {
 	private void addSummaryOfNeedsHeader(PdfPTable summaryOfNeedsTable, List<OcanNeedRatingOverTimeSummaryOfNeedsBean> currentBeanList, int loopNo) {
 
 		PdfPCell headerCell = new PdfPCell();
-		headerCell.setPhrase(new Phrase("Summary of Needs" + (loopNo>1?" (Contd.)":""),new Font(Font.HELVETICA, 20,Font.BOLD)));
+		headerCell.setPhrase(new Phrase("Summary of Needs" + (loopNo>1?" (Contd.)":""),new Font(Font.FontFamily.HELVETICA, 20,Font.BOLD)));
 
 		headerCell.setColspan(currentBeanList.size()*3);
 		headerCell.setVerticalAlignment(Element.ALIGN_TOP);
@@ -273,7 +266,7 @@ public class NeedRatingOverTimeReportGenerator {
 		headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		summaryOfNeedsTable.addCell(headerCell);
 
-		Font f = new Font(Font.HELVETICA,14,Font.BOLD,Color.WHITE);
+		Font f = new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.WHITE);
 		//row1
 		PdfPCell c2 = null;
 
@@ -283,29 +276,29 @@ public class NeedRatingOverTimeReportGenerator {
 		if(currentBeanList.size()>0) {
 			c2 = new PdfPCell();
 			c2.setColspan(2);
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase(currentBeanList.get(0).getOcanName()+"\n"+dateFormatter.format(currentBeanList.get(0).getOcanDate()),f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
 		if(currentBeanList.size()>1) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
 			c2.setColspan(2);
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase(currentBeanList.get(1).getOcanName()+"\n"+dateFormatter.format(currentBeanList.get(1).getOcanDate()),f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
 		if(currentBeanList.size()>2) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
 			c2.setColspan(2);
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase(currentBeanList.get(2).getOcanName()+"\n"+dateFormatter.format(currentBeanList.get(2).getOcanDate()),f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
@@ -318,42 +311,42 @@ public class NeedRatingOverTimeReportGenerator {
 
 		if(currentBeanList.size() > 0) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Consumer",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Staff",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
 		if(currentBeanList.size() > 1) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Consumer",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Staff",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
 		if(currentBeanList.size() > 2) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Consumer",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Staff",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
@@ -362,7 +355,7 @@ public class NeedRatingOverTimeReportGenerator {
 
 	private void addSummaryOfNeedsDomainHeader(PdfPTable summaryOfNeedsTable, List<OcanNeedRatingOverTimeNeedBreakdownBean> currentBeanList, int loopNo) {
 
-		Font f = new Font(Font.HELVETICA,14,Font.BOLD,Color.WHITE);
+		Font f = new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.WHITE);
 		//row1
 		PdfPCell c2 = null;
 
@@ -372,36 +365,36 @@ public class NeedRatingOverTimeReportGenerator {
 
 		if(loopNo > 1) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 		}
 
 		if(currentBeanList.size()>0) {
 			c2 = new PdfPCell();
 			c2.setColspan(2);
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase(currentBeanList.get(0).getOcanName()+"\n"+dateFormatter.format(currentBeanList.get(0).getOcanDate()),f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
 		if(currentBeanList.size()>1) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
 			c2.setColspan(2);
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase(currentBeanList.get(1).getOcanName()+"\n"+dateFormatter.format(currentBeanList.get(1).getOcanDate()),f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
 		if(currentBeanList.size()>2) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
 			c2.setColspan(2);
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase(currentBeanList.get(2).getOcanName()+"\n"+dateFormatter.format(currentBeanList.get(2).getOcanDate()),f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
@@ -409,55 +402,55 @@ public class NeedRatingOverTimeReportGenerator {
 
 		//row2
 		c2 = new PdfPCell();
-		c2.setBackgroundColor(Color.BLUE);
+		c2.setBackgroundColor(BaseColor.BLUE);
 		c2.setPhrase(new Phrase("Domains",f));
 		c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 		summaryOfNeedsTable.addCell(c2);
 
 		if(loopNo > 1) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 		}
 
 		if(currentBeanList.size() > 0) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Consumer",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Staff",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
 		if(currentBeanList.size() > 1) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Consumer",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Staff",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
 		if(currentBeanList.size() > 2) {
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Consumer",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLUE);
+			c2.setBackgroundColor(BaseColor.BLUE);
 			c2.setPhrase(new Phrase("Staff",f));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
@@ -468,49 +461,49 @@ public class NeedRatingOverTimeReportGenerator {
 	private void addSummaryOfNeedsRow(PdfPTable summaryOfNeedsTable,String needType, String needTypeKey, List<OcanNeedRatingOverTimeSummaryOfNeedsBean> currentBeanList) {
 		//row3
 		PdfPCell c2 = new PdfPCell();
-		c2.setBackgroundColor(Color.BLUE);
-		c2.setPhrase(new Phrase(needType,new Font(Font.HELVETICA,14,Font.BOLD,Color.WHITE)));
+		c2.setBackgroundColor(BaseColor.BLUE);
+		c2.setPhrase(new Phrase(needType,new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.WHITE)));
 		summaryOfNeedsTable.addCell(c2);
 
 		if(currentBeanList.size()>0 ){
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.GREEN);
-			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(0).getConsumerNeedMap().get(needTypeKey)),new Font(Font.HELVETICA,14,Font.BOLD)));
+			c2.setBackgroundColor(BaseColor.GREEN);
+			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(0).getConsumerNeedMap().get(needTypeKey)),new Font(Font.FontFamily.HELVETICA,14,Font.BOLD)));
 			c2.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.LIGHT_GRAY);
-			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(0).getStaffNeedMap().get(needTypeKey)),new Font(Font.HELVETICA,14,Font.BOLD)));
+			c2.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(0).getStaffNeedMap().get(needTypeKey)),new Font(Font.FontFamily.HELVETICA,14,Font.BOLD)));
 			c2.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			summaryOfNeedsTable.addCell(c2);
 		}
 		if(currentBeanList.size()>1 ){
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.GREEN);
-			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(1).getConsumerNeedMap().get(needTypeKey)),new Font(Font.HELVETICA,14,Font.BOLD)));
+			c2.setBackgroundColor(BaseColor.GREEN);
+			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(1).getConsumerNeedMap().get(needTypeKey)),new Font(Font.FontFamily.HELVETICA,14,Font.BOLD)));
 			c2.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.LIGHT_GRAY);
-			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(1).getStaffNeedMap().get(needTypeKey)),new Font(Font.HELVETICA,14,Font.BOLD)));
+			c2.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(1).getStaffNeedMap().get(needTypeKey)),new Font(Font.FontFamily.HELVETICA,14,Font.BOLD)));
 			c2.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			summaryOfNeedsTable.addCell(c2);
 		}
 		if(currentBeanList.size()>2 ){
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.GREEN);
-			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(2).getConsumerNeedMap().get(needTypeKey)),new Font(Font.HELVETICA,14,Font.BOLD)));
+			c2.setBackgroundColor(BaseColor.GREEN);
+			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(2).getConsumerNeedMap().get(needTypeKey)),new Font(Font.FontFamily.HELVETICA,14,Font.BOLD)));
 			c2.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.LIGHT_GRAY);
-			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(2).getStaffNeedMap().get(needTypeKey)),new Font(Font.HELVETICA,14,Font.BOLD)));
+			c2.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			c2.setPhrase(new Phrase(String.valueOf(currentBeanList.get(2).getStaffNeedMap().get(needTypeKey)),new Font(Font.FontFamily.HELVETICA,14,Font.BOLD)));
 			c2.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			summaryOfNeedsTable.addCell(c2);
 		}
@@ -521,8 +514,8 @@ public class NeedRatingOverTimeReportGenerator {
 	private void addSummaryOfNeedsDomainRow(PdfPTable summaryOfNeedsTable, int rowNum, List<String> domains, List<OcanNeedRatingOverTimeNeedBreakdownBean> ocans, OcanNeedRatingOverTimeNeedBreakdownBean lastBreakDownBean) {
 
 		PdfPCell c2 = new PdfPCell();
-		c2.setBackgroundColor(Color.BLUE);
-		c2.setPhrase(new Phrase(domains.get(rowNum),new Font(Font.HELVETICA,14,Font.BOLD,Color.WHITE)));
+		c2.setBackgroundColor(BaseColor.BLUE);
+		c2.setPhrase(new Phrase(domains.get(rowNum),new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.WHITE)));
 		summaryOfNeedsTable.addCell(c2);
 
 		if(lastBreakDownBean != null) {
@@ -534,23 +527,23 @@ public class NeedRatingOverTimeReportGenerator {
 				checkmark=true;
 			}
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			if(checkmark) {
-				c2.setPhrase(new Phrase("X",new Font(Font.HELVETICA,14,Font.BOLD,Color.WHITE)));
+				c2.setPhrase(new Phrase("X",new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.WHITE)));
 			}
 			summaryOfNeedsTable.addCell(c2);
 		}
 
 		if(ocans.size()>0 ){
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.GREEN);
-			c2.setPhrase(new Phrase(ocans.get(0).getNeeds().get(rowNum).getConsumerNeed(),new Font(Font.HELVETICA,14,(ocans.get(0).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(0).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?Color.RED:Color.BLACK))));
+			c2.setBackgroundColor(BaseColor.GREEN);
+			c2.setPhrase(new Phrase(ocans.get(0).getNeeds().get(rowNum).getConsumerNeed(),new Font(Font.FontFamily.HELVETICA,14,(ocans.get(0).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(0).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?BaseColor.RED:BaseColor.BLACK))));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.LIGHT_GRAY);
-			c2.setPhrase(new Phrase(ocans.get(0).getNeeds().get(rowNum).getStaffNeed(),new Font(Font.HELVETICA,14,(ocans.get(0).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(0).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?Color.RED:Color.BLACK))));
+			c2.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			c2.setPhrase(new Phrase(ocans.get(0).getNeeds().get(rowNum).getStaffNeed(),new Font(Font.FontFamily.HELVETICA,14,(ocans.get(0).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(0).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?BaseColor.RED:BaseColor.BLACK))));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
@@ -563,20 +556,20 @@ public class NeedRatingOverTimeReportGenerator {
 				checkmark=true;
 			}
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			if(checkmark) {
-				c2.setPhrase(new Phrase("X",new Font(Font.HELVETICA,14,Font.BOLD,Color.WHITE)));
+				c2.setPhrase(new Phrase("X",new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.WHITE)));
 			}
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.GREEN);
-			c2.setPhrase(new Phrase(ocans.get(1).getNeeds().get(rowNum).getConsumerNeed(),new Font(Font.HELVETICA,14,(ocans.get(1).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(1).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?Color.RED:Color.BLACK))));
+			c2.setBackgroundColor(BaseColor.GREEN);
+			c2.setPhrase(new Phrase(ocans.get(1).getNeeds().get(rowNum).getConsumerNeed(),new Font(Font.FontFamily.HELVETICA,14,(ocans.get(1).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(1).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?BaseColor.RED:BaseColor.BLACK))));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.LIGHT_GRAY);
-			c2.setPhrase(new Phrase(ocans.get(1).getNeeds().get(rowNum).getStaffNeed(),new Font(Font.HELVETICA,14,(ocans.get(1).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(1).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?Color.RED:Color.BLACK))));
+			c2.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			c2.setPhrase(new Phrase(ocans.get(1).getNeeds().get(rowNum).getStaffNeed(),new Font(Font.FontFamily.HELVETICA,14,(ocans.get(1).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(1).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?BaseColor.RED:BaseColor.BLACK))));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
@@ -589,20 +582,20 @@ public class NeedRatingOverTimeReportGenerator {
 				checkmark=true;
 			}
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.BLACK);
+			c2.setBackgroundColor(BaseColor.BLACK);
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			if(checkmark) {
-				c2.setPhrase(new Phrase("X",new Font(Font.HELVETICA,14,Font.BOLD,Color.WHITE)));
+				c2.setPhrase(new Phrase("X",new Font(Font.FontFamily.HELVETICA,14,Font.BOLD,BaseColor.WHITE)));
 			}
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.GREEN);
-			c2.setPhrase(new Phrase(ocans.get(2).getNeeds().get(rowNum).getConsumerNeed(),new Font(Font.HELVETICA,14,(ocans.get(2).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(2).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?Color.RED:Color.BLACK))));
+			c2.setBackgroundColor(BaseColor.GREEN);
+			c2.setPhrase(new Phrase(ocans.get(2).getNeeds().get(rowNum).getConsumerNeed(),new Font(Font.FontFamily.HELVETICA,14,(ocans.get(2).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(2).getNeeds().get(rowNum).getConsumerNeed().equals("Unmet Need")?BaseColor.RED:BaseColor.BLACK))));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 			c2 = new PdfPCell();
-			c2.setBackgroundColor(Color.LIGHT_GRAY);
-			c2.setPhrase(new Phrase(ocans.get(2).getNeeds().get(rowNum).getStaffNeed(),new Font(Font.HELVETICA,14,(ocans.get(2).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(2).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?Color.RED:Color.BLACK))));
+			c2.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			c2.setPhrase(new Phrase(ocans.get(2).getNeeds().get(rowNum).getStaffNeed(),new Font(Font.FontFamily.HELVETICA,14,(ocans.get(2).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?Font.BOLD:Font.NORMAL),(ocans.get(2).getNeeds().get(rowNum).getStaffNeed().equals("Unmet Need")?BaseColor.RED:BaseColor.BLACK))));
 			c2.setHorizontalAlignment(Element.ALIGN_CENTER);
 			summaryOfNeedsTable.addCell(c2);
 		}
@@ -643,7 +636,6 @@ public class NeedRatingOverTimeReportGenerator {
 	            false                     // urls
 	        );
 
-		chart.setBackgroundPaint(Color.LIGHT_GRAY);
 
 		GroupedStackedBarRenderer renderer = new GroupedStackedBarRenderer();
 		KeyToGroupMap map = new KeyToGroupMap("G1");
@@ -663,12 +655,12 @@ public class NeedRatingOverTimeReportGenerator {
 		renderer.setMaximumBarWidth(15);
 
 
-		Paint p1 = Color.GREEN;
+		Paint p1 = (Paint) BaseColor.GREEN;
 		renderer.setSeriesPaint(0, p1);
 		renderer.setSeriesPaint(4, p1);
 		renderer.setSeriesPaint(7, p1);
 
-		Paint p2 = Color.BLUE;
+		Paint p2 = (Paint) BaseColor.BLUE;
 		renderer.setSeriesPaint(1, p2);
 		renderer.setSeriesPaint(5, p2);
 		renderer.setSeriesPaint(8, p2);
@@ -680,7 +672,7 @@ public class NeedRatingOverTimeReportGenerator {
 		 renderer.setSeriesPaint(9, p3);
 
 
-		 Paint p4 = Color.ORANGE;
+		 Paint p4 = (Paint) BaseColor.ORANGE;
 		 renderer.setSeriesPaint(3, p4);
 		 renderer.setSeriesPaint(7, p4);
 		 renderer.setSeriesPaint(10, p4);
@@ -702,10 +694,10 @@ public class NeedRatingOverTimeReportGenerator {
 		 plot.setRenderer(renderer);
 
 		 LegendItemCollection result = new LegendItemCollection();
-		 LegendItem item1 = new LegendItem("Unknown",Color.GREEN);
-		 LegendItem item2 = new LegendItem("No Needs",Color.BLUE);
+		 LegendItem item1 = new LegendItem("Unknown", (Paint) BaseColor.GREEN);
+		 LegendItem item2 = new LegendItem("No Needs", (Paint) BaseColor.BLUE);
 		 LegendItem item3 = new LegendItem("Met Needs",new Color(255,255,153));
-		 LegendItem item4 = new LegendItem("Unmet Needs",Color.ORANGE);
+		 LegendItem item4 = new LegendItem("Unmet Needs", (Paint) BaseColor.ORANGE);
 
 		  result.add(item1);
 		  result.add(item2);
@@ -713,8 +705,8 @@ public class NeedRatingOverTimeReportGenerator {
 		  result.add(item4);
 
 		plot.setFixedLegendItems(result);
-		plot.setBackgroundPaint(Color.lightGray);
-        plot.setRangeGridlinePaint(Color.black);
+		plot.setBackgroundPaint((Paint) BaseColor.LIGHT_GRAY);
+        plot.setRangeGridlinePaint((Paint) BaseColor.BLACK);
 
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setRange(new Range(0,24),true,false);

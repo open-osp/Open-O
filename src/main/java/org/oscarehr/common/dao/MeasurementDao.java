@@ -36,6 +36,7 @@ import javax.persistence.Query;
 
 import org.oscarehr.common.NativeSql;
 import org.oscarehr.common.model.Measurement;
+import org.oscarehr.common.model.MeasurementType;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -145,6 +146,13 @@ public class MeasurementDao extends AbstractDao<Measurement> {
 
 		List<Measurement> results = query.getResultList();
 
+		return results;
+	}
+	public List<Measurement> findByAppointmentNo2(Integer appointmentNo) {
+		String sqlCommand = "select x from Measurement x where x.appointmentNo = ?1 ORDER BY x.type, x.dateObserved ASC";
+		Query query = entityManager.createQuery(sqlCommand);
+		query.setParameter(1, appointmentNo);
+		List<Measurement> results = query.getResultList();
 		return results;
 	}
 
@@ -457,9 +465,9 @@ public class MeasurementDao extends AbstractDao<Measurement> {
 		return getSingleResultOrNull(query);
 	}
 
-	public List<Object[]> findMeasurementsAndTypes(Integer demoNo) {
-		String sql = "FROM Measurement m, MeasurementType mt " + "WHERE m.demographicId = :demoNo " + "AND m.type = mt.type " + "GROUP BY mt.type " + "ORDER BY m.type ASC";
-		Query query = entityManager.createQuery(sql);
+	public List<MeasurementType> findMeasurementsTypes(Integer demoNo) {
+		String sql = "select mt.* from measurementType AS mt LEFT JOIN measurementType AS mt2 on (mt.type = mt2.type AND mt.id < mt2.id) LEFT JOIN measurements as m ON m.type = mt.type WHERE mt2.id is null and m.demographicNo = :demoNo group by mt.type order by mt.id DESC";
+		Query query = entityManager.createNativeQuery(sql, MeasurementType.class);
 		query.setParameter("demoNo", demoNo);
 		return query.getResultList();
 	}
@@ -729,7 +737,30 @@ public class MeasurementDao extends AbstractDao<Measurement> {
 		List<Measurement> results = query.getResultList();
 		return results;
 	}
-	
+
+	public List<Measurement> findByDemographicLastUpdateAfterDate(Integer demographicId, Date updatedAfterThisDateExclusive) {
+		String sql = "select x from "+modelClass.getSimpleName()+" x where x.demographicId=:demographicId and x.createDate>:updatedAfterThisDateExclusive order by x.createDate";
+
+		Query query = entityManager.createQuery(sql);
+		query.setParameter("demographicId", demographicId);
+		query.setParameter("updatedAfterThisDateExclusive", updatedAfterThisDateExclusive);
+
+		@SuppressWarnings("unchecked")
+		List<Measurement> results = query.getResultList();
+		return results;
+	}
+
+	@NativeSql("measurements")
+	public List<Measurement> findLatestByDemographicObservedAfterDate(Integer demographicId, Date observedAfterDateExclusive) {
+		String sql = "SELECT x.* FROM measurements x LEFT JOIN measurements y ON x.dateObserved < y.dateObserved AND x.type = y.type AND x.demographicNo = y.demographicNo WHERE y.id IS NULL AND x.demographicNo = :demographicId AND x.dateObserved > :dateObserved GROUP BY x.type, x.dateObserved ORDER BY x.dateObserved DESC";
+		Query query = entityManager.createNativeQuery(sql, Measurement.class);
+		query.setParameter("demographicId", demographicId);
+		query.setParameter("dateObserved", observedAfterDateExclusive);
+		@SuppressWarnings("unchecked")
+		List<Measurement> results = query.getResultList();
+		return results;
+	}
+
 	@NativeSql("measurements")
 	public List<Integer> findNewMeasurementsSinceDemoKey(String keyName) {
 		
@@ -739,5 +770,15 @@ public class MeasurementDao extends AbstractDao<Measurement> {
 		
 		return query.getResultList();
 	}
+	@SuppressWarnings("unchecked")
+	public List<Measurement> findMeasurementByTypeAndDate(Integer demoNo, String type, Date start, Date end){
+		String sqlCommand = "select x from Measurement x where  x.demographicId = ?1 and  x.type = ?2 and x.dateObserved >= ?3 and x.dateObserved <= ?4 order by x.dateObserved DESC";
 
+		Query query = entityManager.createQuery(sqlCommand);
+		query.setParameter(1, demoNo);
+		query.setParameter(2, type);
+		query.setParameter(3, start);
+		query.setParameter(4, end);
+		return query.getResultList();
+	}
 }

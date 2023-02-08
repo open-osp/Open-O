@@ -19,7 +19,7 @@ import java.util.HashSet;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.EFormDataDao;
 import org.oscarehr.common.model.EFormData;
 import org.oscarehr.util.MiscUtils;
@@ -28,8 +28,14 @@ import org.oscarehr.util.WKHtmlToPdfUtils;
 
 import oscar.OscarProperties;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 
+/**
+ * 
+ * @Deprecated
+ * use the fax module.
+ */
+@Deprecated
 public final class FaxAction {
 
 	private static final Logger logger = MiscUtils.getLogger();
