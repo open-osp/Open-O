@@ -279,6 +279,7 @@ function EnablePrint(button) {
 function printImmOnly() { 
 	 document.printFrm.immunizationOnly.value = "true";
 	 document.printFrm.submit();
+	 document.printFrm.immunizationOnly.value = "false";
 }
 
 function showImmunizationOnlyPrintButton() {

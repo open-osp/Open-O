@@ -155,7 +155,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 		UserProperty uProp = (UserProperty)request.getAttribute(UserProperty.STALE_NOTEDATE);
 
 		Date dStaleDate = null;
-		int numToDisplay = 5;
+		int numToDisplay = Integer.MAX_VALUE;
 		int numDisplayed = 0;
 		Calendar cal = Calendar.getInstance();
 		if (uProp != null)

@@ -405,6 +405,7 @@ var notesIncrement = 20;
 var notesRetrieveOk = false;
 var notesCurrentTop = null;
 var notesScrollCheckInterval = null;
+const MAXNOTES = Number.MAX_SAFE_INTEGER;
 
 function notesIncrementAndLoadMore() {
 	if (notesRetrieveOk && $("encMainDiv").scrollTop == 0) {				
@@ -412,9 +413,21 @@ function notesIncrementAndLoadMore() {
 			notesOffset += notesIncrement;
 			notesRetrieveOk = false;
 			notesCurrentTop = $("encMainDiv").children[0].id;
-			notesLoader(notesOffset, notesIncrement, demographicNo);
+			if (notesOffset < MAXNOTES) {
+				notesLoader(notesOffset, notesIncrement, demographicNo);
+			}
 		}
 	}
+}
+
+function notesLoadAll() {
+    notesOffset += notesIncrement;
+    notesRetrieveOk = false;
+    notesCurrentTop = $("encMainDiv").children[0].id;
+    if (notesOffset < MAXNOTES) {
+        notesLoader(notesOffset, MAXNOTES, demographicNo);
+    }
+    notesOffset += MAXNOTES;
 }
 
 /**
@@ -1327,7 +1340,7 @@ function largeNote(note) {
 function resetView(frm, error, e) {
     var parent = Event.element(e).parentNode.id;
     var nId = parent.substr(1);
-    var img = "<img id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
+    var img = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
 
 
     Element.remove(Event.element(e).id);
@@ -1508,7 +1521,7 @@ function changeToView(id) {
        // }
 
         var printImg = "print" + nId;
-        var img = "<img title='Minimize' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
+        var img = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
         var printimg = "<img title='Print' id='" + printImg + "' alt='Toggle Print Note' onclick='togglePrint(" + nId + ", event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/printer.png'>";
         var input = "<div id='txt" + nId + "'>" + tmp + "<\/div>";
 
@@ -1577,7 +1590,7 @@ function completeChangeToView(note,newId) {
 
     var imgId = "quitImg" + newId;
     var printId = "print" + newId;
-    var img = "<img title='Minimize' id='" + imgId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'/>";
+    var img = "<img title='Minimize Display' id='" + imgId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'/>";
     var printimg = "<img title='Print' id='" + printId + "' alt='Toggle Print Note' onclick='togglePrint(" + newId + ", event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/printer.png'>";
     if( $(printId) != null ) {
         Element.remove(printId);
@@ -1687,7 +1700,7 @@ function xpandViewById(id) {
     var content = "c" + nId;
     var date = "d" + nId;
 
-    var imgTag = "<img id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
+    var imgTag = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
 
 
     Element.remove(img);
@@ -1728,11 +1741,17 @@ function fetchNote(nId) {
 
 }
 
-function toggleFullViewForAll(f) {
+function toggleFullViewForAll() {
 	jQuery('[name="fullViewTrigger"]').each(function(){
 		$(this).click();
 	});
 	jQuery('[name="expandViewTrigger"]').each(function(){
+		$(this).click();
+	});
+}
+
+function toggleCollapseViewForAll() {
+	jQuery('[title="Minimize Display"]').each(function(){
 		$(this).click();
 	});
 }
@@ -1778,7 +1797,7 @@ function fullViewById(id) {
                     }
                );
 
-    var imgTag = "<img id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
+    var imgTag = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
 
 
     Element.remove(img);
@@ -1793,7 +1812,7 @@ function resetEdit(e) {
     var txt = Event.element(e).id;
     var nId = txt.substr(1);
 
-    var img = "<img id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
+    var img = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
     var divHeight = 14;
     var divSize = "size";
 
@@ -3774,7 +3793,7 @@ function autoCompleteShowMenuCPP(element, update) {
                    // }
 
                     var printImg = "print" + nId;
-                    var img = "<img title='Minimize' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
+                    var img = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
                     var printimg = "<img title='Print' id='" + printImg + "' alt='Toggle Print Note' onclick='togglePrint(" + nId + ", event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/printer.png'>";
                     var input = "<div id='txt" + nId + "'>" + tmp + "<\/div>";
 

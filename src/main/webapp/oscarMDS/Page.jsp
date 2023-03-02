@@ -417,7 +417,7 @@ String curUser_no = (String) session.getAttribute("user");
 			});
 		
 			jQuery("#summaryView").tablesorter({
-					sortList:[],
+					sortList:[4,1],
 					headers:{
 						4:{
 							sorter:'dateOfTest'

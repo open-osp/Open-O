@@ -149,6 +149,7 @@ String endDate = (String) request.getAttribute("endDate");
                                 <% if (demographicNo == null) { %>
                                     <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnSearch"/>" onClick="window.location='${pageContext.servletContext.contextPath}/oscarMDS/Search.jsp?providerNo=<%= providerNo %>'" />
                                 <% } %>
+                                <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnLoadAll"/>" onClick="showAllInbox()" />
                                 <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnClose"/>" onClick="wrapUp()" />
                       		</td>
 
@@ -459,7 +460,13 @@ String endDate = (String) request.getAttribute("endDate");
 			}
 	 		handleScroll(scroller);
 		}
-	
+
+		function showAllInbox() {
+			page = 1;
+			pageSize = 1000;
+			updateListView();
+		}
+
 		function updateListView() {
 			var query = getQuery();
 			if (page == 1) {
