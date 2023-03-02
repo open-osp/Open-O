@@ -26,10 +26,10 @@ package oscar.login;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
-
 import org.oscarehr.common.service.AcceptableUseAgreementManager;
 import org.oscarehr.util.MiscUtils;
 
+import org.oscarehr.util.SSOUtility;
 import oscar.OscarProperties;
 
 public class LoginResourceBean {
@@ -43,6 +43,19 @@ public class LoginResourceBean {
 	private String tabName;
 	private String buildTag;
 	private String econsultURL;
+	private String ssoLoginUrl;
+	private boolean ssoEnabled;
+
+	public boolean isSsoEnabled() {
+		return ssoEnabled;
+	}
+
+	public void setSsoEnabled(boolean ssoEnabled) {
+		this.ssoEnabled = ssoEnabled;
+	}
+
+	private final String ssoCallbackUrl = "#!" + "/ssoLogin.do" + "?loginStart=";
+
 	private AcceptableUseAgreementManager acceptableUseAgreementManager;
 
 	public LoginResourceBean()
@@ -98,14 +111,16 @@ public class LoginResourceBean {
 		}
 		
 		this.buildTag = OscarProperties.getBuildDate() + " " + OscarProperties.getBuildTag();
-		this.econsultURL = oscarProperties.getProperty("backendEconsultUrl");	
-		
-		if(oscarProperties.getBooleanProperty("oneid.enabled", "true")) {
-			this.econsultURL = this.econsultURL + "/SAML2/login?oscarReturnURL=" + "#!" + "/ssoLogin.do" + "?loginStart=";
-		}
+
+		/*
+		 * Not even sure that Ontario eConsult is currently an active service.
+		 * Adjustments need to be made here if eConsult is needed.
+		 */
+		this.econsultURL = oscarProperties.getProperty("backendEconsultUrl");
 		
 		this.acceptableUseAgreementManager = new AcceptableUseAgreementManager();
-	
+
+		setSsoEnabled(SSOUtility.isSSOEnabled());
 	}
 
 	public String getSupportLink() {
@@ -188,4 +203,11 @@ public class LoginResourceBean {
 		this.tabName = tabName;
 	}
 
+	public String getSsoLoginUrl() {
+		return ssoLoginUrl;
+	}
+
+	public void setSsoLoginUrl(String ssoLoginUrl) {
+		this.ssoLoginUrl = ssoLoginUrl;
+	}
 }

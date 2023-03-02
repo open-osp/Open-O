@@ -133,6 +133,20 @@ public final class LoginCheckLogin {
 	}
 
 	/**
+	 * Overload method for authentication without PIN code.
+	 * It does not matter if the PIN code is set as required in
+	 * the provider profile.
+	 *
+	 * @param user_name
+	 * @param password
+	 * @param ip
+	 * @return
+	 */
+	public String[] auth(String user_name, String password, String ip) {
+		return auth(user_name, password, null, ip);
+	}
+
+	/**
 	 * only works after you call auth successfully
 	 * 
 	 * @return the Security object

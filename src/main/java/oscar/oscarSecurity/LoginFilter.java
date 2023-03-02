@@ -57,7 +57,6 @@ public class LoginFilter implements Filter {
 		"/lab/CMLlabUpload.do", 
 		"/lab/newLabUpload.do", 
 		"/lab/CA/ON/uploadComplete.jsp",
-		"/PopulationReport.do",
 		"/login.do",
 		"/ssoLogin.do",
 		"/econsultSSOLogin.do",
@@ -74,12 +73,12 @@ public class LoginFilter implements Filter {
 		"/EFormSignatureViewForPdfGenerationServlet",
 		"/EFormImageViewForPdfGenerationServlet",
 		"/ProxyEformNotification",
-		"/js/jquery-1.7.1.min.js",
 		"/js/bootstap",
 		"/css/bootstrap",
 		"/css/Roboto.css",
 		"/loginResource",
-		"/css/font/Roboto"
+		"/css/font/Roboto",
+		"/csrfguard"
 	};
 	
 	private static final String[] EXEMPT_URLS_FOR_REQUEST_TIMEOUT = {

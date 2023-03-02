@@ -631,13 +631,21 @@
 	</form-beans>
 
 	<global-forwards>
-		<forward name="Logout" path="/logout.jsp" redirect="true" />
-		<forward name="SessionTimeOut" path="/sessiontimeout.jsp" redirect="true" />
-		<forward name="failure" path="/failure.jsp" redirect="true" />
-		<forward name="auth" path="/survey/auth.jsp" />
+		<forward name="/Logout.jsp" path="/logout" redirect="true" />
+		<forward name="/logout.jsp" path="/logout" redirect="true" />
+		<forward name="SessionTimeOut" path="/logout?method=sessionTimeout" redirect="true" />
+		<forward name="sessiontimeout.jsp" path="/logout?method=sessionTimeout" redirect="true" />
+		<forward name="failure" path="/logout?method=failure" redirect="true" />
+		<forward name="logoutSSO.jsp" path="/logout?method=ssoLogout" redirect="true" />
+		<forward name="loginfailed.jsp" path="/logout?method=failure" />
 	</global-forwards>
 
 	<action-mappings>
+
+		<action path="/logout" type="oscar.login.LogoutAction" scope="request" validate="false" parameter="method">
+			<forward name="success" path="/index.jsp" />
+			<forward name="logoutsso" path="/ssoLogin.do?method=ssoLogout" />
+		</action>
 	
 		<action path="/lookupListManagerAction" type="org.oscarehr.admin.lookUpLists.LookupListManagerAction" 
 			scope="request" validate="false" parameter="method">
@@ -808,15 +816,12 @@
 			<forward name="error" path="/loginfailed.jsp" />
 			<forward name="caisiPMM" path="/PMmodule/ProviderInfo.do" />
 			<forward name="shelterSelection" path="/shelterSelection.do" redirect="true" />
-			<forward name="LoginTest" path="/login/LoginTest.jsp" redirect="true" />
-			
 			<forward name="forcepasswordreset" path="/forcepasswordreset.jsp" />
 			<forward name="programLocation" path="/location.jsp" redirect="true"/>
-			<forward name="cobalt" path="/web/" redirect="true" />
-			
+			<forward name="ssoLogin" path="/ssoLogin.do" redirect="true" />
 		</action>
 		
-		<action input="/login.jsp" name="loginForm" path="/ssoLogin" scope="request" type="oscar.login.SSOLoginAction" validate="true" parameter="ssoLogin">
+		<action input="/login.jsp" name="loginForm" path="/ssoLogin" scope="request" type="oscar.login.SSOLoginAction" validate="true" parameter="method">
 			<forward name="provider" path="/provider/providercontrol.jsp" redirect="true" />
 			<forward name="failure" path="/logout.jsp?login=failed" />
 			<forward name="ssoLoginError" path="/index.jsp" />
@@ -824,9 +829,9 @@
 			<forward name="caisiPMM" path="/PMmodule/ProviderInfo.do" />
 			<forward name="shelterSelection" path="/shelterSelection.do" redirect="true" />
 			<forward name="LoginTest" path="/login/LoginTest.jsp" redirect="true" />
-			
 			<forward name="programLocation" path="/location.jsp" redirect="true"/>
 			<forward name="cobalt" path="/web/" redirect="true" />
+			<forward name="logout" path="/logout.jsp" redirect="true"/>
 		</action>
 		
 		<action input="/login.jsp" name="loginForm" path="/econsultSSOLogin" scope="request" type="oscar.login.SSOLoginAction" validate="true" parameter="econsultLogin">

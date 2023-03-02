@@ -36,6 +36,7 @@ import org.oscarehr.common.dao.SecurityDao;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.Security;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SSOUtility;
 import org.oscarehr.util.SpringUtils;
 import com.quatro.model.security.LdapSecurity;
 import org.owasp.encoder.Encode;
@@ -49,16 +50,18 @@ public final class LoginCheckLoginBean {
 
 	private String username = "";
 	private String password = "";
-	private String pin = "";
+	private String pin;
 	private String ip = "";
 	private String ssoKey = "";
 
-	private String userpassword = null; // your password in the table
+	private String userpassword; // your password in the table
 
-	private String firstname = null;
-	private String lastname = null;
-	private String profession = null;
-	private String rolename = null;
+	private String firstname;
+	private String lastname;
+	private String profession;
+	private String rolename;
+
+	private String email;
 
 	private Security security = null;
 
@@ -83,7 +86,19 @@ public final class LoginCheckLoginBean {
 		// check pin if needed
 
 		String sPin = pin;
-		if (oscar.OscarProperties.getInstance().isPINEncripted()) sPin = oscar.Misc.encryptPIN(sPin);
+
+		if (sPin != null && oscar.OscarProperties.getInstance().isPINEncripted()) sPin = oscar.Misc.encryptPIN(sPin);
+
+		/*
+		 * Override PIN requirement when SSO is enabled
+		 * The pin parameter is set to null in the LoginCheckLogin bean and
+		 * is changed back to default empty after the pin requirement is disabled.
+		 */
+		if(sPin == null && SSOUtility.isSSOEnabled()) {
+			security.setBRemotelockset(0);
+			security.setBLocallockset(0);
+			sPin = "";
+		}
 
 		if (isWAN() && security.getBRemotelockset() != null && security.getBRemotelockset().intValue() == 1 && (!sPin.equals(security.getPin()) || pin.length() < 3)) {
 			return cleanNullObj(LOG_PRE + "Pin-remote needed: " + username);
@@ -94,6 +109,7 @@ public final class LoginCheckLoginBean {
 		if (security.getBExpireset() != null && security.getBExpireset().intValue() == 1 && (security.getDateExpiredate() == null || security.getDateExpiredate().before(new Date()))) {
 			return cleanNullObjExpire(LOG_PRE + "Expired: " + username);
 		}
+
 		String expired_days = "";
 		if (security.getBExpireset() != null && security.getBExpireset().intValue() == 1) {
 			// Give warning if the password will be expired in 10 days.
@@ -117,13 +133,14 @@ public final class LoginCheckLoginBean {
 		}
 
 		if (auth) { // login successfully
-			String[] strAuth = new String[6];
+			String[] strAuth = new String[7];
 			strAuth[0] = security.getProviderNo();
 			strAuth[1] = firstname;
 			strAuth[2] = lastname;
 			strAuth[3] = profession;
 			strAuth[4] = rolename;
 			strAuth[5] = expired_days;
+			strAuth[6] = email;
 			return strAuth;
 		} else { // login failed
 			return cleanNullObj(LOG_PRE + "password failed: " + username);
@@ -142,7 +159,7 @@ public final class LoginCheckLoginBean {
 			strAuth[3] = profession;
 			strAuth[4] = rolename;
 			strAuth[5] = expired_days;
-			strAuth[6] = security.getDelagateOneIdEmail();
+			strAuth[6] = email;
 			
 		}
 		else {
@@ -189,6 +206,7 @@ public final class LoginCheckLoginBean {
 			firstname = provider.getFirstName();
 			lastname = provider.getLastName();
 			profession = provider.getProviderType();
+			email = provider.getEmail();
 		}
 
 		// retrieve the oscar roles for this Provider as a comma separated list
@@ -223,7 +241,12 @@ public final class LoginCheckLoginBean {
 			ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
 			Provider provider = providerDao.getProvider(securityRecord.getProviderNo());
 
-			if (provider != null) {
+			if (provider == null || (provider.getStatus() != null && provider.getStatus().equals("0"))) {
+				String error = "Provider account is missing or inactive. Provider number: " + securityRecord.getProviderNo();
+				logger.error(error);
+				LogAction.addLog(securityRecord.getProviderNo(), "login", "failed", "inactive");
+				return null;
+			} else {
 				firstname = provider.getFirstName();
 				lastname = provider.getLastName();
 			}
@@ -260,7 +283,9 @@ public final class LoginCheckLoginBean {
 	}
 
 	public void setPin(String pin1) {
-		this.pin = pin1.replace(' ', '\b');
+		if(pin1 != null) {
+			this.pin = pin1.replace(' ', '\b');
+		}
 	}
 
 	public void setIp(String ip1) {

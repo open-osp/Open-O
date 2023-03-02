@@ -23,31 +23,4 @@
     Ontario, Canada
 
 --%>
-
-<%@page import="oscar.log.*"%>
-<%
-//  if(oscar.oscarSecurity.CRHelper.isCRFrameworkEnabled()) net.sf.cookierevolver.CRFactory.getManager().recordLogout(request);
-//
-  if(session != null) {
-    Object user = session.getAttribute("user");
-    if (user != null) {
-      //HashMap hash=(HashMap)application.getAttribute("monitor");
-      session.invalidate();
-      request.getSession();
-      String ip = request.getRemoteAddr();
-	  LogAction.addLog((String)user, LogConst.LOGOUT, LogConst.CON_LOGIN, "", ip);
-    }
-  }
-  String param = "";
-  if(request.getParameter("login")!=null ) {
-	  param = "?login="+request.getParameter("login") ;
-	  if (request.getParameter("nameId") != null) {
-		  param = param + "&nameId=" + request.getParameter("nameId");  
-	  }
-  }
-  else if (request.getParameter("errorMessage") != null) {
-	  param = "?errorMessage=" + request.getParameter("errorMessage");
-  }
-
-  response.sendRedirect("index.jsp"+param);
-%>
+<jsp:forward page="/logout.do"></jsp:forward>

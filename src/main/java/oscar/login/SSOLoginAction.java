@@ -22,15 +22,10 @@
  * Ontario, Canada
  */
 
-
 package oscar.login;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -40,6 +35,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.onelogin.saml2.Auth;
+import com.onelogin.saml2.exception.Error;
+import com.onelogin.saml2.exception.SettingsException;
+import com.onelogin.saml2.settings.Saml2Settings;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
@@ -48,39 +47,25 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionRedirect;
-import org.apache.struts.actions.MappingDispatchAction;
+import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.PMmodule.service.ProviderManager;
-import org.oscarehr.PMmodule.web.OcanForm;
 import org.oscarehr.common.dao.FacilityDao;
 import org.oscarehr.common.dao.ProviderPreferenceDao;
 import org.oscarehr.common.dao.SecurityDao;
-import org.oscarehr.common.dao.ServiceRequestTokenDao;
 import org.oscarehr.common.dao.UserPropertyDAO;
-import org.oscarehr.common.model.Facility;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.ProviderPreference;
 import org.oscarehr.common.model.Security;
-import org.oscarehr.common.model.ServiceRequestToken;
-import org.oscarehr.common.model.UserProperty;
-import org.oscarehr.decisionSupport.service.DSService;
 import org.oscarehr.managers.AppManager;
-import org.oscarehr.phr.util.MyOscarUtils;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.LoggedInUserFilter;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SessionConstants;
-import org.oscarehr.util.SpringUtils;
+import org.oscarehr.managers.SsoAuthenticationManager;
+import org.oscarehr.util.*;
 
 import net.sf.json.JSONObject;
 import oscar.OscarProperties;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
-import oscar.util.AlertTimer;
-import oscar.util.CBIUtil;
 import oscar.util.ParameterActionForward;
 
-public final class SSOLoginAction extends MappingDispatchAction {
+public final class SSOLoginAction extends DispatchAction {
 	
 	/**
 	 * This variable is only intended to be used by this class and the jsp which sets the selected facility.
@@ -90,7 +75,8 @@ public final class SSOLoginAction extends MappingDispatchAction {
 
     private static final Logger logger = MiscUtils.getLogger();
     private static final String LOG_PRE = "Login!@#$: ";
-    
+
+	private SsoAuthenticationManager ssoAuthenticationManager = SpringUtils.getBean(SsoAuthenticationManager.class);
     
     private ProviderManager providerManager = (ProviderManager) SpringUtils.getBean("providerManager");
     private AppManager appManager = SpringUtils.getBean(AppManager.class);
@@ -110,6 +96,16 @@ public final class SSOLoginAction extends MappingDispatchAction {
     //Declares providerInformation String Array
 	String[] providerInformation;
 	String providerNumber = "";
+
+	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+
+		String relayState = request.getParameter("RelayState");
+		if (relayState != null) {
+			logger.error("Relay state parameter sent to unspecified. Is the relay missing method parameters? " + relayState);
+		}
+
+		return authenticationRedirect(mapping, form, request, response);
+	}
 	
     public ActionForward econsultLogin(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)  throws IOException {
         boolean ajaxResponse = request.getParameter("ajaxResponse") != null ? Boolean.valueOf(request.getParameter("ajaxResponse")) : false;
@@ -123,7 +119,7 @@ public final class SSOLoginAction extends MappingDispatchAction {
         oneIdKey = request.getParameter("nameId");
         oneIdEmail = request.getParameter("email");
         requestStartTime = request.getParameter("ts");
- String encryptedOneIdToken = request.getParameter("encryptedOneIdToken");
+        String encryptedOneIdToken = request.getParameter("encryptedOneIdToken");
         
         String signature = request.getParameter("signature");
         String ts = request.getParameter("ts");
@@ -271,320 +267,177 @@ public final class SSOLoginAction extends MappingDispatchAction {
         }
         return actionForward;
     }
-    
-    public ActionForward ssoLogin(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException {
-    	boolean ajaxResponse = request.getParameter("ajaxResponse") != null ? Boolean.valueOf(request.getParameter("ajaxResponse")) : false;
-    	//Gets the IP address
-    	String ip = request.getRemoteAddr();
-    	//Gets the isMobileOptimized attribute
-    	Boolean isMobileOptimized = request.getSession().getAttribute("mobileOptimized") != null;
-    	String destination = "failure";
-    	//Declares providerInformation String Array
-    	String[] providerInformation;
-    	String providerNumber = "";
-    	
-    	//Gets the ssoKey parameter
-    	oneIdKey = request.getParameter("nameId");
-    	oneIdEmail = request.getParameter("email");
-        requestStartTime = request.getParameter("ts");
-        String encryptedOneIdToken = request.getParameter("encryptedOneIdToken");
-        
-        String signature = request.getParameter("signature");
-        String ts = request.getParameter("ts");
-        
-        if(!StringUtils.isEmpty(signature)) {
-        	logger.info("Found signature " + signature);
-        	try {
-        		Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-        		SecretKeySpec secret_key = new SecretKeySpec(OscarProperties.getInstance().getProperty("oneid.encryptionKey").getBytes("UTF-8"), "HmacSHA256");
-        		sha256_HMAC.init(secret_key);
-        		String ourSig = Hex.encodeHexString(sha256_HMAC.doFinal((oneIdKey + oneIdEmail + encryptedOneIdToken + ts).getBytes("UTF-8")));
-        		if(!ourSig.equals(signature)) {
-        			logger.warn("SSO Login: invalid HMAC signature");
-                	ActionRedirect redirect = new ActionRedirect(mapping.findForward("ssoLoginError"));
-                    redirect.addParameter("errorMessage", "Invalid signature found");
-                    return redirect;
-        		}
-        	}catch(Exception e) {
-        		MiscUtils.getLogger().error("Error",e);
-        	}
-        	
-        } else {
-        	logger.warn("SSO Login: expected HMAC signature");
-        	ActionRedirect redirect = new ActionRedirect(mapping.findForward("ssoLoginError"));
-            redirect.addParameter("errorMessage", "No signature found");
-            return redirect;
-        }
-        
-        String oneIdToken = null;
-        if(!StringUtils.isEmpty(encryptedOneIdToken)) {
-        	oneIdToken = decrypt(OscarProperties.getInstance().getProperty("oneid.encryptionKey"),encryptedOneIdToken);
-        	logger.info("token from encryption is " + oneIdToken);	
-        } else {
-        	logger.warn("SSO Login: expected an encrypted token");
-        	ActionRedirect redirect = new ActionRedirect(mapping.findForward("ssoLoginError"));
-            redirect.addParameter("errorMessage", "No token found");
-            return redirect;
-        }
-        
-        Boolean valid = isSessionValid();
 
-        if (!valid) {
-            ActionRedirect redirect = new ActionRedirect(mapping.findForward("ssoLoginError"));
-            redirect.addParameter("errorMessage", "The session has timed out");
-            return redirect;
-        }
+	public ActionForward ssoLogout(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+		List<String> errors = Collections.emptyList();
+		try {
+			Auth auth = new Auth(request, response);
+			auth.processSLO();
+			errors = auth.getErrors();
+			if (errors.isEmpty()) {
+				logger.info("Successfully logged out");
+			} else {
+				for(String error : errors) {
+					logger.error(error);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Exception during logout. Errors:  " + errors, e);
+		}
+		return mapping.findForward("logout");
+	}
 
-        if(oneIdToken == null) {
-        	ActionRedirect redirect = new ActionRedirect(mapping.findForward("ssoLoginError"));
-            redirect.addParameter("errorMessage", "No valid token found");
-            return redirect;
-        }
-        
-    	//Creates a new LoginCheckLogin object
-        LoginCheckLogin loginCheck = new LoginCheckLogin();
-        
+	public ActionForward ssoLogin(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+
+//		String relayState = request.getParameter("RelayState");
+
+		String user_email = request.getParameter("user_email");
+		String context = request.getRequestURL().toString();
+		String destination = "ssoLoginError";
+		List<String> errors = Collections.emptyList();
+		Auth auth = null;
+		String contextPath = request.getContextPath();
+		String ipAddress = request.getRemoteAddr();
+
+		logger.debug("Context path validated: " + contextPath);
+
+		try {
+			Saml2Settings saml2Settings = ssoAuthenticationManager.buildAuthenticationRequestSettings(user_email, context);
+			auth = new Auth(saml2Settings, request, response);
+			auth.processResponse();
+		} catch (IOException e) {
+			logger.error("Found IOException ", e);
+		} catch (SettingsException e) {
+			logger.error("Found exception error in settings: " + auth == null ? "" : auth.getSettings(), e);
+		} catch (Error e) {
+			logger.error("Found exception error in SAML response ", e);
+		} catch (Exception e) {
+			logger.error("Found unexpected exception", e);
+		}
+
+		if(auth != null ) {
+
+			errors = auth.getErrors();
+
+			if (! errors.isEmpty()) {
+				logger.error("Errors found while attempting to authenticate SSO response: " + StringUtils.join(errors, ", "));
+
+				String errorReason = auth.getLastErrorReason();
+				if (errorReason != null && !errorReason.isEmpty()) {
+					logger.error("Possible reason for last error " + auth.getLastErrorReason());
+				}
+
+			} else if( auth.isAuthenticated() ) {
+
+//				if (relayState != null) {
+//					//					&& relayState != ServletUtils.getSelfRoutedURLNoQuery(request)) {
+//
+//					// usually means redirect to auth request if this is not set??
+//					logger.error("SSO relay state is set: " + relayState);
+//
+//					if (attributes.isEmpty()) {
+//						logger.error("No authentication response attributes found: " + StringUtils.join(attributes, ", "));
+//						destination = "ssoLoginError";
+//					} else {
+//						Collection<String> keys = attributes.keySet();
+//						for (String name : keys) {
+//							logger.info(name);
+//							List<String> values = attributes.get(name);
+//							for (String value : values) {
+//								logger.info(" - " + value);
+//							}
+//						}
+//
+//
+//					}
+//				}
+
+				Map<String, Object> sessionData = ssoAuthenticationManager.checkSSOLogin(auth);
+
+				if (sessionData != null && ! sessionData.isEmpty()) {
+
+					HttpSession session = request.getSession(false);
+					if (session != null) {
+						if (request.getParameter("invalidate_session") != null && request.getParameter("invalidate_session").equals("false")) {
+							//don't invalidate in this case, it messes up authenticity of OAUTH
+							logger.debug("Session NOT invalidated: " + session.getId());
+						} else {
+							session.invalidate();
+							logger.debug("Session invalidated: " + session.getId());
+						}
+					}
+
+					// Create a new session for this user
+					HttpSession newSession = request.getSession(true);
+
+					logger.debug("New session created: " + session.getId());
+
+					newSession.setMaxInactiveInterval(7200);
+					newSession.setAttribute("oscar_context_path", contextPath);
+
+					// full site or mobile
+					newSession.setAttribute("fullSite","true");
+
+					for(String key : sessionData.keySet()) {
+						newSession.setAttribute(key, sessionData.get(key));
+					}
+
+					if(logger.isDebugEnabled()) {
+						logger.debug("New session validated: ");
+						Enumeration<String> sessionAttributeNames = newSession.getAttributeNames();
+						while (sessionAttributeNames.hasMoreElements()) {
+							String attributeName = sessionAttributeNames.nextElement();
+							logger.debug("=> " + attributeName + ":" + newSession.getAttribute(attributeName));
+						}
+						logger.debug("SSO login updated forwarding to provider schedule.");
+					}
+
+					destination = "provider";
+
+					LogAction.addLog((String) newSession.getAttribute("user"), LogConst.LOGIN, LogConst.CON_LOGIN, "", ipAddress);
+				} else {
+					logger.error("OSCAR SSO login failed");
+					// find out why.
+				}
+			} else {
+				logger.error("SSO authentication failed: " + StringUtils.join(errors, ", "));
+				logger.debug("SSO authentication settings: " + auth.getSettings());
+			}
+		} // end if Auth != null. An exception will be thrown before this point.
+
+		//TODO add something about ajax here.
+
+		ActionRedirect redirect = new ActionRedirect(mapping.findForward(destination));
+		// additional error message parameters here.
+		return redirect;
+	}
+
+    /**
+     * A basic Action method to redirect a user login to the SSO Identity Provider when
+     * SSO authentication is enabled in the oscar.properties file.
+     * This method sends an authentication request to the IDP and then handles the
+     * reply.
+     */
+    public ActionForward authenticationRedirect(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response){
+		String user_email = request.getParameter("user_email");
+		String context = request.getRequestURL().toString();
+	    String relayState = request.getParameter("RelayState");
+
+		if(relayState != null) {
+			logger.error("Should the relay state parameter be present while redirecting for SSO authentication? " + relayState);
+		}
+
         try {
-        	providerInformation = loginCheck.ssoAuth(oneIdKey);
-        }
-        catch (Exception e) {
-        	logger.error("An exception has occurred while trying to login with SSO", e);
-        	String newURL = mapping.findForward("error").getPath();
-        	if (e.getMessage() != null && e.getMessage().startsWith("java.lang.ClassNotFoundException")) {
-        		newURL = newURL + "?errormsg=Database driver " + e.getMessage().substring(e.getMessage().indexOf(':') + 2) + " not found";
-        	}
-        	else {
-        		newURL = newURL + "?errormsg=Database connection error: " + e.getMessage() + ".";
-        	}
-        	
-        	if (ajaxResponse) {
-        		JSONObject json = new JSONObject();
-        		json.put("success", false);
-        		json.put("error", "Database connect error" + e.getMessage() + ".");
-        		response.setContentType("text/x-json");
-        		json.write(response.getWriter());
-        		return null;
-        	}
-        	
-        	return(new ActionForward(newURL));
-        }
-    	
-        logger.error("providerInformation : " + Arrays.toString(providerInformation));
-        if (providerInformation != null && providerInformation.length != 1) {
-        	providerNumber = providerInformation[0];
-        	//Checks if the provider is inactive
-        	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
-        	Provider p = providerDao.getProvider(providerNumber);
-        	
-        	if(p == null || (p.getStatus() != null && p.getStatus().equals("0"))) {
-            	logger.info(LOG_PRE + " Inactive: " + providerNumber);           
-            	LogAction.addLog(providerNumber, "login", "failed", "inactive");
-            	
-                String newURL = mapping.findForward("error").getPath();
-                newURL = newURL + "?errormsg=Your account is inactive. Please contact your administrator to activate.";
-                return(new ActionForward(newURL));
-            }
-        	
-        	// invalidate the existing session
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-            	if(request.getParameter("invalidate_session") != null && request.getParameter("invalidate_session").equals("false")) {
-            		//don't invalidate in this case..messes up authenticity of OAUTH
-            	} else {
-            		session.invalidate();
-            	}
-            }
-            session = request.getSession(); // Create a new session for this user
-
-            logger.debug("Assigned new session for: " + providerInformation[0] + " : " + providerInformation[3] + " : " + providerInformation[4]);
-            LogAction.addLog(providerInformation[0], LogConst.LOGIN, LogConst.CON_LOGIN, "", ip);
-
-            // initial db setting
-            Properties pvar = OscarProperties.getInstance();
-            
-
-            String providerNo = providerInformation[0];
-            session.setAttribute("user", providerInformation[0]);
-            session.setAttribute("userfirstname", providerInformation[1]);
-            session.setAttribute("userlastname", providerInformation[2]);
-            session.setAttribute("userrole", providerInformation[4]);
-            session.setAttribute("oscar_context_path", request.getContextPath());
-            session.setAttribute("expired_days", providerInformation[5]);
-            session.setAttribute("oneIdEmail", oneIdEmail);
-            session.setAttribute("oneid_token", oneIdToken );
-            if (providerInformation[6] != null && !providerInformation[6].equals("")) {
-                session.setAttribute("delegateOneIdEmail", providerInformation[6]);
-            }
-            
-            // If a new session has been created, we must set the mobile attribute again
-            if (isMobileOptimized) session.setAttribute("mobileOptimized","true");
-            // initiate security manager
-            String default_pmm = null;
-            
-         // get preferences from preference table
-        	ProviderPreference providerPreference=providerPreferenceDao.find(providerNo);
-        	
-            
-                
-        	if (providerPreference==null) providerPreference=new ProviderPreference();
-         	
-        	session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE, providerPreference);
-        	
-            if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable()) {
-            	String tklerProviderNo = null;
-            	UserProperty prop = propDao.getProp(providerNo, UserProperty.PROVIDER_FOR_TICKLER_WARNING);
-        		if (prop == null) {
-        			tklerProviderNo = providerNo;
-        		} else {
-        			tklerProviderNo = prop.getValue();
-        		}
-            	session.setAttribute("tklerProviderNo",tklerProviderNo);
-            	
-                session.setAttribute("newticklerwarningwindow", providerPreference.getNewTicklerWarningWindow());
-                session.setAttribute("default_pmm", providerPreference.getDefaultCaisiPmm());
-                session.setAttribute("caisiBillingPreferenceNotDelete", String.valueOf(providerPreference.getDefaultDoNotDeleteBilling()));
-                
-                default_pmm = providerPreference.getDefaultCaisiPmm();
-                @SuppressWarnings("unchecked")
-                ArrayList<String> newDocArr = (ArrayList<String>)request.getSession().getServletContext().getAttribute("CaseMgmtUsers");    
-                if("enabled".equals(providerPreference.getDefaultNewOscarCme())) {
-                	newDocArr.add(providerNo);
-                	session.setAttribute("CaseMgmtUsers", newDocArr);
-                }
-            }
-            session.setAttribute("starthour", providerPreference.getStartHour().toString());
-            session.setAttribute("endhour", providerPreference.getEndHour().toString());
-            session.setAttribute("everymin", providerPreference.getEveryMin().toString());
-            session.setAttribute("groupno", providerPreference.getMyGroupNo());
-                
-            destination = "provider";
-
-            if (destination.equals("provider") && default_pmm != null && "enabled".equals(default_pmm)) {
-            	destination = "caisiPMM";
-            }
-            
-            if (destination.equals("provider") && OscarProperties.getInstance().getProperty("useProgramLocation", "false").equals("true") ) {
-            	destination = "programLocation";
-            }
-
-            String quatroShelter = OscarProperties.getInstance().getProperty("QUATRO_SHELTER");
-            if(quatroShelter!= null && quatroShelter.equals("on")) {
-            	destination = "shelterSelection";
-            }
-        
-            //Lazy Loads AlertTimer instance only once, will run as daemon for duration of server runtime
-            if (pvar.getProperty("billregion").equals("BC")) {
-                String alertFreq = pvar.getProperty("ALERT_POLL_FREQUENCY");
-                if (alertFreq != null) {
-                    Long longFreq = new Long(alertFreq);
-                    String[] alertCodes = OscarProperties.getInstance().getProperty("CDM_ALERTS").split(",");
-                    AlertTimer.getInstance(alertCodes, longFreq.longValue());
-                }
-            }
-
-            String username = (String) session.getAttribute("user");
-            Provider provider = providerManager.getProvider(username);
-            session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER, provider);
-            session.setAttribute(SessionConstants.LOGGED_IN_SECURITY, loginCheck.getSecurity());
-
-            LoggedInInfo loggedInInfo = LoggedInUserFilter.generateLoggedInInfoFromSession(request);
-            
-            if (destination.equals("provider")) {
-                UserProperty drugrefProperty = propDao.getProp(UserProperty.MYDRUGREF_ID);
-                if (drugrefProperty != null || appManager.isK2AUser(loggedInInfo)) {
-                    DSService service =   SpringUtils.getBean(DSService.class);  
-                    service.fetchGuidelinesFromServiceInBackground(loggedInInfo);
-                }
-            }
-            
-		    MyOscarUtils.attemptMyOscarAutoLoginIfNotAlreadyLoggedIn(loggedInInfo, true);
-            
-            List<Integer> facilityIds = providerDao.getFacilityIds(provider.getProviderNo());
-            if (facilityIds.size() > 1) {
-                return(new ActionForward("/select_facility.jsp?nextPage=" + destination));
-            }
-            else if (facilityIds.size() == 1) {
-                // set current facility
-                Facility facility=facilityDao.find(facilityIds.get(0));
-                request.getSession().setAttribute("currentFacility", facility);
-                LogAction.addLog(providerInformation[0], LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId="+facilityIds.get(0), ip);
-                if(facility.isEnableOcanForms()) {
-                	request.getSession().setAttribute("ocanWarningWindow", OcanForm.getOcanWarningMessage(facility.getId()));
-                }
-                if(facility.isEnableCbiForm()) {
-                	request.getSession().setAttribute("cbiReminderWindow", CBIUtil.getCbiSubmissionFailureWarningMessage(facility.getId(),provider.getProviderNo() ));
-                }
-            }
-            else {
-        		List<Facility> facilities = facilityDao.findAll(true);
-        		if(facilities!=null && facilities.size()>=1) {
-        			Facility fac = facilities.get(0);
-        			int first_id = fac.getId();
-        			ProviderDao.addProviderToFacility(providerNo, first_id);
-        			Facility facility=facilityDao.find(first_id);
-        			request.getSession().setAttribute("currentFacility", facility);
-        			LogAction.addLog(providerInformation[0], LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId="+first_id, ip);
-            	}
-            }
-
-            if( pvar.getProperty("LOGINTEST","").equalsIgnoreCase("yes")) {
-                String proceedURL = mapping.findForward(destination).getPath();
-                request.getSession().setAttribute("proceedURL", proceedURL);               
-                return mapping.findForward("LoginTest");
-            }
-            
-            //are they using the new UI?
-            UserProperty prop = propDao.getProp(provider.getProviderNo(), UserProperty.COBALT);
-            if(prop != null && prop.getValue() != null && prop.getValue().equals("yes")) {
-            	destination="cobalt";
-            }
-        }
-        else {
-        	//If the key does not match a user, return the key asking the user to input the OSCAR credentials of the account to tie it to.
-        	logger.info("Key does not match to an account, prompting for OSCAR credentials.");
-            
-            if(ajaxResponse) {
-            	JSONObject json = new JSONObject();
-            	json.put("success", false);
-            	response.setContentType("text/x-json");
-            	json.put("oneIdKey", oneIdKey);
-            	json.write(response.getWriter());
-            	return null;
-            }
-            destination = "ssoLoginError";
-            ParameterActionForward forward = new ParameterActionForward(mapping.findForward(destination));
-            forward.addParameter("nameId", oneIdKey);
-            forward.addParameter("email", oneIdEmail);
-            return forward;
+	        Saml2Settings saml2Settings = ssoAuthenticationManager.buildAuthenticationRequestSettings(user_email, context);
+            Auth auth = new Auth(saml2Settings, request, response);
+            auth.login();
+        } catch (Exception e) {
+            // handle error
+	        logger.error("Error during authentication redirect ", e);
         }
 
-    	logger.debug("checking oauth_token");
-        if(request.getParameter("oauth_token") != null) {
-    		String proNo = (String)request.getSession().getAttribute("user");
-    		ServiceRequestTokenDao serviceRequestTokenDao = SpringUtils.getBean(ServiceRequestTokenDao.class);
-    		ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(request.getParameter("oauth_token"));
-    		if(srt != null) {
-    			srt.setProviderNo(proNo);
-    			serviceRequestTokenDao.merge(srt);
-    		}
-    	}
-        
-        if(ajaxResponse) {
-        	logger.debug("rendering ajax response");
-        	Provider prov = providerDao.getProvider((String)request.getSession().getAttribute("user"));
-        	JSONObject json = new JSONObject();
-        	json.put("success", true);
-        	json.put("providerName", prov.getFormattedName());
-        	json.put("providerNo", prov.getProviderNo());
-        	response.setContentType("text/x-json");
-        	json.write(response.getWriter());
-        	return null;
-        }
-        
-    	logger.debug("rendering standard response : "+ destination);
-        
-        //Returns the destination ActionForward
-    	return mapping.findForward(destination);
+		// return to meaningfull error page.
+		return null;
     }
 
     private Boolean isSessionValid() {

@@ -1,6 +1,7 @@
 package org.apache.xml.security.encryption;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -226,7 +227,7 @@ public class XMLCipher {
     
     /** Local copy of the kek (used to decrypt EncryptedKeys during a
      *  DECRYPT_MODE operation */
-    private Key kek;
+    private List<KeyResolverSpi> kek;
 
     // The EncryptedKey being built (part of a WRAP operation) or read
     // (part of an UNWRAP operation)
@@ -244,21 +245,6 @@ public class XMLCipher {
     
     /** List of internal KeyResolvers for DECRYPT and UNWRAP modes. */
     private List<KeyResolverSpi> internalKeyResolvers;
-    
-    /**
-     * Set the Serializer algorithm to use
-     */
-    public void setSerializer(Serializer serializer) {
-        this.serializer = serializer;
-        serializer.setCanonicalizer(this.canon);
-    }
-    
-    /**
-     * Get the Serializer algorithm to use
-     */
-    public Serializer getSerializer() {
-        return serializer;
-    }
 
     /**
      * Creates a new <code>XMLCipher</code>.
@@ -269,7 +255,7 @@ public class XMLCipher {
      *                          is defined in the <code>EncryptionMethod</code> element.
      * @param provider          the JCE provider that supplies the transformation,
      *                          if null use the default provider.
-     * @param canon             the name of the c14n algorithm, if
+     * @param canonAlg             the name of the c14n algorithm, if
      *                          <code>null</code> use standard serializer
      * @param digestMethod      An optional digestMethod to use. 
      */
@@ -278,7 +264,7 @@ public class XMLCipher {
         String provider, 
         String canonAlg,
         String digestMethod
-    ) throws XMLEncryptionException {
+    ) throws XMLEncryptionException, InvalidCanonicalizerException {
         if (log.isDebugEnabled()) {
             log.debug("Constructing XMLCipher...");
         }
@@ -289,25 +275,24 @@ public class XMLCipher {
         requestedJCEProvider = provider;
         digestAlg = digestMethod;
 
-        // Create a canonicalizer - used when serializing DOM to octets
-        // prior to encryption (and for the reverse)
-
-        try {
-            if (canonAlg == null) {
-                // The default is to preserve the physical representation.
-                this.canon = Canonicalizer.getInstance(Canonicalizer.ALGO_ID_C14N_PHYSICAL);
-            } else {
-                this.canon = Canonicalizer.getInstance(canonAlg);
-            }
-        } catch (InvalidCanonicalizerException ice) {
-            throw new XMLEncryptionException("empty", ice);
-        }
+//        // Create a canonicalizer - used when serializing DOM to octets
+//        // prior to encryption (and for the reverse)
+//
+//        try {
+//            if (canonAlg == null) {
+//                // The default is to preserve the physical representation.
+//                this.canon = Canonicalizer.getInstance(Canonicalizer.ALGO_ID_C14N_PHYSICAL);
+//            } else {
+//                this.canon = Canonicalizer.getInstance(canonAlg);
+//            }
+//        } catch (InvalidCanonicalizerException ice) {
+//            throw new XMLEncryptionException("empty", ice);
+//        }
 
         if (serializer == null) {
-            serializer = new DocumentSerializer();
+            serializer = new DocumentSerializer(Canonicalizer.ALGO_ID_C14N_PHYSICAL, true);
         }
-        serializer.setCanonicalizer(this.canon);
-        
+
         if (transformation != null) {
             contextCipher = constructCipher(transformation, digestMethod);
         }
@@ -383,7 +368,7 @@ public class XMLCipher {
      * @return the XMLCipher
      * @see javax.crypto.Cipher#getInstance(java.lang.String)
      */
-    public static XMLCipher getInstance(String transformation) throws XMLEncryptionException {
+    public static XMLCipher getInstance(String transformation) throws XMLEncryptionException, InvalidCanonicalizerException {
         if (log.isDebugEnabled()) {
             log.debug("Getting XMLCipher with transformation");
         }
@@ -405,7 +390,7 @@ public class XMLCipher {
      * @throws XMLEncryptionException
      */
     public static XMLCipher getInstance(String transformation, String canon)
-        throws XMLEncryptionException {
+            throws XMLEncryptionException, InvalidCanonicalizerException {
         if (log.isDebugEnabled()) {
             log.debug("Getting XMLCipher with transformation and c14n algorithm");
         }
@@ -428,7 +413,7 @@ public class XMLCipher {
      * @throws XMLEncryptionException
      */
     public static XMLCipher getInstance(String transformation, String canon, String digestMethod)
-        throws XMLEncryptionException {
+            throws XMLEncryptionException, InvalidCanonicalizerException {
         if (log.isDebugEnabled()) {
             log.debug("Getting XMLCipher with transformation and c14n algorithm");
         }
@@ -446,7 +431,7 @@ public class XMLCipher {
      * @throws XMLEncryptionException
      */
     public static XMLCipher getProviderInstance(String transformation, String provider)
-        throws XMLEncryptionException {
+            throws XMLEncryptionException, InvalidCanonicalizerException {
         if (log.isDebugEnabled()) {
             log.debug("Getting XMLCipher with transformation and provider");
         }
@@ -473,7 +458,7 @@ public class XMLCipher {
      */
     public static XMLCipher getProviderInstance(
         String transformation, String provider, String canon
-    ) throws XMLEncryptionException {
+    ) throws XMLEncryptionException, InvalidCanonicalizerException {
         if (log.isDebugEnabled()) {
             log.debug("Getting XMLCipher with transformation, provider and c14n algorithm");
         }
@@ -501,7 +486,7 @@ public class XMLCipher {
      */
     public static XMLCipher getProviderInstance(
         String transformation, String provider, String canon, String digestMethod
-    ) throws XMLEncryptionException {
+    ) throws XMLEncryptionException, InvalidCanonicalizerException {
         if (log.isDebugEnabled()) {
             log.debug("Getting XMLCipher with transformation, provider and c14n algorithm");
         }
@@ -521,7 +506,7 @@ public class XMLCipher {
      * @return The XMLCipher
      * @throws XMLEncryptionException
      */
-    public static XMLCipher getInstance() throws XMLEncryptionException {
+    public static XMLCipher getInstance() throws XMLEncryptionException, InvalidCanonicalizerException {
         if (log.isDebugEnabled()) {
             log.debug("Getting XMLCipher with no arguments");
         }
@@ -541,7 +526,7 @@ public class XMLCipher {
      * @return the XMLCipher
      * @throws XMLEncryptionException
      */
-    public static XMLCipher getProviderInstance(String provider) throws XMLEncryptionException {
+    public static XMLCipher getProviderInstance(String provider) throws XMLEncryptionException, InvalidCanonicalizerException {
         if (log.isDebugEnabled()) {
             log.debug("Getting XMLCipher with provider");
         }
@@ -676,8 +661,8 @@ public class XMLCipher {
      * @param kek The key to use for de/encrypting key data
      */
 
-    public void setKEK(Key kek) {
-        this.kek = kek;
+    public void addKEK(Key kek) {
+        this.kek.add((KeyResolverSpi)kek);
     }
 
     /**
@@ -1083,9 +1068,6 @@ public class XMLCipher {
 
         if (algorithm == null) {
             throw new XMLEncryptionException("XMLCipher instance without transformation specified");
-        }
-        if (serializer instanceof AbstractSerializer) {
-            ((AbstractSerializer)serializer).setSecureValidation(secureValidation);
         }
 
         byte[] serializedOctets = null;
@@ -1595,12 +1577,9 @@ public class XMLCipher {
      * @return the <code>Node</code> as a result of the decrypt operation.
      * @throws XMLEncryptionException
      */
-    private Document decryptElement(Element element) throws XMLEncryptionException {
+    private Document decryptElement(Element element) throws XMLEncryptionException, IOException {
         if (log.isDebugEnabled()) {
             log.debug("Decrypting element...");
-        }
-        if (serializer instanceof AbstractSerializer) {
-            ((AbstractSerializer)serializer).setSecureValidation(secureValidation);
         }
 
         if (cipherMode != DECRYPT_MODE) {
@@ -1696,7 +1675,7 @@ public class XMLCipher {
      * @return the <code>Node</code> as a result of the decrypt operation.
      * @throws XMLEncryptionException
      */
-    private Document decryptElementContent(Element element) throws XMLEncryptionException {
+    private Document decryptElementContent(Element element) throws XMLEncryptionException, IOException {
         Element e = 
             (Element) element.getElementsByTagNameNS(
                 EncryptionConstants.EncryptionSpecNS,
@@ -1739,12 +1718,6 @@ public class XMLCipher {
                     // Add an EncryptedKey resolver
                     String encMethodAlgorithm = encryptedData.getEncryptionMethod().getAlgorithm();
                     EncryptedKeyResolver resolver = new EncryptedKeyResolver(encMethodAlgorithm, kek);
-                    if (internalKeyResolvers != null) {
-                        int size = internalKeyResolvers.size();
-                        for (int i = 0; i < size; i++) {
-                            resolver.registerInternalKeyResolver(internalKeyResolvers.get(i));
-                        }
-                    }
                     ki.registerInternalKeyResolver(resolver);
                     ki.setSecureValidation(secureValidation);
                     key = ki.getSecretKey();
@@ -2228,7 +2201,7 @@ public class XMLCipher {
          * @return a new CipherValue
          */
         CipherValue newCipherValue(Element element) {
-            String value = XMLUtils.getFullTextChildrenFromElement(element);
+            String value = XMLUtils.getFullTextChildrenFromNode(element);
 
             return newCipherValue(value);
         }
@@ -3382,12 +3355,9 @@ public class XMLCipher {
                 if (doc == null) {
                     throw new RuntimeException("Document is null");
                 }
-
-                this.doc = doc;
-                this.constructionElement = 
-                    createElementForFamilyLocal(
-                        this.doc, this.getBaseNamespace(), this.getBaseLocalName()
-                    ); 
+                setDocument(doc);
+                createElementForFamilyLocal(this.getBaseNamespace(), this.getBaseLocalName());
+                contextDocument = doc;
             }
 
             /**
@@ -3409,10 +3379,6 @@ public class XMLCipher {
              * @return the XML Element form of that Transforms
              */
             public Element toElement() {
-                if (doc == null) {
-                    doc = contextDocument;
-                }
-
                 return getElement();
             }
 

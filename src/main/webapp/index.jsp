@@ -25,18 +25,11 @@
 --%>
 
 
-<%@ page import="javax.servlet.http.Cookie, oscar.oscarSecurity.CookieSecurity, oscar.login.UAgentInfo" %>
+<%@ page import="oscar.login.UAgentInfo" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix="c" %>
-<%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-
-<caisi:isModuleLoad moduleName="ticklerplus">
-	<c:if test="${ not empty sessionScope.user }">
-		<c:redirect url="/provider/providercontrol.jsp" />
-	</c:if>  
-</caisi:isModuleLoad>
 
 <%
 // detect if mobile device.
@@ -45,15 +38,9 @@ String accept = request.getHeader("Accept");
 UAgentInfo userAgentInfo = new UAgentInfo(userAgent, accept);       
 boolean isMobileDevice = userAgentInfo.detectMobileQuick();
 pageContext.setAttribute("isMobileDevice", isMobileDevice);
-
-// clear old cookies
-Cookie prvCookie = new Cookie(CookieSecurity.providerCookie, "");
-prvCookie.setPath("/");
-prvCookie.setMaxAge(0);
-response.addCookie(prvCookie);
 %>
 
-<jsp:useBean id="LoginResourceBean" beanName="oscar.login.LoginResourceBean" type="oscar.login.LoginResourceBean" scope="page" ></jsp:useBean>
+<jsp:useBean id="LoginResourceBean" beanName="oscar.login.LoginResourceBean" type="oscar.login.LoginResourceBean" />
 <c:set var="login_error" value="" scope="page" />
 <!DOCTYPE html>
 <html:html locale="true">
@@ -71,13 +58,11 @@ response.addCookie(prvCookie);
     </title>
     	
     <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/Oscar.ico" />
-<%--	<link href='${pageContext.request.contextPath}/css/Roboto.css' rel='stylesheet' type='text/css' />--%>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/library/jquery/jquery-1.12.0.min.js" ></script>
-		<script src="${pageContext.request.contextPath}/csrfguard"></script>
+	<link href="${pageContext.request.contextPath}/css/Roboto.css" rel='stylesheet' type='text/css' />
     <script type="text/javascript">
     
         function showHideItem(id){
-            if(document.getElementById(id).style.display == 'none')
+            if(document.getElementById(id).style.display === 'none')
             {
                 document.getElementById(id).style.display = 'block';
             }
@@ -91,10 +76,11 @@ response.addCookie(prvCookie);
 		    document.loginForm.username.focus();
 		    document.loginForm.username.select();
 		  }
+
 		  function popupPage(vheight,vwidth,varpage) {
 		    var page = "" + varpage;
 		    windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
-		    var popup=window.open(page, "gpl", windowprops);
+		    window.open(page, "gpl", windowprops);
 		  }
 
   			function addStartTime() {
@@ -107,7 +93,7 @@ response.addCookie(prvCookie);
 			}
     </script>
        
-    <style media="all" >
+    <style media="all">
 		body, html {
 			height: 100%;
 		}
@@ -139,8 +125,8 @@ response.addCookie(prvCookie);
 		a {
 			text-decoration: none;
 			border: none;
-			padding: 0px;
-			margin: 0px;
+			padding: 0;
+			margin: 0;
 			color: black;
 		}
 		
@@ -240,11 +226,7 @@ response.addCookie(prvCookie);
 		.panel-body {
 			padding: 10px 40px 40px;
 		}
-		
-		.panel-danger {
-			border-color: #ebccd1;
-		}
-		
+
 		.panel-danger>.panel-heading {
 			color: #a94442;
 			background-color: #f2dede;
@@ -343,7 +325,6 @@ response.addCookie(prvCookie);
 		
 		.btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus,
 			.btn:active:focus, .btn:focus {
-			outline: thin dotted;
 			outline: 5px auto -webkit-focus-ring-color;
 			outline-offset: -2px;
 		}
@@ -396,7 +377,6 @@ response.addCookie(prvCookie);
 		
 		.btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus,
 			.btn:active:focus, .btn:focus {
-			outline: thin dotted;
 			outline: 5px auto -webkit-focus-ring-color;
 			outline-offset: -2px;
 		}
@@ -470,7 +450,7 @@ response.addCookie(prvCookie);
 			background-color: #000;
 			width: 60%;
 			height: 34px;
-			margin: 0px auto;
+			margin: 0 auto;
 		}
 		
 		.oneIdLogo {
@@ -508,7 +488,7 @@ response.addCookie(prvCookie);
 		}
 		
 		#clinic_name {
-			margin-bottom: 0px;
+			margin-bottom: 0;
 		}
 		
 		#clinic_text, #support_text, .topbar #buildInfo {
@@ -542,7 +522,7 @@ response.addCookie(prvCookie);
         	<!-- Clinic logo  -->
         	<div id="clinic_logo">
         		<a target="_blank" href="${ LoginResourceBean.clinicLink }" >
-		        	<img src="${ pageContext.request.contextPath }/loginResource/clinicLogo.png" 
+		        	<img src="${ pageContext.request.contextPath }/loginResource/clinicLogo.png" alt="${ LoginResourceBean.clinicLink }"
 		        		onerror="this.style.display='none'"/>
 	        	</a>
         	</div>
@@ -568,7 +548,7 @@ response.addCookie(prvCookie);
 			    
 			    	<div id="oscar_logo">
 				    	<!-- Oscar logo -->
-			        	<img title="OSCAR EMR Login" src="${pageContext.request.contextPath}/images/Logo.png" 
+			        	<img title="OSCAR EMR Login" src="${pageContext.request.contextPath}/images/Logo.png"  alt="OSCAR EMR Login"
 			        		onerror="document.getElementById('default_logo').style.display='block'; this.style.display='none'; " />
 		        	</div>
 		        	
@@ -586,29 +566,30 @@ response.addCookie(prvCookie);
 	        	</c:if>
 
     			<div class="panel-body">
-    			    <div class="leftinput" ng-app="indexApp" ng-controller="indexCtrl">
-   				    	<html:form action="login" >
+    			    <div class="leftinput">
+   				    	<html:form action="login" method="POST" >
    				    
    							<div class="form-group ${ login_error }"> 
    	                        	<input type="text" name="username" placeholder="Enter your username" 
    	                        	value="" size="15" maxlength="15" autocomplete="off" 
-   	                        	class="form-control" ng-model="username" required/>
+   	                        	class="form-control" required/>
    	                        </div>
    	                        
    	                        <div class="form-group ${ login_error }">               
    	                        	<input type="password" name="password" placeholder="Enter your password" 
    	                        	value="" size="15" maxlength="32" autocomplete="off" 
-   	                        	class="form-control" ng-model="password" required/>
+   	                        	class="form-control" required/>
    	                        </div>
-   	                        
-   	                        <div class="form-group ${ login_error }">
-   	                        	<input type="password" name="pin" placeholder="Enter your PIN" value="" 
-   	                        	size="15" maxlength="15" autocomplete="off" class="form-control" ng-model="pin"/>
-   	                        	<span class="extrasmall">
-   		                            <bean:message key="loginApplication.formCmt"/>
-   		                        </span>
-   	                        </div>
-   	                        
+
+							<c:if test="${not LoginResourceBean.ssoEnabled}">
+								<div class="form-group ${ login_error }">
+									<input type="password" name="pin" placeholder="Enter your PIN" value=""
+									size="15" maxlength="15" autocomplete="off" class="form-control" />
+									<span class="extrasmall">
+										<bean:message key="loginApplication.formCmt"/>
+									</span>
+								</div>
+							</c:if>
    	                        <input type="hidden" id="oneIdKey" name="nameId" value="${ nameId }"/>
 							<input type="hidden" id="loginType" name="loginType" value=""/>
    	                        <input type=hidden name='propname' value='<bean:message key="loginApplication.propertyFile"/>' />
@@ -678,7 +659,7 @@ response.addCookie(prvCookie);
 				</c:if>
 	 			<div class="support_details" >
 	 				<a target="_blank" href="${ LoginResourceBean.supportLink }" id="supportImageLink" >
-	 					<img width="150px" src="${ pageContext.request.contextPath }/loginResource/supportLogo.png" 
+	 					<img width="150px" src="${ pageContext.request.contextPath }/loginResource/supportLogo.png" alt="Support Image"
 	 						onerror="this.style.display='none'; document.getElementById('supportImageLink').style.display='none';">					
 	 				</a>
 	 				<c:if test="${ not empty LoginResourceBean.supportName }">
@@ -702,5 +683,5 @@ response.addCookie(prvCookie);
      </footer>
     
     </body>
-
+	<script type="text/javascript" src="${pageContext.request.contextPath}/csrfguard" ></script>
 </html:html>

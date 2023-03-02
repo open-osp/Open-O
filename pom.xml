@@ -270,6 +270,12 @@
 			<version>2.0.8</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.onelogin</groupId>
+			<artifactId>java-saml</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+
 		<!-- hibernate / sql -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -505,13 +511,6 @@
 			<groupId>net.sourceforge.barbecue</groupId>
 			<artifactId>barbecue</artifactId>
 			<version>1.0.6b</version>
-		</dependency>
-
-		<!-- joda time -->
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>1.4</version>
 		</dependency>
 
 		<!-- caisi integrator -->
@@ -939,7 +938,7 @@
                 <dependency>
                         <groupId>org.bouncycastle</groupId>
                         <artifactId>bcprov-jdk15on</artifactId>
-                        <version>1.64</version>
+                        <version>1.70</version>
                 </dependency>
 
 		<!-- AXIS2 (for OLIS) -->
@@ -1047,6 +1046,10 @@
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>joda-time</groupId>
+					<artifactId>joda-time</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -1124,6 +1127,10 @@
 				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>joda-time</groupId>
+					<artifactId>joda-time</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
