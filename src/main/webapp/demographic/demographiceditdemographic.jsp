@@ -41,7 +41,7 @@
 	}
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <%-- @ taglib uri="../WEB-INF/taglibs-log.tld" prefix="log" --%>
 <%@page import="org.oscarehr.sharingcenter.SharingCenterUtil"%>
 <%@page import="oscar.util.ConversionUtils"%>
@@ -247,9 +247,9 @@ if(!authed) {
 <head>
 <title><bean:message
 	key="demographic.demographiceditdemographic.title" /></title>
-	<script src="${pageContext.request.contextPath}/csrfguard"></script>
-<html:base />
 
+<html:base />
+	<script type="text/javascript" src="${pageContext.request.contextPath}/csrfguard"></script>
 <oscar:oscarPropertiesCheck property="DEMOGRAPHIC_PATIENT_HEALTH_CARE_TEAM" value="true">
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/css/healthCareTeam.css" />
 </oscar:oscarPropertiesCheck>

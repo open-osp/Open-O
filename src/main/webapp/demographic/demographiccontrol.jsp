@@ -37,7 +37,7 @@
 
 <%@ page import="oscar.OscarProperties"%>
 <jsp:useBean id="apptMainBean" class="oscar.AppointmentMainBean" scope="session" />
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/csrfguard"></script>
 <%
   LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 

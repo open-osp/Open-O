@@ -38,7 +38,7 @@
 	}
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <%@page import="org.jpedal.fonts.tt.FirstPoint"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="org.apache.commons.lang.StringUtils"%>
@@ -78,7 +78,7 @@
 %>
 
 
-<%@ page import="java.util.*, java.sql.*, java.net.URLEncoder, oscar.*, oscar.util.*" errorPage="errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, java.net.URLEncoder, oscar.*, oscar.util.*" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.common.model.Demographic"%>
 <%@page import="org.oscarehr.common.dao.DemographicDao" %>
@@ -117,17 +117,17 @@
 
 %>
 <html:html locale="true">
-	<script src="${pageContext.request.contextPath}/csrfguard"></script>
+
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<c:out value="${ctx}/share/javascript/Oscar.js"/>"></script>
-<title><bean:message key="demographic.demographicsearchresults.title" /></title>
+	<title><bean:message key="demographic.demographicsearchresults.title" /></title>
+	<script type="text/javascript"  src="${pageContext.request.contextPath}/csrfguard"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
    <script>
      jQuery.noConflict();
    </script>
-<oscar:customInterface section="demoSearch"/>
 
 <% if (isMobileOptimized) { %>
    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width" />
@@ -140,11 +140,9 @@
 
 <%
 	String ptstatus = request.getParameter("ptstatus") == null ? "active" : request.getParameter("ptstatus");
-
-	OscarProperties props = OscarProperties.getInstance();
 %>
 
-<script language="JavaScript">
+<script type="text/javascript">
 
 	function showHideItem(id) {
 		if (document.getElementById(id).style.display == 'inline')
