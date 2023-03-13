@@ -147,21 +147,7 @@ if(!authed) {
 			demo = consultUtil.demoNo;
 		}
 
-		ArrayList<String> users = (ArrayList<String>)session.getServletContext().getAttribute("CaseMgmtUsers");
-		boolean useNewCmgmt = false;
-		WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-		CaseManagementManager cmgmtMgr = null;
-		
-		if (users != null && users.size() > 0 && (users.get(0).equalsIgnoreCase("all") || Collections.binarySearch(users, providerNo) >= 0))
-		{
-			useNewCmgmt = true;
-			cmgmtMgr = (CaseManagementManager)ctx.getBean("caseManagementManager");
-		}
-
-		UserPropertyDAO userPropertyDAO = (UserPropertyDAO)ctx.getBean("UserPropertyDAO");
-		UserProperty fmtProperty = userPropertyDAO.getProp(providerNo, UserProperty.CONSULTATION_REQ_PASTE_FMT);
-		String pasteFmt = fmtProperty != null?fmtProperty.getValue():null;
-
+		UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
 		if (demo != null) {
 			demoData = new oscar.oscarDemographic.data.DemographicData();
 			demographic = demoData.getDemographic(loggedInInfo, demo);			

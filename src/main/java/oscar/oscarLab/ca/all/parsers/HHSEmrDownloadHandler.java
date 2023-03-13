@@ -266,6 +266,10 @@ public class HHSEmrDownloadHandler extends DefaultGenericHandler implements Mess
 
           return super.getOBRName(i) + addToEnd;
       }
+
+      public String getOBRIdentifier(int i) {
+        return super.getOBRIdentifier(i);
+      }
 //
 //        String obrName;
 //        i++;

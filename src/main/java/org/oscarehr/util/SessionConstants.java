@@ -22,6 +22,10 @@
  */
 package org.oscarehr.util;
 
+/**
+ * @Deprecated use the LoggedInInfo class instead
+ */
+@Deprecated
 public class SessionConstants
 {
     public static final String CURRENT_PROGRAM_ID="infirmaryView_programId";

@@ -202,6 +202,11 @@ public class MDSHandler implements MessageHandler {
         return("");
     }
 
+    @Override
+    public String getOBRIdentifier(int i) {
+        return null;
+    }
+
     public String getTimeStamp(int i, int j){
         String timeStamp;
         i++;

@@ -39,6 +39,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 import org.apache.logging.log4j.Logger;
 
@@ -73,9 +74,49 @@ public class DefaultGenericHandler implements MessageHandler {
         Parser p = new PipeParser();
         p.setValidationContext(new NoValidation());
 
-        // force parsing as a generic message by changing the message structure
-        hl7Body = hl7Body.replaceAll("R01", "");
-        msg = p.parse(hl7Body.replaceAll( "\n", "\r\n"));
+        /*
+         * force parsing as a generic message by changing the message structure
+         * Also clean up any potential new lines that will break the parser.
+         * Every segment in a lab should be separated with a carriage return "\r".
+         * Be sure to check the Parser specifications and confirm that "\r" is the proper deliminator.
+         * A lab will fail to parse if a new line or return is located in the middle of a
+         * segment.  Labs often insert breaks into comments.
+         */
+
+        StringTokenizer stringTokenizer = new StringTokenizer(hl7Body, String.valueOf("\n"), false);
+        if(stringTokenizer.countTokens() > 0) {
+            char pipe = Character.valueOf('|');
+            StringBuilder filteredHl7Body = new StringBuilder();
+            while (stringTokenizer.hasMoreTokens()) {
+                String segment = stringTokenizer.nextToken();
+                if (segment.length() > 0) {
+
+                    // remove whitespace so that it won't be counted.
+                    if (Character.isWhitespace(segment.charAt(0))) {
+                        segment = PipeParser.stripLeadingWhitespace(segment);
+                    }
+
+                    // this converts all HL7 into generic HL7
+                    if(segment.startsWith("MSH")) {
+                        // segment = segment.replaceAll("R01", "");
+                        pipe = segment.charAt(3);
+                    }
+
+                    if (segment.length() >= 4 && segment.charAt(3) != pipe) {
+                        // this segment is likely an extension of the last segment
+                        filteredHl7Body.delete(filteredHl7Body.length()-4, filteredHl7Body.length());
+                        filteredHl7Body.append(segment.replaceAll("\n", "")).append("\r\n");
+                    } else {
+                        filteredHl7Body.append(segment).append("\r\n");
+                    }
+                }
+            }
+
+            filteredHl7Body.delete(filteredHl7Body.length()-4, filteredHl7Body.length());
+            hl7Body = filteredHl7Body.toString();
+        }
+
+        msg = p.parse(hl7Body);
 
         terser = new Terser(msg);
 
@@ -177,6 +218,30 @@ public class DefaultGenericHandler implements MessageHandler {
                 obrName = getString(terser.get("/.OBR-4-2"));
                 if (obrName.equals(""))
                     obrName = getString(terser.get("/.OBR-4-1"));
+
+            }else{
+                Segment obrSeg = (Segment) terser.getFinder().getRoot().get("OBR"+i);
+                obrName = getString(Terser.get(obrSeg,4,0,2,1));
+                if (obrName.equals(""))
+                    obrName = getString(Terser.get(obrSeg,4,0,1,1));
+
+            }
+
+            return(obrName);
+
+        }catch(Exception e){
+            return("");
+        }
+    }
+
+    public String getOBRIdentifier(int i) {
+
+        String obrName;
+        i++;
+        try{
+            if (i == 1){
+
+                obrName = getString(terser.get("/.OBR-4-1"));
 
             }else{
                 Segment obrSeg = (Segment) terser.getFinder().getRoot().get("OBR"+i);

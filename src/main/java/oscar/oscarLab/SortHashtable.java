@@ -37,7 +37,7 @@ import java.util.Map;
 @SuppressWarnings("rawtypes")
 public class SortHashtable implements Comparator {
 
-	private static final String COLL_DATE_DATE = "collDateDate";
+	private static final String COLL_DATE_DATE = "collDate";
 
 	public SortHashtable() {
 	}

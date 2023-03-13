@@ -27,12 +27,8 @@ package oscar.oscarLab.ca.all.parsers;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+
 import org.apache.logging.log4j.Logger;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v23.datatype.XCN;
@@ -259,6 +255,15 @@ public class MEDITECHHandler implements MessageHandler {
 			return labName;
 	}
 
+	public String getOBRIdentifier (int i) {
+
+        try{
+            return getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getUniversalServiceIdentifier().getCe1_Identifier().getValue());
+        }catch(Exception e){
+            return "";
+        }
+    }
+
 	@Override
 	public String getTimeStamp(int i, int j){
 		try{
@@ -304,14 +309,18 @@ public class MEDITECHHandler implements MessageHandler {
 		StringBuilder header = new StringBuilder("");
 		String obrHeader = "";
 		String obrHeaderCode = "";
-		try{			
+		String obrDiagnosticService = "";
+		try{
 			obrHeader = getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getUniversalServiceIdentifier().getCe2_Text().getValue());
 			obrHeaderCode = getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getUniversalServiceIdentifier().getCe1_Identifier().getValue());
-			
+			obrDiagnosticService = getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getDiagnosticServiceSectionID().getExtraComponents().getComponent(0).getData().toString());
+
 			if( ! obrHeader.isEmpty() ) {
 				header.append(obrHeader);
-			} else {
+			} else if (!obrHeaderCode.isEmpty()){
 				header.append(obrHeaderCode);
+			} else {
+				header.append(obrDiagnosticService);
 			}
 		
 		}catch(Exception e){
@@ -442,39 +451,39 @@ public class MEDITECHHandler implements MessageHandler {
 	public ArrayList<String> getHeaders(){
 
 		int obrCount = this.getOBRCount();
-		ArrayList<String> headers = null;
+		int responseCount = 0;
+		HashSet<String> headerSet = null;
 		String currentHeader = "";
 		
 		logger.debug("Total OBR count: " + obrCount );
 
 		for ( int i = 0; i < obrCount; i++ ){
 
-			logger.debug("OBX Count for OBR[" + (i) + "] : " + getOBXCount(i) );
+			responseCount = getOBXCount(i);
 			
-			currentHeader = getObservationHeader( i, 0 );
+			currentHeader += ( ( ! currentHeader.isEmpty() ) ? "/" : "" ) + getObservationHeader( i, 0 );
 
-			// try the OBR Identity
-			if( currentHeader.isEmpty() ){
-				
-				logger.debug("Observation Header not found. Trying Observation Name [" + i + "]" );
-				currentHeader = getOBRName(i);
-			}
-			
-			if( currentHeader.isEmpty() ) {
-				currentHeader = "No Headings Found [" + i + "]";
-			}
-			
-			if( headers == null ) {
-				headers = new ArrayList<String>();
-			}
-			
-			logger.debug("Adding header: '" + currentHeader + "' to list");
+			if( responseCount > 0 ) {
 
-			headers.add( currentHeader );
+				if( headerSet == null ) {
+					headerSet = new HashSet<String>();
+				}
+
+				// try the OBR Identity
+				if( currentHeader.isEmpty() ){
+					currentHeader = getOBRName(i);
+				}
+
+				logger.info("Adding header: '" + currentHeader + "' to list");
+
+				headerSet.add( currentHeader );
+
+				currentHeader = "";
+			}
 
 		}
 
-		return headers;
+		return new ArrayList<String>( headerSet );
 
 	}
 

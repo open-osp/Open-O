@@ -150,6 +150,14 @@ public class CLSHandler implements MessageHandler {
 		}
 	}
 
+	public String getOBRIdentifier (int i) {
+        try {
+            return (getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getUniversalServiceIdentifier().getCe1_Identifier().getValue()));
+        } catch (Exception e) {
+            return ("");
+        }
+    }
+
 	public String getTimeStamp(int i, int j) {
 		try {
 			return (formatDateTime(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getObservationDateTime().getTimeOfAnEvent().getValue())));
@@ -619,7 +627,7 @@ public class CLSHandler implements MessageHandler {
 
 	public String getFillerOrderNumber() {
 		// this is different from the filler order number in ORC
-		return get("/.OBR-3-1");
+		return get("/.OBR-3");
 	}
 
 	public String getEncounterId() {

@@ -110,9 +110,9 @@ String curUser_no = (String) session.getAttribute("user");
 					<table id="summaryView" class="tablesorter">
 					<thead>
 						<tr>
-                            <th nowrap>
+                            <th>
                                 <input type="checkbox" onclick="checkAllLabs('lab_form');" name="checkA"/>
-                                <bean:message key="oscarMDS.index.msgHealthNumber"/>
+<%--                                <bean:message key="oscarMDS.index.msgHealthNumber"/>--%>
                             </th>
                             <th>
                                 <bean:message key="oscarMDS.index.msgPatientName"/>
@@ -120,8 +120,12 @@ String curUser_no = (String) session.getAttribute("user");
                             <th>
                                 <bean:message key="oscarMDS.index.msgSex"/>
                             </th>
+
                             <th>
                                 <bean:message key="oscarMDS.index.msgResultStatus"/>
+                            </th>
+                            <th>
+                                <bean:message key="oscarMDS.index.msgLabel"/>
                             </th>
                             <th>
                                 <% if (dateType.equals("receivedCreated")) { %>
@@ -130,9 +134,9 @@ String curUser_no = (String) session.getAttribute("user");
                                 <bean:message key="oscarMDS.index.msgDateTest"/>
                                 <% } %>
                             </th>
-                            <th>
-                                <bean:message key="oscarMDS.index.msgOrderPriority"/>
-                            </th>
+<%--                            <th>--%>
+<%--                                <bean:message key="oscarMDS.index.msgOrderPriority"/>--%>
+<%--                            </th>--%>
                             <th>
                                 <bean:message key="oscarMDS.index.msgRequestingClient"/>
                             </th>
@@ -282,7 +286,7 @@ String curUser_no = (String) session.getAttribute("user");
                                 else {
                         		%>
                                 <tr id="labdoc_<%=segmentID%>" bgcolor="<%=bgcolor%>" <%if(result.isDocument()){%> name="scannedDoc" <%} else{%> name="HL7lab" <%}%> class="<%= (result.isAbnormal() ? "AbnormalRes" : "NormalRes" ) + " " + (result.isMatchedToPatient() ? "AssignedRes" : "UnassignedRes") %>">
-                                <td nowrap>
+                                <td>
                                     <input type="hidden" id="totalNumberRow" value="<%=total_row_index+1%>">
                                     <%
                                         String disabled = "";
@@ -295,9 +299,10 @@ String curUser_no = (String) session.getAttribute("user");
                                     <input type="hidden" name="labType<%=segmentID+result.labType%>" value="<%=result.labType%>"/>
                                     <input type="hidden" name="ackStatus" value="<%= result.isMatchedToPatient() %>" />
                                     <input type="hidden" name="patientName" value="<%=StringEscapeUtils.escapeHtml(result.patientName) %>"/>
-                                    <%=result.getHealthNumber() %>
+<%--                                    <%=result.getHealthNumber() %>--%>
                                 </td>
-                                <td nowrap>
+
+                                <td>
                                     <% if ( result.isMDS() ){ %>
                                     <a href="javascript:parent.reportWindow('SegmentDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=labRead%><%= StringEscapeUtils.escapeHtml(result.getPatientName())%></a>
                                     <% }else if (result.isCML()){ %>
@@ -362,28 +367,31 @@ String curUser_no = (String) session.getAttribute("user");
                                     <a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/BC/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=labRead%><%=StringEscapeUtils.escapeJavaScript(result.getPatientName())%></a>
                                     <% }%>
                                 </td>
-                                <td nowrap>
+                                <td>
                                     <%=result.getSex() %>
                                 </td>
-                                <td nowrap>
+                                <td>
                                     <%= (result.isAbnormal() ? "Abnormal" : "" ) %>
                                 </td>
-                                <td nowrap>
+                                    <td class="lab-label">
+                                        <c:out value="<%= result.getLabel() %>" />
+                                    </td>
+                                <td>
                                     <%=result.getDateTime() + (result.isDocument() ? " / " + result.lastUpdateDate : "")%>
                                 </td>
-                                <td nowrap>
-                                    <%=result.getPriority()%>
+<%--                                <td>--%>
+<%--                                    <%=result.getPriority()%>--%>
+<%--                                </td>--%>
+                                <td>
+                                    <c:out value="<%=result.getRequestingClient()%>" />
                                 </td>
-                                <td nowrap>
-                                    <%=result.getRequestingClient()%>
+                                <td>
+                                    <c:out value='<%=result.isDocument() ? result.description == null ? "" : result.description : result.getDisciplineDisplayString()%>' />
                                 </td>
-                                <td nowrap>
-                                    <%=result.isDocument() ? result.description == null ? "" : result.description : result.getDisciplineDisplayString()%>
-                                </td>
-                                <td nowrap> <!--  -->
+                                <td>
                                     <%= ((result.isReportCancelled())? "Cancelled" : result.isFinal() ? "Final" : "Partial")%>
                                 </td>
-                                <td nowrap>
+                                <td>
                                     <% int multiLabCount = result.getMultipleAckCount(); %>
                                     <%= result.getAckCount() %>&#160<% if ( multiLabCount >= 0 ) { %>(<%= result.getMultipleAckCount() %>)<%}%>
                                 </td>

@@ -140,6 +140,10 @@ public final class OscarToOscarHl7V2Handler implements MessageHandler {
 	    return chainnedMessageAdapter.getOBRName(i);
     }
 
+    public String getOBRIdentifier(int i) {
+        return chainnedMessageAdapter.getOBRIdentifier(i);
+    }
+
 	public String getObservationHeader(int i, int j) {
 	    return chainnedMessageAdapter.getObservationHeader(i, j);
     }

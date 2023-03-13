@@ -23,6 +23,8 @@
  */
 package org.oscarehr.managers.model;
 
+import org.oscarehr.common.model.ProviderPreference;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -50,7 +52,7 @@ public class ProviderSettings {
 	private boolean hideOldEchartLinkInAppointment=false;
 	
 	private Collection<String> appointmentScreenForms = new ArrayList<String>();	
-	private Collection<Integer> appointmentScreenEforms = new ArrayList<Integer>();
+	private Collection<ProviderPreference.EformLink> appointmentScreenEforms = new ArrayList<>();
 	private Collection<org.oscarehr.managers.model.QuickLink> appointmentScreenQuickLinks = new ArrayList<org.oscarehr.managers.model.QuickLink>();
 	
 	private String defaultServiceType = "no";
@@ -246,10 +248,10 @@ public class ProviderSettings {
 	public void setAppointmentScreenForms(Collection<String> appointmentScreenForms) {
 		this.appointmentScreenForms = appointmentScreenForms;
 	}
-	public Collection<Integer> getAppointmentScreenEforms() {
+	public Collection<ProviderPreference.EformLink> getAppointmentScreenEforms() {
 		return appointmentScreenEforms;
 	}
-	public void setAppointmentScreenEforms(Collection<Integer> appointmentScreenEforms) {
+	public void setAppointmentScreenEforms(Collection<ProviderPreference.EformLink> appointmentScreenEforms) {
 		this.appointmentScreenEforms = appointmentScreenEforms;
 	}
 	public Collection<org.oscarehr.managers.model.QuickLink> getAppointmentScreenQuickLinks() {

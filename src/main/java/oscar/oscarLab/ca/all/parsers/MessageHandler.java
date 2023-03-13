@@ -104,6 +104,11 @@ public interface MessageHandler {
     public String getOBRName( int i);
 
     /**
+     * Return the cell identifier of the ith OBR Segment
+     */
+    public String getOBRIdentifier(int i);
+
+    /**
      *  Return the date and time of the observation refered to by the jth obx
      *  segment of the ith obr group. If the date and time is not specified
      *  within the obx segment it should be specified within the obr segment.

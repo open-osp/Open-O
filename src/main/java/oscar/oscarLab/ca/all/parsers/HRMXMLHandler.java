@@ -173,6 +173,10 @@ public class HRMXMLHandler implements MessageHandler {
 		// return (val = obrSegKeySet.get(i).getUniversalServiceIdentifier().getText().getValue()) == null ? " " : val;
 	}
 
+	public String getOBRIdentifier (int i) {
+	    return "";
+    }
+
 	public String getTimeStamp(int i, int j) {
 		return "";
 	}

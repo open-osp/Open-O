@@ -161,13 +161,19 @@ public class EctDisplayLabAction2 extends EctDisplayAction {
 	            	else labDisplayName = label;
 					url = request.getContextPath() + "/lab/CA/ON/CMLDisplay.jsp?demographicId=" + bean.demographicNo + "&providerNo=" + bean.providerNo + "&segmentID=" + result.segmentID + "&multiID=" + result.multiLabId + remoteFacilityIdQueryString;
 				} else if (result.isHL7TEXT()) {
-					if (label == null || label.equals("")) labDisplayName = result.getDiscipline();
-	            	else labDisplayName = label;
+					if (label == null || label.equals("")) {
+						labDisplayName = result.getDiscipline();
+					} else {
+						labDisplayName = label;
+					}
 					// url = request.getContextPath() + "/lab/CA/ALL/labDisplay.jsp?providerNo="+bean.providerNo+"&segmentID="+result.segmentID;
 					url = request.getContextPath() + "/lab/CA/ALL/labDisplay.jsp?demographicId=" + bean.demographicNo + "&providerNo=" + bean.providerNo + "&segmentID=" + result.segmentID + "&multiID=" + result.multiLabId + remoteFacilityIdQueryString;
 				} else {
-					if (label == null || label.equals("")) labDisplayName = result.getDiscipline();
-	            	else labDisplayName = label;
+					if (label == null || label.equals("")) {
+						labDisplayName = result.getDiscipline();
+					} else {
+						labDisplayName = label;
+					}
 					url = request.getContextPath() + "/lab/CA/BC/labDisplay.jsp?demographicId=" + bean.demographicNo + "&segmentID=" + result.segmentID + "&providerNo=" + bean.providerNo + "&multiID=" + result.multiLabId + remoteFacilityIdQueryString;
 				}
 				String labRead = "";

@@ -214,6 +214,10 @@ H3 {
 	border:none !important;
 }
 
+div#listViewDocs table tr td:not(div#listViewDocs table tr td.lab-label){
+	white-space: nowrap;
+}
+
 @media print {
 	INPUT {
 		display: none;

@@ -933,7 +933,7 @@ Allergies and Intolerances - (Reaction List)
 												<observation classCode="OBS" moodCode="EVN">
 													<id extension="12366" root="2.16.840.1.113883.3.1818.10.2.10.15"/>
 													<code code="REASON" displayName="Reason Observation" codeSystem="2.16.840.1.113883.3.3068.10.6.3" codeSystemName="ObservationType-CA-Pending"/>
-													<text>confirmation recieved from Hospital</text>
+													<text>confirmation received from Hospital</text>
 													<effectiveTime value="20120201"/>
 													<value xsi:type="CD" code="10144323"  displayName="Patient findings pneumonia" codeSystem="2.16.840.1.113883.3.1818.10.2.8.3" codeSystemName="SNOMED-CT"/>
 													<!-- Status Change reason Author -->
@@ -1377,7 +1377,7 @@ Current Medications
 								<observation classCode="OBS" moodCode="EVN">
 									<id extension="12366" root="2.16.840.1.113883.3.1818.10.2.10.15"/>
 									<code code="REASON" displayName="Reason Observation" codeSystem="2.16.840.1.113883.3.3068.10.6.3" codeSystemName="ObservationType-CA-Pending"/>
-									<text>confirmation recieved from Hospital</text>
+									<text>confirmation received from Hospital</text>
 									<effectiveTime value="20120201"/>
 									<value xsi:type="CD" code="10144323"  displayName="Patient findings pneumonia" codeSystem="2.16.840.1.113883.3.1818.10.2.8.3" codeSystemName="SNOMED-CT"/>
 									<!-- Status Change reason Author -->
@@ -1685,7 +1685,7 @@ Current Medications
 												<observation classCode="OBS" moodCode="EVN">
 													<id extension="12366" root="2.16.840.1.113883.3.1818.10.2.10.15"/>
 													<code code="REASON" displayName="Reason Observation" codeSystem="2.16.840.1.113883.3.3068.10.6.3" codeSystemName="ObservationType-CA-Pending"/>
-													<text>confirmation recieved from Hospital</text>
+													<text>confirmation received from Hospital</text>
 													<effectiveTime value="20120201"/>
 													<value xsi:type="CD" code="10144323"  displayName="Patient findings pneumonia" codeSystem="2.16.840.1.113883.3.1818.10.2.8.3" codeSystemName="SNOMED-CT"/>
 													<!-- Status Change reason Author -->
@@ -3642,7 +3642,7 @@ Medications & Prescriptions - Medication List
 								<observation classCode="OBS" moodCode="EVN">
 									<id extension="12366" root="2.16.840.1.113883.3.1818.10.2.10.15"/>
 									<code code="REASON" displayName="Reason Observation" codeSystem="2.16.840.1.113883.3.3068.10.6.3" codeSystemName="ObservationType-CA-Pending"/>
-									<text>confirmation recieved from Hospital</text>
+									<text>confirmation received from Hospital</text>
 									<effectiveTime value="20120201"/>
 									<value xsi:type="CD" code="10144323"  displayName="Patient findings pneumonia" codeSystem="2.16.840.1.113883.3.1818.10.2.8.3" codeSystemName="SNOMED-CT"/>
 									<!-- Status Change reason Author -->
@@ -3973,7 +3973,7 @@ Medications & Prescriptions - Medication List
 												<observation classCode="OBS" moodCode="EVN">
 													<id extension="12366" root="2.16.840.1.113883.3.1818.10.2.10.15"/>
 													<code code="REASON" displayName="Reason Observation" codeSystem="2.16.840.1.113883.3.3068.10.6.3" codeSystemName="ObservationType-CA-Pending"/>
-													<text>confirmation recieved from Hospital</text>
+													<text>confirmation received from Hospital</text>
 													<effectiveTime value="20120201"/>
 													<value xsi:type="CD" code="10144323"  displayName="Patient findings pneumonia" codeSystem="2.16.840.1.113883.3.1818.10.2.8.3" codeSystemName="SNOMED-CT"/>
 													<!-- Status Change reason Author -->

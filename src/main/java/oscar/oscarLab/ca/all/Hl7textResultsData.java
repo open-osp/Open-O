@@ -24,6 +24,7 @@
 
 package oscar.oscarLab.ca.all;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -86,7 +87,7 @@ public class Hl7textResultsData {
 
 	public static void populateMeasurementsTable(String lab_no, String demographic_no) {
 		MessageHandler h = Factory.getHandler(lab_no);
-
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		Calendar calender = Calendar.getInstance();
 		String day = Integer.toString(calender.get(Calendar.DAY_OF_MONTH));
 		String month = Integer.toString(calender.get(Calendar.MONTH) + 1);
@@ -157,7 +158,14 @@ public class Hl7textResultsData {
 				String labname = h.getPatientLocation();
 				String accession = h.getAccessionNum();
 				String req_datetime = h.getRequestDate(i);
-				String datetime = h.getTimeStamp(i, j);
+				String observationDate = h.getTimeStamp(i, j);
+
+				// temporary for Excelleris labs. This method be added to the MessageHandler interface if
+				// it is useful for other HL7 labs
+				if(h instanceof oscar.oscarLab.ca.all.parsers.PATHL7Handler) {
+					observationDate = ((oscar.oscarLab.ca.all.parsers.PATHL7Handler) h).getObservationDate(i);
+				}
+
 				String olis_status = h.getOBXResultStatus(i, j);
 				String abnormal = h.getOBXAbnormalFlag(i, j);
 				if (abnormal != null && (abnormal.equals("A") || abnormal.startsWith("H"))) {
@@ -219,18 +227,21 @@ public class Hl7textResultsData {
                     m.setProviderNo("0");
                     m.setDataField(matcher.group());
                     m.setMeasuringInstruction(measInst);
+					try {
+						m.setCreateDate(simpleDateFormat.parse(dateEntered));
+					} catch(Exception e){
+						m.setCreateDate(new Date());
+					}
 
-                    if (datetime != null && datetime.length() > 0) {
-                        m.setDateObserved(UtilDateUtilities.StringToDate(datetime, "yyyy-MM-dd hh:mm:ss"));
-                    }
+					/*
+					 * This should be the OBR date - not the date the lab or measurement was received.
+					 */
+					try {
+						m.setDateObserved(simpleDateFormat.parse(observationDate));
+					} catch(Exception e){
+						m.setDateObserved(new Date());
+					}
 
-                    if (m.getDateObserved() == null && datetime != null && datetime.length() > 0) {
-                        m.setDateObserved(UtilDateUtilities.StringToDate(datetime, "yyyy-MM-dd"));
-                    }
-
-                    if (m.getDateObserved() == null) {
-                        m.setDateObserved(UtilDateUtilities.StringToDate(dateEntered, "yyyy-MM-dd hh:mm:ss"));
-                    }
                     m.setAppointmentNo(0);
                     
                     /*
@@ -287,7 +298,7 @@ public class Hl7textResultsData {
                     me = new MeasurementsExt();
                     me.setMeasurementId(mId);
                     me.setKeyVal("datetime");
-                    me.setVal(datetime);
+                    me.setVal(observationDate);
                     measurementsExts.add(me);
 
                     if (olis_status != null && olis_status.length() > 0) {

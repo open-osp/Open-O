@@ -136,6 +136,10 @@ public class GDMLHandler implements MessageHandler {
         return (( obrSegKeySet.get(i)).getUniversalServiceIdentifier().getText().getValue());
     }
 
+    public String getOBRIdentifier(int i){
+        return (( obrSegKeySet.get(i)).getUniversalServiceIdentifier().getCe1_Identifier().getValue());
+    }
+
     public String getTimeStamp(int i, int j){
         try{
             String ret = ( obrSegKeySet.get(i)).getResultsRptStatusChngDateTime().getTimeOfAnEvent().getValue();
@@ -220,6 +224,7 @@ public class GDMLHandler implements MessageHandler {
         return ret;
     }
     
+
     public String getOBXNameLong(int i, int j){
         String ret = "";
         try{

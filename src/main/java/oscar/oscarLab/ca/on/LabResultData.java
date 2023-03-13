@@ -265,10 +265,6 @@ public class LabResultData implements Comparable<LabResultData> {
 
 
 	public String getDateTime(){
-		/* if (EXCELLERIS.equals(this.labType)){
-            PathnetResultsData prd = new PathnetResultsData();
-            this.dateTime = prd.findPathnetObservationDate(this.segmentID);
-        }*/
 		return this.dateTime;
 	}
 

@@ -257,34 +257,21 @@ $(function() {
 		</td>
 	</tr>
 	<tr>
-		<!--th align="left" valign="bottom" class="cell" nowrap>
-                    <input type="checkbox" onclick="checkAll('lab_form');" name="checkA"/>
-                    <bean:message key="oscarMDS.index.msgHealthNumber"/>
-                </th>
-                <th align="left" valign="bottom" class="cell">
-                    <bean:message key="oscarMDS.index.msgPatientName"/>
-                </th>
-                <th align="left" valign="bottom" class="cell">
-                    <bean:message key="oscarMDS.index.msgSex"/>
-                </th-->
-		<th align="left" valign="bottom" class="cell"><bean:message
-			key="oscarMDS.index.msgDiscipline" /></th>
-		<th align="left" valign="bottom" class="cell"><bean:message
-			key="oscarMDS.index.msgDateTest" /></th>
-		<th align="left" valign="bottom" class="cell"><bean:message
+		<th  class="cell"><bean:message
+				key="oscarMDS.index.msgDateTest" /></th>
+		<th  class="cell">
+			<bean:message key="oscarMDS.index.msgLabel" />
+			</th>
+		<th  class="cell"><bean:message
 			key="oscarMDS.index.msgRequestingClient" /></th>
-		<th align="left" valign="bottom" class="cell"><bean:message
+		<th  class="cell"><bean:message
 			key="oscarMDS.index.msgResultStatus" /></th>
 
-		<!--th align="left" valign="bottom" class="cell">
-                    <bean:message key="oscarMDS.index.msgOrderPriority"/>
-                </th-->
-
-
-		<th align="left" valign="bottom" class="cell"><bean:message
+		<th  class="cell"><bean:message
 			key="oscarMDS.index.msgReportStatus" /></th>
-		<th align="left" valign="bottom" class="cell"><bean:message
-			key="oscarMDS.index.msgLabel" /></th>
+		<th  class="cell">
+			<bean:message key="oscarMDS.index.msgDiscipline" />
+		</th>
 	</tr>
 
 	<%  
@@ -313,28 +300,16 @@ $(function() {
                 }
                 %>
 
-	<tr bgcolor="<%=bgcolor%>"
-		class="<%= (result.isAbnormal() ? "AbnormalRes" : "NormalRes" ) %>">
-		<!--td nowrap>
-                    <input type="checkbox" name="flaggedLabs" value="<%=segmentID%>"> 
-                    <input type="hidden" name="labType<%=segmentID%><%=result.labType%>" value="<%=result.labType%>"/>
-                    <%=result.getHealthNumber() %>
-                </td>
-                <td nowrap>                                    
-                    <% if ( result.isMDS() ){ %>
-                    <a href="javascript:reportWindow('SegmentDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%= result.getPatientName()%></a>
-                    <% }else if (result.isCML()){ %>
-                    <a href="javascript:reportWindow('../lab/CA/ON/CMLDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=(String) result.getPatientName()%></a>
-                    <% }else if (result.isHL7TEXT()) {%>
-                    <a href="javascript:reportWindow('../lab/CA/ON/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=(String) result.getPatientName()%></a>
-                    <% }else {%>
-                    <a href="javascript:reportWindow('../lab/CA/BC/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=(String) result.getPatientName()%></a>
-                    <% }%>
-                </td>
-                <td nowrap>
-                    <center><%= (String) result.getSex() %></center>
-                </td-->
-		<td nowrap>
+	<tr bgcolor="<%=bgcolor%>" class="<%= (result.isAbnormal() ? "AbnormalRes" : "NormalRes" ) %>">
+		<td >
+			<%
+				Date d1 = getServiceDate(loggedInInfo,result);
+				String formattedDate = DateUtils.getDate(d1);
+
+			%>
+			<%=formattedDate %>
+		</td>
+		<td >
 		<% 
 			String remoteFacilityIdQueryString="";
 			if (result.getRemoteFacilityId()!=null)
@@ -352,31 +327,28 @@ $(function() {
 			href="javascript:reportWindow('../oscarMDS/SegmentDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%= result.getDiscipline()%></a>
 		<% } else if (result.isCML()){ %> <a
 			href="javascript:reportWindow('../lab/CA/ON/CMLDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%=(String) result.getDiscipline()%></a>
-		<% }else if (result.isHL7TEXT()) {%> <a
-			href="javascript:reportWindow('../lab/CA/ALL/labDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%=(String) result.getDiscipline()%></a>
-		<% } else {%> <a
-			href="javascript:reportWindow('../lab/CA/BC/labDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')"><%=(String) result.getDiscipline()%></a>
+		<% }else if (result.isHL7TEXT()) {%>
+			<a href="javascript:reportWindow('../lab/CA/ALL/labDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')">
+				<%=StringUtils.trimToEmpty(result.getLabel())%>
+			</a>
+		<% } else {%>
+			<a href="javascript:reportWindow('../lab/CA/BC/labDisplay.jsp?demographicId=<%=demographicNo%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%><%=remoteFacilityIdQueryString%>')">
+				<%=StringUtils.trimToEmpty(result.getLabel())%>
+			</a>
 		<% }%>
 		</td>
-		<td nowrap>
-		<% 
-		    Date d1 = getServiceDate(loggedInInfo,result);
-		 	String formattedDate = DateUtils.getDate(d1);
-         
-		%>
-		<%=formattedDate %>
-		</td>
-		<td nowrap><%= (String) result.getRequestingClient()%></td>
-		<td nowrap><%= (result.isAbnormal() ? "Abnormal" : "" ) %></td>
 
-		<!--td nowrap>
-                    <%= (String) result.getPriority()%>
+		<td ><%= StringUtils.trimToEmpty(result.getRequestingClient())%></td>
+		<td ><%= (result.isAbnormal() ? "Abnormal" : "" ) %></td>
+
+		<!--td >
+                    <%= result.getPriority()%>
                 </td-->
 
 
-		<td nowrap><%= ( (String) ( result.isFinal() ? "Final" : "Partial") )%>
+		<td ><%= ( ( result.isFinal() ? "Final" : "Partial") )%>
 		</td>
-		<td nowrap><%=StringUtils.trimToEmpty(result.getLabel()) %></td>
+		<td ><%=StringUtils.trimToEmpty(result.getDiscipline()) %></td>
 	</tr>
 	<% } 
          

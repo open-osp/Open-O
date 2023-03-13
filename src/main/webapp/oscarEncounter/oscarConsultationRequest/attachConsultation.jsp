@@ -40,6 +40,7 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE html >
 <html>
@@ -92,8 +93,8 @@ function toggleSelectAll(element) {
 			            </li>
 						 <c:forEach items="${ allLabs }" var="lab">
 		                	<li class="lab">
-		                		<input class="lab_check" type="checkbox" name="labNo" id="labNo${ lab.segmentID }" value="${lab.segmentID}" title="${ lab.discipline }" />
-		                		<label for="docNo${document.docId}"><c:out value="${ lab.discipline } ${ lab.dateObj }" /></label>
+		                		<input class="lab_check" type="checkbox" name="labNo" id="labNo${ lab.segmentID }" value="${lab.segmentID}" title="${ lab.label }" />
+								<label for="labNo${lab.segmentID}" title="${ lab.label }" ><c:out value="${fn:substring(lab.label, 0, 30)} ${ lab.dateObj }" /></label>
 		                	</li>
 		                </c:forEach>
 	            	</ul> 

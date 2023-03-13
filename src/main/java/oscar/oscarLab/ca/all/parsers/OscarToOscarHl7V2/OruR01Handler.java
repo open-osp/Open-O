@@ -50,7 +50,17 @@ public final class OruR01Handler extends ChainnedMessageAdapter<ORU_R01> {
 	{
 		return(hl7Message.getPATIENT_RESULT(0).getORDER_OBSERVATION(0));
 	}
-	
+
+	@Override
+	public String getOBRIdentifier(int i) {
+		return null;
+	}
+
+	@Override
+	public String getOBXNameLong(int i, int j) {
+		return null;
+	}
+
 	@Override
 	public String getDocName() {
 		// look through provider records for the referring provider

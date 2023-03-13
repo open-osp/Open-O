@@ -142,9 +142,9 @@ public class DemographicManager {
 		Demographic result = demographicDao.getDemographicById(demographicId);
 
 		//--- log action ---
-		if (result != null) {
-			LogAction.addLog(loggedInInfo, "DemographicManager.getDemographic", null, null, ""+demographicId, null);
-		}
+//		if (result != null) {
+//			LogAction.addLog(loggedInInfo, "DemographicManager.getDemographic", null, null, ""+demographicId, null);
+//		}
 
 		return (result);
 	}

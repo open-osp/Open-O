@@ -36,6 +36,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
 <script type="text/javascript">
     jQuery.noConflict();
+	const ctx = "${pageContext.servletContext.contextPath}";
 </script>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
 <script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>

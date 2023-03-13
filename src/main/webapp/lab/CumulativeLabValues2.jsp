@@ -54,8 +54,7 @@ if(!authed) {
 %>
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html >
 
 
 <html:html locale="true">
@@ -95,7 +94,7 @@ Rounded("div.leftBox","bottom","transparent","#EEEEFF","small border #ccccff");
 
 
 <script type="text/javascript">
-<!--
+//<!--
 //if (document.all || document.layers)  window.resizeTo(790,580);
 function newWindow(file,window) {
   msgWindow=open(file,window,'scrollbars=yes,width=760,height=520,screenX=0,screenY=0,top=0,left=10');
@@ -267,7 +266,7 @@ function addLabToList(req){
                          Hashtable hdata = (Hashtable) dater2.get(labDate);
                          if (hdata != null){
                             latestVal = (String) hdata.get("result");
-                            latestDate = UtilDateUtilities.DateToString( (Date) hdata.get("collDateDate") , "dd-MMM yyyy");
+                            latestDate = UtilDateUtilities.DateToString( (Date) hdata.get("collDate") , "dd-MMM yyyy");
                             abn = r(hdata.get("abn"));
                             h2 = labTestDates.size();
                          }

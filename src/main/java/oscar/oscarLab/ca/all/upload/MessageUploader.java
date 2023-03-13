@@ -40,6 +40,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -47,25 +48,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.OtherIdManager;
-import org.oscarehr.common.dao.FileUploadCheckDao;
-import org.oscarehr.common.dao.Hl7TextInfoDao;
-import org.oscarehr.common.dao.Hl7TextMessageDao;
-import org.oscarehr.common.dao.MeasurementDao;
-import org.oscarehr.common.dao.MeasurementsExtDao;
-import org.oscarehr.common.dao.PatientLabRoutingDao;
-import org.oscarehr.common.dao.ProviderLabRoutingDao;
-import org.oscarehr.common.dao.RecycleBinDao;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.FileUploadCheck;
-import org.oscarehr.common.model.Hl7TextInfo;
-import org.oscarehr.common.model.Hl7TextMessage;
-import org.oscarehr.common.model.Measurement;
-import org.oscarehr.common.model.MeasurementsExt;
-import org.oscarehr.common.model.OtherId;
-import org.oscarehr.common.model.PatientLabRouting;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.ProviderLabRoutingModel;
-import org.oscarehr.common.model.RecycleBin;
+import org.oscarehr.common.dao.*;
+import org.oscarehr.common.model.*;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.olis.dao.OLISSystemPreferencesDao;
 import org.oscarehr.olis.model.OLISSystemPreferences;
@@ -77,11 +61,7 @@ import org.oscarehr.util.SpringUtils;
 import oscar.OscarProperties;
 import oscar.oscarDemographic.data.DemographicMerged;
 import oscar.oscarLab.ca.all.Hl7textResultsData;
-import oscar.oscarLab.ca.all.parsers.Factory;
-import oscar.oscarLab.ca.all.parsers.HHSEmrDownloadHandler;
-import oscar.oscarLab.ca.all.parsers.MEDITECHHandler;
-import oscar.oscarLab.ca.all.parsers.MessageHandler;
-import oscar.oscarLab.ca.all.parsers.SpireHandler;
+import oscar.oscarLab.ca.all.parsers.*;
 import oscar.util.UtilDateUtilities;
 
 public final class MessageUploader {
@@ -96,8 +76,6 @@ public final class MessageUploader {
 	private static MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
 	private static FileUploadCheckDao fileUploadCheckDao = SpringUtils.getBean(FileUploadCheckDao.class);
 	private static DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
-
-
 
 	private MessageUploader() {
 		// there's no reason to instantiate a class with no fields.
@@ -117,6 +95,14 @@ public final class MessageUploader {
 	public static String routeReport(LoggedInInfo loggedInInfo, String serviceName, MessageHandler h, String hl7Body, int fileId, RouteReportResults results) throws Exception {
 			
 		String retVal = "";
+		// Get the system preference to determine if a label should be applied to a version of a lab even if the labs inside the version change, defaulting to true to maintain current expected behavior
+		Boolean applyLabelDifferentLabs = true;
+		SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
+		SystemPreferences applyLabelDifferentLabsPreference = systemPreferencesDao.findPreferenceByName("sticky_label_different_labs");
+		if (applyLabelDifferentLabsPreference != null) {
+			applyLabelDifferentLabs = Boolean.parseBoolean(applyLabelDifferentLabsPreference.getValue());
+		}
+
 		if(h == null) {
 			throw new Exception("Unabled to continue. No valid handler found.");
 		}
@@ -133,9 +119,28 @@ public final class MessageUploader {
 		String accessionNum = h.getAccessionNum();
 		String fillerOrderNum = h.getFillerOrderNumber();
 		String sendingFacility = h.getPatientLocation();
-		ArrayList<?> docNums = h.getDocNums();
+		ArrayList<String> docNums = h.getDocNums();
 		int finalResultCount = h.getOBXFinalResultCount();
-		String obrDate = h.getMsgDate();
+
+
+		/*
+		 * start with OBR date because the date in the MSH segment may not be related to
+		 * when the actual lab result was observed.
+		 * Sometimes the "message date" is altered in data transfers or HL7 re-issues.
+		 */
+		String obrDate = h.getServiceDate();
+		if(obrDate == null || obrDate.isEmpty()) {
+			obrDate = h.getMsgDate();
+		}
+
+		/*
+		 * Temporary test for Excelleris labs.  This method should be added to the
+		 * interface if useful with other HL7 labs.
+		 */
+		String label = "";
+		if(h instanceof PATHL7Handler){
+			label = ((PATHL7Handler) h).getLabel();
+		}
 
 		if(h instanceof HHSEmrDownloadHandler) {
 			try{
@@ -214,7 +219,7 @@ public final class MessageUploader {
 			}
 		}
 
-		boolean isTDIS = type.equals("TDIS");
+		boolean isTDIS = "TDIS".equals(type);
 		boolean hasBeenUpdated = false;
 		Hl7TextMessage hl7TextMessage = new Hl7TextMessage();
 		Hl7TextInfo hl7TextInfo = new Hl7TextInfo();
@@ -256,7 +261,30 @@ public final class MessageUploader {
 			hl7TextInfo.setDiscipline(discipline);
 			hl7TextInfo.setReportStatus(reportStatus);
 			hl7TextInfo.setAccessionNumber(accessionNum);
+			hl7TextInfo.setSendingFacility(sendingFacility);
 			hl7TextInfo.setFillerOrderNum(fillerOrderNum);
+			hl7TextInfo.setLabel(label);
+
+			// If a past lab with the same AccessionNumber exist carry over the label
+			List<Hl7TextInfo> matchingLabs = hl7TextInfoDao.searchByAccessionNumberOrderByObrDate(accessionNum);
+			for (Hl7TextInfo matchingLab : matchingLabs) {
+				// if the lab has an entered label to carry over and the disciplines match (same lab types... for example CHEM1 & CHEM1 and not CHEM1/CHEM4 & CHEM1)
+				if (!StringUtils.isBlank(matchingLab.getLabel()) && (applyLabelDifferentLabs || discipline.equals(matchingLab.getDiscipline()))) {
+					// if the matched lab exist and a demographic is matched to it, make sure the HIN is the same
+					// before carrying over the label. If there is no demographic linked, just carry over the label
+					PatientLabRouting matchedPatientLabRouting = patientLabRoutingDao.findDemographicByLabId(matchingLab.getLabNumber());
+					if (matchedPatientLabRouting != null) {
+						Demographic matchedDemographic = demographicManager.getDemographic(loggedInInfo, matchedPatientLabRouting.getDemographicNo());
+						if (matchedDemographic != null && !StringUtils.isBlank(hin) && hin.equals(matchedDemographic.getHin())) {
+							hl7TextInfo.setLabel(matchingLab.getLabel());
+							break;
+						}
+					} else {
+						hl7TextInfo.setLabel(matchingLab.getLabel());
+						break;
+					}
+				}
+			}
 			hl7TextInfoDao.persist(hl7TextInfo);
 		}
 
@@ -267,7 +295,7 @@ public final class MessageUploader {
 				if(!id.equals(String.valueOf(hl7TextMessage.getId()))) {
 					List<Hl7TextInfo> infos = hl7TextInfoDao.findByLabId(Integer.parseInt(id));
 					for(Hl7TextInfo info:infos) {
-						if(!StringUtils.isEmpty(info.getLabel())) {
+						if(!StringUtils.isEmpty(info.getLabel()) && (applyLabelDifferentLabs || discipline.equals(info.getDiscipline()))) {
 							latestLabel = info.getLabel();
 						}
 					}
@@ -389,8 +417,9 @@ public final class MessageUploader {
 	/**
 	 * Attempt to match the doctors from the lab to a provider
 	 */ 
-	private static void providerRouteReport(String labId, ArrayList<?> docNums, Connection conn, String altProviderNo, String labType, String search_on, Integer limit, boolean orderByLength) throws Exception {
-		ArrayList<String> providerNums = new ArrayList<String>();
+	private static void providerRouteReport(String labId, ArrayList<String> docNums, Connection conn, String altProviderNo, String labType, String search_on, Integer limit, boolean orderByLength) throws Exception {
+		// Using HashSet to avoid duplicate provider numbers
+	    LinkedHashSet<String> providerNums = new LinkedHashSet<>();
 		PreparedStatement pstmt;
 		String sql = "";
 		String sqlLimit = "";
@@ -448,8 +477,7 @@ public final class MessageUploader {
 		
 		ProviderLabRouting routing = new ProviderLabRouting();
 		if (providerNums.size() > 0) {
-			for (int i = 0; i < providerNums.size(); i++) {
-				String provider_no = providerNums.get(i);
+			for (String provider_no : providerNums) {
 				routing.route(labId, provider_no, conn, "HL7");
 			}
 		} else {

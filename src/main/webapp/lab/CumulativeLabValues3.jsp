@@ -139,8 +139,7 @@ try{
 }%>
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 
 
 
@@ -182,7 +181,7 @@ Rounded("div.leftBox","bottom","transparent","#EEEEFF","small border #ccccff");
 
 
 <script type="text/javascript">
-<!--
+//<!--
 //if (document.all || document.layers)  window.resizeTo(790,580);
 function newWindow(file,window) {
   msgWindow=open(file,window,'scrollbars=yes,width=760,height=520,screenX=0,screenY=0,top=0,left=10');
@@ -190,11 +189,6 @@ function newWindow(file,window) {
 } 
 //-->
         </script>
-
-
-
-
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
 
 <script language="JavaScript">
 
@@ -271,7 +265,7 @@ function reportWindow(page) {
 </head>
 
 <body class="BodyStyle">
-<!--  -->
+
 <table class="MainTable" id="scrollNumber1">
 	<tr class="MainTableTopRow">
 		<td class="MainTableTopRowLeftColumn">lab</td>
@@ -292,7 +286,7 @@ function reportWindow(page) {
 	<tr>
 		<td class="MainTableLeftColumn" valign="top"></td>
 		<td valign="top" class="MainTableRightColumn">
-		<table class="cumlatable">
+		<table class="cumlatable table table-condensed">
 			<tr>
 				<th>&nbsp;</th>
 				<th>Latest Value</th>
@@ -306,9 +300,6 @@ function reportWindow(page) {
                                 Hashtable dateIdHash = (Hashtable) dateList.get(i);
                                 String dateString = (String) dateIdHash.get("date");
                                 Date labDate= UtilDateUtilities.StringToDate(dateString, "yyyy-MM-dd HH:mm:ss");
-                                //Hashtable idHash = (Hashtable) dateIdHash.get("idHash");
-                                //String lab_no = (String) idHash.get("lab_no");
-                                //String lab_type = (String) idHash.get("lab_type");
                                 String lab_no = (String) dateIdHash.get("id");
                                 
                                 CommonLabResultData data = new CommonLabResultData();
@@ -316,7 +307,7 @@ function reportWindow(page) {
                             %>
 
 				<th><a
-					href="javascript:reportWindow('../lab/CA/ALL/labDisplay.jsp?segmentID=<%=lab_no%>&providerNo=<%= session.getValue("user") %>')"><%=UtilDateUtilities.DateToString( labDate , "dd-MMM yy")%></a>
+					href="javascript:reportWindow('../lab/CA/ALL/labDisplay.jsp?segmentID=<%=lab_no%>&providerNo=<%= session.getValue("user") %>')"><%=UtilDateUtilities.DateToString( labDate , "dd MMM yy")%></a>
 				</th>
 				<%}%>
 			</tr>

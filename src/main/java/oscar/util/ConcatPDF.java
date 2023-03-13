@@ -43,29 +43,22 @@ package oscar.util;
  * @author Mark Thompson
  */
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.itextpdf.text.Document;
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.oscarehr.util.MiscUtils;
-
-
-import com.itextpdf.text.pdf.PRAcroForm;
-import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.SimpleBookmark;
 
 public class ConcatPDF {
 
 
     public static void concat (ArrayList<Object> alist,String filename){
         try(OutputStream os = new FileOutputStream(filename);) {
-
         	concat(alist,os);
         }catch(Exception e){
             MiscUtils.getLogger().error("Error", e);
@@ -76,100 +69,47 @@ public class ConcatPDF {
      * This class can be used to concatenate existing PDF files.
      * (This was an example known as PdfCopy.java)
      */
-    public static void concat(List<Object> alist,OutputStream out) {
-        Document document = null;
-        PdfReader reader = null;
-        PdfCopy writer = null;
-        try {
-            int pageOffset = 0;
-            ArrayList master = new ArrayList();
-            int f =0;
+    public static void concat(List<Object> fileOrInputStreamPdfList, OutputStream outputStream) {
+        PDFMergerUtility pdfMerger = new PDFMergerUtility();
+        PDDocument documentReader;
+        for (Object o : fileOrInputStreamPdfList) {
+            //load pdf file
+            try {
+                if (o instanceof InputStream) {
+                    documentReader = PDDocument.load((InputStream) o);
+                } else {
+                    Path fileName = Paths.get((String) o);
+                    documentReader = PDDocument.load(fileName.toFile());
+                }
 
-            boolean fileAsStream = false;
-			String name = "";
+                // remove encryption
+                if (documentReader != null && documentReader.isEncrypted()) {
+                    documentReader.setAllSecurityToBeRemoved(true);
+                }
+            } catch (IOException e) {
+                MiscUtils.getLogger().error("Failed to open file for concatenation: " + o, e);
+                continue;
+            }
 
-            MiscUtils.getLogger().debug("Size of list = "+alist.size());
-
-            while (f < alist.size()) {
-            	// we create a reader for a certain document
-    			Object o = alist.get(f);
-
-    			if (o instanceof InputStream) {
-    				name = "";
-    				fileAsStream = true;
-    			} else {
-    				name = (String) alist.get(f);
-    				fileAsStream = false;
-    			}
-
-    			if (fileAsStream) {
-    				reader = new PdfReader((InputStream) alist.get(f));
-    			} else {
-    				reader = new PdfReader(name);
-    			}
-
-                if (reader.isEncrypted()){
-                    try {
-                        Field encryptionField = reader.getClass().getDeclaredField("encrypted");
-                        encryptionField.setAccessible(true);
-                        encryptionField.set(reader, false);
-                    } catch (Exception e) {
-                    	MiscUtils.getLogger().error("Error",e);
+            // save document to output stream and add resulting data to merger
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                if (documentReader != null) {
+                    documentReader.save(baos);
+                    try (InputStream inputStream = new ByteArrayInputStream(baos.toByteArray())) {
+                        pdfMerger.addSource(inputStream);
+                        documentReader.close();
                     }
-    			}
-
-                reader.consolidateNamedDestinations();
-                // we retrieve the total number of pages
-                int n = reader.getNumberOfPages();
-                List bookmarks = SimpleBookmark.getBookmark(reader);
-                if (bookmarks != null) {
-                    if (pageOffset != 0)
-                        SimpleBookmark.shiftPageNumbers(bookmarks, pageOffset, null);
-                    master.addAll(bookmarks);
                 }
-                pageOffset += n;
-                MiscUtils.getLogger().debug("There are " + n + " pages in " + name);
-
-                if (f == 0) {
-                    // step 1: creation of a document-object
-                    document = new Document(reader.getPageSizeWithRotation(1));
-                    // step 2: we create a writer that listens to the document
-                    writer = new PdfCopy(document, out);
-                    // step 3: we open the document
-                    document.open();
-                }
-                // step 4: we add content
-                PdfImportedPage page;
-                for (int i = 0; i < n; ) {
-                    ++i;
-                    page = writer.getImportedPage(reader, i);
-                    writer.addPage(page);
-                    MiscUtils.getLogger().debug("Processed page " + i);
-                }
-                PRAcroForm form = reader.getAcroForm();
-                if (form != null)
-                    writer.copyDocumentFields(reader);
-                f++;
+            } catch (IOException e) {
+                MiscUtils.getLogger().error("Document could not be added to merge " + o, e);
             }
-            if (master.size() > 0)
-                writer.setOutlines(master);
         }
-        catch(Exception e) {
-            MiscUtils.getLogger().error("Error", e);
-        }
-        finally {
-            if (document != null) {
-                document.close();
-            }
 
-            if (reader != null) {
-                reader.close();
-            }
-
-            if (writer != null) {
-                writer.flush();
-                writer.close();
-            }
+        try {
+            pdfMerger.setDestinationStream(outputStream);
+            pdfMerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+        } catch (Exception e) {
+            MiscUtils.getLogger().error("Document merge failed.", e);
         }
     }
 

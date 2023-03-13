@@ -469,19 +469,13 @@ public class CommonLabTestValues {
 									h.put("result", result);
 									h.put("range", handler.getOBXReferenceRange(i, j));
 									h.put("units", handler.getOBXUnits(i, j));
-									String collDate = handler.getTimeStamp(i, j);
 									h.put("lab_no", lab_no);
-									h.put("collDate", collDate);
-									MiscUtils.getLogger().debug("COLLDATE " + collDate);
-									if(collDate.length() == 0) {
-										
-									} else if (collDate.length() == 10) {
-										h.put("collDateDate", UtilDateUtilities.getDateFromString(collDate, "yyyy-MM-dd"));
-									} else if (collDate.length() == 16) {
-										h.put("collDateDate", UtilDateUtilities.getDateFromString(collDate, "yyyy-MM-dd HH:mm"));
-									} else {
-										h.put("collDateDate", UtilDateUtilities.getDateFromString(collDate, "yyyy-MM-dd HH:mm:ss"));
+
+									String collDate = handler.getServiceDate();
+									if(collDate == null || collDate.isEmpty()) {
+										collDate = handler.getTimeStamp(i, j);
 									}
+									h.put("collDate", collDate);
 									labList.add(h);
 									break;
 								}

@@ -24,13 +24,8 @@
 
 package org.oscarehr.managers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.io.Serializable;
+import java.util.*;
 
 import org.oscarehr.common.dao.PreventionDao;
 import org.oscarehr.common.dao.PreventionExtDao;
@@ -50,7 +45,7 @@ import oscar.oscarPrevention.PreventionDisplayConfig;
 import oscar.util.StringUtils;
 
 @Service
-public class PreventionManager {
+public class PreventionManager implements Serializable {
 	@Autowired
 	private PreventionDao preventionDao;
 	@Autowired
@@ -58,6 +53,7 @@ public class PreventionManager {
 	@Autowired
 	private PropertyDao propertyDao;
 	@Autowired
+
 	private PatientConsentManager patientConsentManager;
 	@Autowired
 	private SecurityInfoManager securityInfoManager;
@@ -65,6 +61,9 @@ public class PreventionManager {
 	private static final String HIDE_PREVENTION_ITEM = "hide_prevention_item";
 
 	private ArrayList<String> preventionTypeList = new ArrayList<String>();
+
+	private Set<String> listMatches;
+
 
 	public List<Prevention> getUpdatedAfterDate(LoggedInInfo loggedInInfo, Date updatedAfterThisDateExclusive, int itemsToReturn) {
 		List<Prevention> results = preventionDao.findByUpdateDate(updatedAfterThisDateExclusive, itemsToReturn);

@@ -24,10 +24,7 @@
 
 package org.oscarehr.managers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
@@ -475,7 +472,8 @@ public class ProviderManager2 {
 		}
 		
 		if(pp.getAppointmentScreenEForms() != null) {
-			settings.setAppointmentScreenEforms(pp.getAppointmentScreenEForms());
+			Collection<ProviderPreference.EformLink> appointmentScreenEForms = pp.getAppointmentScreenEForms();
+			settings.setAppointmentScreenEforms(appointmentScreenEForms);
 		}
 		
 		if(pp.getAppointmentScreenQuickLinks() != null) {
@@ -549,7 +547,7 @@ public class ProviderManager2 {
 		}
 		
 		pp.getAppointmentScreenEForms().clear();
-		for(Integer eformId : settings.getAppointmentScreenEforms()) {
+		for(ProviderPreference.EformLink eformId : settings.getAppointmentScreenEforms()) {
 			pp.getAppointmentScreenEForms().add(eformId);
 		}
 		

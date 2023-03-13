@@ -412,12 +412,12 @@
 			<c:choose>
 				<c:when test="${ faxJob.status eq 'ERROR' }">
 					<div class="alert alert-success" role="alert">
-						Fax failed for <c:out value="${ faxJob.recipient } at ${ faxJob.destination } ${ faxJob.status }: ${ faxJob.statusString }" />									
+						Failed to add fax to outgoing queue: <c:out value="${ faxJob.recipient } at ${ faxJob.destination } ${ faxJob.status }: ${ faxJob.statusString }" />
 					</div>								
 				</c:when>
 				<c:otherwise>
 					<div class="alert alert-success" role="alert">
-						Fax successfully sent to <c:out value="${ faxJob.recipient } at ${ faxJob.destination }" />								
+						Successfully added fax to outgoing queue: <c:out value="${ faxJob.recipient } at ${ faxJob.destination }" />
 					</div>	
 				</c:otherwise>				
 			</c:choose>

@@ -42,10 +42,9 @@
 %>
 
 <!DOCTYPE HTML>
-<%-- @ taglib uri="../WEB-INF/taglibs-log.tld" prefix="log" --%>
+
 <%@page import="org.oscarehr.sharingcenter.SharingCenterUtil"%>
 <%@page import="oscar.util.ConversionUtils"%>
-<%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
 <%@page import="org.oscarehr.util.LoggedInInfo" %>
 <%@page import="org.oscarehr.PMmodule.caisi_integrator.ConformanceTestHelper"%>
 <%@page import="org.oscarehr.common.dao.DemographicExtDao" %>
@@ -69,28 +68,9 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <jsp:useBean id="apptMainBean" class="oscar.AppointmentMainBean" scope="session" />
 <%
-
-    String demographic$ = request.getParameter("demographic_no") ;
-    
-    LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-    
-    WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    CountryCodeDao ccDAO =  (CountryCodeDao) ctx.getBean("countryCodeDao");
-    UserPropertyDAO pref = (UserPropertyDAO) ctx.getBean("UserPropertyDAO");                       
-    List<CountryCode> countryList = ccDAO.getAllCountryCodes();
-
-    DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
-    DemographicArchiveDao demographicArchiveDao = SpringUtils.getBean(DemographicArchiveDao.class);
-    DemographicExtArchiveDao demographicExtArchiveDao = SpringUtils.getBean(DemographicExtArchiveDao.class);
-    ScheduleTemplateCodeDao scheduleTemplateCodeDao = SpringUtils.getBean(ScheduleTemplateCodeDao.class);
-    WaitingListDao waitingListDao = SpringUtils.getBean(WaitingListDao.class);
-    WaitingListNameDao waitingListNameDao = SpringUtils.getBean(WaitingListNameDao.class);
-	
-	OscarProperties oscarProps = OscarProperties.getInstance();
-    String privateConsentEnabledProperty = oscarProps.getProperty("privateConsentEnabled");
-    boolean privateConsentEnabled = (privateConsentEnabledProperty != null && privateConsentEnabledProperty.equals("true"));
+	String demographic$ = request.getParameter("demographic_no") ;
+	LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
-
 <security:oscarSec roleName="<%=roleName$%>"
 	objectName='<%="_demographic$"+demographic$%>' rights="o"
 	reverse="<%=false%>">
@@ -109,7 +89,6 @@ if(!authed) {
 <%@ page import="java.util.*, java.net.*,java.text.DecimalFormat, oscar.*, oscar.oscarDemographic.data.ProvinceNames, oscar.oscarWaitingList.WaitingList, oscar.oscarReport.data.DemographicSets,oscar.log.*"%>
 <%@ page import="oscar.oscarDemographic.data.*"%>
 <%@ page import="oscar.oscarDemographic.pageUtil.Util" %>
-<%@ page import="org.springframework.web.context.*,org.springframework.web.context.support.*" %>
 <%@ page import="oscar.OscarProperties"%>
 <%@ page import="org.oscarehr.common.dao.*,org.oscarehr.common.model.*" %>
 <%@ page import="org.oscarehr.common.OtherIdManager" %>
@@ -129,7 +108,23 @@ if(!authed) {
 <%@page import="org.oscarehr.PMmodule.service.ProgramManager" %>
 <%@page import="org.oscarehr.PMmodule.dao.ProgramDao" %>
 <%@page import="org.oscarehr.PMmodule.service.AdmissionManager" %>
-<%
+<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="org.apache.commons.lang.StringUtils"%>
+
+<%!
+
+	CountryCodeDao ccDAO =  SpringUtils.getBean(CountryCodeDao.class);
+	UserPropertyDAO pref = SpringUtils.getBean(UserPropertyDAO.class);
+	List<CountryCode> countryList = ccDAO.getAllCountryCodes();
+	DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
+	DemographicArchiveDao demographicArchiveDao = SpringUtils.getBean(DemographicArchiveDao.class);
+	DemographicExtArchiveDao demographicExtArchiveDao = SpringUtils.getBean(DemographicExtArchiveDao.class);
+	ScheduleTemplateCodeDao scheduleTemplateCodeDao = SpringUtils.getBean(ScheduleTemplateCodeDao.class);
+	WaitingListDao waitingListDao = SpringUtils.getBean(WaitingListDao.class);
+	WaitingListNameDao waitingListNameDao = SpringUtils.getBean(WaitingListNameDao.class);
+	OscarProperties oscarProps = OscarProperties.getInstance();
+	String privateConsentEnabledProperty = oscarProps.getProperty("privateConsentEnabled");
+	boolean privateConsentEnabled = (privateConsentEnabledProperty != null && privateConsentEnabledProperty.equals("true"));
 	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
 	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
@@ -141,14 +136,15 @@ if(!authed) {
 	
 	DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 	ProgramManager2 programManager2 = SpringUtils.getBean(ProgramManager2.class);
-    
+	ProgramManager pm = SpringUtils.getBean(ProgramManager.class);
+	ProgramDao programDao = (ProgramDao)SpringUtils.getBean(ProgramDao.class);
+	CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 	LookupList ll = null;
 %>
 
 <jsp:useBean id="providerBean" class="java.util.Properties"	scope="session" />
 
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%--<%@ taglib uri="/WEB-INF/phr-tag.tld" prefix="phr"%>--%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-logic"
@@ -163,10 +159,6 @@ if(!authed) {
 		return;
 	}
 
-	ProgramManager pm = SpringUtils.getBean(ProgramManager.class);
-	ProgramDao programDao = (ProgramDao)SpringUtils.getBean("programDao");
-    
-
 	String curProvider_no = (String) session.getAttribute("user");
 	String demographic_no = request.getParameter("demographic_no") ;
 	String apptProvider = request.getParameter("apptProvider");
@@ -178,19 +170,16 @@ if(!authed) {
 	int nStrShowLen = 20;
 	String prov= (oscarProps.getProperty("billregion","")).trim().toUpperCase();
 
-	CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
 	List<CaseManagementNoteLink> cml = cmm.getLinkByTableId(CaseManagementNoteLink.DEMOGRAPHIC, Long.valueOf(demographic_no));
 	boolean hasImportExtra = (cml.size()>0);
 	String annotation_display = CaseManagementNoteLink.DISP_DEMO;
 
 	LogAction.addLog((String) session.getAttribute("user"), LogConst.READ, LogConst.CON_DEMOGRAPHIC,  demographic_no , request.getRemoteAddr(),demographic_no);
 
-
 	Boolean isMobileOptimized = session.getAttribute("mobileOptimized") != null;
 	ProvinceNames pNames = ProvinceNames.getInstance();
 	Map<String,String> demoExt = demographicExtDao.getAllValuesForDemo(Integer.parseInt(demographic_no));
 
-	
 	String usSigned = StringUtils.defaultString(apptMainBean.getString(demoExt.get("usSigned")));
     String privacyConsent = StringUtils.defaultString(apptMainBean.getString(demoExt.get("privacyConsent")), "");
 	String informedConsent = StringUtils.defaultString(apptMainBean.getString(demoExt.get("informedConsent")), "");
@@ -239,17 +228,13 @@ if(!authed) {
 
 %>
 
-
-
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.apache.commons.lang.StringUtils"%><html:html locale="true">
+<html:html locale="true">
 
 <head>
-<title><bean:message
-	key="demographic.demographiceditdemographic.title" /></title>
+<title><bean:message key="demographic.demographiceditdemographic.title" /></title>
 
 <html:base />
-	<script type="text/javascript" src="${pageContext.request.contextPath}/csrfguard"></script>
+
 <oscar:oscarPropertiesCheck property="DEMOGRAPHIC_PATIENT_HEALTH_CARE_TEAM" value="true">
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/css/healthCareTeam.css" />
 </oscar:oscarPropertiesCheck>
@@ -928,7 +913,6 @@ function consentClearBtn(radioBtnName)
 			<tr>
 				<td>
 				<%
-                           java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.struts.Globals.LOCALE_KEY);
                                 //----------------------------REFERRAL DOCTOR------------------------------
                                 String rdohip="", rd="", fd="", family_doc = "";
 
@@ -984,7 +968,6 @@ function consentClearBtn(radioBtnName)
                         %> <%=demographic.getLastName()%>,
 				<%=demographic.getFirstName()%> <%=demographic.getSex()%>
 				<%=age%> years &nbsp;
-<%--				<oscar:phrverification demographicNo='<%=demographic.getDemographicNo().toString()%>' ><bean:message key="phr.verification.link"/></oscar:phrverification>--%>
 
 				<span style="margin-left: 20px;font-style:italic">
 				<bean:message key="demographic.demographiceditdemographic.msgNextAppt"/>: <oscar:nextAppt demographicNo='<%=demographic.getDemographicNo().toString()%>' />
@@ -1213,41 +1196,7 @@ if(wLReadonly.equals("")){
                </td>
            </tr>
            <% } %>
-<%--				<phr:indivoRegistered provider="<%=curProvider_no%>"--%>
-<%--					demographic="<%=demographic_no%>">--%>
-<%--                                <tr class="Header">--%>
-<%--				     <td style="font-weight: bold"><bean:message key="global.personalHealthRecord"/></td>--%>
-<%--                                </tr>--%>
-<%--					<tr>--%>
-<%--						<td>--%>
-<%--							<%--%>
-<%--								String onclickString="alert('Please login to MyOscar first.')";--%>
 
-<%--								MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);--%>
-<%--								if (myOscarLoggedInInfo!=null && myOscarLoggedInInfo.isLoggedIn()) onclickString="popupOscarRx(600,900,'../phr/PhrMessage.do?method=createMessage&providerNo="+curProvider_no+"&demographicNo="+demographic_no+"')";--%>
-<%--							%>--%>
-<%--							<a href="javascript: function myFunction() {return false; }" ONCLICK="<%=onclickString%>"	title="myOscar">--%>
-<%--								<bean:message key="demographic.demographiceditdemographic.msgSendMsgPHR"/>--%>
-<%--							</a>--%>
-<%--						</td>--%>
-<%--					</tr>--%>
-<%--					<tr>--%>
-<%--						<td>--%>
-<%--							<a href="" onclick="popup(600, 1000, '<%=request.getContextPath()%>/demographic/viewPhrRecord.do?demographic_no=<%=demographic_no%>', 'viewPatientPHR'); return false;">View PHR Record</a>--%>
-<%--						</td>--%>
-<%--					</tr>--%>
-<%--					<tr>--%>
-<%--						<td>--%>
-<%--							<%--%>
-<%--								if (myOscarLoggedInInfo!=null && myOscarLoggedInInfo.isLoggedIn()) onclickString="popupOscarRx(600,900,'"+request.getContextPath()+"/admin/oscar_myoscar_sync_config_redirect.jsp')";--%>
-<%--							%>--%>
-<%--							<a href="javascript: function myFunction() {return false; }" ONCLICK="<%=onclickString%>"	title="myOscar">--%>
-<%--								<bean:message key="demographic.demographiceditdemographic.MyOscarDataSync"/>--%>
-<%--							</a>--%>
-<%--						</td>--%>
-<%--					</tr>--%>
-<%--				</phr:indivoRegistered>--%>
-			
 <% if (oscarProps.getProperty("clinic_no", "").startsWith("1022")) { // quick hack to make Dr. Hunter happy
 %>
 			<tr>
@@ -2496,7 +2445,7 @@ if ( Dead.equals(PatStat) ) {%>
 							    </td>
 							    <td>
 								<%String spokenLang = oscar.util.StringUtils.noNull(demographic.getSpokenLanguage()); %>
-									<select name="spoken_lang" <%=getDisabled("spoken_lang")%>>
+									<select name="spoken_lang" style="width: 200px;" <%=getDisabled("spoken_lang")%>>
 <%for (String splang : Util.spokenLangProperties.getLangSorted()) { %>
                                         <option value="<%=splang %>" <%=spokenLang.equals(splang)?"selected":"" %>><%=splang %></option>
 <%} %>
@@ -3100,7 +3049,7 @@ if ( Dead.equals(PatStat) ) {%>
 							</tr>
 							<tr valign="top">
 								<td align="right"><b><bean:message key="demographic.demographiceditdemographic.msgCountryOfOrigin"/>: </b></td>
-								<td align="left"><select id="countryOfOrigin" name="countryOfOrigin" <%=getDisabled("countryOfOrigin")%>>
+								<td align="left"><select id="countryOfOrigin" name="countryOfOrigin" style="width: 200px;" <%=getDisabled("countryOfOrigin")%>>
 									<option value="-1"><bean:message key="demographic.demographiceditdemographic.msgNotSet"/></option>
 									<%for(CountryCode cc : countryList){ %>
 									<option value="<%=cc.getCountryId()%>"
@@ -3382,7 +3331,7 @@ document.updatedelete.r_doctor_ohip.value = refNo;
 								<td align="right" nowrap><b><bean:message
 									key="demographic.demographiceditdemographic.RosterTerminationReason" />: </b></td>
 								<td align="left" colspan="3">
-									<select  name="roster_termination_reason">
+									<select  name="roster_termination_reason" style="width: 200px;">
 										<option value="">N/A</option>
 <%for (String code : Util.rosterTermReasonProperties.getTermReasonCodes()) { %>
 										<option value="<%=code %>" <%=code.equals(rosterTerminationReason)?"selected":"" %> ><%=Util.rosterTermReasonProperties.getReasonByCode(code) %></option>

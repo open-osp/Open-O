@@ -52,7 +52,9 @@ import oscar.oscarPrevention.PreventionData;
 /**
  *
  * @author rjonasz
+ * @Deprecated use oscarehr/managers/PreventionManager
  */
+@Deprecated
 @Component
 public class PreventionManager {
 	private static Logger logger = MiscUtils.getLogger();

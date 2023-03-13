@@ -146,6 +146,9 @@
 <c:if test="${param.inWindow eq 'true'}">
 <html>
 <head>
+        <script type="text/javascript">
+            const ctx = "${pageContext.servletContext.contextPath}";
+        </script>
 
         <link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" />
@@ -593,7 +596,7 @@
                 <tr><td colspan="2"><hr width="100%" color="red"></td></tr>
             </table>
         </div>
-<input type="hidden" id="ctx" value="${pageContext.servletContext.contextPath}" />
+
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/share/javascript/oscarMDSIndex.js"></script>
 <script type="text/javascript" src="showDocument.js"></script>        
 <script type="text/javascript">

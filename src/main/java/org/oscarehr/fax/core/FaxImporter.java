@@ -270,7 +270,7 @@ public class FaxImporter {
 		
 		filename = filename.trim();	
 
-		EDoc newDoc = new EDoc("Recieved Fax", "Recieved Fax", filename, "", 
+		EDoc newDoc = new EDoc("Received Fax", "Received Fax", filename, "",
 				DEFAULT_USER, DEFAULT_USER, "", 'A', 
 				DateFormatUtils.format(receivedFax.getStamp(), "yyyy-MM-dd"), 
 				"", "", "demographic", DEFAULT_USER, receivedFax.getNumPages() );

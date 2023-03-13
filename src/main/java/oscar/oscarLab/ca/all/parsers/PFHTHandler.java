@@ -183,6 +183,10 @@ public class PFHTHandler implements MessageHandler {
 	        return ((obrSegKeySet.get(i)).getUniversalServiceIdentifier().getText().getValue());
 	    }
 
+        public String getOBRIdentifier(int i){
+            return ((obrSegKeySet.get(i)).getUniversalServiceIdentifier().getCe1_Identifier().getValue());
+        }
+
 	    public String getTimeStamp(int i, int j){
 	        try{
 	            String ret = (obrSegKeySet.get(i)).getResultsRptStatusChngDateTime().getTimeOfAnEvent().getValue();

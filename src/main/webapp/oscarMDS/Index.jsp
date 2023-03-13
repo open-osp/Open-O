@@ -381,8 +381,8 @@ String endDate = (String) request.getAttribute("endDate");
 	<script type="text/javascript" >
 		jQuery.noConflict();
 		
-		var ctx = "${pageContext.servletContext.contextPath}";
-		var contextpath = "${pageContext.servletContext.contextPath}";
+		const ctx = "${pageContext.servletContext.contextPath}";
+		var contextpath = ctx;
 		
 	 	jQuery(window).on("scroll",handleScroll());
 		 
@@ -719,7 +719,7 @@ String endDate = (String) request.getAttribute("endDate");
 	</script>
 	
 </div> <!--  end wrapper  -->  
-<input type="hidden" id="ctx" value="${pageContext.servletContext.contextPath}" />
+
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/share/javascript/oscarMDSIndex.js"></script>
 <div id="dialog" ></div> 
 

@@ -282,6 +282,14 @@ public class ExcellerisOntarioHandler implements MessageHandler {
         }
     }
 
+    public String getOBRIdentifier(int i){
+        try{
+            return(getString(msg.getPIDPD1NK1NTEPV1PV2ORCOBRNTEOBXNTECTI().getORCOBRNTEOBXNTECTI(i).getOBR().getObr4_UniversalServiceID().getCe1_Identifier().getValue()));
+        }catch(Exception e){
+            return("");
+        }
+    }
+
     //OBR-24
     //Laboratory Section Codes; expanded names available
     public String getObservationHeader(int i, int j){
@@ -532,7 +540,7 @@ X = deleted (available on request; not always preceded by non-X OBRs in an earli
             return("");
         }
     }
-    
+
     public String getOBXResult(int i, int j){
         try{
             return(getString(Terser.get(msg.getPIDPD1NK1NTEPV1PV2ORCOBRNTEOBXNTECTI().getORCOBRNTEOBXNTECTI(i).getOBXNTE(j).getOBX(),5,0,1,1)));

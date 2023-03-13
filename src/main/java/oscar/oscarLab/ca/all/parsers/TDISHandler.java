@@ -246,6 +246,11 @@ public class TDISHandler implements MessageHandler {
 		return (val = obrSegKeySet.get(i).getUniversalServiceIdentifier().getText().getValue()) == null ? " " : val;
 	}
 
+    public String getOBRIdentifier(int i) {
+        String val = "";
+        return (val = obrSegKeySet.get(i).getUniversalServiceIdentifier().getCe1_Identifier().getValue()) == null ? " " : val;
+    }
+
 	public String getTimeStamp(int i, int j) {
 		try {
 			if (isReport(i, j)) {

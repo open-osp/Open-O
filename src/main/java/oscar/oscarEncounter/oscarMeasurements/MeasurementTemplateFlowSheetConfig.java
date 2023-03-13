@@ -41,6 +41,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 import org.drools.RuleBase;
 import org.jdom.Attribute;
@@ -811,34 +812,63 @@ public class MeasurementTemplateFlowSheetConfig implements InitializingBean {
         return getFlowSheet(flowsheetName);
     }
 
+    public MeasurementFlowSheet getFlowSheet(String flowsheetName, String providerNo, Integer demographicNo) {
+    	//flowsheetName is the out-of-the-box name,
+        FlowSheetUserCreatedDao flowSheetUserCreatedDao = (FlowSheetUserCreatedDao) SpringUtils.getBean("flowSheetUserCreatedDao");
 
-//    public MeasurementFlowSheet getFlowSheet(String flowsheetName,String providerNo,String demographicNo) {
-//        log.debug("DOME " +demographicNo);
-//        if (demographicNo.equals("2")){
-//            try{
-//            MeasurementFlowSheet personalizedFlowsheet =  makeNewFlowsheet(getFlowSheet(flowsheetName) );
-//            EctMeasurementTypeBeanHandler mType = new EctMeasurementTypeBeanHandler();
-//
-//                 Hashtable h = new Hashtable();
-//
-//                    h.put("measurement_type","BP");
-//                    h.put("display_name", "BLood Pressure");
-//                    h.put("guideline", "");
-//                    h.put("graphable", "NO");
-//                    h.put("value_name", "BP");
-//                    int cou =0;
-//                    FlowSheetItem item = new FlowSheetItem(h);
-//                 personalizedFlowsheet.addFlowSheetItem(cou, item);
-//
-//            return personalizedFlowsheet;
-//            }catch(Exception e){
-//                MiscUtils.getLogger().error("Error", e);
-//            }
-//        }
-//
-//        return getFlowSheet(flowsheetName);
-//    }
+        MeasurementFlowSheet m = null;
+        FlowSheetUserCreated fsuc = null;
 
+        if(demographicNo != null) {
+        	fsuc = flowSheetUserCreatedDao.findByPatientScope(flowsheetName,demographicNo);
+        	if(fsuc == null) {
+        		fsuc = flowSheetUserCreatedDao.findByProviderScope(flowsheetName, providerNo);
+        		if(fsuc == null) {
+        			fsuc = flowSheetUserCreatedDao.findByClinicScope(flowsheetName);
+        		}
+        	}
+        }
+
+        if(fsuc != null) {
+        	//use custom flowsheet
+            InputStream targetStream = IOUtils.toInputStream(fsuc.getXmlContent().replaceAll("<flowsheet xmlns=\"flowsheets.oscarehr.org\"", "<flowsheet"));
+            EctMeasurementTypeBeanHandler mType = new EctMeasurementTypeBeanHandler();
+            m = createflowsheet(mType, targetStream);
+
+        } else {
+        	//use out of the box flowsheet
+        	m = getFlowSheet(flowsheetName);
+        }
+
+        return m;
+    }
+
+    public MeasurementFlowSheet getFlowSheetByName(String flowsheetName, String providerNo, Integer demographicNo) {
+    	FlowSheetUserCreatedDao flowSheetUserCreatedDao = (FlowSheetUserCreatedDao) SpringUtils.getBean("flowSheetUserCreatedDao");
+
+        MeasurementFlowSheet m = null;
+        FlowSheetUserCreated fsuc = null;
+
+        if(demographicNo != null) {
+        	fsuc = flowSheetUserCreatedDao.findByPatientScopeName(flowsheetName,demographicNo);
+        	if(fsuc == null) {
+        		fsuc = flowSheetUserCreatedDao.findByProviderScopeName(flowsheetName, providerNo);
+        		if(fsuc == null) {
+        			fsuc = flowSheetUserCreatedDao.findByClinicScopeName(flowsheetName);
+        		}
+        	}
+        }
+
+        if(fsuc != null) {
+        	//use custom flowsheet
+            InputStream targetStream = IOUtils.toInputStream(fsuc.getXmlContent().replaceAll("<flowsheet xmlns=\"flowsheets.oscarehr.org\"", "<flowsheet"));
+            EctMeasurementTypeBeanHandler mType = new EctMeasurementTypeBeanHandler();
+            m = createflowsheet(mType, targetStream);
+
+        }
+
+        return m;
+    }
 
     public MeasurementFlowSheet getFlowSheet(String flowsheetName) {
         log.debug("GET FLOWSHEET "+flowsheetName+"  "+flowsheets.get(flowsheetName));

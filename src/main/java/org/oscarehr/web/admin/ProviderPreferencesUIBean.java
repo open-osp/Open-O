@@ -32,12 +32,14 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.util.Log;
+import org.opensaml.xml.signature.P;
 import org.oscarehr.common.dao.EFormDao;
 import org.oscarehr.common.dao.EncounterFormDao;
 import org.oscarehr.common.dao.ProviderPreferenceDao;
 import org.oscarehr.common.model.EForm;
 import org.oscarehr.common.model.EncounterForm;
 import org.oscarehr.common.model.ProviderPreference;
+import org.oscarehr.managers.EformDataManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -149,14 +151,21 @@ public final class ProviderPreferencesUIBean {
 			}
 		}
 
-		// get eForms for appointment screen
+		/*
+		 * Get eForms for appointment screen
+		 *
+		 * This code is adapted to add the name of each
+		 * eForm into the datatable.  The display methods in the schedule
+		 * have been adapted to display a name and ID.
+		 */
 		String[] formIds = request.getParameterValues("eformId");
-		Collection<Integer> eFormsIdsList = providerPreference.getAppointmentScreenEForms();		
-		
+		Collection<ProviderPreference.EformLink> eFormsIdsList = providerPreference.getAppointmentScreenEForms();
 		eFormsIdsList.clear();
 		if( formIds != null ) {
 			for (String formId : formIds) {
-				eFormsIdsList.add(Integer.parseInt(formId));
+				Integer formIdInteger = Integer.parseInt(formId);
+				String eformName = eFormDao.find(formIdInteger).getFormName();
+				eFormsIdsList.add(new ProviderPreference.EformLink(formIdInteger, eformName));
 			}
 		}
 		
@@ -189,13 +198,14 @@ public final class ProviderPreferencesUIBean {
 	public static ProviderPreference getProviderPreference(String providerNo) {
 
 		ProviderPreference providerPreference = providerPreferenceDao.find(providerNo);
+
 		if (providerPreference == null) {
 			providerPreference = new ProviderPreference();
 			providerPreference.setProviderNo(providerNo);
 			providerPreferenceDao.persist(providerPreference);
 		}
 
-		return(providerPreference);
+		return providerPreference;
 	}
 
 	public static List<EForm> getAllEForms() {
@@ -215,7 +225,7 @@ public final class ProviderPreferencesUIBean {
 		return (providerPreference.getAppointmentScreenForms());
 	}
 
-	public static Collection<Integer> getCheckedEFormIds(String providerNo) {
+	public static Collection<ProviderPreference.EformLink> getCheckedEFormIds(String providerNo) {
 		ProviderPreference providerPreference = getProviderPreference(providerNo);
 		return (providerPreference.getAppointmentScreenEForms());
 	}

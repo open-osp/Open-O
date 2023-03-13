@@ -72,6 +72,37 @@ public class ProviderPreference extends AbstractModel<String> implements Seriali
         	this.url = url;
         }
 	}
+
+	@Embeddable
+	public static class EformLink {
+		private int appointmentScreenEForm;
+		private String eFormName;
+
+		public EformLink() {
+
+		}
+
+		public EformLink(int appointmentScreenEForm, String eFormName) {
+			this.appointmentScreenEForm = appointmentScreenEForm;
+			this.eFormName = eFormName;
+		}
+
+		public int getAppointmentScreenEForm() {
+			return appointmentScreenEForm;
+		}
+
+		public void setAppointmentScreenEForm(int appointmentScreenEForm) {
+			this.appointmentScreenEForm = appointmentScreenEForm;
+		}
+
+		public String geteFormName() {
+			return eFormName;
+		}
+
+		public void seteFormName(String eFormName) {
+			this.eFormName = eFormName;
+		}
+	}
 	
 	@Id
 	private String providerNo;
@@ -145,16 +176,16 @@ public class ProviderPreference extends AbstractModel<String> implements Seriali
 	@CollectionOfElements(targetElement = String.class)
 	@JoinTable(name = "ProviderPreferenceAppointmentScreenForm",joinColumns = @JoinColumn(name = "providerNo"))
 	@Column(name="appointmentScreenForm")
-	private Collection<String> appointmentScreenForms=new HashSet<String>();
+	private Collection<String> appointmentScreenForms=new HashSet<>();
 	
-	@CollectionOfElements(targetElement = Integer.class)
+	@CollectionOfElements(targetElement = EformLink.class)
 	@JoinTable(name = "ProviderPreferenceAppointmentScreenEForm",joinColumns = @JoinColumn(name = "providerNo"))
 	@Column(name="appointmentScreenEForm")
-	private Collection<Integer> appointmentScreenEForms=new HashSet<Integer>();
+	private Collection<EformLink> appointmentScreenEForms=new HashSet<>();
 	
 	@CollectionOfElements(targetElement = QuickLink.class)
 	@JoinTable(name = "ProviderPreferenceAppointmentScreenQuickLink",joinColumns = @JoinColumn(name = "providerNo"))
-	private Collection<QuickLink> appointmentScreenQuickLinks=new HashSet<QuickLink>();
+	private Collection<QuickLink> appointmentScreenQuickLinks=new HashSet<>();
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdated=new Date();
@@ -277,7 +308,7 @@ public class ProviderPreference extends AbstractModel<String> implements Seriali
     	return appointmentScreenForms;
     }
 
-	public Collection<Integer> getAppointmentScreenEForms() {
+	public Collection<EformLink> getAppointmentScreenEForms() {
     	return appointmentScreenEForms;
     }
 

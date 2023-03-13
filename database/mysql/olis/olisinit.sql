@@ -5,6 +5,8 @@ CREATE TABLE OLISResultNomenclature (
   PRIMARY KEY(id)
 );
 
+-- Data file last updated March 10, 2023
+-- https://ehealthontario.on.ca/en/olis-nomenclature/download/olis-nomenclatures/prod/v2.69
 LOAD DATA LOCAL INFILE 'OLISTestResultNomenclature.csv'
 INTO TABLE OLISResultNomenclature
 FIELDS TERMINATED BY '\t'
@@ -20,6 +22,8 @@ CREATE TABLE OLISRequestNomenclature (
   PRIMARY KEY(id)
 );
 
+-- Data file last updated March 10, 2023
+-- https://ehealthontario.on.ca/en/olis-nomenclature/download/olis-nomenclatures/prod/v2.69
 LOAD DATA LOCAL INFILE 'OLISTestRequestNomenclature.csv'
 INTO TABLE OLISRequestNomenclature
 FIELDS TERMINATED BY '\t'

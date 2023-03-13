@@ -65,6 +65,7 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.draw.LineSeparator;
 
 import oscar.OscarProperties;
 import oscar.oscarClinic.ClinicData;
@@ -75,7 +76,7 @@ import oscar.oscarPrevention.PreventionDisplayConfig;
 public class PreventionPrintPdf {
 
     private int curPage;
-    private float upperYcoord;
+    private float upperYcoord, upperYScreeningCoord;
     private ColumnText ct;
     private Document document;
     private PdfContentByte cb;
@@ -109,26 +110,28 @@ public class PreventionPrintPdf {
     public void printPdf(String[] headerIds1, HttpServletRequest request, OutputStream outputStream) throws IOException, DocumentException{
         
         //make sure we have data to print      
-        if( headerIds1 == null )
+        if( headerIds1 == null ) {
             throw new DocumentException();
-        
-        String[] headerIds = null;
-        if("true".equals(request.getParameter("immunizationOnly"))) {
-        	List<String> validIds = new ArrayList<String>();
-        	PreventionDisplayConfig pdc = PreventionDisplayConfig.getInstance();
-        	
-        	for(int x=0;x<headerIds1.length;x++) {
-        		String pHeader = request.getParameter("preventionHeader" + headerIds1[x]);
-        		//check if this is an immunization!
-        		HashMap<String,String> prev = pdc.getPrevention(pHeader);
-        		if(prev != null && prev.get("layout") != null && "injection".equals(prev.get("layout"))) {
-        			validIds.add(headerIds1[x]);
-        		}
-        	}
-        	headerIds = validIds.toArray(new String[validIds.size()]);
-        } else {
-        	headerIds = headerIds1;
         }
+
+        String[] headerIds = null;
+        List<String> validImmunizationsIds = new ArrayList<String>();
+        List<String> validScreeningsIds = new ArrayList<String>();
+        PreventionDisplayConfig pdc = PreventionDisplayConfig.getInstance();
+        for (int x = 0; x < headerIds1.length; x++) {
+            String pHeader = request.getParameter("preventionHeader" + headerIds1[x]);
+            //check if this is an immunization!
+            HashMap<String, String> prev = pdc.getPrevention(pHeader);
+            if (prev != null && prev.get("headingName") != null && "Screenings".equals(prev.get("headingName"))) {
+                validScreeningsIds.add(headerIds1[x]);
+            } else {
+                validImmunizationsIds.add(headerIds1[x]);
+            }
+        }
+        if ("false".equals(request.getParameter("immunizationOnly"))) {
+            validImmunizationsIds.addAll(validScreeningsIds);
+        }
+        headerIds = validImmunizationsIds.toArray(new String[validImmunizationsIds.size()]);
         
         if( headerIds1 == null )
             throw new DocumentException();
@@ -209,6 +212,9 @@ public class PreventionPrintPdf {
         
         int subIdx;
         String preventionHeader, procedureAge, procedureDate, procedureStatus;
+
+        //boolean values for headers of Immunizations and Screenings
+        boolean isImmunizationHeaderAdded = false, isScreeningsHeaderAdded = false, isDividerAdded = false, isScreeningHeaderOnNewPage = true;
         
         //1 - obtain number of lines of incoming prevention data
         boolean showComments = OscarProperties.getInstance().getBooleanProperty("prevention_show_comments", "true");        
@@ -225,6 +231,78 @@ public class PreventionPrintPdf {
         for(int idx = 0; idx < headerIds.length; ++idx) {
 
             preventionHeader = request.getParameter("preventionHeader" + headerIds[idx]);
+            //check if this is an immunization!
+            HashMap<String,String> prev = pdc.getPrevention(preventionHeader);
+
+            if (prev != null && prev.get("headingName") != null && !"Screenings".equals(prev.get("headingName"))
+                    && !isImmunizationHeaderAdded && "false".equals(request.getParameter("immunizationOnly"))) {
+                //adding immunizations header before start adding immunizations into the pdf
+                Paragraph iParagraph = addParagraph("\nImmunizations: \n", 12, Font.BOLD);
+                document.add(iParagraph);
+
+                //get top y-coord for starting to print columns
+                upperYcoord = document.top() - header.getHeight() -(clinicParagraph.getLeading()*4f) - iParagraph.getLeading() - font.getCalculatedLeading(LINESPACING);
+                ct.setSimpleColumn(document.left(), document.bottom(), document.right() / 2f, upperYcoord);
+                onColumnLeft = true;
+
+                //immunizations header is added and now setting dividerAdded to false so that divider(horizontal line) can be added before screenigns
+                isImmunizationHeaderAdded = true;
+                isDividerAdded = false;
+            }
+            else if (prev != null && prev.get("headingName") != null && "Screenings".equals(prev.get("headingName"))
+                    && !isScreeningsHeaderAdded && "false".equals(request.getParameter("immunizationOnly"))) {
+                //checking immunizations header added or not. if not which means there no data of immunizations
+                if (!isImmunizationHeaderAdded) {
+                    Paragraph iParagraph = addParagraph("\nImmunizations: \n", 12, Font.BOLD);
+                    Paragraph immNoDataParagraph = addParagraph("No immunization entries for this patient\n", 9,  Font.NORMAL);
+
+                    document.add(iParagraph);
+                    document.add(immNoDataParagraph);
+
+                    //get top y-coord for starting to print columns
+                    upperYcoord = document.top() - header.getHeight() -(clinicParagraph.getLeading()*4f) - iParagraph.getLeading() - immNoDataParagraph.getLeading() - font.getCalculatedLeading(LINESPACING);
+                    ct.setSimpleColumn(document.left(), document.bottom(), document.right() / 2f, upperYcoord);
+                    onColumnLeft = true;
+                }
+
+                //after printing immunizations data checking current column is left or right one
+                //if current column is on the right then start printing screenings from the new page and screenings header
+                //without adding divider
+                if (!onColumnLeft) {
+                    onColumnLeft = true;
+                    ColumnText.showTextAligned(cb, Phrase.ALIGN_CENTER, new Phrase("-" + curPage + "-"),
+                            document.right() / 2f, document.bottom() - (document.bottomMargin() / 2f), 0f);
+                    addPromoText();
+                    upperYcoord = document.top() - header.getHeight() - font.getCalculatedLeading(LINESPACING);
+                    document.newPage();
+
+                    curPage++;
+                    ct.setSimpleColumn(document.left(), document.bottom(), document.right() / 2f, upperYcoord);
+                    Paragraph sParagraph = addParagraph("\nScreenings: \n", 12, Font.BOLD);
+                    document.add(sParagraph);
+
+                    upperYcoord = document.top() - header.getHeight() - sParagraph.getLeading() - font.getCalculatedLeading(LINESPACING);
+                    ct.setSimpleColumn(document.left(), document.bottom(), document.right() / 2f, upperYcoord);
+                }
+                //after printing immunizations data if current column is on the left then we can start printing screenings data
+                //after adding divider and scrrening header
+                else if (!isDividerAdded) {
+                    float positionAtRightColumn = ct.getYLine();
+                    LineSeparator sDivider = new LineSeparator();
+                    addTextInColumn(ct, new Chunk(sDivider), null, 0, -1);
+                    ct.setSimpleColumn(document.right() / 2f, document.bottom(), document.right(), positionAtRightColumn);
+                    addTextInColumn(ct, new Chunk(sDivider), null, 0, -1);
+                    ct.setSimpleColumn(document.left(), document.bottom(), document.right() / 2f, ct.getYLine());
+                    Paragraph sParagraph = new Paragraph("\nScreenings: \n", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD, Color.BLACK));
+                    addTextInColumn(ct, null, sParagraph, 0, Paragraph.ALIGN_LEFT);
+                    isScreeningHeaderOnNewPage = false;
+                    upperYScreeningCoord = ct.getYLine();
+                }
+
+                isScreeningsHeaderAdded = true;
+                isDividerAdded = true;
+            }
+
             Phrase procHeader = new Phrase(LEADING, "Prevention " + preventionHeader + "\n", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Font.BOLD, Color.BLACK));
             ct.addText(procHeader);
             ct.setAlignment(Element.ALIGN_LEFT);
@@ -366,7 +444,14 @@ public class PreventionPrintPdf {
                     if (onColumnLeft) {  
                         //Print to the right column (i.e. we are printing to the current page)
                         onColumnLeft = false;
-                        ct.setSimpleColumn(document.right()/2f, document.bottom(), document.right(), upperYcoord);                                                
+                        ct.setSimpleColumn(document.right()/2f, document.bottom(), document.right(), upperYcoord);
+
+                        //checking if screening header is added after printing immunizations data on the same page then 
+                        //position of column will be accrding to the position of the screening header
+                        if (!isScreeningHeaderOnNewPage) {
+                            isScreeningHeaderOnNewPage = true;
+                            ct.setSimpleColumn(document.right()/2f, document.bottom(), document.right(), upperYScreeningCoord);
+                        }
                     }
                     else {
                         //Print to the left column (i.e. we are starting a new page)
@@ -414,6 +499,49 @@ public class PreventionPrintPdf {
                 ++subIdx;
             }
             
+            // after adding immunizations data checking if there is screening data if not avalible
+            if (idx == headerIds.length - 1 && !isScreeningsHeaderAdded
+                    && "false".equals(request.getParameter("immunizationOnly"))) {
+                //we are currently on the right column then print scrrening header on the new page
+                if (!onColumnLeft) {
+                    onColumnLeft = true;
+                    ColumnText.showTextAligned(cb, Phrase.ALIGN_CENTER, new Phrase("-" + curPage + "-"),
+                            document.right() / 2f, document.bottom() - (document.bottomMargin() / 2f), 0f);
+                    addPromoText();
+                    upperYcoord = document.top() - header.getHeight() - font.getCalculatedLeading(LINESPACING);
+                    document.newPage();
+
+                    curPage++;
+                    ct.setSimpleColumn(document.left(), document.bottom(), document.right() / 2f, upperYcoord);
+                    Paragraph sParagraph = new Paragraph("\nScreenings: \n", FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD, Color.BLACK));
+                    sParagraph.add(Chunk.NEWLINE);
+                    sParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+                    document.add(sParagraph);
+
+                    upperYcoord = document.top() - header.getHeight() - sParagraph.getLeading()
+                            - font.getCalculatedLeading(LINESPACING);
+                    ct.setSimpleColumn(document.left(), document.bottom(), document.right() / 2f, upperYcoord);
+
+                }
+                //if we are currently on the left column then add divider and screening header
+                else if (!isDividerAdded) {
+                    float rightLineSeparator = ct.getYLine();
+                    LineSeparator sDivider = new LineSeparator();
+                    addTextInColumn(ct, new Chunk(sDivider), null, 0, -1);
+                    ct.setSimpleColumn(document.right() / 2f, document.bottom(), document.right(), rightLineSeparator);
+                    addTextInColumn(ct, new Chunk(sDivider), null, 0, -1);
+                    ct.setSimpleColumn(document.left(), document.bottom(), document.right() / 2f, ct.getYLine());
+                    Paragraph sParagraph = new Paragraph("\nScreenings: \n",FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD, Color.BLACK));
+                    addTextInColumn(ct, null, sParagraph, 0, Paragraph.ALIGN_LEFT);
+                    isScreeningHeaderOnNewPage = false;
+                }
+                Paragraph sParagraph = new Paragraph("No screening entries for this patient \n",FontFactory.getFont(FontFactory.HELVETICA, 9, Font.NORMAL, Color.BLACK));
+                addTextInColumn(ct, null, sParagraph, 0, Paragraph.ALIGN_LEFT);
+                upperYScreeningCoord = ct.getYLine();
+
+                isScreeningsHeaderAdded = true;
+                isDividerAdded = true;
+            }
         }
         
         //Make sure last page has the footer
@@ -422,7 +550,25 @@ public class PreventionPrintPdf {
         
         document.close();
     }
-            
+
+    private Paragraph addParagraph(String title, float size, int style) throws DocumentException, IOException {
+        Paragraph paragraph = new Paragraph(LEADING, title,FontFactory.getFont(FontFactory.HELVETICA, size, style, Color.BLACK));
+        paragraph.add(Chunk.NEWLINE);
+        paragraph.setAlignment(Paragraph.ALIGN_LEFT);
+        return paragraph;
+    }
+
+    private void addTextInColumn(ColumnText ct, Chunk chunk, Paragraph paragraph, float indent, int alignment) throws DocumentException {
+        if (chunk != null) {
+            ct.addText(chunk);
+        } else {
+            ct.addText(paragraph);
+            ct.setAlignment(alignment);
+        }
+        ct.setIndent(indent);
+        ct.go();
+    }
+
     private void addPromoText() throws DocumentException, IOException{
         if ( OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") != null){
             cb.beginText();

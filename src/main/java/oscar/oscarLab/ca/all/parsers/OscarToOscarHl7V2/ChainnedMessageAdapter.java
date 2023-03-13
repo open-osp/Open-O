@@ -106,6 +106,8 @@ public abstract class ChainnedMessageAdapter<T extends AbstractMessage> implemen
 		return (null);
 	}
 
+	public String getOBRIdentifier(int i) {return (null); }
+
 	public String getTimeStamp(int i, int j) {
 		return (null);
 	}

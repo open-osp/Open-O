@@ -69,7 +69,7 @@ org.oscarehr.common.model.Demographic demographic =  dData.getDemographic(logged
 
 ArrayList list = null;
 
-if (!(demographicNo == null || demographicNo.equals("null"))){
+if (! (demographicNo == null || "null".equals(demographicNo) || "undefined".equals(demographicNo)) ){
 	if(remoteFacilityIdString==null)
 	{
 		list = CommonLabTestValues.findValuesForTest(labType, Integer.valueOf(demographicNo), testName, identifier);
@@ -83,16 +83,32 @@ if (!(demographicNo == null || demographicNo.equals("null"))){
 	}
 }
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html>
 <html>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <html:base />
-<title><%=""%>, <%=""%> <bean:message
-	key="oscarMDS.segmentDisplay.title" /></title>
-<link rel="stylesheet" type="text/css"
-	href="../../../share/css/OscarStandardLayout.css">
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+<title><bean:message key="oscarMDS.segmentDisplay.title" /></title>
+<link rel="stylesheet" type="text/css" href="../../../share/css/OscarStandardLayout.css">
+
+	<style media="all">
+		#tblDiscs tr td {
+			padding:2px 10px;
+		}
+		#tblDiscs tr td:nth-of-type(odd) {
+			border-right: lightgrey thin solid;
+			border-left: lightgrey thin solid;
+		}
+
+		#tblDiscs tr:nth-last-of-type(odd) {
+			background-color: whitesmoke;
+		}
+
+		#tblDiscs tr:nth-last-of-type(even) {
+			background-color: white;
+		}
+	</style>
+
 </head>
 
 <script language="JavaScript">
@@ -148,26 +164,26 @@ window.close();
 								<table valign="top" border="0" cellpadding="3" cellspacing="0"
 									width="50%">
 									<tr>
-										<td colspan="2" nowrap>
+										<td colspan="2">
 										<div class="FieldData"><strong><bean:message
 											key="oscarMDS.segmentDisplay.formPatientName" />: </strong> <%=demographic.getLastName()%>,
 										<%=demographic.getFirstName()%></div>
 
 										</td>
-										<td colspan="2" nowrap>
-										<div class="FieldData" nowrap="nowrap"><strong><bean:message
+										<td colspan="2">
+										<div class="FieldData"="nowrap"><strong><bean:message
 											key="oscarMDS.segmentDisplay.formSex" />: </strong><%=demographic.getSex()%>
 										</div>
 										</td>
 									</tr>
 									<tr>
-										<td colspan="2" nowrap>
+										<td colspan="2">
 										<div class="FieldData"><strong><bean:message
 											key="oscarMDS.segmentDisplay.formDateBirth" />: </strong> <%=DemographicData.getDob(demographic,"-")%>
 										</div>
 										</td>
-										<td colspan="2" nowrap>
-										<div class="FieldData" nowrap="nowrap"><strong><bean:message
+										<td colspan="2">
+										<div class="FieldData"><strong><bean:message
 											key="oscarMDS.segmentDisplay.formAge" />: </strong><%=demographic.getAge()%>
 										</div>
 										</td>
@@ -186,51 +202,51 @@ window.close();
 
 			</tr>
 
-			<tr>
-				<td align="center" bgcolor="white" colspan="2">
-				<table width="100%" height="20" border="0" cellpadding="0"
-					cellspacing="0">
-					<tr>
-						<td align="center" bgcolor="white">
-						<div class="FieldData">
-						<center></center>
-						</div>
-						</td>
-					</tr>
-				</table>
-				</td>
-			</tr>
+<%--			<tr>--%>
+<%--				<td align="center" bgcolor="white" colspan="2">--%>
+<%--				<table width="100%" height="20" border="0" cellpadding="0"--%>
+<%--					cellspacing="0">--%>
+<%--					<tr>--%>
+<%--						<td align="center" bgcolor="white">--%>
+<%--						<div class="FieldData">--%>
+<%--						<center></center>--%>
+<%--						</div>--%>
+<%--						</td>--%>
+<%--					</tr>--%>
+<%--				</table>--%>
+<%--				</td>--%>
+<%--			</tr>--%>
 		</table>
 
 
 
-		<table style="page-break-inside: avoid;" bgcolor="#003399" border="0"
-			cellpadding="0" cellspacing="0" width="100%">
-			<tr>
-				<td colspan="4" height="7">&nbsp;</td>
-			</tr>
-			<tr>
-				<td colspan="4" height="7">&nbsp;</td>
-			</tr>
+<%--		<table style="page-break-inside: avoid;" bgcolor="#003399" border="0"--%>
+<%--			cellpadding="0" cellspacing="0" width="100%">--%>
+<%--			<tr>--%>
+<%--				<td colspan="4" height="7">&nbsp;</td>--%>
+<%--			</tr>--%>
+<%--			<tr>--%>
+<%--				<td colspan="4" height="7">&nbsp;</td>--%>
+<%--			</tr>--%>
 
-		</table>
+<%--		</table>--%>
 
 		<table width="100%" border="0" cellspacing="0" cellpadding="2"
 			bgcolor="#CCCCFF" bordercolor="#9966FF" bordercolordark="#bfcbe3"
 			name="tblDiscs" id="tblDiscs">
 			<tr class="Field2">
-				<td width="25%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formTestName" /></td>
-				<td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formResult" /></td>
-				<td width="5%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formAbn" /></td>
-				<td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formReferenceRange" /></td>
-				<td width="10%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formUnits" /></td>
-				<td width="15%" align="middle" valign="bottom" class="Cell"><bean:message
-					key="oscarMDS.segmentDisplay.formDateTimeCompleted" /></td>
+				<th class="Cell"><bean:message
+					key="oscarMDS.segmentDisplay.formTestName" /></th>
+				<th class="Cell"><bean:message
+					key="oscarMDS.segmentDisplay.formResult" /></th>
+				<th class="Cell"><bean:message
+					key="oscarMDS.segmentDisplay.formAbn" /></th>
+				<th class="Cell"><bean:message
+					key="oscarMDS.segmentDisplay.formReferenceRange" /></th>
+				<th class="Cell"><bean:message
+					key="oscarMDS.segmentDisplay.formUnits" /></th>
+				<th class="Cell"><bean:message
+					key="oscarMDS.segmentDisplay.formDateTimeCompleted" /></th>
 			</tr>
 			<%  int linenum = 0;
 				
@@ -245,12 +261,12 @@ window.close();
 
 			<tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>"
 				class="<%=lineClass%>">
-				<td valign="top" align="left"><%=h.get("testName") %></td>
-				<td align="right"><%=h.get("result") %></td>
-				<td align="center"><%=h.get("abn") %></td>
-				<td align="left"><%=h.get("range")%></td>
-				<td align="left"><%=h.get("units") %></td>
-				<td align="center"><%=h.get("collDate")%></td>
+				<td><%=h.get("testName") %></td>
+				<td><%=h.get("result") %></td>
+				<td><%=h.get("abn") %></td>
+				<td><%=h.get("range")%></td>
+				<td><%=h.get("units") %></td>
+				<td><%=h.get("collDate")%></td>
 			</tr>
 
 			<%     }

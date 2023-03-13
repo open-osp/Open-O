@@ -56,6 +56,10 @@ if(!authed) {
 		<link rel="stylesheet" type="text/css" media="all" href="${pageContext.servletContext.contextPath}/share/calendar/calendar.css" title="win2k-cold-1" />
 		<link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/share/css/OscarStandardLayout.css">
 
+        <script type="text/javascript">
+            var contextpath = "${pageContext.servletContext.contextPath}";
+            const ctx = contextpath;
+        </script>
 
 		<script type="text/javascript" src="${pageContext.servletContext.contextPath}/share/javascript/prototype.js"></script>
 		   <!-- main calendar program -->
@@ -85,7 +89,7 @@ if(!authed) {
         
 <script type="text/javascript">
 
-var contextpath = "${pageContext.servletContext.contextPath}";
+
 
 function removeLink(docType, docId, providerNo, e) {
 	var url = contextpath + "/dms/ManageDocument.do";

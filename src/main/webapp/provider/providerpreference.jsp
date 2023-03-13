@@ -451,11 +451,18 @@ function showHideERxPref() {
 				<td class="preferenceValue">
 					<div style="height:10em;border:solid grey 1px;overflow:auto;white-space:nowrap;width:45em">
 					<%
-						List<EForm> eforms=ProviderPreferencesUIBean.getAllEForms();
-						Collection<Integer> checkedEFormIds=ProviderPreferencesUIBean.getCheckedEFormIds(providerNo);
+						List<EForm> eforms = ProviderPreferencesUIBean.getAllEForms();
+						Collection<ProviderPreference.EformLink> checkedEFormIds = ProviderPreferencesUIBean.getCheckedEFormIds(providerNo);
 						for(EForm eform : eforms)
 						{
-							String checkedString=(checkedEFormIds.contains(eform.getId())?"checked=\"checked\"":"");
+							String checkedString="";
+							inner:for(ProviderPreference.EformLink eformLink : checkedEFormIds) {
+								if(eform.getId().equals(eformLink.getAppointmentScreenEForm())) {
+									checkedString="checked";
+									break inner;
+								}
+							}
+
 							%>
 								<input type="checkbox" name="eformId" value="<%=eform.getId()%>" <%=checkedString%> /> <%=StringEscapeUtils.escapeHtml(eform.getFormName())%>
 								<br />

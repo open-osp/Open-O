@@ -1592,6 +1592,11 @@ public class OLISHL7Handler implements MessageHandler {
 	}
 
 	@Override
+	public String getOBRIdentifier(int i) {
+		return null;
+	}
+
+	@Override
 	public String getTimeStamp(int i, int j) {
 		String timeStamp;
 		i++;

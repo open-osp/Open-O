@@ -169,6 +169,7 @@ public class SsoAuthenticationManager implements Serializable {
             sessionData.put("userlastname", providerInformation[2]);
             sessionData.put("userrole", providerInformation[4]);
             sessionData.put("expired_days", providerInformation[5]);
+            sessionData.put("fullSite","true");
 
             // only the provider class info here.  Nothing more.
             sessionData.put(SessionConstants.LOGGED_IN_PROVIDER, getProvider(providerInformation[0]));
@@ -216,6 +217,10 @@ public class SsoAuthenticationManager implements Serializable {
         }
 
         sessionData.put(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE, providerPreferences);
+        sessionData.put("starthour", providerPreferences.getStartHour().toString());
+        sessionData.put("endhour", providerPreferences.getEndHour().toString());
+        sessionData.put("everymin", providerPreferences.getEveryMin().toString());
+        sessionData.put("groupno", providerPreferences.getMyGroupNo());
 
         return sessionData;
     }

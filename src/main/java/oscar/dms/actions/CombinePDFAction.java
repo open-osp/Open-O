@@ -26,6 +26,8 @@
 package oscar.dms.actions;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,10 +67,12 @@ public class CombinePDFAction extends Action {
         if (files != null){
             MiscUtils.getLogger().debug("size = "+files.length);
             EDocUtil docData = new EDocUtil();
+            String path = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+            Path filePath;
             for (int i =0 ; i < files.length ; i++){
-               String path = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-               String filename =  docData.getDocumentName(files[i]);
-                     alist.add(path+filename);
+                String filename =  docData.getDocumentName(files[i]);
+                filePath = Paths.get(path,filename);
+                alist.add(filePath.toAbsolutePath().toString());
             }
             if (alist.size() > 0 ){
                 response.setContentType("application/pdf");  //octet-stream

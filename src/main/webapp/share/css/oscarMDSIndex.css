@@ -42,6 +42,8 @@ table {
 
 table#summaryView tr td {
 	padding: 2px 5px !important;
+	text-align: left !important;
+	vertical-align: top !important;
 }
 
 table#summaryView tr th {
@@ -421,10 +423,6 @@ div.Nav a:active {
 	color: yellow;
 }
 
-.PageLink {Verdana;
-	
-}
-
 .text1 {
 	font-size: 8pt;
 	color: black;
@@ -433,27 +431,18 @@ div.Nav a:active {
 div.txt1 {
 	font-size: 8pt;
 	color: black;
-	Verdana
-	,
-	Arial;
 }
 
 div.txt2 {
 	font-weight: bolder;
 	font-size: 6pt;
 	color: black;
-	Verdana
-	,
-	Arial;
 }
 
 div.Title3 {
 	font-weight: bolder;
 	font-size: 12pt;
 	color: black;
-	Verdana
-	,
-	Arial;
 }
 
 .red {
@@ -463,9 +452,6 @@ div.Title3 {
 .text2 {
 	font-size: 7pt;
 	color: black;
-	Verdana
-	,
-	Arial;
 }
 
 .white {
@@ -475,9 +461,6 @@ div.Title3 {
 .title1 {
 	font-size: 9pt;
 	color: black;
-	Verdana
-	,
-	Arial;
 }
 
 div.Title4 {

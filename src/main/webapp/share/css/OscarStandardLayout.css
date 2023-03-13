@@ -294,3 +294,7 @@ TH {
 {
 	color:#003399;
 }
+
+pre {
+	white-space: pre-wrap !important;
+}

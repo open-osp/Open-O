@@ -42,22 +42,30 @@ public class PropertyDao extends AbstractDao<Property> {
 
 	/**
      * Find by name.
-     * @param name
+     * @param name: property key name
      */
     public List<Property> findByName(String name)
 	{
-    	String sqlCommand="select x from "+modelClass.getSimpleName()+" x where x.name=?1";
+    	String sqlCommand="select x from " + modelClass.getSimpleName() + " x where x.name=?1";
 		Query query = entityManager.createQuery(sqlCommand);
-
 		query.setParameter(1, name);
-		
-		@SuppressWarnings("unchecked")
-		List<Property> results = query.getResultList();
-
-		return(results);
+		return query.getResultList();
 	}
-    
-    @SuppressWarnings("unchecked")
+
+	/**
+	 * Find a property by name where the provider number is null. This identifies a globally set property that is not tied to a specific provider.
+	 * This is more of a legacy function, since most new global properties should be added to SystemPreferences instead.
+	 * @param name property key name
+	 * @return list of properties found matching criteria
+	 */
+	public List<Property> findGlobalByName(String name)
+	{
+		String sqlCommand="select x from "+modelClass.getSimpleName()+" x where x.name=?1 and x.providerNo is null";
+		Query query = entityManager.createQuery(sqlCommand);
+		query.setParameter(1, name);
+		return query.getResultList();
+	}
+	
     public List<Property> findByNameAndProvider(String propertyName, String providerNo) {
        	Query query = createQuery("p", "p.name = :name AND p.providerNo = :pno");
    		query.setParameter("name", propertyName);
@@ -65,7 +73,7 @@ public class PropertyDao extends AbstractDao<Property> {
    		return query.getResultList();
    	}
     
-    @SuppressWarnings("unchecked")
+    
     public List<Property> findByProvider(String providerNo) {
        	Query query = createQuery("p", "p.providerNo = :pno");
    		query.setParameter("pno", providerNo);
@@ -84,18 +92,42 @@ public class PropertyDao extends AbstractDao<Property> {
 		}
 		
 	}
-    
+
+    public String getValueByNameAndDefault(String name, String defaultValue) {
+        Property result = checkByName(name);
+        if (result == null) {
+            return defaultValue;
+        } else {
+            return result.getValue();
+        }
+    }
+
     public List<Property> findByNameAndValue(String name, String value)
  	{
-     	String sqlCommand="select x from "+modelClass.getSimpleName()+" x where x.name=?1 and x.value=?2";
+     	String sqlCommand="select x from Property x where x.name=?1 and x.value=?2";
  		Query query = entityManager.createQuery(sqlCommand);
-
  		query.setParameter(1, name);
  		query.setParameter(2, value);
- 		
- 		@SuppressWarnings("unchecked")
- 		List<Property> results = query.getResultList();
-
- 		return(results);
+ 		return query.getResultList();
  	}
+
+	public void removeByName(String name) {
+		String sqlCommand="delete from "+modelClass.getSimpleName()+" where name=?1";
+		Query query = entityManager.createQuery(sqlCommand);
+		query.setParameter(1, name);
+		query.executeUpdate();
+	}
+
+	public Boolean isActiveBooleanProperty(String name) {
+		return isActiveBooleanProperty(name, false);
+	}
+	public Boolean isActiveBooleanProperty(String name, Boolean defaultValue) {
+		List<Property> properties = findByName(name);
+		return properties.isEmpty() ? defaultValue : "true".equals(properties.get(0).getValue());
+	}
+
+	public Boolean isActiveBooleanProperty(String name, String providerNo) {
+		List<Property> properties = findByNameAndProvider(name, providerNo);
+		return !properties.isEmpty() && "true".equals(properties.get(0).getValue());
+	}
 }

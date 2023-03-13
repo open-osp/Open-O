@@ -444,7 +444,30 @@ public class IHAHandler implements MessageHandler {
             }
             
             return(obrName);
-            
+
+        }catch(Exception e){
+            return("");
+        }
+    }
+
+    public String getOBRIdentifier(int i){
+
+        String obrName,sendApp;
+        i++;
+        try{
+            sendApp=getSendingApplication();
+            if(sendApp.startsWith("IHA")) sendApp = sendApp.substring(3);
+            if (i == 1){
+                obrName = getString(terser.get("/.OBR-4-1"));
+            }else{
+                Segment obrSeg = (Segment) terser.getFinder().getRoot().get("OBR"+i);
+                obrName = getString(Terser.get(obrSeg,4,0,2,1));
+                if (obrName.equals(""))
+                    obrName = getString(Terser.get(obrSeg,4,0,1,1));
+            }
+
+            return(obrName);
+
         }catch(Exception e){
             return("");
         }
@@ -827,7 +850,7 @@ public class IHAHandler implements MessageHandler {
         }
         return (getOBXField(i, j, 3, 0, 2));
     }
-    
+
     /*@Override
     public String getOBXResult(int i, int j){
         try{

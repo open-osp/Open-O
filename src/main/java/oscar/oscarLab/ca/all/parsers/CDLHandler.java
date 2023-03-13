@@ -122,6 +122,11 @@ public class CDLHandler implements MessageHandler {
         }
     }
 
+    @Override
+    public String getOBRIdentifier(int i) {
+        return null;
+    }
+
     public String getTimeStamp(int i, int j){
         try{
             return(formatDateTime(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getObservationDateTime().getTimeOfAnEvent().getValue())));

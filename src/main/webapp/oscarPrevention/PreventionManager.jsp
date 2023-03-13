@@ -57,19 +57,11 @@ if(!authed) {
 }
 %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 
 <html:html locale="true">
 <head>
-
 <title><bean:message key="oscarprevention.index.oscarpreventiontitre" /> - <bean:message key="admin.admin.preventionNotification.title" /></title>
-
-<script type="text/javascript">
-<!--
-
-//-->
-</script>
-
 
 <style type="text/css">
 
@@ -103,27 +95,9 @@ border:1px solid #999999;
 }
 
 </style>
-
-<!--[if IE]>
-<style type="text/css">
-
-table.legend{
-border:0;
-margin-top:10px;
-width:370px;
-}
-
-table.legend td{
-font-size:10;
-text-align:left;
-}
-
-</style>
-<![endif]-->
-
 </head>
 
-<body bgcolor="#B7B18D">
+<body>
 
 <%
 String getStatus=""; //initialize getStatus
@@ -136,18 +110,20 @@ String vProp="hide_prevention_stop_signs";
 PreventionDisplayConfig pdc = PreventionDisplayConfig.getInstance();
 ArrayList<HashMap<String,String>> prevList = pdc.getPreventions();
 
-	
+//TODO the rest of this code should be moved into an Action Class and handled by the PreventionManager
+	org.oscarehr.managers.PreventionManager preventionManager = SpringUtils.getBean(org.oscarehr.managers.PreventionManager.class);
+
 	PropertyDao propDao = (PropertyDao)SpringUtils.getBean("propertyDao");
-	List<Property> pList = propDao.findByName(vProp); 
-	
+	List<Property> pList = propDao.findByName(vProp);
+
   	Iterator<Property> i = pList.iterator();
 
   	while (i.hasNext()) {
   	Property item = i.next();
   	getStatus  = item.getValue();
-  	
+
   	}
-	
+
 //checking if hide stop signs have been set in the database if not then check to see if
 //show stop signs have been turned off in the property file
 if(getStatus=="" && OscarProperties.getInstance().getProperty("SHOW_PREVENTION_STOP_SIGNS","false").equals("false") ) { 
@@ -215,6 +191,11 @@ if(pList.size()>0){
 
 getStatus = new_value;
 
+/*
+ * calling getPreventionStopSigns will refresh the list that is currently "cached"
+ * I did not have the time resources to rewrite this page correctly.
+ */
+//preventionManager.getPreventionStopSigns();
 }
 //-----------------------------UPDATE END---------------------------	
 

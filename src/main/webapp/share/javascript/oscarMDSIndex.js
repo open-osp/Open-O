@@ -24,7 +24,6 @@
 
 /************init global data methods*****************/
 var oldestLab = null;
-var ctx = document.getElementById("ctx").value;
 
 function  updateDocStatusInQueue(docid){//change status of queue document link row to I=inactive
     console.log('in updateDocStatusInQueue, docid '+docid);

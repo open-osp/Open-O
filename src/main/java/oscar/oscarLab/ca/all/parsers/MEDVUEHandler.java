@@ -158,6 +158,11 @@ public class MEDVUEHandler implements MessageHandler {
 		return (val = obrseg.getUniversalServiceIdentifier().getText().getValue()) == null ? " " : val;
 	}
 
+	@Override
+	public String getOBRIdentifier(int i) {
+		return null;
+	}
+
 	public String getTimeStamp(int i, int j) {
 		try {
 			if (isReport(i, j)) {

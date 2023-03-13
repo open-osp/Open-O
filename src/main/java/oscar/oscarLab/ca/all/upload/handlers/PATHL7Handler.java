@@ -77,7 +77,7 @@ public class PATHL7Handler implements MessageHandler {
 				}
 			} catch (Exception e) {
 				logger.error("Could not upload PATHL7 message", e);
-				MiscUtils.getLogger().error("Error", e);
+				MiscUtils.getLogger().error("Error in Lab #" + (i+1) + " in batch file " + fileName, e);
 				MessageUploader.clean(fileId);
 				return null;
 			}
