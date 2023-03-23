@@ -26,31 +26,17 @@
 package oscar.oscarDemographic.pageUtil;
 
 import java.awt.Color;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -67,7 +53,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.upload.FormFile;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.jettison.json.JSONObject;
@@ -76,6 +61,7 @@ import org.oscarehr.PMmodule.model.Program;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.PMmodule.service.AdmissionManager;
 import org.oscarehr.PMmodule.service.ProgramManager;
+import org.oscarehr.PMmodule.streethealth.DataElement;
 import org.oscarehr.casemgmt.dao.IssueDAO;
 import org.oscarehr.casemgmt.model.CaseManagementIssue;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
@@ -129,6 +115,7 @@ import org.oscarehr.hospitalReportManager.model.HRMDocumentComment;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentSubClass;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToProvider;
+import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -185,6 +172,7 @@ import cdsDt.PersonNameSimple;
 import cdsDt.PersonNameStandard.LegalName;
 import cdsDt.PersonNameStandard.OtherNames;
 import cdsDt.YIndicator;
+import org.oscarehr.ws.LabUploadWs;
 import oscar.OscarProperties;
 import oscar.dms.EDocUtil;
 import oscar.oscarDemographic.data.DemographicAddResult;
@@ -192,12 +180,9 @@ import oscar.oscarDemographic.data.DemographicData;
 import oscar.oscarEncounter.data.EctProgram;
 import oscar.oscarEncounter.oscarMeasurements.data.ImportExportMeasurements;
 import oscar.oscarLab.FileUploadCheck;
-import oscar.oscarLab.LabRequestReportLink;
 import oscar.oscarLab.ca.all.upload.HandlerClassFactory;
-import oscar.oscarLab.ca.all.upload.handlers.GDMLHandler;
 import oscar.oscarLab.ca.all.upload.handlers.MessageHandler;
 import oscar.oscarLab.ca.all.util.Utilities;
-import oscar.oscarLab.ca.on.LabResultImport;
 import oscar.oscarPrevention.PreventionData;
 import oscar.oscarProvider.data.ProviderData;
 import oscar.oscarRx.data.RxDrugData;
@@ -210,9 +195,9 @@ import oscar.util.UtilDateUtilities;
  *
  * @author Ronnie Cheng
  */
-    public class ImportDemographicDataAction4 extends Action {
+public class ImportDemographicDataAction4 extends Action {
 
-    	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     	
     private static final Logger logger = MiscUtils.getLogger();
     private static final String PATIENTID = "Patient";
@@ -231,7 +216,8 @@ import oscar.util.UtilDateUtilities;
     private static final String REPORTBINARY = "Binary";
     private static final String REPORTTEXT = "Text";
     private static final String RISKFACTOR = "Risk";
-
+    private static String currentDirectory;
+    private static List<Path> validXmlFileList = Collections.emptyList();
 
     boolean matchProviderNames = true;
     String admProviderNo = null;
@@ -258,13 +244,16 @@ import oscar.util.UtilDateUtilities;
     IssueDAO issueDao = SpringUtils.getBean(IssueDAO.class);
     DemographicContactDao contactDao = (DemographicContactDao) SpringUtils.getBean("demographicContactDao");
 
+    private LabUploadWs labUpload = new LabUploadWs();
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception  {
-    	
+
     	if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", null)) {
 			throw new SecurityException("missing required security object (_demographic)");
 		}
+
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     	
         admProviderNo = (String) request.getSession().getAttribute("user");
         programId = new EctProgram(request.getSession()).getProgram(admProviderNo);
@@ -279,7 +268,7 @@ import oscar.util.UtilDateUtilities;
         List<Provider> students = new ArrayList<Provider>();
         int courseId = 0;
         if(frm.getCourseId()!=null && frm.getCourseId().length()>0) {
-            courseId = Integer.valueOf(frm.getCourseId());
+            courseId = Integer.parseInt(frm.getCourseId());
             if(courseId>0) {
                 logger.info("need to apply this import to a learning environment");
                 //get all the students from this course
@@ -293,148 +282,209 @@ import oscar.util.UtilDateUtilities;
         }
         logger.debug("apply this patient to " + students.size() + " students");
         matchProviderNames = frm.getMatchProviderNames();
-        FormFile imp = frm.getImportFile();
-        String ifile = tmpDir + imp.getFileName();
-        ArrayList<String> warnings = new ArrayList<String>();
-        ArrayList<String[]> logs = new ArrayList<String[]>();
-        File importLog = null;
+//        FormFile imp = frm.getImportFile();
+//        String ifile = tmpDir + imp.getFileName();
+//        String ifile = tmpDir + "ChangTestExport.zip";
+        ArrayList<String> warnings = new ArrayList<>();
+        ArrayList<String[]> logs = new ArrayList<>();
+        validXmlFileList = new ArrayList<>();
+        Path directory = Paths.get("/Users/denniswarren/Documents/Colcamex/Clients/data_transfers/Maywood_Medaccess/ChangFinalExport_uxUD8FjFbHuaQPeS6ytZVGWs/ChangFinalExport");
+        String[] logResult;
 
-	try {
-            InputStream is = imp.getInputStream();
-            OutputStream os = new FileOutputStream(ifile);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len=is.read(buf)) > 0) os.write(buf,0,len);
-            is.close();
-            os.close();
+        try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+            for (Path stream : directoryStream) {
 
-            if (matchFileExt(ifile, "zip")) {
-            	saveParts(tmpDir,ifile);
-                ZipInputStream in = new ZipInputStream(new FileInputStream(ifile));
-                boolean noXML = true;
-                ZipEntry entry = in.getNextEntry();
-                String entryDir = "";
+                if (Files.isDirectory(stream)) {
+                    // set the current directory globally. Other methods use it to retrieve relative files.
+                    currentDirectory = stream.toAbsolutePath().toString();
 
-                while (entry!=null) {
-                    String entryName = entry.getName();
-                    if (entry.isDirectory()) entryDir = entryName;
-                    if (entryName.startsWith(entryDir)) entryName = entryName.substring(entryDir.length());
-
-                    String ofile = tmpDir + entryName;
-                    if (matchFileExt(ofile, "xml")) {
-                    	new File(ofile).getParentFile().mkdirs();
-                    	
-                        noXML = false;
-                        OutputStream out = null;    
-                        try {
-	                        out = new FileOutputStream(ofile);
-	                        while ((len=in.read(buf)) > 0) out.write(buf,0,len);
-	                        out.close();
-	                    } finally {
-	                    	IOUtils.closeQuietly(out);
-	                    }
-                        logs.add(importXML(LoggedInInfo.getLoggedInInfoFromSession(request) , ofile, warnings, request,frm.getTimeshiftInDays(),students,courseId,true));
-                        importNo++;
-                        demographicNo=null;
+                    /* check for an XML file that matches the folder name (standard). It's best for performance
+                     * to avoid hunting through the folders when not needed.
+                     */
+                    Path xmlFile = Paths.get(currentDirectory, stream.toFile().getName() + ".xml");
+                    if (Files.exists(xmlFile)) {
+                        logResult = importXML(loggedInInfo, xmlFile.toString(), warnings, request, frm.getTimeshiftInDays(), students, courseId, true);
+                        validXmlFileList.add(xmlFile);
+                        logs.add(logResult);
                     }
-                    entry = in.getNextEntry();
-                }
-                if (noXML) {
-                    Util.cleanFile(ifile);
-                        throw new Exception ("Error! No .xml file in zip");
+
+                    /*
+                     * otherwise hunting for a valid xml file is required. There should only be 1.
+                     */
+                    else {
+                        List<Path> possibleXmlFileList = searchFileByExtension(stream, warnings);
+                        for (Path possibleXmlFile : possibleXmlFileList) {
+                            if (Files.exists(xmlFile)) {
+                                logResult = importXML(loggedInInfo, possibleXmlFile.toString(), warnings, request, frm.getTimeshiftInDays(), students, courseId, true);
+                                validXmlFileList.add(xmlFile);
+                                logs.add(logResult);
+                            }
+                        }
+                    }
                 } else {
-                    importLog = makeImportLog(logs, tmpDir);
+                    warnings.add("Directory not found " + stream);
                 }
-                in.close();
-//                Util.cleanFile(ifile);
-
-            } else if (matchFileExt(ifile, "xml")) {
-                logs.add(importXML(LoggedInInfo.getLoggedInInfoFromSession(request), ifile, warnings, request,frm.getTimeshiftInDays(),students,courseId,false));
-                demographicNo=null;
-                importLog = makeImportLog(logs, tmpDir);
-            } else {
-                Util.cleanFile(ifile);
-                throw new Exception ("Error! Import file must be .xml or .zip");
             }
-	} catch (Exception e) {
-            warnings.add("Error processing file: " + imp.getFileName());
-            logger.error("Error", e);
-	}
-
-	
-	
-	//CONTACTS MUST BE PROCESSED AFTER
-	try {
-		byte[] buf = new byte[1024];
-        int len;
-        
-        if (matchFileExt(ifile, "zip")) {
-        	saveParts(tmpDir,ifile);
-            ZipInputStream in = new ZipInputStream(new FileInputStream(ifile));
-            boolean noXML = true;
-            ZipEntry entry = in.getNextEntry();
-            String entryDir = "";
-
-            while (entry!=null) {
-                String entryName = entry.getName();
-                if (entry.isDirectory()) entryDir = entryName;
-                if (entryName.startsWith(entryDir)) entryName = entryName.substring(entryDir.length());
-
-                String ofile = tmpDir + entryName;
-                if (matchFileExt(ofile, "xml")) {
-                	new File(ofile).getParentFile().mkdirs();
-                	
-                    noXML = false;
-                    OutputStream out = null;    
-                    try {
-                        out = new FileOutputStream(ofile);
-                        while ((len=in.read(buf)) > 0) out.write(buf,0,len);
-                        out.close();
-                    } finally {
-                    	IOUtils.closeQuietly(out);
-                    }
-                    //process for contacts only
-                  //  logger.info("processing for contacts - " + ofile);
-                    logs.add(importContacts(LoggedInInfo.getLoggedInInfoFromSession(request) , ofile, warnings, request,frm.getTimeshiftInDays(),students,courseId));
-                 
-                    demographicNo=null;
-                }
-                entry = in.getNextEntry();
-            }
-            if (noXML) {
-                Util.cleanFile(ifile);
-                    throw new Exception ("Error! No .xml file in zip");
-            } else {
-               // importLog = makeImportLog(logs, tmpDir);
-            }
-            in.close();
-            Util.cleanFile(ifile);
-
-        } else if (matchFileExt(ifile, "xml")) {
-        	logger.info("processing for contacts - " + ifile);
-        	logs.add(importContacts(LoggedInInfo.getLoggedInInfoFromSession(request), ifile, warnings, request,frm.getTimeshiftInDays(),students,courseId));
-            demographicNo=null;
-           // importLog = makeImportLog(logs, tmpDir);
-        } else {
-            Util.cleanFile(ifile);
-            throw new Exception ("Error! Import file must be .xml or .zip");
         }
-} catch (Exception e) {
-        warnings.add("Error processing file: " + imp.getFileName());
-        logger.error("Error", e);
-}
+
+        // use the valid xml list to run through the contact imports.
+        for(Path validXmlFile : validXmlFileList) {
+            logResult = importContacts(loggedInInfo, validXmlFile.toString(), warnings, request, frm.getTimeshiftInDays(), students, courseId);
+            logs.add(logResult);
+        }
+
+        File importLog = makeImportLog(logs, tmpDir);
+
+//	try(InputStream is = Files.newInputStream(Paths.get(ifile));
+//        OutputStream os = new FileOutputStream(ifile)) {
+//            byte[] buf = new byte[1024];
+//            int len;
+//            while ((len=is.read(buf)) > 0) {
+//                os.write(buf,0,len);
+//            }
+//            is.close();
+//            os.close();
+//
+//            if (matchFileExt(ifile, "zip")) {
+//            	saveParts(tmpDir,ifile);
+//                ZipInputStream in = new ZipInputStream(new FileInputStream(ifile));
+//                boolean noXML = true;
+//                ZipEntry entry = in.getNextEntry();
+//                String entryDir = "";
+//
+//                while (entry!=null) {
+//                    String entryName = entry.getName();
+//                    if (entry.isDirectory()) entryDir = entryName;
+//                    if (entryName.startsWith(entryDir)) entryName = entryName.substring(entryDir.length());
+//
+//                    String ofile = tmpDir + entryName;
+//                    if (matchFileExt(ofile, "xml")) {
+//                    	new File(ofile).getParentFile().mkdirs();
+//
+//                        noXML = false;
+//                        OutputStream out = null;
+//                        try {
+//	                        out = new FileOutputStream(ofile);
+//	                        while ((len=in.read(buf)) > 0) out.write(buf,0,len);
+//	                        out.close();
+//	                    } finally {
+//	                    	IOUtils.closeQuietly(out);
+//	                    }
+//                        logs.add(importXML(LoggedInInfo.getLoggedInInfoFromSession(request) , ofile, warnings, request,frm.getTimeshiftInDays(),students,courseId,true));
+//                        importNo++;
+//                        demographicNo=null;
+//                    }
+//                    entry = in.getNextEntry();
+//                }
+//                if (noXML) {
+//                    Util.cleanFile(ifile);
+//                        throw new Exception ("Error! No .xml file in zip");
+//                } else {
+//                    importLog = makeImportLog(logs, tmpDir);
+//                }
+//                in.close();
+////                Util.cleanFile(ifile);
+//
+//            } else if (matchFileExt(ifile, "xml")) {
+//                logs.add(importXML(LoggedInInfo.getLoggedInInfoFromSession(request), ifile, warnings, request,frm.getTimeshiftInDays(),students,courseId,false));
+//                demographicNo=null;
+//                importLog = makeImportLog(logs, tmpDir);
+//            } else {
+//                Util.cleanFile(ifile);
+//                throw new Exception ("Error! Import file must be .xml or .zip");
+//            }
+//	} catch (Exception e) {
+//            warnings.add("Error processing file: " + imp.getFileName());
+//            logger.error("Error processing file: " + imp.getFileName(), e);
+//	}
+//
+//
+//
+//	//CONTACTS MUST BE PROCESSED AFTER
+//	try {
+//		byte[] buf = new byte[1024];
+//        int len;
+//
+//        if (matchFileExt(ifile, "zip")) {
+//        	saveParts(tmpDir,ifile);
+//            ZipInputStream in = new ZipInputStream(new FileInputStream(ifile));
+//            boolean noXML = true;
+//            ZipEntry entry = in.getNextEntry();
+//            String entryDir = "";
+//
+//            while (entry!=null) {
+//                String entryName = entry.getName();
+//                if (entry.isDirectory()) entryDir = entryName;
+//                if (entryName.startsWith(entryDir)) entryName = entryName.substring(entryDir.length());
+//
+//                String ofile = tmpDir + entryName;
+//                if (matchFileExt(ofile, "xml")) {
+//                	new File(ofile).getParentFile().mkdirs();
+//
+//                    noXML = false;
+//                    OutputStream out = null;
+//                    try {
+//                        out = new FileOutputStream(ofile);
+//                        while ((len=in.read(buf)) > 0) out.write(buf,0,len);
+//                        out.close();
+//                    } finally {
+//                    	IOUtils.closeQuietly(out);
+//                    }
+//                    //process for contacts only
+//                  //  logger.info("processing for contacts - " + ofile);
+//                    logs.add(importContacts(LoggedInInfo.getLoggedInInfoFromSession(request) , ofile, warnings, request,frm.getTimeshiftInDays(),students,courseId));
+//
+//                    demographicNo=null;
+//                }
+//                entry = in.getNextEntry();
+//            }
+//            if (noXML) {
+//                Util.cleanFile(ifile);
+//                    throw new Exception ("Error! No .xml file in zip");
+//            } else {
+//               // importLog = makeImportLog(logs, tmpDir);
+//            }
+//            in.close();
+//            Util.cleanFile(ifile);
+//
+//        } else if (matchFileExt(ifile, "xml")) {
+//        	logger.info("processing for contacts - " + ifile);
+//        	logs.add(importContacts(LoggedInInfo.getLoggedInInfoFromSession(request), ifile, warnings, request,frm.getTimeshiftInDays(),students,courseId));
+//            demographicNo=null;
+//           // importLog = makeImportLog(logs, tmpDir);
+//        } else {
+//            Util.cleanFile(ifile);
+//            throw new Exception ("Error! Import file must be .xml or .zip");
+//        }
+//} catch (Exception e) {
+//        warnings.add("Error processing file: " + imp.getFileName());
+//        logger.error("Error", e);
+//}
 	
 	
         //channel warnings and importlog to browser
-        request.setAttribute("warnings",warnings);
-        if (importLog!=null) request.setAttribute("importlog",importLog.getPath());
-
+        request.setAttribute("warnings", warnings);
+        request.setAttribute("importlog", importLog.getPath());
         resetProviderBean(request);
-        
         return mapping.findForward("success");
     }
 
-    void saveParts(String tmpDir,String ifile) throws Exception {
+    private List<Path> searchFileByExtension(Path path, ArrayList<String> warnings) {
+        List<Path> filteredFileList = new ArrayList<>();
+        try (DirectoryStream<Path> fileList = Files.newDirectoryStream(path)) {
+            for(Path file : fileList) {
+                if(Files.isRegularFile(file) && file.getFileName().toString().endsWith(".xml")) {
+                    filteredFileList.add(file);
+                }
+            }
+        } catch(IOException ex){
+            warnings.add("Error while locating " + ".xml" + " in " + path.toString());
+            logger.error("Error while locating " + ".xml" + " in " + path, ex);
+        }
+        return filteredFileList;
+    }
+
+    private void saveParts(String tmpDir,String ifile) throws Exception {
     	int len = 0;
     	byte[] buf = new byte[1024];
     	
@@ -474,7 +524,7 @@ import oscar.util.UtilDateUtilities;
         in.close();
     }
     
-    void resetProviderBean(HttpServletRequest request) {
+    private void resetProviderBean(HttpServletRequest request) {
     	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     	Properties providerBean = new Properties();
     	for(Provider p : providerDao.getActiveProviders()) {
@@ -482,11 +532,11 @@ import oscar.util.UtilDateUtilities;
     	}
     	request.getSession().setAttribute("providerBean", providerBean);
     }
-    String[] importContacts(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays,List<Provider> students, int courseId) throws SQLException, Exception {
+    private String[] importContacts(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays,List<Provider> students, int courseId) throws SQLException, Exception {
     	return importContacts(loggedInInfo, xmlFile,warnings,request,timeShiftInDays,null,null,0);
     }
     
-    String[] importXML(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays,List<Provider> students, int courseId, boolean cleanFile) throws SQLException, Exception {
+    private String[] importXML(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays,List<Provider> students, int courseId, boolean cleanFile) throws SQLException, Exception {
         if(students == null || students.isEmpty()) {
             return importXML(loggedInInfo, xmlFile,warnings,request,timeShiftInDays,null,null,0, cleanFile);
         }
@@ -515,7 +565,7 @@ import oscar.util.UtilDateUtilities;
     	return tmp;
     }
 
-    String[] importContacts(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays, Provider student, Program admitTo, int courseId) throws SQLException, Exception {
+    private String[] importContacts(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays, Provider student, Program admitTo, int courseId) throws SQLException, Exception {
     	DemographicData dd = new DemographicData();
     	 
     	String docDir = oscarProperties.getProperty("DOCUMENT_DIR");
@@ -744,7 +794,7 @@ import oscar.util.UtilDateUtilities;
     }
 
 
-    String[] importXML(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays, Provider student, Program admitTo, int courseId, boolean cleanFile) throws SQLException, Exception {
+    private String[] importXML(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays, Provider student, Program admitTo, int courseId, boolean cleanFile) throws SQLException, Exception {
         ArrayList<String> err_demo = new ArrayList<String>(); //errors: duplicate demographics
         ArrayList<String> err_data = new ArrayList<String>(); //errors: discrete data
         ArrayList<String> err_summ = new ArrayList<String>(); //errors: summary
@@ -758,22 +808,19 @@ import oscar.util.UtilDateUtilities;
         }
 
         File xmlF = new File(xmlFile);
-        OmdCdsDocument.OmdCds omdCds=null;
+        PatientRecord patientRec = null;
         try {
         	XmlOptions opts = new XmlOptions(); 
         	List c = new ArrayList();
         	
         	opts.setErrorListener(c);
-        	opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType()); 
-        	omdCds = OmdCdsDocument.Factory.parse(xmlF,opts).getOmdCds();
-
+        	opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType());
+            OmdCdsDocument.OmdCds omdCds = OmdCdsDocument.Factory.parse(xmlF,opts).getOmdCds();
         	omdCds.validate(opts);
-        	
-           
+            patientRec = omdCds.getPatientRecord();
         } catch (IOException ex) {logger.error("Error", ex);
         } catch (XmlException ex) {logger.error("Error", ex);
         }
-        PatientRecord patientRec = omdCds.getPatientRecord();
 
         //DEMOGRAPHICS
         Demographics demo = patientRec.getDemographics();
@@ -793,7 +840,6 @@ import oscar.util.UtilDateUtilities;
             		firstNameQualifier = legalName.getFirstName().getPartQualifier().toString();
             	}
             }
-            patientName = lastName+","+firstName;
         } else {
             err_data.add("Error! No Legal Name");
         }
@@ -801,7 +847,10 @@ import oscar.util.UtilDateUtilities;
         //other names
         String  otherNameTxt=null;
 
-        LegalName.OtherName[] legalOtherNames = legalName.getOtherNameArray();
+        LegalName.OtherName[] legalOtherNames = new LegalName.OtherName[0];
+        if(legalName != null && legalName.getOtherNameArray() != null) {
+            legalOtherNames = legalName.getOtherNameArray();
+        }
         String middleNames = "";
         
         for (LegalName.OtherName otherName : legalOtherNames) {
@@ -815,8 +864,18 @@ import oscar.util.UtilDateUtilities;
         for (OtherNames otherName : otherNames) {
         	OtherNames.OtherName[] otherNames2 = otherName.getOtherNameArray();
         	for (OtherNames.OtherName otherName2 : otherNames2) {
-        		if (otherNameTxt==null) otherNameTxt = otherName2.getPart();
-        		else otherNameTxt += ", "+otherName2.getPart();
+        		if (otherNameTxt==null) {
+                    otherNameTxt = otherName2.getPart();
+                    // sometimes the legal first name is empty
+                    if(firstName.isEmpty()) {
+                        firstName = otherName2.getPart();
+                    }
+                }
+        		else {
+                    otherNameTxt += ", "+otherName2.getPart();
+                    // sometimes the legal last name is empty
+                    lastName = otherName2.getPart();
+                }
         	}
         	if (otherName.getNamePurpose()!=null) {
         		otherNameTxt = Util.addLine(mapNamePurpose(otherName.getNamePurpose())+": ", otherNameTxt);
@@ -826,6 +885,10 @@ import oscar.util.UtilDateUtilities;
 
         String title = demo.getNames().getNamePrefix()!=null ? demo.getNames().getNamePrefix().toString() : "";
         String suffix = demo.getNames().getLastNameSuffix()!=null ? demo.getNames().getLastNameSuffix().toString() : "";
+
+        patientName = lastName+","+firstName;
+
+        // GENDER
         String sex = demo.getGender()!=null ? demo.getGender().toString() : "";
         if (StringUtils.empty(sex)) {
             err_data.add("Error! No Gender");
@@ -889,8 +952,8 @@ import oscar.util.UtilDateUtilities;
         		 term_reason=new String[enrolTotal],
         		 roster_enrolledTo = new String[enrolTotal];
         		
-        String rosterInfo = null;
-        Calendar enrollDate=null, currentEnrollDate=null;
+        String rosterInfo;
+        Calendar enrollDate, currentEnrollDate;
 
         for (int i=0; i<enrolTotal; i++) {
             roster_status[i] = enrolments[i].getEnrollmentStatus()!=null ? enrolments[i].getEnrollmentStatus().toString() : "";
@@ -1097,7 +1160,12 @@ import oscar.util.UtilDateUtilities;
         org.oscarehr.common.model.Demographic demographic = null;
 
         if(courseId == 0) {
-            demographicNo = dd.getDemoNoByNamePhoneEmail(loggedInInfo, firstName, lastName, homePhone, workPhone, email);
+            // make the cell phone a home phone if home phone is not defined.
+            String phone = homePhone;
+            if(phone.isEmpty() || ! cellPhone.isEmpty()) {
+                phone = cellPhone;
+            }
+            demographicNo = dd.getDemoNoByNamePhoneEmail(loggedInInfo, firstName, lastName, phone, workPhone, email);
             demographic = dd.getDemographic(loggedInInfo, demographicNo);
         }
 /*
@@ -1423,25 +1491,36 @@ import oscar.util.UtilDateUtilities;
             //PERSONAL HISTORY
             PersonalHistory[] pHist = patientRec.getPersonalHistoryArray();
             for (int i=0; i<pHist.length; i++) {
-                if (i==0) scmi = getCMIssue("SocHistory");
+                cdsDt.ResidualInformation residualInformation = pHist[i].getResidualInfo();
+                if (residualInformation == null) {
+                    continue;
+                }
+                if (i==0) {
+                    scmi = getCMIssue("SocHistory");
+                }
                 CaseManagementNote cmNote = prepareCMNote("1",null);
                 cmNote.setIssues(scmi);
 
                 //main field
                 String socialHist = "Imported Personal History";
-//                String summary = pHist[i].getCategorySummaryLine();
-                String residual = getResidual(pHist[i].getResidualInfo());
-                if (StringUtils.empty(residual)) continue;
+                StringBuilder stringBuilder = new StringBuilder();
+                for(cdsDt.ResidualInformation.DataElement dataElement : residualInformation.getDataElementArray()) {
+                    stringBuilder.append(dataElement.getName()).append(": ").append(dataElement.getContent()).append("\n");
+                }
+                if(stringBuilder.capacity() > 0) {
+                    socialHist = stringBuilder.toString();
+                }
 
                 cmNote.setNote(socialHist);
+
                 caseManagementManager.saveNoteSimple(cmNote);
                 addOneEntry(PERSONALHISTORY);
 
                 //to dumpsite
-                residual = Util.addLine("imported.cms4.2011.06", residual);
+                socialHist = Util.addLine("imported.cms4.2011.06", socialHist);
                 Long hostNoteId = cmNote.getId();
                 cmNote = prepareCMNote("2",null);
-                cmNote.setNote(residual);
+                cmNote.setNote( socialHist);
                 saveLinkNote(hostNoteId, cmNote);
             }
 
@@ -1502,6 +1581,7 @@ import oscar.util.UtilDateUtilities;
                     cme.setValue(dateFPGetPartial(fHist[i].getStartDate()));
                     caseManagementManager.saveNoteExt(cme);
                 }
+                //TODO refactor code. Entire process fails if exception thrown due to bad data. It would be better to handle the exception.
                 if (fHist[i].getAgeAtOnset()!=null) {
                     cme.setKeyVal(CaseManagementNoteExt.AGEATONSET);
                     cme.setDateValue((Date)null);
@@ -2168,14 +2248,40 @@ import oscar.util.UtilDateUtilities;
                     	String dosageValue = StringUtils.noNull(strength.getAmount());
                     	String dosageUnit = StringUtils.noNull(strength.getUnitOfMeasure());
 
-                    	if (dosageValue.contains("/")) {
-                    		String[] dValue = dosageValue.split("/");
-                    		String[] dUnit = dosageUnit.split("/");
-                    		dosage = dValue[0] + dUnit[0] + " / " + dValue[1] + (dUnit.length>1 ? dUnit[1] : "unit");
-                    	} else {
-                    		dosage = dosageValue + " " + dosageUnit;
-                    	}
-                		drug.setDosage(dosage);
+                        String[] dValue = new String[0];
+                        String[] dUnit = new String[0];
+                        // cannot depend on the exporter to send actual values.  ie: cannot split a single "/"
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        if (dosageValue.contains("/")) {
+                            dValue = dosageValue.split("/");
+                        } else {
+                            stringBuilder.append(dosageValue);
+                        }
+
+                        if( (dosageUnit.contains("/") && dosageValue.contains("/")) || (! dosageValue.contains("/") && dosageUnit.contains("/"))) {
+                            dUnit = dosageUnit.split("/");
+                        } else {
+                            stringBuilder.append(dosageUnit);
+                        }
+
+                        if(dValue.length > 0) {
+                            stringBuilder.append(dValue[0].trim());
+                        }
+
+                        if(dUnit.length > 0) {
+                            stringBuilder.append(dUnit[0].trim());
+                        }
+
+                        if(dValue.length > 1) {
+                            stringBuilder.append(" / ").append(dValue[1].trim());
+                        }
+
+                        if(dUnit.length > 1) {
+                            stringBuilder.append(dUnit[1].trim());
+                        }
+
+                		drug.setDosage(stringBuilder.toString());
                     }
 
                     special = addSpaced(special, medArray[i].getDosage());
@@ -2460,8 +2566,8 @@ import oscar.util.UtilDateUtilities;
                     appt.setStatus(status);
                     appt.setImportedStatus(apptStatus);
                     appt.setLocation("");
-                    appt.setCreator(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProvider().getFormattedName());
-                    appt.setLastUpdateUser(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo());
+                    appt.setCreator(loggedInInfo.getLoggedInProvider().getFormattedName());
+                    appt.setLastUpdateUser(loggedInInfo.getLoggedInProviderNo());
                     appt.setResources("");
                     appt.setType("");
                     appointmentDao.persist(appt);
@@ -2635,7 +2741,8 @@ import oscar.util.UtilDateUtilities;
                                 	f.write(b);
                                 	f.close();
                                 } else {
-                                	 String tmpDir = oscarProperties.getProperty("TMP_DIR");
+                                	 String tmpDir = currentDirectory;
+                                             //oscarProperties.getProperty("TMP_DIR");
                                      tmpDir = Util.fixDirName(tmpDir);
                                      String path3 = tmpDir + repR[i].getFilePath();
                                      if(!path3.endsWith(contentType)) {
@@ -2960,7 +3067,7 @@ import oscar.util.UtilDateUtilities;
     	}
     	return contentType;
     }
-	File makeImportLog(ArrayList<String[]> demo, String dir) throws IOException {
+	private File makeImportLog(ArrayList<String[]> demo, String dir) throws IOException {
 		String[][] keyword = new String[2][16];
 		keyword[0][0] = PATIENTID;
 		keyword[1][0] = "ID";
@@ -2988,77 +3095,82 @@ import oscar.util.UtilDateUtilities;
                 keyword[1][14] = " Elements";
                 keyword[0][15] = " "+ALERT;
 
-                for (int i=0; i<keyword[0].length; i++) {
-                    if (keyword[0][i].contains("Report")) {
-                        keyword[0][i+1] = "Report2";
-                        i++;
-                        continue;
-                    }
-                    if (keyword[1][i]==null) keyword[1][i] = " ";
-                    if (keyword[0][i].length()>keyword[1][i].length()) keyword[1][i] = fillUp(keyword[1][i], ' ', keyword[0][i].length());
-                    if (keyword[0][i].length()<keyword[1][i].length()) keyword[0][i] = fillUp(keyword[0][i], ' ', keyword[1][i].length());
-                }
+        for (int i=0; i<keyword[0].length; i++) {
+            if (keyword[0][i].contains("Report")) {
+                keyword[0][i+1] = "Report2";
+                i++;
+                continue;
+            }
+            if (keyword[1][i]==null) keyword[1][i] = " ";
+            if (keyword[0][i].length()>keyword[1][i].length()) keyword[1][i] = fillUp(keyword[1][i], ' ', keyword[0][i].length());
+            if (keyword[0][i].length()<keyword[1][i].length()) keyword[0][i] = fillUp(keyword[0][i], ' ', keyword[1][i].length());
+        }
 
 		File importLog = new File(dir, "ImportEvent-"+UtilDateUtilities.getToday("yyyy-MM-dd.HH.mm.ss")+".log");
-		BufferedWriter out = new BufferedWriter(new FileWriter(importLog));
-                int tableWidth = 0;
-                for (int i=0; i<keyword.length; i++) {
-                    for (int j=0; j<keyword[i].length; j++) {
-                        out.write(keyword[i][j]+" |");
-                        if (keyword[i][j].trim().equals("Report")) j++;
-                        if (i==1) tableWidth += keyword[i][j].length()+2;
-                    }
-                    out.newLine();
-                }
-                out.write(fillUp("",'-',tableWidth)); out.newLine();
-
-                //general log data
-                if (importNo==0) importNo = 1;
-                for (int i=0; i<importNo; i++) {
-                    for (int j=0; j<keyword[0].length; j++) {
-                        String category = keyword[0][j].trim();
-                        if (category.contains("Report")) category = keyword[1][j].trim();
-                        Integer occurs = entries.get(category+i);
-                        if (occurs==null) occurs = 0;
-                        out.write(fillUp(occurs.toString(), ' ', keyword[1][j].length()));
-                        out.write(" |");
-                    }
-                    out.newLine();
-                    out.write(fillUp("",'-',tableWidth)); out.newLine();
+		try(BufferedWriter out = new BufferedWriter(new FileWriter(importLog))) {
+            int tableWidth = 0;
+            for (int i = 0; i < keyword.length; i++) {
+                for (int j = 0; j < keyword[i].length; j++) {
+                    out.write(keyword[i][j] + " |");
+                    if (keyword[i][j].trim().equals("Report")) j++;
+                    if (i == 1) tableWidth += keyword[i][j].length() + 2;
                 }
                 out.newLine();
-                out.newLine();
-                out.newLine();
+            }
+            out.write(fillUp("", '-', tableWidth));
+            out.newLine();
 
-                //error log
-                String column1 = "Patient ID";
-                out.write(column1+" |");
-                out.write("Errors/Notes");
-                out.newLine();
-                out.write(fillUp("",'-',tableWidth)); out.newLine();
-
-                for (int i=0; i<importNo; i++) {
-                    Integer id = entries.get(PATIENTID+i);
-                    if (id==null) id = 0;
-                    out.write(fillUp(id.toString(), ' ', column1.length()));
+            //general log data
+            if (importNo == 0) importNo = 1;
+            for (int i = 0; i < importNo; i++) {
+                for (int j = 0; j < keyword[0].length; j++) {
+                    String category = keyword[0][j].trim();
+                    if (category.contains("Report")) category = keyword[1][j].trim();
+                    Integer occurs = entries.get(category + i);
+                    if (occurs == null) occurs = 0;
+                    out.write(fillUp(occurs.toString(), ' ', keyword[1][j].length()));
                     out.write(" |");
-                    String[] info = demo.get(i);
-                    if (info!=null && info.length>0) {
-                        String[] text = info[info.length-1].split("\n");
-                        out.write(text[0]);
-                        out.newLine();
-                        for (int j=1; j<text.length; j++) {
-                            out.write(fillUp("",' ',column1.length()));
-                            out.write(" |");
-                            out.write(text[j]);
-                            out.newLine();
-                        }
-                    }
-                    out.write(fillUp("",'-',tableWidth)); out.newLine();
                 }
-		out.close();
-                importNo = 0;
-                entries.clear();
+                out.newLine();
+                out.write(fillUp("", '-', tableWidth));
+                out.newLine();
+            }
+            out.newLine();
+            out.newLine();
+            out.newLine();
+
+            //error log
+            String column1 = "Patient ID";
+            out.write(column1 + " |");
+            out.write("Errors/Notes");
+            out.newLine();
+            out.write(fillUp("", '-', tableWidth));
+            out.newLine();
+
+            for (int i = 0; i < importNo; i++) {
+                Integer id = entries.get(PATIENTID + i);
+                if (id == null) id = 0;
+                out.write(fillUp(id.toString(), ' ', column1.length()));
+                out.write(" |");
+                String[] info = demo.get(i);
+                if (info != null && info.length > 0) {
+                    String[] text = info[info.length - 1].split("\n");
+                    out.write(text[0]);
+                    out.newLine();
+                    for (int j = 1; j < text.length; j++) {
+                        out.write(fillUp("", ' ', column1.length()));
+                        out.write(" |");
+                        out.write(text[j]);
+                        out.newLine();
+                    }
+                }
+                out.write(fillUp("", '-', tableWidth));
+                out.newLine();
+            }
+            out.close();
+            importNo = 0;
+            entries.clear();
+        }
 		return importLog;
 	}
 
@@ -3212,64 +3324,87 @@ import oscar.util.UtilDateUtilities;
 		return "OT"; //Other
 	}
 
-    String dateFPtoString(cdsDt.DateTimeFullOrPartial dtfp, int timeshiftInDays) {
-		if (dtfp==null) return "";
-
-		if (dtfp.getFullDateTime()!=null)  {
-			dtfp.getFullDateTime().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-			return getCalDateTime(dtfp.getFullDateTime());
-		}
-		if (dtfp.getFullDate()!=null)  {
-			dtfp.getFullDate().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-			return getCalDate(dtfp.getFullDate());
-		}
-		else if (dtfp.getYearMonth()!=null) {
-			dtfp.getYearMonth().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-			return getCalDate(dtfp.getYearMonth());
-		}
-		else if (dtfp.getYearOnly()!=null)
-		{
-			dtfp.getYearOnly().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-			return getCalDate(dtfp.getYearOnly());
-		}
-		else
-			return "";
+    private String dateFPtoString(cdsDt.DateTimeFullOrPartial dtfp, int timeshiftInDays) {
+		try {
+            if (dtfp == null) {
+                return "";
+            }
+            if (dtfp.getFullDateTime() != null) {
+                dtfp.getFullDateTime().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+                return getCalDateTime(dtfp.getFullDateTime());
+            }
+            if (dtfp.getFullDate() != null) {
+                dtfp.getFullDate().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+                return getCalDate(dtfp.getFullDate());
+            } else if (dtfp.getYearMonth() != null) {
+                dtfp.getYearMonth().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+                return getCalDate(dtfp.getYearMonth());
+            } else if (dtfp.getYearOnly() != null) {
+                dtfp.getYearOnly().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+                return getCalDate(dtfp.getYearOnly());
+            } else {
+                return "";
+            }
+        } catch(Exception e) {
+            // cannot depend on export source sending well formatted dates.
+            logger.warn("Invalid date. Returning empty value " + dtfp);
+            return "";
+        }
     }
 
-    String dateFPtoString(cdsDt.DateFullOrPartial dfp, int timeshiftInDays) {
-		if (dfp==null) return "";
+    private String dateFPtoString(cdsDt.DateFullOrPartial dfp, int timeshiftInDays) {
+        try {
+            if (dfp==null) return "";
 
-		if (dfp.getFullDate()!=null)  {
-			dfp.getFullDate().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-			return getCalDate(dfp.getFullDate());
-		}
-		else if (dfp.getYearMonth()!=null) {
-			dfp.getYearMonth().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-			return getCalDate(dfp.getYearMonth());
-		}
-		else if (dfp.getYearOnly()!=null)
-		{
-			dfp.getYearOnly().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-			return getCalDate(dfp.getYearOnly());
-		}
-		else
-			return "";
+            if (dfp.getFullDate()!=null)  {
+                dfp.getFullDate().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+                return getCalDate(dfp.getFullDate());
+            }
+            else if (dfp.getYearMonth()!=null) {
+                dfp.getYearMonth().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+                return getCalDate(dfp.getYearMonth());
+            }
+            else if (dfp.getYearOnly()!=null)
+            {
+                dfp.getYearOnly().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+                return getCalDate(dfp.getYearOnly());
+            }
+            else {
+                return "";
+            }
+        } catch(Exception e) {
+            // cannot depend on export source sending well formatted dates.
+            logger.warn("Invalid date. Returning empty value " + dfp);
+            return "";
+        }
     }
 
     String dateFPGetPartial(cdsDt.DateFullOrPartial dfp) {
-		if (dfp==null) return "";
+        try {
+            if (dfp==null) return "";
 
-		if (dfp.getYearMonth()!=null) return PartialDate.YEARMONTH;
-		else if (dfp.getYearOnly()!=null) return PartialDate.YEARONLY;
-		else return "";
+            if (dfp.getYearMonth()!=null) return PartialDate.YEARMONTH;
+            else if (dfp.getYearOnly()!=null) return PartialDate.YEARONLY;
+            else return "";
+        } catch(Exception e) {
+            // cannot depend on export source sending well formatted dates.
+            logger.warn("Invalid date. Returning empty value " + dfp);
+            return "";
+        }
     }
 
     String dateFPGetPartial(cdsDt.DateTimeFullOrPartial dfp) {
-		if (dfp==null) return "";
+        try {
+            if (dfp==null) return "";
 
-		if (dfp.getYearMonth()!=null) return PartialDate.YEARMONTH;
-		else if (dfp.getYearOnly()!=null) return PartialDate.YEARONLY;
-		else return "";
+            if (dfp.getYearMonth()!=null) return PartialDate.YEARMONTH;
+            else if (dfp.getYearOnly()!=null) return PartialDate.YEARONLY;
+            else return "";
+        } catch(Exception e) {
+            // cannot depend on export source sending well formatted dates.
+            logger.warn("Invalid date. Returning empty value " + dfp);
+            return "";
+        }
     }
 
     Date dateTimeFPtoDate(cdsDt.DateTimeFullOrPartial dtfp, int timeShiftInDays) {
@@ -3978,12 +4113,13 @@ import oscar.util.UtilDateUtilities;
 	/*
 	 * MSH segment for a dummy GDML record
 	 */
-	private static void fillMsh(MSH msh, Date dateOfMessage, String messageCode, String triggerEvent, String messageControlId, String hl7VersionId) throws DataTypeException {
+	private static void fillMsh(MSH msh, Date dateOfMessage, String messageCode, String triggerEvent, String messageControlId, String hl7VersionId, String facility) throws DataTypeException {
 		msh.getFieldSeparator().setValue("|");
 		msh.getEncodingCharacters().setValue("^~\\&");
 		msh.getVersionID().setValue(hl7VersionId);
-		msh.getSendingApplication().getHd1_NamespaceID().setValue("GDML");
-		msh.getSendingFacility().getNamespaceID().setValue("GDML");
+
+		msh.getSendingApplication().getHd1_NamespaceID().setValue(facility);
+		msh.getSendingFacility().getNamespaceID().setValue(facility);
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(dateOfMessage);
@@ -4052,15 +4188,18 @@ import oscar.util.UtilDateUtilities;
     String[] _rev_date  = new String[labResultArr.length]; //getDateTimeResultReviewed
     String[] _req_date  = new String[labResultArr.length]; //getLabRequisitionDateTime (set to collectionDateTime if null)
     
-*/					
+*/
 
-	private Long findMeasurementId(Integer labNo, String testName) {
-		List<MeasurementsExt> results = measurementsExtDao.findByKeyValue("lab_no", labNo.toString());
-		if(!results.isEmpty()) {
-			return new Long(results.get(0).getMeasurementId());
-		}
-		return null;
-	}
+    /**
+     * TODO: Seriously messed up
+     */
+//	private Long findMeasurementId(Integer labNo, String testName) {
+//		List<MeasurementsExt> results = measurementsExtDao.findByKeyValue("lab_no", labNo.toString());
+//		if(!results.isEmpty()) {
+//			return new Long(results.get(0).getMeasurementId());
+//		}
+//		return null;
+//	}
 	private void importLabs(LoggedInInfo loggedInInfo, LaboratoryResults[] labResultArr) {
 		List<String> accessionsDone = new ArrayList<String>();
 		
@@ -4079,23 +4218,53 @@ import oscar.util.UtilDateUtilities;
 				//find others with same accession number
 				LaboratoryResults[] reportResults = filterByAccession(labResultArr,labResult.getAccessionNumber());
 				accessionsDone.add(labResult.getAccessionNumber());
-				
-				
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
 		        String filename = "Lab." + sdf.format(new Date()) + ".import.hl7";
-				
+
+                String facilityName = labResult.getLaboratoryName();
+                if(facilityName == null || facilityName.isEmpty()) {
+                    facilityName = "OTHER";
+                }
+
+                //TODO change the case values as they are determined
+                switch (facilityName.toUpperCase()) {
+                    case "PATHL7":
+                    case "LIFELABS" :
+                    case "EXCELLERIS" :
+                        facilityName = "PATHL7";
+                        break;
+                    case "GDML" :
+                        facilityName = "GDML";
+                        break;
+                    case "IHA" :
+                        facilityName = "IHA";
+                        break;
+                    case "CDL" :
+                        facilityName = "CDL";
+                        break;
+                    case "CLS" :
+                        facilityName = "CLS";
+                        break;
+                    case "MDS" :
+                        facilityName = "MDS";
+                        break;
+                    case "CML" :
+                        facilityName = "CML";
+                        break;
+                    default : facilityName = "OTHER";
+                }
+
 		        ORU_R01 observationMsg = new ORU_R01();
 				
-				fillMsh(observationMsg.getMSH(), new Date(),  "ORU", "R01", filename.substring(0,filename.length()-4), "2.3");
+				fillMsh(observationMsg.getMSH(), new Date(),"ORU", "R01", filename.substring(0,filename.length()-4), "2.3", facilityName);
 				fillPid(observationMsg.getRESPONSE().getPATIENT().getPID(),demographicNo, labResult.getAccessionNumber());
 				
 				for(int x=0;x<reportResults.length;x++) {
 					LaboratoryResults result = reportResults[x];
 					
 					ORU_R01_ORDER_OBSERVATION grp = observationMsg.getRESPONSE().insertORDER_OBSERVATION(x);
-					
-				
-					
+
 					//OBR
 					OBR obr = grp.getOBR();
 					obr.getUniversalServiceIdentifier().getIdentifier().setValue(result.getLabTestCode());
@@ -4131,11 +4300,7 @@ import oscar.util.UtilDateUtilities;
 						
 						
 					}
-					
-					//obr-16 requesting
-					
-					//NOTE: obr-17 lost - ordering physician
-					
+
 					//OBX
 					OBX obx = grp.getOBSERVATION().getOBX();
 					obx.getSetIDOBX().setValue(String.valueOf(x));
@@ -4205,105 +4370,98 @@ import oscar.util.UtilDateUtilities;
 					}
 					
 				}
-				
-		        InputStream formFileIs=null;
-		        InputStream localFileIs=null;
-		        
-		        Integer labNo = null;
-		        try{
-		            String type = "GDML";
-		            
-		            InputStream stream = new ByteArrayInputStream(observationMsg.encode().replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8));
-		            
-		            String filePath = Utilities.saveFile(stream, filename);
-		            File file = new File(filePath);
-		            
-		            localFileIs = new FileInputStream(filePath);
-		            
-		            int checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getName(),localFileIs,admProviderNo);            
-		            
-		            if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE){
-		                logger.debug("filePath"+filePath);
-		                logger.debug("Type :"+type);
-		                MessageHandler msgHandler = HandlerClassFactory.getHandler(type);
-		                if(msgHandler != null){
-		                   logger.debug("MESSAGE HANDLER "+msgHandler.getClass().getName());
-		                }
-		               if((msgHandler.parse(loggedInInfo, getClass().getSimpleName(), filePath,checkFileUploadedSuccessfully, "")) != null) {
-		            	   labNo = ((GDMLHandler)msgHandler).getLastLabNo();
-		                    logger.debug("successfully added lab");        
-		               }
-		            }else{
-		            	 logger.info("uploaded previously");
-		            }
-		        }catch(Exception e){
-		            logger.error("Error: ",e);
-		        }
-		        finally {
-		        	IOUtils.closeQuietly(formFileIs);
-		        	IOUtils.closeQuietly(localFileIs);
-		        }
-		        
-		        
-		        if(labNo != null) {
-		        	DateTimeFullOrPartial dt = labResult.getLabRequisitionDateTime();
-		        	if(dt == null) {
-		        		dt = labResult.getCollectionDateTime();
-		        	}
-		        	
-		        	LabRequestReportLink.save(null,null,dateFPtoString(dt,0),"labPatientPhysicianInfo",labNo.longValue());
-		        	
-		      
-			        for(ResultReviewer resultReviewer : labResult.getResultReviewerArray()) {
-			        	String reviewDate = dateFPtoString(resultReviewer.getDateTimeResultReviewed(),0);
-			        	String reviewer = writeProviderData(resultReviewer.getName().getFirstName(),resultReviewer.getName().getLastName(),resultReviewer.getOHIPPhysicianId());
-			        	
-			        	String status = StringUtils.filled(reviewer) ? "A" : "N";
-	                    reviewer = status.equals("A") ? reviewer : "0";
-	                 
-	                    LabResultImport.updateProviderLabRouting(reviewer, labNo.toString() , status, "", reviewDate,"HL7");
-	                    
-	                   
-			        }
-			      
-			        for(int x=0;x<reportResults.length;x++) {
-	                	LaboratoryResults result = reportResults[x];
-	                	Long measId = findMeasurementId(labNo,result.getTestName());
-						
-	                	if(StringUtils.filled(result.getNotesFromLab())) {
-	                		saveMeasurementsExt(measId, "comments", result.getNotesFromLab());
-	                	}
-	                	
-	                	
-	                	String annotation = labResult.getPhysiciansNotes();
-		                if (StringUtils.filled(annotation)) {
-		                    saveMeasurementsExt(measId, "other_id", "0-0");
-		                    CaseManagementNote cmNote = prepareCMNote("2",null);
-		                    cmNote.setNote(annotation);
-		                    saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, labNo.longValue(), "0-0");
-		                }
+//
+//                logger.info("Lab upload: " + result);
+//		        InputStream formFileIs=null;
+//		        InputStream localFileIs=null;
+//		        Integer labNo = null;
 
-						String olis_status = result.getTestResultStatus();
-						if (StringUtils.filled(olis_status))  {
-							if(measId != null) {
-								saveMeasurementsExt(measId, "olis_status", olis_status);
-							}
-						}
-			               
-	                }
-	                
-			        
-			 
-			        String dump = Util.addLine("imported.cms4.2011.06",  "Physician Notes: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getPhysiciansNotes()));
-			        dump = Util.addLine(dump,  "Test Results Info: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getTestResultsInformationReportedByTheLab()));
-			        dump = Util.addLine(dump,  "Test Code: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getLabTestCode()));
-			        dump = Util.addLine(dump,  "Test Name: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getTestName()));
-			     //   dump = Util.addLine(dump,  "Lab Requisition DateTime: ", org.apache.commons.lang.StringUtils.trimToEmpty((dateFPtoString(labResult.getLabRequisitionDateTime(),0))));
-
-			        CaseManagementNote cmNote = prepareCMNote("2",null);
-                    cmNote.setNote(dump);
-                    saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, labNo.longValue(), "0-0");
+                // save labs now and then process them later.
+                Path filepath;
+		        try(InputStream stream = new ByteArrayInputStream(observationMsg.encode().replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8))) {
+                    String savedFilePath = Utilities.saveFile(stream, filename);
+                    filepath = Paths.get(savedFilePath);
 		        }
+
+                try(InputStream localFileIs = Files.newInputStream(filepath)) {
+                    int checkFileUploadedSuccessfully = FileUploadCheck.addFile(filepath.getFileName().toString(),localFileIs,admProviderNo);
+
+                    if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE){
+                        logger.debug("FilePath: "+ filepath);
+                        logger.debug("Type :"+facilityName);
+//                        MessageHandler msgHandler = HandlerClassFactory.getHandler(facilityName);
+//                        if(msgHandler != null){
+//                            logger.debug("MESSAGE HANDLER " + msgHandler.getClass().getName());
+//                        }
+//                        if((msgHandler.parse(loggedInInfo, getClass().getSimpleName(), filepath.toString(), checkFileUploadedSuccessfully, "")) != null) {
+////                            labNo = msgHandler.getLastLabNo();
+//                            logger.debug("successfully added lab");
+//                        }
+                    }else{
+                        logger.info("uploaded previously");
+                    }
+                }
+		        
+		        
+//		        if(labNo != null) {
+//		        	DateTimeFullOrPartial dt = labResult.getLabRequisitionDateTime();
+//		        	if(dt == null) {
+//		        		dt = labResult.getCollectionDateTime();
+//		        	}
+//
+//		        	LabRequestReportLink.save(null,null,dateFPtoString(dt,0),"labPatientPhysicianInfo",labNo.longValue());
+//
+//
+//			        for(ResultReviewer resultReviewer : labResult.getResultReviewerArray()) {
+//			        	String reviewDate = dateFPtoString(resultReviewer.getDateTimeResultReviewed(),0);
+//			        	String reviewer = writeProviderData(resultReviewer.getName().getFirstName(),resultReviewer.getName().getLastName(),resultReviewer.getOHIPPhysicianId());
+//
+//			        	String status = StringUtils.filled(reviewer) ? "A" : "N";
+//	                    reviewer = status.equals("A") ? reviewer : "0";
+//
+//	                    LabResultImport.updateProviderLabRouting(reviewer, labNo.toString() , status, "", reviewDate,"HL7");
+//
+//
+//			        }
+//
+//			        for(LaboratoryResults result : reportResults) {
+//
+//	                	Long measId = findMeasurementId(labNo,result.getTestName());
+//
+//	                	if(StringUtils.filled(result.getNotesFromLab())) {
+//	                		saveMeasurementsExt(measId, "comments", result.getNotesFromLab());
+//	                	}
+//
+//
+//	                	String annotation = labResult.getPhysiciansNotes();
+//		                if (StringUtils.filled(annotation)) {
+//		                    saveMeasurementsExt(measId, "other_id", "0-0");
+//		                    CaseManagementNote cmNote = prepareCMNote("2",null);
+//		                    cmNote.setNote(annotation);
+//		                    saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, labNo.longValue(), "0-0");
+//		                }
+//
+//						String olis_status = result.getTestResultStatus();
+//						if (StringUtils.filled(olis_status))  {
+//							if(measId != null) {
+//								saveMeasurementsExt(measId, "olis_status", olis_status);
+//							}
+//						}
+//
+//	                }
+//
+//
+//
+//			        String dump = Util.addLine("imported.cms4.2011.06",  "Physician Notes: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getPhysiciansNotes()));
+//			        dump = Util.addLine(dump,  "Test Results Info: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getTestResultsInformationReportedByTheLab()));
+//			        dump = Util.addLine(dump,  "Test Code: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getLabTestCode()));
+//			        dump = Util.addLine(dump,  "Test Name: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getTestName()));
+//			     //   dump = Util.addLine(dump,  "Lab Requisition DateTime: ", org.apache.commons.lang.StringUtils.trimToEmpty((dateFPtoString(labResult.getLabRequisitionDateTime(),0))));
+//
+//			        CaseManagementNote cmNote = prepareCMNote("2",null);
+//                    cmNote.setNote(dump);
+//                    saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, labNo.longValue(), "0-0");
+//		        }
                   
 			}catch(Exception e) {
 				logger.error("error", e);
@@ -4384,32 +4542,32 @@ import oscar.util.UtilDateUtilities;
 	            (blue.length() == 1? "0" + blue : blue);        
 	}
 	
-	protected String getImportStatus() {
-		//create if necessary
-		 AppointmentStatusDao appointmentStatusDao = SpringUtils.getBean(AppointmentStatusDao.class);
-		 AppointmentStatus importedStatus = null;
-		 for(AppointmentStatus as : appointmentStatusDao.findAll()) {
-			 if(as.getDescription().equals("Imported")) {
-				 importedStatus = as;
-				 break;
-			 }
-		 }
-		 if(importedStatus == null) {
-			 importedStatus = new AppointmentStatus();
-			 importedStatus.setActive(1);
-			 importedStatus.setColor("#DDDDDD");
-			 importedStatus.setDescription("Imported");
-			 importedStatus.setEditable(1);
-			 importedStatus.setIcon("5.gif");
-			 if(appointmentStatusDao.findByStatus("i") == null) {
-				 importedStatus.setStatus("i");
-			 } else {
-				 importedStatus.setStatus("I");
-			 }
-			 appointmentStatusDao.persist(importedStatus);
-		 }
-		return importedStatus.getStatus();
-	}
+//	protected String getImportStatus() {
+//		//create if necessary
+//		 AppointmentStatusDao appointmentStatusDao = SpringUtils.getBean(AppointmentStatusDao.class);
+//		 AppointmentStatus importedStatus = null;
+//		 for(AppointmentStatus as : appointmentStatusDao.findAll()) {
+//			 if(as.getDescription().equals("Imported")) {
+//				 importedStatus = as;
+//				 break;
+//			 }
+//		 }
+//		 if(importedStatus == null) {
+//			 importedStatus = new AppointmentStatus();
+//			 importedStatus.setActive(1);
+//			 importedStatus.setColor("#DDDDDD");
+//			 importedStatus.setDescription("Imported");
+//			 importedStatus.setEditable(1);
+//			 importedStatus.setIcon("5.gif");
+//			 if(appointmentStatusDao.findByStatus("i") == null) {
+//				 importedStatus.setStatus("i");
+//			 } else {
+//				 importedStatus.setStatus("I");
+//			 }
+//			 appointmentStatusDao.persist(importedStatus);
+//		 }
+//		return importedStatus.getStatus();
+//	}
 	
 	String tryToMapRoute(String route) {
 		String ret = "";

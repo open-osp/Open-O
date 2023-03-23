@@ -623,9 +623,12 @@ public class RxDrugData {
 	 * @return
 	 * @throws Exception
 	 */
-	public DrugMonograph getDrugByDIN(String DIN) throws Exception{
+	public DrugMonograph getDrugByDIN(String DIN) throws Exception {
 		RxDrugRef drugRef = new RxDrugRef();
 		Hashtable<String, Object> returnVal = drugRef.getDrugByDIN(DIN, Boolean.TRUE);
+		if(returnVal == null) {
+			return null;
+		}
 		return new DrugMonograph(returnVal);
 	}
 

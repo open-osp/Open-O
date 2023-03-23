@@ -28,7 +28,9 @@ import com.onelogin.saml2.settings.Saml2Settings;
 import com.onelogin.saml2.settings.SettingsBuilder;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
+import org.oscarehr.common.dao.FacilityDao;
 import org.oscarehr.common.dao.ProviderPreferenceDao;
+import org.oscarehr.common.model.Facility;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.ProviderPreference;
 import org.oscarehr.common.model.Security;
@@ -59,6 +61,9 @@ public class SsoAuthenticationManager implements Serializable {
 
     @Autowired
     private ProviderPreferenceDao providerPreferenceDao;
+
+    @Autowired
+    private FacilityDao facilityDao;
 
     private static final String samlPropertiesFile = "/onelogin.saml.properties";
 
@@ -149,22 +154,31 @@ public class SsoAuthenticationManager implements Serializable {
         return sessionData;
     }
 
+    public Map<String,Object> checkLogin(Map<String,Object> sessionData, String[] authenticationParams) {
+        String[] providerInformation = checkPlainTextLogin(authenticationParams);
+        return createSession(sessionData, providerInformation);
+    }
+
+    private Map<String,Object> checkLogin(Map<String,Object> sessionData, String nameId) {
+        String[] providerInformation = checkSSOLogin(nameId);
+        return createSession(sessionData, providerInformation);
+    }
+
     /**
      * Validate the user and then return valid session data.
      * Null data if user does not authenticate.
      *
      * @param sessionData new or existing hashmap
-     * @param nameId URI being authenticated
+     * @param providerInformation data of the provider profile
      * @return session data or NULL
      */
-    public Map<String,Object> checkLogin(Map<String,Object> sessionData, String nameId) {
+    private Map<String,Object> createSession(Map<String,Object> sessionData, String[] providerInformation) {
 
-        String[] providerInformation = checkLogin(nameId);
         if(providerInformation != null && providerInformation.length > 0) {
 
             logger.debug("SSO login confirmed with provider info: " + Arrays.toString(providerInformation));
-
-            sessionData.put("user", providerInformation[0]);
+            String providerNo = providerInformation[0];
+            sessionData.put("user", providerNo);
             sessionData.put("userfirstname", providerInformation[1]);
             sessionData.put("userlastname", providerInformation[2]);
             sessionData.put("userrole", providerInformation[4]);
@@ -178,10 +192,10 @@ public class SsoAuthenticationManager implements Serializable {
             sessionData.put(SessionConstants.LOGGED_IN_SECURITY, getSecurity());
 
             // provider preferences.  Let's stop putting this into session
-            setUserPreferences(sessionData, providerInformation[0]);
+            setUserPreferences(sessionData, providerNo);
 
             // not sure if this is needed yet
-            // session.setAttribute("currentFacility", facility);
+            setFacilityInformation(sessionData, providerNo);
 
             // determines if this user should be locked out or not.
             // updateLogin("", providerInformation[0]);
@@ -190,7 +204,36 @@ public class SsoAuthenticationManager implements Serializable {
         return sessionData;
     }
 
-    private String[] checkLogin(String nameId) {
+
+
+    /**
+     * Check authentication by plain text credentials
+     * @param authenticationParams [username, password, pin, ip]
+     * @return
+     */
+    private String[] checkPlainTextLogin(String[] authenticationParams) {
+
+        /* short circuit any null or empty values saves processing power
+         * at least the username and password is required: length < 2
+         */
+        if(authenticationParams == null || authenticationParams.length < 2) {
+            loginCheck = null;
+            return null;
+        }
+
+        /* otherwise validate that the SSO authentication request is
+         * for a valid user.
+         */
+        loginCheck = new LoginCheckLogin();
+        return loginCheck.auth(authenticationParams[0], authenticationParams[1], authenticationParams[2], authenticationParams[3]);
+    }
+
+    /**
+     * Check login credentials specific to SSO by the SSO NameId parameter.
+     * @param nameId
+     * @return
+     */
+    private String[] checkSSOLogin(String nameId) {
 
         /* short circuit any null or empty values saves processing power
          */
@@ -207,7 +250,7 @@ public class SsoAuthenticationManager implements Serializable {
     }
 
     /**
-     * @Deprecated trying to get away from putting this data into the session.
+     * @Deprecated trying to avoid putting this data into the session.
      */
     private Map<String,Object> setUserPreferences(Map<String,Object> sessionData, String providerNo) {
         ProviderPreference providerPreferences = providerPreferenceDao.find(providerNo);
@@ -222,6 +265,16 @@ public class SsoAuthenticationManager implements Serializable {
         sessionData.put("everymin", providerPreferences.getEveryMin().toString());
         sessionData.put("groupno", providerPreferences.getMyGroupNo());
 
+        return sessionData;
+    }
+
+    private Map<String, Object> setFacilityInformation(Map<String,Object> sessionData, String providerNo) {
+        List<Integer> facilityIds = providerDao.getFacilityIds(providerNo);
+        if(facilityIds != null && facilityIds.size() == 1) {
+            // only one facility can be used with SSO auth.
+            Facility facility = facilityDao.find(facilityIds.get(0));
+            sessionData.put("currentFacility", facility);
+        }
         return sessionData;
     }
 

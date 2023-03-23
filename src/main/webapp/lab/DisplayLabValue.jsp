@@ -40,8 +40,7 @@ if(!authed) {
 %>
 
 <%@page import="java.io.Serializable"%>
-<%@ page
-	import="java.math.*, java.util.*, java.sql.*, oscar.*, java.net.*, oscar.oscarLab.ca.on.*,oscar.util.*,oscar.oscarLab.*"%>
+<%@page import="java.util.*,oscar.oscarLab.ca.on.*,oscar.util.*"%>
 <%
     
 
@@ -53,7 +52,6 @@ if(!authed) {
     String identCode = request.getParameter("identCode");
    
     ArrayList<Map<String, Serializable>> list   = CommonLabTestValues.findValuesForTest(labType, Integer.valueOf(demoNo), testName, identCode);
-    Collections.sort(list,new SortHashtable());
              
     %>
 <div class="preventionSection" id="preventionSection<%=ran%>">

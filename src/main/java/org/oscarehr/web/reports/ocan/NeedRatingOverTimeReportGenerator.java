@@ -50,11 +50,11 @@ import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.GroupedStackedBarRenderer;
+import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.KeyToGroupMap;
 import org.jfree.data.Range;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.TextAnchor;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.web.reports.ocan.beans.OcanConsumerStaffNeedBean;
 import org.oscarehr.web.reports.ocan.beans.OcanNeedRatingOverTimeNeedBreakdownBean;
@@ -714,9 +714,9 @@ public class NeedRatingOverTimeReportGenerator {
 
         plot.getDomainAxis().setCategoryMargin(0.35);
 
-        renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
-        renderer.setBaseItemLabelsVisible(true);
-        renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.BASELINE_LEFT));
+        renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+        renderer.setDefaultItemLabelsVisible(true);
+        renderer.setDefaultPositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.BASELINE_LEFT));
 
         return chart;
 	}

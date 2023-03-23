@@ -443,18 +443,18 @@ public class RxDrugRef {
                 XmlRpcClientLite server = new XmlRpcClientLite(server_url);
                 object = server.execute(procedureName, params);
             }                        
-         }catch (XmlRpcException exception) {
-                
-             logger.error("JavaClient: XML-RPC Fault #" +exception.code, exception);
-                                   
-                throw new Exception("JavaClient: XML-RPC Fault #" +
-                                   Integer.toString(exception.code) + ": " +
-                                   exception.toString());
-                
+         } catch (XmlRpcException exception) {
+             if(exception.code == 0) {
+                logger.warn("JavaClient: XML-RPC Fault #" +exception.code
+                        + ". NoResultException thrown for procedure: " + procedureName + " with parameters " + params);
+             } else {
+                 logger.error("JavaClient: XML-RPC Fault #" + exception.code, exception);
+                 throw new Exception("JavaClient: XML-RPC Fault #" + exception.code + ": " + exception);
+             }
+
          } catch (Exception exception) {
         	 logger.error("JavaClient: ", exception);
-
-                throw new Exception("JavaClient: " + exception.toString(),exception);
+             throw new Exception("JavaClient: ", exception);
          }
          return object;
      }

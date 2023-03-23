@@ -27,10 +27,7 @@ package oscar.login;
 
 import java.io.IOException;
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
@@ -54,6 +51,7 @@ import org.oscarehr.common.dao.*;
 import org.oscarehr.common.model.*;
 import org.oscarehr.decisionSupport.service.DSService;
 import org.oscarehr.managers.AppManager;
+//import org.oscarehr.managers.SsoAuthenticationManager;
 import org.oscarehr.util.*;
 import org.owasp.encoder.Encode;
 import org.springframework.context.ApplicationContext;
@@ -87,6 +85,8 @@ public final class LoginAction extends DispatchAction {
     private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     private UserPropertyDAO propDao = SpringUtils.getBean(UserPropertyDAO.class);
 
+	// remove after testing is done
+//	private SsoAuthenticationManager ssoAuthenticationManager = SpringUtils.getBean(SsoAuthenticationManager.class);
 	/**
 	 * TODO: for the love of god - please help me clean-up this nightmare
 	 */
@@ -300,6 +300,30 @@ public final class LoginAction extends DispatchAction {
 
                 return(new ActionForward(newURL));            	
             }
+
+
+// ################----------------------->
+// REMOVE AFTER TESTING IS DONE.
+//	        if(true) {
+//		        String[] authenticationParameters = new String[]{userName, password, pin, ip};
+//		        Map<String, Object> sessionData = ssoAuthenticationManager.checkLogin(new HashMap<>(), authenticationParameters);
+//		        HttpSession newSession = request.getSession(true);
+//
+//		        logger.debug("New session created: " + newSession.getId());
+//
+//		        newSession.setMaxInactiveInterval(7200);
+//		        newSession.setAttribute("oscar_context_path", request.getContextPath());
+//
+//		        // full site or mobile
+//		        newSession.setAttribute("fullSite", "true");
+//
+//		        for (String key : sessionData.keySet()) {
+//			        newSession.setAttribute(key, sessionData.get(key));
+//		        }
+//
+//		        return mapping.findForward("provider");
+//	        }
+// <-----------------------################
 
 	        /*
 	         * User has authenticated in OSCAR at this point.

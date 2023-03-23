@@ -67,12 +67,10 @@ public class PrintAction extends Action {
 		localUri = getEformRequestUrl(request);
 		this.response = response;
 		String id  = (String)request.getAttribute("fdid");
-		String providerId = request.getParameter("providerId");
-	//	skipSave = "true".equals(request.getParameter("skipSave"));
 		try {
-			printForm(request, LoggedInInfo.getLoggedInInfoFromSession(request), id, providerId);
+			printForm(request, LoggedInInfo.getLoggedInInfoFromSession(request), id, response);
 		} catch (Exception e) {
-			MiscUtils.getLogger().error("",e);
+			logger.error("",e);
 			return mapping.findForward("error");
 		}
 		return mapping.findForward("success");
@@ -107,109 +105,127 @@ public class PrintAction extends Action {
 		return (url.toString());
 	}
 
-	/**
-	 * This method will take eforms and send them to a PHR.
-	 */
-	public void printForm(HttpServletRequest request, LoggedInInfo loggedInInfo, String formId, String providerId) {
-		
-		File tempFile = null;
+	//Converts to byte input stream and adds to list.
+	private static void convertAndAddToList(ArrayList<Object> alist, ByteOutputStream bos) {
+		byte[] buffer = bos.getBytes();
+		try(ByteInputStream bis = new ByteInputStream(buffer, bos.getCount())) {
+			alist.add(bis);
+		} catch (IOException e) {
+			logger.error("Exception printing PDF ", e);
+			throw new RuntimeException(e);
+		} finally{
+			bos.close();
+		}
+	}
 
-		byte[] buffer;
-		ByteInputStream bis;
-		ByteOutputStream bos;
-		ArrayList<InputStream> streams = new ArrayList<InputStream>();
-		ArrayList<Object> alist = new ArrayList<Object>();
-		
-		EFormDataDao efmDataDao = SpringUtils.getBean(EFormDataDao.class);
-		EFormData eformData = efmDataDao.find(Integer.parseInt(formId));
+	// Adds attached eDocs converted to pdf byte input stream to attachment list.
+	private static void returnConvertedAttachedDocs(ArrayList<Object> alist, String formId, LoggedInInfo loggedInInfo, HttpServletRequest request, EFormData eformData) {
+		//getting documents
 		ArrayList<EDoc> docs = EDocUtil.listDocsAttachedToEForm(loggedInInfo, String.valueOf(eformData.getDemographicId()), formId, EDocUtil.ATTACHED);
-		String path = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-		
-		CommonLabResultData consultLabs = new CommonLabResultData();
-		ArrayList<LabResultData> labs = consultLabs.populateLabResultsDataEForm(loggedInInfo, String.valueOf(eformData.getDemographicId()), formId, CommonLabResultData.ATTACHED);
-		HRMDocumentToDemographicDao hrmDocumentToDemographicDao = SpringUtils.getBean(HRMDocumentToDemographicDao.class);
-		List<HRMDocumentToDemographic> attachedHRMReports = hrmDocumentToDemographicDao.findHRMDocumentsAttachedToEForm(formId);
-		
+		//converting
+		String documentDirectory = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
 		try {
-			
-			bos = new ByteOutputStream();
-			//ConsultationPDFCreator cpdfc = new ConsultationPDFCreator(request,bos);
-			//cpdfc.printPdf(loggedInInfo);
-			
-			buffer = WKHtmlToPdfUtils.convertToPdf(localUri + formId);
-			 bis = new ByteInputStream(buffer, buffer.length);
-             streams.add(bis);
-             alist.add(bis);
-			
-			
 			for (int i = 0; i < docs.size(); i++) {
-				EDoc doc = docs.get(i);  
+				EDoc doc = docs.get(i);
+				// Documents will be converted if they are an image or a pdf. Other types will be ignored.
 				if (doc.isPrintable()) {
 					if (doc.isImage()) {
-						bos = new ByteOutputStream();
-						request.setAttribute("imagePath", path + doc.getFileName());
-						request.setAttribute("imageTitle", doc.getDescription());
-						ImagePDFCreator ipdfc = new ImagePDFCreator(request, bos);
-						ipdfc.printPdf();
-						
-						buffer = bos.getBytes();
-						bis = new ByteInputStream(buffer, bos.getCount());
-						bos.close();
-						streams.add(bis);
-						alist.add(bis);
-						
-					}
-					else if (doc.isPDF()) {
-						alist.add(path + doc.getFileName());
-					}
-					else {
-						logger.error("EctConsultationFormRequestPrintAction: " + doc.getType() + " is marked as printable but no means have been established to print it.");	
+						try(ByteOutputStream bos = new ByteOutputStream()) {
+							request.setAttribute("imagePath", documentDirectory + doc.getFileName());
+							request.setAttribute("imageTitle", doc.getDescription());
+							ImagePDFCreator ipdfc = new ImagePDFCreator(request, bos);
+							ipdfc.printPdf();
+							convertAndAddToList(alist, bos);
+						}
+					} else if (doc.isPDF()) {
+						alist.add(documentDirectory + doc.getFileName());
+					} else {
+						logger.error("EctConsultationFormRequestPrintAction: " + doc.getType() + " is marked as printable but no means have been established to print it.");
 					}
 				}
 			}
+		} catch (com.itextpdf.text.DocumentException e) {
+			logger.error("", e);
+		} catch (IOException e) {
+			logger.error("", e);
+		}
+	}
 
-			// Iterating over requested labs.
-			for (int i = 0; labs != null && i < labs.size(); i++) {
-				// Storing the lab in PDF format inside a byte stream.
-				bos = new ByteOutputStream();
+	// Adds attached labs converted to pdf byte input stream to attachment list.
+	private static void returnConvertedAttachedLabs(ArrayList<Object> alist, String formId, LoggedInInfo loggedInInfo, HttpServletRequest request, EFormData eformData) {
+		//getting documents
+		CommonLabResultData consultLabs = new CommonLabResultData();
+		ArrayList<LabResultData> labs = consultLabs.populateLabResultsDataEForm(loggedInInfo, String.valueOf(eformData.getDemographicId()), formId, CommonLabResultData.ATTACHED);
+
+		// converting
+		for (int i = 0; labs != null && i < labs.size(); i++) {
+			try(ByteOutputStream bos = new ByteOutputStream()) {
 				request.setAttribute("segmentID", labs.get(i).segmentID);
 				LabPDFCreator lpdfc = new LabPDFCreator(request, bos);
 				lpdfc.printPdf();
-
-				// Transferring PDF to an input stream to be concatenated with
-				// the rest of the documents.
-				buffer = bos.getBytes();
-				bis = new ByteInputStream(buffer, bos.getCount());
-				bos.close();
-				streams.add(bis);
-				alist.add(bis);
-
+				convertAndAddToList(alist, bos);
+			} catch (Exception e) {
+				logger.error("", e);
 			}
+		}
 
-			for (HRMDocumentToDemographic attachedHRM : attachedHRMReports) {
-				bos = new ByteOutputStream();
+	}
+
+	// Adds attached HRM reports converted to pdf byte input stream to attachment list.
+	private static void returnConvertedAttachedHRM(ArrayList<Object> alist, String formId, LoggedInInfo loggedInInfo, HttpServletRequest request, EFormData eformData) {
+		//getting documents
+		HRMDocumentToDemographicDao hrmDocumentToDemographicDao = SpringUtils.getBean(HRMDocumentToDemographicDao.class);
+		List<HRMDocumentToDemographic> attachedHRMReports = hrmDocumentToDemographicDao.findHRMDocumentsAttachedToEForm(formId);
+		//converting
+		for (HRMDocumentToDemographic attachedHRM : attachedHRMReports) {
+			try(ByteOutputStream bos = new ByteOutputStream()) {
 				HRMPDFCreator hrmPdfCreator = new HRMPDFCreator(bos, attachedHRM.getHrmDocumentId(), loggedInInfo);
 				hrmPdfCreator.printPdf();
-
-				buffer = bos.getBytes();
-				bis = new ByteInputStream(buffer, bos.getCount());
-				bos.close();
-				streams.add(bis);
-				alist.add(bis);
+				convertAndAddToList(alist, bos);
 			}
-			
-			List<EFormData> eForms = EFormUtil.listPatientEformsCurrentAttachedToEForm(formId);
-            for (EFormData eForm : eForms) {
-                String localUri = PrintAction.getEformRequestUrl(request);
-                buffer = WKHtmlToPdfUtils.convertToPdf(localUri + eForm.getId());
-                bis = new ByteInputStream(buffer, buffer.length);
-                streams.add(bis);
-                alist.add(bis);
-            }
-            
+		}
+	}
+
+	// Adds attached eForms converted to pdf byte input stream to attachment list.
+	private static void returnConvertedAttachedEForms(ArrayList<Object> alist, String formId, LoggedInInfo loggedInInfo, HttpServletRequest request, EFormData eformData) throws IOException {
+		//getting documents
+		List<EFormData> eForms = EFormUtil.listPatientEformsCurrentAttachedToEForm(formId);
+		//converting
+		for (EFormData eForm : eForms) {
+			byte[] buffer = WKHtmlToPdfUtils.convertToPdf(PrintAction.getEformRequestUrl(request) + eForm.getId());
+			try(ByteInputStream bis = new ByteInputStream(buffer, buffer.length)) {
+				alist.add(bis);
+			} catch (IOException e) {
+				logger.error("", e);
+			}
+		}
+	}
+
+	// Returns a list of all attached documents converted to a byte input stream.
+	private static ArrayList<Object> returnAttachedDocs(String formId, LoggedInInfo loggedInInfo, HttpServletRequest request) throws IOException {
+		ArrayList<Object> alist = new ArrayList<Object>();
+		EFormDataDao efmDataDao = SpringUtils.getBean(EFormDataDao.class);
+		EFormData eformData = efmDataDao.find(Integer.parseInt(formId));
+		byte[] buffer = WKHtmlToPdfUtils.convertToPdf(getEformRequestUrl(request) + eformData.getId());
+		try(ByteInputStream bis = new ByteInputStream(buffer, buffer.length)){
+			// adding main eForm
+			alist.add(bis);
+			// Added attached docs, labs, hrm, eForms.
+			returnConvertedAttachedDocs(alist, formId, loggedInInfo, request, eformData);
+			returnConvertedAttachedLabs(alist, formId, loggedInInfo, request, eformData);
+			returnConvertedAttachedHRM(alist, formId, loggedInInfo, request, eformData);
+			returnConvertedAttachedEForms(alist, formId, loggedInInfo, request, eformData);
+		} catch (IOException e) {
+			logger.error("", e);
+		}
+		return alist;
+	}
+
+	// Return eForm attachments pdf onto response.
+	public static void printForm(HttpServletRequest request, LoggedInInfo loggedInInfo, String formId, HttpServletResponse response) throws IOException {
+		ArrayList<Object> alist = returnAttachedDocs(formId, loggedInInfo, request);
+		try(ByteOutputStream bos = new ByteOutputStream();) {
 			if (alist.size() > 0) {
-				
-				bos = new ByteOutputStream();
 				ConcatPDF.concat(alist, bos);
 				response.setContentType("application/pdf"); // octet-stream
 				response.setHeader(
@@ -219,64 +235,8 @@ public class PrintAction extends Action {
 								+ ".pdf\"");
 				response.getOutputStream().write(bos.getBytes(), 0, bos.getCount());
 			}
-			
-			/*
-			
-			logger.info("Generating PDF for eform with fdid = " + formId);
-
-			tempFile = File.createTempFile("EFormPrint." + formId, ".pdf");
-			//tempFile.deleteOnExit();
-
-			// convert to PDF
-			String viewUri = localUri + formId;
-			WKHtmlToPdfUtils.convertToPdf(viewUri, tempFile);
-			logger.info("Writing pdf to : "+tempFile.getCanonicalPath());
-			
-			
-			InputStream is = new BufferedInputStream(new FileInputStream(tempFile));
-			ByteOutputStream bos = new ByteOutputStream();
-			byte buffer[] = new byte[1024];
-			int read;
-			while (is.available() != 0) {
-				read = is.read(buffer,0,1024);
-				bos.write(buffer,0, read);
-			}
-			
-			bos.flush();
-			// byte[] pdf = HtmlToPdfServlet.appendFooter(bos.getBytes());
-			byte[] pdf;
-            try {
-	            pdf = HtmlToPdfServlet.stamp(bos.getBytes());
-            } catch (Exception e) {
-            	throw new RuntimeException(e);
-            }
-			
-			//while (fos.read() != -1)
-			response.setContentType("application/pdf");  //octet-stream
-            response.setHeader("Content-Disposition", "attachment; filename=\"EForm-"
-            				+ formId + "-"
-							+ UtilDateUtilities.getToday("yyyy-mm-dd.hh.mm.ss")
-							+ ".pdf\"");
-			// response.getOutputStream().write(bos.getBytes(), 0, bos.getCount());
-            HtmlToPdfServlet.stream(response, pdf, false);
-            // response.getOutputStream().write(pdf);
-			
-			// Removing the consulation pdf.
-			tempFile.delete();	
-			
-			// Removing the eform
-			if (skipSave) {
-	        	 EFormDataDao eFormDataDao=(EFormDataDao) SpringUtils.getBean("EFormDataDao");
-	        	 EFormData eFormData=eFormDataDao.find(Integer.parseInt(formId));
-	        	 eFormData.setCurrent(false);
-	        	 eFormDataDao.merge(eFormData);
-			}
-			*/
-		} catch (com.itextpdf.text.DocumentException | com.lowagie.text.DocumentException | IOException e) {
-			//logger.error("Error converting and sending eform. id=" + eFormId, e);
-			MiscUtils.getLogger().error("",e);
+		} catch (IOException e) {
+			logger.error("", e);
 		}
 	}
-
-	
 }

@@ -111,22 +111,26 @@
     int everyMin = providerPreference.getEveryMin();
     int view = 0;
 
-    Collection<Integer> eforms = providerPreference.getAppointmentScreenEForms();
+    /*
+     * Get all the forms, eforms, and quicklinks that the logged in provider
+     * needs to see in all the appointment entries
+     */
+
+    Collection<ProviderPreference.QuickLink> quickLinkCollection = providerPreference.getAppointmentScreenQuickLinks();
+    Collection<String> formNameCollection = providerPreference.getAppointmentScreenForms();
+    List<String>formNamesList = new ArrayList<>(formNameCollection);
+    Collections.sort(formNamesList);
+    Collection<ProviderPreference.EformLink> eFormIdCollection = providerPreference.getAppointmentScreenEForms();
+
     StringBuilder eformIds = new StringBuilder();
-    if (eforms != null) {
-        for (Integer eform : eforms) {
-            eformIds = eformIds.append("&eformId=" + eform);
-        }
+    for (ProviderPreference.EformLink eform : eFormIdCollection) {
+        eformIds = eformIds.append("&eformId=" + eform.getAppointmentScreenEForm());
     }
 
-    Collection<String> forms = providerPreference.getAppointmentScreenForms();
     StringBuilder ectFormNames = new StringBuilder();
-    if (forms != null) {
-        for (String formName : forms) {
-            ectFormNames = ectFormNames.append("&encounterFormName=" + formName);
-        }
+    for (String formName : formNamesList) {
+        ectFormNames = ectFormNames.append("&encounterFormName=" + formName);
     }
-
 
     boolean isMygroupnoNumber = true;
 
@@ -210,9 +214,7 @@
 //multisite ends =======================
 %>
 
-<%@ page
-        import="java.lang.*, java.util.*,java.net.*,oscar.*"
-        errorPage="errorpage.jsp" %>
+<%@ page import="java.lang.*, java.util.*,java.net.*,oscar.*" %>
 <%
     java.util.Properties oscarVariables = OscarProperties.getInstance();
 %>
@@ -476,7 +478,7 @@
                 </a>
                 <b><span CLASS=title><%=strYear%>-<%=strMonth%></span></b>
                 <a href="providercontrol.jsp?year=<%=year%>&month=<%=(month+1)%>&day=<%=day%>&displaymode=month&dboperation=searchappointmentmonth&providerview=<%=providerview%>">
-                <span class="glyphicon glyphicon-step-forward" title="<%=arrayMonthOfYear[month%12]%>"></span>
+                    <span class="glyphicon glyphicon-step-forward" title="<%=arrayMonthOfYear[month%12]%>"></span></a>
                 |
                 <u><a href="providercontrol.jsp?year=<%=curYear%>&month=<%=curMonth%>&day=<%=curDay%>&view=0&displaymode=day&dboperation=searchappointmentday&viewall=1"
                       title="<bean:message key="provider.appointmentProviderAdminDay.viewAllProv"/>"><bean:message

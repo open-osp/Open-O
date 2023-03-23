@@ -64,11 +64,13 @@ div#editAppointment .panel li div {
 div.label {
     text-align:right;
     width:25%;
+    vertical-align: top !important;
 }
 
 div.input {
     text-align:left;
     width:25%;
+    vertical-align: top !important;
 }
 
 .panel input {
@@ -83,9 +85,6 @@ input[readonly] {
     background-color: #e8e8e8;
 }
 
-textarea {
-    height: 55px;
-}
 
 #bottomInfo {
     float:left;

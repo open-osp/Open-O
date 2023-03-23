@@ -211,7 +211,8 @@ public class PreventionPrintPdf {
         upperYcoord = document.top() - header.getHeight() -(clinicParagraph.getLeading()*4f) - font.getCalculatedLeading(LINESPACING);
         
         int subIdx;
-        String preventionHeader, procedureAge, procedureDate, procedureStatus;
+        String preventionHeader, procedureAge, procedureDate, procedureStatus, procedureResult, procedureReason, procedureComments, procedureLocationOfShot,
+            procedureManufacturer, procedureNameOfVaccine, procedureLotID, procedureDoseAdministered;
 
         //boolean values for headers of Immunizations and Screenings
         boolean isImmunizationHeaderAdded = false, isScreeningsHeaderAdded = false, isDividerAdded = false, isScreeningHeaderOnNewPage = true;
@@ -320,7 +321,6 @@ public class PreventionPrintPdf {
             subIdx = 0;
            
             while( (procedureAge = request.getParameter("preventProcedureAge" + headerIds[idx] + "-" + subIdx)) != null ) {
-                procedureDate = request.getParameter("preventProcedureDate" + headerIds[idx] + "-" + subIdx);
                 procedureStatus = request.getParameter("preventProcedureStatus" + headerIds[idx] + "-" + subIdx);
                 if (preventionHeader.equals("Smoking")) {
                 	procedureStatus = readableStatusesForSmoking.get(procedureStatus);
@@ -328,39 +328,39 @@ public class PreventionPrintPdf {
                 	procedureStatus = readableStatuses.get(procedureStatus);
                 }              
                 
-                String providerName = request.getParameter("preventProcedureProvider" + headerIds[idx] + "-"+ subIdx);
                 if( procedureStatus == null ) {
                 	procedureStatus = "N/A";
                 }
               
-                //Age                
-                Phrase procedure = new Phrase(LEADING, "Age:", FontFactory.getFont(FontFactory.HELVETICA, 10, Font.NORMAL, Color.BLACK));
-                procedure.add(new Chunk(procedureAge,FontFactory.getFont(FontFactory.HELVETICA, 9, Font.NORMAL, Color.BLACK)));
-                procedure.add(Chunk.NEWLINE);
+                Phrase procedure = new Phrase(LEADING, "Date: ", FontFactory.getFont(FontFactory.HELVETICA, 10, Font.NORMAL, Color.BLACK));
+                addLabelsAndValuesToProcedure(request, procedure, "preventProcedureDate", "Date: ", headerIds, idx, subIdx, font);
+                addLabelsAndValuesToProcedure(request, procedure, "preventProcedureAge", "Age: ", headerIds, idx, subIdx, font);
                 
-                //Date
-                procedure.add("Date:");
-                procedure.add(new Chunk(procedureDate, FontFactory.getFont(FontFactory.HELVETICA, 9, Font.NORMAL, Color.BLACK)));
+                //We are not adding status using "addLabelsAndValuesToProcedure" function because here "procedureStatus" is itself labelValue 
+                procedure.add("Status: ");
+                procedure.add(new Chunk(procedureStatus, font));
                 procedure.add(Chunk.NEWLINE);
-                
-                //Status
-                procedure.add("Status:");
-                procedure.add(new Chunk(procedureStatus, FontFactory.getFont(FontFactory.HELVETICA, 9, Font.NORMAL, Color.BLACK)));
-                procedure.add(Chunk.NEWLINE);
-                
-                //Provider
-                procedure.add("Provider:");
-                procedure.add(new Chunk(providerName, FontFactory.getFont(FontFactory.HELVETICA, 9, Font.NORMAL, Color.BLACK)));
-                procedure.add(Chunk.NEWLINE);
-                
-                String procedureComments = null;
-                if (showComments) { 
-                    procedureComments = request.getParameter("preventProcedureComments" + headerIds[idx] + "-" + subIdx);
-                    if (procedureComments != null && !procedureComments.isEmpty()){
-                        procedure.add("Comments:");
-                        procedure.add(Chunk.NEWLINE);                        
+
+                procedureResult = request.getParameter("preventProcedureResult" + headerIds[idx] + "-" + subIdx);
+                if (procedureResult != null && !procedureResult.isEmpty()) {
+                    procedure.add("Result: ");
+                    procedure.add(new Chunk(procedureResult, font));
+                    procedureReason = request.getParameter("preventProcedureReason" + headerIds[idx] + "-" + subIdx);
+                    if (procedureReason != null && !procedureReason.isEmpty()) {
+                        procedure.add(new Chunk(" (" + procedureReason + ")", font));
+                    } else if(procedureResult.equals("other")) {
+                        procedure.add(new Chunk(" (no reason submitted)", font));
                     }
+                    procedure.add(Chunk.NEWLINE);
                 }
+
+                addLabelsAndValuesToProcedure(request, procedure, "preventProcedureComments", "Comments: ", headerIds, idx, subIdx, font);
+                addLabelsAndValuesToProcedure(request, procedure, "preventProcedureLocationOfShot", "Location of shot: ", headerIds, idx, subIdx, font);
+                addLabelsAndValuesToProcedure(request, procedure, "preventProcedureManufacture", "Manufacturer: ", headerIds, idx, subIdx, font);
+                addLabelsAndValuesToProcedure(request, procedure, "preventProcedureNameOfVaccine", "Name of Vaccine: ", headerIds, idx, subIdx, font);
+                addLabelsAndValuesToProcedure(request, procedure, "preventProcedureLotID", "Lot#: ", headerIds, idx, subIdx, font);
+                addLabelsAndValuesToProcedure(request, procedure, "preventProcedureDoseAdministered", "Dose Administered: ", headerIds, idx, subIdx, font);
+                addLabelsAndValuesToProcedure(request, procedure, "preventProcedureProvider", "Provider: ", headerIds, idx, subIdx, font);
                          
                 //check if the Date/Age/Comments title can fit on the page.
                 ct.addText(procedure);
@@ -376,7 +376,8 @@ public class PreventionPrintPdf {
                 }
                 
                 //Comments
-                Phrase commentsPhrase = new Phrase(LEADING, "", FontFactory.getFont(FontFactory.HELVETICA, 9, Font.NORMAL, Color.BLACK));
+                Phrase commentsPhrase = new Phrase(LEADING, "", font);
+                procedureComments = request.getParameter("preventProcedureComments" + headerIds[idx] + "-" + subIdx);
                 if (showComments && procedureComments != null && !procedureComments.isEmpty()){
                     commentsPhrase.add(procedureComments);
                     commentsPhrase.add(Chunk.NEWLINE);                                                                
@@ -567,6 +568,18 @@ public class PreventionPrintPdf {
         }
         ct.setIndent(indent);
         ct.go();
+    }
+
+    private void addLabelsAndValuesToProcedure(HttpServletRequest request, Phrase procedure, String labelParameter, String label, String[] headerIds,
+            int idx, int subIdx, Font font) throws DocumentException, IOException {
+        String labelValue = request.getParameter(labelParameter + headerIds[idx] + "-" + subIdx);
+        if (labelValue != null && !labelValue.isEmpty()) {
+            if (!labelParameter.equals("preventProcedureDate")) {
+                procedure.add(label);
+            }
+            procedure.add(new Chunk(labelValue, font));
+            procedure.add(Chunk.NEWLINE);
+        }
     }
 
     private void addPromoText() throws DocumentException, IOException{

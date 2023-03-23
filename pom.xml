@@ -702,11 +702,11 @@
 			<version>1.1</version>
 		</dependency>
 
-		<!-- jfree charts -->
+		<!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
 		<dependency>
-			<groupId>jfree</groupId>
+			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
-			<version>1.0.12</version>
+			<version>1.5.4</version>
 		</dependency>
 
 		<!-- ocan.jar , suspect this is generated classes and should be removed as a jar in the future -->

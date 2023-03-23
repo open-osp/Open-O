@@ -46,42 +46,15 @@ public class LookupListManager {
 	SecurityInfoManager securityInfoManager;
 
 	public List<LookupList> findAllActiveLookupLists(LoggedInInfo loggedInInfo) {
-
-		List<LookupList> results = lookupListDao.findAllActive();
-
-		//--- log action ---
-		if (results.size()>0) {
-			String resultIds=LookupList.getIdsAsStringList(results);
-			LogAction.addLogSynchronous(loggedInInfo, "LookupListManager.findAllLookupLists", "ids returned=" + resultIds);
-		}
-
-		return (results);
+		return lookupListDao.findAllActive();
 	}
 
 	public LookupList findLookupListById(LoggedInInfo loggedInInfo, int id) {
-
-		LookupList result = lookupListDao.find(id);
-
-		//--- log action ---
-		if (result != null) {
-			LogAction.addLogSynchronous(loggedInInfo, "LookupListManager.findLookupListById", "id returned=" + result.getId());
-		}
-
-		return (result);
-
+		return lookupListDao.find(id);
 	}
 
 	public LookupList findLookupListByName(LoggedInInfo loggedInInfo, String name) {
-
-		LookupList result = lookupListDao.findByName(name);
-
-		//--- log action ---
-		if (result != null) {
-			LogAction.addLogSynchronous(loggedInInfo, "LookupListManager.findLookupListByName", "id returned=" + result.getId());
-		}
-
-		return (result);
-
+		return lookupListDao.findByName(name);
 	}
 
 	public LookupList addLookupList(LoggedInInfo loggedInInfo, LookupList lookupList) {

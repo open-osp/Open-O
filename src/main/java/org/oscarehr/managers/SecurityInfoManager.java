@@ -23,10 +23,7 @@
  */
 package org.oscarehr.managers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.oscarehr.common.exception.PatientDirectiveException;
@@ -41,6 +38,8 @@ import com.quatro.dao.security.SecobjprivilegeDao;
 import com.quatro.dao.security.SecuserroleDao;
 import com.quatro.model.security.Secobjprivilege;
 import com.quatro.model.security.Secuserrole;
+
+import javax.servlet.http.HttpSession;
 
 @Service
 public class SecurityInfoManager {
@@ -59,27 +58,22 @@ public class SecurityInfoManager {
     
 	
 	public List<Secuserrole> getRoles(LoggedInInfo loggedInInfo) {
-		@SuppressWarnings("unchecked")
-        List<Secuserrole> results =  secUserRoleDao.findByProviderNo(loggedInInfo.getLoggedInProviderNo());
-		
-	//	LogAction.addLogSynchronous(loggedInInfo, "SecurityInfoManager.getRoles", loggedInInfo.getLoggedInProviderNo());
-			
-		return results;
+		if (loggedInInfo == null || loggedInInfo.getLoggedInProviderNo() == null) {
+		  return Collections.emptyList();
+		}
+
+		return secUserRoleDao.findByProviderNo(loggedInInfo.getLoggedInProviderNo());
 	}
 	
 	public List<Secobjprivilege> getSecurityObjects(LoggedInInfo loggedInInfo) {
 		
-		List<String> roleNames = new ArrayList<String>();
+		List<String> roleNames = new ArrayList<>();
 		for(Secuserrole role:getRoles(loggedInInfo)) {
 			roleNames.add(role.getRoleName());
 		}
 		roleNames.add(loggedInInfo.getLoggedInProviderNo());
 		
-		List<Secobjprivilege> results = secobjprivilegeDao.getByRoles(roleNames);
-		
-	//	LogAction.addLogSynchronous(loggedInInfo, "SecurityInfoManager.getSecurityObjects", loggedInInfo.getLoggedInProviderNo());
-			
-		return results;
+		return secobjprivilegeDao.getByRoles(roleNames);
 	}
 	
 	public boolean hasPrivilege(LoggedInInfo loggedInInfo, String objectName, String privilege, int demographicNo) {
@@ -105,16 +99,10 @@ public class SecurityInfoManager {
 	 *
 	 * If patient-specific privileges are present, it takes priority over the general privileges.
 	 * For checking non-patient-specific object privileges, call with demographicNo==null.
-	 * 
-	 * @param loggedInInfo
-	 * @param objectName
-	 * @param privilege
-	 * @param demographicNo
-	 * @return boolean
 	 */
 	public boolean hasPrivilege(LoggedInInfo loggedInInfo, String objectName, String privilege, String demographicNo) {
 		try {
-			List<String> roleNameLs = new ArrayList<String>();
+			List<String> roleNameLs = new ArrayList<>();
 			for(Secuserrole role:getRoles(loggedInInfo)) {
 				roleNameLs.add(role.getRoleName());
 			}
@@ -122,7 +110,7 @@ public class SecurityInfoManager {
 			String roleNames = StringUtils.join(roleNameLs, ",");
 			
 			boolean noMatchingRoleToSpecificPatient = true;
-			List v = null;
+			List<Object> v = null;
 			if (demographicNo!=null) {
 				v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName+"$"+demographicNo);
 				List<String> roleInObj = (List<String>)v.get(1);
@@ -134,10 +122,15 @@ public class SecurityInfoManager {
 					}
 				}
 			}
-			if (noMatchingRoleToSpecificPatient) v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
+
+			if (noMatchingRoleToSpecificPatient) {
+				v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
+			}
 			
 			if (!noMatchingRoleToSpecificPatient && OscarRoleObjectPrivilege.checkPrivilege(roleNames, (Properties)v.get(0), (List<String>)v.get(1), (List<String>)v.get(2), NORIGHTS)) {
-					throw new PatientDirectiveException("Patient has requested user not access record");
+				HttpSession returnSession = loggedInInfo.getSession();
+				returnSession.setAttribute("accountLocked", true);
+				loggedInInfo.setSession(returnSession);
 			} else  if (OscarRoleObjectPrivilege.checkPrivilege(roleNames, (Properties)v.get(0), (List<String>)v.get(1), (List<String>)v.get(2), "x")) {
 				return true;
 			}
@@ -165,7 +158,7 @@ public class SecurityInfoManager {
 	
 	public boolean isAllowedAccessToPatientRecord(LoggedInInfo loggedInInfo, Integer demographicNo) {
 		
-		List<String> roleNameLs = new ArrayList<String>();
+		List<String> roleNameLs = new ArrayList<>();
 		for(Secuserrole role:getRoles(loggedInInfo)) {
 			roleNameLs.add(role.getRoleName());
 		}
@@ -173,7 +166,7 @@ public class SecurityInfoManager {
 		String roleNames = StringUtils.join(roleNameLs, ",");
 		
 		
-		Vector v = OscarRoleObjectPrivilege.getPrivilegeProp("_demographic$"+demographicNo);
+		List<Object> v = OscarRoleObjectPrivilege.getPrivilegeProp("_demographic$"+demographicNo);
 		if(OscarRoleObjectPrivilege.checkPrivilege(roleNames, (Properties)v.get(0), (List<String>)v.get(1), (List<String>)v.get(2), "o")) {
 			return false;
 		}

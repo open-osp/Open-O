@@ -268,21 +268,19 @@ public final class MessageUploader {
 			// If a past lab with the same AccessionNumber exist carry over the label
 			List<Hl7TextInfo> matchingLabs = hl7TextInfoDao.searchByAccessionNumberOrderByObrDate(accessionNum);
 			for (Hl7TextInfo matchingLab : matchingLabs) {
-				// if the lab has an entered label to carry over and the disciplines match (same lab types... for example CHEM1 & CHEM1 and not CHEM1/CHEM4 & CHEM1)
-				if (!StringUtils.isBlank(matchingLab.getLabel()) && (applyLabelDifferentLabs || discipline.equals(matchingLab.getDiscipline()))) {
-					// if the matched lab exist and a demographic is matched to it, make sure the HIN is the same
-					// before carrying over the label. If there is no demographic linked, just carry over the label
-					PatientLabRouting matchedPatientLabRouting = patientLabRoutingDao.findDemographicByLabId(matchingLab.getLabNumber());
-					if (matchedPatientLabRouting != null) {
-						Demographic matchedDemographic = demographicManager.getDemographic(loggedInInfo, matchedPatientLabRouting.getDemographicNo());
-						if (matchedDemographic != null && !StringUtils.isBlank(hin) && hin.equals(matchedDemographic.getHin())) {
-							hl7TextInfo.setLabel(matchingLab.getLabel());
-							break;
+				String currentLabel = matchingLab.getLabel();
+				// if the lab has an entered label to carry over
+				if (!StringUtils.isBlank(currentLabel) && !StringUtils.isBlank(label)) {
+					// compare labels and eliminate duplicates.
+					String[] labelArray = label.split(" \\| ");
+					if(labelArray != null && labelArray.length > 0) {
+						for (String labelItem : labelArray) {
+							String regex = "\\|?\\s?" + labelItem;
+							currentLabel = currentLabel.replaceAll(regex, "");
 						}
-					} else {
-						hl7TextInfo.setLabel(matchingLab.getLabel());
-						break;
 					}
+					currentLabel.trim();
+					hl7TextInfo.setLabel( currentLabel.isEmpty() ? label : currentLabel + " | " + label);
 				}
 			}
 			hl7TextInfoDao.persist(hl7TextInfo);

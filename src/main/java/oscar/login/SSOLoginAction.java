@@ -370,7 +370,7 @@ public final class SSOLoginAction extends DispatchAction {
 					// Create a new session for this user
 					HttpSession newSession = request.getSession(true);
 
-					logger.debug("New session created: " + session.getId());
+					logger.debug("New session created: " + newSession.getId());
 
 					newSession.setMaxInactiveInterval(7200);
 					newSession.setAttribute("oscar_context_path", contextPath);

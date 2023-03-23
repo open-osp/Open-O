@@ -26,12 +26,9 @@ package oscar.oscarLab.ca.on;
 
 import java.io.Serializable;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.model.Hl7Obx;
@@ -488,6 +485,23 @@ public class CommonLabTestValues {
 
 			
 		}
+		// sort the lab list
+		Collections.sort(labList, new Comparator<Map<String, Serializable>>() {
+			@Override
+			public int compare(Map o1, Map o2) {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+				Date dateOne = new Date();
+				Date dateTwo = new Date();
+				try {
+					dateOne = simpleDateFormat.parse((String) o1.get("collDate"));
+					dateTwo = simpleDateFormat.parse((String) o2.get("collDate"));
+				} catch (ParseException e) {
+					logger.error("Issue while parsing date for common test values. Using current date.");
+				} finally {
+					return dateOne.before(dateTwo) ? 1 : dateOne.equals(dateTwo) ? 0 : -1;
+				}
+			}
+		});
 
 		return labList;
 	}

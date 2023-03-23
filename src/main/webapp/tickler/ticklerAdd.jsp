@@ -160,7 +160,7 @@ GregorianCalendar now=new GregorianCalendar();
 <%@ page import="org.oscarehr.common.model.UserProperty"%>
 <%@ page import="org.oscarehr.PMmodule.dao.ProgramProviderDAO" %>
 <%@ page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
-
+<!DOCTYPE html>
 <html:html locale="true">
 <head>
 <title><bean:message key="tickler.ticklerAdd.title"/></title>
@@ -289,27 +289,41 @@ function refresh() {
 //-->
 </script>
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <style media="all">
+        .tickler-label {
+            color:#003366;
+            font-weight:bold;
+        }
+        table {
+            width:100%;
+        }
+    </style>
 </head>
 
-<body bgcolor="#FFFFFF" text="#000000" leftmargin="0" rightmargin="0" topmargin="10" onLoad="setfocus()">
-    <table width="100%">                       
+<body onLoad="setfocus()">
+    <table>
         <tr style="background-color: black">   
-            <td colspan="4" style="text-align:left; font-weight: 900; height:40px;font-size:large;font-family:arial,sans-serif;color:white"><bean:message key="tickler.ticklerAdd.msgTickler"/></td>
+            <td class="table-condensed" style="text-align:left; padding:10px; font-weight: 900; height:40px;font-size:large;font-family:arial,sans-serif;color:white">Add <bean:message key="tickler.ticklerAdd.msgTickler"/></td>
         </tr>
     </table>
 
-<div class="container-fluid well" > 
-<table width="100%" border="0" cellspacing="0" cellpadding="0"bgcolor="#EEEEFF">
- <form name="ADDAPPT" method="post" action="../appointment/appointmentcontrol.jsp">
-<tr><td colspan="4"> <p><div id="error" class="alert alert-error" style="display:none;"></div> </td></tr>
+<div class="container-fluid well" >
+    <form name="ADDAPPT" method="post" action="../appointment/appointmentcontrol.jsp">
+        <table class="table-condensed">
+<tr><td colspan="2"> <div id="error" class="alert alert-error" style="display:none;"></div></td></tr>
 <tr> 
-      <td width="35%"><font color="#003366"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"><b><bean:message key="tickler.ticklerAdd.formDemoName"/>: </b></font></font></td>
-      <td colspan="2" width="65%">
-<div align="left"><INPUT TYPE="TEXT" NAME="keyword" size="25" VALUE="<%=bFirstDisp?"":demoName.equals("")?session.getAttribute("appointmentname"):demoName%>">
-   	 <input type="submit" name="Submit" class="btn"  value="<bean:message key="tickler.ticklerAdd.btnSearch"/>">
-  </div>
-</td>
+        <td width="35%" class="tickler-label"><bean:message key="tickler.ticklerAdd.formDemoName"/>:</td>
+        <td width="65%">
+
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="keyword" placeholder="Search Demographic" size="25" value="<%=bFirstDisp?"":demoName.equals("")?session.getAttribute("appointmentname"):demoName%>">
+                        <span class="input-group-btn">
+                            <input type="submit" name="Submit" class="btn btn-default"  value="<bean:message key="tickler.ticklerAdd.btnSearch"/>">
+                        </span>
+                    </div>
+
+        </td>
     </tr>
   <INPUT TYPE="hidden" NAME="orderby" VALUE="last_name" >
   <%
@@ -345,21 +359,23 @@ function refresh() {
               <INPUT TYPE="hidden" NAME="remarks" VALUE="">
               <input type="hidden" name="parentAjaxId" value="<%=parentAjaxId%>"/>
               <input type="hidden" name="updateParent" value="<%=updateParent%>"/> 
- </form>
+
 </table>
-<table width="100%" border="0" bgcolor="#EEEEFF">
-  <form name="serviceform" method="post" >
+    </form>
+    <form name="serviceform" method="post" >
+        <table class="table-condensed">
+
       <input type="hidden" name="parentAjaxId" value="<%=parentAjaxId%>"/>
       <input type="hidden" name="updateParent" value="<%=updateParent%>"/>
  
      <tr> 
-      <td width="35%"> <div align="left"><font color="#003366"><font face="Verdana, Arial, Helvetica, sans-serif" size="2"><strong><bean:message key="tickler.ticklerAdd.formChartNo"/>:</strong> </font></font></div></td>
-      <td colspan="2"> <div align="left"><INPUT TYPE="hidden" NAME="demographic_no" VALUE="<%=bFirstDisp?"":request.getParameter("demographic_no").equals("")?"":request.getParameter("demographic_no")%>"><%=ChartNo%></div></td>
+      <td width="35%" class="tickler-label"> <bean:message key="tickler.ticklerAdd.formChartNo"/>:</td>
+      <td width="65%"> <span><INPUT TYPE="hidden" NAME="demographic_no" VALUE="<%=bFirstDisp?"":request.getParameter("demographic_no").equals("")?"":request.getParameter("demographic_no")%>"><%=ChartNo%></span></td>
     </tr>
 
     <tr> 
-      <td style="text-align:left; font-weight: 900; height:40px;font-size:large;font-family:arial,sans-serif;color:white"><bean:message key="tickler.ticklerAdd.formServiceDate"/></td>
-      <td><input type="date" style="height:26px;" name="xml_appointment_date" value="<%=xml_appointment_date%>"> 
+      <td class="tickler-label"><bean:message key="tickler.ticklerAdd.formServiceDate"/></td>
+      <td><input type="date" class="form-control" name="xml_appointment_date" value="<%=xml_appointment_date%>">
         <font color="#003366" size="1" face="Verdana, Arial, Helvetica, sans-serif">
         <a href="#" onClick="toggleQuickPickDateDisplay(this)" title="<bean:message key="tickler.ticklerAdd.btnToggleQuickpickDates"/>" style="padding-left:5px; vertical-align: middle;"><bean:message key="tickler.ticklerAdd.btnHideQuickpick"/></a>
         <div id="quickPickDateOptions"  style="display:block;">
@@ -382,25 +398,21 @@ function refresh() {
          <a href="#" onClick="addMonths(120)">10yr</a>
         </div>
         </font> </td>
-        
-        
-      <td>&nbsp;</td>
     </tr>
     <tr> 
-      <td height="21" valign="top"><font color="#003366" size="2" face="Verdana, Arial, Helvetica, sans-serif"><strong><bean:message key="tickler.ticklerMain.Priority"/>:</strong></font></td>
-      <td valign="top"> 
-	<select name="priority" style="font-face:Verdana, Arial, Helvetica, sans-serif">
+      <td class="tickler-label"><bean:message key="tickler.ticklerMain.Priority"/>:</td>
+      <td>
+	<select name="priority" class="form-control">
  	<option value="<bean:message key="tickler.ticklerMain.priority.high"/>" <%=priority.equals("High")?"selected":""%>><bean:message key="tickler.ticklerMain.priority.high"/>
 	<option value="<bean:message key="tickler.ticklerMain.priority.normal"/>" <%=priority.equals("Normal")?"selected":""%>><bean:message key="tickler.ticklerMain.priority.normal"/>
 	<option value="<bean:message key="tickler.ticklerMain.priority.low"/>" <%=priority.equals("Low")?"selected":""%>><bean:message key="tickler.ticklerMain.priority.low"/>	
      	</select>
       </td>
-      <td>&nbsp;</td>
     </tr>
 
     <tr> 
-      <td height="21" valign="top"><font color="#003366" size="2" face="Verdana, Arial, Helvetica, sans-serif"><strong><bean:message key="tickler.ticklerAdd.assignTaskTo"/>:</strong></font></td>
-      <td valign="top"> <font face="Verdana, Arial, Helvetica, sans-serif" size="2" color="#333333">
+      <td class="tickler-label" ><bean:message key="tickler.ticklerAdd.assignTaskTo"/>:</td>
+      <td>
 <% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) 
 { // multisite start ==========================================
         	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
@@ -446,7 +458,7 @@ function changeSite(sel) {
       </script>
  
 <div id="selectWrapper">
-      	<select id="site" name="site" onchange="changeSite(this)">
+      	<select id="site" class="form-control" name="site" onchange="changeSite(this)">
       		<option value="none" style="background-color: white">---select clinic---</option>
       	<%
       	for (int i=0; i<sites.size(); i++) {
@@ -456,7 +468,7 @@ function changeSite(sel) {
       	<% } %>
       	</select>
 
-      	<select name="task_assigned_to" id="task_assigned_to" style="width:140px"></select>
+      	<select name="task_assigned_to" id="task_assigned_to" class="form-control"></select>
 
 	<h4 id="preferenceLink" style="display:none"><small><a href="#" onClick="toggleWrappers()">[preference]</a></small></h4>
 </div>
@@ -509,7 +521,7 @@ changeSite(selSite);
 } else {
 %>
 
-      <select name="task_assigned_to">        
+      <select name="task_assigned_to" class="form-control">
             <%  String proFirst="";
                 String proLast="";
                 String proOHIP="";
@@ -531,27 +543,22 @@ changeSite(selSite);
            <input type="hidden" name="docType" value="<%=request.getParameter("docType")%>"/>
            <input type="hidden" name="docId" value="<%=request.getParameter("docId")%>"/>
       </td>
-      <td>&nbsp;</td>
     </tr>
     <tr> 
-      <td height="21" valign="top"><font color="#003366" size="2" face="Verdana, Arial, Helvetica, sans-serif"><strong><bean:message key="tickler.ticklerAdd.formReminder"/>:</strong></font></td>
-          <td valign="top"> <textarea style="font-face:Verdana, Arial, Helvetica, sans-serif"name="textarea" cols="50" rows="5"></textarea></td>
-          <td>&nbsp;</td>
+      <td class="tickler-label"><bean:message key="tickler.ticklerAdd.formReminder"/>:</td>
+          <td> <textarea class="form-control"></textarea></td>
       </tr>
      <INPUT TYPE="hidden" NAME="user_no" VALUE="<%=user_no%>">
       <input type="hidden" name="writeToEncounter" value="<%=writeToEncounter%>"/>
     <tr>
-      <td><input type="button" name="Button" class="btn" value="<bean:message key="tickler.ticklerAdd.btnCancel"/>" onClick="window.close()"></td>
-      <td><input type="button" name="Button" class="btn" value="<bean:message key="tickler.ticklerAdd.btnSubmit"/>" onClick="event.preventDefault();validate(this.form);">
+      <td><input type="button" name="Button" class="btn btn-warning" value="<bean:message key="tickler.ticklerAdd.btnCancel"/>" onClick="window.close()"></td>
+      <td><input type="button" name="Button" class="btn btn-primary" value="<bean:message key="tickler.ticklerAdd.btnSubmit"/>" onClick="event.preventDefault();validate(this.form);">
           <input type="button" name="Button" class="btn btn-primary" value="<bean:message key="tickler.ticklerAdd.btnWriteSubmit"/>" onClick="validate(this.form, true)">
       </td>
-      <td></td>
           </tr>
-  </form>
-</table>
-<p><font face="Arial, Helvetica, sans-serif" size="2"> </font></p>
-  <p>&nbsp; </p>
 
+</table>
+    </form>
 </div>
 </body>
 </html:html>

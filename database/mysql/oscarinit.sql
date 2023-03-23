@@ -9090,7 +9090,7 @@ CREATE TABLE IF NOT EXISTS appointmentArchive (
 );
 
 CREATE TABLE IF NOT EXISTS ProviderPreferenceAppointmentScreenForm(providerNo varchar(6) not null, appointmentScreenForm varchar(128) not null);
-CREATE TABLE IF NOT EXISTS ProviderPreferenceAppointmentScreenEForm(providerNo varchar(6) not null, appointmentScreenEForm int not null);
+CREATE TABLE IF NOT EXISTS ProviderPreferenceAppointmentScreenEForm(providerNo varchar(6) not null, appointmentScreenEForm int not null, eFormName varchar(255));
 
 
 CREATE TABLE IF NOT EXISTS `Eyeform` (

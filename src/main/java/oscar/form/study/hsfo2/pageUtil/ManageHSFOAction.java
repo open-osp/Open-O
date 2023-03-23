@@ -42,7 +42,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
@@ -236,14 +236,14 @@ public class ManageHSFOAction extends Action
       else
       {
         // If patientHistory is greater than 1 than fill the graphing arrays
-        TimeSeries sbpSeries = new TimeSeries( "Systolic Blood Pressure", Day.class );
-        TimeSeries dbpSeries = new TimeSeries("Diastolic Blood Pressure", Day.class);
-        TimeSeries bmiSeries = new TimeSeries("BMI", Day.class);
-        TimeSeries waistSeries = new TimeSeries("Waist", Day.class);
-        TimeSeries ldlSeries = new TimeSeries("LDL", Day.class);
-        TimeSeries tcHdlSeries = new TimeSeries("TC/HDL", Day.class);
-        TimeSeries importanceSeries = new TimeSeries("Importance", Day.class);
-        TimeSeries confidenceSeries = new TimeSeries("Confidence", Day.class);
+        TimeSeries sbpSeries = new TimeSeries( "Systolic Blood Pressure" );
+        TimeSeries dbpSeries = new TimeSeries("Diastolic Blood Pressure");
+        TimeSeries bmiSeries = new TimeSeries("BMI");
+        TimeSeries waistSeries = new TimeSeries("Waist");
+        TimeSeries ldlSeries = new TimeSeries("LDL");
+        TimeSeries tcHdlSeries = new TimeSeries("TC/HDL");
+        TimeSeries importanceSeries = new TimeSeries("Importance");
+        TimeSeries confidenceSeries = new TimeSeries("Confidence");
         
         Map<GraphDesc,TimeSeries> graphDescSeriesMap = new HashMap<GraphDesc,TimeSeries>();
         graphDescSeriesMap.put( new GraphDesc( "Systolic Blood Pressure", "Dates", "SBP(mmHg)"), sbpSeries );
@@ -532,7 +532,7 @@ public class ManageHSFOAction extends Action
       {
         String fileName = graphDesc.getFileName() + "." + Calendar.getInstance().getTimeInMillis() + ".jpg";
         String realFilePath = graphDirRealPath + "/" + fileName;        
-        ChartUtilities.saveChartAsJPEG( new File( realFilePath ), chart, 900,  200 );
+        ChartUtils.saveChartAsJPEG( new File( realFilePath ), chart, 900,  200 );
         logger.info( "graph file: " + realFilePath + " generated and saved. " );
         
         request.setAttribute( "graphFile."+graphDesc.getFileName(), request.getContextPath() + "/" + graphDirPath + "/" + fileName );
