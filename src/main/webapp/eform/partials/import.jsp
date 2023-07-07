@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 <html>
 <%@ page import="oscar.eform.data.*, oscar.eform.*, java.util.*"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -30,13 +31,18 @@
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 
 <%
-String status = (String) request.getAttribute("status");    		
+String status = (String) request.getAttribute("status");
 %>
 <head>
-	<link href="<%=request.getContextPath()%>/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-	<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-	<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/global.js"></script>
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
+    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+    <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+    <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+
 	<style>
 	body{background-color:#f5f5f5;}
 	</style>
@@ -56,9 +62,9 @@ String status = (String) request.getAttribute("status");
 
 </c:if>
 <form action="<%=request.getContextPath()%>/eform/manageEForm.do" method="POST" enctype="multipart/form-data" id="eformImportForm">
-    	
+
     	<input type="hidden" name="method" value="importEForm">
-    	
+
     	<%List<String> importErrors = (List<String>) request.getAttribute("importErrors");
         if (importErrors != null && importErrors.size() > 0) {%>
 	        <div class="row-fluid">
@@ -67,22 +73,22 @@ String status = (String) request.getAttribute("status");
 	                <%for (String importError: importErrors) {%>
 	                <li class="text-error"><%=importError%></li>
 	                <%}%>
-	          	</ul> 
+	          	</ul>
 	        </div>
         <%}%>
-        
+
         <div class="control-group">
         	<div class="controls">
         		<label class="control-label" for="zippedForm">Import eForm:</label>
 		        <input type="file" class="input-file" id="zippedForm" name="zippedForm" size="50" required/>
 		        <span style="color:red;">
 		         <i class="icon-warning-sign" title="<bean:message key="global.uploadWarningBody"/>" ></i>
-		         </span>                      
+		         </span>
 		        <input type="submit" name="subm" value="Import" class="btn btn-primary upload" disabled>
 	        </div>
         </div>
         <div class="row-fluid">
-	        <span class="label label-info">Info: </span> 
+	        <span class="label label-info">Info: </span>
 	        <span>Zip file format only</span>
         </div>
 
@@ -90,7 +96,7 @@ String status = (String) request.getAttribute("status");
 
 <script type="text/javascript">
 $( document ).ready(function() {
-	$(".input-file").change(validate).keyup(validate);
+	$(".input-file").on("change",validate).keyup(validate);
 });
 
 function validate() {
@@ -107,9 +113,9 @@ function validate() {
     }else{
 	    $('.upload').attr("disabled", "disabled");
 		$('.upload').removeClass("btn-success");
-    } 
+    }
 }
-	
+
 
 </script>
 

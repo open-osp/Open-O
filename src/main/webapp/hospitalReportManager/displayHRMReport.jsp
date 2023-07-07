@@ -50,7 +50,7 @@ HRMProviderConfidentialityStatementDao hrmProviderConfidentialityStatementDao = 
 <!DOCTYPE html>
 
 <%
-Integer hrmReportId = Integer.parseInt(request.getParameter("segmentID"));
+Integer hrmReportId = Integer.parseInt(request.getParameter("id"));
 boolean isListView = Boolean.parseBoolean(request.getParameter("isListView"));
 String hrmReportTime = "";
 Integer hrmDuplicateNum =null;

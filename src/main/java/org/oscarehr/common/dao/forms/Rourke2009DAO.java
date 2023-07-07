@@ -23,7 +23,7 @@
  */
 
 
-package oscar.form.dao;
+package org.oscarehr.common.dao.forms;
 
 import java.util.List;
 

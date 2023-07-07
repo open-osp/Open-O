@@ -47,21 +47,21 @@
 <%@page import="oscar.OscarProperties"%>
 
 <%
-	if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+	if(session.getValue("user") == null) response.sendRedirect("${ pageContext.request.contextPath }/logout.jsp");
     //int demographic_no = Integer.parseInt(request.getParameter("demographic_no"));
-    if(session.getAttribute("userrole") == null )  response.sendRedirect("../logout.jsp");
+    if(session.getAttribute("userrole") == null )  response.sendRedirect("${ pageContext.request.contextPath }/logout.jsp");
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     String demographic_no = request.getParameter("demographic_no");
     String providerNo = (String) session.getAttribute("user");
     String temp = request.getParameter("template");
-     
+
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
     <security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="r" reverse="<%=true%>">
         "You have no right to access this page!"
         <%
     	LogAction.addLog((String) session.getAttribute("user"), LogConst.NORIGHT+LogConst.READ, LogConst.CON_FLOWSHEET,  temp , request.getRemoteAddr(),demographic_no);
-            response.sendRedirect("../../noRights.html");
+            response.sendRedirect("${ pageContext.request.contextPath }/noRights.html");
     %>
     </security:oscarSec>
 
@@ -110,13 +110,13 @@
     FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) SpringUtils.getBean("flowSheetCustomizationDao");
     FlowSheetDrugDao flowSheetDrugDao = (FlowSheetDrugDao) SpringUtils.getBean("flowSheetDrugDao");
 	FlowSheetDxDao flowSheetDxDao = (FlowSheetDxDao) SpringUtils.getBean("flowSheetDxDao");
-  
+
     MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
-    
+
     MeasurementFlowSheet mFlowsheet = null;
-    
+
     mFlowsheet = templateConfig.getFlowSheet(temp,loggedInInfo.getLoggedInProviderNo(),Integer.parseInt(demographic_no));
-    
+
     MeasurementInfo mi = new MeasurementInfo(demographic_no);
     List<String> measurementLs = mFlowsheet.getMeasurementList();
     ArrayList<String> measurements = new ArrayList(measurementLs);
@@ -147,19 +147,16 @@
     ArrayList comments = new ArrayList();
 
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html:html locale="true">
 
 <head>
 <title><%=flowSheet%> - <oscar:nameage demographicNo="<%=demographic_no%>"/></title><!--I18n-->
-<link rel="stylesheet" type="text/css" href="../../share/css/OscarStandardLayout.css" />
-<script type="text/javascript" src="../../share/javascript/Oscar.js"></script>
-<script type="text/javascript" src="../../share/javascript/prototype.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>
-<script>
-	jQuery.noConflict();
-</script>
+
+<script type="text/javascript" src="${ pageContext.request.contextPath }/share/javascript/Oscar.js"></script>
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+
+
 <script>
 	function getDemographicNo() {
 		return '<%=demographic_no%>';
@@ -169,11 +166,11 @@
 	}
 
 	function refreshEncounter() {
-	      self.opener.location.reload(); 
+	      self.opener.location.reload();
 	}
 </script>
 <oscar:customInterface name="renal" section="diab"/>
-			
+
 <style type="text/css">
     div.ImmSet { background-color: #ffffff;clear:left;margin-top:10px;}
     div.ImmSet h2 {  }
@@ -228,10 +225,9 @@ div.headPrevention a:link { color:black; }
 div.headPrevention a:visited { color:black; }
 
 div.headPrevention p {
-    background: #ddddff;
+    background: silver;
     font-family: verdana,tahoma,sans-serif;
     margin:0;
-
     padding: 4px 4px;
     line-height: 1.2;
 /*text-align: justify;*/
@@ -242,9 +238,9 @@ div.headPrevention p {
 
 </style>
 
-<link rel="stylesheet" type="text/css" href="../../share/css/niftyCorners.css" />
-<link rel="stylesheet" type="text/css" href="../../share/css/niftyPrint.css" media="print" />
-<script type="text/javascript" src="../../share/javascript/nifty.js"></script>
+<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/niftyCorners.css" />
+<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/niftyPrint.css" media="print" />
+<script type="text/javascript" src="${ pageContext.request.contextPath }/share/javascript/nifty.js"></script>
 
 <script type="text/javascript">
     window.onload=function(){
@@ -270,66 +266,70 @@ div.headPrevention p {
     	  if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
     	  return d.toISOString().slice(0,10) === dateString;
     	}
-    
+
 
     function clearDifferentElements(){
-    	$('numEle').value = '';
-    	$('flowsheetStartDate').value = '';
-    	 $('flowsheetEndDate').value = '';
+    	document.getElementById('numEle').value = '';
+    	document.getElementById('flowsheetStartDate').value = '';
+    	document.getElementById('flowsheetEndDate').value = '';
     	 loadDifferentElements();
-    	
+
     }
    function loadDifferentElements(){
        //console.log("hapy");
-        var numEle = $('numEle').value;
-        var sdate = $('flowsheetStartDate').value;
-        var edate = $('flowsheetEndDate').value;
-        
+        var numEle = document.getElementById('numEle').value;
+        var sdate = document.getElementById('flowsheetStartDate').value;
+        var edate = document.getElementById('flowsheetEndDate').value;
+
         if(numEle.length>0 && (isNaN(numEle) || parseInt(numEle) <= 0)) {
         	alert("# of Elements needs to be a number greater than 0")
         	return;
         }
-        
+
         if(sdate.length > 0 && !isValidDate(sdate)) {
         	alert("Start Date must be a valid date in yyyy-mm-dd format");
         	return;
         }
-        
+
         if(edate.length > 0 && !isValidDate(edate)) {
         	alert("End Date must be a valid date in yyyy-mm-dd format");
         	return;
         }
-        
-        
+
+
         //get selected elements
         var selectedItems = [];
-        jQuery("input[name='selected_item']:checked").each( function () {
-      		selectedItems.push( jQuery(this).val());
-  		});
+        let elements = document.getElementsByName("selected_item");
+
+        for (var i = 0, len = elements.length; i < len; i++) {
+            if(elements[i].checked) {
+                selectedItems.push(elements[i].value);
+            }
+        }
         var selectedItemsStr = "";
-        
+
         if(selectedItems.length>0) {
         	selectedItemsStr = "&selectedItems=" + encodeURIComponent(selectedItems.join(','));
         }
-        
+
         var url = 'TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>';
-        if( !numEle.blank()){
+        if(numEle.length > 0){
         	url = url + '&numEle='+numEle;
         }
-        if(!sdate.blank()) {
+        if(sdate.length > 0) {
         	url = url + '&sdate='+sdate;
         }
-        if(!edate.blank()) {
+        if(edate.length > 0) {
         	url = url + '&edate='+edate;
         }
         url = url + selectedItemsStr;
-        
+
         window.location = url;
         /*
-        if( !numEle.blank()){
+        if( numEle.length > 0){
             window.location = 'TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&numEle='+numEle + selectedItemsStr;
             //console.log("one");
-        }else if (!sdate.blank() && !edate.blank()){
+        }else if (sdate.length > 0 && edate.length > 0){
             window.location = 'TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&sdate='+sdate+'&edate='+edate + selectedItemsStr;
             //console.log("two");
         }else{
@@ -370,7 +370,7 @@ span.footnote {
 }
 
 div.leftBox h3 {
-    background-color: #ccccff;
+    background-color: silver;
 /*font-size: 1.25em;*/
     font-size: 8pt;
     font-variant:small-caps;
@@ -379,12 +379,12 @@ div.leftBox h3 {
     padding-top:0px;
     margin-bottom:0px;
     padding-bottom:0px;
+    line-height: 16px;
 }
 
 div.leftBox ul{
 /*border-top: 1px solid #F11;*/
 /*border-bottom: 1px solid #F11;*/
-    font-size: 1.0em;
     list-style:none;
     list-style-type:none;
     list-style-position:outside;
@@ -410,10 +410,9 @@ div.headPrevention {
 }
 
 div.headPrevention p {
-    background: #ddddff;
+    background: silver;
     font-family: verdana,tahoma,sans-serif;
     margin:0;
-
     padding: 4px 4px;
     line-height: 1.2;
 /*text-align: justify;*/
@@ -490,15 +489,15 @@ div.recommendations li{
 <table  class="MainTable" id="scrollNumber1" >
 <tr class="MainTableTopRow">
     <td class="MainTableTopRowLeftColumn"  >
-        <%=flowSheet%>
+        <h4><%=flowSheet%></h4>
     </td>
     <td class="MainTableTopRowRightColumn">
-        <table class="TopStatusBar" cellpadding="2">
+        <table class="TopStatusBar">
             <tr>
                 <td colspan="3">
-                    <oscar:nameage demographicNo="<%=demographic_no%>"/>
+                    <h4><oscar:nameage demographicNo="<%=demographic_no%>"/></h4>
                     <span class="DoNotPrint">
-                    
+
                     <a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&show=lastOnly">Last Only</a>
                     &nbsp;
                     <a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&show=outOfRange">Only out of Range</a>
@@ -506,8 +505,6 @@ div.recommendations li{
                     <a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&show=overdue">Only overdue</a>
                     &nbsp;
                     <a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>">All</a>
-                    &nbsp;
-                    <a href="TemplateFlowSheetPrint.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>">Custom Print</a>
                   </span>
                 </td>
              </tr>
@@ -516,16 +513,16 @@ div.recommendations li{
                		<span class="DoNotPrint">
                     #Of Elements <input type="text" size="3" id="numEle" value="<%=request.getParameter("numEle") != null ? request.getParameter("numEle") : "" %>"/>
 
-                    Start Date <input type="text" size="10" id="flowsheetStartDate" value="<%=request.getParameter("sdate") != null ? request.getParameter("sdate") : "" %>" />
-                    End Date <input type="text" size="10"id="flowsheetEndDate" value="<%=request.getParameter("edate") != null ? request.getParameter("edate") : "" %>"/>
-                    <input type="button" value="go" onclick="javascript: loadDifferentElements()"/>
-                    <input type="button" value="clear" onclick="javascript: clearDifferentElements()"/>
+                    Start Date <input type="date" size="10" id="flowsheetStartDate" value="<%=request.getParameter("sdate") != null ? request.getParameter("sdate") : "" %>" />
+                    End Date <input type="date" size="10" id="flowsheetEndDate" value="<%=request.getParameter("edate") != null ? request.getParameter("edate") : "" %>"/>
+                    <input type="button" class="btn" value="go" onclick="javascript: loadDifferentElements()"/>
+                    <input type="button" class="btn" value="clear" onclick="javascript: clearDifferentElements()"/>
                     </span>
                 </td>
                 <td>
                 &nbsp;
                 </td>
-                <td style="text-align:right" valign="bottom">
+                <td style="text-align:right; vertical-align:bottom;">
                     <oscar:help keywords="measurement" key="app.top1"/> | <a href="javascript:popupStart(300,400,'About.jsp')" ><bean:message key="global.about" /></a> | <a href="javascript:popupStart(300,400,'License.jsp')" ><bean:message key="global.license" /></a>
                 </td>
             </tr>
@@ -533,7 +530,7 @@ div.recommendations li{
     </td>
 </tr>
 <tr>
-<td class="MainTableLeftColumn" valign="top">
+<td class="MainTableLeftColumn" style="vertical-align:top; width:170px;">
 	<security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
     <% if (recList.size() > 0){ %>
     <p><a class="DoNotPrint" href="javascript: function myFunction() {return false; }"  onclick="javascript:createAddAll(<%=demographic_no%>, '<%= URLEncoder.encode(temp,"UTF-8") %>', <%=Math.abs( "ADDTHEMALL".hashCode() ) %>)" TITLE="Add all measurements.">
@@ -550,7 +547,7 @@ div.recommendations li{
     <!-- only show disease registry and prescriptions for flowsheets which aren't medical in nature -->
     <% if (mFlowsheet.isMedical()) {%>
     <div class="leftBox">
-        <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientdxlist" />  <a class="DoNotPrint"  href="#" onclick="Element.toggle('dxFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
+        <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientdxlist" />  <a class="DoNotPrint"  href="#" onclick="toggle('dxFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
         <div class="wrapper" id="dxFullListing"  >
             <ul>
             <%
@@ -588,7 +585,7 @@ div.recommendations li{
 
     <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r"  >
         <div class="leftBox">
-            <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientrxlist" />  <a class="DoNotPrint" href="#" onclick="Element.toggle('rxFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
+            <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientrxlist" />  <a class="DoNotPrint" href="#" onclick="toggle('rxFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
             <div class="wrapper" id="rxFullListing"  >
 
                 <%
@@ -623,7 +620,7 @@ div.recommendations li{
 
 
          <div class="leftBox">
-            <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientallergylist" />  <a class="DoNotPrint" href="#" onclick="Element.toggle('allergFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
+            <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientallergylist" />  <a class="DoNotPrint" href="#" onclick="toggle('allergFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
             <div class="wrapper" id="allergFullListing"  >
 
                 <%
@@ -652,15 +649,18 @@ div.recommendations li{
     </security:oscarSec>
     <% } %>
 <div id="print_box">
-   <input type="button" class="DoNotPrint" value="<bean:message key="oscarencounter.templateflowsheet.print" />" onclick="javascript:window.print()">
+   <input type="button" class="DoNotPrint btn" value="<bean:message key="oscarencounter.templateflowsheet.print" />" onclick="javascript:window.print()">
+    <a class="btn" href="TemplateFlowSheetPrint.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>">Custom Print</a>
+&nbsp;
+
 </div>
 </td>
 
-<td valign="top" class="MainTableRightColumn">
+<td class="MainTableRightColumn" style="vertical-align:top;">
 <% if (warnings.size() > 0 || recomendations.size() > 0  || dsProblems) { %>
 <div class="recommendations">
     <span style="font-size:larger;"><%=flowSheet%> Recommendations</span>
-    <a href="#" onclick="Element.toggle('recomList'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a>
+    <a href="#" onclick="toggle('recomList'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a>
     <ul id="recomList" style="display:none;">
         <% for (String warn : warnings){ %>
         <li style="color: red;"><%=warn%></li>
@@ -680,7 +680,7 @@ div.recommendations li{
 	out.print(mFlowsheet.getTopHTMLStream());
 %>
 <%--
-<img src="../../oscarEncounter/GraphMeasurements.do?demographic_no=<%=demographic_no%>&type=INR&type2=COUM"/>
+<img src="${ pageContext.request.contextPath }/oscarEncounter/GraphMeasurements.do?demographic_no=<%=demographic_no%>&type=INR&type2=COUM"/>
 <br/>
 --%>
 <div >
@@ -688,7 +688,7 @@ div.recommendations li{
 	//set add link array
 	String[] addAllLink = new String[measurements.size()];
 	int mCount=0;
-	
+
     EctMeasurementTypeBeanHandler mType = new EctMeasurementTypeBeanHandler();
     long startTimeToLoopAndPrint = System.currentTimeMillis();
     for (String measure:measurements){
@@ -700,7 +700,7 @@ div.recommendations li{
             hidden= "display:none;";
         }
 
-       
+
         if (h2.get("measurement_type") != null ){
             Hashtable h = new Hashtable();
             EctMeasurementTypesBean mtypeBean = mType.getMeasurementType(measure);//mFlowsheet.getMeasurementInfo(measure);
@@ -714,7 +714,7 @@ div.recommendations li{
             }
             String prevName = (String) h.get("name");
             ArrayList<EctMeasurementsDataBean> alist = mi.getMeasurementData(measure);
-            if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {	
+            if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {
                 EctMeasurementsDataBeanHandler.addRemoteMeasurements(loggedInInfo, alist,measure,Integer.parseInt(demographic_no));
              }
             String extraColour = "";
@@ -723,34 +723,34 @@ div.recommendations li{
             }else if(mi.hasWarning(measure)){
                 extraColour = "style=\"background-color: "+mFlowsheet.getWarningColour()+"\" ";
             }
-            
+
             if (request.getParameter("show") !=null && request.getParameter("show").equals("overdue") && StringUtils.isEmpty(extraColour) ){
                 hidden= "display:none;";
             }
-            
+
             if(request.getParameter("selectedItems") !=null) {
             	String selectedItems = request.getParameter("selectedItems");
             	List<String> selectedItemsArray = Arrays.asList(selectedItems.split(","));
             	if(!selectedItemsArray.contains(prevName)) {
             		 hidden= "display:none;";
             	}
-            	
+
             }
-            
+
             //measurement_type="EDGI"
             //display_name="Autonomic Neuropathy"
             //guideline="Erectile Dysfunction, hastrointestinal disturbance"
             //graphable="no"
             //value_name="Answer"
 %>
-<div class="preventionSection" id="<%=measure%>"  style="overflow: auto;<%=hidden%>" nowrap>
+<div class="preventionSection" id="<%=measure%>"  style="overflow: auto;<%=hidden%>" >
     <div class="headPrevention">
 
         <p class="noborder" <%=extraColour%> title="fade=[on] header=[<%=h2.get("display_name")%>] body=[<%=wrapWithSpanIfNotNull(mi.getWarning(measure),"red")%><%=wrapWithSpanIfNotNull(mi.getRecommendation(measure),"red")%><%=h2.get("guideline")%>]"   >
         <input type="checkbox" name="selected_item" value="<%= h.get("name")%>"/>
             <%if(h2.get("graphable") != null && ((String) h2.get("graphable")).equals("yes")){%>
             <%if (alist != null && alist.size() > 1) { %>
-               <img class="DoNotPrint" src="img/chart.gif" alt="Plot"  onclick="window.open('../../oscarEncounter/GraphMeasurements.do?demographic_no=<%=demographic_no%>&type=<%=measure%>');"/>
+               <img class="DoNotPrint" src="img/chart.gif" alt="Plot"  onclick="window.open('${ pageContext.request.contextPath }/oscarEncounter/GraphMeasurements.do?demographic_no=<%=demographic_no%>&type=<%=measure%>');"/>
             <%}else{%>
                <img class="DoNotPrint" src="img/chart.gif" alt="Plot"/>
             <%}%>
@@ -790,7 +790,7 @@ div.recommendations li{
                 num =1;
             }
             Date itDate = mdb.getDateObservedAsDate();
-            
+
             if(sdate != null) {
             	 if (itDate.before(sdate)){
                      hider = "style=\"display:none\"";
@@ -824,9 +824,9 @@ div.recommendations li{
             }
 
     %>
-    <div class="preventionProcedure" <%=hider%>  
+    <div class="preventionProcedure" <%=hider%>
     <%if(mdb.getRemoteFacility() == null){ %>
-    onclick="javascript:fsPopup(760,670,'AddMeasurementData.jsp?measurement=<%= response.encodeURL( measure) %>&amp;id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>&amp;template=<%= URLEncoder.encode(temp,"UTF-8") %>','addMeasurementData')" 
+    onclick="javascript:fsPopup(760,670,'AddMeasurementData.jsp?measurement=<%= response.encodeURL( measure) %>&amp;id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>&amp;template=<%= URLEncoder.encode(temp,"UTF-8") %>','addMeasurementData')"
     <%}%>
     >
         <p <%=indColour%> title="fade=[on] header=[<%=hdata.get("age")%> -- Date:<%=hdata.get("prevention_date")%>] body=[<%=com%>&lt;br/&gt;Entered By:<%=mdb.getProviderFirstName()%> <%=mdb.getProviderLastName()%>]"><%=h2.get("value_name")%>: <%=hdata.get("age")%> <br/>
@@ -834,7 +834,7 @@ div.recommendations li{
             <%if (comb) {%>
             <span class="footnote"><%=comments.size()%></span>
             <%}%>
-           <%=getFromFacilityMsg(mdb) %> 
+           <%=getFromFacilityMsg(mdb) %>
         </p>
     </div>
     <%}%>
@@ -855,7 +855,7 @@ div.recommendations li{
 <div class="preventionSection" style="<%=hidden%>" >
     <div class="headPrevention">
         <p title="fade=[on] header=[<%=h2.get("display_name")%>] body=[<%=wrapWithSpanIfNotNull(mi.getWarning(measure),"red")%><%=wrapWithSpanIfNotNull(mi.getRecommendation(measure),"red")%><%=h2.get("guideline")%>]">
-            <a href="javascript: function myFunction() {return false; }"  onclick="javascript:fsPopup(465,635,'../../oscarPrevention/AddPreventionData.jsp?prevention=<%= response.encodeURL( prevType) %>&amp;demographic_no=<%=demographic_no%>','addPreventionData<%=Math.abs( prevType.hashCode() ) %>')">
+            <a href="javascript: function myFunction() {return false; }"  onclick="javascript:fsPopup(465,635,'${ pageContext.request.contextPath }/oscarPrevention/AddPreventionData.jsp?prevention=<%= response.encodeURL( prevType) %>&amp;demographic_no=<%=demographic_no%>','addPreventionData<%=Math.abs( prevType.hashCode() ) %>')">
                 <span title="<%=h2.get("guideline")%>" style="font-weight:bold;"><%=h2.get("display_name")%></span>
             </a>
             &nbsp;
@@ -876,7 +876,7 @@ div.recommendations li{
                 com ="";
             }
     %>
-    <div class="preventionProcedure"  onclick="javascript:fsPopup(465,635,'../../oscarPrevention/AddPreventionData.jsp?id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>','addPreventionData')" >
+    <div class="preventionProcedure"  onclick="javascript:fsPopup(465,635,'${ pageContext.request.contextPath }/oscarPrevention/AddPreventionData.jsp?id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>','addPreventionData')" >
         <p <%=r(hdata.get("refused"))%> title="fade=[on] header=[<%=hdata.get("age")%> -- Date:<%=hdata.get("prevention_date")%>] body=[<%=com%>]" >Age: <%=hdata.get("age")%> <br/>
             <!--<%=refused(hdata.get("refused"))%>-->Date: <%=hdata.get("prevention_date")%>
             <%if (comb) {%>
@@ -894,6 +894,14 @@ div.recommendations li{
 %>
 
 <script language="javascript">
+function toggle(id){
+    var el = document.getElementById(id);
+    if(window.getComputedStyle(el).display === "block") {
+        el.style.display="none";
+    } else {
+        el.style.display="block";
+    }
+}
 function createAddAll(d,t,h){
 
 	//most likely will remove this and create qs above to account for prevention
@@ -957,7 +965,7 @@ if(temp.equals("diab2") || temp.equals("chf")) {
 	String code = "";
 	if(temp.equals("diab2"))
 		code = "250";
-	if(temp.equals("chf")) 
+	if(temp.equals("chf"))
 		code = "428";
 	DrugReasonDao drugReasonDao = SpringUtils.getBean(DrugReasonDao.class);
 	DrugDao drugDao = SpringUtils.getBean(DrugDao.class);
@@ -979,7 +987,7 @@ if(temp.equals("diab2") || temp.equals("chf")) {
 		%>
 			<tr>
 				<td>
-					
+
 					<!-- get all drugs of this type in our list, and sort by rx date -->
 					<%
 						List<Drug> thisDrug = new ArrayList<Drug>();
@@ -1006,7 +1014,7 @@ if(temp.equals("diab2") || temp.equals("chf")) {
 			</tr>
 		<%
 	}
-	
+
 	%></table><%
 %>
 </div>
@@ -1029,19 +1037,25 @@ if(temp.equals("diab2") || temp.equals("chf")) {
     <td class="MainTableBottomRowLeftColumn">
         &nbsp;
     </td>
-    <td class="MainTableBottomRowRightColumn" valign="top">
+    <td class="MainTableBottomRowRightColumn" style="vertical-align:top;">
         &nbsp;
     </td>
 </tr>
 </table>
-<script type="text/javascript" src="../../share/javascript/boxover.js"></script>
+<script type="text/javascript" src="${ pageContext.request.contextPath }/share/javascript/boxover.js"></script>
 
 <script>
-if(jQuery('#add_custom').length){
-  //if WT, HT and BMI exists then allow the link
-  if(jQuery('#WT').length && jQuery('#HT').length && jQuery('#BMI').length){
-    jQuery('#add_custom').show();
-  }
+function idExists(id) {
+    var element = document.getElementById(id);
+    if (typeof(element) != 'undefined' && element != null) {
+        return true;
+    }
+    return false;
+}
+
+//if WT, HT and BMI exists then allow the link
+if(idExists("WT") && idExists("HT" ) && idExists("BMI")){
+    document.getElementById('add_custom').style.display = 'block'; // show
 }
 </script>
 </body>
@@ -1075,14 +1089,14 @@ if(jQuery('#add_custom').length){
             ret = "<span style='color:"+colour+"'>"+s+"</span> </br>";
         }
         return ret;
-    }    
-    
+    }
+
     public String getFromFacilityMsg(EctMeasurementsDataBean emdb){
 		if (emdb.getRemoteFacility()!=null)	return("<br /><span style=\"color:#990000\">(At facility : "+emdb.getRemoteFacility()+")<span>");
 		else return("");
 	}
-    
-    
-    
-    
+
+
+
+
     %>

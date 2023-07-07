@@ -38,21 +38,21 @@ function popupPage(vheight,vwidth,varpage) { //open a new popup window
 
 function openPatient(demographicNo) {
 	popupPage(700,1200,'../demographic/demographiccontrol.jsp?demographic_no='+demographicNo+'&displaymode=edit&dboperation=search_detail');
-	
+
 }
-	
+
 function openReport(id) {
 	popupPage(700,1200,'Display.do?id='+id+'&duplicateLabIds=');
-	
+
 }
-	
+
 $(document).ready( function() {
 
 	getHrmStatus();
-	setInterval(function(){ 
+	setInterval(function(){
 		getHrmStatus();
 		}, 5000);
-		
+
 	// table sorting
 	$('#libraryTable').DataTable({
 		serverSide : true,
@@ -71,7 +71,7 @@ $(document).ready( function() {
 			 	{render: function(data, type, full, meta) {
 			 		var r = "<a href='javascript:void(0)' onClick=\"openReport("+full.id+");return false;\" ><img src='../images/details2.gif' border='0'/></a>";
 			 		return r;
-			 		} 
+			 		}
 			 	},
 			 	{ "data": "recipient_name" , render: function(data,type,full,meta){
 			 		if(full.provider_no != null && full.provider_no.length>0) {
@@ -79,7 +79,7 @@ $(document).ready( function() {
 			 		} else {
 			 			return full.recipient_name;
 			 		}
-			 		
+
 			 	}},
 			 	{ "data": "patient_name", render: function(data, type, full, meta) {
 			 		var r = data;
@@ -98,14 +98,17 @@ $(document).ready( function() {
 	            { "data": "category" , "visible" : false},
 	            { "data":  "description"}
 	        ],
-	        "order":[[6,"desc"]]
+	        "order":[[6,"desc"]],
+	        "language": {
+                        "url": "../library/DataTables/i18n/"+lang+".json"
+                    }
 
 	});
-	
+
 	$("#uploadHRM").on('click',function(){
 		$("#uploadHRMDialog").modal();
 	});
-	
+
 	$("#providerUnmatched").on('change',function(){
 		updateProviderFilter();
 	});
@@ -118,17 +121,17 @@ $(document).ready( function() {
 	$("#demographicUnmatched").on('change',function(){
 		reloadTable();
 	});
- 
+
 	$("#showAddlPatientInfo").on('change',function(){
-		$("#libraryTable").DataTable().column(3).visible($(this).is(":checked"));	
-		$("#libraryTable").DataTable().column(4).visible($(this).is(":checked"));	
-		$("#libraryTable").DataTable().column(5).visible($(this).is(":checked"));	
+		$("#libraryTable").DataTable().column(3).visible($(this).is(":checked"));
+		$("#libraryTable").DataTable().column(4).visible($(this).is(":checked"));
+		$("#libraryTable").DataTable().column(5).visible($(this).is(":checked"));
 	});
-	
+
 	$("#showCategoryInfo").on('change',function(){
-		$("#libraryTable").DataTable().column(10).visible($(this).is(":checked"));	
+		$("#libraryTable").DataTable().column(10).visible($(this).is(":checked"));
 	});
-	
+
 	$('#hrm_file').fileupload({
         dataType: 'json',
         done: function (e, data) {
@@ -138,13 +141,13 @@ $(document).ready( function() {
         	alert('Error uploading file. See log for more information');
         }
     });
-   
+
 });
 
 function updateProviderFilter() {
 	var providerNoVal = $("#providerNo").val();
 	var providerUnmatchedVal = $("#providerUnmatched").is(':checked');
-	
+
 	if(providerUnmatchedVal) {
 		$("#providerNo").prop('disabled',true);
 		$("#noSignOff").prop('checked',false);
@@ -154,9 +157,9 @@ function updateProviderFilter() {
 		$("#noSignOff").prop('disabled',false);
 		$("#noSignOff").prop('checked',true);
 	}
-	
+
 	$("#libraryTable").DataTable().ajax.reload();
-	
+
 	//alert(providerNoVal + "\n" + providerUnmatchedVal);
 }
 
@@ -169,7 +172,7 @@ function fetchNewData() {
 				type:"GET",
 				url:'../hospitalReportManager/hrm.do?method=fetch',
 				dataType:'json',
-				async:true, 
+				async:true,
 				success:function(data) {
 					if(data && data.error) {
 						alert('An error occured. Please check the HRM log for more information\n' + data.error);
@@ -185,18 +188,15 @@ function getHrmStatus() {
 				type:"GET",
 				url:'../hospitalReportManager/hrm.do?method=getHrmStatus',
 				dataType:'json',
-				async:true, 
+				async:true,
 				success:function(data) {
 					if(data.running != null && data.running == true) {
-						$("#hrm_status").html("Fetching data from HRM"); 
+						$("#hrm_status").html("Fetching data from HRM");
 					} else {
-						$("#hrm_status").html("Idle"); 
+						$("#hrm_status").html("Idle");
 					}
-				
+
 				}
 	});
 
 }
-
-
-

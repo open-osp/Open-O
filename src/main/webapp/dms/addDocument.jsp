@@ -30,7 +30,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="w" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_edoc");%>
+	<%response.sendRedirect("${ pageContext.request.contextPath }/securityError.jsp?type=_edoc");%>
 </security:oscarSec>
 <%
 	if(!authed) {
@@ -41,7 +41,8 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib prefix="csrf" uri="http://www.owasp.org/index.php/Category:OWASP_CSRFGuard_Project/Owasp.CsrfGuard.tld" %>
-<%@ page import="java.util.*, oscar.util.*, oscar.OscarProperties, oscar.dms.*, oscar.dms.data.*, org.oscarehr.util.SpringUtils, org.oscarehr.common.dao.CtlDocClassDao"%>
+<%@ page
+	import="java.util.*, oscar.util.*, oscar.OscarProperties, oscar.dms.*, oscar.dms.data.*, org.oscarehr.util.SpringUtils, org.oscarehr.common.dao.CtlDocClassDao"%>
 <%--This is included in documentReport.jsp - wasn't meant to be displayed as a separate page --%>
 <%
 String user_no = (String) session.getAttribute("user");
@@ -136,44 +137,23 @@ for (String reportClass : reportClasses) {
     }
 }
 %>
-<script src="../share/javascript/Oscar.js" type="text/javascript language='JavaScript'"></script>
-<script type="text/javascript" src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" src="../share/javascript/scriptaculous.js"></script>
+
+ <link rel="stylesheet" href="${ pageContext.request.contextPath }/library/jquery/jquery-ui.theme-1.12.1.min.css">
+ <link rel="stylesheet" href="${ pageContext.request.contextPath }/library/jquery/jquery-ui.structure-1.12.1.min.css">
+<script src="${ pageContext.request.contextPath }/share/javascript/Oscar.js" type="text/javascript"></script>
+<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+<script src="${ pageContext.request.contextPath }/share/calendar/calendar.js"></script>
+<script src="${ pageContext.request.contextPath }/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
+<script src="${ pageContext.request.contextPath }/share/calendar/calendar-setup.js"></script>
 
 <link rel="stylesheet" type="text/css" media="all"
-	href="../share/calendar/calendar.css" title="win2k-cold-1" />
-<style type="text/css">
-    .autocomplete_style {
-        background: #fff;
-        text-align: left;
-    }
+	href="${ pageContext.request.contextPath }/share/calendar/calendar.css" title="win2k-cold-1" />
 
-    .autocomplete_style ul {
-        border: 1px solid #aaa;
-        margin: 0px;
-        padding: 2px;
-        list-style: none;
-    }
 
-    .autocomplete_style ul li.selected {
-        background-color: #ffa;
-        text-decoration: underline;
-    }
-</style>
 
-<script type="text/javascript" src="../share/calendar/calendar.js"></script>
-<script type="text/javascript"
-	src="../share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
-<script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
 <script type="text/javascript" language="JavaScript">
-function onloadfunction() {
-    new Autocompleter.Local('docSubClass', 'docSubClass_list', docSubClassList);
-    new Autocompleter.Local('docSubClass2', 'docSubClass_list2', docSubClassList);
-    if(!NiftyCheck())
-        return;
 
-    Rounded("div.topplane","top","transparent","#d1d5bd","small border #d1d5bd");
-    Rounded("div.topplane","bottom","transparent","#f2f7ff","small border #d1d5bd");
+
     <%--request attribute "linkhtmlerrors" & "docerrors" is used to check if a document was just submitted --%>
     <% if (request.getAttribute("linkhtmlerrors") != null) { //Open AddLink div%>
     showhide('addLinkDiv', 'plusminusLinkA');
@@ -182,7 +162,7 @@ function onloadfunction() {
     //setFocus();
     <%}%>
 
-}
+
   function checkSel(sel){
   theForm = sel.form;
   if ((theForm.docDesc.value == "") || (theForm.docDesc.value == "<%= defaultDesc%>")) {
@@ -212,8 +192,8 @@ function setFocus() {
 }*/
 
 function showhide(hideelement, button) {
-    var plus = "+";
-    var minus = "--";
+    var plus = '<i class="icon-plus"></i>';
+    var minus = '<i class="icon-minus"></i>';
     if (document.getElementById) { // DOM3 = IE5, NS6
         if (document.getElementById(hideelement).style.display == 'none') {
               document.getElementById(hideelement).style.display = 'block';
@@ -262,11 +242,11 @@ function newDocType(){
 	if (newOpt != "") {
 	    document.getElementById("docType").options[document.getElementById("docType").length] = new Option(newOpt, newOpt);
 	    document.getElementById("docType").options[document.getElementById("docType").length-1].selected = true;
-		
+
 	    } else {
 	    alert("Invalid entry");
 	}
-	
+
 }
 
 function newDocTypeLink(){
@@ -278,33 +258,27 @@ function newDocTypeLink(){
 	if (newOpt != "") {
 	    document.getElementById("docType1").options[document.getElementById("docType1").length] = new Option(newOpt, newOpt);
 	    document.getElementById("docType1").options[document.getElementById("docType1").length-1].selected = true;
-		
+
 	    } else {
 	    alert("Invalid entry");
 	}
-	
+
 }
 
 
-var docSubClassList = [
-        <% for (int i=0; i<subClasses.size(); i++) { %>
-"<%=subClasses.get(i)%>"<%=(i<subClasses.size()-1)?",":""%>
-        <% } %>
-];
 </script>
 <div class="topplane">
-<div class="docHeading" style="background-color: #d1d5bd;">
-    <a id="plusminusAddDocA" href="javascript: showhide('addDocDiv', 'plusminusAddDocA');"> +<bean:message key="dms.addDocument.msgAddDocument"/></a>
-    <%-- a id="plusminusAddDocA" href="undocumentReport2.jsp"> +<bean:message key="dms.addDocument.msgManageUploadDocument"/></a --%>
-    <a id="plusminusLinkA" href="javascript: showhide('addLinkDiv', 'plusminusLinkA')"> +<bean:message key="dms.addDocument.AddLink"/> </a>
-    <a href="javascript:;" onclick="popup(450, 600, 'addedithtmldocument.jsp?function=<%=module%>&functionid=<%=moduleid%>&mode=addHtml', 'addhtml')">+<bean:message key="dms.addDocument.AddHTML"/></a>
+<div class="docHeading" style="background-color: silver;">
+    <a id="plusminusAddDocA" href="javascript: showhide('addDocDiv', 'plusminusAddDocA');"> <i class="icon-plus"></i>&nbsp;</a><bean:message key="dms.addDocument.msgAddDocument"/>
+    <%-- a id="plusminusAddDocA" href="undocumentReport2.jsp"> <i class="icon-plus"></i>&nbsp;</a><bean:message key="dms.addDocument.msgManageUploadDocument"/> --%>
+    <a id="plusminusLinkA" href="javascript: showhide('addLinkDiv', 'plusminusLinkA')"> <i class="icon-plus"></i>&nbsp;</a><bean:message key="dms.addDocument.AddLink"/>
+    <a href="javascript:;" onclick="popup(450, 600, 'addedithtmldocument.jsp?function=<%=module%>&functionid=<%=moduleid%>&mode=addHtml', 'addhtml')"><i class="icon-plus"></i>&nbsp</a><bean:message key="dms.addDocument.AddHTML"/>
 </div>
 <div id="addDocDiv" class="addDocDiv"
-	style="background-color: #f2f5e3; display: none;"><html:form
+	style="background-color: silver; display: none;"><html:form
 	action="/dms/addEditDocument" method="POST"
 	enctype="multipart/form-data" styleClass="forms"
 	onsubmit="return submitUpload(this)">
-	<input type="hidden" name="<csrf:tokenname/>" value="<csrf:tokenvalue/>"/>
 	<%-- Lists Errors --%>
 	<% for (Enumeration errorkeys = docerrors.keys(); errorkeys.hasMoreElements();) {%>
 	<font class="warning">Error: <bean:message
@@ -312,14 +286,14 @@ var docSubClassList = [
 	<br />
 	<% } %>
 	<input type="hidden" name="function"
-		value="<%=formdata.getFunction()%>" size="20">
+		value="<%=formdata.getFunction()%>" >
 	<input type="hidden" name="functionId"
-		value="<%=formdata.getFunctionId()%>" size="20">
-	<input type="hidden" name="functionid" value="<%=moduleid%>" size="20">
+		value="<%=formdata.getFunctionId()%>" >
+	<input type="hidden" name="functionid" value="<%=moduleid%>" >
 	<input type="hidden" name="parentAjaxId" value="<%=parentAjaxId%>">
 	<input type="hidden" name="curUser" value="<%=curUser%>">
 	<input type="hidden" name="appointmentNo" value="<%=formdata.getAppointmentNo()%>"/>
-	<select id="docType" name="docType" style="width: 160" > 
+	<select id="docType" name="docType" style="width: 160px" >
 		<option value=""><bean:message key="dms.addDocument.formSelect" /></option>
 		<%
                                    for (int i=0; i<doctypes.size(); i++) {
@@ -328,7 +302,7 @@ var docSubClassList = [
 			<%=(formdata.getDocType().equals(doctype))?" selected":""%>><%= doctype%></option>
 		<%}%>
 	</select>
-	<input id="docTypeinput1" type="button" size="20" onClick="newDocType();" value="<bean:message key="dms.documentEdit.formAddNewDocType"/>" /> 
+	<input id="docTypeinput" type="button" class="btn" onClick="newDocType();" value="<bean:message key="dms.documentEdit.formAddNewDocType"/>" />
 	<% if (module.equals("provider")) {%>
                                 Public: <input type="checkbox"
 		name="docPublic" <%=formdata.getDocPublic() + " "%> value="checked">
@@ -337,16 +311,19 @@ var docSubClassList = [
 		value="<%=formdata.getDocDesc()%>" onfocus="checkDefaultValue(this)"
 		<% if (docerrors.containsKey("descmissing")) {%> class="warning" <%}%>>
 	<input type="hidden" name="docCreator"
-		value="<%=formdata.getDocCreator()%>" size="20">
+		value="<%=formdata.getDocCreator()%>" >
 	<span class="fieldlabel" title="Observation Date">Obs Date
 	(yyyy/mm/dd): </span>
-	<input type="text" name="observationDate" id="observationDate"
+<div class="input-append">
+	<input class="span2" type="text" name="observationDate" id="observationDate"
 		value="<%=formdata.getObservationDate()%>"
 		onclick="checkDefaultDate(this, '<%=UtilDateUtilities.DateToString(new Date(), "yyyy/MM/dd")%>')"
-		size="10" style="text-align: center;">
-	<a id="obsdate"><img title="Calendar" src="../images/cal.gif"
-		alt="Calendar" border="0" /></a>
-	<input type="file" name="docFile" size="20"
+		>
+<span class="add-on">
+	<a id="obsdate"><img title="Calendar" src="${ pageContext.request.contextPath }/images/cal.gif"
+		alt="Calendar" ></a></span>
+</div>
+	<input type="file" name="docFile"
 		<% if (docerrors.containsKey("uploaderror")) {%> class="warning" <%}%>>
 	<br />
         <bean:message key="dms.addDocument.msgDocClass"/>:
@@ -369,17 +346,17 @@ for (String reportClass : reportClasses) {
         <div class="autocomplete_style" id="docSubClass_list"></div>
         &nbsp;
         <input type="checkbox" name="restrictToProgram"> Restrict to current program
-        <br />
+        <br /><br>
 	<input type="hidden" name="mode" value="add">
-	<input type="submit" name="Submit" value="Add">
-	<input type="button" name="Button"
+	<input type="submit" name="Submit" value="Add" class="btn btn-primary">
+	<input type="button" name="Button" class="btn"
 		value="<bean:message key="global.btnCancel"/>"
 		onclick="javascript: window.location='documentReport.jsp?function=<%=module%>&functionid=<%=moduleid%>'">
 </html:form></div>
 <div id="addLinkDiv" class="addDocDiv"
-	style="background-color: #f2f5e3; display: none;"><html:form
+	style="background-color: silver; display: none;"><html:form
 	action="/dms/addLink" method="POST" styleClass="forms"
-	onsubmit="return submitUploadLink(this)">
+	onsubmit="return submitUploadLink(this)"><br><br>
 	<%-- Lists Errors --%>
 	<% for (Enumeration errorkeys = linkhtmlerrors.keys(); errorkeys.hasMoreElements();) {%>
 	<font class="warning">Error: <bean:message
@@ -387,15 +364,15 @@ for (String reportClass : reportClasses) {
 	<br />
 	<% } %>
 	<input type="hidden" name="function"
-		value="<%=formdata.getFunction()%>" size="20">
+		value="<%=formdata.getFunction()%>" >
 	<input type="hidden" name="functionId"
-		value="<%=formdata.getFunctionId()%>" size="20">
-	<input type="hidden" name="functionid" value="<%=moduleid%>" size="20">
+		value="<%=formdata.getFunctionId()%>" >
+	<input type="hidden" name="functionid" value="<%=moduleid%>" >
 	<input type="hidden" name="observationDate"
 		value="<%=formdata.getObservationDate()%>">
 		<input type="hidden" name="appointmentNo" value="<%=formdata.getAppointmentNo()%>"/>
-	<select id="docType1" name="docType" style="width: 160" > 
- 		<option value=""><bean:message key="dms.addDocument.formSelect" /></option> 
+	<select id="docType1" name="docType" style="width: 160px" >
+ 		<option value=""><bean:message key="dms.addDocument.formSelect" /></option>
 		<%
          for (int i1=0; i1<doctypes.size(); i1++) {
                                       String doctype = (String) doctypes.get(i1); %>
@@ -403,7 +380,7 @@ for (String reportClass : reportClasses) {
 			<%=(formdata.getDocType().equals(doctype))?" selected":""%>><%= doctype%></option>
 		<%}%>
 	</select>
-	<input id="docTypeinput1" type="button" size="20" onClick="newDocTypeLink();" value="<bean:message key="dms.documentEdit.formAddNewDocType"/>" />  
+	<input id="docTypeinput1" type="button"  onClick="newDocTypeLink();" value="<bean:message key="dms.documentEdit.formAddNewDocType"/>" />
 	<% if (module.equals("provider")) {%>
                                 Public: <input type="checkbox"
 		name="docPublic" <%=formdata.getDocPublic() + " "%> value="checked">
@@ -415,11 +392,11 @@ for (String reportClass : reportClasses) {
 	<input type="text" name="html" size="30"
 		value="<%=formdata.getHtml()%>" onfocus="checkDefaultValue(this)">
 	<input type="hidden" name="docCreator"
-		value="<%=formdata.getDocCreator()%>" size="20">
+		value="<%=formdata.getDocCreator()%>" >
 		<input type="hidden" name="appointmentNo" value="<%=formdata.getAppointmentNo()%>"/>
 	<br />
         <bean:message key="dms.addDocument.msgDocClass"/>:
-        <select name="docClass" id="docClass">
+        <select name="docClass" id="docClassB">
             <option value=""><bean:message key="dms.addDocument.formSelectClass"/></option>
 <% boolean consult2Shown = false;
 for (String reportClass : reportClasses) {
@@ -436,9 +413,9 @@ for (String reportClass : reportClasses) {
         <bean:message key="dms.addDocument.msgDocSubClass"/>:
         <input type="text" name="docSubClass" id="docSubClass2" style="width:330px">
         <div class="autocomplete_style" id="docSubClass_list2"></div>
-        
-        
-		
+
+
+
         <br />
 	<input type="hidden" name="mode" value="addLink">
 	<input type="SUBMIT" name="Submit" value="Add">

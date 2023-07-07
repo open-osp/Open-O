@@ -952,11 +952,7 @@ div.logoutBox {
 			<li><a href="#"
 				onclick='popupPage(550,800,&quot;<html:rewrite page="/admin/updatedemographicprovider.jsp"/>&quot;);return false;'><bean:message
 				key="admin.admin.btnUpdatePatientProvider" /></a></li>
-		   
-		   <% if (OscarProperties.getInstance().getProperty("NEW_CONTACTS_UI","false").equals("true")) { %>
-            	<li><a href="#" onclick='popupPage(800, 1000,&quot;<html:rewrite page="/demographic/migrate_demographic_contacts.jsp"/>&quot;);return false;'><bean:message key="admin.admin.migrate_contacts"/></a></li>
-            <% } %>
-				
+
 		</ul>
 		</div>
 		

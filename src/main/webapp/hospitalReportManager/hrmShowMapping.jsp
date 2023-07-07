@@ -24,36 +24,44 @@ if(!authed) {
 }
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@page import="java.util.*, org.oscarehr.hospitalReportManager.*, org.oscarehr.hospitalReportManager.model.HRMCategory"%>
-<%
-	String deepColor = "#CCCCFF", weakColor = "#EEEEFF";
-	String country = request.getLocale().getCountry();
-%>
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<html:html locale="true">
+<!DOCTYPE html >
+<html:html locale="true" >
 <head>
+<html:base />
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Show Mappings</title>
-	<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-	<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>
+	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" >
+
+	<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+
+	<script>
+	    jQuery(document).ready( function () {
+	        jQuery('#tblMap').DataTable({
+            "order": [],
+	        "bPaginate": false,
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+            });
+	    });
+    </script>
+
 </head>
 
-<body onunload="updateAjax()" class="BodyStyle" vlink="#0000FF">
+<body onunload="updateAjax()" class="BodyStyle" >
+	<div class="table-responsive">
+
+	<div class="col-sm-12">
 <h4>Show Mappings</h4>
 <p class="pull-right">
-	<a href="javascript:popupStart(300,400,'Help.jsp')"><bean:message key="global.help" /></a> | 
+	<a href="javascript:popupStart(300,400,'Help.jsp')"><bean:message key="global.help" /></a> |
 	<a href="javascript:popupStart(300,400,'About.jsp')"><bean:message key="global.about" /></a> |
 	<a href="javascript:popupStart(300,400,'License.jsp')"><bean:message key="global.license" /></a>
 </p>
@@ -64,7 +72,7 @@ if(!authed) {
 		Successfully added the mapping
 	<% 	} else { %>
 		Error encountered while adding the mapping<br />
-	<% 
+	<%
 		}
 	}
 	%>
@@ -73,8 +81,8 @@ if(!authed) {
 	<a href="<%=request.getContextPath() %>/hospitalReportManager/hrmAddClassMapping.jsp">+ Add a class mapping</a>
 </div>
 <hr/>
-<table class="table table-bordered table-striped table-hover table-condensed">
-	<tbody>
+<table id="tblMap" class="table table-striped table-hover table-condensed">
+	<thead>
 		<tr>
 			<th>Sending Facility Id</th>
 			<th>Class Name</th>
@@ -84,6 +92,8 @@ if(!authed) {
 			<th>Category</th>
 			<th></th>
 		</tr>
+    </thead>
+	<tbody>
 		<%
 		ArrayList<HashMap<String,? extends Object>> hrmmappings = HRMUtil.listMappings();
 		for (int i = 0; i < hrmmappings.size(); i++) {
@@ -92,16 +102,18 @@ if(!authed) {
 		<tr>
 			<td><%=curmapping.get("id")%>&nbsp;</td>
 			<td><%=curmapping.get("class")%>&nbsp;</td>
-			<td align='center'><%=curmapping.get("sub_class")%>&nbsp;</td>
+			<td><%=curmapping.get("sub_class")%>&nbsp;</td>
 			<td><%=curmapping.get("mnemonic") %>&nbsp;</td>
 			<td><%=curmapping.get("description") %>&nbsp;</td>
 			<td><%=((HRMCategory) curmapping.get("category")).getCategoryName() %>&nbsp;</td>
 			<td><a href="<%=request.getContextPath() %>/hospitalReportManager/Mapping.do?deleteMappingId=<%=curmapping.get("mappingId") %>">Delete</a></td>
 		</tr>
 		<%
-		} 
+		}
 		%>
 	</tbody>
 </table>
+</div>
+</div>
 </body>
 </html:html>

@@ -23,71 +23,66 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ page import="java.util.List"%>
 <%@ page import="org.oscarehr.common.model.BillingPaymentType"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+
 <html>
-
-<style type="text/css">
-body {
-	font-size: 18px;
-	font-family: Verdana;
-}
-</style>
-
 <head>
+<title>Manage Billing Payment Type</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js"></script>
-	<title>Manage Billing Payment Type</title>
-</head>
+    <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+    <link href="${ pageContext.request.contextPath }/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+    <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/js/global.js"></script>
+    <script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+
+    <script>
+	    jQuery(document).ready( function () {
+	        jQuery('#tblBillType').DataTable({
+            "order": [],
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+            });
+	    });
+    </script>
 
 <%
 	List<BillingPaymentType> paymentTypeList = (List<BillingPaymentType>) request
 			.getAttribute("paymentTypeList");
 %>
-
+</head>
 <body>
-	<table width="100%">
-		<tbody>
-			<tr bgcolor="#CCCCFF">
-				<th>Manage Billing Payment Type</th>
-			</tr>
-		</tbody>
-	</table>
-	<p />
-	<p />
+&nbsp;<h4>Manage Billing Payment Type</h4>
 
-	<table width="100%">
-		<tbody>
-			<tr bgcolor="#CCCCFF">
+<div class="well">
+	<table style="width:80%" id="tblBillType" class="table table-striped">
+		<thead>
+			<tr>
 				<th>Id</th>
 				<th>Type</th>
-				<th colspan="2">Operation</th>
+				<th>Operation</th>
+                <th></th>
 			</tr>
+        </thead>
+        <tbody>
 			<%
 				int count = 0;
-				String bgColor = "white";
 				for (BillingPaymentType paymentType : paymentTypeList) {
 					count++;
-					if (count % 2 == 0) {
-			%>
-			<tr bgcolor="white">
-				<%
-					} else {
 				%>
-			
-			<tr bgcolor="#EEEEFF">
-				<%
-					}
-				%>
+            <tr>
 				<td><%=paymentType.getId()%></td>
 				<td><%=paymentType.getPaymentType()%></td>
 				<td>
 				<a href="<%=request.getContextPath()%>/billing/CA/ON/editBillingPaymentType.jsp?id=<%=paymentType.getId()%>&type=<%=paymentType.getPaymentType()%>">Edit</a>
 				</td>
 				<td>
-				<a href="#" paymentTypeId="<%=paymentType.getId()%>">Delete</a>
+				<a href="#" data-paymentTypeId="<%=paymentType.getId()%>">Delete</a>
 				</td>
 			</tr>
 			<%
@@ -95,15 +90,15 @@ body {
 			%>
 		</tbody>
 	</table>
-	<p />
+	<p>
 	<hr />
-	<center style="font-family: Verdana">
-		<a
+		<a class="btn"
 			href="<%=request.getContextPath()%>/billing/CA/ON/editBillingPaymentType.jsp">Create
 			a new payment type</a>
-	</center>
-</body>
-</html>
+
+</div>
+
+
 
 <script type="text/javascript">
 
@@ -115,7 +110,7 @@ jQuery(document).ready(function() {
 			async: "false",
 			timeout: 30000,
 			dataType: "json",
-			data: {method: "removeType", paymentTypeId: event.target.getAttribute("paymentTypeId")},
+			data: {method: "removeType", paymentTypeId: event.target.getAttribute("data-paymentTypeId")},
 			success: function (data) {
 				if (data == null) {
 					alert("Error happened after getting response!");
@@ -136,4 +131,5 @@ jQuery(document).ready(function() {
 })
 
 </script>
-
+</body>
+</html>

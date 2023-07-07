@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -50,20 +49,22 @@
 %>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Episode Form</title>
 
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
-<script type="text/javascript" language="JavaScript" src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
-<script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
+
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
 <script>
 	var ctx = '<%=request.getContextPath()%>';
 
 	$(document).ready(function(){
-				
+
 		$("#startDate").datepicker({ dateFormat: "yy-mm-dd" });
 		$("#endDate").datepicker({ dateFormat: "yy-mm-dd" });
         $("#description").autocomplete({
@@ -75,14 +76,14 @@
                     return false;
             }
     	});
-               
+
         $("#search_coding_system").bind('change',function(){
     		$("#description").autocomplete("option","source",ctx+'/CodeSearch.do?codingSystem='+ $("#search_coding_system").val());
-    		$('input[name="episode.codingSystem"]').val($("#search_coding_system").val());            
+    		$('input[name="episode.codingSystem"]').val($("#search_coding_system").val());
     	});
-        
-        $('input[name="episode.codingSystem"]').val($("#search_coding_system").val());            
-        
+
+        $('input[name="episode.codingSystem"]').val($("#search_coding_system").val());
+
         <%if(episode != null) { %>
         	$( "#code" ).val('<%=episode.getCode()%>');
         	$('input[name="episode.status"]').val('<%=episode.getStatus()%>');
@@ -94,7 +95,7 @@
         	$( "#startDate" ).val('<%=episode.getStartDateStr()%>');
         	$( "#endDate" ).val('<%=episode.getEndDateStr()%>');
         <% } %>
-               
+
 	});
 
 
@@ -109,7 +110,7 @@
 			alert("Start Date Required");
 			return false;
 		}
-		
+
 		if($("#endDate").val().length == 0 && $('select[name="episode.status"]').val() == 'Completed') {
 			alert("End Date Required");
 			return false;
@@ -117,84 +118,7 @@
 		return true;
 	}
 </script>
-<style type="text/css">
-table.outline {
-	margin-top: 50px;
-	border-bottom: 1pt solid #888888;
-	border-left: 1pt solid #888888;
-	border-top: 1pt solid #888888;
-	border-right: 1pt solid #888888;
-}
 
-table.grid {
-	border-bottom: 1pt solid #888888;
-	border-left: 1pt solid #888888;
-	border-top: 1pt solid #888888;
-	border-right: 1pt solid #888888;
-}
-
-td.gridTitles {
-	border-bottom: 2pt solid #888888;
-	font-weight: bold;
-	text-align: center;
-}
-
-td.gridTitlesWOBottom {
-	font-weight: bold;
-	text-align: center;
-}
-
-td.middleGrid {
-	border-left: 1pt solid #888888;
-	border-right: 1pt solid #888888;
-	text-align: center;
-}
-
-label {
-	float: left;
-	width: 120px;
-	font-weight: bold;
-}
-
-label.checkbox {
-	float: left;
-	width: 116px;
-	font-weight: bold;
-}
-
-label.fields {
-	float: left;
-	width: 80px;
-	font-weight: bold;
-}
-
-span.labelLook {
-	font-weight: bold;
-}
-
-input,textarea,select { //
-	margin-bottom: 5px;
-}
-
-textarea {
-	width: 450px;
-	height: 100px;
-}
-
-.boxes {
-	width: 1em;
-}
-
-#submitbutton {
-	margin-left: 120px;
-	margin-top: 5px;
-	width: 90px;
-}
-
-br {
-	clear: left;
-}
-</style>
 
 	<style>
 	.ui-autocomplete {
@@ -215,23 +139,23 @@ br {
 
 </head>
 
-<body vlink="#0000FF" class="BodyStyle">
+<body class="BodyStyle">
 
 <table class="MainTable">
 	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">Admin</td>
+		<td class="MainTableTopRowLeftColumn"><h4>Admin</h4></td>
 		<td class="MainTableTopRowRightColumn">
 		<table class="TopStatusBar" style="width: 100%;">
 			<tr>
-				<td>Episode Editor</td>
+				<td><h4>Episode Editor</h4></td>
 			</tr>
 		</table>
 		</td>
 	</tr>
 	<tr>
-		<td class="MainTableLeftColumn" valign="top" width="160px;">
+		<td class="MainTableLeftColumn" style="width:160px;">
 		&nbsp;</td>
-		<td class="MainTableRightColumn" valign="top">
+		<td class="MainTableRightColumn" >
 			<html:form action="/Episode">
 				<input type="hidden" name="method" value="save"/>
 				<input type="hidden" id="episode.demographicNo" name="episode.demographicNo" value="<%=request.getAttribute("demographicNo")%>"/>
@@ -274,22 +198,22 @@ br {
 							<td>Status:</td>
 							<td>
 								<%
-								    
+
 									String status = episode == null ? "Current" : episode.getStatus();
 									if(status == null || status.length()==0) {
 										status="Current";
 									}
-									String selected=" selected=\"selected\" ";									
+									String selected=" selected=\"selected\" ";
 								%>
 								<select id="episode.status" name="episode.status">
-									<option value="Current" <%=("Current".equals(status))?selected:"" %>>Current</option>									
+									<option value="Current" <%=("Current".equals(status))?selected:"" %>>Current</option>
 									<option value="Complete" <%=("Complete".equals(status))?selected:"" %>>Completed</option>
 									<option value="Deleted" <%=("Deleted".equals(status))?selected:"" %>>Deleted</option>
 								</select>
 							</td>
 						</tr>
 					</table>
-				<html:submit onclick="return validate();"/>
+				<html:submit styleClass="btn btn-primary" onclick="return validate();"/>
 			</html:form>
 		</td>
 	</tr>

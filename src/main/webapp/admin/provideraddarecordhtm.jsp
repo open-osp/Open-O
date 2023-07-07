@@ -250,9 +250,6 @@ for (int i=0; i<sites.size(); i++) {
 				key="admin.provider.formType.optionMidwife" /></option>
 			<option value="admin"><bean:message
 				key="admin.provider.formType.optionAdmin" /></option>
-			<caisi:isModuleLoad moduleName="survey">
-				<option value="er_clerk"><bean:message key="admin.provider.formType.optionErClerk" /></option>
-			</caisi:isModuleLoad>
 		</select> 
 		</td>
 	</tr>
@@ -388,12 +385,13 @@ for (int i=0; i<sites.size(); i++) {
 					<%
 						LookupListManager lookupListManager = SpringUtils.getBean(LookupListManager.class);
 						LookupList ll = lookupListManager.findLookupListByName(LoggedInInfo.getLoggedInInfoFromSession(request), "practitionerNoType");
-						for(LookupListItem llItem : ll.getItems()) {
-							%>
-								<option value="<%=llItem.getValue()%>"><%=llItem.getLabel()%></option>
-							<%
+						if(ll != null) {
+							for(LookupListItem llItem : ll.getItems()) {
+								%>
+									<option value="<%=llItem.getValue()%>"><%=llItem.getLabel()%></option>
+								<%
+							}
 						}
-
 					%>
 				</select>
 

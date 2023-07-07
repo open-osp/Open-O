@@ -71,14 +71,14 @@
 	}
 %>
 
-
+<!DOCTYPE html>
 <html:html locale="true">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" src="../share/javascript/Oscar.js"/></script>
+<script type="text/javascript" src="../share/javascript/Oscar.js"></script>
 <title><bean:message key="RxPreview.title"/></title>
-<style type="text/css" media="print">
+<style media="print">
  .noprint {
 	 display: none;
  }
@@ -205,12 +205,10 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
 <html:form action="/form/formname" styleId="preview2Form">
 
 	<input type="hidden" name="demographic_no" value="<%=bean.getDemographicNo()%>"/>
-    <p id="pharmInfo" style="float:right;">
-    </p>
     <table>
         <tr>
             <td>
-                            <table id="pwTable" width="400px" height="500px" cellspacing=0 cellpadding=10 border=2>
+	            <table id="pwTable" width="400px" height="500px" cellspacing=0 cellpadding=10 border=2>
                                     <tr>
                                             <td valign=top height="100px"><input type="image"
                                                     src="img/rx.gif" border="0" alt="[Submit]"
@@ -452,8 +450,7 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
                                             }
                                             %> <input type="hidden" name="rx"
                                                                     value="<%= StringEscapeUtils.escapeHtml(strRx.replaceAll(";","\\\n")) %>" />
-                                                            <input type="hidden" name="rx_no_newlines"
-                                                                    value="<%= strRxNoNewLines.toString() %>" />
+                                                            <input type="hidden" name="rx_no_newlines" value="<%= strRxNoNewLines.toString() %>" />
                                                             <input type="hidden" name="additNotes" value=""/>
                                                                     </td>
                                                              
@@ -473,7 +470,7 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
                                                     <tr valign=bottom>
                                                             <td height=25px width=25%><bean:message key="RxPreview.msgSignature"/>:</td>
                                                             <td height=25px width=75%
-                                                                    style="border-width: 0; border-bottom-width: 1; border-style: solid;">
+                                                                    style="border-width: 0; border-bottom-width: 1px; border-style: solid;">
                                                                     <%
 																	String signatureRequestId = null;	
 																	String imageUrl=null;
@@ -535,6 +532,7 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
 		                                                                    style="float: right;"><bean:message key="RxPreview.msgTimesPrinted"/>:&nbsp;<%=String.valueOf(rx.getNumPrints())%></span>
 		                                                            <input type="hidden" name="origPrintDate" value="<%=rx.getPrintDate()%>"/>
 		                                                            <input type="hidden" name="numPrints" value="<%=String.valueOf(rx.getNumPrints())%>"/>
+			                                                        <input type="hidden" name="rxReprint" value="true"/>
 		                                                        </td>
 		                                                    </tr>
 	                                                    <%
@@ -568,6 +566,10 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
                                     </tr>
                             </table>
 			</td>
+	        <td style="vertical-align: top;padding: 5px;white-space: nowrap;">
+		        <div id="pharmInfo" >
+		        </div>
+	        </td>
 		</tr>
 	</table>
 </html:form>

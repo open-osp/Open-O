@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
@@ -49,34 +49,35 @@
 <title><bean:message key="admin.admin.traceabilityReport"/></title>
 <!--<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>-->
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
-<script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
+<script src="${ pageContext.servletContext.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+<script src="${ pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
+<link href="${ pageContext.servletContext.contextPath }/css/bootstrap.min.css" rel="stylesheet">
 
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-	
+<link href="${ pageContext.servletContext.contextPath }/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+<link href="${ pageContext.servletContext.contextPath }/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<script src="${ pageContext.servletContext.contextPath }/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
 <script language="JavaScript">
 function setfocus() {
 	this.focus();
 }
 
-function generate() {  
-    document.forms[0].method.value='generate';  
-    document.forms[0].submit();  
+function generate() {
+    document.forms[0].method.value='generate';
+    document.forms[0].submit();
 }
 
 function validateInput() {
 	if (document.forms[1].file.value == ""){
 		alert ("<bean:message key='admin.admin.downloadEmpty'/>");
-		return false; 
+		return false;
 	}
 }
 
 </script>
 
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+
 <script>
 $(function() {
     $( document ).tooltip();
@@ -103,9 +104,9 @@ You can click "Download Traceability Data from this Oscar" to generate a file wi
 If you have a Traceability Data file from another Oscar, you can choose it and click "Generate Traceability Report" to create a file which will let you know what files in the OSCAR program have been modified, added, or removed.
 
 <form action="GenerateTraceabilityReportAction.do" method="post" enctype="multipart/form-data" onsubmit="return validateInput()">
-<input type="file" name="file" value="Browse" />
-<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img border="0" src="../images/icon_alertsml.gif"/></span></span>
-        
+<input type="file" name="file"/>
+<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img alt="alert" src="../images/icon_alertsml.gif"/></span>
+
 <br>
 <input class="btn btn-primary" type="submit" name="submit" value="Generate"/>
 </form>

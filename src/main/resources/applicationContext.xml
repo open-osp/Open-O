@@ -91,7 +91,7 @@
 	<bean id="defaultIssueDao" class="org.caisi.dao.DefaultIssueDao" autowire="byName" />
 	
     <bean id="MacroDAO" class="org.oscarehr.eyeform.dao.MacroDao" autowire="byName" />
-	<bean id="rourke2009Dao" class="oscar.form.dao.Rourke2009DAO" autowire="byName" />
+	<bean id="rourke2009Dao" class="org.oscarehr.common.dao.forms.Rourke2009DAO" autowire="byName" />
 	<bean id="ocanSubmissionLogDao" class="org.oscarehr.PMmodule.dao.OcanSubmissionLogDao" autowire="byName" />
 
 	<bean id="lookupDao" class="com.quatro.dao.LookupDao" autowire="byName" />
@@ -244,10 +244,10 @@
 	<bean id="extPrintSpecsHistory" class="org.oscarehr.eyeform.web.SpecsHistoryPrint" autowire="byName"/>
 
 	<!-- Encounter Form DAO -->
-	<bean id="Rourke2009DAO" class="oscar.form.dao.Rourke2009DAO" autowire="byName"/>
-	<bean id="FormBCAR2020Dao" class="oscar.form.dao.FormBCAR2020Dao" autowire="byName"/>
-	<bean id="FormBCAR2020DataDao" class="oscar.form.dao.FormBCAR2020DataDao" autowire="byName"/>
-	<bean id="FormBCAR2020TextDao" class="oscar.form.dao.FormBCAR2020TextDao" autowire="byName"/>
+	<bean id="Rourke2009DAO" class="org.oscarehr.common.dao.forms.Rourke2009DAO" autowire="byName"/>
+	<bean id="FormBCAR2020Dao" class="org.oscarehr.common.dao.forms.FormBCAR2020Dao" autowire="byName"/>
+	<bean id="FormBCAR2020DataDao" class="org.oscarehr.common.dao.forms.FormBCAR2020DataDao" autowire="byName"/>
+	<bean id="FormBCAR2020TextDao" class="org.oscarehr.common.dao.forms.FormBCAR2020TextDao" autowire="byName"/>
 
 
 	<!--Email Support -->

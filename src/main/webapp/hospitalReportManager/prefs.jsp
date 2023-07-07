@@ -38,39 +38,37 @@
 	boolean isHrm = securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_hrm", "r", null);
 %>
 
-<!DOCTYPE html > 
+<!DOCTYPE html >
 <html:html locale="true" >
 <head>
+<html:base />
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>HRM Prefs - OSCAR EMR</title>
 
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />
- 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" /> 
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/hospitalReportManager/inbox.css" />
-	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js" ></script>
+	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" >
+	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/hospitalReportManager/inbox.css" >
+
+	<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
+
 	<script>
-	// table sorting
 	$(document).ready(function(){
 		loadConfidentialityStatement();
-	});	
-	
-	function loadConfidentialityStatement() {	
+	});
+
+	function loadConfidentialityStatement() {
 		$.ajax({
 			type:"GET",
 			url:'../hospitalReportManager/hrm.do?method=getConfidentialityStatement',
 			dataType:'json',
-			async:true, 
+			async:true,
 			success:function(data) {
 				$("#confidentialityStatement").val(data.value);
 			}
 		});
 	}
-	
+
 	function saveConfidentialityStatement() {
 		$.ajax({
 			type:"POST",
@@ -79,30 +77,30 @@
 				value: $("#confidentialityStatement").val()
 			},
 			dataType:'json',
-			async:true, 
+			async:true,
 			success:function(data) {
 				alert('Saved');
 			}
-		});	
+		});
 	}
-	
+
 	function addToOutageList() {
 		$.ajax({
 			type:"POST",
 			url:'../hospitalReportManager/hrm.do?method=addToOutageList',
 			dataType:'json',
-			async:true, 
+			async:true,
 			success:function(data) {
 				alert('Saved');
 			}
-		});	
+		});
 	}
 	</script>
 </head>
 <body>
 <div>
 <div class="col-sm-12">
-	
+
     <!-- Fixed navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -119,7 +117,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            
+
           </ul>
           <ul class="nav navbar-nav navbar-right">
           <li><a href="inbox.jsp">HRM Inbox</a></li>
@@ -127,29 +125,29 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-	
+
 	<div class="table-responsive" id="libraryTableContainer">
-	
+
 		<div class="col-sm-12">
-		
-				
+
+
 				<div class="panel panel-default">
 				  <div class="panel-heading">
 				    <h3 class="panel-title">Confidentiality Statement</h3>
 				  </div>
 				  <div class="panel-body">
-				  
+
 				  	<table class="table">
-				  		
+
 					  	<tr>
 					  		<td>
 					  			<textarea class="form-control" id="confidentialityStatement" rows="10" style="width:60%"></textarea>
 					  		</td>
-					  		
+
 					  	</tr>
 					  	<tr>
 					  		<td>
-					  				<input type="button" value="Save" class="btn btn-primary" id="saveBtn" onClick="saveConfidentialityStatement()"/>			
+					  				<input type="button" value="Save" class="btn btn-primary" id="saveBtn" onClick="saveConfidentialityStatement()"/>
 					  		</td>
 					  	</tr>
   					</table>
@@ -162,20 +160,20 @@
 				    <h3 class="panel-title">HRM Outage Recipient List</h3>
 				  </div>
 				  <div class="panel-body">
-				  
-					  <input type="button" value="I don't want to receive any more HRM outtage messages for this outtage instance" class="btn btn-default" id="saveBtn" onClick="addToOutageList()"/>		
-				 
+
+					  <input type="button" value="I don't want to receive any more HRM outtage messages for this outtage instance" class="btn btn-default" id="saveBtn2" onClick="addToOutageList()"/>
+
 				  </div>
 				</div>
-				
-			
+
+
 		</div>
-		
-	
-	
+
+
+
 	</div>
 
-</div>	
+</div>
 </div> <!-- end container -->
 </body>
 </html:html>

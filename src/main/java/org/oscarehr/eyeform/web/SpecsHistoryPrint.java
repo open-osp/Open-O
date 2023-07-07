@@ -32,6 +32,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.itextpdf.text.*;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.casemgmt.service.CaseManagementPrintPdf;
@@ -41,18 +42,13 @@ import org.oscarehr.eyeform.model.EyeformSpecsHistory;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
 
 public class SpecsHistoryPrint implements ExtPrint {
 
 	private static Logger logger = MiscUtils.getLogger();
 	
 	@Override
-	public void printExt(CaseManagementPrintPdf engine, HttpServletRequest request) throws IOException, DocumentException{
+	public void printExt(CaseManagementPrintPdf engine, HttpServletRequest request) throws IOException, DocumentException {
 		logger.debug("specs history print!!!!");
 		String startDate = request.getParameter("pStartDate");
 		String endDate = request.getParameter("pEndDate");
@@ -88,7 +84,7 @@ public class SpecsHistoryPrint implements ExtPrint {
         else
             engine.setNewPage(true);
         
-        Font obsfont = new Font(engine.getBaseFont(), engine.FONTSIZE, Font.UNDERLINE);                
+        Font obsfont = new Font(engine.getBaseFont(), engine.FONTSIZE, Font.UNDERLINE);
        
         
         Paragraph p = new Paragraph();

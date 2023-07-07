@@ -31,22 +31,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
@@ -95,6 +80,10 @@ public class Tickler extends AbstractModel<Integer> {
 	@Column(length=1)
 	@Enumerated(EnumType.STRING)
 	private STATUS status = STATUS.A;
+
+	@Column(name="creation_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createDate = new Date();
 	
 	@Column(name="update_date")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -122,14 +111,15 @@ public class Tickler extends AbstractModel<Integer> {
 	@NotFound(action=NotFoundAction.IGNORE)
 	private TicklerCategory ticklerCategory;
 	
-	@OneToMany(fetch=FetchType.EAGER)
+	@OneToMany(fetch=FetchType.LAZY)
     @JoinColumn(name="tickler_no", referencedColumnName="tickler_no")
-	@OrderBy("updateDate ASC")
+	@NotFound(action=NotFoundAction.IGNORE)
 	private Set<TicklerUpdate> updates = new HashSet<TicklerUpdate>();
 	
-	@OneToMany( fetch=FetchType.EAGER)
+	@OneToMany(fetch=FetchType.EAGER)
     @JoinColumn(name="tickler_no", referencedColumnName="tickler_no")
-	@OrderBy("updateDate ASC")
+	@OrderBy("updateDate DESC")
+	@NotFound(action=NotFoundAction.IGNORE)
 	private Set<TicklerComment> comments = new HashSet<TicklerComment>();
 	
 	
@@ -294,6 +284,13 @@ public class Tickler extends AbstractModel<Integer> {
 
 	public void setProgram(Program program) {
 		this.program = program;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
 
 	//web stuff
@@ -590,6 +587,21 @@ public class Tickler extends AbstractModel<Integer> {
 
 	public void setTicklerCategory(TicklerCategory ticklerCategory) {
 		this.ticklerCategory = ticklerCategory;
+	}
+
+
+	@PrePersist
+	protected void jpaPersist() {
+		this.createDate = new Date();
+		this.updateDate = this.createDate;
+		if (this.serviceDate == null) {
+			this.serviceDate = this.createDate;
+		}
+	}
+
+	@PreUpdate
+	protected void jpaUpdate() {
+		this.updateDate = new Date();
 	}
 
 }

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.Allergy;
 import org.oscarehr.phr.model.PHRMedication;
@@ -455,5 +456,27 @@ public class RxSessionBean  implements java.io.Serializable {
 
        logger.debug("took "+end+ "milliseconds vs "+end2);
        return interactions;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("providerNo", providerNo)
+                .append("demographicNo", demographicNo)
+                .append("view", view)
+                .append("stash", stash)
+                .append("favIdRandomIdMap", favIdRandomIdMap)
+                .append("stashIndex", stashIndex)
+                .append("allergyWarnings", allergyWarnings)
+                .append("missingAllergyWarnings", missingAllergyWarnings)
+                .append("workingAllergyWarnings", workingAllergyWarnings)
+                .append("attributeNames", attributeNames)
+                .append("interactingDrugList", interactingDrugList)
+                .append("reRxDrugIdList", reRxDrugIdList)
+                .append("randomIdDrugIdPair", randomIdDrugIdPair)
+                .append("listMedHistory", listMedHistory)
+                .append("pairPHRMed", pairPHRMed)
+                .append("pairPrevViewedPHRMed", pairPrevViewedPHRMed)
+                .toString();
     }
 }

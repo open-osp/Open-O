@@ -17,13 +17,14 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
+<!DOCTYPE html>
 <%if (session.getAttribute("user") == null) {
-				response.sendRedirect("../logout.jsp");
+				response.sendRedirect("${pageContext.request.contextPath}/logout.jsp");
 			}
 			String user_no = (String) session.getAttribute("user");
 
 			%>
-<%@ page errorPage="../../../appointment/errorpage.jsp"
+<%@ page errorPage="${pageContext.request.contextPath}/appointment/errorpage.jsp"
 	import="java.util.*,java.sql.*,oscar.*,java.text.*,java.net.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.JdbcBillingPageUtil"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.*"%>
@@ -166,7 +167,7 @@
 					} else {
 						msg = name + " is <font color='red'>NOT</font> deleted. Action failed! Try edit it again.";
 						action = "edit" + name;
-						prop.setProperty("name", name);						
+						prop.setProperty("name", name);
 					  }
 					}
 				}
@@ -215,23 +216,11 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Add/Edit Service Code</title>
-<link rel="stylesheet" type="text/css" href="billingON.css" />
-<link rel="StyleSheet" type="text/css" href="../web.css" />
-<!-- calendar stylesheet -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../share/calendar/calendar.css" title="win2k-cold-1" />
-<!-- main calendar program -->
-<script type="text/javascript" src="../../../share/calendar/calendar.js"></script>
-<!-- language for the calendar -->
-<script type="text/javascript"
-	src="../../../share/calendar/lang/<bean:message key="global.javascript.calendar"/>">
-              </script>
-<!-- the following script defines the Calendar.setup helper function, which makes
-       adding a calendar a matter of 1 or 2 lines of code. -->
-<script type="text/javascript"
-	src="../../../share/calendar/calendar-setup.js"></script>
+
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>
+    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
+
 <script language="JavaScript">
 
       <!--
@@ -245,7 +234,7 @@
 	        var ret = checkServiceCode();
 	        return ret;
 	    }
-	    
+
 	    // @ OSCARSERVICE
 		function onDelete() {
 			var ret = false;
@@ -253,7 +242,7 @@
 			return ret;
 		}
 		// @ OSCARSERVICE
-	    
+
 	    function onSave() {
 	        //document.forms[0].submit.value="Save";
 	        var ret = checkServiceCode();
@@ -319,7 +308,7 @@
 			            b = false;
 			            alert ("You must type in a number in the right Dx field!");
 			        }
-	        } 
+	        }
 			return b;
 	    }
 	    function isNumber(s){
@@ -336,26 +325,23 @@
 	    function upCaseCtrl(ctrl) {
 			ctrl.value = ctrl.value.toUpperCase();
 		}
-	    
+
 //-->
 
       </script>
 </head>
-<body bgcolor="ivory" onLoad="setfocus()" topmargin="0" leftmargin="0"
-	rightmargin="0">
-<center>
-<table BORDER="1" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
+<body onLoad="setfocus()" >
+<h4>Add/Edit Service Code</h4>
+<table style="width:100%;">
 	<tr class="myDarkGreen">
-		<th><font color="white"><%=msg%></font></th>
+		<th class="alert alert-info"><%=msg%></th>
 	</tr>
 </table>
-</center>
 
-<table BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%"
-	class="myYellow">
-	<form method="post" name="baseur0" action="billingONfavourite.jsp">
+<form method="post" name="baseur0" action="billingONfavourite.jsp">
+<table style="width:100%;">
 	<tr>
-		<td align="right" width="50%"><select name="name" id="name">
+		<td style="width:50%; text-align: center;"><select name="name" id="name">
 			<option selected="selected" value="">- choose one -</option>
 			<%//
 				List sL = dbObj.getBillingFavouriteList();
@@ -365,37 +351,38 @@
 			<%}
 				%>
 		</select></td>
-		<td><input type="hidden" name="submit" value="Search"> <input
-			type="submit" name="action" value=" Edit "> <input
+		<td><input class="input-mini" type="hidden" name="submit" value="Search"> <input class="btn"
+			type="submit" name="action" value=" Edit "> <input class="btn"
 			type="submit" name="action" value="Delete"
 			onClick="javascript:return onDelete();"></td>
 	</tr>
-	</form>
-</table>
 
-<table width="100%" border="0" cellspacing="2" cellpadding="2">
-	<form method="post" name="baseurl" action="billingONfavourite.jsp">
+</table>
+</form>
+<form method="post" name="baseurl" action="billingONfavourite.jsp">
+<table style="width:100%;" class="table table-striped table-condensed">
+
 	<tr class="myGreen">
-		<td align="right"><b>Name</b></td>
-		<td><input type="text" name="name"
-			value="<%=prop.getProperty("name", "")%>" size='40' maxlength='50' />
-		(e.g. Flu shot) <input type="submit" name="submit" value="Search"
+		<td style="text-align:right"><b>Name</b></td>
+		<td><input class="input" type="text" name="name"
+			value="<%=prop.getProperty("name", "")%>" maxlength='50' />
+		(e.g. Flu shot) <input class="btn" type="submit" name="submit" value="Search"
 			onclick="javascript:return onSearch();"></td>
 	</tr>
 
 	<%for (int i = 0; i < BillingDataHlp.FIELD_SERVICE_NUM; i++) {
 
 					%>
-	<tr<%=i%2==0? "bgcolor=\"ivory\"" : "class=\"myGreen\""%>">
-		<td align="right"><b>Service Code <%=i + 1%></b></td>
-		<td><input type="text" name="serviceCode<%=i%>"
-			value="<%=prop.getProperty("serviceCode"+i, "")%>" size='5'
-			maxlength='50' onblur="upCaseCtrl(this)" /> (e.g. A001A) <b>Unit</b><input
+	<tr>
+		<td style="text-align:right"><b>Service Code <%=i + 1%></b></td>
+		<td><input class="input-mini" type="text" name="serviceCode<%=i%>"
+			value="<%=prop.getProperty("serviceCode"+i, "")%>"
+			maxlength='50' onblur="upCaseCtrl(this)" /> (e.g. A001A) <b>Unit</b><input class="input-mini"
 			type="text" name="serviceUnit<%=i%>"
-			value="<%=prop.getProperty("serviceUnit"+i, "")%>" size='2'
-			maxlength='2' /> (e.g. 1, 12) <b>@</b><input type="text"
+			value="<%=prop.getProperty("serviceUnit"+i, "")%>"
+			maxlength='2' /> (e.g. 1, 12) <b>@</b><input class="input-mini" type="text"
 			name="serviceAt<%=i%>"
-			value="<%=prop.getProperty("serviceAt"+i, "")%>" size='3'
+			value="<%=prop.getProperty("serviceAt"+i, "")%>"
 			maxlength='4' /> (e.g. 0.85)</td>
 	</tr>
 	<%}
@@ -403,28 +390,25 @@
 				%>
 
 	<tr>
-		<td align="right"><b>Dx</b></td>
-		<td><input type="text" name="dx"
-			value="<%=prop.getProperty("dx", "")%>" size='3' maxlength='4' />
-		(e.g. 012) <b>Dx1</b> <input type="text" name="dx1"
-			value="<%=prop.getProperty("dx1", "")%>" size='3' maxlength='4' /> <b>Dx2</b>
-		<input type="text" name="dx2" value="<%=prop.getProperty("dx2", "")%>"
-			size='3' maxlength='4' /></td>
+		<td style="text-align:right"><b>Dx</b></td>
+		<td><input class="input-mini" type="text" name="dx"
+			value="<%=prop.getProperty("dx", "")%>"  maxlength='4' />
+		(e.g. 012) <b>Dx1</b> <input class="input-mini" type="text" name="dx1"
+			value="<%=prop.getProperty("dx1", "")%>"  maxlength='4' /> <b>Dx2</b>
+		<input class="input-mini" type="text" name="dx2" value="<%=prop.getProperty("dx2", "")%>"
+			maxlength='4' /></td>
 	</tr>
 	<tr>
-		<td align="center" class="myGreen" colspan="2"><input
+		<td style="text-align:center" class="myGreen" colspan="2"><input
 			type="hidden" name="action" value='<%=action%>'> <input
-			type="submit" name="submit"
+			type="submit" name="submit" class="btn btn-primary"
 			value="<bean:message key="admin.resourcebaseurl.btnSave"/>"
-			onclick="javascript:return onSave();"> <input type="button"
+			onclick="javascript:return onSave();"> <input class="btn" type="button"
 			name="Cancel"
 			value="<bean:message key="admin.resourcebaseurl.btnExit"/>"
 			onClick="window.close()"></td>
 	</tr>
-	</form>
 </table>
+</form>
 </body>
-<script type="text/javascript">
-//Calendar.setup( { inputField : "billingservice_date", ifFormat : "%Y-%m-%d", showsTime :false, button : "billingservice_date_cal", singleClick : true, step : 1 } );
-</script>
 </html:html>

@@ -478,9 +478,9 @@ public class HRMReportParser {
 		
 		logger.info("Routing Report to Provider, for file:"+report.getFileLocation());
 		
-		HRMDocumentToProviderDao hrmDocumentToProviderDao = (HRMDocumentToProviderDao) SpringUtils.getBean("HRMDocumentToProviderDao");
-		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao"); 
-		IncomingLabRulesDao incomingLabRulesDao = (IncomingLabRulesDao) SpringUtils.getBean("IncomingLabRulesDao");
+		HRMDocumentToProviderDao hrmDocumentToProviderDao = SpringUtils.getBean(HRMDocumentToProviderDao.class);
+		ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+		IncomingLabRulesDao incomingLabRulesDao = SpringUtils.getBean(IncomingLabRulesDao.class);
 
 		String practitionerNo = report.getDeliverToUserId();
 		

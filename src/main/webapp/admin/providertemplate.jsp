@@ -46,6 +46,10 @@
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.EncounterTemplate" %>
 <%@ page import="org.oscarehr.common.dao.EncounterTemplateDao" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%
 	EncounterTemplateDao encounterTemplateDao = SpringUtils.getBean(EncounterTemplateDao.class);
 %>
@@ -70,30 +74,46 @@
     }
   }
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ page import="org.oscarehr.common.dao.EncounterTemplateDao"%>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
-<%@ page import="org.oscarehr.common.model.EncounterTemplate"%>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils"%><html:html locale="true">
-<head>
 
+<html:html locale="true">
+<head>
 <title><bean:message key="admin.providertemplate.title" /></title>
 
 <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+
+<script>
+function setfocus() {
+  this.focus();
+  document.template.name.focus();
+}
+
+function idExists(id) {
+    var element = document.getElementById(id);
+    if (typeof(element) != 'undefined' && element != null) {
+        return true;
+    }
+    return false;
+}
+
+function hideExit(){
+    var isInIFrame = (window.location != window.parent.location);
+    if(isInIFrame==true && idExists('exit-btn')){
+        document.getElementById('exit-btn').style.display = "none";
+    }
+}
+</script>
 
 </head>
-<body onLoad="setfocus()">
+<body onLoad="setfocus(),hideExit();">
 
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span12">
 		<!--Body content-->
-		
+
 		<h3><bean:message key="admin.providertemplate.msgTitle" /></h3>
-		
-<div class="well">		
+
+<div class="well">
 	<form name="edittemplate" method="post" action="providertemplate.jsp" class="form-inline">
 			<!--<bean:message key="admin.providertemplate.formEdit" />:-->
 			Select Template<br>
@@ -103,7 +123,7 @@
 
 				for (EncounterTemplate encounterTemplate : allTemplates)
 				{
-					String templateName=StringEscapeUtils.escapeHtml(encounterTemplate.getEncounterTemplateName());
+					String templateName=Encode.forHtmlAttribute(encounterTemplate.getEncounterTemplateName());
 					%>
 						<option value="<%=templateName%>"><%=templateName%></option>
 					<%
@@ -112,10 +132,10 @@
 			</select>
 			<input type="hidden" value="Edit" name="dboperation">
 			<input type="button" value="<bean:message key="admin.providertemplate.btnEdit"/>" name="dboperation" class="btn" onclick="document.forms['edittemplate'].dboperation.value='Edit'; document.forms['edittemplate'].submit();">
-	</form>	
-	
-</div>	
-	
+	</form>
+
+</div>
+
 <%
   boolean bEdit=request.getParameter("dboperation")!=null&&request.getParameter("dboperation").equals("Edit")?true:false;
   String tName = null;
@@ -129,30 +149,30 @@
   }
 %>
 
-			<div class="well">	
+			<div class="well">
 				<form name="template" method="post" action="providertemplate.jsp">
 				<input type="hidden" name="dboperation" value="">
-			
+
 					<bean:message key="admin.providertemplate.formTemplateName" />:<br>
-					<input type="text" name="name" value="<%=bEdit?tName:""%>" class="span10" maxlength="20">
-				
+					<input type="text" name="name" pattern="^[a-zA-Z0-9\s]+$" value="<%=bEdit?tName:""%>" class="span10" maxlength="50"> <!-- match the definition in the schema -->
+
 					<br><br>
-				
+
 					<bean:message key="admin.providertemplate.formTemplateText" />:<br>
 					<textarea name="value" rows="20" class="span10"><%=bEdit?tValue:""%></textarea>
-			
+
 					<br>
 					<input type="button" value="<bean:message key="admin.providertemplate.btnDelete"/>" class="btn btn-danger" onClick="document.forms['template'].dboperation.value='Delete'; document.forms['template'].submit();">
-			
-					<INPUT TYPE="hidden" NAME="creator"	VALUE="<%=curUser_no%>"> 
+
+					<INPUT TYPE="hidden" NAME="creator"	VALUE="<%=curUser_no%>">
 					<input type="button" value="<bean:message key="admin.providertemplate.btnSave"/>"	class="btn btn-primary" onClick="document.forms['template'].dboperation.value=' Save '; document.forms['template'].submit();">
-					
-			
+
+
 					<input type="button" name="Button" id="exit-btn" value="<bean:message key="admin.providertemplate.btnExit"/>"	 class="btn" onClick="window.close();">
-			
+
 				</form>
-			</div>	
-			
+			</div>
+
 		</div><!-- span12 -->
 	</div><!-- row fluid -->
 </div><!-- container -->
@@ -160,20 +180,5 @@
 
 
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
-<script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
-<script>
-<!--
-function setfocus() {
-  this.focus();
-  document.template.name.focus();
-}
-//-->
-
-var isInIFrame = (window.location != window.parent.location);
-if(isInIFrame==true){
-    $('#exit-btn').hide();
-}
-</script>
 </body>
 </html:html>

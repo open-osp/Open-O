@@ -25,9 +25,6 @@
 --%>
 <%@ page import="oscar.oscarProvider.data.*, oscar.oscarRx.data.*,oscar.OscarProperties, oscar.oscarClinic.ClinicData, java.util.*"%>
 <%@ page import="org.oscarehr.common.model.PharmacyInfo" %>
-<%@ page import="org.oscarehr.common.model.DemographicPharmacy" %>
-<%@ page import="org.oscarehr.common.dao.DemographicPharmacyDao" %>
-<%@ page import="org.oscarehr.common.dao.PharmacyInfoDao" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -48,13 +45,18 @@
 <%@page import="org.oscarehr.common.model.Appointment"%>
 <%@page import="org.oscarehr.common.dao.OscarAppointmentDao"%>
 <%@ page import="org.oscarehr.common.dao.FaxConfigDao, org.oscarehr.common.model.FaxConfig" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="oscar.oscarProvider.data.ProviderData" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+
 <%
 	OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
 
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
     boolean authed=true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
@@ -107,8 +109,9 @@ if(reprint.equalsIgnoreCase("true") ) {
     bean = (oscar.oscarRx.pageUtil.RxSessionBean)session.getAttribute("tmpBeanRX");
     createAnewRx = "window.location.href = '" + request.getContextPath() + "/oscarRx/SearchDrug.jsp'";
 }
-else
-    createAnewRx = "javascript:clearPending('')";
+else {
+	createAnewRx = "javascript:clearPending('')";
+}
 
 // for satellite clinics
 Vector vecAddressName = null;
@@ -182,10 +185,11 @@ if(bMultisites) {
 
     for(int i=0; i<temp0.length; i++) {
         vecAddressName.add(temp0[i]);
-        vecAddress.add("<b>"+doctorName+"</b><br>"+temp0[i]+"<br>"+temp1[i] + "<br>" + temp2[i] + ", " + temp3[i] + " " + temp4[i] + "<br>"+rb.getString("RxPreview.msgTel")+": " + temp5[i] + "<br>"+rb.getString("RxPreview.msgFax")+": " + temp6[i]);
+        vecAddress.add("<b>"+Encode.forHtml(doctorName)+"</b><br>"+Encode.forHtml(temp0[i])+"<br>"+Encode.forHtml(temp1[i]) + "<br>" + temp2[i] + ", " + temp3[i] + " " + temp4[i] + "<br>"+rb.getString("RxPreview.msgTel")+": " + temp5[i] + "<br>"+rb.getString("RxPreview.msgFax")+": " + temp6[i]);
     }
 }
-String comment = (String) request.getSession().getAttribute("comment");
+String comment = request.getSession().getAttribute("comment")!=null?request.getSession().getAttribute("comment").toString():"";
+request.getSession().removeAttribute("comment");
 String pharmacyId = request.getParameter("pharmacyId");
 RxPharmacyData pharmacyData = new RxPharmacyData();
 PharmacyInfo pharmacy = null;
@@ -213,7 +217,7 @@ if (userAgent != null) {
 }
 %>
 <link rel="stylesheet" type="text/css" href="styles.css" />
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+
 <script type="text/javascript" src="../share/javascript/prototype.js"></script>
 <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
 
@@ -252,29 +256,29 @@ if (userAgent != null) {
         var useSC=false;
         var scAddress="";
         var rxPageSize=$('printPageSize').value;
-        //console.log("rxPagesize  "+rxPageSize);
+        console.log("rxPagesize  "+rxPageSize);
 
+        <% if(vecAddressName != null) { %>
+            useSC=true;
+            <%for(int i=0; i<vecAddressName.size(); i++) {%>
+	            if(document.getElementById("addressSel").value=="<%=i%>") {
+    	            scAddress="<%=Encode.forUriComponent(StringEscapeUtils.unescapeHtml((String)vecAddress.get(i)))%>";
+                }
+			<%}
+        }%>
+	    let action="../form/createcustomedpdf?__title=Rx&__method=" +  method+"&useSC="+useSC+"&scAddress="+scAddress+"&rxPageSize="+rxPageSize+"&scriptId="+scriptId;
+	    document.getElementById("preview").contentWindow.document.getElementById("preview2Form").action = action;
+	    if (method!="oscarRxFax"){
+		    document.getElementById("preview").contentWindow.document.getElementById("preview2Form").target="_blank";
+	    }
+	    document.getElementById("preview").contentWindow.document.getElementById("preview2Form").submit();
 
-  <% if(vecAddressName != null) {
-    %>
-        useSC=true;
-   <%      for(int i=0; i<vecAddressName.size(); i++) {%>
-	    if(document.getElementById("addressSel").value=="<%=i%>") {
-    	       scAddress="<%=vecAddress.get(i)%>";
-            }
-<%       }
-      }%>
-            const action="../form/createcustomedpdf?__title=Rx&__method=" +  method+"&useSC="+useSC+"&scAddress="+scAddress+"&rxPageSize="+rxPageSize+"&scriptId="+scriptId;
-            document.getElementById("preview").contentWindow.document.getElementById("preview2Form").action = action;
-            if (method!="oscarRxFax"){
-                document.getElementById("preview").contentWindow.document.getElementById("preview2Form").target="_blank";
-            }
-            document.getElementById("preview").contentWindow.document.getElementById("preview2Form").submit();
-       return true;
+		return true;
     }
 
 function setComment(){
-    frames['preview'].document.getElementById('additNotes').innerHTML = '<%=comment%>';
+    frames['preview'].document.getElementById('additNotes').innerHTML = '<%=Encode.forJavaScript(comment.replaceAll("\n", "<br>"))%>';
+    frames['preview'].document.getElementsByName('additNotes')[0].value = frames['preview'].document.getElementById('additNotes').innerHTML ;
 }
 
 function setDefaultAddr(){
@@ -304,63 +308,151 @@ function addNotes(){
 function printIframe(){
 	var browserName=navigator.appName;
 	   if (browserName=="Microsoft Internet Explorer")
-			{
-	              try
-	            {
-	                iframe = document.getElementById('preview');
-	                iframe.contentWindow.document.execCommand('print', false, null);
-	            }
-	            catch(e)
-	            {
-	                window.print();
-	            }
-			}
-			else
-			{
-				preview.focus();
-				preview.print();
-			}
+		{
+            alert("Use of Microsoft Internet Explorer is not permitted")
+		}
+		else
+		{
+			preview.focus();
+			preview.print();
+
+			self.onfocus = function () {
+				self.setTimeout(
+					function(){
+						self.parent.close();
+					}, 1000);
+			};
+			self.focus();
+		}
 	}
 
-function printPaste2Parent(print){
+function printPaste2Parent(print, fax, pasteRx){
     //console.log("in printPaste2Parent");
    try{
-      text =""; // "****<%=oscar.oscarProvider.data.ProviderData.getProviderName(bean.getProviderNo())%>********************************************************************************";
-      //console.log("1");
-      //text = text.substring(0, 82) + "\n";
-      if (document.all){
-         text += preview.document.forms[0].rx_no_newlines.value
-      } else {
-         text += preview.document.forms[0].rx_no_newlines.value + "\n";
-      }
-      //console.log("2");
-      text+=document.getElementById('additionalNotes').value+"\n";
-      //text += "**********************************************************************************\n";
-      //oscarLog(text);
+      text ="";
+      <% if (props.isPropertyActive("rx_paste_asterisk")) { %>
+	   text += "**********************************************************************************\n";
+     <% } %>
+
+     if(print) {
+	   text += "Prescribed and printed by <%= Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName())%>\n";
+     } else if(fax) {
+<%--    	 <% if(echartPreferencesMap.getOrDefault("echart_paste_fax_note", false)) {--%>
+    		 <% String timeStamp = new SimpleDateFormat("dd-MMM-yyyy hh:mm a").format(Calendar.getInstance().getTime()); %>
+    	 // %>
+    	 	text ="[Rx faxed to "+'<%= pharmacy!=null?StringEscapeUtils.escapeJavaScript(pharmacy.getName()):""%>'+" Fax#: "+'<%= pharmacy!=null?pharmacy.getFax():""%>';
+
+<%--    	 <% if (rxPreferencesMap.getOrDefault("rx_paste_provider_to_echart", false)) { %>--%>
+    		text += " prescribed by <%= Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName())%>";
+<%--    	 <% } %>--%>
+   			text += ", <%= timeStamp %>]\n";
+<%--   		 <%--%>
+<%--    	 }--%>
+<%--    	 %>    	--%>
+     }
+
+	if(pasteRx) {
+		if (document.all){
+			text += preview.document.forms[0].rx_no_newlines.value
+		} else {
+			text += preview.document.forms[0].rx_no_newlines.value + "\n";
+		}
+
+		if (document.getElementById('additionalNotes') !== null) {
+			text += document.getElementById('additionalNotes').value + "\n";
+		}
+	}
+	   <% if (props.isPropertyActive("rx_paste_asterisk")) {
+	   		if(prefPharmacy!=null && prefPharmacy.trim()!=""){ %>
+       			text += "<%=prefPharmacy%>\n"
+	   		<% } %>
+		  text += "****<%=Encode.forJavaScript(oscar.oscarProvider.data.ProviderData.getProviderName(bean.getProviderNo()))%>********************************************************************************\n";
+	   <% } %>
 
       //we support pasting into orig encounter and new casemanagement
       demographicNo = <%=bean.getDemographicNo()%>;
       noteEditor = "noteEditor"+demographicNo;
-      if( window.parent.opener.document.forms["caseManagementEntryForm"] != undefined ) {
-          //oscarLog("3");
-        window.parent.opener.pasteToEncounterNote(text);
-      }else if( window.parent.opener.document.encForm != undefined ){
-          //oscarLog("4");
-        window.parent.opener.document.encForm.enTextarea.value = window.parent.opener.document.encForm.enTextarea.value + text;
-      }else if( window.parent.opener.document.getElementById(noteEditor) != undefined ){
-    	window.parent.opener.document.getElementById(noteEditor).value = window.parent.opener.document.getElementById(noteEditor).value + text; 
-      }
+      if (window.parent.opener) {
+		  if (window.parent.opener.document.forms["caseManagementEntryForm"] != undefined &&
+				  window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo &&
+				  window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo.value === "<%=bean.getDemographicNo()%>") {
+			  //oscarLog("3");
+			  window.parent.opener.pasteToEncounterNote(text);
+              if (print) {
+                  printIframe();
+              }
+		  } else if (window.parent.opener.document.encForm != undefined) {
+			  //oscarLog("4");
+			  window.parent.opener.document.encForm.enTextarea.value = window.parent.opener.document.encForm.enTextarea.value + text;
+              if (print) {
+                  printIframe();
+              }
+		  } else if (window.parent.opener.document.getElementById(noteEditor) != undefined) {
+			  window.parent.opener.document.getElementById(noteEditor).value = window.parent.opener.document.getElementById(noteEditor).value + text;
+              if (print) {
+                  printIframe();
+              }
+		  } else if (pasteRx) {
+				  writeToEncounter(print, text);
+		  }
+	  } else {
+		  writeToEncounter(print, text);
+	  }
       
    }catch (e){
-      alert ("ERROR: could not paste to EMR");
+      alert ("ERROR: could not paste to EMR" + e);
+      if (print) { printIframe();}
    }
-   
-   if (print) { printIframe(); }
    
 }
 
+	function writeToEncounter(print, text) {
+    	try {
+			var url = "<%=request.getContextPath() %>/oscarRx/WriteToEncounter.do";
+			var prefPharmacy = "<%=prefPharmacy != null ? prefPharmacy : ""%>";
+			new Ajax.Request(url, {method: 'post',
+				parameters: "prefPharmacy=" + encodeURIComponent(prefPharmacy) +
+						"&additionalNotes=" +
+						"&body="+ encodeURIComponent(text),
+				onSuccess:function(ret){
+					//console.log("success")
+					if (print) {
+						printIframe();
+					}
+					openEncounter();
+				},
+				onError: function(e) {
+					alert("ERROR: could not paste to EMR" + e);
+					if (print) {
+						printIframe();
+					}
+					openEncounter();
+				}});
+		} catch (e) {
+			alert("ERROR: could not paste to EMR" + e);
+		}
+	}
 
+	function openEncounter() {
+		var windowprops = "height=710,width=1024,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=20,left=20";
+		var currentDate = new Date().toISOString().substring(0, 10);
+		var url = "../oscarEncounter/IncomingEncounter.do?providerNo=<%= bean.getProviderNo() %>&demographicNo=<%= bean.getDemographicNo() %>&curProviderNo=<%= bean.getProviderNo() %>&userName=<%=Encode.forUriComponent(ProviderData.getProviderName(bean.getProviderNo()))%>&curDate=" + currentDate;
 
+		if (window.parent.opener && window.parent.opener.document.forms["caseManagementEntryForm"] != undefined) {
+			// redirect if encounter window open
+			window.parent.opener.location = url;
+			return window.parent.opener;
+		}
+
+		return window.open(url, "encounter", windowprops);
+	}
+
+var rxToPaste = null;
+
+function pasteRxToEchart() {
+    var encounterWindow = openEncounter();
+    encounterWindow.rxToPaste = rxToPaste;
+}
 
 function addressSelect() {
    <% if(vecAddressName != null) {
@@ -413,18 +505,21 @@ var isRxFaxEnabled = "<%=OscarProperties.getInstance().isRxFaxEnabled()%>";
 function refreshImage()
 {
 	counter=counter+1;
-	frames["preview"].document.getElementById("signature").src="<%=imageUrl%>&rand="+counter;
-	frames['preview'].document.getElementById('imgFile').value='<%=System.getProperty("java.io.tmpdir").replace("\\","\\\\")%>/signature_<%=signatureRequestId%>.jpg';	
+	if (frames["preview"].document.getElementById("signature") != null) {
+		frames["preview"].document.getElementById("signature").src = "<%=imageUrl%>&rand=" + counter;
+	}
+	frames['preview'].document.getElementById('imgFile').value='<%=System.getProperty("java.io.tmpdir").replaceAll("\\\\", "/")%>/signature_<%=signatureRequestId%>.jpg';
 }
 
-function sendFax()
-{
-	var faxNumber = document.getElementById('faxNumber');
+function sendFax() {
+	if ('function' === typeof window.onbeforeunload) {
+		window.onbeforeunload = null;
+	}
+	let faxNumber = document.getElementById('faxNumber');
 	frames['preview'].document.getElementById('finalFax').value = faxNumber.options[faxNumber.selectedIndex].value;
-	frames['preview'].document.getElementById('pdfId').value='<%=signatureRequestId%>';	
-	frames['preview'].onPrint2('oscarRxFax');
-	frames['preview'].document.FrmForm.submit();	
-	window.onbeforeunload = null;
+	frames['preview'].document.getElementById('pdfId').value='<%=signatureRequestId%>';
+   	onPrint2('oscarRxFax', "<%=request.getParameter("scriptId")%>");
+
 }
 
 function unloadMess(){
@@ -435,16 +530,38 @@ function unloadMess(){
 
 var isSignatureDirty = false;
 var isSignatureSaved = false;
-
-function signatureHandler(e) {	
-	e.target.onbeforeunload = null;
-	var hasFaxNumber = <%=pharmacy != null && pharmacy.getFax().trim().length() > 0%>;
+function signatureHandler(e) {
+	<% if (OscarProperties.getInstance().isRxFaxEnabled()) { %>
+		var hasFaxNumber = <%= pharmacy != null && pharmacy.getFax() != null && pharmacy.getFax().trim().length() > 0 ? "true" : "false" %>;
+	<% } %>
 	isSignatureDirty = e.isDirty;
 	isSignatureSaved = e.isSave;
-	e.target.document.getElementById("faxButton").disabled = !(isRxFaxEnabled && hasFaxNumber && isSignatureSaved);
-	if(isSignatureSaved)
-	{
+	e.target.onbeforeunload = null;
+	<% if (OscarProperties.getInstance().isRxFaxEnabled()) { //%>
+	let disabled = !hasFaxNumber || !e.isSave;
+	toggleFaxButtons(disabled);
+	<% } %>
+	if (e.isSave) {
+		<% if (OscarProperties.getInstance().isRxFaxEnabled()) { //%>
+		if (hasFaxNumber) {
+			e.target.onbeforeunload = unloadMess;
+		}
+		<% } %>
 		refreshImage();
+	}
+}
+
+function toggleFaxButtons(disabled) {
+	document.getElementById("faxButton").disabled = disabled;
+	document.getElementById("faxPasteButton").disabled = disabled;
+}
+
+function enableExistingSignature() {
+	toggleFaxButtons(false);
+	frames["preview"].document.onreadystatechange = function(event, readystate) {
+		if (frames["preview"].document.readyState === "complete") {
+			refreshImage();
+		}
 	}
 }
 
@@ -454,7 +571,7 @@ var requestIdKey = "<%=signatureRequestId %>";
 </head>
 
 <body topmargin="0" leftmargin="0" vlink="#0000FF"
-	onload="addressSelect();">
+	onload="addressSelect();printPharmacy('<%=prefPharmacyId%>','<%=prefPharmacy%>')">
 
 <!-- added by vic, hsfo -->
 <%
@@ -513,7 +630,7 @@ function toggleView(form) {
 	id="AutoNumber1" height="100%">
 	<tr>
 		<td width="100%"
-			style="padding-left: 3; padding-right: 3; padding-top: 2; padding-bottom: 2"
+			style="padding-left: 3px; padding-right: 3px; padding-top: 2px; padding-bottom: 2px"
 			height="0%" colspan="2">
 
 		</td>
@@ -541,6 +658,11 @@ function toggleView(form) {
                                     document.forms.RxClearPendingForm.submit();
                                 }
 
+                                function clearPendingFax(){
+                                    parent.window.location = "../oscarRx/close.html";
+                                    parent.myLightWindow.deactivate();
+								}
+
                                 function ShowDrugInfo(drug){
                                     window.open("drugInfo.do?GN=" + escape(drug), "_blank",
                                         "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
@@ -550,15 +672,21 @@ function toggleView(form) {
                                 function printPharmacy(id,name){
                                     //ajax call to get all info about a pharmacy
                                     //use json to write to html
+	                                if(! id) {
+										return;
+	                                }
                                     var url="<c:out value="${ctx}"/>"+"/oscarRx/managePharmacy2.do?";
                                     var data="method=getPharmacyInfo&pharmacyId="+id;
                                     new Ajax.Request(url, {method: 'get',parameters:data, onSuccess:function(transport){
                                         var json=transport.responseText.evalJSON();
 
                                             if(json!=null){
-                                                var text=json.name+"<br>"+json.address+"<br>"+json.city+","+json.province+","
-                                                    +json.postalCode+"<br>Tel:"+json.phone1+","+json.phone2+"<br>Fax:"+json.fax+"<br>Email:"+json.email+"<br>Note:"+json.notes;
+                                                var text=json.name+"<br>"+json.address+"<br>"+json.city+", "+json.province+", "
+                                                    +json.postalCode+"<br>Tel:"+json.phone1+" "+json.phone2+"<br>Fax:"+json.fax+"<br>Email:"+json.email+"<br>Note:"+json.notes;
+
                                                     text+='<br><br><a class="noprint" style="text-align:center;" onclick="parent.reducePreview();" href="javascript:void(0);">Remove Pharmacy Info</a>';
+
+													text += "<input type='hidden' name='pharmacyInfo' value='" + JSON.stringify(json) + "' />"
                                                 expandPreview(text);
                                             }
                                         }});
@@ -609,7 +737,7 @@ function toggleView(form) {
 
                                         <tr>
                                             <!--td width=10px></td-->
-                                            <td>Size of Print PDF :
+                                            <td>Page size:
                                                 <select name="printPageSize" id="printPageSize" style="height:20px;font-size:10px" >
                                                      <%
                                                      String rxPageSize=(String)request.getSession().getAttribute("rxPageSize");
@@ -623,37 +751,42 @@ function toggleView(form) {
                                                 </select>
                                             </td>
                                         </tr>
-					<tr>
-						<!--td width=10px></td-->
-						<td>
-						<span>
-							<input type=button value="Print PDF" class="ControlPushButton" style="width: 150px" onClick="<%=reprint.equalsIgnoreCase("true") ? "javascript:return onPrint2('rePrint', "+request.getParameter("scriptId")+");" : "javascript:return onPrint2('print', "+request.getParameter("scriptId")+");" %>" />
-						</span>
-						</td>
-					</tr>
+<%--					<tr>--%>
+<%--						<!--td width=10px></td-->--%>
+<%--						<td>--%>
+<%--						<span>--%>
+<%--							<input type=button value="Print PDF" class="ControlPushButton" style="width: 150px" onClick="<%=reprint.equalsIgnoreCase("true") ? "javascript:return onPrint2('rePrint', "+request.getParameter("scriptId")+");" : "javascript:return onPrint2('print', "+request.getParameter("scriptId")+");" %>" />--%>
+<%--						</span>--%>
+<%--						</td>--%>
+<%--					</tr>--%>
 
 					<tr>
 						<!--td width=10px></td-->
-						<td><span><input type=button value="<bean:message key="ViewScript.msgPrint"/>"
-							class="ControlPushButton" style="width: 150px"
+						<td style="padding-bottom: 0"><span><input type=button value="<bean:message key="ViewScript.msgPrint"/>"
+							class="ControlPushButton" style="width: 210px"
 							onClick="javascript:printIframe();" /></span></td>
 					</tr>
 					<tr>
-						<td><span><input type=button
-							<%=reprint.equals("true")?"disabled='true'":""%> value="<bean:message key="ViewScript.msgPrintPasteEmr"/>"
-							class="ControlPushButton" style="width: 150px"
-							onClick="javascript:printPaste2Parent(true);" /></span></td>
+						<td style="padding-top: 0"><span><input type=button
+							<%=reprint.equals("true")?"disabled='true'":""%> value="Print &amp; Add to encounter note"
+							class="ControlPushButton" style="width: 210px"
+							onClick="printPaste2Parent(true, false, true);" /></span></td>
 					</tr>
 					<% if (OscarProperties.getInstance().isRxFaxEnabled()) {
 					    	FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
 					    	List<FaxConfig> faxConfigs = faxConfigDao.findAll(null, null);
 					    
 					    %>
-					<tr>                            
-                            <td><span><input type=button value="Fax & Paste into EMR"
-                                    class="ControlPushButton" id="faxButton" style="width: 150px"
-                                    onClick="printPaste2Parent(false);sendFax();" title="Pharmacy fax number and signature required." disabled/></span>
-                                    
+					<tr>
+						<td style="padding-bottom: 0"><span><input type=button value="Fax"
+										 class="ControlPushButton" id="faxButton" style="width: 210px"
+										 onClick="sendFax();" disabled/></span>
+						</td>
+					</tr>
+					<tr>
+                            <td style="padding-top: 0"><span><input type=button value="Fax &amp; Add to encounter note"
+                                    class="ControlPushButton" id="faxPasteButton" style="width: 210px"
+                                    onClick="printPaste2Parent(false, true, true);sendFax();" disabled/></span>
                                  <span>
                                  	<select id="faxNumber" name="faxNumber">
                                  	<%
@@ -672,27 +805,25 @@ function toggleView(form) {
 						<!--td width=10px></td-->
 						<td><span><input type=button
 							value="<bean:message key="ViewScript.msgCreateNewRx"/>" class="ControlPushButton"
-                                                        style="width: 150px"  onClick="resetStash();resetReRxDrugList();javascript:parent.myLightWindow.deactivate();" /></span></td>
+                                                        style="width: 210px"  onClick="resetStash();resetReRxDrugList();javascript:parent.myLightWindow.deactivate();" /></span></td>
 					</tr>
 					<tr>
 						<!--td width=10px></td-->
 						<td><span><input type=button value="<bean:message key="ViewScript.msgBackToOscar"/>"
-							class="ControlPushButton" style="width: 150px"
-                                                        onClick="javascript:clearPending('close');parent.window.close();" /></span></td>
-							<!--onClick="javascript:clearPending('close');" /></span></td>-->
+							class="ControlPushButton" style="width: 210px" onClick="javascript:clearPending('close');parent.window.close();" /></span></td>
 					</tr>
-                                       <%if(prefPharmacy.length()>0 && prefPharmacyId.length()>0){   %>
-                                           <tr><td><span><input id="selectPharmacyButton" type=button value="<bean:message key='oscarRx.printPharmacyInfo.addPharmacyButton'/>" class="ControlPushButton" style="width:150px;"
-                                                             onclick="printPharmacy('<%=prefPharmacyId%>','<%=prefPharmacy%>');"/>
-                                                </span>
+<%--                                       <%if(prefPharmacy.length()>0 && prefPharmacyId.length()>0){   %>--%>
+<%--                                           <tr><td><span><input id="selectPharmacyButton" type=button value="<bean:message key='oscarRx.printPharmacyInfo.addPharmacyButton'/>" class="ControlPushButton" style="width:150px;"--%>
+<%--                                                             onclick="printPharmacy('<%=prefPharmacyId%>','<%=prefPharmacy%>');"/>--%>
+<%--                                                </span>--%>
 
-                                            </td>
-                                        </tr><%}%>
-                                        <tr>
-                                            <td>
-                                                <a id="selectedPharmacy" style="color:red"></a>
-                                            </td>
-                                        </tr>
+<%--                                            </td>--%>
+<%--                                        </tr><%}%>--%>
+<%--                                        <tr>--%>
+<%--                                            <td>--%>
+<%--                                                <a id="selectedPharmacy" style="color:red"></a>--%>
+<%--                                            </td>--%>
+<%--                                        </tr>--%>
 
                                         <%
                         if (request.getSession().getAttribute("rePrint") == null ){%>
@@ -704,7 +835,7 @@ function toggleView(form) {
                                                 <!--td width=10px></td-->
                                                 <td>
                                                     <textarea id="additionalNotes" style="width: 200px" onchange="javascript:addNotes();" ></textarea>
-                                                    <input type="button" value="<bean:message key="ViewScript.msgAddToRx"/>" onclick="javascript:addNotes();"/>
+                                                    <input type="button" value="Additional Rx Notes" onclick="javascript:addNotes();"/>
                                                 </td>
                                         </tr>
 
@@ -732,7 +863,6 @@ function toggleView(form) {
                             if (! rx.isCustom()){
                             %>
 					<tr>
-						<!--td width=10px></td-->
 						<td><span><a
 							href="javascript:ShowDrugInfo('<%= rx.getGenericName() %>');">
 						<%= rx.getGenericName() %> (<%= rx.getBrandName() %>) </a></span></td>

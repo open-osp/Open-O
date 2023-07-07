@@ -61,7 +61,7 @@ public final class HandlerClassFactory {
         String msgType;
         String msgHandler = "";
         
-        if (type.equals("")){
+        if (type == null || type.equals("")) {
             logger.debug("Type not specified using Default Handler");
             return( new DefaultHandler());
         }

@@ -35,7 +35,6 @@
 
 <!DOCTYPE html > 
 <html lang="" >
-<script src="${pageContext.request.contextPath}/csrfguard"></script>
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,7 +46,7 @@
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/web/css/Dashboard.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/js/jqplot/jquery.jqplot2.min.css" />
 	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>		
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>	
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/web/dashboard/display/dashboardDisplayController.js" ></script>
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jqplot/jquery.jqplot2.min.js" ></script>
@@ -93,12 +92,12 @@
 		<div class="col-md-6">
 			Last loaded: 
 			<c:out value="${ dashboard.lastChecked }" />
-			<a href="#" title="refresh" class="reloadDashboardBtn" id="getDashboard_${ dashboard.id }" >
+			<a href="javascript:void(0)" title="refresh" class="reloadDashboardBtn" id="getDashboard_${ dashboard.id }" >
 				<span class="glyphicon glyphicon-refresh"></span>
 			</a>
 		</div>
 		<div class="col-md-6">
-			<a href="#" title="Dashboard Manager" class="pull-right dashboardManagerBtn" id="${ dashboard.id }" >
+			<a href="javascript:void(0)" title="Dashboard Manager" class="pull-right dashboardManagerBtn" id="${ dashboard.id }" >
 				<span class="glyphicon glyphicon glyphicon-cog"></span>
 			</a>
 		</div>

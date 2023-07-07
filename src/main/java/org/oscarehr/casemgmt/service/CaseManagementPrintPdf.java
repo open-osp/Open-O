@@ -24,7 +24,7 @@
 
 package org.oscarehr.casemgmt.service;
 
-import java.awt.*;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -33,9 +33,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.lowagie.text.*;
-import com.lowagie.text.Font;
-import com.lowagie.text.Rectangle;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.lang.StringUtils;
 import org.oscarehr.PMmodule.model.Program;
 import org.oscarehr.PMmodule.model.ProgramProvider;
@@ -46,12 +48,6 @@ import org.oscarehr.common.printing.PdfWriterFactory;
 import org.oscarehr.managers.ProgramManager2;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
-
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPageEventHelper;
-import com.lowagie.text.pdf.PdfWriter;
 
 import oscar.OscarProperties;
 import oscar.oscarClinic.ClinicData;
@@ -169,7 +165,7 @@ public class CaseManagementPrintPdf {
 
         //Write title with top and bottom borders on p1
         cb = writer.getDirectContent();
-        cb.setColorStroke(new Color(0,0,0));
+        cb.setColorStroke(BaseColor.BLACK);
         cb.setLineWidth(0.5f);
 
         cb.moveTo(document.left(), document.top());
@@ -191,7 +187,8 @@ public class CaseManagementPrintPdf {
         String del = "";
         for( int idx = 0; idx < clinic.length; ++idx ) {
             String clinicItem = del + StringUtils.trimToEmpty(clinic[idx]);
-            phrase.add(clinicItem);
+            p.add(clinicItem);
+            phrase.add(del + StringUtils.trimToEmpty(clinic[idx]));
             del = "\n";
         }
         ct.setSimpleColumn(document.left(), upperYcoord, document.right()/2f, document.top());
@@ -201,10 +198,8 @@ public class CaseManagementPrintPdf {
         // Create and fill a dummy phrase with only new lines to keep the left column the
         // appropriate size in relation to the right column in the event the right column is larger.
         // rowCount has + 1 to account for the blank line created by the getCalculatedLeading above.
-        Phrase dummy = new Phrase();
-        Collection dummyphrase = Collections.nCopies((int)rowCount + 1, "\n");
-        dummy.addAll(dummyphrase);
-        p.add(dummy);
+        List dummyphrase = Collections.nCopies((int)rowCount + 1, new Phrase("\n"));
+        p.addAll(dummyphrase);
         document.add(p);
 
         //add patient info
@@ -414,40 +409,40 @@ public class CaseManagementPrintPdf {
     /*
      *Used to print footers on each page
      */
-    class EndPage extends PdfPageEventHelper {
-        private Date now;
-        private String promoTxt;
-
-        public EndPage() {
-            now = new Date();
-            promoTxt = OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT");
-            if( promoTxt == null ) {
-                promoTxt = "";
-            }
-        }
-
-        public void onEndPage( PdfWriter writer, Document document ) {
-            //Footer contains page numbers and date printed on all pages
-            PdfContentByte cb = writer.getDirectContent();
-            cb.saveState();
-
-            String strFooter = promoTxt + " " + formatter.format(now);
-
-            float textBase = document.bottom();
-            cb.beginText();
-            cb.setFontAndSize(font.getBaseFont(),FONTSIZE);
-            Rectangle page = document.getPageSize();
-            float width = page.getWidth();
-
-            cb.showTextAligned(PdfContentByte.ALIGN_CENTER, strFooter, (width/2.0f), textBase - 20, 0);
-
-            strFooter = "-" + writer.getPageNumber() + "-";
-            cb.showTextAligned(PdfContentByte.ALIGN_CENTER, strFooter, (width/2.0f), textBase-10, 0);
-
-            cb.endText();
-            cb.restoreState();
-        }
-    }
+//    class EndPage extends PdfPageEventHelper {
+//        private Date now;
+//        private String promoTxt;
+//
+//        public EndPage() {
+//            now = new Date();
+//            promoTxt = OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT");
+//            if( promoTxt == null ) {
+//                promoTxt = "";
+//            }
+//        }
+//
+//        public void onEndPage( PdfWriter writer, Document document ) {
+//            //Footer contains page numbers and date printed on all pages
+//            PdfContentByte cb = writer.getDirectContent();
+//            cb.saveState();
+//
+//            String strFooter = promoTxt + " " + formatter.format(now);
+//
+//            float textBase = document.bottom();
+//            cb.beginText();
+//            cb.setFontAndSize(font.getBaseFont(),FONTSIZE);
+//            Rectangle page = document.getPageSize();
+//            float width = page.getWidth();
+//
+//            cb.showTextAligned(PdfContentByte.ALIGN_CENTER, strFooter, (width/2.0f), textBase - 20, 0);
+//
+//            strFooter = "-" + writer.getPageNumber() + "-";
+//            cb.showTextAligned(PdfContentByte.ALIGN_CENTER, strFooter, (width/2.0f), textBase-10, 0);
+//
+//            cb.endText();
+//            cb.restoreState();
+//        }
+//    }
 
 
 }

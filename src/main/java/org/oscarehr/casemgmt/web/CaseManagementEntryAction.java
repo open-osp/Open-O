@@ -3492,6 +3492,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 		CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean("CaseManagementNoteLinkDAO");
 		CaseManagementNoteLink link = caseManagementNoteLinkDao.getLastLinkByTableId(CaseManagementNoteLink.TICKLER, Long.valueOf(ticklerNo));
+		JSONObject json = JSONObject.fromObject("{}");
 
 		if (link != null) {
 			Long noteId = link.getNoteId();
@@ -3509,12 +3510,10 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				hashMap.put("revision", note.getRevision());
 				hashMap.put("obsDate", formatter.format(note.getObservation_date()));
 				hashMap.put("editor", this.providerMgr.getProvider(note.getProviderNo()).getFormattedName());
-				JSONObject json = JSONObject.fromObject(hashMap, config);
-				response.getOutputStream().write(json.toString().getBytes());
-
+				json = JSONObject.fromObject(hashMap, config);
 			}
 		}
-
+		response.getOutputStream().write(json.toString().getBytes());
 		return null;
 	}
 

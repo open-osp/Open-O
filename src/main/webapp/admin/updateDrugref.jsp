@@ -29,7 +29,7 @@
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 	boolean authed=true;
 %>
-<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>"> 
+<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
 	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
 </security:oscarSec>
@@ -39,76 +39,67 @@ if(!authed) {
 }
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
 
-<%@page import="oscar.oscarProvider.data.*,java.util.*,org.oscarehr.util.SpringUtils,org.oscarehr.common.dao.QueueDao" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
-<html>
-    <head>
-		<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-		<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-		<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-		<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-		<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
-		
-		<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-		<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-		<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-		<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-		<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-		<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-		<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
-		<script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
-        <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/prototype.js"/>"></script>
+
+<!DOCTYPE html>
+<html:html locale="true">
+<head>
+<html:base />
+        <title><bean:message key="admin.admin.UpdateDrugref"/></title>
+		<link href="<c:out value="${ctx}/css/bootstrap.css"/>" rel="stylesheet" type="text/css">
+		<script src="<c:out value="${ctx}/share/javascript/Oscar.js"/>"></script>
+        <script src="<c:out value="${ctx}/share/javascript/prototype.js"/>"></script>
+        <script>
+            function getUpdateTime(){
+              var data="method=getLastUpdate";
+                    var url="<c:out value='${ctx}'/>"+"/oscarRx/updateDrugrefDB.do";
+                    new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
+                            var json=transport.responseText.evalJSON();
+                            if(json.lastUpdate==null){
+                                $('dbInfo').innerHTML='Drugref database has not been updated, please update.';
+                                $('updatedb').show();
+                            }
+                            else if(json.lastUpdate=='updating'){
+                                $('dbInfo').innerHTML='Drugref database is updating';
+                                $('updatedb').hide();
+                            }
+                            else{
+                                $('dbInfo').innerHTML='Drugref has been updated on '+json.lastUpdate;
+                                $('updatedb').show();
+                            }
+                    },onFailure:function(transport){
+                    	$('dbInfo').innerHTML='Drugref database has not been updated, please update.';
+                    	$('updatedb').show();
+                    	}})
+
+            }
+            function updateDB(){
+                    var data="method=updateDB";
+                    var url="<c:out value='${ctx}'/>"+"/oscarRx/updateDrugrefDB.do";
+                    new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
+                            var json=transport.responseText.evalJSON();
+                            if(json.result=='running')
+                                $('updateResult').innerHTML="Update has started, it'll take about 1 hour to finish";
+                            else if (json.result=='updating')
+                                $('updateResult').innerHTML="Some one has already been updating it";
+                    }})
+            }
+        </script>
     </head>
     <body class="mainbody" onload="getUpdateTime();" >
-    	<h4>Update Drugref</h4>
+    	<h4><bean:message key="admin.admin.UpdateDrugref"/></h4>
     	<div class="well">
-        	<p>Drugref<span class="pull-right"><oscar:help keywords="1.6.11" key="app.top1"/> |
-           		<a href="javascript: popupStart(300, 400, 'About.jsp')">About</a> |
-           		<a href="javascript: popupStart(300, 400, 'License.jsp')">License</a>
-           	</span></p>
+        	<p><bean:message key="admin.admin.DrugRef"/></p>
 			<p><a id="dbInfo" href="javascript:void(0);"></a></p>
-           	<p><a id="updatedb" style="display:none" onclick="updateDB();" href="javascript:void(0);" >Update Drugref Database</a></td><td><a id="updateResult"></a></td>
+           	<p><a id="updatedb" style="display:none" onclick="updateDB();" href="javascript:void(0);" class="btn btn-primary" ><bean:message key="admin.admin.UpdateDrugref"/></a>
+            <p><a id="updateResult"></a><p>
          </div>
     </body>
-    <script type="text/javascript">
-        function getUpdateTime(){
-          var data="method=getLastUpdate";
-                var url="<c:out value='${ctx}'/>"+"/oscarRx/updateDrugrefDB.do";
-                new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-                        var json=transport.responseText.evalJSON();
-                        if(json.lastUpdate==null){
-                            $('dbInfo').innerHTML='Drugref database has not been updated,please update.';
-                            $('updatedb').show();
-                        }
-                        else if(json.lastUpdate=='updating'){
-                            $('dbInfo').innerHTML='Drugref database is updating';
-                            $('updatedb').hide();
-                        }
-                        else{
-                            $('dbInfo').innerHTML='Drugref has been updated on '+json.lastUpdate;
-                            $('updatedb').show();
-                        }
-                },onFailure:function(transport){
-                	$('dbInfo').innerHTML='Drugref database has not been updated,please update.';
-                	$('updatedb').show(); 
-                	}})
 
-    }
-         function updateDB(){
-                var data="method=updateDB";
-                var url="<c:out value='${ctx}'/>"+"/oscarRx/updateDrugrefDB.do";
-                new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){
-                        var json=transport.responseText.evalJSON();
-                        if(json.result=='running')
-                            $('updateResult').innerHTML="Update has started, it'll take about 1 hour to finish";
-                        else if (json.result=='updating')
-                            $('updateResult').innerHTML="Some one has already been updating it";
-                }})
-            }
-    </script>
-</html>
+</html:html>

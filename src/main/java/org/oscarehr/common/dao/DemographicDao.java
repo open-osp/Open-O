@@ -89,22 +89,20 @@ import oscar.util.SqlUtils;
 public class DemographicDao extends HibernateDaoSupport implements ApplicationEventPublisherAware {
 
 	private static final int MAX_SELECT_SIZE = 500;
-	
+
 	static Logger log = MiscUtils.getLogger();
 
 	private ApplicationEventPublisher publisher;
-    
+
 
 	/**
 	 * Finds merged demographic IDs for the specified demographic.
-	 * 
-	 * @param demographicNo
-	 * 		Demographic ID to find merged records for
-	 * @return
-	 * 		Returns the list of merged (child ids) or empty list if the record is not merged to any other record   
+	 *
+	 * @param demographicNo Demographic ID to find merged records for
+	 * @return Returns the list of merged (child ids) or empty list if the record is not merged to any other record
 	 */
 	@SuppressWarnings("unchecked")
-	@NativeSql({ "demographic_merged" })
+	@NativeSql({"demographic_merged"})
 	public List<Integer> getMergedDemographics(Integer demographicNo) {
 		// Please don't tell me anything about session handling - this hibernate stuff must be refactored into JPA, then we will talk, ok?
 		Session session = getSession();
@@ -136,20 +134,20 @@ public class DemographicDao extends HibernateDaoSupport implements ApplicationEv
 		logger.error("No one should be calling this method, this is a good way to run out of memory and crash a server... this is too large of a result set, it should be pagenated.", new IllegalArgumentException("The entire demographic table is too big to allow a full select."));
 		return this.getHibernateTemplate().find("from Demographic d order by d.LastName");
 	}
-	
+
 	public Long getActiveDemographicCount() {
 		List<?> res = this.getHibernateTemplate().find("SELECT COUNT(*) FROM Demographic d WHERE d.PatientStatus = 'AC'");
-		for(Object r : res) {
+		for (Object r : res) {
 			return (Long) r;
 		}
 		return 0L;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-    public List<Demographic> getActiveDemographics(final int offset, final int limit) {
+	public List<Demographic> getActiveDemographics(final int offset, final int limit) {
 		return getHibernateTemplate().executeFind(new HibernateCallback<List<Demographic>>() {
 			@Override
-            public List<Demographic> doInHibernate(Session session) throws HibernateException, SQLException {
+			public List<Demographic> doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.createQuery("FROM Demographic d WHERE d.PatientStatus = 'AC'");
 				if (offset > 0) {
 					query.setFirstResult(offset);
@@ -162,12 +160,12 @@ public class DemographicDao extends HibernateDaoSupport implements ApplicationEv
 					throw new MaxSelectLimitExceededException(MAX_SELECT_SIZE, aLimit);
 				}
 				query.setMaxResults(aLimit);
-				
-	            return query.list();
-            }
+
+				return query.list();
+			}
 		});
 	}
-	
+
 
 	public Demographic getDemographicById(Integer demographic_id) {
 		String q = "FROM Demographic d WHERE d.DemographicNo = ?";
@@ -186,7 +184,7 @@ public class DemographicDao extends HibernateDaoSupport implements ApplicationEv
 		if (onlyActive) {
 			q = "From Demographic d where d.ProviderNo = ? and d.PatientStatus = 'AC' ";
 		}
-		List<Demographic> rs = getHibernateTemplate().find(q, new Object[] { providerNo });
+		List<Demographic> rs = getHibernateTemplate().find(q, new Object[]{providerNo});
 		return rs;
 	}
 	

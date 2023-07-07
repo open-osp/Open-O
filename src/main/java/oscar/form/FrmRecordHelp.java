@@ -28,6 +28,8 @@ package oscar.form;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -47,7 +49,27 @@ public class FrmRecordHelp {
     private String _dateFormat = "yyyy/MM/dd";
     private String _newDateFormat = "yyyy-MM-dd"; //handles both date formats, but yyyy/MM/dd is displayed to avoid deprecation
 
-    public void setDateFormat(String s) {// "dd/MM/yyyy"
+    private static final HashSet VALID_ACTION_VALUES = new HashSet < String > () {
+        {
+            add("print");
+            add("save");
+            add("exit");
+            add("graph");
+            add("printAll");
+            add("printLabReq");
+            add("printConsultLetter");
+            add("printNewOBConsult");
+            add("printMaleConsultLetter");
+            add("printIUDTemplate");
+            add("printAllJasperReport");
+            add("formEpistaxisLetter");
+            add("formOtologicLetter");
+            add("formSinusLetter");
+            add("followUpLetter");
+        }
+    };
+
+    public void setDateFormat(String s) {
         _dateFormat = s;
     }
 
@@ -63,7 +85,7 @@ public class FrmRecordHelp {
                 String name = md.getColumnName(i);
                 String value;
 
-                if ( "TINYINT".equalsIgnoreCase(md.getColumnTypeName(i)) || "BIT".equalsIgnoreCase(md.getColumnTypeName(i)) || md.getColumnTypeName(i).toUpperCase().startsWith("TINY")) {
+                if (md.getColumnTypeName(i).toUpperCase().startsWith("TINYINT") || md.getColumnTypeName(i).equalsIgnoreCase("bit")) {
                     if (rs.getInt(i) == 1)
                         value = "checked='checked'";
                     else
@@ -83,20 +105,16 @@ public class FrmRecordHelp {
         return props;
     }
 
-    @SuppressWarnings("deprecation")
-	public synchronized int saveFormRecord(Properties props, String sql) throws SQLException {
+    public synchronized int saveFormRecord(Properties props, String sql) throws SQLException {
 
-    	int insertedPk = -1;
 
-    	ResultSet rs = DBHandler.GetSQL(sql, true);
+        ResultSet rs = DBHandler.GetSQL(sql, true);
         rs.moveToInsertRow();
-        updateResultSet(props, rs, true);
+        rs = updateResultSet(props, rs, true);
         rs.insertRow();
-        rs.last();
-        insertedPk = rs.getInt(1); 
-        
-        String saveAsXml = OscarProperties.getInstance().getProperty("save_as_xml", "false");      
-        if ("true".equalsIgnoreCase(saveAsXml)) {
+        String saveAsXml = OscarProperties.getInstance().getProperty("save_as_xml", "false");
+
+        if (saveAsXml.equalsIgnoreCase("true")) {
 
             String demographicNo = props.getProperty("demographic_no");
             int index = sql.indexOf("form");
@@ -115,13 +133,30 @@ public class FrmRecordHelp {
                 Document doc = JDBCUtil.toDocument(rs);
                 JDBCUtil.saveAsXML(doc, fileName);
             } catch (Exception e) {
-                MiscUtils.getLogger().error("Error. Failed to save XML Doc for " + fileName, e);
+                MiscUtils.getLogger().error("Error", e);
             }
         }
-        
         rs.close();
 
-        return insertedPk;
+        int ret = 0;
+        /*
+         * if db_type = mysql return LAST_INSERT_ID() but if db_type = postgresql, return a prepared
+         * statement, since here we dont know which sequence will be used
+         */
+        String db_type = OscarProperties.getInstance() != null ? OscarProperties.getInstance().getProperty("db_type",
+                "") : "";
+        if (db_type.equals("") || db_type.equalsIgnoreCase("mysql")) {
+            sql = "SELECT LAST_INSERT_ID()";
+        } else if (db_type.equalsIgnoreCase("postgresql")) {
+            sql = "SELECT CURRVAL('?')";
+        } else {
+            throw new SQLException("ERROR: Database " + db_type + " unrecognized.");
+        }
+        rs = DBHandler.GetSQL(sql);
+        if (rs.next())
+            ret = rs.getInt(1);
+        rs.close();
+        return ret;
     }
 
     public ResultSet updateResultSet(Properties props, ResultSet rs, boolean bInsert) throws SQLException {
@@ -137,19 +172,9 @@ public class FrmRecordHelp {
 
             String value = props.getProperty(name, null);
 
-            System.out.println("FORM TABLE: " + md.getTableName(i) + "; COLUMN: " + md.getColumnName(i) + "; TYPE: " + md.getColumnTypeName(i) + "; VALUE: " + value);
-
-            /* To whomever sees this:
-             * Don't ever ever ever filter column types with a string comparator in order to translate "hacked"
-             * column values such as "on" for boolean true and "off" for boolean false.
-             * Use proper data types and values and let the JDBC driver do the work.
-             * This developer cause a bucket load of un-safe maintenance issues by doing this. This is an
-             * expensive job to fix correctly.
-             */
-            if ("TINYINT".equalsIgnoreCase(md.getColumnTypeName(i)) || "BIT".equalsIgnoreCase(md.getColumnTypeName(i)) || md.getColumnTypeName(i).startsWith("TINY")) {
+            if (md.getColumnTypeName(i).toUpperCase().startsWith("TINYINT") || md.getColumnTypeName(i).equalsIgnoreCase("bit")) {
                 if (value != null) {
-                    if ("on".equalsIgnoreCase(value) || "checked='checked'".equalsIgnoreCase(value) || "checked=\"checked\"".equalsIgnoreCase(value)
-                            || "1".equals(value) || "checked='true'".equalsIgnoreCase(value) || "checked=\"true\"".equalsIgnoreCase(value)) {
+                    if (value.equalsIgnoreCase("on") || value.equalsIgnoreCase("checked='checked'")) {
                         rs.updateInt(name, 1);
 
                     } else {
@@ -244,7 +269,7 @@ public class FrmRecordHelp {
             String name = md.getColumnName(i);
             String value;
 
-            if (( "TINYINT".equalsIgnoreCase(md.getColumnTypeName(i)) || "bit".equalsIgnoreCase(md.getColumnTypeName(i)) || md.getColumnTypeName(i).toUpperCase().startsWith("TINY")) && md.getScale(i) == 1) {
+            if ((md.getColumnTypeName(i).toUpperCase().startsWith("TINYINT") || md.getColumnTypeName(i).equalsIgnoreCase("bit")) && md.getScale(i) == 1) {
                 if (rs.getInt(i) == 1)
                     value = "on";
                 else
@@ -273,21 +298,7 @@ public class FrmRecordHelp {
     }
     
     public String findActionValue(String submit)  {
-        if (submit != null && submit.equalsIgnoreCase("print")) {
-            return "print";
-        } else if (submit != null && submit.equalsIgnoreCase("save")) {
-            return "save";
-        } else if (submit != null && submit.equalsIgnoreCase("exit")) {
-            return "exit";
-        } else if (submit != null && submit.equalsIgnoreCase("graph")) {
-            return "graph";
-        } else if (submit != null && submit.equalsIgnoreCase("printall")) {
-            return "printAll";
-        } else if (submit != null && submit.equalsIgnoreCase("printLabReq")) {
-            return "printLabReq";
-        } else {
-            return "failure";
-        }
+        return VALID_ACTION_VALUES.contains(submit) ? submit : "failure";
     }
 
     public String createActionURL(String where, String action, String demoId, String formId)  {
@@ -305,11 +316,24 @@ public class FrmRecordHelp {
             temp = where;
         } else if (action.equals("printAll")) {
             temp = where + "?demographic_no=" + demoId + "&formId=" + formId;
-        }else {
+        }  else if (action.equalsIgnoreCase("printConsultLetter")) {
+        	temp = where +  "?formId=" + formId;
+        } else if (action.equalsIgnoreCase("printMaleConsultLetter")) {
+        	temp = where +  "?formId=" + formId;
+        } else if (isOpenHealthCustomForm(action)) {
+            temp = where + "?demographic_no=" + demoId + "&formId=" + formId;
+        } else {
             temp = where;
         }
 
         return temp;
+    }
+
+    private boolean isOpenHealthCustomForm(String action) {
+        return "formEpistaxisLetter".equalsIgnoreCase(action)
+                || "formOtologicLetter".equalsIgnoreCase(action)
+                || "followUpLetter".equalsIgnoreCase(action)
+                || "formSinusLetter".equalsIgnoreCase(action) ;
     }
 
     public static void convertBooleanToChecked(Properties p)
@@ -334,5 +358,27 @@ public class FrmRecordHelp {
     			}
     		}
     	}
+    }
+
+    public Date getDateFieldOrNull(Properties props, String fieldName) {
+        String value = props.getProperty(fieldName);
+        Date result = null;
+        if (value != null) {
+            try {
+                if (value.contains("/")) {
+                    result = new SimpleDateFormat(_dateFormat).parse(value);
+                } else {
+                    result = new SimpleDateFormat(_newDateFormat).parse(value);
+                }
+            } catch (ParseException e) { /* do nothing, keep result == null */ }
+        }
+        return result;
+    }
+    public String parseDateFieldOrNull(Date date) {
+        String result = null;
+        if (date != null) {
+            result = new SimpleDateFormat(_dateFormat).format(date);
+        }
+        return result;
     }
 }

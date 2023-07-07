@@ -61,26 +61,26 @@ if(!authed) {
   DemographicData dd = new DemographicData();
 
 %>
-
+<!DOCTYPE html>
 <html:html locale="true">
 
 <head>
+<html:base />
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Demographic Set Edit I18n</title>
-<script src="../share/javascript/Oscar.js"></script>
-<link rel="stylesheet" type="text/css"
-	href="../share/css/OscarStandardLayout.css">
-<link rel="stylesheet" type="text/css" media="all"
-	href="../share/calendar/calendar.css" title="win2k-cold-1" />
+    <script src="../share/javascript/Oscar.js"></script>
 
-<script type="text/javascript" src="../share/calendar/calendar.js"></script>
-<script type="text/javascript"
-	src="../share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
-<script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
 
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+	<script src="${pageContext.request.contextPath}/js/global.js"></script>
+    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
 
-<SCRIPT LANGUAGE="JavaScript">
+<script>
 
 function showHideItem(id){
     if(document.getElementById(id).style.display == 'none')
@@ -121,28 +121,27 @@ function disableifchecked(ele,nextDate){
 
 
 
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
 </head>
 
 <body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="180">
 
   <div class="container">
-  
+
   <div class="page-header">
-    <h1><bean:message key="oscarReport.oscarReportDemoSetEdit.msgDemographic"/> - <bean:message key="oscarReport.oscarReportDemoSetEdit.msgSetEdit"/></h1>
+    <h3><bean:message key="oscarReport.oscarReportDemoSetEdit.msgDemographic"/> - <bean:message key="oscarReport.oscarReportDemoSetEdit.msgSetEdit"/></h3>
   </div>
 
   	<section id="mainContent">
 		<% if(request.getAttribute("deleteSetSuccess")!=null && (Boolean)request.getAttribute("deleteSetSuccess")){ %>
 			<div class="alert alert-block alert-success fade in">
-				<button type="button" class="close" data-dismiss="alert">×</button>
+				<button type="button" class="close" data-dismiss="alert">X</button>
 				<h4 class="alert-heading">Success!</h4>
 				<p>Patient set "${requestScope.setname}" has been successfully deleted.</p>
 			</div>
 		<% } %>
 		<div class="row">
 		<div class="span12">
-		<html:form styleClass="form-horizontal well form-search" 
+		<html:form styleClass="form-horizontal well form-search"
 			action="/report/DemographicSetEdit">
 			<div><bean:message key="oscarReport.oscarReportDemoSetEdit.msgPatientSet"/>: <html:select property="patientSet">
 				<html:option value="-1"><bean:message key="oscarReport.oscarReportDemoSetEdit.msgOptionSet"/></html:option>
@@ -150,19 +149,21 @@ function disableifchecked(ele,nextDate){
                             String s = sets.get(i);%>
 				<html:option value="<%=s%>"><%=s%></html:option>
 				<%}%>
-			</html:select> <input type="submit" value="<bean:message key="oscarReport.oscarReportDemoSetEdit.btnDisplaySet"/>" /></div>
+			</html:select> <input type="submit" class="btn" value="<bean:message key="oscarReport.oscarReportDemoSetEdit.btnDisplaySet"/>" /></div>
 
 		</html:form> <%if( request.getAttribute("SET") != null ) {
                    List<Map<String,String>> list = (List<Map<String,String>>) request.getAttribute("SET");
                    String setName = (String) request.getAttribute("setname");%>
 		<div><html:form action="/report/SetEligibility">
-			<input type="submit" value="<bean:message key="oscarReport.oscarReportDemoSetEdit.btnSetIneligible"/>" /> <bean:message key="oscarReport.oscarReportDemoSetEdit.msgIneligible"/><br>
-                        <input type="submit" name="delete" value="<bean:message key="oscarReport.oscarReportDemoSetEdit.btnDelete"/>"/><bean:message key="oscarReport.oscarReportDemoSetEdit.msgDelete"/>
-                   <input type="hidden" name="setName"
-				value="<%=setName%>" />
-			<table class="ele">
-				<tr>
-					<th>&nbsp;</th>
+			 <input type="button" class="btn" data-toggle="tooltip" title="<bean:message key="oscarReport.oscarReportDemoSetEdit.msgIneligible"/>" value="<bean:message key="oscarReport.oscarReportDemoSetEdit.btnSetIneligible"/>" onclick="submit();" >
+             <input type="submit" class="btn" name="delete" title="<bean:message key="oscarReport.oscarReportDemoSetEdit.msgDelete"/>" value="<bean:message key="oscarReport.oscarReportDemoSetEdit.btnDelete"/>"/>
+            <input type="hidden" name="setName" value="<%=setName%>">
+            <input type="hidden" name="deleteSet" id="deleteSet">
+
+			<table id="demoTable" class="ele table table-striped table-condensed">
+				<thead>
+                <tr>
+					<th>&nbsp;<input type="checkbox" id="select_all" onClick="check_uncheck_checkbox(this.checked);"></th>
 					<th><bean:message key="oscarReport.oscarReportDemoSetEdit.msgDemo"/></th>
 					<th><bean:message key="oscarReport.oscarReportDemoSetEdit.msgName"/></th>
 					<th><bean:message key="oscarReport.oscarReportDemoSetEdit.msgDOB"/></th>
@@ -171,12 +172,14 @@ function disableifchecked(ele,nextDate){
 					<th><bean:message key="oscarReport.oscarReportDemoSetEdit.msgDoctor"/></th>
 					<th><bean:message key="oscarReport.oscarReportDemoSetEdit.msgEligibility" /></th>
 				</tr>
+                </thead>
+                <tbody>
 				<%for (int i=0; i < list.size(); i++){
                      Map<String,String> h = list.get(i);
                      org.oscarehr.common.model.Demographic demo = dd.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), h.get("demographic_no"));  %>
 				<tr>
 					<td><input type="checkbox" name="demoNo"
-						value="<%=h.get("demographic_no")%>" />
+						value="<%=h.get("demographic_no")%>" class="checkbox"></td>
 					<td><%=h.get("demographic_no")%></td>
 					<td><%=demo.getLastName()%>, <%=demo.getFirstName()%></td>
 					<td><%=oscar.oscarDemographic.data.DemographicData.getDob(demo,"-")%></td>
@@ -186,8 +189,40 @@ function disableifchecked(ele,nextDate){
 					<td><%=elle(h.get("eligibility"))%></td>
 				</tr>
 				<%}%>
+                </tbody>
 			</table>
+            <!-- Button to trigger modal delete confirmation. Backend not implimented-->
+            <!--<a href="#delete-set-confirm" role="button" class="btn btn-alert" data-toggle="modal"><bean:message key="eform.groups.delGroup"/></a>-->
 		</html:form></div>
+<script>
+
+
+	function check_uncheck_checkbox(isChecked) {
+			if(isChecked) {
+				$('.checkbox').each(function() {
+					this.checked = true;
+				});
+			} else {
+				$('.checkbox').each(function() {
+					this.checked = false;
+				});
+			}
+		}
+
+    var table = jQuery('#demoTable').DataTable({
+            columnDefs: [
+                { searchable: false,
+                   orderable:false,
+                    targets: 0,
+                },],
+            "order": [[1,'asc']],
+            "paging": false,
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+    });
+
+</script>
 		<%}%>
 		</td>
 	</tr>
@@ -205,7 +240,7 @@ function disableifchecked(ele,nextDate){
 
 	<div id="delete-set-confirm" class="modal hide fade" tabindex="-1" role="dialog">
 		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal">×</button>
+			<button type="button" class="close" data-dismiss="modal">X</button>
 			<h3>Delete Set</h3>
 		</div>
 		<div class="modal-body">
@@ -214,33 +249,31 @@ function disableifchecked(ele,nextDate){
 			<p>Are you sure you want to proceed?</p>
 		</div>
 		<div class="modal-footer">
-			<a href="javascript:onDeleteConfirm()" class="btn btn-danger">Yes</a> 
-			<a href="javascript:$('#delete-set-confirm').modal('hide')" class="btn secondary">No</a>
+			<a href="javascript:onDeleteConfirm();" class="btn btn-danger">Yes</a>
+			<button type="button" class="btn" data-dismiss="modal">No</button>
 		</div>
-	</div>	
+	</div>
 
-    <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.js"></script>
-	
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>
 
-	<script type="text/javascript">
-	
+
+	<script>
+
 	function onDeleteConfirm(){
 		$('#delete-set-confirm').modal('hide');
     	$('#deleteSet').val('deleteSet');
-    	$('form[name="DemographicSetEditForm"]').submit();
+document.getElementsByName("DemographicSetEditForm")[0].submit();
+    	//$('form[name="DemographicSetEditForm"]').trigger( "submit" );
 	}
-	
+
 
 	function onDeleteSetClick() {
 	    //e.preventDefault();
-	    
+
 	    var id = $(this).data('id');
 		$('#delete-set-confirm').modal({ backdrop: true });
 	    $('#delete-set-confirm').data('id', id).modal('show');
 	};
-	
+
 	</script>
 </body>
 </html:html>

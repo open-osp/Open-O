@@ -521,9 +521,15 @@ Varicella Immunoglobulin	VarIg
 
 	<item
 			resultDesc=""
-			desc="Women from ages 21 to 70 are recommended to receive a PAP" name="PAP"
-			headingName="Screenings" link="" layout="PAPMAM" minAge="21"
-			maxAge="70" sex="F" showIfMinRecordNum="1" />
+			desc="Women from ages 25 to 60 are recommended to receive a PAP" name="PAP"
+			headingName="Screenings" link="" layout="PAPMAM" minAge="25"
+			maxAge="69" sex="F" showIfMinRecordNum="1" />
+
+	<item
+			resultDesc=""
+			desc="Women from ages 25 to 69" name="HPV-CERVIX"
+			headingName="Screenings" link="" layout="PAPMAM" minAge="25"
+			maxAge="69" sex="F" showIfMinRecordNum="1" />
 
 	<item
 			resultDesc=""
@@ -542,7 +548,7 @@ Varicella Immunoglobulin	VarIg
 			displayName="FIT/FOBT"
 			desc="Fecal Occult Blood Test or Fecal Immunochemical Test" name="FOBT"
 			headingName="Screenings" link="" layout="PAPMAM"
-			minAge="49" maxAge="80" showIfMinRecordNum="1" />
+			minAge="50" maxAge="74" showIfMinRecordNum="1" />
 
 	<item
 			resultDesc=""

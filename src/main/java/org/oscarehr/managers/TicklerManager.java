@@ -220,9 +220,9 @@ public class TicklerManager {
         }    
         
         //--- log action ---
-        for(Tickler tickler:results) {
-        	LogAction.addLogSynchronous(loggedInInfo, "TicklerManager.getTicklers", "ticklerId="+tickler.getId());
-        }
+//        for(Tickler tickler:results) {
+//        	LogAction.addLogSynchronous(loggedInInfo, "TicklerManager.getTicklers", "ticklerId="+tickler.getId());
+//        }
         
         return(results);
     }
@@ -230,14 +230,14 @@ public class TicklerManager {
     public List<Tickler> getTicklers(LoggedInInfo loggedInInfo, CustomFilter filter) {
     	checkPrivilege(loggedInInfo, PRIVILEGE_READ);
     	
-    	List<Tickler> results = ticklerDao.getTicklers(filter);     
+    	return ticklerDao.getTicklers(filter);
         
         //--- log action ---
-        for(Tickler tickler:results) {
-        	LogAction.addLogSynchronous(loggedInInfo, "TicklerManager.getTicklers", "ticklerId="+tickler.getId());
-        }
+//        for(Tickler tickler:results) {
+//        	LogAction.addLogSynchronous(loggedInInfo, "TicklerManager.getTicklers", "ticklerId="+tickler.getId());
+//        }
         
-        return(results);
+
     }
     
     public List<Tickler> getTicklers(LoggedInInfo loggedInInfo, CustomFilter filter, int offset, int limit) {
@@ -246,9 +246,9 @@ public class TicklerManager {
     	List<Tickler> results = ticklerDao.getTicklers(filter,offset,limit);     
         
         //--- log action ---
-        for(Tickler tickler:results) {
-        	LogAction.addLogSynchronous(loggedInInfo, "TicklerManager.getTicklers", "ticklerId="+tickler.getId());
-        }
+//        for(Tickler tickler:results) {
+//        	LogAction.addLogSynchronous(loggedInInfo, "TicklerManager.getTicklers", "ticklerId="+tickler.getId());
+//        }
         
         return(results);
     }
@@ -652,22 +652,7 @@ public class TicklerManager {
         List<Tickler> ticklers = ticklerDao.findByDemographicIdTaskAssignedToAndMessage(Integer.parseInt(demographic), task_assigned_to, message);
         return !ticklers.isEmpty();
      }
-     
-     /*
-     public void createTickler(String demoNo, String provNo, String message) {
-    	    if (!ticklerExists(demoNo, message)) {
-    	    	Tickler t = new Tickler();
-    	    	t.setDemographicNo(Integer.valueOf(demoNo));
-    	    	t.setMessage(message);
-    	    	t.setStatus("A");
-    	    	t.setCreator(provNo);
-    	    	t.setPriority("4");
-    	    	t.setTaskAssignedTo(provNo);
-    	    	ticklerDao.persist(t);
-    	    }
-    	  }
-    	  
-    	*/  
+
     	  public void createTickler(String demoNo, String provNo, String message, String assignedTo) {
     		   Tickler t = new Tickler();
     	    	t.setDemographicNo(Integer.parseInt(demoNo));
@@ -676,20 +661,7 @@ public class TicklerManager {
     	    	t.setTaskAssignedTo(assignedTo);
     	    	ticklerDao.persist(t);
     		  }
-    	  
-    	 
-    	  /*
-    	  public boolean ticklerExists(String demoNo, String message) {
-    		  CustomFilter filter=  new CustomFilter();
-    		  filter.setDemographicNo(demoNo);
-    		  filter.setMessage(message);
-    		  filter.setStatus("A");
-    		  List<Tickler> ticklers = ticklerDao.getTicklers(filter);
-    		  return !ticklers.isEmpty();
-    	  }
-    	  */
 
-    	 
     	  public void resolveTicklers(LoggedInInfo loggedInInfo, String providerNo, List<String> cdmPatientNos, String remString) {
     		  resolveTicklersBySubstring(loggedInInfo, providerNo, cdmPatientNos, remString);  
     	  }

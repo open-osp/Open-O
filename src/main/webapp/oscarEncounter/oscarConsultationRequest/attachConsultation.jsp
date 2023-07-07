@@ -49,8 +49,8 @@ if(!authed) {
 
 <script type="text/javascript">
 //<!--   
-function toggleSelectAll(element) {
-	jQuery("."+jQuery(element).val() + ":not(input[disabled='disabled'])").attr( "checked", (jQuery(element).attr("checked") === "checked"));
+function toggleSelectAll(element, startClassName) {
+	jQuery("[class^='"+ startClassName +"']:not(input[disabled='disabled'])").prop('checked', jQuery(element).prop("checked"));
 }
 //-->
 </script>
@@ -66,7 +66,7 @@ function toggleSelectAll(element) {
 			<td>
 			<ul id="documentList" style="list-style-type: none;padding:0px;">
             <li class="selectAllHeading">
-                 <input id="selectAllDocuments" type="checkbox" onclick="toggleSelectAll(this);" value="document_check" title="Select/un-select all documents."/> 
+                 <input id="selectAllDocuments" type="checkbox" onclick="toggleSelectAll(this, 'document_');" value="document_check" title="Select/un-select all documents."/>
                  <label for="selectAllDocuments">Select all</label>  
             </li>
              <c:forEach items="${ allDocuments }" var="document">
@@ -88,7 +88,7 @@ function toggleSelectAll(element) {
 				<td>
 					<ul id="labList" style="list-style-type: none;padding:0px;">					
 					    <li class="selectAllHeading" >
-			                 <input id="selectAllLabs" type="checkbox" onclick="toggleSelectAll(this);" value="lab_check" title="Select/un-select all documents."/> 
+			                 <input id="selectAllLabs" type="checkbox" onclick="toggleSelectAll(this, 'lab_');" value="lab_check" title="Select/un-select all documents."/>
 			                 <label for="selectAllLabs">Select all</label>  
 			            </li>
 						 <c:forEach items="${ allLabs }" var="lab">

@@ -46,19 +46,19 @@
 	<div class="row indicatorFooter" >
 		<div class="col-md-12 text-right">	
 									
-	        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
+	        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button"
 	        	aria-haspopup="true" aria-expanded="false">
 	        	options <span class="caret"></span>
 	        </a>
 	        
 			<ul class="dropdown-menu pull-right text-left">
 				<li>
-					<a href="#" data-toggle="modal" data-target="#indicatorInfo_${ indicatorPanel.id }" >
+					<a href="javascript:void(0)" data-toggle="modal" data-target="#indicatorInfo_${ indicatorPanel.id }" >
 						Indicator Info
 					</a>
 			    </li>
 			    <li>
-					<a href="#" class="indicatorDrilldownBtn" id="getDrilldown_${ indicatorPanel.id }" >
+					<a href="javascript:void(0)" class="indicatorDrilldownBtn" id="getDrilldown_${ indicatorPanel.id }" >
 						Drill Down
 					</a>
 			    </li>

@@ -80,6 +80,12 @@ import oscar.oscarRx.util.RxUtil;
 import oscar.oscarRx.util.TimingOutCallback;
 import oscar.oscarRx.util.TimingOutCallback.TimeoutException;
 
+/**
+ * @Deprecated do not use.  This class uses Sessions, drops streams, and causes corruption
+ * with prescription writing.
+ * MyDrugRef is no longer an active option.
+ */
+@Deprecated
 public final class RxMyDrugrefInfoAction extends DispatchAction {
 
     private static final Logger log2 = MiscUtils.getLogger();

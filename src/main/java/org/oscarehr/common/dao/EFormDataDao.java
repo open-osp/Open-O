@@ -113,9 +113,9 @@ public class EFormDataDao extends AbstractDao<EFormData> {
 		return findByDemographicIdCurrent(demographicId, current, startIndex, numToReturn, null);
 	}
     public List<EFormData> findByDemographicIdCurrentAttachedToConsult(String consultationId) {
-        String sql = "SELECT * FROM eform_data e where e.patient_independent = false " +
-                "AND e.fdid IN (SELECT cd.document_no FROM consultdocs cd WHERE cd.requestId = '" + consultationId + "' AND cd.docType = 'E' AND cd.deleted IS NULL) " +
-                "ORDER BY e.form_date DESC, e.form_time DESC";
+        String sql = "SELECT * FROM eform_data e JOIN consultdocs cd ON e.fdid = cd.document_no WHERE e.patient_independent = false AND cd.requestId = '" + consultationId + 
+					 "'AND cd.docType = 'E' AND cd.deleted IS NULL " + 
+					 "ORDER BY e.form_date DESC, e.form_time DESC";
         Query query = entityManager.createNativeQuery(sql, modelClass);
 
         return query.getResultList();

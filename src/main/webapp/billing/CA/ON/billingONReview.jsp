@@ -17,6 +17,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
+<!DOCTYPE html>
 <%@page import="org.oscarehr.common.dao.BillingServiceDao"%>
 <%@page import="org.oscarehr.common.dao.DemographicDao"%>
 <%@page import="org.oscarehr.common.dao.DxresearchDAO" %>
@@ -45,10 +46,6 @@
 <%@ page import="org.oscarehr.common.dao.DiagnosticCodeDao" %>
 <%@ page import="org.oscarehr.common.dao.BillingONCHeader1Dao, org.oscarehr.common.model.BillingONCHeader1" %>
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
-<script>
-    jQuery.noConflict();
-</script>
 
 
 <%
@@ -142,7 +139,7 @@ boolean dupServiceCode = false;
     String warningMsg = "";
 	String errorFlag = "";
 	String errorMsg = "";
-        
+
 	Vector vecCodeItem = prepObj.getServiceCodeReviewVec(vecServiceParam[0], vecServiceParam[1],vecServiceParam[2],billReferalDate);
 	Vector vecPercCodeItem = prepObj.getPercCodeReviewVec(vecServiceParam[0], vecServiceParam[1], vecCodeItem,billReferalDate);  //LINE CAUSING ERROR
 
@@ -168,12 +165,12 @@ boolean dupServiceCode = false;
 			int dob_year = 0, dob_month = 0, dob_date = 0, age = 0;
 			String content = "";
 			String total = "";
-			
+
 			//add to patientDx (or not)
 			if ("yes".equals(request.getParameter("addToPatientDx"))) {
 				String dxCodeMatch = request.getParameter("codeMatchToPatientDx");
 				String dxCodeAdd = dxCodeMatch.isEmpty() ? dxCode : dxCodeMatch;
-				
+
 				DxresearchDAO dxresearchDao = SpringUtils.getBean(DxresearchDAO.class);
 				java.util.Date d = new java.util.Date();
 				Dxresearch dx = new Dxresearch(Integer.valueOf(demo_no), d, d, 'A', dxCodeAdd, "icd9", (byte)0, user_no);
@@ -186,11 +183,11 @@ boolean dupServiceCode = false;
 			Vector vecHist = new Vector();
 			// get provider's detail
 			String proOHIPNO = "", proRMA = "";
-			
+
 			ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 			Provider ppp = providerDao.getProvider(request.getParameter("xml_provider"));
 			if (ppp != null) {
-				proOHIPNO = ppp.getOhipNo(); 
+				proOHIPNO = ppp.getOhipNo();
 				proRMA = ppp.getRmaNo();
 			}
 			if (request.getParameter("xml_provider") != null)
@@ -199,7 +196,7 @@ boolean dupServiceCode = false;
 			String r_doctor = "", r_doctor_ohip = "";
 			String demoFirst = "", demoLast = "", demoHIN = "", demoVer = "", demoDOB = "", demoDOBYY = "", demoDOBMM = "", demoDOBDD = "", demoHCTYPE = "";
 			String strPatientAddr = "";
-			
+
 			DemographicDao demoDao = SpringUtils.getBean(DemographicDao.class);
 			Demographic demo = demoDao.getDemographic(demo_no);
 			if (demo != null) {
@@ -247,17 +244,17 @@ boolean dupServiceCode = false;
 				if (demo.getHin() == null) {
 					errorFlag = "1";
 					errorMsg = errorMsg
-							+ "<br><div class='myError'>Error: The patient does not have a valid HIN. </div><br>";
+							+ "<br><div class='alert alert-error'>Error: The patient does not have a HIN </div><br>";
 				} else if (demo.getHin().equals("")) {
-					warningMsg += "<br><div class='myError'>Warning: The patient does not have a valid HIN. </div><br>";
+					warningMsg += "<br><div class='alert alert-error'>Warning: The patient does not have a HIN </div><br>";
 				}
 				if (r_doctor_ohip != null && r_doctor_ohip.length() > 0 && r_doctor_ohip.length() != 6) {
-					warningMsg += "<br><div class='myError'>Warning: the referral doctor's no is wrong. </div><br>";
+					warningMsg += "<br><div class='alert alert-error'>Warning: the referral doctor's no is wrong. </div><br>";
 				}
 				if (demoDOB.length() != 8) {
 					errorFlag = "1";
 					errorMsg = errorMsg
-							+ "<br><div class='myError'>Error: The patient does not have a valid DOB. </div><br>";
+							+ "<br><div class='alert alert-error'>Error: The patient does not have a valid DOB. </div><br>";
 				}
 			}
 
@@ -268,25 +265,31 @@ boolean dupServiceCode = false;
 			%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 <c:set var="demographicNo" value="${param.demographic_no}" scope="request"/>
-<oscar:customInterface section="billingreview"/>
+
 
 <%@page import="org.oscarehr.common.dao.SiteDao"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@page import="org.oscarehr.common.model.Site"%><html xmlns="http://www.w3.org/1999/xhtml">
+<%@page import="org.oscarehr.common.model.Site"%>
 <head>
 <title>OscarBilling</title>
-<link rel="stylesheet" type="text/css" href="billingON.css" />
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
+<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
    <script>
      jQuery.noConflict();
    </script>
+
 <oscar:customInterface section="billingReview"/>
 <script language="JavaScript">
         ctx = "<c:out value="${ctx}"/>";
     	demographicNo = "<c:out value="${demographicNo}"/>";
-    
+
 		var bClick = false;
-	    
+
 		function onSave() {
 		var value=jQuery("#payee").val();
 		jQuery("#payeename").val(value);
@@ -295,11 +298,11 @@ boolean dupServiceCode = false;
 
             return ret;
         }
-	    
+
 	    function onClickSave() {
 			bClick = true;
 	    }
-		
+
 	    function popupPage(vheight,vwidth,varpage) {
 		  var page = "" + varpage;
 		  windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
@@ -322,14 +325,17 @@ boolean dupServiceCode = false;
 		     popupPage('600', '700', 'onSearch3rdBillAddr.jsp?param='+t0);
 		}
                 function showtotal(){
-                	document.getElementById('payMethod_0').checked=true;
+                    var el = document.getElementById('payMethod_0');
+                    if (el != null){
+                    	document.getElementById('payMethod_0').checked=true;
+                    }
                     var subtotal = document.getElementById("total").value;
                     //subtotal = subtotal * 1 + document.getElementById("gst").value * 1;
                     var element = document.getElementById("stotal");
                     if( element != null )
                         element.value = subtotal;
                 }
-                
+
                 function validatePaymentNumberic(idx) {
                 	var oldVal = document.getElementById("percCodeSubtotal_" + idx).value;
                 	var val = document.getElementById("paid_" + idx).value;
@@ -366,7 +372,7 @@ boolean dupServiceCode = false;
                 	}
                 	oldVal = val;
                 }
-                
+
                 function validateFeeNumberic(idx) {
                 	var oldVal = "0.00";
                 	var val = document.getElementById("percCodeSubtotal_" + idx).value;
@@ -386,11 +392,11 @@ boolean dupServiceCode = false;
                 }
 
 
-                
+
        function updateElement(eId, data) {
     	   jQuery("#"+eId).val(data);
        }
-       
+
        function checkTotal() {
     	   var totValue = document.getElementById("total").value;
     	   if(isNaN(totValue)) {
@@ -399,7 +405,7 @@ boolean dupServiceCode = false;
     	   }
     	   return true;
        }
-       
+
        function updateTotal(e) {
     	   var editedValue = e.value;
     	   if( isNaN(editedValue) ) {
@@ -412,24 +418,24 @@ boolean dupServiceCode = false;
     			var total = 0.0;
     			var idx = 0;
     			var displayTotal = "0.00";
-    			
-    			while( (codeFees = document.getElementById("percCodeSubtotal_" + idx)) ) {    				    			
+
+    			while( (codeFees = document.getElementById("percCodeSubtotal_" + idx)) ) {
     				total += parseInt(codeFees.value);
     				++idx;
     			}
-    		    			
-    			updateElement("total", formatTotal(total));    			    			
-    			total += new Number(jQuery("#gst").val());    			
+
+    			updateElement("total", formatTotal(total));
+    			total += new Number(jQuery("#gst").val());
     			updateElement("gstBilledTotal", formatTotal(total));
-    			
+
     	   }
-    	   
+
        }
-       
+
        function formatTotal(total) {
     	   var displayTotal = "0.00";
     	   var decimal = total % 1;
-    	   
+
     	   if( decimal == 0 ) {
 				displayTotal = total + ".00";
 			}
@@ -439,26 +445,26 @@ boolean dupServiceCode = false;
 			else {
 				displayTotal = total;
 			}
-    	   
+
     	   return displayTotal;
        }
-       
+
        function checkPaymentMethod(settle) {
     	   var payMethods = document.getElementsByName("payMethod");
     	   var checkedMethod = false;
-    	   
+
     	   if( settle != "Settle" && document.forms[0].payment.value == 0 ) {
     		   return true;
     	   }
-    	   
-    	   
+
+
     	   for( var idx = 0; idx < payMethods.length; ++idx ) {
     		   if( payMethods[idx].checked ) {
     			   checkedMethod = true;
     			   break;
     		   }
     	   }
-    	   
+
     	   if( !checkedMethod ) {
     		   alert("Please select a payment method");
     	   }
@@ -467,10 +473,19 @@ boolean dupServiceCode = false;
     		   document.forms['titlesearch'].submit();
     		   popupPage(700,720,'billingON3rdInv.jsp');
     	   }
-    	   
+
     	   return checkedMethod;
-    	   
+
        }
+
+function toggle(id){
+    var el = document.getElementById(id);
+    if(window.getComputedStyle(el).display === "block") {
+        el.style.display="none";
+    } else {
+        el.style.display="block";
+    }
+}
 
 	//-->
 
@@ -478,7 +493,7 @@ boolean dupServiceCode = false;
 
 <style type="text/css">
 div.wrapper{
-    background-color: #eeeeff;
+    background-color: white;
     margin-top:0px;
     padding-top:0px;
     margin-bottom:0px;
@@ -491,36 +506,16 @@ div.wrapper br{
 
 div.wrapper ul{
     width: 80%;
-    background-color: #eeeeff;
     list-style:none;
     list-style-type:none;
     list-style-position:outside;
-    padding-left:1px;
+    padding-left:55px;
     margin-left:1px;
-    margin-top:0px;
-    padding-top:1px;
-    margin-bottom:0px;
-    padding-bottom:0px;
-}
-
-div.wrapper ul li{
-    background-color: #eeeeff;
-}
-
-div.dxBox{
-    width:90%;
-    background-color: #eeeeff;
-    margin-top: 2px;
-    margin-left:3px;
-    margin-right:3px;
-    margin-bottom:0px;
-    padding-bottom:0px;
-    float: left;
 }
 
 
 div.dxBox h3 {
-    background-color: #ccccff;
+    background-color: silver;
   /*font-size: 1.25em;*/
     font-size: 10pt;
     font-variant:small-caps;
@@ -546,24 +541,20 @@ div.dxBox input {
     padding-bottom: 0px;
 }
 
-</style>
-<script type="text/javascript" src="../../../share/javascript/prototype.js"></script>
-<script type="text/javascript" src="../../../share/javascript/nifty.js"></script>
-<link rel="stylesheet" type="text/css" href="../../../share/css/niftyCorners.css" />
-<link rel="stylesheet" type="text/css" href="../../../share/css/niftyPrint.css" media="print"/>
 
-<script type="text/javascript">
-window.onload=function(){
-          if(!NiftyCheck())
-                      return;
-          Rounded("div.dxBox","top","transparent","#CCCCFF","small border #CCCCFF");
-          Rounded("div.dxBox","bottom","transparent","#EEEEFF","small border #CCCCFF");
+.border1, .border1 th, .border1 td {
+    border: 1px solid lightgray
+
 }
-</script>
+input[type="text"]{
+margin-bottom: 0px;
+}
+
+</style>
 
 </head>
 
-<body topmargin="0" onload="showtotal(),calculatePayment()">
+<body onload="showtotal(),calculatePayment()">
 
 <form method="post" name="titlesearch" action="billingONSave.jsp" onsubmit="return onSave();">
     <input type="hidden" name="url_back" value="<%=request.getParameter("url_back")%>">
@@ -571,44 +562,42 @@ window.onload=function(){
 	<input type="hidden" name="billStatus_old" id="billStatus_old" value="<%=request.getParameter("billStatus_old")%>" />
 	<input type="hidden" name="billForm" id="billForm" value="<%=request.getParameter("billForm")%>" />
     <input type="hidden" name="payeename" id="payeename" value="" />
-<table border="0" cellpadding="0" cellspacing="2" width="100%" class="myIvory">
+<table style="width:100%" class="myIvory">
 	<tr>
 		<td>
-		<table border="0" cellspacing="0" cellpadding="0" width="100%" class="myDarkGreen">
-			<tr>
-				<td><b><font color="#FFFFFF">&nbsp;Confirmation </font></b></td>
-				<td align="right"><input type="hidden" name="addition" value="Confirm" /></td>
+		<table style="width:100%" class="myDarkGreen">
+			<tr style="background-color:silver;">
+				<td><H4>&nbsp;Billing Confirmation</H4></td>
+				<td style="text-align:right"><input type="hidden" name="addition" value="Confirm" /></td>
 			</tr>
 		</table>
 		</td>
 	</tr>
 	<tr>
 		<td>
-		<table border="0" cellspacing="0" cellpadding="0" width="100%" class="myYellow">
+		<table style="width:100%" class="myYellow">
 			<tr>
-				<td nowrap width="10%" align="center"><%=demoname%> <%=demoSex.equals("1") ? "Male" : "Female"%>
-				<%=" DOB: " + demoDOBYY + "/" + demoDOBMM + "/" + demoDOBDD + " HIN: " + demoHIN + "" + demoVer%>
+				<td style="white-space:nowrap; width:10%; text-align:center"><%=demoname%> &nbsp;&nbsp; <%=demoSex.equals("1") ? "Male" : "Female"%> &nbsp;&nbsp;
+				<%=" DOB: " + demoDOBYY + "/" + demoDOBMM + "/" + demoDOBDD + " &nbsp;&nbsp; HIN: " + demoHIN + "" + demoVer%>
 				</td>
-				<td align="center"><%=wrongMsg%></td>
+				<td style="text-align:center"><%=wrongMsg%></td>
 			</tr>
 		</table>
 
-		<table border="1" cellspacing="0" cellpadding="0" width="100%" bordercolorlight="#99A005" bordercolordark="#FFFFFF"
-			 class="myIvory">
+		<table style="width:100%;">
 			<tr>
-				<td width="50%">
+				<td style="width:50%">
 
-				<table border="1" cellspacing="2" cellpadding="0" width="100%" bordercolorlight="#99A005" bordercolordark="#FFFFFF"
-					>
+				<table style="width:100%" >
 					<tr>
 						<!--<input type="text" name="checkFlag" id="checkFlag" value="<%=request.getParameter("checkFlag") %>" />  -->
-						<td nowrap width="30%" align="center" ><b>Service Date</b><br>
+						<td style="white-space:nowrap; width:30%; text-align:center" ><b>Service Date</b><br>
 						<%=request.getParameter("service_date").replaceAll("\\n", "<br>")%></td>
-						<td align="center" width="33%"><b>Diagnostic Code</b><br>
-						<%=dxCode%></br>
+						<td style="text-align:center; width:33%"><b>Diagnostic Code</b><br>
+						<%=dxCode%><br>
 						<%=dxDesc%>
 						</td>
-						<td valign="top"><b>Refer. Doctor</b><br>
+						<td style="vertical-align:top"><b>Refer. Doctor</b><br>
 						<%=request.getParameter("referralDocName")%><br>
 						<b>Refer. Doctor #</b><br>
 						<%=request.getParameter("referralCode")%></td>
@@ -616,25 +605,25 @@ window.onload=function(){
 				</table>
 
 				</td>
-				<td valign="top">
+				<td style="vertical-align:top">
 
-				<table border="1" cellspacing="2" cellpadding="0" width="100%" bordercolorlight="#99A005" bordercolordark="#FFFFFF"
+				<table style="width:100%"
 					 class="myGreen">
 					<tr>
-						<td nowrap width="30%"><b>Billing Physician</b></td>
-						<td width="20%"><%=providerBean.getProperty(request.getParameter("xml_provider")!=null?request.getParameter("xml_provider").substring(0,request.getParameter("xml_provider").indexOf("|")):"", "")%></td>
-						<td nowrap width="30%"><b>Assig. Physician</b></td>
-						<td width="20%"><%=assgProvider_no == null ? "N/A" : providerBean.getProperty(assgProvider_no, "")%></td>
+						<td style="white-space:nowrap;width:30%"><b>Billing Physician</b></td>
+						<td style="width:20%"><%=providerBean.getProperty(request.getParameter("xml_provider")!=null?request.getParameter("xml_provider").substring(0,request.getParameter("xml_provider").indexOf("|")):"", "")%></td>
+						<td style="white-space:nowrap; width:30%"><b>MRP</b></td>
+						<td style="width:20%"><%=assgProvider_no == null ? "N/A" : providerBean.getProperty(assgProvider_no, "")%></td>
 					</tr>
 					<tr>
 
-						<td width="30%"><b>Visit Type</b></td>
-						<td width="20%"><%=request.getParameter("xml_visittype").substring(
+						<td style="width:30%"><b>Visit Type</b></td>
+						<td style="width:20%"><%=request.getParameter("xml_visittype").substring(
 							request.getParameter("xml_visittype").indexOf("|") + 1)%>
 						</td>
 
-						<td width="30%"><b>Billing Type</b></td>
-						<td width="20%"><%=request.getParameter("xml_billtype").substring(
+						<td style="width:30%"><b>Billing Type</b></td>
+						<td style="width:20%"><%=request.getParameter("xml_billtype").substring(
 							request.getParameter("xml_billtype").indexOf("|") + 1)%>
 						</td>
 					</tr>
@@ -646,20 +635,27 @@ window.onload=function(){
 							</td>
 
 					<% if (bMultisites) { %>
-						<td width="30%"><b>Billing Clinic</b></td>
-						<td width="20%" nowrap="nowrap"><%=request.getParameter("site")%>
+						<td style="width:30%"><b>Billing Clinic</b></td>
+						<td style="width:20%; white-space:nowrap;"><%=request.getParameter("site")%>
 						</td>
 					<% } %>
 					</tr>
 					<tr>
                    		<td><b>SLI Code</b></td>
                         <td><%=request.getParameter("xml_slicode").substring(request.getParameter("xml_slicode").indexOf("|") + 1)%> &nbsp;</td>
+					<% if (bMultisites) { %>
+						<td></td>
+						<td></td>
+					<% } %>
                     </tr>
 					<tr>
 						<td><b>Admission Date</b></td>
 						<td><%=request.getParameter("xml_vdate")%></td>
 						<td colspan="2"></td>
-
+					<% if (bMultisites) { %>
+						<td></td>
+						<td></td>
+					<% } %>
 					</tr>
 				</table>
 
@@ -672,64 +668,64 @@ window.onload=function(){
 
 	</tr>
 	<tr>
-		<td align="center">
-		<table border="1" width="100%" bordercolorlight="#99A005" bordercolordark="#FFFFFF">
+		<td style="text-align:center">
+		<table class="border1" style="width:100%">
 <%  boolean codeValid = true;
 
     //validation that user hasn't already had billed to OHIP an annual physical this year
     String serviceCodeValue = null;
     int srvCodeIdx = 0;
     while (codeValid && (srvCodeIdx < BillingDataHlp.FIELD_SERVICE_NUM)) {
-         
+
          serviceCodeValue = request.getParameter("serviceCode" + srvCodeIdx);
          //Only worry about this check if we are billing OHIP for A003
          if (serviceCodeValue.equals("A003A") && request.getParameter("xml_billtype").matches("ODP.*")) {
             BillingONCHeader1 bCh1 = billingONCHeader1Dao.getLastOHIPBillingDateForServiceCode(Integer.parseInt(demo_no),"A003A");
-            if (bCh1 != null) {                
-                Calendar serviceDateCal = Calendar.getInstance();                
-                java.util.Date serviceDate = null;               
-                try {                   
-                    serviceDate = oscar.util.DateUtils.parseDate(request.getParameter("service_date"),request.getLocale()); 
-                    serviceDateCal.setTime(serviceDate);                    
+            if (bCh1 != null) {
+                Calendar serviceDateCal = Calendar.getInstance();
+                java.util.Date serviceDate = null;
+                try {
+                    serviceDate = oscar.util.DateUtils.parseDate(request.getParameter("service_date"),request.getLocale());
+                    serviceDateCal.setTime(serviceDate);
                 } catch (java.text.ParseException e) {}
-                
-                Calendar nextBillDateCal = Calendar.getInstance();               
+
+                Calendar nextBillDateCal = Calendar.getInstance();
                 nextBillDateCal.setTime(bCh1.getBillingDate());
                 //year plus a day
-                nextBillDateCal.add(Calendar.YEAR,1); 
+                nextBillDateCal.add(Calendar.YEAR,1);
                 nextBillDateCal.add(Calendar.DATE,1);
                 if (nextBillDateCal.after(serviceDateCal)) {
-                      codeValid = false;
+                      //codeValid = false; the bill will not be rejected if its only the second A003A and the diagnosis differs
     %>
                        <tr style="color:white">
                             <td align=center>
                                 <div class='myError'>
-                                  (<bean:message key="oscar.billing.ca.on.billingON.review.invoiceNo"/><%=String.valueOf(bCh1.getId())%>) A003A - <bean:message key="oscar.billing.ca.on.billingON.review.msgServiceCodeAlreadyBilled"/>                                
+                                  (<bean:message key="oscar.billing.ca.on.billingON.review.invoiceNo"/><%=String.valueOf(bCh1.getId())%>) A003A - <bean:message key="oscar.billing.ca.on.billingON.review.msgServiceCodeAlreadyBilled"/>
                                 </div>
                             </td>
                        </tr>
-    <%               
+    <%
                 }
             }
         }
         srvCodeIdx++;
     }
-    
-    //validation of user entered service codes    
+
+    //validation of user entered service codes
     serviceCodeValue = null;
     for (int i = 0; i < BillingDataHlp.FIELD_SERVICE_NUM; i++) {
 	serviceCodeValue = request.getParameter("serviceCode" + i);
 
 	if (!serviceCodeValue.equals("")) {
-		BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class); 
-		
+		BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);
+
 		List<Object> svcCodes = billingServiceDao.findBillingCodesByCodeAndTerminationDate(serviceCodeValue.trim().replaceAll("_","\\_"),
 				ConversionUtils.fromDateString(billReferalDate));
-	    
+
 	    if (svcCodes.isEmpty()) {
 			codeValid = false;
 		%>
-		<tr class="myErrorText"><td align=center>
+		<tr class="alert alert-error"><td align=center>
 		    &nbsp;<br>
 		    Service code "<%=serviceCodeValue%>" is invalid. Please go back to correct it.
 		</td></tr>
@@ -748,7 +744,7 @@ window.onload=function(){
 		if(dcodes.size() == 0) {
 		codeValid = false;
 		%>
-		<tr class="myErrorText"><td align=center>
+		<tr class="alert alert-error"><td align=center>
 		    &nbsp;<br>
 		    Diagnostic code "<%=dxCodeValue%>" is invalid. Please go back to correct it.
 		</td></tr>
@@ -765,7 +761,7 @@ window.onload=function(){
 				<%if(!"PAT".equals(billType)){%>
 				<td>Description</td>
 				<%}else{%>
-				<td width="14%">Description</td><td width="3%">Payment</td><td width="3%">Discount</td>
+				<td style="width:14%">Description</td><td style="width:3%">Payment</td><td style="width:3%">Discount</td>
 				<%}%>
 			</tr>
 <%  }
@@ -810,29 +806,29 @@ window.onload=function(){
                         if (codeValid) {
 			%>
 			<tr class="myGreen">
-				<td align='center' width='3%'><%=""+n %></td>
-				<td align='right' width='12%'><%=codeName %> (<%=codeUnit %>)</td>
+				<td style="text-align:center; width:3%"><%=""+n %></td>
+				<td style="text-align:right; width:12%"><%=codeName %> (<%=codeUnit %>)</td>
 				<td>
                     <% if( strWarning.length() > 0 ) { %>
-                    <span style="color:red; float:left;"><%=strWarning%></span>
+                    <span style="float:left;" class="alert alert-warning"><%=strWarning%></span>
                     <%}%>
                     <span style="float:right;"> <%=codeFee %> x <%=codeUnit %><% if (gstFlag.equals("1")){%> + <%=percent%>% GST<%}%> =
-				<input type="text" name="percCodeSubtotal_<%=i %>" size="5" value="<%=codeTotal %>" id="percCodeSubtotal_<%=i %>" onBlur="calculateTotal();" onchange="validateFeeNumberic(<%=i%>)"/>
-				<input type="hidden" name="xserviceCode_<%=i %>" value="<%=codeName %>" />
-				<input type="hidden" id="xserviceUnit_<%=i %>" name="xserviceUnit_<%=i %>" value="<%=codeUnit %>" />
+				<input type="text" name="percCodeSubtotal_<%=i %>" value="<%=codeTotal %>" id="percCodeSubtotal_<%=i %>" onBlur="calculateTotal();" onchange="validateFeeNumberic(<%=i%>)">
+				<input type="hidden" name="xserviceCode_<%=i %>" value="<%=codeName %>" >
+				<input type="hidden" id="xserviceUnit_<%=i %>" name="xserviceUnit_<%=i %>" value="<%=codeUnit %>" >
                     </span>
 				</td>
 				<%if(!"PAT".equals(billType)){%>
-					<td width='25%'><%=propCodeDesc.getProperty(codeName, "") %></td>
+					<td style="width:25%"><%=propCodeDesc.getProperty(codeName, "") %></td>
 				<%}else{
 				String paid_value = "0.00";
 				%>
 				<oscar:oscarPropertiesCheck property="BILLING_REVIEW_AUTO_PAYMENT" value="yes">
 				<%paid_value = codeTotal; %>
 				</oscar:oscarPropertiesCheck>
-				<td nowrap width='14%'><pre><%=codeDescription%></pre></td>
-				<td nowrap width='3%'><input type="text" id="paid_<%=i%>" name="paid_<%=i %>" value="<%=paid_value%>" onBlur="calculatePayment();" onchange="validatePaymentNumberic(<%=i %>)"/></td>
-				<td nowrap width='3%'><input type="text" id="discount_<%=i%>" name="discount_<%=i %>" value="0.00" onBlur="calculateDiscount();" onchange="validateDiscountNumberic(<%=i %>)"/></td>
+				<td style="white-space:nowrap; width:14%"><pre><%=codeDescription%></pre></td>
+				<td style="white-space:nowrap; width:3%"><input type="text" id="paid_<%=i%>" name="paid_<%=i %>" value="<%=paid_value%>" onBlur="calculatePayment();" onchange="validatePaymentNumberic(<%=i %>)"/></td>
+				<td style="white-space:nowrap; width:3%"><input type="text" id="discount_<%=i%>" name="discount_<%=i %>" value="0.00" onBlur="calculateDiscount();" onchange="validateDiscountNumberic(<%=i %>)"/></td>
 				<%}%>
 			</tr>
 			<%
@@ -843,9 +839,9 @@ window.onload=function(){
 			if (codeValid) {
                                             %>
 			<tr class="myPink">
-				<td align='center' ><%="&nbsp;" %></td>
-				<td align='right' ><%=codeName %> (1)</td>
-				<td align='right'>
+				<td style="text-align:center;" ><%="&nbsp;" %></td>
+				<td style="text-align:right;" ><%=codeName %> (1)</td>
+				<td style="text-align:right;">
 		     <% }
 
 						bPerc = true;
@@ -858,16 +854,16 @@ window.onload=function(){
 							String percTotal = (Float.parseFloat((String)vecPercTotal.get(j)) )*Integer.parseInt(codeUnit) + "";
 				if (codeValid) {
                                                         %>
-						<input type="checkbox" name="percCode_<%=i %>" value="<%=percTotal %>" onclick="onCheckMaster();" /> <%=percTotal %><font size='-2'>(<%=vecPercFee.get(j) %>x<%=percFee %>x<%=codeUnit %>)</font> |
+						<input type="checkbox" id="percentCode" name="percCode_<%=i %>" value="<%=percTotal %>" onclick="onCheckMaster();" /> <%=percTotal %>(<%=vecPercFee.get(j) %>x<%=percFee %>x<%=codeUnit %>) |
 				<%
                                 }
                                                 }
                                 if (codeValid) {
-				%> = <input type="text" name="percCodeSubtotal_<%=i %>" size="5" value="0.00" />
+				%> = <input type="text" name="percCodeSubtotal_<%=i %>" value="0.00" />
 				<input type="hidden" name="xserviceCode_<%=i %>" value="<%=codeName %>" />
 				<input type="hidden" name="xserviceUnit_<%=i %>" value="<%=codeUnit %>" />
 				</td>
-				<td width='25%'><%=propCodeDesc.getProperty(codeName, "") %>
+				<td style="width:25%"><%=propCodeDesc.getProperty(codeName, "") %>
 				</td>
 			</tr>
 			<%
@@ -885,9 +881,15 @@ window.onload=function(){
                         if (codeValid) {
 			%>
 			<tr>
-				<td align='right' colspan='3' class="myGreen">Total: <input type="text" id="total" name="total" size="5" value="0.00" onchange="onTotalChanged();"/>
+                <td style="text-align:left;" colspan="2">
+                </td>
+				<td style="text-align:right;" colspan='1' class="myGreen">
+
+                Total: <input type="text" id="total" name="total" value="0.00" onchange="onTotalChanged();"/>
 				<input type="hidden" name="totalItem" value="<%=vecServiceParam[0].size() %>" /></td>
+
 <script Language="JavaScript">
+
 <!--
 function onCheckMaster() {
 <%
@@ -969,24 +971,28 @@ function onCheckMaster() {
                         <% } %>
 			<tr>
 
-				<td colspan='3' align='center' bgcolor="silver">
-				    <input type="submit" name="button" value="Back to Edit" style="width: 120px;" />
+				<td colspan="4" style="text-align:center; background-color:silver">
+				    <input type="submit" name="button" value="Back to Edit" class="btn" style="width: 120px;" />
                                     <% if (codeValid && !dupServiceCode) { %>
-                                    <input type="submit" name="submit" value="Save" style="width: 120px;" onClick="onClickSave();"/>
-				    <input type="submit" name="submit" value="Save & Add Another Bill" onClick="onClickSave();"/>
+                                    <input type="submit" name="submit" value="Save"  class="btn btn-primary" style="width: 120px;" onClick="onClickSave();"/>
+				    <input type="submit" name="submit" value="Save & Add Another Bill"  class="btn" onClick="onClickSave();"/>
                                     <% }else if (dupServiceCode){%>
-                                    <td><div class='myError'>Warning: Duplicated service codes. </div></td>
+                                    <td><div class='alert alert-error'>Warning: Duplicate service codes entered </div></td>
                                     <% }
                                     %>
                                     </td>
 			</tr>
 		</table>
+
 		</td>
 	</tr>
+
+<% if(bPerc) { out.println("<tr><td style='text-align:center'><br><span class='alert alert-info' >* Click the code you want the % code to apply to [1 or 2 ...].</span></td></tr>"); } %>
 <% if (codeValid) {
         if(request.getParameter("xml_billtype")!=null && request.getParameter("xml_billtype").matches("ODP.*|WCB.*|NOT.*|BON.*")) { %>
 	<tr>
-			<td >
+			<td>
+			<br>
 			Billing Notes:<br>
 			<%
 			String tempLoc = "";
@@ -1002,9 +1008,10 @@ function onCheckMaster() {
 			tempLoc = request.getParameter("site");
 		}
 			%>
-			<textarea name="comment" cols=60 rows=4><%=tempLoc %></textarea>
+			<textarea name="comment" style="width:600px;"><%=tempLoc %></textarea>
 			</td>
 	</tr>
+<tr><td>
 <%      }
   }     %>
 <%//
@@ -1074,35 +1081,36 @@ if (bMultisites) {
 	OscarProperties props = OscarProperties.getInstance();
 	String tempLoc = props.getProperty("BILLING_NOTE","");
 %>
+</td></tr>
 <tr><td>
-		<table border="1" width="100%" bordercolorlight="#99A005" bordercolordark="#FFFFFF">
+		<table class="border1" style="width:100%">
 			<tr class="myYellow">
 				<td colspan='2'>Private Billing</td>
 			</tr>
-			<tr><td width="80%">
+			<tr><td style="width:80%">
 
-			<table id="privateBillInfo" border="0" width="100%" >
+			<table id="privateBillInfo" style="width:100%" >
 			<tr><td>Bill To [<a href=# onclick="scriptAttach('billTo'); return false;">Search</a>]<br>
 			<textarea name="billto" id="billTo" cols=30 rows=6><%=strPatientAddr %></textarea></td>
 			<td>Remit To [<a href=# onclick="scriptAttach('remitTo'); return false;">Search</a>]<br>
 			<textarea name="remitto" id="remitTo" value="" cols=30 rows=6><%=clinicAddress%></textarea></td>
 			<td>Payee<br>
-             <% 
+             <%
              String  providerNo= request.getParameter("xml_provider");
              int indexnumber=providerNo.indexOf("|");
              if(indexnumber!=-1)
              {
              providerNo=providerNo.substring(0,indexnumber);
              }
-             
+
              String payeename="";
              String lname="";
              String fname="";
              Provider p = providerDao.getProvider(providerNo);
              lname = p.getLastName();
-             fname = p.getFirstName();   
+             fname = p.getFirstName();
              payeename=fname+" "+lname;
-             	  
+
 Properties prop = oscar.OscarProperties.getInstance();
    String payee = prop.getProperty("PAYEE", "");
    payee = payee.trim();
@@ -1115,19 +1123,19 @@ Properties prop = oscar.OscarProperties.getInstance();
 <% } %>
 			</tr>
 			</table>
-			<table border="0" width="100%" >
+			<table style="width:100%" >
 			<tr>
 			<td >
 			Billing Notes:<br>
 			<textarea name="comment" cols=100 rows=6><%=tempLoc %></textarea>
 			</td>
-			<td align="right">
+			<td style="text-align:right">
                         <input type="hidden" name="provider_no" value="<%=request.getParameter("xml_provider").substring(0,request.getParameter("xml_provider").indexOf("|"))%>"/>
-                        GST Billed:<input type="text" id="gst" name="gst" value="<%=gstTotal%>" size="6"/><br>
-                        <input type="hidden" id="gstBilledTotal" name="gstBilledTotal" value="<%=gstbilledtotal%>" size="6" />
-                        Total:<input type="text" id="stotal" disabled name = "stotal" value="0.00" size="6" /><br>
-			Payments:<input type="text"  disabled name="payment1" id="payment"value="0.00" size="6" onDblClick="settlePayment();" /><br/>
-			Discount:<input type="text" disabled name="discount2" id="discount"value="0.00" size="6"/>
+                        GST Billed:<input type="text" id="gst" name="gst" value="<%=gstTotal%>" ><br>
+                        <input type="hidden" id="gstBilledTotal" name="gstBilledTotal" value="<%=gstbilledtotal%>" >
+                        Total:<input type="text" id="stotal" disabled name = "stotal" value="0.00" ><br>
+			Payments:<input type="text"  disabled name="payment1" id="payment"value="0.00" onDblClick="settlePayment();" /><br/>
+			Discount:<input type="text" disabled name="discount2" id="discount"value="0.00" >
 			</td>
 			</tr>
 			</table>
@@ -1139,8 +1147,10 @@ Properties prop = oscar.OscarProperties.getInstance();
 			<% } %>
 			</td></tr>
 			<tr>
-				<td colspan='2' align='center' bgcolor="silver"><input type="submit" name="submit" value="Save & Print Invoice"
-					style="width: 150px;" /><input type="submit" name="submit" id="settlePrintBtn"
+				<td colspan='2' align='center' bgcolor="silver">
+                    <input type="submit" name="submit" value="Save & Print Invoice" class="btn"
+					style="width: 150px;" />
+                    <input type="submit" name="submit" id="settlePrintBtn" class="btn btn-primary"
 					value="Settle & Print Invoice" onClick="document.forms['titlesearch'].btnPressed.value='Settle'; document.forms['titlesearch'].submit();javascript:popupPage(700,720,'billingON3rdInv.jsp');" style="width: 160px;" />
 				<input type="hidden"  name="btnPressed" value="">
 				<input type="hidden" name="total_payment" id="total_payment" value="0.00"/>
@@ -1151,6 +1161,9 @@ Properties prop = oscar.OscarProperties.getInstance();
 		</table>
 
 </td></tr>
+<tr><td>
+
+
 <% }} %>
 	<%for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
 				String temp = e.nextElement().toString();
@@ -1159,10 +1172,9 @@ Properties prop = oscar.OscarProperties.getInstance();
 	<%}
 
 		%>
-
-
+</td></tr>
 </table>
-<% if(bPerc) { out.println("* Click the code you want the % code to apply to [1 or 2 ...]."); } %>
+
 </form>
 
 
@@ -1175,9 +1187,11 @@ function calculatePayment(){
     		payment = payment.toFixed(2);
     	}
     });
-
-	document.getElementById("payment").value=payment;
-	document.getElementById("total_payment").value=payment;
+    el = document.getElementById("payment");
+    if (el !=null){
+	    document.getElementById("payment").value=payment;
+	    document.getElementById("total_payment").value=payment;
+    }
 }
 
 function calculateDiscount(){
@@ -1188,7 +1202,7 @@ function calculateDiscount(){
 			discount = discount.toFixed(2);
 		}
 	});
-	
+
 	document.getElementById("discount").value = discount;
 	document.getElementById("total_discount").value = discount;
 }
@@ -1214,7 +1228,7 @@ function onTotalChanged() {
 		alert("Please enter digital numbers !");
 		return;
 	}
-	
+
 	var total = jQuery("#total").val();
 	jQuery("#gstBilledTotal").val(total);
 	jQuery("#stotal").val(total);
@@ -1223,15 +1237,20 @@ function onTotalChanged() {
 function addToDiseaseRegistry(){
 	if ( validateItems() ) {
 		var url = "../../../oscarResearch/oscarDxResearch/dxResearch.do";
-		var data = Form.serialize(dxForm);
-		
-		new Ajax.Updater('dxListing',url, {method: 'post',postBody: data,asynchronous:true,onComplete: getNewCurrentDxCodeList});
+		//var data = Form.serialize(dxForm);
+        data = jQuery('#dxForm').serialize();
+		//new Ajax.Updater('dxListing',url, {method: 'post',postBody: data,asynchronous:true,onComplete: getNewCurrentDxCodeList});
+        jQuery.post(url, data, function(data){
+            jQuery("#dxListing").html(data);
+            getNewCurrentDxCodeList();
+        });
+
 	}
 }
 
 function validateItems(){
 	var ret = false;
-	
+
 	dxChecks = document.getElementsByName("xml_research");
 	for( idx = 0; idx < dxChecks.length; ++idx ) {
 		if( dxChecks[idx].checked ) {
@@ -1251,17 +1270,28 @@ function getNewCurrentDxCodeList(origRequest){
    var ran_number=Math.round(Math.random()*1000000);
    var params = "demographicNo=<%=demo_no%>&rand="+ran_number;  //hack to get around ie caching the page
    //alert(params);
-   new Ajax.Updater('dxFullListing',url, {method:'get',parameters:params,asynchronous:true});
-   //alert(origRequest.responseText);
-}
+   //new Ajax.Updater('dxFullListing',url, {method:'get',parameters:params,asynchronous:true});
 
+    jQuery.ajax({
+       url: url,
+       type: "get",
+       dataType: "html",
+       data: params,
+       success: function(returnData){
+         jQuery("#dxFullListing").html(returnData);
+       },
+       error: function(e){
+         alert(e);
+       }
+    });
+}
 </script>
 
 
 <oscar:oscarPropertiesCheck property="DX_QUICK_LIST_BILLING_REVIEW" value="yes">
 
 <div class="dxBox">
-    <h3>&nbsp;Current Patient Dx List &nbsp;<a href="#" onclick="Element.toggle('dxFullListing'); return false;" style="font-size:small;" >show/hide</a></h3>
+    <h3>&nbsp;Current Patient Dx List &nbsp;<a href="#" onclick="toggle('dxFullListing'); return false;" style="font-size:small;" >show/hide</a></h3>
        <div class="wrapper" id="dxFullListing">
        <jsp:include page="../../../oscarResearch/oscarDxResearch/currentCodeList.jsp">
           <jsp:param name="demographicNo" value="<%=demo_no%>"/>
@@ -1270,7 +1300,8 @@ function getNewCurrentDxCodeList(origRequest){
 </div>
 
 <div class="dxBox">
-    <h3>&nbsp;Dx Quick Pick Add Lists</h3>
+
+    <h3>&nbsp;Dx Quick Pick Add Lists &nbsp;<a href="#" onclick="toggle('dxForm'); return false;" style="font-size:small;" >show/hide</a></h3>
        <form id="dxForm">
        <input type="hidden" name="demographicNo" value="<%=demo_no%>" />
        <input type="hidden" name="providerNo" value="<%=session.getAttribute("user")%>" />
@@ -1281,7 +1312,7 @@ function getNewCurrentDxCodeList(origRequest){
           <jsp:param name="demographicNo" value="<%=demo_no%>"/>
        </jsp:include>
        </div>
-       <input type="button" value="Add To Disease Registry" onclick="addToDiseaseRegistry()"/>
+       <input type="button" value="Add To Disease Registry" class="btn" onclick="addToDiseaseRegistry()"/>
        </form>
 </div>
 

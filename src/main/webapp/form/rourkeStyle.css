@@ -27,8 +27,7 @@
 
 BODY {
 	font-size: 10pt;
-	background-color: #DAEBFC;
-	font-family: "Times New Roman", Times, serif;
+	/*background-color: #DAEBFC;*/
 	/*   #c1ddf9; */
 }
 
@@ -66,14 +65,14 @@ A:link {
 }
 
 .column TABLE {
-	background-color: #486EBD;
+	/*background-color: #486EBD;*/
 	color: #FFFFFF;
 	vertical-align: top;
 	font-weight: bold;
 }
 
 .row {
-	background-color: #486EBD;
+	/*background-color: #486EBD;*/
 	color: #FFFFFF;
 	width: 22.5%;
 	padding-top: 5px;

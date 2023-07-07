@@ -73,7 +73,7 @@ public class TicklerUpdate extends AbstractModel<Integer> {
 	@Column(name="update_date")
 	private Date updateDate;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="provider_no", referencedColumnName="provider_no", insertable=false, updatable=false)
 	@NotFound(action=NotFoundAction.IGNORE)
 	private Provider provider;

@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.PMmodule.caisi_integrator.IntegratorFallBackManager;
@@ -313,6 +314,18 @@ public class RxPatientData {
 			return new RxPrescriptionData().getPrescriptionScriptsByPatient(this.getDemographicNo());
 		}
 
+		@Override
+		public String toString() {
+			return new ToStringBuilder(this)
+					.append("demographic", demographic)
+					.append("partialDateDao", partialDateDao)
+					.toString();
+		}
 	}
 
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.toString();
+	}
 }

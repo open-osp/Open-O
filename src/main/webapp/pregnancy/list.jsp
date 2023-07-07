@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@ include file="/taglibs.jsp"%>
@@ -55,17 +54,14 @@ if(!authed) {
 %>
 <html:html locale="true">
 <head>
-<script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath() %>/js/jquery.dataTables.js" type="text/javascript"></script>
-
 <title>Pregnancy History</title>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" >
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" >
 
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
 
-<style title="currentStyle" type="text/css">
-			@import "<%=request.getContextPath()%>/css/demo_page.css";
-			@import "<%=request.getContextPath()%>/css/demo_table.css";
-</style>
 
 <style>
 body
@@ -81,9 +77,12 @@ div#demo
 	text-align: left;
 }
 </style>
-<script type="text/javascript">
+<script>
 	$(document).ready(function() {
-		$('#ocanTable').dataTable({
+		$('#pregTable').DataTable({
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
 	      //  "aaSorting": [[ 1, "desc" ]]
 	    });
 	} );
@@ -93,12 +92,12 @@ div#demo
 
 <body>
 
-<Br/>
+<br>
 <h2 style="text-align:center">Pregnancy History</h2>
-<br/>
+<br>
 
 <div id="demo">
-			<table id="ocanTable" cellpadding="0" cellspacing="0" border="0" class="display" width="100%">
+			<table id="pregTable" class="display" style="width:100%">
 				<thead>
 					<tr>
 						<th></th>
@@ -130,13 +129,13 @@ div#demo
 					%>
 					<tr class="gradeB">
 						<td>
-							<a href="<%=url%>" title="Go to latest form" target="_blank"><img src="<%=request.getContextPath()%>/images/notepad.gif" border="0"></a>
+							<a href="<%=url%>" title="Go to latest form" target="_blank"><img src="<%=request.getContextPath()%>/images/notepad.gif" alt="antenatal"></a>
 						</td>
 						<td>
 							<a href="<%=request.getContextPath()%>/Episode.do?method=edit&episode.id=<%=episode.getId()%>"><%=episode.getDescription() %></a>
 						</td>
 						<td style="text-align:center"><%=startDateStr %></td>
-						<td style="text-align:center"><%=endDateStr %></td>						
+						<td style="text-align:center"><%=endDateStr %></td>
 						<td style="text-align:center"><%=episode.getStatus() %></td>
 						<td>
 							<%=episode.getNotes()!=null?episode.getNotes():"" %>
@@ -149,6 +148,6 @@ div#demo
 			</table>
 </div>
 
-<br/><br/>
+<br><br>
 
 </html:html>

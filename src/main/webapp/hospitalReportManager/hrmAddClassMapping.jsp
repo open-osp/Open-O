@@ -24,37 +24,28 @@ if(!authed) {
 }
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@page import="java.util.*, org.oscarehr.hospitalReportManager.*, org.oscarehr.hospitalReportManager.model.HRMCategory, org.oscarehr.hospitalReportManager.dao.HRMCategoryDao, org.oscarehr.util.SpringUtils"%>
-<%
-	String deepColor = "#CCCCFF", weakColor = "#EEEEFF";
-	String country = request.getLocale().getCountry();
-%>
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<html:html locale="true">
+<!DOCTYPE html >
+<html:html locale="true" >
 <head>
+<html:base />
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Show Mappings</title>
-	<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-	<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>
+	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css">
 </head>
 
 <body onunload="updateAjax()">
+	<div class="table-responsive">
+
+	<div class="col-sm-12">
 <h4>Add Mapping</h4>
 <p class="pull-right">
-	<a href="javascript:popupStart(300,400,'Help.jsp')"><bean:message key="global.help" /></a> | 
-	<a href="javascript:popupStart(300,400,'About.jsp')"><bean:message key="global.about" /></a> | 
+	<a href="javascript:popupStart(300,400,'Help.jsp')"><bean:message key="global.help" /></a> |
+	<a href="javascript:popupStart(300,400,'About.jsp')"><bean:message key="global.about" /></a> |
 	<a href="javascript:popupStart(300,400,'License.jsp')"><bean:message key="global.license" /></a>
 </p>
 <form method="post" action="<%=request.getContextPath() %>/hospitalReportManager/Mapping.do">
@@ -68,26 +59,26 @@ if(!authed) {
 		<div class="control-group">
 			<label class="control-label">Sub-class:</label>
 			<div class="controls">
-				<input type="text" name="subclass" />
+				<input type="text" class="form-control input-normal" name="subclass" />
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">Sub-class mmenoic:</label>
 			<div class="controls">
-				<input type="text" name="mnemonic" />
+				<input type="text" class="form-control input-normal" name="mnemonic" />
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">Sub-class description:</label>
 			<div class="controls">
-				<input type="text" name="description" />
+				<input type="text" class="form-control input-normal" name="description" />
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">Sending Facility ID (* for all):</label>
 						<div class="controls">
-				<input type="text" name="sendingFacilityId" value="*" />
-			</div>	
+				<input type="text" class="form-control input-normal" name="sendingFacilityId" value="*" />
+			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">Category:</label>
@@ -99,7 +90,7 @@ if(!authed) {
 					for (HRMCategory category : categoryList) {
 				%>
 					<option value="<%=category.getId() %>"><%=category.getCategoryName() %></option>
-				<% 
+				<%
 					}
 				%>
 				</select>
@@ -108,8 +99,10 @@ if(!authed) {
 		<div class="control-group">
 			<input type="submit" class="btn btn-primary" name="submit" value="Save" />
 		</div>
-	
+
 	</fieldset>
 </form>
+</div>
+</div>
 </body>
 </html:html>

@@ -41,7 +41,7 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import oscar.form.dao.Rourke2009DAO;
+import org.oscarehr.common.dao.forms.Rourke2009DAO;
 import oscar.form.model.FormRourke2009;
 import oscar.oscarEncounter.data.EctFormData;
 import oscar.util.UtilDateUtilities;

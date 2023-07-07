@@ -816,9 +816,9 @@ function GetTextTop(){
 	}
 
 	//reference built in faxControl	
-	if (document.getElementById("includeFaxControl").checked) {
-		textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;$%7Boscar_javascript_path%7Deforms/faxControl.js&quot;&gt;&lt;/script&gt;\n";
-	}
+	// if (document.getElementById("includeFaxControl").checked) {
+	// 	textTop += "&lt;script type=&quot;text/javascript&quot; src=&quot;$%7Boscar_javascript_path%7Deforms/faxControl.js&quot;&gt;&lt;/script&gt;\n";
+	// }
 
 	// Support for consult_sig_xxx.png signatures
 	if (document.getElementById('AddStamp2').checked){
@@ -2280,11 +2280,11 @@ onclick="SetSwitchOn('Stamp');document.getElementById('AddStamp').disabled=true;
 	<input name="ScaleCheckmark" id="ScaleCheckmark" type="checkbox"><bean:message key="eFormGenerator.miscCheckmarksScale"/><br>
 	<input name="DefaultCheckmark" id="DefaultCheckmark" type="checkbox" style="display:none"><span style="display:none"><bean:message key="eFormGenerator.miscCheckmarksDraw"/></span>
 </p>
-<p <%=eformGeneratorIndivicaFaxEnabled ? "" : "style=\"display: none;\"" %>>
-	<span class='h2'><bean:message key="eFormGenerator.fax"/></span><br>
-	<input name="includeFaxControl" id="includeFaxControl" type="checkBox"><bean:message key="eFormGenerator.faxDescription"/><br>
-	<bean:message key="eFormGenerator.faxnumber"/>: <input type="text" name="faxno" id="faxno" style="width:200px;">
-</p>
+<%--<p <%=eformGeneratorIndivicaFaxEnabled ? "" : "style=\"display: none;\"" %>>--%>
+<%--	<span class='h2'><bean:message key="eFormGenerator.fax"/></span><br>--%>
+<%--	<input name="includeFaxControl" id="includeFaxControl" type="checkBox"><bean:message key="eFormGenerator.faxDescription"/><br>--%>
+<%--	<bean:message key="eFormGenerator.faxnumber"/>: <input type="text" name="faxno" id="faxno" style="width:200px;">--%>
+<%--</p>--%>
 
 <div id='pdfOption' <%=eformGeneratorIndivicaPrintEnabled ? "" : "style=\"display: none;\"" %>>
 <p><span class='h2'><bean:message key="eFormGenerator.PDFprint"/></span><br>

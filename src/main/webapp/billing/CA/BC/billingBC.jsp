@@ -182,7 +182,7 @@ if(!authed) {
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/share/javascript/Oscar.js"></script>
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/share/javascript/boxover.js"></script>
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/js/dxJSONCodeSearch.js"></script>
-<script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/jquery/jquery.validate-1.19.1.min.js"></script>
+<script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/jquery/jquery.validate-1.19.5.min.js"></script>
 
 <style type="text/css">
 	table {
@@ -890,17 +890,9 @@ jQuery(document).ready(function(jQuery){
 			  * Is provider selected
 			  */
 			 xml_provider: {
-				 required: true
-			 },
-			 /*
-			  * Referral provider codes must be numeric
-			  */
-			 xml_refer1: {
-				 alphanumeric: true
-			 },
-
-			 xml_refer2: {
-                 alphanumeric: true
+				 required: function(element){
+					 return element.value.length === 0;
+				 }
 			 },
 			 
 			 /*
@@ -1013,8 +1005,6 @@ jQuery(document).ready(function(jQuery){
 			 xml_other3_unit: "Service code units must be numeric",
 			 xml_provider: "Select a billing physician",
 			 xml_other1: "At least 1 service code is required",
-			 xml_refer1: "1: Invalid Referral Doctor code",
-			 xml_refer2: "2: Invalid Referral Doctor code",
 			 WCBid: "A WCB Form must be selected."
 		 },
 		 
@@ -1252,7 +1242,8 @@ if(wcbneeds != null){%>
                     Select Provider
                   </html:option>
                 <%for (int j = 0; j < billphysician.length; j++) {                %>
-                  <html:option value="<%=billphysician[j].getProviderNo()%>"><%=billphysician[j].getProviderName()%>                  </html:option>
+                  <html:option value="<%=billphysician[j].getProviderNo()%>"><%=billphysician[j].getProviderName()%>
+                  </html:option>
                 <%}                %>
                 </html:select>
                 

@@ -38,21 +38,24 @@
 	boolean isHrm = securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_hrm", "r", null);
 %>
 
-<!DOCTYPE html > 
+<!DOCTYPE html >
 <html:html locale="true" >
 <head>
+<html:base />
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>HRM Inbox - OSCAR EMR</title>
 
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />
- 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" /> 
+ 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/hospitalReportManager/inbox.css" />
-	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js" ></script>
+
+
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
+    <script src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
+    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+
 	<script>
 	// table sorting
 	$(document).ready(function(){
@@ -61,7 +64,8 @@
 			ajax : "../hospitalReportManager/hrm.do?method=viewLog",
 			searching: false,
 			"dom": '<"top"i>rt<"bottom"lp><"clear">',
-			 "columns": [
+            "language": { "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json" },
+			"columns": [
 		            { "data": "transaction_date", render: function(data, type, full, meta) {
 		            	console.log(JSON.stringify(full));
 		                return '<a href="javascript:void(0);" onClick="showDetailedLogs('+full.id+')">'+data+'</a>';
@@ -75,23 +79,23 @@
 		            { "data": "deleted" }
 		        ]
 		});
-		
+
 	});
-	
+
 	function showDetailedLogs(id) {
 		$.ajax({
 			type:"GET",
 			url:'../hospitalReportManager/hrm.do?method=getDetailedLog&id='+id,
 			dataType:'json',
-			async:true, 
+			async:true,
 			success:function(data) {
 				//alert(JSON.stringify(data.items));
 				if(data != null && data.items != null) {
 					var html = '';
-					for(var x=0;x<data.items.length;x++) { 
+					for(var x=0;x<data.items.length;x++) {
 						console.log(data.items[x].id);
 						html += "<table>";
-						
+
 						html += "<tr><td><b>Filename:</b></td><td>"+data.items[x].encrypted_filename + "</td></tr>";
 						html += "<tr><td><b>Recipient:</b></td><td>"+data.items[x].recipient + "</td></tr>";
 						html += "<tr><td><b>Errors:</b></td><td>"+data.items[x].error +"</td></tr>";
@@ -102,13 +106,13 @@
 			}
 });
 	}
-		
+
 	</script>
 </head>
 <body>
 <div>
 <div class="col-sm-12">
-	
+
     <!-- Fixed navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -125,7 +129,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            
+
           </ul>
           <ul class="nav navbar-nav navbar-right">
           <li><a href="inbox.jsp">HRM Inbox</a></li>
@@ -133,9 +137,9 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-	
+
 	<div class="table-responsive" id="libraryTableContainer">
-	
+
 	<div class="col-sm-12">
 		<h3>Transaction Log</h3>
 		<br/>
@@ -152,25 +156,25 @@
 					<th>Deleted</th>
 				</tr>
 			</thead>
-		
+
 			<tbody>
 			</tbody>
 		</table>
 	</div>
-	
-	
+
+
 	<br/>
-	
+
 	<div class="col-sm-12">
 		<h3>Detailed information</h3>
 		<div id="detailed_info">
-		</div>	
-	</div>
-	
-	
+		</div>
 	</div>
 
-</div>	
+
+	</div>
+
+</div>
 </div> <!-- end container -->
 </body>
 </html:html>

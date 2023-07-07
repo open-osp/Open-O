@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -54,34 +54,186 @@ String outcome = (String) request.getAttribute("outcome");
 <title><bean:message key="lab.ca.all.testUploader.labUploadUtility" /></title>
 
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
 
-<script type="text/javascript">
-            function selectOther(){                
-                if (document.UPLOAD.type.value == "OTHER")
-                    document.getElementById('OTHER').style.display = "block";
-                else
-                    document.getElementById('OTHER').style.display = "none";                
-            }
-</script>
+<style>
+	body {
+		margin: 30px !important;
+	}
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script> 
+	.file-item {
+		border: 1px solid green;
+		border-radius: 5px;
+		padding: 7px;
+		margin-bottom: 3px;
+		font-size: 14px;
+		word-wrap: break-word;
+		max-width: 100%;
+		position: relative;
+	}
 
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+	.upload-text {
+		position: absolute;
+		top: 50%;
+		right: 10px;
+		transform: translateY(-50%);
+		font-weight: bold;
+	}
+
+	.file-name {
+		max-width: calc(100% - 170px);
+		display: inline-block;
+		vertical-align: middle;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.loading-screen {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: #f1f1f1;
+		display: none;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		z-index: 9999;
+	}
+
+	.loading-bar {
+		width: 50%;
+		margin-bottom: 20px;
+	}
+
+	.loading-message {
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.flex {
+		display: flex;
+	}
+
+	.hidden {
+		display: none;
+	}
+
+	.invalid,
+	.failed {
+		color: red;
+	}
+
+	.success,
+	.pending {
+		color: green;
+	}
+
+	.exists {
+		color: #FFD700;
+	}
+
+	#file-list {
+		margin-top: 20px;
+	}
+</style>
+
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
+<script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 
 <script>
-$(function() {
-    $( document ).tooltip();
-  });
+	$(function() {
+		$(document).tooltip();
+	});
+
+	function selectOther() {
+		document.querySelector('.alert').classList.add('hidden');
+		if (document.UPLOAD.type.value == "OTHER") {
+			document.getElementById('OTHER').classList.remove('hidden');
+			document.getElementById('otherType').required = true;
+		} else {
+			document.getElementById('OTHER').classList.add('hidden');
+			document.getElementById('otherType').required = false;
+		}
+	}
+
+	function validateForm() {
+		let numberOfLabs = document.getElementById("importFiles").files.length;
+		let labType = document.getElementById("type").value;
+
+		if (numberOfLabs === 0) {
+			showErrorMessage("<strong>Error!</strong> Please select labs for upload.");
+			return false;
+		} else if (labType === "0") {
+			showErrorMessage("<strong>Error!</strong> Please specify a lab type.");
+			return false;
+		}
+
+		document.querySelector('.loading-screen').classList.toggle('flex');
+		return true;
+	}
+
+	function showErrorMessage(message) {
+		document.querySelector('.alert').classList.add('alert-error');
+		document.querySelector('.alert').classList.remove('hidden');
+		document.getElementById('errorMsg').innerHTML = message;
+	}
+
+	function getFileList(event) {
+		document.querySelector('.alert').classList.add('hidden');
+		const fileList = document.getElementById('file-list');
+		const files = event.target.files;
+		fileList.innerHTML = '';
+
+		for (let i = 0; i < files.length; i++) {
+			addFileNameWithStatus(files[i].name, "PENDING");
+		}
+	}
+
+	function addFileNameWithStatus(name, status) {
+		const fileList = document.getElementById('file-list');
+		const fileItem = document.createElement('div');
+		fileItem.className = 'file-item';
+
+		const fileName = document.createElement('span');
+		fileName.className = 'file-name';
+		fileName.textContent = name;
+
+		const uploadText = document.createElement('span');
+		uploadText.className = 'upload-text';
+		uploadText.classList.remove('invalid', 'success', 'pending', 'failed', 'exists');
+		switch (status.trim()) {
+			case "FAILED":
+				uploadText.textContent = 'Failed to upload HL7 lab';
+				uploadText.classList.add('failed');
+				break;
+			case "COMPLETED":
+				uploadText.textContent = 'Uploaded successfully';
+				uploadText.classList.add('success');
+				break;
+			case "PENDING":
+				uploadText.textContent = 'Pending upload';
+				uploadText.classList.add('pending');
+				break;
+			case "EXISTS":
+				uploadText.textContent = 'Already uploaded';
+				uploadText.classList.add('exists');
+				break;
+			default:
+				uploadText.textContent = 'Invalid lab';
+				uploadText.classList.add('invalid');
+				break;
+		}
+
+		fileItem.appendChild(fileName);
+		fileItem.appendChild(uploadText);
+		fileList.appendChild(fileItem);
+	}
 </script>
 
 </head>
@@ -89,34 +241,40 @@ $(function() {
 <body>
 
 <h3>HL7 Lab Upload</h3>
+	<div class="loading-screen">
+		<div class="loading-bar progress progress-striped active">
+			<div class="bar" style="width: 100%;"></div>
+		</div>
+		<div class="loading-message">
+			Please be patient. Uploading a large number of HL7 labs may take some time. Do not close this window while uploading...
+		</div>
+	</div>
+
 <div class="well">
 
-    <div class="alert" style="display:none;">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>  
+    <div class="alert hidden">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
     <div id="errorMsg">
-		
+
 	</div>
     </div>
 
-<form method='POST' name="UPLOAD" id="uploadForm" enctype="multipart/form-data"	action='${ctx}/lab/CA/ALL/insideLabUpload.do'>
-						
-<bean:message key="lab.ca.all.testUploader.pleaseSelectTheLabfile" />: <i class="icon-question-sign"></i> <oscar:help keywords="lab" key="app.top1"/> <br />
-				
+<form method='POST' name="UPLOAD" id="uploadForm" enctype="multipart/form-data" onsubmit="return validateForm()" action='${ctx}/lab/CA/ALL/insideLabUpload.do'>
+
+<bean:message key="lab.ca.all.testUploader.pleaseSelectTheLabfile" />: <i class="icon-question-sign"></i> <oscar:help keywords="lab" key="app.top1"/> <br>
+
 <div style="position:relative;">
-<a class='btn' href='javascript:;'>
+<span class='btn'>
     Choose File...
-    <input type="file" name="importFile" id="importFile" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="file_source" size="40"  onchange='$("#upload-file-info").html($(this).val());'>
-</a>
+    <input type="file" name="importFiles" id="importFiles" accept=".xml,.hl7" multiple onChange="getFileList(event)" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' size="40">
 </span>
-     
-&nbsp;
-<span class='label label-success' id="upload-file-info"></span>
+
 
 </div>
-	<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img border="0" src="../../../images/icon_alertsml.gif"/></span>
-  
-	<br /><br />
-				<bean:message key="lab.ca.all.testUploader.labType" /><br />
+	<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img alt="alert" src="../../../images/icon_alertsml.gif"/></span>
+
+	<br><br>
+				<bean:message key="lab.ca.all.testUploader.labType" /><br>
 				<select name="type" id="type" onchange="selectOther()">
 					<option value="0">Select Lab Type:</option>
 					<option value="ALPHA">ALPHA</option>
@@ -145,111 +303,30 @@ $(function() {
 					<option value="CLS">Calgary Lab Services (CLS)</option>
 					<option value="CDL">CDL</option>
 					<option value="TRUENORTH">TRUENORTH</option>
+					<option value="MEDITECH">MEDITECH</option>
 					<option value="OTHER">Other</option>
 				</select>
-			<br />
-			<div id="OTHER" style="display: none;">
-				<bean:message key="lab.ca.all.testUploader.pleaseSpecifyTheOtherLabType" />:<br />
-				<input type="text" name="otherType">
+			<br>
+			<div id="OTHER" class="hidden">
+				<bean:message key="lab.ca.all.testUploader.pleaseSpecifyTheOtherLabType" />:<br>
+				<input type="text" id="otherType">
 			</div>
-			
-			<br />
+
+			<br>
+			<bean:message key="lab.ca.all.testUploader.warnings" />
+			<br><br>
 			<button type="submit" class="btn btn-primary"><i class="icon-upload"></i> Upload</button>
 
+			<div id="file-list">
+			</div>
+
+			<c:forEach var="file" items="${filesStatusMap}">
+				<script>
+					addFileNameWithStatus("<c:out value="${file.key}" />", "<c:out value="${file.value}" />");
+				</script>
+			</c:forEach>
 </form>
 </div>
 </body>
 
-<script>
-var pageTitle = $(document).attr('title');
-$(document).attr('title', 'Administration Panel | <bean:message key="lab.ca.all.testUploader.labUploadUtility" />');
-
-$("#uploadForm").submit(function() {
-	
-	var lab = $('#importFile').val();
-	var ext = lab.substring((lab.length - 3), lab.length);
-
-	var type=$('#type').val();
-	var other = $('input[name=otherType]').val();
-
-		
-	if (lab==""){
-        $('.alert').removeClass('alert-success');
-        $('.alert').addClass('alert-error');
-        $('.alert').show();
-         
-        $('#errorMsg').html("<strong>Error!</strong> Please select a lab for upload.");
-
-        
-        return false;
-        
-	}else if(ext != 'hl7' && ext != 'xml'){
-
-	        $('.alert').removeClass('alert-success');
-	        $('.alert').addClass('alert-error');
-	        $('.alert').show();
-	         
-	        $('#errorMsg').html("<strong>Error!</strong> The lab must be either a .xml or .hl7 file.");
-
-	       
-	        return false;
-	}else if(type=="0" || type==""){
-	    $('.alert').removeClass('alert-success');
-        $('.alert').addClass('alert-error');
-        $('.alert').show();
-         
-        $('#errorMsg').html("<strong>Error!</strong> Please specify a lab type.");
-        return false;
-	}else if(type=="OTHER" && other==""){
-
-		    $('.alert').removeClass('alert-success');
-	        $('.alert').addClass('alert-error');
-	        $('.alert').show();
-	         
-	        $('#errorMsg').html("<strong>Error!</strong> Please specify the <strong>other</strong> lab type.");
-	        return false; 
-	}
-	
-
-});
-
-$( document ).ready(function( $ ) {
-<%
-if(outcome != null){
-	   if(outcome.equals("success")){
-	%>
-    $('.alert').removeClass('alert-error');
-    $('.alert').addClass('alert-success');
-	$('#errorMsg').html("Lab uploaded successfully");
-	$('.alert').show();
-	<%
-	    }else if(outcome.equals("uploaded previously")){
-	%>
-     $('.alert').removeClass('alert-success');
-     $('.alert').addClass('alert-error');
-	 $('#errorMsg').html("Lab has already been uploaded");
-	 $('.alert').show();
-	<%    
-	    }else if(outcome.equals("exception")){
-	%>
-	  $('.alert').removeClass('alert-success');
-      $('.alert').addClass('alert-error');  	
-	  $('#errorMsg').html("Exception uploading the lab");
-	  $('.alert').show();
-	<%
-	    }else{
-	%>
-	  $('.alert').removeClass('alert-success');
-      $('.alert').addClass('alert-error');
-	  $('#errorMsg').html("Failed to upload lab");
-	  $('.alert').show();
-	
-	<%
-	    }
-	}
-	%>
-	
-});
-
-</script>
 </html>

@@ -194,30 +194,30 @@
 
                         </caisi:isModuleLoad>
 
-                        <%if(appManager.isK2AEnabled()){ %>
-                        <li>
-                        	<a href="javascript:void(0);" id="K2ALink">K2A<span><sup id="k2a_new_notifications"></sup></span></a>
-                        	<script type="text/javascript">
-                        		function getK2AStatus(){
-                        			jQuery.get( "../ws/rs/resources/notifications/number", function( data ) {
-                        				  if(data === "-"){ //If user is not logged in
-                        					  jQuery("#K2ALink").click(function() {
-                        						const win = window.open('../apps/oauth1.jsp?id=K2A','appAuth','width=700,height=450,scrollbars=1');
-                        						win.focus();
-                        					  });
-                        				   }else{
-                        					  jQuery("#k2a_new_notifications").text(data);
-                        					  jQuery("#K2ALink").click(function() {
-                        						const win = window.open('../apps/notifications.jsp','appAuth','width=450,height=700,scrollbars=1');
-                        						win.focus();
-                        					  });
-                        				   }
-                        			});
-                        		}
-                        		getK2AStatus();
-                        	</script>
-                        </li>
-                        <%}%>
+<%--                        <%if(appManager.isK2AEnabled()){ %>--%>
+<%--                        <li>--%>
+<%--                        	<a href="javascript:void(0);" id="K2ALink">K2A<span><sup id="k2a_new_notifications"></sup></span></a>--%>
+<%--                        	<script type="text/javascript">--%>
+<%--                        		function getK2AStatus(){--%>
+<%--                        			jQuery.get( "../ws/rs/resources/notifications/number", function( data ) {--%>
+<%--                        				  if(data === "-"){ //If user is not logged in--%>
+<%--                        					  jQuery("#K2ALink").click(function() {--%>
+<%--                        						const win = window.open('../apps/oauth1.jsp?id=K2A','appAuth','width=700,height=450,scrollbars=1');--%>
+<%--                        						win.focus();--%>
+<%--                        					  });--%>
+<%--                        				   }else{--%>
+<%--                        					  jQuery("#k2a_new_notifications").text(data);--%>
+<%--                        					  jQuery("#K2ALink").click(function() {--%>
+<%--                        						const win = window.open('../apps/notifications.jsp','appAuth','width=450,height=700,scrollbars=1');--%>
+<%--                        						win.focus();--%>
+<%--                        					  });--%>
+<%--                        				   }--%>
+<%--                        			});--%>
+<%--                        		}--%>
+<%--                        		getK2AStatus();--%>
+<%--                        	</script>--%>
+<%--                        </li>--%>
+<%--                        <%}%>--%>
 
                         <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="r">

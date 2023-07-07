@@ -48,7 +48,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            background: #ffffff;
+            background: #f8f8f8;
             opacity: .8;
             filter: alpha(opacity=80);
             -moz-opacity: .8;
@@ -89,5 +89,5 @@ function HideSpin()
 <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
     <div id="screen" class="screen"></div>
 <div id="spinner" class="spinner" style="display:none;">
-    <img id="img-spinner" src="<%=request.getContextPath() %>/mcedt/web/img/spinner.gif" alt="Loading"/>
+    <img id="img-spinner" src="<%=request.getContextPath() %>/images/spinner.jpg" alt="Loading"/>
 </div>

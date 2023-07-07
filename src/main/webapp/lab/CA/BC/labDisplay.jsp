@@ -39,7 +39,6 @@ if(!authed) {
 }
 %>
 
-<%@page errorPage="../provider/errorpage.jsp"%>
 <%@ page
 	import="java.util.*, oscar.oscarMDS.data.*,oscar.oscarLab.ca.bc.PathNet.*,oscar.oscarLab.ca.on.CML.*"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -317,7 +316,7 @@ function popupStart(vheight,vwidth,varpage,windowname) {
 							key="oscarMDS.segmentDisplay.formReportStatus" />:</strong></div>
 						</td>
 						<td>
-						<div class="FieldData" nowrap="nowrap"><%= ( (String) ( lab.status.equals("F") ? "Final" : lab.status.equals("C") ? "Corrected" : "Partial") )%>
+						<div class="FieldData" nowrap="nowrap"><%= lab.status %>
 						</div>
 						</td>
 					</tr>

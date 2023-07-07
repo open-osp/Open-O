@@ -40,12 +40,7 @@ import org.oscarehr.eyeform.dao.EyeformOcularProcedureDao;
 import org.oscarehr.eyeform.model.EyeformOcularProcedure;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
-import com.lowagie.text.Chunk;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
+import com.itextpdf.text.*;
 
 public class OcularProcPrint implements ExtPrint {
 

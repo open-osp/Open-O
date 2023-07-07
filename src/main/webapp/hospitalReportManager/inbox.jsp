@@ -34,43 +34,47 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%	
+<%
 	SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	boolean isHrmAdmin = securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_hrm.administrator", "r", null);
 	boolean isAdmin = securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin.hrm", "r", null);
 	boolean isHrm = securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_hrm", "r", null);
-	
+
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 	List<Provider> providers = providerDao.getActiveProviders();
 	String myProviderNo = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
-	
+
 %>
 
-<!DOCTYPE html > 
+<!DOCTYPE html >
 <html:html locale="true" >
 <head>
+<html:base />
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>HRM Inbox - OSCAR EMR</title>
+	<title>HRM - HOSPITAL REPORT INBOX</title>
 
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />
- 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" /> 
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/hospitalReportManager/inbox.css" />
-	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/hospitalReportManager/inbox.js?<%=(int)(Math.random()*100000)%>"></script>
-	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery.ui.widget.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery.fileupload.js" ></script>
-	
+	<link rel="stylesheet" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" >
+ 	<link rel="stylesheet" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" >
+	<link rel="stylesheet" href="${ pageContext.request.contextPath }/hospitalReportManager/inbox.css" >
+    <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
+    <script src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
+    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <script> var lang='<bean:message key="global.i18nLanguagecode"/>';</script>
+    <script src="${ pageContext.request.contextPath }/hospitalReportManager/inbox.js?<%=(int)(Math.random()*100000)%>"></script>
+
+    <script src="${ pageContext.request.contextPath }/js/jquery.ui.widget.js" ></script>
+    <script src="${ pageContext.request.contextPath }/js/jquery.fileupload.js" ></script>
+
 </head>
 <body>
 <div>
 <div class="col-sm-12">
-	
+
     <!-- Fixed navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
@@ -82,12 +86,12 @@
             <span class="icon-bar"></span>
           </button>
           <b>
-          <a class="navbar-brand" href="#">Health Report Manager</a>
+          <a class="navbar-brand" href="#"><i class="icon-hospital"></i>&nbsp;Health Report Manager</a>
           </b>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            
+
           </ul>
           <ul class="nav navbar-nav navbar-right">
           <li><a href="javascript:void(0)"><b>Status:<span id="hrm_status"></span></b></a></li>
@@ -102,11 +106,11 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-	
+
 	<div class="table-responsive" id="libraryTableContainer">
-	
+
 	<div class="col-sm-12">
-		<table style="width:50%;align:center">
+		<table style="width:50%;">
 			<tr>
 				<td><b>Provider Inbox</b>:</td>
 				<%if(isHrmAdmin || isAdmin) { %>
@@ -149,10 +153,10 @@
 			</tr>
 		</table>
 	</div>
-	
+
 	<br/>
 	<br/>
-	
+
 	<div class="col-sm-12">
 		<table class="table table-striped table-condensed" id="libraryTable" style="width:100%">
 			<thead>
@@ -171,12 +175,12 @@
 					<th>Description</th>
 				</tr>
 			</thead>
-		
+
 			<tbody>
 			</tbody>
 		</table>
 		<hr />
-		<h3> 
+		<h3>
 			&nbsp;
 		</h3>
 	</div>
@@ -193,20 +197,20 @@
 					Upload HRM File
 				</h4>
 			</div>
-			
+
 			<form id="uploadHRMForm" >
-						
+
 			<div class="modal-body">
-			
+
 				<div class="row">
 					<label for="hrm_file">HRM XML File: </label>
-					<input id="hrm_file" type="file" name="hrm_file" data-url="../hospitalReportManager/hrm.do?method=uploadReport" >	
+					<input id="hrm_file" type="file" name="hrm_file" data-url="../hospitalReportManager/hrm.do?method=uploadReport" >
 				</div>
-				
+
 
 			</div>
 			<div class="modal-footer">
-				
+
 				<button type="button" class="btn btn-default" data-dismiss="modal">
 					Close
 				</button>
@@ -216,7 +220,7 @@
 
 	</div>
 </div> <!-- end modal window -->
-</div>	
+</div>
 </div> <!-- end container -->
 </body>
 </html:html>

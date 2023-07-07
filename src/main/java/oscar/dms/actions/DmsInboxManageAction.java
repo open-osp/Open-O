@@ -694,14 +694,14 @@ public class DmsInboxManageAction extends DispatchAction {
 				if (qn.length() > 0) {
 					CommonLabResultData c = new CommonLabResultData();
 					demoId = c.getDemographicNo(qn, "HL7");
-					if (demoId != null && !demoId.equals("0")) success = true;
+					success = (demoId != null && !"0".equals(demoId));
 				}
 			}
 		} catch (Exception e) {
 			logger.error("Error", e);
 		}
 
-		HashMap<String, Object> hm = new HashMap<String, Object>();
+		HashMap<String, Object> hm = new HashMap<>();
 		hm.put("isLinkedToDemographic", success);
 		hm.put("demoId", demoId);
 		JSONObject jsonObject = JSONObject.fromObject(hm);

@@ -50,13 +50,14 @@ import org.oscarehr.util.SpringUtils;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import oscar.form.JSONAction;
 
 /*
  * This class is to support the address/phone history popup in the master demographic screen.
  * 
  * returns JSON array of DemographicHistoryItems based on changed address, home phone+ext, work phone+ext, cell phone.
  */
-public class DemographicAction extends DispatchAction  {
+public class DemographicAction extends JSONAction {
 
 	
 	private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
@@ -262,14 +263,9 @@ public class DemographicAction extends DispatchAction  {
 		if(duplicateList.size()>0) {
 			result.put("hasDuplicates", true);
 		}
-		
-        try {
-            JSONObject json = JSONObject.fromObject(result);
-            json.write(response.getWriter());
-        }catch (IOException e) {        
-        	log.error(e.getMessage(), e);
-        }
-        
+
+		jsonResponse(response,JSONObject.fromObject(result));
+
         return null;
 	}
 }

@@ -33,21 +33,20 @@
 
 <!DOCTYPE html > 
 <html lang="" >
-<script src="${pageContext.request.contextPath}/csrfguard"></script>
 <head>
 <title>Dashboard Drilldown</title>
 
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/web/css/Dashboard.css" />
- 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" /> 
+ 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables/DataTables-1.13.4/css/jquery.dataTables.min.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap2-datepicker/datepicker3.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/css/bootstrap-timepicker.min.css" />
 	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>	
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-ui-1.10.2.custom.min.js"></script>
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables/DataTables-1.13.4/js/jquery.dataTables.js" ></script>
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables/DataTables-1.13.4/js/dataTables.bootstrap.js" ></script>
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/jquery/jquery-ui-1.12.1.min.js"></script>
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap2-datepicker/bootstrap-datepicker.js" ></script>
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/bootstrap-timepicker.min.js" ></script>
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/moment.js" ></script>	
@@ -156,7 +155,7 @@
 						<tr>
 							<th class="donotprint" id="0" >
 								<div class="dropdown" id="actionMenu">
-									<a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" role="button" 
+									<a href="javascript:void(0)" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" role="button"
 										aria-haspopup="true" aria-expanded="false" id="actionMenuLink">
 										<span class="glyphicon glyphicon-check"></span>
 										Actions
@@ -165,12 +164,12 @@
 
 									<ul class="dropdown-menu" aria-labelledby="actionMenuLink">
 										<li>									
-											<a href="#" class="dropdown-item" id="selectAllDrilldown" title="Select all rows in the current view." >
+											<a href="javascript:void(0)" class="dropdown-item" id="selectAllDrilldown" title="Select all rows in the current view." >
 												Select All in View
 											</a>
 									    </li>
 									    <li>
-											<a href="#" class="dropdown-item" id="selectNoneDrilldown" title="Deselect all checked rows.">
+											<a href="javascript:void(0)" class="dropdown-item" id="selectNoneDrilldown" title="Deselect all checked rows.">
 												Select None
 											</a>
 										</li>
@@ -194,7 +193,7 @@
 										
 										<c:if test="${fn:contains(drilldown.actionIds, 'demoExcl')}">
 											<li>
-												<a href="#"
+												<a href="javascript:void(0)"
 													class="dropdown-item"
 													title="Exclude Checked Patients from Indicator Results." id="excludePatientsChecked" >
 													Exclude Patients From Indicator Results
@@ -204,7 +203,7 @@
 										
 										<c:if test="${fn:contains(drilldown.actionIds, 'patientStatusUpdate')}">
 											<li>
-												<a href="#"
+												<a href="javascript:void(0)"
 													class="dropdown-item"
 													title="Set Checked Patients Status Inactive." id="patientStatusUpdateChecked" >
 													Set Status Inactive

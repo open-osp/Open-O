@@ -54,7 +54,7 @@ import org.oscarehr.common.model.Demographic;
 import org.oscarehr.util.MiscUtils;
 
 import oscar.OscarProperties;
-import oscar.form.dao.Rourke2009DAO;
+import org.oscarehr.common.dao.forms.Rourke2009DAO;
 import oscar.form.model.FormRourke2009;
 import oscar.oscarReport.data.DemographicSets;
 import oscar.util.StringUtils;

@@ -25,12 +25,9 @@
 package org.oscarehr.managers;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
@@ -65,6 +62,7 @@ import org.oscarehr.common.model.DemographicMerged;
 import org.oscarehr.common.model.PHRVerification;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.UserProperty;
+import org.oscarehr.common.model.enumerator.DemographicExtKey;
 import org.oscarehr.util.DemographicContactCreator;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -345,18 +343,34 @@ public class DemographicManager {
 		return providerList;
 	}
 
-	public List<Demographic> getDemographicsByProvider(LoggedInInfo loggedInInfo, Provider provider) {
+	public List<Demographic> getDemographicsNameRangeByProvider(LoggedInInfo loggedInInfo, Provider provider, String regex) {
 		checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
-		List<Demographic> result = demographicDao.getDemographicByProvider(provider.getProviderNo(), true);
-
-		//--- log action ---
-		if (result != null) {
-			for (Demographic demographic : result) {
-				LogAction.addLogSynchronous(loggedInInfo, "DemographicManager.getDemographicsByProvider result", "demographicId=" + demographic.getDemographicNo());
+		List<Demographic> demographicList = demographicDao.getDemographicByProvider(provider.getProviderNo());
+		/*
+		 * A reluctant method to sort the results due to the lack of REGEX functions
+		 * in the outdated Demographic Hibernate Template.
+		 * Upgrading DemographicDao to JPA is not tenable at this time.
+		 * However, it needs to be done eventually.
+		 */
+		List<Demographic> demographicFilterList = new ArrayList<>();
+		if (demographicList != null && ! demographicList.isEmpty()){
+			Pattern pattern = Pattern.compile(regex);
+			Matcher matcher;
+			for(Demographic demographic : demographicList) {
+				if(demographic.getLastName() != null) {
+					matcher = pattern.matcher(demographic.getLastName().toUpperCase());
+					if(matcher.find()) {
+						demographicFilterList.add(demographic);
+					}
+				}
 			}
 		}
+		return demographicFilterList;
+	}
 
-		return result;
+	public List<Demographic> getDemographicsByProvider(LoggedInInfo loggedInInfo, Provider provider) {
+		checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
+		return demographicDao.getDemographicByProvider(provider.getProviderNo(), true);
 	}
 
 	public void createDemographic(LoggedInInfo loggedInInfo, Demographic demographic, Integer admissionProgramId) {
@@ -686,7 +700,7 @@ public class DemographicManager {
 	}
 
 	/**
-	 * @see DemographicDao.findByAttributes for parameter details
+	 * @see DemographicDao for parameter details
 	 */
 	public List<Demographic> searchDemographicsByAttributes(LoggedInInfo loggedInInfo, String hin, String firstName, String lastName, Gender gender, Calendar dateOfBirth, String city, String province, String phone, String email, String alias, int startIndex, int itemsToReturn) {
 		checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
@@ -839,6 +853,86 @@ public class DemographicManager {
 			return (results);
 		}
 
+
+		public List<Integer> getDemographicNumbersByMidwifeNumberAndDemographicLastNameRegex (
+				LoggedInInfo loggedInInfo,
+				final String midwifeNumber,
+				final String lastNameRegex
+		) {
+			checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
+			return demographicExtDao.getDemographicNumbersByDemographicExtKeyAndProviderNumberAndDemographicLastNameRegex(
+					DemographicExtKey.MIDWIFE,
+					midwifeNumber,
+					lastNameRegex
+			);
+		}
+
+		public List<Integer> getDemographicNumbersByNurseNumberAndDemographicLastNameRegex(
+				LoggedInInfo loggedInInfo,
+				final String nurseNumber,
+				final String lastNameRegex
+		) {
+			checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
+			return demographicExtDao.getDemographicNumbersByDemographicExtKeyAndProviderNumberAndDemographicLastNameRegex(
+					DemographicExtKey.NURSE,
+					nurseNumber,
+					lastNameRegex
+			);
+		}
+
+		public List<Integer> getDemographicNumbersByResidentNumberAndDemographicLastNameRegex(
+				LoggedInInfo loggedInInfo,
+				final String residentNumber,
+				final String lastNameRegex
+		) {
+			checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
+			return demographicExtDao.getDemographicNumbersByDemographicExtKeyAndProviderNumberAndDemographicLastNameRegex(
+					DemographicExtKey.RESIDENT,
+					residentNumber,
+					lastNameRegex
+			);
+		}
+
+
+		public List<DemographicExt> getMultipleMidwifeForDemographicNumbersByProviderNumber(
+				LoggedInInfo loggedInInfo,
+				final Collection<Integer> demographicNumbers,
+				final String midwifeNumber
+		) {
+			checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
+			return demographicExtDao.getMultipleDemographicExtKeyForDemographicNumbersByProviderNumber(
+					DemographicExtKey.MIDWIFE,
+					demographicNumbers,
+					midwifeNumber
+			);
+		}
+
+		public List<DemographicExt> getMultipleNurseForDemographicNumbersByProviderNumber(
+				LoggedInInfo loggedInInfo,
+				final Collection<Integer> demographicNumbers,
+				final String nurseNumber
+		) {
+			checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
+			return demographicExtDao.getMultipleDemographicExtKeyForDemographicNumbersByProviderNumber(
+					DemographicExtKey.NURSE,
+					demographicNumbers,
+					nurseNumber
+			);
+		}
+
+		public List<DemographicExt> getMultipleResidentForDemographicNumbersByProviderNumber(
+				LoggedInInfo loggedInInfo,
+				final Collection<Integer> demographicNumbers,
+				final String residentNumber
+		) {
+			checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
+			return demographicExtDao.getMultipleDemographicExtKeyForDemographicNumbersByProviderNumber(
+					DemographicExtKey.RESIDENT,
+					demographicNumbers,
+					residentNumber
+			);
+		}
+
 		/**
 		 * Fetch the remote demographic file from the Integrator.
 		 * 
@@ -970,7 +1064,7 @@ public class DemographicManager {
 		 * THIS IS AN INTEGRATOR FUNCTION ONLY.  INTEGRATOR MUST BE ENABLED. 
 		 * 
 		 * @param loggedInInfo
-		 * @param local demographicNo
+		 * @param demographicNo
 		 * @param sourceFacilityId where the linked demographic should exist
 		 * @return
 		 */
@@ -998,7 +1092,7 @@ public class DemographicManager {
 		}
 		
 		/**
-		 * Fetch all the the demographic files from all facilities linked by the Integrator to the given local demographic number
+		 * Fetch all the demographic files from all facilities linked by the Integrator to the given local demographic number
 		 * Excludes the demographic file located in this facility
 		 * 
 		 * THIS IS AN INTEGRATOR FUNCTION ONLY.  INTEGRATOR MUST BE ENABLED.
@@ -1185,7 +1279,6 @@ public class DemographicManager {
 		/**
 		 * Get personal contact info with the contact id.
 		 * @param loggedInInfo
-		 * @param contactId
 		 * @return
 		 */
 		public DemographicContact getPersonalEmergencyContactById(LoggedInInfo loggedInInfo, Integer demographicContactId) {
@@ -1203,7 +1296,7 @@ public class DemographicManager {
 		/**
 		 * These are contacts which are marked as emergency contacts.
 		 * @param loggedInInfo
-		 * @param demographicId
+		 * @param demographicNo
 		 * @return
 		 */
 		public List<DemographicContact> getEmergencyContacts(LoggedInInfo loggedInInfo, Integer demographicNo) {

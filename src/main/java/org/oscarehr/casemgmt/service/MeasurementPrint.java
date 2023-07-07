@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.itextpdf.text.pdf.PdfPTable;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.casemgmt.util.ExtPrint;
 import org.oscarehr.common.dao.MeasurementDao;
@@ -40,12 +41,7 @@ import org.oscarehr.common.model.Measurement;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfPTable;
+import com.itextpdf.text.*;
 
 public class MeasurementPrint implements ExtPrint {
 

@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * of the License, or (at your option) any later version. 
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,26 +21,37 @@
  * Hamilton
  * Ontario, Canada
  */
-package oscar.form.dao;
+
+
+package org.oscarehr.common.dao.forms;
 
 import org.oscarehr.common.dao.AbstractDao;
-import oscar.form.model.FormBCAR2020;
+import org.springframework.stereotype.Repository;
+import oscar.form.model.BooleanValueForm;
+import oscar.form.model.FormBooleanValue;
 
 import javax.persistence.Query;
+import java.util.HashMap;
 
-public class FormBCAR2020Dao extends AbstractDao<FormBCAR2020> {
-    public FormBCAR2020Dao() { super(FormBCAR2020.class); }
+@Repository
+public class FormBooleanValueDao extends AbstractDao<FormBooleanValue> {
 
-    public Integer getLatestActiveFormIdByDemographic(Integer demographicNo) {
-        Integer latestFormId = null;
-        String sql = "select max(frm.formId) from FormBCAR2020 frm WHERE frm.demographicNo = :demographicNo and frm.active = true";
-        Query query = entityManager.createQuery(sql);
-        query.setParameter("demographicNo", demographicNo);
-        Object result = query.getSingleResult();
-        if (result instanceof Integer) {
-            latestFormId = (Integer)result;
-        }
-
-        return latestFormId;
+    public FormBooleanValueDao() {
+        super(FormBooleanValue.class);
     }
+    
+    public HashMap<String, FormBooleanValue> findAllForForm(BooleanValueForm form) {
+        String sql = "SELECT value FROM FormBooleanValue value WHERE value.id.formName = :formName AND value.id.formId = :formId";
+        Query query = entityManager.createQuery(sql);
+        query.setParameter("formName", form.getFormTable());
+        query.setParameter("formId", form.getId());
+
+        HashMap<String, FormBooleanValue> results = new HashMap<String, FormBooleanValue>();
+        for (Object o : query.getResultList()) {
+            FormBooleanValue booleanValue = (FormBooleanValue) o;
+            results.put(booleanValue.getId().getFieldName(), booleanValue);
+        }
+        
+        return results;
+    } 
 }

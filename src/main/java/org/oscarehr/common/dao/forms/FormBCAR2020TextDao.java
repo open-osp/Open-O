@@ -21,7 +21,7 @@
  * Hamilton
  * Ontario, Canada
  */
-package oscar.form.dao;
+package org.oscarehr.common.dao.forms;
 
 import org.oscarehr.common.dao.AbstractDao;
 import oscar.form.model.FormBCAR2020Text;

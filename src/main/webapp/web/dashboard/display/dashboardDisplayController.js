@@ -113,14 +113,14 @@ $(document).ready( function() {
 // build Indicator panel with Pie chart.
 function buildIndicatorPanel( html, target, id ) {
 	
-	var indicatorGraph;
+	let indicatorGraph;
 	
 	if ( indicatorGraph ) {
 		indicatorGraph.destroy();
 	}
 	
-	var panel = $( "#" + target + "_" + id ).html( html ); //.append("<h3>" +id+ "</h3>");
-	var data = "[" + panel.find( "#graphPlots_" + id ).val() + "]";
+	let panel = $( "#" + target + "_" + id ).html( html ); //.append("<h3>" +id+ "</h3>");
+	let data = "[" + panel.find( "#graphPlots_" + id ).val() + "]";
 	data = data.replace(/'/g, '"');
 	data = JSON.parse( data )
 	indicatorGraph = $.jqplot ( 'graphContainer_' + id, data, jqplotOptions ).replot();
@@ -129,9 +129,9 @@ function buildIndicatorPanel( html, target, id ) {
 		indicatorGraph.replot();
 	}
 	
-	var name = panel.find( ".indicatorHeading div" ).text();
+	let name = panel.find( ".indicatorHeading div" ).text();
 	
-	var paneldata = [ name, id, data ];
+	let paneldata = [ name, id, data ];
 	
 	if( paneldata ) {
 		indicatorPanels.push( paneldata );
@@ -139,11 +139,11 @@ function buildIndicatorPanel( html, target, id ) {
 
 	if( indicatorPanels.length === placeHolderCount ) {
 
-		var panelList;
+		let panelList;
 		
-		for(var i = 0; i < indicatorPanels.length; i++ ) {
-			var ipanel = indicatorPanels[i];
-			var name, id, data;
+		for(let i = 0; i < indicatorPanels.length; i++ ) {
+			let ipanel = indicatorPanels[i];
+			let name, id, data;
 
 			if( ipanel ) {
 				name = ipanel[0].trim();

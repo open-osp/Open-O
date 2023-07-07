@@ -32,8 +32,8 @@ import org.oscarehr.util.SpringUtils;
 import org.owasp.encoder.Encode;
 import oscar.SxmlMisc;
 
-import oscar.form.dao.FormBCAR2020DataDao;
-import oscar.form.dao.FormBCAR2020TextDao;
+import org.oscarehr.common.dao.forms.FormBCAR2020DataDao;
+import org.oscarehr.common.dao.forms.FormBCAR2020TextDao;
 import oscar.form.model.FormBCAR2020Data;
 import oscar.form.model.FormBCAR2020Text;
 import oscar.util.UtilDateUtilities;

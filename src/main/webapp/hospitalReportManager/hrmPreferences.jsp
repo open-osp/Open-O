@@ -23,45 +23,44 @@ if(!authed) {
 	return;
 }
 %>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <%@ page import="java.util.*,oscar.OscarProperties ,oscar.oscarReport.reportByTemplate.*,org.oscarehr.hospitalReportManager.*,org.oscarehr.util.SpringUtils, org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty"%>
-<% 
-  
+<%
+
     OscarProperties props = OscarProperties.getInstance();
-    
+
     UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
- 	
+
     String userName = "";
     String location = "";
     String interval = "30";
     String privateKey = "";
     String decryptionKey = "";
-    
+
     try {
     	userName = userPropertyDao.getProp("hrm_username").getValue();
     } catch (Exception e) {
     	userName = "";
     }
-    
+
     try {
     	location = userPropertyDao.getProp("hrm_location").getValue();
     } catch (Exception e) {
     	location = "";
     }
-    
+
     try {
     	interval = userPropertyDao.getProp("hrm_interval").getValue();
     } catch (Exception e) {
     	interval = "30";
     }
-    
+
     try {
     	privateKey = userPropertyDao.getProp("hrm_privateKey").getValue();
     } catch (Exception e) {
     	privateKey = "";
     }
-    
+
     try {
     	decryptionKey = userPropertyDao.getProp("hrm_decryptionKey").getValue();
     } catch (Exception e) {
@@ -76,26 +75,12 @@ if(!authed) {
 <html:html locale="true">
 <head>
 	<title>HRM Preferences</title>
-	<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-	<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
-	
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
+	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
+	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+	<script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
+	<script src="${pageContext.request.contextPath}/js/global.js"></script>
 
-	<script type="text/javascript" language="JavaScript" src="../share/javascript/prototype.js"></script>
-	<script type="text/javascript" language="JavaScript" src="../share/javascript/Oscar.js"></script>
-	<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-
-<script type="text/JavaScript">
+<script>
 function popupPage(vheight,vwidth,varpage) { //open a new popup window
   var page = "" + varpage;
   windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";//360,680
@@ -144,7 +129,7 @@ function updateLink(filePath,keytype){
 			<label class="control-label">Decryption Key:</label>
 			<div class="controls">
 				<a href="../<%=decryptionKey%>" id="dkeyLink">View Decryption Key</a>
-				<input type="button" class="btn" name="decryptionKey" value="Upload Decryption Key" onClick='popupPage(600,900,&quot;<html:rewrite page="/hospitalReportManager/hrmKeyUploader.jsp"/>&quot;);return false;' />	
+				<input type="button" class="btn" name="decryptionKey" value="Upload Decryption Key" onClick='popupPage(600,900,&quot;<html:rewrite page="/hospitalReportManager/hrmKeyUploader.jsp"/>&quot;);return false;' />
 			</div>
 		</div>
 		<div class="control-group">

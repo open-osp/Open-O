@@ -60,10 +60,6 @@ public class PrintOLISLabAction extends Action {
 			OLISLabPDFCreator pdf = new OLISLabPDFCreator(request, response.getOutputStream());
 			pdf.printPdf();
 
-		}catch(DocumentException de) {
-			logger.error("DocumentException occured insided OLISPrintLabsAction", de);
-			request.setAttribute("printError", new Boolean(true));
-			return mapping.findForward("error");
 		}catch(IOException ioe) {
 			logger.error("IOException occured insided OLISPrintLabsAction", ioe);
 			request.setAttribute("printError", new Boolean(true));

@@ -43,7 +43,7 @@
 		<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.js"></script>
 		<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.form.js"></script>
 		<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.metadata.js"></script>
-		<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.validate-1.19.5.min.js"></script>
 --%>
 
 		<script type="text/javascript" src="<%=request.getContextPath()%>/js/genericIntake.js"></script>

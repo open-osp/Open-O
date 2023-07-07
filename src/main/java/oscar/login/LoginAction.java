@@ -109,7 +109,7 @@ public final class LoginAction extends DispatchAction {
 		{
 			isMobileOptimized = false;
 		}
-	   	
+
         LoginCheckLogin cl = new LoginCheckLogin();
         String oneIdKey = request.getParameter("nameId");
         String oneIdEmail = request.getParameter("email");
@@ -298,7 +298,7 @@ public final class LoginAction extends DispatchAction {
                     newURL = newURL + "?errormsg=Setting values to the session.";            		
             	}
 
-                return(new ActionForward(newURL));            	
+                return new ActionForward(newURL);
             }
 
 

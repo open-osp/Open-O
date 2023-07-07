@@ -76,9 +76,13 @@ public final class RxAddAllergyAction extends Action {
             
             RxPatientData.Patient patient = (RxPatientData.Patient)request.getSession().getAttribute("Patient");
             Allergy allergy = new Allergy();
-            if (type != null && type.equals("13")){
-            	allergy.setDrugrefId(String.valueOf(id));
+            if (type != null && "13".equals(type)){
+            	allergy.setDrugrefId(id);
             }
+
+		    if (type != null && "8".equals(type)){
+			    allergy.setAtc(id);
+		    }
             allergy.setDescription(name);
             allergy.setTypeCode(Integer.parseInt(type));
             allergy.setReaction(description);

@@ -491,7 +491,7 @@ public class CommonLabResultData {
 	public static String searchPatient(String labNo, String labType) {
 		PatientLabRoutingDao dao = SpringUtils.getBean(PatientLabRoutingDao.class);
 		List<PatientLabRouting> routings = dao.findByLabNoAndLabType(ConversionUtils.fromIntString(labNo), labType);
-		if (routings.isEmpty()) {
+		if (routings == null || routings.isEmpty()) {
 			return "0";
 		}
 		

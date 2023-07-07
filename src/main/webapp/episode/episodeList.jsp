@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@ include file="/taglibs.jsp"%>
@@ -44,17 +43,12 @@
 %>
 <html:html locale="true">
 <head>
-<script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath() %>/js/jquery.dataTables.js" type="text/javascript"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
 
 <title>Episode List</title>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
-
-
-<style title="currentStyle" type="text/css">
-			@import "<%=request.getContextPath()%>/css/demo_page.css";
-			@import "<%=request.getContextPath()%>/css/demo_table.css";
-</style>
+<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
 
 <style>
 body
@@ -70,9 +64,12 @@ div#demo
 	text-align: left;
 }
 </style>
-<script type="text/javascript">
+<script>
 	$(document).ready(function() {
-		$('#ocanTable').dataTable({
+		$('#ocanTable').DataTable({
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
 	      //  "aaSorting": [[ 1, "desc" ]]
 	    });
 	} );
@@ -87,7 +84,7 @@ div#demo
 <br/>
 
 <div id="demo">
-			<table id="ocanTable" cellpadding="0" cellspacing="0" border="0" class="display" width="100%">
+			<table id="ocanTable" class="table table-striped table-condensed">
 				<thead>
 					<tr>
 						<th>Description</th>

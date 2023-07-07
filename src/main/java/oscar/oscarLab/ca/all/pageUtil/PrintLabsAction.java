@@ -95,11 +95,11 @@ public class PrintLabsAction extends Action{
 	            f.delete();
             }
         }catch(IOException ioe) {
-            logger.error("IOException occured insided PrintLabsAction", ioe);
+            logger.error("IOException occurred inside PrintLabsAction", ioe);
             request.setAttribute("printError", new Boolean(true));
             return mapping.findForward("error");
         }catch(Exception e){
-            logger.error("Unknown Exception occured insided PrintLabsAction", e);
+            logger.error("Unknown Exception occurred inside PrintLabsAction", e);
             request.setAttribute("printError", new Boolean(true));
             return mapping.findForward("error");
         }

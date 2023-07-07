@@ -52693,56 +52693,6 @@ CREATE TABLE IF NOT EXISTS `ProviderPreference` (
 INSERT INTO `ProviderPreference` (`providerNo`, `startHour`, `endHour`, `everyMin`, `myGroupNo`, `colourTemplate`, `newTicklerWarningWindow`, `defaultServiceType`, `defaultCaisiPmm`, `defaultNewOscarCme`, `printQrCodeOnPrescriptions`, `lastUpdated`, `appointmentScreenLinkNameDisplayLength`, `defaultDoNotDeleteBilling`, `defaultDxCode`, `eRxEnabled`, `eRx_SSO_URL`, `eRxUsername`, `eRxPassword`, `eRxFacility`, `eRxTrainingMode`, `encryptedMyOscarPassword`) VALUES
 ('999998', 8, 18, 15, '.default', 'deepblue', NULL, NULL, 'disabled', 'disabled', 0, '2012-08-22 17:13:36', 3, 0, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL);
 
--- --------------------------------------------------------
-
---
--- Table structure for table `ProviderPreferenceAppointmentScreenEForm`
---
-
-CREATE TABLE IF NOT EXISTS `ProviderPreferenceAppointmentScreenEForm` (
-  `providerNo` varchar(6) NOT NULL,
-  `appointmentScreenEForm` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `ProviderPreferenceAppointmentScreenEForm`
---
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ProviderPreferenceAppointmentScreenForm`
---
-
-CREATE TABLE IF NOT EXISTS `ProviderPreferenceAppointmentScreenForm` (
-  `providerNo` varchar(6) NOT NULL,
-  `appointmentScreenForm` varchar(128) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `ProviderPreferenceAppointmentScreenForm`
---
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ProviderPreferenceAppointmentScreenQuickLink`
---
-
-CREATE TABLE IF NOT EXISTS `ProviderPreferenceAppointmentScreenQuickLink` (
-  `providerNo` varchar(6) NOT NULL,
-  `name` varchar(64) NOT NULL,
-  `url` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `ProviderPreferenceAppointmentScreenQuickLink`
---
-
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `providersite`
@@ -52753,13 +52703,6 @@ CREATE TABLE IF NOT EXISTS `providersite` (
   `site_id` int(11) NOT NULL,
   PRIMARY KEY (`provider_no`,`site_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `providersite`
---
-
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `providerstudy`

@@ -26,7 +26,7 @@
 <%@page import="java.text.SimpleDateFormat"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
     boolean authed=true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="w" reverse="<%=true%>">
@@ -40,13 +40,11 @@
 %>
 
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ page import="java.sql.*, java.util.*, java.net.URLEncoder, oscar.oscarDB.*, oscar.MyDateFormat, oscar.oscarWaitingList.WaitingList, org.oscarehr.common.OtherIdManager" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.net.URLEncoder, oscar.oscarDB.*, oscar.MyDateFormat, oscar.oscarWaitingList.WaitingList, org.oscarehr.common.OtherIdManager"%>
 <%@ page import="oscar.log.*"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 
-<%@ page import="org.oscarehr.common.model.Admission" %>
-<%@ page import="org.oscarehr.common.dao.AdmissionDao" %>
 <%@ page import="org.oscarehr.common.dao.WaitingListDao" %>
 
 <%@ page import="org.oscarehr.common.model.DemographicExt" %>
@@ -56,20 +54,15 @@
 <%@ page import="org.oscarehr.common.dao.DemographicDao" %>
 <%@ page import="org.oscarehr.common.model.DemographicCust" %>
 <%@ page import="org.oscarehr.common.dao.DemographicCustDao" %>
-
-<%@ page import="org.oscarehr.PMmodule.dao.ProgramDao" %>
-<%@ page import="org.oscarehr.PMmodule.model.Program" %>
 <%@page import="org.oscarehr.PMmodule.web.GenericIntakeEditAction" %>
 <%@page import="org.oscarehr.PMmodule.service.ProgramManager" %>
 <%@page import="org.oscarehr.PMmodule.service.AdmissionManager" %>
 
 <%@page import="org.oscarehr.common.dao.DemographicArchiveDao" %>
-<%@page import="org.oscarehr.common.model.DemographicArchive" %>
 <%@page import="org.oscarehr.common.dao.DemographicExtArchiveDao" %>
 <%@page import="org.oscarehr.common.model.DemographicExtArchive" %>
 
 <%@page import="org.oscarehr.managers.PatientConsentManager" %>
-<%@page import="org.oscarehr.common.model.Consent" %>
 <%@page import="org.oscarehr.common.model.ConsentType" %>
 <%@page import="oscar.OscarProperties" %>
 
@@ -77,10 +70,10 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
 <%@ page import="org.owasp.encoder.Encode" %>
-<% 
+<%!
 	java.util.Properties oscarVariables = oscar.OscarProperties.getInstance();
 
-	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean("admissionDao");
+//	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean("admissionDao");
 	ProgramManager pm = SpringUtils.getBean(ProgramManager.class);
 	AdmissionManager am = SpringUtils.getBean(AdmissionManager.class);
 	WaitingListDao waitingListDao = (WaitingListDao)SpringUtils.getBean("waitingListDao");
@@ -88,7 +81,7 @@
 	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
 	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
 
-	ProgramDao programDao = (ProgramDao)SpringUtils.getBean("programDao");
+//	ProgramDao programDao = (ProgramDao)SpringUtils.getBean("programDao");
 	
 	DemographicExtArchiveDao demographicExtArchiveDao = SpringUtils.getBean(DemographicExtArchiveDao.class);
 	DemographicArchiveDao demographicArchiveDao = (DemographicArchiveDao)SpringUtils.getBean("demographicArchiveDao");
@@ -101,7 +94,6 @@
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <link rel="stylesheet" href="../web.css" />
 <script LANGUAGE="JavaScript">
-    <!--
     function start(){
       this.focus();
       this.resizeTo(1000,700);
@@ -110,12 +102,11 @@
       //parent.refresh();
       close();
     }
-    //-->
 </script>
 </head>
 
 <body onload="start()" bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0">
-<center>
+<div class="container">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr bgcolor="#486ebd">
 		<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
@@ -254,8 +245,6 @@
      }
 
     if(request.getParameter("hin")!=null && request.getParameter("hin").length()>5 && !hinDupCheckException) {
-  		//oscar.oscarBilling.ca.on.data.BillingONDataHelp dbObj = new oscar.oscarBilling.ca.on.data.BillingONDataHelp();
-		//String sql = "select demographic_no from demographic where hin=? and year_of_birth=? and month_of_birth=? and date_of_birth=?";
 		String paramNameHin =new String();
 		paramNameHin=request.getParameter("hin").trim();
 		List<Demographic> demographics = demographicDao.searchByHealthCard(paramNameHin);
@@ -431,10 +420,8 @@
         if(start_time2!=null && !start_time2.equals("null")) {
 	%>
 	<script language="JavaScript">
-	<!--
 	document.addappt.action="../appointment/addappointment.jsp?user_id=<%=Encode.forJavaScript(request.getParameter("creator"))%>&provider_no=<%=provider_no2%>&bFirstDisp=<%=bFirstDisp2%>&appointment_date=<%=request.getParameter("appointment_date")%>&year=<%=year2%>&month=<%=month2%>&day=<%=day2%>&start_time=<%=start_time2%>&end_time=<%=end_time2%>&duration=<%=duration2%>&name=<%=URLEncoder.encode(bufName.toString())%>&chart_no=<%=URLEncoder.encode(bufChart.toString())%>&bFirstDisp=false&demographic_no=<%=dem.toString()%>&messageID=<%=request.getParameter("messageId")%>&doctor_no=<%=Encode.forJavaScript(bufDoctorNo.toString())%>&notes=<%=Encode.forJavaScript(request.getParameter("notes"))%>&reason=<%=Encode.forJavaScript(request.getParameter("reason"))%>&location=<%=Encode.forJavaScript(request.getParameter("location"))%>&resources=<%=request.getParameter("resources")%>&type=<%=request.getParameter("type")%>&style=<%=request.getParameter("style")%>&billing=<%=request.getParameter("billing")%>&status=<%=Encode.forJavaScript(request.getParameter("status"))%>&createdatetime=<%=request.getParameter("createdatetime")%>&creator=<%=Encode.forJavaScript(request.getParameter("creator"))%>&remarks=<%=Encode.forJavaScript(request.getParameter("remarks"))%>";
 	document.addappt.submit();
-	//-->
 	</SCRIPT> 
 	<% } %>
 </form>
@@ -458,7 +445,8 @@
 </caisi:isModuleLoad>
 
 
-<p></p>
-<%@ include file="footer.jsp"%></center>
+</p>
+<%@ include file="footer.jsp"%>
+</div>
 </body>
 </html:html>

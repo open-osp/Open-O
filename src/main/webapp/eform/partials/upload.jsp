@@ -32,10 +32,12 @@
 <html:html locale="true">
 
 <head>
-<link href="<%=request.getContextPath()%>/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/global.js"></script>
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+    <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+    <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
 
 <style>
 body{background-color:#f5f5f5;}
@@ -52,7 +54,7 @@ body{background-color:#f5f5f5;}
     <button type="button" class="close" data-dismiss="alert">&times;</button>
     <strong>Success!</strong> Your eform was uploaded.
     </div>
-    
+
     <script>
 		window.top.location.href = "<%=request.getContextPath()%>/administration/?show=Forms";
 	</script>
@@ -61,31 +63,31 @@ body{background-color:#f5f5f5;}
 
 <html:form action="/eform/uploadHtml" method="POST" onsubmit="return checkFormAndDisable()" enctype="multipart/form-data">
 <div class="alert alert-error" style="display:none"> <html:errors /> </div>
-                                       
+
                                         <div class='uploadEformTitle'>
                                         <bean:message key="eform.uploadhtml.formName" /> <span class="text-error textExists" style='display:none;'>Name already exists</span><br>
                                         <input type="text" name="formName" size="30" class="check" required>
                                         </div>
-                                        
+
                                         <div class='uploadEformTitle'>
                                         <bean:message key="eform.uploadhtml.formSubject" /><br>
                                         <input type="text" name="formSubject" size="30">
                                         </div>
-                                        
+
                                         <div class='uploadEformTitle'>
                                         <bean:message key="eform.uploadhtml.btnRoleType"/><br>
                                         <select name="roleType">
                                         <option value="" >- select one -</option>
                                        <%  ArrayList roleList = EFormUtil.listSecRole();
-  											for (int i=0; i<roleList.size(); i++) {    
-  										%>  											
-                                        	
+  											for (int i=0; i<roleList.size(); i++) {
+  										%>
+
                                         		<option value="<%=roleList.get(i) %>"><%=roleList.get(i) %></option>
-                                        	
+
                                         <%} %>
                                         </select>
                                         </div>
-                                        
+
                                         <div class='uploadEformTitle'>
                                         	<div>
 	                                        <label class="checkbox">
@@ -98,24 +100,25 @@ body{background-color:#f5f5f5;}
 	                                        </label>
 	                                        </div>
                                         </div>
-                                        
+
                                         <input type="file" name="formHtml" id="formHtml" class="check" size="50" required>
                                     	<span style="color:red;">
 								         <i class="icon-warning-sign" title="<bean:message key="global.uploadWarningBody"/>" ></i>
 								        </span>
-                                        
-                                        
+
+
                                         <input type="submit" name="subm" class="btn btn-primary upload" value="<bean:message key="eform.uploadhtml.btnUpload"/>" disabled>
-               
+
 </html:form>
 
 <div style="font-size:0%; line-height:0%">&nbsp;</div>
 
-<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>  
+<script src="<%=request.getContextPath() %>/js/jquery-1.12.3.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-1.4.1.js"></script>
 
 <script>
 $( document ).ready(function() {
-$(".check").change(validate).keyup(validate);
+$(".check").on("change",validate).keyup(validate);
 });
 
 function validate()
@@ -138,7 +141,7 @@ if (v!="" && inputCheck=="" && formHtml!="") {
 	    $('.upload').attr("disabled", "disabled");
 		$('.upload').removeClass("btn-success");
 		$('.textExists').hide();
-    } 
+    }
 }
 
 function checkRow(textInput)

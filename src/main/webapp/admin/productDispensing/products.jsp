@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -50,33 +49,24 @@ if(!authed) {
 
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	Provider provider = loggedInInfo.getLoggedInProvider();	
+	Provider provider = loggedInInfo.getLoggedInProvider();
 %>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>OSCAR Products</title>
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
-<script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/bootstrap2-datepicker/datepicker3.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
 
-
-<link href="<%=request.getContextPath() %>/library/bootstrap2-datepicker/datepicker3.css" rel="stylesheet">
-
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
+<script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 <script src="<%=request.getContextPath() %>/library/bootstrap2-datepicker/bootstrap-datepicker.js"></script>
- 
+
 <style>
 .red{color:red}
 
@@ -86,23 +76,23 @@ if(!authed) {
 
 	var currentPage = 1;
 	var pageSize = 10;
-	
+
 	var templates = new Array();
-	
-	
+
+
 	$(document).ready(function(){
 		$(".help-inline").hide();
 	});
-	
-	
+
+
 	function updatePageSize() {
 		pageSize = $("#selPageSize").val();
 		currentPage = 1;
-		
+
 		console.log('updating page size to ' + pageSize);
 		updatePage();
 	}
-	
+
 	function deleteProduct(productId) {
 		if(confirm("Are you sure you want to delete this?")) {
 			jQuery.getJSON("../../ws/rs/productDispensing/deleteDrugProduct/" + productId, {},
@@ -115,19 +105,19 @@ if(!authed) {
 			        });
 		}
 	}
-	
+
 	function editProduct(productId) {
 		jQuery.getJSON("../../ws/rs/productDispensing/drugProduct/"+productId, {},
         function(xml) {
-			if(xml.drugProduct) {
+			if(xml.content) {
 				var drugProduct;
 				if(xml.drugProduct instanceof Array) {
-					drugProduct = xml.drugProduct[0];
+					drugProduct = xml.content[0];
 				} else {
-					drugProduct = xml.drugProduct;
+					drugProduct = xml.content;
 				}
-				
-					
+
+
 				$('#productName').val(drugProduct.name);
 				$('#productCode').val(drugProduct.code);
 				$('#productLocation').val(drugProduct.location);
@@ -137,15 +127,15 @@ if(!authed) {
 				$('#productId').val(drugProduct.id);
 				$('#totalEntriesToCreateGroup').hide();
 				$('#new-product').dialog('open');
-				
+
 				fetchCurrentNamesAndCodes();
-				
+
 			}
         });
-	
+
 	}
-	
-	function addNewProduct() {	
+
+	function addNewProduct() {
 		$('#productName').val('');
 		$('#productCode').val('');
 		$('#productLocation').val('');
@@ -156,24 +146,22 @@ if(!authed) {
 		$('#productBulkTotal').val('1');
 		$('#totalEntriesToCreateGroup').show();
 		$('#new-product').dialog('open');
-		
+
 		fetchCurrentNamesAndCodes();
 	}
-	
-	
+
+
 
 	function fetchCurrentNamesAndCodes() {
 		jQuery.getJSON("../../ws/rs/productDispensing/drugProductTemplates", {},
 		        function(xml) {
+			    	//console.log(xml);
 					$("#productNameTemplate option").remove();
-					if(xml.templates) {	
+					if(xml.templates) {
 						templates = xml.templates;
 						$("#productNameTemplate").append("<option value=\"\"></option>");
 						for(var x=0;x<xml.templates.length;x++) {
-							//Line below needs to be commented out to work for Google Chrome
-							//console.log(xml.templates[x].toSource());
 							$("#productNameTemplate").append("<option value=\""+xml.templates[x].name+"\">"+xml.templates[x].name+"</option>");
-							
 						}
 					}
 		        });
@@ -194,7 +182,7 @@ if(!authed) {
 					$("#productName").val(templates[x].name);
 					$("#productCode").val(templates[x].code);
 					$("#productAmount").val(templates[x].amount);
-					
+
 					$("#productName").attr("disabled", true);
 					$("#productCode").attr("disabled", true);
 					$("#productAmount").attr("disabled", true);
@@ -202,7 +190,7 @@ if(!authed) {
 			}
 		}
 	}
-	
+
 	function dateToYMD(date) {
 	    var changeDate = new Date(date.toString());
 	    var d = changeDate.getDate();
@@ -212,46 +200,47 @@ if(!authed) {
 	}
 
 
-	
+
 	function listProducts() {
 		var productNameFilterValue = $('#productNameFilter').val();
 		var productLotFilterValue = $('#productLotFilter').val();
 		var productLocationFilterValue = $('#productLocationFilter').val();
 		var availableOnly = $('#availableOnly').is(':checked');
-		
+
 		console.log('listing products - current page is ' + currentPage + ', page size is ' + pageSize + ', name=' + productNameFilterValue + ',lot='+productLotFilterValue+',location='+productLocationFilterValue);
-		
+
 		var startIndex = ((currentPage-1) * pageSize)
 		startIndex = (startIndex<0)?0:startIndex; //just in case
-		
+
 		console.log('start index is ' + startIndex);
-		
-		jQuery.getJSON("../../ws/rs/productDispensing/drugProducts?offset="+startIndex+"&limit="+pageSize+"&limitByName="+productNameFilterValue + "&limitByLot=" + productLotFilterValue + "&limitByLocation=" + productLocationFilterValue + "&availableOnly=" + availableOnly, {},
+
+		jQuery.getJSON("../../ws/rs/productDispensing/drugProducts?offset="+startIndex+"&limit="+pageSize+"&limitByName=" + escape(productNameFilterValue) + "&limitByLot=" + productLotFilterValue + "&limitByLocation=" + productLocationFilterValue + "&availableOnly=" + availableOnly, {},
         function(xml) {
 			$("#productTable tbody tr").remove();
-			
+
 			var total = xml.total;
-			
-		//	console.log(xml.toSource());
+
+			console.log(xml);
 			$("#productFilterMessage").empty();
-			
-			if(xml.drugProduct) {
+
+			if(xml.content) {
 				var arr = new Array();
-				if(xml.drugProduct instanceof Array) {
-					arr = xml.drugProduct;
+				if(xml.content instanceof Array) {
+					arr = xml.content;
 				} else {
-					arr[0] =xml.drugProduct;
+					arr[0] =xml.content;
 				}
-				
-				
+
+
 				for(var i=0;i<arr.length;i++) {
 					var drugProduct = arr[i];
-				
+			        //console.log(arr[i]);
 					var expDate = drugProduct.expiryDate;
+                    //console.log(expDate);
 					if(expDate.length > 9) {
 						expDate = expDate.substring(0,10);
 					}
-					
+
 					var html = '<tr>';
 					html += '<td><a href="javascript:void(0)" onclick="editProduct('+drugProduct.id+')">Edit</a>&nbsp;|&nbsp;<a href="javascript:void(0)" onclick="deleteProduct('+drugProduct.id+')">Delete</a></td>';
 					html += '<td>'+drugProduct.name+'</td>';
@@ -260,32 +249,32 @@ if(!authed) {
 					html += '<td>'+expDate+'</td>';
 					html += '<td>'+drugProduct.amount+'</td>';
 					//html += '<td>'+drugProduct.id+'</td>';
-					
+
 					html += '</tr>';
-				
+
 					jQuery('#productTable tbody').append(html);
-				
-					
+
+
 				}
-				
+
 				//pagination here
 				// $('button').prop('disabled', true);
 				//$('#btnPrevPage').
-				
+
 				//next page..add condition for full last page
-				
+
 				$('#btnPrevPage').prop('disabled', startIndex==0);
 				$('#btnNextPage').prop('disabled', arr.length < pageSize);
-				
+
 				$("#productFilterMessage").append("<b>Showing Results:</b>&nbsp;" + (startIndex+1) + "-" + (startIndex+arr.length)  + " of " + total);
-				
-			} 
-			
-			
-				
+
+			}
+
+
+
         });
 	}
-	
+
 
 	function setProductLocations() {
 		jQuery.getJSON("../../ws/rs/productDispensing/productLocations", {},
@@ -297,7 +286,7 @@ if(!authed) {
 						} else {
 							arr[0] =xml.productLocations;
 						}
-						
+
 						for(var i=0;i<arr.length;i++) {
 							$('#productLocation').append($('<option>', {
 							    value: arr[i].id,
@@ -310,9 +299,9 @@ if(!authed) {
 						}
 					}
 		        });
-			
+
 	}
-	
+
 	function updateProductNames() {
 		jQuery.getJSON("../../ws/rs/productDispensing/drugProducts/uniqueNames", {},
 		        function(xml) {
@@ -323,11 +312,11 @@ if(!authed) {
 						} else {
 							arr[0] =xml.content;
 						}
-						
+
 						var currentVal = $("#productNameFilter").val();
 						$("#productNameFilter").empty();
 						$("#productNameFilter").append('<option value=""></option>');
-						
+
 						for(var i=0;i<arr.length;i++) {
 							$('#productNameFilter').append($('<option>', {
 							    value: arr[i],
@@ -335,17 +324,17 @@ if(!authed) {
 							}));
 						}
 						$("#productNameFilter").val(currentVal);
-						
+
 						updateProductLots();
-						
+
 					}
 		        });
 	}
-	
+
 	function updateProductLots() {
 		var currentVal = $("#productLotFilter").val();
-		
-		
+
+
 		$('#productLotFilter').html("<option value=''></option>");
 		jQuery.getJSON("../../ws/rs/productDispensing/drugProducts/uniqueLots?name=" + $('#productNameFilter').val(), {},
 		        function(xml) {
@@ -356,12 +345,12 @@ if(!authed) {
 						} else {
 							arr[0] =xml.content;
 						}
-						
+
 						 $("#productLotFilter").val();
-						
+
 						$("#productLotFilter").empty();
 						$("#productLotFilter").append('<option value=""></option>');
-						
+
 							for(var i=0;i<arr.length;i++) {
 							$('#productLotFilter').append($('<option>', {
 							    value: arr[i],
@@ -369,70 +358,70 @@ if(!authed) {
 							}));
 						}
 						$("#productLotFilter").val(currentVal);
-						
+
 					}
 		        });
 	}
-	
-	
-	
+
+
+
 	function updatePage() {
 		updateProductNames();
 		listProducts();
 	}
-	
+
 	function loadPreviousResults() {
 		currentPage--;
 		updatePage();
 	}
-	
+
 	function loadNextResults() {
 		currentPage++;
 		updatePage();
 	}
-	
+
 	$(document).ready(function(){
 		setProductLocations();
-		
+
 		updatePage();
 
 		$('#productNameFilter').bind('change',function(){
 			currentPage=1;
 			updatePage();
 		});
-		
+
 		$('#productLotFilter').bind('change',function(){
 			currentPage=1;
 			updatePage();
 		});
-		
+
 		$('#productLocationFilter').bind('change',function(){
 			currentPage=1;
 			updatePage();
 		});
-		
+
 		$('#availableOnly').bind('change',function(){
 			currentPage=1;
 			updatePage();
 		});
-		
-		
+
+
 		$( "#new-product" ).dialog({
 			autoOpen: false,
-			height: 450,
+			height: 550,
 			width: 800,
 			modal: true,
 			buttons: {
-				"Save Product": {class:"btn btn-primary", text:"Save", click: function() {	
+				"Save Product": {class:"btn btn-primary", text:"Save", click: function() {
 					if(validateSaveProduct()) {
-					
+
 						var dbEntryDate = new Date($("#productExpiryDate").val());
 						//Must set the attr disabled to false so the values get passed properly
 						//The date was still being set to one day in the past so this corrects the error.
 						dbEntryDate.setDate(dbEntryDate.getDate() + 2);
-						
+
 						$("#productExpiryDate").val(dateToYMD(dbEntryDate));
-						
+
 						$("#productName").attr("disabled",false);
 						$("#productCode").attr("disabled",false);
 						$("#productAmount").attr("disabled",false);
@@ -440,12 +429,12 @@ if(!authed) {
 								function(data){
 									updatePage();
 								 });
-						$( this ).dialog( "close" );	
+						$( this ).dialog( "close" );
 					}
-					
+
 				} },
 				Cancel: { class:"btn", text:"Cancel", click:function() {
-					
+
 					$("#productName").attr("disabled",false);
 					$("#productCode").attr("disabled",false);
 					$("#productAmount").attr("disabled",false);
@@ -453,14 +442,14 @@ if(!authed) {
 				} }
 			},
 			close: function() {
-				
+
 			}
 		});
-		
-	
+
+
 
 	});
-	
+
 	function toggleFormFieldErrorDisplay(name,hasError) {
 		if(hasError) {
 			$("#"+name+"Group").addClass("error");
@@ -471,12 +460,12 @@ if(!authed) {
 			$("#"+name+"Group .help-inline").hide();
 		}
 	}
-	
+
 
 	function validateSaveProduct() {
-		
+
 		var hasErrors = false;
-		
+
 		if($("#productName").val() == '') {
 			toggleFormFieldErrorDisplay('productName',true);
 			hasErrors=true;
@@ -507,28 +496,28 @@ if(!authed) {
 		} else {
 			toggleFormFieldErrorDisplay('productAmount',false);
 		}
-		
-		
+
+
 		return !hasErrors;
-		
+
 	}
 </script>
 </head>
 
-<body vlink="#0000FF" class="BodyStyle">
+<body class="BodyStyle">
 <h4>Manage Drug Products</h4>
 
-<div> 
+<div>
 <select name="productNameFilter" id="productNameFilter">
-	<option value=""></option>
+	<option value="">&nbsp;</option>
 </select>
 &nbsp;
 <select name="productLotFilter" id="productLotFilter">
-	<option value=""></option>
+	<option value="">&nbsp;</option>
 </select>
 &nbsp;
 <select name="productLocationFilter" id="productLocationFilter">
-	<option value=""></option>
+	<option value="">&nbsp;</option>
 </select>
 &nbsp;
 <input type="checkbox" name="availableOnly" id="availableOnly" value="true"/>Show Available Only
@@ -538,7 +527,7 @@ if(!authed) {
 <span id="productFilterMessage"></span>
 </div>
 
-<table id="productTable" name="productTable" class="table table-bordered table-striped table-hover table-condensed">
+<table id="productTable" class="table table-bordered table-striped table-hover table-condensed">
 	<thead>
 		<tr>
 			<th></th>
@@ -565,25 +554,25 @@ if(!authed) {
 		<option value="50">50</option>
 		<option value="100">100</option>
 	</select>
-	
+
 	&nbsp;&nbsp;&nbsp;
-	<input type="button" class="btn btn-primary" value="Add New" onClick="addNewProduct()"/>	
-	
+	<input type="button" class="btn btn-primary" value="Add New" onClick="addNewProduct()"/>
+
 </div>
 
 <div id="new-product" title="OSCAR Drug Product Editor">
 	<p class="validateTips"></p>
-	
+
 	<form id="productForm">
 		<input type="hidden" name="product.id" id="productId" value="0"/>
-			
+
 <div>
 	<div class="controls controls-row">
 		<div class="control-group span6" id="productNameTemplateGroup">
 				<label class="control-label" for="productNameTemplate">Choose Existing:</label>
 				<div class="controls">
 					<select id="productNameTemplate" name="productNameTemplate" onChange="copyNameFromTemplate()">
-						<option></option>
+						<option>&nbsp;</option>
 					</select>
 				</div>
 			</div>
@@ -603,10 +592,10 @@ if(!authed) {
 					<span class="help-inline">Required</span>
 				</div>
 			</div>
-			
+
 	</div>
 <div class="controls controls-row">
-			
+
 			<div class="control-group span3" id="productLotGroup">
 				<label class="control-label" for="productLot">Lot:</label>
 				<div class="controls">
@@ -614,7 +603,7 @@ if(!authed) {
 					<span class="help-inline">Required</span>
 				</div>
 			</div>
-			
+
 			<div class="control-group span3" id="productExpiryDateGroup">
 				<label class="control-label" for="productExpiryDate">Expiry Date:</label>
 				<div class="controls">
@@ -622,7 +611,7 @@ if(!authed) {
 					<span class="help-inline">Required</span>
 				</div>
 			</div>
-			
+
 </div>
 <div class="controls controls-row">
 			<div class="control-group span3" id="productAmountGroup">
@@ -632,14 +621,14 @@ if(!authed) {
 					<span class="help-inline">Required (number)</span>
 				</div>
 			</div>
-			
+
 			<div class="control-group span3" id="totalEntriesToCreateGroup">
 				<label class="control-label" for="productExpiryDate">Total Entries to create:</label>
 				<div class="controls">
 					<input type="text" name="productBulkTotal" id="productBulkTotal" value="1"/>
 				</div>
 			</div>
-			
+
 </div>
 
 <div class="controls controls-rw">
@@ -647,7 +636,7 @@ if(!authed) {
 				<label class="control-label" for="productLocation">Location:</label>
 				<div class="controls">
 					<select name="product.location" id="productLocation">
-						
+
 					</select>
 				</div>
 			</div>
@@ -659,7 +648,7 @@ if(!authed) {
 	</form>
 </div>
 
-<script type="text/javascript">
+<script>
 
 $('#productExpiryDate').datepicker({
         format: "yyyy-mm-dd",

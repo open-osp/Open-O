@@ -1,5 +1,5 @@
 BODY {
-	FONT-SIZE: Normal;
+	FONT-SIZE: inherit;
 	FONT-FAMILY: Verdana, Tahoma, Arial, sans-serif;
 }
 
@@ -37,7 +37,7 @@ TH {
 	color: #FFFFFF;
 	font-size: 14pt;
 	font-weight: bold;
-	text-align: centre;
+	text-align: center;
 }
 
 .searchTitle {
@@ -45,8 +45,7 @@ TH {
 	color: #000000;
 	font-weight: bold;
 	text-align: left;
-	height
-	="20px"
+	height:20px;
 }
 
 .title {
@@ -54,8 +53,7 @@ TH {
 	color: #000000;
 	font-weight: bold;
 	text-align: center;
-	height
-	="20px"
+	height:20px;
 }
 
 .fieldTitle {

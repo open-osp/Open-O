@@ -166,7 +166,7 @@ if(request.getParameter("submit")!=null && request.getParameter("submit").equals
 			proObj = (new JdbcBillingPageUtil()).getProviderObj(provider);
 			
 			if (proObj.getOhipNo().length() != PROVIDER_BILLINGNO_LENGTH) 
-				errorMsg = "The provider's billing code is not correct!<br>";
+				errorMsg = "The billing code (" + proObj.getOhipNo() + ") for provider (" + provider + ") is not correct!<br>";
 			
 			String proOHIP=""; 
 			String specialty_code; 
@@ -187,12 +187,12 @@ if(request.getParameter("submit")!=null && request.getParameter("submit").equals
 			specialty_code = proObj.getSpecialtyCode();
 		
 			if (specialty_code.length() != PROVIDER_SPECIALTYCODE_LENGTH){
-				errorMsg += "The provider's specialty code is not correct!<br>";
+				errorMsg += "The specialty code (" + specialty_code + ") for provider (" + provider + ") is not correct!<br>";
 				specialty_code = "00"; 
 			}
 		
 			if (billinggroup_no.length() != PROVIDER_GROUPNO_LENGTH){
-				errorMsg += "The provider's group no is not correct!<br>";
+				errorMsg += "The group no (" + billinggroup_no + ") for provider (" + provider + ") is not correct!<br>";
 				billinggroup_no = "0000";
 			} 
 		
@@ -210,7 +210,7 @@ if(request.getParameter("submit")!=null && request.getParameter("submit").equals
 			dbObj.errorMsg += errorMsg;
 			
 			dbObj.createBillingFileStr(LoggedInInfo.getLoggedInInfoFromSession(request), "0", new String[] { "O", "W", "I" }, true, null, summaryView);
-			if (dbObj.getRecordCount() > 0) {
+			if (dbObj.getRecordCount() > 0 || !"".equals(dbObj.errorMsg) || !"".equals(dbObj.errorFatalMsg)) {
 				recordCount += dbObj.getRecordCount();	
 				bigTotal = bigTotal.add(dbObj.getBigTotal());
 				htmlValue += dbObj.getHtmlValue();			

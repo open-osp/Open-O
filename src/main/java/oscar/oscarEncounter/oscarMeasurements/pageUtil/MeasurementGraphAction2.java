@@ -26,6 +26,7 @@
 package oscar.oscarEncounter.oscarMeasurements.pageUtil;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Paint;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -115,8 +116,8 @@ public class MeasurementGraphAction2 extends Action {
 
         String patientName = oscar.oscarDemographic.data.DemographicNameAgeString.getInstance().getNameAgeString(LoggedInInfo.getLoggedInInfoFromSession(request), demographicNo);
         String chartTitle = "Data Graph for " + patientName;
-        int width = 800;
-        int height = 400;
+        int width = 1000;
+        int height = 600;
 
         String method = request.getParameter("method");
 
@@ -175,16 +176,17 @@ public class MeasurementGraphAction2 extends Action {
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
 
         for(String din:dins){
-             oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographicId,din);
-             if(arr != null && arr.length>0) {
-	             TaskSeries ts  = new TaskSeries(arr[0].getBrandName());
-	             for(oscar.oscarRx.data.RxPrescriptionData.Prescription pres:arr){
-	                 ts.add(new Task(pres.getBrandName(),pres.getRxDate(),pres.getEndDate()));
-	             }
-	             datasetDrug.add(ts);
-             }
+            if (din != null ) {
+                oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographicId,din);
+                if(arr != null && arr.length>0) {
+                    TaskSeries ts  = new TaskSeries(arr[0].getBrandName());
+                    for(oscar.oscarRx.data.RxPrescriptionData.Prescription pres:arr){
+                        ts.add(new Task(pres.getBrandName(),pres.getRxDate(),pres.getEndDate()));
+                    }
+                    datasetDrug.add(ts);
+                }
+            }
         }
-
 
         XYTaskDataset dataset = new XYTaskDataset(datasetDrug);
             dataset.setTransposed(true);
@@ -197,21 +199,25 @@ public class MeasurementGraphAction2 extends Action {
         ArrayList<String> list = new ArrayList<String>();
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
         for(String din:dins){
-            if(din != null && ! "null".equalsIgnoreCase(din)) {
-                oscar.oscarRx.data.RxPrescriptionData.Prescription[] arr = prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographic, din);
-                String brandName = null;
-                if (arr != null && arr.length > 0) {
-                    brandName = arr[0].getBrandName();
-                }
-                if (brandName != null && brandName.length() > 50) {
-                    brandName = brandName.substring(0, 50) + "...";
-                    list.add(brandName);
-                }
+            if (din != null && ! "null".equalsIgnoreCase(din)) {
+             oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographic, din);
+             String brandName = null;
+             if (arr != null && arr.length > 0) {
+                 brandName = arr[0].getBrandName();             
+             }
+             if (brandName!=null && brandName.length() > 30) {
+                 brandName = brandName.substring(0, 30) + "...";
+             }
+             list.add(brandName);
             }
         }
         ret = list.toArray( new String[list.size()] );
         return ret;
     }
+
+
+
+
 
 
     private JFreeChart referenceRangeChart(Integer demographicNo, String typeIdName, String typeIdName2, String patientName, String chartTitle) {
@@ -299,7 +305,8 @@ public class MeasurementGraphAction2 extends Action {
         XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
         renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
 
-        renderer.setDefaultSeriesVisible(true);
+        renderer.setDefaultItemLabelsVisible(true);
+
         plot.setBackgroundPaint(Color.WHITE);
         plot.setDomainCrosshairPaint(Color.GRAY);
 
@@ -307,8 +314,8 @@ public class MeasurementGraphAction2 extends Action {
 
         if (renderer instanceof XYLineAndShapeRenderer) {
             XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) renderer;
-            rend.setDefaultSeriesVisible(true);
-            rend.setDefaultSeriesVisible(true);
+            rend.setDefaultShapesVisible(true);
+            rend.setDefaultShapesFilled(true);
         }
 
 
@@ -385,6 +392,7 @@ public class MeasurementGraphAction2 extends Action {
             renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
 
             renderer.setDefaultItemLabelsVisible(true);
+
             plot.setBackgroundPaint(Color.WHITE);
             plot.setDomainCrosshairPaint(Color.GRAY);
 
@@ -425,6 +433,10 @@ public class MeasurementGraphAction2 extends Action {
             XYBarRenderer xyrenderer = new XYBarRenderer();
             xyrenderer.setUseYInterval(true);
             xyrenderer.setBarPainter(new StandardXYBarPainter());
+
+
+            Font font = new Font("helvetica", Font.PLAIN, 8);
+            renderer.setDefaultItemLabelFont(font);
 
             xyrenderer.setDefaultItemLabelGenerator(new StandardXYItemLabelGenerator("HAPPY{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00")));
             XYPlot xyplot = new XYPlot(dataset2, xAxis, yAxis, xyrenderer);
@@ -508,10 +520,15 @@ public class MeasurementGraphAction2 extends Action {
             ValueAxis va = plot.getRangeAxis();
             va.setAutoRange(true);
             XYItemRenderer renderer = plot.getRenderer(); //DateFormat.getInstance()
+            
+            Font font = new Font("helvetica", Font.PLAIN, 8);
+            renderer.setDefaultItemLabelFont(font);
+            
             XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
             renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
 
-            renderer.setDefaultSeriesVisible(true);
+            renderer.setDefaultItemLabelsVisible(true);
+
             plot.setBackgroundPaint(Color.WHITE);
             plot.setDomainCrosshairPaint(Color.GRAY);
 
@@ -525,6 +542,7 @@ public class MeasurementGraphAction2 extends Action {
             plot.setRenderer(renderer);
             return chart;
     }
+
 
         JFreeChart actualLabChartRef(Integer demographicNo, String labType, String identifier,String testName, String patientName, String chartTitle) throws ParseException {
             org.jfree.data.time.TimeSeriesCollection dataset = new org.jfree.data.time.TimeSeriesCollection();
@@ -602,12 +620,30 @@ public class MeasurementGraphAction2 extends Action {
             ValueAxis va = plot.getRangeAxis();
             va.setAutoRange(true);
             XYItemRenderer renderer = plot.getRenderer(); //DateFormat.getInstance()
-            XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
+			XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.###"));
+            
+			switch ((int) newSeries.getItemCount()/10) {
+				case 0:
+					//("0-9");
+					generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.###"));
+					renderer.setDefaultItemLabelsVisible(true);
+					break;
+				case 1:
+					//("10-19");
+					renderer.setDefaultItemLabelsVisible(true);
+					break;
+				case 2:
+					//("20-29");
+					Font font = new Font("helvetica", Font.PLAIN, 8);
+					renderer.setDefaultItemLabelFont(font);
+					renderer.setDefaultItemLabelsVisible(true);
+					break;
+				default:
+					renderer.setDefaultItemLabelsVisible(false);
+					break;
+			}                
+                        
             renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
-
-            renderer.setDefaultSeriesVisible(true);
-            plot.setBackgroundPaint(Color.WHITE);
-            plot.setDomainCrosshairPaint(Color.GRAY);
 
             if (renderer instanceof XYLineAndShapeRenderer) {
                 XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) renderer;
@@ -626,6 +662,10 @@ public class MeasurementGraphAction2 extends Action {
                 plot.setRenderer(1,new HighLowRenderer());
 
             }
+            plot.setBackgroundPaint(Color.WHITE);
+            plot.setDomainCrosshairPaint(Color.GRAY);
+            plot.setRangeGridlinePaint(Color.lightGray);
+            plot.setDomainGridlinePaint(Color.lightGray); // grid from x axis
 
             return chart;
         }
@@ -677,9 +717,9 @@ public class MeasurementGraphAction2 extends Action {
                     if (NumberUtils.isParsable(result)) {
                         String collectionDate = (String) mdb.get("collDate");
                         if(collectionDate != null) {
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                            Day regularTimePeriod = new Day(simpleDateFormat.parse(collectionDate));
-                            newSeries.addOrUpdate(regularTimePeriod, Double.parseDouble(result));
+                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                             Day regularTimePeriod = new Day(simpleDateFormat.parse(collectionDate));
+                             newSeries.addOrUpdate(regularTimePeriod, Double.parseDouble(result));
                         }
                     }
                 }
@@ -727,13 +767,29 @@ public class MeasurementGraphAction2 extends Action {
             ValueAxis va = plot.getRangeAxis();
             va.setAutoRange(true);
             XYItemRenderer renderer = plot.getRenderer(); //DateFormat.getInstance()
-            XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
+			XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{2}",  new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.###"));
+
+			switch ((int) newSeries.getItemCount()/6) {
+				case 0:
+					//("0-5");
+					generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.###"));
+					renderer.setDefaultItemLabelsVisible(true);
+					break;
+				case 1:
+					//("6-11");
+					renderer.setDefaultItemLabelsVisible(true);
+					break;
+				case 2:
+					//("12-17");
+					Font font = new Font("helvetica", Font.PLAIN, 8);
+					renderer.setDefaultItemLabelFont(font);
+					renderer.setDefaultItemLabelsVisible(true);
+					break;
+				default:
+					renderer.setDefaultItemLabelsVisible(false);
+					break;
+			}
             renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
-
-            renderer.setDefaultSeriesVisible(true);
-            plot.setBackgroundPaint(Color.WHITE);
-            plot.setDomainCrosshairPaint(Color.GRAY);
-
             if (renderer instanceof XYLineAndShapeRenderer) {
                 XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) renderer;
                 rend.setDefaultShapesVisible(true);
@@ -751,7 +807,12 @@ public class MeasurementGraphAction2 extends Action {
                 plot.setRenderer(1,new HighLowRenderer());
 
             }
-
+            
+            plot.setBackgroundPaint(Color.WHITE);
+            plot.setDomainCrosshairPaint(Color.GRAY);
+            plot.setRangeGridlinePaint(Color.lightGray);
+            plot.setDomainGridlinePaint(Color.lightGray); // grid fro x axis
+            
             XYTaskDataset drugDataset = getDrugDataSet( demographicNo,drugs);
 
             //DateAxis xAxis = new DateAxis("Date/Time");
@@ -863,7 +924,7 @@ public class MeasurementGraphAction2 extends Action {
             XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{1} \n {2}", new SimpleDateFormat("yyyy.MM.dd"), new DecimalFormat("0.00"));
             renderer.setSeriesItemLabelGenerator(0, generator);//setLabelGenerator(generator);
 
-            renderer.setDefaultSeriesVisible(true);
+            renderer.setDefaultItemLabelsVisible(true);
             plot.setBackgroundPaint(Color.WHITE);
             plot.setDomainCrosshairPaint(Color.GRAY);
 
@@ -1008,18 +1069,6 @@ public class MeasurementGraphAction2 extends Action {
             JFreeChart chart = ChartFactory.createTimeSeriesChart(chartTitle, "Days", "MEDS", dataset, true, true, true);
 
             XYPlot plot = chart.getXYPlot();
-//            plot.getDomainAxis().setAutoRange(true);
-//            Range rang = plot.getDataRange(plot.getRangeAxis());
-//
-//            log.debug("LEN " + plot.getDomainAxis().getLowerBound() + " ddd " + plot.getDomainAxis().getUpperMargin() + " eee " + plot.getDomainAxis().getLowerMargin());
-//            plot.getDomainAxis().setUpperMargin(plot.getDomainAxis().getUpperMargin()*6);
-//            plot.getDomainAxis().setLowerMargin(plot.getDomainAxis().getLowerMargin()*6);
-//            plot.getRangeAxis().setUpperMargin(plot.getRangeAxis().getUpperMargin()*1.7);
-//
-//            plot.getDomainAxis().setUpperMargin(0.9);
-//            plot.getDomainAxis().setLowerMargin(0.9);
-//            plot.getRangeAxis().setUpperMargin(plot.getRangeAxis().getUpperMargin() * 4);
-
 
             XYTaskDataset drugDataset = getDrugDataSet( demographicNo,drugs);
 

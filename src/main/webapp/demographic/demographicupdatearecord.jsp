@@ -442,9 +442,9 @@
     }
     
     
-    //add to waiting list if the waiting_list parameter in the property file is set to true
+    //add to waiting list if the waiting_list parameter in the property file is set to true and a waiting list is found
     oscar.oscarWaitingList.WaitingList wL = oscar.oscarWaitingList.WaitingList.getInstance();
-    if(wL.getFound()){
+	if(oscarVariables.getProperty("DEMOGRAPHIC_WAITING_LIST").equals("true") && wL.getFound()){
  	  WLWaitingListUtil.updateWaitingListRecord(
  	  request.getParameter("list_id"), request.getParameter("waiting_list_note"),
  	  request.getParameter("demographic_no"), request.getParameter("waiting_list_referral_date"));

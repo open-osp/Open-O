@@ -17,6 +17,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
+<!DOCTYPE html>
 <%
   String user_no = (String) session.getAttribute("user");
 %>
@@ -38,16 +39,15 @@
    String codeName = request.getParameter("name");
 
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="billing.billingDigSearch.title" /></title>
-<script LANGUAGE="JavaScript">
-<!--
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
+<script>
 function CodeAttach(File2) {
       if (self.opener.callChangeCodeDesc) self.opener.callChangeCodeDesc();
 
@@ -63,21 +63,16 @@ function setfocus() {
   document.forms[0].codedesc.focus();
   document.forms[0].codedesc.select();
 }
--->
-
 </script>
 
 </head>
 
-<body bgcolor="#FFFFFF" text="#000000" onLoad="setfocus()" topmargin="0"
-	leftmargin="0" rightmargin="0">
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th align=center NOWRAP bgcolor="#CCCCFF"><font face="Helvetica"
-			color="#000000"><bean:message
-			key="billing.billingDigSearch.msgDiagnostic" /> </font><font
-			face="Arial, Helvetica, sans-serif" color="#FF0000"><bean:message
-			key="billing.billingDigSearch.msgMaxSelections" /></font></th>
+<body onLoad="setfocus()">
+<table style="width:100%">
+	<tr >
+		<th style="text-align:center; background-color:silver;" ><bean:message
+			key="billing.billingDigSearch.msgDiagnostic" /><bean:message
+			key="billing.billingDigSearch.msgMaxSelections" /></th>
 	</tr>
 </table>
 <% String coderange=request.getParameter("coderange");
@@ -98,7 +93,7 @@ function setfocus() {
 <input type="hidden" name="name2"
 	value="<%=request.getParameter("name2")%>" />
 <%}%>
-<p><font face="Arial, Helvetica, sans-serif" size="2"><b><bean:message
+<p><b><bean:message
 	key="billing.billingDigSearch.msgRefine" /></b><br>
 <bean:message key="billing.billingDigSearch.msgCodeRange" />: <select
 	name="coderange">
@@ -114,7 +109,7 @@ function setfocus() {
 	<option value="9">900-999</option>
 </select> <bean:message key="billing.billingDigSearch.msgOR" /> <br />
 <bean:message key="billing.billingDigSearch.msgDescription" />: <input
-	type="text" name="codedesc" value="" size="30" /></font> <input type="submit"
+	type="text" name="codedesc" value="" > <input type="submit" class="btn"
 	name="search1"
 	value="<bean:message key="billing.billingDigSearch.btnSearch"/>" /></p>
 <input type="hidden" name="search"
@@ -123,22 +118,20 @@ function setfocus() {
 
 <form name="diagcode" id="diagcode" method="post"
 	action="billingDigUpdate.jsp">
-<table width="600" border="1">
-
-	<tr bgcolor="#CCCCFF">
-		<td width="12%"><b><font face="Arial, Helvetica, sans-serif"
-			size="2"><bean:message key="billing.billingDigSearch.formCode" /></font></b></td>
-		<td width="88%"><b><font face="Arial, Helvetica, sans-serif"
-			size="2"><bean:message
-			key="billing.billingDigSearch.formDescription" /></font></b></td>
+<table style="width:800px; margin:auto" class="table-striped table-condensed">
+    <thead>
+	<tr>
+		<th style="width:12%"><b><bean:message key="billing.billingDigSearch.formCode" /></b></th>
+		<th style="width:88%"><b><bean:message
+			key="billing.billingDigSearch.formDescription" /></b></th>
 	</tr>
-
-
+    </thead>
+    <tbody>
 	<%  ResultSet rslocal = null;
       ResultSet rslocal2 = null;
         String Dcode="", DcodeDesc="", Dcode2="", DcodeDesc2="";
         String codeName2="";
-    String color="";
+
  int Count = 0;
  int intCount = 0;
  String numCode="";
@@ -211,22 +204,18 @@ textCode = sBuffer.toString();
 		DcodeDesc = result.getDescription().trim();
 		if (Count == 0){
 			Count = 1;
-			color = "#FFFFFF";
 		} else {
 			Count = 0;
-			color="#EEEEFF";
 		}
  %>
 
-	<tr bgcolor="<%=color%>">
-		<td width="12%"><font face="Arial, Helvetica, sans-serif"
-			size="2"><a
-			href="javascript:CodeAttach('<%=Dcode%>|<%=DcodeDesc%>')"><%=Dcode%><a></font></td>
-		<td width="88%"><font face="Arial, Helvetica, sans-serif"
-			size="2"><input type="text" name="<%=Dcode%>"
-			value="<%=DcodeDesc%>" size="60"><input type="submit"
+	<tr>
+		<td style="width:12%"><a
+			href="javascript:CodeAttach('<%=Dcode%>|<%=DcodeDesc%>')"><%=Dcode%></a></td>
+		<td style="width:88%"><input type="text" class="input input-xxlarge" style="margin-bottom: 0px;" name="<%=Dcode%>"
+			value="<%=DcodeDesc%>">&nbsp;<input type="submit" class="btn"
 			name="update"
-			value="<bean:message key="billing.billingDigSearch.btnUpdate"/> <%=Dcode%>"></font></td>
+			value="<bean:message key="billing.billingDigSearch.btnUpdate"/> <%=Dcode%>"></td>
 	</tr>
 	<%
   } //end of while looop
@@ -239,23 +228,19 @@ textCode = sBuffer.toString();
   		  DcodeDesc = result.getDescription().trim();
   		  if (Count == 0){
   			 Count = 1;
-  			 color = "#FFFFFF";
-  		  } else {
+   		  } else {
   			 Count = 0;
-  			 color="#F9E6F0";
   		  }
 
  %>
 
-	<tr bgcolor="<%=color%>">
-		<td width="12%"><font face="Arial, Helvetica, sans-serif"
-			size="2"><a
-			href="javascript:CodeAttach('<%=Dcode%>|<%=DcodeDesc%>')"><%=Dcode%><a></font></td>
-		<td width="88%"><font face="Arial, Helvetica, sans-serif"
-			size="2"><input type="text" name="<%=Dcode%>"
-			value="<%=DcodeDesc%>" size="60"><input type="submit"
+	<tr>
+		<td style="width:12%"><a
+			href="javascript:CodeAttach('<%=Dcode%>|<%=DcodeDesc%>')"><%=Dcode%></a></td>
+		<td style="width:88%"><input type="text" class="input input-xxlarge" style="margin-bottom: 0px;"  name="<%=Dcode%>"
+			value="<%=DcodeDesc%>">&nbsp;<input type="submit" class="btn"
 			name="update"
-			value="<bean:message key="billing.billingDigSearch.btnUpdate"/> <%=Dcode%>"></font></td>
+			value="<bean:message key="billing.billingDigSearch.btnUpdate"/> <%=Dcode%>"></td>
 	</tr>
 	<%
   }
@@ -268,22 +253,18 @@ textCode = sBuffer.toString();
   		  DcodeDesc2 = result.getDescription().trim();
   		  if (Count == 0){
   			 Count = 1;
-  			 color = "#FFFFFF";
   		  } else {
   			 Count = 0;
-  			 color="#F9E6F0";
   		  }
  %>
 
-	<tr bgcolor="<%=color%>">
-		<td width="12%"><font face="Arial, Helvetica, sans-serif"
-			size="2"><a
-			href="javascript:CodeAttach('<%=Dcode2%>|<%=DcodeDesc2%>')"><%=Dcode2%><a></font></td>
-		<td width="88%"><font face="Arial, Helvetica, sans-serif"
-			size="2"><input type="text" name="<%=Dcode2%>"
-			value="<%=DcodeDesc2%>" size="60"><input type="submit"
+	<tr>
+		<td style="width:12%"><a
+			href="javascript:CodeAttach('<%=Dcode2%>|<%=DcodeDesc2%>')"><%=Dcode2%></a></td>
+		<td style="width:88%"><input type="text" class="input input-xxlarge" style="margin-bottom: 0px;"  name="<%=Dcode2%>"
+			value="<%=DcodeDesc2%>">&nbsp;<input type="submit" class="btn"
 			name="update"
-			value="<bean:message key="billing.billingDigSearch.btnUpdate"/> <%=Dcode2%>"></font></td>
+			value="<bean:message key="billing.billingDigSearch.btnUpdate"/> <%=Dcode2%>"></td>
 	</tr>
 	<%
   }
@@ -291,10 +272,9 @@ textCode = sBuffer.toString();
   %>
 
 	<%  if (intCount == 0 ) { %>
-	<tr bgcolor="<%=color%>">
-		<td colspan="2"><font face="Arial, Helvetica, sans-serif"
-			size="2"><bean:message
-			key="billing.billingDigSearch.msgNoMatch" />. <%// =i%></font></td>
+	<tr>
+		<td colspan="2"><bean:message
+			key="billing.billingDigSearch.msgNoMatch" />. <%// =i%></td>
 
 	</tr>
 	<%  }%>
@@ -307,6 +287,7 @@ textCode = sBuffer.toString();
 
 </script>
 	<% } %>
+    </tbody>
 </table>
 </form>
 <p>&nbsp;</p>

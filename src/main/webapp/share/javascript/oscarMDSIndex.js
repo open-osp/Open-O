@@ -341,26 +341,27 @@ function rotate90(id) {
 
 function removeFirstPage(id) {
 	jQuery("#removeFirstPagebtn_" + id).attr('disabled', 'disabled');
-        var displayDocumentAs=$('displayDocumentAs_'+id).value;
+	if(confirm("!! This is a destructive action that CANNOT be reversed !! \n Click OK to delete the first page of this document, or Cancel to abort.")) {
+		var displayDocumentAs = $('displayDocumentAs_' + id).value;
+		new Ajax.Request(contextpath + "/dms/SplitDocument.do", {
+			method: 'post', parameters: "method=removeFirstPage&document=" + id,
+			onSuccess: function (data) {
+				jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
+				if (displayDocumentAs == "PDF") {
+					showPDF(id, contextpath);
+				} else {
+					jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
+				}
+				var numPages = parseInt(jQuery("#numPages_" + id).text()) - 1;
+				jQuery("#numPages_" + id).text("" + numPages);
 
-	new Ajax.Request(contextpath + "/dms/SplitDocument.do", {method: 'post', parameters: "method=removeFirstPage&document=" + id, onSuccess: function(data) {
-		jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
-                if(displayDocumentAs=="PDF") {
-                    showPDF(id,contextpath);
-                } else {
-                    jQuery("#docImg_" + id).attr('src', contextpath + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-                }
-		var numPages = parseInt(jQuery("#numPages_" + id).text())-1;
-		jQuery("#numPages_" + id).text("" + numPages);
-
-
-
-		if (numPages <= 1) {
-			jQuery("#numPages_" + id).removeClass("multiPage");
-			jQuery("#removeFirstPagebtn_" + id).remove();
-		}
-
-	}});
+				if (numPages <= 1) {
+					jQuery("#numPages_" + id).removeClass("multiPage");
+					jQuery("#removeFirstPagebtn_" + id).remove();
+				}
+			}
+		});
+	}
 }
 
 function split(id) {

@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -68,19 +67,25 @@
 %>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Manage Flowsheets</title>
-<link rel="stylesheet" type="text/css"
-	href="../share/css/OscarStandardLayout.css">
 
-<script type="text/javascript" language="JavaScript"
-	src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" language="JavaScript"
-	src="../share/javascript/Oscar.js"></script>
+<script src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+<link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css"	rel="stylesheet" type="text/css">
+
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
+<script src="<%=request.getContextPath()%>/js/bootstrap.js"></script>
+<script	src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
+
+
+
 <script>
 jQuery.noConflict();
 jQuery(function() {
@@ -88,121 +93,33 @@ jQuery(function() {
   });
 </script>
 
-<style type="text/css">
-table.outline {
-	margin-top: 50px;
-	border-bottom: 1pt solid #888888;
-	border-left: 1pt solid #888888;
-	border-top: 1pt solid #888888;
-	border-right: 1pt solid #888888;
-}
 
-table.grid {
-	border-bottom: 1pt solid #888888;
-	border-left: 1pt solid #888888;
-	border-top: 1pt solid #888888;
-	border-right: 1pt solid #888888;
-}
-
-td.gridTitles {
-	border-bottom: 2pt solid #888888;
-	font-weight: bold;
-	text-align: center;
-}
-
-td.gridTitlesWOBottom {
-	font-weight: bold;
-	text-align: center;
-}
-
-td.middleGrid {
-	border-left: 1pt solid #888888;
-	border-right: 1pt solid #888888;
-	text-align: center;
-}
-
-label {
-	float: left;
-	width: 120px;
-	font-weight: bold;
-}
-
-label.checkbox {
-	float: left;
-	width: 116px;
-	font-weight: bold;
-}
-
-label.fields {
-	float: left;
-	width: 80px;
-	font-weight: bold;
-}
-
-span.labelLook {
-	font-weight: bold;
-}
-
-input,textarea,select { //
-	margin-bottom: 5px;
-}
-
-textarea {
-	width: 450px;
-	height: 100px;
-}
-
-.boxes {
-	width: 1em;
-}
-
-#submitbutton {
-	margin-left: 120px;
-	margin-top: 5px;
-	width: 90px;
-}
-
-br {
-	clear: left;
-}
-</style>
 </head>
 
-<body vlink="#0000FF" class="BodyStyle">
+<body>
 
-<table class="MainTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">admin</td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar" style="width: 100%;">
-			<tr>
-				<td>Manage Flowsheets</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn" valign="top" width="160px;">
-		&nbsp;</td>
-		<td class="MainTableRightColumn" valign="top">
+
 			<h3>Flowsheets</h3>
-			<br/>
-			<table width="80%">
+			<br>
+			<table class="table table-striped table-hover">
+                <thead>
 				<tr>
 					<td><b>Name</b></td>
 					<td><b>Universal</B></td>
 					<td><b>Dx Triggers</B></td>
 					<td><b>Program Triggers</B></td>
 					<td><b>Type</b></td>
-					<td><b>Enabled</b></td>					
+					<td><b>Enabled</b></td>
 					<td><b>Actions</b></td>
 				</tr>
+                </thead>
+                <tbody>
 			<%
 			Hashtable<String, String> systemFlowsheets = MeasurementTemplateFlowSheetConfig.getInstance().getFlowsheetDisplayNames();
 				for(String name:systemFlowsheets.keySet()) {
 					String displayName = systemFlowsheets.get(name);
 					MeasurementFlowSheet flowSheet = MeasurementTemplateFlowSheetConfig.getInstance().getFlowSheet(name);
-					
+
 					//load from db to know if it's enabled or not.
 					Flowsheet fs = MeasurementTemplateFlowSheetConfig.getInstance().getFlowsheetSettings().get(flowSheet.getName());
 					boolean enabled=true;
@@ -217,7 +134,7 @@ br {
 
 					if(!flowSheet.getDisplayName().equals("Health Tracker")){
 					%>
-						
+
 						<tr>
 							<td><%=flowSheet.getDisplayName()%></td>
 							<td><%=flowSheet.isUniversal() %></td>
@@ -230,30 +147,24 @@ br {
 									<a href="manageFlowsheets.jsp?method=disable&name=<%=flowSheet.getName()%>">Disable</a>
 								<% } else { %>
 									<a href="manageFlowsheets.jsp?method=enable&name=<%=flowSheet.getName()%>">Enable</a>
-								<% } %>								
+								<% } %>
 							</td>
 						</tr>
 					<%
 					}
 				}
 			%>
+            </tbody>
 			</table>
-				
-			<br/><br/><br/>
-			
-			<form enctype="multipart/form-data" method="POST" action="<%=request.getContextPath()%>/admin/manageFlowsheetsUpload.jsp">
-				<input type="file" name="flowsheet_file"/>
-				<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img border="0" src="../images/icon_alertsml.gif"/></span></span>
-        
-				&nbsp;
-				<input type="submit" value="Upload" />
-			</form>					
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn">&nbsp;</td>
 
-		<td class="MainTableBottomRowRightColumn">&nbsp;</td>
-	</tr>
-</table>
+			<br><br><br>
+
+			<form enctype="multipart/form-data" method="POST" action="<%=request.getContextPath()%>/admin/manageFlowsheetsUpload.jsp">
+				<input type="file" name="flowsheet_file">
+				<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img alt="alert" src="<%=request.getContextPath()%>/images/icon_alertsml.gif"/></span>
+
+				&nbsp;
+				<input type="submit" value="Upload" class="btn btn-primary">
+			</form>
+
 </html:html>

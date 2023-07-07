@@ -1013,12 +1013,11 @@ public class LabPDFCreator extends PdfPageEventHelper {
         cell.setPhrase(new Phrase("Report Status: ", boldFont));
         rInfoTable.addCell(cell);
         if(handler.getMsgType().equals("PATHL7")){
-        	cell.setPhrase(new Phrase((handler.getOrderStatus().equals("F") ? "Final" : (handler.getOrderStatus().equals("C") ? "Corrected" : "Preliminary")), font));
+        	cell.setPhrase(new Phrase(handler.getOrderStatus(), font));
         	rInfoTable.addCell(cell);
         }else{
-        	//(  handler.getOrderStatus().equals("X") ? "DELETED": handler.getOrderStatus())
-        	
-        cell.setPhrase(new Phrase((handler.getOrderStatus().equals("F") ? "Final" : (handler.getOrderStatus().equals("C") ? "Corrected" :  handler.getOrderStatus().equals("P") ? "Partial": handler.getOrderStatus().equals("X") ? "DELETED": handler.getOrderStatus())), font));
+
+        cell.setPhrase(new Phrase(handler.getOrderStatus(), font));
         rInfoTable.addCell(cell);}
         cell.setPhrase(new Phrase("Client Ref. #: ", boldFont));
         rInfoTable.addCell(cell);

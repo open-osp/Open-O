@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%-- This JSP is the first page you see when you enter 'report by template' --%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -48,27 +47,23 @@ if(!authed) {
 
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>BORN Mappings</title>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
-<script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
+<script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
+<script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+
 
 <script>
 function addNewMapping() {
-	
+
 	jQuery.getJSON("bornManage.json",{method: "listServices"},
             function(data,textStatus){
 				console.log('ok');
@@ -76,9 +71,9 @@ function addNewMapping() {
 				for(var x=0;x<data.length;x++) {
 					var id = data[x].serviceId;
 					var name = data[x].serviceDesc;
-					
+
 					$("#oscarService").append("<option value=\""+ id + "\">"+name+"</option>");
-					
+
 					$('#new-form').dialog('open');
 				}
    			 }
@@ -100,14 +95,14 @@ function deleteMapping(id) {
 
 function listMappings() {
 	 $("#mappingTable tbody").find("tr").remove();
-	 
+
 	jQuery.getJSON("bornManage.json",{method: "list"},
            function(data,textStatus){
 				for(var x=0;x<data.length;x++) {
 					var id = data[x].id;
 					var bornPathway = data[x].bornPathway;
 					var serviceId = data[x].serviceName;
-					
+
 					$('#mappingTable > tbody:last').append('<tr><td>'+bornPathway+'</td><td>'+serviceId+'</td><td><a href="javascript:void(0);" onclick="deleteMapping('+id+');"><img border="0" title="delete" src="../images/Delete16.gif"/></a></td></tr>');
 				}
    });
@@ -115,7 +110,7 @@ function listMappings() {
 
 $(document).ready(function(){
 	listMappings();
-	
+
 	$( "#new-form" ).dialog({
 		autoOpen: false,
 		height: 275,
@@ -137,7 +132,7 @@ $(document).ready(function(){
 			                	else
 			                		alert(xml.error);
 			                });
-				 
+
 				$( this ).dialog( "close" );
 			},
 			Cancel: function() {
@@ -145,27 +140,29 @@ $(document).ready(function(){
 			}
 		},
 		close: function() {
-			
+
 		}
 	});
-	
+
 });
 
 </script>
+
 </head>
 
-<body vlink="#0000FF" class="BodyStyle">
+<body class="BodyStyle">
 <h4>BORN/OSCAR Consultation Service Mapping</h4>
-<table id="mappingTable" name="mappingTable" class="table table-bordered table-striped table-hover table-condensed">
+<table id="mappingTable" class="table table-bordered table-striped table-hover table-condensed">
 	<thead>
 		<tr>
 			<th>Early Child Development and Parenting Resource System - Ontario</th>
 			<th>OSCAR Consultation Service</th>
+			<th>&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody></tbody>
 </table>
-<input type="button" class="btn btn-primary" value="Add New" onClick="addNewMapping()"/>	
+<input type="button" class="btn btn-primary" value="Add New" onClick="addNewMapping()"/>
 
 
 <div id="new-form" title="Create Mapping">
@@ -206,7 +203,7 @@ $(document).ready(function(){
 				<label class="control-label" for="oscarService">OSCAR Consultation Service:</label>
 				<div class="controls">
 					<select name="oscarService" id="oscarService">
-						
+
 					</select>
 				</div>
 			</div>

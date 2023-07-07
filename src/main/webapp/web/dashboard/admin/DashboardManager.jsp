@@ -41,14 +41,14 @@
 <title>
 <bean:message key="dashboard.dashboardmanager.title" />
 </title>
+	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables/DataTables-1.13.4/css/jquery.dataTables.min.css" />
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />
- 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" /> 
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/web/css/Dashboard.css" />
 	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js" ></script>
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables/DataTables-1.13.4/js/jquery.dataTables.js" ></script>
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables/DataTables-1.13.4/js/dataTables.bootstrap.js" ></script>
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/web/dashboard/admin/dashboardManagerController.js"></script>
 	
 </head>
@@ -120,7 +120,7 @@
 				<ul class="dropdown-menu" aria-labelledby="editDashboardMenu">			
 					<c:forEach items="${ dashboards }" var="dashboard" varStatus="loop">
 						<li>
-							<a href="#" id="dashboard_${ dashboard.id }" class="editDashboardSelect" >
+							<a href="javascript:void(0)" id="dashboard_${ dashboard.id }" class="editDashboardSelect" >
 								<c:out value="${ dashboard.name }" />
 								<input type="hidden" name="selectName" id="selectName" value="${ dashboard.name }" />
 								<input type="hidden" name="selectDescription" id="selectDescription" value="${ dashboard.description }" />

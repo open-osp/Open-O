@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%-- This JSP is the first page you see when you enter 'report by template' --%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -56,38 +55,24 @@ if(!authed) {
 %>
 <html:html locale="true">
 <head>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/global.js"></script>
+<html:base />
+<script src="<%=request.getContextPath()%>/js/global.js"></script>
 <title>OSCAR Products</title>
-<link href="<%=request.getContextPath()%>/css/bootstrap.css"
-	rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath()%>/css/datepicker.css"
-	rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath()%>/css/DT_bootstrap.css"
-	rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css"
-	rel="stylesheet" type="text/css">
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/css/font-awesome.min.css">
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
+<link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath()%>/css/datepicker.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css"	rel="stylesheet" type="text/css">
 
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/bootstrap.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery.validate.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery.dataTables.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/DT_bootstrap.js"></script>
-<script type="text/javascript" language="JavaScript"
-	src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
+<script src="<%=request.getContextPath()%>/js/bootstrap.js"></script>
+<script src="<%=request.getContextPath()%>/js/bootstrap-datepicker.js"></script>
+<script src="<%=request.getContextPath()%>/js/jquery.validate.js"></script>
+
+<script	src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
 
 
 <link
@@ -96,6 +81,7 @@ if(!authed) {
 
 <script
 	src="<%=request.getContextPath()%>/library/bootstrap2-datepicker/bootstrap-datepicker.js"></script>
+
 
 <script>
 	$(document)
@@ -151,7 +137,7 @@ if(!authed) {
 																	"#eformReportToolEformId")
 																	.val()
 														};
-														
+
 														if ($(
 																"#eformExpiryDate")
 																.val() != null
@@ -299,8 +285,8 @@ if(!authed) {
 								if (e.dateLastPopulated != null) {
 									dateLastPopulated = new Date(
 											e.dateLastPopulated);
-									
-									
+
+
 								}
 								if(e.expiryDate != null) {
 									expiryDate = new Date(e.expiryDate);
@@ -339,6 +325,7 @@ if(!authed) {
 						alert('error:' + data);
 					}
 				});
+
 	}
 </script>
 
@@ -350,14 +337,14 @@ if(!authed) {
 
 </head>
 
-<body vlink="#0000FF" class="BodyStyle">
+<body class="BodyStyle">
 	<h4>EForm Reporting Tool</h4>
 
 
 	<!--  display list of existing tables made, with ability to delete any one of them -->
-	<table id="listTable" class="table" width="100%">
+	<table id="listTable" class="table table-striped table-hover table-condensed" style="width: 100%;">
 		<thead>
-			<th></th>
+			<th>&nbsp;</th>
 			<th>Name</th>
 			<th>Table Name</th>
 			<th>Eform Name</th>
@@ -371,7 +358,7 @@ if(!authed) {
 	</table>
 
 	<!-- button to add new  -->
-	<button id="btnAdd">Add New</button>
+	<button id="btnAdd" class="btn" >Add New</button>
 
 	<!-- add new should show form with name, eform name, and expiry date -->
 
@@ -399,14 +386,12 @@ if(!authed) {
 						<div class="controls">
 							<input type="text" name="eformReportTool.name"
 								id="eformReportToolName" />
-
 						</div>
 					</div>
 
 
 				</div>
 				<div class="controls controls-row">
-
 
 					<div class="control-group span8" id="group3">
 						<label class="control-label" for="eformExpiryDate">Expiry
@@ -425,7 +410,7 @@ if(!authed) {
 	</div>
 
 
-	<script type="text/javascript">
+	<script>
 		$('#eformExpiryDate').datepicker({
 			format : "yyyy-mm-dd",
 			todayBtn : "linked",

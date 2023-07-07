@@ -147,6 +147,19 @@
         	.singlePage {
 
         	}
+            table.docTable{
+                width:100%;
+            }
+            td:first-child.docTable {
+                width: auto;
+            }
+            td:nth-child(2).docTable {
+                width: 200px;
+            }
+            img.docTable {
+                max-width:100%;
+            }
+            
         </style>               
         
         <script>
@@ -177,7 +190,7 @@
                 <tr>
 
 
-                    <td colspan="8">
+                    <td colspan="8" class="docTable">
                         <div style="text-align: right; font-weight: bold"> 
                         <% if( numOfPage > 1 ) {%> 
                         <a id="firstP" style="display: none;" href="javascript:void(0);" onclick="firstPage('<%=docId%>');">First</a>
@@ -186,11 +199,11 @@
                         <a id="lastP" href="javascript:void(0);" onclick="lastPage('<%=docId%>');">Last</a>                        
                         <%}%>
                         </div>
-                        <a href="<%=url2%>" ><img alt="document" src="<%=url%>" id="docImg_<%=docId%>" /></a>
+                        <a href="<%=url2%>" ><img class = "docTable" alt="document" src="<%=url%>" id="docImg_<%=docId%>" /></a>
               
                         
                    </td>
-                    <td align="left" valign="top">
+                    <td align="left" valign="top" class="docTable">
                         <fieldset><legend>Patient:<%=demoName%> </legend>
                             <table border="0">
                                 <tr>

@@ -24,12 +24,13 @@
     Ontario, Canada
 
 --%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <html>
   <head>
     <title>Bootstrap 101 data tables Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
- 
+
 
     <!-- Bootstrap -->
     <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
@@ -43,7 +44,7 @@
       <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/assets/js/respond.min.js"></script>
     <![endif]-->
 
-    <!--Data Tables--->
+    <!--Data Tables-->
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/library/bootstrap/3.0.0/assets/css/DT_bootstrap.css">
 
 
@@ -60,9 +61,9 @@
 
     <div class="container">
 
-    <h1>Hello, data tables! <small><a href="index.jsp">view example list</a></small></h1>
+    <h1>Hello, DataTables v1.13.4, jQuery v3.6.4 with Bootstrap v3.0.0 <br><small><a href="index.jsp">view example list</a></small></h1>
 
- <table cellpadding="0" cellspacing="0" border="0" class="table" id="example">
+ <table class="table" id="example">
 	<thead>
 		<tr>
 			<th>Rendering engine</th>
@@ -492,19 +493,19 @@
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
     <!--Data Tables-->
-    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/library/bootstrap/3.0.0/assets/js/DT_bootstrap.js"></script>
+    <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
+    <script src="<%=request.getContextPath()%>/library/bootstrap/3.0.0/assets/js/DT_bootstrap.js"></script>
 
 	<script>
 
 	/* The patch Boot3/Datatables patch*/
 	$(document).ready(function() {
-		$('#example').dataTable(  );
+		$('#example').DataTable();
 
 	//The patch Boot3/Datatables patch - insert after you initialise dataTable
 	$('div.dataTables_filter label select').addClass('form-control');
@@ -518,4 +519,3 @@
 
   </body>
 </html>
-

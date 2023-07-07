@@ -48,19 +48,18 @@
 
 <title>Report by Template</title>
 
-	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" type="text/css" media="all" href="${pageContext.request.contextPath}/share/calendar/calendar.css" title="win2k-cold-1" />
-	<script type="text/javascript" src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
+	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/share/calendar/calendar.css" title="win2k-cold-1" rel="stylesheet">
+	<script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/share/calendar/calendar.js"></script>	
-	<script type="text/javascript" src="${pageContext.request.contextPath}/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/share/calendar/calendar-setup.js"></script>
-	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/js/jquery-1.9.1.min.js"></script>  
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.2.js"></script>
-	
-	<script type="text/javascript" >
+	<script src="${pageContext.request.contextPath}/share/calendar/calendar.js"></script>
+	<script src="${pageContext.request.contextPath}/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
+	<script src="${pageContext.request.contextPath}/share/calendar/calendar-setup.js"></script>
+	<script src="${pageContext.servletContext.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+	<script src="${pageContext.request.contextPath}/js/bootstrap.min.2.js"></script>
+	<script >
 	    function checkform(formobj) {
 	        if (!validDateFieldsByClass('datefield', formobj)) {
 	            alert("Invalid Date: Must be in the format YYYY/MM/DD");
@@ -69,7 +68,7 @@
 	        return true;
 	    }
 	</script>
-	<style type="text/css">
+	<style>
 		div#optionsDiv a {
 			padding-left: 5px;
 			border-left:#0088cc 2px solid;
@@ -79,10 +78,10 @@
 		}
 
 	</style>
-	
+
 </head>
 
-<% 
+<%
 	String templateid = request.getParameter("templateid");
 	if (templateid == null) templateid = (String) request.getAttribute("templateid");
 	ReportObject curreport = (new ReportManager()).getReportTemplate(templateid);
@@ -100,7 +99,7 @@
 <%}%>
 
 <h3>
-	<c:out value="${ curreport.title }" /><br />
+	<c:out value="${ curreport.title }" /><br>
 	<small><c:out value="${ curreport.description }" /></small>
 </h3>
 
@@ -111,7 +110,7 @@
     </div>
 </c:if>
 
-	<div class="well configDiv" id=manageGroups >			
+	<div class="well configDiv" id=manageGroups >
 		<html:form styleClass="form" action="/oscarReport/reportByTemplate/GenerateReportAction" onsubmit="return checkform(this);">
 			<input type="hidden" name="templateId" value="${ curreport.templateId }">
 			<input type="hidden" name="type" value="${ curreport.type }">
@@ -121,47 +120,47 @@
                              Parameter curparam = (Parameter) parameters.get(i); %>
 					<div class="control-group">
 						<label class="control-label" for="<%=curparam.getParamId()%>" ><strong>Step <%=step%>: </strong> <%=curparam.getParamDescription()%></label>
-					
-					<%-- If LIST field --%> 
+
+					<%-- If LIST field --%>
 					<%if (curparam.getParamType().equals(curparam.LIST)) {%>
 						 <div class="controls">
 							<select name="<%=curparam.getParamId()%>" id="<%=curparam.getParamId()%>">
 								<%ArrayList paramChoices = curparam.getParamChoices();
-		                                         for (int i2=0; i2<paramChoices.size(); i2++) { 
+		                                         for (int i2=0; i2<paramChoices.size(); i2++) {
 		                                         Choice curchoice = (Choice) paramChoices.get(i2);%>
 								<option value="<%=curchoice.getChoiceId()%>"><%=curchoice.getChoiceText()%></option>
 								<%}%>
 							</select>
 						</div>
-					
-					<%--If TEXT field --%> 
+
+					<%--If TEXT field --%>
 					<% } else if (curparam.getParamType().equals(curparam.TEXT)) {%>
 						<div class="controls">
 							<input type="text" name="<%=curparam.getParamId()%>" id="<%=curparam.getParamId()%>" />
 						</div>
-						
-					<%--If DATE field --%> 
-					<% } else if (curparam.getParamType().equals(curparam.DATE)) {%>				
-						<div class="controls">	
+
+					<%--If DATE field --%>
+					<% } else if (curparam.getParamType().equals(curparam.DATE)) {%>
+						<div class="controls">
 							<div class="input-append" id="<%=curparam.getParamId()%>">
-								<input type="text" class="datefield" id="datefield<%=i%>" name="<%=curparam.getParamId()%>" />							
+								<input type="text" class="datefield" id="datefield<%=i%>" name="<%=curparam.getParamId()%>" />
 								<span class="add-on">
 									<a id="obsdate<%=i%>">
-										<img title="Calendar" src="${pageContext.request.contextPath}/images/cal.gif" alt="Calendar" border="0" />
-									</a> 
+										<img title="Calendar" src="${pageContext.request.contextPath}/images/cal.gif" alt="Calendar">
+									</a>
 								</span>
 							</div>
 						</div>
-						<script type="text/javascript"> Calendar.setup( { inputField : "datefield<%=i%>", ifFormat : "%Y-%m-%d", showsTime :false, button : "obsdate<%=i%>", singleClick : true, step : 1 } );
-                        </script> 
-                        
-                    <%--If CHECK field --%> 
+						<script> Calendar.setup( { inputField : "datefield<%=i%>", ifFormat : "%Y-%m-%d", showsTime :false, button : "obsdate<%=i%>", singleClick : true, step : 1 } );
+                        </script>
+
+                    <%--If CHECK field --%>
                     <% } else if (curparam.getParamType().equals(curparam.CHECK)) {%>
-						<input type="hidden" name="<%=curparam.getParamId()%>:check" value="" /> 
+						<input type="hidden" name="<%=curparam.getParamId()%>:check" value="" />
 						<div class="controls">
-						
+
 							<input type="checkbox" name="mastercheck" id="mastercheck" onclick="checkAll(this, 'enclosingCol<%=i%>', 'checkclass<%=i%>')" />
-							
+
 							<%ArrayList paramChoices = curparam.getParamChoices();
 	                        for (int i2=0; i2<paramChoices.size(); i2++) {
 	                            Choice curchoice = (Choice) paramChoices.get(i2);%>
@@ -169,30 +168,30 @@
 									<input type="checkbox" name="<%=curparam.getParamId()%>" id="<%=curparam.getParamId() + curchoice.getChoiceId()%>" class="checkclass<%=i%>" value="<%=curchoice.getChoiceId()%>" />
 									<%=curchoice.getChoiceText()%>
 								</label>
-							<%}%> 
+							<%}%>
 						</div>
 					<% } else if (curparam.getParamType().equals(curparam.TEXTLIST)) {%>
 						<div class="controls">
 							<input type="text" placeholder="Comma Separated" name="<%=curparam.getParamId()%>:list" id="<%=curparam.getParamId()%>"/>
 						</div>
 					<% }%>
-			
+
 					</div>
 
-				<%} %> <%--end for loop --%> 
+				<%} %> <%--end for loop --%>
 
 					<div class="control-group">
 						<label class="control-label"><strong>Step <%=step+1%>:</strong></label>
 						<div class="controls">
 							<input type="submit" class="btn btn-primary" name="submitButton" value="Run Query" />
 						</div>
-					</div>	
+					</div>
 		</html:form>
 	</div>
 
 	<div id="optionsDiv" class="form-actions">
-		<a href="viewTemplate.jsp?templateid=<%=curreport.getTemplateId()%>" class="link">View Template XML</a> 
-		<a href="addEditTemplate.jsp?templateid=<%=curreport.getTemplateId()%>&opentext=1" class="link">Edit Template</a> 
+		<a href="viewTemplate.jsp?templateid=<%=curreport.getTemplateId()%>" class="link">View Template XML</a>
+		<a href="addEditTemplate.jsp?templateid=<%=curreport.getTemplateId()%>&opentext=1" class="link">Edit Template</a>
 		<a href="addEditTemplatesAction.do?templateid=<%=curreport.getTemplateId()%>&action=delete"
 			onclick="return confirm('Are you sure you want to delete this report template?')" class="link">
 			Delete Template

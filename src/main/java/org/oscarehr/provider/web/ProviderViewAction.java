@@ -24,9 +24,7 @@
 
 package org.oscarehr.provider.web;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,31 +67,27 @@ public class ProviderViewAction extends DispatchAction {
 
          String view_name = request.getParameter("view_name");
          String role = (String)request.getSession().getAttribute("userrole");
-	 String providerNo = (String) request.getSession().getAttribute("user");
-         Map<String,View> map = this.userViewDAO.getView(view_name,role, providerNo);
+	     String providerNo = (String) request.getSession().getAttribute("user");
+         Map<String,View> currentview = this.userViewDAO.getView(view_name, role, providerNo);
 
-         String [] names = request.getParameterValues("name");
-         String [] values = request.getParameterValues("value");
-         View v;
-
-         //first we delete any current view
-         Set<String> keys = map.keySet();
-         String key;
-         for( Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-             key = iter.next();
-             v = map.get(key);
-             this.userViewDAO.delete(v);
+         Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
+         parameterMap.remove("method");
+         for(Map.Entry<String, String[]> parameter : parameterMap.entrySet()) {
+             View view = currentview.get(parameter.getKey());
+             if(view == null) {
+                 view = new View();
+             }
+             view.setProviderNo(providerNo);
+             view.setView_name(view_name);
+             view.setRole(role);
+             view.setName(parameter.getKey());
+             view.setValue(parameter.getValue()[0]);
+             currentview.put(parameter.getKey(), view);
          }
-
-         //now we save new view
-         for( int idx = 0; idx < names.length; ++idx ) {
-             v = new View();
-             v.setName(names[idx]);
-             v.setRole(role);
-             v.setValue(values[idx]);
-             v.setView_name(view_name);
-	     v.setProviderNo(providerNo);
-             this.userViewDAO.saveView(v);
+         if(currentview != null && !currentview.isEmpty()) {
+             for (View value : currentview.values()) {
+                userViewDAO.saveView(value);
+             }
          }
 
          return null;

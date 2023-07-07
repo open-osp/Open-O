@@ -59,7 +59,7 @@ String[] param = new String[2];
 String[] temp = request.getParameterValues("checkbox");
 if (temp== null){
 %>
-<jsp:forward page='ticklerDemoMain.jsp'>
+<jsp:forward page='ticklerMain.jsp'>
          <jsp:param name="demoview" value='<%=demoview%>' />
          <jsp:param name="parentAjaxId" value="<%=parentAjaxId%>" />
          <jsp:param name="updateParent" value="<%=updateParent%>" />
@@ -85,7 +85,7 @@ if (temp== null){
 	} //end for
 }
 %>
-<jsp:forward page='ticklerDemoMain.jsp'>
+<jsp:forward page='ticklerMain.jsp'>
     <jsp:param name="demoview" value='<%=demoview%>' />
     <jsp:param name="parentAjaxId" value="<%=parentAjaxId%>" />
     <jsp:param name="updateParent" value="<%=updateParent%>" />

@@ -39,7 +39,7 @@ if(!authed) {
 }
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="oscar.oscarLab.ca.all.pageUtil.SendOruR01UIBean"%>
 <%@page import="org.oscarehr.common.model.ProfessionalSpecialist"%>
@@ -51,36 +51,32 @@ if(!authed) {
 	<title>Send eData</title>
 	<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-	<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
-	
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
-	<script type="text/javascript">
+
+
+	<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+
+	<script src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
+	<script src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
+	<script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
+
+	<script>
 		function checkRequiredFields() {
 			if (jQuery("#professionalSpecialistId").val().length==0) {
 				alert('Select a provider / specialist to send to.');
 				return(false);
-			}			
+			}
 			if (jQuery("#clientFirstName").val().length==0 || jQuery("#clientLastName").val().length==0) {
 				alert('The clients first and last name is required.');
 				return(false);
-			}	
+			}
 			if (jQuery("#subject").val().length==0) {
-				alert('The data name is required.');
+				alert('The subject is required.');
 				return(false);
-			}	
+			}
 			if (jQuery("#textMessage").val().length==0 && jQuery("#uploadFile").val().length==0) {
 				alert('Either Text Data or an Upload File is required.');
 				return(false);
-			}	
+			}
 			return(true);
 		}
 	</script>
@@ -146,7 +142,7 @@ for pre-populating data.
 			<label class="control-label">BirthDay</label>
 			<div class="controls">
 				<input type="text" id="clientBirthDay" name="clientBirthDay" value="<%=sendOruR01UIBean.getClientBirthDate()%>" />
-				<script type="text/javascript">
+				<script>
 					jQuery(document).ready(function() {
 						Date.format='yy-mm-dd';
 						jQuery("#clientBirthDay").datepicker({dateFormat: 'yy-mm-dd'});

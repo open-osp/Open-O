@@ -915,30 +915,30 @@
 
                             </caisi:isModuleLoad>
 
-                            <%if(appManager.isK2AEnabled()){ %>
-                            <li>
-                                <a href="javascript:void(0);" id="K2ALink">K2A<span><sup id="k2a_new_notifications"></sup></span></a>
-                                <script type="text/javascript">
-                                    function getK2AStatus(){
-                                        jQuery.get( "../ws/rs/resources/notifications/number", function( data ) {
-                                            if(data === "-"){ //If user is not logged in
-                                                jQuery("#K2ALink").click(function() {
-                                                    const win = window.open('../apps/oauth1.jsp?id=K2A','appAuth','width=700,height=450,scrollbars=1');
-                                                    win.focus();
-                                                });
-                                            }else{
-                                                jQuery("#k2a_new_notifications").text(data);
-                                                jQuery("#K2ALink").click(function() {
-                                                    const win = window.open('../apps/notifications.jsp','appAuth','width=450,height=700,scrollbars=1');
-                                                    win.focus();
-                                                });
-                                            }
-                                        });
-                                    }
-                                    getK2AStatus();
-                                </script>
-                            </li>
-                            <%}%>
+<%--                            <%if(appManager.isK2AEnabled()){ %>--%>
+<%--                            <li>--%>
+<%--                                <a href="javascript:void(0);" id="K2ALink">K2A<span><sup id="k2a_new_notifications"></sup></span></a>--%>
+<%--                                <script type="text/javascript">--%>
+<%--                                    function getK2AStatus(){--%>
+<%--                                        jQuery.get( "../ws/rs/resources/notifications/number", function( data ) {--%>
+<%--                                            if(data === "-"){ //If user is not logged in--%>
+<%--                                                jQuery("#K2ALink").click(function() {--%>
+<%--                                                    const win = window.open('../apps/oauth1.jsp?id=K2A','appAuth','width=700,height=450,scrollbars=1');--%>
+<%--                                                    win.focus();--%>
+<%--                                                });--%>
+<%--                                            }else{--%>
+<%--                                                jQuery("#k2a_new_notifications").text(data);--%>
+<%--                                                jQuery("#K2ALink").click(function() {--%>
+<%--                                                    const win = window.open('../apps/notifications.jsp','appAuth','width=450,height=700,scrollbars=1');--%>
+<%--                                                    win.focus();--%>
+<%--                                                });--%>
+<%--                                            }--%>
+<%--                                        });--%>
+<%--                                    }--%>
+<%--                                    getK2AStatus();--%>
+<%--                                </script>--%>
+<%--                            </li>--%>
+<%--                            <%}%>--%>
 
                             <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                                 <security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="r">
@@ -1941,7 +1941,7 @@
                                                             <caisi:isModuleLoad moduleName="ticklerplus"
                                                                                 reverse="true">
                                                                 <a href="#"
-                                                                   onClick="popupPage(700,1024, '../tickler/ticklerDemoMain.jsp?demoview=0');return false;"
+                                                                   onClick="popupPage(700,1024, '../tickler/ticklerMain.jsp?demoview=0');return false;"
                                                                    title="<bean:message key="provider.appointmentProviderAdminDay.ticklerMsg"/>: <%=Encode.forHtmlContent(tickler_note)%>">
                                                                     <span color="red">!</span></a>
                                                             </caisi:isModuleLoad>
@@ -1999,7 +1999,7 @@
                                                     <caisi:isModuleLoad moduleName="ticklerplus"
                                                                         reverse="true">
                                                     <a href="#"
-                                                       onClick="popupPage(700,1024, '../tickler/ticklerDemoMain.jsp?demoview=<%=demographic_no%>');return false;"
+                                                       onClick="popupPage(700,1024, '../tickler/ticklerMain.jsp?demoview=<%=demographic_no%>');return false;"
                                                        title="<bean:message key="provider.appointmentProviderAdminDay.ticklerMsg"/>: <%=UtilMisc.htmlEscape(tickler_note)%>"><span
                                                             color="red">!</span></a>
                                                     </caisi:isModuleLoad>
@@ -2156,7 +2156,7 @@
                                                                 {
                                                                 %>
                                                     &#124; <a href=#
-                                                              onClick='popupPage(755,1200, "../billing.do?billRegion=<%=URLEncoder.encode(prov)%>&billForm=<%=URLEncoder.encode(oscarVariables.getProperty("default_view"))%>&hotclick=<%=URLEncoder.encode("")%>&appointment_no=<%=appointment.getId()%>&demographic_name=<%=URLEncoder.encode(name)%>&status=<%=status%>&demographic_no=<%=demographic_no%>&providerview=<%=curProvider_no[nProvider]%>&user_no=<%=loggedInInfo1.getLoggedInProviderNo()%>&apptProvider_no=<%=curProvider_no[nProvider]%>&appointment_date=<%=year+"-"+month+"-"+day%>&start_time=<%=start_time%>&bNewForm=1");return false;'
+                                                              onClick='popupPage(755,1200, "../billing.do?billRegion=<%=URLEncoder.encode(prov)%>&billForm=<%=URLEncoder.encode(oscarVariables.getProperty("default_view"))%>&hotclick=<%=URLEncoder.encode("")%>&appointment_no=<%=appointment.getId()%>&demographic_name=<%=URLEncoder.encode(name)%>&status=<%=status%>&demographic_no=<%=demographic_no%>&providerview=<%=curProvider_no[nProvider]%>&user_no=<%=loggedInInfo1.getLoggedInProviderNo()%>&apptProvider_no=<%=curProvider_no[nProvider]%>&xml_provider=<%=curProvider_no[nProvider]%>&appointment_date=<%=year+"-"+month+"-"+day%>&start_time=<%=start_time%>&bNewForm=1");return false;'
                                                               title="<bean:message key="global.billingtag"/>"><bean:message
                                                         key="provider.appointmentProviderAdminDay.btnB"/></a>
                                                             <%

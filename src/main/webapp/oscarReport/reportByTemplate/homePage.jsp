@@ -53,8 +53,9 @@
 <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
 <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
 <link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="${pageContext.servletContext.contextPath}/js/jquery-1.9.1.min.js"></script>  
-<script type="text/javascript" src="${pageContext.servletContext.contextPath}/js/bootstrap.min.2.js"></script>
+<script src="${pageContext.servletContext.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.servletContext.contextPath}/js/bootstrap.min.2.js"></script>
+<script src="${pageContext.servletContext.contextPath}/js/global.js"></script>
 
 </head>
 
@@ -75,17 +76,17 @@ String value = "";
 			<span class="add-on">Group</span>
 				<select name="templates" id="viewSelect">
 					<option value="all">All Templates</option>
-					
+
 				<%for (int i=0; i<templateGroups.size(); i++){
-				
+
 					List<RBTGroup> templatesInGroup = rbtGroupManager.getGroup(loggedInInfo, (templateGroups.get(i)));
 					value ="";
 					for (int x=0; x<templatesInGroup.size(); x++) {
 						value = value + String.valueOf((templatesInGroup.get(x)).getTemplateId()) + ",";
 					}%>
-					
+
 					<option value="<%=value%>"><%=templateGroups.get(i)%></option>
-				<% }%>	
+				<% }%>
 				</select>
 		</div>
 		<input type="text" id="userSearch" placeholder="Search" />
@@ -102,36 +103,36 @@ String value = "";
 			<th onclick="sortTable(2)"><a class="contentLink">Description</a></th>
 		</tr>
 	</thead>
-	
+
 	<tbody id="tableData">
 	<%ArrayList templates = (new ReportManager()).getReportTemplatesNoParam();
 	            String templateViewId = request.getParameter("templateviewid");
 	            if (templateViewId == null) templateViewId = "";
-	            %>            
+	            %>
 	<%for (int i=0; i<templates.size(); i++) {
 	                    ReportObject curReport = (ReportObject) templates.get(i);%>
-		<tr id="t<%=i%>">                   
+		<tr id="t<%=i%>">
 			<td align="center" ><%=String.valueOf(i+1)%></td>
 			<td> <a style="display:block;outline:none;" href="reportConfiguration.jsp?templateid=<%=curReport.getTemplateId()%>"><%=curReport.getTitle()%></a></td>
 			<td> <%=curReport.getDescription()%> </td>
 			<td style="display:none;" id="<%=curReport.getTemplateId()%>"></td>
 		</tr>
-				<% } %> 
-		
+				<% } %>
+
 		<%if (templates.isEmpty()) {%>
 		<tr>
 			<td align="center" >0</td>
 			<td>No Templates</td>
 			<td>No templates in the database, please create a template file by clicking on "Add Template"</td>
 		</tr>
-			<%}%>		          
+			<%}%>
 	</tbody>
-	</table>			
+	</table>
 </div>
 
 <script type="text/javascript">
 //Table Display
-jQuery("#viewSelect").change(function() {
+jQuery("#viewSelect").on("change",function() {
 	updateTableDisplay();
 });
 
@@ -144,7 +145,7 @@ function updateTableDisplay(){
 	var rows = table.rows;
 	var index = "";
 	var i, tid;
-	
+
 	for (i= 0; i< (rows.length); i++) {
 		tid = rows[i].getElementsByTagName("TD")[3].id.toString();
 		index = rows[i].id.toString();
@@ -175,14 +176,14 @@ function inGroup(element){
 	return bool;
 }
 
-// Search
+// Search  NB .context is a jQuery 1.3 - 2.4 property
 jQuery(document).ready(function() {
 	jQuery("#userSearch").on("keyup", function() {
 		var value = jQuery(this).val().toLowerCase();
 		jQuery("#tableData tr").filter(
 			function() {
 				jQuery(this).toggle(
-					(jQuery(this).text().toLowerCase().indexOf(value) > -1) && 
+					(jQuery(this).text().toLowerCase().indexOf(value) > -1) &&
 					inGroup(jQuery(this).context))
 		});
 	});
@@ -193,7 +194,7 @@ function sortTable(n) {
 	table = document.getElementById("tableData");
 	switching = true;
 	dir = "asc";
-	
+
 	while (switching) {
 		switching = false;
 		rows = table.rows;
@@ -201,12 +202,12 @@ function sortTable(n) {
 			shouldSwitch = false;
 			x = rows[i].getElementsByTagName("TD")[n];
 			y = rows[i + 1].getElementsByTagName("TD")[n];
-			
+
 			if (n == 1){
 				x = new DOMParser().parseFromString(x.innerHTML, "text/html").body.childNodes[0];
 				y = new DOMParser().parseFromString(y.innerHTML, "text/html").body.childNodes[0];
 			}
-			
+
 			if (dir == "asc") {
 				/* If it is the first row then it is a number*/
 				if (n == 0){
@@ -235,7 +236,7 @@ function sortTable(n) {
 				}
 			}
 		}
-		
+
 		if (shouldSwitch) {
 			rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
 			switching = true;

@@ -141,9 +141,12 @@ table#scheduleNavigation, table#monthScheduleNavigation {
 	width:100%;
 }
 
-table#scheduleNavigation tr td, table#monthScheduleNavigation tr td {
-	max-width: 396px;
-	min-width: 396px;
+table#scheduleNavigation tr td#dateAndCalendar {
+	min-width: 405px;
+}
+
+table#scheduleNavigation tr td#group {
+	min-width: 695px;
 }
 
 .providerSchedule {

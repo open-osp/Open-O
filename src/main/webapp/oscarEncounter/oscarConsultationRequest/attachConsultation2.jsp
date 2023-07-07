@@ -91,8 +91,6 @@ boolean onIPad = http_user_agent.indexOf("iPad") >= 0;
 <title><bean:message
 	key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.title" /></title>
 
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css" />
-
 <script type="text/javascript">
 //<!--   
 <% 

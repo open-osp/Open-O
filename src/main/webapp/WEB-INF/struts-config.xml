@@ -1171,6 +1171,7 @@
 			<forward name="exit" path="/oscarEncounter/close.jsp" />
 			<forward name="print" path="/form/forwardprint.jsp" />
 			<forward name="printAll" path="/form/createpdf" />
+            <forward name="printAllJasperReport" path="/form/formPdfJasperReport.do" />
 			<forward name="printLabReq" path="/form/formlabreqprint.jsp" />
 			<forward name="save" path="/form/forwardname.jsp" />
 			<forward name="graph" path="/form/createpdf" />

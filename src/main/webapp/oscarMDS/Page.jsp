@@ -389,7 +389,7 @@ String curUser_no = (String) session.getAttribute("user");
                                     <c:out value='<%=result.isDocument() ? result.description == null ? "" : result.description : result.getDisciplineDisplayString()%>' />
                                 </td>
                                 <td>
-                                    <%= ((result.isReportCancelled())? "Cancelled" : result.isFinal() ? "Final" : "Partial")%>
+                                    <c:out value="<%= result.getReportStatus() %>" />
                                 </td>
                                 <td>
                                     <% int multiLabCount = result.getMultipleAckCount(); %>

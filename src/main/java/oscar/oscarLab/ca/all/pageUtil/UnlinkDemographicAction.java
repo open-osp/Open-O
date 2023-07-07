@@ -26,30 +26,37 @@ package oscar.oscarLab.ca.all.pageUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
 import org.apache.logging.log4j.Logger;
-import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.oscarehr.common.dao.PatientLabRoutingDao;
+import org.oscarehr.common.dao.ProviderLabRoutingDao;
 import org.oscarehr.common.model.PatientLabRouting;
+import org.oscarehr.common.model.ProviderLabRoutingModel;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.OscarAuditLogger;
 import org.oscarehr.util.SpringUtils;
 
+import oscar.form.JSONAction;
 import oscar.log.LogConst;
+import java.util.List;
 
 /**
  *
  * @author mweston4
  */
-public class UnlinkDemographicAction  extends Action {
+public class UnlinkDemographicAction  extends JSONAction {
     
     private static Logger logger = MiscUtils.getLogger();
-    private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-    
+    private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+
+    private final PatientLabRoutingDao plrDao = SpringUtils.getBean(PatientLabRoutingDao.class);
+
+    private final ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
     public UnlinkDemographicAction () {}
     
     @Override
@@ -59,22 +66,48 @@ public class UnlinkDemographicAction  extends Action {
     	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", "u", null)) {
 			throw new SecurityException("missing required security object (_lab)");
 		}
-
+        boolean success = false;
 		//set the demographicNo in the patientLabRouting table 
         String reason = request.getParameter("reason");
         String labNoStr = request.getParameter("labNo");
         Integer labNo = Integer.parseInt(labNoStr);
-        PatientLabRoutingDao plrDao = SpringUtils.getBean(PatientLabRoutingDao.class);
         PatientLabRouting plr = plrDao.findByLabNo(labNo);
-        Integer demoNo = plr.getDemographicNo();
-        plr.setDemographicNo(PatientLabRoutingDao.UNMATCHED);
-        plrDao.merge(plr);
-        
+        Integer demoNo = 0;
+
+        if(plr != null) {
+            demoNo = plr.getDemographicNo();
+            plr.setDemographicNo(PatientLabRoutingDao.UNMATCHED);
+            plrDao.merge(plr);
+            if(plr.getDemographicNo().equals(PatientLabRoutingDao.UNMATCHED)) {
+                success = true;
+            }
+        }
+
         OscarAuditLogger.getInstance().log(loggedInInfo, LogConst.UNLINK, LogConst.CON_HL7_LAB, String.valueOf(labNo), request.getRemoteAddr(), demoNo, reason);
         
         logger.debug("Unlinked lab with segmentID: " + labNo + " from eChart of Demographic " + demoNo);
-        
-        return mapping.findForward("success");
+
+        /* ensure the lab requisitioning provider is aware by inserting lab back into their inbox.
+         * or into the unattached inbox if no provider is identified.
+         */
+        List<ProviderLabRoutingModel> providerLabRoutingModel = providerLabRoutingDao.findAllLabRoutingByIdandType(labNo, ProviderLabRoutingDao.LAB_TYPE.HL7.name());
+        for(ProviderLabRoutingModel providerLabRouting : providerLabRoutingModel) {
+            String currentStatus = providerLabRouting.getStatus();
+            providerLabRouting.setStatus(ProviderLabRoutingDao.STATUS.N.name());
+            providerLabRouting.setComment(providerLabRouting.getComment() + " " + " Lab unlinked from incorrect demographic number: " + demoNo);
+            providerLabRoutingDao.merge(providerLabRouting);
+            OscarAuditLogger.getInstance().log(loggedInInfo, LogConst.UNLINK, LogConst.CON_HL7_LAB, String.valueOf(labNo), request.getRemoteAddr(), demoNo,"Provider " + providerLabRouting.getProviderNo() + " Ack status from " + currentStatus + " to " + ProviderLabRoutingDao.STATUS.N.name());
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("success",success);
+        jsonObject.put("unlinkedDemographicNo", demoNo);
+        jsonObject.put("labNo", labNo);
+        jsonObject.put("reason", reason);
+
+        jsonResponse(response, jsonObject);
+
+        return null;
     }
     
     

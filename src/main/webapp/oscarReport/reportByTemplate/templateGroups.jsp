@@ -33,38 +33,42 @@
 <!DOCTYPE html>
 <html:html locale="true">
 <head>
-	<title>Report by Template Groups</title>
-	
-	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<script src="${pageContext.request.contextPath}/js/jquery-1.9.1.min.js"></script>
-	<script src="${pageContext.request.contextPath}/share/javascript/jquery/jquery.validate.js"></script>  
-	<script src="${pageContext.request.contextPath}/js/jquery-ui-1.10.2.custom.min.js"></script> 
-	<script src="${pageContext.request.contextPath}/js/bootstrap.min.2.js"></script>
-	
+    <title>Report by Template Groups</title>
+
+    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet" >
+    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
+    <script src="${pageContext.request.contextPath}/js/bootstrap.min.2.js"></script>
+
 
 </head>
 
 <body>
 
 	<%@ include file="rbtTopNav.jspf"%>
-	
+
 	<h3>Template Groups</h3>
-	
+
  	<c:choose>
 	<c:when test="${ empty templatesInGroup }">
 	<div class="row-fluid">
 		<div class="well span12" id=manageGroups >
-			
+
 			<div class="row-fluid">
 				<!--ADD GROUP-->
-				<form action= "${pageContext.request.contextPath}/oscarReport/reportByTemplate/actions/addGroup.do" 
+				<form action= "${pageContext.request.contextPath}/oscarReport/reportByTemplate/actions/addGroup.do"
 						method="get" id="addGroupTemplate" class="form-inline">
 					<input type="text" name="groupName" class="check" placeholder="Group Name">
 					<input type="submit" name="subm" class="btn groupAdd" value="Add Group" disabled>
 				</form>
-			
+
 			    <div class="alert alert-error textExists" style="display:none;">
 			    	<button type="button" class="close" data-dismiss="alert">&times;</button>
 			    	<strong>Error!</strong> the group name you selected already exists.
@@ -78,23 +82,23 @@
 							<th colspan="2">Group Name</th>
 						</tr>
 					</thead>
-				
+
 					<tbody>
 					<c:choose>
 						<c:when test="${ not empty rbtGroups }">
 							<c:forEach items="${ rbtGroups }" var="groupName">
 								<tr class="">
-									<td title="${ groupName }"> 
+									<td title="${ groupName }">
 										<a href="${pageContext.request.contextPath}/oscarReport/reportByTemplate/actions/tempInGroup.do?groupName=${ groupName }">
 											<c:out value="${ groupName }" />
-										</a> 
+										</a>
 									</td>
 									<td>
-										<a class="pull-right" href="${pageContext.request.contextPath}/oscarReport/reportByTemplate/actions/delGroup.do?groupName=${ groupName }" title="delete group" >										
+										<a class="pull-right" href="${pageContext.request.contextPath}/oscarReport/reportByTemplate/actions/delGroup.do?groupName=${ groupName }" title="delete group" >
 											<i style="color:red;" class="icon-remove"></i>
 										</a>
 										<span>&nbsp;</span>
-										<a class="pull-right" href="${pageContext.request.contextPath}/oscarReport/reportByTemplate/actions/tempInGroup.do?groupName=${ groupName }" title="edit group" >										
+										<a class="pull-right" href="${pageContext.request.contextPath}/oscarReport/reportByTemplate/actions/tempInGroup.do?groupName=${ groupName }" title="edit group" >
 											<i style="color:blue;" class="icon-edit"></i>
 										</a>
 									</td>
@@ -137,24 +141,24 @@
 								Template Name
 							</a>
 						</th>
-						
+
 						<th colspan="2">
 							<a href="#" class="contentLink">
 								Description
 							</a>
-						</th>	    
+						</th>
 					</tr>
 				</thead>
-				
+
 				<tbody>
 				<c:choose>
 					<c:when test="${ templatesInGroup.size() gt 1 }">
 						<c:forEach items="${ templatesInGroup }" var="temp">
 						<c:set var="template" value="${ temp.templateId }" />
-							<tr class="">								
+							<tr class="">
 								<c:choose>
 									<c:when test="${ not empty templates }">
-										
+
 										<c:if test="${ template ne '0'}" >
 											<td title="">
 												<a href="${pageContext.request.contextPath}/oscarReport/reportByTemplate/reportConfiguration.jsp?templateid=${ template }" class="contentLink"> <c:out value="${ templates[template].title }"/> </a>
@@ -162,21 +166,21 @@
 											<td>
 												<c:out value="${ templates[template].description }"/>
 											</td>
-										
-											<td>								
-												<a href="${pageContext.request.contextPath}/oscarReport/reportByTemplate/actions/remFromGroup.do?tid=${template}&groupName=${temp.groupName}" 
-													class="pull-right" title="delete template from group" >										
+
+											<td>
+												<a href="${pageContext.request.contextPath}/oscarReport/reportByTemplate/actions/remFromGroup.do?tid=${template}&groupName=${temp.groupName}"
+													class="pull-right" title="delete template from group" >
 													<i style="color:red;" class="icon-remove"></i>
 												</a>
 											</td>
 										</c:if >
-										
+
 									</c:when>
 									<c:otherwise>
-										<td title=""> 	
+										<td title="">
 											Error in retrieving template.
 										</td>
-				
+
 										<td colspan="2">
 											The template may have been deleted.
 										</td>
@@ -190,31 +194,31 @@
 				        <td>No templates in this group</td>
 				        <td colspan="2">Click "Select Templates"</td>
 				    </tr>
-				    
+
 		    		</c:otherwise>
 			    </c:choose>
 				</tbody>
 			</table>
 			</div>
 			<div class="row-fluid actions">
-				<form class="form-inline" action="${pageContext.request.contextPath}/oscarReport/reportByTemplate/rbtGroup.do" id="goBack">	
-					<button type="submit" name="back-btn" id="back-btn" 
-							title="return to template group page" class="btn btn-secondary pull-right">Back</button>	
-									
-					<button type="button" style="margin-right:5px;" name="selectRbtTemplatesBtn" id="selectRbtTemplatesBtn" 
+				<form class="form-inline" action="${pageContext.request.contextPath}/oscarReport/reportByTemplate/rbtGroup.do" id="goBack">
+					<button type="submit" name="back-btn" id="back-btn"
+							title="return to template group page" class="btn btn-secondary pull-right">Back</button>
+
+					<button type="button" style="margin-right:5px;" name="selectRbtTemplatesBtn" id="selectRbtTemplatesBtn"
 						title="add template to this group" data-toggle="modal" data-target="#selectTemplatesModal" class="btn btn-primary pull-right">
 						Select Templates
 					</button>
-		
+
 				</form>
 			</div>
 		</div>
 	</div>
  	</c:otherwise>
 	</c:choose>
-	
+
 	<!-- MODAL for template group selection -->
-	<div id="selectTemplatesModal" class="modal hide" tabindex="-1"  
+	<div id="selectTemplatesModal" class="modal hide" tabindex="-1"
 		aria-labelledby="selectTemplatesModal" aria-hidden="true">
 		 <div class="modal-dialog">
 		<div class="modal-content" role="dialog">
@@ -223,7 +227,7 @@
 					&times;
 				</button>
 				<h3 class="modal-title">Select templates for group: <c:out value="${templatesInGroup[0].groupName}"/></h3>
-			</div>		
+			</div>
 			<div class="modal-body">
 				<form action="${pageContext.request.contextPath}/oscarReport/reportByTemplate/actions/rbtAddToGroup.do" id="templateToGroupForm">
 					<div>
@@ -238,7 +242,7 @@
 					</div>
 				</form>
 			</div>
-		
+
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 				<button type="button" id="templateToGroup-btn" class="btn btn-primary">
@@ -248,21 +252,21 @@
 		</div>
 		</div>
 	</div>
-		
-	<script type="text/javascript">
-	
-	$( document ).ready(function() {
-	
- 		$("#templateToGroup-btn").click(function(){
- 			$("#templateToGroupForm").submit();
-		    $('#selectTemplatesModal').modal('hide');
-		}); 
 
-		$(".check").change(validate).keyup(validate);
-	
+	<script type="text/javascript">
+
+	$( document ).ready(function() {
+
+ 		$("#templateToGroup-btn").on( "click", function(){
+ 			$("#templateToGroupForm").trigger( "submit" );
+		    $('#selectTemplatesModal').modal('hide');
+		});
+
+		$(".check").on("change",validate).keyup(validate);
+
 	});
-	
-	
+
+
 	// Function ensures that no duplicate groups can be added
 	// Variable v - user entered group name to be compared
 	function validate()
@@ -271,7 +275,7 @@
 	value = value.trim();
 	var id = $(this).attr("id");
 	var inputCheck=checkRow(value);
-	
+
 	if (value!="" && inputCheck=="") {
 	    	$('.groupAdd').removeAttr("disabled");
 	    	$('.groupAdd').addClass("btn-success");
@@ -284,23 +288,23 @@
 	        $('.groupAdd').attr("disabled", "disabled");
 	    	$('.groupAdd').removeClass("btn-success");
 	    	$('.textExists').hide();
-	    } 
+	    }
 	}
-	
+
 	function checkRow(textInput)
 	{
 	var result="";
 	$('#groupListTbl tbody').find('tr').each(function(){
-	
+
 	    if($("td:nth(0)",$(this)).attr("title") && $("td:nth(0)",$(this)).attr("title").trim().toUpperCase()===textInput.toUpperCase()){
 	    result="exists";
 	        return false;
 	    }
 	});
-	
+
 	return result
 	}
-	
+
 	</script>
 </body>
 </html:html>

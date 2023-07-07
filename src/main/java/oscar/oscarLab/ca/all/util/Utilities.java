@@ -61,10 +61,8 @@ public class Utilities {
     public static ArrayList<String> separateMessages(String fileName) throws Exception{
                 
         ArrayList<String> messages = new ArrayList<String>();
-        try{
-            InputStream is = new FileInputStream(fileName);
-            
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        try (InputStream is = new FileInputStream(fileName);
+             BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             
             String line = null;
             boolean firstPIDflag = false; //true if the first PID segment has been processed false otherwise
@@ -99,10 +97,10 @@ public class Utilities {
             // add the last message
             messages.add(sb.toString());
             
-            is.close();
-            br.close();
-        }catch(Exception e){
-            throw e;
+        } catch (FileNotFoundException e) {
+            MiscUtils.getLogger().error("File not found - ", e);
+        } catch (IOException e) {
+            MiscUtils.getLogger().error("An IOException occurred while working with file streams - ", e);
         }
         
         return(messages);

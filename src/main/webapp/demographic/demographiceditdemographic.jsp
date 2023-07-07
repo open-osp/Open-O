@@ -242,7 +242,9 @@ if(!authed) {
 <!-- calendar stylesheet -->
 <link rel="stylesheet" type="text/css" media="all"
 	href="../share/calendar/calendar.css" title="win2k-cold-1" />
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
+
+	<script type="text/javascript" src="<%=request.getContextPath()%>/library/jquery/jquery-1.12.0.min.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath()%>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 <% if (oscarProps.getBooleanProperty("workflow_enhance", "true")) { %>
 <script language="javascript" src="<%=request.getContextPath() %>/hcHandler/hcHandler.js"></script>
 <script language="javascript" src="<%=request.getContextPath() %>/hcHandler/hcHandlerUpdateDemographic.js"></script>
@@ -288,6 +290,8 @@ if(!authed) {
    <script>
      jQuery.noConflict();
    </script>
+
+
 <oscar:customInterface section="master"/>
 
 <script type="text/javascript" src="<%=request.getContextPath() %>/demographic/demographiceditdemographic.js.jsp"></script>
@@ -898,7 +902,8 @@ function consentClearBtn(radioBtnName)
 		});
 	}
 </script>
-
+	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/oscar-modal-dialog.js"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="${pageContext.servletContext.contextPath}/library/jquery/jquery-ui-1.12.1.min.css" />
 </head>
 <body onLoad="setfocus(); checkONReferralNo(); formatPhoneNum(); checkRosterStatus2();"
 	topmargin="0" leftmargin="0" rightmargin="0" id="demographiceditdemographic">
@@ -1172,7 +1177,7 @@ if(wLReadonly.equals("")){
 				<% }else { %>
 				<a
 					href="javascript: function myFunction() {return false; }"
-					onClick="popupPage(700,1000,'../tickler/ticklerDemoMain.jsp?demoview=<%=demographic_no%>');return false;">
+					onClick="popupPage(700,1000,'../tickler/ticklerMain.jsp?demoview=<%=demographic_no%>');return false;">
 				<bean:message key="global.tickler" /></a>
 				<% } %>
 				</td>
@@ -2288,8 +2293,7 @@ if ( Dead.equals(PatStat) ) {%>
 		                    <img src="../images/notes.gif" align="right" alt="Extra data from Import" height="16" width="13" border="0"> </a>
 <%} %>
 
-		                <input type="button" onclick="window.open('demographicAudit.jsp?demographic_no=<%=demographic_no %>','dawin','width=800,height=1000');" value="Audit Information"/>
-		                
+
 
 
 						</div>
@@ -4008,9 +4012,9 @@ if(oscarProps.getProperty("demographicExtJScript") != null) { out.println(oscarP
 											</c:if>
 										</security:oscarSec>
 									</oscar:oscarPropertiesCheck>
-									<br />
+									<input type="button" class="oscar-dialog-link" href="demographicAudit.jsp?demographic_no=<%=demographic_no %>" value="Audit Information"/>
 
-								<input type="hidden" name="dboperation" value="update_record"> 
+									<input type="hidden" name="dboperation" value="update_record">
 
 								 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographicExport" rights="r" reverse="<%=false%>">
 								<input type="button" value="<bean:message key="demographic.demographiceditdemographic.msgExport"/>"
@@ -4150,56 +4154,6 @@ jQuery(document).ready(function(){
 <%
 }
 %>
-
-<%--jQuery(document).ready(function(){--%>
-<%--	//Check if PHR is active and if patient has consented	--%>
-<%--	/*--%>
-<%--	PHR inactive                    FALSE      INACTIVE--%>
-<%--	PHR active & Consent Needed     TRUE       NEED_CONSENT--%>
-<%--	PHR Active & Consent exists.    TRUE       CONSENTED--%>
-<%--	*/--%>
-<%--	jQuery.ajax({--%>
-<%--		url: "<%=request.getContextPath()%>/ws/rs/app/PHRActive/consentGiven/<%=demographic_no%>",--%>
-<%--		dataType: 'json',--%>
-<%--		success: function (data) {--%>
-<%--			console.log("PHR CONSENT",data);--%>
-<%--			if(data.success && data.message === "NEED_CONSENT"){--%>
-<%--				jQuery("#phrConsent").show();--%>
-<%--			}else{--%>
-<%--				jQuery("#phrConsent").hide();--%>
-<%--			}--%>
-<%--		}--%>
-<%--	});--%>
-<%--	--%>
-<%--	jQuery.ajax({--%>
-<%--		url: "<%=request.getContextPath()%>/ws/rs/app/PHRActive/",--%>
-<%--		dataType: 'json',--%>
-<%--		success: function (data) {--%>
-<%--			console.log("PHR Active",data);--%>
-<%--			if(!data.success){--%>
-<%--				jQuery("#emailInvite").hide();--%>
-<%--			}--%>
-<%--		}--%>
-<%--	});--%>
-<%--		--%>
-<%--	jQuery("#phrConsent").click(function() {--%>
-<%--  		jQuery.ajax({--%>
-<%--  			type: "POST",--%>
-<%--	        url: "<%=request.getContextPath()%>/ws/rs/app/PHRActive/consentGiven/<%=demographic_no%>",--%>
-<%--	        dataType: 'json',--%>
-<%--	        success: function (data) {--%>
-<%--	       		console.log("PHR CONSENT POST",data);--%>
-<%--	       		if(data.success && data.message === "NEED_CONSENT"){--%>
-<%--	       			jQuery("#phrConsent").show();--%>
-<%--	       		}else{--%>
-<%--	       			alert("Successfully confirmed");--%>
-<%--	       			jQuery("#phrConsent").hide();--%>
-<%--	       		}--%>
-<%--	    		}--%>
-<%--		});--%>
-<%--	});--%>
-<%--	--%>
-<%--});--%>
 
 </script>
 </body>

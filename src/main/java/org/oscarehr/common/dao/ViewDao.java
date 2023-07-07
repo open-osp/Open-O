@@ -61,7 +61,7 @@ public class ViewDao extends AbstractDao<View>{
 
     private Map<String, View> getView(Query query)
     {
-	@SuppressWarnings("unchecked")
+
         List<View> list = query.getResultList();
         Map<String,View>map = new HashMap<String,View>();
 

@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%
   if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
@@ -39,8 +39,8 @@
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%
     String demo = (String) request.getAttribute("demographicNo"); //bean.getDemographicNo();
-    
-    MeasurementManager measurementManager = SpringUtils.getBean(MeasurementManager.class); 
+
+    MeasurementManager measurementManager = SpringUtils.getBean(MeasurementManager.class);
     String groupName = (String) request.getAttribute("groupName");
 %>
 
@@ -55,49 +55,79 @@
 <html:base />
 
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
+<link href="/oscar/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="/oscar/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
 
-</head>
+
+<link rel="stylesheet" href="/oscar/css/font-awesome.min.css">
+
+<style>
+body {
+    line-height: 14px;
+}
+h3 {
+    line-height: 14px;
+}
+.note {
+    padding:0px;
+    font-size:12px;
+}
+.table td {
+    line-height:14px;
+    padding:3px;
+}
+.MainTableLeftColumn {
+vertical-align:top;
+padding:14px;
+}
+</style>
+    <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/share/calendar/calendar.js"></script>
+    <script src="${ pageContext.request.contextPath }/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
+    <script src="${ pageContext.request.contextPath }/share/calendar/calendar-setup.js"></script>
+    <link rel="stylesheet" type="text/css" media="all" href="${ pageContext.request.contextPath }/share/calendar/calendar.css" title="win2k-cold-2" />
 
 <script type="text/javascript">
 
 function write2Parent(text){
-    
+
     self.close();
     opener.document.encForm.enTextarea.value = opener.document.encForm.enTextarea.value + text;
  }
 
-function getDropboxValue(ctr){   
+function getDropboxValue(ctr){
     var selectedItem = document.forms[0].value(inputMInstrc-ctr).options[document.forms[0].value(inputMInstrc-ctr).selectedIndex].value;
     alert("hello!");
 }
 
 function popupPage(vheight,vwidth,page) { //open a new popup window
-    
+
   windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
-  var popup=window.open(page, "blah", windowprops);  
+  var popup=window.open(page, "blah", windowprops);
 }
 
 parentChanged = false;
 
 function check() {
 	var ret = true;
-    
+
     if( parentChanged ) {
         document.forms[0].elements["value(parentChanged)"].value = "true";
-        
-        if( !confirm("<bean:message key="oscarEncounter.oscarMeasurements.Measurements.msgParentChanged"/> <oscar:nameage demographicNo="<%=demo%>"/>") ) 
-            ret = false;        
+
+        if( !confirm("<bean:message key="oscarEncounter.oscarMeasurements.Measurements.msgParentChanged"/> <oscar:nameage demographicNo="<%=demo%>"/>") )
+            ret = false;
     }
-    
+
     if(ret) {
 
       	 $.post('<%=request.getContextPath()%>/oscarEncounter/Measurements.do?ajax=true&skipCreateNote=true',$('#theForm').serialize(),function(data){
       		$("#errors_list").empty();
       		 if(data.errors) {
+                $("#errors_list").prepend("<div class='alert alert-error'>");
       			 for(var x=0;x<data.errors.length;x++) {
-      				 $("#errors_list").append(data.errors[x]);
+      				 $(".alert").append(data.errors[x]);
       			 }
+
       		 } else {
 				opener.postMessage(data,"*");
       			window.close();
@@ -107,31 +137,32 @@ function check() {
     }
 }
 </script>
-<body class="BodyStyle" vlink="#0000FF" onload="window.focus();">
+</head>
+<body class="BodyStyle" onload="window.focus();">
 <html:form action="/oscarEncounter/Measurements" styleId="theForm">
 	<logic:present name="css">
 		<link rel="stylesheet" type="text/css" href="<bean:write name="css" />">
 	</logic:present>
 	<logic:notPresent name="css">
-		<link rel="stylesheet" type="text/css" href="styles/measurementStyle.css">
+		<!--<link rel="stylesheet" type="text/css" href="styles/measurementStyle.css">-->
 	</logic:notPresent>
-		
-	<table class="MainTable" id="scrollNumber1" name="encounterTable">
+
+	<table class="MainTable" id="scrollNumber1">
 		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn"><logic:present
+			<td class="MainTableTopRowLeftColumn"><h4><logic:present
 				name="groupName">
-				<bean:write name="groupName" />
+				<bean:write name="groupName" /></h4>
 			</logic:present></td>
 			<td class="MainTableTopRowRightColumn" style="padding:0px">
 			<table class="TopStatusBar" style="width:100%; height:100%;">
 				<tr>
-					<td class="Header"><oscar:nameage demographicNo="<%=demo%>" /></td>
+					<td class="Header"><h3><oscar:nameage demographicNo="<%=demo%>" /></h3></td>
 				</tr>
 			</table>
 			</td>
 		</tr>
 		<tr>
-			<td class="MainTableLeftColumn">
+			<td class="MainTableLeftColumn"  >
 			<table>
 				<tr>
 					<td><a
@@ -142,44 +173,45 @@ function check() {
 			</table>
 			</td>
 			<td class="MainTableRightColumn">
+
 			<%=measurementManager.getDShtml(groupName)%>
 			<ul id="errors_list" style="color:red">
 			</ul>
-			<table border=0 cellspacing=0>
+
+			<table >
 				<tr>
 					<td>
 					<table>
 						<tr>
 							<td>
-							<table>
+                            <div class="well">
+							<table class="table table-striped">
 								<html:errors />
-								<tr>
-									<td>
 								<tr class="Header">
-									<td align="left" width="100"><bean:message
+									<th style="width:120px"><bean:message
 										key="oscarEncounter.oscarMeasurements.Measurements.headingType" />
-									</td>
-									<td align="left" width="160"><bean:message
+									</th>
+									<th style="width:160px"><bean:message
 										key="oscarEncounter.oscarMeasurements.Measurements.headingMeasuringInstrc" />
-									</td>
-									<td align="left" width="50"><bean:message
+									</th>
+									<th style="width:30px"><bean:message
 										key="oscarEncounter.oscarMeasurements.Measurements.headingValue" />
-									</td>
-									<td align="left" width="130"><bean:message
+									</th>
+									<th style="width:40px"><bean:message
 										key="oscarEncounter.oscarMeasurements.Measurements.headingObservationDate" />
-									</td>
-									<td align="left" width="300"><bean:message
+									</th>
+									<th style="width:80px"><bean:message
 										key="oscarEncounter.oscarMeasurements.Measurements.headingComments" />
-									</td>
-									<td align="left" width="10"></td>
+									</th>
+									<th style="width:10px"></th>
 								</tr>
 								<% int i = 0;%>
 								<logic:iterate id="measurementType" name="measurementTypes"
 									property="measurementTypeVector" indexId="ctr">
 									<tr class="data" id="row-<bean:write name="measurementType" property="type" />">
-										<td width="5"><a
-											title="<bean:write name="measurementType" property="typeDesc" />"><bean:write
-											name="measurementType" property="typeDisplayName" /></a></td>
+										<td>
+											<span title="<bean:write name="measurementType" property="typeDesc" />"><bean:write
+											name="measurementType" property="typeDisplayName" /></span></td>
 										<td><logic:iterate id="mInstrc"
 											name="<%=\"mInstrcs\"+ ctr%>"
 											property="measuringInstructionList">
@@ -204,19 +236,19 @@ function check() {
 										<td>
 										<%
 											for( int idx = 0; idx < options.length; ++idx ) {
-										%>	
-										<html:radio property='<%= "value(inputValue-" + ctr + ")" %>' value="<%=options[idx].trim()%>"></html:radio><%=options[idx]%>&nbsp;										
-									
+										%>
+										<html:radio property='<%= "value(inputValue-" + ctr + ")" %>' value="<%=options[idx].trim()%>"></html:radio><%=options[idx]%>&nbsp;
+
 										<%}%>
 										</td>
 										<%}else { %>
-										<td><html:text property='<%= "value(inputValue-" + ctr + ")" %>' size="5" /></td>
+
+										<td><input type="text" class="input-small" name='<%= "value(inputValue-" + ctr + ")" %>' id='<%= "inputValue-" + ctr  %>' /></td>
 										<%} %>
-										<td><html:text
-											property='<%= "value(date-" + ctr + ")" %>' size="20" /></td>
-										<td><html:text
-											property='<%= "value(comments-" + ctr + ")" %>' size="45" /></td>
-										<td width="10"></td>
+										<td><input type="text" class="input-medium" name='<%= "value(date-" + ctr + ")" %>' id='<%= "date-" + ctr  %>' /></td>
+										<script>Calendar.setup( { inputField : "<%= "date-" + ctr %>", ifFormat : "%Y-%m-%d",  button : "<%= "date-" + ctr %>" });</script>
+										<td><input type="text" class="input-large" name='<%= "value(comments-" + ctr + ")" %>' id='<%= "comments-" + ctr  %>' /></td>
+                                        <td>
 										<input type="hidden"
 											name='<%= "value(inputType-" + ctr + ")" %>'
 											value="<bean:write name="measurementType" property="type" />" />
@@ -226,23 +258,24 @@ function check() {
 										<input type="hidden"
 											name='<%= "value(validation-" + ctr + ")" %>'
 											value="<bean:write name="measurementType" property="validation" />" />
+                                        </td>
 										<% i++; %>
 									</tr>
 									<logic:present name='measurementType' property='lastMInstrc'>
 										<tr class="note">
 											<td><bean:message
 												key="oscarEncoutner.oscarMeasurements.msgTheLastValue" />:</td>
-											<td><bean:write name='measurementType'
+											<td>&nbsp;<bean:write name='measurementType'
 												property='lastMInstrc' /></td>
-											<td><bean:write name='measurementType'
+											<td>&nbsp;<bean:write name='measurementType'
 												property='lastData' /></td>
-											<td><bean:write name='measurementType'
+											<td>&nbsp;<bean:write name='measurementType'
 												property='lastDateEntered' /></td>
-											<td><bean:write name='measurementType'
+											<td>&nbsp;<bean:write name='measurementType'
 												property='lastComments' /></td>
-											<td><img src="img/history.gif"
+											<td><i class="icon-time icon-large"
 												title='<bean:message key="oscarEncounter.Index.oldMeasurements"/>'
-												onClick="popupPage(300,800,'SetupDisplayHistory.do?type=<bean:write name="measurementType" property="type" />'); return false;" /></td>
+												onClick="popupPage(300,800,'SetupDisplayHistory.do?type=<bean:write name="measurementType" property="type" />'); return false;" ></i></td>
 										</tr>
 									</logic:present>
 								</logic:iterate>
@@ -261,15 +294,15 @@ function check() {
 								<logic:notPresent name="css">
 									<input type="hidden" name="value(css)" value="" />
 								</logic:notPresent>
-								</td>
-								</tr>
+
 							</table>
+                            </div> <!-- well -->
 							<table>
 								<tr>
-									<td><input type="button" name="Button"
+									<td><input type="button" name="Button" class="btn"
 										value="<bean:message key="global.btnCancel"/>"
 										onClick="window.close()"></td>
-									<td><input type="button" name="Button"
+									<td><input type="button" name="Button" class="btn btn-primary"
 										value="<bean:message key="global.btnSubmit"/>"
 										onclick="check();" /></td>
 								</tr>
@@ -295,22 +328,24 @@ $( document ).ready(function() {
 //if WT, HT and BMI exists then allow the link
 if($('#row-WT').length && $('#row-HT').length && $('#row-BMI').length){
 
-$('#row-WT td:eq(2) input').keyup(function(){
+$('#row-WT td:eq(2) input').on( "keyup", function(){
   calcBMI( $(this).val(),$('#row-HT td:eq(2) input').val() );
 });
 
-$('#row-HT td:eq(2) input').keyup(function(){
+$('#row-HT td:eq(2) input').on( "keyup", function(){
   calcBMI( $('#row-WT td:eq(2) input').val(),$(this).val() );
-});  
+});
 }
 
 });
 
+var utc = new Date().toJSON().slice(0,10);
+$("[id^=date-]").val(utc);
 
 function calcBMI(w,h) {
 b = '';
 
-if ( $.isNumeric(w) && $.isNumeric(h) && h!=="" && w!=="" ) {
+if ( !isNaN(parseFloat(w)) && !isNaN(parseFloat(h)) && h!=="" && w!=="" ) {
   if (h > 0) {
     b = (w/Math.pow(h/100,2)).toFixed(1);
     $('#row-BMI td:eq(2) input').val(b);
@@ -319,5 +354,8 @@ if ( $.isNumeric(w) && $.isNumeric(h) && h!=="" && w!=="" ) {
  }
 }
 </script>
+
+
+
 </body>
 </html:html>

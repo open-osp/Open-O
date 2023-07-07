@@ -50,12 +50,13 @@
 	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/js/jquery-1.9.1.min.js"></script>  
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.2.js"></script>
 
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-ui-1.10.2.custom.min.js"></script>
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css">
+
+
 <script>
 $(function() {
     $( document ).tooltip();
@@ -88,10 +89,10 @@ $(function() {
                 action = "edit";
             }
 
-            if("edit".equals(action) && templateid != null) 
+            if("edit".equals(action) && templateid != null)
             {
-              	ReportObject curreport = rm.getReportTemplateNoParam(templateid);    
-            	pageContext.setAttribute("curreport", curreport); 
+              	ReportObject curreport = rm.getReportTemplateNoParam(templateid);
+            	pageContext.setAttribute("curreport", curreport);
             	pageContext.setAttribute("templatexml", templatexml);
             }
             pageContext.setAttribute("action", action);
@@ -99,8 +100,8 @@ $(function() {
           %>
 
 <h3>
-	<%=StringUtils.capitalize(action)%>  
-	
+	<%=StringUtils.capitalize(action)%>
+
 	<c:if test="${ action eq 'add' }">
 		Template
 	</c:if>
@@ -110,13 +111,13 @@ $(function() {
 	</c:if>
 </h3>
 
-<c:if test="${ not empty message }">	
+<c:if test="${ not empty message }">
 	<c:choose>
 		<c:when test="${ not fn:startsWith(fn:toLowerCase(message), 'error') and not fn:startsWith(fn:toLowerCase(message), 'exception')}" >
 			<div class="alert alert-success" >
 		    	<a href="#" data-dismiss="alert" class="close">&times;</a>
 		    	<c:out value="${ message }" />
-			</div>		
+			</div>
 		</c:when>
 		<c:otherwise>
 			<div class="alert alert-error" >
@@ -125,15 +126,15 @@ $(function() {
 		    </div>
 		</c:otherwise>
 	</c:choose>
-</c:if>	
-<c:if test="${ empty opentext and empty param.opentext }">	
+</c:if>
+<c:if test="${ empty opentext and empty param.opentext }">
 	<html:form styleClass="form-horizontal" action="/oscarReport/reportByTemplate/uploadTemplates" enctype="multipart/form-data">
 	   <div class="row-fluid">
-		<div class="well">	
+		<div class="well">
 	        <div class="control-group">
 	        	<label class="control-label" for="uploadReportXml">Select template</label>
 	        	<div class="controls">
-	        		<input type="file" id="uploadReportXml" class="input-file" name="templateFile">
+	        		<input type="file" id="uploadReportXml" class="input-file" name="templateFile" title="Upload a formatted template file. The extension is usually xml or txt">
 	        	</div>
 	        </div>
 			<input type="hidden" name="action" value="${ action }">
@@ -148,19 +149,19 @@ $(function() {
 		</div>
 	</div>
 	</html:form>
-</c:if>	
-<c:if test="${ opentext eq '1' or param.opentext eq '1' }">	
+</c:if>
+<c:if test="${ opentext eq '1' or param.opentext eq '1' }">
 
 	<html:form styleClass="form" action="/oscarReport/reportByTemplate/addEditTemplatesAction">
-    <div class="row-fluid">    
-		<div class="well">          
-            <textarea id="xmltext" name="xmltext" style="width:99%;height:300px;overflow-y:scroll;">${ templatexml }</textarea>	
+    <div class="row-fluid">
+		<div class="well">
+            <textarea id="xmltext" name="xmltext" style="width:99%;height:300px;overflow-y:scroll;">${ templatexml }</textarea>
 			<input type="hidden" name="action" value="${ action }">
 			<input type="hidden" name="opentext" value="${ empty opentext ? param.opentext : opentext }">
 			<input type="hidden" name="templateid" value="${ templateid }">
 			<input type="hidden" name="uuid" value="${ curreport.uuid }">
 		</div>
-		
+
 		<div class="form-actions">
 			<input type="submit" class="btn pull-right" value="Save">
 
@@ -168,7 +169,7 @@ $(function() {
 				<input type="submit" class="btn btn-primary pull-right" name="done" value="Done">
 			</c:if>
 			<c:if test="${ action ne 'edit' }">
-				<input type="button" class="btn pull-right" name="cancel" value="Cancel" onclick="document.location='homePage.jsp'"> 
+				<input type="button" class="btn pull-right" name="cancel" value="Cancel" onclick="document.location='homePage.jsp'">
 			</c:if>
 		</div>
 	</div>
@@ -177,7 +178,7 @@ $(function() {
 </c:if>
 
 <script type="text/javascript">
-	jQuery("#xmltext").keyup(function() {
+	jQuery("#xmltext").on( "keyup", function() {
 		jQuery(".alert").hide();
 	});
 </script>

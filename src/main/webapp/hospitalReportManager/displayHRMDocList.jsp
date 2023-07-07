@@ -8,6 +8,7 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="java.util.*, org.oscarehr.hospitalReportManager.*,org.oscarehr.hospitalReportManager.model.HRMCategory"%>
 
@@ -20,7 +21,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_hrm" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_hrm");%>
+	<%response.sendRedirect("{ pageContext.request.contextPath }/securityError.jsp?type=_hrm");%>
 </security:oscarSec>
 <%
 if(!authed) {
@@ -38,10 +39,10 @@ if(!authed) {
 	String orderBy = request.getParameter("orderBy") != null ?  request.getParameter("orderBy") : "report_date";
 	String orderAsc = request.getParameter("orderAsc") != null ?  request.getParameter("orderAsc") : "false";
 	boolean asc = new Boolean(orderAsc);
-	
+
 	ArrayList<HashMap<String,? extends Object>> hrmdocs;
 	hrmdocs = HRMUtil.listHRMDocuments(loggedInInfo,orderBy, asc, demographic_no);
-	
+
 %>
 
 <html:html locale="true">
@@ -49,37 +50,48 @@ if(!authed) {
 <head>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
 <title>HRM Document List</title>
-<link rel="stylesheet" type="text/css"
-	href="../share/css/OscarStandardLayout.css">
-<link rel="stylesheet" type="text/css"
-	href="../share/css/eformStyle.css">
-<script type="text/javascript" language="javascript">
-function popupPage(varpage, windowname) {
-    var page = "" + varpage;
-    windowprops = "height=700,width=800,location=no,"
-    + "scrollbars=yes,menubars=no,status=yes,toolbars=no,resizable=yes,top=10,left=200";
-    var popup = window.open(page, windowname, windowprops);
-    if (popup != null) {
-       if (popup.opener == null) {
-          popup.opener = self;
-       }
-       popup.focus();
-    }
-}
-</script>
-<script type="text/javascript" language="JavaScript"
-	src="../share/javascript/Oscar.js"></script>
-</head>
 
-<body class="BodyStyle" vlink="#0000FF">
-<!--  -->
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
+    <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+    <link href="${ pageContext.request.contextPath }/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+    <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/js/global.js"></script>
+    <script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+
+    <script>
+	    jQuery(document).ready( function () {
+	        jQuery('#tblHRM').DataTable({
+            "order": [],
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+            });
+	    });
+    </script>
+    <script>
+    function popupPage(varpage, windowname) {
+        var page = "" + varpage;
+        windowprops = "height=700,width=800,location=no,"
+        + "scrollbars=yes,menubars=no,status=yes,toolbars=no,resizable=yes,top=10,left=200";
+        var popup = window.open(page, windowname, windowprops);
+        if (popup != null) {
+           if (popup.opener == null) {
+              popup.opener = self;
+           }
+           popup.focus();
+        }
+    }
+    </script>
+</head>
+<body>
+
+<table class="MainTable" id="scrollNumber1">
 	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn" width="175">HRM</td>
+		<td class="MainTableTopRowLeftColumn" style="width:175px"><h4>HRM</h4></td>
 		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
+		<table class="TopStatusBar" style="width:100%">
 			<tr>
-				<td><bean:message key="hrm.displayHRMDocList.displaydocs" /></td>
+				<td><h4><bean:message key="hrm.displayHRMDocList.displaydocs" /></h4></td>
 				<td>&nbsp;</td>
 				<td style="text-align: right"><a
 					href="javascript:popupStart(300,400,'Help.jsp')"><bean:message
@@ -93,14 +105,13 @@ function popupPage(varpage, windowname) {
 		</td>
 	</tr>
 	<tr>
-		<td class="MainTableLeftColumn" valign="top">
+		<td class="MainTableLeftColumn">
 			</td>
-		<td class="MainTableRightColumn" valign="top">
-		
-				<table class="elements" width="100%">
-					
-					<tr bgcolor=<%=deepColor%>>
-						
+		<td class="MainTableRightColumn">
+				<table id="tblHRM" class="table table-striped table-hover table-condensed" style="width:100%">
+                    <thead>
+					<tr>
+
 						<th>
 							<a href="displayHRMDocList.jsp?demographic_no=<%=demographic_no%>&orderBy=report_name&orderAsc=<%=("report_name".equals(orderBy)) ? !asc : "true"%>">
 								<bean:message key="hrm.displayHRMDocList.reportType" />
@@ -113,22 +124,23 @@ function popupPage(varpage, windowname) {
 						<th><a href="displayHRMDocList.jsp?demographic_no=<%=demographic_no%>&orderBy=category&orderAsc=<%=("category".equals(orderBy)) ? !asc : "true"%>">Category</a></th>
 						<th>Class/Subclass/Accompanying Subclass</th>
 					</tr>
+                    </thead>
 					<%
-						
-						
+
+
 						for (int i = 0; i < hrmdocs.size(); i++)
 						{
 							HashMap<String,? extends Object> curhrmdoc = hrmdocs.get(i);
 					%>
-					<tr bgcolor="<%=((i % 2) == 1)?"#F2F2F2":"white"%>">
-						
+					<tr>
+
 						<td><a href="#"
 							ONCLICK="popupPage('<%=request.getContextPath() %>/hospitalReportManager/Display.do?id=<%=curhrmdoc.get("id")%>', 'HRM Report'); return false;"
 							><%=curhrmdoc.get("report_type")%></a></td>
 						<td><%=curhrmdoc.get("description")%></td>
 						<td><%=curhrmdoc.get("report_status")%></td>
-						<td align='center'><%=curhrmdoc.get("report_date")%></td>
-						<td align='center'><%=curhrmdoc.get("time_received")%></td>
+						<td style="text-align: center;"><%=curhrmdoc.get("report_date")%></td>
+						<td style="text-align: center;"><%=curhrmdoc.get("time_received")%></td>
 						<td><%=curhrmdoc.get("category") != null ? curhrmdoc.get("category")  : "" %>
 						<td><%=curhrmdoc.get("class_subclass") != null ? curhrmdoc.get("class_subclass")  : "" %>
 					</tr>
@@ -138,14 +150,14 @@ function popupPage(varpage, windowname) {
 							{
 					%>
 					<tr>
-						<td align='center' colspan='7'><bean:message
+						<td style="text-align: center;" colspan='7'><bean:message
 							key="eform.showmyform.msgNoData" /></td>
 					</tr>
 					<%
 						}
 					%>
 				</table>
-				
+
 		</td>
 	</tr>
 	<tr>

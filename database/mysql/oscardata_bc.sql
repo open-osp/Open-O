@@ -100,6 +100,7 @@ INSERT INTO billinglocation VALUES ('00','TERRACE/HAZELTON/STEWARD','BC');
 INSERT INTO billinglocation VALUES ('00','TRAIL/ROSSLAND','BC');
 INSERT INTO billinglocation VALUES ('00','VANCOUVER','BC');
 INSERT INTO billinglocation VALUES ('00','VERNON','BC');
+INSERT INTO billinglocation VALUES ('00','VICTORIA/GREATER VICTORIA','BC');
 INSERT INTO billinglocation VALUES ('00','WEST VANCOUVER/BOWEN ISLAND','BC');
 INSERT INTO billinglocation VALUES ('00','WILLIAMS LAKE/100 MILE HOUSE/108 MILE HOUSE','BC');
 INSERT INTO billinglocation VALUES ('00','WINDERMERE/INVERMERE','BC');
@@ -291,174 +292,179 @@ INSERT INTO `billingvisit`(`visittype`, `visit_desc`, `region`) VALUES ('Z', 'No
 -- ----------------------------
 -- Records of ctl_billingservice
 -- ----------------------------
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '04026', 'Visit', 'Group1', 'A', 19);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14199', 'Visit', 'Group1', 'A', 18);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14018', 'Visit', 'Group1', 'A', 17);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '00118', 'Visit', 'Group1', 'A', 16);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14109', 'Visit', 'Group1', 'A', 15);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '00776', 'Visit', 'Group1', 'A', 14);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '04119', 'Visit', 'Group1', 'A', 13);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '04118', 'Visit', 'Group1', 'A', 12);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '04502', 'Visit', 'Group1', 'A', 11);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '04023', 'Visit', 'Group1', 'A', 10);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '00790', 'Visit', 'Group1', 'A', 9);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '12101', 'Visit', 'Group1', 'A', 8);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '00119', 'Visit', 'Group1', 'A', 7);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '04000', 'Visit', 'Group1', 'A', 6);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14109', 'Visit', 'Group1', 'A', 5);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14090', 'Visit', 'Group1', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14091', 'Visit', 'Group1', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14094', 'Visit', 'Group1', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14104', 'Visit', 'Group1', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14560', 'Procedures', 'Group2', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14540', 'Procedures', 'Group2', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '04509', 'Procedures', 'Group2', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '00785', 'Procedures', 'Group2', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '08264', 'Procedures', 'Group2', 'A', 5);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14545', 'Procedures', 'Group2', 'A', 6);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '15130', 'Procedures', 'Group2', 'A', 7);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '00044', 'Procedures', 'Group2', 'A', 8);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '14000', 'Premiums', 'Group3', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'OB obstetrics', 'OB', '00012', 'Premiums', 'Group3', 'A', 2);
 
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '04026', 'Visit', 'Group1', 'A', 19, 1);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14199', 'Visit', 'Group1', 'A', 18, 2);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14018', 'Visit', 'Group1', 'A', 17, 3);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '00118', 'Visit', 'Group1', 'A', 16, 4);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14109', 'Visit', 'Group1', 'A', 15, 5);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '00776', 'Visit', 'Group1', 'A', 14, 6);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '04119', 'Visit', 'Group1', 'A', 13, 7);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '01200', 'Premiums', 'Group3', 'A', 1, 8);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '01201', 'Premiums', 'Group3', 'A', 2, 9);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '04118', 'Visit', 'Group1', 'A', 12, 10);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '04502', 'Visit', 'Group1', 'A', 11, 11);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '04023', 'Visit', 'Group1', 'A', 10, 12);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '00790', 'Visit', 'Group1', 'A', 9, 13);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '12101', 'Visit', 'Group1', 'A', 8, 14);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '00119', 'Visit', 'Group1', 'A', 7, 15);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '04000', 'Visit', 'Group1', 'A', 6, 16);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14109', 'Visit', 'Group1', 'A', 5, 17);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14090', 'Visit', 'Group1', 'A', 1, 18);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14091', 'Visit', 'Group1', 'A', 2, 19);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14094', 'Visit', 'Group1', 'A', 3, 20);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14104', 'Visit', 'Group1', 'A', 4, 21);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '01202', 'Premiums', 'Group3', 'A', 3, 22);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00112', 'Premiums', 'Group3', 'A', 4, 23);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00113', 'Premiums', 'Group3', 'A', 5, 24);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00105', 'Premiums', 'Group3', 'A', 6, 25);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00123', 'Premiums', 'Group3', 'A', 7, 26);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00081', 'Premiums', 'Group3', 'A', 8, 27);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00082', 'Premiums', 'Group3', 'A', 9, 28);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00084', 'Premiums', 'Group3', 'A', 10, 29);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00083', 'Premiums', 'Group3', 'A', 11, 30);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '01205', 'Premiums', 'Group3', 'A', 12, 31);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '01206', 'Premiums', 'Group3', 'A', 13, 32);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '01207', 'Premiums', 'Group3', 'A', 14, 33);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00103', 'Premiums', 'Group3', 'A', 15, 34);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00104', 'Premiums', 'Group3', 'A', 16, 35);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00111', 'Premiums', 'Group3', 'A', 17, 36);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '06b00', 'Proceedures', 'Group2', 'A', 1, 37);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13612', 'Proceedures', 'Group2', 'A', 20, 38);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00014', 'Proceedures', 'Group2', 'A', 3, 39);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00190', 'Proceedures', 'Group2', 'A', 2, 40);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00757', 'Proceedures', 'Group2', 'A', 5, 41);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00015', 'Proceedures', 'Group2', 'A', 4, 42);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '00761', 'Proceedures', 'Group2', 'A', 6, 43);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13600', 'Proceedures', 'Group2', 'A', 7, 44);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13601', 'Proceedures', 'Group2', 'A', 8, 45);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13605', 'Proceedures', 'Group2', 'A', 9, 46);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13620', 'Proceedures', 'Group2', 'A', 10, 47);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13621', 'Proceedures', 'Group2', 'A', 11, 48);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13622', 'Proceedures', 'Group2', 'A', 12, 49);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13633', 'Proceedures', 'Group2', 'A', 15, 50);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13622', 'Proceedures', 'Group2', 'A', 14, 51);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13631', 'Proceedures', 'Group2', 'A', 13, 52);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13611', 'Proceedures', 'Group2', 'A', 19, 53);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '07055', 'Proceedures', 'Group2', 'A', 17, 54);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13610', 'Proceedures', 'Group2', 'A', 18, 55);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13650', 'Proceedures', 'Group2', 'A', 16, 56);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '12200', 'Visits', 'Group1', 'A', 1, 57);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13200', 'Visits', 'Group1', 'A', 2, 58);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '16200', 'Visits', 'Group1', 'A', 3, 59);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '17200', 'Visits', 'Group1', 'A', 4, 60);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '18200', 'Visits', 'Group1', 'A', 5, 61);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '12201', 'Visits', 'Group1', 'A', 6, 62);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13201', 'Visits', 'Group1', 'A', 7, 63);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '16201', 'Visits', 'Group1', 'A', 8, 64);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '17201', 'Visits', 'Group1', 'A', 9, 65);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '18201', 'Visits', 'Group1', 'A', 10, 66);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13220', 'Visits', 'Group1', 'A', 11, 67);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '16220', 'Visits', 'Group1', 'A', 12, 68);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '17220', 'Visits', 'Group1', 'A', 13, 69);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '18220', 'Visits', 'Group1', 'A', 14, 70);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13015', 'Visits', 'Group1', 'A', 15, 71);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14560', 'Procedures', 'Group2', 'A', 1, 72);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14540', 'Procedures', 'Group2', 'A', 2, 73);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '04509', 'Procedures', 'Group2', 'A', 3, 74);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '00785', 'Procedures', 'Group2', 'A', 4, 75);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '08264', 'Procedures', 'Group2', 'A', 5, 76);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14545', 'Procedures', 'Group2', 'A', 6, 77);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '15130', 'Procedures', 'Group2', 'A', 7, 78);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '00044', 'Procedures', 'Group2', 'A', 8, 79);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '14000', 'Premiums', 'Group3', 'A', 1, 80);
-INSERT INTO `ctl_billingservice` VALUES ('OB obstetrics', 'OB', '00012', 'Premiums', 'Group3', 'A', 2, 81);
-INSERT INTO `ctl_billingservice` VALUES ('Miscellaneous', 'MSC', 'A007A', 'Visit', 'Group1', 'A', 1, 82);
-INSERT INTO `ctl_billingservice` VALUES ('Miscellaneous', 'MSC', 'A007A', 'Procedures', 'Group2', 'A', 1, 83);
-INSERT INTO `ctl_billingservice` VALUES ('Miscellaneous', 'MSC', 'A007A', 'Premiums', 'Group3', 'A', 1, 84);
-INSERT INTO `ctl_billingservice` VALUES ('ER - Hospital - home', 'ER', '13052', 'Premiums', 'Group3', 'A', 18, 85);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00060', 'Office', 'Group1', 'A', 1, 1002);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00061', 'Office', 'Group1', 'A', 2, 1003);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00060a', 'Office', 'Group1', 'A', 3, 1004);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00190', 'Office', 'Group1', 'A', 4, 1005);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'ACOPY', 'Office', 'Group1', 'A', 5, 1006);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'ACPP', 'Office', 'Group1', 'A', 6, 1007);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00072', 'Legal', 'Group2', 'A', 1, 1008);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00073', 'Legal', 'Group2', 'A', 2, 1009);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00095', 'Legal', 'Group2', 'A', 3, 1010);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00096', 'Legal', 'Group2', 'A', 4, 1011);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00096a', 'Legal', 'Group2', 'A', 5, 1012);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A94529', 'Legal', 'Group2', 'A', 6, 1013);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00071', 'Legal', 'Group2', 'A', 7, 1014);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00070', 'Legal', 'Group2', 'A', 8, 1015);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00070a', 'Legal', 'Group2', 'A', 9, 1016);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A94564', 'Legal', 'Group2', 'A', 10, 1017);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A94565', 'Legal', 'Group2', 'A', 11, 1018);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00059', 'Other', 'Group3', 'A', 1, 1019);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00069', 'Other', 'Group3', 'A', 2, 1020);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00055', 'Other', 'Group3', 'A', 3, 1021);
-INSERT INTO `ctl_billingservice` VALUES ('Private', 'PRI', 'A00056', 'Other', 'Group3', 'A', 4, 1022);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '17120', 'Visit', 'Group1', 'A', 13, 1321);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '16100', 'Visit', 'Group1', 'A', 5, 1322);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '12101', 'Visit', 'Group1', 'A', 12, 1323);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '15320', 'Visit', 'Group1', 'A', 4, 1324);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00010', 'Visit', 'Group1', 'A', 17, 1325);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '12100', 'Visit', 'Group1', 'A', 11, 1326);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '17100', 'Visit', 'Group1', 'A', 7, 1327);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00101', 'Visit', 'Group1', 'A', 2, 1328);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '18120', 'Visit', 'Group1', 'A', 14, 1329);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '18100', 'Visit', 'Group1', 'A', 9, 1330);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00100', 'Visit', 'Group1', 'A', 1, 1331);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '16120', 'Visit', 'Group1', 'A', 12, 1332);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '17101', 'Visit', 'Group1', 'A', 8, 1333);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00120', 'Visit', 'Group1', 'A', 13, 1334);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '18101', 'Visit', 'Group1', 'A', 10, 1335);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '16101', 'Visit', 'Group1', 'A', 6, 1336);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '15300', 'Visit', 'Group1', 'A', 0, 1337);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '03333', 'Visit', 'Group1', 'A', 15, 1338);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '15301', 'Visit', 'Group1', 'A', 3, 1339);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00043', 'Visit', 'Group1', 'A', 16, 1340);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00103', 'Procedures', 'Group2', 'A', 18, 1341);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14560', 'Procedures', 'Group2', 'A', 17, 1342);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00114', 'Procedures', 'Group2', 'A', 15, 1343);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13837', 'Procedures', 'Group2', 'A', 25, 1344);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13621', 'Procedures', 'Group2', 'A', 4, 1345);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13737', 'Procedures', 'Group2', 'A', 24, 1346);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13637', 'Procedures', 'Group2', 'A', 23, 1347);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00114', 'Procedures', 'Group2', 'A', 11, 1348);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13620', 'Procedures', 'Group2', 'A', 3, 1349);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13005', 'Procedures', 'Group2', 'A', 16, 1350);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00090', 'Procedures', 'Group2', 'A', 4, 1351);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '15130', 'Procedures', 'Group2', 'A', 6, 1352);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00190', 'Procedures', 'Group2', 'A', 1, 1353);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '00044', 'Procedures', 'Group2', 'A', 2, 1354);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '15120', 'Procedures', 'Group2', 'A', 5, 1355);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13329', 'Procedures', 'Group2', 'A', 8, 1356);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13005', 'Procedures', 'Group2', 'A', 19, 1357);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13237', 'Procedures', 'Group2', 'A', 20, 1358);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13437', 'Procedures', 'Group2', 'A', 21, 1359);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13537', 'Procedures', 'Group2', 'A', 22, 1360);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13070', 'Premiums', 'Group3', 'A', 23, 1361);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14018', 'Premiums', 'Group3', 'A', 20, 1362);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14044', 'Premiums', 'Group3', 'A', 7, 1363);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14066', 'Premiums', 'Group3', 'A', 19, 1364);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14052', 'Premiums', 'Group3', 'A', 3, 1365);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14051', 'Premiums', 'Group3', 'A', 2, 1366);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14018', 'Premiums', 'Group3', 'A', 18, 1367);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14053', 'Premiums', 'Group3', 'A', 4, 1368);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14078', 'Premiums', 'Group3', 'A', 24, 1369);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14050', 'Premiums', 'Group3', 'A', 1, 1370);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14033', 'Premiums', 'Group3', 'A', 17, 1371);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14063', 'Premiums', 'Group3', 'A', 5, 1372);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14046', 'Premiums', 'Group3', 'A', 9, 1373);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14045', 'Premiums', 'Group3', 'A', 8, 1374);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14047', 'Premiums', 'Group3', 'A', 10, 1375);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14043', 'Premiums', 'Group3', 'A', 6, 1376);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14048', 'Premiums', 'Group3', 'A', 11, 1377);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '13075', 'Premiums', 'Group3', 'A', 22, 1378);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14076', 'Premiums', 'Group3', 'A', 25, 1379);
-INSERT INTO `ctl_billingservice` VALUES ('GP General Practise', 'GP', '14077', 'Premiums', 'Group3', 'A', 26, 1380);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '01200', 'Premiums', 'Group3', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '01201', 'Premiums', 'Group3', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '01202', 'Premiums', 'Group3', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00112', 'Premiums', 'Group3', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00113', 'Premiums', 'Group3', 'A', 5);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00105', 'Premiums', 'Group3', 'A', 6);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00123', 'Premiums', 'Group3', 'A', 7);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00081', 'Premiums', 'Group3', 'A', 8);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00082', 'Premiums', 'Group3', 'A', 9);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00084', 'Premiums', 'Group3', 'A', 10);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00083', 'Premiums', 'Group3', 'A', 11);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '01205', 'Premiums', 'Group3', 'A', 12);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '01206', 'Premiums', 'Group3', 'A', 13);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '01207', 'Premiums', 'Group3', 'A', 14);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00103', 'Premiums', 'Group3', 'A', 15);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00104', 'Premiums', 'Group3', 'A', 16);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00111', 'Premiums', 'Group3', 'A', 17);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '06b00', 'Proceedures', 'Group2', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13612', 'Proceedures', 'Group2', 'A', 20);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00014', 'Proceedures', 'Group2', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00190', 'Proceedures', 'Group2', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00757', 'Proceedures', 'Group2', 'A', 5);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00015', 'Proceedures', 'Group2', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '00761', 'Proceedures', 'Group2', 'A', 6);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13600', 'Proceedures', 'Group2', 'A', 7);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13601', 'Proceedures', 'Group2', 'A', 8);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13605', 'Proceedures', 'Group2', 'A', 9);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13620', 'Proceedures', 'Group2', 'A', 10);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13621', 'Proceedures', 'Group2', 'A', 11);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13622', 'Proceedures', 'Group2', 'A', 12);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13633', 'Proceedures', 'Group2', 'A', 15);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13622', 'Proceedures', 'Group2', 'A', 14);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13631', 'Proceedures', 'Group2', 'A', 13);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13611', 'Proceedures', 'Group2', 'A', 19);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '07055', 'Proceedures', 'Group2', 'A', 17);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13610', 'Proceedures', 'Group2', 'A', 18);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13650', 'Proceedures', 'Group2', 'A', 16);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '12200', 'Visits', 'Group1', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13200', 'Visits', 'Group1', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '16200', 'Visits', 'Group1', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '17200', 'Visits', 'Group1', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '18200', 'Visits', 'Group1', 'A', 5);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '12201', 'Visits', 'Group1', 'A', 6);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13201', 'Visits', 'Group1', 'A', 7);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '16201', 'Visits', 'Group1', 'A', 8);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '17201', 'Visits', 'Group1', 'A', 9);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '18201', 'Visits', 'Group1', 'A', 10);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13220', 'Visits', 'Group1', 'A', 11);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '16220', 'Visits', 'Group1', 'A', 12);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '17220', 'Visits', 'Group1', 'A', 13);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '18220', 'Visits', 'Group1', 'A', 14);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13015', 'Visits', 'Group1', 'A', 15);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'ER - Hospital - home', 'ER', '13052', 'Premiums', 'Group3', 'A', 18);
 
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Miscellaneous', 'MSC', 'A007A', 'Visit', 'Group1', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Miscellaneous', 'MSC', 'A007A', 'Procedures', 'Group2', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Miscellaneous', 'MSC', 'A007A', 'Premiums', 'Group3', 'A', 3);
+
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00060', 'Office', 'Group1', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00061', 'Office', 'Group1', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00060a', 'Office', 'Group1', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00190', 'Office', 'Group1', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'ACOPY', 'Office', 'Group1', 'A', 5);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'ACPP', 'Office', 'Group1', 'A', 6);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00072', 'Legal', 'Group2', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00073', 'Legal', 'Group2', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00095', 'Legal', 'Group2', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00096', 'Legal', 'Group2', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00096a', 'Legal', 'Group2', 'A', 5);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A94529', 'Legal', 'Group2', 'A', 6);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00071', 'Legal', 'Group2', 'A', 7);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00070', 'Legal', 'Group2', 'A', 8);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00070a', 'Legal', 'Group2', 'A', 9);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A94564', 'Legal', 'Group2', 'A', 10);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A94565', 'Legal', 'Group2', 'A', 11);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00059', 'Other', 'Group3', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00069', 'Other', 'Group3', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00055', 'Other', 'Group3', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'Private', 'PRI', 'A00056', 'Other', 'Group3', 'A', 4);
+
+
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '17120', 'Visit', 'Group1', 'A', 13);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '16100', 'Visit', 'Group1', 'A', 5);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '12101', 'Visit', 'Group1', 'A', 12);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '15320', 'Visit', 'Group1', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00010', 'Visit', 'Group1', 'A', 17);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '12100', 'Visit', 'Group1', 'A', 11);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '17100', 'Visit', 'Group1', 'A', 7);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00101', 'Visit', 'Group1', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '18120', 'Visit', 'Group1', 'A', 14);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '18100', 'Visit', 'Group1', 'A', 9);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00100', 'Visit', 'Group1', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '16120', 'Visit', 'Group1', 'A', 12);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '17101', 'Visit', 'Group1', 'A', 8);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00120', 'Visit', 'Group1', 'A', 13);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '18101', 'Visit', 'Group1', 'A', 10);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '16101', 'Visit', 'Group1', 'A', 6);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '15300', 'Visit', 'Group1', 'A', 0);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '03333', 'Visit', 'Group1', 'A', 15);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '15301', 'Visit', 'Group1', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00043', 'Visit', 'Group1', 'A', 16);
+
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00103', 'Procedures', 'Group2', 'A', 18);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14560', 'Procedures', 'Group2', 'A', 17);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00114', 'Procedures', 'Group2', 'A', 15);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13837', 'Procedures', 'Group2', 'A', 25);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13621', 'Procedures', 'Group2', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13737', 'Procedures', 'Group2', 'A', 24);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13637', 'Procedures', 'Group2', 'A', 23);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00114', 'Procedures', 'Group2', 'A', 11);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13620', 'Procedures', 'Group2', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13005', 'Procedures', 'Group2', 'A', 16);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00090', 'Procedures', 'Group2', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '15130', 'Procedures', 'Group2', 'A', 6);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00190', 'Procedures', 'Group2', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '00044', 'Procedures', 'Group2', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '15120', 'Procedures', 'Group2', 'A', 5);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13329', 'Procedures', 'Group2', 'A', 8);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13005', 'Procedures', 'Group2', 'A', 19);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13237', 'Procedures', 'Group2', 'A', 20);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13437', 'Procedures', 'Group2', 'A', 21);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13537', 'Procedures', 'Group2', 'A', 22);
+
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13070', 'Premiums', 'Group3', 'A', 23);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14018', 'Premiums', 'Group3', 'A', 20);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14044', 'Premiums', 'Group3', 'A', 7);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14066', 'Premiums', 'Group3', 'A', 19);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14052', 'Premiums', 'Group3', 'A', 3);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14051', 'Premiums', 'Group3', 'A', 2);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14018', 'Premiums', 'Group3', 'A', 18);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14053', 'Premiums', 'Group3', 'A', 4);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14078', 'Premiums', 'Group3', 'A', 24);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14050', 'Premiums', 'Group3', 'A', 1);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14033', 'Premiums', 'Group3', 'A', 17);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14063', 'Premiums', 'Group3', 'A', 5);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14046', 'Premiums', 'Group3', 'A', 9);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14045', 'Premiums', 'Group3', 'A', 8);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14047', 'Premiums', 'Group3', 'A', 10);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14043', 'Premiums', 'Group3', 'A', 6);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14048', 'Premiums', 'Group3', 'A', 11);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '13075', 'Premiums', 'Group3', 'A', 22);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14076', 'Premiums', 'Group3', 'A', 25);
+INSERT INTO `ctl_billingservice` VALUES (NULL, 'GP General Practise', 'GP', '14077', 'Premiums', 'Group3', 'A', 26);
 
 
 
@@ -8875,16 +8881,54 @@ INSERT INTO billingtypes VALUES ('Pri',3);
 INSERT INTO billingtypes VALUES ('WCB',4);
 
 
-INSERT INTO `billing_msp_servicecode_times` VALUES (1,'00112',0);
-INSERT INTO `billing_msp_servicecode_times` VALUES (2,'01200',0);
-INSERT INTO `billing_msp_servicecode_times` VALUES (3,'01201',0);
-INSERT INTO `billing_msp_servicecode_times` VALUES (4,'01205',1);
-INSERT INTO `billing_msp_servicecode_times` VALUES (5,'01206',1);
-INSERT INTO `billing_msp_servicecode_times` VALUES (6,'01207',1);
-INSERT INTO `billing_msp_servicecode_times` VALUES (7,'01210',0);
-INSERT INTO `billing_msp_servicecode_times` VALUES (8,'01211',0);
-INSERT INTO `billing_msp_servicecode_times` VALUES (9,'14015',1);
-INSERT INTO `billing_msp_servicecode_times` VALUES (10,'14016',1);
+INSERT INTO `billing_msp_servicecode_times`(`id`, `billingservice_no`, `timeRange`) VALUES
+(1, '00112', 0),
+(2, '01200', 0),
+(3, '01201', 0),
+(4, '01205', 1),
+(5, '01206', 1),
+(6, '01207', 1),
+(7, '01210', 0),
+(8, '01211', 0),
+(9, '14015', 1),
+(10, '14016', 1),
+(11, '00103', 0),
+(12, '00115', 0),
+(13, '01202', 0),
+(14, '01212', 1),
+(15, '04118', 1),
+(16, '04119', 1),
+(17, '10001', 1),
+(18, '10002', 1),
+(19, '10003', 1),
+(20, '14018', 0),
+(21, '14021', 1),
+(22, '14022', 1),
+(23, '14023', 1),
+(24, '14043', 0),
+(25, '14044', 1),
+(26, '14045', 1),
+(27, '14046', 1),
+(28, '14047', 1),
+(29, '14048', 1),
+(30, '14063', 0),
+(31, '14077', 1),
+(32, '14199', 1),
+(33, '12120', 1),
+(34, '00120', 1),
+(35, '15320', 1),
+(36, '16120', 1),
+(37, '17120', 1),
+(38, '18120', 1),
+(39, '12220', 1),
+(40, '13220', 1),
+(41, '15220', 1),
+(42, '16220', 1),
+(43, '17220', 1),
+(44, '18220', 1),
+(45, '98010', 1),
+(46, '98011', 1),
+(47, '98012', 1);
 
 --
 -- Dumping data for table `billing_service_code_conditions`

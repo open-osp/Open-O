@@ -62,7 +62,7 @@ public class EctDisplayTicklerAction extends EctDisplayAction {
     	pathedit = request.getContextPath() + "/Tickler.do?method=edit&tickler.demographic_webName="+ encode(bean) +"&tickler.demographicNo=" + bean.demographicNo;
     }
     else {
-        pathview = request.getContextPath() + "/tickler/ticklerDemoMain.jsp?demoview=" + bean.demographicNo + "&parentAjaxId=" + cmd;
+        pathview = request.getContextPath() + "/tickler/ticklerMain.jsp?demoview=" + bean.demographicNo + "&parentAjaxId=" + cmd;
         pathedit = request.getContextPath() + "/tickler/ticklerAdd.jsp?bFirstDisp=false&demographic_no=" + bean.demographicNo;
         
     }
@@ -114,7 +114,7 @@ public class EctDisplayTicklerAction extends EctDisplayAction {
         if( org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable() ) {
         	url = "popupPage(500,900,'" + hash + "','" + request.getContextPath() + "/Tickler.do?method=view&id="+t.getId()+"'); return false;";
         } else {
-        	url = "popupPage(500,900,'" + hash + "','" + request.getContextPath() + "/tickler/ticklerDemoMain.jsp?demoview=" + bean.demographicNo + "&parentAjaxId=" + cmd + "'); return false;";
+        	url = "popupPage(500,900,'" + hash + "','" + request.getContextPath() + "/tickler/ticklerMain.jsp?demoview=" + bean.demographicNo + "&parentAjaxId=" + cmd + "'); return false;";
         }
         item.setURL(url);
         Dao.addItem(item);

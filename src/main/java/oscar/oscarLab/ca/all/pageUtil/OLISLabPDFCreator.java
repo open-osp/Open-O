@@ -23,8 +23,6 @@
  */
 package oscar.oscarLab.ca.all.pageUtil;
 
-import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -34,6 +32,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.itextpdf.text.*;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.Hl7TextMessageDao;
 import org.oscarehr.common.model.Hl7TextMessage;
@@ -41,21 +40,12 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfPageEventHelper;
-import com.lowagie.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import oscar.OscarProperties;
 import oscar.oscarLab.ca.all.Hl7textResultsData;
@@ -87,22 +77,11 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
     private Font categoryHeadFont;
     private Font commentFont;
     private Font subscriptFont;
-  //  private String dateLabReceived;
-    
+
     private String category = "";
 	private String newCategory = "";
 
 	private Logger logger = MiscUtils.getLogger();
-	
-	public static byte[] getPdfBytes(String segmentId, String providerNo) throws IOException, DocumentException
-    {
-    	ByteArrayOutputStream baos=new ByteArrayOutputStream();
-
-    	LabPDFCreator labPDFCreator=new LabPDFCreator(baos, segmentId, providerNo);
-    	labPDFCreator.printPdf();
-
-    	return(baos.toByteArray());
-    }
 
     /** Creates a new instance of LabPDFCreator */
     public OLISLabPDFCreator(HttpServletRequest request, OutputStream os) {
@@ -129,7 +108,6 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
 			Hl7TextMessage hl7TextMessage = hl7TxtMsgDao.find(Integer.parseInt(segmentId));
 			java.util.Date date = hl7TextMessage.getCreated();
 			String stringFormat = "yyyy-MM-dd HH:mm";
-		//	dateLabReceived = UtilDateUtilities.DateToString(date, stringFormat);
 
 			// create handler
 			this.handler = (OLISHL7Handler) Factory.getHandler(id);
@@ -166,18 +144,15 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
 		}
     }
     
-    public void printPdf() throws IOException, DocumentException{
+    public void printPdf() throws IOException, DocumentException {
 
-        // check that we have data to print
-        if (handler == null)
-            throw new DocumentException();
-
-        //response.setContentType("application/pdf");  //octet-stream
-        //response.setHeader("Content-Disposition", "attachment; filename=\""+handler.getPatientName().replaceAll("\\s", "_")+"_LabReport.pdf\"");
+	    // check that we have data to print
+	    if (handler == null){
+		    throw new DocumentException();
+        }
 
         //Create the document we are going to write to
         document = new Document();
-        //PdfWriter writer = PdfWriter.getInstance(document, response.getOutputStream());
         PdfWriter writer = PdfWriter.getInstance(document, os);
 
         //Set page event, function onEndPage will execute each time a page is finished being created
@@ -193,8 +168,8 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
         cf = BaseFont.createFont(BaseFont.COURIER, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
         font = new Font(bf, 9, Font.NORMAL);
         boldFont = new Font(bf, 9, Font.BOLD);
-        redFont = new Font(bf, 9, Font.NORMAL, Color.RED);
-        blueFont = new Font(bf, 9, Font.NORMAL, Color.BLUE);
+        redFont = new Font(bf, 9, Font.NORMAL, BaseColor.RED);
+        blueFont = new Font(bf, 9, Font.NORMAL, BaseColor.BLUE);
         categoryHeadFont = new Font(bf, 12, Font.BOLD);
         commentFont = new Font(cf, 9, Font.NORMAL);
         subscriptFont = new Font(bf, 6, Font.NORMAL);
@@ -218,21 +193,6 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
         	}
         }
 
-        /*// add end of report table
-        PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(100);
-        PdfPCell cell = new PdfPCell();
-        cell.setBorder(0);
-        cell.setPhrase(new Phrase("  "));
-        table.addCell(cell);
-        cell.setBorder(15);
-        cell.setBackgroundColor(new Color(210, 212, 255));
-        cell.setPhrase(new Phrase("END OF REPORT", boldFont));
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        table.addCell(cell);
-        document.add(table);*/
-
         document.close();
 
         os.flush();
@@ -243,8 +203,8 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
 	 * header, the test result headers and the test results for that category.
 	 */
 	private void addOLISLabCategory(String header, Integer obr) throws DocumentException {	
-		Color categoryBackground = new Color(255, 204, 0);
-		Color separatorColour = new Color(0, 51, 153);
+		BaseColor categoryBackground = new BaseColor(255, 204, 0);
+		BaseColor separatorColour = new BaseColor(0, 51, 153);
 		
 		//Creates a separator cell for separation between results
 		PdfPCell separator = new PdfPCell();
@@ -308,7 +268,7 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
 		//Checks if the OBR is blocked
 		Boolean blocked = handler.isOBRBlocked(obr);
 		if (blocked){
-			categoryPhrase.setFont(new Font(bf, 7, Font.NORMAL, Color.RED));
+			categoryPhrase.setFont(new Font(bf, 7, Font.NORMAL, BaseColor.RED));
 			categoryPhrase.add("\n\n(Do Not Disclose Without Explicit Patient Consent");
 		}
 		
@@ -380,7 +340,7 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
 		cell.setColspan(1);
 		cell.setBorder(15);
 		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-		cell.setBackgroundColor(new Color(210, 212, 255));
+		cell.setBackgroundColor(new BaseColor(210, 212, 255));
 		cell.setPhrase(new Phrase("Test Name(s)", boldFont));
 		table.addCell(cell);
 		cell.setPhrase(new Phrase("Result", boldFont));
@@ -395,8 +355,8 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
 		table.addCell(cell);
 
 		cell.setBorder(12);
-		cell.setBorderColor(Color.BLACK); // cell.setBorderColor(Color.WHITE);
-		cell.setBackgroundColor(new Color(255, 255, 255));
+		cell.setBorderColor(BaseColor.BLACK); // cell.setBorderColor(Color.WHITE);
+		cell.setBackgroundColor(new BaseColor(255, 255, 255));
 		
 		boolean obrFlag = false;
 		int obxCount = handler.getOBXCount(obr);
@@ -882,7 +842,7 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
         	phonePhrase.setFont(font);
         	phonePhrase.add(getPhone(homePhone));
         	phonePhrase.setFont(subscriptFont);
-        	phonePhrase.add(homePhone.get("useCode"));
+        	phonePhrase.add(new Phrase(homePhone.get("useCode")));
         	//Adds the phrase to the table
         	cell.setPhrase(phonePhrase);
         	pInfoTable.addCell(cell);
@@ -978,8 +938,7 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
         	cell.setPhrase(new Phrase(phone.get("useCode") + ": ", boldFont));
         	rInfoTable.addCell(cell);
         	//Adds the phone number
-        	phoneNumber = getPhone(phone);
-        	cell.setPhrase(new Phrase(phoneNumber, font));
+        	cell.setPhrase(getPhone(phone));
         	rInfoTable.addCell(cell);
         }
         
@@ -1073,13 +1032,13 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
         PdfPTable table = new PdfPTable(tableWidths);
         if (multiID.length > 1){
             cell = new PdfPCell(new Phrase("Version: "+versionNum+" of "+multiID.length, boldFont));
-            cell.setBackgroundColor(new Color(210, 212, 255));
+            cell.setBackgroundColor(new BaseColor(210, 212, 255));
             cell.setPadding(3);
             cell.setColspan(2);
             table.addCell(cell);
         }
         cell = new PdfPCell(new Phrase("Detail Results: Patient Info", boldFont));
-        cell.setBackgroundColor(new Color(210, 212, 255));
+        cell.setBackgroundColor(new BaseColor(210, 212, 255));
         cell.setPadding(5);
         table.addCell(cell);
         cell.setPhrase(new Phrase("Results Info", boldFont));
@@ -1182,7 +1141,7 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
     	return fullAddress;
     }
     
-    public String getPhone(HashMap<String, String> phone){
+    public Phrase getPhone(HashMap<String, String> phone){
     	
     	String phoneNumber = "";
     	if (phone.get("email") != null){
@@ -1214,8 +1173,8 @@ public class OLISLabPDFCreator extends PdfPageEventHelper{
    			
    			phoneNumber = countryCode + areaCode + localNumber + extension;
     	}
-    	
-    	return phoneNumber;
+
+	    return new Phrase(phoneNumber, font);
     }
     
 	public PdfPTable createCollectionTable(Integer obr){

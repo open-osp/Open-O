@@ -173,7 +173,7 @@ String endDate = (String) request.getAttribute("endDate");
 								<% if (! OscarProperties.getInstance().isBritishColumbiaBillingRegion()) { %>
 									<a href="javascript:popupStart(800,1000, '${pageContext.servletContext.contextPath}/oscarMDS/CreateLab.jsp')" style="color: #FFFFFF;"><bean:message key="global.createLab" /></a>
 	                                <a href="javascript:popupStart(800,1000, '${pageContext.servletContext.contextPath}/olis/Search.jsp')" style="color: #FFFFFF;"><bean:message key="olis.olisSearch" /></a>
-	                                <a href="javascript:popupPage(400, 400,'<html:rewrite page="/hospitalReportManager/hospitalReportManager.jsp"/>')" style="color: #FFFFFF;">HRM Status/Upload</a>
+	                                <a href="javascript:popupPage(400, 1050,'<html:rewrite page="/hospitalReportManager/hospitalReportManager.jsp"/>')" style="color: #FFFFFF;">HRM Status/Upload</a>
 								<% } %>
 								
 								<span class="HelpAboutLogout">

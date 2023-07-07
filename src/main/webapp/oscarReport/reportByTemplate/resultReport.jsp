@@ -49,16 +49,16 @@
 <head>
 <title>Report by Template</title>
 
-	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css" />
-	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css" />
-	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-	<link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
-	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/js/jquery-1.9.1.min.js"></script> 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/bootstrap.min.2.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js"></script>
+	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+	<script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
+	<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+	<script src="${pageContext.request.contextPath}/js/bootstrap.min.2.js"></script>
+	<script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
 
-<script type="text/javascript">
+<script>
 	function clearSession(){
 	    new Ajax.Request('clearSession.jsp','{asynchronous:true}');
 	}
@@ -66,7 +66,7 @@
 	    jQuery('.reportTable').DataTable();
 	});
 </script>
-<style type="text/css" media="print">
+<style media="print">
 	.noprint,.showhidequery,.sqlBorderDiv,.controls,.dataTables_length,.dataTables_filter,.dataTables_paginate
 	{
 		display: none;
@@ -81,13 +81,13 @@
 </style>
 </head>
 <%
-		
+
 		ReportObjectGeneric curreport = (ReportObjectGeneric) request.getAttribute("reportobject");
-		Integer sequenceLength = (Integer)request.getAttribute("sequenceLength");		
+		Integer sequenceLength = (Integer)request.getAttribute("sequenceLength");
 		List<String> sqlList = new ArrayList<String>();
 		List<String> htmlList = new ArrayList<String>();
 		List<String> csvList = new ArrayList<String>();
-		
+
 		if(curreport.isSequence()) {
 			for(int x=0;x<sequenceLength;x++) {
 				sqlList.add((String) request.getAttribute("sql-" + x));
@@ -99,9 +99,9 @@
 			htmlList.add((String) request.getAttribute("resultsethtml"));
 			csvList.add((String) request.getAttribute("csv"));
 		}
-		
+
 		pageContext.setAttribute("htmlList", htmlList);
-		          
+
 %>
 
 <body onunload="clearSession();">
@@ -109,7 +109,7 @@
 <%@ include file="rbtTopNav.jspf"%>
 
 <h3>
-	<c:out value="${ reportobject.title }" /><br />
+	<c:out value="${ reportobject.title }" /><br>
 	<small><c:out value="${ reportobject.description }" /></small>
 </h3>
 
@@ -128,17 +128,17 @@
 				</c:choose>
 			</c:forEach>
 		</div>
-		
+
 		<div class="noprint form-actions">
-			
+
 			<div style="margin-bottom:15px;" class="controls controls-row">
 				<input type="button" class="btn btn-primary" value="Back" onclick="document.location='reportConfiguration.jsp?templateid=${ reportobject.templateId }'">
 				<input type="button" class="btn btn-primary" value="Print" onclick="window.print();">
-			
+
 			<%
 				for(int x=0;x<csvList.size();x++) {
-			%>			
-		
+			%>
+
 				<html:form style="display:inline;" action="/oscarReport/reportByTemplate/generateOutFilesAction" >
 					<%if(x>1){ %>
 						<label><%=(x+1)%></label>
@@ -147,8 +147,8 @@
 					<input type="submit" class="btn" name="getCSV" value="Export to CSV">
 					<input type="submit" class="btn" name="getXLS" value="Export to XLS">
 				</html:form>
-				
-			<% } %>	
+
+			<% } %>
 			</div>
 			<div class="row-fluid sub-actions">
 				<a href="#" class="showhidequery result-btn" onclick="showHideItem('sqlDiv')">

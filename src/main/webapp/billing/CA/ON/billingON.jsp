@@ -1,4 +1,4 @@
-	 	
+
 <%--
 
     Copyright (c) 2006-. OSCARservice, OpenSoft System. All Rights Reserved.
@@ -18,6 +18,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -59,7 +60,7 @@
 	scope="session" />
 <%
 			if (session.getAttribute("user") == null) {
-				response.sendRedirect("../../../logout.jsp");
+				response.sendRedirect("${ pageContext.request.contextPath }/logout.jsp");
 			}
                         oscar.OscarProperties oscarVariables = oscar.OscarProperties.getInstance();
 
@@ -104,24 +105,24 @@
  			}
             CodeFilterManager codeFilterManager = SpringUtils.getBean(CodeFilterManager.class);
             DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
-			Demographic demo = demographicManager.getDemographic(loggedInInfo, demo_no); 
+			Demographic demo = demographicManager.getDemographic(loggedInInfo, demo_no);
 			java.util.Date filterDate = ConversionUtils.fromDateString(billReferenceDate);
 			if(request.getParameter("start_time") != null){
 	   			filterDate =  ConversionUtils.fromTimestampString(billReferenceDate+" "+request.getParameter("start_time"));
  			}
-			
+
 			//load patientDx
 			List<Dxresearch> dxList = dxresearchDao.getByDemographicNo(Integer.parseInt(demo_no));
 			List<String> patientDx = new ArrayList<String>();
 			for (Dxresearch dx : dxList) {
 				if ("icd9".equals(dx.getCodingSystem())) patientDx.add(dx.getDxresearchCode());
 			}
-			
+
 			//load codelist to add to patientDx
 			UserProperty codeList = userPropertyDao.getProp(UserProperty.CODE_TO_ADD_PATIENTDX);
 			String codeToAddPatientDx = codeList!=null ? codeList.getValue() : "";
 			codeToAddPatientDx = codeToAddPatientDx!=null ? codeToAddPatientDx.trim() : "";
-			
+
 			codeList = userPropertyDao.getProp(UserProperty.CODE_TO_MATCH_PATIENTDX);
 			String codeToMatchPatientDx = codeList!=null ? codeList.getValue() : "";
 			codeToMatchPatientDx = codeToMatchPatientDx!=null ? codeToMatchPatientDx.trim() : "";
@@ -145,31 +146,31 @@
             preference=ProviderPreferencesUIBean.getProviderPreferenceByProviderNo(provider_no);
 
 
-           	
+
 
 			if (curBillForm!=null) {
 			    // user picks a bill form from browser
 			    ctlBillForm = curBillForm;
-			} else {                    
-                            //check if patient's roster status determines which billing form to display (this superceeds provider preference)                    
+			} else {
+                            //check if patient's roster status determines which billing form to display (this superceeds provider preference)
                             String rosterStatus = demo.getRosterStatus();
-                            
+
                             CtlBillingServiceDao ctlBillingServiceDao = (CtlBillingServiceDao) SpringUtils.getBean("ctlBillingServiceDao");
                             List<CtlBillingService> ctlBillSrvList = ctlBillingServiceDao.findByServiceTypeId(rosterStatus);
-                            
+
                             if (!ctlBillSrvList.isEmpty() && !rosterStatus.isEmpty()) {
                                 ctlBillForm = ctlBillSrvList.get(0).getServiceType();
                             }
-                            else {                                                        
+                            else {
                                 // check user preference to show a bill form
                                 ProviderPreferenceDao providerPreferenceDao=(ProviderPreferenceDao)SpringUtils.getBean("providerPreferenceDao");
                                 ProviderPreference providerPreference=null;
-                            
+
                                 //use the appointment provider's preferences first if we can
                                 //otherwise, use the preferences of the logged in user
-                                if( apptProvider_no.equalsIgnoreCase("none") ) {                                   
+                                if( apptProvider_no.equalsIgnoreCase("none") ) {
                                     providerPreference = providerPreferenceDao.find(user_no);
-                                } else {                                    
+                                } else {
                                     providerPreference = providerPreferenceDao.find(apptProvider_no);
                                 }
 
@@ -177,12 +178,12 @@
                                 if (providerPreference!=null) {
                                     defaultServiceType = providerPreference.getDefaultServiceType();
                                 }
-                                
+
                                 if (defaultServiceType != null && !defaultServiceType.isEmpty() && !defaultServiceType.equals("no")) {
 									ctlBillForm = providerPreference.getDefaultServiceType();
-                                } else { 
+                                } else {
                                         //check if there is a group preference for default billing
-                                        MyGroupDao myGroupDao = (MyGroupDao) SpringUtils.getBean("myGroupDao"); 
+                                        MyGroupDao myGroupDao = (MyGroupDao) SpringUtils.getBean("myGroupDao");
                                         List<MyGroup> myGroups = myGroupDao.getProviderGroups(provider_no);
                                         String groupBillForm = "";
                                         for (MyGroup group : myGroups) {
@@ -192,7 +193,7 @@
                                                 break;
                                             }
                                         }
-                                       
+
                                         if (ctlBillForm == null || ctlBillForm.isEmpty()) {
                                             // check oscar.properties to show a default bill form
                                             String dv = OscarProperties.getInstance().getProperty("default_view");
@@ -267,15 +268,15 @@
 				}
 
 				if (demoHIN.equals("")) {
-					warningMsg += "<br/><b><div class='myError'>Warning: The patient does not have a valid HIN. </div></b><br/>";
+					warningMsg += "<b><div class='alert alert-error'>Warning: The patient does not have a valid HIN. </div></b>";
 				}
 				if (r_doctor_ohip != null && r_doctor_ohip.length() > 0 && r_doctor_ohip.length() != 6) {
-					warningMsg += "<br/><div class='myError'>Warning: the referral doctor's no is wrong. </div><br/>";
+					warningMsg += "<div class='alert alert error'>Warning: the referral doctor's no is wrong. </div>";
 				}
 				if (StringUtils.isBlank(demoDOB) || demoDOB.length() != 8) {
 					errorFlag = "1";
 					errorMsg = errorMsg
-							+ "<br/><b><div class='myError'>Error: The patient does not have a valid DOB. </div></b><br/>";
+							+ "<b><div class='alert alert error'>Error: The patient does not have a valid DOB. </div></b>";
 				}
 			//}
 
@@ -385,7 +386,7 @@
             CtlBillingServiceDao cbsDao = SpringUtils.getBean(CtlBillingServiceDao.class);
             BillingServiceDao bDao = SpringUtils.getBean(BillingServiceDao.class);
             CtlBillingServicePremiumDao pDao = SpringUtils.getBean(CtlBillingServicePremiumDao.class);
-            
+
             for(Object[] i : cbsDao.findServiceTypesByStatus("A")) {
                     ArrayList<Properties> listGroup1 = new ArrayList<Properties>();
                     ArrayList<Properties> listGroup2 = new ArrayList<Properties>();
@@ -399,11 +400,11 @@
 			for(Object[] o : bDao.findBillingServiceAndCtlBillingServiceByMagic(ctlcode, "Group1", ConversionUtils.fromDateString(billReferenceDate))) {
 				BillingService b = (BillingService) o[0];
 				CtlBillingService c = (CtlBillingService) o[1];
-								
+
 				if(!codeFilterManager.isCodeValid(b.getServiceCode(), null, false, filterDate, demo)){
 					continue;
 				}
-				
+
 				propT = new Properties();
 				propT.setProperty("serviceCode", b.getServiceCode() );
 				propT.setProperty("serviceDesc", b.getDescription() == null ? "N/A" : b.getDescription());
@@ -432,7 +433,7 @@
 				for (int ii = 0; ii < listGroup1.size(); ii++) {
 					serviceCodes.add(listGroup1.get(ii).getProperty("serviceCode"));
 				}
-				
+
 				for(CtlBillingServicePremium p : pDao.findByServceCodes(serviceCodes)) {
 					propPremium.setProperty(p.getServiceCode(), "A");
 				}
@@ -442,13 +443,13 @@
 			for(Object[] o : bDao.findBillingServiceAndCtlBillingServiceByMagic(ctlcode, "Group2", ConversionUtils.fromDateString(billReferenceDate))) {
 				BillingService b = (BillingService) o[0];
 				CtlBillingService c = (CtlBillingService) o[1];
-								
+
 				if(!codeFilterManager.isCodeValid(b.getServiceCode(), null, false, filterDate, demo)){
 					continue;
 				}
-				
+
 				propT = new Properties();
-				
+
 				propT.setProperty("serviceCode", b.getServiceCode() );
 				propT.setProperty("serviceDesc", b.getDescription());
 				propT.setProperty("serviceDisp", b.getValue());
@@ -477,12 +478,12 @@
 				for (int ii = 0; ii < listGroup2.size(); ii++) {
 					serviceCodes.add(listGroup2.get(ii).getProperty("serviceCode"));
 				}
-				
+
 				for(CtlBillingServicePremium p : pDao.findByServceCodes(serviceCodes)) {
 					propPremium.setProperty(p.getServiceCode(), "A");
 				}
 			}
-			
+
             billingServiceCodesMap.put("group2_".concat(ctlcode),listGroup2);
 
 
@@ -493,9 +494,9 @@
 				if(!codeFilterManager.isCodeValid(b.getServiceCode(), null, false, filterDate, demo)){
 					continue;
 				}
-				
+
 				propT = new Properties();
-				
+
 				propT.setProperty("serviceCode", b.getServiceCode() );
 				propT.setProperty("serviceDesc", b.getDescription());
 				propT.setProperty("serviceDisp", b.getValue());
@@ -524,7 +525,7 @@
 				for (int ii = 0; ii < listGroup3.size(); ii++) {
 					serviceCodes.add(listGroup3.get(ii).getProperty("serviceCode"));
 				}
-				
+
 				for(CtlBillingServicePremium p : pDao.findByServceCodes(serviceCodes)) {
 					propPremium.setProperty(p.getServiceCode(), "A");
 				}
@@ -543,8 +544,7 @@
 			// create msg
 			msg += errorMsg + warningMsg;
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
 
 <%@page import="org.oscarehr.common.dao.SiteDao"%>
 <%@page import="org.oscarehr.common.model.Site"%>
@@ -554,14 +554,20 @@
 <%@page import="org.oscarehr.common.dao.ProviderPreferenceDao"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.common.model.ProviderPreference"%><html>
+<%@ page import="org.owasp.encoder.Encode" %>
 <head>
 <title>Ontario Billing</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="${ pageContext.request.contextPath }/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+
+
 <style type="text/css">
 <!--
 .demo1 {
 	color: #000033;
-	background-color: silver;
-	layer-background-color: #cccccc;
+	background-color: lightgray;
 	position: absolute;
 	top: 50px;
 	left: 170px;
@@ -570,30 +576,42 @@
 	z-index: 99;
 	visibility: hidden;
 }
+.demo1 th{
+	background-color: silver;
+
+}
+.demo1 td{
+	text-align:center;
+
+}
 -->
+select, input[type="text"] {
+	margin-bottom:0px;
+}
+.border1, .border1 th, .border1 td {
+    border: 1px solid lightgray
+
+}
 </style>
-<link rel="stylesheet" type="text/css" href="billingON.css" />
+
 <!-- calendar stylesheet -->
 <link rel="stylesheet" type="text/css" media="all"
-	href="../../../share/calendar/calendar.css" title="win2k-cold-1" />
+	href="${ pageContext.request.contextPath }/share/calendar/calendar.css" title="win2k-cold-1" />
 <!-- main calendar program -->
-<script type="text/javascript" src="../../../share/calendar/calendar.js"></script>
+<script type="text/javascript" src="${ pageContext.request.contextPath }/share/calendar/calendar.js"></script>
 <!-- language for the calendar -->
-<script type="text/javascript"
-	src="../../../share/calendar/lang/calendar-en.js"></script>
+<script src="${ pageContext.request.contextPath }/share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
 <!-- the following script defines the Calendar.setup helper function, which makes
        adding a calendar a matter of 1 or 2 lines of code. -->
 <script type="text/javascript"
-	src="../../../share/calendar/calendar-setup.js"></script>
+	src="${ pageContext.request.contextPath }/share/calendar/calendar-setup.js"></script>
 
-<script type="text/javascript"
-	src="../../../share/javascript/prototype.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath() %>/js/jquery.js"></script>
+<script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+
 <script type="text/javascript" language="JavaScript">
-<!--
-jQuery.noConflict();
+    jQuery.noConflict();
 </script>
+<!-- to load for example /oscar/js/custom/ocean/global.js and /oscar/js/custom/ocean/billing.js although those are not present in stock -->
 <oscar:customInterface section="billing"/>
 <script>
 
@@ -634,7 +652,7 @@ function showHideLayers() { //v3.0
 function onNext() {
 	var codeToAddStr = "<%=codeToAddPatientDx%>";
 	var codeToMatchStr = "<%=codeToMatchPatientDx%>";
-	
+
 	var codeToAdd = codeToAddStr.split(",");
 	var codeToMatch = {};
 	if (codeToMatchStr!="") {
@@ -644,7 +662,7 @@ function onNext() {
 			codeToMatch[codeMatch[0]] = codeMatch[1];
 		}
 	}
-	
+
 	var dxCode = document.titlesearch.dxCode.value;
 	var codeMatch = codeToMatch[dxCode];
 	if (codeToAdd.indexOf(dxCode)>=0 || codeMatch!=null) {
@@ -658,7 +676,7 @@ function onNext() {
 	} else {
 		dxCode = -1;
 	}
-    
+
     var ret = true;
     if (!checkAllDates()) {
     	ret = false;
@@ -733,6 +751,12 @@ function checkAllDates() {
 		}
     }
     return b;
+}
+
+function updateDate(){
+    if (!document.forms[0].xml_visittype.options[2].selected || !document.forms[0].xml_visittype.options[4].selected) {
+       document.getElementById("xml_vdate").value = "" ;  //only nursing homes and hospitals have admission dates
+    }
 }
 
 function checkServiceDate(s) {
@@ -830,31 +854,31 @@ function referralScriptAttach(elementName) {
      t0 = escape("document.forms[0].elements[\'"+d+"\'].value");
      //t1 = escape("");
      //alert(('searchRefDoc.jsp?param='+t0));
-     awnd=rs('att',('searchRefDoc.jsp?param='+t0),600,600,1);
-     awnd.focus();
+     awnd=rs('att',('searchRefDoc.jsp?param='+t0),1000,800,1);
+     //awnd.focus();
 }
 
 function referralScriptAttach2(elementName, name2) {
      var d = elementName;
      t0 = escape("document.forms[0].elements[\'"+d+"\'].value");
      t1 = escape("document.forms[0].elements[\'"+name2+"\'].value");
-     awnd=rs('att',('searchRefDoc.jsp?param='+t0+'&param2='+t1+'&submit=Search&keyword='+document.forms[0].elements[name2].value),600,600,1);
-     awnd.focus();
+     awnd=rs('att',('searchRefDoc.jsp?param='+t0+'&param2='+t1+'&submit=Search&keyword='+document.forms[0].elements[name2].value),1000,800,1);
+     //awnd.focus();
 }
 
 function dxScriptAttach(name2) {
 	ff = eval("document.forms[0].elements['" +name2+"']");
 	f0 = ff.value;
 	f1 = escape("document.forms[0].elements[\'"+name2+"\'].value");
-	awnd=rs('att','billingDigSearch.jsp?name='+f0 + '&search=&name2='+f1,600,600,1);
-	awnd.focus();
+	awnd=rs('att','billingDigSearch.jsp?name='+f0 + '&search=&name2='+f1,800,800,1);
+	//awnd.focus();
 }
 
 function scScriptAttach(nameF) {
 	f0 = escape(nameF.value);
 	f1 = escape("document.forms[0].elements[\'"+nameF.name + "\'].value");
 	awnd=rs('att','billingCodeSearch.jsp?name='+f0 + '&search=&name1=&name2=&nameF='+f1,600,600,1);
-	awnd.focus();
+	//awnd.focus();
 }
 
 function onDblClickServiceCode(item) {
@@ -979,7 +1003,7 @@ function showHideBox(layerName, iState) { // 1 visible, 0 hidden
 function onHistory() {
     var dd = document.forms[0].day.value;
     //alert(dd);
-    popupPage("800","640","billingONHistorySpec.jsp?demographic_no=<%=demo_no%>&demo_name=<%=URLEncoder.encode(demoname,"UTF-8")%>&orderby=appointment_date&day=" + dd);
+    popupPage("800","1000","billingONHistorySpec.jsp?demographic_no=<%=demo_no%>&demo_name=<%=URLEncoder.encode(demoname,"UTF-8")%>&orderby=appointment_date&day=" + dd);
 }
 
 function prepareBack() {
@@ -1052,7 +1076,21 @@ function changeCodeDesc() {
     var url  = "billingON_dx_desc.jsp";
     var pars = "diagnostic_code=" + document.forms[0].dxCode.value;
 
-    var descAjax = new Ajax.Updater("code_desc",url, {method: "get", parameters: pars});
+    //prototype
+    //var descAjax = new Ajax.Updater("code_desc",url, {method: "get", parameters: pars});
+
+    jQuery.ajax({
+       url: url,
+       type: "get",
+       dataType: "html",
+       data: pars,
+       success: function(returnData){
+         jQuery("#code_desc").html(returnData);
+       },
+       error: function(e){
+         alert(e);
+       }
+    });
 }
 
 //this function will show the content within the <div> tag of billing codes
@@ -1102,33 +1140,29 @@ function toggleDiv(selectedBillForm, selectedBillFormName,billType)
 </script>
 </head>
 
-<body onload="prepareBack();changeCodeDesc();" topmargin="0">
+<body onload="prepareBack();changeCodeDesc();" >
 	<div id="Instrdiv" class="demo1">
 
-		<table bgcolor='#007FFF' width='99%'>
+		<table style="width: 99%;">
 			<tr>
-				<th align='right'><a href=#
-					onclick="showHideBox('Instrdiv',0); return false;"><font
-						color="red">X</font></a></th>
+				<th style="text-align: right"><a href="javascript:void(0)"
+					onclick="showHideBox('Instrdiv',0); return false;">X</a></th>
 			</tr>
 			<tr>
-				<th><a href=#
-					onclick="showHideBox('Instrdiv',0); return false;"><font
-						color="#66FF66">Double clicking any code below will move up
-						to specialist billing.</font><br>&nbsp;</a></th>
+				<td><a href="javascript:void(0);" style="color:black"
+					onclick="showHideBox('Instrdiv',0); return false;">Double clicking any code below will move up
+						to specialist billing.<br>&nbsp;</a></td>
 			</tr>
 
 		</table>
 	</div>
 	<div id="Layer1"
-		style="position: absolute; left: 360px; top: 165px; width: 410px; height: 210px; z-index: 1; background-color: #FFCC00; layer-background-color: #FFCC00; border: 1px none #000000; visibility: hidden">
-		<table width="98%" border="0" cellspacing="0" cellpadding="0"
-			align=center>
-			<tr bgcolor="#393764">
-				<td width="96%" height="7" bgcolor="#FFCC00"><font size="-2"
-					face="Geneva, Arial, Helvetica, san-serif" color="#000000">
-					<b>Billing Form</b></font></td>
-				<td width="3%" bgcolor="#FFCC00" height="7"><b><a href="#"
+		style="position: absolute; left: 360px; top: 165px; width: 410px; height: 210px; z-index: 1; visibility: hidden">
+		<table style="width: 98%; margin:auto; ">
+			<tr>
+				<td style="width: 96%; background-color:silver; height:12px;">
+					<b>Billing Form</b></td>
+				<td style="width: 3%; background-color:silver; height:12px;"><b><a href="javascript:void(0);"
 						onclick="showHideLayers('Layer1','','hide');return false;">X</a></b></td>
 			</tr>
 			<%
@@ -1144,30 +1178,29 @@ function toggleDiv(selectedBillForm, selectedBillFormName,billType)
 			    currentFormName = ctlcodename;
 			}
 			String billType = "";
-			
+
 			for(CtlBillingType bt : ctlBillingtypeDao.findByServiceType(ctlcode)) {
 				billType = bt.getBillType();
 	        }
 %>
-			<tr bgcolor=<%=ctlCount%2==0 ? "#FFFFFF" : "#EEEEFF"%>>
-				<td colspan="2"><b><font size="-1" color="#7A388D">
-						<a href="#"
+			<tr>
+				<td colspan="2" style="background-color:lightgray;"><b>
+						<a href="javascript:void(0);"
 							onclick="toggleDiv('<%=ctlcode%>', '<%=ctlcodename %>','<%=billType%>');showHideLayers('Layer1','','hide');"><%=ctlcodename%></a>
-					</font></b></td>
+					</b></td>
 			</tr>
 			<%}%>
 		</table>
 	</div>
 
 	<div id="Layer2"
-		style="position: absolute; left: 1px; top: 26px; width: 435px; height: 680px; z-index: 2; background-color: #FFCC00; layer-background-color: #FFCC00; border: 1px none #000000; visibility: hidden">
-		<table width="98%" border="0" cellspacing="0" cellpadding="0"
-			align=center>
+		style="position: absolute; left: 1px; top: 26px; width: 435px; height: 680px; z-index: 2; background-color: #FFCC00; border: 1px none #000000; visibility: hidden">
+		<table style="width: 98%; margin:auto;">
 			<tr>
-				<td width="10%"><b><font size="-2">DxCode</font></b></td>
-				<td width="85%"><b><font size="-2">Description</font></b></td>
-				<td><a href="#" onclick="showHideLayers('Layer2','','hide');return false">
-					<font face="verdana">X</font></a>
+				<td style="width: 10%"><b>DxCode</b></td>
+				<td style="width: 85%"><b>Description</b></td>
+				<td><a href="javascript:void(0);" onclick="showHideLayers('Layer2','','hide');return false">
+					</a>
 				</td>
 			</tr>
 		</table>
@@ -1183,25 +1216,25 @@ function toggleDiv(selectedBillForm, selectedBillFormName,billType)
 
 			<%
 			DiagnosticCodeDao dcDao = SpringUtils.getBean(DiagnosticCodeDao.class);
-		
+
 		for(Object[] o : dcDao.findDiagnosictsAndCtlDiagCodesByServiceType(st)) {
 			DiagnosticCode d = (DiagnosticCode) o[0];
 			CtlDiagCode c = (CtlDiagCode) o[1];
-			
+
 				ctldiagcode = d.getDiagnosticCode();
 				ctldiagcodename = d.getDescription();
 				ctlCount++;
 %>
-			<table width="98%" border="0" cellspacing="0" cellpadding="1" align=center>
-				<tr bgcolor=<%=ctlCount%2==0 ? "#FFFFFF" : "#EEEEFF"%>>
-					<td width="10%">
-							<a href="#" onclick="document.forms[0].dxCode.value='<%=ctldiagcode%>';showHideLayers('Layer2','','hide');changeCodeDesc();return false;">
-								<font face="verdana" size="-2"><%=ctldiagcode%></font>
+			<table style="width: 98%; margin:auto;" class="table-striped table-hover" >
+				<tr>
+					<td style="width: 10%">
+							<a href="javascript:void(0);" onclick="document.forms[0].dxCode.value='<%=ctldiagcode%>';showHideLayers('Layer2','','hide');changeCodeDesc();return false;">
+								<%=ctldiagcode%>
 							</a>
 					</td>
-					<td colspan="2">
-						<a href="#" onclick="document.forms[0].dxCode.value='<%=ctldiagcode%>';showHideLayers('Layer2','','hide');changeCodeDesc();return false;">
-							<font face="verdana" size="-2"><%=ctldiagcodename.length() < 56 ? ctldiagcodename : ctldiagcodename.substring(0, 55)%></font>
+					<td>
+						<a href="javascript:void(0);" onclick="document.forms[0].dxCode.value='<%=ctldiagcode%>';showHideLayers('Layer2','','hide');changeCodeDesc();return false;">
+							<%=ctldiagcodename.length() < 56 ? Encode.forHtml(ctldiagcodename) : Encode.forHtml(ctldiagcodename.substring(0, 55))%>
 						</a>
 					</td>
 				</tr>
@@ -1223,16 +1256,16 @@ if(checkFlag == null) checkFlag = "0";
 		<input type="hidden" name="addToPatientDx" />
 		<input type="hidden" name="codeMatchToPatientDx" />
 
-		<table border="0" cellspacing="0" cellpadding="0" class="myDarkGreen"
-			width="100%">
+		<table class="xmyDarkGreen"
+			style="width: 100%; background-color: silver;">
 			<tr>
-				<td><b><font color="#FFFFFF">Ontario Billing</font></b></td>
-				<td align="right"><oscar:help keywords="1.4 Billing"
-						key="app.top1" style="color: #FFFFFF" /> <font color="#FFFFFF">
-					| </font> <a href=#
-					onclick="popupPage(460,680,'billingONfavourite.jsp'); return false;">
-						<font color="#FFFFFF">Edit</font>
-				</a> <select name="cutlist" id="cutlist" onchange="changeCut(this)">
+				<td><H4><i class="icon-money" style="margin-left:10px;"></i>&nbsp;Ontario Billing</H4></td>
+				<td style="text-align: right"><i class="icon-question-sign"></i>&nbsp;<oscar:help keywords="Billing"
+						key="app.top1" />
+					|  <i class="icon-edit"></i><a href="javascript:void(0);"
+					onclick="popupPage(800,700,'billingONfavourite.jsp'); return false;">
+						Edit
+				</a> <select name="cutlist" id="cutlist" onchange="changeCut(this)" >
 						<option selected="selected" value="">- SUPER CODES -</option>
 						<% //
 		    List sL = tdbObj.getBillingFavouriteList();
@@ -1240,88 +1273,90 @@ if(checkFlag == null) checkFlag = "0";
 						<option value="<%=(String) sL.get(i+1)%>"><%=(String) sL.get(i)%></option>
 						<% } %>
 				</select></td>
-				<td align="right" width="10%" nowrap><input type="submit"
-					name="submit" value="Next" style="width: 120px;" /> <input
-					type="button" name="button" value="Exit" style="width: 120px;"
+				<td style="text-align: right; width: 10%; white-space:nowrap">
+                    <input type="submit"
+					name="submit" value="Next" style="width: 120px;" class="btn btn-primary"/>
+                    <input
+					type="button" class="btn" name="button" value="Exit" style="width: 120px;" class="btn"
 					onclick="self.close();" /> &nbsp;</td>
 			</tr>
 		</table>
 
-		<table border="0" cellpadding="0" cellspacing="2" width="100%">
+		<table style="width: 100%; border-spacing:2px;">
 			<tr>
 				<td>
-					<table border="0" cellspacing="0" cellpadding="0" width="100%"
-						class="myYellow">
+					<table  style="width: 100%;"
+						>
 						<tr>
-							<td nowrap bgcolor="#FFCC99" width="10%" align="center"><b>&nbsp;<oscar:nameage
-										demographicNo="<%=demo_no%>" /> <%=roster_status%></b> <%if (appt_no.compareTo("0") == 0) {%>
-								<img src="../../../images/cal.gif" id="service_date_cal" /> <input
-								type="text" id="service_date" name="service_date" readonly
+							<td style="white-space:nowrap; width: 10%; text-align: center"><b>&nbsp;<oscar:nameage
+										demographicNo="<%=demo_no%>" /> <%=roster_status%></b>
+                            <%if (appt_no.compareTo("0") == 0) {%>
+                                <span class="input-append">
+								<input type="text" id="service_date" name="service_date" readonly
 								value="<%=request.getParameter("service_date")!=null? request.getParameter("service_date"):strToday%>"
-								size="10" /> <%} else {%> <input type="text" name="service_date"
+								style="width: 80px; height:14px;  vertical-align: bottom;">
+                                <img src="${ pageContext.request.contextPath }/images/cal.gif" id="service_date_cal" style="height:14px;  vertical-align: bottom;" class="add-on" alt="cal"></span>
+                            <%} else {%>
+                                <input type="text" name="service_date"
 								readonly value="<%=request.getParameter("appointment_date")%>"
-								size="10" maxlength="10" style="width: 80px;" /> <%}%></td>
+								maxlength="10" style="width: 80px;" > <%}%></td>
 							<%
-                                                              String warningStyle = "";
+                                                              String warningClass = "";
                                                               if (billingRecomendations.length() > 0) {
-                                                                  warningStyle="border:solid 3px red;padding-left:10px;line-height:150%;font-family:Arial;";
+                                                                  warningClass="alert";
                                                               }
                                                         %>
-							<td
-								style="<%=warningStyle%> color: red; background-color: #FFFFFF; font-size: 18px; font-weight: bold;"><%=billingRecomendations.toString()%></td>
-							<td align="center"><font color="black"><%=msg%></font></td>
+							<td style="text-align: center;"
+								class="<%=warningClass%>"><%=billingRecomendations.toString()%></td>
+							<td style="text-align: center;"><%=msg%></td>
 						</tr>
 					</table>
 
-					<table border="1" cellspacing="0" cellpadding="0" width="100%"
-						bordercolorlight="#99A005" bordercolordark="#FFFFFF"
-						bgcolor="#FFFFFF">
+					<table class="border1"  style="width: 100%;">
 						<tr>
-							<td width="46%">
-								<table border="1" cellspacing="2" cellpadding="0" width="100%"
-									bordercolorlight="#99A005" bordercolordark="#FFFFFF"
-									class="myIvory">
+							<td style="width: 46%">
+								<table class="border1" style="width: 100%; border-spacing:2px;"
+									>
 									<tr>
-										<td colspan="2" class="myPink">Specialist billing
-											&nbsp;&nbsp;&nbsp;&nbsp; <a href=#
+										<td colspan="2" >Specialist billing
+											&nbsp;&nbsp;&nbsp;&nbsp; <a href="javascript:void(0);"
 											title="Double click shaded fields for drop down or calculation"
-											onClick="showHideBox('Instrdiv',1);return false;"> <font
-												color='red'>Instruction</font>
+											onClick="showHideBox('Instrdiv',1);return false;">Instruction
 										</a>
 										</td>
-										<td valign="top" rowspan="2">
-											<table border="0" cellspacing="0" cellpadding="0"
-												width="100%">
+										<td style="vertical-align:top" rowspan="2">
+											<table
+												style="width: 100%;">
 												<tr>
-													<td width="15%">&nbsp;</td>
-													<td nowrap><font size="-2">
+													<td style="width: 15%">&nbsp;</td>
+													<td style="white-space:nowrap">
 														<div id="code_desc"></div>
-													</font></td>
+													</td>
 												</tr>
 												<tr>
-													<td><a href="#"
+													<td><a href="javascript:void(0);"
 														onclick="showHideLayers('Layer2','','show','Layer1','','hide'); return false;">Dx</a>
 													</td>
-													<td><input type="text" name="dxCode" size="5"
+													<td><input type="text" name="dxCode" class="input-mini"
 														maxlength="5" ondblClick="dxScriptAttach('dxCode')"
 														onchange="changeCodeDesc();"
 														value="<%=request.getParameter("dxCode")!=null?request.getParameter("dxCode"):dxCode%>" />
-														<a href=# onclick="dxScriptAttach('dxCode');">Search</a>
+														<a href="javascript:void(0);" onclick="dxScriptAttach('dxCode');">Search</a>
 													</td>
 												</tr>
 												<tr>
 													<td>dx1</td>
-													<td><input type="text" name="dxCode1" size="5"
+													<td><input type="text" name="dxCode1" class="input-mini"
 														maxlength="5" ondblClick="dxScriptAttach('dxCode1')"
 														value="<%=request.getParameter("dxCode1")!=null?request.getParameter("dxCode1"):""%>" />
-														<a href=# onclick="dxScriptAttach('dxCode1')">Search</a></td>
+														<a href="javascript:void(0);" onclick="dxScriptAttach('dxCode1')">Search</a></td>
 												</tr>
 												<tr>
 													<td>dx2</td>
-													<td><input type="text" name="dxCode2" size="5"
+													<td><input type="text" name="dxCode2" class="input-mini"
 														maxlength="5" ondblClick="dxScriptAttach('dxCode2')"
 														value="<%=request.getParameter("dxCode2")!=null?request.getParameter("dxCode2"):""%>" />
-														<a href=# onclick="dxScriptAttach('dxCode2')">Search</a></td>
+														<a href="javascript:void(0);" onclick="dxScriptAttach('dxCode2')">Search</a></td>
 												</tr>
 											</table> <a
 											href="javascript:referralScriptAttach2('referralCode','referralDocName')">Refer.
@@ -1342,53 +1377,53 @@ if(checkFlag == null) checkFlag = "0";
 
 
 			%> <input type="checkbox" name="rfcheck" value="checked"
-											<%=checkRefBox%> onclick="onClickRefDoc()" /><br /> <input
-											type="text" name="referralCode" size="5" maxlength="6"
-											value="<%=refNo%>">&nbsp; <input type="text"
-											name="referralSpet" size="2" maxlength="2"
-											value="<%=referSpet==null?"":referSpet%>"><br /> <input
-											type="text" name="referralDocName" size="22" maxlength="30"
+											<%=checkRefBox%> onclick="onClickRefDoc()" /><br />
+                                            <input
+											type="text" name="referralCode" class="input-mini" maxlength="6" placeholder="<bean:message
+													key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.referralNo" />"
+											value="<%=refNo%>">&nbsp;
+                                            <input type="text" placeholder="<bean:message
+													key="dms.documentReport.msgType" />"
+											name="referralSpet" class="input-small" maxlength="2"
+											value="<%=referSpet==null?"":referSpet%>"><br />
+                                            <input placeholder="<bean:message
+													key="demographic.demographiceditdemographic.formRefDoc" />"
+											type="text" name="referralDocName" class="input-medium" maxlength="30"
 											value="<%=refName%>">
 										</td>
 									</tr>
 									<tr>
-										<td nowrap width="33%" align="center" class="myPink"><b>Code
+										<td style="white-space:nowrap; width: 33%; text-align: center" class="xmyPink"><b>Code
 												&nbsp; Time &nbsp;%</b><br /> <%	    for (int i = 0; i < BillingDataHlp.FIELD_SERVICE_NUM / 2; i++) { %>
-											<input type="text" name="serviceCode<%=i%>" size="4"
-											maxlength="15"
+											<input type="text" name="serviceCode<%=i%>" class="input-mini"
+
 											value="<%=request.getParameter("serviceCode"+i)!=null?request.getParameter("serviceCode"+i):""%>"
 											onDblClick="scScriptAttach(this)" onBlur="upCaseCtrl(this)" />x
-											<input type="text" name="serviceUnit<%=i%>" size="2"
-											maxlength="4" style="width: 20px;"
+											<input type="text" name="serviceUnit<%=i%>" size="2" maxlength="4" style="width: 20px;"
 											value="<%=request.getParameter("serviceUnit"+i)!=null?request.getParameter("serviceUnit"+i):""%>" />@
-											<input type="text" name="serviceAt<%=i%>" size="3"
-											maxlength="4" style="width: 30px"
+											<input type="text" name="serviceAt<%=i%>" size="3" maxlength="4" style="width: 30px"
 											value="<%=request.getParameter("serviceAt"+i)!=null?request.getParameter("serviceAt"+i):""%>" /><br />
 											<%	    } %></td>
-										<td nowrap width="33%" align="center" class="myPink"><b>Code
+										<td style="white-space:nowrap; width: 33%; text-align: center" class="xmyPink"><b>Code
 												&nbsp; Time &nbsp;%</b><br /> <%	    for (int i = BillingDataHlp.FIELD_SERVICE_NUM / 2; i < BillingDataHlp.FIELD_SERVICE_NUM; i++) { %>
-											<input type="text" name="serviceCode<%=i%>" size="4"
-											maxlength="15"
+											<input type="text" name="serviceCode<%=i%>" class="input-mini"
+
 											value="<%=request.getParameter("serviceCode"+i)!=null?request.getParameter("serviceCode"+i):""%>"
 											onDblClick="scScriptAttach(this)" onBlur="upCaseCtrl(this)" />x
-											<input type="text" name="serviceUnit<%=i%>" size="2"
-											maxlength="2" style="width: 20px;"
+											<input type="text" name="serviceUnit<%=i%>" size="2" maxlength="2" style="width: 20px;"
 											value="<%=request.getParameter("serviceUnit"+i)!=null?request.getParameter("serviceUnit"+i):""%>" />@
-											<input type="text" name="serviceAt<%=i%>" size="3"
-											maxlength="4" style="width: 30px"
+											<input type="text" name="serviceAt<%=i%>" size="3" maxlength="4" style="width: 30px"
 											value="<%=request.getParameter("serviceAt"+i)!=null?request.getParameter("serviceAt"+i):""%>" /><br />
 											<%	    } %></td>
 									</tr>
 								</table>
 							</td>
-							<td valign="top">
-								<table border="1" cellspacing="2" cellpadding="0" width="100%"
-									bordercolorlight="#99A005" bordercolordark="#FFFFFF"
-									class="myGreen">
+							<td style="vertical-align:top">
+								<table class="border1 table-hover" style="width: 100%; border-spacing:2px;">
 									<tr>
-										<td nowrap width="30%" align="center"><b>Billing
+										<td style="white-space:nowrap; width: 30%"><b>Billing
 												Physician</b></td>
-										<td width="20%">
+										<td style="width: 20%">
 											<% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable())
 { // multisite start ==========================================
         	SiteDao siteDao = (SiteDao)SpringUtils.getBean("siteDao");
@@ -1396,22 +1431,22 @@ if(checkFlag == null) checkFlag = "0";
 
       %> <script>
 var _providers = [];
-<%	for (int i=0; i<sites.size(); i++) { 
+<%	for (int i=0; i<sites.size(); i++) {
 	Set<Provider> siteProviders = sites.get(i).getProviders();
 	List<Provider>  siteProvidersList = new ArrayList<Provider> (siteProviders);
      Collections.sort(siteProvidersList,(new Provider()).ComparatorName());%>
-	_providers["<%= sites.get(i).getName() %>"]="<% Iterator<Provider> iter = siteProvidersList.iterator();
+	_providers["<%= Encode.forJavaScriptBlock(sites.get(i).getName()) %>"]="<% Iterator<Provider> iter = siteProvidersList.iterator();
 	while (iter.hasNext()) {
 		Provider p=iter.next();
 		if ("1".equals(p.getStatus()) && StringUtils.isNotBlank(p.getOhipNo())) {
-	%><option value='<%= p.getProviderNo() %>|<%= p.getOhipNo() %>' ><%=p.getLastName()%>, <%=p.getFirstName()%></option><%}}%>";
+	%><option value='<%= p.getProviderNo() %>|<%= p.getOhipNo() %>' ><%=Encode.forHtmlAttribute(p.getLastName())%>, <%=Encode.forHtmlAttribute(p.getFirstName())%></option><%}}%>";
 <%}%>
 function changeSite(sel) {
 	sel.form.xml_provider.innerHTML=sel.value=="none"?"":_providers[sel.value];
 	sel.style.backgroundColor=sel.options[sel.selectedIndex].style.backgroundColor;
 }
       </script> <select id="site" name="site" onchange="changeSite(this)"
-											style="width: 140px">
+											>
 												<option value="none" style="background-color: white">---select
 													clinic---</option>
 												<%
@@ -1420,9 +1455,9 @@ function changeSite(sel) {
 												      	if (selectedSite==null) {
 												      		OscarAppointmentDao apptDao = SpringUtils.getBean(OscarAppointmentDao.class);
 												      		for(Object[] obj : apptDao.findAppointmentAndProviderByAppointmentNo(ConversionUtils.fromIntString(appt_no))) {
-												      			Appointment a = (Appointment) obj[0]; 
+												      			Appointment a = (Appointment) obj[0];
 												      			Provider p = (Provider) obj[1];
-												      			
+
 												      			selectedSite = a.getLocation();
 												      			xmlp = a.getProviderNo() + "|" + p.getOhipNo();
 												      		}
@@ -1431,14 +1466,14 @@ function changeSite(sel) {
 												%>
 												<option value="<%=sites.get(i).getName()%>"
 													style="background-color:<%=sites.get(i).getBgColor()%>"
-													<%=sites.get(i).getName().toString().equals(selectedSite)?"selected":""%>><%=sites.get(i).getName()%></option>
+													<%=sites.get(i).getName().toString().equals(selectedSite)?"selected":""%>><%=Encode.forHtmlContent(sites.get(i).getName())%></option>
 												<%
 													}
 												%>
 										</select> <select id="xml_provider" name="xml_provider"
-											style="width: 140px"></select> <script>
+											></select> <script>
      	changeSite(document.getElementById("site"));
-      	document.getElementById("xml_provider").value='<%=request.getParameter("xml_provider")==null?xmlp:request.getParameter("xml_provider")%>';
+      	document.getElementById("xml_provider").value='<%=Encode.forJavaScriptBlock(request.getParameter("xml_provider")==null?xmlp:request.getParameter("xml_provider"))%>';
       	</script> <%
  	// multisite end ==========================================
  } else {
@@ -1451,7 +1486,7 @@ function changeSite(sel) {
 												%>
 												<option value="<%=propT.getProperty("proOHIP")%>"
 													<%=providerview.equals(tmp[0].trim())?"selected":""%>>
-													<b><%=propT.getProperty("last_name")%>, <%=propT.getProperty("first_name")%></b>
+													<b><%=Encode.forHtmlContent(propT.getProperty("last_name")+", "+propT.getProperty("first_name"))%></b>
 												</option>
 												<%
 													} else {
@@ -1465,12 +1500,12 @@ function changeSite(sel) {
 														    propT = (Properties) vecProvider.get(i);
                                                                                                                     String info = propT.getProperty("proOHIP");
                                                                                                                     String prov = info.substring(0, info.indexOf("|"));
-                                                                                                                    
+
 												%>
-                                                                                                
+
 												<option value="<%=propT.getProperty("proOHIP")%>"
 													<%=providerview.equalsIgnoreCase(prov)?"selected":""%>>
-													<b><%=propT.getProperty("last_name")%>, <%=propT.getProperty("first_name")%></b>
+													<b><%=Encode.forHtmlContent(propT.getProperty("last_name")+", "+propT.getProperty("first_name"))%></b>
 												</option>
 												<%
 													}
@@ -1481,13 +1516,13 @@ function changeSite(sel) {
  %>
 
 										</td>
-										<td nowrap width="30%" align="center"><b>Assig. Phys.</b></td>
-										<td width="20%"><%=providerBean.getProperty(assgProvider_no, "").length() > 15
-					    ? providerBean.getProperty(assgProvider_no, "").substring(0, 15)
+										<td style="white-space:nowrap; width: 30%"><b>Assig. Phys.</b></td>
+										<td style="width: 20%"><%=providerBean.getProperty(assgProvider_no, "").length() > 15
+					    ? providerBean.getProperty(assgProvider_no, "").substring(0, 14)
 					    : providerBean.getProperty(assgProvider_no, "")%></td>
 									</tr>
 									<tr>
-										<td width="30%"><b> <%
+										<td style="width: 30%"><b> <%
  	if (OscarProperties.getInstance().getBooleanProperty("rma_enabled", "true")) {
  %>
 												Clinic Nbr <%
@@ -1497,7 +1532,7 @@ function changeSite(sel) {
  	}
  %>
 										</b></td>
-										<td width="20%"><select name="xml_visittype">
+										<td style="width: 20%"><select name="xml_visittype" onchange="updateDate()">
 												<%
 													if (OscarProperties.getInstance().getBooleanProperty("rma_enabled", "true")) {
 												%>
@@ -1541,8 +1576,8 @@ function changeSite(sel) {
 													}
 												%>
 										</select></td>
-										<td width="30%"><b>Billing Type</b></td>
-										<td width="20%">
+										<td style="width: 30%"><b>Billing Type</b></td>
+										<td style="width: 20%">
 											<%
 												String srtBillType = request.getParameter("xml_billtype")!=null ? request.getParameter("xml_billtype") : defaultBillType;
 											%> <select name="xml_billtype" onchange="onChangePrivate();">
@@ -1583,20 +1618,22 @@ function changeSite(sel) {
 												<%
 													//
 													    String billLocationNo="", billLocation="";
+String strLocation ="";
 													    List lLocation = tdbObj.getFacilty_num();
+                                                        String last_location = getDefaultValue(request.getParameter("xml_visittype"),vecHist,"clinic_ref_code");
 													    for (int i = 0; i < lLocation.size(); i = i + 2) {
 														billLocationNo = (String) lLocation.get(i);
 														billLocation = (String) lLocation.get(i + 1);
-														String strLocation = request.getParameter("xml_location") != null ? request.getParameter("xml_location") : clinicview;
+														strLocation = request.getParameter("xml_location") != null ? request.getParameter("xml_location") : last_location != null ? last_location  : clinicview;
 												%>
 												<option value="<%=billLocationNo + "|" + billLocation%>"
 													<%=strLocation.startsWith(billLocationNo)?"selected":""%>>
-													<%=billLocation%>
+                                                    <%=billLocation%>
 												</option>
 												<%
 													}
 												%>
-										</select> Manual: <input type="checkbox" name="m_review" value="Y"
+										</select>Manual Review Flag: <input type="checkbox" name="m_review" value="Y"
 											<%=m_review.equals("Y")?"checked":""%>></td>
 									</tr>
 									<tr>
@@ -1651,7 +1688,7 @@ function changeSite(sel) {
 									</tr>
 									<tr>
 										<td><b>Admission Date</b></td>
-										<td>
+										<td  class="input-append">
 											<%
 												String admDate = "";
 											          String inPatient = oscarVariables.getProperty("inPatient");
@@ -1664,21 +1701,20 @@ function changeSite(sel) {
 											        	  MiscUtils.getLogger().error("Error", inPatientEx);
 												     admDate = "";
 											          }
-
-												  if (visitType.startsWith("02")) admDate = visitdate;
-											%> <!--input type="text" name="xml_vdate" id="xml_vdate" value="<%--=request.getParameter("xml_vdate")!=null? request.getParameter("xml_vdate"):visitdate--%>" size='10' maxlength='10' -->
+												  if (visitType.startsWith("02") || visitType.startsWith("04")) admDate = getDefaultValue(request.getParameter("visitdate"),vecHist,"visitdate");
+											%>
 											<input type="text" name="xml_vdate" id="xml_vdate"
 											value="<%=request.getParameter("xml_vdate")!=null? request.getParameter("xml_vdate"):admDate%>"
-											size='10' maxlength='10' readonly> <img
-											src="../../../images/cal.gif" id="xml_vdate_cal" />
+											class="input-small" style="height: 14px; margin-top:4px;" readonly> <img alt="cal" class="add-on" style="height:14px;  margin-top:4px;"
+											src="${ pageContext.request.contextPath }/images/cal.gif" id="xml_vdate_cal" />
 										</td>
-										<td colspan="2"><a href="#"
+										<td colspan="2"><a href="javascript:void(0);"
 											onclick="showHideLayers('Layer1','','show');return false;">
-												Billing form</a>: <input type="text" name="billFormName"
+												Billing form</a>: <input type="text" name="billFormName" class="input-large"
 											id="billFormName" size="30" readonly
 											value="<%=currentFormName.length() < 40 ? currentFormName : currentFormName.substring(0, 40)%>" />
-											<input type="hidden" name="billForm" id="billForm" size="30"
-											maxlength="30" readonly value="<%=ctlBillForm%>" /></td>
+											<input type="hidden" name="billForm" id="billForm"
+											value="<%=ctlBillForm%>" /></td>
 									</tr>
 									<%
 										if (!org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
@@ -1692,7 +1728,7 @@ function changeSite(sel) {
 										String suggestSite = sitePrep.getSuggestSite(siteList, thisSite, strServDate, apptProvider_no );
 									%>
 									<tr>
-										<td align="right">Site</td>
+										<td style="text-align: right">Site</td>
 										<td colspan="3"><select name="siteId">
 												<%
 													for(int i=0; i<siteList.length; i++) {
@@ -1719,25 +1755,21 @@ function changeSite(sel) {
 			</tr>
 			<tr>
 				<td>
-					<table width="100%" border="0" cellspacing="0" cellpadding="0"
-						height="137">
+					<table style="width: 100%; height:137px">
 						<tr>
-							<td valign="top" width="33%">
+							<td style="vertical-align:top; width: 33%">
 								<%
 									for( int j=0; j< listServiceType.size(); j++) {
 								        ArrayList<Properties> vecCodeCol1 = new ArrayList<Properties>();
 								        vecCodeCol1 = billingServiceCodesMap.get("group1_".concat(listServiceType.get(j)));
 								        headerTitle1 = titleMap.get("group1_".concat(listServiceType.get(j)));
 								%>
-								<div id="group1_<%=listServiceType.get(j)%>"
-									style="display: none;">
-									<table width="100%" border="1" cellspacing="0" cellpadding="1"
-										height="0" bordercolorlight="#99A005"
-										bordercolordark="#FFFFFF">
-										<tr class="myYellow">
-											<th width="10%" nowrap><div class="smallFont"><%=headerTitle1%></div></th>
-											<th width="70%"><div class="smallFont">Description</div></th>
-											<th><div class="smallFont">Fee</div></th>
+								<div id="group1_<%=listServiceType.get(j)%>" style="display: none;">
+									<table style="width: 100%;" class="border1 table-striped table-hover">
+										<tr>
+											<th style="width: 10%; white-space:nowrap; background-color:silver"><div class="smallFont"><%=headerTitle1%></div></th>
+											<th style="width: 70%; background-color:silver"><div class="smallFont">Description</div></th>
+											<th style="background-color:silver"><div class="smallFont">Fee</div></th>
 										</tr>
 
 
@@ -1755,28 +1787,28 @@ function changeSite(sel) {
 												if (propPremium.getProperty(serviceCode) != null) premiumFlag = "A";
 												else premiumFlag = "";
 
-												String bgcolor = i % 2 == 0 ? "bgcolor='#FFFFFF'" : "class='myGreen'";
-												if (request.getParameter("xml_" + serviceCode) != null) bgcolor = "bgcolor='#66FF66'";
+												String bgcolor = "";
+												if (request.getParameter("xml_" + serviceCode) != null) bgcolor = "background-color: #66FF66;";
 										%>
-										<tr <%=bgcolor%>>
-											<td align="left" style="<%=displayStyle%>" nowrap><input
+										<tr>
+											<td style="<%=displayStyle%> text-align: left; white-space:nowrap; <%=bgcolor%>" ><input
 												type="checkbox" id="xml_<%=serviceCode%>"
 												name="xml_<%=serviceCode%>" value="checked"
 												onclick="refreshServicesChecked(this);"
 												<%=request.getParameter("xml_"+serviceCode)!=null?request.getParameter("xml_"+serviceCode):""%>
 												<%=bSingleClick? "onClick='onClickServiceCode(this)'" :""%> />
 												<span id="sc<%=(""+i).substring(0,1)+serviceCode%>"
+												onclick="getElementById('xml_<%=serviceCode%>').click();"
 												ondblclick="onDblClickServiceCode(this)"><%=serviceCode%></span>
-
 											</td>
-											<td
+											<td style="<%=displayStyle%> <%=bgcolor%>"
 												<%=serviceDesc.length()>30?"title=\""+serviceDesc+"\"":""%>
 												<%=displayStyle.equals("")? "class=\"smallFont\"": "style=\"" + displayStyle + "\""%>>
-												<div><%=serviceDesc.length() > 30 ? serviceDesc.substring(0, 30) + "..." : serviceDesc%>
+												<div onclick="getElementById('xml_<%=serviceCode%>').click();"><%=serviceDesc.length() > 30 ? serviceDesc.substring(0, 30) + "..." : serviceDesc%>
 													<!--<input type="hidden" name="desc_xml_<%=serviceCode%>" value="<%=serviceDesc%>" />-->
 												</div>
 											</td>
-											<td align="right">
+											<td style="text-align: right; <%=displayStyle%> <%=bgcolor%>">
 												<div class="smallFont"><%=serviceDisp%></div> <input
 												type="hidden" name="sli_xml_<%=serviceCode%>"
 												value="<%=sliFlag%>" /> <!--<input type="hidden" name="price_xml_<%=serviceCode%>" value="<%=serviceDisp%>" />
@@ -1792,7 +1824,7 @@ function changeSite(sel) {
  %>
 
 							</td>
-							<td width="33%" valign="top">
+							<td style="width: 33%" valign="top">
 								<%
 									for( int j=0; j< listServiceType.size(); j++) {
 
@@ -1804,15 +1836,13 @@ function changeSite(sel) {
 									style="display: none;">
 
 
-									<table width="100%" border="1" cellspacing="0" cellpadding="1"
-										height="0" bordercolorlight="#99A005"
-										bordercolordark="#FFFFFF">
-										<tr class="myYellow">
-											<th width="10%" nowrap>
+									<table style="width: 100%;" class="border1 table-striped table-hover">
+										<tr>
+											<th style="width: 10%; white-space:nowrap; background-color:silver">
 												<div class="smallFont"><%=headerTitle2%></div>
 											</th>
-											<th width="70%"><div class="smallFont">Description</div></th>
-											<th><div class="smallFont">Fee</div></th>
+											<th style="width: 70%; background-color:silver"><div class="smallFont">Description</div></th>
+											<th style="background-color:silver"><div class="smallFont">Fee</div></th>
 										</tr>
 
 										<%
@@ -1829,28 +1859,29 @@ function changeSite(sel) {
 												if (propPremium.getProperty(serviceCode) != null) premiumFlag = "A";
 												else premiumFlag = "";
 
-												String bgcolor = i % 2 == 0 ? "bgcolor='#FFFFFF'" : "class='myGreen'";
-												if (request.getParameter("xml_" + serviceCode) != null) bgcolor = "bgcolor='#66FF66'";
+												String bgcolor = "";
+												if (request.getParameter("xml_" + serviceCode) != null) bgcolor = "background-color: #66FF66;";
 										%>
-										<tr <%=bgcolor%>>
-											<td align="left" style="<%=displayStyle%>" nowrap><input
+										<tr >
+											<td style="text-align: left; <%=displayStyle%> white-space:nowrap; <%=bgcolor%>"><input
 												type="checkbox" id="xml_<%=serviceCode%>"
 												name="xml_<%=serviceCode%>" value="checked"
 												onclick="refreshServicesChecked(this);"
 												<%=request.getParameter("xml_"+serviceCode)!=null?request.getParameter("xml_"+serviceCode):""%>
 												<%=bSingleClick? "onClick='onClickServiceCode(this)'" :""%> />
 												<span id="sc<%=(""+i).substring(0,1)+serviceCode%>"
+												onclick="getElementById('xml_<%=serviceCode%>').click();"
 												onDblClick="onDblClickServiceCode(this)"><%=serviceCode%></span>
 
 											</td>
-											<td
+											<td style="<%=displayStyle%> <%=bgcolor%>"
 												<%=serviceDesc.length()>30?"title=\""+serviceDesc+"\"":""%>
 												<%=displayStyle.equals("")? "class=\"smallFont\"": "style=\"" + displayStyle + "\""%>>
-												<div>
+												<div onclick="getElementById('xml_<%=serviceCode%>').click();">
 													<%=serviceDesc.length() > 30 ? serviceDesc.substring(0, 30) + "..." : serviceDesc%>
 												</div> <!--<input type="hidden" name="desc_xml_<%=serviceCode%>" value="<%=serviceDesc%>" />-->
 											</td>
-											<td align="right">
+											<td style="text-align: right;<%=displayStyle%>  <%=bgcolor%>">
 												<div class="smallFont"><%=serviceDisp%></div> <input
 												type="hidden" name="sli_xml_<%=serviceCode%>"
 												value="<%=sliFlag%>" /> <!--<input type="hidden" name="price_xml_<%=serviceCode%>" value="<%=serviceDisp%>" />
@@ -1860,13 +1891,14 @@ function changeSite(sel) {
 										<%
 											}
 										%>
+
 									</table>
 								</div> <%
  	}
  %>
 
 							</td>
-							<td width="33%" valign="top">
+							<td style="width: 33%" valign="top">
 								<%
 									for( int j=0; j< listServiceType.size(); j++) {
 
@@ -1879,13 +1911,11 @@ function changeSite(sel) {
 
 
 
-									<table width="100%" border="1" cellspacing="0" cellpadding="1"
-										height="0" bordercolorlight="#99A005"
-										bordercolordark="#FFFFFF">
-										<tr class="myYellow">
-											<th width="10%" nowrap><div class="smallFont"><%=headerTitle3%></div></th>
-											<th width="70%"><div class="smallFont">Description</div></th>
-											<th><div class="smallFont">Fee</div></th>
+									<table style="width: 100%;" class="border1 table-striped table-hover">
+										<tr>
+											<th style="width: 10%; white-space:nowrap; background-color:silver"><div class="smallFont"><%=headerTitle3%></div></th>
+											<th style="width: 70%; background-color:silver"><div class="smallFont">Description</div></th>
+											<th style="background-color:silver"><div class="smallFont">Fee</div></th>
 										</tr>
 
 										<%
@@ -1902,28 +1932,29 @@ function changeSite(sel) {
 												if (propPremium.getProperty(serviceCode) != null) premiumFlag = "A";
 												else premiumFlag = "";
 
-												String bgcolor = i % 2 == 0 ? "bgcolor='#FFFFFF'" : "class='myGreen'";
-												if (request.getParameter("xml_" + serviceCode) != null) bgcolor = "bgcolor='#66FF66'";
+												String bgcolor = "";
+												if (request.getParameter("xml_" + serviceCode) != null) bgcolor = "background-color: #66FF66;";
 										%>
-										<tr <%=bgcolor%>>
-											<td align="left" style="<%=displayStyle%>" nowrap><input
+										<tr>
+											<td style="text-align: left; <%=displayStyle%> white-space:nowrap; <%=bgcolor%>"><input
 												type="checkbox" id="xml_<%=serviceCode%>"
 												name="xml_<%=serviceCode%>" value="checked"
 												onclick="refreshServicesChecked(this);"
 												<%=request.getParameter("xml_"+serviceCode)!=null?request.getParameter("xml_"+serviceCode):""%>
 												<%=bSingleClick? "onClick='onClickServiceCode(this)'" :""%> />
 												<span id="sc<%=(""+i).substring(0,1)+serviceCode%>"
+												onclick="getElementById('xml_<%=serviceCode%>').click();"
 												onDblClick="onDblClickServiceCode(this)"><%=serviceCode%></span>
 											</td>
-											<td
+											<td style="<%=displayStyle%> <%=bgcolor%> "
 												<%=serviceDesc.length()>30?"title=\""+serviceDesc+"\"":""%>
 												<%=displayStyle.equals("")? "class=\"smallFont\"": "style=\"" + displayStyle + "\""%>>
-												<div>
+												<div onclick="getElementById('xml_<%=serviceCode%>').click();">
 													<%=serviceDesc.length() > 30 ? serviceDesc.substring(0, 30) + "..." : serviceDesc%>
 													<!--<input type="hidden" name="desc_xml_<%=serviceCode%>" value="<%=serviceDesc%>" />-->
 												</div>
 											</td>
-											<td align="right">
+											<td style="text-align: right; <%=displayStyle%>  <%=bgcolor%>">
 												<div class="smallFont"><%=serviceDisp%></div> <input
 												type="hidden" name="sli_xml_<%=serviceCode%>"
 												value="<%=sliFlag%>" /> <!--<input type="hidden" name="price_xml_<%=serviceCode%>" value="<%=serviceDisp%>" />
@@ -1981,30 +2012,30 @@ function changeSite(sel) {
 
 		</table>
 
-		<table border="0" cellpadding="0" cellspacing="2" width="100%"
-			class="myIvory">
-			<tr class="myYellow">
-				<td><%=demoname%> - <b>Billing History</b> (last 5 records)</td>
-				<td width="20%" align="right">Last <input type="text"
-					name="day" value="365" size="3" /> days <input type="button"
+		<table style="width: 100%; border-spacing:2px;"
+			 >
+			<tr style="background-color: silver;">
+				<td><%=Encode.forHtml(demoname)%> - <b>Billing History</b> (last 5 records)</td>
+				<td style="width: 20%; text-align: right">Last <input type="text"
+					name="day" value="365" class="input-small" /> days <input type="button"
 					name="buttonDay" value="Go" onClick="onHistory(); return false;" />
 				</td>
 			</tr>
 		</table>
 	</form>
 
-	<table border="0" cellpadding="0" cellspacing="2" width="100%"
+	<table style="width: 100%; border-spacing:2px;"
 		class="myIvory">
 		<tr>
 			<td>
-				<table border="1" cellspacing="0" cellpadding="0"
-					bordercolorlight="#99A005" bordercolordark="#FFFFFF" width="100%">
-					<tr class="myYellow" align="center">
-						<th nowrap>Serial No.</th>
-						<th nowrap>Billing Date</th>
-						<th nowrap>Appt/Adm Date</th>
-						<th nowrap>Service Code</th>
-						<th nowrap>Dx</th>
+				<table class="border1"
+					class="table-striped" style="width: 100%;">
+					<tr class="myYellow" style="text-align: center">
+						<th style="white-space:nowrap">Serial No.</th>
+						<th style="white-space:nowrap">Billing Date</th>
+						<th style="white-space:nowrap">Appt/Adm Date</th>
+						<th style="white-space:nowrap">Service Code</th>
+						<th style="white-space:nowrap">Dx</th>
 						<th>Create Date</th>
 					</tr>
 					<%
@@ -2013,7 +2044,7 @@ function changeSite(sel) {
 							BillingClaimHeader1Data obj = (BillingClaimHeader1Data) aL.get(i);
 							BillingItemData iobj = (BillingItemData) aL.get(i + 1);
 					%>
-					<tr <%=i%4==0? "class=\"myGreen\"":""%> align="center">
+					<tr style="text-align: center">
 						<td class="smallFont"><%=obj.getId()%></td>
 						<td class="smallFont"><%=obj.getBilling_date()%></td>
 						<td class="smallFont"><%=iobj.getService_date()%></td>
@@ -2030,7 +2061,7 @@ function changeSite(sel) {
 	</table>
 
 	<script type="text/javascript">
-           
+
 Calendar.setup( { inputField : "xml_vdate", ifFormat : "%Y-%m-%d", showsTime :false, button : "xml_vdate_cal", singleClick : true, step : 1 } );
 <%if (appt_no.compareTo("0") == 0) {%>
     Calendar.setup( { inputField : "service_date", ifFormat : "%Y-%m-%d", showsTime :false, button : "service_date_cal", singleClick : true, step : 1 } );

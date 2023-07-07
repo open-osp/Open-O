@@ -32,7 +32,7 @@
 <%@page import="org.oscarehr.common.model.Demographic"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
     boolean authed=true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="r" reverse="<%=true%>">
@@ -45,36 +45,8 @@
 	}
 %>
 
-<%@page import="org.apache.commons.beanutils.BeanUtils"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@page import="org.springframework.web.context.WebApplicationContext"%>
-<%@page import="org.oscarehr.caisi_integrator.ws.DemographicWs"%>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.IntegratorFallBackManager" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-
-<%@ page import="java.util.*, java.sql.*, java.net.*, oscar.*, oscar.oscarDB.*" errorPage="errorpage.jsp"%>
-<%@ page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager, org.oscarehr.caisi_integrator.ws.CachedAppointment, org.oscarehr.caisi_integrator.ws.CachedProvider, org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.caisi_integrator.ws.*"%>
-<%@ page import="org.oscarehr.common.model.CachedAppointmentComparator" %>
-
-<%@page import="oscar.util.DateUtils"%>
-<%@page import="org.apache.commons.lang.StringUtils"%>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-
-<%@page import="org.oscarehr.common.dao.SiteDao"%>
-<%@page import="org.oscarehr.common.model.Site"%>
-
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.common.model.AppointmentArchive" %>
-<%@page import="org.oscarehr.common.dao.AppointmentStatusDao" %>
-<%@page import="org.oscarehr.common.model.AppointmentStatus" %>
-
-
-<%@ page import="org.oscarehr.common.model.ProviderData"%>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao"%>
-
+<%@ page import="java.util.*"%>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -86,86 +58,28 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 
 
-<html:html locale="true">
-
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script> 
-   <script>
-     jQuery.noConflict();
-   </script>
-<c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
-<script>
-	var ctx = '<%=request.getContextPath()%>';
-</script>
 
-<%
+<%!
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
-	Demographic demographic = demographicDao.getDemographic(request.getParameter("demographic_no"));
-	
 	OscarLogDao oscarLogDao = SpringUtils.getBean(OscarLogDao.class);
-	List<OscarLog> logs = oscarLogDao.findByDemographicId(demographic.getDemographicNo());
-	
-	Collections.sort(logs,new Comparator<OscarLog>() {
-		 public int compare(OscarLog o1, OscarLog o2) {
-	            return o1.getCreated().compareTo(o2.getCreated());
-	        }
-	});
-	
+
 %>
+	<%
+		Demographic demographic = demographicDao.getDemographic(request.getParameter("demographic_no"));
+		List<OscarLog> logs = oscarLogDao.findByDemographicId(demographic.getDemographicNo());
+		Collections.sort(logs,new Comparator<OscarLog>() {
+			public int compare(OscarLog o1, OscarLog o2) {
+				return o1.getCreated().compareTo(o2.getCreated());
+			}
+		});
+	%>
 
-<title>Audit for </title>
-<link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
-<script type="text/javascript">
-
-	function popupPageNew(vheight,vwidth,varpage) {
-	  var page = "" + varpage;
-	  windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
-	  var popup=window.open(page, "demographicprofile", windowprops);
-	  if (popup != null) {
-	    if (popup.opener == null) {
-	      popup.opener = self;
-	    }
-	  }
-	}
-
-	function printVisit() {
-		printVisit('');               
-	}
-	
-	
-	jQuery(document).ready(function(){
-		
-	});
-	
-</script>
-
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
 </head>
 
 <body class="BodyStyle" vlink="#0000FF">
 
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">Audit</td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td>Audit Log Information for <%=demographic.getFormattedName()%>(<%=demographic.getDemographicNo()%>)</td>
-				<td>&nbsp;</td>
-				<td style="text-align: right" ><a href="javascript:popupStart(300,400,'../About.jsp')">
-					<bean:message key="global.about" /></a> | <a href="javascript:popupStart(300,400,'../License.jsp')">
-					<bean:message key="global.license" /></a>
-				</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn" valign="top">
-			 
-	    </td>
-		<td class="MainTableRightColumn">
+
 			<table style="width:100%">
 				<thead>
 					<th align="left">Time of Event</th>
@@ -200,8 +114,6 @@
 					} %>
 				</tbody>
 			</table>
-		</td>
-	</tr>
-</table>
+
 </body>
-</html:html>
+</html>
