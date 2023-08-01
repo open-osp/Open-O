@@ -26,19 +26,6 @@
 package oscar.oscarRx.pageUtil;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -48,11 +35,16 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.OscarProperties;
 import oscar.form.pharmaForms.formBPMH.util.JsonUtil;
 import oscar.oscarRx.data.RxAllergyData;
 import oscar.oscarRx.util.RxDrugRef;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 public final class RxSearchAllergyAction extends Action {
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
@@ -68,27 +60,15 @@ public final class RxSearchAllergyAction extends Action {
 			throw new RuntimeException("missing required security object (_allergy)");
 		}
 
-
-        // Setup variables
-
-        // execute search
-
         RxSearchAllergyForm frm = (RxSearchAllergyForm)form;
-        
+
         // JSON overrides the form.
- 		String jsondata = request.getParameter("jsonData");
- 		if( jsondata != null ) {			
- 			frm = (RxSearchAllergyForm) JsonUtil.jsonToPojo(jsondata, RxSearchAllergyForm.class);
- 		}
- 		
+		String jsondata = request.getParameter("jsonData");
+		if( jsondata != null ) {			
+			frm = (RxSearchAllergyForm) JsonUtil.jsonToPojo(jsondata, RxSearchAllergyForm.class);
+		}
+
         RxAllergyData aData = new RxAllergyData();
-        //RxAllergyData.Allergy[] arr =
-        //    aData.AllergySearch(frm.getSearchString(), frm.getType5(),
-        //    frm.getType4(), frm.getType3(), frm.getType2(), frm.getType1());
-
-
-        ///Search a drug like another one
-
         RxDrugRef drugRef = new RxDrugRef();
 
         java.util.Vector vec    = new java.util.Vector();
@@ -156,20 +136,23 @@ public final class RxSearchAllergyAction extends Action {
         Map<Integer,Allergy> classResults = new HashMap<Integer,Allergy>();
 
         Vector classVec = new Vector() ;
-        for (int i = 0; i < vec.size(); i++){
+        for (int i = 0; vec != null && i < vec.size(); i++){
         	java.util.Hashtable hash = (java.util.Hashtable) vec.get(i);
             if (!hash.get("name").equals("None found")){
                 arr[i] = new Allergy();
 
-                arr[i].setTypeCode(((Integer) hash.get("category")).intValue());
+                arr[i].setTypeCode(Integer.parseInt((String) hash.get("category")));
                 arr[i].setDrugrefId( String.valueOf(hash.get("id")));
-                arr[i].setDescription(((String) hash.get("name")));
+                arr[i].setDescription((String) hash.get("name"));
+                arr[i].setPharmacological((String) hash.get("pharmacological"));
+                arr[i].setChemical((String) hash.get("chemical"));
+                arr[i].setSubstance((String) hash.get("substance"));
 
                 if( arr[i].getTypeCode() == 13){
                     classVec.add(""+arr[i].getDrugrefId());
                 }
 
-                allergyResults.get(hash.get("category")).add(arr[i]);
+                allergyResults.get(arr[i].getTypeCode()).add(arr[i]);
                 if(flatList.get(arr[i].getDescription()) == null) {
                 	flatList.put(arr[i].getDescription(),arr[i]);
                 }

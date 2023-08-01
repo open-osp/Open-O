@@ -185,7 +185,7 @@ String allergyId = (String) request.getAttribute("allergyId");
 		<td width="100%" height="0%" colspan="2">&nbsp;</td>
 	</tr>
 	<tr>
-		<td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
+		<td width="100%" height="0%" style="padding: 5px" bgcolor="#DCDCDC"
 			colspan="2"></td>
 	</tr>
 </table>

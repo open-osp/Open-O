@@ -322,7 +322,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 
 							if(allergyResults.get(11).size()>0) {
 								%><div class="DivContentSectionHead"><a href="javascript:void(0)" onclick="toggleSection('11');return false;"><img border="0" id="11_img" src="../images/expander.png"/></a>Generic Name</div><%
-								%><div id="11_content" style="display:none"><%
+								%><div id="11_content"><%
 								for(Allergy allergy:allergyResults.get(11)) {
 									%>
 									<a href="addReaction.do?ID=<%= allergy.getDrugrefId() %>&name=<%=java.net.URLEncoder.encode(allergy.getDescription())%>&type=<%=allergy.getTypeCode()%>"><%=allergy.getDescription() %></a>

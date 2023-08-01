@@ -24,22 +24,11 @@
 
 package org.oscarehr.common.model;
 
+import org.apache.commons.lang.StringUtils;
+
+import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.apache.commons.lang.StringUtils;
 
 
 @Entity
@@ -62,12 +51,11 @@ public class Allergy extends AbstractModel<Integer> implements DemographicData {
 	private String description;
 
 	private String reaction;
-	
+
 	private boolean archived=false;
-	
+
 	private Boolean nonDrug=false;
-	
-	
+
 	@Column(name = "HICL_SEQNO")
 	private Integer hiclSeqno;
 
@@ -125,6 +113,15 @@ public class Allergy extends AbstractModel<Integer> implements DemographicData {
 	 * This string is currently nullable because this field never use to exist, therefore all previous entries are null, all new entries should be populated though.
 	 */
 	private String providerNo;
+
+	@Transient
+	private String pharmacological;
+
+	@Transient
+	private String chemical;
+
+	@Transient
+	private String substance;
 
 	public boolean getArchived() {
 		return archived;
@@ -458,5 +455,28 @@ public class Allergy extends AbstractModel<Integer> implements DemographicData {
 		this.nonDrug = nonDrug;
 	}
 
+	public String getPharmacological() {
+		return pharmacological;
+	}
+
+	public void setPharmacological(String pharmacological) {
+		this.pharmacological = pharmacological;
+	}
+
+	public String getChemical() {
+		return chemical;
+	}
+
+	public void setChemical(String chemical) {
+		this.chemical = chemical;
+	}
+
+	public String getSubstance() {
+		return substance;
+	}
+
+	public void setSubstance(String substance) {
+		this.substance = substance;
+	}
 
 }

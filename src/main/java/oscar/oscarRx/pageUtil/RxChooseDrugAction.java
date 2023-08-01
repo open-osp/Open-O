@@ -60,10 +60,6 @@ public final class RxChooseDrugAction extends Action {
 		}
 		
             // Extract attributes we will need
-
-       //     p("locale="+locale.toString());
-        //    p("message="+messages.toString());
-            // Setup variables           
             oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)request.getSession().getAttribute("RxSessionBean");
             if(bean==null){
                 response.sendRedirect("error.html");
@@ -81,10 +77,7 @@ public final class RxChooseDrugAction extends Action {
 
                
                 String BN     = request.getParameter("BN");
-                String drugId = request.getParameter("drugId"); 
-                
-
-             //   p("GN="+GN);
+                String drugId = request.getParameter("drugId");
                     rx.setBrandName(BN);
                 try{
                     rx.setGCN_SEQNO(Integer.parseInt(drugId));
@@ -93,8 +86,6 @@ public final class RxChooseDrugAction extends Action {
                     genName = f.name;
                     rx.setAtcCode(f.atc);
                     rx.setBrandName(f.product);
-              //      p("f.name: "+f.name+"f.atc: "+f.atc+"f.product: "+f.product+ "f.regionalIdentifier: "+f.regionalIdentifier);
-              //      p("f.components: "+f.components.toString());
                     rx.setRegionalIdentifier(f.regionalIdentifier);
                
                     request.setAttribute("components", f.components);
@@ -108,13 +99,11 @@ public final class RxChooseDrugAction extends Action {
                         }
                     }          
                     rx.setDosage(dosage);
-                 //   p("rx set dosage to: "+dosage);
                     StringBuilder compString = null;
                     if (f.components != null){
                         compString = new StringBuilder();
                         for (int c = 0; c < f.components.size();c++){
                             RxDrugData.DrugMonograph.DrugComponent dc = (RxDrugData.DrugMonograph.DrugComponent) f.components.get(c);
-                  //          p("dc.name: "+dc.name+"dc.strength: "+dc.strength+"dc.unit: "+dc.unit);
                             compString.append(dc.name+" "+dc.strength+ " "+dc.unit+" ");              
                         }          
                     }
@@ -140,7 +129,6 @@ public final class RxChooseDrugAction extends Action {
                 rx.setDuration("30");
                 rx.setDurationUnit("D");
                 bean.addAttributeName(rx.getAtcCode() + "-" + String.valueOf(bean.getStashIndex()));
-                
 
                 bean.setStashIndex(bean.addStashItem(loggedInInfo, rx));
             }

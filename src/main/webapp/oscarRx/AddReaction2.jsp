@@ -274,13 +274,11 @@ boolean isNKDA = "No Known Drug Allergies".equals(name);
 <% } %>
 
 						<tr>
-							<td>
-								<html:submit property="submit" value="Add Allergy" styleClass="ControlPushButton"
-									onclick="return doSubmit()" />
-								<input type=button class="ControlPushButton" id="cancelAddReactionButton"
-									onclick="window.location='ShowAllergies2.jsp?demographicNo=<%=bean.getDemographicNo() %>'"
-									value="Cancel" />
-							</td>
+							<td ><html:submit property="submit"
+								value="Add Allergy" styleClass="ControlPushButton" /> <input
+								type=button class="ControlPushButton" id="cancelAddReactionButton"
+								onclick="javascript:document.forms.RxAddAllergyForm.reactionDescription.value='';document.forms.RxAddAllergyForm.startDate.value='';document.forms.RxAddAllergyForm.ageOfOnset.value='';document.forms.RxAddAllergyForm.reactionDescription.focus();"
+								value="Reset" /></td>
 						</tr>
 					</table>
         
@@ -312,7 +310,7 @@ boolean isNKDA = "No Known Drug Allergies".equals(name);
 		<td width="100%" height="0%" colspan="2">&nbsp;</td>
 	</tr>
 	<tr>
-		<td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
+		<td width="100%" height="0%" style="padding: 5px" bgcolor="#DCDCDC"
 			colspan="2"></td>
 	</tr>
 </table>

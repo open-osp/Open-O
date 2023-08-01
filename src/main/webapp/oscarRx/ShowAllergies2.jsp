@@ -25,11 +25,7 @@
 --%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="org.oscarehr.util.WebUtils"%>
-<%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
 <%@page import="org.oscarehr.util.WebUtils"%>
-<%@page import="org.oscarehr.util.LocaleUtils"%>
-<%@page import="org.oscarehr.phr.util.MyOscarUtils"%>
-<%@page import="org.oscarehr.util.MiscUtils"%>
 <%@ page language="java" import="oscar.OscarProperties"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -78,6 +74,7 @@ String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.D
 
 com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
 %>
+
 <html:html lang="en">
 <head>
 <title><bean:message key="EditAllergies.title" /></title>
@@ -143,38 +140,40 @@ $(document).ready( function() {
 		});
 
 		//--> Toggle search results listing.
-		$.fn.toggleSection = function(typecode) {
-			var imgsrc = document.getElementById(typecode+"_img").src;
-			if(imgsrc.indexOf('expander')!=-1) {
-				document.getElementById(typecode+"_img").src='../images/collapser.png';
-				Effect.BlindDown(document.getElementById(typecode+"_content"), {duration: 0.1 });
-			} else {
-				document.getElementById(typecode+"_img").src='../images/expander.png';
-				Effect.BlindUp(document.getElementById(typecode+"_content"), {duration: 0.1 });
-			}
-		}
+	    $.fn.toggleSection = function(typecode) {
+	    	let imgsrc = document.getElementById(typecode+"_img").src;
+	    	if(imgsrc.indexOf('expander') !== -1) {
+	    		document.getElementById(typecode+"_img").src='../images/collapser.png';
+	    		Effect.BlindDown(document.getElementById(typecode+"_content"), {duration: 0.1 });
+	    	} else {
+	    		document.getElementById(typecode+"_img").src='../images/expander.png';
+	    		Effect.BlindUp(document.getElementById(typecode+"_content"), {duration: 0.1 });
+	    	}
+
+	    }
 
 		//--> Toggle search results listing.
 		$(".DivContentSectionHead a img").bind("click", function(event){
 			event.preventDefault();
 			var typecode = this.id.split("_")[0];
 			var imgsrc = document.getElementById(typecode+"_img").src;
-			if(imgsrc.indexOf('expander')!=-1) {
-				document.getElementById(typecode+"_img").src='../images/collapser.png';
-				$("#"+typecode+"_content").show();
-			} else {
-				document.getElementById(typecode+"_img").src='../images/expander.png';
-				$("#"+typecode+"_content").hide();
-			}
+
+	    	if(imgsrc.indexOf('expander') !== -1) {
+	    		document.getElementById(typecode+"_img").src='../images/collapser.png';
+	    		$("#"+typecode+"_content").show();
+	    	} else {
+	    		document.getElementById(typecode+"_img").src='../images/expander.png';
+	    		$("#"+typecode+"_content").hide();
+	    	}
 		})
 	
 	} //--> end bind events function.
 
 	//--> set default checkboxes on load
-	$.fn.setDefaults = function() {
-		// default set Drug Classes checked.
-		document.forms.searchAllergy2.type4.checked = true;
-	}
+	// $.fn.setDefaults = function() {
+	// 	// default set Drug Classes checked.
+	// 	document.forms.searchAllergy2.type4.checked = true;
+	// }
 	
 	//--> Send allergy search to server
 	$("#searchStringButton").click( function(){
@@ -196,6 +195,14 @@ $(document).ready( function() {
 			$('#searchString').addClass('ajax-loader');
 			
 			sendSearchRequest(url, param, "#searchResultsContainer"); 
+		}
+	});
+
+	//--> focus Enter key on search button
+	$("#searchString").keypress(function(e) {
+		if(e.which === 13) {
+			$("#searchStringButton").trigger('click');
+			return false;
 		}
 	});
 
@@ -226,7 +233,7 @@ $(document).ready( function() {
 	})
 
 	$().bindActionEvents();
-	$().setDefaults();
+	// $().setDefaults();
 
 }); //--> end document ready
 
@@ -456,42 +463,62 @@ ColourCodesArray[3]="#CC0000"; // Severe
 ColourCodesArray[4]="#E0E0E0"; // unknown
 ColourCodesArray[5]="#FFFFFF"; // no reaction
 
-String allergy_colour_codes = "<table class='allergy_legend' cellspacing='0'><tr><td><b>Legend:</b></td> <td > <table class='colour_codes' bgcolor='"+ColourCodesArray[1]+"'><td> </td></table></td> <td >Mild</td> <td > <table class='colour_codes' bgcolor='"+ColourCodesArray[2]+"'><td> </td></table></td> <td >Moderate</td><td > <table class='colour_codes' bgcolor='"+ColourCodesArray[3]+"'><td> </td></table></td> <td >Severe</td> </tr></table>";
-%>
+							out.print(" <span class='view_selected'>"+navArray[i]+"</span>");
+
+
+						}else{
+							out.print("<span class='view_menu'><a href='" + request.getContextPath() + "/oscarRx/showAllergy.do?demographicNo="+demoNo+"&view="+navArray[i]+"'>");
+								out.print(navArray[i]);
+							out.print("</a></span>");
+						}
+					 }
+					 //1 mild 2 moderate 3 severe 4 unknown
+
+					 String[] ColourCodesArray=new String[5];
+					 ColourCodesArray[1]="#F5F5F5"; // Mild Was set to yellow (#FFFF33) SJHH requested not to flag mild
+					 ColourCodesArray[2]="#FF6600"; // Moderate
+					 ColourCodesArray[3]="#CC0000"; // Severe
+					 ColourCodesArray[4]="#E0E0E0"; // unknown
+
+					 String allergy_colour_codes = "<table class='allergy_legend' cellspacing='0'><tr><td><b>Legend:</b></td> <td > <table class='colour_codes' bgcolor='"+ColourCodesArray[1]+"'><td> </td></table></td> <td >Mild</td> <td > <table class='colour_codes' bgcolor='"+ColourCodesArray[2]+"'><td> </td></table></td> <td >Moderate</td><td > <table class='colour_codes' bgcolor='"+ColourCodesArray[3]+"'><td> </td></table></td> <td >Severe</td> </tr></table>";
+				%>
+
 				</span>
-<%
-if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user")))
-{
-	MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
-	boolean enabledMyOscarButton=MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demoNo));
-	if (enabledMyOscarButton)
-	{
-		String sendDataPath = request.getContextPath() + "/phr/send_medicaldata_to_myoscar.jsp?"
-							+ "demographicId=" + demoNo + "&"
-							+ "medicalDataType=Allergies" + "&"
-							+ "parentPage=" + request.getRequestURI();
-%>
-				| <a href="<%=sendDataPath%>"><%=LocaleUtils.getMessage(request, "SendToPHR")%></a>
-<%
-	}
-	else
-	{
-	%>
-				| <span style="color:grey;text-decoration:underline"><%=LocaleUtils.getMessage(request, "SendToPHR")%></span>
-	<%
-	}
-}
-%>
+
 			</td>
 		</tr>
+		</table>
 		<tr>
 			<td>
 				<table border="0">
 				<tr>
 					<td class="Step1Text">
 						<%=allergy_colour_codes%>
-	
-						<table class="allergy_table" >
+					</td>
+					</tr>
+				</table>
+				</td>
+			</tr>
+			
+			<tr id="addAllergyInterface" >
+			
+				<td>
+					<form action="/oscarRx/searchAllergy2.do" id="searchAllergy2"  >
+					<table>
+					<tr><th>Add an Allergy</th></tr>
+						<tr id="allergyQuickButtonRow" >
+                            <td>                           	
+                        		<input type=button class="ControlPushButton" onclick="javascript:addCustomNKDA();" value="NKDA" />                              
+                               <input type=button class="ControlPushButton" onclick="javascript:addPenicillinAllergy();" value="Penicillin" />
+                               <input type=button class="ControlPushButton" onclick="javascript:addSulfonamideAllergy();" value="Sulfa" />
+	                            <input type="text" name="searchString" value="${ searchString }" size="16" id="searchString" maxlength="16" autofocus="autofocus" />
+	                            <input type="button" value="Search Drugs" id="searchStringButton" class="ControlPushButton" />
+	                            OR
+	                            <input type=button class="ControlPushButton" onclick="addCustomAllergy();" value="Custom Allergy" />
+
+                            </td>
+						</tr>
+
 						<tr>
 							<td><b>Status</b></td>
 							<td><b>Entry Date</b></td>
@@ -505,147 +532,18 @@ if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user")))
 							<td><b>Start Date</b></td>
 							<td><b>Life Stage</b></td>
 							<td><b>Age Of Onset</b></td>
-							<td><b><img src="../images/notes.gif" border="0" width="10" height="12" alt="Annotation"></b></td>
+							<td><b><img src="../images/notes.gif" border="0" width="10px" height="12px" alt="Annotation"></b></td>
 							<td><b>Action</b></td>
 						</tr>
-<%
-String strArchived;
-int intArchived=0;
-String labelStatus;
-String labelAction;
-String actionPath;
-String trColour;
-String strSOR;
-int intSOR;
-boolean hasDrugAllergy=false;
-int iNKDA = 0;
 
-for(org.oscarehr.common.model.Allergy allergy : patient.getAllergies(LoggedInInfo.getLoggedInInfoFromSession(request)))
-{
-	if (!allergy.getArchived()) {
-		if (allergy.getTypeCode()>0) hasDrugAllergy = true;
-		if (allergy.getDescription().equals("No Known Drug Allergies")) iNKDA = allergy.getId();
-	}
-	
-	String title = "";
-	if(allergy.getRegionalIdentifier() != null && !allergy.getRegionalIdentifier().trim().equalsIgnoreCase("null") && !allergy.getRegionalIdentifier().trim().equals("")){
-		title= " title=\"Din: "+allergy.getRegionalIdentifier()+"\" ";
-	}
-
-	boolean filterOut=false;
-	strArchived=allergy.getArchived()?"1":"0";
-
-	try
-	{
-		intArchived = Integer.parseInt(strArchived);
-
-		if(strView.equals("Active") && intArchived == 1) {
-			filterOut=true;
-		}
-
-		if(strView.equals("Inactive") && intArchived == 0) {
-			filterOut=true;
-		}
-	}
-	catch (Exception e)
-	{
-		// that's okay , most likely the value is not set so we don't know, leave blank
-	}
-
-	strSOR=allergy.getSeverityOfReaction();
-	intSOR = Integer.parseInt(strSOR);
-	String sevColour;
-
-	if(intArchived==1){
-		//if allergy is set as archived
-		labelStatus="Inactive";
-		labelAction="Reactivate";
-		actionPath="activate";
-		trColour="#C0C0C0";
-
-		sevColour="#C0C0C0"; //clearing severity bgcolor
-	}else{
-		labelStatus="Active";
-		labelAction="Inactivate";
-		actionPath="delete";
-
-		trColour="#E0E0E0";
-		sevColour=ColourCodesArray[intSOR];
-	}
-
-
-	if(!filterOut) {
-		String entryDate = partialDateDao.getDatePartial(allergy.getEntryDate(), PartialDate.ALLERGIES, allergy.getAllergyId(), PartialDate.ALLERGIES_ENTRYDATE);
-		String startDate = partialDateDao.getDatePartial(allergy.getStartDate(), PartialDate.ALLERGIES, allergy.getAllergyId(), PartialDate.ALLERGIES_STARTDATE);
-%>
-						<tr bgcolor="<%=trColour%>" id="allergy_<%= allergy.getAllergyId() %>" >
-							<td><%=labelStatus%></td>
-							<td><%=entryDate==null ? "" : entryDate %></td>
-							<td <%=title%> ><%=allergy.getDescription() %></td>
-							<td><%=allergy.getTypeDesc() %></td>
-							
-							<td><%=allergy.getTypeCode() == 0 &&  allergy.isNonDrug() == null? "<i>&lt;Not Set&gt;</i>" :""%><%=allergy.getTypeCode() == 0 && allergy.isNonDrug() != null && allergy.isNonDrug() ? "*" : "" %></td>
-							<td bgcolor="<%=sevColour%>"><%=allergy.getSeverityOfReactionDesc() %></td>
-							<td><%=allergy.getOnSetOfReactionDesc() %></td>
-							<td><%=allergy.getReaction()!=null?allergy.getReaction():"" %></td>
-							<td><%=startDate==null ? "" : startDate %></td>
-							<td><%=allergy.getLifeStageDesc() %></td>
-							<td><%=allergy.getAgeOfOnset()==null ? "" : allergy.getAgeOfOnset()%></td>
-<%
-		CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
-		@SuppressWarnings("unchecked")
-		List<CaseManagementNoteLink> existingAnnots = cmm.getLinkByTableId(org.oscarehr.casemgmt.model.CaseManagementNoteLink.ALLERGIES,Long.valueOf(allergy.getAllergyId()));
-%>
-							<td>
-<%
-		if (!allergy.isIntegratorResult())
-		{
-%>
-								<a href="#" title="Annotation" onclick="window.open('../annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=String.valueOf(allergy.getAllergyId())%>&demo=<jsp:getProperty name="patient" property="demographicNo"/>','anwin','width=400,height=500');">
-<%			if(existingAnnots.size()>0) {%>
-									<img src="../images/filledNotes.gif" border="0"/>
-<%			} else { %>
-									<img src="../images/notes.gif" border="0">
-<%			} %>
-								</a>
-<%		} %>
-							</td>
-							<td>
-<%
-		if(!allergy.isIntegratorResult() && securityManager.hasDeleteAccess("_allergies",roleName$)) {
-			if(intArchived==0){
-%>
-								<a href="#" class="deleteAllergyLink" 
-										id="deleteAllergy:<%= labelAction %>_ID=<%=allergy.getAllergyId() %>&demographicNo=<%=demoNo %>&action=<%=actionPath %>" >
-									<%=labelAction%>
-								</a> |
-<%			} %>
-								<a href="#" class="modifyAllergyLink" 
-										id="modifyAllergy:<%= labelAction %>_ID=<%=allergy.getDrugrefId() %>&name=<%=allergy.getDescription() %>&type=<%=allergy.getTypeCode() %>&allergyToArchive=<%=allergy.getId() %>" >
-									<%=intArchived==0?"Modify":labelAction%>
-								</a>
-<%		} %>
-							</td>
-						</tr>
-<%	}
-} //end of iterate
-if (hasDrugAllergy) iNKDA = 0;
-%>
-						</table>
-
-					<%=allergy_colour_codes%>
-					</td>
-				</tr>
-				</table>
-			</td>
-		</tr>
-
-		<tr id="addAllergyInterface" >
-			<td>
-				<form action="/oscarRx/searchAllergy2.do" focus="searchString" id="searchAllergy2" onSubmit="return submitSearchForm()">
-
-					<input type="hidden" name="iNKDA" value="<%=iNKDA%>"/>
-					<input type="hidden" name="hasDrugAllergy" value="<%=hasDrugAllergy%>"/>
+					</table>
+					</form>
+				</td>
+			</tr>
+			
+			<tr>
+				<td id="searchResultsContainer" ></td>
+			</tr>
 
 					<table>
 					<tr>

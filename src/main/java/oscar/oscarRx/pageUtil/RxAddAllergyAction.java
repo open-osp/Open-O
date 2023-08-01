@@ -25,12 +25,6 @@
 
 package oscar.oscarRx.pageUtil;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -41,23 +35,29 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 import oscar.oscarRx.data.RxDrugData;
 import oscar.oscarRx.data.RxPatientData;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 public final class RxAddAllergyAction extends Action {
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_allergy", "w", null)) {
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_allergy", "w", null)) {
 			throw new RuntimeException("missing required security object (_allergy)");
 		}
     	
             String id = request.getParameter("ID");
-            if(id != null && "null".equals(id)) {
+
+            if(id == null || "null".equals(id)) {
             	id = "";
             }
 
@@ -70,22 +70,20 @@ public final class RxAddAllergyAction extends Action {
             String severityOfReaction = request.getParameter("severityOfReaction");
             String onSetOfReaction = request.getParameter("onSetOfReaction");
             String lifeStage = request.getParameter("lifeStage");
+
             String allergyToArchive = request.getParameter("allergyToArchive");
-            
+
             String nonDrug = request.getParameter("nonDrug");
             
             RxPatientData.Patient patient = (RxPatientData.Patient)request.getSession().getAttribute("Patient");
             Allergy allergy = new Allergy();
-            if (type != null && "13".equals(type)){
-            	allergy.setDrugrefId(id);
-            }
-
-		    if (type != null && "8".equals(type)){
-			    allergy.setAtc(id);
-		    }
+            allergy.setDrugrefId(id);
+			// this can be overwritten with the conditions further down this code block
+			allergy.setRegionalIdentifier(id);
             allergy.setDescription(name);
             allergy.setTypeCode(Integer.parseInt(type));
             allergy.setReaction(description);
+			allergy.setProviderNo(loggedInInfo.getLoggedInProviderNo());
 
 	    if (startDate.length()>=8 && getCharOccur(startDate,'-')==2) {
 	    	allergy.setStartDate(oscar.oscarRx.util.RxUtil.StringToDate(startDate, "yyyy-MM-dd"));
@@ -109,11 +107,20 @@ public final class RxAddAllergyAction extends Action {
             }
             	
 
-            if (type != null && type.equals("13")){
+            if(nonDrug != null && "on".equals(nonDrug)) {
+            	allergy.setNonDrug(true);
+
+            } else if(nonDrug != null && "off".equals(nonDrug)) {
+            	allergy.setNonDrug(false);
+            }
+
+
+            if (! "0".equals(type) && ! id.isEmpty() && ! "0".equals(id)){
                 RxDrugData drugData = new RxDrugData();
                 try{
-                RxDrugData.DrugMonograph f = drugData.getDrug(""+id);
-                allergy.setRegionalIdentifier(f.regionalIdentifier);
+                    RxDrugData.DrugMonograph f = drugData.getDrug2(id);
+                    allergy.setRegionalIdentifier(f.regionalIdentifier);
+	                allergy.setAtc(f.getAtc());
                 }catch(Exception e){
                     MiscUtils.getLogger().error("Error", e);
                 }
@@ -121,17 +128,16 @@ public final class RxAddAllergyAction extends Action {
 
             allergy.setDemographicNo(patient.getDemographicNo());
             allergy.setArchived(false);
-            
-            patient.addAllergy(oscar.oscarRx.util.RxUtil.Today(), allergy);
-            
+
             String ip = request.getRemoteAddr();
-            LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ADD, LogConst.CON_ALLERGY, ""+allergy.getAllergyId() , ip,""+patient.getDemographicNo(), allergy.getAuditString());
-            
-            if (allergyToArchive!=null && !allergyToArchive.isEmpty()) {
-            	patient.deleteAllergy(Integer.parseInt(allergyToArchive));
-            	LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ARCHIVE, LogConst.CON_ALLERGY, ""+allergyToArchive , ip,""+patient.getDemographicNo(), null);
-            }
-            
+		    if (allergyToArchive!=null && !allergyToArchive.isEmpty()) {
+			    patient.deleteAllergy(Integer.parseInt(allergyToArchive));
+			    LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ARCHIVE, LogConst.CON_ALLERGY, ""+allergyToArchive , ip,""+patient.getDemographicNo(), null);
+		    } else {
+			    patient.addAllergy(oscar.oscarRx.util.RxUtil.Today(), allergy);
+			    LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ADD, LogConst.CON_ALLERGY, allergy.getAllergyId() + "", ip, "" + patient.getDemographicNo(), allergy.getAuditString());
+		    }
+
             return (mapping.findForward("success"));
     }
 

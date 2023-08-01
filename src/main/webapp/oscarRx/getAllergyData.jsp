@@ -76,8 +76,12 @@ if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {
 
 Allergy[] allergyWarnings = null;
    RxDrugData drugData = new RxDrugData();
-   List<Allergy> missing = new ArrayList<Allergy>();
-   allergyWarnings = drugData.getAllergyWarnings(atcCode, allergies,missing);
+
+	try {
+		allergyWarnings = drugData.getAllergyWarnings(atcCode, allergies);
+	} catch (Exception e) {
+		MiscUtils.getLogger().error("Error", e);
+	}
 
    Allergy highestSeverityAllergy = null;
 
