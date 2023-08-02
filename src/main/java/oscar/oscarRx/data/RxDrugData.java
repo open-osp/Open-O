@@ -25,17 +25,16 @@
 
 package oscar.oscarRx.data;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.oscarehr.common.model.Allergy;
 import org.oscarehr.util.MiscUtils;
-
 import oscar.oscarRx.util.RxDrugRef;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 
 public class RxDrugData {
 
@@ -820,18 +819,14 @@ public class RxDrugData {
 	public Allergy[] getAllergyWarnings(String atcCode,Allergy[] allerg,List<Allergy> missing) throws Exception {
 		Vector vec = new Vector();
 		for (int i = 0; i < allerg.length; i++) {
-			Hashtable h = new Hashtable();
-			h.put("id", "" + i);
-			h.put("description", allerg[i].getDescription());
-			h.put("type", "" + allerg[i].getTypeCode());
-			if (allerg[i].getRegionalIdentifier() != null) {
-				h.put("din", allerg[i].getRegionalIdentifier());
-			}
-			if (allerg[i].getAtc() != null) {
-				h.put("atc", allerg[i].getAtc());
-			} else if (allerg[i].getTypeCode() == 8) {
-				h.put("atc", allerg[i].getDrugrefId());
-			}
+			Hashtable<String, String> h = new Hashtable<>();
+
+			h.put("id",""+i);
+			h.put("description",allerg[i].getDescription());
+			h.put("type",""+allerg[i].getTypeCode());
+			h.put("ATC",allerg[i].getAtc());
+			h.put("uuid", allerg[i].getRegionalIdentifier());
+
 			vec.add(h);
 		}
 		RxDrugRef d = new RxDrugRef();

@@ -256,6 +256,9 @@ public class Allergy extends AbstractModel<Integer> implements DemographicData {
 	}
 
 	public String getRegionalIdentifier() {
+		if(regionalIdentifier == null) {
+			return "";
+		}
 		return regionalIdentifier;
 	}
 
@@ -264,6 +267,9 @@ public class Allergy extends AbstractModel<Integer> implements DemographicData {
 	}
 
 	public String getAtc() {
+		if(atc == null) {
+			return "";
+		}
 		return atc;
 	}
 

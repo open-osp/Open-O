@@ -396,8 +396,92 @@ if(listRxDrugs!=null){
 
 
 
-       			</div>
-       
+<fieldset class="stagedMedication" id="set_<%=rand%>">
+    <div class="row header">
+	    <label class="medicationTag left" title="<%=ATC%>" >Medication:</label>
+	    <input type="text" placeholder="ATC Code" readonly="readonly" name="atcCode_<%=rand%>" value="<%=ATCcode%>" size="8" />
+	    
+	    <input tabindex="-1" type="text" placeholder="Drug Name and Strength" class="drugName" id="drugName_<%=rand%>"
+	    	name="drugName_<%=rand%>" <%if("0".equals(gcnCode)){%> onkeyup="saveCustomName(this);"
+	    	value="<%=drugName%>"<%} else{%> value='<%=drugName%>'  
+	    	onchange="changeDrugName('<%=rand%>','<%=drugName%>');" <%}%> title="<%=drugName%>" />
+    </div>	
+    <div class="row subheader"> 
+    	<label class="left" for="ingredientLink_<%=rand%>" >&nbsp;</label> 
+    	<span class="ingredientLink" id="ingredientLink_<%=rand%>">
+    		<%=alternatename%>
+    	</span>    
+    </div>	
+    <div class="row inactive" id="inactive_<%=rand%>" style="color:red;"></div>
+
+	<!-- Allergy Alert Table-->
+	<div class="row"  style="display: none; text-align: center; margin-bottom: 10px;" id="alleg_tbl_<%=rand%>">
+		<span id="alleg_<%=rand%>" style="font-size:11px;"></span>
+	</div>
+	    
+    <%-- Splice in the Indication field --%>
+
+<div class="row">
+
+	<label class="left" for="jsonDxSearch_<%=rand%>" >Indication:</label>
+	<select name="codingSystem_<%=rand%>" id="codingSystem_<%=rand%>" >
+		<option ${ codesystem eq 'icd9' ? 'selected' : ''  } value="icd9" >ICD9</option>
+		<option ${ codesystem eq 'icd9Synonym' ? 'selected' : ''  } value="icd9Synonym" >ICD9 Synonym</option>
+		<option value="${ wildCardDrugReasonCode }">Comment Only</option>
+		<%-- option value="limitUse">Limited Use</option --%>
+	</select>
+	
+	<input type="hidden" name="reasonCode_<%=rand%>" id="codeTxt_<%=rand%>" value="${ drugreasoncode }" />
+	
+	<input type="text" class="codeTxt" name="jsonDxSearch_<%=rand%>"
+		id="jsonDxSearch_<%=rand%>" placeholder="Search Dx" value="${ drugreason }" />
+
+	<input type="text" class="reasonComment" 
+		name="reasonComment_<%=rand%>"  
+		id="reasonComment_<%=rand%>" placeholder="Comment"  value="${ drugreasoncomment }" />
+</div>
+     <%-- Splice in the Indication field --%>
+ <div class="row">
+ 
+ 	<label class="left" for="instructions_<%=rand%>">   
+	    <a tabindex="-1" href="javascript:void(0);" title="Click to add additional instructions" 
+	    	onclick="showHideSpecInst('siAutoComplete_<%=rand%>')" >
+	    	Instructions:
+	    </a>
+    </label>
+    <input type="text" id="instructions_<%=rand%>" name="instructions_<%=rand%>" 
+    	onkeypress="handleEnter(this,event);" value="<%=instructions%>" 
+    	onchange="parseIntr(this);" />
+    	
+    	<label class="smallLabel">
+	    	<a href="javascript:void(0);" 
+		    	tabindex="-1" onclick="displayMedHistory('<%=rand%>');"  
+		    	title="Instruction snippets">quick list</a>  
+    	</label>
+    	
+    	<label class="smallLabel">
+	    	<a href="javascript:void(0);" tabindex="-1" onclick="displayInstructions('<%=rand%>');">
+	    		<img src="${ctx}/images/icon_help_sml.gif" title="Instructions Field Reference" />
+	    	</a> 
+    	</label>
+    	
+    	<span id="major_<%=rand%>" style="display:none;background-color:red"></span>
+    	<span id="moderate_<%=rand%>" style="display:none;background-color:orange"></span>
+    	<span id='minor_<%=rand%>' style="display:none;background-color:yellow;"></span>
+    	<span id='unknown_<%=rand%>' style="display:none;background-color:#B1FB17"></span>
+ </div>      
+
+       <div class="row" id="siAutoComplete_<%=rand%>" <%if( ! isSpecInstPresent ){%> style="display:none;" <%}%> >
+           
+           <label class="left" for="siInput_<%=rand%>" > Special:</label>
+           
+           <input id="siInput_<%=rand%>" type="text" size="60" <%if(!isSpecInstPresent) {%>style="color:gray; width:auto" 
+           	value="Enter Special Instruction" <%} else {%> style="color:black; width:auto" value="<%=specialInstruction%>" <%}%> 
+           	onblur="changeText('siInput_<%=rand%>');updateSpecialInstruction('siInput_<%=rand%>');" 
+           	onfocus="changeText('siInput_<%=rand%>');" >
+           
+           <div id="siContainer_<%=rand%>" style="float:right" ></div>
+
         </div>
            
            <div id="renalDosing_<%=rand%>" ></div>
