@@ -539,40 +539,50 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
             var url='../../../dms/inboxManage.do';
                                            var data='method=isLabLinkedToDemographic&labid='+labid;
                                            new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
-											   console.log("TRANSPORT: " + transport);
+
                                                                     var json=transport.responseText.evalJSON();
                                                                     if(json!=null){
                                                                         var success=json.isLinkedToDemographic;
                                                                         var demoid='';
                                                                         //check if lab is linked to a provider
                                                                         if(success){
-                                                                            if(action==='ackLab'){
+																			console.log("Lab IS linked to demographic: " + success);
+																			console.log("Processing action: " + action);
+
+																			if(action==='ackLab'){
+																				console.log("Acknowledging lab results");
                                                                                 if(confirmAck()){
+	                                                                                console.log("Acknowledge confirmed. Labid: " + labid);
                                                                                 	jQuery("#labStatus_"+labid).val("A")
                                                                                     updateStatus(formid,labid);
                                                                                 }
                                                                             }else if(action==='msgLab'){
+																				console.log("Sending message about lab. Demoid: " + demoid);
                                                                                 demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0)
-                                                                                    window.popup(700,960,'../../../oscarMessenger/SendDemoMessage.do?demographic_no='+demoid,'msg');
+                                                                                if(demoid!=null && demoid.length>0) {
+	                                                                                window.popup(700, 960, '../../../oscarMessenger/SendDemoMessage.do?demographic_no=' + demoid, 'msg');
+                                                                                }
                                                                             }else if(action==='msgLabRecall'){
                                                                                 demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0)
-                                                                                    window.popup(700,980,'../../../oscarMessenger/SendDemoMessage.do?demographic_no='+demoid+"&recall",'msgRecall');
-                                                                                    window.popup(450,600,'../../../tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid+'<%=ticklerAssignee%>&priority=<%=recallTicklerPriority%>&recall','ticklerRecall');
+                                                                                if(demoid!=null && demoid.length>0) {
+	                                                                                window.popup(700, 980, '../../../oscarMessenger/SendDemoMessage.do?demographic_no=' + demoid + "&recall", 'msgRecall');
+	                                                                                window.popup(450, 600, '../../../tickler/ForwardDemographicTickler.do?docType=HL7&docId=' + labid + '&demographic_no=' + demoid + '<%=ticklerAssignee%>&priority=<%=recallTicklerPriority%>&recall', 'ticklerRecall');
+                                                                                }
                                                                             }else if(action==='ticklerLab'){
+																				console.log("Setting lab Tickler. Labid: " + labid + " Demoid: " + demoid);
                                                                                 demoid=json.demoId;
-                                                                                if(demoid!=null && demoid.length>0)
-                                                                                    window.popup(450,600,'../../../tickler/ForwardDemographicTickler.do?docType=HL7&docId='+labid+'&demographic_no='+demoid,'tickler')
-                                                                            }
-                                                                            else if( action === 'addComment' ) {
+                                                                                if(demoid!=null && demoid.length>0) {
+	                                                                                window.popup(450, 600, '../../../tickler/ForwardDemographicTickler.do?docType=HL7&docId=' + labid + '&demographic_no=' + demoid, 'tickler')
+                                                                                }
+                                                                            } else if( action === 'addComment' ) {
+																				console.log("Adding comment. Formid: " + formid + " labid: " + labid);
                                                                             	addComment(formid,labid);
                                                                             }
-																			// else if (action === 'unlinkDemo') {
-                                                                            //     unlinkDemographic(labid);
-                                                                            // }
 
                                                                         }else{
+	                                                                        console.log("Lab is NOT linked to demographic: " + success);
+	                                                                        console.log("Processing action: " + action);
+
                                                                             if(action === 'ackLab'){
                                                                                 if(confirmAckUnmatched()) {
                                                                                 	jQuery("#labStatus_"+labid).val("A")
@@ -605,29 +615,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
         function confirmAckUnmatched(){
             return confirm('<bean:message key="oscarMDS.index.msgConfirmAcknowledgeUnmatched"/>');
         }
-        <%--function updateStatus(formid,labid){--%>
-        <%--	alert(labid)--%>
-        <%--    var url='<%=request.getContextPath()%>'+"/oscarMDS/UpdateStatus.do";--%>
-        <%--    var data=$(formid).serialize(true);--%>
 
-        <%--    new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){--%>
-        <%--    	console.log(transport);--%>
-        <%--    	if( <%=showAll%> ) {                	--%>
-        <%--        	window.location.reload();--%>
-        <%--        }--%>
-        <%--    	else if( window.opener.document.getElementById('labdoc_'+labid) != null ) {--%>
-        <%--        	window.opener.Effect.BlindUp('labdoc_'+labid);--%>
-        <%--            window.opener.refreshCategoryList();  --%>
-        <%--            window.close();--%>
-        <%--    	}--%>
-        <%--        else {--%>
-        <%--        	window.close();--%>
-        <%--        }--%>
-        <%--        --%>
-        <%--    }});--%>
-
-        <%--}--%>
-        
         function unlinkDemographic(labNo){           
             var reason = "Incorrect demographic";
             reason = prompt('<bean:message key="oscarMDS.segmentDisplay.msgUnlink"/>', reason);
@@ -656,16 +644,15 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
         function addComment(formid,labid) {
         	var url='<%=request.getContextPath()%>'+"/oscarMDS/UpdateStatus.do?method=addComment";
-			if( $F("labStatus_"+labid) == "" ) {
-				$("labStatus_"+labid).value = "N";
+
+			if( jQuery("#labStatus_"+labid).val() === "" ) {
+				jQuery("#labStatus_"+labid).val("N");
 			}
 			
         	var data=$(formid).serialize(true);
-        	
-            new Ajax.Request(url,{method:'post',parameters:data,onSuccess:function(transport){				
-            		window.location.reload();
-            	
-        }});
+			console.log(url);
+        	console.log(data);
+			jQuery.post(url, data).success(function(){window.location.reload();});
         }
 
         function submitLabel(lblval, segmentID){
@@ -696,7 +683,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
         		if (ackList != null){
         		    for (int i=0; i < ackList.size(); i++){
         		        ReportStatus reportStatus = ackList.get(i);
-        		        if (reportStatus.getProviderNo() != null && reportStatus.getProviderNo().equals(providerNo) ) {
+        		        if (providerNo.equals(reportStatus.getOscarProviderNo())) {
         		        	labStatus = reportStatus.getStatus();
         		        	if( labStatus.equals("A") ){
         		            	ackFlag = true;//lab has been ack by this provider.
@@ -736,7 +723,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
           });
       });
 
-        var _in_window = <%=( "true".equals(request.getParameter("inWindow")) ? "true" : "false" )%>;
+        var _in_window = <%= request.getParameter("inWindow") == null || "true".equals(request.getParameter("inWindow")) %>;
         var contextpath = "<%=request.getContextPath()%>";
 
 		</script>
@@ -803,6 +790,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                     <%
                                     if ( !ackFlag ) {
                                     %>
+
 									<%
 										UserPropertyDAO upDao = SpringUtils.getBean(UserPropertyDAO.class);
 										UserProperty up = upDao.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(),UserProperty.LAB_MACRO_JSON);
@@ -831,9 +819,10 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 											  </div>
 											</div>
 									<% } %>
+
                                     <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>" >
-                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
                                     <% } %>
+                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
                                     <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="ForwardSelectedRows(<%=segmentID%> + ':HL7', '', '')" >
                                     <input type="button" value=" <bean:message key="global.btnClose"/> " onClick="window.close()">
                                     <input type="button" value=" <bean:message key="global.btnPrint"/> " onClick="printPDF('<%=segmentID%>')">
@@ -2029,8 +2018,8 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                 <td align="left" width="50%">
                                     <% if ( !ackFlag ) { %>
                                     <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge" />" onclick="<%=ackLabFunc%>" >
-                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
                                     <% } %>
+                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
                                     <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="ForwardSelectedRows(<%=segmentID%> + ':HL7', '', '')" >
                                     <input type="button" value=" <bean:message key="global.btnClose"/> " onClick="window.close()">
                                     <input type="button" value=" <bean:message key="global.btnPrint"/> " onClick="printPDF('<%=segmentID%>')">

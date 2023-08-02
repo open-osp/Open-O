@@ -23,9 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<%-- This JSP is the first page you see when you enter 'report by template' --%>
+<!DOCTYPE html>
 <%@page import="org.oscarehr.common.dao.DemographicDao"%>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
 <%@page import="org.oscarehr.common.dao.FlowSheetUserCreatedDao"%>
@@ -58,28 +56,14 @@
 %>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Flowsheet Editor</title>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
+<script src="<%=request.getContextPath() %>/js/global.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
-<script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
-<style>
-.red{color:red}
 
-</style>
 <%
 	String flowsheetId = request.getParameter("flowsheetId");
 	String measurementType = request.getParameter("measurementType");
@@ -98,14 +82,14 @@ function loadIndicators() {
 				} else {
 					arr[0] =xml.indicators;
 				}
-				
+
 				for(var i=0;i<arr.length;i++) {
 					$('#indicator').append($('<option>', {
 					    value: arr[i].key,
 					    text: arr[i].key
-					}));		
+					}));
 				}
-				
+
 	});
 }
 
@@ -121,13 +105,13 @@ function saveItem() {
 </script>
 </head>
 
-<!-- 
+<!--
 <rule indicationColor="LOW">
 	<condition type="getDataAsDouble" param="WAIS" value="&gt;102" />
 	<condition type="isMale"  value="true" />
 </rule>
  -->
-<body vlink="#0000FF" class="BodyStyle">
+<body>
 <h2>Flowsheet Target Editor</h2>
 <br/>
 <form name="theForm" id="theForm">
@@ -165,7 +149,7 @@ function saveItem() {
 </tr>
 <tr>
 	<td colspan="2">
-		<input type="button" value="Save" onClick="saveItem()"/>
+		<input type="button" value="Save" class="btn btn-primary" onClick="saveItem()"/>
 	</td>
 </tr>
 </table>

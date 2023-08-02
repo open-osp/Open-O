@@ -23,9 +23,8 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<%-- This JSP is the first page you see when you enter 'report by template' --%>
+<!DOCTYPE html>
+
 <%@page import="org.oscarehr.common.model.FlowSheetUserCreated"%>
 <%@page import="org.oscarehr.common.dao.DemographicDao"%>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
@@ -59,34 +58,23 @@
 %>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>OSCAR Jobs</title>
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
-<script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+<script src="<%=request.getContextPath()%>/js/global.js"></script>
+<script src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
+<script src="<%=request.getContextPath()%>/share/yui/js/yahoo-dom-event.js"></script>
+<script src="<%=request.getContextPath()%>/share/yui/js/connection-min.js"></script>
+<script src="<%=request.getContextPath()%>/share/yui/js/animation-min.js"></script>
+<script src="<%=request.getContextPath()%>/share/yui/js/datasource-min.js"></script>
+<script src="<%=request.getContextPath()%>/share/yui/js/autocomplete-min.js"></script>
+<script src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
 
-
-<script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/connection-min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/animation-min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/datasource-min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/share/yui/js/autocomplete-min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/demographicProviderAutocomplete.js"></script>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css"/>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/yui/css/autocomplete.css"/>
-<link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css"  />
+<link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" >
+<link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet" >
+<link href="<%=request.getContextPath()%>/share/yui/css/fonts-min.css" rel="stylesheet" >
+<link href="<%=request.getContextPath()%>/share/yui/css/autocomplete.css" rel="stylesheet" >
+<link href="<%=request.getContextPath()%>/share/css/demographicProviderAutocomplete.css" media="all" rel="stylesheet" >
 
 
 <style>
@@ -94,7 +82,7 @@
 
 </style>
 <%
-	String scope = request.getParameter("scope");	
+	String scope = request.getParameter("scope");
 %>
 <script>
 
@@ -126,10 +114,10 @@ function getSystemFlowsheets() {
 		} else {
 			arr[0] =xml.results;
 		}
-		
+
 		$("#template").empty();
 		$("#template").append("<option value=''>Select Below</option>");
-		
+
 		for(var i=0;i<arr.length;i++) {
 			var fs = arr[i];
 			$("#template").append("<option value='"+fs.name+"'>"+fs.displayName+"</option>");
@@ -147,7 +135,7 @@ function saveFlowsheet() {
 
 function updateDetails() {
 	var template = $("#template").val();
-	
+
 	if(template != '') {
 		jQuery.getJSON("<%=request.getContextPath()%>/admin/Flowsheet.do?method=getTemplateDetails&template=" + template, {},
 			    function(xml) {
@@ -160,12 +148,12 @@ function updateDetails() {
 </script>
 </head>
 
-<body vlink="#0000FF" class="BodyStyle">
+<body>
 <h2>Add New Custom Flowsheet</h2>
 <br/>
 <form id="theForm">
-<table style="width:30%"  class="table table-bordered table-striped table-hover table-condensed">
- 
+<table style="width:30%"  class="table table-striped table-hover table-condensed">
+
 <tr>
 	<td><b>Name:</b></td>
 	<td><input type="text" name="name" value=""/></td>

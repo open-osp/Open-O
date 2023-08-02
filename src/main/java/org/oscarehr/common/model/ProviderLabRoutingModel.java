@@ -103,6 +103,9 @@ public class ProviderLabRoutingModel extends AbstractModel<Integer> implements S
 	}
 	
 	public String getComment() {
+		if(comment == null) {
+			return "";
+		}
 		return comment;
 	}
 	

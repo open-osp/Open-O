@@ -23,9 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<%-- This JSP is the first page you see when you enter 'report by template' --%>
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -55,28 +53,13 @@
 %>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>OSCAR Jobs</title>
+<title>Flowsheet Manager</title>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
+<script src="<%=request.getContextPath() %>/js/global.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/DT_bootstrap.js"></script>   
-<script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
-<style>
-.red{color:red}
-
-</style>
 
 <script>
 $(document).ready(function(){
@@ -93,7 +76,7 @@ function listSystemFlowsheets() {
 		} else {
 			arr[0] =xml.results;
 		}
-		
+
 		for(var i=0;i<arr.length;i++) {
 			var fs = arr[i];
 			var html = '<tr>';
@@ -101,9 +84,9 @@ function listSystemFlowsheets() {
 			html += '<td>'+fs.displayName+'</td>';
 			html += '<td>'+fs.name+'</td>';
 			html += '<td>'+fs.triggers+'</td>';
-			
+
 			html += '</tr>';
-		
+
 			jQuery('#systemFsTable tbody').append(html);
 		}
     });
@@ -125,7 +108,7 @@ function listFlowsheets(scope) {
 		} else {
 			arr[0] =xml.results;
 		}
-		
+
 		for(var i=0;i<arr.length;i++) {
 			var fs = arr[i];
 			var html = '<tr>';
@@ -135,9 +118,9 @@ function listFlowsheets(scope) {
 			html += '<td>'+fs.triggers+'</td>';
 			html += '<td>'+ fs.dateCreated +'</td>';
 			html += '<td>' + fs.createdBy + '</td>';
-			html += '<td>'+ fs.details +'</td>';	
+			html += '<td>'+ fs.details +'</td>';
 			html += '</tr>';
-		
+
 			jQuery('#'+scope+'Table tbody').append(html);
 		}
     });
@@ -163,7 +146,7 @@ function deleteFlowsheet(id) {
 </script>
 </head>
 
-<body vlink="#0000FF" class="BodyStyle">
+<body>
 <h2>Manage Flowsheets</h2>
 <br/>
 
@@ -201,7 +184,7 @@ function deleteFlowsheet(id) {
 	<tbody>
 	</tbody>
 </table>
-<input type="button" class="btn btn-primary" value="Add New Custom Flowsheet for the clinic" onClick="addNewFlowsheet('clinic')"/>	
+<input type="button" class="btn btn-primary" value="Add New Custom Flowsheet for the clinic" onClick="addNewFlowsheet('clinic')"/>
 
 
 <br/><br/>
@@ -221,7 +204,7 @@ function deleteFlowsheet(id) {
 	<tbody>
 	</tbody>
 </table>
-<input type="button" class="btn btn-primary" value="Add New Custom Flowsheet for a Provider" onClick="addNewFlowsheet('provider')"/>	
+<input type="button" class="btn btn-primary" value="Add New Custom Flowsheet for a Provider" onClick="addNewFlowsheet('provider')"/>
 
 
 <br/><br/>
@@ -241,7 +224,7 @@ function deleteFlowsheet(id) {
 	<tbody>
 	</tbody>
 </table>
-<input type="button" class="btn btn-primary" value="Add New Custom Flowsheet for a Patient" onClick="addNewFlowsheet('patient')"/>	
+<input type="button" class="btn btn-primary" value="Add New Custom Flowsheet for a Patient" onClick="addNewFlowsheet('patient')"/>
 
 </body>
 </html:html>

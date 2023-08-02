@@ -17,7 +17,8 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%      
+<!DOCTYPE html>
+<%
 String user_no = (String) session.getAttribute("user");
 String asstProvider_no = "";
 String color ="";
@@ -28,7 +29,7 @@ String service_form="", service_name="";
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, oscar.*, java.net.*" %>
 <%@ include file="../../../admin/dbconnection.jsp"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.CtlBillingService" %>
@@ -37,11 +38,12 @@ String service_form="", service_name="";
 <%@ page import="org.oscarehr.common.dao.CtlDiagCodeDao" %>
 <%@ page import="org.oscarehr.common.model.CtlBillingServicePremium" %>
 <%@ page import="org.oscarehr.common.dao.CtlBillingServicePremiumDao" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%
 	CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
 	CtlDiagCodeDao ctlDiagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
 	CtlBillingServicePremiumDao ctlBillingServicePremiumDao = SpringUtils.getBean(CtlBillingServicePremiumDao.class);
-	
+
 %>
 
 
@@ -51,30 +53,26 @@ String reportAction=request.getParameter("reportAction")==null?"":request.getPar
 %>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="billing.manageBillingform.title" /></title>
-<link rel="stylesheet" href="billing.css">
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-<script type="text/javascript"
-	src="../../../share/javascript/prototype.js"></script>
-<script language="JavaScript">
-<!--
+<script>
 
 function selectprovider(s) {
   if(self.location.href.lastIndexOf("&providerview=") > 0 ) a = self.location.href.substring(0,self.location.href.lastIndexOf("&providerview="));
   else a = self.location.href;
 	self.location.href = a + "&providerview=" +s.options[s.selectedIndex].value ;
 }
-function openBrWindow(theURL,winName,features) { 
+function openBrWindow(theURL,winName,features) {
   window.open(theURL,winName,features);
-} 
+}
 function setfocus() {
   this.focus();
   document.ADDAPPT.keyword.focus();
   document.ADDAPPT.keyword.select();
 }
-   
+
 function valid(form){
 	if (validateServiceType(form)){
 		form.action = "dbManageBillingform_add.jsp";
@@ -87,7 +85,7 @@ function validateServiceType() {
 		alert("<bean:message key="billing.manageBillingform.msgIDExists"/>");
 		return false;
 	}
-	
+
 	if (document.servicetypeform.typeid.value == '') {
 		alert("<bean:message key="billing.manageBillingform.btnManage.msgRequiredField"/>");
 		return false;
@@ -107,8 +105,12 @@ function refresh() {
 function manageType(stype,stype_name) {
     url  = "manageBillingform_billtype.jsp";
     pars = "type_id=" + stype + "&type_name=" + stype_name;
-    
-    var myAjax = new Ajax.Updater("manage_type", url, {method:"get", parameters:pars});
+
+    fetch(url+"?"+pars, {method:"get"})
+    .then(function (response){ return response.text();
+    }).then(function(data) {
+        document.getElementById("manage_type").innerHTML=data;
+    });
     showManageType(true);
 }
 
@@ -119,9 +121,10 @@ function onUnbilled(url) {
 }
 
 function showManageType(cmd) {
-    var p = $("manage_type");
-    if (cmd) p.show();
-    else p.hide();
+    var el = document.getElementById("manage_type");
+    if ( el == null ) { return;}
+    if (cmd) el.style.display = "block";
+    else el.style.display = "none";
 }
 
 function manageBillType(id,oldtype,newtype) {
@@ -129,47 +132,34 @@ function manageBillType(id,oldtype,newtype) {
     pars = "?servicetype="+id+"&billtype_old="+oldtype+"&billtype="+newtype;
     popupPage(700,720,url+pars);
 }
-//-->
+
 </script>
 </head>
+<body onload="showManageType(false);">
+<h4><b>oscar<bean:message key="billing.manageBillingform.msgBilling" /></h4>
 
-<body leftmargin="0" topmargin="5" rightmargin="0"
-	onload="showManageType(false);">
+<form name="serviceform" method="post" action="manageBillingform.jsp">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr bgcolor="#000000">
-		<td height="40" width="10%"></td>
-		<td width="90%" align="left">
-		<p><font face="Verdana, Arial, Helvetica, sans-serif"
-			color="#FFFFFF"><b><font
-			face="Arial, Helvetica, sans-serif" size="4">oscar<font
-			size="3"><bean:message
-			key="billing.manageBillingform.msgBilling" /></font></font></b></font></p>
-		</td>
-	</tr>
-</table>
-
-<table width="100%" border="0" bgcolor="#EEEEFF">
-	<form name="serviceform" method="post" action="manageBillingform.jsp">
+<div class="well">
+<table width="100%" >
 	<tr>
-		<td width="30%" align="right"><font size="2" color="#333333"
-			face="Verdana, Arial, Helvetica, sans-serif"> <input
-			type="radio" name="reportAction" value="servicecode"
+		<td style="width:30%; text-align:right">
+            <input	type="radio" name="reportAction" value="servicecode"
 			<%=reportAction.equals("servicecode")?"checked":""%>> <bean:message
-			key="billing.manageBillingform.formServiceCode" /> <input
-			type="radio" name="reportAction" value="dxcode"
+			key="billing.manageBillingform.formServiceCode" />
+            <input type="radio" name="reportAction" value="dxcode"
 			<%=reportAction.equals("dxcode")?"checked":""%>> <bean:message
-			key="billing.manageBillingform.formDxCode" /></font></td>
-		<td width="50%" align="center"><font
-			face="Verdana, Arial, Helvetica, sans-serif" size="2" color="#333333"><b><bean:message
-			key="billing.manageBillingform.formSelectForm" /></b></font> <select
-			name="billingform">
+			key="billing.manageBillingform.formDxCode" /></td>
+		<td style="width:40%; text-align: center">
+		<div style="align:right">
+            <bean:message key="billing.manageBillingform.formSelectForm" />&nbsp;&nbsp;
+            <select	name="billingform">
 			<option value="000" <%=clinicview.equals("000")?"selected":""%>><bean:message
 				key="billing.manageBillingform.formAddDelete" /></option>
 			<option value="***" <%=clinicview.equals("***")?"selected":""%>><bean:message
 				key="billing.manageBillingform.formManagePremium" /></option>
 
-<% 
+<%
 String serviceType="";
 String serviceTypeName="";
 List<Object[]> billingServices = ctlBillingServiceDao.findServiceTypes();
@@ -181,18 +171,18 @@ for(Object[] billingService:billingServices){
 			<option value="<%=serviceType%>"
 				<%=clinicview.equals(serviceType)?"selected":""%>><%=serviceTypeName%></option>
 <%
-}      
+}
 %>
-		</select></td>
-		<td width="40%"><font color="#333333" size="2"
-			face="Verdana, Arial, Helvetica, sans-serif"> <input
-			type="submit" name="Submit" style=""
+		</select></div>
+		</td>
+		<td style="width:30%;">
+            <input type="submit" name="Submit" class="btn"
 			value="<bean:message key="billing.manageBillingform.btnManage"/>">
-		</font></td>
+		</td>
 	</tr>
-	</form>
 </table>
-
+	</form>
+<br>
 <%
 if (clinicview.compareTo("000") == 0) { %>
 <%@ include file="manageBillingform_add.jspf"%>
@@ -207,7 +197,7 @@ if (clinicview.compareTo("000") == 0) { %>
 <%
 }
 %>
-
+</div>
 
 </body>
 </html:html>

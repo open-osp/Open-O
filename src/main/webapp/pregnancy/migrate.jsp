@@ -48,21 +48,15 @@ if(!authed) {
 <%@page import="org.oscarehr.common.dao.EpisodeDao" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 
-<%
 
-%>
 <html:html locale="true">
 <head>
-<script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-
 <title>Migration Tool</title>
 
 
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
-<script type="text/javascript" language="JavaScript" src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
-<script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/share/css/OscarStandardLayout.css">
+<script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 <style>
 div#demo
 {
@@ -81,7 +75,6 @@ function complete() {
 }
 </script>
 </head>
-
 <body>
 
 	<br/>
@@ -90,10 +83,10 @@ function complete() {
 <%
 	if(request.getAttribute("error") != null) {
 %>
-	<h2 style="color:red"><%=request.getAttribute("error") %></h2>
-<% 
+	<span style="alert alert-warning"><%=request.getAttribute("error") %></span>
+<%
 	return;
-	} 
+	}
 %>
 
 	<form action="Pregnancy.do">
@@ -106,7 +99,7 @@ function complete() {
 			<h3>Migrate data from ONAR2005 form to the <b>Enhanced</b> form.</h3>
 			<p>
 				You only run this once per patient for existing charts where an AR2005 form is in progress.<br/>
-				
+
 				This tool will take existing data from the latest AR2005 form, and<br/>
 				copy the values over to the new enhanced form.</p>
 			<p>
@@ -116,16 +109,16 @@ function complete() {
 			</p>
 			<%
 			if(request.getAttribute("warning")!=null) {
-				%><h5 style="color:red"><%=request.getAttribute("warning") %></h5><%
+				%><h5 style="alert alert-warning"><%=request.getAttribute("warning") %></h5><%
 			}
 			%>
-			<button>Perform Migration</button>
-			
+			<button class="btn">Perform Migration</button>
+
 			<% } else {	%>
-				<h4 style="color:red"><%=request.getAttribute("message")%></h4>	
+				<h4 style="alert alert-warning"><%=request.getAttribute("message")%></h4>
 				<br/>
 				<br/>
-				<button onclick="return complete();">Close Window</button>				
+				<button onclick="return complete();" class="btn">Close Window</button>
 			<% } %>
 		</fieldset>
 	</form>

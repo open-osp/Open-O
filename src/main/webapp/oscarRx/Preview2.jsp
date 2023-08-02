@@ -30,18 +30,14 @@
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscar"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page import="oscar.oscarProvider.data.ProSignatureData, oscar.oscarProvider.data.ProviderData"%>
-<%@ page import="oscar.log.*,oscar.oscarRx.data.*"%>
+<%@ page import="oscar.oscarRx.data.*"%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@ page import="org.apache.logging.log4j.Logger" %>
 
 <%@ page import="oscar.*,java.lang.*,java.util.Date,java.text.SimpleDateFormat,oscar.oscarRx.util.RxUtil,org.springframework.web.context.WebApplicationContext,
          org.springframework.web.context.support.WebApplicationContextUtils,
          org.oscarehr.common.dao.UserPropertyDAO,org.oscarehr.common.model.UserProperty"%>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
 
 <!-- Classes needed for signature injection -->
-<%@page import="org.oscarehr.util.SessionConstants"%>
-<%@page import="org.oscarehr.common.dao.*"%>
 <%@page import="org.oscarehr.common.model.*"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="org.oscarehr.util.DigitalSignatureUtils"%>
@@ -74,15 +70,23 @@
 <!DOCTYPE html>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" src="../share/javascript/Oscar.js"></script>
+<%--<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>--%>
+<%--<script type="text/javascript" src="../share/javascript/prototype.js"></script>--%>
+<%--<script type="text/javascript" src="../share/javascript/Oscar.js"></script>--%>
 <title><bean:message key="RxPreview.title"/></title>
 <style media="print">
  .noprint {
 	 display: none;
  }
  </style>
+	<style media="all">
+		* {
+			font:13px/1.231 arial,helvetica,clean,sans-serif;
+		}
+        #fax-success {
+            color:green;
+        }
+	</style>
 <html:base />
 
 <logic:notPresent name="RxSessionBean" scope="session">
@@ -96,18 +100,18 @@
 	</logic:equal>
 </logic:present>
 
-<link rel="stylesheet" type="text/css" href="styles.css">
-<script type="text/javascript" language="Javascript">
-	
+<%--<link rel="stylesheet" type="text/css" href="styles.css">--%>
+<%--<script type="text/javascript" language="Javascript">--%>
+<%--	--%>
 
-    function onPrint2(method) {
+<%--    function onPrint2(method) {--%>
 
-            document.getElementById("preview2Form").action = "../form/createcustomedpdf?__title=Rx&__method=" + method;
-            document.getElementById("preview2Form").target="_blank";
-            document.getElementById("preview2Form").submit();
-       return true;
-    }
-</script>
+<%--            document.getElementById("preview2Form").action = "../form/createcustomedpdf?__title=Rx&__method=" + method;--%>
+<%--            document.getElementById("preview2Form").target="_blank";--%>
+<%--            document.getElementById("preview2Form").submit();--%>
+<%--       return true;--%>
+<%--    }--%>
+<%--</script>--%>
 
 </head>
 <body topmargin="0" leftmargin="0" vlink="#0000FF">
@@ -566,7 +570,7 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
                                     </tr>
                             </table>
 			</td>
-	        <td style="vertical-align: top;padding: 5px;white-space: nowrap;">
+	        <td style="vertical-align: top;padding: 5px;">
 		        <div id="pharmInfo" >
 		        </div>
 	        </td>

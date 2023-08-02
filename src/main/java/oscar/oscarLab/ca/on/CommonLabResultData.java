@@ -425,7 +425,10 @@ public class CommonLabResultData {
 				providerLabRoutingModel.setStatus(""+status);
 				//we don't want to clobber existing comments when filing labs
 				String currentComment = providerLabRoutingModel.getComment();
-				providerLabRoutingModel.setComment(currentComment != null ? currentComment : ""  + " " + comment);
+				// use the new incoming comment on these conditions.
+				if(currentComment != null && ! currentComment.trim().equalsIgnoreCase(comment.trim())) {
+					providerLabRoutingModel.setComment(comment.trim());
+				}
 				providerLabRoutingModel.setTimestamp(new Date());
 				providerLabRoutingDao.merge(providerLabRoutingModel);
 			}

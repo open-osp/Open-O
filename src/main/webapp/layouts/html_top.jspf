@@ -1,11 +1,16 @@
+<!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
- <link href="<%=request.getContextPath()%>/js/jquery_css/smoothness/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery_oscar_defaults.js"></script>
+
+<script src="${pageContext.request.contextPath}/js/global.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery_oscar_defaults.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+<link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+
 <%
 	String passedThroughHeadElement=(String)request.getAttribute("HEAD_ELEMENT");
 	if (passedThroughHeadElement!=null)
@@ -13,7 +18,7 @@
 		%>
 			<%=passedThroughHeadElement%>
 		<%
-	}		
+	}
 %>
 <title></title>
 </head>

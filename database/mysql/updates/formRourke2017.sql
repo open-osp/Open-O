@@ -168,4 +168,4 @@ CREATE TABLE IF NOT EXISTS `formRourke2017` (
   `archived` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`ID`),
   KEY `formRourke2017_demographic_no` (`demographic_no`)
-);
+)ENGINE=Aria DEFAULT CHARSET=latin1;

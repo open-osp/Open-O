@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="oscar.util.*" %>
@@ -55,16 +54,16 @@ if(!authed) {
 %>
 <html:html locale="true">
 <head>
-<script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-
 <title>Migration Tool</title>
 
 
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
 <script type="text/javascript" language="JavaScript" src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
-<script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
-<script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
 <style>
 div#demo
 {
@@ -76,19 +75,19 @@ div#demo
 </style>
 
 <script>
-$(document).ready(function() {		
+$(document).ready(function() {
 	$("select[name='c_province']").val('<%= UtilMisc.htmlEscape(props.getProperty("c_province", "")) %>');
 	$("select[name='pg1_maritalStatus']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_maritalStatus", "")) %>');
-	$("select[name='pg1_language']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_language", "")) %>');		
+	$("select[name='pg1_language']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_language", "")) %>');
 	$("select[name='pg1_partnerEduLevel']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_partnerEduLevel", "")) %>');
-	
+
 	$("select[name='pg1_eduLevel']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_eduLevel", "")) %>');
-	
+
 	$("select[name='pg1_ethnicBgMother']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_ethnicBgMother", "")) %>');
 	$("select[name='pg1_ethnicBgFather']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_ethnicBgFather", "")) %>');
 	$("select[name='c_hinType']").val('<%= UtilMisc.htmlEscape(props.getProperty("c_hinType", "")) %>');
-	
-	$("select[name='pg1_box3']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_box3", "")) %>');		
+
+	$("select[name='pg1_box3']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_box3", "")) %>');
 	$("select[name='pg1_labHIV']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_labHIV", "")) %>');
 	$("select[name='pg1_labABO']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_labABO", "")) %>');
 	$("select[name='pg1_labRh']").val('<%= UtilMisc.htmlEscape(props.getProperty("pg1_labRh", "")) %>');
@@ -102,17 +101,17 @@ $(document).ready(function() {
 	$("select[name='ar2_strep']").val('<%= UtilMisc.htmlEscape(props.getProperty("ar2_strep", "")) %>');
 	$("select[name='ar2_bloodGroup']").val('<%= UtilMisc.htmlEscape(props.getProperty("ar2_bloodGroup", "")) %>');
 	$("select[name='ar2_rh']").val('<%=  UtilMisc.htmlEscape(props.getProperty("ar2_rh", "")) %>');
-	
-	$("input[name='ar2_lab2GTT1']").bind('keyup',function(){
+
+	$("input[name='ar2_lab2GTT1']").on('keyup',function(){
 		updateGtt();
 	});
-	$("input[name='ar2_lab2GTT2']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT2']").on('keyup',function(){
 		updateGtt();
 	});
-	$("input[name='ar2_lab2GTT3']").bind('keyup',function(){
+	$("input[name='ar2_lab2GTT3']").on('keyup',function(){
 		updateGtt();
 	});
-	
+
 	var gttVal = $("input[name='ar2_lab2GTT']").val();
 	if(gttVal.length > 0) {
 		var parts = gttVal.split("/");
@@ -121,7 +120,7 @@ $(document).ready(function() {
 		$("input[name='ar2_lab2GTT3']").val(parts[2]);
 	}
 
-	
+
 });
 
 
@@ -139,10 +138,10 @@ function updateGtt() {
 <%
 	if(request.getAttribute("error") != null) {
 %>
-	<h2 style="color:red"><%=request.getAttribute("error") %></h2>
-<% 
+	<span style="alert alert-warning"><%=request.getAttribute("error") %></span>
+<%
 	return;
-	} 
+	}
 %>
 
 	<h3>Values on the left side are from the existing AR2005 form. Please set drop down boxes on right.</h3>
@@ -164,8 +163,8 @@ function updateGtt() {
 						<td>Province:</td>
 						<td><input type="text" name="c_province_old" value="<%=props.getProperty("c_province","")%>"/></td>
 						<td>
-			
-			
+
+
 				<select name="c_province" style="width: 100%">
 					<option value="AB" >AB-Alberta</option>
 					<option value="BC" >BC-British Columbia</option>
@@ -238,10 +237,10 @@ function updateGtt() {
 					<option value="US-WV" >US-WV-West Virginia</option>
 					<option value="US-WY" >US-WY-Wyoming</option>
 					<option value="OT" >Other</option>
-				</select>						
+				</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>Language:</td>
 						<td><input type="text" name="pg1_language_old" value="<%=props.getProperty("pg1_language","")%>"/></td>
@@ -287,13 +286,13 @@ function updateGtt() {
 						<option value="DAN">Danish</option>
 						<option value="DIV">Dhivehi</option>
 						<option value="NLD">Dutch</option>
-						<option value="DZO">Dzongkha</option>						
+						<option value="DZO">Dzongkha</option>
 						<option value="EST">Estonian</option>
 						<option value="EWE">Ewe</option>
 						<option value="FAO">Faroese</option>
 						<option value="FIJ">Fijian</option>
 						<option value="FIL">Filipino</option>
-						<option value="FIN">Finnish</option>						
+						<option value="FIN">Finnish</option>
 						<option value="FUL">Fulah</option>
 						<option value="GLG">Galician</option>
 						<option value="LUG">Ganda</option>
@@ -355,7 +354,7 @@ function updateGtt() {
 						<option value="NDE">North Ndebele</option>
 						<option value="SME">Northern Sami</option>
 						<option value="NOR">Norwegian</option>
-						<option value="NOB">Norwegian Bokmål</option>
+						<option value="NOB">Norwegian Bokm\ufffdl</option>
 						<option value="NNO">Norwegian Nynorsk</option>
 						<option value="NYA">Nyanja</option>
 						<option value="OCI">Occitan (post 1500)</option>
@@ -425,73 +424,73 @@ function updateGtt() {
 						<option value="ZHA">Zhuang</option>
 						<option value="ZUL">Zulu</option>
 						<option value="OTH">Other</option>
-						<option value="UN">Unknown</option>					
-					</select>								
+						<option value="UN">Unknown</option>
+					</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>Partner Education Level:</td>
 						<td><input type="text" name="pg1_partnerEduLevel_old" value="<%=props.getProperty("pg1_partnerEduLevel","")%>"/></td>
-						
+
 						<td>
 											<select name="pg1_partnerEduLevel" style="width: 100%" >
 						<option value="UNK">Select</option>
 						<option value="ED001">College/University Completed</option>
-						<option value="ED002">College/University not Completed</option>						
+						<option value="ED002">College/University not Completed</option>
 						<option value="ED004">High School Completed</option>
-						<option value="ED005">High School not Completed</option>		
+						<option value="ED005">High School not Completed</option>
 						<option value="ED003">Grade School Completed</option>
 						<option value="ED006">Grade School not Completed</option>
-					</select>			
-					
+					</select>
+
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>Education Level:</td>
 						<td><input type="text" name="pg1_eduLevel_old" value="<%=props.getProperty("pg1_eduLevel","")%>"/></td>
-						
+
 						<td>
 											<select name="pg1_eduLevel" style="width: 100%" >
 						<option value="UNK">Select</option>
 						<option value="ED001">College/University Completed</option>
-						<option value="ED002">College/University not Completed</option>						
+						<option value="ED002">College/University not Completed</option>
 						<option value="ED004">High School Completed</option>
-						<option value="ED005">High School not Completed</option>		
+						<option value="ED005">High School not Completed</option>
 						<option value="ED003">Grade School Completed</option>
 						<option value="ED006">Grade School not Completed</option>
-					</select>			
-					
+					</select>
+
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>Ethnic Background:</td>
-						<td><input type="text" name="pg1_ethnicBg_old" value="<%=props.getProperty("pg1_ethnicBg","")%>"/></td>						
+						<td><input type="text" name="pg1_ethnicBg_old" value="<%=props.getProperty("pg1_ethnicBg","")%>"/></td>
 						<td>
 				Mother:
 				<select name="pg1_ethnicBgMother" >
-					<option value="UN">Select</option>					
+					<option value="UN">Select</option>
 					<option value="ANC001">Aboriginal</option>
 					<option value="ANC002">Asian</option>
 					<option value="ANC005">Black</option>
 					<option value="ANC007">Caucasian</option>
-					<option value="OTHER">Other</option>									
+					<option value="OTHER">Other</option>
 				</select>
 				<br/>
 				Father
 				<select name="pg1_ethnicBgFather"  >
-					<option value="UN">Select</option>					
+					<option value="UN">Select</option>
 					<option value="ANC001">Aboriginal</option>
 					<option value="ANC002">Asian</option>
 					<option value="ANC005">Black</option>
 					<option value="ANC007">Caucasian</option>
-					<option value="OTHER">Other</option>									
-				</select>						
+					<option value="OTHER">Other</option>
+				</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>Billing Type:</td>
 						<td></td>
@@ -500,27 +499,27 @@ function updateGtt() {
 					<option value="OHIP">OHIP</option>
 					<option value="RAMQ">RAMQ</option>
 					<option value="OTHER">OTHER</option>
-				</select>						
+				</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>Smoking - Cigs/Day:</td>
-						<td><input type="text" name="pg1_box3_old" value="<%=props.getProperty("pg1_box3","")%>"/></td>						
-						
+						<td><input type="text" name="pg1_box3_old" value="<%=props.getProperty("pg1_box3","")%>"/></td>
+
 						<td>
 								<select name="pg1_box3">
 									<option value="">Select</option>
 									<option value="LESS10">&lt;10</option>
 									<option value="UP20">10-20</option>
 									<option value="OVER20">&gt;20</option>
-								</select>								
+								</select>
 						</td>
 					</tr>
 					<tr>
 						<td>HIV:</td>
-						<td><input type="text" name="pg1_labHIV_old" value="<%=props.getProperty("pg1_labHIV","")%>"/></td>						
-						
+						<td><input type="text" name="pg1_labHIV_old" value="<%=props.getProperty("pg1_labHIV","")%>"/></td>
+
 						<td>
 						<select name="pg1_labHIV">
 							<option value="NDONE">Not Done</option>
@@ -528,14 +527,14 @@ function updateGtt() {
 							<option value="NEG">Negative</option>
 							<option value="IND">Indeterminate</option>
 							<option value="UNK">Unknown</option>
-						</select>							
+						</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>ABO:</td>
-						<td><input type="text" name="pg1_labABO_old" value="<%=props.getProperty("pg1_labABO","")%>"/></td>						
-						
+						<td><input type="text" name="pg1_labABO_old" value="<%=props.getProperty("pg1_labABO","")%>"/></td>
+
 						<td>
 						<select name="pg1_labABO">
 							<option value="NDONE">Not Done</option>
@@ -544,14 +543,14 @@ function updateGtt() {
 							<option value="AB">AB</option>
 							<option value="O">O</option>
 							<option value="UNK">Unknown</option>
-						</select>							
+						</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>RH:</td>
-						<td><input type="text" name="pg1_labRh_old" value="<%=props.getProperty("pg1_labRh","")%>"/></td>						
-						
+						<td><input type="text" name="pg1_labRh_old" value="<%=props.getProperty("pg1_labRh","")%>"/></td>
+
 						<td>
 						<select name="pg1_labRh">
 							<option value="NDONE">Not Done</option>
@@ -559,91 +558,91 @@ function updateGtt() {
 							<option value="WPOS">Weak Positive</option>
 							<option value="NEG">Negative</option>
 							<option value="UNK">Unknown</option>
-						</select>							
+						</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>GC/Chlamydia:</td>
-						<td><input type="text" name="pg1_labGC_old" value="<%=props.getProperty("pg1_labGC","")%>"/></td>						
-						
+						<td><input type="text" name="pg1_labGC_old" value="<%=props.getProperty("pg1_labGC","")%>"/></td>
+
 						<td>
 						<select name="pg1_labGC">
 							<option value="NDONE">Not Done</option>
 							<option value="POS">Positive</option>
 							<option value="NEG">Negative</option>
 							<option value="UNK">Unknown</option>
-						</select>		
+						</select>
 						<br/>
 						<select name="pg1_labChlamydia">
 							<option value="NDONE">Not Done</option>
 							<option value="POS">Positive</option>
 							<option value="NEG">Negative</option>
 							<option value="UNK">Unknown</option>
-						</select>											
+						</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>Rubella:</td>
-						<td><input type="text" name="pg1_labRubella_old" value="<%=props.getProperty("pg1_labRubella","")%>"/></td>						
-						
+						<td><input type="text" name="pg1_labRubella_old" value="<%=props.getProperty("pg1_labRubella","")%>"/></td>
+
 						<td>
 						<select name="pg1_labRubella">
 							<option value="NDONE">Not Done</option>
 							<option value="Non-Immune">Non-Immune</option>
 							<option value="Immune">Immune </option>
 							<option value="Indeterminate">Indeterminate</option>
-						</select>							
+						</select>
 						</td>
-					</tr>			
-					
+					</tr>
+
 					<tr>
 						<td>HbsAg:</td>
-						<td><input type="text" name="pg1_labHBsAg_old" value="<%=props.getProperty("pg1_labHBsAg","")%>"/></td>						
-						
+						<td><input type="text" name="pg1_labHBsAg_old" value="<%=props.getProperty("pg1_labHBsAg","")%>"/></td>
+
 						<td>
 						<select name="pg1_labHBsAg">
 							<option value="NDONE">Not Done</option>
 							<option value="POS">Positive</option>
 							<option value="NEG">Negative</option>
 							<option value="UNK">Unknown</option>
-						</select>							
+						</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>VDRL:</td>
-						<td><input type="text" name="pg1_labVDRL_old" value="<%=props.getProperty("pg1_labVDRL","")%>"/></td>						
-						
+						<td><input type="text" name="pg1_labVDRL_old" value="<%=props.getProperty("pg1_labVDRL","")%>"/></td>
+
 						<td>
 						<select name="pg1_labVDRL">
 							<option value="NDONE">Not Done</option>
 							<option value="POS">Positive</option>
 							<option value="NEG">Negative</option>
 							<option value="UNK">Unknown</option>
-						</select>							
+						</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>Sickle Cell:</td>
-						<td><input type="text" name="pg1_labSickle_old" value="<%=props.getProperty("pg1_labSickle","")%>"/></td>						
-						
+						<td><input type="text" name="pg1_labSickle_old" value="<%=props.getProperty("pg1_labSickle","")%>"/></td>
+
 						<td>
 						<select name="pg1_labSickle">
 							<option value="NDONE">Not Done</option>
 							<option value="POS">Positive</option>
 							<option value="NEG">Negative</option>
 							<option value="UNK">Unknown</option>
-						</select>							
+						</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>AR2 ABO:</td>
-						<td><input type="text" name="ar2_bloodGroup_old" value="<%=props.getProperty("ar2_bloodGroup","")%>"/></td>						
-						
+						<td><input type="text" name="ar2_bloodGroup_old" value="<%=props.getProperty("ar2_bloodGroup","")%>"/></td>
+
 						<td>
 						<select name="ar2_bloodGroup">
 							<option value="NDONE">Not Done</option>
@@ -652,15 +651,15 @@ function updateGtt() {
 							<option value="AB">AB</option>
 							<option value="O">O</option>
 							<option value="UNK">Unknown</option>
-						</select>						
+						</select>
 						</td>
 					</tr>
-					
-					
+
+
 					<tr>
 						<td>AR2 RH:</td>
-						<td><input type="text" name="ar2_rh_old" value="<%=props.getProperty("ar2_rh","")%>"/></td>						
-						
+						<td><input type="text" name="ar2_rh_old" value="<%=props.getProperty("ar2_rh","")%>"/></td>
+
 						<td>
 						<select name="ar2_rh">
 							<option value="NDONE">Not Done</option>
@@ -668,14 +667,14 @@ function updateGtt() {
 							<option value="WPOS">Weak Positive</option>
 							<option value="NEG">Negative</option>
 							<option value="UNK">Unknown</option>
-						</select>							
+						</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>GBS:</td>
-						<td><input type="text" name="ar2_strep_old" value="<%=props.getProperty("ar2_strep","")%>"/></td>						
-						
+						<td><input type="text" name="ar2_strep_old" value="<%=props.getProperty("ar2_strep","")%>"/></td>
+
 						<td>
 						<select name="ar2_strep">
 							<option value="NDONE">Not Done</option>
@@ -683,27 +682,27 @@ function updateGtt() {
 							<option value="POSURINE">Urine Positive for GBS</option>
 							<option value="NEGSWAB">Negative swab result</option>
 							<option value="DONEUNK">Done-result unknown</option>
-							<option value="UNK">Unknown if screened</option>						
-						</select>			
+							<option value="UNK">Unknown if screened</option>
+						</select>
 						</td>
 					</tr>
-					
+
 					<tr>
 						<td>2 Hr GTT:</td>
-						<td><input type="text" name="ar2_lab2GTT_old" value="<%=props.getProperty("ar2_lab2GTT","")%>"/></td>						
-						
+						<td><input type="text" name="ar2_lab2GTT_old" value="<%=props.getProperty("ar2_lab2GTT","")%>"/></td>
+
 						<td>
-						<input type="hidden" name="ar2_lab2GTT" value="<%= UtilMisc.htmlEscape(props.getProperty("ar2_lab2GTT", "")) %>"/> 
+						<input type="hidden" name="ar2_lab2GTT" value="<%= UtilMisc.htmlEscape(props.getProperty("ar2_lab2GTT", "")) %>"/>
 						<input style="width:50px" type="text" name="ar2_lab2GTT1" size="4" maxlength="4">/
 						<input style="width:50px" type="text" name="ar2_lab2GTT2" size="4" maxlength="4">/
 						<input style="width:50px" type="text" name="ar2_lab2GTT3" size="4" maxlength="4">
 
 						</td>
-					</tr>																									
-					
+					</tr>
+
 				</tbody>
 			</table>
-			<button>Perform Migration</button>		
+			<button class="btn">Perform Migration</button>
 		</fieldset>
 	</form>
 

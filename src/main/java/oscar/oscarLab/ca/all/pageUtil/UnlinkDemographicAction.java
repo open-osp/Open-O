@@ -43,6 +43,8 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.form.JSONAction;
 import oscar.log.LogConst;
+
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,12 +53,13 @@ import java.util.List;
  */
 public class UnlinkDemographicAction  extends JSONAction {
     
-    private static Logger logger = MiscUtils.getLogger();
+    private final Logger logger = MiscUtils.getLogger();
     private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     private final PatientLabRoutingDao plrDao = SpringUtils.getBean(PatientLabRoutingDao.class);
 
     private final ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
+
     public UnlinkDemographicAction () {}
     
     @Override
@@ -71,32 +74,38 @@ public class UnlinkDemographicAction  extends JSONAction {
         String reason = request.getParameter("reason");
         String labNoStr = request.getParameter("labNo");
         Integer labNo = Integer.parseInt(labNoStr);
-        PatientLabRouting plr = plrDao.findByLabNo(labNo);
-        Integer demoNo = 0;
 
-        if(plr != null) {
-            demoNo = plr.getDemographicNo();
-            plr.setDemographicNo(PatientLabRoutingDao.UNMATCHED);
-            plrDao.merge(plr);
-            if(plr.getDemographicNo().equals(PatientLabRoutingDao.UNMATCHED)) {
+        List<PatientLabRouting> plr = plrDao.findByLabNoAndLabType(labNo, ProviderLabRoutingDao.LAB_TYPE.HL7.name());
+        Integer demoNo = PatientLabRoutingDao.UNMATCHED;
+
+        for(PatientLabRouting patientLabRouting : plr) {
+            demoNo = patientLabRouting.getDemographicNo();
+            patientLabRouting.setDemographicNo(PatientLabRoutingDao.UNMATCHED);
+            patientLabRouting.setDateModified(new Date());
+            plrDao.merge(patientLabRouting);
+            if (patientLabRouting.getDemographicNo().equals(PatientLabRoutingDao.UNMATCHED)) {
                 success = true;
+                logger.debug("Unlinked lab with segmentID: " + labNo + " from eChart of Demographic " + demoNo);
+                OscarAuditLogger.getInstance().log(loggedInInfo, LogConst.UNLINK, LogConst.CON_HL7_LAB, String.valueOf(labNo), request.getRemoteAddr(), demoNo, reason);
+            } else {
+                break;
             }
         }
-
-        OscarAuditLogger.getInstance().log(loggedInInfo, LogConst.UNLINK, LogConst.CON_HL7_LAB, String.valueOf(labNo), request.getRemoteAddr(), demoNo, reason);
-        
-        logger.debug("Unlinked lab with segmentID: " + labNo + " from eChart of Demographic " + demoNo);
 
         /* ensure the lab requisitioning provider is aware by inserting lab back into their inbox.
          * or into the unattached inbox if no provider is identified.
          */
-        List<ProviderLabRoutingModel> providerLabRoutingModel = providerLabRoutingDao.findAllLabRoutingByIdandType(labNo, ProviderLabRoutingDao.LAB_TYPE.HL7.name());
-        for(ProviderLabRoutingModel providerLabRouting : providerLabRoutingModel) {
-            String currentStatus = providerLabRouting.getStatus();
-            providerLabRouting.setStatus(ProviderLabRoutingDao.STATUS.N.name());
-            providerLabRouting.setComment(providerLabRouting.getComment() + " " + " Lab unlinked from incorrect demographic number: " + demoNo);
-            providerLabRoutingDao.merge(providerLabRouting);
-            OscarAuditLogger.getInstance().log(loggedInInfo, LogConst.UNLINK, LogConst.CON_HL7_LAB, String.valueOf(labNo), request.getRemoteAddr(), demoNo,"Provider " + providerLabRouting.getProviderNo() + " Ack status from " + currentStatus + " to " + ProviderLabRoutingDao.STATUS.N.name());
+        if(success) {
+            List<ProviderLabRoutingModel> providerLabRoutingModel = providerLabRoutingDao.findAllLabRoutingByIdandType(labNo, ProviderLabRoutingDao.LAB_TYPE.HL7.name());
+            for (ProviderLabRoutingModel providerLabRouting : providerLabRoutingModel) {
+                String currentStatus = providerLabRouting.getStatus();
+                providerLabRouting.setStatus(ProviderLabRoutingDao.STATUS.N.name());
+                String comment = providerLabRouting.getComment() + " Lab unlinked from incorrect demographic number: " + demoNo;
+                providerLabRouting.setComment(comment.trim());
+                providerLabRouting.setTimestamp(new Date());
+                providerLabRoutingDao.merge(providerLabRouting);
+                OscarAuditLogger.getInstance().log(loggedInInfo, LogConst.UNLINK, LogConst.CON_HL7_LAB, String.valueOf(labNo), request.getRemoteAddr(), demoNo, "Provider " + providerLabRouting.getProviderNo() + " Ack status from " + currentStatus + " to " + ProviderLabRoutingDao.STATUS.N.name());
+            }
         }
 
         JSONObject jsonObject = new JSONObject();
