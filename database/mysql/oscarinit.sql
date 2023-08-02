@@ -1,15 +1,13 @@
-CREATE TABLE IF NOT EXISTS `surveyData` (
+
+CREATE TABLE `surveyData` (
   surveyDataId int(10) NOT NULL auto_increment,
-  surveyId varchar(40) default NULL,
+  surveyId varchar(5) default NULL,
   demographic_no int(10) default NULL,
   provider_no varchar(6) default NULL,
   status char(2) default NULL,
   survey_date date default NULL,
   answer varchar(10) default NULL,
   processed int(10) default NULL,
-  `period` int(10),
-  randomness int(10),
-  version int(10),
   INDEX `surveyId_index` (surveyId(5)),
   INDEX `demographic_no_index` (demographic_no),
   INDEX `provider_no_index` (provider_no(6)),
@@ -24,15 +22,15 @@ CREATE TABLE IF NOT EXISTS `surveyData` (
 -- Table structure for table `FaxClientLog`
 --
 
-CREATE TABLE IF NOT EXISTS FaxClientLog (
+CREATE TABLE FaxClientLog (
   faxLogId int(9) NOT NULL auto_increment,
   provider_no varchar(6) default NULL,
   startTime datetime default NULL,
   endTime datetime default NULL,
   result varchar(255) default NULL,
-  requestId varchar(10) default NULL,
-  faxId varchar(10) default NULL,
-  `transactionType` varchar(25),
+  requestId int(10),
+  faxId int(10),
+  transactionType varchar(25),
   PRIMARY KEY  (faxLogId)
 ) ;
 
@@ -40,7 +38,7 @@ CREATE TABLE IF NOT EXISTS FaxClientLog (
 -- Table structure for table `allergies`
 --
 
-CREATE TABLE IF NOT EXISTS allergies (
+CREATE TABLE allergies (
   allergyid int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   entry_date date default NULL,
@@ -52,7 +50,7 @@ CREATE TABLE IF NOT EXISTS allergies (
   TYPECODE tinyint(4) NOT NULL default '0',
   reaction text,
   drugref_id varchar(100) default NULL,
-  archived tinyint(1) NOT NULL,
+  archived char(1) default '0',
   start_date date default NULL,
   age_of_onset char(4) default '0',
   severity_of_reaction char(1) default '0',
@@ -62,9 +60,9 @@ CREATE TABLE IF NOT EXISTS allergies (
   position int(10) not null,
   lastUpdateDate datetime not null,
   providerNo varchar(6),
-  atc varchar(55),
+  `atc` varchar(55),
+  `nonDrug` tinyint(1),
   `reaction_type` varchar(20),
-  `nonDrug` tinyint(1) DEFAULT NULL,
   PRIMARY KEY  (allergyid)
 ) ;
 
@@ -72,7 +70,7 @@ CREATE TABLE IF NOT EXISTS allergies (
 -- Table structure for table `appointment`
 --
 
-CREATE TABLE IF NOT EXISTS appointment (
+CREATE TABLE appointment (
   appointment_no int(12) NOT NULL auto_increment,
   provider_no varchar(6) NOT NULL default '',
   appointment_date date NOT NULL default '0001-01-01',
@@ -84,12 +82,16 @@ CREATE TABLE IF NOT EXISTS appointment (
   notes varchar(255),
   reasonCode INT(11),
   reason varchar(80) default NULL,
-  location varchar(30) default NULL,
+  locationCode int(11),
+  location varchar(80),
+  referralSource varchar(80),
+  referralSourceCode int(11),
   resources varchar(255) default NULL,
   type varchar(50) NULL,
   style varchar(10) default NULL,
   billing varchar(10) default NULL,
-  status char(2) BINARY default NULL,
+  status char(2) default NULL,
+  serviceMode int(11),
   imported_status varchar(20),
   createdatetime datetime default NULL,
   updatedatetime datetime default NULL,
@@ -102,14 +104,13 @@ CREATE TABLE IF NOT EXISTS appointment (
   PRIMARY KEY  (appointment_no),
   KEY appointment_date (appointment_date,start_time,demographic_no),
   KEY demographic_no (demographic_no),
-  KEY location (location),
-  KEY `appointment_ikey` (`demographic_no`,`updatedatetime`)
+  KEY location (location)
 ) ;
 
 --
 -- Table structure for table batchEligibility
 --
-CREATE TABLE IF NOT EXISTS batchEligibility(
+CREATE TABLE batchEligibility(
   responseCode int(9) NOT NULL ,
   MOHResponse varchar(100) NOT NULL,
   reason varchar(255) NOT NULL,
@@ -120,7 +121,7 @@ CREATE TABLE IF NOT EXISTS batchEligibility(
 -- Table structure for table `billactivity`
 --
 
-CREATE TABLE IF NOT EXISTS billactivity (
+CREATE TABLE billactivity (
   id int(10) NOT NULL auto_increment primary key,
   monthCode char(1) default NULL,
   batchcount int(3) default NULL,
@@ -142,8 +143,8 @@ CREATE TABLE IF NOT EXISTS billactivity (
 -- Table structure for table `billcenter`
 --
 
-CREATE TABLE IF NOT EXISTS billcenter (
-  billcenter_code char(2) NOT NULL DEFAULT '',
+CREATE TABLE billcenter (
+  billcenter_code char(2) NOT NULL,
   billcenter_desc varchar(20) default NULL,
   primary key(billcenter_code)
 ) ;
@@ -152,7 +153,7 @@ CREATE TABLE IF NOT EXISTS billcenter (
 -- Table structure for table `billing`
 --
 
-CREATE TABLE IF NOT EXISTS billing (
+CREATE TABLE billing (
   billing_no int(10) NOT NULL auto_increment,
   clinic_no int(10) NOT NULL default '0',
   demographic_no int(10) NOT NULL default '0',
@@ -168,7 +169,7 @@ CREATE TABLE IF NOT EXISTS billing (
   clinic_ref_code varchar(10) default NULL,
   content text,
   total varchar(6) default NULL,
-  status varchar(1) default NULL,
+  status char(1) default NULL,
   dob varchar(8) default NULL,
   visitdate date default NULL,
   visittype char(2) default NULL,
@@ -193,7 +194,7 @@ CREATE TABLE IF NOT EXISTS billing (
 -- Table structure for table `billingdetail`
 --
 
-CREATE TABLE IF NOT EXISTS billingdetail (
+CREATE TABLE billingdetail (
   billing_dt_no int(10) NOT NULL auto_increment,
   billing_no int(10) NOT NULL default '0',
   service_code varchar(5) default NULL,
@@ -211,7 +212,7 @@ CREATE TABLE IF NOT EXISTS billingdetail (
 -- Table structure for table `billinginr`
 --
 
-CREATE TABLE IF NOT EXISTS billinginr (
+CREATE TABLE billinginr (
   billinginr_no int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   demographic_name varchar(60) NOT NULL default '',
@@ -235,7 +236,7 @@ CREATE TABLE IF NOT EXISTS billinginr (
 -- Table structure for table `billingservice`
 --
 
-CREATE TABLE IF NOT EXISTS billingservice (
+CREATE TABLE billingservice (
   billingservice_no int(10) NOT NULL auto_increment,
   service_compositecode varchar(30) default NULL,
   service_code varchar(10) default NULL,
@@ -258,7 +259,7 @@ CREATE TABLE IF NOT EXISTS billingservice (
 -- Table structure for table `clinic`
 --
 
-CREATE TABLE IF NOT EXISTS clinic (
+CREATE TABLE clinic (
   clinic_no int(10) NOT NULL auto_increment,
   clinic_name varchar(100) default NULL,
   clinic_address varchar(60) default '',
@@ -278,7 +279,7 @@ CREATE TABLE IF NOT EXISTS clinic (
 -- Table structure for table `clinic_location`
 --
 
-CREATE TABLE IF NOT EXISTS clinic_location (
+CREATE TABLE clinic_location (
   id int(10) NOT NULL auto_increment,
   clinic_location_no varchar(15) NOT NULL default '',
   clinic_no int(10) NOT NULL default '0',
@@ -290,7 +291,7 @@ CREATE TABLE IF NOT EXISTS clinic_location (
 -- Table structure for table `config_Immunization`
 --
 
-CREATE TABLE IF NOT EXISTS config_Immunization (
+CREATE TABLE config_Immunization (
   setId int(10) NOT NULL auto_increment,
   setName varchar(255) default NULL,
   setXmlDoc text,
@@ -304,7 +305,7 @@ CREATE TABLE IF NOT EXISTS config_Immunization (
 -- Table structure for table `consultationRequests`
 --
 
-CREATE TABLE IF NOT EXISTS consultationRequests (
+CREATE TABLE consultationRequests (
   referalDate date default NULL,
   serviceId int(10) default NULL,
   demographicContactId int(10),
@@ -335,48 +336,15 @@ CREATE TABLE IF NOT EXISTS consultationRequests (
   `lastUpdateDate` datetime not null,
   fdid int(10),
   source varchar(50),
-  PRIMARY KEY  (requestId)
-) ;
-
-CREATE TABLE consultationRequestsArchive (
-  Id int(10) NOT NULL auto_increment,
-  referalDate date default NULL,
-  serviceId int(10) default NULL,
-  specId int(10) default NULL,
-  appointmentDate date default NULL,
-  appointmentTime time default NULL,
-  reason text,
-  clinicalInfo text,
-  currentMeds text,
-  allergies text,
-  providerNo varchar(6) default NULL,
-  demographicNo int(10) default NULL,
-  status char(2) default NULL,
-  statusText text,
-  sendTo varchar(20) default NULL,
-  requestId int(10) NOT NULL,
-  concurrentProblems text,
-  urgency char(2) default NULL,
-  appointmentInstructions VARCHAR(256),
-  patientWillBook tinyint(1),
-  followUpDate date default NULL,
-  site_name varchar(255),
-  signature_img VARCHAR(20),
-  letterheadName VARCHAR(255),
-  letterheadAddress TEXT,
-  letterheadPhone VARCHAR(50),
-  letterheadFax VARCHAR(50),
-  `lastUpdateDate` datetime not null,
-  fdid int(10),
-  source varchar(50),
-  PRIMARY KEY  (id)
+  PRIMARY KEY  (`requestId`),
+  KEY demographicNoIndex (`demographicNo`)
 ) ;
 
 --
 -- Table structure for table `consultationServices`
 --
 
-CREATE TABLE IF NOT EXISTS consultationServices (
+CREATE TABLE consultationServices (
   serviceId int(10) NOT NULL auto_increment,
   serviceDesc varchar(255) default NULL,
   active char(2) default NULL,
@@ -387,7 +355,7 @@ CREATE TABLE IF NOT EXISTS consultationServices (
 -- Table structure for table `consultationResponse`
 --
 
-CREATE TABLE IF NOT EXISTS consultationResponse (
+CREATE TABLE consultationResponse (
   responseId int(10) NOT NULL auto_increment,
   responseDate date,
   referralDate date,
@@ -410,7 +378,7 @@ CREATE TABLE IF NOT EXISTS consultationResponse (
   urgency char(2),
   followUpDate date,
   signatureImg VARCHAR(20),
-  letterheadName VARCHAR(255),
+  letterheadName VARCHAR(20),
   letterheadAddress TEXT,
   letterheadPhone VARCHAR(50),
   letterheadFax VARCHAR(50),
@@ -418,9 +386,9 @@ CREATE TABLE IF NOT EXISTS consultationResponse (
 ) ;
 
 --
--- CREATE TABLE IF NOT EXISTS consultResponseDoc
+-- CREATE TABLE consultResponseDoc
 --
-CREATE TABLE IF NOT EXISTS `consultResponseDoc` (
+CREATE TABLE `consultResponseDoc` (
   `id` int(10) NOT NULL auto_increment PRIMARY KEY,
   `responseId` int(10) NOT NULL,
   `documentNo` int(10) NOT NULL,
@@ -434,7 +402,7 @@ CREATE TABLE IF NOT EXISTS `consultResponseDoc` (
 -- Table structure for table `ctl_billingservice`
 --
 
-CREATE TABLE IF NOT EXISTS ctl_billingservice (
+CREATE TABLE ctl_billingservice (
   id int(10) not null auto_increment primary key,
   servicetype_name varchar(150) default NULL,
   servicetype varchar(10) default NULL,
@@ -449,7 +417,7 @@ CREATE TABLE IF NOT EXISTS ctl_billingservice (
 -- Table structure for table `ctl_billingservice_premium`
 --
 
-CREATE TABLE IF NOT EXISTS ctl_billingservice_premium (
+CREATE TABLE ctl_billingservice_premium (
   id int(10) not null auto_increment primary key,
   servicetype_name varchar(150) default '',
   service_code varchar(10) default '',
@@ -461,7 +429,7 @@ CREATE TABLE IF NOT EXISTS ctl_billingservice_premium (
 -- Table structure for table `ctl_diagcode`
 --
 
-CREATE TABLE IF NOT EXISTS ctl_diagcode (
+CREATE TABLE ctl_diagcode (
   id int(10) not null auto_increment primary key,
   servicetype varchar(10) default NULL,
   diagnostic_code varchar(5) default NULL,
@@ -472,7 +440,7 @@ CREATE TABLE IF NOT EXISTS ctl_diagcode (
 -- Table structure for table `ctl_doctype`
 --
 
-CREATE TABLE IF NOT EXISTS ctl_doctype (
+CREATE TABLE ctl_doctype (
   id int(10) not null auto_increment primary key,
   module varchar(30) NOT NULL default '',
   doctype varchar(60) NOT NULL default '',
@@ -483,7 +451,7 @@ CREATE TABLE IF NOT EXISTS ctl_doctype (
 -- Table structure for table `ctl_doc_class`
 --
 
-CREATE TABLE IF NOT EXISTS ctl_doc_class (
+CREATE TABLE ctl_doc_class (
   id integer auto_increment primary key,
   reportclass varchar(60) not null,
   subclass varchar(60) not null
@@ -493,7 +461,7 @@ CREATE TABLE IF NOT EXISTS ctl_doc_class (
 -- Table structure for table `ctl_document`
 --
 
-CREATE TABLE IF NOT EXISTS ctl_document (
+CREATE TABLE ctl_document (
   module varchar(30) NOT NULL default '',
   module_id int(6) NOT NULL default '0',
   document_no int(6) NOT NULL default '0',
@@ -507,7 +475,7 @@ CREATE TABLE IF NOT EXISTS ctl_document (
 -- Table structure for table `ctl_frequency`
 --
 
-CREATE TABLE IF NOT EXISTS ctl_frequency (
+CREATE TABLE ctl_frequency (
   freqid tinyint(4) NOT NULL auto_increment,
   freqcode varchar(8) NOT NULL default '',
   dailymin varchar(5) NOT NULL default '0',
@@ -521,7 +489,7 @@ CREATE TABLE IF NOT EXISTS ctl_frequency (
 -- Table structure for table `ctl_specialinstructions`
 --
 
-CREATE TABLE IF NOT EXISTS ctl_specialinstructions (
+CREATE TABLE ctl_specialinstructions (
   id tinyint(4) NOT NULL auto_increment,
   description varchar(50) NOT NULL default '',
   PRIMARY KEY  (id)
@@ -531,7 +499,7 @@ CREATE TABLE IF NOT EXISTS ctl_specialinstructions (
 -- Table structure for table `demographic`
 --
 
-CREATE TABLE IF NOT EXISTS demographic (
+CREATE TABLE demographic (
   demographic_no int(10) NOT NULL auto_increment,
   title varchar(10),
   last_name varchar(30) NOT NULL default '',
@@ -543,7 +511,7 @@ CREATE TABLE IF NOT EXISTS demographic (
   phone varchar(20),
   phone2 varchar(20),
   email varchar(100),
-  myOscarUserName varchar(1),
+  myOscarUserName varchar(255) unique,
   year_of_birth varchar(4),
   month_of_birth varchar(2),
   date_of_birth varchar(2),
@@ -553,14 +521,13 @@ CREATE TABLE IF NOT EXISTS demographic (
   roster_date date,
   roster_termination_date date,
   roster_termination_reason varchar(2),
-  `roster_enrolled_to` varchar(20) DEFAULT NULL,
   patient_status varchar(20),
   patient_status_date date,
   date_joined date,
   chart_no varchar(10),
   official_lang varchar(60),
   spoken_lang varchar(60),
-  provider_no varchar(11),
+  provider_no varchar(250),
   sex char(1) NOT NULL default '',
   end_date date,
   eff_date date,
@@ -569,38 +536,29 @@ CREATE TABLE IF NOT EXISTS demographic (
   hc_renew_date date,
   family_doctor varchar(80),
   alias varchar(70),
-  previousAddress varchar(60),
-  children varchar(1),
-  sourceOfIncome varchar(1),
+  previousAddress varchar(255),
+  children varchar(255),
+  sourceOfIncome varchar(255),
   citizenship varchar(40),
   sin varchar(15),
   country_of_origin char(4),
-  newsletter varchar(10),
+  newsletter varchar(32),
   anonymous varchar(32),
   lastUpdateUser varchar(6),
   lastUpdateDate datetime not null,
-  `consentToUseEmailForCare` tinyint(1) DEFAULT NULL,
-  `middleNames` varchar(100) DEFAULT NULL,
-  `residentialAddress` varchar(60) DEFAULT NULL,
-  `residentialCity` varchar(50) DEFAULT NULL,
-  `residentialProvince` varchar(20) DEFAULT NULL,
-  `residentialPostal` varchar(9) DEFAULT NULL,
-  genderId int(11) null,
-  pronoun varchar(25) null,
-  pronounId int null,
-  gender varchar(25) null,
-  pref_name varchar(30) NOT NULL DEFAULT '',
+  referralSourceCode int(11),
   PRIMARY KEY  (demographic_no),
-  KEY hin (hin),
-  KEY name (last_name,first_name),
-  KEY `country_of_origin` (`country_of_origin`)
+  KEY `hin` (`hin`),
+  KEY `name` (last_name,first_name),
+  KEY `country_of_origin` (`country_of_origin`),
+  KEY `demo_last_first_hin_sex_Index` (demographic_no, last_name, first_name, hin, sex)
 );
 
 --
 -- Table structure for table `demographicaccessory`
 --
 
-CREATE TABLE IF NOT EXISTS demographicaccessory (
+CREATE TABLE demographicaccessory (
   demographic_no int(10) NOT NULL default '0',
   content text,
   PRIMARY KEY  (demographic_no)
@@ -610,7 +568,7 @@ CREATE TABLE IF NOT EXISTS demographicaccessory (
 -- Table structure for table `demographiccust`
 --
 
-CREATE TABLE IF NOT EXISTS demographiccust (
+CREATE TABLE demographiccust (
   demographic_no int(10) NOT NULL default '0',
   cust1 varchar(255) default NULL,
   cust2 varchar(255) default NULL,
@@ -628,7 +586,7 @@ CREATE TABLE IF NOT EXISTS demographiccust (
 -- Table structure for table `demographiccustArchive`
 --
 
-CREATE TABLE IF NOT EXISTS demographiccustArchive (
+CREATE TABLE demographiccustArchive (
   id int(10) AUTO_INCREMENT,
   demographic_no int(10) NOT NULL,
   cust1 varchar(255),
@@ -643,7 +601,7 @@ CREATE TABLE IF NOT EXISTS demographiccustArchive (
 -- Table structure for table `demographicstudy`
 --
 
-CREATE TABLE IF NOT EXISTS demographicstudy (
+CREATE TABLE demographicstudy (
   demographic_no int(10) NOT NULL default '0',
   study_no int(3) NOT NULL default '0',
   provider_no varchar(6) NOT NULL default '',
@@ -655,7 +613,7 @@ CREATE TABLE IF NOT EXISTS demographicstudy (
 -- Table structure for table `desannualreviewplan`
 --
 
-CREATE TABLE IF NOT EXISTS desannualreviewplan (
+CREATE TABLE desannualreviewplan (
   des_no int(10) NOT NULL auto_increment,
   des_date date NOT NULL default '0001-01-01',
   des_time time NOT NULL default '00:00:00',
@@ -671,7 +629,7 @@ CREATE TABLE IF NOT EXISTS desannualreviewplan (
 -- Table structure for table `desaprisk`
 --
 
-CREATE TABLE IF NOT EXISTS desaprisk (
+CREATE TABLE desaprisk (
   desaprisk_no int(10) NOT NULL auto_increment,
   desaprisk_date date NOT NULL default '0001-01-01',
   desaprisk_time time NOT NULL default '00:00:00',
@@ -687,7 +645,7 @@ CREATE TABLE IF NOT EXISTS desaprisk (
 -- Table structure for table `diagnosticcode`
 --
 
-CREATE TABLE IF NOT EXISTS diagnosticcode (
+CREATE TABLE diagnosticcode (
   diagnosticcode_no int(5) NOT NULL auto_increment,
   diagnostic_code varchar(5) NOT NULL default '',
   description text,
@@ -701,7 +659,7 @@ CREATE TABLE IF NOT EXISTS diagnosticcode (
 -- Table structure for table `diseases`
 --
 
-CREATE TABLE IF NOT EXISTS diseases (
+CREATE TABLE diseases (
   diseaseid int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   ICD9_E char(6) NOT NULL default '',
@@ -713,7 +671,7 @@ CREATE TABLE IF NOT EXISTS diseases (
 -- Table structure for table `document`
 --
 
-CREATE TABLE IF NOT EXISTS document (
+CREATE TABLE document (
   document_no int(20) NOT NULL auto_increment,
   doctype varchar(60),
   docClass varchar(60),
@@ -736,19 +694,15 @@ CREATE TABLE IF NOT EXISTS document (
   reviewdatetime datetime default NULL,
   number_of_pages int(6),
   appointment_no int(11) default NULL,
-  restrictToProgram tinyint(1) NOT NULL,
-  abnormal int(1) NOT NULL DEFAULT 0,
-  receivedDate date,
-  `report_media` int(11) DEFAULT NULL,
-  `sent_date_time` datetime DEFAULT NULL,
-  PRIMARY KEY  (document_no),
-  KEY `document_ikey` (`public1`,`doctype`,`status`,`updatedatetime`)
+  restrictToProgram tinyint(1),
+  fileSignature varchar(255),
+  PRIMARY KEY  (document_no)
 ) ;
 
 --
 -- Table structure for table `reportTemplates`
 --
-CREATE TABLE IF NOT EXISTS reportTemplates (
+CREATE TABLE reportTemplates (
   templateid int(11) NOT NULL auto_increment,
   templatetitle varchar(80) NOT NULL DEFAULT '',
   templatedescription text NOT NULL,
@@ -758,6 +712,7 @@ CREATE TABLE IF NOT EXISTS reportTemplates (
   `type` varchar(32) default null,
   uuid varchar(60),
   sequence tinyint(1),
+  category varchar(255),
   PRIMARY KEY (templateid)
 );
 
@@ -765,7 +720,7 @@ CREATE TABLE IF NOT EXISTS reportTemplates (
 -- Table structure for table `drugs`
 --
 
-CREATE TABLE IF NOT EXISTS drugs (
+CREATE TABLE drugs (
   drugid int(10) NOT NULL auto_increment,
   provider_no varchar(6) NOT NULL default '',
   demographic_no int(10) NOT NULL default '0',
@@ -782,6 +737,7 @@ CREATE TABLE IF NOT EXISTS drugs (
   duration varchar(4) default NULL,
   durunit char(1) default NULL,
   quantity varchar(20) default NULL,
+  dispensingUnits varchar(20),
   `repeat` tinyint(4) default NULL,
   last_refill_date date,
   nosubs tinyint(1) NOT NULL default '0',
@@ -795,7 +751,7 @@ CREATE TABLE IF NOT EXISTS drugs (
   regional_identifier varchar(100) default NULL,
   unit varchar(5) default 'tab',
   method varchar(5) default 'Take',
-  route varchar(50) default 'PO',
+  route varchar(5) default 'PO',
   drug_form varchar(50),
   create_date datetime,
   dosage text,
@@ -803,10 +759,9 @@ CREATE TABLE IF NOT EXISTS drugs (
   unitName varchar(10) default NULL,
   custom_note boolean,
   long_term boolean,
-  short_term boolean,
   non_authoritative boolean,
   past_med boolean,
-  patient_compliance boolean,
+  patient_compliance tinyint(1),
   outside_provider_name varchar(100),
   outside_provider_ohip varchar(20),
   archived_reason varchar(100) default '',
@@ -814,7 +769,7 @@ CREATE TABLE IF NOT EXISTS drugs (
   hide_from_drug_profile tinyint(1) default '0',
   eTreatmentType varchar(20),
   rxStatus varchar(20),
-  dispense_interval varchar(100),
+  dispense_interval int(10),
   refill_duration int(10),
   refill_quantity int(10),
   hide_cpp tinyint(1),
@@ -823,12 +778,9 @@ CREATE TABLE IF NOT EXISTS drugs (
   start_date_unknown boolean,
   lastUpdateDate datetime not null,
   dispenseInternal tinyint(1) not null,
-   demographic_contact_id int(10),
-  protocol varchar(255),
-  priorRxProtocol varchar(255),
-  pharmacyId int(11),
   PRIMARY KEY  (drugid),
-  KEY `drugs_demographic_no` (`demographic_no`)
+  KEY `special_instructionIndex` (special_instruction(5)),
+  KEY `demo_script_pos_rxdate_Index` (demographic_no, script_no, position, rx_date, drugid)
 ) ;
 
 
@@ -836,7 +788,7 @@ CREATE TABLE IF NOT EXISTS drugs (
 -- Table structure for table `dxresearch`
 --
 
-CREATE TABLE IF NOT EXISTS dxresearch (
+CREATE TABLE dxresearch (
   dxresearch_no int(10) NOT NULL auto_increment,
   demographic_no int(10) default '0',
   start_date date default '0001-01-01',
@@ -847,11 +799,10 @@ CREATE TABLE IF NOT EXISTS dxresearch (
   association tinyint(1) not null default 0,
   providerNo varchar(6),
   PRIMARY KEY  (dxresearch_no),
-  KEY `dxresearch_ikey` (`demographic_no`,`status`,`update_date`),
-  KEY `dxresearch_integrator` (`demographic_no`,`update_date`)
+  KEY `demographic_noIndex` (demographic_no)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `dx_associations` (
+CREATE TABLE `dx_associations` (
         `id` int primary key auto_increment,
         `dx_codetype` varchar(50) not null,
         `dx_code` varchar(50) not null,
@@ -860,18 +811,11 @@ CREATE TABLE IF NOT EXISTS `dx_associations` (
         `update_date` timestamp not null
 );
 
-CREATE TABLE IF NOT EXISTS `dxCodeTranslations` (
-  `dxCode` varchar(10) NOT NULL,
-  `patientFriendly` varchar(250) NOT NULL,
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`id`)
-);
-
 --
 -- Table structure for table `eChart`
 --
 
-CREATE TABLE IF NOT EXISTS eChart (
+CREATE TABLE eChart (
   eChartId int(15) NOT NULL auto_increment,
   timeStamp timestamp NOT NULL,
   demographicNo int(10) NOT NULL default '0',
@@ -884,14 +828,14 @@ CREATE TABLE IF NOT EXISTS eChart (
   reminders text,
   encounter text,
   PRIMARY KEY  (eChartId),
-  KEY demographicno (demographicNo)
+  KEY `demographicNoIdIndex` (demographicNo,eChartId)
 )  MAX_ROWS=200000000 AVG_ROW_LENGTH=9000;
 
 --
 -- Table structure for table `eform`
 --
 
-CREATE TABLE IF NOT EXISTS eform (
+CREATE TABLE eform (
   fid int(8) NOT NULL auto_increment,
   form_name varchar(255) default NULL,
   file_name varchar(255) default NULL,
@@ -901,13 +845,11 @@ CREATE TABLE IF NOT EXISTS eform (
   form_creator varchar(255) default NULL,
   status tinyint(1) NOT NULL default '1',
   form_html mediumtext,
-  showLatestFormOnly tinyint(1) NOT NULL,
+  showLatestFormOnly boolean NOT NULL,
   patient_independent boolean NOT NULL,
   roleType varchar(50) default NULL,
-  programNo int(10) DEFAULT NULL,
-  restrictToProgram tinyint(1) NOT NULL DEFAULT '0',
-  `stable` tinyint(1) NOT NULL DEFAULT 1,
-  `errorLog` tinyblob NULL,
+  programNo int(10),
+  restrictToProgram tinyint(1) NOT NULL,
   PRIMARY KEY  (fid),
   UNIQUE KEY id (fid)
 ) ;
@@ -916,7 +858,7 @@ CREATE TABLE IF NOT EXISTS eform (
 -- Table structure for table `eform_data`
 --
 
-CREATE TABLE IF NOT EXISTS eform_data (
+CREATE TABLE eform_data (
   fdid int(8) NOT NULL auto_increment,
   fid int(8) NOT NULL default '0',
   form_name varchar(255) default NULL,
@@ -932,12 +874,13 @@ CREATE TABLE IF NOT EXISTS eform_data (
   roleType varchar(50) default NULL,
   PRIMARY KEY  (fdid),
   UNIQUE KEY id (fdid),
-  KEY `idx_eform_data_demographic_no` (`demographic_no`),
+  KEY `dem_inde_stat_date_time_Index` (`demographic_no`, `patient_independent`, `status`, `form_date`, `form_time`),
   KEY `idx_eform_data_status` (`status`),
   KEY `idx_eform_data_from_date` (`form_date`),
   KEY `idx_eform_data_form_name` (`form_name`),
   KEY `idx_eform_data_subject` (`subject`),
   KEY `idx_eform_data_fid` (`fid`),
+  KEY `patient_independentIndex` (`patient_independent`),
   KEY `idx_eform_data_form_provider` (`form_provider`)
 ) ;
 
@@ -946,7 +889,7 @@ CREATE TABLE IF NOT EXISTS eform_data (
 -- Table structure for table `eform_values`
 --
 
-CREATE TABLE IF NOT EXISTS `eform_values` (
+CREATE TABLE `eform_values` (
   `id` int(16) NOT NULL auto_increment,
   `fdid` int(8) default NULL,
   `fid` int(8) default NULL,
@@ -954,14 +897,15 @@ CREATE TABLE IF NOT EXISTS `eform_values` (
   `var_name` varchar(30) NOT NULL default '',
   `var_value` text,
   PRIMARY KEY  (`id`),
-  KEY `eform_values_varname_varvalue` (`var_name`,`var_value`(30))
+  KEY `eform_values_varname_varvalue` (`var_name`,`var_value`(30)),
+  KEY `fdidIndex` (`fdid`)
 );
 
 --
 -- Table structure for table `eform_groups`
 --
 
-CREATE TABLE IF NOT EXISTS `eform_groups` (
+CREATE TABLE `eform_groups` (
   `id` int(10) NOT NULL auto_increment,
   `fid` int(8) NOT NULL default 0,
   `group_name` varchar(20) NOT NULL default '',
@@ -972,7 +916,7 @@ CREATE TABLE IF NOT EXISTS `eform_groups` (
 -- Table structure for table `encounter`
 --
 
-CREATE TABLE IF NOT EXISTS encounter (
+CREATE TABLE encounter (
   encounter_no int(12) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   encounter_date date NOT NULL default '0001-01-01',
@@ -988,7 +932,7 @@ CREATE TABLE IF NOT EXISTS encounter (
 -- Table structure for table `encounterForm`
 --
 
-CREATE TABLE IF NOT EXISTS encounterForm (
+CREATE TABLE encounterForm (
   form_name varchar(30) NOT NULL default '',
   form_value varchar(255) NOT NULL default '',
   form_table varchar(50) NOT NULL default '',
@@ -1000,7 +944,7 @@ CREATE TABLE IF NOT EXISTS encounterForm (
 -- Table structure for table `encountertemplate`
 --
 
-CREATE TABLE IF NOT EXISTS encountertemplate (
+CREATE TABLE encountertemplate (
   encountertemplate_name varchar(50) NOT NULL default '',
   createdatetime datetime default NULL,
   encountertemplate_value text,
@@ -1013,7 +957,7 @@ CREATE TABLE IF NOT EXISTS encountertemplate (
 -- Table structure for table `encounterWindow`
 --
 
-CREATE TABLE IF NOT EXISTS encounterWindow (
+CREATE TABLE encounterWindow (
   provider_no varchar(6) NOT NULL default '',
   rowOneSize int(10) NOT NULL default '60',
   rowTwoSize int(10) NOT NULL default '60',
@@ -1026,7 +970,7 @@ CREATE TABLE IF NOT EXISTS encounterWindow (
 -- Table structure for table `favorites`
 --
 
-CREATE TABLE IF NOT EXISTS favorites (
+CREATE TABLE favorites (
   favoriteid int(10) NOT NULL auto_increment,
   provider_no varchar(6) NOT NULL default '',
   favoritename varchar(50) NOT NULL default '',
@@ -1039,6 +983,7 @@ CREATE TABLE IF NOT EXISTS favorites (
   duration varchar(4) default NULL,
   durunit char(1) default NULL,
   quantity varchar(20) default NULL,
+  dispensingUnits varchar(20),
   `repeat` tinyint(4) default NULL,
   nosubs tinyint(1) NOT NULL default '0',
   prn tinyint(1) NOT NULL default '0',
@@ -1061,7 +1006,7 @@ CREATE TABLE IF NOT EXISTS favorites (
 -- Table structure for table `form`
 --
 
-CREATE TABLE IF NOT EXISTS form (
+CREATE TABLE form (
   form_no int(12) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   provider_no varchar(6) NOT NULL default '',
@@ -1076,7 +1021,7 @@ CREATE TABLE IF NOT EXISTS form (
 --
 -- Table structure for table form2MinWalk
 --
-CREATE TABLE IF NOT EXISTS form2MinWalk(
+CREATE TABLE form2MinWalk(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -1107,7 +1052,7 @@ CREATE TABLE IF NOT EXISTS form2MinWalk(
 -- Table structure for table `formAR`
 --
 
-CREATE TABLE IF NOT EXISTS formAR (
+CREATE TABLE formAR (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   provider_no varchar(6) default NULL,
@@ -1788,7 +1733,7 @@ CREATE TABLE IF NOT EXISTS formAR (
 -- Table structure for table `formAdf`
 --
 
-CREATE TABLE IF NOT EXISTS formAdf (
+CREATE TABLE formAdf (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   provider_no int(10) default NULL,
@@ -1854,7 +1799,7 @@ CREATE TABLE IF NOT EXISTS formAdf (
   PRIMARY KEY  (ID)
 ) ;
 
-CREATE TABLE IF NOT EXISTS formAdfV2(
+CREATE TABLE formAdfV2(
   ID int(10) NOT NULL  auto_increment,
   demographic_no int(10) NOT NULL default '0' ,
   provider_no int(10)  default NULL ,
@@ -1930,7 +1875,7 @@ CREATE TABLE IF NOT EXISTS formAdfV2(
 -- Table structure for table `formAlpha`
 --
 
-CREATE TABLE IF NOT EXISTS formAlpha (
+CREATE TABLE formAlpha (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   provider_no int(10) default NULL,
@@ -1986,7 +1931,7 @@ CREATE TABLE IF NOT EXISTS formAlpha (
 -- Table structure for table `formAnnual`
 --
 
-CREATE TABLE IF NOT EXISTS formAnnual (
+CREATE TABLE formAnnual (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) default NULL,
   provider_no int(10) default NULL,
@@ -2113,7 +2058,7 @@ CREATE TABLE IF NOT EXISTS formAnnual (
 -- Table structure for table `formAnnualV2`
 --
 
-CREATE TABLE IF NOT EXISTS formAnnualV2 (
+CREATE TABLE formAnnualV2 (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) default NULL,
   provider_no int(10) default NULL,
@@ -2318,7 +2263,7 @@ CREATE TABLE IF NOT EXISTS formAnnualV2 (
 --
 -- Table structure for table formCaregiver
 --
-CREATE TABLE IF NOT EXISTS formCaregiver(
+CREATE TABLE formCaregiver(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -2651,7 +2596,7 @@ CREATE TABLE IF NOT EXISTS formBCHP (
 --
 -- Table structure for table formCESD
 --
-CREATE TABLE IF NOT EXISTS formCESD(
+CREATE TABLE formCESD(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -2745,7 +2690,7 @@ CREATE TABLE IF NOT EXISTS formCESD(
 --
 -- Table structure for table formCostQuestionnaire
 --
-CREATE TABLE IF NOT EXISTS formCostQuestionnaire(
+CREATE TABLE formCostQuestionnaire(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -2818,7 +2763,7 @@ CREATE TABLE IF NOT EXISTS formCostQuestionnaire(
 --
 -- Table structure for table formGripStrength
 --
-CREATE TABLE IF NOT EXISTS formGripStrength(
+CREATE TABLE formGripStrength(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -2839,7 +2784,7 @@ CREATE TABLE IF NOT EXISTS formGripStrength(
 --
 -- Table structure for table formLateLifeFDIDisability
 --
-CREATE TABLE IF NOT EXISTS formLateLifeFDIDisability(
+CREATE TABLE formLateLifeFDIDisability(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -3013,7 +2958,7 @@ CREATE TABLE IF NOT EXISTS formLateLifeFDIDisability(
 --
 -- Table structure for table formLateLifeFDIFunction
 --
-CREATE TABLE IF NOT EXISTS formLateLifeFDIFunction(
+CREATE TABLE formLateLifeFDIFunction(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -3227,7 +3172,7 @@ CREATE TABLE IF NOT EXISTS formLateLifeFDIFunction(
 -- Table structure for table formFall
 --
 DROP TABLE IF EXISTS formFalls;
-CREATE TABLE IF NOT EXISTS formFalls(
+CREATE TABLE formFalls(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -3252,7 +3197,7 @@ CREATE TABLE IF NOT EXISTS formFalls(
 -- Table structure for table `formImmunAllergy`
 --
 
-CREATE TABLE IF NOT EXISTS formImmunAllergy (
+CREATE TABLE formImmunAllergy (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   provider_no int(10) default NULL,
@@ -3284,7 +3229,7 @@ CREATE TABLE IF NOT EXISTS formImmunAllergy (
 --
 -- Table structure for table formHomeFalls
 --
-CREATE TABLE IF NOT EXISTS formHomeFalls(
+CREATE TABLE formHomeFalls(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -3360,7 +3305,7 @@ CREATE TABLE IF NOT EXISTS formHomeFalls(
 --
 -- Table structure for table formIntakeInfo
 --
-CREATE TABLE IF NOT EXISTS formIntakeInfo(
+CREATE TABLE formIntakeInfo(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -3523,7 +3468,7 @@ CREATE TABLE IF NOT EXISTS formIntakeInfo(
 --
 -- Table structure for table `formInternetAccess`
 --
-CREATE TABLE IF NOT EXISTS formInternetAccess(
+CREATE TABLE formInternetAccess(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -3549,7 +3494,7 @@ CREATE TABLE IF NOT EXISTS formInternetAccess(
 -- Table structure for table `formSatisfactionScale`
 --
 
-CREATE TABLE IF NOT EXISTS `formSatisfactionScale` (
+CREATE TABLE `formSatisfactionScale` (
   `ID` int(10) NOT NULL auto_increment,
   `demographic_no` int(10) NOT NULL default '0',
   `provider_no` int(10) default NULL,
@@ -3592,14 +3537,14 @@ CREATE TABLE IF NOT EXISTS `formSatisfactionScale` (
 -- Table structure for table `formLabReq`
 --
 
-CREATE TABLE IF NOT EXISTS formLabReq (
+CREATE TABLE formLabReq (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) default NULL,
   provider_no int(10) default NULL,
   formCreated date default NULL,
   formEdited timestamp NOT NULL,
   provName varchar(60) default NULL,
-  reqProvName varchar(60),
+  reqProvName varchar(60) default "",
   clinicAddress varchar(30) default NULL,
   clinicCity varchar(20) default NULL,
   clinicPC varchar(7) default NULL,
@@ -3671,7 +3616,7 @@ CREATE TABLE IF NOT EXISTS formLabReq (
 -- Table structure for table `formMMSE`
 --
 
-CREATE TABLE IF NOT EXISTS formMMSE (
+CREATE TABLE formMMSE (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) default NULL,
   provider_no int(10) default NULL,
@@ -3709,7 +3654,7 @@ CREATE TABLE IF NOT EXISTS formMMSE (
 -- Table structure for table `formMentalHealth`
 --
 
-CREATE TABLE IF NOT EXISTS formMentalHealth (
+CREATE TABLE formMentalHealth (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   provider_no int(10) default NULL,
@@ -3790,7 +3735,7 @@ CREATE TABLE IF NOT EXISTS formMentalHealth (
 -- Table structure for table `formPalliativeCare`
 --
 
-CREATE TABLE IF NOT EXISTS formPalliativeCare (
+CREATE TABLE formPalliativeCare (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) default NULL,
   provider_no int(10) default NULL,
@@ -3893,7 +3838,7 @@ CREATE TABLE IF NOT EXISTS formPalliativeCare (
 -- Table structure for table `formPeriMenopausal`
 --
 
-CREATE TABLE IF NOT EXISTS formPeriMenopausal (
+CREATE TABLE formPeriMenopausal (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   provider_no int(10) default NULL,
@@ -4117,7 +4062,7 @@ CREATE TABLE IF NOT EXISTS formPeriMenopausal (
 -- Table structure for table `formRourke2006`
 --
 
-CREATE TABLE IF NOT EXISTS `formRourke2006` (
+CREATE TABLE `formRourke2006` (
   `ID` int(10) NOT NULL auto_increment,
   `demographic_no` int(10) default NULL,
   `provider_no` int(10) default NULL,
@@ -4753,7 +4698,7 @@ CREATE TABLE IF NOT EXISTS `formRourke2006` (
 -- Table structure for table `formRourke`
 --
 
-CREATE TABLE IF NOT EXISTS `formRourke` (
+CREATE TABLE `formRourke` (
   `ID` int(10) NOT NULL auto_increment,
   `demographic_no` int(10) default NULL,
   `provider_no` int(10) default NULL,
@@ -5185,7 +5130,7 @@ CREATE TABLE IF NOT EXISTS `formRourke` (
 --
 -- Table structure for table formSF36
 --
-CREATE TABLE IF NOT EXISTS formSF36(
+CREATE TABLE formSF36(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -5403,7 +5348,7 @@ CREATE TABLE IF NOT EXISTS formSF36(
 -- Table structure for table formSF36Caregiver
 --
 
-CREATE TABLE IF NOT EXISTS formSF36Caregiver(
+CREATE TABLE formSF36Caregiver(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -5620,7 +5565,7 @@ CREATE TABLE IF NOT EXISTS formSF36Caregiver(
 --
 -- Table structure for table formSelfAdministered
 --
-CREATE TABLE IF NOT EXISTS formSelfAdministered(
+CREATE TABLE formSelfAdministered(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -5661,7 +5606,7 @@ CREATE TABLE IF NOT EXISTS formSelfAdministered(
 --
 -- Table structure for table formSelfEffcacy
 --
-CREATE TABLE IF NOT EXISTS formSelfEfficacy(
+CREATE TABLE formSelfEfficacy(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -5717,7 +5662,7 @@ CREATE TABLE IF NOT EXISTS formSelfEfficacy(
 --
 -- Table structure for table formSelfManagement
 --
-CREATE TABLE IF NOT EXISTS formSelfManagement(
+CREATE TABLE formSelfManagement(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -5779,7 +5724,7 @@ CREATE TABLE IF NOT EXISTS formSelfManagement(
 --
 -- Table structure for table `formTreatmentPref`
 --
-CREATE TABLE IF NOT EXISTS formTreatmentPref(
+CREATE TABLE formTreatmentPref(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -5796,7 +5741,7 @@ CREATE TABLE IF NOT EXISTS formTreatmentPref(
 -- Table structure for table `formType2Diabetes`
 --
 
-CREATE TABLE IF NOT EXISTS formType2Diabetes (
+CREATE TABLE formType2Diabetes (
   ID int(10) NOT NULL auto_increment,
   demographic_no int(10) default NULL,
   provider_no int(10) default NULL,
@@ -5942,7 +5887,7 @@ CREATE TABLE IF NOT EXISTS formType2Diabetes (
 # Host: localhost
 # Saved: 2004-06-15 15:47:55
 #
-CREATE TABLE IF NOT EXISTS formVTForm(
+CREATE TABLE formVTForm(
   ID int(10) NOT NULL  auto_increment ,
   demographic_no int(10) NOT NULL,
   provider_no int(10),
@@ -6109,7 +6054,7 @@ CREATE TABLE IF NOT EXISTS formVTForm(
 
 ) ;
 
-CREATE TABLE IF NOT EXISTS `formGrowth0_36` (
+CREATE TABLE `formGrowth0_36` (
   `ID` int(10) NOT NULL auto_increment,
   `demographic_no` int(10) NOT NULL default '0',
   `provider_no` int(10) default NULL,
@@ -6247,7 +6192,7 @@ CREATE TABLE IF NOT EXISTS `formGrowth0_36` (
 
 
 
-CREATE TABLE IF NOT EXISTS `formRhImmuneGlobulin` (
+CREATE TABLE `formRhImmuneGlobulin` (
   `ID` int(10) NOT NULL auto_increment,
   `demographic_no` int(10) NOT NULL default '0',
   `provider_no` int(10) default NULL,
@@ -6333,7 +6278,7 @@ CREATE TABLE IF NOT EXISTS `formRhImmuneGlobulin` (
 );
 
 
-CREATE TABLE IF NOT EXISTS `formConsult` (
+CREATE TABLE `formConsult` (
   `ID` int(10) NOT NULL auto_increment,
   `provider_no` int(10) default NULL,
   `doc_name` varchar(60) default NULL,
@@ -6366,7 +6311,7 @@ CREATE TABLE IF NOT EXISTS `formConsult` (
 --
 -- Table structure for table `formIntakeHx`
 --
-CREATE TABLE IF NOT EXISTS formIntakeHx (
+CREATE TABLE formIntakeHx (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
   `demographic_no` int(10) NOT NULL,
   `provider_no` int(10),
@@ -6668,13 +6613,10 @@ CREATE TABLE IF NOT EXISTS formIntakeHx (
 -- Table structure for table `groupMembers_tbl`
 --
 
-CREATE TABLE IF NOT EXISTS groupMembers_tbl (
+CREATE TABLE groupMembers_tbl (
   id int(10) NOT NULL auto_increment,
   groupID int(10) default NULL,
   provider_No varchar(6) default NULL,
-  facilityId int(6),
-  `destinationFacilityId` int(6) DEFAULT NULL,
-  clinicLocationNo int(11),
   PRIMARY KEY  (id)
 ) ;
 
@@ -6682,7 +6624,7 @@ CREATE TABLE IF NOT EXISTS groupMembers_tbl (
 -- Table structure for table `groups_tbl`
 --
 
-CREATE TABLE IF NOT EXISTS groups_tbl (
+CREATE TABLE groups_tbl (
   groupID int(10) NOT NULL auto_increment,
   parentID int(10) default NULL,
   groupDesc varchar(50) default NULL,
@@ -6693,18 +6635,17 @@ CREATE TABLE IF NOT EXISTS groups_tbl (
 -- Table structure for table `ichppccode`
 --
 
-CREATE TABLE IF NOT EXISTS ichppccode (
-  ichppccode varchar(10),
+CREATE TABLE ichppccode (
+  ichppccode varchar(10) default NULL,
   diagnostic_code varchar(10) default NULL,
-  description varchar(255) default NULL,
-  primary key(ichppccode)
+  description varchar(255) default NULL
 ) ;
 
 --
 -- Table structure for table `immunizations`
 --
 
-CREATE TABLE IF NOT EXISTS immunizations (
+CREATE TABLE immunizations (
   ID int(11) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   provider_no varchar(6) NOT NULL default '',
@@ -6719,7 +6660,7 @@ CREATE TABLE IF NOT EXISTS immunizations (
 -- Table structure for table `labRequestReportLink`
 --
 
-CREATE TABLE IF NOT EXISTS labRequestReportLink (
+CREATE TABLE labRequestReportLink (
   id int(10) NOT NULL auto_increment,
   request_table varchar(60),
   request_id int(10),
@@ -6733,7 +6674,7 @@ CREATE TABLE IF NOT EXISTS labRequestReportLink (
 -- Table structure for table `mdsMSH`
 --
 
-CREATE TABLE IF NOT EXISTS mdsMSH (
+CREATE TABLE mdsMSH (
   segmentID int(10) NOT NULL auto_increment,
   sendingApp char(180) default NULL,
   dateTime datetime NOT NULL,
@@ -6744,15 +6685,14 @@ CREATE TABLE IF NOT EXISTS mdsMSH (
   acceptAckType char(2) default NULL,
   appAckType char(2) default NULL,
   demographic_no int(10) default '0',
-  PRIMARY KEY  (segmentID),
-  KEY `mdsMSH_ikey` (`dateTime`)
+  PRIMARY KEY  (segmentID)
 ) ;
 
 --
 -- Table structure for table `mdsNTE`
 --
 
-CREATE TABLE IF NOT EXISTS mdsNTE (
+CREATE TABLE mdsNTE (
   segmentID int(10) default NULL,
   sourceOfComment varchar(8) default NULL,
   comment varchar(255) default NULL,
@@ -6764,7 +6704,7 @@ CREATE TABLE IF NOT EXISTS mdsNTE (
 -- Table structure for table `mdsOBR`
 --
 
-CREATE TABLE IF NOT EXISTS mdsOBR (
+CREATE TABLE mdsOBR (
   segmentID int(10) default NULL,
   obrID int(10) default NULL,
   placerOrderNo char(75) default NULL,
@@ -6780,7 +6720,7 @@ CREATE TABLE IF NOT EXISTS mdsOBR (
 -- Table structure for table `mdsOBX`
 --
 
-CREATE TABLE IF NOT EXISTS mdsOBX (
+CREATE TABLE mdsOBX (
   segmentID int(10) default NULL,
   obxID int(10) default '0',
   valueType char(2) default NULL,
@@ -6798,7 +6738,7 @@ CREATE TABLE IF NOT EXISTS mdsOBX (
 -- Table structure for table `mdsPID`
 --
 
-CREATE TABLE IF NOT EXISTS mdsPID (
+CREATE TABLE mdsPID (
   segmentID int(10) default NULL,
   intPatientID char(16) default NULL,
   altPatientID char(15) default NULL,
@@ -6814,7 +6754,7 @@ CREATE TABLE IF NOT EXISTS mdsPID (
 -- Table structure for table `mdsPV1`
 --
 
-CREATE TABLE IF NOT EXISTS mdsPV1 (
+CREATE TABLE mdsPV1 (
   segmentID int(10) default NULL,
   patientClass char(1) default NULL,
   patientLocation char(80) default NULL,
@@ -6831,7 +6771,7 @@ CREATE TABLE IF NOT EXISTS mdsPV1 (
 -- Table structure for table `mdsZCL`
 --
 
-CREATE TABLE IF NOT EXISTS mdsZCL (
+CREATE TABLE mdsZCL (
   segmentID int(10) default NULL,
   setID char(4) default NULL,
   consultDoc char(60) default NULL,
@@ -6851,7 +6791,7 @@ CREATE TABLE IF NOT EXISTS mdsZCL (
 -- Table structure for table `mdsZCT`
 --
 
-CREATE TABLE IF NOT EXISTS mdsZCT (
+CREATE TABLE mdsZCT (
   segmentID int(10) default NULL,
   barCodeIdentifier char(14) default NULL,
   placerGroupNo char(14) default NULL,
@@ -6863,7 +6803,7 @@ CREATE TABLE IF NOT EXISTS mdsZCT (
 -- Table structure for table `mdsZFR`
 --
 
-CREATE TABLE IF NOT EXISTS mdsZFR (
+CREATE TABLE mdsZFR (
   segmentID int(10) default NULL,
   reportForm char(1) default NULL,
   reportFormStatus char(1) default NULL,
@@ -6878,7 +6818,7 @@ CREATE TABLE IF NOT EXISTS mdsZFR (
 -- Table structure for table `mdsZLB`
 --
 
-CREATE TABLE IF NOT EXISTS mdsZLB (
+CREATE TABLE mdsZLB (
   segmentID int(10) default NULL,
   labID varchar(5) default NULL,
   labIDVersion varchar(255) default NULL,
@@ -6894,7 +6834,7 @@ CREATE TABLE IF NOT EXISTS mdsZLB (
 -- Table structure for table `mdsZMC`
 --
 
-CREATE TABLE IF NOT EXISTS mdsZMC (
+CREATE TABLE mdsZMC (
   segmentID int(10) default NULL,
   setID varchar(10) default NULL,
   messageCodeIdentifier varchar(10) default NULL,
@@ -6909,7 +6849,7 @@ CREATE TABLE IF NOT EXISTS mdsZMC (
 -- Table structure for table `mdsZMN`
 --
 
-CREATE TABLE IF NOT EXISTS mdsZMN (
+CREATE TABLE mdsZMN (
   segmentID int(10) default NULL,
   resultMnemonic varchar(20) default NULL,
   resultMnemonicVersion varchar(255) default NULL,
@@ -6928,7 +6868,7 @@ CREATE TABLE IF NOT EXISTS mdsZMN (
 -- Table structure for table `mdsZRG`
 --
 
-CREATE TABLE IF NOT EXISTS mdsZRG (
+CREATE TABLE mdsZRG (
   segmentID int(10) default NULL,
   reportSequence varchar(255) default NULL,
   reportGroupID varchar(10) default NULL,
@@ -6944,7 +6884,7 @@ CREATE TABLE IF NOT EXISTS mdsZRG (
 --
 -- Table structure for table `measurements`
 --
-CREATE TABLE IF NOT EXISTS measurements(
+CREATE TABLE measurements(
   id int UNSIGNED AUTO_INCREMENT,
   type varchar(50) NOT NULL,
   demographicNo int(10) NOT NULL default '0',
@@ -6958,15 +6898,14 @@ CREATE TABLE IF NOT EXISTS measurements(
   PRIMARY KEY(id),
   KEY type (type),
   KEY measuringInstruction (measuringInstruction),
-  KEY demographicNo (demographicNo),
-  KEY measurement_integrator (demographicNo,dateEntered)
+  KEY demographicNo (demographicNo)
 ) ;
 
 --
 -- Table structure for table `measurementCSSLocation`
 --
 DROP TABLE IF EXISTS measurementCSSLocation;
-CREATE TABLE IF NOT EXISTS measurementCSSLocation(
+CREATE TABLE measurementCSSLocation(
   cssID int(9) NOT NULL auto_increment,
   location varchar(255) NOT NULL,
   PRIMARY KEY  (cssID)
@@ -6975,12 +6914,12 @@ CREATE TABLE IF NOT EXISTS measurementCSSLocation(
 --
 -- Table structure for table `measurementsDeleted`
 --
-CREATE TABLE IF NOT EXISTS measurementsDeleted(
+CREATE TABLE measurementsDeleted(
   id int UNSIGNED AUTO_INCREMENT,
   type varchar(4) NOT NULL,
   demographicNo int(10) NOT NULL default '0',
   providerNo varchar(6) NOT NULL default '',
-  dataField  varchar(255) NOT NULL,
+  dataField  varchar(10) NOT NULL,
   measuringInstruction varchar(255) NOT NULL,
   comments varchar(255) NOT NULL,
   dateObserved datetime NOT NULL,
@@ -6994,7 +6933,7 @@ CREATE TABLE IF NOT EXISTS measurementsDeleted(
 -- Table structure for table `measurementGroup`
 --
 DROP TABLE IF EXISTS measurementGroup;
-CREATE TABLE IF NOT EXISTS measurementGroup(
+CREATE TABLE measurementGroup(
   `id` int(10) not null auto_increment primary key,
   name varchar(100) NOT NULL,
   typeDisplayName varchar(255),
@@ -7004,7 +6943,7 @@ CREATE TABLE IF NOT EXISTS measurementGroup(
 --
 -- Table structure for table `measurementGroupStyle`
 --
-CREATE TABLE IF NOT EXISTS measurementGroupStyle(
+CREATE TABLE measurementGroupStyle(
   groupID int(9) NOT NULL auto_increment,
   groupName varchar(100) NOT NULL,
   cssID int(9) NOT NULL,
@@ -7017,7 +6956,7 @@ CREATE TABLE IF NOT EXISTS measurementGroupStyle(
 -- Table structure for table `measurementType`
 --
 DROP TABLE IF EXISTS measurementType;
-CREATE TABLE IF NOT EXISTS measurementType (
+CREATE TABLE measurementType (
   id int UNSIGNED AUTO_INCREMENT,
   type varchar(50) NOT NULL,
   typeDisplayName varchar(255) NOT NULL,
@@ -7034,7 +6973,7 @@ CREATE TABLE IF NOT EXISTS measurementType (
 --
 -- Table structure for table `measurementTypeDeleted`
 --
-CREATE TABLE IF NOT EXISTS measurementTypeDeleted (
+CREATE TABLE measurementTypeDeleted (
   id int UNSIGNED AUTO_INCREMENT,
   type varchar(50) NOT NULL,
   typeDisplayName varchar(20) NOT NULL,
@@ -7048,14 +6987,12 @@ CREATE TABLE IF NOT EXISTS measurementTypeDeleted (
 -- Table structure for table `messagelisttbl`
 --
 
-CREATE TABLE IF NOT EXISTS messagelisttbl (
+CREATE TABLE messagelisttbl (
   id int UNSIGNED AUTO_INCREMENT,
   message mediumint(9) default NULL,
   provider_no varchar(6) default NULL,
   status varchar(10) default NULL,
   remoteLocation int(10) default NULL,
-  destinationFacilityId int(6),
-  sourceFacilityId int(6),
   PRIMARY KEY(id),
   KEY `message` (`message`),
   KEY `provider_no` (`provider_no`),
@@ -7067,7 +7004,7 @@ CREATE TABLE IF NOT EXISTS messagelisttbl (
 -- Table structure for table `messagetbl`
 --
 
-CREATE TABLE IF NOT EXISTS messagetbl (
+CREATE TABLE messagetbl (
   messageid mediumint(9) NOT NULL auto_increment,
   thedate date default NULL,
   theime time default NULL,
@@ -7090,33 +7027,20 @@ CREATE TABLE IF NOT EXISTS messagetbl (
 -- Table structure for table `msgDemoMap`
 --
 
-CREATE TABLE IF NOT EXISTS msgDemoMap (
+CREATE TABLE msgDemoMap (
   id int(11) auto_increment,
-  messageID mediumint(9) NOT NULL DEFAULT 0,
-  demographic_no int(10) NOT NULL DEFAULT 0,
+  messageID mediumint(9),
+  demographic_no int(10),
   PRIMARY KEY (id),
-  KEY (messageID, demographic_no),
-  KEY `demoMap_messageID_demographic_no` (`messageID`,`demographic_no`)
+  KEY  (messageID, demographic_no)
 ) ;
 
---
--- Table structure for table `msgIntegratorDemoMap`
---
-
-CREATE TABLE IF NOT EXISTS `msgIntegratorDemoMap` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `messageId` int(11) ,
-  `sourceDemographicNo` int(11),
-  `sourceFacilityId` int(6),
-  `msgDemoMapId` int(11),
-  PRIMARY KEY (`id`)
-);
 
 --
 -- Table structure for table `mygroup`
 --
 
-CREATE TABLE IF NOT EXISTS `mygroup` (
+CREATE TABLE mygroup (
   mygroup_no varchar(10) NOT NULL default '',
   provider_no varchar(6) NOT NULL default '',
   last_name varchar(30) NOT NULL default '',
@@ -7124,13 +7048,13 @@ CREATE TABLE IF NOT EXISTS `mygroup` (
   vieworder char(2) default NULL,
   default_billing_form varchar(10),
   PRIMARY KEY  (mygroup_no,provider_no)
-);
+) ;
 
 --
 -- Table structure for table `oscarcommlocations`
 --
 
-CREATE TABLE IF NOT EXISTS oscarcommlocations (
+CREATE TABLE oscarcommlocations (
   locationId int(10) NOT NULL default '0',
   locationDesc varchar(50) NOT NULL default '',
   locationAuth varchar(30) default NULL,
@@ -7144,7 +7068,7 @@ CREATE TABLE IF NOT EXISTS oscarcommlocations (
 -- Table structure for table `patientLabRouting`
 --
 
-CREATE TABLE IF NOT EXISTS patientLabRouting (
+CREATE TABLE patientLabRouting (
   demographic_no int(10) NOT NULL default '0',
   lab_no int(10) NOT NULL default '0',
   lab_type char(3) NOT NULL default 'MDS',
@@ -7155,11 +7079,10 @@ CREATE TABLE IF NOT EXISTS patientLabRouting (
   KEY `demographic` (`demographic_no`),
   KEY `lab_type_index` (`lab_type`),
   KEY `lab_no_index` (`lab_no`),
-  KEY `all_index` (`lab_type`,`lab_no`,`demographic_no`),
-  KEY `patientLabRouting_ikey` (`created`)
+  KEY `all_index` (`lab_type`,`lab_no`,`demographic_no`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS ProviderPreference
+create table ProviderPreference
 (
 	providerNo varchar(6) not null primary key,
 	startHour tinyint,
@@ -7182,16 +7105,14 @@ CREATE TABLE IF NOT EXISTS ProviderPreference
     eRxPassword varchar(64),
     eRxFacility varchar(32),
     eRxTrainingMode tinyint(1) not null,
-    encryptedMyOscarPassword varbinary(255),
-    defaultBillingLocation varchar(4) DEFAULT 'no',
-    defaultSliCode varchar(4) default 'no'
+    encryptedMyOscarPassword varbinary(255)
 );
 
 --
 -- Table structure for table `prescribe`
 --
 
-CREATE TABLE IF NOT EXISTS prescribe (
+CREATE TABLE prescribe (
   prescribe_no int(12) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   provider_no varchar(6) NOT NULL default '',
@@ -7205,7 +7126,7 @@ CREATE TABLE IF NOT EXISTS prescribe (
 -- Table structure for table `prescription`
 --
 
-CREATE TABLE IF NOT EXISTS prescription (
+CREATE TABLE prescription (
   script_no int(10) NOT NULL auto_increment,
   provider_no varchar(6) default NULL,
   demographic_no int(10) default NULL,
@@ -7219,79 +7140,60 @@ CREATE TABLE IF NOT EXISTS prescription (
 ) ;
 
 --
--- Table structure for table `PreventionReport`
---
-
-CREATE TABLE IF NOT EXISTS `PreventionReport` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `providerNo` varchar(6) DEFAULT NULL,
-  `reportName` varchar(255) DEFAULT NULL,
-  `json` text,
-  `updateDate` datetime DEFAULT NULL,
-  `createDate` datetime DEFAULT NULL,
-  `active` tinyint(1) DEFAULT NULL,
-  `archived` tinyint(1) DEFAULT NULL,
-  `uuid` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ;
-
---
 -- Table structure for table `professionalSpecialists`
 --
 
-CREATE TABLE IF NOT EXISTS professionalSpecialists (
-  `specId` int(10) NOT NULL AUTO_INCREMENT,
-  `fName` varchar(32) DEFAULT NULL,
-  `lName` varchar(32) DEFAULT NULL,
-  `proLetters` varchar(20) DEFAULT NULL,
-  `address` varchar(255) DEFAULT NULL,
-  `phone` varchar(30) DEFAULT NULL,
-  `fax` varchar(30) DEFAULT NULL,
-  `website` varchar(128) DEFAULT NULL,
-  `email` varchar(128) DEFAULT NULL,
-  `specType` varchar(128) DEFAULT NULL,
-  `eDataUrl` varchar(255) DEFAULT NULL,
-  `eDataOscarKey` varchar(1024) DEFAULT NULL,
-  `eDataServiceKey` varchar(1024) DEFAULT NULL,
-  `eDataServiceName` varchar(255) DEFAULT NULL,
-  `lastUpdated` datetime NOT NULL,
-  `annotation` text DEFAULT NULL,
-  `referralNo` varchar(6) DEFAULT NULL,
-  `privatePhoneNumber` varchar(30) DEFAULT NULL,
-  `cellPhoneNumber` varchar(30) DEFAULT NULL,
-  `pagerNumber` varchar(30) DEFAULT NULL,
-  `salutation` varchar(10) DEFAULT NULL,
-  `institutionId` int(10) NOT NULL,
-  `departmentId` int(10) NOT NULL,
-  `eformId` int(10) DEFAULT NULL,
-  `hideFromView` tinyint(1) NOT NULL,
-  `deleted` tinyint(1) NOT NULL DEFAULT 0,
-    `province` varchar(55),
-  PRIMARY KEY (`specId`)
+CREATE TABLE professionalSpecialists (
+  specId int(10) NOT NULL auto_increment primary key,
+  fName varchar(32),
+  lName varchar(32),
+  proLetters varchar(20),
+  address varchar(255),
+  phone varchar(30),
+  fax varchar(30),
+  website varchar(128),
+  email varchar(128),
+  specType varchar(128),
+  eDataUrl varchar(255),
+  eDataOscarKey varchar(1024),
+  eDataServiceKey varchar(1024),
+  eDataServiceName varchar(255),
+  lastUpdated datetime not null,
+  annotation text,
+  referralNo varchar(6),
+  institutionId int(10) not null,
+  departmentId int(10) not null,
+  privatePhoneNumber varchar(30),
+  cellPhoneNumber varchar(30),
+  pagerNumber varchar(30),
+  salutation varchar(10),
+  hideFromView tinyint(1),
+  eformId int(10)
 );
 
 --
 -- Table structure for table `property`
 --
 
- CREATE TABLE IF NOT EXISTS `property` (
+ CREATE TABLE property (
   name varchar(255) NOT NULL default '',
-  value varchar(2000) default NULL,
+  value varchar(255) default NULL,
   id int(10) NOT NULL auto_increment,
   provider_no varchar(6) default '',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `provider_noIndex` (`provider_no`),
+  KEY `nameIndex` (name(20))
 )  ;
 
 --
 -- Table structure for table `provider`
 --
 
-CREATE TABLE IF NOT EXISTS provider (
+CREATE TABLE provider (
   provider_no varchar(6) NOT NULL default '',
   last_name varchar(30) NOT NULL default '',
   first_name varchar(30) NOT NULL default '',
   provider_type varchar(15) NOT NULL default '',
-  supervisor varchar(6),
   specialty varchar(40) NOT NULL default '',
   team varchar(20) default '',
   sex char(1) NOT NULL default '',
@@ -7314,30 +7216,14 @@ CREATE TABLE IF NOT EXISTS provider (
   `lastUpdateUser` varchar(6) default NULL,
   `lastUpdateDate` datetime not null,
   `signed_confidentiality` datetime,
-  `practitionerNoType` varchar(255),
-  PRIMARY KEY  (provider_no),
-  KEY `provider_ikey` (`lastUpdateDate`)
+  PRIMARY KEY  (provider_no)
 );
-
-
---
--- Table structure for table `document_review`
---
-
-CREATE TABLE IF NOT EXISTS document_review (
-  `id` int auto_increment primary key,
-  `document_no` int(20) not null,
-  `provider_no` varchar(6) not null,
-  `date_reviewed` datetime,
-  foreign key(document_no) references document(document_no),
-  foreign key(provider_no) references provider(provider_no)
-) ;
 
 --
 -- Table structure for table `providerExt`
 --
 
-CREATE TABLE IF NOT EXISTS providerExt (
+CREATE TABLE providerExt (
   provider_no varchar(6) default NULL,
   signature varchar(255) default NULL
 ) ;
@@ -7346,7 +7232,7 @@ CREATE TABLE IF NOT EXISTS providerExt (
 -- Table structure for table `providerLabRouting`
 --
 
-CREATE TABLE IF NOT EXISTS providerLabRouting (
+CREATE TABLE providerLabRouting (
   provider_no varchar(6) NOT NULL default '',
   lab_no int(10) NOT NULL default '0',
   status char(1) default '',
@@ -7362,7 +7248,7 @@ CREATE TABLE IF NOT EXISTS providerLabRouting (
 --
 -- Table structure for table quickList
 --
-CREATE TABLE IF NOT EXISTS quickList(
+CREATE TABLE quickList(
   `id` int(10) not null auto_increment primary key,
   quickListName varchar(255) NOT NULL,
   createdByProvider varchar(20),
@@ -7373,7 +7259,7 @@ CREATE TABLE IF NOT EXISTS quickList(
 --
 -- Table structure for table quickListUser
 --
-CREATE TABLE IF NOT EXISTS quickListUser(
+CREATE TABLE quickListUser(
   `id` int(10) not null auto_increment primary key,
   providerNo varchar(20) NOT NULL,
   quickListName varchar(10) NOT NULL,
@@ -7384,7 +7270,7 @@ CREATE TABLE IF NOT EXISTS quickListUser(
 -- Table structure for table `radetail`
 --
 
-CREATE TABLE IF NOT EXISTS radetail (
+CREATE TABLE radetail (
   radetail_no int(6) NOT NULL auto_increment,
   raheader_no int(6) NOT NULL default '0',
   providerohip_no varchar(12) NOT NULL default '',
@@ -7398,15 +7284,14 @@ CREATE TABLE IF NOT EXISTS radetail (
   error_code char(2) NOT NULL default '',
   billtype char(3) NOT NULL default '',
   claim_no varchar(12) not null default '',
-  PRIMARY KEY  (radetail_no),
-  KEY `service_date_index`(`service_date`)
+  PRIMARY KEY  (radetail_no)
 ) ;
 
 --
 -- Table structure for table `raheader`
 --
 
-CREATE TABLE IF NOT EXISTS raheader (
+CREATE TABLE raheader (
   raheader_no int(6) NOT NULL auto_increment,
   filename varchar(30) NOT NULL,
   paymentdate varchar(8) NOT NULL default '',
@@ -7424,7 +7309,7 @@ CREATE TABLE IF NOT EXISTS raheader (
 -- Table structure for table `recycle_bin`
 --
 
-CREATE TABLE IF NOT EXISTS recycle_bin (
+CREATE TABLE recycle_bin (
   `id` int(10) not null auto_increment primary key,
   provider_no varchar(6) NOT NULL default '',
   table_name varchar(30) NOT NULL default '',
@@ -7436,7 +7321,7 @@ CREATE TABLE IF NOT EXISTS recycle_bin (
 -- Table structure for table `recyclebin`
 --
 
-CREATE TABLE IF NOT EXISTS recyclebin (
+CREATE TABLE recyclebin (
   recyclebin_no int(12) NOT NULL auto_increment,
   provider_no varchar(6) default NULL,
   updatedatetime datetime default NULL,
@@ -7450,7 +7335,7 @@ CREATE TABLE IF NOT EXISTS recyclebin (
 --
 -- Table structure for table `rehabStudy2004`
 --
-CREATE TABLE IF NOT EXISTS rehabStudy2004(
+CREATE TABLE rehabStudy2004(
   studyID int(10) NOT NULL,
   demographic_no int(10) NOT NULL,
   PRIMARY KEY  (studyID)
@@ -7460,7 +7345,7 @@ CREATE TABLE IF NOT EXISTS rehabStudy2004(
 -- Table structure for table `remoteAttachments`
 --
 
-CREATE TABLE IF NOT EXISTS remoteAttachments (
+CREATE TABLE remoteAttachments (
   id int(9) auto_increment,
   demographic_no int(10) default NULL,
   messageid mediumint(9) default NULL,
@@ -7474,7 +7359,7 @@ CREATE TABLE IF NOT EXISTS remoteAttachments (
 -- Table structure for table `reportagesex`
 --
 
-CREATE TABLE IF NOT EXISTS reportagesex (
+CREATE TABLE reportagesex (
   `id` int(10) not null auto_increment primary key,
   demographic_no int(10) default NULL,
   age int(4) default '0',
@@ -7489,7 +7374,7 @@ CREATE TABLE IF NOT EXISTS reportagesex (
 --
 -- Table structure for table reportByExamples
 --
-CREATE TABLE IF NOT EXISTS reportByExamples(
+CREATE TABLE reportByExamples(
   id int(9) auto_increment ,
   providerNo varchar(6) NOT NULL,
   query blob NOT NULL,
@@ -7500,7 +7385,7 @@ CREATE TABLE IF NOT EXISTS reportByExamples(
 --
 -- Table structure for table reportByExamplesFavorite
 --
-CREATE TABLE IF NOT EXISTS reportByExamplesFavorite(
+CREATE TABLE reportByExamplesFavorite(
   id int(9) auto_increment ,
   providerNo varchar(6) NOT NULL,
   query blob NOT NULL,
@@ -7512,7 +7397,7 @@ CREATE TABLE IF NOT EXISTS reportByExamplesFavorite(
 -- Table structure for table `reportprovider`
 --
 
-CREATE TABLE IF NOT EXISTS reportprovider (
+CREATE TABLE reportprovider (
   `id` int(10) not null auto_increment primary key,
   provider_no varchar(10) default '',
   team varchar(10) default '',
@@ -7524,7 +7409,7 @@ CREATE TABLE IF NOT EXISTS reportprovider (
 -- Table structure for table `reporttemp`
 --
 
-CREATE TABLE IF NOT EXISTS reporttemp (
+CREATE TABLE reporttemp (
   demographic_no int(10) NOT NULL default '0',
   edb date NOT NULL default '0001-01-01',
   demo_name varchar(60) NOT NULL default '',
@@ -7538,7 +7423,7 @@ CREATE TABLE IF NOT EXISTS reporttemp (
 -- Table structure for table `rschedule`
 --
 
-CREATE TABLE IF NOT EXISTS `rschedule` (
+CREATE TABLE `rschedule` (
   `id` int(6) NOT NULL auto_increment,
   `provider_no` varchar(6) NOT NULL default '',
   `sdate` date NOT NULL default '0001-01-01',
@@ -7556,7 +7441,7 @@ CREATE TABLE IF NOT EXISTS `rschedule` (
 -- Table structure for table `scheduledate`
 --
 
-CREATE TABLE IF NOT EXISTS `scheduledate` (
+CREATE TABLE `scheduledate` (
   `id` int(6) NOT NULL auto_increment,
   `sdate` date NOT NULL default '0001-01-01',
   `provider_no` varchar(6) NOT NULL default '',
@@ -7566,10 +7451,10 @@ CREATE TABLE IF NOT EXISTS `scheduledate` (
   `hour` varchar(255) default NULL,
   `creator` varchar(50) default NULL,
   `status` char(1) NOT NULL default '',
-  KEY `scheduledate_sdate` (`sdate`),
-  KEY `scheduledate_pno` (`provider_no`),
-  KEY `scheduledate_status` (`status`),
-  KEY `scheduledate_key1` (`sdate`,`provider_no`,`hour`,`status`),
+   key(sdate),
+   key(provider_no),
+   key(status),
+   key(sdate,provider_no,hour,status),
   PRIMARY KEY  (`id`)
 ) ;
 
@@ -7577,7 +7462,7 @@ CREATE TABLE IF NOT EXISTS `scheduledate` (
 -- Table structure for table `scheduledaytemplate`
 --
 
-#CREATE TABLE IF NOT EXISTS scheduledaytemplate (
+#CREATE TABLE scheduledaytemplate (
 #  provider_no varchar(6) NOT NULL default '',
 #  day date NOT NULL default '0001-01-01',
 #  template_name varchar(20) default NULL,
@@ -7588,7 +7473,7 @@ CREATE TABLE IF NOT EXISTS `scheduledate` (
 -- Table structure for table `scheduleholiday`
 --
 
-CREATE TABLE IF NOT EXISTS scheduleholiday (
+CREATE TABLE scheduleholiday (
   sdate date NOT NULL default '0001-01-01',
   holiday_name varchar(100) NOT NULL default '',
   PRIMARY KEY  (sdate)
@@ -7598,7 +7483,7 @@ CREATE TABLE IF NOT EXISTS scheduleholiday (
 -- Table structure for table `scheduletemplate`
 --
 
-CREATE TABLE IF NOT EXISTS scheduletemplate (
+CREATE TABLE scheduletemplate (
   provider_no varchar(6) NOT NULL default '',
   name varchar(20) NOT NULL default '',
   summary varchar(80) default NULL,
@@ -7610,7 +7495,7 @@ CREATE TABLE IF NOT EXISTS scheduletemplate (
 -- Table structure for table `scheduletemplatecode`
 --
 
-CREATE TABLE IF NOT EXISTS scheduletemplatecode (
+CREATE TABLE scheduletemplatecode (
   id int(10) NOT NULL auto_increment,
   code char(1) NOT NULL default '',
   description varchar(80) default NULL,
@@ -7626,52 +7511,32 @@ CREATE TABLE IF NOT EXISTS scheduletemplatecode (
 -- Table structure for table `security`
 --
 
-CREATE TABLE IF NOT EXISTS security (
+CREATE TABLE security (
   security_no int(6) NOT NULL auto_increment,
-  user_name varchar(30) NOT NULL default '',
-  password varchar(255) NOT NULL default '',
-  provider_no varchar(6) default NULL,
-  pin varchar(255) default NULL,
-  b_ExpireSet int(1) default 1,
-  date_ExpireDate date default '2100-01-01',
-  b_LocalLockSet int(1) default 1,
-  b_RemoteLockSet int(1) default 1, 
-  forcePasswordReset tinyint(1),
-  passwordUpdateDate datetime,
-  pinUpdateDate datetime,
-  lastUpdateUser varchar(20),
-  lastUpdateDate timestamp,
-  oneIdKey VARCHAR(255),
-  oneIdEmail VARCHAR(255),
-  delegateOneIdEmail VARCHAR(255),
-  PRIMARY KEY  (security_no),
-  UNIQUE user_name (user_name)
-) ;
-
-CREATE TABLE IF NOT EXISTS `SecurityArchive` (
- `id` int(11) NOT NULL auto_increment,
-  security_no int(6) NOT NULL,
   user_name varchar(30) NOT NULL,
   password varchar(255) NOT NULL,
   provider_no varchar(6) default NULL,
   pin varchar(255),
-  b_ExpireSet int(1),
-  date_ExpireDate date,
-  b_LocalLockSet int(1),
-  b_RemoteLockSet int(1),
+  b_ExpireSet int(1) default 1,
+  date_ExpireDate date default '2100-01-01',
+  b_LocalLockSet int(1) default 1,
+  b_RemoteLockSet int(1) default 1,
   forcePasswordReset tinyint(1),
+  storageVersion int NOT NULL,
   passwordUpdateDate datetime,
   pinUpdateDate datetime,
   lastUpdateUser varchar(20),
   lastUpdateDate timestamp,
- PRIMARY KEY  (`id`)
-);
+  PRIMARY KEY  (security_no),
+  UNIQUE user_name (user_name)
+) ;
+
 
 --
 -- Table structure for table `serviceSpecialists`
 --
 
-CREATE TABLE IF NOT EXISTS serviceSpecialists (
+CREATE TABLE serviceSpecialists (
   serviceId int(10) default NULL,
   specId int(10) default NULL
 ) ;
@@ -7680,7 +7545,7 @@ CREATE TABLE IF NOT EXISTS serviceSpecialists (
 -- Table structure for table `specialistsJavascript`
 --
 
-CREATE TABLE IF NOT EXISTS specialistsJavascript (
+CREATE TABLE specialistsJavascript (
   `id` int(10) not null auto_increment primary key,
   setId char(1) default NULL,
   javascriptString mediumtext
@@ -7690,7 +7555,7 @@ CREATE TABLE IF NOT EXISTS specialistsJavascript (
 -- Table structure for table `study`
 --
 
-CREATE TABLE IF NOT EXISTS study (
+CREATE TABLE study (
   study_no int(3) NOT NULL auto_increment,
   study_name varchar(20) NOT NULL default '',
   study_link varchar(255) NOT NULL default '',
@@ -7707,7 +7572,7 @@ CREATE TABLE IF NOT EXISTS study (
 -- Table structure for table `studydata`
 --
 
-CREATE TABLE IF NOT EXISTS studydata (
+CREATE TABLE studydata (
   studydata_no int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   deleted tinyint not null,
@@ -7724,7 +7589,7 @@ CREATE TABLE IF NOT EXISTS studydata (
 -- Table structure for table `studylogin`
 --
 
-CREATE TABLE IF NOT EXISTS studylogin (
+CREATE TABLE studylogin (
   id int(6) NOT NULL auto_increment,
   provider_no varchar(6) default NULL,
   study_no int(3) default NULL,
@@ -7743,7 +7608,7 @@ CREATE TABLE IF NOT EXISTS studylogin (
 -- Table structure for table `tickler`
 --
 
-CREATE TABLE IF NOT EXISTS tickler (
+CREATE TABLE tickler (
   tickler_no int(10) NOT NULL auto_increment,
   demographic_no int(10) default '0',
   program_id int,
@@ -7755,7 +7620,6 @@ CREATE TABLE IF NOT EXISTS tickler (
   priority varchar(6) default 'Normal',
   task_assigned_to varchar(255),
   category_id int(11),
-  creation_date timestamp not null,
   PRIMARY KEY  (tickler_no),
   KEY `statusIndex` (`status`),
   KEY `demo_status_date_Index` (demographic_no,status,service_date)
@@ -7765,7 +7629,7 @@ CREATE TABLE IF NOT EXISTS tickler (
 -- Table structure for table `tmpdiagnosticcode`
 --
 
-#CREATE TABLE IF NOT EXISTS tmpdiagnosticcode (
+#CREATE TABLE tmpdiagnosticcode (
 #  diagnosticcode_no int(5) NOT NULL auto_increment,
 #  diagnostic_code varchar(5) NOT NULL default '',
 #  description text,
@@ -7776,10 +7640,10 @@ CREATE TABLE IF NOT EXISTS tickler (
 --
 -- Table structure for table `validations`
 --
-CREATE TABLE IF NOT EXISTS validations(
+CREATE TABLE validations(
   id int UNSIGNED AUTO_INCREMENT,
   name varchar(100) NOT NULL,
-  regularExp varchar(250) ,
+  regularExp varchar(100) ,
   `maxValue1` double,
   minValue double,
   maxLength int(3),
@@ -7793,7 +7657,7 @@ CREATE TABLE IF NOT EXISTS validations(
 --
 -- Table structure for table `waitingListName`
 --
-CREATE TABLE IF NOT EXISTS `waitingListName` (
+CREATE TABLE `waitingListName` (
   `ID` bigint(11) NOT NULL auto_increment,
   `name` varchar(80) NOT NULL default '',
   `group_no` varchar(10) default '',
@@ -7807,7 +7671,7 @@ CREATE TABLE IF NOT EXISTS `waitingListName` (
 --
 -- Table structure for table `waitingList`
 --
-CREATE TABLE IF NOT EXISTS `waitingList` (
+CREATE TABLE `waitingList` (
   `id` bigint(20) NOT NULL auto_increment,
   `listID` int(11) default NULL,
   `demographic_no` int(10) NOT NULL default '0',
@@ -7823,48 +7687,47 @@ CREATE TABLE IF NOT EXISTS `waitingList` (
 --
 -- Table structure for table `pharmacyInfo`
 --
-CREATE TABLE IF NOT EXISTS pharmacyInfo (
-  `recordID` int(10) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `address` varchar(255),
-  `city` varchar(60) DEFAULT NULL,
-  `province` varchar(255) DEFAULT NULL,
-  `postalCode` varchar(20) DEFAULT NULL,
-  `phone1` varchar(20) DEFAULT NULL,
-  `phone2` varchar(20) DEFAULT NULL,
-  `fax` varchar(20) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `notes` tinytext,
-  `addDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `status` char(1) DEFAULT '1',
-  `serviceLocationIdentifier` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`recordID`)
+create table pharmacyInfo (
+   recordID int(10) auto_increment primary key,
+   ID int(5),
+   name varchar(255),
+   address text,
+   city varchar(255),
+   province varchar(255),
+   postalCode varchar(20),
+   phone1 varchar(20),
+   phone2 varchar(20),
+   fax varchar(20),
+   email varchar(100),
+   serviceLocationIdentifier varchar(255),
+   notes text,
+   addDate timestamp,
+   status char (1) default '1'
 );
 
 --
 -- Table structure for table `demographicPharmacy`
 --
 
-CREATE TABLE IF NOT EXISTS demographicPharmacy (
+create table demographicPharmacy (
    id int(10) NOT NULL auto_increment primary key,
    pharmacyID int(10),
    demographic_no int(10),
    status char(1) default '1',
    addDate timestamp,
-   preferredOrder int(10),
-   consentToContact tinyint(1)
+   preferredOrder int(10)
 ) ;
 
 
 
 
 
-CREATE TABLE IF NOT EXISTS `log` (
+CREATE TABLE `log` (
   id bigint auto_increment primary key,
   `dateTime` datetime not null,
   `provider_no` varchar(10),
   index datetime (`dateTime`, `provider_no`),
-  `action` varchar(100),
+  `action` varchar(64),
   INDEX `action` (`action`),
   `content` varchar(80),
   INDEX `content` (`content`),
@@ -7874,28 +7737,25 @@ CREATE TABLE IF NOT EXISTS `log` (
   `demographic_no` int(10),
   INDEX `demographic_no` (`demographic_no`),
   `data` text,
-  securityId int,
-  KEY `provider_noIndex` (`provider_no`)
+  securityId int
 ) ;
 
-CREATE TABLE IF NOT EXISTS preventions (
+CREATE TABLE preventions (
   id int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL default '0',
   creation_date datetime default NULL,
   prevention_date datetime default NULL,
   provider_no varchar(6) NOT NULL default '',
   provider_name varchar(255) default NULL,
-  prevention_type varchar(255) default NULL,
+  prevention_type varchar(20) default NULL,
   deleted char(1) default '0',
   refused char(1) default '0',
   next_date date default NULL,
   never char(1) default '0',
   creator int(10) default NULL,
   lastUpdateDate datetime NOT NULL,
-  `restrictToProgram` tinyint(1) DEFAULT NULL,
-  `programNo` int(11) DEFAULT NULL,
-  snomedId varchar(255),
-  PRIMARY KEY  (`id`),
+  restrictToProgram tinyint(1),
+  programNo int,
   INDEX `preventions_demographic_no` (`demographic_no`),
   INDEX `preventions_provider_no` (provider_no(6)),
   INDEX `preventions_prevention_type` (prevention_type(10)),
@@ -7904,10 +7764,10 @@ CREATE TABLE IF NOT EXISTS preventions (
   INDEX `preventions_never` (never),
   INDEX `preventions_creation_date` (`creation_date`),
   INDEX `preventions_next_date` (next_date),
-  KEY `preventions_ikey` (`lastUpdateDate`)
+  PRIMARY KEY  (`id`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS preventionsExt (
+CREATE TABLE preventionsExt (
   id int(10) NOT NULL auto_increment,
   prevention_id int(10) default NULL,
   keyval varchar(20) default NULL,
@@ -7918,7 +7778,7 @@ CREATE TABLE IF NOT EXISTS preventionsExt (
 ) ;
 
 
-CREATE TABLE IF NOT EXISTS `secRole` (
+CREATE TABLE `secRole` (
   `role_no` int(3) NOT NULL auto_increment,
   `role_name` varchar(60) NOT NULL default '',
   `description` varchar(60),
@@ -7927,18 +7787,17 @@ CREATE TABLE IF NOT EXISTS `secRole` (
 ) ;
 
 
-CREATE TABLE IF NOT EXISTS secUserRole(
+create table secUserRole(
   `id`  int(10) not null auto_increment,
   `provider_no` VARCHAR(6) not null,
   `role_name` VARCHAR(60) not null,
   `orgcd` VARCHAR(80) default 'R0000001',
   `activeyn`    int(1),
   `lastUpdateDate` datetime not null,
-  primary key (id),
-  KEY `secUserRole_ikey` (`lastUpdateDate`)
+  primary key (id)
 );
 
-CREATE TABLE IF NOT EXISTS `secPrivilege` (
+CREATE TABLE `secPrivilege` (
   `id` int(2) NOT NULL auto_increment,
   `privilege` varchar(5) NOT NULL default '0',
   `description` varchar(80) NOT NULL default '',
@@ -7946,7 +7805,7 @@ CREATE TABLE IF NOT EXISTS `secPrivilege` (
   UNIQUE KEY `privilege` (`privilege`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `secObjPrivilege` (
+CREATE TABLE `secObjPrivilege` (
   `roleUserGroup` varchar(30) NOT NULL default '',
   `objectName` varchar(100) NOT NULL default '',
   `privilege` varchar(100) NOT NULL default '|0|',
@@ -7955,14 +7814,14 @@ CREATE TABLE IF NOT EXISTS `secObjPrivilege` (
   PRIMARY KEY  (`roleUserGroup`, `objectName`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `secObjectName` (
+CREATE TABLE `secObjectName` (
   `objectName` varchar(100) NOT NULL default '',
   `description` varchar(60),
   `orgapplicable` tinyint(1) default 0,
   PRIMARY KEY  (`objectName`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `demographicSets` (
+CREATE TABLE `demographicSets` (
   `id` int(10) not null auto_increment primary key,
   `demographic_no` int(10) default NULL,
   `set_name` varchar(20) default NULL,
@@ -7970,7 +7829,7 @@ CREATE TABLE IF NOT EXISTS `demographicSets` (
   `archive` char(1) default 0
 );
 
-CREATE TABLE IF NOT EXISTS demographicQueryFavourites (
+CREATE TABLE demographicQueryFavourites (
   favId int(9) NOT NULL auto_increment,
   selects text,
   age varchar(255) default NULL,
@@ -7988,14 +7847,14 @@ CREATE TABLE IF NOT EXISTS demographicQueryFavourites (
   PRIMARY KEY  (favId)
 );
 
-CREATE TABLE IF NOT EXISTS `reportItem` (
+CREATE TABLE `reportItem` (
   `id` int(5) NOT NULL auto_increment,
   `report_name` varchar(80) NOT NULL default '',
   `status` int(1) default 1,
   PRIMARY KEY  (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `reportConfig` (
+CREATE TABLE `reportConfig` (
   `id` int(7) NOT NULL auto_increment,
   `report_id` int(5),
   `name` varchar(80) NOT NULL default '',
@@ -8008,7 +7867,7 @@ CREATE TABLE IF NOT EXISTS `reportConfig` (
   INDEX `name` (`name`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `reportTableFieldCaption` (
+CREATE TABLE `reportTableFieldCaption` (
   `id` int(7) NOT NULL auto_increment,
   `table_name` varchar(80) NOT NULL default '',
   `name` varchar(80) NOT NULL default '',
@@ -8017,7 +7876,7 @@ CREATE TABLE IF NOT EXISTS `reportTableFieldCaption` (
   key (`table_name`,`name`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `reportFilter` (
+CREATE TABLE `reportFilter` (
   `id` int(7) NOT NULL auto_increment,
   `report_id` int(5),
   `description` text,
@@ -8032,7 +7891,7 @@ CREATE TABLE IF NOT EXISTS `reportFilter` (
   INDEX `report_id` (`report_id`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `demographicExt` (
+CREATE TABLE `demographicExt` (
   `id` int(10) NOT NULL auto_increment,
   `demographic_no` int(10) default NULL,
   `provider_no` varchar(6) default NULL,
@@ -8041,11 +7900,10 @@ CREATE TABLE IF NOT EXISTS `demographicExt` (
   `date_time` datetime default NULL,
   `hidden` char(1) default '0',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `uk_demo_ext` (`demographic_no`,`key_val`),
   INDEX (demographic_no)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `demographicExtArchive` (
+CREATE TABLE `demographicExtArchive` (
   `id` int(10) NOT NULL auto_increment,
   `archiveId` bigint(20),
   `demographic_no` int(10) default NULL,
@@ -8055,11 +7913,10 @@ CREATE TABLE IF NOT EXISTS `demographicExtArchive` (
   `date_time` datetime default NULL,
   `hidden` char(1) default '0',
   PRIMARY KEY  (`id`),
-  INDEX (demographic_no),
-  KEY `archiveId` (`archiveId`)
+  INDEX (demographic_no)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `relationships` (
+CREATE TABLE `relationships` (
   `id` int(10) NOT NULL auto_increment,
   `facility_id` int,
   `demographic_no` int(10) NOT NULL default '0',
@@ -8075,7 +7932,7 @@ CREATE TABLE IF NOT EXISTS `relationships` (
 ) ;
 
 
-CREATE TABLE IF NOT EXISTS `table_modification` (
+CREATE TABLE `table_modification` (
   `id` int(10) NOT NULL auto_increment primary key,
   `demographic_no` int(10) default '0',
   `provider_no` varchar(6) NOT NULL default '',
@@ -8091,7 +7948,7 @@ CREATE TABLE IF NOT EXISTS `table_modification` (
 
 
 
-CREATE TABLE IF NOT EXISTS `fileUploadCheck` (
+CREATE TABLE `fileUploadCheck` (
   `id` int(10) NOT NULL auto_increment,
   `provider_no` varchar(6) NOT NULL default '',
   `filename` varchar(255) NOT NULL default '',
@@ -8100,7 +7957,7 @@ CREATE TABLE IF NOT EXISTS `fileUploadCheck` (
   PRIMARY KEY  (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS scratch_pad (
+create table scratch_pad (
    id int(10) not null auto_increment primary key,
    provider_no varchar(6),
    date_time datetime,
@@ -8109,9 +7966,9 @@ CREATE TABLE IF NOT EXISTS scratch_pad (
 );
 
 --
--- CREATE TABLE IF NOT EXISTS consultdocs
+-- CREATE TABLE consultdocs
 --
-CREATE TABLE IF NOT EXISTS `consultdocs` (
+CREATE TABLE `consultdocs` (
   `id` int(10) NOT NULL auto_increment PRIMARY KEY,
   `requestId` int(10) NOT NULL,
   `document_no` int(10) NOT NULL,
@@ -8121,7 +7978,7 @@ CREATE TABLE IF NOT EXISTS `consultdocs` (
   `provider_no` varchar(6) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS report_letters(
+create table report_letters(
     ID int(10) auto_increment primary key,
     provider_no varchar(6),
     report_name varchar(255),
@@ -8134,7 +7991,7 @@ CREATE TABLE IF NOT EXISTS report_letters(
     KEY date_time (`date_time`)
 );
 
-CREATE TABLE IF NOT EXISTS log_letters(
+create table log_letters(
     ID int(10) primary key auto_increment,
     date_time datetime,
     provider_no varchar(6),
@@ -8145,7 +8002,7 @@ CREATE TABLE IF NOT EXISTS log_letters(
     KEY date_time (`date_time`)
  );
 
-CREATE TABLE IF NOT EXISTS indivoDocs (
+CREATE TABLE indivoDocs (
     id int(10) not null auto_increment primary key,
     oscarDocNo int(10) not null,
     indivoDocIdx varchar(255) not null,
@@ -8154,7 +8011,7 @@ CREATE TABLE IF NOT EXISTS indivoDocs (
     `update` char(1)
 );
 
-CREATE TABLE IF NOT EXISTS hl7TextInfo(
+create table hl7TextInfo(
 	id  int(10) NOT NULL auto_increment primary key,
 	lab_no int(10) NOT NULL,
 	sex varchar(1),
@@ -8167,7 +8024,7 @@ CREATE TABLE IF NOT EXISTS hl7TextInfo(
 	discipline varchar(100),
 	last_name varchar(30),
 	first_name varchar(30),
-	report_status varchar(20) NOT NULL,
+	report_status varchar(1) NOT NULL,
 	accessionNum varchar(255),
 	filler_order_num varchar(50),
 	sending_facility varchar(50),
@@ -8176,23 +8033,22 @@ CREATE TABLE IF NOT EXISTS hl7TextInfo(
 	KEY `accession_index`(`accessionNum`)
 );
 
-CREATE TABLE IF NOT EXISTS hl7TextMessage(
+create table hl7TextMessage(
 	lab_id int(10) NOT NULL auto_increment primary key,
 	fileUploadCheck_id int(10) NOT NULL,
 	message longtext NOT NULL,
 	type varchar(100) not null,
 	serviceName varchar(100) not null,
-	created datetime not null,
-  KEY `hl7TextMessage_ikey` (`created`)
+	created datetime not null
 );
 
-CREATE TABLE IF NOT EXISTS oscarKeys(
+create table oscarKeys(
 	name varchar(100) NOT NULL primary key,
 	pubKey text,
 	privKey text
 );
 
-CREATE TABLE IF NOT EXISTS publicKeys(
+create table publicKeys(
 	service varchar(100) NOT NULL primary key,
 	type varchar(100) NOT NULL,
 	pubKey text NOT NULL,
@@ -8200,16 +8056,15 @@ CREATE TABLE IF NOT EXISTS publicKeys(
 	matchingProfessionalSpecialistId int
 );
 
-CREATE TABLE IF NOT EXISTS measurementsExt(
+CREATE TABLE measurementsExt(
 	id int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	measurement_id int(10) NOT NULL,
 	keyval varchar(20) NOT NULL,
 	val text NOT NULL,
-	INDEX(measurement_id),
-  INDEX measurements_ext_keyval_val (keyval, val(100))
+	INDEX(measurement_id)
 );
 
-CREATE TABLE IF NOT EXISTS measurementMap(
+CREATE TABLE measurementMap(
 	id int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	loinc_code varchar(20) NOT NULL,
 	ident_code varchar(20) NOT NULL,
@@ -8218,7 +8073,7 @@ CREATE TABLE IF NOT EXISTS measurementMap(
 	INDEX(ident_code)
 );
 
-CREATE TABLE IF NOT EXISTS incomingLabRules(
+CREATE TABLE incomingLabRules(
 	id int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	provider_no varchar(6) NOT NULL,
 	status varchar(1),
@@ -8226,22 +8081,21 @@ CREATE TABLE IF NOT EXISTS incomingLabRules(
 	archive varchar(1) default 0
 );
 
-CREATE TABLE IF NOT EXISTS incomingLabRulesType (
-  id int(10) NOT NULL AUTO_INCREMENT,
-  forward_rule_id int(10),
-  type VARCHAR(10) NOT NULL,
-  PRIMARY KEY (id),
-  CONSTRAINT FOREIGN KEY (forward_rule_id) REFERENCES incomingLabRules (id) ON DELETE CASCADE ON UPDATE CASCADE
-);
 
 
-CREATE TABLE IF NOT EXISTS IssueGroup (id int primary key auto_increment, name varchar(255) not null);
-CREATE TABLE IF NOT EXISTS IssueGroupIssues (issueGroupId int not null, issue_id int not null, unique(issueGroupId,issue_id), index(issue_id));
+
+
+
+
+
+
+create table IssueGroup (id int primary key auto_increment, name varchar(255) not null);
+create table IssueGroupIssues (issueGroupId int not null, issue_id int not null, unique(issueGroupId,issue_id), index(issue_id));
 
 --
 -- Table structure for table `demographic_merged`
 --
-CREATE TABLE IF NOT EXISTS demographic_merged(
+CREATE TABLE demographic_merged(
     id INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
     demographic_no INT(10) NOT NULL,
     merged_to INT(10) NOT NULL,
@@ -8256,7 +8110,7 @@ CREATE TABLE IF NOT EXISTS demographic_merged(
 --
 -- New audit table stores hashes of casemanagement notes
 --
-CREATE TABLE IF NOT EXISTS hash_audit (
+CREATE TABLE hash_audit (
     `pkid` int(10) NOT NULL auto_increment,
     `signature` varchar(255) NOT NULL,
     `id` int(10) default 0,
@@ -8269,7 +8123,7 @@ CREATE TABLE IF NOT EXISTS hash_audit (
 --
 -- table for 3rd bill
 --
-CREATE TABLE IF NOT EXISTS `gstControl` (
+CREATE TABLE `gstControl` (
   `gstFlag` int(1) NOT NULL default '0',
   `gstPercent` int(3) NOT NULL default '0',
    id int auto_increment,
@@ -8279,18 +8133,33 @@ CREATE TABLE IF NOT EXISTS `gstControl` (
 --
 -- provider -- bill center table
 --
-CREATE TABLE IF NOT EXISTS `providerbillcenter` (
+CREATE TABLE `providerbillcenter` (
   `provider_no` varchar(6) NOT NULL default '""',
   `billcenter_code` char(2) NOT NULL default '""',
   PRIMARY KEY  (`provider_no`)
 );
 
 --
+-- Needed by Program Managaer
+--
+
+create table provider_facility
+(
+	provider_no varchar(6) not null,
+	facility_id int not null,
+	unique (provider_no, facility_id),
+	index (facility_id)
+--	foreign key (provider_no) references provider(provider_no),
+--	foreign key (facility_id) references facility(id),
+);
+
+
+--
 -- Table structure for table `formchf`
 --
 
 DROP TABLE IF EXISTS `formchf`;
-CREATE TABLE IF NOT EXISTS `formchf` (
+CREATE TABLE `formchf` (
   `ID` int(10) NOT NULL auto_increment,
   `demographic_no` int(10) default NULL,
   `provider_no` int(10) default NULL,
@@ -8484,7 +8353,7 @@ CREATE TABLE IF NOT EXISTS `formchf` (
 );
 
 
-CREATE TABLE IF NOT EXISTS `formGrowthChart` (
+CREATE TABLE `formGrowthChart` (
   `ID` int(10) NOT NULL auto_increment,
   `demographic_no` int(10) NOT NULL default '0',
   `provider_no` int(10) default NULL,
@@ -8750,7 +8619,7 @@ CREATE TABLE IF NOT EXISTS `formGrowthChart` (
 ) ;
 
 
- CREATE TABLE IF NOT EXISTS user_ds_message_prefs(
+ create table user_ds_message_prefs(
             id int(10) primary key auto_increment,
             resource_type varchar(255),
             resource_id varchar(255),
@@ -8766,7 +8635,7 @@ CREATE TABLE IF NOT EXISTS `formGrowthChart` (
 
 
 
-CREATE TABLE IF NOT EXISTS `country_codes` (
+CREATE TABLE `country_codes` (
   `id` int(10) NOT NULL auto_increment,
   `country_name` varchar(255) default NULL,
   `country_id` char(4) default NULL,
@@ -8776,7 +8645,7 @@ CREATE TABLE IF NOT EXISTS `country_codes` (
   KEY `c_locale` (`c_locale`)
 );
 
-CREATE TABLE IF NOT EXISTS lst_orgcd
+create table lst_orgcd
 
 (
   code         VARCHAR(8) not null,
@@ -8788,7 +8657,7 @@ CREATE TABLE IF NOT EXISTS lst_orgcd
   INDEX `IDX_ORGCD_CODE` (codetree)
 );
 
-CREATE TABLE IF NOT EXISTS favoritesprivilege
+create table favoritesprivilege
 (
     id int(4) PRIMARY KEY NOT NULL auto_increment,
     provider_no varchar(6),
@@ -8797,9 +8666,9 @@ CREATE TABLE IF NOT EXISTS favoritesprivilege
 );
 
 
-CREATE TABLE IF NOT EXISTS `appointment_status` (
+CREATE TABLE `appointment_status` (
   `id` int(11) NOT NULL auto_increment,
-  `status` char(2) NOT NULL,
+  `status` char(2) BINARY NOT NULL,
   `description` char(30) NOT NULL default 'no description',
   `color` char(7) NOT NULL default '#cccccc',
   `icon` char(30) NOT NULL default '''''',
@@ -8812,7 +8681,7 @@ CREATE TABLE IF NOT EXISTS `appointment_status` (
 
 
 
-CREATE TABLE IF NOT EXISTS `oscar_annotations` (
+CREATE TABLE `oscar_annotations` (
   `id` int(10) NOT NULL auto_increment,
   `table_id` int(10) default NULL,
   `table_name` int(10) default NULL,
@@ -8827,30 +8696,29 @@ CREATE TABLE IF NOT EXISTS `oscar_annotations` (
 );
 
 
-CREATE TABLE IF NOT EXISTS `casemgmt_note_link` (
+CREATE TABLE `casemgmt_note_link` (
   `id` int(10) NOT NULL auto_increment,
   `table_name` int(6) NOT NULL,
   `table_id` int(10) NOT NULL,
   `note_id` int(10) NOT NULL,
   `other_id` varchar(25),
   PRIMARY KEY  (`id`),
-  KEY `note_idIndex` (`note_id`),
-  KEY `casemgmt_note_link_table_table_name_index` (`table_name`, `table_id`, `other_id`)
+  KEY note_idIndex (`note_id`)
 );
 
 
-CREATE TABLE IF NOT EXISTS `casemgmt_note_ext` (
+CREATE TABLE `casemgmt_note_ext` (
   `id` int(10) NOT NULL auto_increment,
   `note_id` int(10) NOT NULL,
   `key_val` varchar(64) NOT NULL,
   `value` text,
   `date_value` date,
-  PRIMARY KEY (`id`),
-  KEY `note_idIndex` (`note_id`)
+  PRIMARY KEY  (`id`),
+  KEY note_idIndex (`note_id`)
 );
 
 
-  CREATE TABLE IF NOT EXISTS flowsheet_customization(
+  create table flowsheet_customization(
       id int(10) NOT NULL auto_increment primary key,
       flowsheet varchar(40),
       action varchar(10),
@@ -8866,7 +8734,7 @@ CREATE TABLE IF NOT EXISTS `casemgmt_note_ext` (
     ) ;
 
 
-CREATE TABLE IF NOT EXISTS `tickler_link` (
+CREATE TABLE `tickler_link` (
   `id` int(10) NOT NULL auto_increment,
   `table_name` char(3) NOT NULL,
   `table_id` int(10) NOT NULL,
@@ -8874,7 +8742,7 @@ CREATE TABLE IF NOT EXISTS `tickler_link` (
   PRIMARY KEY  (`id`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS flowsheet_drug (
+create table flowsheet_drug (
       id int(10) NOT NULL auto_increment primary key,
       flowsheet varchar(40),
       atc_code varchar(40),
@@ -8885,17 +8753,16 @@ CREATE TABLE IF NOT EXISTS flowsheet_drug (
       archived_date datetime
     ) ;
 
-CREATE TABLE IF NOT EXISTS `view` (
+CREATE TABLE `view` (
   `id` int(10) NOT NULL auto_increment,
   `view_name` varchar(255) NOT NULL default '',
   `name` varchar(255) NOT NULL default '',
   `value` text,
   `role` varchar(255) NOT NULL default '',
-  `providerNo` varchar(6),
   PRIMARY KEY  (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `dsGuidelines` (
+CREATE TABLE `dsGuidelines` (
   `id` int(11) NOT NULL auto_increment,
   `uuid` varchar(60) NOT NULL,
   `title` varchar(100) NOT NULL,
@@ -8910,14 +8777,14 @@ CREATE TABLE IF NOT EXISTS `dsGuidelines` (
   PRIMARY KEY  (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `dsGuidelineProviderMap` (
+CREATE TABLE `dsGuidelineProviderMap` (
   `mapid` int(11) NOT NULL auto_increment,
   `provider_no` varchar(11) NOT NULL,
   `guideline_uuid` varchar(60) NOT NULL,
   PRIMARY KEY (`mapid`)
 );
 
-CREATE TABLE IF NOT EXISTS flowsheet_dx (
+create table flowsheet_dx (
       id int(10) NOT NULL auto_increment primary key,
       flowsheet varchar(40),
       dx_code varchar(40),
@@ -8929,7 +8796,7 @@ CREATE TABLE IF NOT EXISTS flowsheet_dx (
       archived_date datetime
     ) ;
 
-CREATE TABLE IF NOT EXISTS `site` (
+CREATE TABLE `site` (
   `site_id` int(11) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
   `short_name` varchar(10) NOT NULL default '',
@@ -8943,7 +8810,7 @@ CREATE TABLE IF NOT EXISTS `site` (
   `status` tinyint(4) NOT NULL default '0',
   `providerId_from` int null,
   `providerId_to` int null,
-  `siteLogoId` int,
+  `siteLogoId` int ,
   `siteUrl` varchar(50),
   PRIMARY KEY  (`site_id`),
   UNIQUE KEY `unique_name` (`name`),
@@ -8951,14 +8818,14 @@ CREATE TABLE IF NOT EXISTS `site` (
 );
 
 
-CREATE TABLE IF NOT EXISTS `providersite` (
+CREATE TABLE `providersite` (
   `provider_no` varchar(6) NOT NULL,
   `site_id` int(11) NOT NULL,
   PRIMARY KEY  (`provider_no`,`site_id`)
 );
 
 DROP TABLE IF EXISTS queue;
-CREATE TABLE IF NOT EXISTS queue (
+create table queue (
     id int(10) not null auto_increment,
     name varchar(40) not null ,
     primary key(id),unique (name)
@@ -8966,7 +8833,7 @@ CREATE TABLE IF NOT EXISTS queue (
 
 
 DROP TABLE IF EXISTS queue_document_link;
-CREATE TABLE IF NOT EXISTS queue_document_link (
+create table queue_document_link (
     id int(10) not null auto_increment,
     queue_id int(10) not null,
     document_id int(10) not null,
@@ -8974,7 +8841,7 @@ CREATE TABLE IF NOT EXISTS queue_document_link (
     primary key (id)
 );
 
-CREATE TABLE IF NOT EXISTS `other_id` (
+CREATE TABLE `other_id` (
 	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	table_name int NOT NULL,
 	table_id varchar(30) NOT NULL,
@@ -8983,7 +8850,7 @@ CREATE TABLE IF NOT EXISTS `other_id` (
 	deleted boolean NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS `partial_date` (
+CREATE TABLE `partial_date` (
 	id int PRIMARY KEY AUTO_INCREMENT,
 	table_name int,
 	table_id int,
@@ -8991,7 +8858,7 @@ CREATE TABLE IF NOT EXISTS `partial_date` (
 	format varchar(10)
 );
 
-CREATE TABLE IF NOT EXISTS demographicArchive (
+CREATE TABLE demographicArchive (
   id bigint(20) auto_increment primary key,
   demographic_no int(10),
   title varchar(10),
@@ -9004,7 +8871,7 @@ CREATE TABLE IF NOT EXISTS demographicArchive (
   phone varchar(20),
   phone2 varchar(20),
   email varchar(100),
-  myOscarUserName varchar(1),
+  myOscarUserName varchar(255),
   year_of_birth varchar(4),
   month_of_birth char(2),
   date_of_birth char(2),
@@ -9014,7 +8881,6 @@ CREATE TABLE IF NOT EXISTS demographicArchive (
   roster_date date,
   roster_termination_date date,
   roster_termination_reason varchar(2),
-  `roster_enrolled_to` varchar(20) DEFAULT NULL,
   patient_status varchar(20),
   patient_status_date date,
   date_joined date,
@@ -9039,20 +8905,10 @@ CREATE TABLE IF NOT EXISTS demographicArchive (
   newsletter varchar(32),
   anonymous varchar(32),
   lastUpdateUser varchar(6),
-  lastUpdateDate date,
-  `middleNames` varchar(100) DEFAULT NULL,
-  `residentialAddress` varchar(60) DEFAULT NULL,
-  `residentialCity` varchar(50) DEFAULT NULL,
-  `residentialProvince` varchar(20) DEFAULT NULL,
-  `residentialPostal` varchar(9) DEFAULT NULL,
-  `pref_name` varchar(30) NOT NULL DEFAULT '',
-  genderId int(11) null,
-  pronoun varchar(25) null,
-  pronounId int null,
-  gender varchar(25) null  
+  lastUpdateDate date
 );
 
-CREATE TABLE IF NOT EXISTS providerArchive (
+CREATE TABLE providerArchive (
   id bigint(20) auto_increment primary key,
   provider_no varchar(6),
   last_name varchar(30),
@@ -9079,11 +8935,10 @@ CREATE TABLE IF NOT EXISTS providerArchive (
   `title` varchar(20),
   `lastUpdateUser` varchar(6),
   `lastUpdateDate` date,
-  `signed_confidentiality` datetime,
-  `practitionerNoType` varchar(255)
+  `signed_confidentiality` date
 );
 
-CREATE TABLE IF NOT EXISTS appointmentArchive (
+CREATE TABLE appointmentArchive (
   `id` int(10) not null auto_increment primary key,
   appointment_no int(12),
   provider_no varchar(6),
@@ -9109,10 +8964,19 @@ CREATE TABLE IF NOT EXISTS appointmentArchive (
   remarks varchar(50),
   urgency varchar(30),
   creatorSecurityId int,
-  bookingSource varchar(32)
+  bookingSource varchar(32),
+  `reasonCode` int(11),
+  `locationCode` int(11),
+  `serviceMode` int(11),
+    referralSource varchar(80),
+  referralSourceCode int(11)
 );
 
-CREATE TABLE IF NOT EXISTS `Eyeform` (
+create table ProviderPreferenceAppointmentScreenForm(providerNo varchar(6) not null, appointmentScreenForm varchar(128) not null);
+create table ProviderPreferenceAppointmentScreenEForm(providerNo varchar(6) not null, appointmentScreenEForm int not null);
+
+
+CREATE TABLE `Eyeform` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `appointment_no` int(11)  ,
   `discharge` varchar(20),
@@ -9123,11 +8987,11 @@ CREATE TABLE IF NOT EXISTS `Eyeform` (
 );
 
 
-CREATE TABLE IF NOT EXISTS `EyeformFollowUp` (
+CREATE TABLE `EyeformFollowUp` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `appointment_no` int(11)  ,
   `demographic_no` int(11) ,
-  `timespan` int(11) ,
+  `timespan` varchar(6),
   `timeframe` varchar(25) ,
   `followup_provider` varchar(100) ,
   `date` timestamp ,
@@ -9138,7 +9002,7 @@ CREATE TABLE IF NOT EXISTS `EyeformFollowUp` (
 );
 
 
-CREATE TABLE IF NOT EXISTS `EyeformMacro` (
+CREATE TABLE `EyeformMacro` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `label` varchar(255) NOT NULL,
   `displayOrder` int(10) NOT NULL,
@@ -9171,7 +9035,7 @@ CREATE TABLE IF NOT EXISTS `EyeformMacro` (
 );
 
 
-CREATE TABLE IF NOT EXISTS `EyeformOcularProcedure` (
+CREATE TABLE `EyeformOcularProcedure` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `demographicNo` int(11) NOT NULL ,
   `provider` varchar(60) ,
@@ -9189,7 +9053,7 @@ CREATE TABLE IF NOT EXISTS `EyeformOcularProcedure` (
 );
 
 
-CREATE TABLE IF NOT EXISTS `EyeformProcedureBook` (
+CREATE TABLE `EyeformProcedureBook` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `eyeform_id` bigint(20) ,
   `demographic_no` int(11) ,
@@ -9206,7 +9070,7 @@ CREATE TABLE IF NOT EXISTS `EyeformProcedureBook` (
 );
 
 
-CREATE TABLE IF NOT EXISTS `EyeformSpecsHistory` (
+CREATE TABLE `EyeformSpecsHistory` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `demographicNo` int(11) NOT NULL ,
   `provider` varchar(60) ,
@@ -9226,10 +9090,11 @@ CREATE TABLE IF NOT EXISTS `EyeformSpecsHistory` (
   `updateTime` datetime ,
   `status` varchar(2) ,
   `appointmentNo` int(11) ,
+   `note` varchar(254),
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `EyeformTestBook` (
+CREATE TABLE `EyeformTestBook` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `testname` varchar(60) ,
   `appointment_no` int(11) ,
@@ -9244,15 +9109,8 @@ CREATE TABLE IF NOT EXISTS `EyeformTestBook` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE ISO36612 (
-    id int(11) auto_increment,
-    code varchar(255),
-    province varchar(255),
-    country varchar(255),
-    PRIMARY KEY(id)
-);
 
-CREATE TABLE IF NOT EXISTS `issue` (
+CREATE TABLE `issue` (
   `issue_id` int(10) NOT NULL auto_increment,
   `code` varchar(20) NOT NULL,
   `description` varchar(255) NOT NULL,
@@ -9266,7 +9124,7 @@ CREATE TABLE IF NOT EXISTS `issue` (
   KEY (`code`)
 );
 
-CREATE TABLE IF NOT EXISTS consultationRequestExt(
+create table consultationRequestExt(
  id int(10) NOT NULL auto_increment,
  requestId int(10) NOT NULL,
  name varchar(100) NOT NULL,
@@ -9276,19 +9134,8 @@ CREATE TABLE IF NOT EXISTS consultationRequestExt(
  key(requestId)
 );
 
-create table consultationRequestExtArchive(
- id int(10) NOT NULL auto_increment,
- originalId int(10) NOT NULL,
- requestId int(10) NOT NULL,
- name varchar(100) NOT NULL,
- value text NOT NULL,
- dateCreated date not null,
- consultationRequestArchiveId int(10) NOT NULL,
- primary key(id),
- key(requestId)
-);
 
-CREATE TABLE IF NOT EXISTS EyeformConsultationReport (
+create table EyeformConsultationReport (
  id int(10) NOT NULL auto_increment,
  `date` datetime,
  referralId integer,
@@ -9313,20 +9160,24 @@ CREATE TABLE IF NOT EXISTS EyeformConsultationReport (
  plan text,
  urgency varchar(100),
  patientWillBook integer,
+ contactId varchar(100),
+ contact_type int(10),
+ otherReferralId int(11),
+ siteId int(11),
  primary key(id)
 );
 
-CREATE TABLE IF NOT EXISTS RemoteDataLog
+create table RemoteDataLog
 (
 	id bigint primary key auto_increment,
 	providerNo varchar(255) not null,
 	actionDate datetime not null,
 	action varchar(32) not null,
 	documentId varchar(255) not null,
-	documentContents mediumblob not null
+	documentContents blob not null
 );
 
-CREATE TABLE IF NOT EXISTS DemographicContact (
+create table DemographicContact (
 	id integer not null auto_increment primary key,
 	facilityId integer not null,
 	creator varchar(20) not null,
@@ -9344,12 +9195,12 @@ CREATE TABLE IF NOT EXISTS DemographicContact (
 	consentToContact tinyint(1),
 	active tinyint(1),
 	mrp tinyint(1),
-	programNo int(11),
+	programNo int(10),
 	KEY (`demographicNo`)
 );
 
 
-CREATE TABLE IF NOT EXISTS Contact (
+create table Contact (
 id integer not null auto_increment primary key,
 type varchar(20),
 lastName varchar(100),
@@ -9377,38 +9228,10 @@ KEY (`cpso`),
 KEY (`systemId`)
 );
 
---
--- Table structure for table `ProviderPreferenceAppointmentScreenEForm`
---
-
-CREATE TABLE IF NOT EXISTS `ProviderPreferenceAppointmentScreenEForm` (
-      `providerNo` varchar(6) NOT NULL,
-      `appointmentScreenEForm` int(11) NOT NULL,
-      `eFormName` varchar(255)
-);
+create table ProviderPreferenceAppointmentScreenQuickLink(providerNo varchar(6) not null, name varchar(64) not null, url varchar(255) not null);
 
 
---
--- Table structure for table `ProviderPreferenceAppointmentScreenForm`
---
-
-CREATE TABLE IF NOT EXISTS `ProviderPreferenceAppointmentScreenForm` (
-     `providerNo` varchar(6) NOT NULL,
-     `appointmentScreenForm` varchar(128) NOT NULL
-);
-
---
--- Table structure for table `ProviderPreferenceAppointmentScreenQuickLink`
---
-
-CREATE TABLE IF NOT EXISTS `ProviderPreferenceAppointmentScreenQuickLink` (
-  `providerNo` varchar(6) NOT NULL,
-  `name` varchar(64) NOT NULL,
-  `url` varchar(255) NOT NULL
-);
-
-
-CREATE TABLE IF NOT EXISTS drugReason (
+CREATE TABLE drugReason (
   id int(10) NOT NULL auto_increment,
   drugId int(10) NOT NULL,
   codingSystem varchar(255),
@@ -9426,7 +9249,7 @@ CREATE TABLE IF NOT EXISTS drugReason (
   KEY `codingSystem` (`codingSystem`(30),`code`(30))
 );
 
-CREATE TABLE IF NOT EXISTS `appointmentType` (
+CREATE TABLE `appointmentType` (
   `id` int(12) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NULL,
   `notes` varchar(80) NULL,
@@ -9437,15 +9260,14 @@ CREATE TABLE IF NOT EXISTS `appointmentType` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `HRMCategory` (
+CREATE TABLE `HRMCategory` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `categoryName` varchar(255) NOT NULL,
   subClassNameMnemonic varchar(255),
-  sendingFacilityId varchar(50),
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `HRMDocument` (
+CREATE TABLE `HRMDocument` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `timeReceived` datetime ,
   `reportType` varchar(50),
@@ -9461,20 +9283,10 @@ CREATE TABLE IF NOT EXISTS `HRMDocument` (
   `sourceFacility` varchar(120) ,
   `hrmCategoryId` int ,
   `description` varchar(255),
-  `formattedName` varchar(100) DEFAULT NULL,
-  `dob` varchar(10) DEFAULT NULL,
-  `gender` varchar(1) DEFAULT NULL,
-  `hcn` varchar(20) DEFAULT NULL,
-  `recipientId` varchar(15) DEFAULT NULL,
-  `recipientName` varchar(255) DEFAULT NULL,
-  `recipientProviderNo` varchar(25) DEFAULT NULL,
-  `className` varchar(255) DEFAULT NULL,
-  `subClassName` varchar(255) DEFAULT NULL,
-  `sourceFacilityReportNo` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `HRMDocumentSubClass` (
+CREATE TABLE `HRMDocumentSubClass` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hrmDocumentId` int(11) ,
   `subClass` varchar(50) ,
@@ -9482,63 +9294,28 @@ CREATE TABLE IF NOT EXISTS `HRMDocumentSubClass` (
   `subClassDescription` varchar(255) ,
   `subClassDateTime` date ,
   `isActive` tinyint(4) NOT NULL ,
-  `sendingFacilityId` varchar(50),
   PRIMARY KEY (`id`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `HRMDocumentToDemographic` (
+CREATE TABLE `HRMDocumentToDemographic` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `demographicNo` varchar(20) ,
   `hrmDocumentId` varchar(20) ,
   `timeAssigned` datetime ,
-  PRIMARY KEY (`id`),
-  INDEX idx_hrmDocumentId_hd (`hrmDocumentId`),
-  INDEX idx_demographicNo_hd (`demographicNo`)
+  PRIMARY KEY (`id`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `HRMDocumentToProvider` (
+CREATE TABLE `HRMDocumentToProvider` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `providerNo` varchar(20) ,
   `hrmDocumentId` varchar(20) ,
   `signedOff` int(11) ,
   `signedOffTimestamp` datetime ,
-  `viewed` int(11),
-  `filed` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  INDEX idx_hrmDocumentId_hp (`hrmDocumentId`),
-  INDEX idx_signedOff_providerNo_hp (`signedOff`, `providerNo`)
-) ;
-
-CREATE TABLE IF NOT EXISTS `HrmLog` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `started` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `initiatingProviderNo` varchar(25) DEFAULT NULL,
-  `transactionType` varchar(25) DEFAULT NULL,
-  `externalSystem` varchar(50) DEFAULT NULL,
-  `error` varchar(255) DEFAULT NULL,
-  `connected` tinyint(1) DEFAULT NULL,
-  `downloadedFiles` tinyint(1) DEFAULT NULL,
-  `numFilesDownloaded` int(11) DEFAULT NULL,
-  `deleted` tinyint(1) DEFAULT NULL,
+  `viewed` int(11) ,
   PRIMARY KEY (`id`)
 ) ;
 
-CREATE TABLE `HrmLogEntry` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `hrmLogId` int(11) DEFAULT NULL,
-  `encryptedFileName` varchar(255) DEFAULT NULL,
-  `decrypted` tinyint(1) DEFAULT NULL,
-  `decryptedFileName` varchar(255) DEFAULT NULL,
-  `filename` varchar(255) DEFAULT NULL,
-  `error` varchar(255) DEFAULT NULL,
-  `parsed` tinyint(1) DEFAULT NULL,
-  `recipientId` varchar(100) DEFAULT NULL,
-  `recipientName` varchar(255) DEFAULT NULL,
-  `distributed` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ;
-
-CREATE TABLE IF NOT EXISTS `HRMSubClass` (
+CREATE TABLE `HRMSubClass` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `className` varchar(255) ,
   `subClassName` varchar(255) ,
@@ -9549,7 +9326,7 @@ CREATE TABLE IF NOT EXISTS `HRMSubClass` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `HRMDocumentComment` (
+CREATE TABLE `HRMDocumentComment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `providerNo` varchar(20) DEFAULT NULL,
   `hrmDocumentId` int(11) DEFAULT NULL,
@@ -9559,21 +9336,21 @@ CREATE TABLE IF NOT EXISTS `HRMDocumentComment` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `HRMProviderConfidentialityStatement` (
+CREATE TABLE `HRMProviderConfidentialityStatement` (
   `providerNo` varchar(20) NOT NULL DEFAULT '',
   `statement` text,
   PRIMARY KEY (`providerNo`)
 );
 
 
-CREATE TABLE IF NOT EXISTS document_storage (
+create table document_storage (
 	id int(10)  NOT NULL auto_increment primary key,
 	documentNo int(10),
 	fileContents mediumblob,
 	uploadDate Date
 );
 
-CREATE TABLE IF NOT EXISTS SecurityToken (
+CREATE TABLE SecurityToken (
   id int(10) NOT NULL auto_increment,
   token varchar(100) not null,
   created timestamp not null,
@@ -9585,7 +9362,7 @@ CREATE TABLE IF NOT EXISTS SecurityToken (
 );
 
 
-CREATE TABLE IF NOT EXISTS FlowSheetUserCreated(
+create table FlowSheetUserCreated(
   id int(10) auto_increment primary key,
   name varchar(4),
   dxcodeTriggers varchar(255),
@@ -9595,23 +9372,17 @@ CREATE TABLE IF NOT EXISTS FlowSheetUserCreated(
   topHTML text,
   archived tinyint(1),
   createdDate date,
-  `createdBy` varchar(100) DEFAULT NULL,
-  `scope` varchar(100) DEFAULT NULL,
-  `scopeProviderNo` varchar(100) DEFAULT NULL,
-  `scopeDemographicNo` int(10) DEFAULT NULL,
-  `template` varchar(100) DEFAULT NULL,
-  `xmlContent` text DEFAULT NULL,
   KEY FlowSheetUserCreated_archived (archived)
 );
 
-CREATE TABLE IF NOT EXISTS providerLabRoutingFavorites (
+create table providerLabRoutingFavorites (
   id int auto_increment primary key,
   provider_no varchar(6),
   index(provider_no),
   route_to_provider_no varchar(6)
 );
 
-CREATE TABLE IF NOT EXISTS `dataExport` (
+CREATE TABLE `dataExport` (
   `id` int(11) primary key auto_increment,
   `file` varchar(255),
   `daterun` timestamp,
@@ -9623,7 +9394,7 @@ CREATE TABLE IF NOT EXISTS `dataExport` (
   `contactEmail` varchar(255)
 );
 
-CREATE TABLE IF NOT EXISTS Flowsheet (
+create table Flowsheet (
   id int(10) auto_increment primary key,
   name varchar(25),
   content text,
@@ -9632,7 +9403,7 @@ CREATE TABLE IF NOT EXISTS Flowsheet (
   createdDate date
 );
 
-CREATE TABLE IF NOT EXISTS PHRVerification(
+create table PHRVerification(
 	id int(10) auto_increment primary key,
 	demographicNo int(10),
 	phrUserName varchar(255),
@@ -9647,7 +9418,7 @@ CREATE TABLE IF NOT EXISTS PHRVerification(
 	KEY `PHRVerification_archived` (`archived`)
 );
 
-CREATE TABLE IF NOT EXISTS `SentToPHRTracking` (
+CREATE TABLE `SentToPHRTracking` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `demographicNo` int(10) NOT NULL,
   `objectName` varchar(60) NOT NULL,
@@ -9657,7 +9428,7 @@ CREATE TABLE IF NOT EXISTS `SentToPHRTracking` (
   UNIQUE KEY `demographicNo` (`demographicNo`,`objectName`,`sentToServer`)
 );
 
-CREATE TABLE IF NOT EXISTS RemoteReferral
+create table RemoteReferral
 (
 	id int primary key auto_increment,
 	facilityId int not null,
@@ -9673,7 +9444,7 @@ CREATE TABLE IF NOT EXISTS RemoteReferral
 	createDate datetime not null
 );
 
-CREATE TABLE IF NOT EXISTS HL7HandlerMSHMapping (
+create table HL7HandlerMSHMapping (
 	id int(50) NOT NULL AUTO_INCREMENT,
 	hospital_site varchar(255),
 	facility varchar(100),
@@ -9682,7 +9453,7 @@ CREATE TABLE IF NOT EXISTS HL7HandlerMSHMapping (
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS `cssStyles` (
+CREATE TABLE `cssStyles` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(255),
   `style` text,
@@ -9690,7 +9461,7 @@ CREATE TABLE IF NOT EXISTS `cssStyles` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `clinic_nbr` (
+CREATE TABLE `clinic_nbr` (
   `nbr_id` int NOT NULL AUTO_INCREMENT,
   `nbr_value` varchar(11) NOT NULL,
   `nbr_string` text,
@@ -9698,7 +9469,7 @@ CREATE TABLE IF NOT EXISTS `clinic_nbr` (
   PRIMARY KEY (`nbr_id`)
 );
 
-CREATE TABLE IF NOT EXISTS billingreferral (
+CREATE TABLE billingreferral (
   billingreferral_no int(10) NOT NULL auto_increment,
   referral_no varchar(6) NOT NULL,
   last_name varchar(30) default NULL,
@@ -9717,7 +9488,7 @@ CREATE TABLE IF NOT EXISTS billingreferral (
 ) ;
 
 
-CREATE TABLE IF NOT EXISTS `RemoteIntegratedDataCopy` (
+CREATE TABLE `RemoteIntegratedDataCopy` (
   id int(11) NOT NULL auto_increment,
   demographic_no int(10) ,
   datatype varchar(255) ,
@@ -9736,14 +9507,13 @@ CREATE TABLE IF NOT EXISTS `RemoteIntegratedDataCopy` (
 -- Table structure for table `billing_payment_type`
 --
 
-CREATE TABLE IF NOT EXISTS billing_payment_type (
+CREATE TABLE billing_payment_type (
   id int(11) NOT NULL auto_increment,
   payment_type varchar(25) NOT NULL default '',
-  PRIMARY KEY  (id),
-  UNIQUE KEY `payment_type` (`payment_type`)
+  PRIMARY KEY  (id)
 );
 
-CREATE TABLE IF NOT EXISTS `billing_on_3rdPartyAddress` (
+CREATE TABLE `billing_on_3rdPartyAddress` (
   `id` int(6) NOT NULL auto_increment,
   `attention` varchar(100) NOT NULL default '',
   `company_name` varchar(100) NOT NULL default '',
@@ -9756,7 +9526,7 @@ CREATE TABLE IF NOT EXISTS `billing_on_3rdPartyAddress` (
   PRIMARY KEY  (`id`)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `doc_category` (
+CREATE TABLE `doc_category` (
 	`cat_id` int(11) NOT NULL auto_increment,
 	`level` int(11) NOT NULL,
 	`parent_id` int(11),
@@ -9767,7 +9537,7 @@ CREATE TABLE IF NOT EXISTS `doc_category` (
     KEY `parent_id` (`parent_id`)
 );
 
-CREATE TABLE IF NOT EXISTS `doc_manager` (
+CREATE TABLE `doc_manager` (
     `id` int(20) NOT NULL auto_increment,
     `category_id` int(11),
     `doc_path` varchar(100),
@@ -9781,14 +9551,14 @@ CREATE TABLE IF NOT EXISTS `doc_manager` (
     CONSTRAINT `doc_manager_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `doc_category` (`cat_id`)
 );
 
-CREATE TABLE IF NOT EXISTS `uploadfile_from` (
+CREATE TABLE `uploadfile_from` (
     `id` int(11) NOT NULL auto_increment,
     `from_name` varchar(50) NOT NULL,
     PRIMARY KEY  (`id`)
 );
 
 
-CREATE TABLE IF NOT EXISTS `Facility` (
+create table Facility (
     id int primary key auto_increment,
     name varchar(50) NOT NULL, unique(name),
     description VARCHAR(150),
@@ -9805,14 +9575,14 @@ CREATE TABLE IF NOT EXISTS `Facility` (
 	integratorPassword varchar(255),
 	enableIntegratedReferrals tinyint(1) not null,
 	enableHealthNumberRegistry tinyint(1) not null,
-	allowSims tinyint(1) unsigned not null default 1,
+	allowSims tinyint(1) unsigned NOT NULL,
 	enableDigitalSignatures tinyint(1) not null,
-  ocanServiceOrgNumber int(10) not null default 0,
+        ocanServiceOrgNumber int(10) not null,
         enableOcanForms tinyint(1) not null,
         enableCbiForm tinyint(1) not null,
 	enableAnonymous tinyint(1) unsigned NOT NULL,
 	enablePhoneEncounter tinyint(1) unsigned NOT NULL,
-	enableGroupNotes tinyint(1) unsigned NOT NULL DEFAULT 0,
+	enableGroupNotes tinyint(1) unsigned NOT NULL,
 	lastUpdated datetime not null,
 	enableEncounterTime tinyint(1) not null,
 	enableEncounterTransportationTime tinyint(1) not null,
@@ -9828,7 +9598,7 @@ CREATE TABLE IF NOT EXISTS `Facility` (
 
 
 
-CREATE TABLE IF NOT EXISTS `program` (
+CREATE TABLE `program` (
  	id int primary key auto_increment,
 	facilityId int not null,
 	index(facilityId),
@@ -9866,36 +9636,23 @@ CREATE TABLE IF NOT EXISTS `program` (
 	defaultServiceRestrictionDays int,
 	ageMin int not null,
 	ageMax int not null,
-  `userDefined` int(1) DEFAULT 1,
-  `shelter_id` int(11) DEFAULT 0,
-  `facility_id` int(10) DEFAULT 0,
+  `userDefined` int(1),
+  `shelter_id` int(11),
+  `facility_id` int(10),
   `capacity_funding` int(10),
   `capacity_space` int(10),
   `lastUpdateUser` varchar(6),
-  lastUpdateDate datetime not null,
+ lastUpdateDate datetime not null,
   `enableEncounterTime` tinyint(1),
   `enableEncounterTransportationTime` tinyint(1),
   `siteSpecificField` varchar(255),
 	emailNotificationAddressesCsv varchar(255),
 	lastReferralNotification datetime,
-  `enableOCAN` tinyint(1) not null,
-  KEY `program_ikey` (`facilityId`,`lastUpdateDate`)
+  `enableOCAN` tinyint(1) not null
+
 );
 
---
--- Needed by Program Managaer
---
-
-CREATE TABLE IF NOT EXISTS `provider_facility` (
-	provider_no varchar(6) not null,
-	facility_id int not null,
-	unique (provider_no, facility_id),
-	index (facility_id),
-	foreign key (provider_no) references provider(provider_no),
-	foreign key (facility_id) references Facility(id)
-);
-
-CREATE TABLE IF NOT EXISTS `vacancy_template` (
+CREATE TABLE `vacancy_template` (
   `TEMPLATE_ID` int(11) NOT NULL AUTO_INCREMENT,  
   `NAME` varchar(100) NOT NULL,
   `ACTIVE` tinyint(1) NOT NULL,
@@ -9903,7 +9660,7 @@ CREATE TABLE IF NOT EXISTS `vacancy_template` (
   PRIMARY KEY (`TEMPLATE_ID`)
 );
 
-CREATE TABLE IF NOT EXISTS `criteria_type` (
+CREATE TABLE `criteria_type` (
   `CRITERIA_TYPE_ID` int(11) NOT NULL AUTO_INCREMENT,
   `FIELD_NAME` varchar(128) NOT NULL,
   `FIELD_TYPE` varchar(128) NOT NULL,
@@ -9914,7 +9671,7 @@ CREATE TABLE IF NOT EXISTS `criteria_type` (
   PRIMARY KEY (`CRITERIA_TYPE_ID`)
 );
 
-CREATE TABLE IF NOT EXISTS `criteria_type_option` (
+CREATE TABLE `criteria_type_option` (
   `OPTION_ID` int(11) NOT NULL AUTO_INCREMENT,
   `CRITERIA_TYPE_ID` int(11) NOT NULL,
   `DISPLAY_ORDER_NUMBER` int(11) NOT NULL,
@@ -9925,7 +9682,7 @@ CREATE TABLE IF NOT EXISTS `criteria_type_option` (
   PRIMARY KEY (`OPTION_ID`)
 );
 
-CREATE TABLE IF NOT EXISTS `criteria` (
+CREATE TABLE `criteria` (
   `CRITERIA_ID` int(11) NOT NULL AUTO_INCREMENT,
   `CRITERIA_TYPE_ID` int(11) NOT NULL,
   `CRITERIA_VALUE` varchar(255),
@@ -9938,14 +9695,14 @@ CREATE TABLE IF NOT EXISTS `criteria` (
   PRIMARY KEY (`CRITERIA_ID`)
 );
 
-CREATE TABLE IF NOT EXISTS `criteria_selection_option` (
+CREATE TABLE `criteria_selection_option` (
   `SELECT_OPTION_ID` int(11) NOT NULL AUTO_INCREMENT,
   `CRITERIA_ID` int(11) NOT NULL,
   `OPTION_VALUE` varchar(255),
   PRIMARY KEY (`SELECT_OPTION_ID`)
 );
 
-CREATE TABLE IF NOT EXISTS `vacancy` (
+CREATE TABLE `vacancy` (
   `id` int(11) primary key NOT NULL AUTO_INCREMENT,
   `vacancyName` varchar(255) NOT NULL,
   `templateId` int(11) NOT NULL,
@@ -9959,7 +9716,7 @@ CREATE TABLE IF NOT EXISTS `vacancy` (
    statusUpdateDate datetime
 );
 
-CREATE TABLE IF NOT EXISTS `vacancy_client_match` (
+CREATE TABLE `vacancy_client_match` (
   `match_id` int NOT NULL AUTO_INCREMENT,
   `vacancy_id` int(11),
   `client_id` int(11),
@@ -9975,7 +9732,7 @@ CREATE TABLE IF NOT EXISTS `vacancy_client_match` (
 ) ;
 
 
-CREATE TABLE IF NOT EXISTS MyGroupAccessRestriction (
+create table MyGroupAccessRestriction (
         id int not null auto_increment,
         myGroupNo varchar(50) not null,
         providerNo varchar(20) not null,
@@ -9986,7 +9743,7 @@ CREATE TABLE IF NOT EXISTS MyGroupAccessRestriction (
         primary key(id)
 );
 
-CREATE TABLE IF NOT EXISTS tickler_text_suggest (
+create table tickler_text_suggest (
     id int(10) not null AUTO_INCREMENT,
     creator varchar(6) not null,
     suggested_text varchar(255) not null,
@@ -9995,7 +9752,7 @@ CREATE TABLE IF NOT EXISTS tickler_text_suggest (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS Episode (
+create table Episode (
         id int not null auto_increment primary key,
         demographicNo int not null,
         startDate date not null,
@@ -10009,7 +9766,7 @@ CREATE TABLE IF NOT EXISTS Episode (
 	notes text
 );
 
-CREATE TABLE IF NOT EXISTS form_hsfo2_visit (
+CREATE TABLE form_hsfo2_visit (
  	ID int(10) NOT NULL auto_increment,
   demographic_no int(10) NOT NULL,
   provider_no varchar(10) NOT NULL ,
@@ -10132,7 +9889,7 @@ CREATE TABLE IF NOT EXISTS form_hsfo2_visit (
   PRIMARY KEY  (ID)
 ) ;
 
-CREATE TABLE IF NOT EXISTS hsfo2_patient (
+CREATE TABLE hsfo2_patient (
   ID int(10) NOT NULL auto_increment,
   SiteCode varchar(10) Not null,
   Patient_Id varchar(255) NOT NULL,
@@ -10171,13 +9928,13 @@ CREATE TABLE IF NOT EXISTS hsfo2_patient (
   PRIMARY KEY  (ID)
 ) ;
 
-CREATE TABLE IF NOT EXISTS hsfo2_system (
+CREATE TABLE hsfo2_system (
   ID int(10) NOT NULL auto_increment,
   LastUploadDate date NOT NULL,
   PRIMARY KEY  (ID)
 ) ;
 
-CREATE TABLE IF NOT EXISTS `hsfo_recommit_schedule` (   
+CREATE TABLE `hsfo_recommit_schedule` (   
   `id` int(11) NOT NULL auto_increment,   
   `status` varchar(2) ,       
   `memo` text,                            
@@ -10187,7 +9944,7 @@ CREATE TABLE IF NOT EXISTS `hsfo_recommit_schedule` (
    PRIMARY KEY  (`id`)                     
    ) ; 
 
-CREATE TABLE IF NOT EXISTS `PageMonitor` (
+CREATE TABLE `PageMonitor` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   pageName varchar(100) NOT NULL,
   pageId varchar(255) NOT NULL,
@@ -10201,23 +9958,16 @@ CREATE TABLE IF NOT EXISTS `PageMonitor` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS BornTransmissionLog(
+create table BornTransmissionLog(
         id integer not null auto_increment,
         submitDateTime timestamp not null,
         success tinyint(1) default 0,
-        filename varchar(100),
-	demographicNo int,
-	type varchar(20),
-	httpCode varchar(20),
-	httpResult mediumtext,
-	httpHeaders text,
-	hialTransactionId varchar(255),
-	contentLocation varchar(255),
+        filename varchar(100) not null,
         primary key(id)
 );
 
 
-CREATE TABLE IF NOT EXISTS `PrintResourceLog` (
+CREATE TABLE `PrintResourceLog` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   resourceName varchar(100) NOT NULL,
   resourceId varchar(50) NOT NULL,
@@ -10228,7 +9978,7 @@ CREATE TABLE IF NOT EXISTS `PrintResourceLog` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `eyeform_macro_def` (
+CREATE TABLE `eyeform_macro_def` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `macroName` varchar(255),
   `lastUpdated` datetime,
@@ -10238,7 +9988,7 @@ CREATE TABLE IF NOT EXISTS `eyeform_macro_def` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `eyeform_macro_billing` (
+CREATE TABLE `eyeform_macro_billing` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `macroId` int(11),
   `billingServiceCode` varchar(50),
@@ -10246,7 +9996,7 @@ CREATE TABLE IF NOT EXISTS `eyeform_macro_billing` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS billing_on_payment (
+create table billing_on_payment (
     payment_id int (10) NOT NULL auto_increment primary key, 
     billing_no int(6) NOT NULL, 
     pay_date timestamp NOT NULL,
@@ -10262,7 +10012,7 @@ CREATE TABLE IF NOT EXISTS billing_on_payment (
 --
 -- Table structure for table `formCounseling`
 --
-CREATE TABLE IF NOT EXISTS `formCounseling` (
+CREATE TABLE `formCounseling` (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
   `provider_no` int(10),    
   `doc_name` varchar(60),
@@ -10295,7 +10045,7 @@ CREATE TABLE IF NOT EXISTS `formCounseling` (
 --
 -- Table structure for table `formNoShowPolicy`
 --
-CREATE TABLE IF NOT EXISTS `formNoShowPolicy` (
+CREATE TABLE `formNoShowPolicy` (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
   `provider_no` int(10),
   `demographic_no` int(10) NOT NULL,
@@ -10309,7 +10059,7 @@ CREATE TABLE IF NOT EXISTS `formNoShowPolicy` (
 -- Table structure for table `formSelfAssessment`
 --
 
-CREATE TABLE IF NOT EXISTS `formSelfAssessment` (
+CREATE TABLE `formSelfAssessment` (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
   `demographic_no` int(10),
   `provider_no` int(10),
@@ -10411,7 +10161,7 @@ CREATE TABLE IF NOT EXISTS `formSelfAssessment` (
   PRIMARY KEY (`ID`)
 );
 
-CREATE TABLE IF NOT EXISTS providerstudy (
+create table providerstudy (
         study_no int(10),
         provider_no varchar(6),
         creator varchar(6),
@@ -10419,7 +10169,7 @@ CREATE TABLE IF NOT EXISTS providerstudy (
 );
 
 
-CREATE TABLE IF NOT EXISTS `workflow` (
+CREATE TABLE `workflow` (
   ID int(10) NOT NULL AUTO_INCREMENT,
   workflow_type varchar(100),
   provider_no varchar(20),
@@ -10430,7 +10180,7 @@ CREATE TABLE IF NOT EXISTS `workflow` (
   PRIMARY KEY(`ID`)
 );
 
-CREATE TABLE IF NOT EXISTS Institution (
+create table Institution (
         id int PRIMARY KEY NOT NULL auto_increment,
         name varchar(255) not null,
         address varchar(255),
@@ -10445,19 +10195,19 @@ CREATE TABLE IF NOT EXISTS Institution (
         annotation text
 );
 
-CREATE TABLE IF NOT EXISTS Department (
+create table Department (
         id int PRIMARY KEY NOT NULL auto_increment,
         name varchar(255) not null,
         annotation text
 );
 
 
-CREATE TABLE IF NOT EXISTS InstitutionDepartment (
+create table InstitutionDepartment (
         institutionId int not null,
         departmentId int not null
 );
 
-CREATE TABLE IF NOT EXISTS `casemgmt_note_lock` (
+CREATE TABLE `casemgmt_note_lock` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `session_id` varchar(255),
   `ip_address` varchar(64),
@@ -10471,7 +10221,7 @@ CREATE TABLE IF NOT EXISTS `casemgmt_note_lock` (
   KEY `casemgmt_note_lock_providerNo_noteId` (`provider_no`,`note_id`)
 );
 
-CREATE TABLE IF NOT EXISTS `default_issue` (
+CREATE TABLE `default_issue` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `assigned_time` datetime NOT NULL,
   `issue_ids` text,
@@ -10480,13 +10230,13 @@ CREATE TABLE IF NOT EXISTS `default_issue` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS OscarCode (
+create table OscarCode (
       id int(10) NOT NULL auto_increment primary key,
       OscarCode varchar(25) not null,
       description varchar(255)
 );
 
-CREATE TABLE IF NOT EXISTS labTestResults(
+create table labTestResults(
   id int(10) NOT NULL auto_increment primary key,
   labPatientPhysicianInfo_id int(10),
   line_type char (1),
@@ -10505,7 +10255,7 @@ CREATE TABLE IF NOT EXISTS labTestResults(
 );
 
 
-CREATE TABLE IF NOT EXISTS labPatientPhysicianInfo(
+create table labPatientPhysicianInfo(
   id int(10) NOT NULL auto_increment primary key,
   labReportInfo_id int(10),
   accession_num varchar(64),
@@ -10529,12 +10279,11 @@ CREATE TABLE IF NOT EXISTS labPatientPhysicianInfo(
   patient_phone varchar(20),
   doc_phone varchar(20),
   collection_date varchar(20),
-  lastUpdateDate datetime not null,
-  KEY `labPatientPhysicianInfo_ikey` (`lastUpdateDate`)
+  lastUpdateDate datetime not null
 );
 
 
-CREATE TABLE IF NOT EXISTS LookupList (
+create table LookupList (
         id int(11) NOT NULL AUTO_INCREMENT,
         name varchar(50) NOT NULL,
         `listTitle` varchar(50),
@@ -10546,11 +10295,13 @@ CREATE TABLE IF NOT EXISTS LookupList (
         primary key(id)
 );
 
-CREATE TABLE IF NOT EXISTS LookupListItem (
+create table LookupListItem (
         id int(11) NOT NULL AUTO_INCREMENT,
         lookupListId int(11) not null,
         value varchar(50) NOT NULL,
         label varchar(255),
+        `icon` varchar(255),
+		`colour` varchar(6),
         displayOrder int not null,
         `active` tinyint(1) not null,
         createdBy varchar(8) not null,
@@ -10559,7 +10310,7 @@ CREATE TABLE IF NOT EXISTS LookupListItem (
 );
 
 
-CREATE TABLE IF NOT EXISTS CtlRelationships (
+create table CtlRelationships (
         id int(11) NOT NULL AUTO_INCREMENT,
         value varchar(50) NOT NULL,
         label varchar(255),
@@ -10569,7 +10320,7 @@ CREATE TABLE IF NOT EXISTS CtlRelationships (
         primary key(id)
 );
 
-CREATE TABLE IF NOT EXISTS  documentDescriptionTemplate (
+CREATE TABLE  documentDescriptionTemplate (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
   doctype varchar(60) NOT NULL,
   description varchar(255) NOT NULL,
@@ -10579,15 +10330,8 @@ CREATE TABLE IF NOT EXISTS  documentDescriptionTemplate (
   PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS DocumentExtraReviewer (
-  `id` int(11) NOT NULL auto_increment,
-  `documentNo` integer,
-  `reviewerProviderNo` varchar(40),
-  `reviewDateTime` timestamp,
-  PRIMARY KEY (`id`)
-);
 
-CREATE TABLE IF NOT EXISTS ORNPreImplementationReportLog (
+create table ORNPreImplementationReportLog (
   id int(10) NOT NULL auto_increment,
   providerNo varchar(10) not null,
   reportData text not null,
@@ -10596,7 +10340,7 @@ CREATE TABLE IF NOT EXISTS ORNPreImplementationReportLog (
 );
 
 
-CREATE TABLE IF NOT EXISTS `ServiceRequestToken` (
+CREATE TABLE `ServiceRequestToken` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `clientId` int(11) DEFAULT NULL,
   `tokenId` varchar(255) NOT NULL,
@@ -10609,7 +10353,7 @@ CREATE TABLE IF NOT EXISTS `ServiceRequestToken` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `ServiceAccessToken` (
+CREATE TABLE `ServiceAccessToken` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `clientId` int(11) DEFAULT NULL,
   `tokenId` varchar(255) NOT NULL,
@@ -10622,18 +10366,17 @@ CREATE TABLE IF NOT EXISTS `ServiceAccessToken` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `ServiceClient` (
+CREATE TABLE `ServiceClient` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `clientKey` varchar(255) NOT NULL,
   `clientSecret` varchar(255) NOT NULL,
   `uri` varchar(255) DEFAULT NULL,
   `dateCreated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `lifetime` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS PreventionsLotNrs(
+create table PreventionsLotNrs(
   id int(10) NOT NULL AUTO_INCREMENT, 
   creationDate datetime,
   providerNo varchar(6) NOT NULL,
@@ -10644,7 +10387,7 @@ CREATE TABLE IF NOT EXISTS PreventionsLotNrs(
   PRIMARY KEY (`id`)
 );
 
-
+/* Sharing Center Tables - begin */
 CREATE TABLE IF NOT EXISTS `sharing_affinity_domain` (
     `id` int AUTO_INCREMENT PRIMARY KEY,
     `oid` VARCHAR(255),
@@ -10872,7 +10615,7 @@ CREATE TABLE IF NOT EXISTS `sharing_exported_doc` (
 );
 /* Sharing Center Tables - end */
 
-CREATE TABLE IF NOT EXISTS ORNCkdScreeningReportLog (
+create table ORNCkdScreeningReportLog (
   id int(10) NOT NULL auto_increment,
   providerNo varchar(10) not null,
   reportData text not null,
@@ -10881,22 +10624,23 @@ CREATE TABLE IF NOT EXISTS ORNCkdScreeningReportLog (
 );
 
 
-CREATE TABLE IF NOT EXISTS DrugProduct(
-  id int(9) NOT NULL auto_increment,
-  name varchar(255),
-  code varchar(255),
-  lotNumber varchar(255),
-  dispensingEvent int(9),
-  amount int not null,
-  expiryDate date,
-  location int,
-  `dateCreated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `lastUpdateDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `lastUpdateUser` varchar(10) DEFAULT NULL,
-  primary key (id)
+create table DrugProduct(
+        id int(9) NOT NULL auto_increment,
+        name varchar(255),
+        code varchar(255),
+        lotNumber varchar(255),
+        dispensingEvent int(9),
+        amount int not null,
+        expiryDate date,
+        location int,
+	dateCreated TIMESTAMP,
+	lastUpdateDate TIMESTAMP,
+	lastUpdateUser varchar(10),
+        primary key (id)
 );
 
-CREATE TABLE IF NOT EXISTS DrugDispensing (
+
+create table DrugDispensing (
         id int(9) not null auto_increment,
         drugId int(9),
         dateCreated datetime,
@@ -10912,7 +10656,7 @@ CREATE TABLE IF NOT EXISTS DrugDispensing (
         primary key(id)
 );
 
-CREATE TABLE IF NOT EXISTS DrugDispensingMapping (
+create table DrugDispensingMapping (
         id int(9) not null auto_increment,
         din varchar(50),
         duration varchar(255),
@@ -10936,8 +10680,7 @@ CREATE TABLE IF NOT EXISTS `OscarJob` (
     `cronExpression` VARCHAR(255),
     `providerNo` VARCHAR(10),
     `enabled` TINYINT(1) NOT NULL,
-    `updated` DATETIME NOT NULL,
-    `config` text
+    `updated` DATETIME NOT NULL
 );
 
 
@@ -10950,13 +10693,13 @@ CREATE TABLE IF NOT EXISTS `OscarJobType` (
     `updated` DATETIME NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS ProductLocation (
+CREATE TABLE ProductLocation (
   `id` int(11) NOT NULL auto_increment,
   `name` varchar(255),
   PRIMARY KEY  (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `faxes` (
+CREATE TABLE `faxes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `filename` varchar(255),
   `faxline` varchar(11),
@@ -10971,32 +10714,28 @@ CREATE TABLE IF NOT EXISTS `faxes` (
   `jobId` int(11),
   `oscarUser` varchar(6),
   `demographicNo` int(11),
-  sender varchar(255),
   PRIMARY KEY (`id`),
   KEY `faxline` (`faxline`),
   KEY `faxstatus` (`status`)
 ); 
 
-CREATE TABLE IF NOT EXISTS `fax_config` (
+CREATE TABLE `fax_config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(255) DEFAULT '',
-  `siteUser` varchar(255) DEFAULT '',
-  `passwd` varchar(255) DEFAULT '',
-  `gatewayName` varchar(255) DEFAULT '',
-  `faxUser` varchar(255) DEFAULT '',
-  `faxPasswd` varchar(255) DEFAULT '',
-  `queue` varchar(255) DEFAULT 0,
-  `active` tinyint(1) DEFAULT false,
-  `faxNumber` varchar(10) DEFAULT '',
-  `faxReply` varchar(10) DEFAULT '',
-  `senderEmail` varchar(255) DEFAULT '',
-  `accountName` varchar(55) DEFAULT '',
-  `download` tinyint(1) DEFAULT 0,
+  `url` varchar(255),
+  `siteUser` varchar(255),
+  `passwd` varchar(255),
+  `faxUser` varchar(255),
+  `faxPasswd` varchar(255),
+  `queue` varchar(255),
+  `active` tinyint(1),
+  `faxNumber` varchar(10),
+  `senderEmail` varchar(255),
+  `accountName` varchar(55),
   PRIMARY KEY (`id`)
 );
 
 
-CREATE TABLE IF NOT EXISTS formONAREnhancedRecord (
+CREATE TABLE formONAREnhancedRecord (
   ID int(10) NOT NULL  auto_increment,
   episodeId int(10),
   sent_to_born tinyint(1) default 0,
@@ -11383,11 +11122,12 @@ CREATE TABLE IF NOT EXISTS formONAREnhancedRecord (
   c_planManage19 varchar(100) default NULL,
   c_riskFactors20 varchar(50) default NULL,
   c_planManage20 varchar(100) default NULL,
-  PRIMARY KEY (ID)
+  PRIMARY KEY (`ID`),
+  KEY `demographic_noIndex` (`demographic_no`)
 );
 
 
-CREATE TABLE IF NOT EXISTS formONAREnhancedRecordExt1 (
+CREATE TABLE formONAREnhancedRecordExt1 (
   ID int(10) NOT NULL ,
   ar2_rhNeg tinyint(1) default NULL,
   ar2_rhIG varchar(10) default NULL,
@@ -11793,10 +11533,11 @@ CREATE TABLE IF NOT EXISTS formONAREnhancedRecordExt1 (
   `pg2_urinePr40` char(3),
   `pg2_urineGl40` char(3),
   `pg2_BP40` varchar(8),
-  `pg2_comments40` varchar(80)
+  `pg2_comments40` varchar(80),
+  KEY `idIndex` (`ID`)
 );
 
-CREATE TABLE IF NOT EXISTS formONAREnhancedRecordExt2 (
+CREATE TABLE formONAREnhancedRecordExt2 (
   ID int(10) NOT NULL ,
   `pg2_date41` date,
   `pg2_gest41` varchar(6),
@@ -12182,11 +11923,12 @@ CREATE TABLE IF NOT EXISTS formONAREnhancedRecordExt2 (
   pg1_geneticA_riskLevel varchar(25),
   pg1_geneticB_riskLevel varchar(25),
   pg1_geneticC_riskLevel varchar(25),
-  pg1_labCustom3Result_riskLevel varchar(25)
+  pg1_labCustom3Result_riskLevel varchar(25),
+  KEY `idIndex` (`ID`)
 );
 
 
-CREATE TABLE IF NOT EXISTS DrugProductTemplate (
+create table DrugProductTemplate (
         id int NOT NULL auto_increment,
         name varchar(255),
         code varchar(255),
@@ -12195,7 +11937,7 @@ CREATE TABLE IF NOT EXISTS DrugProductTemplate (
 );
 
 
-CREATE TABLE IF NOT EXISTS `AppDefinition` (
+CREATE TABLE `AppDefinition` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `name` varchar(255),
   `appType` varchar(255),
@@ -12203,12 +11945,11 @@ CREATE TABLE IF NOT EXISTS `AppDefinition` (
   `active` tinyint(1),
   `addedBy` varchar(8),
   `added` datetime,
-  `consentTypeId` int(15),
   PRIMARY KEY (`id`)
 );
 
 
-CREATE TABLE IF NOT EXISTS `AppUser` (
+CREATE TABLE `AppUser` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `providerNo` varchar(8),
   `appId` int(9),
@@ -12217,7 +11958,7 @@ CREATE TABLE IF NOT EXISTS `AppUser` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `IntegratorProgress` (
+CREATE TABLE `IntegratorProgress` (
  `id` int(11) NOT NULL auto_increment,
  `dateCreated` timestamp,
  `status` varchar(50),
@@ -12227,7 +11968,7 @@ CREATE TABLE IF NOT EXISTS `IntegratorProgress` (
 );
 
 
-CREATE TABLE IF NOT EXISTS `IntegratorProgressItem` (
+CREATE TABLE `IntegratorProgressItem` (
  `id` int(11) NOT NULL auto_increment,
   `demographicNo` int not null,
   `integratorProgressId` int not null,
@@ -12239,9 +11980,9 @@ CREATE TABLE IF NOT EXISTS `IntegratorProgressItem` (
 );
 
 -- ----------------------------
--- Table structure for `Icd9Synonym`
+--  Table structure for `Icd9Synonym`
 -- ----------------------------
-CREATE TABLE IF NOT EXISTS `Icd9Synonym` (
+CREATE TABLE `Icd9Synonym` (
   `dxCode` varchar(10) NOT NULL,
   `patientFriendly` varchar(250) NOT NULL,
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -12252,24 +11993,25 @@ CREATE TABLE IF NOT EXISTS `Icd9Synonym` (
 --
 -- Table structure for table 'contactspecialty'
 --
-CREATE TABLE IF NOT EXISTS `ContactSpecialty` (
+CREATE TABLE `ContactSpecialty` (
   `id` int(11) NOT NULL,
   `specialty` varchar(50) NOT NULL,
   `description` varchar(140),
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `EFormDocs` (
-  `id` int(10) NOT NULL auto_increment PRIMARY KEY,
-  `fdid` int(10) NOT NULL,
-  `document_no` int(10) NOT NULL,
-  `doctype` char(1) NOT NULL,
-  `deleted` char(1) DEFAULT NULL,
-  `attach_date` date,
-  `provider_no` varchar(6) NOT NULL
+
+--
+-- Table structure for table 'specialty'
+--
+
+CREATE TABLE specialty (
+  region varchar(5) default '',
+  specialty char(2) default '',
+  specialtydesc varchar(100) default ''
 ) ;
 
-CREATE TABLE IF NOT EXISTS EFormReportTool (
+create table EFormReportTool (
   `id` int(11) NOT NULL auto_increment,
   `tableName` varchar(255) not null,
   `eformId` int not null,
@@ -12279,10 +12021,12 @@ CREATE TABLE IF NOT EXISTS EFormReportTool (
   `name` varchar(255),
   `dateLastPopulated` timestamp null,
   `latestMarked` tinyint(1) not null,
+  `startDate` datetime,
+  `endDate` datetime,
   PRIMARY KEY  (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `billing_on_item_payment`(
+CREATE TABLE `billing_on_item_payment`(
         `id` INT(12) NOT NULL AUTO_INCREMENT,
         `ch1_id` INT(12) NOT NULL,
         `billing_on_payment_id` INT(12) NOT NULL,
@@ -12298,7 +12042,7 @@ CREATE TABLE IF NOT EXISTS `billing_on_item_payment`(
         KEY(`billing_on_item_id`)
 );
 
-CREATE TABLE IF NOT EXISTS `billing_on_transaction` (
+CREATE TABLE `billing_on_transaction` (
   `id` int(12) NOT NULL AUTO_INCREMENT,
   `ch1_id` int(12) NOT NULL,
   `payment_id` int(12) NOT NULL,
@@ -12343,30 +12087,57 @@ CREATE TABLE IF NOT EXISTS `billing_on_transaction` (
   KEY `pay_program`(`pay_program`)
 );
 
-CREATE TABLE IF NOT EXISTS `ResourceStorage` (
+
+CREATE TABLE `SecurityArchive` (
+ `id` int(11) NOT NULL auto_increment,
+  security_no int(6) NOT NULL,
+  user_name varchar(30) NOT NULL,
+  password varchar(255) NOT NULL,
+  provider_no varchar(6) default NULL,
+  pin varchar(255),
+  b_ExpireSet int(1),
+  date_ExpireDate date,
+  b_LocalLockSet int(1),
+  b_RemoteLockSet int(1),
+  forcePasswordReset tinyint(1),
+  storageVersion int NOT NULL,
+  passwordUpdateDate datetime,
+  pinUpdateDate datetime,
+  lastUpdateUser varchar(20),
+  lastUpdateDate timestamp,
+ PRIMARY KEY  (`id`)
+);
+
+
+create table MyGroupProgram (
+        id int(9) NOT NULL auto_increment,
+	myGroupNo varchar(10) not null,
+	programNo int(10) not null,
+        primary key (id)
+);
+
+
+CREATE TABLE `ResourceStorage` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `resourceType` varchar(100),
   `resourceName` varchar(100),
   `uuid` varchar(40),
   `fileContents` mediumblob,
   `uploadDate` datetime,
-  `update_date` datetime,
-  `reference_date` datetime,
   `active` tinyint(1),
   PRIMARY KEY (`id`),
-  KEY `ResourceStorage_resourceType_active` (`resourceType`(10),`active`),
-  KEY `ResourceStorage_resourceType_uuid` (`uuid`)
+  KEY `ResourceStorage_resourceType_active` (`resourceType`(10),`active`)
 );
 
 
-CREATE TABLE IF NOT EXISTS `BORNPathwayMapping` (
+CREATE TABLE `BORNPathwayMapping` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `bornPathway` varchar(100),
   `serviceId` int(10),
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `Consent` (
+CREATE TABLE `Consent` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `demographic_no` int(10),
   `consent_type_id` int(10),
@@ -12377,54 +12148,44 @@ CREATE TABLE IF NOT EXISTS `Consent` (
   `optout_date` datetime,
   `edit_date` datetime,
   `deleted` tinyint(1),
-  PRIMARY KEY (`id`),
-  KEY `Consent_demographic_no_IDX` (`demographic_no`)
+  PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `consentType` (
+CREATE TABLE `consentType` (
   `id` int(15) NOT NULL AUTO_INCREMENT,
   `type` varchar(50),
   `name` varchar(50),
   `description` varchar(500),
   `active` tinyint(1),
-  `providerNo` VARCHAR(11),
-  `remoteEnabled` TINYINT(1),
   PRIMARY KEY (`id`)
 );
 
 
 
-CREATE TABLE IF NOT EXISTS `billingperclimit` (
-  `service_code` varchar(10) NOT NULL,
-  `min` varchar(8) DEFAULT '0',
-  `max` varchar(8) DEFAULT '0',
-  `effective_date` date DEFAULT '1970-01-01',
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`id`)
+CREATE TABLE billingperclimit (
+  service_code varchar(10) NOT NULL ,
+  min varchar(8),
+  max varchar(8),
+  effective_date date,
+  id int auto_increment,
+  PRIMARY KEY  (id)
 ) ;
 
-CREATE TABLE IF NOT EXISTS resident_oscarMsg (
-    id int(11) auto_increment,
-    supervisor_no varchar(6),
-    resident_no varchar(6),
-    demographic_no int(11),
-    appointment_no int(11),    
-    note_id int(10),
-    complete int(1),
-    create_time timestamp,
-    complete_time timestamp,
-    PRIMARY KEY(id),
-    index note_id_idx (note_id)
+CREATE TABLE `EncounterType` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `value` varchar(255),
+  `global` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS oscar_msg_type (
-    type int(10),
-    description varchar(255),
-    code varchar(255),
-    PRIMARY KEY(type)
+
+CREATE TABLE `ProgramEncounterType` (
+  `programId` int(10) NOT NULL,
+  `encounterTypeId` int(10) NOT NULL,
+  PRIMARY KEY (`programId`,`encounterTypeId`)
 );
 
-CREATE TABLE IF NOT EXISTS `dashboard` (
+CREATE TABLE `dashboard` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255),
   `description` varchar(255),
@@ -12435,7 +12196,7 @@ CREATE TABLE IF NOT EXISTS `dashboard` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `indicatorTemplate` (
+CREATE TABLE `indicatorTemplate` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `dashboardId` int(11),
   `name` varchar(255),
@@ -12448,14 +12209,26 @@ CREATE TABLE IF NOT EXISTS `indicatorTemplate` (
   `template` mediumtext,
   `active` bit(1),
   `locked` bit(1),
-  `shared` tinyint(1),
-  `metricSetName` varchar(255),
-  `metricLabel` varchar(255),
-
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `tickler_category` (
+CREATE TABLE `demographicSite` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `siteId` int(11) NOT NULL,
+  `demographicId` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE  `site_role_mpg` (
+  `id` int not null auto_increment,
+  `site_id` int(10) unsigned NOT NULL,
+  `access_role_id` int(10) unsigned ,
+  `crt_dt` timestamp NOT NULL ,
+  `admit_discharge_role_id` int(10) unsigned,
+  primary key (`id`)
+);
+
+CREATE TABLE `tickler_category` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `category` varchar(55),
   `description` varchar(255),
@@ -12463,741 +12236,128 @@ CREATE TABLE IF NOT EXISTS `tickler_category` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `onCallClinicDates` (
-   `id` int(10) NOT NULL,
-   `startDate` date,
-   `endDate` date,
-   `name` varchar(256),
-   `location` varchar(256),
-   `color` varchar(7),
-  PRIMARY KEY (`id`)
-);
-
-
-CREATE TABLE IF NOT EXISTS SurveillanceData (
-	id int(10)  NOT NULL auto_increment primary key,
-	surveyId varchar(50),
-	data mediumblob,
-	createDate datetime,
-	lastUpdateDate datetime,
-	transmissionDate datetime,
-	sent boolean
-);
-
-CREATE TABLE IF NOT EXISTS IntegratorFileLog (
-    id int(11) auto_increment,
-    filename varchar(255),
-    checksum varchar(255),
-    lastDateUpdated datetime,
-    currentDate datetime,
-    integratorStatus varchar(100),
-    dateCreated timestamp,
-    PRIMARY KEY(id)
-);
-
-CREATE TABLE IF NOT EXISTS CVCMedication (
-  `id` int(11) NOT NULL auto_increment,
-  `versionId` integer,
-  `din` integer,
-  `dinDisplayName` varchar(255),
-  `snomedCode` varchar(255),
-  `snomedDisplay` varchar(255),
-  `status` varchar(40),
-  `isBrand` tinyint(1),
-  `manufacturerId` integer,
-  `manufacturerDisplay` varchar(255),
-  PRIMARY KEY  (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS CVCMedicationGTIN (
-  `id` int(11) NOT NULL auto_increment,
-  `cvcMedicationId` integer NOT NULL,
-  `gtin` varchar(255) NOT NULL,
-  PRIMARY KEY  (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS CVCMedicationLotNumber (
-  `id` int(11) NOT NULL auto_increment,
-  `cvcMedicationId` integer NOT NULL,
-  `lotNumber` varchar(255) NOT NULL,
-  `expiryDate` date,
-  PRIMARY KEY  (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS CVCImmunization (
-  `id` int(11) NOT NULL auto_increment,
-  `versionId` integer,
-  `snomedConceptId` varchar(255),
-  `displayName` varchar(255),
-  `picklistName` varchar(255),
-  `generic` tinyint(1),
-  `prevalence` int,
-  `parentConceptId` varchar(255),
-  `ispa` tinyint(1),
-  PRIMARY KEY  (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS `CVCMapping` (
-   `id` int(10) NOT NULL auto_increment,
-   `oscarName` varchar(255),
-   `cvcSnomedId` varchar(255),
-   `preferCVC` tinyint(1),
-  PRIMARY KEY (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS DHIRSubmissionLog (
-    id int(11) auto_increment,
-    demographicNo int,
-    preventionId int,
-    submitterProviderNo varchar(255),
-    status varchar(255),
-    dateCreated datetime,
-    transactionId varchar(100),
-    bundleId varchar(255),
-    response mediumtext,
-    clientRequestId varchar(100),
-    clientResponseId varchar(100),
-    PRIMARY KEY(id)
-);
-
-CREATE TABLE IF NOT EXISTS lst_gender
-(
-	code char(1) NOT NULL,
- 	description varchar(80),
- 	isactive tinyint(1),
- 	displayorder int(10),
- 	PRIMARY KEY (code)
-);
-
-CREATE TABLE IF NOT EXISTS SystemPreferences
-(
-  id         INT AUTO_INCREMENT PRIMARY KEY,
-  name       VARCHAR(40) NULL,
-  value      VARCHAR(40) NULL,
-  updateDate DATETIME    NULL
-);
-
-CREATE TABLE IF NOT EXISTS `rbt_groups` (
+CREATE TABLE `preventionsBilling` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tid` int(11) DEFAULT NULL,
-  `group_name` varchar(255) DEFAULT NULL,
+  `preventionType` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `billingServiceCodeAndUnit` varchar(50) NOT NULL,
+  `billingType` varchar(50) NOT NULL,
+  `visitType` varchar(50) NOT NULL,
+  `billingDxCode` varchar(50) NOT NULL,
+  `visitLocation` varchar(50) NOT NULL,
+  `sliCode` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `pbtype` (`preventionType`)
+);
+
+
+CREATE TABLE IF NOT EXISTS `lu_drugTherapyProblemIssue` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) ,
+  `numericValue` int(5) ,
+  `description` varchar(125) ,
+  `active` bit(1) ,
   PRIMARY KEY (`id`)
 );
 
-create table if not exists `read_lab`
-(
-    id int null,
-    provider_no varchar(11) null,
-    lab_type varchar(20) null,
-    lab_id int null
+CREATE TABLE IF NOT EXISTS `lu_drugTherapyProblemProbability` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) ,
+  `numericValue` int(5) ,
+  `active` bit(1) ,
+  PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `formRourke2017` (
-                                  `ID` int(10) NOT NULL AUTO_INCREMENT,
-                                  `demographic_no` int(10) DEFAULT NULL,
-                                  `c_male` varchar(2) DEFAULT '',
-                                  `c_female` varchar(2) DEFAULT '',
-                                  `provider_no` varchar(6) DEFAULT NULL,
-                                  `formCreated` date DEFAULT NULL,
-                                  `formEdited` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                  `c_lastVisited` char(3) DEFAULT NULL,
-                                  `c_birthRemarks` text,
-                                  `c_riskFactors` text,
-                                  `c_famHistory` text,
-                                  `c_pName` varchar(60) DEFAULT NULL,
-                                  `c_birthDate` date DEFAULT NULL,
-                                  `c_length` varchar(6) DEFAULT NULL,
-                                  `c_headCirc` varchar(6) DEFAULT NULL,
-                                  `c_birthWeight` varchar(7) DEFAULT NULL,
-                                  `c_dischargeWeight` varchar(7) DEFAULT NULL,
-                                  `c_fsa` char(3) DEFAULT NULL,
-                                  `start_of_gestation` DATE,
-                                  `c_APGAR1min` int(11) DEFAULT NULL,
-                                  `c_APGAR5min` int(11) DEFAULT NULL,
-                                  `p1_date1w` date DEFAULT NULL,
-                                  `p1_date2w` date DEFAULT NULL,
-                                  `p1_date1m` date DEFAULT NULL,
-                                  `p1_ht1w` varchar(5) DEFAULT NULL,
-                                  `p1_wt1w` varchar(5) DEFAULT NULL,
-                                  `p1_hc1w` varchar(5) DEFAULT NULL,
-                                  `p1_ht2w` varchar(5) DEFAULT NULL,
-                                  `p1_wt2w` varchar(5) DEFAULT NULL,
-                                  `p1_hc2w` varchar(5) DEFAULT NULL,
-                                  `p1_ht1m` varchar(5) DEFAULT NULL,
-                                  `p1_wt1m` varchar(5) DEFAULT NULL,
-                                  `p1_hc1m` varchar(5) DEFAULT NULL,
-                                  `p1_pConcern1w` text,
-                                  `p1_pConcern2w` text,
-                                  `p1_pConcern1m` text,
-                                  `p1_development1w` text,
-                                  `p1_development2w` text,
-                                  `p1_development1m` text,
-                                  `p1_problems1w` text,
-                                  `p1_problems2w` text,
-                                  `p1_problems1m` text,
-                                  `p1_signature2w` varchar(250) DEFAULT NULL,
-                                  `p2_date2m` date DEFAULT NULL,
-                                  `p2_date4m` date DEFAULT NULL,
-                                  `p2_date6m` date DEFAULT NULL,
-                                  `p2_ht2m` varchar(5) DEFAULT NULL,
-                                  `p2_wt2m` varchar(5) DEFAULT NULL,
-                                  `p2_hc2m` varchar(5) DEFAULT NULL,
-                                  `p2_ht4m` varchar(5) DEFAULT NULL,
-                                  `p2_wt4m` varchar(5) DEFAULT NULL,
-                                  `p2_hc4m` varchar(5) DEFAULT NULL,
-                                  `p2_ht6m` varchar(5) DEFAULT NULL,
-                                  `p2_wt6m` varchar(5) DEFAULT NULL,
-                                  `p2_hc6m` varchar(5) DEFAULT NULL,
-                                  `p2_pConcern2m` text,
-                                  `p2_pConcern4m` text,
-                                  `p2_pConcern6m` text,
-                                  `p2_nutrition2m` text,
-                                  `p2_nutrition4m` text,
-                                  `p2_development2m` text,
-                                  `p2_development4m` text,
-                                  `p2_development6m` text,
-                                  `p2_problems2m` text,
-                                  `p2_problems4m` text,
-                                  `p2_problems6m` text,
-                                  `p2_signature2m` varchar(250) DEFAULT NULL,
-                                  `p2_signature4m` varchar(250) DEFAULT NULL,
-                                  `p3_date9m` date DEFAULT NULL,
-                                  `p3_date12m` date DEFAULT NULL,
-                                  `p3_date15m` date DEFAULT NULL,
-                                  `p3_ht9m` varchar(5) DEFAULT NULL,
-                                  `p3_wt9m` varchar(5) DEFAULT NULL,
-                                  `p3_hc9m` varchar(5) DEFAULT NULL,
-                                  `p3_ht12m` varchar(5) DEFAULT NULL,
-                                  `p3_wt12m` varchar(5) DEFAULT NULL,
-                                  `p3_hc12m` varchar(5) DEFAULT NULL,
-                                  `p3_ht15m` varchar(5) DEFAULT NULL,
-                                  `p3_wt15m` varchar(5) DEFAULT NULL,
-                                  `p3_hc15m` varchar(5) DEFAULT NULL,
-                                  `p3_pConcern9m` text,
-                                  `p3_pConcern12m` text,
-                                  `p3_pConcern15m` text,
-                                  `p3_nutrition12m` text,
-                                  `p3_nutrition15m` text,
-                                  `p3_development9m` text,
-                                  `p3_development12m` text,
-                                  `p3_development15m` text,
-                                  `p3_problems9m` text,
-                                  `p3_problems12m` text,
-                                  `p3_problems15m` text,
-                                  `p3_signature9m` varchar(250) DEFAULT NULL,
-                                  `p3_signature12m` varchar(250) DEFAULT NULL,
-                                  `p3_signature15m` varchar(250) DEFAULT NULL,
-                                  `p4_date18m` date DEFAULT NULL,
-                                  `p4_date24m` date DEFAULT NULL,
-                                  `p4_date48m` date DEFAULT NULL,
-                                  `p4_ht18m` varchar(5) DEFAULT NULL,
-                                  `p4_wt18m` varchar(5) DEFAULT NULL,
-                                  `p4_hc18m` varchar(5) DEFAULT NULL,
-                                  `p4_ht24m` varchar(5) DEFAULT NULL,
-                                  `p4_wt24m` varchar(5) DEFAULT NULL,
-                                  `p4_hc24m` varchar(5) DEFAULT NULL,
-                                  `p4_ht48m` varchar(5) DEFAULT NULL,
-                                  `p4_bmi24m` varchar(5) DEFAULT NULL,
-                                  `p4_bmi48m` varchar(10) DEFAULT NULL,
-                                  `p4_wt48m` varchar(5) DEFAULT NULL,
-                                  `p4_pConcern18m` text,
-                                  `p4_pConcern24m` text,
-                                  `p4_pConcern48m` text,
-                                  `p4_problems18m` text,
-                                  `p4_problems24m` text,
-                                  `p4_problems48m` text,
-                                  `p4_signature18m` varchar(250) DEFAULT NULL,
-                                  `p4_signature24m` varchar(250) DEFAULT NULL,
-                                  `p4_signature48m` varchar(250) DEFAULT NULL,
-                                  `p1_signature1w` varchar(250) DEFAULT NULL,
-                                  `p1_signature1m` varchar(250) DEFAULT NULL,
-                                  `p2_signature6m` varchar(250) DEFAULT NULL,
-                                  `p1_pNutrition1w` text,
-                                  `p1_pNutrition2w` text,
-                                  `p1_pNutrition1m` text,
-                                  `p1_education1w` text,
-                                  `p1_education2w` text,
-                                  `p1_education1m` text,
-                                  `p1_pPhysical1w` text,
-                                  `p1_pPhysical2w` text,
-                                  `p1_pPhysical1m` text,
-                                  `p1_immunization1w` text,
-                                  `p1_immunization2w` text,
-                                  `p1_immunization1m` text,
-                                  `p2_nutrition6m` text,
-                                  `p2_education2m` text,
-                                  `p2_education4m` text,
-                                  `p2_education6m` text,
-                                  `p2_physical2m` text,
-                                  `p2_physical4m` text,
-                                  `p2_physical6m` text,
-                                  `p2_immunization6m` text,
-                                  `p3_nutrition9m` text,
-                                  `p3_education9m` text,
-                                  `p3_education12m` text,
-                                  `p3_education15m` text,
-                                  `p3_physical9m` text,
-                                  `p3_physical12m` text,
-                                  `p3_physical15m` text,
-                                  `p4_nutrition18m` text,
-                                  `p4_nutrition24m` text,
-                                  `p4_nutrition48m` text,
-                                  `p4_education18m` text,
-                                  `p4_education24m` text,
-                                  `p4_education48m` text,
-                                  `p4_development18m` text,
-                                  `p4_development24m` text,
-                                  `p4_development48m` text,
-                                  `p4_development36m` text,
-                                  `p4_development60m` text,
-                                  `p4_physical18m` text,
-                                  `p4_physical24m` text,
-                                  `p4_physical48m` text,
-                                  `p4_nippisingattained` text,
-                                  PRIMARY KEY (`ID`),
-                                  KEY `formRourke2017_demographic_no` (`demographic_no`)
+CREATE TABLE IF NOT EXISTS `lu_drugTherapyProblemSeverity` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) ,
+  `numericValue` int(5) ,
+  `active` bit(1) ,
+  PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `form_boolean_value` (
-                                      `form_name` varchar(50) NOT NULL,
-                                      `form_id` int(10) NOT NULL,
-                                      `field_name` varchar(50) NOT NULL,
-                                      `value` tinyint(1) DEFAULT NULL,
-                                      PRIMARY KEY (`form_name`,`form_id`,`field_name`)
+CREATE TABLE IF NOT EXISTS `lu_drugTherapyProblemPriority` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) ,
+  `numericValue` int(5) ,
+  `active` bit(1) ,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `lu_drugTherapyProblemPharmacistAction` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) ,
+  `numericValue` int(5) ,
+  `description` varchar(125) ,
+  `active` bit(1) ,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `lu_drugTherapyProblemStatus` (
+  `id` int(11) NOT NULL,
+  `name` varchar(15) ,
+  `numericValue` int(5) ,
+  `active` bit(1) ,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `drugTherapyProblemComment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `comment` text,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `drugTherapyProblemEvent` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `event` varchar(255),
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS ctl_drugTherapyProblemPharmacistAction  (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `dtp_id` int(11) NULL,
+      `dtp_action_id` int(11) NULL,
+      PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `DrugTherapyProblem` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tracker_id` char(36) NOT NULL,
+  `demographic_no` int(11) NOT NULL,
+  `comment_id` int(11) ,
+  `issue_id` int(11) NOT NULL,
+  `event_id` INT(11),
+  `drug_id` int(11) DEFAULT NULL,
+  `DIN` varchar(20) ,
+  `priority_id` int(2) ,
+  `severity_id` int(2) ,
+  `pharmacist_action_id` int(2) ,
+  `probability_id` int(2) ,
+  `status_id` int(2) ,
+  `date_entered` date,
+  `date_identified` datetime ,
+  `date_updated` datetime ,
+  `date_response` datetime ,
+  PRIMARY KEY (`id`),
+  KEY `drugTherapyProblem_id` (`issue_id`),
+  KEY `status_id` (`status_id`),
+  KEY `priority_id` (`priority_id`),
+  KEY `probability_id` (`probability_id`),
+  KEY `pharmacist_action_id` (`pharmacist_action_id`),
+  KEY `severity_id` (`severity_id`),
+  KEY `drug_id` (`drug_id`),
+  KEY `fk_demographic` (`demographic_no`),
+  KEY `comment_id` (`comment_id`),
+  CONSTRAINT `fk_action` FOREIGN KEY (`pharmacist_action_id`) REFERENCES `lu_drugTherapyProblemPharmacistAction` (`id`),
+  CONSTRAINT `fk_comment` FOREIGN KEY (`comment_id`) REFERENCES `drugTherapyProblemComment` (`id`),
+  CONSTRAINT `fk_demographic` FOREIGN KEY (`demographic_no`) REFERENCES `demographic` (`demographic_no`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_drug` FOREIGN KEY (`drug_id`) REFERENCES `drugs` (`drugid`),
+  CONSTRAINT `fk_issue` FOREIGN KEY (`issue_id`) REFERENCES `lu_drugTherapyProblemIssue` (`id`),
+  CONSTRAINT `fk_priority` FOREIGN KEY (`priority_id`) REFERENCES `lu_drugTherapyProblemPriority` (`id`),
+  CONSTRAINT `fk_probability` FOREIGN KEY (`probability_id`) REFERENCES `lu_drugTherapyProblemProbability` (`id`),
+  CONSTRAINT `fk_severity` FOREIGN KEY (`severity_id`) REFERENCES `lu_drugTherapyProblemSeverity` (`id`),
+  CONSTRAINT `fk_status` FOREIGN KEY (`status_id`) REFERENCES `lu_drugTherapyProblemStatus` (`id`),
+  CONSTRAINT `fk_event` FOREIGN KEY (`event_id`) REFERENCES `drugTherapyProblemEvent` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 
-CREATE TABLE IF NOT EXISTS `formRourke2020` (
-                                                `ID` int(10) NOT NULL AUTO_INCREMENT,
-                                                `demographic_no` int(10) DEFAULT NULL,
-                                                `c_male` varchar(2) DEFAULT '',
-                                                `c_female` varchar(2) DEFAULT '',
-                                                `provider_no` varchar(6) DEFAULT NULL,
-                                                `formCreated` date DEFAULT NULL,
-                                                `formEdited` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-                                                `c_lastVisited` char(3) DEFAULT NULL,
-                                                `c_birthRemarks` text DEFAULT NULL,
-                                                `c_riskFactors` text DEFAULT NULL,
-                                                `c_famHistory` text DEFAULT NULL,
-                                                `c_pName` varchar(60) DEFAULT NULL,
-                                                `c_birthDate` date DEFAULT NULL,
-                                                `c_length` varchar(6) DEFAULT NULL,
-                                                `c_headCirc` varchar(6) DEFAULT NULL,
-                                                `c_birthWeight` varchar(7) DEFAULT NULL,
-                                                `c_dischargeWeight` varchar(7) DEFAULT NULL,
-                                                `c_fsa` char(3) DEFAULT NULL,
-                                                `start_of_gestation` date DEFAULT NULL,
-                                                `c_APGAR1min` int(11) DEFAULT NULL,
-                                                `c_APGAR5min` int(11) DEFAULT NULL,
-                                                `p1_date1w` date DEFAULT NULL,
-                                                `p1_date2w` date DEFAULT NULL,
-                                                `p1_date1m` date DEFAULT NULL,
-                                                `p1_ht1w` varchar(5) DEFAULT NULL,
-                                                `p1_wt1w` varchar(5) DEFAULT NULL,
-                                                `p1_hc1w` varchar(5) DEFAULT NULL,
-                                                `p1_ht2w` varchar(5) DEFAULT NULL,
-                                                `p1_wt2w` varchar(5) DEFAULT NULL,
-                                                `p1_hc2w` varchar(5) DEFAULT NULL,
-                                                `p1_ht1m` varchar(5) DEFAULT NULL,
-                                                `p1_wt1m` varchar(5) DEFAULT NULL,
-                                                `p1_hc1m` varchar(5) DEFAULT NULL,
-                                                `p1_pConcern1w` text DEFAULT NULL,
-                                                `p1_pConcern2w` text DEFAULT NULL,
-                                                `p1_pConcern1m` text DEFAULT NULL,
-                                                `p1_development1w` text DEFAULT NULL,
-                                                `p1_development2w` text DEFAULT NULL,
-                                                `p1_development1m` text DEFAULT NULL,
-                                                `p1_problems1w` text DEFAULT NULL,
-                                                `p1_problems2w` text DEFAULT NULL,
-                                                `p1_problems1m` text DEFAULT NULL,
-                                                `p1_signature2w` varchar(250) DEFAULT NULL,
-                                                `p2_date2m` date DEFAULT NULL,
-                                                `p2_date4m` date DEFAULT NULL,
-                                                `p2_date6m` date DEFAULT NULL,
-                                                `p2_ht2m` varchar(5) DEFAULT NULL,
-                                                `p2_wt2m` varchar(5) DEFAULT NULL,
-                                                `p2_hc2m` varchar(5) DEFAULT NULL,
-                                                `p2_ht4m` varchar(5) DEFAULT NULL,
-                                                `p2_wt4m` varchar(5) DEFAULT NULL,
-                                                `p2_hc4m` varchar(5) DEFAULT NULL,
-                                                `p2_ht6m` varchar(5) DEFAULT NULL,
-                                                `p2_wt6m` varchar(5) DEFAULT NULL,
-                                                `p2_hc6m` varchar(5) DEFAULT NULL,
-                                                `p2_pConcern2m` text DEFAULT NULL,
-                                                `p2_pConcern4m` text DEFAULT NULL,
-                                                `p2_pConcern6m` text DEFAULT NULL,
-                                                `p2_nutrition2m` text DEFAULT NULL,
-                                                `p2_nutrition4m` text DEFAULT NULL,
-                                                `p2_development2m` text DEFAULT NULL,
-                                                `p2_development4m` text DEFAULT NULL,
-                                                `p2_development6m` text DEFAULT NULL,
-                                                `p2_problems2m` text DEFAULT NULL,
-                                                `p2_problems4m` text DEFAULT NULL,
-                                                `p2_problems6m` text DEFAULT NULL,
-                                                `p2_signature2m` varchar(250) DEFAULT NULL,
-                                                `p2_signature4m` varchar(250) DEFAULT NULL,
-                                                `p3_date9m` date DEFAULT NULL,
-                                                `p3_date12m` date DEFAULT NULL,
-                                                `p3_date15m` date DEFAULT NULL,
-                                                `p3_ht9m` varchar(5) DEFAULT NULL,
-                                                `p3_wt9m` varchar(5) DEFAULT NULL,
-                                                `p3_hc9m` varchar(5) DEFAULT NULL,
-                                                `p3_ht12m` varchar(5) DEFAULT NULL,
-                                                `p3_wt12m` varchar(5) DEFAULT NULL,
-                                                `p3_hc12m` varchar(5) DEFAULT NULL,
-                                                `p3_ht15m` varchar(5) DEFAULT NULL,
-                                                `p3_wt15m` varchar(5) DEFAULT NULL,
-                                                `p3_hc15m` varchar(5) DEFAULT NULL,
-                                                `p3_pConcern9m` text DEFAULT NULL,
-                                                `p3_pConcern12m` text DEFAULT NULL,
-                                                `p3_pConcern15m` text DEFAULT NULL,
-                                                `p3_nutrition12m` text DEFAULT NULL,
-                                                `p3_nutrition15m` text DEFAULT NULL,
-                                                `p3_development9m` text DEFAULT NULL,
-                                                `p3_development12m` text DEFAULT NULL,
-                                                `p3_development15m` text DEFAULT NULL,
-                                                `p3_problems9m` text DEFAULT NULL,
-                                                `p3_problems12m` text DEFAULT NULL,
-                                                `p3_problems15m` text DEFAULT NULL,
-                                                `p3_signature9m` varchar(250) DEFAULT NULL,
-                                                `p3_signature12m` varchar(250) DEFAULT NULL,
-                                                `p3_signature15m` varchar(250) DEFAULT NULL,
-                                                `p4_date18m` date DEFAULT NULL,
-                                                `p4_date24m` date DEFAULT NULL,
-                                                `p4_date48m` date DEFAULT NULL,
-                                                `p4_ht18m` varchar(5) DEFAULT NULL,
-                                                `p4_wt18m` varchar(5) DEFAULT NULL,
-                                                `p4_hc18m` varchar(5) DEFAULT NULL,
-                                                `p4_ht24m` varchar(5) DEFAULT NULL,
-                                                `p4_wt24m` varchar(5) DEFAULT NULL,
-                                                `p4_hc24m` varchar(5) DEFAULT NULL,
-                                                `p4_ht48m` varchar(5) DEFAULT NULL,
-                                                `p4_bmi24m` varchar(5) DEFAULT NULL,
-                                                `p4_bmi48m` varchar(10) DEFAULT NULL,
-                                                `p4_wt48m` varchar(5) DEFAULT NULL,
-                                                `p4_pConcern18m` text DEFAULT NULL,
-                                                `p4_pConcern24m` text DEFAULT NULL,
-                                                `p4_pConcern48m` text DEFAULT NULL,
-                                                `p4_problems18m` text DEFAULT NULL,
-                                                `p4_problems24m` text DEFAULT NULL,
-                                                `p4_problems48m` text DEFAULT NULL,
-                                                `p4_signature18m` varchar(250) DEFAULT NULL,
-                                                `p4_signature24m` varchar(250) DEFAULT NULL,
-                                                `p4_signature48m` varchar(250) DEFAULT NULL,
-                                                `p1_signature1w` varchar(250) DEFAULT NULL,
-                                                `p1_signature1m` varchar(250) DEFAULT NULL,
-                                                `p2_signature6m` varchar(250) DEFAULT NULL,
-                                                `p1_pNutrition1w` text DEFAULT NULL,
-                                                `p1_pNutrition2w` text DEFAULT NULL,
-                                                `p1_pNutrition1m` text DEFAULT NULL,
-                                                `p1_education1w` text DEFAULT NULL,
-                                                `p1_education2w` text DEFAULT NULL,
-                                                `p1_education1m` text DEFAULT NULL,
-                                                `p1_pPhysical1w` text DEFAULT NULL,
-                                                `p1_pPhysical2w` text DEFAULT NULL,
-                                                `p1_pPhysical1m` text DEFAULT NULL,
-                                                `p1_immunization1w` text DEFAULT NULL,
-                                                `p1_immunization2w` text DEFAULT NULL,
-                                                `p1_immunization1m` text DEFAULT NULL,
-                                                `p2_nutrition6m` text DEFAULT NULL,
-                                                `p2_education2m` text DEFAULT NULL,
-                                                `p2_education4m` text DEFAULT NULL,
-                                                `p2_education6m` text DEFAULT NULL,
-                                                `p2_physical2m` text DEFAULT NULL,
-                                                `p2_physical4m` text DEFAULT NULL,
-                                                `p2_physical6m` text DEFAULT NULL,
-                                                `p2_immunization6m` text DEFAULT NULL,
-                                                `p3_nutrition9m` text DEFAULT NULL,
-                                                `p3_education9m` text DEFAULT NULL,
-                                                `p3_education12m` text DEFAULT NULL,
-                                                `p3_education15m` text DEFAULT NULL,
-                                                `p3_physical9m` text DEFAULT NULL,
-                                                `p3_physical12m` text DEFAULT NULL,
-                                                `p3_physical15m` text DEFAULT NULL,
-                                                `p4_nutrition18m` text DEFAULT NULL,
-                                                `p4_nutrition24m` text DEFAULT NULL,
-                                                `p4_nutrition48m` text DEFAULT NULL,
-                                                `p4_education18m` text DEFAULT NULL,
-                                                `p4_education24m` text DEFAULT NULL,
-                                                `p4_education48m` text DEFAULT NULL,
-                                                `p4_development18m` text DEFAULT NULL,
-                                                `p4_development24m` text DEFAULT NULL,
-                                                `p4_development48m` text DEFAULT NULL,
-                                                `p4_development36m` text DEFAULT NULL,
-                                                `p4_development60m` text DEFAULT NULL,
-                                                `p4_physical18m` text DEFAULT NULL,
-                                                `p4_physical24m` text DEFAULT NULL,
-                                                `p4_physical48m` text DEFAULT NULL,
-                                                `p4_nippisingattained` text DEFAULT NULL,
-                                                `p5_1GiveDtRota` date DEFAULT NULL,
-                                                `p5_1ExpDtRota` date DEFAULT NULL,
-                                                `p5_1InjeRota` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNRota` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialRota` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsRota` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtHib` date DEFAULT NULL,
-                                                `p5_1ExpDtHib` date DEFAULT NULL,
-                                                `p5_1InjeHib` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNHib` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialHib` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsHib` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtPneu` date DEFAULT NULL,
-                                                `p5_1ExpDtPneu` date DEFAULT NULL,
-                                                `p5_1InjePneu` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNPneu` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialPneu` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsPneu` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtMenCon` date DEFAULT NULL,
-                                                `p5_1ExpDtMenCon` date DEFAULT NULL,
-                                                `p5_1InjeMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtHepa` date DEFAULT NULL,
-                                                `p5_1ExpDtHepa` date DEFAULT NULL,
-                                                `p5_1InjeHepa` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNHepa` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialHepa` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsHepa` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtMMR` date DEFAULT NULL,
-                                                `p5_1ExpDtMMR` date DEFAULT NULL,
-                                                `p5_1InjeMMR` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNMMR` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialMMR` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsMMR` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtVaricella` date DEFAULT NULL,
-                                                `p5_1ExpDtVaricella` date DEFAULT NULL,
-                                                `p5_1InjeVaricella` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNVaricella` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialVaricella` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsVaricella` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtdTapIpv` date DEFAULT NULL,
-                                                `p5_1ExpDtdTapIpv` date DEFAULT NULL,
-                                                `p5_1InjeDTaPIpv` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNDTaPIpv` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialDTaPIpv` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsDTaPIpv` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtdTap` date DEFAULT NULL,
-                                                `p5_1ExpDtdTap` date DEFAULT NULL,
-                                                `p5_1InjeDTap` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNDTap` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialDTap` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsDTap` varchar(255) DEFAULT NULL,
-                                                `p5_1NaciInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtInfluenza` date DEFAULT NULL,
-                                                `p5_1ExpDtInfluenza` date DEFAULT NULL,
-                                                `p5_1InjeInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtHpv` date DEFAULT NULL,
-                                                `p5_1ExpDtHpv` date DEFAULT NULL,
-                                                `p5_1InjeHPV` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNHPV` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialHPV` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsHPV` varchar(255) DEFAULT NULL,
-                                                `p5_1GiveDtOther` date DEFAULT NULL,
-                                                `p5_1ExpDtOther` date DEFAULT NULL,
-                                                `p5_1InjeOther` varchar(255) DEFAULT NULL,
-                                                `p5_1LotNOther` varchar(255) DEFAULT NULL,
-                                                `p5_1InitialOther` varchar(255) DEFAULT NULL,
-                                                `p5_1CommentsOther` varchar(255) DEFAULT NULL,
-                                                `p5_1NaciOther` varchar(255) DEFAULT NULL,
-                                                `p5_2GiveDtRota` date DEFAULT NULL,
-                                                `p5_2ExpDtRota` date DEFAULT NULL,
-                                                `p5_2InjeRota` varchar(255) DEFAULT NULL,
-                                                `p5_2LotNRota` varchar(255) DEFAULT NULL,
-                                                `p5_2InitialRota` varchar(255) DEFAULT NULL,
-                                                `p5_2CommentsRota` varchar(255) DEFAULT NULL,
-                                                `p5_2GiveDtHib` date DEFAULT NULL,
-                                                `p5_2ExpDtHib` date DEFAULT NULL,
-                                                `p5_2InjeHib` varchar(255) DEFAULT NULL,
-                                                `p5_2LotNHib` varchar(255) DEFAULT NULL,
-                                                `p5_2InitialHib` varchar(255) DEFAULT NULL,
-                                                `p5_2CommentsHib` varchar(255) DEFAULT NULL,
-                                                `p5_2GiveDtPneu` date DEFAULT NULL,
-                                                `p5_2ExpDtPneu` date DEFAULT NULL,
-                                                `p5_2InjePneu` varchar(255) DEFAULT NULL,
-                                                `p5_2LotNPneu` varchar(255) DEFAULT NULL,
-                                                `p5_2InitialPneu` varchar(255) DEFAULT NULL,
-                                                `p5_2CommentsPneu` varchar(255) DEFAULT NULL,
-                                                `p5_2GiveDtMenCon` date DEFAULT NULL,
-                                                `p5_2ExpDtMenCon` date DEFAULT NULL,
-                                                `p5_2InjeMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_2LotNMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_2InitialMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_2CommentsMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_2GiveDtHepa` date DEFAULT NULL,
-                                                `p5_2ExpDtHepa` date DEFAULT NULL,
-                                                `p5_2InjeHepa` varchar(255) DEFAULT NULL,
-                                                `p5_2LotNHepa` varchar(255) DEFAULT NULL,
-                                                `p5_2InitialHepa` varchar(255) DEFAULT NULL,
-                                                `p5_2CommentsHepa` varchar(255) DEFAULT NULL,
-                                                `p5_2GiveDtMMR` date DEFAULT NULL,
-                                                `p5_2ExpDtMMR` date DEFAULT NULL,
-                                                `p5_2InjeMMR` varchar(255) DEFAULT NULL,
-                                                `p5_2LotNMMR` varchar(255) DEFAULT NULL,
-                                                `p5_2InitialMMR` varchar(255) DEFAULT NULL,
-                                                `p5_2CommentsMMR` varchar(255) DEFAULT NULL,
-                                                `p5_2GiveDtVaricella` date DEFAULT NULL,
-                                                `p5_2ExpDtVaricella` date DEFAULT NULL,
-                                                `p5_2InjeVaricella` varchar(255) DEFAULT NULL,
-                                                `p5_2LotNVaricella` varchar(255) DEFAULT NULL,
-                                                `p5_2InitialVaricella` varchar(255) DEFAULT NULL,
-                                                `p5_2CommentsVaricella` varchar(255) DEFAULT NULL,
-                                                `p5_2NaciInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_2GiveDtInfluenza` date DEFAULT NULL,
-                                                `p5_2ExpDtInfluenza` date DEFAULT NULL,
-                                                `p5_2InjeInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_2LotNInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_2InitialInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_2CommentsInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_2GiveDtHpv` date DEFAULT NULL,
-                                                `p5_2ExpDtHpv` date DEFAULT NULL,
-                                                `p5_2InjeHPV` varchar(255) DEFAULT NULL,
-                                                `p5_2LotNHPV` varchar(255) DEFAULT NULL,
-                                                `p5_2InitialHPV` varchar(255) DEFAULT NULL,
-                                                `p5_2CommentsHPV` varchar(255) DEFAULT NULL,
-                                                `p5_3GiveDtRota` date DEFAULT NULL,
-                                                `p5_3ExpDtRota` date DEFAULT NULL,
-                                                `p5_3InjeRota` varchar(255) DEFAULT NULL,
-                                                `p5_3LotNRota` varchar(255) DEFAULT NULL,
-                                                `p5_3InitialRota` varchar(255) DEFAULT NULL,
-                                                `p5_3CommentsRota` varchar(255) DEFAULT NULL,
-                                                `p5_3GiveDtHib` date DEFAULT NULL,
-                                                `p5_3ExpDtHib` date DEFAULT NULL,
-                                                `p5_3InjeHib` varchar(255) DEFAULT NULL,
-                                                `p5_3LotNHib` varchar(255) DEFAULT NULL,
-                                                `p5_3InitialHib` varchar(255) DEFAULT NULL,
-                                                `p5_3CommentsHib` varchar(255) DEFAULT NULL,
-                                                `p5_3GiveDtPneu` date DEFAULT NULL,
-                                                `p5_3ExpDtPneu` date DEFAULT NULL,
-                                                `p5_3InjePneu` varchar(255) DEFAULT NULL,
-                                                `p5_3LotNPneu` varchar(255) DEFAULT NULL,
-                                                `p5_3InitialPneu` varchar(255) DEFAULT NULL,
-                                                `p5_3CommentsPneu` varchar(255) DEFAULT NULL,
-                                                `p5_3GiveDtMenCon` date DEFAULT NULL,
-                                                `p5_3ExpDtMenCon` date DEFAULT NULL,
-                                                `p5_3InjeMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_3LotNMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_3InitialMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_3CommentsMenCon` varchar(255) DEFAULT NULL,
-                                                `p5_3GiveDtHepa` date DEFAULT NULL,
-                                                `p5_3ExpDtHepa` date DEFAULT NULL,
-                                                `p5_3InjeHepa` varchar(255) DEFAULT NULL,
-                                                `p5_3LotNHepa` varchar(255) DEFAULT NULL,
-                                                `p5_3InitialHepa` varchar(255) DEFAULT NULL,
-                                                `p5_3CommentsHepa` varchar(255) DEFAULT NULL,
-                                                `p5_3NaciInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_3GiveDtInfluenza` date DEFAULT NULL,
-                                                `p5_3ExpDtInfluenza` date DEFAULT NULL,
-                                                `p5_3InjeInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_3LotNInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_3InitialInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_3CommentsInfluenza` varchar(255) DEFAULT NULL,
-                                                `p5_3GiveDtHpv` date DEFAULT NULL,
-                                                `p5_3ExpDtHpv` date DEFAULT NULL,
-                                                `p5_3InjeHPV` varchar(255) DEFAULT NULL,
-                                                `p5_3LotNHPV` varchar(255) DEFAULT NULL,
-                                                `p5_3InitialHPV` varchar(255) DEFAULT NULL,
-                                                `p5_3CommentsHPV` varchar(255) DEFAULT NULL,
-                                                `p5_4GiveDtHib` date DEFAULT NULL,
-                                                `p5_4ExpDtHib` date DEFAULT NULL,
-                                                `p5_4InjeHib` varchar(255) DEFAULT NULL,
-                                                `p5_4LotNHib` varchar(255) DEFAULT NULL,
-                                                `p5_4InitialHib` varchar(255) DEFAULT NULL,
-                                                `p5_4CommentsHib` varchar(255) DEFAULT NULL,
-                                                `p5_4GiveDtPneu` date DEFAULT NULL,
-                                                `p5_4ExpDtPneu` date DEFAULT NULL,
-                                                `p5_4InjePneu` varchar(255) DEFAULT NULL,
-                                                `p5_4LotNPneu` varchar(255) DEFAULT NULL,
-                                                `p5_4InitialPneu` varchar(255) DEFAULT NULL,
-                                                `p5_4CommentsPneu` varchar(255) DEFAULT NULL,
-                                                `archived` tinyint(1) NOT NULL DEFAULT 0,
-                                                PRIMARY KEY (`ID`),
-                                                KEY `formRourke2020_demographic_no` (`demographic_no`)
- ) ENGINE = ARIA DEFAULT CHARSET=latin1;
 
-INSERT INTO `encounterForm`(`form_name`, `form_value`, `form_table`, `hidden`) VALUES ('Rourke2017', '../form/formrourke2017complete.jsp?demographic_no=', 'formRourke2017', 38);
-INSERT INTO `encounterForm`(`form_name`, `form_value`, `form_table`, `hidden`) VALUES ('Rourke2020', '../form/formrourke2020complete.jsp?demographic_no=', 'formRourke2020', 0);
-
---
--- Table structure for table `billing_preferences`
---
--- Stores data about a users billing preferences
--- Shares a one to one relation with the provider table
-CREATE TABLE IF NOT EXISTS billing_preferences (
-  id int(10) unsigned NOT NULL auto_increment,
-  referral int(10) unsigned NOT NULL default '0',
-  providerNo int(10) unsigned NOT NULL default '0',
-  defaultPayeeNo varchar(11) NOT NULL default '0',
-  PRIMARY KEY  (id)
-) ;
-
---
--- Table structure for table `erefer_attachment` and `erefer_attachment_data`
---
--- Stores Ocean eRefer attachment data
-CREATE TABLE IF NOT EXISTS erefer_attachment (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    demographic_no INT,
-    created DATETIME,
-    archived BOOLEAN DEFAULT FALSE
-);
-
-CREATE TABLE IF NOT EXISTS erefer_attachment_data (
-    erefer_attachment_id INT,
-    lab_id INT,
-    lab_type VARCHAR(20),
-    PRIMARY KEY(erefer_attachment_id, lab_id, lab_type)
-);
-
-
--- Stores EmailLog and EmailConfig data
-CREATE TABLE IF NOT EXISTS emailConfig (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    emailType VARCHAR(20),
-    emailProvider VARCHAR(20),
-    active BOOLEAN DEFAULT FALSE,  -- Set default to false
-    senderFirstName VARCHAR(50),
-    senderLastName VARCHAR(50),
-    senderEmail VARCHAR(255),
-    configDetails VARCHAR(1000)
-);
-CREATE TABLE IF NOT EXISTS emailLog (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    configId BIGINT,
-    fromEmail VARCHAR(255),
-    toEmail VARCHAR(255),
-    subject VARCHAR(1024),
-    body BLOB,
-    status VARCHAR(20),
-    errorMessage VARCHAR(1000),
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    encryptedMessage BLOB,
-    password VARCHAR(50),
-    passwordClue VARCHAR(1024),
-    isEncrypted BOOLEAN DEFAULT FALSE,  -- Set default to false
-    isAttachmentEncrypted BOOLEAN DEFAULT FALSE,  -- Set default to false
-    chartDisplayOption VARCHAR(20),
-    transactionType VARCHAR(20),
-    demographicNo INT,
-    providerNo varchar(6),
-    additionalParams VARCHAR(1000),
-    FOREIGN KEY (configId) REFERENCES emailConfig (id)
-);
-CREATE TABLE IF NOT EXISTS emailAttachment (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    logId BIGINT,
-    fileName VARCHAR(100),
-    filePath VARCHAR(500),
-    documentType VARCHAR(20),
-    documentId INT,
-    FOREIGN KEY (logId) REFERENCES emailLog (id)
-);
-
-CREATE TABLE IF NOT EXISTS specialty (
-  region varchar(5) default '',
-  specialty char(2) default '',
-  specialtydesc varchar(100) default ''
-);
