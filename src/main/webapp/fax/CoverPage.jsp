@@ -226,7 +226,7 @@
 							  <select class="form-control" name="senderFaxNumber"  id="senderFaxAccount">
 									<c:forEach items="${ accounts }" var="account">
 							    		<option value="${ account.faxNumber }" ${ account.faxNumber eq letterheadFax or account.faxNumber eq param.letterheadFax ? 'selected' : '' } >
-							    			<c:out value="${ account.senderEmail }"/> <c:out value="(${ account.faxNumber })"/>
+							    			<c:out value="${ account.accountName }"/> <c:out value="(${ account.faxNumber })"/>
 							    		</option>
 									</c:forEach>
 							  </select>

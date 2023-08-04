@@ -76,6 +76,7 @@ public class ConfigureFaxAction extends DispatchAction {
 			String[] activeState = request.getParameterValues("activeState");
 			String[] faxNumbers = request.getParameterValues("faxNumber");
 			String[] senderEmails = request.getParameterValues("senderEmail");
+			String[] accountNames = request.getParameterValues("accountName");
 		
 			Integer id;
 			int savedidx;
@@ -120,6 +121,7 @@ public class ConfigureFaxAction extends DispatchAction {
 						savedFaxConfig.setFaxNumber(faxNumber);
 						savedFaxConfig.setSenderEmail(senderEmails[idx]);
 						savedFaxConfig.setQueue(Integer.parseInt(inboxQueues[idx]));
+						savedFaxConfig.setAccountName(accountNames[idx]);
 						savedFaxConfig.setActive(Boolean.parseBoolean(activeState[idx]));
 						faxConfigList.add(savedFaxConfig);
 					}
@@ -141,6 +143,7 @@ public class ConfigureFaxAction extends DispatchAction {
 						faxConfig.setFaxNumber(faxNumbers[idx]);
 						faxConfig.setSenderEmail(senderEmails[idx]);
 						faxConfig.setQueue(Integer.parseInt(inboxQueues[idx]));
+						faxConfig.setAccountName(accountNames[idx]);
 						faxConfig.setActive( Boolean.parseBoolean(activeState[idx]));
 						faxConfigList.add(faxConfig);
 					}

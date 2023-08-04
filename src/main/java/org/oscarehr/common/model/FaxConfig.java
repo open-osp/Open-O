@@ -218,6 +218,10 @@ public class FaxConfig extends AbstractModel<Integer> {
 	}
 
 	public String getAccountName() {
+		if(accountName == null || accountName.isEmpty()) {
+			return getFaxUser();
+		}
+
 		return accountName;
 	}
 
