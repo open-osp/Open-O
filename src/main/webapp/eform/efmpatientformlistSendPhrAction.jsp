@@ -37,7 +37,7 @@ ArrayList<String> newDocIds=bean.sendEFormsToPhr(s);
 
 StringBuilder sb=new StringBuilder();
 sb.append(request.getContextPath());
-sb.append("/dms/SendDocToPhr.do?demoId=");
+sb.append("/documentManager/SendDocToPhr.do?demoId=");
 sb.append(clientId);
 
 for (String docId : newDocIds)

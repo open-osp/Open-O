@@ -73,8 +73,10 @@ public class SearchProviderAutoCompleteAction extends DispatchAction{
     	String firstName, lastName;
     	
     	if( searchStr.indexOf(",") != -1 ) {
-    		String[] searchParams = searchStr.split(",");
-    		lastName = searchParams[0].trim();
+			String[] searchParams = searchStr.split(",",-1);
+				//note - the -1 is added because split discards a last empty string by default, so "smith,".split(",") returns ["smith"], not ["smith",""].  
+				//adding the -1 causes split to return the 2 element array in this situation, to avoid an index out of bounds error when setting the firstName		
+			lastName = searchParams[0].trim();
     		firstName = searchParams[1].trim();
     	}
     	else {

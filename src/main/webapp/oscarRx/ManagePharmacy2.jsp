@@ -26,9 +26,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ page
-	import="oscar.oscarRx.pageUtil.*,oscar.oscarRx.data.*,java.util.*"%>
-	
+
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
 	String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -42,12 +40,128 @@
 	if(!authed) {
 		return;
 	}
-%>
 
+	String type = request.getParameter("type");
+%>
+<!DOCTYPE HTML>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+
+<script type="text/javascript">
+<%
+ if (request.getParameter("ID") != null && type != null && type.equals("Edit")){ %>
+	$(function() {
+		var data = "pharmacyId=<%=request.getParameter("ID")%>";
+		$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=getPharmacyInfo",
+				  data, function( data ) {
+			if(data.name) {
+			  $('#pharmacyId').val(<%=request.getParameter("ID")%>);
+			  $('#pharmacyName').val(data.name);
+			  $('#pharmacyAddress').val(data.address);
+			  $('#pharmacyCity').val(data.city);
+			  $('#pharmacyProvince').val(data.province);
+			  $('#pharmacyPostalCode').val(data.postalCode);
+			  $('#pharmacyPhone1').val(data.phone1);
+			  $('#pharmacyPhone2').val(data.phone2);
+			  $('#pharmacyFax').val(data.fax);
+			  $('#pharmacyEmail').val(data.email);
+			  $('#pharmacyServiceLocationId').val(data.serviceLocationIdentifier);
+			  $('#pharmacyNotes').val(data.notes);
+			}
+			else {
+				alert("Unable to retrieve pharmacy information");
+			}
+		},"json");
+	});
+<% } %>
+  function savePharmacy() {
+	var typeName = (new URLSearchParams(window.location.search)).get('type')
+	if (typeName != null && typeName.toLowerCase() == "edit") {
+		const saveWarningStr = "WARNING - you are about to edit a pharmacy's entry in the clinic's database. Any changes will automatically apply to all patients who already have this pharmacy as a preferred pharmacy.\n\nOnly proceed if you are absolutely sure. Type \"yes\" in the box below to proceed.";
+		const userInput = prompt(saveWarningStr);
+		if (userInput == null || userInput.toLowerCase() != "yes") {
+			alert("This pharmacy's entry has not been edited because you did not type \"yes\" in the previous box.");
+			return false;
+		}
+	}
+	  if( !isFaxNumberCorrect() ) {   return false;  }
+
+	  if( $("#pharmacyId").val() != null && $("#pharmacyId").val() != "" ) {
+
+		  var data = $("#pharmacyForm").serialize();
+		  $.post("<%=request.getContextPath() + "/oscarRx/managePharmacy.do?method=save"%>",
+			  data, function( data ) {
+		      	if( data.id ) {
+					parent.location.reload();
+		      	}
+		      	else {
+		      	    alert("There was a problem saving your record");
+		      	}
+		  }, "json"	);
+	  }
+	  else {
+		  addPharmacy();
+	  }
+
+	  return false;
+  }
+
+  function addPharmacy() {
+
+	  if( $("#pharmacyName").val() == "" ) {
+		  alert("Please fill in the name of a pharmacy");
+		  return false;
+	  }
+
+	  var data = $("#pharmacyForm").serialize();
+	  $.post("<%=request.getContextPath() + "/oscarRx/managePharmacy.do?method=add"%>",
+			  data, function( data ) {
+				if( data.success ) {
+					parent.location.reload();
+				}
+				else {
+					alert("There was an error saving your Pharmacy");
+				}
+			},
+			"json"
+		);
+  }
+
+  function isFaxNumberCorrect() {
+
+	  var faxNumber = $("#pharmacyFax").val().trim();
+	  var isCorrect = false;
+
+	  if(faxNumber.split("-").join("").length == 12){
+          isCorrect = faxNumber.match(/^1?\s?\(?[9]{1}\)?[\-\s]?[1|9]{1}\)?[\-\s]?[0-9]{3}\)?[\-\s]?[0-9]{3}[\-\s]?[0-9]{4}$/);
+	  } else if (faxNumber.split("-").join("").length == 11){
+	      isCorrect = faxNumber.match(/^1?\s?\(?[1|9]{1}\)?[\-\s]?[0-9]{3}\)?[\-\s]?[0-9]{3}[\-\s]?[0-9]{4}$/);
+	  } else if (faxNumber.split("-").join("").length == 10){
+	      isCorrect = faxNumber.match(/^1?\s?\(?[0-9]{3}\)?[\-\s]?[0-9]{3}[\-\s]?[0-9]{4}$/)
+	  }
+
+	  if(!isCorrect) {
+
+	  	alert("Fax number REQUIRED, in the following formats:" +
+			"\n###-###-#### " +
+			"\n1-###-###-###" +
+			"\n9-###-###-####" +
+			"\n9-1-###-###-####" +
+			"\n9-9-###-###-####");
+	  	setTimeout( function() {
+	  			$("#pharmacyFax").focus();
+	  	},1);
+
+ 	  }
+
+	  return isCorrect;
+  }
+
+</script>
 <title><bean:message key="ManagePharmacy.title" /></title>
+<script src="<%=request.getContextPath()%>/JavaScriptServlet" type="text/javascript"></script>
 <html:base />
 
 <logic:notPresent name="RxSessionBean" scope="session">
@@ -60,18 +174,7 @@
 		<logic:redirect href="error.html" />
 	</logic:equal>
 </logic:present>
-
-<%
-oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean");
-
-if (request.getParameter("ID") != null && request.getParameter("type")!=null && request.getParameter("type").equals("Delete")){
-	RxPharmacyData rxp = new RxPharmacyData();
-	rxp.deletePharmacy(request.getParameter("ID"));
-	response.sendRedirect(request.getContextPath() + "/oscarRx/SelectPharmacy2.jsp");
-	return;
-}
-%>
-
+<% oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean"); %>
 <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body topmargin="0" leftmargin="0" vlink="#0000FF">
@@ -79,30 +182,16 @@ if (request.getParameter("ID") != null && request.getParameter("type")!=null && 
 <table border="0" cellpadding="0" cellspacing="0"
 	style="border-collapse: collapse" bordercolor="#111111" width="100%"
 	id="AutoNumber1" height="100%">
-	<%@ include file="TopLinks.jsp"%><!-- Row One included here-->
 	<tr>
-		<%@ include file="SideLinksNoEditFavorites2.jsp"%><!-- <td></td>Side Bar File --->
-		<td width="100%" style="border-left: 2px solid #A9A9A9;" height="100%"
-			valign="top">
+		<td width="100%" height="100%"
+			valign="top" colspan="2">
 		<table cellpadding="0" cellspacing="2"
 			style="border-collapse: collapse" bordercolor="#111111" width="100%"
 			height="100%">
-			<tr>
-				<td width="0%" valign="top">
-				<div class="DivCCBreadCrumbs"><a href="SearchDrug3.jsp"> <bean:message
-					key="SearchDrug.title" /></a></div>
-				</td>
-			</tr>
 			<!----Start new rows here-->
 			<tr>
 				<td>
-				<div class="DivContentTitle"><bean:message
-					key="ManagePharmacy.title" /></div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-				<div class="DivContentSectionHead">
+				<div class="DivContentSectionHead" style="height:8px; text-indent: 10px">
 				<% if (request.getParameter("ID") ==  null){ %> <bean:message
 					key="ManagePharmacy.subTitle.add" /> <%}else{%> <bean:message
 					key="ManagePharmacy.subTitle.update" /> <%}%>
@@ -110,107 +199,75 @@ if (request.getParameter("ID") != null && request.getParameter("type")!=null && 
 				</td>
 			</tr>
 			<tr>
-				<td><html:form action="/oscarRx/managePharmacy2">
-					<%
-                            if (request.getParameter("ID") != null){
-                               RxManagePharmacyForm frm = (RxManagePharmacyForm) request.getAttribute("RxManagePharmacyForm");
-                               String ID = request.getParameter("ID");
-                               RxPharmacyData pharmacy = new RxPharmacyData();
-                               org.oscarehr.common.model.PharmacyInfo ph = pharmacy.getPharmacy(ID);
-                               frm.setID(ID);
-                               frm.setAddress(ph.getAddress());
-                               frm.setCity(ph.getCity());
-                               frm.setEmail(ph.getEmail());
-                               frm.setFax(ph.getFax());
-                               frm.setName(ph.getName());
-                               frm.setNotes(ph.getNotes());
-                               frm.setPhone1(ph.getPhone1());
-                               frm.setPhone2(ph.getPhone2());
-                               frm.setPostalCode(ph.getPostalCode());
-                               frm.setProvince(ph.getProvince());
-                               frm.setServiceLocationIdentifier(ph.getServiceLocationIdentifier());
-                            }%>
+				<td><form id="pharmacyForm">
 					<table>
 						<tr>
 							<td>
-							<%String type = request.getParameter("type"); %>
-                            <html:hidden property="pharmacyAction" value="<%=type%>"/>
-							<html:hidden property="pharmacyAction" value="<%=type%>" />
-								 <html:hidden property="ID" /> <bean:message
-								key="ManagePharmacy.txtfld.label.pharmacyName" /> :</td>
-							<td><html:text property="name" /></td>
+							<input type="hidden" id="pharmacyId" name="pharmacyId"/>
+							<input type="hidden" id="demographicNo" name="demographicNo" value="<%=bean.getDemographicNo()%>"/>
+							<bean:message key="ManagePharmacy.txtfld.label.pharmacyName" /> :</td>
+							<td><input type="text" id="pharmacyName" name="pharmacyName" /></td>
 						</tr>
 						<tr>
 							<td><bean:message key="ManagePharmacy.txtfld.label.address" />
 							:</td>
-							<td><html:text property="address" /></td>
+							<td><input type="text" id="pharmacyAddress" name="pharmacyAddress" /></td>
 						</tr>
 						<tr>
 							<td><bean:message key="ManagePharmacy.txtfld.label.city" />
 							:</td>
-							<td><html:text property="city" /></td>
+							<td><input type="text" id="pharmacyCity" name="pharmacyCity" /></td>
 						</tr>
 						<tr>
 							<td><bean:message key="ManagePharmacy.txtfld.label.province" />
 							:</td>
-							<td><html:text property="province" /></td>
+							<td><input type="text" id="pharmacyProvince" name="pharmacyProvince" /></td>
 						</tr>
 						<tr>
 							<td><bean:message
 								key="ManagePharmacy.txtfld.label.postalCode" /> :</td>
-							<td><html:text property="postalCode" /></td>
+							<td><input type="text" id="pharmacyPostalCode" name="pharmacyPostalCode" /></td>
 						</tr>
 						<tr>
 							<td><bean:message key="ManagePharmacy.txtfld.label.phone1" />
 							:</td>
-							<td><html:text property="phone1" /></td>
+							<td><input type="text" id="pharmacyPhone1" name="pharmacyPhone1" /></td>
 						</tr>
 						<tr>
 							<td><bean:message key="ManagePharmacy.txtfld.label.phone2" />
 							:</td>
-							<td><html:text property="phone2" /></td>
+							<td><input type="text" id="pharmacyPhone2" name="pharmacyPhone2" /></td>
 						</tr>
 						<tr>
 							<td><bean:message key="ManagePharmacy.txtfld.label.fax" /> :
 							</td>
-							<td><html:text property="fax" /></td>
+							<td><input type="text" id="pharmacyFax" name="pharmacyFax" /></td>
 						</tr>
 						<tr>
 							<td><bean:message key="ManagePharmacy.txtfld.label.email" />
 							:</td>
-							<td><html:text property="email" /></td>
+							<td><input type="text" id="pharmacyEmail" name="pharmacyEmail" /></td>
 						</tr>
-                                                <tr>
-                                                    <td><bean:message key="ManagePharmacy.txtfld.label.serviceLocationIdentifier" /> :
-                                                    </td>
-                                                    <td><html:text property="serviceLocationIdentifier" /></td>
-                                                </tr>
+						<tr>
+							<td><bean:message key="ManagePharmacy.txtfld.label.serviceLocationIdentifier" /> :
+							</td>
+							<td><input type="text" id="pharmacyServiceLocationId" name="pharmacyServiceLocationId" /></td>
+						</tr>
 
 						<tr>
-							<td colspan="2"><bean:message
+							<td><bean:message
 								key="ManagePharmacy.txtfld.label.notes" /> :</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><html:textarea property="notes" /></td>
+							<td><textarea id="pharmacyNotes" name="pharmacyNotes" rows="4"></textarea></td>
 						</tr>
 
 						<tr>
-                                                    <td><input type="submit"
+                                                    <td><input type="button" onclick="savePharmacy();"
 								value="<bean:message key="ManagePharmacy.submitBtn.label.submit"/>" />
 							</td>
 						</tr>
 					</table>
-				</html:form></td>
-			</tr>
-
-			<tr>
-				<td>
-				<%
-                        String sBack="SearchDrug3.jsp";
-                      %> <input type=button class="ControlPushButton"
-					onclick="javascript:window.location.href='<%=sBack%>';"
-					value="Back to Search Drug" /></td>
+				</form>
+				</td>
 			</tr>
 			<!----End new rows here-->
 			<tr height="100%">
@@ -218,19 +275,6 @@ if (request.getParameter("ID") != null && request.getParameter("type")!=null && 
 			</tr>
 		</table>
 		</td>
-	</tr>
-	<tr>
-		<td height="0%"
-			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-		<td height="0%"
-			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-	</tr>
-	<tr>
-		<td width="100%" height="0%" colspan="2">&nbsp;</td>
-	</tr>
-	<tr>
-		<td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
-			colspan="2"></td>
 	</tr>
 </table>
 

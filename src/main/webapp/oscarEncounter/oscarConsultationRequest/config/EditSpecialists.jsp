@@ -1,4 +1,4 @@
-<%--
+<%@ page import="org.owasp.encoder.Encode" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -42,6 +42,8 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+
+<!DOCTYPE html>
 <html:html locale="true">
 <jsp:useBean id="displayServiceUtil" scope="request"
 	class="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConDisplayServiceUtil" />
@@ -49,25 +51,35 @@ if(!authed) {
 displayServiceUtil.estSpecialistVector();
 %>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+
 <title><bean:message
 	key="oscarEncounter.oscarConsultationRequest.config.EditSpecialists.title" />
 </title>
+	<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <html:base />
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-</head>
-<script language="javascript">
-function BackToOscar()
-{
-       window.close();
-}
-</script>
-<link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
-<body class="BodyStyle" vlink="#0000FF">
+	<script language="javascript">
+		function BackToOscar()
+		{
+			window.close();
+		}
+	</script>
+	<link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
 
+</head>
+
+<body class="BodyStyle" vlink="#0000FF">
+<jsp:include page="../../../images/spinner.jsp" flush="true"/>
+<script>
+	ShowSpin(true);
+	document.onreadystatechange = function () {
+		if (document.readyState === "interactive") {
+			HideSpin();
+		}
+	}
+</script>
 <html:errors />
-<!--  -->
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
+<div id="service-providers-wrapper" style="margin:auto 10px;">
+<table class="MainTable" id="scrollNumber1" >
 	<tr class="MainTableTopRow">
 		<td class="MainTableTopRowLeftColumn">Consultation</td>
 		<td class="MainTableTopRowRightColumn">
@@ -88,24 +100,19 @@ function BackToOscar()
 		</td>
 		<td class="MainTableRightColumn">
 		<table cellpadding="0" cellspacing="2"
-			style="border-collapse: collapse" bordercolor="#111111" width="100%"
-			height="100%">
+			style="border-collapse: collapse" bordercolor="#111111" width="100%">
 
 			<!----Start new rows here-->
 			<tr>
-                            <td><%--bean:message
-					key="oscarEncounter.oscarConsultationRequest.config.EditSpecialists.msgCheckOff" /--%><br>
+                            <td>
 				<bean:message
 					key="oscarEncounter.oscarConsultationRequest.config.EditSpecialists.msgClickOn" /><br>
-
 
 				</td>
 			</tr>
 			<tr>
 				<td><html:form action="/oscarEncounter/EditSpecialists">
-					<%-- input type="submit" name="delete"
-						value="<bean:message key="oscarEncounter.oscarConsultationRequest.config.EditSpecialists.btnDeleteSpecialist"/>"--%>
-					<div class="ChooseRecipientsBox1">
+
 					<table>
 						<tr>
 							<th>&nbsp;</th>
@@ -123,8 +130,7 @@ function BackToOscar()
 							</th>
 
 						</tr>
-						<tr>
-							<td><!--<div class="ChooseRecipientsBox1">--> <%
+						<%
 
                                  for(int i=0;i < displayServiceUtil.specIdVec.size(); i++){
                                  String  specId     = displayServiceUtil.specIdVec.elementAt(i);
@@ -142,26 +148,21 @@ function BackToOscar()
 							<td>
 							<%
                                       out.print("<a href=\"../../EditSpecialists.do?specId="+specId+"\"/>");
-                                      out.print(lName+" "+fName+" "+(proLetters==null?"":proLetters));
+                                      out.print(Encode.forHtmlContent(lName+" "+fName+" "+(proLetters==null?"":proLetters)));
                                       out.print("</a>");
                                     %>
 							</td>
-							<td><%=address %></td>
-							<td><%=phone%></td>
-							<td><%=fax%></td>
+							<td><%=Encode.forHtmlContent(address) %></td>
+							<td><%=Encode.forHtmlContent(phone)%></td>
+							<td><%=Encode.forHtmlContent(fax)%></td>
 						</tr>
 						<% }%>
-						</td>
-						</tr>
+
 					</table>
-					</div>
+
 				</html:form></td>
 			</tr>
-			<!----End new rows here-->
 
-			<tr height="100%">
-				<td></td>
-			</tr>
 		</table>
 		</td>
 	</tr>
@@ -170,5 +171,6 @@ function BackToOscar()
 		<td class="MainTableBottomRowRightColumn"></td>
 	</tr>
 </table>
+</div>
 </body>
 </html:html>

@@ -31,8 +31,6 @@ import javax.persistence.Query;
 import org.oscarehr.common.dao.AbstractDao;
 import org.springframework.stereotype.Repository;
 
-import oscar.util.ConversionUtils;
-
 /**
  * 
  * Responsible for CRUD operation a user Billing Module Preferences
@@ -49,8 +47,8 @@ public class BillingPreferencesDAO extends AbstractDao<BillingPreference> {
 
 	@SuppressWarnings("unchecked")
 	public BillingPreference getUserBillingPreference(String providerNo) {
-		Query query = createQuery("bp", "bp.providerNo = :providerNo ORDER BY bp.id DESC LIMIT 1");
-		query.setParameter("providerNo", ConversionUtils.fromIntString(providerNo));
+		Query query = createQuery("bp", "bp.providerNo = :providerNo");
+		query.setParameter("providerNo", providerNo);
 
 		List<BillingPreference> prefs = query.getResultList();
 		if (prefs.isEmpty()) return null;

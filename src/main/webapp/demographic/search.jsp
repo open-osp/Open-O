@@ -39,7 +39,7 @@
 	}
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -101,22 +101,21 @@
         }
          
         </script>
-<% if (isMobileOptimized) { %>
-   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width" />
-   <link rel="stylesheet" type="text/css" href="../mobile/searchdemographicstyle.css">
-<% } else { %>
- <link rel="stylesheet" type="text/css" media="all" href="../demographic/searchdemographicstyle.css"  />
- <link rel="stylesheet" type="text/css" href="../share/css/searchBox.css" />
 
-<% } %>
+<%-- <link rel="stylesheet" type="text/css" media="all" href="../demographic/searchdemographicstyle.css"  />--%>
+	<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js" type="text/javascript"></script>
+	<script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css"/>
+	<link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+	<link rel="stylesheet" type="text/css" media="all" href="${pageContext.request.contextPath}/share/css/searchBox.css"  />
 </head>
 <body onload="setfocus()">
-<div id="demographicSearch">
-</div>
-    <!-- Search Box -->
+<div class="container">
+<h2 style="margin:auto 15px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+	<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+</svg>Search Patient</h2>
     <%@ include file="zdemographicfulltitlesearch.jsp"%>
-<p>
-<!-- we may want to not allow students to create new patients? -->
+
 <!-- <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic.addnew" rights="r">  -->
     <div class="createNew">
 	<a href="demographicaddarecordhtm.jsp"><b><font size="+1"><bean:message
@@ -127,8 +126,8 @@
 	<oscar:oscarPropertiesCheck
 	property="SHOW_FILE_IMPORT_SEARCH" value="yes">
            &nbsp;&nbsp;&nbsp;<a href="demographicImport.jsp"><b><font
-		size="+1"><bean:message	key="demographic.search.importNewDemographic" /></font></a>
-</oscar:oscarPropertiesCheck></p>
-<p><!--a href="http://204.92.240.253:8080/test/slt/Search.jsp"><font size="+1"><bean:message key="demographic.search.btnELearning"/></font></a--></p>
+		size="+1"><bean:message	key="demographic.search.importNewDemographic" /></font></b></a>
+</oscar:oscarPropertiesCheck>
+</div>
 </body>
 </html:html>

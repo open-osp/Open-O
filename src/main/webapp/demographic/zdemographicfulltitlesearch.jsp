@@ -24,129 +24,132 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ page import="java.lang.*"%>
-<%@page import="oscar.OscarProperties"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="java.lang.*" %>
+<%@page import="oscar.OscarProperties" %>
+<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 
 <%
-        boolean fromMessenger = request.getParameter("fromMessenger") == null ? false : (request.getParameter("fromMessenger")).equalsIgnoreCase("true")?true:false;
-		String roleName = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");		
+	boolean fromMessenger = request.getParameter("fromMessenger") == null ? false : (request.getParameter("fromMessenger")).equalsIgnoreCase("true") ? true : false;
+	String roleName = session.getAttribute("userrole") + "," + session.getAttribute("user");
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 
-<script language="JavaScript">
-function searchInactive() {
-    document.titlesearch.ptstatus.value="inactive";
-    if (checkTypeIn()) document.titlesearch.submit();
-}
+<script type="application/javascript">
+	function checkdbstatus() {
+		if (document.titlesearch.search_mode.value === 'search_band_number') {
+			document.titlesearch.dboperation.value = 'search_status_id';
+		} else {
+			document.titlesearch.dboperation.value = 'search_titlename';
+		}
+	}
 
-function searchAll() {
-    document.titlesearch.ptstatus.value="";
-    if (checkTypeIn()) document.titlesearch.submit();
-}
+	function searchInactive() {
+		document.titlesearch.ptstatus.value = "inactive";
+		if (checkTypeIn()) document.titlesearch.submit();
+	}
 
-function searchOutOfDomain() {
-    document.titlesearch.outofdomain.value="true";
-    if (checkTypeIn()) document.titlesearch.submit();
-}
+	function searchAll() {
+		document.titlesearch.ptstatus.value = "";
+		if (checkTypeIn()) document.titlesearch.submit();
+	}
+
+	function searchOutOfDomain() {
+		document.titlesearch.outofdomain.value = "true";
+		if (checkTypeIn()) document.titlesearch.submit();
+	}
 
 </script>
-
-<form method="get" name="titlesearch" action="<%=request.getContextPath()%>/demographic/demographiccontrol.jsp"
-	onsubmit="return checkTypeIn()">
 <div class="searchBox">
-<div class="RowTop header">
-	<div class="title">
-		<bean:message key="demographic.search.msgSearchPatient" />
-	</div>
-	<div class="createNew">
-		<span class="HelpAboutLogout" style="font-size:12px; font-style:normal;">
-			<oscar:help keywords="&Title=Patient+Search&portal_type%3Alist=Document" key="app.top1" style="color:black; font-size:10px;font-style:normal;"/> |
-        		<a style="color:black; font-size:10px;font-style:normal;" href="<%=request.getContextPath()%>/oscarEncounter/About.jsp" target="_new"><bean:message key="global.about" /></a>
-		</span> 
-	</div>
-</div> 
-<ul>
-    <li>
-        <div class="label">
-        </div>
-	<% String searchMode = request.getParameter("search_mode");
-         String keyWord = request.getParameter("keyword");
-         if (searchMode == null || searchMode.equals("")) {
-             searchMode = OscarProperties.getInstance().getProperty("default_search_mode","search_name");             
-         }  
-         if (keyWord == null) {
-             keyWord = "";
-         }
-     %>
-         <select class="wideInput" name="search_mode">
-            <option value="search_name" <%=searchMode.equals("search_name")?"selected":""%>>
-                <bean:message key="demographic.zdemographicfulltitlesearch.formName" />
-            </option>
-            <option value="search_phone" <%=searchMode.equals("search_phone")?"selected":""%>>
-                <bean:message key="demographic.zdemographicfulltitlesearch.formPhone" />
-            </option>
-            <option value="search_dob" <%=searchMode.equals("search_dob")?"selected":""%>>
-                <bean:message key="demographic.zdemographicfulltitlesearch.formDOB" />
-            </option>
-            <option value="search_address" <%=searchMode.equals("search_address")?"selected":""%>>
-                <bean:message key="demographic.zdemographicfulltitlesearch.formAddr" />
-            </option>
-            <option value="search_hin" <%=searchMode.equals("search_hin")?"selected":""%>>
-                <bean:message key="demographic.zdemographicfulltitlesearch.formHIN" />
-            </option>
-            <option value="search_chart_no" <%=searchMode.equals("search_chart_no")?"selected":""%>>
-                <bean:message key="demographic.zdemographicfulltitlesearch.formChart" />
-            </option>
-            <option value="search_demographic_no" <%=searchMode.equals("search_demographic_no")?"selected":""%>>
-                <bean:message key="demographic.zdemographicfulltitlesearch.formDemographicNo" />
-            </option>
-         </select>
-    </li>
-    <li>
-        <div class="label">
-        </div>
-        <input class="wideInput" type="text" NAME="keyword" VALUE="<%=StringEscapeUtils.escapeHtml(keyWord)%>" SIZE="17" MAXLENGTH="100">
-    </li>
-    <li>
-				<INPUT TYPE="hidden" NAME="orderby" VALUE="last_name, first_name">
-				<INPUT TYPE="hidden" NAME="dboperation" VALUE="search_titlename">
-    <INPUT TYPE="hidden" NAME="limit1" VALUE="0">
-    <INPUT TYPE="hidden" NAME="limit2" VALUE="10">
-    <INPUT TYPE="hidden" NAME="displaymode" VALUE="Search">
-    <INPUT TYPE="hidden" NAME="ptstatus" VALUE="active">
-    <INPUT TYPE="hidden" NAME="fromMessenger" VALUE="<%=fromMessenger%>">
-					<INPUT TYPE="hidden" NAME="outofdomain" VALUE="">
-    <INPUT TYPE="SUBMIT" class="rightButton blueButton top" VALUE="<bean:message key="demographic.zdemographicfulltitlesearch.msgSearch" />" SIZE="17"
-					TITLE="<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchActive"/>">
-				&nbsp;&nbsp;&nbsp; <INPUT TYPE="button" onclick="searchInactive();"
-					TITLE="<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchInactive"/>"
-					VALUE="<bean:message key="demographic.search.Inactive"/>">
-				<INPUT TYPE="button" onclick="searchAll();"
-					TITLE="<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchAll"/>"
-					VALUE="<bean:message key="demographic.search.All"/>">
-					
-				<%
-					LoggedInInfo loggedInInfo2 = LoggedInInfo.getLoggedInInfoFromSession(request);
-					if(loggedInInfo2.getCurrentFacility().isIntegratorEnabled()) {
-				%>
-						<input type="checkbox" name="includeIntegratedResults" value="true"/>Include Integrator
-				<%}%>
-				
-					<security:oscarSec roleName="<%=roleName%>" objectName="_search.outofdomain" rights="r">  
-						<INPUT TYPE="button" onclick="searchOutOfDomain();"
-							TITLE="<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchOutOfDomain"/>"
-							VALUE="<bean:message key="demographic.search.OutOfDomain"/>">
-					</security:oscarSec>
-					
-				<caisi:isModuleLoad moduleName="caisi">
-				<input type="button" value="cancel" onclick="location.href='<html:rewrite page="/PMmodule/ProviderInfo.do"/>'" >
-				</caisi:isModuleLoad>			
-    </li>
-</ul>
+	<form method="get" name="titlesearch" action="<%=request.getContextPath()%>/demographic/demographiccontrol.jsp" onsubmit="return checkTypeIn()">
+
+		<% String searchMode = request.getParameter("search_mode");
+			String keyWord = request.getParameter("keyword");
+			if (searchMode == null || searchMode.equals("")) {
+				searchMode = OscarProperties.getInstance().getProperty("default_search_mode", "search_name");
+			}
+			if (keyWord == null) {
+				keyWord = "";
+			}
+		%>
+		<div class="input-group select-group">
+			<select class="form-control input-group-addon" name="search_mode" id="search_mode">
+				<option value="search_name" <%=searchMode.equals("search_name") ? "selected" : ""%>>
+					<bean:message key="demographic.zdemographicfulltitlesearch.formName"/>
+				</option>
+				<option value="search_phone" <%=searchMode.equals("search_phone") ? "selected" : ""%>>
+					<bean:message key="demographic.zdemographicfulltitlesearch.formPhone"/>
+				</option>
+				<option value="search_dob" <%=searchMode.equals("search_dob") ? "selected" : ""%>>
+					<bean:message key="demographic.zdemographicfulltitlesearch.formDOB"/>
+				</option>
+				<option value="search_address" <%=searchMode.equals("search_address") ? "selected" : ""%>>
+					<bean:message key="demographic.zdemographicfulltitlesearch.formAddr"/>
+				</option>
+				<option value="search_hin" <%=searchMode.equals("search_hin") ? "selected" : ""%>>
+					<bean:message key="demographic.zdemographicfulltitlesearch.formHIN"/>
+				</option>
+				<option value="search_chart_no" <%=searchMode.equals("search_chart_no") ? "selected" : ""%>>
+					<bean:message key="demographic.zdemographicfulltitlesearch.formChart"/>
+				</option>
+				<option value="search_demographic_no" <%=searchMode.equals("search_demographic_no") ? "selected" : ""%>>
+					<bean:message key="demographic.zdemographicfulltitlesearch.formDemographicNo"/>
+				</option>
+				<oscar:oscarPropertiesCheck value="true" defaultVal="false" property="FIRST_NATIONS_MODULE">
+					<option value="search_band_number" <%=searchMode.equals("search_band_number") ? "selected" : ""%> >
+						<bean:message key="demographic.zdemographicfulltitlesearch.formBandNumber"/>
+					</option>
+				</oscar:oscarPropertiesCheck>
+			</select>
+
+			<input class="wideInput form-control" type="search" placeholder="Search Patient" NAME="keyword"
+			       VALUE="<%=StringEscapeUtils.escapeHtml(keyWord)%>" SIZE="17" MAXLENGTH="100">
+
+
+			<INPUT TYPE="hidden" NAME="orderby" VALUE="last_name, first_name">
+			<INPUT TYPE="hidden" NAME="dboperation" VALUE="search_titlename">
+			<INPUT TYPE="hidden" NAME="limit1" VALUE="0">
+			<INPUT TYPE="hidden" NAME="limit2" VALUE="10">
+			<INPUT TYPE="hidden" NAME="displaymode" VALUE="Search">
+			<INPUT TYPE="hidden" NAME="ptstatus" VALUE="active">
+			<INPUT TYPE="hidden" NAME="fromMessenger" VALUE="<%=fromMessenger%>">
+			<INPUT TYPE="hidden" NAME="outofdomain" VALUE="">
+			<div class="input-group-btn">
+				<INPUT TYPE="SUBMIT" class="rightButton blueButton top btn btn-primary" VALUE="Active" SIZE="17"
+				       TITLE="<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchActive"/>">
+
+
+				<INPUT TYPE="button" class="btn btn-secondary" onclick="searchInactive();"
+				       TITLE="<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchInactive"/>"
+				       VALUE="<bean:message key="demographic.search.Inactive"/>">
+
+
+				<INPUT TYPE="button" class="btn btn-secondary" onclick="searchAll();"
+				       TITLE="<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchAll"/>"
+				       VALUE="<bean:message key="demographic.search.All"/>">
+			</div>
+			<%
+				LoggedInInfo loggedInInfo2 = LoggedInInfo.getLoggedInInfoFromSession(request);
+				if (loggedInInfo2.getCurrentFacility().isIntegratorEnabled()) {
+			%>
+			<input type="checkbox" class="form-control" name="includeIntegratedResults" id="includeIntegratedResults"
+			       value="true"/><label for="includeIntegratedResults">Include Integrator</label>
+			<%}%>
+
+			<security:oscarSec roleName="<%=roleName%>" objectName="_search.outofdomain" rights="r">
+				<INPUT TYPE="button" onclick="searchOutOfDomain();"
+				       TITLE="<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchOutOfDomain"/>"
+				       VALUE="<bean:message key="demographic.search.OutOfDomain"/>">
+			</security:oscarSec>
+
+			<caisi:isModuleLoad moduleName="caisi">
+				<input type="button" value="cancel"
+				       onclick="location.href='<html:rewrite page="/PMmodule/ProviderInfo.do"/>'">
+			</caisi:isModuleLoad>
+		</div>
+
+	</form>
 </div>
-</form>

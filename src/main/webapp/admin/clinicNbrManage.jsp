@@ -30,7 +30,7 @@
 <%@page import="oscar.OscarProperties, org.oscarehr.util.LoggedInInfo"%>
 <%@ page
 	import="java.sql.*, java.util.*, oscar.*, oscar.SxmlMisc, oscar.oscarProvider.data.ProviderBillCenter"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 
 <html:html locale="true">
 <head>

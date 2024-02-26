@@ -69,27 +69,29 @@ var standardistaTableSorting = {
 		var row = table.tHead.rows[table.tHead.rows.length - 1];
 		
 		for (var i=0; i < row.cells.length; i++) {
-		
-			// create a link with an onClick event which will control the sorting of the table
-			var linkEl = createElement('a');
-			linkEl.href = '#';
-			linkEl.onclick = this.headingClicked;
-			linkEl.setAttribute('columnId', i);
-			
-			// move the current contents of the cell that we're hyperlinking
-			// into the hyperlink
-			var innerEls = row.cells[i].childNodes;
-			for (var j = 0; j < innerEls.length; j++) {
-				linkEl.appendChild(innerEls[j]);
-			}
-			
-			// and finally add the new link back into the cell
-			row.cells[i].appendChild(linkEl);
 
-			var spanEl = createElement('span');
-			spanEl.className = 'tableSortArrow';
-			spanEl.appendChild(document.createTextNode('\u00A0\u00A0'));
-			row.cells[i].appendChild(spanEl);
+			if(row.cells[i].className !== "no-sort") {
+				// create a link with an onClick event which will control the sorting of the table
+				var linkEl = createElement('a');
+				linkEl.href = '#';
+				linkEl.onclick = this.headingClicked;
+				linkEl.setAttribute('columnId', i);
+
+				// move the current contents of the cell that we're hyperlinking
+				// into the hyperlink
+				var innerEls = row.cells[i].childNodes;
+				for (var j = 0; j < innerEls.length; j++) {
+					linkEl.appendChild(innerEls[j]);
+				}
+
+				// and finally add the new link back into the cell
+				row.cells[i].appendChild(linkEl);
+
+				var spanEl = createElement('span');
+				spanEl.className = 'tableSortArrow';
+				spanEl.appendChild(document.createTextNode('\u00A0\u00A0'));
+				row.cells[i].appendChild(spanEl);
+			}
 
 		}
 	
@@ -232,7 +234,7 @@ var standardistaTableSorting = {
 		if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) {
 			sortfn = this.sortDate;
 		}
-		if (itm.match(/^[£$]/)) {
+		if (itm.match(/^[ï¿½$]/)) {
 			sortfn = this.sortCurrency;
 		}
 		if (itm.match(/^[\d\.]+$/)) {

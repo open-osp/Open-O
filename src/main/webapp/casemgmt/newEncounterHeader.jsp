@@ -37,8 +37,11 @@
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="oscar.OscarProperties" %>
+<%@ page import="org.oscarehr.managers.DemographicManager" %>
+<%@ page import="org.oscarehr.common.model.Demographic" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
- 
+
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -53,6 +56,8 @@
     Facility facility = loggedInInfo.getCurrentFacility();
 
     String demoNo = bean.demographicNo;
+	DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+	Demographic demographic = demographicManager.getDemographic(loggedInInfo, demoNo);
     EctPatientData.Patient pd = new EctPatientData().getPatient(loggedInInfo, demoNo);
     String famDocName, famDocSurname, famDocColour, inverseUserColour, userColour;
     String user = (String) session.getAttribute("user");
@@ -101,35 +106,48 @@
 
     <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
     
-<div style="float:left; width: 100%; padding-left:2px; text-align:left; font-size: 12px; color:<%=inverseUserColour%>; background-color:<%=userColour%>" id="encounterHeader">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table id="encounterHeader" style="color:<%=inverseUserColour%>; background-color:<%=userColour%>" >
 <tr>
-<td>
-    <security:oscarSec roleName="<%=roleName$%>" objectName="_newCasemgmt.doctorName" rights="r">
-    <span style="border-bottom: medium solid <%=famDocColour%>"><bean:message key="oscarEncounter.Index.msgMRP"/>&nbsp;&nbsp;
-    <%=famDocName.toUpperCase()%> <%=famDocSurname.toUpperCase()%>  </span>
-	</security:oscarSec>
-    <span class="Header" style="color:<%=inverseUserColour%>; background-color:<%=userColour%>">
+<td id="encounterHeaderLeftColumn"><h1>Encounter</h1></td>
+
+<td id="encounterHeaderCenterColumn">
+
         <%
-        
             String appointmentNo = request.getParameter("appointmentNo");
-            String winName = "Master" + bean.demographicNo;
-            String url = "/demographic/demographiccontrol.jsp?demographic_no=" + bean.demographicNo + "&amp;displaymode=edit&amp;dboperation=search_detail&appointment="+appointmentNo;
+            String winName = "Master" + demoNo;
+            String url = "/demographic/demographiccontrol.jsp?demographic_no=" + demoNo + "&amp;displaymode=edit&amp;dboperation=search_detail&appointment="+appointmentNo;
         %>
-        <a href="#" onClick="popupPage(700,1000,'<%=winName%>','<c:out value="${ctx}"/><%=url%>'); return false;" title="<bean:message key="provider.appointmentProviderAdminDay.msgMasterFile"/>"><%=bean.patientLastName %>, <%=bean.patientFirstName%></a> <%=bean.patientSex%> <%=bean.patientAge%>  
-        &nbsp;<oscar:phrverification demographicNo="<%=demoNo%>"><bean:message key="phr.verification.link"/></oscar:phrverification> &nbsp;<%=bean.phone%> 
+        <%= demographic.getStandardIdentificationHTML() %>
+
+		<security:oscarSec roleName="<%=roleName$%>" objectName="_newCasemgmt.doctorName" rights="r">
+
+		        <span class="label">
+		              <bean:message key="oscarEncounter.Index.msgMRP"/>
+			    </span>
+			    <span>
+			        <c:out value="${ not empty pageScope.mostResponsibleProvider ? pageScope.mostResponsibleProvider : 'Unknown' }" />
+			    </span>
+
+		</security:oscarSec>
+
 		<span id="encounterHeaderExt"></span>
 		<security:oscarSec roleName="<%=roleName$%>" objectName="_newCasemgmt.apptHistory" rights="r">
-		<a href="javascript:popupPage(400,850,'ApptHist','<c:out value="${ctx}"/>/demographic/demographiccontrol.jsp?demographic_no=<%=bean.demographicNo%>&amp;last_name=<%=bean.patientLastName.replaceAll("'", "\\\\'")%>&amp;first_name=<%=bean.patientFirstName.replaceAll("'", "\\\\'")%>&amp;orderby=appointment_date&amp;displaymode=appt_history&amp;dboperation=appt_history&amp;limit1=0&amp;limit2=25')" style="font-size: 11px;text-decoration:none;" title="<bean:message key="oscarEncounter.Header.nextApptMsg"/>"><span style="margin-left:20px;"><bean:message key="oscarEncounter.Header.nextAppt"/>: <oscar:nextAppt demographicNo="<%=bean.demographicNo%>"/></span></a>
+		<a href="javascript:popupPage(400,850,'ApptHist','<c:out value="${ctx}"/>/demographic/demographiccontrol.jsp?demographic_no=<%=demoNo%>&amp;last_name=<%=Encode.forUriComponent(demographic.getLastName())%>&amp;first_name=<%=Encode.forUriComponent(demographic.getFirstName())%>&amp;orderby=appointment_date&amp;displaymode=appt_history&amp;dboperation=appt_history&amp;limit1=0&amp;limit2=25')" title="<bean:message key="oscarEncounter.Header.nextApptMsg"/>">
+		<span class="label">
+		<bean:message key="oscarEncounter.Header.nextAppt"/>:
+		</span>
+		</a>
+			<span>
+				<oscar:nextAppt demographicNo="<%=demoNo%>"/>
+			</span>
 		</security:oscarSec>
-        &nbsp;&nbsp;        
-		
+
         <% if(oscar.OscarProperties.getInstance().hasProperty("ONTARIO_MD_INCOMINGREQUESTOR")){%>
            <a href="javascript:void(0)" onClick="popupPage(600,175,'Calculators','<c:out value="${ctx}"/>/common/omdDiseaseList.jsp?sex=<%=bean.patientSex%>&age=<%=pAge%>'); return false;" ><bean:message key="oscarEncounter.Header.OntMD"/></a>
         <%}%>
         <%=getEChartLinks() %>
-        &nbsp;&nbsp;
-        
+
+
 		<%
 		if (facility.isIntegratorEnabled()){
 			int secondsTillConsideredStale = -1;
@@ -157,16 +175,15 @@
     			<div style="background: none repeat scroll 0% 0% red; color: white; font-weight: bold; padding-left: 10px; margin-bottom: 2px;"><bean:message key="oscarEncounter.integrator.NA"/></div>
     		<%}else if(!allSynced) {%>
     			<div style="background: none repeat scroll 0% 0% orange; color: white; font-weight: bold; padding-left: 10px; margin-bottom: 2px;"><bean:message key="oscarEncounter.integrator.outOfSync"/>
-    			&nbsp;&nbsp;
+
 				<a href="javascript:void(0)" onClick="popupPage(233,600,'ViewICommun','<c:out value="${ctx}"/>/admin/viewIntegratedCommunity.jsp'); return false;" >Integrator</a>
     			</div>
 	    	<%}else{%>
 	    		<a href="javascript:void(0)" onClick="popupPage(233,600,'ViewICommun','<c:out value="${ctx}"/>/admin/viewIntegratedCommunity.jsp'); return false;" >I</a>
 	    	<%}%>
-	  <%}%>    
-   </span>
+	  <%}%>
 </td>
-<td align=right>
+<td id="encounterHeaderRightColumn" align=right>
 	<span class="HelpAboutLogout">
 	<oscar:help keywords="&Title=Chart+Interface&portal_type%3Alist=Document" key="app.top1" style="font-size:10px;font-style:normal;"/>&nbsp;|
 	<a style="font-size:10px;font-style:normal;" href="<%=request.getContextPath()%>/oscarEncounter/About.jsp" target="_new"><bean:message key="global.about" /></a>
@@ -174,7 +191,6 @@
 </td>
 </tr>
 </table>
-</div>
 
 <%!
 

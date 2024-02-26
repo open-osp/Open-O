@@ -997,7 +997,7 @@
                         popupOscarRx(425, 430, '../share/CalendarPopup.jsp?urlfrom=../provider/providercontrol.jsp&year=<%=strYear%>&month=<%=strMonth%>&param=<%=URLEncoder.encode("&view=0&displaymode=day&dboperation=searchappointmentday","UTF-8")%>');
                         return false;  //run code for 'C'alendar
                     case <bean:message key="global.edocShortcut"/> :
-                        popupOscarRx('700', '1024', '../dms/documentReport.jsp?function=provider&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');
+                        popupOscarRx('700', '1024', '../documentManager/documentReport.jsp?function=provider&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');
                         return false;  //run code for e'D'oc
                     case <bean:message key="global.resourcesShortcut"/> :
                         popupOscarRx(550, 687, '<%=resourcebaseurl%>');
@@ -1015,7 +1015,7 @@
                         return false;
                     }
                     case <bean:message key="global.labShortcut"/> :
-                        popupOscarRx(600, 1024, '../dms/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>', '<bean:message key="global.lab"/>');
+                        popupOscarRx(600, 1024, '../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>', '<bean:message key="global.lab"/>');
                         return false;  //run code for 'L'ab
                     case <bean:message key="global.msgShortcut"/> :
                         popupOscarRx(600, 1024, '../oscarMessenger/DisplayMessages.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');

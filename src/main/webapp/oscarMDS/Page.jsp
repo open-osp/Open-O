@@ -99,7 +99,7 @@ String curUser_no = (String) session.getAttribute("user");
 					<div id="listViewDocs" style="height:550px; overflow:scroll;" onscroll="handleScroll(this)">
 					    <%
                             SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
-                            SystemPreferences systemPreferences = systemPreferencesDao.findPreferenceByName("inboxDateSearchType");
+                            SystemPreferences systemPreferences = systemPreferencesDao.findPreferenceByName(SystemPreferences.LAB_DISPLAY_PREFERENCE_KEYS.inboxDateSearchType);
                             String dateType = "serviceObservation";
 
                             if (systemPreferences != null && systemPreferences.getValue() != null)
@@ -236,7 +236,7 @@ String curUser_no = (String) session.getAttribute("user");
 									<input type="hidden" name="status" value="<%=status%>"/>
 								</form> 
                                 <div id="document_<%=segmentID%>">                                 	                                		                            
-                        			<jsp:include page="../dms/showDocument.jsp" flush="true">
+                        			<jsp:include page="../documentManager/showDocument.jsp" flush="true">
                         				<jsp:param name="segmentID" value="<%=segmentID%>"/>
                         				<jsp:param name="demoName" value="<%=demoName%>"/>
                         				<jsp:param name="providerNo" value="<%=providerNo%>"/>
@@ -333,7 +333,7 @@ String curUser_no = (String) session.getAttribute("user");
                                     else if (result.isDocument()){ 
                                 	String patientName = result.getPatientName();
                                     	StringBuilder url = new StringBuilder(request.getContextPath());                                    	
-                                    	url.append("/dms/showDocument.jsp?inWindow=true&segmentID=");
+                                    	url.append("/documentManager/showDocument.jsp?inWindow=true&segmentID=");
                                     	url.append(segmentID);
                                     	url.append("&providerNo=");
                                     	url.append(providerNo);
@@ -419,15 +419,20 @@ String curUser_no = (String) session.getAttribute("user");
 				  id: 'dateOfTest',
 				  is: function(s) {return false;},
 				  format: function(s) {
-				    return s.indexOf("/")!=-1?s.substr(s.indexOf("/")+2,10):s;
+                    //this code assumes the following:
+                    //in this scenario (2023-09-21 / 2023-09-21), use the 10 characters following the /
+                    //in this scenario (2023-09-19 12:53:00 ), use the first 10 characters 
+                    //in this scenario (2023-09-21 17:39:05.0), use the first 10 characters
+                    //in any other scenario, just use the original string
+				    return s.indexOf("/")!=-1?s.substr(s.indexOf("/")+2,10):(s.indexOf(" ")!=-1?s.substr(0,10):s);
 				  },
 				  type: 'text'
 			});
 		
 			jQuery("#summaryView").tablesorter({
-					sortList:[4,1],
+					sortList:[5,1],
 					headers:{
-						4:{
+						5:{
 							sorter:'dateOfTest'
 						}
 					}

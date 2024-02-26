@@ -180,7 +180,7 @@ public class FrmONAREnhancedRecord extends FrmRecord {
 				String theName = t.split("\\|")[0];
 				String type = t.split("\\|")[1];
 				
-				if(theName.equals("ID")) {
+				if("ID".equals(theName)) {
 					if(id == null) {
 						preparedStmt.setNull(x+1, Types.INTEGER);
 					} else {
@@ -190,15 +190,15 @@ public class FrmONAREnhancedRecord extends FrmRecord {
 				}
 				
 				
-				if(type.equals("VARCHAR") || type.equals("CHAR")) {
+				if("VARCHAR".equals(type) || "CHAR".equals(type) || "TEXT".equals(type)) {
 					String value = props.getProperty(theName);
 					if(value == null) {
 						preparedStmt.setNull(x+1, getType(type));
 					} else {
 						preparedStmt.setString(x+1,value);
 					}
-				}
-				else if(type.equals("INT") || type.equals("TINYINT")) {
+				}				
+				else if("INT".equals(type) || "TINYINT".equals(type) || "BIT".equals(type)) {
 					String value = props.getProperty(theName);
 					if(value != null && value.isEmpty()) {
 						MiscUtils.getLogger().info("empty value for "+ theName);
@@ -210,7 +210,7 @@ public class FrmONAREnhancedRecord extends FrmRecord {
 	                    value = "1";
 					}
 					preparedStmt.setInt(x+1, Integer.parseInt(value));
-				} else if(type.equals("DATE")) {
+				} else if("DATE".equals(type)) {
 					String  value = props.getProperty(theName);
 					Date d= null;
 					
@@ -227,7 +227,7 @@ public class FrmONAREnhancedRecord extends FrmRecord {
 	                else
 	                	preparedStmt.setDate(x+1,  new java.sql.Date(d.getTime()));
 	                				
-				} else if(type.equals("TIMESTAMP")) {
+				} else if("TIMESTAMP".equals(type)) {
 					Date d;
 	                if (theName.equalsIgnoreCase("formEdited")) {
 	                    d = new Date();
@@ -241,7 +241,7 @@ public class FrmONAREnhancedRecord extends FrmRecord {
 	               
 					
 				} else {
-					MiscUtils.getLogger().error("missing type handler for this column " + theName, new Exception());
+					MiscUtils.getLogger().error("missing type handler for this column " + theName + " of type " + type, new Exception());
 				}
 				
 			}
@@ -275,10 +275,10 @@ public class FrmONAREnhancedRecord extends FrmRecord {
 
 
 	private int getType(String type) {
-		if(type.equals("VARCHAR")) {
+		if("VARCHAR".equals(type)) {
 			return Types.VARCHAR;
 		}
-		if(type.equals("CHAR")) {
+		if("CHAR".equals(type)) {
 			return Types.CHAR;
 		}
 		return -1;

@@ -38,7 +38,7 @@ if(!authed) {
 }
 %>
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat" errorPage="errorpage.jsp"%>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.billing.CA.BC.dao.TeleplanS00Dao" %>
@@ -234,7 +234,7 @@ String proFirst="", proLast="", demoFirst="", demoLast="", apptDate="", apptTime
 	String convertSignage(String val) {
 		String ret = val;
 		
-		if(val.matches(".*[\\}JKLMNOPQR]$")) {
+		if(val != null && val.matches(".*[\\}JKLMNOPQR]$")) {
 		 
 		    ret = "-" + val.substring(0,val.length()-1);
 		
@@ -263,8 +263,7 @@ String proFirst="", proLast="", demoFirst="", demoLast="", apptDate="", apptTime
 		    }
 		
 		}
-		
-	
+
 		return ret;
 	}
 
@@ -272,11 +271,13 @@ String proFirst="", proLast="", demoFirst="", demoLast="", apptDate="", apptTime
         String moneyStr = "0.00";
         str = convertSignage(str);
         
-        
-        try{             
-            moneyStr = new java.math.BigDecimal(str).movePointLeft(2).toString();
-        }catch (Exception moneyException) { MiscUtils.getLogger().error("Error", moneyException); }
-              	
+        if(str != null && ! str.isEmpty()) {
+	        try {
+		        moneyStr = new java.math.BigDecimal(str).movePointLeft(2).toString();
+	        } catch (Exception moneyException) {
+		        MiscUtils.getLogger().error("Error could not convert " + str + "into big decimal", moneyException);
+	        }
+        }
        
     return moneyStr;
     }

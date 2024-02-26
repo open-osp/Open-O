@@ -23,7 +23,7 @@ String content = (String) session.getAttribute("content");
 session.setAttribute("content", "");
 %>
 
-<%@ page import="java.sql.*, java.util.*,java.net.*, oscar.util.*, oscar.oscarBilling.ca.on.data.*, oscar.MyDateFormat" errorPage="errorpage.jsp"%>
+<%@ page import="java.sql.*, java.util.*,java.net.*, oscar.util.*, oscar.oscarBilling.ca.on.data.*, oscar.MyDateFormat" errorPage="/errorpage.jsp"%>
 
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.Billing" %>

@@ -128,6 +128,8 @@ public class ScheduleWs extends AbstractWs {
 		Appointment appointment = scheduleManager.getAppointment(getLoggedInInfo(),appointmentTransfer.getId());
 
 		appointmentTransfer.copyTo(appointment);
+		appointment.setLastUpdateUser(getLoggedInInfo().getLoggedInProviderNo());
+		
 		scheduleManager.updateAppointment(getLoggedInInfo(),appointment);
 	}
 

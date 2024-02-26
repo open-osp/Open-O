@@ -692,4 +692,16 @@ Varicella Immunoglobulin	VarIg
 			layout="injection" atc="J07BC"
 			showIfMinRecordNum="1" />
 
+	<item
+			resultDesc=""
+			name="RSVPreF3"
+			desc="Recombinant PreF RSV Vaccine eg Arexvy"
+			healthCanadaType="RSVPreF3"
+			link="https://ca.gsk.com/media/6988/arexvy.pdf"
+			layout="injection"
+			minAge="60"
+			maxAge="100"
+            atc="J07BX05"
+   			showIfMinRecordNum="1" />
+
 </preventions>

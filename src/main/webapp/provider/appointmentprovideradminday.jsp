@@ -761,6 +761,30 @@
                 curProviderName[0] = request.getParameter("curProviderName");
             }
         }
+
+    //the view parameter controls how much information is displayed for each appointment such as the name and the E | M | R links. It is normally set in the URL parameter
+    //an edge case has been identified where there's likely room to show more data, but because view is set to 0, it's not.
+    //author did not feel confident that he could update all references correctly, without introducing regression.
+    //instead, this next section of code explicitly sets view=1 (so more data) in the identified edge case
+    
+    //later in the code there is a complex inline ternary function that uses view as a parameter.  
+    //the following code "caches" the result of this function (as viewString) before setting view=1
+    String curProviderString = request.getParameter("curProvider") != null ? "&curProvider=" + request.getParameter("curProvider") : "";
+    String curProviderNameString = request.getParameter("curProviderName") != null ? "&curProviderName="+ URLEncoder.encode(request.getParameter("curProviderName"),"UTF-8") : "";
+    String viewString = view==0 ? "&view=0" : "&view=1" + curProviderString + curProviderNameString;
+
+    //Edge case: If the 'displaymode' is set to 'day' and 'viewall' is not equal to 1, then 'view' will be set to 1 to display all links.  
+    //This is believe to be a situation where there's only a single clinician displayed, so there should be enough space to display all of the data
+    if ("day".equals(request.getParameter("displaymode")) && !"1".equals(request.getParameter("viewall"))) { 
+        view = 1;
+        
+        //when view=1, curProvider_no and curProviderName need to be set as well
+        if (curProvider_no[0] == null || curProviderName[0] == null) {
+            curProvider_no = new String[]{loggedInInfo1.getLoggedInProviderNo()};
+            curProviderName = new String[]{(userlastname + ", " + userfirstname)};
+        }
+    }
+
 //set timecode bean
         String bgcolordef = "#486ebd";
         String[] param3 = new String[2];
@@ -900,13 +924,13 @@
                                         <c:if test="${doctorLinkRights}">
                                         <li>
                                             <a HREF="#"
-                                               ONCLICK="popupInboxManager('../dms/inboxManage.do?method=prepareForIndexPage&providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>', 'Lab');return false;"
+                                               ONCLICK="popupInboxManager('../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>', 'Lab');return false;"
                                                TITLE='<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>
                                                 <span id="oscar_new_lab"><bean:message key="global.lab"/></span>
                                             </a>
                                             <oscar:newUnclaimedLab>
                                                 <a id="unclaimedLabLink" class="tabalert" HREF="javascript:void(0)"
-                                                   onclick="popupInboxManager('../dms/inboxManage.do?method=prepareForIndexPage&providerNo=0&searchProviderNo=0&status=N&lname=&fname=&hnum=&pageNum=1&startIndex=0', 'Lab');return false;"
+                                                   onclick="popupInboxManager('../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=0&searchProviderNo=0&status=N&lname=&fname=&hnum=&pageNum=1&startIndex=0', 'Lab');return false;"
                                                    title='<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>U</a>
                                             </oscar:newUnclaimedLab>
                                         </li>
@@ -983,7 +1007,7 @@
                                 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r">
                                     <li>
                                         <a HREF="#"
-                                           onclick="popup('700', '1024', '../dms/documentReport.jsp?function=provider&functionid=<%=loggedInInfo1.getLoggedInProviderNo()%>&curUser=<%=loggedInInfo1.getLoggedInProviderNo()%>', 'edocView');"
+                                           onclick="popup('700', '1024', '../documentManager/documentReport.jsp?function=provider&functionid=<%=loggedInInfo1.getLoggedInProviderNo()%>&curUser=<%=loggedInInfo1.getLoggedInProviderNo()%>', 'edocView');"
                                            TITLE='<bean:message key="provider.appointmentProviderAdminDay.viewEdoc"/>'><bean:message
                                                 key="global.edoc"/></a>
                                     </li>
@@ -1153,7 +1177,7 @@
         <tr id="ivoryBar">
             <td id="dateAndCalendar">
                 <a class="redArrow"
-                   href="providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=<%=isWeekView?(day-7):(day-1)%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+URLEncoder.encode(request.getParameter("curProviderName"),"UTF-8") )%>&displaymode=day&dboperation=searchappointmentday<%=isWeekView?"&provider_no="+provNum:""%>&viewall=<%=viewall%>">
+                   href="providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=<%=isWeekView?(day-7):(day-1)%><%=viewString%>&displaymode=day&dboperation=searchappointmentday<%=isWeekView?"&provider_no="+provNum:""%>&viewall=<%=viewall%>">
                     <span class="glyphicon glyphicon-step-backward"
                                       title="<bean:message key="provider.appointmentProviderAdminDay.viewPrevDay"/>"></span>
                 </a>
@@ -1165,7 +1189,7 @@
                     }
                 %></span></b>
                 <a class="redArrow"
-                   href="providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=<%=isWeekView?(day+7):(day+1)%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+URLEncoder.encode(request.getParameter("curProviderName"),"UTF-8") )%>&displaymode=day&dboperation=searchappointmentday<%=isWeekView?"&provider_no="+provNum:""%>&viewall=<%=viewall%>">
+                   href="providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=<%=isWeekView?(day+7):(day+1)%><%=viewString%>&displaymode=day&dboperation=searchappointmentday<%=isWeekView?"&provider_no="+provNum:""%>&viewall=<%=viewall%>">
                     <span class="glyphicon glyphicon-step-forward"
                           title="<bean:message key="provider.appointmentProviderAdminDay.viewNextDay"/>"></span>
                 </a>
@@ -1189,7 +1213,7 @@
                 <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                     <security:oscarSec roleName="<%=roleName$%>" objectName="_day" rights="r">
                         | <a class="rightButton top"
-                             href="providercontrol.jsp?year=<%=curYear%>&month=<%=curMonth%>&day=<%=curDay%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+URLEncoder.encode(request.getParameter("curProviderName"),"UTF-8") )%>&displaymode=day&dboperation=searchappointmentday"
+                             href="providercontrol.jsp?year=<%=curYear%>&month=<%=curMonth%>&day=<%=curDay%><%=viewString%>&displaymode=day&dboperation=searchappointmentday"
                              TITLE='<bean:message key="provider.appointmentProviderAdminDay.viewDaySched"/>'
                              OnMouseOver="window.status='<bean:message key="provider.appointmentProviderAdminDay.viewDaySched"/>' ; return true"><bean:message
                             key="global.today"/></a>
@@ -1197,7 +1221,7 @@
                     <security:oscarSec roleName="<%=roleName$%>" objectName="_month" rights="r">
 
                         | <a
-                            href="providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=1&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+URLEncoder.encode(request.getParameter("curProviderName"),"UTF-8") )%>&displaymode=month&dboperation=searchappointmentmonth"
+                            href="providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=1<%=viewString%>&displaymode=month&dboperation=searchappointmentmonth"
                             TITLE='<bean:message key="provider.appointmentProviderAdminDay.viewMonthSched"/>'
                             OnMouseOver="window.status='<bean:message key="provider.appointmentProviderAdminDay.viewMonthSched"/>' ; return true"><bean:message
                             key="global.month"/></a>
@@ -1442,11 +1466,11 @@
             </td>
         </tr>
     </table>
-    <table id="scheduleTable" BORDER="0" CELLPADDING="1" CELLSPACING="0" WIDTH="100%" BGCOLOR="#C0C0C0">
+    <table id="scheduleTable" BGCOLOR="#C0C0C0">
 
         <tr>
             <td colspan="3">
-                <table border="0" cellpadding="0" bgcolor="#486ebd" cellspacing="0" width="100%">
+                <table bgcolor="#486ebd" >
                     <tr>
                         <%
                             int hourCursor = 0, minuteCursor = 0, depth = everyMin; //depth is the period, e.g. 10,15,30,60min.
@@ -1578,7 +1602,7 @@
                         <td valign="top" width="<%=isWeekView?100/7:100/numProvider%>%">
                             <!-- for the first provider's schedule -->
 
-                            <table border="0" cellpadding="0" bgcolor="#486ebd" cellspacing="0" width="100%">
+                            <table bgcolor="#486ebd">
                                 <!-- for the first provider's name -->
                                 <tr>
                                     <td class="infirmaryView" NOWRAP ALIGN="center"
@@ -1666,9 +1690,7 @@
                                             <!-- caisi infirmary view exteion add end ffffffffffffffffff-->
                                             <!-- =============== following block is the original oscar code. -->
                                             <!-- table for hours of day start -->
-                                            <table id="providerSchedule" border="0" cellpadding="0"
-                                                   bgcolor="<%=userAvail?"#486ebd":"silver"%>"
-                                                   cellspacing="0" width="100%">
+                                            <table id="providerSchedule" bgcolor="<%=userAvail?"#486ebd":"silver"%>">
                                                 <%
                                                     bFirstTimeRs = true;
                                                     bFirstFirstR = true;
@@ -1890,7 +1912,7 @@
                                                         %>
                                                         <!-- Short letters -->
                                                         <a class="apptStatus" href="javascript:void(0)"
-                                                           onclick="refreshSameLoc('providercontrol.jsp?appointment_no=<%=appointment.getId()%>&amp;provider_no=<%=curProvider_no[nProvider]%>&amp;status=&amp;statusch=<%=nextStatus%>&amp;year=<%=year%>&amp;month=<%=month%>&amp;day=<%=day%>&amp;view=<%=view == 0 ? "0" : ("1&amp;curProvider="+request.getParameter("curProvider")+"&curProviderName="+URLEncoder.encode(request.getParameter("curProviderName"),"UTF-8") )%>&amp;displaymode=addstatus&amp;dboperation=updateapptstatus&amp;viewall=${ not empty param.viewall ? param.viewall : "0" }<%= isWeekView ? "&amp;viewWeek=1" : "" %>');"
+                                                           onclick="refreshSameLoc('providercontrol.jsp?appointment_no=<%=appointment.getId()%>&amp;provider_no=<%=curProvider_no[nProvider]%>&amp;status=&amp;statusch=<%=nextStatus%>&amp;year=<%=year%>&amp;month=<%=month%>&amp;day=<%=day%>&amp;<%=viewString%>&amp;displaymode=addstatus&amp;dboperation=updateapptstatus&amp;viewall=${ not empty param.viewall ? param.viewall : "0" }<%= isWeekView ? "&amp;viewWeek=1" : "" %>');"
                                                            title='<c:out value="<%=as.getTitleString(request.getLocale())%>" />' >
                                                             <%
                                                                 }
@@ -2354,7 +2376,7 @@
                         popupOscarRx(425, 430, '../share/CalendarPopup.jsp?urlfrom=../provider/providercontrol.jsp&year=<%=strYear%>&month=<%=strMonth%>&param=<%=URLEncoder.encode("&view=0&displaymode=day&dboperation=searchappointmentday","UTF-8")%>');
                         return false;  //run code for 'C'alendar
                     case <bean:message key="global.edocShortcut"/> :
-                        popupOscarRx('700', '1024', '../dms/documentReport.jsp?function=provider&functionid=<%=loggedInInfo1.getLoggedInProviderNo()%>&curUser=<%=loggedInInfo1.getLoggedInProviderNo()%>', 'edocView');
+                        popupOscarRx('700', '1024', '../documentManager/documentReport.jsp?function=provider&functionid=<%=loggedInInfo1.getLoggedInProviderNo()%>&curUser=<%=loggedInInfo1.getLoggedInProviderNo()%>', 'edocView');
                         return false;  //run code for e'D'oc
                     case <bean:message key="global.resourcesShortcut"/> :
                         popupOscarRx(550, 687, '<%=resourcebaseurl%>');
@@ -2372,13 +2394,13 @@
                         return false;
                     }
                     case <bean:message key="global.labShortcut"/> :
-                        popupOscarRx(600, 1024, '../dms/inboxManage.do?method=prepareForIndexPage&providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>', '<bean:message key="global.lab"/>');
+                        popupOscarRx(600, 1024, '../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>', '<bean:message key="global.lab"/>');
                         return false;  //run code for 'L'ab
                     case <bean:message key="global.msgShortcut"/> :
                         popupOscarRx(600, 1024, '../oscarMessenger/DisplayMessages.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
                         return false;  //run code for 'M'essage
                     case <bean:message key="global.monthShortcut"/> :
-                        window.open("providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=1&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+URLEncoder.encode(request.getParameter("curProviderName"),"UTF-8") )%>&displaymode=month&dboperation=searchappointmentmonth", "_self");
+                        window.open("providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=1<%=viewString%>&displaymode=month&dboperation=searchappointmentmonth", "_self");
                         return false;  //run code for Mo'n'th
                     case <bean:message key="global.conShortcut"/> :
                         popupOscarRx(625, 1024, '../oscarEncounter/IncomingConsultation.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
@@ -2400,7 +2422,7 @@
                         popupOscarRx(550, 687, '../demographic/search.jsp');
                         return false;  //run code for 'S'earch
                     case <bean:message key="global.dayShortcut"/> :
-                        window.open("providercontrol.jsp?year=<%=curYear%>&month=<%=curMonth%>&day=<%=curDay%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+URLEncoder.encode(request.getParameter("curProviderName"),"UTF-8") )%>&displaymode=day&dboperation=searchappointmentday", "_self");
+                        window.open("providercontrol.jsp?year=<%=curYear%>&month=<%=curMonth%>&day=<%=curDay%><%=viewString%>&displaymode=day&dboperation=searchappointmentday", "_self");
                         return false;  //run code for 'T'oday
                     case <bean:message key="global.viewShortcut"/> : {
                         <% if(request.getParameter("viewall")!=null && request.getParameter("viewall").equals("1") ) { %>

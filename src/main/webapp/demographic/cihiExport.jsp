@@ -83,7 +83,7 @@ List<String> setsList = ds.getDemographicSets();
 <body>
 <div class="container-fluid well">
 <html:form action="/demographic/cihiExportOMD4.do" method="get">
-<h3>Vender Information</h3>
+<h3>Vendor Information</h3>
 <table class="table-condensed">
 	<tr><td>Organization Name</td><td><html:text styleClass="right" property="orgName"></html:text></td></tr>
 	<tr><td>Contact Last Name</td><td><html:text styleClass="right" property="contactLName"></html:text></td></tr>

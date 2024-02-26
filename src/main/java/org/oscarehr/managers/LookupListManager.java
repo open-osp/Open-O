@@ -90,21 +90,11 @@ public class LookupListManager {
 	 * Retrieve all the active select list option items by the lookUpList.id
 	 */
 	public List<LookupListItem> findLookupListItemsByLookupListId(LoggedInInfo loggedInInfo, int lookupListId ) {
-
-		List<LookupListItem> lookupListItems = lookupListItemDao.findActiveByLookupListId( lookupListId );
-
-		if ( lookupListItems != null ) {
-			LogAction.addLogSynchronous(loggedInInfo, "LookupListManager.findLookupListItemsByLookupListId", lookupListItems.toString() );
-		}
-
-		return lookupListItems;
+		return lookupListItemDao.findActiveByLookupListId( lookupListId );
 	}
 	
 	public LookupListItem findLookupListItemByLookupListIdAndValue(LoggedInInfo loggedInInfo, int lookupListId, String value)  {
-		
-		LookupListItem item = lookupListItemDao.findByLookupListIdAndValue(lookupListId, value);
-		
-		return item;
+		return lookupListItemDao.findByLookupListIdAndValue(lookupListId, value);
 	}
 	
 
@@ -118,7 +108,6 @@ public class LookupListManager {
 
 		if (lookupList != null) {
 			lookupListItems = findLookupListItemsByLookupListId(loggedInInfo, lookupList.getId() );
-			LogAction.addLogSynchronous(loggedInInfo, "LookupListManager.findLookupListItemsByLookupListName", lookupList.toString() );
 		}
 
 		return lookupListItems;
@@ -133,9 +122,6 @@ public class LookupListManager {
 		LookupListItem lookupListItem = null;
 		if( lookupListItemId > 0 ) {		
 			lookupListItem = lookupListItemDao.find( lookupListItemId );
-		}
-		if( lookupListItem != null ) {
-			LogAction.addLogSynchronous(loggedInInfo, "LookupListManager.findLookupListItemById", lookupListItem.toString());
 		}
 		return lookupListItem;
 	}
@@ -180,7 +166,6 @@ public class LookupListManager {
 	/**
 	 * Change the display order sequence of this lookupListItem
 	 * @param lookupListItemId
-	 * @param displayOrder
 	 */
 	public boolean updateLookupListItemDisplayOrder(LoggedInInfo loggedInInfo, int lookupListItemId, int lookupListItemDisplayOrder ) { 
 

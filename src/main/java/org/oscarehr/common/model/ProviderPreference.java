@@ -170,7 +170,9 @@ public class ProviderPreference extends AbstractModel<String> implements Seriali
 	* Whether or not the provider has enabled training mode in the external prescriber
 	*/
 	private boolean eRxTrainingMode = false;
-	
+
+
+	private String defaultBillingLocation;
 	
 	
 	@CollectionOfElements(targetElement = String.class)
@@ -276,6 +278,13 @@ public class ProviderPreference extends AbstractModel<String> implements Seriali
     	this.defaultServiceType = defaultServiceType;
     }
 
+	public String getDefaultBillingLocation() {
+		return defaultBillingLocation;
+	}
+
+	public void setDefaultBillingLocation(String defaultBillingLocation) {
+		this.defaultBillingLocation = defaultBillingLocation;
+	}
 	public String getDefaultCaisiPmm() {
     	return defaultCaisiPmm;
     }

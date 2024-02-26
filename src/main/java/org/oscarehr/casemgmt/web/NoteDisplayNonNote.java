@@ -310,6 +310,10 @@ public class NoteDisplayNonNote implements NoteDisplay {
 		return false;
 	}
 
+	public boolean isExternalNote() {
+		return false;
+	}
+
 	public Date getCreated() {
 		return created;
 	}

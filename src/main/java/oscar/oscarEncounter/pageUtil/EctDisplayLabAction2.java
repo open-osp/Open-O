@@ -28,10 +28,7 @@ package oscar.oscarEncounter.pageUtil;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.Logger;
@@ -44,6 +41,7 @@ import org.oscarehr.util.SpringUtils;
 import org.w3c.dom.Document;
 
 import oscar.OscarProperties;
+import oscar.oscarLab.ca.all.Hl7textResultsData;
 import oscar.oscarLab.ca.all.parsers.MessageHandler;
 import oscar.oscarLab.ca.all.web.LabDisplayHelper;
 import oscar.oscarLab.ca.on.CommonLabResultData;
@@ -75,7 +73,6 @@ public class EctDisplayLabAction2 extends EctDisplayAction {
 				labs.addAll(remoteResults);
 			}
 
-			Collections.sort(labs);
 
 			// set text for lefthand module title
 			Dao.setLeftHeading(messages.getMessage(request.getLocale(), "oscarEncounter.LeftNavBar.Labs"));
@@ -118,17 +115,23 @@ public class EctDisplayLabAction2 extends EctDisplayAction {
 			StringBuilder func;
 			int hash;
 
-			LinkedHashMap<String,LabResultData> accessionMap = new LinkedHashMap<String,LabResultData>();
+			// Comment out this code and instead using the correct method to
+			// get latest lab versions, which is the getLatestLabVersions() function below.
+			// LinkedHashMap<String,LabResultData> accessionMap = new LinkedHashMap<String,LabResultData>();
+			// for (int i = 0; i < labs.size(); i++) {
+			// 	result = labs.get(i);
+			// 	if (result.accessionNumber == null || result.accessionNumber.equals("")) {
+			// 		accessionMap.put("noAccessionNum" + i + result.labType, result);
+			// 	} else {
+			// 		if (!accessionMap.containsKey(result.accessionNumber + result.labType)) accessionMap.put(result.accessionNumber + result.labType, result);
+			// 	}
+			// }
+			// labs = new ArrayList<LabResultData>(accessionMap.values());
 
-			for (int i = 0; i < labs.size(); i++) {
-				result = labs.get(i);
-				if (result.accessionNumber == null || result.accessionNumber.equals("")) {
-					accessionMap.put("noAccessionNum" + i + result.labType, result);
-				} else {
-					if (!accessionMap.containsKey(result.accessionNumber + result.labType)) accessionMap.put(result.accessionNumber + result.labType, result);
-				}
-			}
-			labs = new ArrayList<LabResultData>(accessionMap.values());
+			//First, getting the latest versions of the lab results and then sorting them ensures 
+			//that they will be displayed in the correct date order in the encounter window.
+			labs = getLatestLabVersions(labs);
+			Collections.sort(labs);
 			
 			for (int j = 0; j < labs.size(); j++) {
 				result = labs.get(j);
@@ -206,6 +209,25 @@ public class EctDisplayLabAction2 extends EctDisplayAction {
 
 			return true;
 		}
+	}
+
+	private ArrayList<LabResultData> getLatestLabVersions(ArrayList<LabResultData> labs) {
+		List<String> allLabIds = new ArrayList<>();
+		ArrayList<LabResultData> latestLabVersions = new ArrayList<>();
+		for (LabResultData lab : labs) {
+			if (allLabIds.contains(lab.getSegmentID())) { continue; }
+
+			String[] allLabVersionIdsOfLab = Hl7textResultsData.getMatchingLabs(lab.getSegmentID()).split(",");
+			allLabIds.addAll(Arrays.asList(allLabVersionIdsOfLab));
+
+			for (LabResultData labResultData : labs) {
+				if (allLabVersionIdsOfLab[allLabVersionIdsOfLab.length - 1].equals(labResultData.getSegmentID())) {
+					latestLabVersions.add(labResultData);
+					break;
+				}
+			}
+		}
+		return latestLabVersions;
 	}
 
     public Date getServiceDate(LoggedInInfo loggedInInfo, LabResultData labData) {

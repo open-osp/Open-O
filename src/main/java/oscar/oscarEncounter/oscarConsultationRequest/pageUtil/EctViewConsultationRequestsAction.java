@@ -26,24 +26,25 @@
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
 import java.io.IOException;
-import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
-import oscar.util.UtilDateUtilities;
 
 public class EctViewConsultationRequestsAction extends Action {
 	private static SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    private static final Logger logger= MiscUtils.getLogger();
 
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
@@ -57,8 +58,8 @@ public class EctViewConsultationRequestsAction extends Action {
         String defaultPattern = "yyyy-MM-dd";   
         String sendTo = null;
         String includeCompleted = null;                
-        Date startDate = null;
-        Date endDate = null;
+        String startDate = frm.getStartDate();
+        String endDate = frm.getEndDate();
         boolean includedComp = false;        
                 
         sendTo = frm.getSendTo();
@@ -66,16 +67,26 @@ public class EctViewConsultationRequestsAction extends Action {
                                 
         if(includeCompleted != null && includeCompleted.equals("include") ){
            includedComp = true; 
-        }                        
+        }
+
+        SimpleDateFormat simpleDateFormat = null;
+
         try{
-           startDate = UtilDateUtilities.getDateFromString(frm.getStartDate(),defaultPattern);            
-        }catch(Exception e){/*ignore*/}        
-        try{
-           endDate = UtilDateUtilities.getDateFromString(frm.getEndDate(),defaultPattern);            
-        }catch(Exception e){/*ignore*/}
-                                
-        request.setAttribute("startDate",startDate);               
-        request.setAttribute("endDate",endDate);               
+            if (startDate != null && !startDate.isEmpty()) {
+                simpleDateFormat = new SimpleDateFormat(defaultPattern);
+                request.setAttribute("startDate", simpleDateFormat.parse(startDate));
+            }
+
+            if (endDate != null && !endDate.isEmpty()) {
+                if (simpleDateFormat == null) {
+                    simpleDateFormat = new SimpleDateFormat(defaultPattern);
+                }
+                request.setAttribute("endDate", simpleDateFormat.parse(endDate));
+            }
+        } catch (Exception e) {
+            logger.error("Cannot parse start date " + startDate + " and/or end date " + endDate + " for consultation request report. ", e);
+        }
+
         request.setAttribute("includeCompleted",new Boolean(includedComp));               
         request.setAttribute("teamVar", sendTo);
         request.setAttribute("orderby",frm.getOrderby());

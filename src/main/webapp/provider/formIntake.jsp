@@ -9,7 +9,7 @@
 
 --%>
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, oscar.oscarRx.util.*, oscar.util.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, oscar.*, oscar.oscarRx.util.*, oscar.util.*" errorPage="/errorpage.jsp"%>
 <%@ page import="org.oscarehr.common.dao.MeasurementDao" %>
 <%@ page import="org.oscarehr.common.model.Measurement" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>

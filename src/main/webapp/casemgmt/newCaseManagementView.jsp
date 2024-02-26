@@ -39,11 +39,11 @@
 <%@page import="org.oscarehr.PMmodule.model.*"%>
 <%@page import="org.oscarehr.common.model.*"%>
 <%@page import="oscar.util.DateUtils"%>
-<%@page import="oscar.dms.EDocUtil"%>
+<%@page import="org.oscarehr.documentManager.EDocUtil"%>
 <%@page import="org.springframework.web.context.WebApplicationContext"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@page import="org.oscarehr.casemgmt.common.Colour"%>
-<%@page import="oscar.dms.EDoc"%>
+<%@page import="org.oscarehr.documentManager.EDoc"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@page import="com.quatro.dao.security.*,com.quatro.model.security.Secrole"%>
 <%@page import="org.oscarehr.util.EncounterUtil"%>
@@ -64,32 +64,28 @@
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" />
 
-	<div id="cppBoxes">
-		<div id="divR1" style="width: 100%; height: 75px; margin: 0px; background-color: #FFFFFF;">
+	<div id="cppBoxes" >
+		<div id="divR1"  >
 			<!-- social history -->		
-			<div id="divR1I1" class="topBox" 
-				style="float: left; width: 49%; margin-left: 3px; height: inherit;">
+			<div id="divR1I1" class="topBox">
 			</div>
-		
-			<!-- This is the Medical History cell ...mh...-->
-			<div id="divR1I2" class="topBox"
-				style="float: right; width: 49%; margin-right: 3px; height: inherit;">
+
+			<div id="divR1I2" class="topBox">
+
 			</div>
 		</div>
 	
-		<div id="divR2" style="width: 100%; height: 75px; margin-top: 0px; background-color: #FFFFFF;">		
+		<div id="divR2" >
 			<!--Ongoing Concerns cell -->
-			<div id="divR2I1" class="topBox"
-				style="clear: left; float: left; width: 49%; margin-left: 3px; height: inherit;">	
+			<div id="divR2I1" class="topBox">
 			</div>	
 			<!--Reminders cell -->
-			<div id="divR2I2" class="topBox"
-				style="clear: right; float: right; width: 49%; margin-right: 3px; height: inherit;">		
+			<div id="divR2I2" class="topBox">
 			</div>
 		</div>
-		<span style="visibility:hidden">test</span>
+
 	</div>
 	
-	<div id="notCPP" style="height: 70%; margin-left: 2px; background-color: #FFFFFF;">	
+	<div id="notCPP">
  	
 	</div>

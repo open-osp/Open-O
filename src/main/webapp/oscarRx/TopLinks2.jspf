@@ -26,7 +26,8 @@
  * McMaster University 
  * Hamilton 
  * Ontario, Canada 
- */%> 
+ */%>
+<jsp:include page="../images/spinner.jsp" flush="true"/> 
 <script language="javascript" type="text/javascript">
 
 function newWindow(url) {
@@ -46,8 +47,8 @@ function newWindow(url) {
                     <td valign="bottom" style="color:white;" >     
 								
 					<b><bean:message key="SearchDrug.nameText" /></b> <jsp:getProperty name="patient" property="firstName" /> <jsp:getProperty name="patient" property="surname" />
-		     		<b><bean:message key="SearchDrug.ageText" /></b> <jsp:getProperty name="patient" property="age" />
-                    <b><a style="color:white; "href="SelectPharmacy2.jsp">Preferred Pharmacy</a>:</b>
+		     		<b><bean:message key="SearchDrug.ageText" /></b> <jsp:getProperty name="patient" property="age" /><br>
+                    <b>Selected Pharmacy:</b>
                     <select id="Calcs" name="pharmacyId" onchange="populatePharmacy(this.options[this.selectedIndex].value);showpic('Layer1');"> 
                     <%
                     	if( pharmacyList != null ) {
@@ -59,12 +60,13 @@ function newWindow(url) {
 	        					mapper.writeValue(jsonObject, pharmacyInfo);
 
 					%>
-								<option value='<%=jsonObject.toString().replaceAll("'", "")%>'><%=pharmacyInfo.getName() + " " + pharmacyInfo.getCity()%></option>
+								<option value='<%=jsonObject.toString().replaceAll("'", "")%>'><%=pharmacyInfo.getName() + " " + "(" + pharmacyInfo.getAddress() + ", " + pharmacyInfo.getCity() + ", Fax: " + pharmacyInfo.getFax() + ")"%></option>
 					<%
 	        				}
 	       		 		}
 					%>
                     </select>        
+					<b><a style="color:white; "href="SelectPharmacy2.jsp"><span onclick="ShowSpin(true);">(Edit List)</span></a></b>
                     </td>
                     <td valign="top" align="right">
                         <span class="HelpAboutLogout" style="color:white;">

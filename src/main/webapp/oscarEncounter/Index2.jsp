@@ -98,7 +98,7 @@ You have no rights to access the data!
 <%@page
 	import="oscar.oscarEncounter.oscarMeasurements.*,oscar.oscarResearch.oscarDxResearch.bean.*,oscar.util.*"%>
 <%@page
-	import="oscar.eform.*, oscar.dms.*, org.apache.commons.lang.StringEscapeUtils"%>
+	import="oscar.eform.*, org.apache.commons.lang.StringEscapeUtils"%>
 
 <% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
 

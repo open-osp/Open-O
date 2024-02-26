@@ -662,7 +662,7 @@ $P{s_relationshipStatus}]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$P{t_biologicalFatherEthnicity}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="54" y="185" width="152" height="13" uuid="32203def-ecbf-4163-8bbf-1d8db9422e61"/>
+				<reportElement x="54" y="185" width="165" height="13" uuid="32203def-ecbf-4163-8bbf-1d8db9422e61"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
@@ -679,7 +679,7 @@ $P{s_relationshipStatus}]]></textFieldExpression>
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="209" y="185" width="152" height="13" uuid="4989b252-9e2d-40ca-b9d4-6cb59acf0b49"/>
+				<reportElement x="209" y="185" width="190" height="13" uuid="4989b252-9e2d-40ca-b9d4-6cb59acf0b49"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>

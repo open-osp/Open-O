@@ -46,7 +46,7 @@ String user_no = (String) session.getAttribute("user");
 %>
 
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, oscar.util.*, java.net.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, oscar.*, oscar.util.*, java.net.*" errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.oscarBilling.ca.on.pageUtil.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.*"%>
 <jsp:useBean id="SxmlMisc" class="oscar.SxmlMisc" scope="session" />

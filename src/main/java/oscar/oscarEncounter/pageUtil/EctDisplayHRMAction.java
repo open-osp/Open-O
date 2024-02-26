@@ -13,25 +13,14 @@ package oscar.oscarEncounter.pageUtil;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.util.MessageResources;
 import org.oscarehr.common.dao.OscarLogDao;
-import org.oscarehr.hospitalReportManager.HRMReport;
-import org.oscarehr.hospitalReportManager.HRMReportParser;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentDao;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentSubClassDao;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentToDemographicDao;
-import org.oscarehr.hospitalReportManager.dao.HRMSubClassDao;
-import org.oscarehr.hospitalReportManager.model.HRMDocument;
-import org.oscarehr.hospitalReportManager.model.HRMDocumentSubClass;
-import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
-import org.oscarehr.hospitalReportManager.model.HRMSubClass;
+import org.oscarehr.hospitalReportManager.HRMUtil;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -42,10 +31,6 @@ public class EctDisplayHRMAction extends EctDisplayAction {
 
 	private static Logger logger = MiscUtils.getLogger();
 	private static final String cmd = "HRM";
-	private HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean("HRMDocumentToDemographicDao");
-	private HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
-	private HRMDocumentSubClassDao hrmDocumentSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean("HRMDocumentSubClassDao");
-	private HRMSubClassDao hrmSubClassDao = (HRMSubClassDao) SpringUtils.getBean("HRMSubClassDao");
 	private OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
 	
 	public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao, MessageResources messages) {
@@ -64,80 +49,29 @@ public class EctDisplayHRMAction extends EctDisplayAction {
 
 			StringBuilder javascript = new StringBuilder("<script type=\"text/javascript\">");
 			String js = "";
-			List<HRMDocumentToDemographic> hrmDocListDemographic = hrmDocumentToDemographicDao.findByDemographicNo(bean.demographicNo);
 			String dbFormat = "yyyy-MM-dd";
 			String serviceDateStr = "";
 			String key;
-			String title;
 			int hash;
 			String BGCOLOUR = request.getParameter("hC");
 			Date date;
 
-			List<HRMDocument> allHrmDocsForDemo = new LinkedList<HRMDocument>();
-			for (HRMDocumentToDemographic hrmDemoDocResult : hrmDocListDemographic) {
-				List<HRMDocument> hrmDoc = hrmDocumentDao.findById(hrmDemoDocResult.getHrmDocumentId());
-				allHrmDocsForDemo.addAll(hrmDoc);
-			}
+			ArrayList<HashMap<String, ? extends Object>> allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, bean.demographicNo,true);
+			for (HashMap<String, ? extends Object> hrmDocument: allHRMDocuments) {
+				String hrmDocumentId = String.valueOf(hrmDocument.get("id"));
+				String displayHRMName = (String) hrmDocument.get("name");
 
-			for (HRMDocument hrmDocument : allHrmDocsForDemo) {
-				// filter duplicate reports
-				HRMReport hrmReport = HRMReportParser.parseReport(loggedInInfo, hrmDocument.getReportFile());
-				if (hrmReport == null) continue;
-				hrmReport.setHrmDocumentId(hrmDocument.getId());
+				displayHRMName = StringUtils.maxLenString(displayHRMName, MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
 
-				List<HRMDocumentSubClass> hrmDocumentSubClassList = hrmDocumentSubClassDao.getSubClassesByDocumentId(hrmDocument.getId());
-				String reportStatus = hrmDocument.getReportStatus();
-				String dispFilename = hrmDocument.getReportType();
-				String dispSubClass ="";
-				HRMSubClass subClass;
-				String dispDocNo = hrmDocument.getId().toString();
-				String description = hrmDocument.getDescription();
-
-				if (hrmReport.getFirstReportClass().equalsIgnoreCase("Diagnostic Imaging Report") || hrmReport.getFirstReportClass().equalsIgnoreCase("Cardio Respiratory Report")) {
-					//Get first sub class to display on eChart
-					if (hrmDocumentSubClassList != null && hrmDocumentSubClassList.size()>0) {
-						HRMDocumentSubClass firstSubClass = hrmDocumentSubClassList.get(0);
-						subClass = hrmSubClassDao.findApplicableSubClassMapping(hrmReport.getFirstReportClass(), firstSubClass.getSubClass(), firstSubClass.getSubClassMnemonic(), hrmReport.getSendingFacilityId());
-						dispSubClass = subClass!=null?subClass.getSubClassDescription():"";
-					}
-
-					if ((StringUtils.isNullOrEmpty(dispSubClass)) && hrmReport.getAccompanyingSubclassList().size()>0){
-						// if sub class doesn't exist, display the accompanying subclass
-						dispSubClass = hrmReport.getFirstAccompanyingSubClass();
-					}
-				} else {
-					//Medical Records Report
-					String[] reportSubClass = hrmReport.getFirstReportSubClass().split("\\^");
-					dispSubClass = reportSubClass!=null&&reportSubClass.length>1?reportSubClass[1]:"";
-				}
-
-				// Determine text to display on eChart
-				String t = "";
-				if(!StringUtils.isNullOrEmpty(description)){
-					t = description; //custom label
-				}
-				else if(!StringUtils.isNullOrEmpty(dispSubClass)){
-					t = dispSubClass; // subclass
-				}
-				else {
-					t = dispFilename; // report class
-				}
-
-				if (reportStatus != null && reportStatus.equalsIgnoreCase("C")) {
-					t = "(Cancelled) " + t;
-				}
-
-				title = StringUtils.maxLenString(t, MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
-				
 				DateFormat formatter = new SimpleDateFormat(dbFormat);
-				String dateStr = hrmDocument.getTimeReceived().toString();
+				String dateStr = (String) hrmDocument.get("report_date");
 				NavBarDisplayDAO.Item item = NavBarDisplayDAO.Item();
 				try {
 					date = formatter.parse(dateStr);
-					serviceDateStr =  DateUtils.formatDate(date,request.getLocale()); 
+					serviceDateStr =  DateUtils.formatDate(date,request.getLocale());
 				}
 				catch(ParseException ex ) {
-					MiscUtils.getLogger().debug("EctDisplayHRMAction: Error creating date " + ex.getMessage());
+					logger.debug("EctDisplayHRMAction: Error creating date " + ex.getMessage());
 					serviceDateStr = "Error";
 					date = null;
 				}
@@ -145,18 +79,18 @@ public class EctDisplayHRMAction extends EctDisplayAction {
 				String user = (String) request.getSession().getAttribute("user");
 				item.setDate(date);
 				hash = Math.abs(winName.hashCode());
-				
-				url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/hospitalReportManager/Display.do?id="+dispDocNo+"&segmentID="+dispDocNo+"');";
+
+				url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/hospitalReportManager/Display.do?id="+hrmDocumentId+"&segmentID="+hrmDocumentId+"');";
 
 				String labRead = "";
-				if(!oscarLogDao.hasRead(( (String) request.getSession().getAttribute("user")   ),"hrm",dispDocNo)){
-                	labRead = "*";	
-                }
+				if(!oscarLogDao.hasRead(user,"hrm",hrmDocumentId)){
+					labRead = "*";
+				}
 
-				
-				item.setLinkTitle(title + serviceDateStr);
-				item.setTitle(labRead+title+labRead);
-				key = StringUtils.maxLenString(dispFilename, MAX_LEN_KEY, CROP_LEN_KEY, ELLIPSES) + "(" + serviceDateStr + ")";
+
+				item.setLinkTitle(displayHRMName + serviceDateStr);
+				item.setTitle(labRead + displayHRMName + labRead);
+				key = StringUtils.maxLenString((String)hrmDocument.get("report_type"), MAX_LEN_KEY, CROP_LEN_KEY, ELLIPSES) + "(" + serviceDateStr + ")";
 				key = StringEscapeUtils.escapeJavaScript(key);
 
 
@@ -165,7 +99,6 @@ public class EctDisplayHRMAction extends EctDisplayAction {
 				url += "return false;";
 				item.setURL(url);
 				Dao.addItem(item);
-
 			}
 			javascript.append("</script>");
 

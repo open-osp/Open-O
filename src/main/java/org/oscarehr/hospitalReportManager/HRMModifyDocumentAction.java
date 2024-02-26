@@ -89,16 +89,20 @@ public class HRMModifyDocumentAction extends DispatchAction {
 		
 		try {
 			HRMDocument document = hrmDocumentDao.find(Integer.parseInt(reportId));
-			if (document.getParentReport() != null) {
+			if (document.getParentReport() != null && !document.getParentReport().equals(Integer.parseInt(reportId))) {
+				// There is a parent report that isn't itself, implies this is a child document
 				document.setParentReport(null);
 				hrmDocumentDao.merge(document);
 			} else {
-				// This is the parent document; choose the closest one 
+				// This is a parent document so we need to find and disassociate all the children documents (if any)				
 				List<HRMDocument> documentChildren = hrmDocumentDao.getAllChildrenOf(document.getId());
 				if (documentChildren != null && documentChildren.size() > 0) {
+					// If there's children, choose the first child (which has the earliest id) and mark its parent as null
 					HRMDocument newParentDoc = documentChildren.get(0);
 					newParentDoc.setParentReport(null);
 					hrmDocumentDao.merge(newParentDoc);
+					
+					// update all children to have this first child as their parent instead
 					for (HRMDocument childDoc : documentChildren) {
 						if (childDoc.getId().intValue() != newParentDoc.getId().intValue()) {
 							childDoc.setParentReport(newParentDoc.getId());

@@ -1082,7 +1082,7 @@ function removeSaveFeedback()  {
 					onmouseover="window.status='<bean:message key="oscarEncounter.Index.viewResource"/>';return true"><bean:message
 					key="oscarEncounter.Index.resource" /></a><br>
 				<a href="#"
-					onClick="popupPage(710,970,'../dms/documentReport.jsp?function=demographic&doctype=lab&functionid=<%=bean.demographicNo%>&curUser=<%=bean.curProviderNo%>');return false;"><bean:message
+					onClick="popupPage(710,970,'../documentManager/documentReport.jsp?function=demographic&doctype=lab&functionid=<%=bean.demographicNo%>&curUser=<%=bean.curProviderNo%>');return false;"><bean:message
 					key="oscarEncounter.Index.msgDocuments" /></a><br>
 				<a href="#"
 					onClick="popupPage(500,950, '../eform/efmpatientformlist.jsp?demographic_no=<%=bean.demographicNo%>');return false;"><bean:message

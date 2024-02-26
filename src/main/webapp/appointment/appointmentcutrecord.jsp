@@ -28,7 +28,7 @@
 %>
 <%@ page
 	import="oscar.appt.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@page import="org.oscarehr.common.dao.AppointmentArchiveDao" %>

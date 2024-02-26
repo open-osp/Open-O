@@ -34,7 +34,7 @@
     bNew = false;
 %>
 <%@ page import="java.util.*, java.sql.*, oscar.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 
 <HTML>
 <head>

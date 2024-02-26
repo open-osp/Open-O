@@ -670,23 +670,44 @@ public class BillingONCHeader1Dao extends AbstractDao<BillingONCHeader1>{
         return rs;
     }
 
-	public List<Object[]> findByMagic2(List<String> payPrograms, String statusType, String providerNo, Date startDate, Date endDate, Integer demoNo, List<String> serviceCodes, String dx, String visitType, String visitLocation, Date paymentStartDate, Date paymentEndDate ) {
+    public List<Object[]> findByMagic2(List<String> payPrograms, String statusType, String providerNo, Date startDate, Date endDate, Integer demoNo, List<String> serviceCodes, String dx, String visitType, String visitLocation, Date paymentStartDate, Date paymentEndDate) {
+        return findByMagic2(payPrograms, statusType, providerNo, startDate, endDate, demoNo, serviceCodes, dx, visitType, visitLocation, paymentStartDate, paymentEndDate, null );
+    }
+
+	public List<Object[]> findByMagic2(List<String> payPrograms, String statusType, String providerNo, Date startDate, Date endDate, Integer demoNo, List<String> serviceCodes, String dx, String visitType, String visitLocation, Date paymentStartDate, Date paymentEndDate, String claimNo ) {
 		String base = "FROM BillingONCHeader1 ch1, BillingONItem bi";
 		if(paymentStartDate != null || paymentEndDate != null) {
 			base += ", BillingONPayment bp ";
 		}
+        if (claimNo != null){
+            base += ", RaDetail rd ";
+        }
 		ParamAppender app = new ParamAppender(base);
-		app.and("ch1.id = bi.ch1Id");
+		app.and("ch1.id = bi.ch1Id");        
 		if(paymentStartDate != null || paymentEndDate != null) {
 			app.and("ch1.id = bp.billingNo");
 		}
+        if (claimNo != null){
+            app.and("ch1.id = rd.billingNo");
+            app.and("bi.serviceCode = rd.serviceCode");            
+            if ("%".equals(claimNo)){
+                //in this scenario, there is no need to filter on claimNo because % means match all claim numbers
+            } else {
+                app.and("rd.claimNo = :claimNo", "claimNo", claimNo);        
+            }
+        }
+
 		app.and("bi.status != 'D'");
 		
 		app.and("ch1.payProgram in (:payPrograms)", "payPrograms", payPrograms);
 		app.and("ch1.status = :status", "status", statusType);
 		app.and("ch1.providerNo = :providerNo", "providerNo", providerNo);
-		app.and("ch1.billingDate >= :startDate", "startDate", (new SimpleDateFormat("yyyy-MM-dd")).format(startDate));
-		app.and("ch1.billingDate <= :endDate", "endDate", (new SimpleDateFormat("yyyy-MM-dd")).format(endDate));
+		if (startDate != null) {
+            app.and("ch1.billingDate >= :startDate", "startDate", (new SimpleDateFormat("yyyy-MM-dd")).format(startDate));
+        }
+        if (endDate != null ){
+            app.and("ch1.billingDate <= :endDate", "endDate", (new SimpleDateFormat("yyyy-MM-dd")).format(endDate));
+        }		
 		
 		if(paymentStartDate != null) {
 			app.and("bp.paymentdate >= :paymentStartDate", "paymentStartDate", paymentStartDate);

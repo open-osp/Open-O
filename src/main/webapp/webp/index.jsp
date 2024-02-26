@@ -34,7 +34,6 @@ response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 response.setHeader("Pragma", "no-cache");
 response.setDateHeader("Expires", 0);
 
-session.setAttribute("useIframeResizing", "true");  //Temporary Hack
 %>
 
 <!DOCTYPE html>
@@ -293,7 +292,6 @@ font-size:20px
  	<script src="../library/angular-resource.min.js"></script>
  	
  	<script src="../library/ui-bootstrap-tpls-2.5.0.js"></script>
- 	<script src="../library/pym.js"></script>
  	
  	<script src="../library/ng-infinite-scroll.min.js"></script>
  	

@@ -41,7 +41,7 @@
   String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF" ;
 %>
 <%@ page import="java.sql.*, java.util.*, oscar.*" buffer="none"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 <jsp:useBean id="apptMainBean" class="oscar.AppointmentMainBean"
 	scope="session" />
 

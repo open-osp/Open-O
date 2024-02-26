@@ -65,7 +65,7 @@
 %>
 <%@ page
 	import="java.util.*, java.sql.*,java.net.*, oscar.*, oscar.util.*, org.oscarehr.common.OtherIdManager"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 

@@ -42,7 +42,7 @@
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="page" />
 
 <%@page import="java.net.URLDecoder, java.net.URLEncoder,java.util.Date, java.util.List"%>
-<%@page import="oscar.dms.EDocUtil,oscar.dms.EDoc"%>
+<%@page import="org.oscarehr.documentManager.EDocUtil,org.oscarehr.documentManager.EDoc"%>
 <%@page import="org.oscarehr.casemgmt.web.NoteDisplay,org.oscarehr.casemgmt.web.NoteDisplayLocal"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.casemgmt.service.CaseManagementManager,org.oscarehr.casemgmt.model.CaseManagementNote"%>
@@ -217,14 +217,14 @@
                      
             showPageImg=function(curdocid,doctype){
                 if(curdocid!="0") {
-                    var url2='<%=request.getContextPath()%>'+'/dms/ManageDocument.do?method=display&doc_no='
+                    var url2='<%=request.getContextPath()%>'+'/documentManager/ManageDocument.do?method=display&doc_no='
                         +curdocid;
                     document.getElementById('docdisp').innerHTML = '<iframe	src="' +url2 +'"  width="' +(getWidth()-40) +'" height="' +(getHeight()-50) +'"></iframe>';
                             
-                    var url4='<%=request.getContextPath()%>'+'/dms/ManageDocument.do?method=viewDocumentDescription&doc_no='+curdocid;
+                    var url4='<%=request.getContextPath()%>'+'/documentManager/ManageDocument.do?method=viewDocumentDescription&doc_no='+curdocid;
                     document.getElementById('docextrainfo').innerHTML = '<object data="' +url4 +'"  height=250px width="100%" type="text/html" ></object>';
                     
-                    var url5='<%=request.getContextPath()%>'+'/dms/ManageDocument.do?method=viewAnnotationAcknowledgementTickler&doc_no='+curdocid;
+                    var url5='<%=request.getContextPath()%>'+'/documentManager/ManageDocument.do?method=viewAnnotationAcknowledgementTickler&doc_no='+curdocid;
                     document.getElementById('docinfo').innerHTML = '<object data="' +url5 +'"  height=100px width="100%" type="text/html" ></object>';                    
                       
                     document.getElementById('printnotesbutton').style.visibility = 'hidden'; 
@@ -238,7 +238,7 @@
             }
             showPageCombineImg=function(doclist){
                 
-                var url2='<%=request.getContextPath()%>'+'/dms/combinePDFs.do?ContentDisposition=inline'+doclist;
+                var url2='<%=request.getContextPath()%>'+'/documentManager/combinePDFs.do?ContentDisposition=inline'+doclist;
                 document.getElementById('docdisp').innerHTML = '<object	data="' +url2 +'" type="application/pdf" width="' +(getWidth()-40) +'" height="' +(getHeight()-50) +'"></object>';
                 document.getElementById('docinfo').innerHTML='';
                 document.getElementById('docextrainfo').innerHTML='';
@@ -429,11 +429,11 @@
                 var doctype=selected[0].value.substring(docidindexend+1,selected[0].value.length);
                 
                 if (doctype== 'text/html') { 
-                    popup(450,600,'../dms/addedithtmldocument.jsp?editDocumentNo='+docid+'&function=<%=module%>&functionid=<%=demographicID%>','EditDoc');                                               
+                    popup(450,600,'../documentManager/addedithtmldocument.jsp?editDocumentNo='+docid+'&function=<%=module%>&functionid=<%=demographicID%>','EditDoc');
                 }
                 else {
                             
-                    popup(350,500,'../dms/editDocument.jsp?editDocumentNo='+docid+'&function=<%=module%>&functionid=<%=demographicID%>','EditDoc');                                               
+                    popup(350,500,'../documentManager/editDocument.jsp?editDocumentNo='+docid+'&function=<%=module%>&functionid=<%=demographicID%>','EditDoc');
                 }                                        
             }
 
@@ -569,6 +569,12 @@
                             %>
                                 <option value="<%=curNote.getNoteId()%>"><%=DateUtils.getDate(MyDateFormat.getCalendar(curNote.getObservationDate()).getTime(), "yyyy-MM-dd  HH:mm ", request.getLocale())%> <%=curNote.getProviderName()%></option>
                             <%          
+                                    } 
+                                    
+                                    if (curNote.isExternalNote()) {
+                            %>
+                                <option value="<%=curNote.getNoteId()%>"><%=DateUtils.getDate(MyDateFormat.getCalendar(curNote.getObservationDate()).getTime(), "yyyy-MM-dd  HH:mm ", request.getLocale())%> <%=curNote.getProviderName()%></option>
+                            <%            
                                     }
                                 }  
                         %>                   

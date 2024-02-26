@@ -44,7 +44,7 @@ function onSubmitCheck(){
 		return false;
 	}	
 	
-	var url = "../dms/inboxManage.do?method=prepareForIndexPage&providerNo=<%=request.getParameter("providerNo")%>";
+	var url = "../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=request.getParameter("providerNo")%>";
 	if( $("#provfind").val().trim() != "" ) {
 		url += "&searchProviderNo=" + $("#provfind").val().trim();
 	}

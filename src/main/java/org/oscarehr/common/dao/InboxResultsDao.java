@@ -172,7 +172,7 @@ public class InboxResultsDao {
 		String sql = "";
 		String dateSearchType = "serviceObservation";
 
-		SystemPreferences systemPreferences = systemPreferencesDao.findPreferenceByName("inboxDateSearchType");
+		SystemPreferences systemPreferences = systemPreferencesDao.findPreferenceByName(SystemPreferences.LAB_DISPLAY_PREFERENCE_KEYS.inboxDateSearchType);
 		if (systemPreferences != null)
 		{
 			if (systemPreferences.getValue() != null && !systemPreferences.getValue().isEmpty())

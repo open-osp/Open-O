@@ -23,15 +23,7 @@
  */
 package org.oscarehr.fax.admin;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -43,6 +35,12 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigureFaxAction extends DispatchAction {
 
@@ -77,11 +75,13 @@ public class ConfigureFaxAction extends DispatchAction {
 			String[] faxNumbers = request.getParameterValues("faxNumber");
 			String[] senderEmails = request.getParameterValues("senderEmail");
 			String[] accountNames = request.getParameterValues("accountName");
+			String[] downloadState = request.getParameterValues("downloadState");
 		
 			Integer id;
 			int savedidx;
 			FaxConfig faxConfig;
 			FaxConfig savedFaxConfig;
+			FaxConfig masterFaxConfig;
 			
 			if( faxConfigIds == null ) {
 				for(FaxConfig sfaxConfig : savedFaxConfigList ) {
@@ -117,20 +117,26 @@ public class ConfigureFaxAction extends DispatchAction {
 						if(faxNumber != null)
 						{
 							faxNumber = faxNumber.trim().replaceAll("\\D", "");
+
 						}
 						savedFaxConfig.setFaxNumber(faxNumber);
 						savedFaxConfig.setSenderEmail(senderEmails[idx]);
 						savedFaxConfig.setQueue(Integer.parseInt(inboxQueues[idx]));
 						savedFaxConfig.setAccountName(accountNames[idx]);
 						savedFaxConfig.setActive(Boolean.parseBoolean(activeState[idx]));
+						savedFaxConfig.setDownload(Boolean.parseBoolean(downloadState[idx]));
 						faxConfigList.add(savedFaxConfig);
 					}
 					else {
 						faxConfig.setId(null);
 						faxConfig.setSiteUser(siteUser);
-						
+
 						if( ! PASSWORD_BLANKET.equals(sitePasswd) ) {
 							faxConfig.setPasswd(sitePasswd);
+						}
+						// the password carries over from the last configuration. Usually the first entry
+						else if((masterFaxConfig = savedFaxConfigList.get(0)) != null) {
+							faxConfig.setPasswd(masterFaxConfig.getPasswd());
 						}
 						
 						faxConfig.setUrl(faxUrl);
@@ -145,6 +151,7 @@ public class ConfigureFaxAction extends DispatchAction {
 						faxConfig.setQueue(Integer.parseInt(inboxQueues[idx]));
 						faxConfig.setAccountName(accountNames[idx]);
 						faxConfig.setActive( Boolean.parseBoolean(activeState[idx]));
+						faxConfig.setDownload(Boolean.parseBoolean(downloadState[idx]));
 						faxConfigList.add(faxConfig);
 					}
 				}
@@ -161,7 +168,27 @@ public class ConfigureFaxAction extends DispatchAction {
 					}
 				}
 			}
-		
+
+			/*
+			 * Ensure that the fax server information remains intact
+			 * whenever all the gateway accounts are wiped out.
+			 */
+			int auditList = faxConfigDao.getCountAll();
+			if(auditList == 0) {
+				faxConfig = new FaxConfig();
+				faxConfig.setUrl(faxUrl);
+				faxConfig.setSiteUser(siteUser);
+
+				if( ! PASSWORD_BLANKET.equals(sitePasswd) ) {
+					faxConfig.setPasswd(sitePasswd);
+				}
+				// the password carries over from the last configuration. Usually the first entry
+				else if((masterFaxConfig = savedFaxConfigList.get(0)) != null) {
+					faxConfig.setPasswd(masterFaxConfig.getPasswd());
+				}
+				faxConfigDao.saveEntity(faxConfig);
+			}
+
 			jsonObject = JSONObject.fromObject("{success:true}");
 		}
 		catch( Exception ex ) {

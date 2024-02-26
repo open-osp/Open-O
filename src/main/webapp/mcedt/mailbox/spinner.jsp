@@ -25,69 +25,85 @@
 --%>
 <style>
 .spinner {
-	padding: 20px;
     position: fixed;
     top: 50%;
     left: 50%;
-    margin-left: -50px; /* half width of the spinner gif */
-    margin-top: -50px; /* half height of the spinner gif */
-    text-align:center;
-    z-index:1234;
-    overflow: auto;
-    width: 130px; /* width of the spinner gif */
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 1234;
+    display:none;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    opacity: 1;
+    transition: opacity 0.3s ease;
 }
 
-.screen
-{
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background: #f8f8f8;
-            opacity: .8;
-            filter: alpha(opacity=80);
-            -moz-opacity: .8;
-            z-index: 101;
-            display: none;
- }
+#img-spinner {
+    width: 100px;
+    height: 77px;
+}
+
+.screen {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 101;
+    display: none;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.active-spinner {
+    display: block;
+}
 </style>
-<script src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
 
 <script type="text/javascript">
 
-// if locked is ture: can't click away
-// if lock is false: can click away from it
+// if locked is true: can't click away
+// if locked is false: can click away from it
 function ShowSpin(locked)
 {
-    $("#screen").show();
-    $("#spinner").fadeIn(300);
+    let screen = document.getElementById("screen");
+    let spinner = document.getElementById("spinner");
+    
+    screen.classList.add("active-spinner");
+    spinner.classList.add("active-spinner");
 
     if (locked)
     {
-        $("#screen").unbind("click");
+        screen.removeEventListener("click", HideSpin);
     }
     else
     {
-        $("#screen").click(function (e)
-        {
-            HideSpin();
-        });
+        screen.addEventListener("click", HideSpin);
     }
 }
 
 function HideSpin()
 {
-    $("#screen").hide();
-    $("#spinner").fadeOut(300);
+    let screen = document.getElementById("screen");
+    let spinner = document.getElementById("spinner");
+    
+    screen.classList.remove("active-spinner");
+    spinner.style.opacity = "0";
+    
+    setTimeout(function() {
+        spinner.classList.remove("active-spinner");
+        spinner.style.opacity = "1";
+    }, 300);
 }
 </script>
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
-    <div id="screen" class="screen"></div>
-<div id="spinner" class="spinner" style="display:none;">
+<div id="screen" class="screen"></div>
+<div id="spinner" class="spinner">
     <img id="img-spinner" src="<%=request.getContextPath() %>/images/spinner.jpg" alt="Loading"/>
 </div>

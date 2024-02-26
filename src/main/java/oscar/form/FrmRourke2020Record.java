@@ -187,15 +187,14 @@ public class FrmRourke2020Record extends FrmRecord implements JasperReportPdfPri
                     "getP3Hc12m", "getP3Hc15m", "getP4Hc18m", "getP4Hc24m", "getP1Wt1w", "getP1Wt2w", "getP1Wt1m",
                     "getP2Wt2m", "getP2Wt4m", "getP2Wt6m", "getP3Wt9m", "getP3Wt12m", "getP3Wt15m", "getP4Wt18m",
                     "getP4Wt24m", "getP1Ht1w", "getP1Ht2w", "getP1Ht1m", "getP2Ht2m", "getP2Ht4m", "getP2Ht6m",
-                    "getP3Ht9m", "getP3Ht12m", "getP3Ht15m", "getP4Ht18m", "getP4Ht24m"};
+                    "getP3Ht9m", "getP3Ht12m", "getP3Ht15m", "getP4Ht18m", "getP4Ht24m", "getP4Ht48m", "getP4Wt48m", "getP4Date48m"};
                 String[] names = {"c_pName", "c_birthDate", "c_birthWeight", "c_headCirc", "c_length",
                      "p1_date1w", "p1_date2w", "p1_date1m", "p2_date2m", "p2_date4m", "p2_date6m", "p3_date9m",
                      "p3_date12m", "p3_date15m", "p4_date18m", "p4_date24m", "p1_hc1w", "p1_hc2w", "p1_hc1m",
                      "p2_hc2m", "p2_hc4m", "p2_hc6m", "p3_hc9m", "p3_hc12m", "p3_hc15m", "p4_hc18m", "p4_hc24m",
                      "p1_wt1w", "p1_wt2w", "p1_wt1m", "p2_wt2m", "p2_wt4m", "p2_wt6m", "p3_wt9m", "p3_wt12m", "p3_wt15m",
                      "p4_wt18m", "p4_wt24m", "p1_ht1w", "p1_ht2w", "p1_ht1m", "p2_ht2m", "p2_ht4m", "p2_ht6m", "p3_ht9m",
-                     "p3_ht12m", "p3_ht15m", "p4_ht18m", "p4_ht24m"};
-
+                     "p3_ht12m", "p3_ht15m", "p4_ht18m", "p4_ht24m", "p4_ht48m", "p4_wt48m", "p4_date48m"};
                 Rourke2020Dao rourkeDao = SpringUtils.getBean(Rourke2020Dao.class);
                 FormRourke2020 frmRourke = rourkeDao.find(existingID);
 

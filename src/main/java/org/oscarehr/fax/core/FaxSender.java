@@ -54,9 +54,9 @@ import oscar.OscarProperties;
 public class FaxSender {
 	
 	private static String PATH = "/fax";
-	private FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
-	private FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
-    private FaxClientLogDao faxClientLogDao = SpringUtils.getBean(FaxClientLogDao.class);
+	private final FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
+	private final FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
+    private final FaxClientLogDao faxClientLogDao = SpringUtils.getBean(FaxClientLogDao.class);
 	
 	private Logger log = MiscUtils.getLogger();
 	

@@ -63,7 +63,7 @@ public class NoteTo1 implements Serializable{
 	private boolean isEncounterForm;
 	private boolean isInvoice;
 	private boolean isTicklerNote;
-	private String encounterType;
+	private String encounterType = "";
 	private Integer appointmentNo;
 	private String summaryCode;
 

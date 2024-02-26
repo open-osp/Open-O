@@ -24,7 +24,7 @@
 
 --%>
 
-<%@ page import="java.sql.*, java.util.*, oscar.MyDateFormat" errorPage="errorpage.jsp"%>
+<%@ page import="java.sql.*, java.util.*, oscar.MyDateFormat" errorPage="/errorpage.jsp"%>
 
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.common.dao.EncounterTemplateDao" %>

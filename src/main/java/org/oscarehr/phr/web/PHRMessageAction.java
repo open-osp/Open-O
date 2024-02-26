@@ -73,9 +73,9 @@ import org.oscarehr.util.WebUtils;
 import org.oscarehr.util.XmlUtils;
 import org.w3c.dom.Document;
 
-import oscar.dms.EDoc;
-import oscar.dms.EDocUtil;
-import oscar.dms.actions.AddEditDocumentAction;
+import org.oscarehr.documentManager.EDoc;
+import org.oscarehr.documentManager.EDocUtil;
+import org.oscarehr.documentManager.actions.AddEditDocumentAction;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 import oscar.oscarDemographic.data.DemographicData;

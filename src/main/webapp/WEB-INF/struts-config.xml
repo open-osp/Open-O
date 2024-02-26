@@ -50,8 +50,8 @@
 			<!--    <form-property name="codesearch" type="java.lang.String" />  -->
 		</form-bean>
 
-		<form-bean name="addDocumentType" type="oscar.dms.data.AddDocumentTypeForm" />
-		<form-bean name="changeDocStatus" type="oscar.dms.data.ChangeDocStatusForm" />
+		<form-bean name="addDocumentType" type="org.oscarehr.documentManager.data.AddDocumentTypeForm" />
+		<form-bean name="changeDocStatus" type="org.oscarehr.documentManager.data.ChangeDocStatusForm" />
 		<!-- login form bean -->
 		<form-bean name="loginForm" type="oscar.login.LoginForm" />
 		<form-bean name="msgSendMessageForm" type="oscar.oscarMessenger.pageUtil.MsgSendMessageForm" />
@@ -184,6 +184,7 @@
 		<form-bean name="BillingViewForm" type="oscar.oscarBilling.ca.bc.pageUtil.BillingViewForm" />
 		<form-bean name="WCBForm" type="oscar.oscarBilling.ca.bc.pageUtil.WCBForm" />
 		<form-bean name="ReProcessBilling" type="oscar.oscarBilling.ca.bc.pageUtil.BillingReProcessBillForm" />
+        <form-bean name="ReProcessBillingForm" type="oscar.oscarBilling.ca.bc.pageUtil.BillingReProcessBillForm" />
 		<form-bean name="TeleplanCorrectionFormWCB" type="oscar.oscarBilling.ca.bc.administration.TeleplanCorrectionFormWCB" />
 		<form-bean name="BillingSearchCodeForm" type="oscar.oscarBilling.ca.bc.pageUtil.BillingSearchCodeForm" />
 		<form-bean name="BillingEditCodeForm" type="oscar.oscarBilling.ca.bc.pageUtil.BillingEditCodeForm" />
@@ -217,10 +218,10 @@
 		<form-bean name="receivePaymentActionForm" type="oscar.oscarBilling.ca.bc.pageUtil.ReceivePaymentActionForm" />
 		<form-bean name="billingPreferencesActionForm" type="oscar.oscarBilling.ca.bc.pageUtil.BillingPreferencesActionForm" />
 		<form-bean name="supServiceCodeAssocActionForm" type="oscar.oscarBilling.ca.bc.pageUtil.SupServiceCodeAssocActionForm" />
-		<form-bean name="eDocsAddEditDocument" type="oscar.dms.data.AddEditDocumentForm" />
-		<form-bean name="documentUploadForm" type="oscar.dms.data.DocumentUploadForm" />
-		<form-bean name="addLinkDoc" type="oscar.dms.data.AddEditDocumentForm" />
-		<form-bean name="addEditHtmlDoc" type="oscar.dms.data.AddEditDocumentForm" />
+		<form-bean name="eDocsAddEditDocument" type="org.oscarehr.documentManager.data.AddEditDocumentForm" />
+		<form-bean name="documentUploadForm" type="org.oscarehr.documentManager.data.DocumentUploadForm" />
+		<form-bean name="addLinkDoc" type="org.oscarehr.documentManager.data.AddEditDocumentForm" />
+		<form-bean name="addEditHtmlDoc" type="org.oscarehr.documentManager.data.AddEditDocumentForm" />
 		<form-bean name="ManagePatientLettersForm" type="oscar.oscarReport.pageUtil.ManagePatientLettersForm" />
 		<form-bean name="CihiExportForm" type="org.apache.struts.validator.DynaValidatorForm">
 			<form-property name="patientSet" type="java.lang.String" />
@@ -324,13 +325,6 @@
 			<form-property name="myOscarLoginId" type="java.lang.String" />
 		</form-bean>
 		<form-bean name="attachConsultation" type="org.apache.struts.action.DynaActionForm">
-			<form-property name="documents" type="java.lang.String[]" />
-			<form-property name="attachedDocs" type="java.lang.String[]" />
-			<form-property name="requestId" type="java.lang.String" />
-			<form-property name="demoNo" type="java.lang.String" />
-			<form-property name="providerNo" type="java.lang.String" />
-		</form-bean>
-		<form-bean name="attachEform" type="org.apache.struts.action.DynaActionForm">
 			<form-property name="documents" type="java.lang.String[]" />
 			<form-property name="attachedDocs" type="java.lang.String[]" />
 			<form-property name="requestId" type="java.lang.String" />
@@ -616,6 +610,7 @@
 			<form-property name="faxFilePath" type="java.lang.String" />
 			<form-property name="recipient" type="java.lang.String" />
 			<form-property name="recipientFaxNumber" type="java.lang.String" />
+			<form-property name="letterheadFax" type="java.lang.String" />
 			<form-property name="comments" type="java.lang.String" />
 			<form-property name="demographicNo" type="java.lang.Integer" />
 			<form-property name="coverpage" type="java.lang.String" />
@@ -763,17 +758,17 @@
     		<forward name="error" path="/billing/CA/BC/quickBillingBC.jsp?saved=false" />
     	</action>
 
-	<action input="/dms/addNewDocumentCategories.jsp" name="addDocumentType"
-			path="/dms/addDocumentType" type="oscar.dms.actions.AddDocumentTypeAction"
+	<action input="/documentManager/addNewDocumentCategories.jsp" name="addDocumentType"
+			path="/documentManager/addDocumentType" type="org.oscarehr.documentManager.actions.AddDocumentTypeAction"
 			parameter="method" scope="request" validate="false">
-			<forward name="failed" path="/dms/addNewDocumentCategories.jsp"></forward>
-			<forward name="success" path="/dms/closeWindow.html"></forward>
+			<forward name="failed" path="/documentManager/addNewDocumentCategories.jsp"></forward>
+			<forward name="success" path="/documentManager/closeWindow.html"></forward>
 		</action>
-		<action input="/dms/changeStatus.jsp" name="changeDocStatus"
-			path="/dms/changeDocStatus" type="oscar.dms.actions.ChangeDocStatusAction"
+		<action input="/documentManager/changeStatus.jsp" name="changeDocStatus"
+			path="/documentManager/changeDocStatus" type="org.oscarehr.documentManager.actions.ChangeDocStatusAction"
 			parameter="method" scope="request" validate="false">
-			<!--<forward name="failed" path="/dms/addNewDocumentCategories.jsp"></forward> -->
-			<forward name="success" path="/dms/closeWindow.html"></forward>
+			<!--<forward name="failed" path="/documentManager/addNewDocumentCategories.jsp"></forward> -->
+			<forward name="success" path="/documentManager/closeWindow.html"></forward>
 		</action>
 
 		<action input="/lab/CA/ALL/labDisplay.jsp" name="TDISLabelForm" path="/lab/CA/ALL/createLabelTDIS" scope="request" type="oscar.oscarLab.ca.all.pageUtil.CreateLabelTDISAction">
@@ -939,7 +934,7 @@
 			<forward name="domain-error" path="/casemgmt/domain-error.jsp" />
 		</action>
 
-		<action name="FrmForm" path="/dms/inboxManage" scope="request"  parameter="method" type="org.springframework.web.struts.DelegatingActionProxy">
+		<action name="FrmForm" path="/documentManager/inboxManage" scope="request"  parameter="method" type="org.springframework.web.struts.DelegatingActionProxy">
             <forward name="dms_index" path="/oscarMDS/Index.jsp" />
             <forward name="dms_page" path="/oscarMDS/Page.jsp" />
             <forward name="document_in_queues"  path="/oscarMDS/documentsInQueues.jsp" />
@@ -1052,15 +1047,14 @@
 		<action input="/oscarRx/ChooseDrug.jsp" path="/oscarRx/drugInfo" scope="request" type="oscar.oscarRx.pageUtil.RxDrugInfoAction">
 			<forward name="success" path="/oscarRx/SearchDrug.jsp" />
 		</action>
-		<action input="/oscarRx/ManagePharacy.jsp" name="RxManagePharmacyForm" path="/oscarRx/managePharmacy" scope="request" parameter="method" type="oscar.oscarRx.pageUtil.RxManagePharmacyAction">
-			<forward name="success" path="/oscarRx/SelectPharmacy.jsp" />
-		</action>
-		<action input="/oscarRx/SelectPharmacy2.jsp" path="/oscarRx/managePharmacy" scope="request" parameter="method" type="oscar.oscarRx.pageUtil.RxManagePharmacyAction">			
-		</action>
 		
-		<action input="/oscarRx/ManagePharacy2.jsp" name="RxManagePharmacyForm" path="/oscarRx/managePharmacy2" scope="request" parameter="method" type="oscar.oscarRx.pageUtil.RxManagePharmacyAction">
+		<action input="/oscarRx/ManagePharmacy2.jsp" name="RxManagePharmacyForm" path="/oscarRx/managePharmacy2" scope="request" parameter="method" type="oscar.oscarRx.pageUtil.RxManagePharmacyAction">
 			<forward name="success" path="/oscarRx/SelectPharmacy2.jsp" />
-		</action>				
+		</action>
+
+		<action input="/oscarRx/SelectPharmacy2.jsp" path="/oscarRx/managePharmacy" scope="request" parameter="method" type="oscar.oscarRx.pageUtil.RxManagePharmacyAction">
+		</action>
+
 		<action input="/oscarRx/SearchDrug.jsp" name="FrmForm" path="/oscarRx/SendToPhr" parameter="method" scope="request" type="org.springframework.web.struts.DelegatingActionProxy">
 			<forward name="finished" path="/phr/response.jsp"></forward>
 		</action>
@@ -1077,6 +1071,11 @@
 		<action input="/oscarRx/ViewScript2.jsp" path="/oscarRx/GetRxPageSizeInfo" parameter="method" scope="request" type="oscar.oscarRx.pageUtil.RxRxPageSizeInfoAction">
 			<forward name="success" path="/oscarRx/ViewScript2.jsp"></forward>
 		</action>
+
+		<action path="/oscarRx/WriteToEncounter" scope="request" type="oscar.oscarRx.pageUtil.RxWriteToEncounterAction">
+			<forward name="success" path="/oscarRx/ViewScript2.jsp" />
+		</action>
+
 		<action path="/oscarMDS/SendMRP" scope="request" type="oscar.oscarMDS.pageUtil.SendMostResponProvAction">
 			<forward name="failure" path="/errorpage.jsp" />
 		</action>
@@ -1089,7 +1088,7 @@
 		</action>
 		<action input="/Index.jsp" path="/oscarMDS/ReportReassign" scope="request" type="oscar.oscarMDS.pageUtil.ReportReassignAction">
 			<forward name="failure" path="/errorpage.jsp" />
-			<forward name="success" path="/dms/inboxManage.do?method=prepareForIndexPage" />
+			<forward name="success" path="/documentManager/inboxManage.do?method=prepareForIndexPage" />
 		</action>
 		<action input="/labDisplay.jsp" path="/lab/CA/ALL/Forward" scope="request" type="oscar.oscarMDS.pageUtil.ReportReassignAction">
 			<forward name="failure" path="/errorpage.jsp" />
@@ -1133,7 +1132,7 @@
 		</action>
 		<action input="/Index.jsp" path="/oscarMDS/FileLabs" scope="request" parameter="method" type="oscar.oscarLab.pageUtil.FileLabsAction">
 			<forward name="failure" path="/errorpage.jsp" />
-			<forward name="success" path="/dms/inboxManage.do?method=prepareForIndexPage" />
+			<forward name="success" path="/documentManager/inboxManage.do?method=prepareForIndexPage" />
 		</action>
 		<action input="/SegmentDisplay.jsp" path="/oscarMDS/SearchPatient" scope="request" type="oscar.oscarMDS.pageUtil.SearchPatientAction">
 			<forward name="failure" path="/oscarMDS/PatientSearch.jsp?search_mode=search_name&amp;limit1=0&amp;limit2=10" />
@@ -1290,6 +1289,10 @@
 		<action input=" " name="EctIncomingConsultationForm" path="/oscarEncounter/IncomingConsultation" scope="request" type="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctIncomingConsultationAction">
 			<forward name="success" path="/oscarEncounter/oscarConsultationRequest/ViewConsultationRequests.jsp" />
 		</action>
+		
+		<action path="/previewDocs" validate="false" parameter="method" type="org.oscarehr.documentManager.actions.DocumentPreviewAction" scope="request">
+			<forward name="fetchDocuments" path="/documentManager/attachDocument.jsp" />
+		</action>
 
 		<action input="/oscarConsultationRequest/ConsultationFormRequest.jsp" path="/attachDocs" validate="false" parameter="method"
 			type="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ConsultationAttachDocsAction" scope="request">
@@ -1316,7 +1319,11 @@
 		<action input="/oscarEncounter/oscarConsultationRequest/ConsultationFormRequest.jsp" name="EctConsultationFormRequestForm" path="/oscarEncounter/RequestConsultation" scope="request"
 			type="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestAction">
 			<forward name="success" path="/oscarEncounter/oscarConsultationRequest/ConfirmConsultationRequest.jsp" />
+			<forward name="error" path="/oscarEncounter/ViewRequest.do?error=error" />
 			<forward name="failESend" path="/oscarEncounter/ViewRequest.do" />
+			<forward name="print" path="/oscarEncounter/oscarConsultationRequest/ConsultationFormPrint.jsp" />
+			<forward name="printalt" path="/oscarEncounter/oscarConsultationRequest/ConsultationFormPrint2.jsp" />
+			<forward name="printpdf" path="/oscarEncounter/oscarConsultationRequest/printPdf.do" />
 			<forward name="printIndivica" path="/oscarEncounter/oscarConsultationRequest/printPdf2.do" />
 			<forward name="fax" path="/fax/CoverPage.jsp" />
 		</action>
@@ -1325,11 +1332,16 @@
 		</action>
 		<action input="/oscarEncounter/oscarconsultationRequest/ConsultationFormRequest.jsp" path="/oscarEncounter/oscarConsultationRequest/printPdf2" scope="request" type="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestPrintAction2">
 			<forward name="error" path="/oscarEncounter/ViewRequest.do?error=error" />
+			<!-- locate and forward to the given form name -->
+			<forward name="attachform" path="/form/forwardshortcutname.jsp" />
 		</action>
 		<action input="/oscarEncounter/oscarconsultationRequest/ConsultationFormRequest.jsp" path="/oscarEncounter/oscarConsultationRequest/ConsultationFormFax" name="EctConsultationFaxForm" 
 			scope="request" type="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormFaxAction">
 			<forward name="success" path="/oscarEncounter/oscarConsultationRequest/ConfirmConsultationRequest.jsp" />
 			<forward name="error" path="/oscarEncounter/ViewRequest.do?error=error" />
+			<!-- locate and forward to the given form name -->
+			<forward name="attachform" path="/form/forwardshortcutname.jsp" />
+			<forward name="cancel" path="/oscarEncounter/ViewRequest.do" />
 		</action>
 		<action input="/oscarEncounter/oscarConsultationRequest/attachmentReport.jsp" name="FrmForm" path="/oscarEncounter/oscarConsultation/printAttached" scope="request" type="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ConsultationPrintDocsAction">
 			<forward name="noprint" path="/oscarEncounter/oscarConsultationRequest/nothingtoPrint.jsp" />
@@ -1727,6 +1739,7 @@
 			<forward name="error" path="/errorpage.jsp" />
 			<forward name="CONSULTATION" path="/oscarEncounter/ViewRequest.do" />
 			<forward name="EFORM" path="/eform/efmshowform_data.jsp" />
+			<forward name="eFormError" path="/eform/efmshowform_data.jsp?error=error" />
 		</action>		
 		<action input="/provider/providerColourPicker.jsp" name="setProviderColour" path="/setProviderColour" scope="request" type="oscar.oscarProvider.pageUtil.ProEditColourAction">
 			<forward name="success" path="/provider/providerColourPicker.jsp" />
@@ -1869,6 +1882,10 @@
 			<forward name="success" path="/billing/CA/BC/adjustBill.jsp" />
 			<forward name="save" path="/billing/CA/BC/billStatus.jsp" />
 		</action>
+        <action input="/billing/CA/BC/billStatus.jsp" name="ReProcessBillingForm" path="/billing/CA/BC/reprocessBill" scope="request" type="oscar.oscarBilling.ca.bc.pageUtil.BillingReProcessBillAction">
+            <forward name="success" path="/billing/CA/BC/adjustBill.jsp" />
+            <forward name="save" path="/billing/CA/BC/billStatus.jsp" />
+        </action>
 		<action input="/billing/CA/BC/billingCodeAdjust.jsp" name="BillingEditCodeForm" parameter="method" path="/billing/CA/BC/billingEditCode" scope="request" type="oscar.oscarBilling.ca.bc.pageUtil.BillingEditCodeAction">
 			<forward name="success" path="/billing/CA/BC/billingCodeAdjust.jsp" />
 			<forward name="private" path="/billing/CA/BC/billingPrivateCodeAdjust.jsp" />
@@ -2005,11 +2022,10 @@
 		<action input="/eform/efmformadd_data.jsp" path="/eform/addEForm" scope="request" type="oscar.eform.actions.AddEFormAction">
 			<forward name="close" path="/eform/efmclosewindow.jsp" />
 			<forward name="fax" path="/fax/faxAction.do" />
-			<forward name="print" path="/eform/efmformprint.do" />
+			<forward name="download" path="/eform/efmshowform_data.jsp"/>
+			<forward name="error" path="/eform/efmshowform_data.jsp?error=error"/>
 		</action>
-		<action input="/eform/efmformadd_data.jsp" path="/eform/efmformprint" scope="request" type="oscar.eform.actions.PrintAction">
-			<forward name="close" path="/eform/efmclosewindow.jsp" />
-		</action>
+
 		<action input="/eform/efmformadd_data.jsp" path="/eform/efmPrintPDF" scope="request" type="oscar.eform.actions.PrintPDFAction">
 			<forward name="printAll" path="/eform/createpdf" />
 			<forward name="graph" path="/eform/createpdf" />
@@ -2122,25 +2138,25 @@
 		<action input="/billing/CA/BC/billingSVCTrayAssoc.jsp" name="supServiceCodeAssocActionForm" path="/billing/CA/BC/supServiceCodeAssocAction" scope="request" type="oscar.oscarBilling.ca.bc.pageUtil.SupServiceCodeAssocAction" validate="false">
 			<forward name="success" path="/billing/CA/BC/billingSVCTrayAssoc.jsp"></forward>
 		</action>
-		<action input="/dms/documentReport.jsp" name="eDocsAddEditDocument" path="/dms/addEditDocument" type="oscar.dms.actions.AddEditDocumentAction" parameter="method" scope="request" validate="false">
-			<forward name="successAdd" path="/dms/documentReport.jsp"></forward>
-			<forward name="failAdd" path="/dms/documentReport.jsp"></forward>
-			<forward name="failEdit" path="/dms/editDocument.jsp"></forward>
-			<forward name="successEdit" path="/dms/closeWindow.html"></forward>
-			<forward name="fastUploadSuccess" path="/dms/uploadMultiDocument.jsp"></forward>
+		<action input="/documentManager/documentReport.jsp" name="eDocsAddEditDocument" path="/documentManager/addEditDocument" type="org.oscarehr.documentManager.actions.AddEditDocumentAction" parameter="method" scope="request" validate="false">
+			<forward name="successAdd" path="/documentManager/documentReport.jsp"></forward>
+			<forward name="failAdd" path="/documentManager/documentReport.jsp"></forward>
+			<forward name="failEdit" path="/documentManager/editDocument.jsp"></forward>
+			<forward name="successEdit" path="/documentManager/closeWindow.html"></forward>
+			<forward name="fastUploadSuccess" path="/documentManager/uploadMultiDocument.jsp"></forward>
 		</action>
-		<action input="/dms/documentReport.jsp" name="FrmForm" path="/dms/combinePDFs" type="oscar.dms.actions.CombinePDFAction" scope="request" validate="false">
-			<forward name="success" path="/dms/documentReport.jsp"></forward>
+		<action input="/documentManager/documentReport.jsp" name="FrmForm" path="/documentManager/combinePDFs" type="org.oscarehr.documentManager.actions.CombinePDFAction" scope="request" validate="false">
+			<forward name="success" path="/documentManager/documentReport.jsp"></forward>
 		</action>
-		<action input="/dms/documentReport.jsp" name="addLinkDoc" path="/dms/addLink" type="oscar.dms.actions.AddEditHtmlAction" scope="request" validate="false">
-			<forward name="success" path="/dms/documentReport.jsp"></forward>
-			<forward name="failed" path="/dms/documentReport.jsp"></forward>
+		<action input="/documentManager/documentReport.jsp" name="addLinkDoc" path="/documentManager/addLink" type="org.oscarehr.documentManager.actions.AddEditHtmlAction" scope="request" validate="false">
+			<forward name="success" path="/documentManager/documentReport.jsp"></forward>
+			<forward name="failed" path="/documentManager/documentReport.jsp"></forward>
 		</action>
-		<action input="/dms/addedithtmldocument.jsp" name="addEditHtmlDoc" path="/dms/addEditHtml" type="oscar.dms.actions.AddEditHtmlAction" scope="request" validate="false">
-			<forward name="success" path="/dms/closeWindow.html" />
-			<forward name="failed" path="/dms/addedithtmldocument.jsp" />
+		<action input="/documentManager/addedithtmldocument.jsp" name="addEditHtmlDoc" path="/documentManager/addEditHtml" type="org.oscarehr.documentManager.actions.AddEditHtmlAction" scope="request" validate="false">
+			<forward name="success" path="/documentManager/closeWindow.html" />
+			<forward name="failed" path="/documentManager/addedithtmldocument.jsp" />
 		</action>
-		<action input="/dms/documentReport.jsp" name="FrmForm" path="/dms/SendDocToPhr" parameter="method" scope="request" type="org.springframework.web.struts.DelegatingActionProxy">
+		<action input="/documentManager/documentReport.jsp" name="FrmForm" path="/documentManager/SendDocToPhr" parameter="method" scope="request" type="org.springframework.web.struts.DelegatingActionProxy">
 			<forward name="finished" path="/phr/response.jsp"></forward>
 		</action>
 		<action input="/scratch/index.jsp" name="FrmForm" path="/Scratch" scope="request" parameter="method" type="oscar.scratch.ScratchAction">
@@ -2632,10 +2648,10 @@
 			<forward name="success" path="/oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp" />
 		</action>
 
-		<action path="/dms/ManageDocument" name="FrmForm" type="org.oscarehr.document.web.ManageDocumentAction" parameter="method" scope="request">
-			<forward name="success" path="/dms/undocument.jsp" />
-			<forward name="displaySingleDoc" path="/dms/MultiPageDocDisplay.jsp" />
-                        <forward name="nextIncomingDoc" path="/dms/incomingDocs.jsp" />
+		<action path="/documentManager/ManageDocument" name="FrmForm" type="org.oscarehr.documentManager.actions.ManageDocumentAction" parameter="method" scope="request">
+			<forward name="success" path="/documentManager/undocument.jsp" />
+			<forward name="displaySingleDoc" path="/documentManager/MultiPageDocDisplay.jsp" />
+                        <forward name="nextIncomingDoc" path="/documentManager/incomingDocs.jsp" />
 		</action>
 		
                 <action path="/DocumentDescriptionTemplate" name="FrmForm" type="org.oscarehr.provider.web.DocumentDescriptionTemplateAction" parameter="method" scope="request">
@@ -2644,11 +2660,11 @@
                 <action path="/PrinterList" name="FrmForm" type="org.oscarehr.printer.PrinterListAction" parameter="method" scope="request">
 		</action>
                 
-		<action path="/dms/SplitDocument" name="FrmForm" type="org.oscarehr.document.web.SplitDocumentAction" parameter="method" scope="request">
+		<action path="/documentManager/SplitDocument" name="FrmForm" type="org.oscarehr.documentManager.actions.SplitDocumentAction" parameter="method" scope="request">
         	<forward name="success" path="/oscarMDS/Splitclose.jsp" />
         </action>
 
-		<action input="/dms/documentUploader.jsp" name="documentUploadForm" path="/dms/documentUpload" type="oscar.dms.actions.DocumentUploadAction"  parameter="method" scope="request" validate="false">
+		<action input="/documentManager/documentUploader.jsp" name="documentUploadForm" path="/documentManager/documentUpload" type="org.oscarehr.documentManager.actions.DocumentUploadAction" parameter="method" scope="request" validate="false">
         </action>
 
 		<action path="/PhrRetrieve" type="org.springframework.web.struts.DelegatingActionProxy" parameter="method" scope="request">

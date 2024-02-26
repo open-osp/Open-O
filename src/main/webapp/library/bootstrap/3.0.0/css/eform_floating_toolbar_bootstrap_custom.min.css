@@ -52,7 +52,7 @@ div#eform_floating_toolbar * {
 	display: block;
 }
 
-#eform_floating_toolbar svg:not (:root ){
+#eform_floating_toolbar svg:not(:root ){
 	overflow: hidden
 }
 
@@ -1724,7 +1724,7 @@ div#eform_floating_toolbar * {
 	display: table-cell
 }
 
-#eform_floating_toolbar .input-group-btn:not (:first-child ):not(:last-child), 
+#eform_floating_toolbar .input-group-btn:not(:first-child ):not(:last-child), 
 #eform_floating_toolbar .input-group .form-control:not(:first-child):not(:last-child){
 	border-radius: 0
 }
@@ -2114,7 +2114,7 @@ div#eform_floating_toolbar * {
 	position: fixed
 }
 
-@
+
 #eform_floating_toolbar -ms-viewport {
 	width: device-width
 }
@@ -2586,13 +2586,101 @@ div#eform_floating_toolbar * {
 	height:65px;
 }
 
+#remoteTotalAttachments {
+	background-color: #b1b1b1;
+	color: #fff;
+	border-radius: 5px;
+	display: inline-block;
+	padding: 1px 4px;
+	font-size: 11px;
+}
 
+/* This custom CSS changes are for the 'attachDocument.jsp' jQuery dialog, ensuring it works without any issues in all eForms when it opens using floating toolbar. */
+.ui-dialog {
+	font-size: small !important;
+}
 
+.ui-autocomplete{
+	font-size: small !important;
+}
 
+.save-and-close-button {
+	width: auto !important;
+}
 
+@media (min-height: 100px) and (max-height: 1200px) {
+	.attachmentList {
+		height: 85vh !important;
+	}
+}
 
+@media (min-height: 1200px) {
+	.attachmentList {
+		height: 90vh !important;
+	}
+}
 
+@media (min-height: 1600px) {
+	.attachmentList {
+		height: 93vh !important;
+	}
+}
 
+#attachDocumentsPanel h2 {
+	margin: 0;
+	padding: 0;
+}
 
+#attachDocumentsForm li {
+	padding-bottom: 2px;
+}
+/* */
 
+/* To disable floating toolbar */
+.disabled-toolbar {
+	pointer-events: none; 
+	cursor: not-allowed; 
+}
 
+/* Loading screen */
+.oscar-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 9999;
+    display:none;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+#img-oscar-spinner {
+    width: 100px;
+    height: 77px;
+}
+
+.oscar-spinner-screen {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    display: none;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.active-oscar-spinner {
+    display: block;
+}

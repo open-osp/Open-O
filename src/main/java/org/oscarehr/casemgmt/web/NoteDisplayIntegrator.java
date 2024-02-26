@@ -246,4 +246,8 @@ public class NoteDisplayIntegrator implements NoteDisplay {
 	public boolean isTicklerNote() {
 		return false;
 	}
+
+	public boolean isExternalNote() {
+		return false;
+	}
 }

@@ -99,8 +99,8 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
 		if (firstDocument != null) {
 			String sql = null;
 			Query query = null;
-			if (firstDocument.getParentReport() != null) {
-				// This is a child report; get the parent and all siblings of this report
+			if (firstDocument.getParentReport() != null && !firstDocument.getParentReport().equals(docId)) {
+				// This is a child report; get the parent and all siblings of this report (which includes itself)
 				sql = "select x from " + this.modelClass.getName() + " x where x.id = ? order by x.id asc";
 				query = entityManager.createQuery(sql);
 				query.setParameter(1, firstDocument.getParentReport());
@@ -113,10 +113,11 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
 
 				
 			} else {
-				// This is a parent report
-				sql = "select x from " + this.modelClass.getName() + " x where x.parentReport = ? order by x.id asc";
+				// This is a parent report; get all the children of this report as well as itself
+				sql = "select x from " + this.modelClass.getName() + " x where x.parentReport = ? or x.id = ?  order by x.id asc";
 				query = entityManager.createQuery(sql);
 				query.setParameter(1, firstDocument.getId());
+				query.setParameter(2, firstDocument.getId()); 
 				documentsWithRelationship = query.getResultList();
 			}
 		
@@ -127,9 +128,10 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
 	}
 	
 	public List<HRMDocument> getAllChildrenOf(Integer docId) {
-		String sql = "select x from " + this.modelClass.getName() + " x where x.parentReport=? order by id asc";
+		String sql = "select x from " + this.modelClass.getName() + " x where x.parentReport=? and x.id != ? order by id asc";
 		Query query = entityManager.createQuery(sql);
 		query.setParameter(1, docId);
+		query.setParameter(2, docId);
 		@SuppressWarnings("unchecked")
 		List<HRMDocument> documents = query.getResultList();
 		return documents;

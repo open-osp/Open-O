@@ -186,8 +186,8 @@ import org.springframework.beans.BeanUtils;
 import org.w3c.dom.Document;
 
 import oscar.OscarProperties;
-import oscar.dms.EDoc;
-import oscar.dms.EDocUtil;
+import org.oscarehr.documentManager.EDoc;
+import org.oscarehr.documentManager.EDocUtil;
 import oscar.form.FrmLabReq07Record;
 import oscar.log.LogAction;
 import oscar.oscarLab.ca.all.web.LabDisplayHelper;

@@ -35,6 +35,25 @@ public class BillingPreferencesActionForm
   private String providerNo;
   private String referral;
   private String payeeProviderNo;
+  private String gstNo;
+  private boolean useClinicGstNo;
+  private boolean autoPopulateRefer;
+
+  //What to display for payee info when this provider gets referred to as a payee on an invoice
+  private String invoicePayeeInfo;
+  private boolean invoicePayeeDisplayClinicInfo;
+
+  //Default billing form preference
+  private String defaultBillingForm;
+  private String formCode;
+  private String description;
+
+  //Default billing provider preference
+  private String defaultBillingProvider;
+
+  //Default Teleplan service location (visittype)
+  private String defaultServiceLocation;
+
   public String getProviderNo() {
 
     return providerNo;
@@ -61,11 +80,89 @@ public class BillingPreferencesActionForm
     return payeeProviderNo;
   }
 
+  public String getGstNo() {
+    return gstNo;
+  }
+
+  public void setGstNo(String gstNo) {
+    this.gstNo = gstNo;
+  }
+
+  public boolean isUseClinicGstNo() {
+    return useClinicGstNo;
+  }
+
+  public void setUseClinicGstNo(boolean useClinicGstNo) {
+    this.useClinicGstNo = useClinicGstNo;
+  }
+
+  public String getInvoicePayeeInfo() {
+    return invoicePayeeInfo;
+  }
+
+  public void setInvoicePayeeInfo(String invoicePayeeInfo) {
+    this.invoicePayeeInfo = invoicePayeeInfo;
+  }
+
+  public boolean isInvoicePayeeDisplayClinicInfo() {
+    return invoicePayeeDisplayClinicInfo;
+  }
+
+  public void setInvoicePayeeDisplayClinicInfo(boolean invoicePayeeDisplayClinicInfo) {
+    this.invoicePayeeDisplayClinicInfo = invoicePayeeDisplayClinicInfo;
+  }
+
   public ActionErrors validate(ActionMapping actionMapping,
                                HttpServletRequest httpServletRequest) {
       /** @todo: finish this method, this is just the skeleton.*/
     return null;
   }
 
- 
+  public String getDefaultBillingForm() {
+    return defaultBillingForm;
+  }
+
+  public void setDefaultBillingForm(String defaultBillingForm) {
+    this.defaultBillingForm = defaultBillingForm;
+  }
+
+  public String getFormCode() {
+    return formCode;
+  }
+
+  public void setFormCode(String formCode) {
+    this.formCode = formCode;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getDefaultBillingProvider() {
+    return defaultBillingProvider;
+  }
+
+  public void setDefaultBillingProvider(String defaultBillingProvider) {
+    this.defaultBillingProvider = defaultBillingProvider;
+  }
+
+  public String getDefaultServiceLocation() {
+    return defaultServiceLocation;
+  }
+
+  public void setDefaultServiceLocation(String defaultServiceLocation) {
+    this.defaultServiceLocation = defaultServiceLocation;
+  }
+
+  public boolean isAutoPopulateRefer() {
+    return autoPopulateRefer;
+  }
+
+  public void setAutoPopulateRefer(boolean autoPopulateRefer) {
+    this.autoPopulateRefer = autoPopulateRefer;
+  }
 }

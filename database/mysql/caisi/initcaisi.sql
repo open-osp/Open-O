@@ -1268,7 +1268,8 @@ CREATE TABLE IF NOT EXISTS tickler_comments (
 	message text,
 	provider_no varchar(6) not null,
 	update_date datetime not null,
-	primary key(id)
+	primary key(id),
+  KEY `ticklerno` (`tickler_no`)
 );
 
 CREATE TABLE IF NOT EXISTS `formDischargeSummary` (

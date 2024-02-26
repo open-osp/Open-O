@@ -25,6 +25,7 @@
 
 package org.oscarehr.common.dao;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -41,7 +42,7 @@ public class ConsultDocsDao extends AbstractDao<ConsultDocs>{
 	}
 
 	public List<ConsultDocs> findByRequestIdDocNoDocType(Integer requestId, Integer documentNo, String docType) {
-	  	String sql = "select x from ConsultDocs x where x.requestId=? and x.documentNo=? and x.docType=? and x.deleted is NULL";
+	  	String sql = "select x from ConsultDocs x where x.requestId=?1 and x.documentNo=?2 and x.docType=?3 and x.deleted is NULL";
     	Query query = entityManager.createQuery(sql);
     	query.setParameter(1,requestId);
     	query.setParameter(2,documentNo);
@@ -51,8 +52,21 @@ public class ConsultDocsDao extends AbstractDao<ConsultDocs>{
         return results;
 	}
 
+	public List<ConsultDocs> findByRequestIdDocType(Integer requestId, String docType) {
+		String sql = "select x from ConsultDocs x where x.requestId=?1 and x.docType=?2 and x.deleted is NULL";
+		Query query = entityManager.createQuery(sql);
+		query.setParameter(1,requestId);
+		query.setParameter(2,docType);
+
+		List<ConsultDocs> results = query.getResultList();
+		if(results == null) {
+			return Collections.emptyList();
+		}
+		return results;
+	}
+
 	public List<ConsultDocs> findByRequestId(Integer requestId) {
-	  	String sql = "select x from ConsultDocs x where x.requestId=? and x.deleted is NULL";
+	  	String sql = "select x from ConsultDocs x where x.requestId=?1 and x.deleted is NULL";
     	Query query = entityManager.createQuery(sql);
     	query.setParameter(1,requestId);
 

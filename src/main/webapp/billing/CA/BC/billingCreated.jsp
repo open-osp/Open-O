@@ -49,11 +49,11 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@ page import="java.util.*, oscar.oscarDemographic.data.*"%>
 <%@ page import="oscar.oscarBilling.ca.bc.data.*,oscar.oscarBilling.ca.bc.pageUtil.*"%>
 <%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Billingreferral" %>
 <%@page import="org.oscarehr.common.dao.BillingreferralDao" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="java.util.ArrayList" %>
 <%
 	BillingreferralDao billingReferralDao = (BillingreferralDao)SpringUtils.getBean("BillingreferralDAO");
 %>
@@ -273,13 +273,7 @@ function showHideLayers() { //v3.0
 				<td id="oscarBillingHeaderCenterColumn">				
 					Billing Summary				
 				</td>
-				<td id="oscarBillingHeaderRightColumn" align=right>
-					<span class="HelpAboutLogout"> 
-						<a style="font-size: 10px; font-style: normal;" href="${ ctx }oscarEncounter/About.jsp" target="_new">About</a>
-						<a style="font-size: 10px; font-style: normal;" target="_blank"
-									href="http://www.oscarmanual.org/search?SearchableText=&Title=Chart+Interface&portal_type%3Alist=Document">Help</a>		
-					</span>
-				</td>
+
 			</tr>
 		</table>
 	</div>
@@ -293,11 +287,11 @@ function showHideLayers() { //v3.0
 			</tr>
 			<tr>
 				<th>Patient Name:</th>
-				<td><%=bean.getPatientName()%></td>
+				<td><%=Encode.forHtmlContent(bean.getPatientName())%></td>
 				<th>Patient PHN:</th>
-				<td><%=bean.getPatientPHN()%></td>
+				<td><%=Encode.forHtmlContent(bean.getPatientPHN())%></td>
 				<th>Health Card Type:</th>
-				<td><%=bean.getPatientHCType()%></td>
+				<td><%=Encode.forHtmlContent(bean.getPatientHCType())%></td>
 			</tr>
 			<tr>
 				<th>Patient DoB:</th>
@@ -309,11 +303,11 @@ function showHideLayers() { //v3.0
 			</tr>
 			<tr>
 				<th>Patient Address:</th>
-				<td><%=bean.getPatientAddress1()%></td>
+				<td><%=Encode.forHtmlContent(bean.getPatientAddress1())%></td>
 				<th>City:</th>
-				<td><%=bean.getPatientAddress2()%></td>
+				<td><%=Encode.forHtmlContent(bean.getPatientAddress2())%></td>
 				<th>Postal:</th>
-				<td><%=bean.getPatientPostal()%></td>
+				<td><%=Encode.forHtmlContent(bean.getPatientPostal())%></td>
 			</tr>
 
 		</table>
@@ -348,15 +342,15 @@ function showHideLayers() { //v3.0
 				<th>End:</th>
 				<td><%=bean.getEndTime()%></td>
 				<th>Billing Provider:</th>
-				<td><%=billform.getProviderName(bean.getBillingProvider())%></td>
+				<td><%=Encode.forHtmlContent(billform.getProviderName(bean.getBillingProvider()))%></td>
 				<th>Appointment Provider:</th>
-				<td><%=billform.getProviderName(bean.getApptProviderNo())%></td>
+				<td><%=Encode.forHtmlContent(billform.getProviderName(bean.getApptProviderNo()))%></td>
 			</tr>
 			<tr>
 				<th>Creator:</th>
-				<td><%=billform.getProviderName(bean.getCreator())%></td>
+				<td><%=Encode.forHtmlContent(billform.getProviderName(bean.getCreator()))%></td>
 				<th>Dependent:</th>
-				<td><%=bean.getDependent()%></td>
+				<td><%=Encode.forHtmlContent(bean.getDependent())%></td>
 				<th>Sub Code:</th>
 				<td><%=bean.getSubmissionCode()%></td>
 				<th>&nbsp;</th>
@@ -364,15 +358,15 @@ function showHideLayers() { //v3.0
 			</tr>
 			<tr>
 				<th>Short Note:</th>
-				<td colspan="3"><%=bean.getShortClaimNote()%></td>
+				<td colspan="3"><%=Encode.forHtmlContent(bean.getShortClaimNote())%></td>
 				<th>ICBC Claim #:</th>
 				<td colspan="3"><%=bean.getIcbc_claim_no()%></td>
 			</tr>
 			<tr>
 				<th><%=getReferralString(bean.getReferType1())%></th>
-				<td colspan="3"><%=billingReferralDao.getReferralDocName(bean.getReferral1()) %> <%=addBrackets(bean.getReferral1())%></td>
+				<td colspan="3"><%=Encode.forHtmlContent(billingReferralDao.getReferralDocName(bean.getReferral1())) %> <%=addBrackets(bean.getReferral1())%></td>
 				<th><%=getReferralString(bean.getReferType2())%></th>
-				<td colspan="3"><%=billingReferralDao.getReferralDocName(bean.getReferral2()) %> <%=addBrackets(bean.getReferral2())%></td>
+				<td colspan="3"><%=Encode.forHtmlContent(billingReferralDao.getReferralDocName(bean.getReferral2())) %> <%=addBrackets(bean.getReferral2())%></td>
 			</tr>
 
 		</table>
@@ -442,7 +436,7 @@ function showHideLayers() { //v3.0
 							<td>notes</td>
 						</tr>
 						<tr>
-							<td colspan="4"><%= bean.getNotes() %></td>
+							<td colspan="4"><%= Encode.forHtmlContent(bean.getNotes()) %></td>
 						</tr>
 					</table>
 				</td>
@@ -452,7 +446,7 @@ function showHideLayers() { //v3.0
 							<td>Internal Notes</td>
 						</tr>
 						<tr>
-							<td colspan="4"><%= bean.getMessageNotes() %></td>
+							<td colspan="4"><%= Encode.forHtmlContent(bean.getMessageNotes()) %></td>
 						</tr>
 	
 					</table>
@@ -468,7 +462,7 @@ function showHideLayers() { //v3.0
 						<%
                if (bean.getBillingType().compareTo("WCB") == 0 && request.getSession().getAttribute("WCBForm") != null){
                  WCBForm wcb =(WCBForm) request.getSession().getAttribute("WCBForm");
-                %> <%=wcb.getW_fname()%> <%}%>
+                %> <%=Encode.forHtmlContent(wcb.getW_fname())%> <%}%>
 						</td>
 
 				</table>

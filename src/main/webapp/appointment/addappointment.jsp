@@ -85,7 +85,7 @@
     MiscUtils.getLogger().error("Error", e);
   }
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*, oscar.appt.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*, oscar.appt.*" errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.appt.status.service.AppointmentStatusMgr"%>
 <%@ page import="oscar.appt.status.service.impl.AppointmentStatusMgrImpl"%>
 <%@ page import="org.oscarehr.common.model.AppointmentStatus"%>

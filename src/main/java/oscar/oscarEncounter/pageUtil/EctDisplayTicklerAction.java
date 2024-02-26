@@ -63,7 +63,7 @@ public class EctDisplayTicklerAction extends EctDisplayAction {
     }
     else {
         pathview = request.getContextPath() + "/tickler/ticklerMain.jsp?demoview=" + bean.demographicNo + "&parentAjaxId=" + cmd;
-        pathedit = request.getContextPath() + "/tickler/ticklerAdd.jsp?bFirstDisp=false&demographic_no=" + bean.demographicNo;
+        pathedit = request.getContextPath() + "/tickler/ticklerAdd.jsp?bFirstDisp=false&demographic_no=" + bean.demographicNo + "&parentAjaxId=" + cmd;
         
     }
 

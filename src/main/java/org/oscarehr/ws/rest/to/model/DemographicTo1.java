@@ -43,7 +43,7 @@ public class DemographicTo1 implements Serializable {
 	private Date patientStatusDate;
 	private String rosterStatus;
 	private String providerNo;
-	private String myOscarUserName;
+//	private String myOscarUserName;
 	private String hin;
 	private String ver;
 	private Date dateOfBirth;
@@ -96,7 +96,14 @@ public class DemographicTo1 implements Serializable {
 	private AgeTo1 age;
 	private Integer admissionProgramId;
 	private String middleNames;
-	
+	private String gender;
+	private String pronoun;
+	private Integer genderId;
+	private Integer pronounId;
+
+	private String cellPhone;
+	private String phoneComment;
+
 	private List<DemographicContactFewTo1> demoContacts = new ArrayList<DemographicContactFewTo1>();
 	private List<DemographicContactFewTo1> demoContactPros = new ArrayList<DemographicContactFewTo1>();
 	private List<DemographicExtTo1> extras = new ArrayList<DemographicExtTo1>();
@@ -157,13 +164,13 @@ public class DemographicTo1 implements Serializable {
 		this.providerNo = providerNo;
 	}
 
-	public String getMyOscarUserName() {
-		return myOscarUserName;
-	}
-
-	public void setMyOscarUserName(String myOscarUserName) {
-		this.myOscarUserName = myOscarUserName;
-	}
+//	public String getMyOscarUserName() {
+//		return myOscarUserName;
+//	}
+//
+//	public void setMyOscarUserName(String myOscarUserName) {
+//		this.myOscarUserName = myOscarUserName;
+//	}
 
 	public String getHin() {
 		return hin;
@@ -676,5 +683,52 @@ public class DemographicTo1 implements Serializable {
 	public void setMiddleNames(String middleNames) {
 		this.middleNames = middleNames;
 	}
-	
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getPronoun() {
+		return pronoun;
+	}
+
+	public void setPronoun(String pronoun) {
+		this.pronoun = pronoun;
+	}
+
+	public Integer getGenderId() {
+		return genderId;
+	}
+
+	public void setGenderId(Integer genderId) {
+		this.genderId = genderId;
+	}
+
+	public Integer getPronounId() {
+		return pronounId;
+	}
+
+	public void setPronounId(Integer pronounId) {
+		this.pronounId = pronounId;
+	}
+
+	public String getCellPhone() {
+		return cellPhone;
+	}
+
+	public void setCellPhone(String cellPhone) {
+		this.cellPhone = cellPhone;
+	}
+
+	public String getPhoneComment() {
+		return phoneComment;
+	}
+
+	public void setPhoneComment(String phoneComment) {
+		this.phoneComment = phoneComment;
+	}
 }

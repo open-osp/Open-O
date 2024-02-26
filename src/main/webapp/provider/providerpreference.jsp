@@ -38,7 +38,7 @@
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page import="java.util.*,java.text.*,java.sql.*,java.net.*" errorPage="errorpage.jsp" %>
+<%@ page import="java.util.*" %>
 <%@ page import="oscar.OscarProperties" %>
 <%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
 <%@ page import="org.oscarehr.common.model.UserProperty"%>
@@ -69,6 +69,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="provider.providerpreference.title" /></title>
+<script src="<%=request.getContextPath()%>/csrfguard" type="text/javascript"></script>
 <script type="text/javascript" src="../share/javascript/prototype.js"></script>
 <script language="JavaScript">
 
@@ -228,7 +229,9 @@ function showHideERxPref() {
 	String ticklerProviderNo = request.getParameter("tklerproviderno");
 	String defaultPMM = request.getParameter("default_pmm")!=null?request.getParameter("default_pmm"):providerPreference.getDefaultCaisiPmm();
 	String caisiBillingNotDelete = request.getParameter("caisiBillingPreferenceNotDelete")!=null?request.getParameter("caisiBillingPreferenceNotDelete"):String.valueOf(providerPreference.getDefaultDoNotDeleteBilling());
-	
+
+	//TODO add proper user interface for this billing setting in Ontario?
+    // String defaultBillingLocation = providerPreference.getDefaultBillingLocation()!=null?providerPreference.getDefaultBillingLocation():"no";
 %>
 
 <body bgproperties="fixed"  onLoad="setfocus();showHideBillPref();showHideERxPref();" topmargin="0"leftmargin="0" rightmargin="0" style="font-family:sans-serif">

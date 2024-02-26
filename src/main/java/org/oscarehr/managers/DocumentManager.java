@@ -24,45 +24,51 @@
 
 package org.oscarehr.managers;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.itextpdf.text.DocumentException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.oscarehr.common.dao.*;
 import org.oscarehr.common.model.*;
 
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.PDFGenerationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import oscar.OscarProperties;
-import oscar.dms.EDoc;
+import org.oscarehr.documentManager.EDoc;
 
-import oscar.dms.EDocUtil;
+import org.oscarehr.documentManager.EDocUtil;
 import oscar.log.LogAction;
+import oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ImagePDFCreator;
 
 @Service
 public class DocumentManager {
 
 	private static final String PARENT_DIR = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+	private final Logger logger = MiscUtils.getLogger();
 
 	@Autowired
 	private DocumentDao documentDao;
 
 	@Autowired
 	private CtlDocumentDao ctlDocumentDao;
+
+	@Autowired
+	private NioFileManager nioFileManager;
 
 	@Autowired
 	protected SecurityInfoManager securityInfoManager;
@@ -429,5 +435,45 @@ public class DocumentManager {
 			}
 		}
 		return providerList;
+	}
+
+	public Path renderDocument(LoggedInInfo loggedInInfo, EDoc eDoc) throws PDFGenerationException {
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.documents", SecurityInfoManager.READ, null)) {
+			throw new RuntimeException("Access Denied");
+		}
+
+		return renderDocument(eDoc);
+	}
+
+	public Path renderDocument(LoggedInInfo loggedInInfo, String documentId) throws PDFGenerationException {
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.documents", SecurityInfoManager.READ, null)) {
+			throw new RuntimeException("Access Denied");
+		}
+
+		EDoc eDoc = EDocUtil.getEDocFromDocId(String.valueOf(documentId));
+		return renderDocument(eDoc);
+	}
+
+	private Path renderDocument(EDoc eDoc) throws PDFGenerationException {
+		Path eDocPDFPath = null;
+		String eDocPath = getFullPathToDocument(eDoc.getFileName());
+		if (eDoc.isImage()) {
+			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+				ImagePDFCreator imagePDFCreator = new ImagePDFCreator(eDocPath, eDoc.getDescription(), outputStream);
+				imagePDFCreator.printPdf();
+				eDocPDFPath = nioFileManager.saveTempFile("temporaryPDF" + new Date().getTime(), outputStream);
+			} catch (DocumentException | IOException e) {
+				throw new PDFGenerationException("Error Details: Document [" + eDoc.getDescription() + "] could not be converted into a PDF", e);
+			}
+		} else if (eDoc.isPDF()) {
+			try {
+				eDocPDFPath = Paths.get(eDocPath);
+			} catch (InvalidPathException e) {
+				throw new PDFGenerationException("Error Details: Document [" + eDoc.getDescription() + "] could not be converted into a PDF", e);
+			}
+		} else {
+			throw new PDFGenerationException("Error Details: Document [" + eDoc.getDescription() + "] could not be converted into a PDF");
+		}
+		return eDocPDFPath;
 	}
 }

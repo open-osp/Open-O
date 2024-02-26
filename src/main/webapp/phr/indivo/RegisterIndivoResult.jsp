@@ -82,7 +82,7 @@ String user = (String) session.getAttribute("user");
                 	The user and corresponding permissions have been added. 
                     <br/>
                     <input type="button" onclick="closeWindow()" name="closeButton" value="Close Window">
-                    <a href="../../dms/ManageDocument.do?method=display&doc_no=<%=dispDocNo%>&providerNo=<%=user%>" >Registration Letter</a>
+                    <a href="../../documentManager/ManageDocument.do?method=display&doc_no=<%=dispDocNo%>&providerNo=<%=user%>" >Registration Letter</a>
             </div>
         <%}%>
     </body>

@@ -24,7 +24,7 @@ OscarProperties props = OscarProperties.getInstance();
 session.setAttribute("homepath", props.getProperty("project_home", ""));      
 %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ page import="oscar.*" errorPage="errorpage.jsp"%>
+<%@ page import="oscar.*" errorPage="/errorpage.jsp"%>
 
 <html>
 <head>

@@ -121,8 +121,8 @@ public class EctDisplayFormAction extends EctDisplayAction {
 							EctFormData.PatientForm pfrm = pforms[0];
 
 							// convert date to that specified in base class
-							DateFormat formatter = new SimpleDateFormat(EctFormData.DATE_FORMAT);
-							serviceDateStr = pfrm.getCreated();
+							DateFormat formatter = new SimpleDateFormat(EctFormData.DATETIME_FORMAT);
+							serviceDateStr = pfrm.getEdited();
 							
 							try {
 								date = formatter.parse(serviceDateStr);

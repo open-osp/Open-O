@@ -139,13 +139,13 @@
 	<table cellpadding="0" cellspacing="0" width="100%" border="0">
 		<tr valign="top">
 			<td align="center">
-				<input type="radio" id="p1_birthRemarksr1" name="p1_birthRemarksr1" onclick="onCheck(this,'p1_birthRemarksr')" <%= props.getProperty("p1_birthRemarksr1", "") %>>
 				<bean:message key="oscarEncounter.formRourke2009.formBirhtRemarks" /><br>
-				<bean:message key="oscarEncounter.formRourke2009.formPremature" />&nbsp;
+				<input type="radio" id="p1_birthRemarksr1" name="p1_birthRemarksr1" onclick="onCheck(this,'p1_birthRemarksr')" <%= props.getProperty("p1_birthRemarksr1", "") %>>
+				<label for="p1_birthRemarksr1"><bean:message key="oscarEncounter.formRourke2009.formPremature" /></label>&nbsp;
 				<input type="radio" id="p1_birthRemarksr2" name="p1_birthRemarksr2" onclick="onCheck(this,'p1_birthRemarksr')" <%= props.getProperty("p1_birthRemarksr2", "") %>>
-				<bean:message key="oscarEncounter.formRourke2009.formHighRisk" />&nbsp;<br>
+				<label for="p1_birthRemarksr2"><bean:message key="oscarEncounter.formRourke2009.formHighRisk" /></label>&nbsp;<br>
 				<input type="radio" id="p1_birthRemarksr3" name="p1_birthRemarksr3" onclick="onCheck(this,'p1_birthRemarksr')"<%= props.getProperty("p1_birthRemarksr3", "") %>>
-				<bean:message key="oscarEncounter.formRourke2009.formNoConcerns" />&nbsp;
+				<label for="p1_birthRemarksr3"><bean:message key="oscarEncounter.formRourke2009.formNoConcerns" /></label>&nbsp;
 			</td>                        
 			<td width="65%" nowrap align="center">
 			<p>
@@ -244,16 +244,19 @@
 		<tr align="center">
 			<td class="column"><a><bean:message key="oscarEncounter.formRourke1.msgDate" /></a></td>
 			<td colspan="3">
+				<img src="../images/cal.gif" id="p1_date1w_cal" style="vertical-align: middle;">
 				<input readonly type="text" id="p1_date1w" name="p1_date1w" size="10" ondblclick="resetDate(this)" value="<%=UtilMisc.htmlEscape(props.getProperty("p1_date1w", ""))%>" />
-				<img src="../images/cal.gif" id="p1_date1w_cal">
+				<img src="../images/clear.png" id="p1_date1w_delete" style="vertical-align: middle; cursor: pointer;" onClick="resetDateUsingID('p1_date1w')">
 			</td>
 			<td colspan="3">
+				<img src="../images/cal.gif" id="p1_date2w_cal" style="vertical-align: middle;">
 				<input readonly type="text" id="p1_date2w" name="p1_date2w" size="10" ondblclick="resetDate(this)" value="<%=UtilMisc.htmlEscape(props.getProperty("p1_date2w", ""))%>" />
-				<img src="../images/cal.gif" id="p1_date2w_cal">
+				<img src="../images/clear.png" id="1_date2w_delete" style="vertical-align: middle; cursor: pointer;" onClick="resetDateUsingID('p1_date2w')">
 			</td>
 			<td colspan="3">
+				<img src="../images/cal.gif" id="p1_date1m_cal" style="vertical-align: middle;">
 				<input readonly type="text" id="p1_date1m" name="p1_date1m" size="10" ondblclick="resetDate(this)" value="<%=UtilMisc.htmlEscape(props.getProperty("p1_date1m", ""))%>" />
-				<img src="../images/cal.gif" id="p1_date1m_cal">
+				<img src="../images/clear.png" id="p1_date1m_delete" style="vertical-align: middle; cursor: pointer;" onClick="resetDateUsingID('p1_date1m')">
 			</td>
 		</tr>
 		<tr align="center" id="growthAp1">
@@ -346,7 +349,10 @@
 		</tr>
 		<tr align="center" id="nutritionp1">
 
-			<td class="column"><a><bean:message key="oscarEncounter.formRourke1.msgNutrition" />*:</a></td>
+			<td class="column"><a><bean:message key="oscarEncounter.formRourke1.msgNutrition" />*</a><br/>
+				<img height="15" width="20" src="graphics/Checkmark_Lwhite.gif">
+				<bean:message key="oscarEncounter.formRourke2020.msgNutritionLegend" />
+			</td>
 			<td colspan="3">
 			<table id="ntp11" cellpadding="0" cellspacing="0" width="100%">
 				<tr>
@@ -1099,11 +1105,6 @@
 			<td colspan="3">
 			<table id="immt11" cellpadding="0" cellspacing="0" width="100%">
 				<tr>
-					<td style="text-align: center" colspan="4">
-						<b><bean:message key="oscarEncounter.formRourke2006_1.msgImmunizationColTitle"/></b>
-					</td>
-				</tr>
-				<tr>
 					<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
 					<td class="edcol" valign="top">X</td>
 					<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
@@ -1143,9 +1144,6 @@
 			<td colspan="3">			
 			<table id="immt12" cellpadding="0" cellspacing="0" width="100%">
 				<tr>
-					<td style="text-align: center"><b><bean:message key="oscarEncounter.formRourke2006_1.msgImmunizationColTitle" /></b></td>
-				</tr>
-				<tr>
 					<td style="vertical-align:bottom;">
 						<textarea id="p1_immunization2w" name="p1_immunization2w" rows="5" cols="25" class="wide"><%= props.getProperty("p1_immunization2w", "") %></textarea>
 					</td>
@@ -1154,11 +1152,6 @@
 			</td>
 			<td colspan="3">
 			<table id="immt13" cellpadding="0" cellspacing="0" width="100%">
-				<tr>
-					<td style="text-align: center" colspan="4">
-						<b><bean:message key="oscarEncounter.formRourke2006_1.msgImmunizationColTitle" /></b>
-					</td>
-				</tr>				
 				<tr>
 					<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
 					<td class="edcol" valign="top">X</td>

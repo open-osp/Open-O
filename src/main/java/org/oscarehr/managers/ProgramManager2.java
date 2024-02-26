@@ -52,49 +52,20 @@ public class ProgramManager2 {
 	
 
 	public Program getProgram(LoggedInInfo loggedInInfo, Integer programId) {
-		Program result = programDao.getProgram(programId);
-
-		//--- log action ---
-		LogAction.addLogSynchronous(loggedInInfo, "ProgramManager2.getPrograms" , "id:"+result.getId());
-
-		return (result);
+		return programDao.getProgram(programId);
 	}
 
 
 	public List<Program> getAllPrograms(LoggedInInfo loggedInInfo) {
-		List<Program> results = programDao.findAll();
-
-		//--- log action ---
-		if (results.size()>0) {
-			String resultIds=Program.getIdsAsStringList(results);
-			LogAction.addLogSynchronous(loggedInInfo, "ProgramManager2.getAllPrograms", "ids returned=" + resultIds);
-		}
-
-		return (results);
+		return programDao.findAll();
 	}
 
 	public List<ProgramProvider> getAllProgramProviders(LoggedInInfo loggedInInfo) {
-		List<ProgramProvider> results = programProviderDAO.getAllProgramProviders();
-
-		//--- log action ---
-		if (results.size()>0) {
-			String resultIds=ProgramProvider.getIdsAsStringList(results);
-			LogAction.addLogSynchronous(loggedInInfo, "ProgramManager2.getAllProgramProviders", "ids returned=" + resultIds);
-		}
-
-		return (results);
+		return programProviderDAO.getAllProgramProviders();
 	}
 	
 	public List<ProgramProvider> getProgramDomain(LoggedInInfo loggedInInfo, String providerNo) {
-		List<ProgramProvider> results = programProviderDAO.getProgramProvidersByProvider(providerNo);
-		
-		//--- log action ---
-		if (results.size()>0) {
-			String resultIds=ProgramProvider.getIdsAsStringList(results);
-			LogAction.addLogSynchronous(loggedInInfo, "ProgramManager2.getProgramDomain", "ids returned=" + resultIds);
-		}
-		
-		return (results);
+		return programProviderDAO.getProgramProvidersByProvider(providerNo);
 	}
 	
 	public ProgramProvider getCurrentProgramInDomain(LoggedInInfo loggedInInfo) {
@@ -111,11 +82,6 @@ public class ProgramManager2 {
     		   result =  programProviderDAO.getProgramProvider(providerNo, Long.valueOf(defProgramId));
     	   }
         }
-        
-        if(result !=null) {
-        	LogAction.addLogSynchronous(loggedInInfo, "ProgramManager2.getCurrentProgramInDomain", "id returned=" + result.getId());
-        }
-        
         return (result);
 	}
 	

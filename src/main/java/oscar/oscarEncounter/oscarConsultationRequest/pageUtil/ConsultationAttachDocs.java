@@ -24,100 +24,23 @@
 
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
-import java.util.ArrayList;
-
-import org.oscarehr.common.dao.ConsultationRequestDao;
-import org.oscarehr.common.model.ConsultationRequest;
+import org.oscarehr.common.model.ConsultDocs;
 import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.SpringUtils;
-
-import oscar.dms.EDoc;
-import oscar.dms.EDocUtil;
-import oscar.util.ConversionUtils;
 
 /**
  *
  * Handles logic of attaching documents to a specified consultation
  */
-public class ConsultationAttachDocs {
+@Deprecated
+public class ConsultationAttachDocs extends ConsultationAttach {
 
-	private String reqId; //consultation id
-	private String demoNo;
-	private String providerNo;
-	private ArrayList<String> docs; //document ids
+    private static final String DOCTYPE = ConsultDocs.DOCTYPE_DOC;
 
-	/** Creates a new instance of ConsultationAttachDocs */
-	public ConsultationAttachDocs(String req) {
-		reqId = req;
-		demoNo = "";
-		docs = new ArrayList<String>();
-	}
+    public ConsultationAttachDocs(String provNo, String demo, String req, String[] d) {
+        super(provNo, demo, req, d);
+    }
 
-	/**
-	 * 
-	 * @param prov
-	 * @param demo
-	 * @param req
-	 * @param d
-	 */
-	public ConsultationAttachDocs(String prov, String demo, String req, String[] d) {
-		providerNo = prov;
-		demoNo = demo;
-		reqId = req;
-		docs = new ArrayList<String>(d.length);
-
-		for (int idx = 0; idx < d.length; ++idx) {
-			docs.add(d[idx]);
-		}
-	}
-
-	public String getDemoNo() {
-		String demo;
-		if (!demoNo.equals("")) demo = demoNo;
-		else {
-			ConsultationRequestDao dao = SpringUtils.getBean(ConsultationRequestDao.class);
-			ConsultationRequest req = dao.find(ConversionUtils.fromIntString(reqId));
-			if (req != null) {
-				demo = req.getId().toString();
-				demoNo = demo;
-			} else {
-				demo = "";
-			}
-		}
-
-		return demo;
-	}
-
-	public void attach(LoggedInInfo loggedInInfo) {
-
-		//first we get a list of currently attached docs
-		ArrayList<EDoc> oldlist = EDocUtil.listDocs(loggedInInfo, demoNo, reqId, EDocUtil.ATTACHED);
-		ArrayList<String> newlist = new ArrayList<String>();
-		ArrayList<EDoc> keeplist = new ArrayList<EDoc>();
-		boolean alreadyAttached;
-		//add new documents to list and get ids of docs to keep attached
-		for (int i = 0; i < docs.size(); ++i) {
-			alreadyAttached = false;
-			for (int j = 0; j < oldlist.size(); ++j) {
-				if ((oldlist.get(j)).getDocId().equals(docs.get(i))) {
-					alreadyAttached = true;
-					keeplist.add(oldlist.get(j));
-					break;
-				}
-			}
-			if (!alreadyAttached) newlist.add(docs.get(i));
-		}
-
-		//now compare what we need to keep with what we have and remove association
-		for (int i = 0; i < oldlist.size(); ++i) {
-			if (keeplist.contains(oldlist.get(i))) continue;
-
-			EDocUtil.detachDocConsult((oldlist.get(i)).getDocId(), reqId);
-		}
-
-		//now we can add association to new list
-		for (int i = 0; i < newlist.size(); ++i)
-			EDocUtil.attachDocConsult(providerNo, newlist.get(i), reqId);
-
-	} //end attach
+    public void attach(LoggedInInfo loggedInInfo) {
+        super.attach(loggedInInfo, DOCTYPE);
+    }
 }

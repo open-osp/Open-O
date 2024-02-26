@@ -49,7 +49,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ page
 	import="java.lang.*, java.util.*, java.text.*,java.sql.*, oscar.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 
 <%!
 	OscarProperties op = OscarProperties.getInstance();

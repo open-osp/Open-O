@@ -33,7 +33,7 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<%@ page errorPage="errorpage.jsp"
+<%@ page errorPage="/errorpage.jsp"
 	import="java.util.*,java.math.*,java.net.*,java.sql.*,oscar.util.*,oscar.*,oscar.appt.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.administration.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.*"%>

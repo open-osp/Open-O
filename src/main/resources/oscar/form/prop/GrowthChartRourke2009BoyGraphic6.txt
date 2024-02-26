@@ -1,3 +1,6 @@
+p4_date24m       :      p4_ht24m
+p4_date48m       :      p4_ht48m
+
 date_1			 :		length_1
 date_2			 :		length_2
 date_3			 :		length_3

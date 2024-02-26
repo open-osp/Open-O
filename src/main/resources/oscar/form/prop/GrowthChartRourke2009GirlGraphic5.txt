@@ -1,3 +1,6 @@
+p4_date24m       :      p4_wt24m
+p4_date48m       :      p4_wt48m
+
 date_1			 :		weight_1
 date_2			 :		weight_2
 date_3			 :		weight_3

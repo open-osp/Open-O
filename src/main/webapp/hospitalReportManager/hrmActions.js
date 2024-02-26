@@ -69,7 +69,9 @@ function makeIndependent(reportId) {
         url:  contextpath +"/hospitalReportManager/Modify.do",
         data: "method=makeIndependent&reportId=" + reportId,
         success: function(data) {
-
+            if (data != null && data.indexOf('Success') !== -1) {
+                $("similarNotice").innerHTML = "";
+            }
         }
     });
 }

@@ -25,8 +25,7 @@
 --%>
 
 <%@page import="org.oscarehr.common.model.TicklerTextSuggest, org.oscarehr.common.dao.TicklerTextSuggestDao"%>
-<%@page import="org.springframework.web.context.WebApplicationContext, org.springframework.web.context.support.WebApplicationContextUtils"%>
-<!DOCTYPE html>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -43,46 +42,19 @@
 	if(!authed) {
 		return;
 	}
-%>
-
-
-<%
     if(session.getAttribute("user") == null)
         response.sendRedirect("../logout.jsp");
-
-    WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    TicklerTextSuggestDao ticklerTextSuggestDao = (TicklerTextSuggestDao) ctx.getBean("ticklerTextSuggestDao");
+    %>
+<%!
+    TicklerTextSuggestDao ticklerTextSuggestDao = SpringUtils.getBean(TicklerTextSuggestDao.class);
 %>
+<!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title><bean:message key="tickler.ticklerEdit.title"/></title>
-        <style type="text/css">
-            h1{
-                width:100%;
-                background-color: black;
-                text-align:left; 
-                font-weight: 900; 
-                height:40px;
-                font-size:large;
-                font-family:arial,sans-serif;
-                color:white;   
-                line-height: 40px;
-            }
-            h2{
-                font-size:larger;
-                text-align: center;
-                font-family:arial,sans-serif;
-            }
-            th{
-                font-family:arial,sans-serif;
-                font-size:  medium;
-                font-weight: bolder;
-                text-align: center;
-                color: #336666;
-            }
-        </style>
-        <script language="javascript">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <script type="application/javascript">
             function setEmpty(selectbox) {
                 var emptyTxt = "<bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.empty"/>";
                 var emptyVal = "0";
@@ -161,22 +133,33 @@
                 }
             }
         </script>
+        <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet" type="text/css">
+        <style>
+            table {
+                border-collapse: collapse;
+                width:100%;
+            }
+            .text-selection {
+                width:300px;
+            }
+
+        </style>
     </head>
-    <body style="font-family:arial, sans-serif;background-color: #ddddff;">
-       <h1><bean:message key="tickler.ticklerEdit.title"/></h1>
-       <h2><bean:message key="tickler.ticklerTextSuggest.textSuggestTitle"/></h2>
+    <body style="font-family:arial, sans-serif;">
+    <div class="container">
+       <h3>Tickler <bean:message key="tickler.ticklerTextSuggest.textSuggestTitle"/></h3>
         <html:form action="/tickler/EditTicklerTextSuggest">
             <input type="hidden" name="method" value="updateTextSuggest">
-            <table width="100%">
+            <table style="display: flex;justify-content: space-evenly;align-items: stretch;">
 
                 <tr>
                     <th><bean:message key="tickler.ticklerTextSuggest.activeText"/></th>
-                    <td></td>
+                    <th></th>
                     <th><bean:message key="tickler.ticklerTextSuggest.inactiveText"/></th>
                 </tr>
                 <tr>
-                    <td>                    
-                        <html:select property="activeText" style="width: 300px;" multiple="true" size="10">        
+                    <td style="vertical-align: top">
+                        <html:select styleClass="form-control text-selection" property="activeText" multiple="true" size="10">
                             <%  java.util.List<TicklerTextSuggest> activeTexts = ticklerTextSuggestDao.getActiveTicklerTextSuggests();
                                 if (activeTexts.isEmpty()) {
                              %>
@@ -192,12 +175,12 @@
                         </html:select>
                     </td>
                     <td>
-                        <input type="button" name="movetoInactive" value=">>" onclick="swap('activeText','inactiveText')"/>    
+                        <input type="button" class="btn" name="movetoInactive" value=">>" onclick="swap('activeText','inactiveText')"/>
                         <br/>
-                        <input type="button" name="movetoActive" value="<<" onclick="swap('inactiveText','activeText')"/>
+                        <input type="button" class="btn" name="movetoActive" value="<<" onclick="swap('inactiveText','activeText')"/>
                     </td>
-                    <td>                    
-                        <html:select property="inactiveText" style="width: 300px;" multiple="true" size="10">        
+                    <td style="vertical-align: top">
+                        <html:select styleClass="form-control text-selection" property="inactiveText" multiple="true" size="10">
                             <%
                                 java.util.List<TicklerTextSuggest> inactiveTexts = ticklerTextSuggestDao.getInactiveTicklerTextSuggests();
                                 if (inactiveTexts.isEmpty()) {
@@ -215,21 +198,26 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
-                        <label for="newTextSuggest" style="font-weight:bold;font-size:small"><bean:message key="tickler.ticklerTextSuggest.enterText"/>:</label>
-                         <input  id="newTextSuggest" name="newTextSuggest" type="text" maxlength="100" style="width: 95%"/>
-                    </td>
-                    <td style="vertical-align:  bottom;text-align: left;">
-                         <input type="button" name="addNewTextSuggest" value="<bean:message key="tickler.ticklerTextSuggest.addText"/>" onclick="addToList('activeText','newTextSuggest')"/>
+                    <td colspan="3">
+                        <label for="newTextSuggest"><bean:message key="tickler.ticklerTextSuggest.enterText"/>:</label>
+                        <div class="input-group">
+                         <input id="newTextSuggest" class="form-control" name="newTextSuggest" type="text" maxlength="100" />
+                            <div class="input-group-btn">
+                                <input type="button" class="btn btn-default" name="addNewTextSuggest" value="<bean:message key="tickler.ticklerTextSuggest.addText"/>" onclick="addToList('activeText','newTextSuggest')"/>
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align:right;height:3em;vertical-align: bottom" colspan="3">
-                        <input type="button" name="saveTextChanges" value="<bean:message key="tickler.ticklerTextSuggest.save"/>" onclick="doSelect('activeText');doSelect('inactiveText');document.tsTicklerForm.submit();"/>
-                        <input type="button" name="cancelTextChanges" value="<bean:message key="tickler.ticklerTextSuggest.cancel"/>" onclick="window.close()"/>
+                    <td colspan="3">
+                        <div class="form-group pull-right">
+                        <input type="button" class="btn btn-primary" name="saveTextChanges" value="<bean:message key="tickler.ticklerTextSuggest.save"/>" onclick="doSelect('activeText');doSelect('inactiveText');document.tsTicklerForm.submit();"/>
+                        <input type="button" class="btn btn-danger" name="cancelTextChanges" value="<bean:message key="tickler.ticklerTextSuggest.cancel"/>" onclick="window.close()"/>
+                        </div>
                     </td>
                 </tr>
             </table>
-        </html:form>                           
+        </html:form>
+    </div>
     </body>
 </html>

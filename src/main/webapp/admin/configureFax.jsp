@@ -60,12 +60,6 @@ if(!authed) {
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" type="text/css">
 
-<style type="text/css">
-
-.center { float: none; margin-left: auto; margin-right: auto; }
-
-</style>
-
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
 
 <script type="text/javascript">
@@ -77,8 +71,7 @@ if(!authed) {
 			
 	
 	$(document).ready(function() {
-		$("#faxUrl").focus();				
-		
+
 		$("select").change(function() {
 			$("#submit").prop("disabled", false);
 			$(this).off();
@@ -86,159 +79,33 @@ if(!authed) {
 				
 		$("#submit").click(function(e) {
 			e.preventDefault();
-			
-			if( verify() ) {
-				var url = "<%=request.getContextPath() %>/admin/ManageFax.do";
-				var data = $("#configFrm").serialize();
-				
-				$.ajax({
-					url: url,
-					method: 'POST',
-					data: data,
-					dataType: "json",
-					success: function(data){
-						
-						if( data.success ) {
-							$("#msg").html("Configuration saved!");
-							$('.alert').removeClass('alert-error');
-							$('.alert').addClass('alert-success');
-							$('.alert').show();
-						}
-						else {
-							$("#msg").html("There was a problem saving your configuration.  Check the logs for further details.");
-							$('.alert').removeClass('alert-success');
-							$('.alert').adqdClass('alert-error');
-							$('.alert').show(); 
-						}
-					}});
-				
-			} 
-			else {
-				alert("The configuration form is incomplete");
-			}//end if
-		});
-		
-		if( $("#faxUrl").val().substr(0,2) == "ip" ) {
-			$("#faxUrl").keypress(function() {
-				$(this).val("");
-				$(this).off();
-				$(this).dblclick(function() {
-					$(this).val("");
-				});
-			});
-		}
-		else {
-			$("#faxUrl").dblclick(function() {
-				$(this).val("");
-			});
-		}
-		
-		
-		if( $("#faxServiceUser").val() == "Fax Service login" ) {
-			$("#faxServiceUser").keypress(function() {
-				$(this).val("");
-				$(this).off();
-				$(this).dblclick(function() {
-					$(this).val("");
-				});
-			});
-		}
-		else {
-			$("#faxServiceUser").dblclick(function() {
-				$(this).val("");
-			});
-		}
-				
-		if( $("#faxServicePasswd").val() == "Fax Service Passwd" ) {
-			$("#faxServicePasswd").keypress(function() {
-				$(this).val("");
-				$(this).off();
-				$(this).dblclick(function() {
-					$(this).val("");
-				});
-			});
-		}
-		else {
-			$("#faxServicePasswd").dblclick(function() {
-				$(this).val("");
-			});
-		}
-		
-		if( $("#faxUser").val() == "user login" ) {
-			$("#faxUser").keypress(function() {
-				$(this).val("");
-				$(this).off();
-				$(this).dblclick(function() {
-					$(this).val("");
-				});
-			});
-		}
-		
-		
-		if( $("#faxPasswd").val() == "login passwd" ) {
-			$("#faxPasswd").keypress(function() {
-				$(this).val("");
-				$(this).off();
-				$(this).dblclick(function() {
-					$(this).val("");
-				});
-			});
-		}
-		
-		if( $("#faxNumber").val() == "Clinic Fax Number" ) {
-			$("#faxNumber").keypress(function() {
-				$(this).val("");
-				$(this).off();
-				$(this).dblclick(function() {
-					$(this).val("");
-				});
-			});
-			
-			$("#faxNumber").blur(function() {
-				if( !$(this).val().match("^\\d{10}$")) {
-					alert("please enter fax number in form 1234567890");
-					var input = $(this);
-					setTimeout(function() {input.focus();},10);
-				}
-			});
-		}
 
+			var url = "<%=request.getContextPath() %>/admin/ManageFax.do";
+			var data = $("#configFrm").serialize();
 
-		$("input[type='text']").filter(function() {
-			return this.id.match("^faxUser\d+")
-		}).each(function() {			
-			$(this).dblclick(function() {
-				$(this).val("");
-			});
+			$.ajax({
+				url: url,
+				method: 'POST',
+				data: data,
+				dataType: "json",
+				success: function(data){
+
+					if( data.success ) {
+						$("#msg").html("Configuration saved!");
+						$('.alert').removeClass('alert-error');
+						$('.alert').addClass('alert-success');
+						$('.alert').show();
+					}
+					else {
+						$("#msg").html("There was a problem saving your configuration.  Check the logs for further details.");
+						$('.alert').removeClass('alert-success');
+						$('.alert').adqdClass('alert-error');
+						$('.alert').show();
+					}
+				}});
+
 		});
-			
-		$("input[type='text']").filter(function() {
-			return this.id.match("^faxPasswd\\d+")
-		}).each(function() {			
-			$(this).dblclick(function() {
-				$(this).val("");
-			});
-						
-		});
-		
-		
-		$("input[type='text']").filter(function() {
-			return this.id.match("^faxNumber\\d+")
-		}).each(function() {				
-			$(this).dblclick(function() {
-				$(this).val("");
-			});
-			
-			$(this).blur(function() {
-				if( !$(this).val().match("^\\d{10}")) {
-					alert("please enter fax number in form 1234567890");
-					var input = $(this);
-					setTimeout(function() {input.focus();},10);
-				}
-			});
-						
-		});
-				
+
 		$("input[type='radio']").click(function() {
 			$("#submit").prop("disabled", false);
 			setState(this);
@@ -270,10 +137,13 @@ if(!authed) {
 		$(div).attr("id",userDivId);
 		$(div).find("#faxUser").attr("id","faxUser" + userCount);
 		$(div).find("#faxPasswd").attr("id","faxPasswd" + userCount);
-		
+		$(div).find("#senderEmail").attr("id","senderEmail" + userCount);
+		$(div).find("#accountName").attr("id","accountName" + userCount);
+		$(div).find("#faxNumber").attr("id","faxNumber" + userCount);
+
 		$(div).find("#remove").attr("id","r"+userCount);
 		$(div).find("#r"+userCount).attr("onclick","removeUser("+userCount+");return false;");
-		$(div).find('input[type="text"]').val("");
+		$(div).find('input[type="text"], input[type="password"], input[type="email"]').val("");
 		$(div).find('input[type="radio"]').prop('checked', false);
 		$(div).find("#on").attr("name","active" + userCount);
 		$(div).find("#of").attr("name","active" + userCount);
@@ -281,6 +151,12 @@ if(!authed) {
 		$(div).find("#of").attr("id","of" + userCount);
 		$(div).find("#activeState").val("");
 		$(div).find("#activeState").attr("id","activeState"+userCount);
+		$(div).find("#download_on").attr("name","download" + userCount);
+		$(div).find("#download_of").attr("name","download" + userCount);
+		$(div).find("#download_on").attr("id","download_on" + userCount);
+		$(div).find("#download_of").attr("id","download_of" + userCount);
+		$(div).find("#downloadState").val("");
+		$(div).find("#downloadState").attr("id","downloadState" + userCount);
 		$(div).find("#id").val("-1");
 		$(div).find("#id").attr("id","id"+userCount);
 		
@@ -311,43 +187,22 @@ if(!authed) {
 		}
 		else {
 			divId = "user";
-			$('#'+divId + ' input[type="text"]').val("");			
+			$('#'+divId + ' input[type="text"]').val("");
+			$('#'+divId + ' input[type="password"]').val("");
+			$('#'+divId + ' input[type="email"]').val("");
 			$('#'+divId + ' input[type="radio"]').attr("checked",false);
 			$('#'+divId + ' input[type="hidden"]').val("");
 			$('#'+divId + ' select').val("-1");				
 		}
 	}
-	
-	function verify() {
-		var names = ["faxUrl","siteUser","sitePasswd","faxUser","faxPassword","faxNumber","activeState","inboxQueue"];
-		var valid = true;
-		var incomplete = new Object();
-		
-		for( var idx = 0; idx < names.length; ++idx ) {
-			try {
-			 	$('[name="'+names[idx] + '"]').each(function(index) {	
-			 		if( index == 0 ) {
-			 			return;
-			 		}			 					 	
-			 		
-			 		if( $(this).val() == "" || $(this).val() == "-1" || $(this).val() == "ip addr of fax service" || $(this).val() == "Fax Service login" ||
-			 				$(this).val() == "Fax Service Passwd" || $(this).val() == "user login" || $(this).val() == "login passwd" || $(this).val() == "Clinic Fax Number" ) {			 			
-			 			throw incomplete;
-			 		}
-			 	});
-			 	}
-				catch( incomplete ) {
-					valid = false;
-					break;
-				}
-			
-		}
-		
-		return valid;
-	}
-	
+
 	function setState(elem) {
-		var id = "#activeState" + elem.id.substring(2);
+		var id;
+		if (elem.id.startsWith("download")) {
+			id = "#downloadState" + elem.id.substring(11);
+		} else { 
+			id = "#activeState" + elem.id.substring(2);
+		} 
 		$(id).val($(elem).val());
 	}
 	
@@ -358,7 +213,7 @@ if(!authed) {
 
 <body>
 	<div class="container-fluid">
-		<form id="configFrm" method="post" onSubmit="return verify()"> 
+		<form id="configFrm" method="post" >
 		<input type="hidden" name="method" value="configure"/> 
 		<div id="bodyrow" class="row">
 
@@ -368,28 +223,29 @@ if(!authed) {
 			<div class="row">			
 				<div class="span12">
 					<label for="faxUrl" > Fax Server URL</label>
-					<input class="span12" id="faxUrl" type="text" name="faxUrl" placeholder="fax web service URL" value="<%=faxConfigList.get(0).getUrl()%>" />				
+					<input class="span12" id="faxUrl" type="text" name="faxUrl" placeholder="fax web service URL"
+					       value="<%=Encode.forHtmlAttribute( ! faxConfigList.isEmpty() ? faxConfigList.get(0).getUrl() : "")%>" />
 				</div>			
 			</div>
 
 			<div class="row">
 				<div class="span6">
 					<label for="faxServiceUser">Fax Server Username</label>
-					<input class="span6" id="faxServiceUser" type="text" name="siteUser" value="<%=faxConfigList.isEmpty() || faxConfigList.get(0).getSiteUser() == null ? "Fax Service login" : faxConfigList.get(0).getSiteUser() %>" />				
+					<input class="span6" id="faxServiceUser" type="text" name="siteUser" value="<%=Encode.forHtmlAttribute( ! faxConfigList.isEmpty() ? faxConfigList.get(0).getSiteUser() : "" )%>" />
 				</div>			
 	
 				<div class="span6">
 					<%
 						String faxServicePassword = "";
 						
-						if(faxConfigList != null && faxConfigList.get(count) != null && faxConfigList.get(count).getPasswd() != null
+						if(! faxConfigList.isEmpty() && faxConfigList.get(count) != null && faxConfigList.get(count).getPasswd() != null
 								&& faxConfigList.get(count).getPasswd().length() > 0) {
 							faxServicePassword="**********";
 						}
 						
 					%>
 					<label for="faxServicePasswd">Fax Server Password</label>
-					<input class="span6" id="faxServicePasswd" type="password" name="sitePasswd" value="<%=faxServicePassword%>" />
+					<input class="span6" id="faxServicePasswd" type="password" name="sitePasswd" value="<%=Encode.forHtmlAttribute( faxServicePassword )%>" />
 				</div>
 
 			</div>
@@ -408,7 +264,7 @@ if(!authed) {
 				<div class="row">
 					<div class="span6">
 						<label for="faxUser<%=count == 0 ? "" : count%>">User</label>
-							<input class="span6" type="text" id="faxUser<%=count == 0 ? "" : count%>" name="faxUser" value="<%=faxConfigList.isEmpty() ? "user login" : faxConfigList.get(count).getFaxUser()%>"/>
+							<input class="span6" type="text" id="faxUser<%=count == 0 ? "" : count%>" name="faxUser" value="<%=Encode.forHtmlAttribute( faxConfigList.isEmpty() ? "" : faxConfigList.get(count).getFaxUser() )%>"/>
 							<input type="hidden" id="id<%=count == 0 ? "" : count%>" name="id" value="<%=faxConfigList.isEmpty() ? "-1" : faxConfigList.get(count).getId()%>"/>
 						
 					</div>
@@ -418,26 +274,26 @@ if(!authed) {
 						<%
 						String faxPassword = "";
 						
-						if(faxConfigList != null && faxConfigList.get(count) != null && faxConfigList.get(count).getFaxPasswd() != null
+						if(! faxConfigList.isEmpty() && faxConfigList.get(count) != null && faxConfigList.get(count).getFaxPasswd() != null
 								&& faxConfigList.get(count).getFaxPasswd().length() > 0) {
 							faxPassword="**********";
 						}
 						
 						%>
-						<input class="span6" type="password" id="faxPasswd<%=count == 0 ? "" : count%>" name="faxPassword" value="<%=faxPassword%>"/>
+						<input class="span6" type="password" id="faxPasswd<%=count == 0 ? "" : count%>" name="faxPassword" value="<%=Encode.forHtmlAttribute( faxPassword )%>"/>
 					</div>
 				</div>
 				<div class="row">
 					<div class="span6">
 
 						<label for="faxNumber<%=count == 0 ? "" : count%>" >Fax Number</label>
-						<input class="span6" type="text" id="faxNumber<%=count == 0 ? "" : count%>" name="faxNumber" value="<%=faxConfigList.isEmpty() ? "Clinic Fax Number" : faxConfigList.get(count).getFaxNumber()%>"/>
+						<input class="span6" type="text" id="faxNumber<%=count == 0 ? "" : count%>" name="faxNumber" value="<%=Encode.forHtmlAttribute( faxConfigList.isEmpty() ? "" : faxConfigList.get(count).getFaxNumber() )%>"/>
 					</div>	
 					
 					<div class="span6">
 					<label for="senderEmail<%=count == 0 ? "" : count%>">Email</label>
 
-					<input class="span6" type="email" id="senderEmail<%=count == 0 ? "" : count%>" name="senderEmail" placeholder="Account email" value="<%=Encode.forHtmlAttribute(faxConfigList.get(count).getSenderEmail())%>" />
+					<input class="span6" type="email" id="senderEmail<%=count == 0 ? "" : count%>" name="senderEmail" placeholder="Account email" value="<%=Encode.forHtmlAttribute(faxConfigList.isEmpty() ? "" : faxConfigList.get(count).getSenderEmail())%>" />
 				</div>
 				</div>
 				<div class="row">
@@ -465,7 +321,7 @@ if(!authed) {
 					</div>
 					<div class="span6">
 						<label for="accountName<%= count == 0 ? "" : count %>" >Account Name</label>
-						<input type="text" name="accountName" id='accountName<%= count == 0 ? "" : count %>' value='<%= Encode.forHtmlAttribute(faxConfigList.get(count).getAccountName()) %>' />
+						<input type="text" name="accountName" id='accountName<%= count == 0 ? "" : count %>' value='<%= Encode.forHtmlAttribute(faxConfigList.isEmpty() ? "" : faxConfigList.get(count).getAccountName()) %>' />
 					</div>
 				</div>
 					<div class="row">
@@ -480,6 +336,17 @@ if(!authed) {
 								Off</label>
 
 							<input type="hidden" id="activeState<%=count == 0 ? "" : count%>" name="activeState" value="<%=faxConfigList.isEmpty() ? "" : faxConfigList.get(count).isActive()%>" />
+						</div>
+						<div class="span6">
+							<label>Enable/Disable Receiving Faxes (If Gateway Enabled)</label>
+
+							<label class="radio inline control-label">
+								<input type="radio" id="download_on<%=count == 0 ? "" : count %>" name="download<%=count == 0 ? "" : count%>" value="true" <%=faxConfigList.isEmpty() ? "" : faxConfigList.get(count).isDownload() ? "checked" : ""%>  />
+								On</label>
+							<label class="radio inline control-label">
+								<input type="radio" id="download_of<%=count == 0 ? "" : count %>" name="download<%=count == 0 ? "" : count%>" value="false" <%=faxConfigList.isEmpty() ? "" : faxConfigList.get(count).isDownload()  ? "" : "checked"%> />
+								Off</label>
+							<input type="hidden" id="downloadState<%=count == 0 ? "" : count%>" name="downloadState" value="<%=faxConfigList.isEmpty() ? "" : faxConfigList.get(count).isDownload()%>" />
 						</div>
 					</div>
 
@@ -505,7 +372,7 @@ if(!authed) {
 				</div>
 			</form>
 			
-		<div id="msg" class="row alert">
+		<div id="msg" class="row alert" style="display:none;">
    		</div>								
 </div>	<!-- end container -->	
 		

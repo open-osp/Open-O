@@ -33,7 +33,7 @@
 %>
 <%@ page
 	import="java.util.*, java.sql.*, java.net.*, oscar.*, oscar.oscarDB.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.*"%>
 <%@page import="org.oscarehr.billing.CA.ON.dao.*" %>
 <%@page import="org.oscarehr.common.dao.BillingONExtDao" %>

@@ -139,7 +139,13 @@ public class EFormLoader {
                 return curAP;
             }
         }
-        logger.error("AP: "+apName+" was not found returning null");
+        
+        if (apName.startsWith("m$")) {
+            logger.info("AP: "+apName+" was not found returning null"); //info level of logging because this a missing measurement is not a big deal
+        } else {
+            logger.error("AP: "+apName+" was not found returning null"); //warn level of logging because this other missing oscarDb tags is more significant
+        }
+        
         return null;
     }
 

@@ -1,6 +1,43 @@
+
+table {
+	border-collapse: collapse;
+	margin:0;
+	padding:0;
+	width:100%;
+}
+
+table#addDemographicTbl {
+	width:100%;
+	padding: 0;
+	margin: 0 !important;
+}
+table#addDemographicTbl tr, table#addDemographicTbl tr td table#waitingListTable tr {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: stretch;
+	width:100%;
+}
+
+table#addDemographicTbl tr td, table#addDemographicTbl tr td table#waitingListTable tr td{
+	display:flex;
+	align-items: stretch;
+	width:100%;
+	margin:0 !important;
+}
+table#addDemographicTbl tr td input, table#addDemographicTbl tr td select, table#addDemographicTbl tr td textarea{
+	width:100% !important;
+}
+
+table#addDemographicTbl tr td b, table#addDemographicTbl tr td strong, .alignRight{
+	text-indent: 5px
+}
+
+table#addDemographicTbl tr:nth-of-type(odd){
+	background-color:white;
+}
+
 body {
-	margin: 10px;
-	font-size: Normal;
 	font-family: Verdana, Tahoma, Arial, sans-serif;
 }
 
@@ -19,13 +56,6 @@ table td.RowTop, div.title, table th.subject {
 	font-size:small;
 }
 
-#countryOfOrigin, td#spokenCell select {
-	width: 75%;
-}
-
-table tr#rowWithLastName td{
-	width:2.5%;
-}
 
 form[name='titlesearch'] {
 	margin:6pt 0;

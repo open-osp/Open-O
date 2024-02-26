@@ -39,13 +39,15 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.oscarehr.PMmodule.dao.ProviderDao;
+import org.oscarehr.common.dao.PropertyDao;
+import org.oscarehr.common.model.Property;
+import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
 import oscar.OscarProperties;
-import oscar.entities.Provider;
-import oscar.oscarBilling.ca.bc.MSP.MSPReconcile;
 import oscar.oscarBilling.ca.bc.data.BillRecipient;
 import oscar.oscarBilling.ca.bc.data.BillingPreference;
 import oscar.oscarBilling.ca.bc.data.BillingPreferencesDAO;
@@ -88,6 +90,7 @@ public final class BillingViewAction
 
       bean.calculateSubtotal();
       log.debug("GrandTotal" + bmanager.getGrandTotal(billItem));
+      bean.setGrandtotal(bmanager.getGrandTotal(billItem));
       DemographicData demoData = new DemographicData();
       log.debug("Calling Demo");
 
@@ -131,33 +134,26 @@ public final class BillingViewAction
       ActionForward actionForward = mapping.findForward("success");
       String receipt = request.getParameter("receipt");
       if (receipt != null && receipt.equals("yes")) {
-        Provider p = getPreferredPayeeProvider(bean.getBillingProvider());
-        bean.setDefaultPayeeFirstName(p.getFirstName());
-        bean.setDefaultPayeeLastName(p.getLastName());
+
+        BillingPreferencesDAO billingPreferencesDAO = SpringUtils.getBean(BillingPreferencesDAO.class);
+        BillingPreference pref = billingPreferencesDAO.getUserBillingPreference(bean.getBillingProvider());
+
+        if(pref == null || "NONE".equals(pref.getDefaultPayeeNo())){
+            bean.setDefaultPayeeInfo("");
+        } else if("CUSTOM".equals(pref.getDefaultPayeeNo())){
+            PropertyDao propertyDao = SpringUtils.getBean(PropertyDao.class);
+            List<Property> propList = propertyDao.findByNameAndProvider(Property.PROPERTY_KEY.invoice_payee_info, bean.getBillingProvider());
+            bean.setDefaultPayeeInfo(!propList.isEmpty() ? propList.get(0).getValue() : "");
+        } else {
+            ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+            Provider p = providerDao.getProvider(pref.getDefaultPayeeNo());
+            bean.setDefaultPayeeInfo( p != null ? p.getFormattedName() : "");
+        }
         actionForward = mapping.findForward("private");
       }
 
 
       return actionForward;
     }
-  }
-
-  /**
-   * Returns a Provider instance which represents the default payee for a providers bills
-   * according to the specified user preference. If the user doesn't have a default payee
-   * an instance with empty fields is returned
-   * @param userProviderNo String
-   * @return Provider
-   */
-  public Provider getPreferredPayeeProvider(String userProviderNo){
-    Provider p = new Provider();
-    BillingPreferencesDAO dao = SpringUtils.getBean(BillingPreferencesDAO.class);
-    BillingPreference pref = dao.getUserBillingPreference(userProviderNo);
-
-    if(pref != null){
-      MSPReconcile msp = new MSPReconcile();
-      p = msp.getProvider(String.valueOf(pref.getDefaultPayeeNo()),0);
-    }
-    return p;
   }
 }

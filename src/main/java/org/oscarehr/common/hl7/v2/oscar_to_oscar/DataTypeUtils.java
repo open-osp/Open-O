@@ -440,9 +440,8 @@ public final class DataTypeUtils {
 
 		if (Gender.M == oscarGender) return ("M");
 		else if (Gender.F == oscarGender) return ("F");
-		else if (Gender.O == oscarGender) return ("O");
-		else if (Gender.T == oscarGender) return ("A");
-		else if (Gender.U == oscarGender) return ("N");
+		else if (Gender.U == oscarGender) return ("U");
+		else if (Gender.X == oscarGender) return ("U");
 		else {
 			logger.error("Missed gender or dirty data in database. demographic.sex=" + oscarGender);
 			return ("U");
@@ -459,10 +458,8 @@ public final class DataTypeUtils {
 
 		if ("M".equals(hl7Gender)) return (Gender.M);
 		else if ("F".equals(hl7Gender)) return (Gender.F);
-		else if ("O".equals(hl7Gender)) return (Gender.O);
-		else if ("A".equals(hl7Gender)) return (Gender.T);
 		else if ("N".equals(hl7Gender)) return (Gender.U);
-		else if ("U".equals(hl7Gender)) return (null);
+		else if ("U".equals(hl7Gender)) return (Gender.U);
 		else throw (new IllegalArgumentException("Missed gender : " + hl7Gender));
 	}
 

@@ -21,7 +21,7 @@
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="oscar.util.ConversionUtils"%>
 <%@page import="org.oscarehr.util.DateRange"%>
-<%@ page import="java.math.*,java.util.*,java.sql.*,oscar.*,oscar.oscarBilling.ca.on.OHIP.*,java.net.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.math.*,java.util.*,java.sql.*,oscar.*,oscar.oscarBilling.ca.on.OHIP.*,java.net.*" errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.oscarBilling.ca.on.pageUtil.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.*,oscar.oscarProvider.data.ProviderBillCenter"%>
 

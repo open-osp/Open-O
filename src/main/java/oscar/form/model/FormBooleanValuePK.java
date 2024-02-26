@@ -5,9 +5,7 @@
  * License details are available via "gnu.org/licenses/gpl-2.0.html".
  */
 
-
 package oscar.form.model;
-
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

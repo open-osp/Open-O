@@ -19,7 +19,7 @@
 --%>
 <%@page import="org.oscarehr.common.dao.BillingDao"%>
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, java.net.*,oscar.*, oscar.util.*, oscar.MyDateFormat,oscar.oscarDB.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, java.net.*,oscar.*, oscar.util.*, oscar.MyDateFormat,oscar.oscarDB.*" errorPage="/errorpage.jsp"%>
 <%@ include file="../../../admin/dbconnection.jsp"%>
 
 <jsp:useBean id="billingLocalInvNoBean" class="java.util.Properties" scope="page" />

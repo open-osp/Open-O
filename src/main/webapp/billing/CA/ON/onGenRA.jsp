@@ -36,7 +36,7 @@
 	<%isTeamAccessPrivacy=true; %>
 </security:oscarSec>
 
-<%@ page import="java.io.*, java.sql.*, oscar.*, oscar.util.*, java.util.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.io.*, java.sql.*, oscar.*, oscar.util.*, java.util.*" errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.oscarBilling.ca.on.pageUtil.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.*"%>
 <jsp:useBean id="documentBean" class="oscar.DocumentBean" scope="request" />

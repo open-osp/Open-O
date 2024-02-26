@@ -29,6 +29,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.*;
 import org.apache.logging.log4j.Logger;
+import org.oscarehr.common.model.EFormData;
 import org.oscarehr.hospitalReportManager.dao.HRMDocumentDao;
 
 import org.oscarehr.hospitalReportManager.dao.HRMProviderConfidentialityStatementDao;
@@ -37,9 +38,12 @@ import org.oscarehr.hospitalReportManager.model.HRMDocument;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+import org.oscarehr.documentManager.ConvertToEdoc;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public class HRMPDFCreator extends PdfPageEventHelper {
@@ -169,6 +173,13 @@ public class HRMPDFCreator extends PdfPageEventHelper {
 
                 document.close();
             }
+            else if (hrmReport.getFileExtension() != null && (hrmReport.getFileExtension().equals(".html"))) {
+                EFormData eFormData = new EFormData();
+                byte[] htmlHrmReportData = hrmReport.getBinaryContent();
+                eFormData.setFormData(new String(htmlHrmReportData, StandardCharsets.UTF_8));
+                Path path = ConvertToEdoc.saveAsTempPDF(eFormData);
+                outputStream.write(Files.readAllBytes(path));
+            }
             else {
                 logger.info("HRM Report is binary, only printing the attachment");
                 outputStream.write(hrmReport.getBinaryContent());
@@ -267,6 +278,14 @@ public class HRMPDFCreator extends PdfPageEventHelper {
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         metaDataBox.addCell(cell);
 
+        cell.setPhrase(new Phrase("Sending Author: ", boldFont));
+        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        metaDataBox.addCell(cell);
+        
+        cell.setPhrase(new Phrase(hrmReport.getSendingAuthor(), font));
+        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+        metaDataBox.addCell(cell);
+        
         cell.setPhrase(new Phrase("Sending Facility ID: ", boldFont));
         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         metaDataBox.addCell(cell);

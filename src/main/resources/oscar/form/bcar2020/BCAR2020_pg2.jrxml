@@ -1404,49 +1404,49 @@
 				<textFieldExpression><![CDATA[$P{t_imagingGA4}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="434" y="303" width="157" height="13" uuid="cbc2517b-6c1c-4d29-ad0c-e8a93e5370d3"/>
+				<reportElement x="434" y="303" width="170" height="13" uuid="cbc2517b-6c1c-4d29-ad0c-e8a93e5370d3"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{t_considerationsLifestyle}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="397" y="318" width="194" height="13" uuid="4eba53a7-555b-4e11-a5fd-9d3e8ebf62ec"/>
+				<reportElement x="397" y="318" width="210" height="13" uuid="4eba53a7-555b-4e11-a5fd-9d3e8ebf62ec"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{t_considerationsPregnancy}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="408" y="333" width="183" height="13" uuid="1f3f460b-3ea2-42a1-8085-9e38fb6eb897"/>
+				<reportElement x="408" y="333" width="200" height="13" uuid="1f3f460b-3ea2-42a1-8085-9e38fb6eb897"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{t_considerationsLabour}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="404" y="349" width="187" height="13" uuid="c6000c15-d492-4b05-8bb7-cc3356f98029"/>
+				<reportElement x="404" y="349" width="210" height="13" uuid="c6000c15-d492-4b05-8bb7-cc3356f98029"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{t_considerationsBreastfeeding}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="399" y="364" width="192" height="13" uuid="8ef197eb-5b89-495e-a6a1-cc1161795d88"/>
+				<reportElement x="399" y="364" width="210" height="13" uuid="8ef197eb-5b89-495e-a6a1-cc1161795d88"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{t_considerationsPostpartum}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="419" y="379" width="172" height="13" uuid="fd975195-2ccf-4b7e-a6e0-b8f93124f25b"/>
+				<reportElement x="419" y="379" width="180" height="13" uuid="fd975195-2ccf-4b7e-a6e0-b8f93124f25b"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{t_considerationsContraception}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="392" y="394" width="199" height="13" uuid="71a22b3c-c4bc-4684-93b1-26484897a0b8"/>
+				<reportElement x="392" y="394" width="210" height="13" uuid="71a22b3c-c4bc-4684-93b1-26484897a0b8"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>

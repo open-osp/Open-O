@@ -64,7 +64,7 @@ public class FaxStatusUpdater {
 			faxConfig = faxConfigDao.getConfigByNumber( faxJob.getFax_line() );
 			
 			if( faxConfig == null ) {
-				log.error("Could not find faxConfig.  Has the fax number changed?");
+				log.error("Could not find faxConfig while processing fax id: " + faxJob.getId() + " Has the fax number changed?");
 			}	
 
 			else if( faxConfig.isActive() ) {

@@ -23,8 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -71,16 +70,16 @@
     					<div role="tabpanel" class="tab-pane" ng-class="tabActive('local')" id="home">
     						<div class="list-group">
 						  <a ng-click="openSurvey(surveyConfig)" class="list-group-item" ng-class="itemActive(surveyConfig.id)" data-ng-repeat="surveyConfig in loadedSurveillanceConfigs | limitTo:loadedSurveillanceConfigsQuantity" >
-						  	
+
 						  	<h4 class="list-group-item-heading"><span ng-if="surveyConfig.active" style="color:green" class="glyphicon glyphicon-ok " aria-hidden="true"></span> {{surveyConfig.name}}</h4>
 							 <p class="list-group-item-text">{{surveyConfig.date | date:'medium'}}</p>
 							 <br>
 		  					<button ng-if="!surveyConfig.active" class="btn btn-default btn-sm" ng-click="enable(surveyConfig)">Enable</button>
 		  					<button ng-if="surveyConfig.active" class="btn btn-default btn-sm " ng-click="disable(surveyConfig)">Disable</button>
 		  					<button ng-if="hasUpdateAvailableFromK2A(surveyConfig.id)" class="btn btn-success btn-sm" ng-click="updateFromK2a(surveyConfig)">Update</button>
-		  					
-						
-						    
+
+
+
 						   
 						  </a>
 						</div>
@@ -146,7 +145,7 @@
 			  </div>
 			  <div class="row">	
 			  	<div class="form-group col-xs-6">
-			    		<label for="exampleInputName3">Export Filename Prefix</label>
+			    		<label for="prefixid">Export Filename Prefix</label>
 			    		<input type="text" class="form-control" id="prefixid" placeholder="013" ng-model="prefix">
 			  	</div>
 			  </div>
@@ -161,7 +160,7 @@
 		 	</h4>
 
 		 		
-		 		<table class="table table-condensed table-stripedå"> 
+		 		<table class="table table-condensed table-striped">
 		 			<thead> 
 		 				<tr> 
 		 					<th>Name</th> 

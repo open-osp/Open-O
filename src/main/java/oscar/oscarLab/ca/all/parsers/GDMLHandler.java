@@ -327,8 +327,14 @@ public class GDMLHandler implements MessageHandler {
     }
 
     public int getOBXFinalResultCount(){
-        // not applicable to gdml labs
-        return 0;
+        int obrCount = getOBRCount();
+        int count = 0;
+        for (int i=0; i < obrCount; i++){
+            //note - this is assuming every returned OBX is FINAL in GDML labs (which is understood to be the case)
+            count += getOBXCount(i);            
+        }        
+        
+        return count;
     }
 
     /**

@@ -25,16 +25,12 @@
 
 package oscar;
 
+import org.oscarehr.util.MiscUtils;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-
-import org.oscarehr.util.MiscUtils;
+import java.util.*;
 
 /**
  * This class will hold OSCAR & CAISI properties. It is a singleton class. Do not instantiate it, use the method getInstance(). Every time the properties file changes, tomcat must be restarted.
@@ -362,6 +358,14 @@ public class OscarProperties extends Properties {
 	
 	public static boolean isLdapAuthenticationEnabled() {
 		return Boolean.parseBoolean(oscarProperties.getProperty("ldap.enabled"));
+	}
+
+	public String getDocumentDirectory() {
+		return oscarProperties.getProperty("DOCUMENT_DIR");
+	}
+
+	public String getDocumentCacheDirectory() {
+		return oscarProperties.getProperty("DOCUMENT_CACHE_DIR");
 	}
 
 }

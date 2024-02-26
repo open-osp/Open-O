@@ -35,11 +35,10 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.WKHtmlToPdfUtils;
 
-import oscar.dms.EDoc;
-import oscar.dms.EDocUtil;
-import oscar.dms.actions.AddEditDocumentAction;
+import org.oscarehr.documentManager.EDoc;
+import org.oscarehr.documentManager.EDocUtil;
+import org.oscarehr.documentManager.actions.AddEditDocumentAction;
 
 public final class EfmpatientformlistSendPhrAction {
 
@@ -131,7 +130,7 @@ public final class EfmpatientformlistSendPhrAction {
 
 			// convert to PDF
 			String viewUri = localUri + eFormId;
-			WKHtmlToPdfUtils.convertToPdf(viewUri, tempFile);
+
 			logger.debug("Writing pdf to : " + tempFile.getCanonicalPath());
 
 			// upload pdf to oscar docs

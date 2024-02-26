@@ -61,6 +61,8 @@ public final class ProviderPreferencesUIBean {
 		String temp;
 		HttpSession session = request.getSession();
 
+		boolean updatePreferences = Boolean.parseBoolean(request.getParameter("updatePreference"));
+
 		// new tickler window
 		temp = StringUtils.trimToNull(request.getParameter("new_tickler_warning_window"));
 		if (temp != null) {
@@ -131,6 +133,10 @@ public final class ProviderPreferencesUIBean {
 
 		temp = StringUtils.trimToNull(request.getParameter("default_servicetype"));
 		if (temp != null) providerPreference.setDefaultServiceType(temp);
+
+		temp = StringUtils.trimToNull(request.getParameter("default_location"));
+		if (temp != null) providerPreference.setDefaultBillingLocation(temp);
+
 
 		temp = StringUtils.trimToNull(request.getParameter("color_template"));
 		if (temp != null) providerPreference.setColourTemplate(temp);

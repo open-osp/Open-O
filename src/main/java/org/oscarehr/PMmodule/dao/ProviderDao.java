@@ -46,6 +46,7 @@ import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.ProviderFacility;
 import org.oscarehr.common.model.ProviderFacilityPK;
 import org.oscarehr.common.model.UserProperty;
+import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -277,6 +278,16 @@ public class ProviderDao extends HibernateDaoSupport {
     public List<Provider> getBillableProviders() {
 		List<Provider> rs = getHibernateTemplate().find("FROM Provider p where p.OhipNo != '' and p.Status = '1' order by p.LastName");
 		return rs;
+	}
+
+	/**
+	 * Add loggedininfo to excluded logged in provider.
+	 * Usefull when setting personal preferrences.
+	 * @param loggedInInfo
+	 * @return
+	 */
+	public List<Provider> getBillableProvidersInBC(LoggedInInfo loggedInInfo) {
+		return getHibernateTemplate().find("FROM Provider p where (p.OhipNo <> '' or p.RmaNo <> ''  or p.BillingNo <> '' or p.HsoNo <> '') and p.Status = '1' and p.ProviderNo not like ? order by p.LastName", loggedInInfo.getLoggedInProviderNo());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -543,6 +554,10 @@ public class ProviderDao extends HibernateDaoSupport {
             else		
                 return providers;
         }
+
+		public List<Provider> getProvidersWithNonEmptyOhip(LoggedInInfo loggedInInfo) {
+			return getHibernateTemplate().find("FROM Provider WHERE ohip_no != '' and ProviderNo not like ? order by last_name, first_name", loggedInInfo.getLoggedInProviderNo());
+		}
         
         /**
          * Gets all providers with non-empty OHIP number ordered by last,then first name

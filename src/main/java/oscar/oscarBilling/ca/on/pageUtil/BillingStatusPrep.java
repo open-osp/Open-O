@@ -58,12 +58,12 @@ public class BillingStatusPrep {
 	
 	public List<BillingClaimHeader1Data> getBills(String[] billType, String statusType, String providerNo, String startDate, String endDate,
 			String demoNo, String serviceCodeParams, String dx, String visitType, String billingForm, String visitLocation, String paymentStartDate, String paymentEndDate) {
-		return getBillsWithSorting(billType,statusType,providerNo,startDate,endDate,demoNo,serviceCodeParams,dx,visitType,billingForm,visitLocation,null,null, paymentStartDate,paymentEndDate);
+		return getBillsWithSorting(billType,statusType,providerNo,startDate,endDate,demoNo,serviceCodeParams,dx,visitType,billingForm,visitLocation,null,null, paymentStartDate,paymentEndDate,null);
 	}
 	
 	public List<BillingClaimHeader1Data> getBillsWithSorting(String[] billType, String statusType, String providerNo, String startDate, String endDate,
 			String demoNo, String serviceCodeParams, String dx, String visitType, String billingForm, String visitLocation, String sortName, String sortOrder,
-			String paymentStartDate, String paymentEndDate) {
+			String paymentStartDate, String paymentEndDate, String claimNo) {
 		JdbcBillingReviewImpl bObj = new JdbcBillingReviewImpl();
 		billType = billType == null || billType.length == 0 ? null : billType;
 		statusType = statusType == null || statusType.length() == 0 || statusType.equals(ANY_STATUS_TYPE) ? null : statusType;
@@ -80,9 +80,11 @@ public class BillingStatusPrep {
 
 		paymentStartDate = paymentStartDate == null || paymentStartDate.length() == 0 ? null : paymentStartDate;
 		paymentEndDate = paymentEndDate == null || paymentEndDate.length() == 0 ? null : paymentEndDate;
+
+		claimNo = claimNo == null || claimNo.length() == 0 ? null : claimNo;
 		
 		List<String> serviceCodeList = bObj.mergeServiceCodes(serviceCodeParams, billingForm);
-		List<BillingClaimHeader1Data> retval = bObj.getBillWithSorting(billType, statusType, providerNo, startDate, endDate, demoNo, serviceCodeList, dx, visitType, visitLocation,sortName,sortOrder,paymentStartDate,paymentEndDate);
+		List<BillingClaimHeader1Data> retval = bObj.getBillWithSorting(billType, statusType, providerNo, startDate, endDate, demoNo, serviceCodeList, dx, visitType, visitLocation,sortName,sortOrder,paymentStartDate,paymentEndDate,claimNo);
 		return retval;
 	}
 

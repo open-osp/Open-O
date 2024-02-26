@@ -87,6 +87,7 @@
 <%-- END DETACHED VIEW ENABLED  --%> 
 
 <script type="text/javascript" >
+	//<!--
 var popupWindow;	
 //--> Add contact from popup selection or internal method.
 function popUpData( data ){	
@@ -116,7 +117,7 @@ function popUpData( data ){
 		var contactObject = "";
 		
 		// force parameters required by the saveManage action method.
-		if(method == "saveManage") {			
+		if(method === "saveManage") {
 			procontact_num = 1; // total number of procontacts to add.				
 			//id = 0; // Id of a demographicContact object - set as zero when adding new.
 			contact_num = 0; // total number of demographic contacts to add.
@@ -124,7 +125,7 @@ function popUpData( data ){
 			contactObject = contactCategory + '_' + procontact_num + '.';
 		}
 		
-		if( 'editHealthCareTeam' == method ) {
+		if( 'editHealthCareTeam' === method ) {
 			target = 'popup';
 		}
 		
@@ -162,7 +163,7 @@ function sendData(path, param, target) {
  		    data: param,
  		  	dataType: 'html',
  		    success: function(data) {
- 		    	if( target == 'popup' ) {
+ 		    	if( target === 'popup' ) {
 	  		    	popupWindow = window.open("", "_blank", "scrollbars=yes, resizable=yes, width=600, height=600");
 					with(popupWindow.document) {
 				      open();
@@ -180,7 +181,8 @@ function sendData(path, param, target) {
 
 //--> Refresh containing elements 
 function renderResponse(html, id) {
-	
+	console.log(html);
+	console.log(id);
 	if( id instanceof Array ) {
 		jQuery.each(id, function(i, val){
 			jQuery(val).replaceWith( jQuery(val, html) );
@@ -334,7 +336,7 @@ jQuery(document).ready( function($) {
 	jQuery().bindFunctions();
 	
 })
-				
+//-->
 </script>
 
 <%-- DETACHED VIEW ENABLED  --%>
@@ -368,15 +370,14 @@ jQuery(document).ready( function($) {
 </c:if>
 
 <%-- END DETACHED VIEW ENABLED  --%>
+<table>
+	<tr><td><table id="listHealthCareTeam" class="${ param.view }View" >
+			<%-- MANAGE PATIENTS HEALTH CARE TEAM  --%>
+			<%-- LIST CURRENT HEALTH CARE TEAM --%>
 
-
-<table id="listHealthCareTeam" class="${ param.view }View" >
-	<%-- MANAGE PATIENTS HEALTH CARE TEAM  --%>
-		<%-- LIST CURRENT HEALTH CARE TEAM --%>
-		
 		<c:set value="${ demographicContacts }" var="demographicContactList" scope="page" />
 
-		<tr id="tableTitle" >
+		<tr id="tableTitle" class="category_table_heading" >
 			<th colspan="6" class="alignLeft" >Health Care Team</th>
 		</tr>
 
@@ -388,95 +389,95 @@ jQuery(document).ready( function($) {
 		<c:forEach items="${ demographicContactList }" var="demographicContact" >
 			<c:set value="internal" var="internal" scope="page" />
 			<c:set value="${ demographicContact.details.workPhone }" var="workPhone" scope="page" />
-			
-			<tr>					
-				<td class="alignRight" >	
-					<c:out value="${ demographicContact.role }" />				 					
+
+			<tr>
+				<td class="alignRight" >
+					<c:out value="${ demographicContact.role }" />
 				</td>
-                <td class="alignLeft" >
-                		<c:out value="${ demographicContact.contactName }" />
-                </td>
-                
-                 	<c:if test="${ workPhone eq internal }" > 
-						<td>&#40;<c:out value="${ internal }" />&#41;</td>
-						<td>&nbsp;</td>
-					</c:if>	
-					                 	
-               		<c:if test="${ workPhone ne internal }" >	                 		
-                 		<td><c:out value="${ workPhone }" /></td>
-                 		<td><c:out value="${ demographicContact.details.fax }" /></td>
-               		</c:if>
-               	 	
-	            <td class="alignRight">
-	            	<input type="button" 
-	            		id="remove<c:out value="${ demographicContact.type }" />_<c:out value="${ demographicContact.id }" />" 
-	            		class="actionlink" value="remove" />
+				<td class="alignLeft" >
+					<c:out value="${ demographicContact.contactName }" />
+				</td>
+
+				<c:if test="${ workPhone eq internal }" >
+					<td>&#40;<c:out value="${ internal }" />&#41;</td>
+					<td>&nbsp;</td>
+				</c:if>
+
+				<c:if test="${ workPhone ne internal }" >
+					<td><c:out value="${ workPhone }" /></td>
+					<td><c:out value="${ demographicContact.details.fax }" /></td>
+				</c:if>
+
+				<td class="alignRight">
+					<input type="button"
+					       id="remove<c:out value="${ demographicContact.type }" />_<c:out value="${ demographicContact.id }" />"
+					       class="actionlink" value="remove" />
 				</td>
 				<td class="alignLeft">
 					<c:if test="${ demographicContact.type gt 0 }">
-						<input type="button" 
-							id="edit<c:out value="${ demographicContact.type }" />_<c:out value="${ demographicContact.id }" />" 
-							class="actionlink" value="edit" />
+						<input type="button"
+						       id="edit<c:out value="${ demographicContact.type }" />_<c:out value="${ demographicContact.id }" />"
+						       class="actionlink" value="edit" />
 					</c:if>
 				</td>
-            </tr>	
+			</tr>
 		</c:forEach>
-</table>
-
-<table id="addEditHealthCareTeam" class="${ param.view }View" >	
-		<%-- ADD NEW MEMBER TO HEALTH CARE TEAM --%>
+	</table></td></tr>
+	<tr><td style="background-color:whitesmoke;border-top:lightgrey thin solid;"><table id="addEditHealthCareTeam" class="${ param.view }View" >
+			<%-- ADD NEW MEMBER TO HEALTH CARE TEAM --%>
 
 		<tr>
-			<td class="alignLeft"><strong>add a provider:</strong></td>		
+			<td class="alignLeft"><strong>add a provider:</strong></td>
 			<td class="alignLeft">
 				<select name="searchInternalExternal" id="searchInternalExternal" >
 					<option value="${ providerType }" >internal</option>
-		            <option value="${ professionalContactType }" >external</option>
+					<option value="${ professionalContactType }" >external</option>
 				</select>
 			</td>
-			
+
 			<!-- If Internal list, then display the Internal Demographic options
 			 External, then display the external search options -->
 
-			 <td class="internal" >
-			 	<select name="internalProviderList" id="internalProviderList">
-			 		<c:forEach items="${ providerList }" var="providerDetail" >
-			 			<option value="${ providerDetail.providerNo }" >
-			 				<c:out value="${ providerDetail.formattedName }" />
-			 				&#40;<c:out value="${ providerDetail.specialty }" />&#41;
-			 			</option>
-			 		</c:forEach>		 
-				</select>
-			 </td>
-			 
-			 <td class="internal">
-				<input type="button" name="addHealthCareTeamButton" 
-					id="addHealthCareTeamButton" value="Add" />						
-			</td>
-			
-			<td class="external" >
-				<select id="selectHealthCareTeamRoleType" name="selectHealthCareTeamRoleType" >					
-					<c:forEach items="${ specialty }" var="specialtyType">						
-						<option value="${ specialtyType.id }" ${ specialtyType.specialty eq 'UNKNOWN' ? 'selected' : '' } > 						 
-							<c:out value="${ specialtyType.specialty }" />			
+			<td class="internal" >
+				<select name="internalProviderList" id="internalProviderList">
+					<c:forEach items="${ providerList }" var="providerDetail" >
+						<option value="${ providerDetail.providerNo }" >
+							<c:out value="${ providerDetail.formattedName }" />
+							&#40;<c:out value="${ providerDetail.specialty }" />&#41;
 						</option>
 					</c:forEach>
 				</select>
 			</td>
-			
+
+			<td class="internal">
+				<input type="button" name="addHealthCareTeamButton"
+				       id="addHealthCareTeamButton" value="Add" />
+			</td>
+
 			<td class="external" >
-				<input type="text" id="searchHealthCareTeamInput" 
-					name="searchHealthCareTeamInput" 
-					value="" />
+				<select id="selectHealthCareTeamRoleType" name="selectHealthCareTeamRoleType" >
+					<c:forEach items="${ specialty }" var="specialtyType">
+						<option value="${ specialtyType.id }" ${ specialtyType.specialty eq 'UNKNOWN' ? 'selected' : '' } >
+							<c:out value="${ specialtyType.specialty }" />
+						</option>
+					</c:forEach>
+				</select>
 			</td>
-			
+
+			<td class="external" >
+				<input type="text" id="searchHealthCareTeamInput"
+				       name="searchHealthCareTeamInput"
+				       value="" />
+			</td>
+
 			<td class="external">
-				<input type="button" name="searchHealthCareTeamButton" id="searchHealthCareTeamButton" value="Search" />						
+				<input type="button" name="searchHealthCareTeamButton" id="searchHealthCareTeamButton" value="Search" />
 			</td>
-				
+
 		</tr>
-		
-	<%-- END MANAGE PATIENTS HEALTH CARE TEAM  --%>
+
+			<%-- END MANAGE PATIENTS HEALTH CARE TEAM  --%>
+	</table></td></tr>
 </table>
 
 <%-- DETACHED VIEW ENABLED  --%>

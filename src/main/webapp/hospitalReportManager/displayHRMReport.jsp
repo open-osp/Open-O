@@ -67,6 +67,7 @@ List<HRMDocumentSubClass> subClassList;
 HRMDocumentToProvider thisProviderLink;
 HRMCategory category = null;
 List<HRMDocument> allDocumentsWithRelationship=null;
+List<HRMDocument> children=null;
 List<HRMDocumentComment> documentComments = null;
 String confidentialityStatement = null;
 
@@ -131,9 +132,12 @@ String confidentialityStatement = null;
 
 			// Get all the other HRM documents that are either a child, sibling, or parent
 			allDocumentsWithRelationship = hrmDocumentDao.findAllDocumentsWithRelationship(document.getId());
+			request.setAttribute("allDocumentsWithRelationship", allDocumentsWithRelationship);
 
-
-
+			// Get all the other HRM documents that are a child of this document
+			children = hrmDocumentDao.getAllChildrenOf(document.getId());
+			request.setAttribute("children", children);
+			
 			documentComments = hrmDocumentCommentDao.getCommentsForDocument(hrmReportId);
 
 
@@ -241,7 +245,7 @@ String csrfTokenJs = "{'" + CsrfGuard.getInstance().getTokenName() + "': '" + Cs
 	}
 
 	#hrmReportContent, #descriptionBox, #commentBox,
-	#metadataBox, #infoBox, #duplicateAndSimilarBox {
+	#metadataBox, #infoBox, #duplicateAndSimilarBox, #duplicatesMessage {
 		padding: 25px;
 		margin: 10px;
 		border: 1px solid black;
@@ -278,6 +282,10 @@ String csrfTokenJs = "{'" + CsrfGuard.getInstance().getTokenName() + "': '" + Cs
 		order: 7;
 	}
 
+	#duplicatesMessage td, #duplicateAndSimilarBox td {
+		text-align: center;		
+	}
+
 	#infoBox {
 		flex-grow: 1;
 	}
@@ -306,6 +314,10 @@ String csrfTokenJs = "{'" + CsrfGuard.getInstance().getTokenName() + "': '" + Cs
 
 	#metadataBox th {
 		text-align: right;
+	}
+
+	.boxButton {
+		margin-top: 10px;
 	}
 
 	@media print {
@@ -412,9 +424,9 @@ popupPage(700,1200,'Display.do?id='+id);
 	<% if (hrmDuplicateNum != null && (hrmDuplicateNum > 0)) { %><br /><i>OSCAR has received <%=String.valueOf(hrmDuplicateNum) %> duplicates of this report.</i><% } %>
 	<%
 	allDocumentsWithRelationship = (List<HRMDocument>) request.getAttribute("allDocumentsWithRelationship");
-	if (allDocumentsWithRelationship != null && allDocumentsWithRelationship.size() >= 1) {
+	if (allDocumentsWithRelationship != null && allDocumentsWithRelationship.size() > 1) {
 	%>
-		OSCAR has detected that this is similar to the following reports: 
+		<span id="similarNotice">OSCAR has also detected that the following reports are similar: 
 		<% 
 		List<Integer> seenBefore = new LinkedList<Integer>();
 		for (HRMDocument relationshipDocument : allDocumentsWithRelationship) { 
@@ -426,8 +438,9 @@ popupPage(700,1200,'Display.do?id='+id);
 			}
 		} %>
 		 <div class="boxButton">
-		   <input type="button" onClick="makeIndependent('<%=hrmReportId %>')" value="Make Independent" />
+		   <input type="button" onClick="makeIndependent('<%=hrmReportId %>')" value="Mark this report as not similar to the other report(s)" />
 		 </div>  
+		</span>
 	<% } %>
 	</div>
 
@@ -712,18 +725,11 @@ popupPage(700,1200,'Display.do?id='+id);
 
 <br/>
 	<%
-		List<HRMDocument> children = (List<HRMDocument>)request.getAttribute("children");
-		HRMDocument parent = (HRMDocument) request.getAttribute("parent");
-		
-		if(parent != null) {
-			%>
-				NOTE: This report is <b style="color:red">not the most current report available</b> . You can view the latest <a href="javascript:void(0)" onClick="openReport('<%=parent.getId()%>')">Here</a>.
-			<%
-		}
+		children = (List<HRMDocument>)request.getAttribute("children");
 		
 		if(children != null && children.size()>0) {
 			%>
-				This report has replaced the following versions.<br/>
+				NOTE: This report might <b style="color:red">not be the most current report available</b>. Similar reports have been received as follows:<br/><br/>
 				<table>
 					<tr>
 						<th>Id</th>
@@ -741,12 +747,7 @@ popupPage(700,1200,'Display.do?id='+id);
 			<%			
 		}
 	%>
-
-	<%if(parent != null || (children != null && children.size()>0)) {%>
-		 <div class="boxButton">
-		   <input type="button" onClick="makeIndependent('<%=hrmReportId %>')" value="Make Independent" />
-		 </div>  
-	<% } %>
+	
 </div>
 <div id="descriptionBox">
 
@@ -876,8 +877,8 @@ if (duplicateLabIdsString!=null)
 
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 	%>
-
-		Report History:<br />
+		<div id="duplicatesMessage">
+		Duplicate Report History:<br /><br />
 
 		<table>
 			<tr>
@@ -902,13 +903,11 @@ if (duplicateLabIdsString!=null)
 		<%
 	}
 
-	%></table><%
-}
+	%></table></div><%
+} 
 %>
 
-<div id="duplicatesMessage">
-Duplicates of this report have been received <%=hrmDuplicateNum!=null?hrmDuplicateNum:"0"%> time(s).
-</div>
+
 
 </div>
 </body>

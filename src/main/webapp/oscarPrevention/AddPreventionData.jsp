@@ -209,17 +209,44 @@ if(!authed) {
 	  }
   }
 
-  List<Map<String, String>>  providers = ProviderData.getProviderList();
+  List<Map<String, String>> providers = ProviderData.getProviderList(); 
+  List<Map<String, String>> allProviders = ProviderData.getProviderListOfAllTypes(true);  
+
+  //because inactive providers can be the original provider for an entry, the next two blocks checks if that's the case 
+  //and if so, dynamically adds the inactive original provider into the providers List for later use when constructing the GUI while continuing to exclude other inactive providers
+  Boolean providerFoundInActiveList = false;
+  for (int i=0;i < providers.size(); i++){
+      Map<String,String> h = providers.get(i);
+      if (h.get("providerNo").equals(provider)){
+         providerFoundInActiveList = true;
+      }
+  }
+
+  //the below block is skipped if provider == -1 because we do NOT need to add this provider because -1 is used to mean "other", that is, a person outside the scope of this OSCAR
+  //the issue that happens if -1 is added is that there usually is a system provider with -1 as the provider_no, resulting in this system account appearing to be the provider for a particular prevention
+  //TODO: writer recommends that eventually -1 is not set as the provider_no
+  if (!providerFoundInActiveList && !"-1".equals(provider)){ 
+      for (int i=0;i < allProviders.size() && !providerFoundInActiveList; i++){
+         Map<String,String> h = allProviders.get(i);
+         if (h.get("providerNo").equals(provider)){
+            providers.add(h);
+            providerFoundInActiveList = true;
+         }
+      }
+  }
+
+  //Ensuring creator information is found/set. Note, the original creator can be inactive, so should iterate over allProviders list
+  //the creatorProvider was deliberately not mixed into the providers List the same was the provider was, because the creatorProvider is only relevant here
   if (creatorProviderNo == "")
   { 
 	  creatorProviderNo = provider;
   }
-  for (int i=0; i < providers.size(); i++) {
-       Map<String,String> h = providers.get(i);
-	   if (h.get("providerNo").equals(creatorProviderNo))
-	   {
-	   		creatorName = h.get("lastName") + " " +  h.get("firstName");
-	   }
+  for (int i=0; i < allProviders.size(); i++) {
+      Map<String,String> h = allProviders.get(i);
+      if (h.get("providerNo").equals(creatorProviderNo))
+      {
+            creatorName = h.get("lastName") + " " +  h.get("firstName");
+      }
   }
   
   //calc age at time of prevention
@@ -713,7 +740,7 @@ function changeSite(el) {
                             <label for="provider" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName" value="<%=providerName%>"/>
                                   <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
                                       <%for (int i=0; i < providers.size(); i++) {
-                                           Map<String,String> h = providers.get(i);%>
+                                          Map<String,String> h = providers.get(i);%>
                                         <option value="<%= h.get("providerNo")%>" <%= ( h.get("providerNo").equals(provider) ? " selected" : "" ) %>><%= h.get("lastName") %> <%= h.get("firstName") %></option>
                                       <%}%>
                                       <option value="-1" <%= ( "-1".equals(provider) ? " selected" : "" ) %> >Other</option>
@@ -902,8 +929,8 @@ function changeSite(el) {
                    <fieldset>
                       <legend>Prevention : <%=prevention%></legend>
                          <div>
-                            <input name="given" type="radio" value="given"      <%=checked(completed,"0")%>>Completed</input><br/>
-                            <input name="given" type="radio" value="given_ext"  <%=checked(completed,"3")%>>Completed externally</input><br/>
+                            <input name="given" type="radio" value="given"      <%=checked(completed,"0")%> onClick="$('#providerDrop').val('<%=LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo() %>');hideExtraName(document.getElementById('providerDrop'))">Completed</input><br/>
+                            <input name="given" type="radio" value="given_ext"  <%=checked(completed,"3")%> onClick="$('#providerDrop').val('-1');hideExtraName(document.getElementById('providerDrop'))">Completed externally</input><br/>
                             <input name="given" type="radio" value="refused"    <%=checked(completed,"1")%>>Refused</input><br/>
                             <input name="given" type="radio" value="ineligible" <%=checked(completed,"2")%>>Ineligible</input>
                          </div>
@@ -1000,21 +1027,21 @@ function changeSite(el) {
                    <fieldset>
                       <legend>Prevention : <%=prevention%></legend>
                          <div>
-                            <input name="given" type="radio" value="given"      <%=checked(completed,"0")%>>Completed</input><br/>
-                            <input name="given" type="radio" value="given_ext"  <%=checked(completed,"3")%>>Completed externally</input><br/>
+                            <input name="given" type="radio" value="given"      <%=checked(completed,"0")%> onClick="$('#providerDrop').val('<%=LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo() %>');hideExtraName(document.getElementById('providerDrop'))">Completed</input><br/>
+                            <input name="given" type="radio" value="given_ext"  <%=checked(completed,"3")%> onClick="$('#providerDrop').val('-1');hideExtraName(document.getElementById('providerDrop'))">Completed externally</input><br/>
                             <input name="given" type="radio" value="refused"    <%=checked(completed,"1")%>>Refused</input><br/>
                             <input name="given" type="radio" value="ineligible" <%=checked(completed,"2")%>>Ineligible</input>
                          </div>
                          <div>&nbsp;</div>
                          <div style="margin-left:30px;">
                             <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="9" > <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
-                            <label for="provider" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName"/>
+                            <label for="provider" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName" value="<%=providerName%>"/>
                                   <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
                                       <%for (int i=0; i < providers.size(); i++) {
                                            Map<String,String> h = providers.get(i);%>
                                         <option value="<%= h.get("providerNo")%>" <%= ( h.get("providerNo").equals(provider) ? " selected" : "" ) %>><%= h.get("lastName") %> <%= h.get("firstName") %></option>
                                       <%}%>
-                                      <option value="-1" >Other</option>
+                                      <option value="-1" <%= ( "-1".equals(provider) ? " selected" : "" ) %> >Other</option>
                                   </select>
                                   <br/>
                                   <label for="creator" class="fields" >Creator:</label> <input type="text" name="creator" value="<%=creatorName%>" readonly/> <br/>

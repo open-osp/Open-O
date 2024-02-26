@@ -14,6 +14,7 @@ oscar.iml
 /override_config.xml
 /oscar_data_dir
 src/test/resources/over_ride_config.properties
+src/test/resources/over_ride_config.properties.template
 src/main/resources/uiResources_*.properties
 *.DS_Store
 *.scp

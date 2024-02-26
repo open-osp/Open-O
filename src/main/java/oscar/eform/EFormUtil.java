@@ -89,8 +89,8 @@ import com.quatro.model.security.Secobjprivilege;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import oscar.OscarProperties;
-import oscar.dms.EDoc;
-import oscar.dms.EDocUtil;
+import org.oscarehr.documentManager.EDoc;
+import org.oscarehr.documentManager.EDocUtil;
 import oscar.eform.actions.DisplayImageAction;
 import oscar.eform.data.EForm;
 import oscar.eform.data.EFormBase;
@@ -247,6 +247,11 @@ public class EFormUtil {
 	public static List<EFormData> listPatientEformsCurrent(Integer demographicNo, Boolean current, int startIndex, int numToReturn) {
 		return eFormDataDao.findByDemographicIdCurrent(demographicNo, current, startIndex, numToReturn);
 	}
+
+	public static List<EFormData> listPatientEformsCurrent(Integer demographicNo, Boolean current) {
+		return eFormDataDao.findByDemographicIdCurrent(demographicNo, current);
+	}
+
     public static List<EFormData> listPatientEformsCurrentAttachedToConsult(String consultationId) {
         return eFormDataDao.findByDemographicIdCurrentAttachedToConsult(consultationId);
     }

@@ -122,21 +122,6 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.fileDownload.js"></script>
 <script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
 <script type="text/javascript" language="javascript">
-	function showHtml() {
-		
-		//		preparingMessageHtml: "Generating PDF, please wait...",
-        //		failMessageHtml: "There was a problem generating PDF, please try again.",
-        var content = document.body.innerHTML;
-		$.fileDownload(
-			"<%=request.getContextPath()%>/html2pdf",
-			{
-        		httpMethod: "POST",
-        		data: {"content":  content}
-		    }
-		);
-		return false;
-     }
-	
 	$(document).ready(function() {
 		var shareDocumentsTarget = "../sharingcenter/documents/shareDocumentsAction.jsp";
 		
@@ -338,7 +323,6 @@ function updateAjax() {
 				<% if (isMyOscarAvailable) { %>
 					<input type="submit" value="<bean:message key="eform.showmyform.btnsendtophr" />"> |
 				<% } %> 
-				<button onclick="showHtml(); return false;">Save as PDF</button>
 				
 				<!-- MARC-HI's Sharing Center -->
 				<% if (isSharingCenterEnabled) { %>

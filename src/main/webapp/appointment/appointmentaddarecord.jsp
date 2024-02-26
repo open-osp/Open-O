@@ -43,7 +43,7 @@
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ page
 	import="java.sql.*, java.util.*, oscar.MyDateFormat, oscar.oscarDemographic.data.*, org.oscarehr.common.OtherIdManager, java.text.SimpleDateFormat"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 <%@ page import="org.oscarehr.common.model.Demographic,oscar.appt.AppointmentMailer, org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
 <%@page import="org.oscarehr.common.model.Appointment" %>

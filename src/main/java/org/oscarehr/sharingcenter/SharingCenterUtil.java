@@ -140,7 +140,7 @@ import org.oscarehr.sharingcenter.util.EformParser;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import oscar.dms.EDocUtil;
+import org.oscarehr.documentManager.EDocUtil;
 
 public class SharingCenterUtil {
 

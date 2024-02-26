@@ -75,7 +75,7 @@ if(!authed) {
  ResultSet rsPatient = null;
 
 %>
-<%@ page import="java.math.*, java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.math.*, java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="/errorpage.jsp"%>
 
 
 <%@page import="org.oscarehr.util.SpringUtils" %>

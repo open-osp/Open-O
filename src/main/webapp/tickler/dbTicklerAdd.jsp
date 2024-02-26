@@ -114,6 +114,7 @@
 
 	String parentAjaxId = request.getParameter("parentAjaxId");
 	String updateParent = request.getParameter("updateParent");
+	String updateTicklerNav = request.getParameter("updateTicklerNav");
 
 	if (rowsAffected) {
 %>
@@ -122,19 +123,25 @@
 	var parentId = "<%=parentAjaxId%>";
 	var updateParent = <%=updateParent%>;
 	var demo = "<%=module_id%>";
+	var updateTicklerNav = <%=updateTicklerNav%>;
 	var Url = window.opener.URLs;
 
 	/*because the url for demomaintickler is truncated by the delete action, we need
 	  to reconstruct it if necessary
 	*/
 	if (parentId != "" && updateParent == true && !window.opener.closed) {
-		var ref = window.opener.location.href;
-		if (ref.indexOf("?") > -1 && ref.indexOf("updateParent") == -1)
-			ref = ref + "&updateParent=true";
-		else if (ref.indexOf("?") == -1)
-			ref = ref + "?demoview=" + demo + "&parentAjaxId=" + parentId + "&updateParent=true";
+		if (updateTicklerNav != "" && updateTicklerNav == true) {
+			window.opener.reloadNav(parentId);
+			window.close();
+		} else {
+			var ref = window.opener.location.href;
+			if (ref.indexOf("?") > -1 && ref.indexOf("updateParent") == -1)
+				ref = ref + "&updateParent=true";
+			else if (ref.indexOf("?") == -1)
+				ref = ref + "?demoview=" + demo + "&parentAjaxId=" + parentId + "&updateParent=true";
 
-		window.opener.location = ref;
+			window.opener.location = ref;
+		}
 	} else if (parentId != "" && !window.opener.closed) {
 		if (window.opener.document.forms['encForm']) {
 			window.opener.document.forms['encForm'].elements['reloadDiv'].value = parentId;

@@ -51,6 +51,15 @@ public class EFormDocsDao extends AbstractDao<EFormDocs>{
         return results;
 	}
 
+	public List<EFormDocs> findByFdidIdDocType(Integer fdid, String docType) {
+		String sql = "select x from EFormDocs x where x.fdid=?1 and x.docType=?2 and x.deleted is NULL";
+		Query query = entityManager.createQuery(sql);
+		query.setParameter(1,fdid);
+		query.setParameter(2,docType);
+
+		return query.getResultList();
+	}
+
 	public List<EFormDocs> findByFdid(Integer fdid) {
 	  	String sql = "select x from EFormDocs x where x.fdid=? and x.deleted is NULL";
     	Query query = entityManager.createQuery(sql);

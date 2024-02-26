@@ -26,7 +26,7 @@
   
   String curUser_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.sql.*, java.util.*,oscar.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.sql.*, java.util.*,oscar.*" errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.oscarBilling.ca.on.pageUtil.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.*"%>
 <%@ include file="../../../admin/dbconnection.jsp"%>

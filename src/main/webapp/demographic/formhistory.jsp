@@ -43,7 +43,7 @@
 <%
   String user_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.util.*, java.sql.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*" errorPage="/errorpage.jsp"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.RecycleBin" %>
 <%@ page import="org.oscarehr.common.dao.RecycleBinDao" %>

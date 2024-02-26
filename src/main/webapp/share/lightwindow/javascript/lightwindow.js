@@ -1006,7 +1006,7 @@ lightwindow.prototype = {
 	//
 	//	Get the domain from a string.
 	//
-	_getDomain : function(url) {  oscarLog("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& _getDomain");
+	_getDomain : function(url) {  //oscarLog("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& _getDomain");
         var leadSlashes = url.indexOf('//');
         var domainStart = leadSlashes+2;
         var withoutResource = url.substring(domainStart, url.length);

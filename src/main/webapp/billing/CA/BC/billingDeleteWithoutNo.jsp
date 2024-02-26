@@ -42,7 +42,7 @@ if(!authed) {
 <%
 	String curUser_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.sql.*, java.util.*,java.net.*, oscar.MyDateFormat" errorPage="errorpage.jsp"%>
+<%@ page import="java.sql.*, java.util.*,java.net.*, oscar.MyDateFormat" errorPage="/errorpage.jsp"%>
 
 <%@page import="org.oscarehr.common.dao.AppointmentArchiveDao" %>
 <%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>

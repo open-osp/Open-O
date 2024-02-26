@@ -851,7 +851,7 @@ INSERT INTO `lst_documenttype` VALUES('dcr', NULL, 1, 3.100000000000000e+001, 'a
 INSERT INTO `lst_documenttype` VALUES('der', NULL, 1, 3.200000000000000e+001, 'application/x-x509-ca-cert', 'DOC', NULL, NULL);
 INSERT INTO `lst_documenttype` VALUES('dir', NULL, 1, 3.300000000000000e+001, 'application/x-director', 'DOC', NULL, NULL);
 INSERT INTO `lst_documenttype` VALUES('dll', NULL, 1, 3.400000000000000e+001, 'application/x-msdownload', 'DOC', NULL, NULL);
-INSERT INTO `lst_documenttype` VALUES('dms', NULL, 1, 3.500000000000000e+001, 'application/octet-stream', 'DOC', NULL, NULL);
+INSERT INTO `lst_documenttype` VALUES('documentManager', NULL, 1, 3.500000000000000e+001, 'application/octet-stream', 'DOC', NULL, NULL);
 INSERT INTO `lst_documenttype` VALUES('doc', NULL, 1, 3.600000000000000e+001, 'application/msword', 'DOC', NULL, NULL);
 INSERT INTO `lst_documenttype` VALUES('dot', NULL, 1, 3.700000000000000e+001, 'application/msword', 'DOC', NULL, NULL);
 INSERT INTO `lst_documenttype` VALUES('dvi', NULL, 1, 3.800000000000000e+001, 'application/x-dvi', 'DOC', NULL, NULL);

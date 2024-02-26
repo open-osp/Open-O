@@ -111,19 +111,16 @@ public final class RxManagePharmacyAction extends DispatchAction {
     public ActionForward unlink(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
     	
     	try {
-    		String data = request.getParameter("preferedPharmacy");
+    		String pharmId = request.getParameter("pharmacyId");
     		String demographicNo = request.getParameter("demographicNo");
     		
-    		ObjectMapper mapper = new ObjectMapper();       		
-    	
-    		PharmacyInfo pharmacyInfo =  mapper.readValue(data, PharmacyInfo.class);
-    		
+    		ObjectMapper mapper = new ObjectMapper();
     		RxPharmacyData pharmacy = new RxPharmacyData();
     		
-    		pharmacy.unlinkPharmacy(String.valueOf(pharmacyInfo.getId()), demographicNo);
+    		pharmacy.unlinkPharmacy(pharmId, demographicNo);
     		
     		response.setContentType("text/x-json");
-    		String retVal = "{\"id\":\"" + pharmacyInfo.getId() + "\"}";
+    		String retVal = "{\"id\":\"" + pharmId  + "\"}";
     		JSONObject jsonObject = JSONObject.fromObject(retVal);
     		jsonObject.write(response.getWriter());
     	}
@@ -151,9 +148,8 @@ public final class RxManagePharmacyAction extends DispatchAction {
     
     public ActionForward setPreferred(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
     	RxPharmacyData pharmacy = new RxPharmacyData();
-    	
     	try {
-    		PharmacyInfo pharmacyInfo = pharmacy.addPharmacyToDemographic(request.getParameter("pharmacyId"), request.getParameter("demographicNo"), request.getParameter("preferredOrder"));
+    		PharmacyInfo pharmacyInfo = pharmacy.addPharmacyToDemographic(request.getParameter("pharmId"), request.getParameter("demographicNo"), request.getParameter("preferredOrder"));
     		ObjectMapper mapper = new ObjectMapper();
     		response.setContentType("text/x-json");
     		mapper.writeValue(response.getWriter(), pharmacyInfo);

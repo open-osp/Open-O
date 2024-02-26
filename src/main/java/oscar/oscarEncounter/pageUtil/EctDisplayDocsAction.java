@@ -43,9 +43,9 @@ import org.oscarehr.common.dao.DocumentDao.DocumentType;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 
-import oscar.dms.EDoc;
-import oscar.dms.EDocUtil;
-import oscar.dms.EDocUtil.EDocSort;
+import org.oscarehr.documentManager.EDoc;
+import org.oscarehr.documentManager.EDocUtil;
+import org.oscarehr.documentManager.EDocUtil.EDocSort;
 import oscar.util.DateUtils;
 import oscar.util.StringUtils;
 
@@ -72,7 +72,7 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     		boolean inboxflag = oscar.util.plugin.IsPropertiesOn.propertiesOn("inboxmnger");
     		// set lefthand module heading and link
     		String winName = "docs" + bean.demographicNo;
-    		String url = "popupPage(500,1115,'" + winName + "', '" + request.getContextPath() + "/dms/documentReport.jsp?" + "function=demographic&doctype=lab&functionid=" + bean.demographicNo + "&curUser=" + bean.providerNo + "')";
+    		String url = "popupPage(500,1115,'" + winName + "', '" + request.getContextPath() + "/documentManager/documentReport.jsp?" + "function=demographic&doctype=lab&functionid=" + bean.demographicNo + "&curUser=" + bean.providerNo + "')";
     
     		Dao.setLeftHeading(messages.getMessage(request.getLocale(), "oscarEncounter.Index.msgDocuments"));
     		if (inboxflag) {
@@ -83,7 +83,7 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     
     		// set the right hand heading link to call addDocument in index jsp
     		winName = "addDoc" + bean.demographicNo;
-    		url = "popupPage(500,1115,'" + winName + "','" + request.getContextPath() + "/dms/documentReport.jsp?" + "function=demographic&doctype=lab&functionid=" + bean.demographicNo + "&curUser=" + bean.providerNo + "&mode=add" + "&parentAjaxId=" + cmd + "');return false;";
+    		url = "popupPage(500,1115,'" + winName + "','" + request.getContextPath() + "/documentManager/documentReport.jsp?" + "function=demographic&doctype=lab&functionid=" + bean.demographicNo + "&curUser=" + bean.providerNo + "&mode=add" + "&parentAjaxId=" + cmd + "');return false;";
     
     		if (inboxflag) {
     			url = "popupPage(300,600,'" + winName + "','" + request.getContextPath() + "/mod/docmgmtComp/FileUpload.do?method=newupload&demographic_no=" + bean.demographicNo + "');return false;";
@@ -162,11 +162,11 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     				isURLjavaScript = true;
     			}
     			else if( curDoc.getRemoteFacilityId()==null && curDoc.isPDF() ) {
-    				url = "popupPage(window.screen.width,window.screen.height,'" + hash + "','" + request.getContextPath() + "/dms/MultiPageDocDisplay.jsp?segmentID=" + dispDocNo + "&providerNo=" + user + "&searchProviderNo=" + user + "&status=A'); return false;";
+    				url = "popupPage(window.screen.width,window.screen.height,'" + hash + "','" + request.getContextPath() + "/documentManager/MultiPageDocDisplay.jsp?segmentID=" + dispDocNo + "&providerNo=" + user + "&searchProviderNo=" + user + "&status=A'); return false;";
     				isURLjavaScript = true;
     			}
     			else {
-    				url = "popupPage(700,800,'" + hash + "', '" +  request.getContextPath() + "/dms/ManageDocument.do?method=display&doc_no=" + dispDocNo + "&providerNo=" + user + (curDoc.getRemoteFacilityId()!=null?"&remoteFacilityId="+curDoc.getRemoteFacilityId():"") + "'); return false;";
+    				url = "popupPage(700,800,'" + hash + "', '" +  request.getContextPath() + "/documentManager/ManageDocument.do?method=display&doc_no=" + dispDocNo + "&providerNo=" + user + (curDoc.getRemoteFacilityId()!=null?"&remoteFacilityId="+curDoc.getRemoteFacilityId():"") + "'); return false;";
     			}
     			
     			item.setLinkTitle(title + serviceDateStr);

@@ -38,9 +38,10 @@ import net.sf.json.JSONObject;
 
 public final class EctConsultationFaxForm extends ActionForm {
 
-    private String recipient;
+    private String method;
+	private String recipient;
     private String from;
-    private String recipientsFaxNumber;
+    private String recipientFaxNumber;
     private String sendersPhone;
     private String sendersFax;
     private String comments;
@@ -54,6 +55,12 @@ public final class EctConsultationFaxForm extends ActionForm {
     private HttpServletRequest request;
 	private FaxAccount sender;
     
+	public String getMethod() {
+		return method;
+	}
+	public void setMethod(String method) {
+		this.method = method;
+	}
 	public String getRecipient() {
 		return recipient;
 	}
@@ -66,14 +73,14 @@ public final class EctConsultationFaxForm extends ActionForm {
 	public void setFrom(String from) {
 		this.from = from;
 	}
-	public String getRecipientsFaxNumber() {
-		if(recipientsFaxNumber != null) {
-			recipientsFaxNumber = recipientsFaxNumber.trim().replaceAll("\\D", "");
+	public String getRecipientFaxNumber() {
+		if(recipientFaxNumber != null) {
+			recipientFaxNumber = recipientFaxNumber.trim().replaceAll("\\D", "");
 		}
-		return recipientsFaxNumber;
+		return recipientFaxNumber;
 	}
-	public void setRecipientsFaxNumber(String recipientsFaxNumber) {
-		this.recipientsFaxNumber = recipientsFaxNumber;
+	public void setRecipientFaxNumber(String recipientFaxNumber) {
+		this.recipientFaxNumber = recipientFaxNumber;
 	}
 	public String getSendersPhone() {
 		return sendersPhone;
@@ -129,7 +136,7 @@ public final class EctConsultationFaxForm extends ActionForm {
 	public Set<FaxRecipient> getAllFaxRecipients() {
 		if(allFaxRecipients == null) {
 			allFaxRecipients = new HashSet<FaxRecipient>();
-			allFaxRecipients.add( new FaxRecipient( getRecipient() , getRecipientsFaxNumber() ) );
+			allFaxRecipients.add( new FaxRecipient( getRecipient() , getRecipientFaxNumber() ) );
 			allFaxRecipients.addAll(getCopiedTo());
 		}
 

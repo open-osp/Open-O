@@ -43,7 +43,7 @@
 %>
 <%@ page
 	import="java.util.*, java.sql.*, java.net.*, oscar.util.*, oscar.form.graphic.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.form.*"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <HTML>

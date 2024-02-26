@@ -28,14 +28,59 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+
+import oscar.OscarProperties;
 
 public final class DateUtils {
     public static final String JS_ISO_DATE_FORMAT = "yy-mm-dd";
 
     public DateUtils() {
     }
+
+    private static String dateFormatString = OscarProperties.getInstance().getProperty("DATE_FORMAT");	
+	private static String timeFormatString = OscarProperties.getInstance().getProperty("TIME_FORMAT");
+	
+	/**
+	 * @param locale can be null
+	 * @return if date is null will return a blank string.
+	 */
+	public static String formatDate(Date date, Locale locale) {
+		return(format(dateFormatString, date, locale));
+	}
+	
+	/**
+	 * @param locale can be null
+	 * @return if date is null will return a blank string.
+	 */
+	public static String formatTime(Date date, Locale locale) {
+		return(format(timeFormatString, date, locale));
+	}
+        
+    public static String formatDateTime(Date date, Locale locale) {
+		return(formatDate(date, locale)+' '+formatTime(date, locale));
+	}
+
+    /**
+	 * @param locale can be null
+	 * @return if date is null will return a blank string.
+	 */
+	public static String format(String format, Date date, Locale locale)
+	{
+		if (date == null) { return ""; }
+
+        SimpleDateFormat dateFormatter;
+        if (locale == null) {
+            dateFormatter = new SimpleDateFormat(format);
+        } else {
+            dateFormatter = new SimpleDateFormat(format, locale);
+        }
+
+        return dateFormatter.format(date);
+	}
 
     public static String getIsoDateTimeNoTNoSeconds(Calendar cal) {
         if (cal == null) {

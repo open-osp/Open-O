@@ -240,7 +240,7 @@ public class PersonaService extends AbstractServiceImpl {
 		
 		MenuTo1 menu = new MenuTo1()
 		        .add(idCounter++,bundle.getString("navbar.menu.schedule"),null,"../provider/providercontrol.jsp")
-				.add(idCounter++,bundle.getString("navbar.menu.inbox"),null,"../dms/inboxManage.do?method=prepareForIndexPage","inbox");
+				.add(idCounter++,bundle.getString("navbar.menu.inbox"),null,"../documentManager/inboxManage.do?method=prepareForIndexPage","inbox");
 
 		if (!consultationManager.isConsultResponseEnabled()) {
 			menu.addWithState(idCounter++,bundle.getString("navbar.menu.consults"),null,"consultRequests");
@@ -271,7 +271,7 @@ public class PersonaService extends AbstractServiceImpl {
 		
 		MenuTo1 moreMenuList = new MenuTo1()
 		.addWithState(idCounter++,bundle.getString("navbar.menu.reports"),null,"reports")
-		.add(idCounter++,bundle.getString("navbar.menu.documents"),null,"../dms/documentReport.jsp?function=provider&functionid="+provider.getPractitionerNo(),"edocView");
+		.add(idCounter++,bundle.getString("navbar.menu.documents"),null,"../documentManager/documentReport.jsp?function=provider&functionid="+provider.getPractitionerNo(),"edocView");
 		
 		
 		if (ClinicalConnectUtil.isReady(provider.getProviderNo())) {

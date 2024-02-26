@@ -41,7 +41,7 @@ if(request.getParameter("limit2")!=null) strLimit2 = request.getParameter("limit
 String providerview = request.getParameter("providerview")==null?"all":request.getParameter("providerview") ;
 %>
 
-<%@ page import="java.util.*, java.sql.*, oscar.login.*, oscar.*, java.net.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, oscar.login.*, oscar.*, java.net.*" errorPage="/errorpage.jsp"%>
 <%@ include file="../../../admin/dbconnection.jsp"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.ReportProvider" %>

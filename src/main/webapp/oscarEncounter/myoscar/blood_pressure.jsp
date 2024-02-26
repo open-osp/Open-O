@@ -195,15 +195,4 @@
 		<hr>
 
 </body>
-
-<%
-String iframeResize = (String) session.getAttribute("useIframeResizing");
-if(iframeResize !=null && "true".equalsIgnoreCase(iframeResize)){ %>
-<script src="<%=request.getContextPath() %>/library/pym.js"></script>
-<script>
-    console.log('hi1');
-    pymChild = new pym.Child({ polling: 500 });
-</script>
-<%}%>    
-
 </html:html>

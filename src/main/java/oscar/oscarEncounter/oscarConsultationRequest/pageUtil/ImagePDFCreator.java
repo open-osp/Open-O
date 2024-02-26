@@ -31,9 +31,9 @@ import com.itextpdf.text.pdf.codec.TiffImage;
 public class ImagePDFCreator extends PdfPageEventHelper {
 
 	private static Logger logger = MiscUtils.getLogger();
-	private HttpServletRequest request;
 	private OutputStream os;
-
+	private String imagePath;
+	private String imageTitle;
 	private Document document;
 
 	/**
@@ -42,9 +42,15 @@ public class ImagePDFCreator extends PdfPageEventHelper {
 	 * @param os the output stream where the PDF will be written
 	 */
 	public ImagePDFCreator(HttpServletRequest request, OutputStream os) {
-		this.request = request;
+		this.imagePath = (String) request.getAttribute("imagePath");
+		this.imageTitle = (String) request.getAttribute("imageTitle");
 		this.os = os;
-	   
+	}
+
+	public ImagePDFCreator(String imagePath, String imageTitle, OutputStream os) {
+		this.imagePath = imagePath;
+		this.imageTitle = imageTitle;
+		this.os = os;
 	}
 
 	/**
@@ -56,7 +62,7 @@ public class ImagePDFCreator extends PdfPageEventHelper {
 
 		Image image;
 		try {
-			image = Image.getInstance((String)request.getAttribute("imagePath"));
+			image = Image.getInstance(imagePath);
 		} catch (Exception e) {
 			logger.error("Unexpected error:", e);
 			throw new DocumentException(e);
@@ -76,7 +82,7 @@ public class ImagePDFCreator extends PdfPageEventHelper {
 		if (type == Image.ORIGINAL_TIFF) {
 			// The following is composed of code from com.itextpdf.tools.plugins.Tiff2Pdf modified to create the 
 			// PDF in memory instead of on disk
-			RandomAccessFileOrArray ra = new RandomAccessFileOrArray((String)request.getAttribute("imagePath"));
+			RandomAccessFileOrArray ra = new RandomAccessFileOrArray(imagePath);
             int comps = TiffImage.getNumberOfPages(ra);
  			boolean adjustSize = false;
  			PdfContentByte cb = writer.getDirectContent();
@@ -94,7 +100,7 @@ public class ImagePDFCreator extends PdfPageEventHelper {
                  		}
                  		img.setAbsolutePosition(20, 20);
                          document.newPage();
-                         document.add(new Paragraph((String)request.getAttribute("imageTitle") + " - page " + (c + 1)));
+                         document.add(new Paragraph(imageTitle + " - page " + (c + 1)));
                  	}
                     cb.addImage(img);
                     

@@ -39,10 +39,14 @@ import org.oscarehr.util.SpringUtils;
 import oscar.entities.Billingmaster;
 import oscar.entities.WCB;
 import oscar.oscarBilling.ca.bc.data.BillingmasterDAO;
+import oscar.oscarBilling.ca.on.administration.GstControlAction;
 import oscar.util.ConversionUtils;
+import oscar.util.StringUtils;
+
 
 public class BillingBillingManager {
 	private String billTtype;
+	private String gstPercent = (new GstControlAction()).readDatabase().getProperty("gstPercent", "");
 
 	public BillingItem[] getBillingItem(String[] service, String service1, String service2, String service3, String service1unit, String service2unit, String service3unit) {
 		BillingItem[] arr = {};
@@ -98,13 +102,20 @@ public class BillingBillingManager {
 					billingCode = wcb.getW_feeitem();
 					billingUnit = "1";
 				}
-			} else {
+			}
+			if (billingCode.equals("")) {
 				billingCode = m.getBillingCode();
 				billingUnit = m.getBillingUnit();
 			}
 			BillingItem billingItem = new BillingItem(billingCode, billingUnit);
-			billingItem.fill(this.billTtype);
-			billingItem.price = m.getBillAmountAsDouble();
+			double gst = 0.0;
+			billingItem.fill(this.billTtype, gst/(m.getBillAmountAsDouble() - gst) * 100);
+			billingItem.lineTotal = m.getBillAmountAsDouble();
+			billingItem.gstFlag = false;
+			if (billingItem.units != 0) {
+				billingItem.price = ((billingItem.lineTotal - gst) / billingItem.units);
+			} else
+				billingItem.price = 0.00;
 			billingItem.setLineNo(m.getBillingmasterNo());
 
 			billingItemsArray.add(billingItem);
@@ -242,6 +253,8 @@ public class BillingBillingManager {
 		double percentage;
 		double units;
 		double lineTotal;
+		boolean gstFlag = false;
+		double gstTotal = 0;
 		int lineNo;
 
 		public BillingItem(String service_code, String description, String price1, String percentage1, double units1) {
@@ -255,6 +268,11 @@ public class BillingBillingManager {
 		public BillingItem(String service_code, String units1) {
 			this.service_code = service_code;
 			this.units = Double.parseDouble(units1);
+		}
+		public BillingItem(String service_code, String units1, double gst) {
+			this.service_code = service_code;
+			this.units = Double.parseDouble(units1);
+			this.gstTotal = gst;
 		}
 
 		public BillingItem(String service_code, int units1) {
@@ -307,6 +325,10 @@ public class BillingBillingManager {
 		}
 
 		public void fill(String billType) {
+			fill(billType, null);
+		}
+
+		public void fill(String billType, Double percentage) {
 			BillingServiceDao dao = SpringUtils.getBean(BillingServiceDao.class);
 			List<BillingService> bss = null;
 			//make sure to load private fee if required,but default to MSP fee if Private fee unavailable
@@ -322,9 +344,11 @@ public class BillingBillingManager {
 				this.price = Double.parseDouble(bs.getValue());
 
 				try {
-					String percRes = bs.getPercentage();
-					if (percRes != null && !"".equals(percRes)) {
-						this.percentage = Double.parseDouble(percRes);
+					this.gstFlag = bs.getGstFlag() && (StringUtils.filled(gstPercent) || percentage != null);
+					if (this.gstFlag) {
+						this.percentage = percentage != null? percentage : Double.parseDouble(gstPercent);
+					} else if (StringUtils.filled(bs.getPercentage())) {
+						this.percentage = Double.parseDouble(bs.getPercentage());
 					} else {
 						this.percentage = 100.00;
 					}
@@ -337,7 +361,24 @@ public class BillingBillingManager {
 		public double getLineTotal() {
 
 			this.lineTotal = price * units;
+			if (percentage < 100 && this.gstFlag) {
+				this.gstTotal = (this.lineTotal * percentage/100);
+				this.lineTotal += this.gstTotal;
+			}
 			return lineTotal;
+		}
+
+		public boolean isGstFlag() {
+			return gstFlag;
+		}
+
+		public double getGstTotal() {
+			return gstTotal;
+		}
+
+		public String getDispGstTotal() {
+			BigDecimal bdFee = new BigDecimal("" + gstTotal).setScale(2, RoundingMode.HALF_UP);
+			return bdFee.toString();
 		}
 
 		public String getDispLineTotal() {

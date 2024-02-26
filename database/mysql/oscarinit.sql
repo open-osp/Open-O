@@ -575,7 +575,7 @@ CREATE TABLE IF NOT EXISTS demographic (
   citizenship varchar(40),
   sin varchar(15),
   country_of_origin char(4),
-  newsletter varchar(1),
+  newsletter varchar(10),
   anonymous varchar(32),
   lastUpdateUser varchar(6),
   lastUpdateDate datetime not null,
@@ -585,6 +585,11 @@ CREATE TABLE IF NOT EXISTS demographic (
   `residentialCity` varchar(50) DEFAULT NULL,
   `residentialProvince` varchar(20) DEFAULT NULL,
   `residentialPostal` varchar(9) DEFAULT NULL,
+  genderId int(11) null,
+  pronoun varchar(25) null,
+  pronounId int null,
+  gender varchar(25) null,
+  pref_name varchar(30) NOT NULL DEFAULT '',
   PRIMARY KEY  (demographic_no),
   KEY hin (hin),
   KEY name (last_name,first_name),
@@ -7175,7 +7180,9 @@ CREATE TABLE IF NOT EXISTS ProviderPreference
     eRxPassword varchar(64),
     eRxFacility varchar(32),
     eRxTrainingMode tinyint(1) not null,
-    encryptedMyOscarPassword varbinary(255)
+    encryptedMyOscarPassword varbinary(255),
+    defaultBillingLocation varchar(4) DEFAULT 'no',
+    defaultSliCode varchar(4) default 'no'
 );
 
 --
@@ -7256,7 +7263,8 @@ CREATE TABLE IF NOT EXISTS professionalSpecialists (
   `departmentId` int(10) NOT NULL,
   `eformId` int(10) DEFAULT NULL,
   `hideFromView` tinyint(1) NOT NULL,
-  `deleted` tinyint(1) DEFAULT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
+    `province` varchar(55),
   PRIMARY KEY (`specId`)
 );
 
@@ -7388,7 +7396,8 @@ CREATE TABLE IF NOT EXISTS radetail (
   error_code char(2) NOT NULL default '',
   billtype char(3) NOT NULL default '',
   claim_no varchar(12) not null default '',
-  PRIMARY KEY  (radetail_no)
+  PRIMARY KEY  (radetail_no),
+  KEY `service_date_index`(`service_date`)
 ) ;
 
 --
@@ -7815,7 +7824,7 @@ CREATE TABLE IF NOT EXISTS `waitingList` (
 CREATE TABLE IF NOT EXISTS pharmacyInfo (
   `recordID` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
-  `address` varchar(60),
+  `address` varchar(255),
   `city` varchar(60) DEFAULT NULL,
   `province` varchar(255) DEFAULT NULL,
   `postalCode` varchar(20) DEFAULT NULL,
@@ -7823,10 +7832,10 @@ CREATE TABLE IF NOT EXISTS pharmacyInfo (
   `phone2` varchar(20) DEFAULT NULL,
   `fax` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `notes` varchar(25),
+  `notes` tinytext,
   `addDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `status` char(1) DEFAULT '1',
-  `serviceLocationIdentifier` varchar(25) DEFAULT NULL,
+  `serviceLocationIdentifier` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`recordID`)
 );
 
@@ -7863,7 +7872,8 @@ CREATE TABLE IF NOT EXISTS `log` (
   `demographic_no` int(10),
   INDEX `demographic_no` (`demographic_no`),
   `data` text,
-  securityId int
+  securityId int,
+  KEY `provider_noIndex` (`provider_no`)
 ) ;
 
 CREATE TABLE IF NOT EXISTS preventions (
@@ -8043,7 +8053,8 @@ CREATE TABLE IF NOT EXISTS `demographicExtArchive` (
   `date_time` datetime default NULL,
   `hidden` char(1) default '0',
   PRIMARY KEY  (`id`),
-  INDEX (demographic_no)
+  INDEX (demographic_no),
+  KEY `archiveId` (`archiveId`)
 ) ;
 
 CREATE TABLE IF NOT EXISTS `relationships` (
@@ -8192,7 +8203,8 @@ CREATE TABLE IF NOT EXISTS measurementsExt(
 	measurement_id int(10) NOT NULL,
 	keyval varchar(20) NOT NULL,
 	val text NOT NULL,
-	INDEX(measurement_id)
+	INDEX(measurement_id),
+  INDEX measurements_ext_keyval_val (keyval, val(100))
 );
 
 CREATE TABLE IF NOT EXISTS measurementMap(
@@ -8819,7 +8831,9 @@ CREATE TABLE IF NOT EXISTS `casemgmt_note_link` (
   `table_id` int(10) NOT NULL,
   `note_id` int(10) NOT NULL,
   `other_id` varchar(25),
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `note_idIndex` (`note_id`),
+  KEY `casemgmt_note_link_table_table_name_index` (`table_name`, `table_id`, `other_id`)
 );
 
 
@@ -8829,7 +8843,8 @@ CREATE TABLE IF NOT EXISTS `casemgmt_note_ext` (
   `key_val` varchar(64) NOT NULL,
   `value` text,
   `date_value` date,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `note_idIndex` (`note_id`)
 );
 
 
@@ -9027,7 +9042,12 @@ CREATE TABLE IF NOT EXISTS demographicArchive (
   `residentialAddress` varchar(60) DEFAULT NULL,
   `residentialCity` varchar(50) DEFAULT NULL,
   `residentialProvince` varchar(20) DEFAULT NULL,
-  `residentialPostal` varchar(9) DEFAULT NULL
+  `residentialPostal` varchar(9) DEFAULT NULL,
+  `pref_name` varchar(30) NOT NULL DEFAULT '',
+  genderId int(11) null,
+  pronoun varchar(25) null,
+  pronounId int null,
+  gender varchar(25) null  
 );
 
 CREATE TABLE IF NOT EXISTS providerArchive (
@@ -9089,10 +9109,6 @@ CREATE TABLE IF NOT EXISTS appointmentArchive (
   creatorSecurityId int,
   bookingSource varchar(32)
 );
-
-CREATE TABLE IF NOT EXISTS ProviderPreferenceAppointmentScreenForm(providerNo varchar(6) not null, appointmentScreenForm varchar(128) not null);
-CREATE TABLE IF NOT EXISTS ProviderPreferenceAppointmentScreenEForm(providerNo varchar(6) not null, appointmentScreenEForm int not null, eFormName varchar(255));
-
 
 CREATE TABLE IF NOT EXISTS `Eyeform` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -10957,16 +10973,19 @@ CREATE TABLE IF NOT EXISTS `faxes` (
 
 CREATE TABLE IF NOT EXISTS `fax_config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(255),
-  `siteUser` varchar(255),
-  `passwd` varchar(255),
-  `faxUser` varchar(255),
-  `faxPasswd` varchar(255),
-  `queue` varchar(255),
-  `active` tinyint(1),
-  `faxNumber` varchar(10),
-  `senderEmail` varchar(255),
-  `accountName` varchar(55),
+  `url` varchar(255) DEFAULT '',
+  `siteUser` varchar(255) DEFAULT '',
+  `passwd` varchar(255) DEFAULT '',
+  `gatewayName` varchar(255) DEFAULT '',
+  `faxUser` varchar(255) DEFAULT '',
+  `faxPasswd` varchar(255) DEFAULT '',
+  `queue` varchar(255) DEFAULT 0,
+  `active` tinyint(1) DEFAULT false,
+  `faxNumber` varchar(10) DEFAULT '',
+  `faxReply` varchar(10) DEFAULT '',
+  `senderEmail` varchar(255) DEFAULT '',
+  `accountName` varchar(55) DEFAULT '',
+  `download` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`)
 );
 
@@ -13090,7 +13109,20 @@ CREATE TABLE IF NOT EXISTS `formRourke2020` (
                                                 `archived` tinyint(1) NOT NULL DEFAULT 0,
                                                 PRIMARY KEY (`ID`),
                                                 KEY `formRourke2020_demographic_no` (`demographic_no`)
-);
+ ) ENGINE = ARIA DEFAULT CHARSET=latin1;
 
 INSERT INTO `encounterForm`(`form_name`, `form_value`, `form_table`, `hidden`) VALUES ('Rourke2017', '../form/formrourke2017complete.jsp?demographic_no=', 'formRourke2017', 38);
 INSERT INTO `encounterForm`(`form_name`, `form_value`, `form_table`, `hidden`) VALUES ('Rourke2020', '../form/formrourke2020complete.jsp?demographic_no=', 'formRourke2020', 0);
+
+--
+-- Table structure for table `billing_preferences`
+--
+-- Stores data about a users billing preferences
+-- Shares a one to one relation with the provider table
+CREATE TABLE IF NOT EXISTS billing_preferences (
+  id int(10) unsigned NOT NULL auto_increment,
+  referral int(10) unsigned NOT NULL default '0',
+  providerNo int(10) unsigned NOT NULL default '0',
+  defaultPayeeNo varchar(11) NOT NULL default '0',
+  PRIMARY KEY  (id)
+) ;

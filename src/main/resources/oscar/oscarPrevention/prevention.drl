@@ -820,7 +820,7 @@
         <java:condition>prev.getHowManyMonthsSinceLast("COLONOSCOPY") != -1</java:condition>
         <java:consequence>
               prev.log("FOBT Inelligible debug");
-              prev.addReminder("Colonoscopy makes FIT Inelligible");
+              prev.addReminder("Colonoscopy makes FIT Ineligible");
         </java:consequence>
     </rule>
     <!-- FOBT Rules End-->

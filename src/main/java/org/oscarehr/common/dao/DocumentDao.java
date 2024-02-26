@@ -42,7 +42,7 @@ import org.oscarehr.common.model.Document;
 import org.oscarehr.common.model.EFormDocs;
 import org.springframework.stereotype.Repository;
 
-import oscar.dms.EDocUtil.EDocSort;
+import org.oscarehr.documentManager.EDocUtil.EDocSort;
 import oscar.util.ConversionUtils;
 
 

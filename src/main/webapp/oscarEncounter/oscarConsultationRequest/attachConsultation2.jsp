@@ -36,7 +36,7 @@ String userlastname = (String) session.getAttribute("userlastname");
 <jsp:useBean id="oscarVariables" class="java.util.Properties"
 	scope="page" />
 <%@ page
-	import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, oscar.util.*, java.net.*,oscar.MyDateFormat, oscar.dms.*, oscar.dms.data.*, oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ConsultationAttachDocs"%>
+	import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, oscar.util.*, java.net.*,oscar.MyDateFormat, oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ConsultationAttachDocs"%>
 <%@ page import="oscar.oscarLab.ca.on.*"%>
 <%@ page import="oscar.oscarLab.ca.all.Hl7textResultsData"%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
@@ -49,14 +49,17 @@ String userlastname = (String) session.getAttribute("userlastname");
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.oscarehr.common.model.EFormData" %>
 <%@ page import="oscar.eform.EFormUtil" %>
+<%@ page import="org.oscarehr.documentManager.EDocUtil" %>
+<%@ page import="org.oscarehr.documentManager.EDoc" %>
 
+<!-- Deprecated: Please use attachDocument.jsp. -->
 <%
 
 //preliminary JSP code
 
 LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 
-// "Module" and "function" is the same thing (old dms module)
+// "Module" and "function" is the same thing (old documentManager module)
 String module = "demographic";
 String demoNo = request.getParameter("demo");
 String requestId = request.getParameter("requestId");
@@ -212,7 +215,7 @@ function save() {
 function previewPDF(docId, url) {	
 	$("#previewPane").attr("src", 
 			"<%= request.getContextPath() %>/oscarEncounter/oscarConsultationRequest/displayImage.jsp?url=" 
-					       + encodeURIComponent("<%= request.getContextPath() %>" + "/dms/ManageDocument.do?method=view&doc_no=" + docId) 
+					       + encodeURIComponent("<%= request.getContextPath() %>" + "/documentManager/ManageDocument.do?method=view&doc_no=" + docId)
 					       + "&link=" + encodeURIComponent(url));
 }
 
@@ -310,9 +313,8 @@ function toggleSelectAll() {
 	                String dStatus = "";
 	                if ((curDoc.getStatus() + "").compareTo("A") == 0) dStatus="active";
 	                else if ((curDoc.getStatus() + "").compareTo("H") == 0) dStatus="html";
-	                url = request.getContextPath() + "/oscarEncounter/oscarConsultationRequest/" 
-	                    + "documentGetFile.jsp?document=" + StringEscapeUtils.escapeJavaScript(curDoc.getFileName()) 
-	                    + "&type=" + dStatus + "&doc_no=" + curDoc.getDocId();
+	                url = request.getContextPath() + "/documentManager/" 
+	                    + "showDocument.jsp?inWindow=true&segmentID=" + curDoc.getDocId() + "&providerNo=" + providerNo;
 	                String onClick = "";
 	                
 	                if (curDoc.isPDF()) {                        

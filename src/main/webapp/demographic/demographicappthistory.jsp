@@ -46,7 +46,7 @@
 <%@page import="org.oscarehr.PMmodule.caisi_integrator.IntegratorFallBackManager" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 
-<%@ page import="java.util.*, java.sql.*, java.net.*, oscar.*, oscar.oscarDB.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, java.net.*, oscar.*, oscar.oscarDB.*" errorPage="/errorpage.jsp"%>
 <%@ page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager, org.oscarehr.caisi_integrator.ws.CachedAppointment, org.oscarehr.caisi_integrator.ws.CachedProvider, org.oscarehr.util.LoggedInInfo" %>
 <%@ page import="org.oscarehr.caisi_integrator.ws.*"%>
 <%@ page import="org.oscarehr.common.model.CachedAppointmentComparator" %>

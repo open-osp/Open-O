@@ -627,32 +627,8 @@ public final class BillingCreateBillingForm extends ActionForm {
     return requestId;
   }
 
-  /**
-   * Setter for property facilitySubNum.
-   * @param facilitySubNum New value of property facilitySubNum.
-   */
-  public void setFacilitySubNum(java.lang.String facilitySubNum) {
-    this.facilitySubNum = facilitySubNum;
-  }
-
   public void setMode(String mode) {
     this.mode = mode;
-  }
-
-  public void setXml_endtime_hr(String xml_endtime_hr) {
-    this.xml_endtime_hr = xml_endtime_hr;
-  }
-
-  public void setXml_endtime_min(String xml_endtime_min) {
-    this.xml_endtime_min = xml_endtime_min;
-  }
-
-  public void setXml_starttime_hr(String xml_starttime_hr) {
-    this.xml_starttime_hr = xml_starttime_hr;
-  }
-
-  public void setXml_starttime_min(String xml_starttime_min) {
-    this.xml_starttime_min = xml_starttime_min;
   }
 
   public void setRequestId(String requestId) {
@@ -731,16 +707,7 @@ public final class BillingCreateBillingForm extends ActionForm {
         }
       }
     }
-    /**
-        int starttime = new Integer(this.xml_starttime_hr + this.xml_starttime_min).intValue();
-        int endtime = new Integer(this.xml_endtime_hr + this.xml_endtime_min).intValue();
-        if(starttime>endtime||starttime==endtime){
-          errors.add("",
-                       new ActionMessage(
-     "oscar.billing.CA.BC.billingBC.error.invalidtimeselection"));
 
-        }
-     **/
     BillingSessionBean bean = (BillingSessionBean) request.getSession().getAttribute("billingSessionBean");
     if (bean != null){
         bean.setStartTimeHr(this.getXml_starttime_hr());
@@ -759,33 +726,5 @@ public final class BillingCreateBillingForm extends ActionForm {
     _log.debug("About to return errors "+errors.size());
     return errors;
   }
-  /**
-   * Validate the properties that have been set from this HTTP request,
-   * and return an <code>ActionErrors</code> object that encapsulates any
-   * validation errors that have been found.  If no errors are found, return
-   * <code>null</code> or an <code>ActionErrors</code> object with no
-   * recorded error messages.
-   *
-   * @param mapping The mapping used to select this instance
-   * @param request The servlet request we are processing
-   * @return fill in later
-   */
-  //public ActionErrors validate(ActionMapping mapping,
-  //                               HttpServletRequest request) {
-
-  //   ActionErrors errors = new ActionErrors();
-
-  //   if (message == null || message.length() == 0){
-  //      errors.add("message", new ActionError("error.message.missing"));
-  //   }
-
-  //   if (provider == null || provider.length == 0){
-  //      errors.add(ActionErrors.GLOBAL_ERROR,
-  //              new ActionError("error.provider.missing"));
-  //   }
-
-  //   return errors;
-
-  //}
 
 } //CreateMessageForm

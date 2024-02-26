@@ -176,6 +176,8 @@ public class StringUtils {
             return true;
         } else if (obj.trim().toUpperCase().equals("NULL")) {
             return true;
+        } else if (obj.trim().toLowerCase().equals("null")) {
+            return true;
         } else {
             return false;
         }

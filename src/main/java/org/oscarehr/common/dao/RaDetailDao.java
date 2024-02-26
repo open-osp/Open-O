@@ -42,6 +42,22 @@ import oscar.util.DateUtils;
 @SuppressWarnings("unchecked")
 public class RaDetailDao extends AbstractDao<RaDetail> {
 
+	//These error codes are used when an RA is "settled" in the sense that invoices submitted to OHIP that are "fully done" are marked "settled".
+	//These error codes are considered irrelevant in the sense that while an error code is being returned, these specific errors
+	//can be safely ignored, and do not require further review. 
+	//
+	//This string should be in a format appropriate for an SQL statement X in irrelevantErrorCodes (se usage)
+	//EV = "Check health card for current version code", which is essentially when the pt's ohip card is about to expire
+	//55 = "Deduction is an adjustment on an earlier account"
+	//57 = "This payment is an adjustment on an earlier account"
+	//HM = "Invalid master number used on date of service"
+	//30 = Service is not a benefit of OHIP
+	//B2 = Paid in accordance with the OHIP Schedule of Benefits for Telephone Virtual Care Services
+	//I6 = Premium not applicable
+	//V8 = This service paid at lower fee as per stated OHIP policy
+	//In addition to this list, the functions that use this string may have additional situations hardcoded; search for use of this string directly
+	private static String irrelevantErrorCodes = "('EV','55','57','HM','30','B2','I6','V8')";
+
 	public RaDetailDao() {
 		super(RaDetail.class);
 	}
@@ -127,7 +143,7 @@ public class RaDetailDao extends AbstractDao<RaDetail> {
 	}
                         
    	 public List<RaDetail> search_raerror35(Integer raHeaderNo, String error1, String error2, String providerOhipNo) {
-		 Query query = entityManager.createQuery("SELECT rad from RaDetail rad WHERE rad.raHeaderNo = :raHeaderNo and rad.errorCode<>'' and rad.errorCode<>:error1 and rad.errorCode<>:error2 and rad.errorCode<>'EV' and rad.errorCode<>'55' and rad.errorCode<>'57' and rad.errorCode<>'HM' and (rad.serviceCode<>'Q200A' or rad.errorCode<>'I9') and rad.providerOhipNo like :ohip");
+		 Query query = entityManager.createQuery("SELECT rad from RaDetail rad WHERE rad.raHeaderNo = :raHeaderNo and rad.errorCode<>'' and rad.errorCode<>:error1 and rad.errorCode<>:error2 and not rad.errorCode in " + irrelevantErrorCodes + " and (rad.serviceCode<>'Q200A' or rad.errorCode<>'I9') and rad.providerOhipNo like :ohip");
         
 		 query.setParameter("raHeaderNo", raHeaderNo);
 		 query.setParameter("error1", error1);
@@ -142,7 +158,7 @@ public class RaDetailDao extends AbstractDao<RaDetail> {
 	 }
    	 
    	 public List<Integer> search_ranoerror35(Integer raHeaderNo, String error1, String error2, String providerOhipNo) { 
-   		Query query = entityManager.createQuery("select distinct rad.billingNo from RaDetail rad where rad.raHeaderNo=:raHeaderNo and (rad.errorCode='' or rad.errorCode=:error1 or rad.errorCode=:error2 or rad.errorCode='EV' or rad.errorCode='55' or rad.errorCode='57' or rad.errorCode='HM' or (rad.serviceCode='Q200A' and rad.errorCode='I9')) and rad.providerOhipNo like :ohip");
+   		Query query = entityManager.createQuery("select distinct rad.billingNo from RaDetail rad where rad.raHeaderNo=:raHeaderNo and (rad.errorCode='' or rad.errorCode=:error1 or rad.errorCode=:error2 or rad.errorCode in " + irrelevantErrorCodes + " or (rad.serviceCode='Q200A' and rad.errorCode='I9')) and rad.providerOhipNo like :ohip");
    		 
    		query.setParameter("raHeaderNo", raHeaderNo);
    		query.setParameter("error1", error1);

@@ -165,35 +165,35 @@
 
 		<script language="JavaScript">
 
-			function addMonths(months) {
-				var d = new Date();
-				d = new Date(d.setMonth(d.getMonth() + months));
-				var mth = ((d.getMonth() + 1) < 10) ? ("0" + (d.getMonth() + 1)) : (d.getMonth() + 1);
-				var day = d.getDate() > 10 ? d.getDate() : ("0" + d.getDate());
-				var newD = d.getFullYear() + "-" + mth + "-" + day;
-				document.serviceform.xml_appointment_date.value = newD;
-			}
-
-			function addDays(numDays) {
-				var d = new Date();
-				d = new Date(d.setDate(d.getDate() + numDays));
-				var mth = ((d.getMonth() + 1) < 10) ? ("0" + (d.getMonth() + 1)) : (d.getMonth() + 1);
-				var day = d.getDate() > 10 ? d.getDate() : ("0" + d.getDate());
-				var newD = d.getFullYear() + "-" + mth + "-" + day;
-				document.serviceform.xml_appointment_date.value = newD;
-			}
-
-			function toggleQuickPickDateDisplay(linkToggle) {
-				var options = document.getElementById("quickPickDateOptions");
-				if (options.style.display === "none") {
-					options.style.display = "block";
-					linkToggle.innerHTML = "<bean:message key="tickler.ticklerAdd.btnHideQuickpick"/>";
-				} else {
-					options.style.display = "none";
-					linkToggle.innerHTML = "<bean:message key="tickler.ticklerAdd.btnShowQuickpick"/>";
+			// Add options 1 to 10 for days, weeks, months, and years
+			function addQuickPick() {
+                const quickPickDiv = document.getElementById('quickPickDateOptions');
+				for (let i = 0; i < 40; i++) {
+					const linkButton = document.createElement('a');
+					linkButton.href = '#';                    					
+					switch (Math.floor(i/10)){
+                        case 0: linkButton.innerText = (i%10)+1 + "d";linkButton.onclick = function() { addTime((i%10)+1, "days"); }; break;//1 through 10 days
+						case 1: linkButton.innerText = (i%10)+1 + "w";linkButton.onclick = function() { addTime(((i%10)+1) * 7, "days"); }; break;//1 through 10 weeks
+						case 2: linkButton.innerText = (i%10)+1 + "m";linkButton.onclick = function() { addTime((i%10)+1, "months"); }; break;//1 through 10 months
+						case 3: linkButton.innerText = (i%10)+1 + "y";linkButton.onclick = function() { addTime(((i%10)+1) * 12, "months"); }; break;//1 through 10 years
+                    }
+                    quickPickDiv.appendChild(linkButton);
 				}
 			}
 
+			function addTime(num, type) {
+				let currentDate = new Date();
+				if (type === "months") {
+					currentDate.setMonth(currentDate.getMonth() + num);
+				} else {
+					currentDate.setDate(currentDate.getDate() + num);
+				}
+				const year = currentDate.getFullYear();
+				const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+				const day = String(currentDate.getDate()).padStart(2, '0');
+				const newDate = year + "-" + month + "-" + day;
+				document.serviceform.xml_appointment_date.value = newDate;
+			}
 
 			function popupPage(vheight, vwidth, varpage) { //open a new popup window
 				var page = "" + varpage;
@@ -220,6 +220,23 @@
 				this.focus();
 				document.ADDAPPT.keyword.focus();
 				document.ADDAPPT.keyword.select();
+				addQuickPick();
+			}
+			
+			function initResize(){
+				window.addEventListener("resize", resizeTextMessage);
+				resizeTextMessage();
+			}
+
+			/****
+			*This function resizes the messageBox so that the overall browser window is filled.
+			****/
+			function resizeTextMessage() {				
+				const messageBox = document.getElementById("ticklerMessage");
+				//this formula checks for empty space at the bottom, less the 20 px that corresponds to the margin-bottom
+				const newHeight = messageBox.offsetHeight + window.innerHeight - document.body.clientHeight-20; 
+				//only resize if the new height will be greater than 50 pixels, the original default height.
+				if (newHeight > 50) messageBox.style.height = newHeight +"px";
 			}
 
 			function validate(form) {
@@ -231,7 +248,7 @@
 					if (writeToEncounter) {
 						form.action = "dbTicklerAdd.jsp?writeToEncounter=true";
 					} else {
-						form.action = "dbTicklerAdd.jsp";
+						form.action = "dbTicklerAdd.jsp?updateTicklerNav=true";
 					}
 					form.submit();
 				}
@@ -302,10 +319,42 @@
             * {
                 font-size: 12px !important;
             }
+
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(10, 1fr);
+				grid-gap: 2px;
+				width: 270px;
+			}
+
+			.grid a, .today-button {
+				background-color: #E6E6FA;
+				text-align: center;
+				width: auto;
+				height: auto;
+				padding: 2px;
+				margin: 1px;
+				display: flex;
+				justify-content: center;
+				text-decoration: none;
+				color: black;
+				font-size: 11px !important;
+				border-radius: 3px;
+			}
+
+			.grid a:hover, .today-button:hover {
+				background-color: #EE82EE;
+				color: white;
+			}
+
+			.today-button {
+				width: 128px;
+				cursor: pointer;
+			}
 		</style>
 	</head>
 
-	<body onLoad="setfocus()">
+	<body onLoad="setfocus();initResize()">
 	<table>
 		<tr style="background-color: black">
 			<td class="table-condensed"
@@ -399,28 +448,10 @@
 					<td><input type="date" class="form-control" name="xml_appointment_date"
 					           value="<%=xml_appointment_date%>">
 						<font color="#003366" size="1" face="Verdana, Arial, Helvetica, sans-serif">
-							<a href="#" onClick="toggleQuickPickDateDisplay(this)"
-							   title="<bean:message key="tickler.ticklerAdd.btnToggleQuickpickDates"/>"
-							   style="padding-left:5px; vertical-align: middle;"><bean:message
-									key="tickler.ticklerAdd.btnHideQuickpick"/></a>
-							<div id="quickPickDateOptions" style="display:block;">
-								<a href="#" onClick="addDays(3)">3d</a>&nbsp; &nbsp;
-								<a href="#" onClick="addDays(7)">1w</a>&nbsp; &nbsp;
-								<a href="#" onClick="addDays(14)">2w</a>&nbsp; &nbsp;
-								<a href="#" onClick="addDays(21)">3w</a>&nbsp; &nbsp;
-								<a href="#" onClick="addDays(28)">4w</a>&nbsp; &nbsp;<br>
-								<a href="#" onClick="addMonths(1)">1m</a>&nbsp; &nbsp;
-								<a href="#" onClick="addMonths(2)">2m</a>&nbsp; &nbsp;
-								<a href="#" onClick="addMonths(3)">3m</a>&nbsp; &nbsp;
-								<a href="#" onClick="addMonths(4)">4m</a>&nbsp; &nbsp;
-								<a href="#" onClick="addMonths(6)">6m</a>&nbsp; &nbsp;
-								<a href="#" onClick="addMonths(9)">9m</a>&nbsp; &nbsp;<br>
-								<a href="#" onClick="addMonths(12)">1yr</a>&nbsp; &nbsp;
-								<a href="#" onClick="addMonths(24)">2yr</a>&nbsp; &nbsp;
-								<a href="#" onClick="addMonths(36)">3yr</a>&nbsp; &nbsp;
-								<a href="#" onClick="addMonths(60)">5yr</a>&nbsp; &nbsp;
-								<a href="#" onClick="addMonths(96)">8yr</a>&nbsp; &nbsp;
-								<a href="#" onClick="addMonths(120)">10yr</a>
+							<!-- Today button placed before the grid -->
+							<div id="todayButton" class="today-button" onclick="addTime(0, 'days')">Today</div>
+							<div id="quickPickDateOptions" class="grid" >
+								<!-- Quick pick will be added here using JavaScript -->
 							</div>
 						</font></td>
 				</tr>
@@ -578,7 +609,7 @@
 				</tr>
 				<tr>
 					<td class="tickler-label"><bean:message key="tickler.ticklerAdd.formReminder"/>:</td>
-					<td><textarea name="ticklerMessage" class="form-control"></textarea></td>
+					<td><textarea name="ticklerMessage" id="ticklerMessage" class="form-control"></textarea></td>
 				</tr>
 				<INPUT TYPE="hidden" name="user_no" VALUE="<%=user_no%>">
 				<input type="hidden" name="writeToEncounter" value="<%=writeToEncounter%>"/>

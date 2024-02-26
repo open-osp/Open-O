@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import javax.servlet.ServletContext;
 
@@ -43,7 +44,15 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import oscar.OscarProperties;
 
+/**
+ * the NioFileManager handles all file input and output of all OscarDocument files
+ * by providing several convenience utilities.
+ *
+ * One goal is to eliminate the use of "OscarProperties.getInstance().getProperty("DOCUMENT_DIR")"
+ * in every single page of OSCAR code.
+ */
 @Service
 public final class NioFileManager {
 	
@@ -55,7 +64,7 @@ public final class NioFileManager {
 
 	private static Logger log = MiscUtils.getLogger();
 	private static final String DOCUMENT_CACHE_DIRECTORY = "document_cache";
-	public static final String DOCUMENT_DIRECTORY = "document";
+	public static final String DOCUMENT_DIRECTORY = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
 	private static final String TEMP_PDF_DIRECTORY = "tempPDF";
 	private static final String DEFAULT_FILE_SUFFIX = "pdf";
 	private static final String BASE_DOCUMENT_DIR = oscar.OscarProperties.getInstance().getProperty("BASE_DOCUMENT_DIR");
@@ -204,5 +213,67 @@ public final class NioFileManager {
 		}
 		return false;
 	}
+
+
+	/**
+	 * retrieve given filename from Oscar's document directory path as defined in
+	 * Oscar properties.
+	 * Filename string in File out
+	 */
+	public File getOscarDocument(String fileName) {
+		Path oscarDocument = Paths.get(getDocumentDirectory(), fileName);
+		return oscarDocument.toFile();
+	}
+
+	/**
+	 * Path NIO object in Path out.
+	 * The incoming path could have been derived from a temporary file.
+	 */
+	public Path getOscarDocument(Path fileNamePath) {
+		return getOscarDocument(fileNamePath.getFileName().toString()).toPath();
+	}
+
+	/**
+	 * Copy file from given file path into the default OscarDocuments directory.
+	 * This method deletes the temporary file after successful copy
+	 */
+	public String copyFileToOscarDocuments(String tempFilePath) {
+		String destinationDir = getDocumentDirectory();
+		File tempFile = new File(tempFilePath);
+		Path destinationFilePath = Paths.get(destinationDir, tempFile.getName());
+		try {
+			Files.copy(tempFile.toPath(), destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
+			if(Files.exists(destinationFilePath)) {
+				deleteTempFile(tempFile.toPath().toString());
+			}
+		} catch (IOException e) {
+			log.error("An error occurred while moving the PDF file", e);
+		}
+		return destinationFilePath.toString();
+	}
+
+	/**
+	 * Get the default OscarDocument directory.
+	 * Newer versions of OSCAR will only define the path for the BASE_DOCUMENT and
+	 * not for the full DOCUMENT_DIRECTORY path in Oscar.properties.
+	 * This method considers both locations.
+	 */
+	private String getDocumentDirectory() {
+		String document_dir = DOCUMENT_DIRECTORY;
+		if( ! Files.isDirectory(Paths.get(document_dir))) {
+			document_dir = String.valueOf(Paths.get(BASE_DOCUMENT_DIR, "document"));
+		}
+		return document_dir;
+	}
+
+	/**
+	 * True if given filename exists in OscarDocument directory.
+	 * False if file not found.
+	 */
+	public boolean isOscarDocument(String fileName) {
+		File oscarDocument = getOscarDocument(fileName);
+		return Files.exists(oscarDocument.toPath());
+	}
+
 
 }

@@ -44,7 +44,7 @@ oscarApp.controller('DashboardCtrl', function ($scope,providerService,ticklerSer
 	});
 		
 	$scope.openInbox = function() {
-		 newwindow=window.open('../dms/inboxManage.do?method=prepareForIndexPage','inbox','height=700,width=1000');
+		 newwindow=window.open('../documentManager/inboxManage.do?method=prepareForIndexPage','inbox','height=700,width=1000');
 		 if (window.focus) {
 			 newwindow.focus();
 		 }	

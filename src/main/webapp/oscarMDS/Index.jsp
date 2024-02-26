@@ -157,18 +157,18 @@ String endDate = (String) request.getAttribute("endDate");
                                 <a href="javascript:parent.reportWindow('${pageContext.servletContext.contextPath}/oscarMDS/ForwardingRules.jsp?providerNo=<%= providerNo %>');" style="color: #FFFFFF;" >Forwarding Rules</a>
                                 <a href="javascript:popupStart(800,1000,'${pageContext.servletContext.contextPath}/lab/CA/ALL/testUploader.jsp')" style="color: #FFFFFF; "><bean:message key="admin.admin.hl7LabUpload"/></a>
                                 <% if (OscarProperties.getInstance().getBooleanProperty("legacy_document_upload_enabled", "true")) { %>
-                                	<a href="javascript:popupStart(600,500,'${pageContext.servletContext.contextPath}/dms/html5AddDocuments.jsp')" style="color: #FFFFFF; "><bean:message key="inboxmanager.document.uploadDoc"/></a>
+                                	<a href="javascript:popupStart(600,500,'${pageContext.servletContext.contextPath}/documentManager/html5AddDocuments.jsp')" style="color: #FFFFFF; "><bean:message key="inboxmanager.document.uploadDoc"/></a>
                                 <% } else { %>
-                                	<a href="javascript:popupStart(800,1000,'${pageContext.servletContext.contextPath}/dms/documentUploader.jsp')" style="color: #FFFFFF; "><bean:message key="inboxmanager.document.uploadDoc"/></a>
+                                	<a href="javascript:popupStart(800,1000,'${pageContext.servletContext.contextPath}/documentManager/documentUploader.jsp')" style="color: #FFFFFF; "><bean:message key="inboxmanager.document.uploadDoc"/></a>
                                 	
-                    <%--    Soon:         	<a href="javascript:void(0)" style="color:white;" class="dialog-link" id="/dms/documentUploader.jsp" >
+                    <%--    Soon:         	<a href="javascript:void(0)" style="color:white;" class="dialog-link" id="/documentManager/documentUploader.jsp" >
                                 		<bean:message key="inboxmanager.document.uploadDoc" />
                                 	</a> --%>
                                 <% } %>
 								
-								<a href="javascript:popupStart(700,1100,'../dms/inboxManage.do?method=getDocumentsInQueues')" style="color: #FFFFFF;"><bean:message key="inboxmanager.document.pendingDocs"/></a>
+								<a href="javascript:popupStart(700,1100,'../documentManager/inboxManage.do?method=getDocumentsInQueues')" style="color: #FFFFFF;"><bean:message key="inboxmanager.document.pendingDocs"/></a>
 								
-								<a href="javascript:popupStart(800,1200,'${pageContext.servletContext.contextPath}/dms/incomingDocs.jsp')" style="color: #FFFFFF;" ><bean:message key="inboxmanager.document.incomingDocs"/></a>
+								<a href="javascript:popupStart(800,1200,'${pageContext.servletContext.contextPath}/documentManager/incomingDocs.jsp')" style="color: #FFFFFF;" ><bean:message key="inboxmanager.document.incomingDocs"/></a>
 									                                
 								<% if (! OscarProperties.getInstance().isBritishColumbiaBillingRegion()) { %>
 									<a href="javascript:popupStart(800,1000, '${pageContext.servletContext.contextPath}/oscarMDS/CreateLab.jsp')" style="color: #FFFFFF;"><bean:message key="global.createLab" /></a>
@@ -373,7 +373,7 @@ String endDate = (String) request.getAttribute("endDate");
 	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/share/yui/js/connection-min.js"></script>
 	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/share/yui/js/animation-min.js"></script>
 	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/share/yui/js/datasource-min.js"></script>
-	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/dms/showDocument.js"></script>
+	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/documentManager/showDocument.js"></script>
 	
 	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/hospitalReportManager/hrmActions.js"></script>
 	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/js/documentDescriptionTypeahead.js"></script>        
@@ -408,7 +408,7 @@ String endDate = (String) request.getAttribute("endDate");
 		var providerNo = "<%=(providerNo == null ? "" : providerNo)%>";
 		var searchStatus = "<%=(ackStatus == null ? "": ackStatus)%>";
 		var abnormalStatus = "<%=abnormalStatus == null || "all".equals(abnormalStatus) ? "L" : (abnormalStatus.equals("normalOnly") ? "N" : "A")%>"
-		var url = ctx + "/dms/inboxManage.do?";
+		var url = ctx + "/documentManager/inboxManage.do?";
 		const startDate = "${startDate}";
 		const endDate = "${endDate}";
 		var request = null;
@@ -673,7 +673,7 @@ String endDate = (String) request.getAttribute("endDate");
 		function updateCategoryList() {
 			jQuery.ajax({
 				type: "GET",
-				url: ctx + "/dms/inboxManage.do",
+				url: ctx + "/documentManager/inboxManage.do",
 				data: window.location.search.substr(1) + "&ajax=true",
 				success: function (data) {
 					if (jQuery("#categoryHash").length == 0 || jQuery(data)[2].value != jQuery("#categoryHash").val()) {

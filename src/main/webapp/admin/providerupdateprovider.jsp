@@ -48,7 +48,7 @@
 
 <%@ page
 	import="java.sql.*, java.util.*, oscar.SxmlMisc, oscar.oscarProvider.data.ProviderBillCenter"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.log.LogAction,oscar.log.LogConst"%>
 <%@ page import="org.oscarehr.common.model.ClinicNbr"%>
 <%@ page import="org.oscarehr.util.SpringUtils"%>

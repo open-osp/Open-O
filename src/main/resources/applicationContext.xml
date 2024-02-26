@@ -95,7 +95,7 @@
 	<bean id="ocanSubmissionLogDao" class="org.oscarehr.PMmodule.dao.OcanSubmissionLogDao" autowire="byName" />
 
 	<bean id="lookupDao" class="com.quatro.dao.LookupDao" autowire="byName" />
-	<bean id="documentDao" class="org.oscarehr.document.dao.DocumentMergeDemographicDAO" autowire="byName" />
+	<bean id="documentDao" class="org.oscarehr.common.dao.DocumentMergeDemographicDAO" autowire="byName" />
 	<bean id="userAccessDao" class="com.quatro.dao.security.UserAccessDao" autowire="byName" />
 	<bean id="providerInboxRoutingDAO" class="org.oscarehr.common.dao.ProviderInboxRoutingDao" autowire="byName"/>
 	<bean id="ProviderLabRoutingFavoritesDao" class="org.oscarehr.common.dao.ProviderLabRoutingFavoritesDao" autowire="byName"/>

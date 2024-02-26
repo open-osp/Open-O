@@ -23,7 +23,14 @@
     Ontario, Canada
 
 --%>
-
+<%@ page import="java.io.OutputStream" %>
+<%@ page import="java.util.Hashtable" %>
+<%@ page import="org.jfree.data.time.TimeSeries" %>
+<%@ page import="org.jfree.data.time.Day" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="org.jfree.chart.JFreeChart" %>
+<%@ page import="org.jfree.chart.ChartFactory" %>
+<%@ page import="org.jfree.chart.ChartUtils" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -39,10 +46,8 @@
 	}
 %>
 
-<%@ page
-	import="org.jfree.chart.ChartUtilities,org.jfree.chart.ChartFactory,java.util.*,java.io.*,org.jfree.data.time.TimeSeriesCollection,org.jfree.data.time.Day,org.jfree.data.time.TimeSeries,org.jfree.chart.JFreeChart"%>
-%><%
-OutputStream o = response.getOutputStream(); 
+<%
+OutputStream o = response.getOutputStream();
 
 org.jfree.data.time.TimeSeriesCollection dataset = new org.jfree.data.time.TimeSeriesCollection();
 
@@ -53,7 +58,7 @@ Hashtable[] harray = (Hashtable[]) session.getAttribute(id);
 for (Hashtable dat : harray){
     String name = (String) dat.get("name");
     Hashtable[] setData = (Hashtable[]) dat.get("data");
-    TimeSeries s1 = new TimeSeries(name, Day.class); 
+    TimeSeries s1 = new TimeSeries(name);
     for(Hashtable d : setData){
         if(d !=null){
            s1.addOrUpdate(new Day( (Date) d.get("date")) ,
@@ -64,7 +69,7 @@ for (Hashtable dat : harray){
 }
 String chartTitle = "";
 
-JFreeChart chart = ChartFactory.createTimeSeriesChart( 
+JFreeChart chart = ChartFactory.createTimeSeriesChart(
 chartTitle, 
 "Date", "", 
 dataset, 
@@ -75,7 +80,7 @@ false
 
 
 response.setContentType("image/png"); 
-ChartUtilities.writeChartAsPNG(o, chart, 350, 275); 
+ChartUtils.writeChartAsPNG(o, chart, 350, 275);
 session.removeAttribute(id);
 out.close(); 
 %>

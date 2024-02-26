@@ -3,7 +3,7 @@
         "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
 		
-	<bean name="/dms/inboxManage" class="oscar.dms.actions.DmsInboxManageAction">
+	<bean name="/documentManager/inboxManage" class="org.oscarehr.documentManager.actions.DmsInboxManageAction">
 		<property name="providerInboxRoutingDAO" ref="providerInboxRoutingDAO" />
 		<property name="queueDocumentLinkDAO" ref="queueDocumentLinkDAO" />
 		<property name="secObjectNameDao" ref="secObjectNameDao" />
@@ -182,7 +182,7 @@
 	<bean name="/oscarRx/SendToPhr" class="oscar.oscarRx.pageUtil.RxSendToPhrAction" singleton="false"/>
 	<bean name="/oscarEncounter/oscarMeasurements/SendToPhr" class="oscar.oscarEncounter.oscarMeasurements.pageUtil.EctSendMeasurementToPhr" singleton="false"/>
 		
-	<bean name="/dms/SendDocToPhr" class="oscar.dms.actions.SendDocToPhrAction" singleton="false" />
+	<bean name="/documentManager/SendDocToPhr" class="org.oscarehr.documentManager.actions.SendDocToPhrAction" singleton="false" />
 	<bean name="/phr/Login" class="org.oscarehr.phr.web.PHRLoginAction" singleton="false" />
 	<bean name="/phr/Logout" class="org.oscarehr.phr.web.PHRLogoutAction" singleton="false" />
 

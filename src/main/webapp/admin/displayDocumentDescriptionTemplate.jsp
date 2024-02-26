@@ -28,13 +28,13 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-    
-<%@ page import="java.util.*,java.sql.*,java.util.ResourceBundle" errorPage="../provider/errorpage.jsp"%>
+
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
 <%@page import="org.oscarehr.common.model.UserProperty"%>
-<%@page import="oscar.dms.EDocUtil"%>
-    
+<%@page import="org.oscarehr.documentManager.EDocUtil"%>
+<%@ page import="java.util.ArrayList" %>
+
 <%
     String curProvider_no = (String) session.getAttribute("user");
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");

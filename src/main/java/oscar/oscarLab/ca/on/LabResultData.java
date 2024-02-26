@@ -32,6 +32,7 @@ import java.util.Date;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.LabReportInformationDao;
 import org.oscarehr.common.model.LabReportInformation;
+import org.oscarehr.util.DateUtils;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
@@ -321,6 +322,18 @@ public class LabResultData implements Comparable<LabResultData> {
 		}
 
 		return this.dateTimeObr;
+	}
+
+	public String getDateObjFormated() {
+		return DateUtils.formatDate(this.dateTimeObr, null);
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public void setDateObj(Date d){

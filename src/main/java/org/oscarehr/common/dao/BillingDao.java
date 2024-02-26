@@ -27,12 +27,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.Query;
-
 import org.oscarehr.common.NativeSql;
 import org.oscarehr.common.model.Billing;
 import org.oscarehr.util.DateRange;
 import org.springframework.stereotype.Repository;
-
 import oscar.entities.Billingmaster;
 import oscar.oscarBilling.ca.bc.MSP.MSPReconcile;
 import oscar.util.ConversionUtils;
@@ -177,6 +175,37 @@ public class BillingDao extends AbstractDao<Billing> {
 	    return query.getResultList();
     }
 
+	/**
+	 * Finds all billings for provider in optional date range
+	 * @param providerNos
+	 * @param dateRange
+	 * @return
+	 */
+	public List<Object[]> findProviderBillingsWithGst(String[] providerNos, DateRange dateRange) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		StringBuilder sqlStr = new StringBuilder("FROM " + Billingmaster.class.getSimpleName() + " b, Billing bi where bi.id = b.billingNo and bi.providerNo IN (:providerNos) " + "and b.gst > 0.00");
+		params.put("providerNos", Arrays.asList(providerNos));
+
+		if (dateRange != null) {
+			if (dateRange.getFrom() != null) {
+				sqlStr.append(" AND bi.billingDate >= :dateFrom");
+				params.put("dateFrom", dateRange.getFrom());
+			}
+
+			if (dateRange.getTo() != null) {
+				sqlStr.append(" AND bi.billingDate <= :dateTo");
+				params.put("dateTo", dateRange.getTo());
+			}
+		}
+
+		Query query = entityManager.createQuery(sqlStr.toString());
+		for(Entry<String, Object> param : params.entrySet()) {
+			query.setParameter(param.getKey(), param.getValue());
+		}
+
+		return query.getResultList();
+	}
+
     /**
      * Finds billings by the provider, status and dates
      * 
@@ -231,6 +260,7 @@ public class BillingDao extends AbstractDao<Billing> {
 	    String endDateQuery = "";
 	    String demoQuery = "";
 	    String billingType = "";
+	    String altJoin = "";
 
 	    //  Map s00Map = getS00Map();
 	    if (providerNo != null && !providerNo.trim().equalsIgnoreCase("all")) {
@@ -287,8 +317,8 @@ public class BillingDao extends AbstractDao<Billing> {
 	        +
 	        " bm.bill_amount, bm.billing_code, bm.dx_code1, bm.dx_code2, bm.dx_code3,"
 	        +
-	        " b.provider_no, b.visitdate, b.visittype,bm.billingmaster_no,p.first_name,p.last_name,bm.billing_unit from billing b left join provider p on p.provider_no = b.provider_no, "
-	        + " billingmaster bm where b.billing_no= bm.billing_no "
+	        " b.provider_no, b.visitdate, b.visittype,bm.billingmaster_no,p.first_name,p.last_name,COALESCE(bm.billing_unit,'') from billing b left join provider p on p.provider_no = b.provider_no "
+	        + (altJoin.equals("") ? ", billingmaster bm where b.billing_no= bm.billing_no " : altJoin)
 
 	        + statusTypeClause
 	        + providerQuery
@@ -449,7 +479,7 @@ public class BillingDao extends AbstractDao<Billing> {
 	
 	
 	public List<Billing> search_bill_history_daterange(String providerNo, Date startBillingDate, Date endBillingDate ) {
-		Query q = entityManager.createQuery("select b from Billing b where b.providerNo=? and b.billingDate >=? and b.billingDate<=? and b.status<>'D' and b.status<>'S' and b.status<>'B' and b.demographicNo <> 0 order by b.billingDate desc, b.billingTime desc");
+		Query q = entityManager.createQuery("select b from Billing b where b.providerNo like ? and b.billingDate >=? and b.billingDate<=? and b.status<>'D' and b.status<>'S' and b.status<>'B' and b.demographicNo <> 0 order by b.billingDate desc, b.billingTime desc");
 		q.setParameter(1, providerNo);
 		q.setParameter(2, startBillingDate);
 		q.setParameter(3, endBillingDate);

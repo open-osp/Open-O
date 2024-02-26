@@ -139,6 +139,7 @@
 	demographic.setLastName(request.getParameter("last_name").trim());
 	demographic.setFirstName(request.getParameter("first_name").trim());
 	demographic.setMiddleNames(request.getParameter("middleNames").trim());
+	demographic.setAlias(request.getParameter("nameUsed"));
 	demographic.setAddress(request.getParameter("address"));
 	demographic.setCity(request.getParameter("city"));
 	if(request.getParameter("province") != null) {
@@ -171,6 +172,8 @@
 	demographic.setChartNo(request.getParameter("chart_no"));
 	demographic.setProviderNo(request.getParameter("staff"));
 	demographic.setSex(request.getParameter("sex"));
+	demographic.setPronoun(request.getParameter("pronouns"));
+	demographic.setGender(request.getParameter("gender"));
 
 	year = StringUtils.trimToNull(request.getParameter("end_date_year"));
 	month = StringUtils.trimToNull(request.getParameter("end_date_month"));
@@ -349,6 +352,9 @@
        demographicExtDao.addKey(proNo, demographic.getDemographicNo(), "HasPrimaryCarePhysician", request.getParameter("HasPrimaryCarePhysician"), "");
        demographicExtDao.addKey(proNo, demographic.getDemographicNo(), "EmploymentStatus", request.getParameter("EmploymentStatus"), "");
        demographicExtDao.addKey(proNo, demographic.getDemographicNo(), "PHU", request.getParameter("PHU"), "");
+	demographicExtDao.addKey(proNo, demographic.getDemographicNo(), "fNationFamilyNumber",    request.getParameter("fNationFamilyNumber"),    "");
+	demographicExtDao.addKey(proNo, demographic.getDemographicNo(), "fNationFamilyPosition",    request.getParameter("fNationFamilyPosition"),    "");
+	demographicExtDao.addKey(proNo, demographic.getDemographicNo(), "labelfNationCom",    request.getParameter("labelfNationCom"),    "");
        //for the IBD clinic
 		OtherIdManager.saveIdDemographic(dem, "meditech_id", request.getParameter("meditech_id"));
 
@@ -356,7 +362,7 @@
        if(oscarVariables.getProperty("demographicExt") != null) {
 	       String [] propDemoExt = oscarVariables.getProperty("demographicExt","").split("\\|");
 	       for(int k=0; k<propDemoExt.length; k++) {
-	    	   demographicExtDao.addKey(proNo,demographic.getDemographicNo(),propDemoExt[k],request.getParameter(propDemoExt[k].replace(' ','_')),"");
+	    	   demographicExtDao.addKey(proNo,demographic.getDemographicNo(),propDemoExt[k].replace(' ','_'), request.getParameter(propDemoExt[k].replace(' ','_')),"");
 	       }
        }
        // customized key
@@ -376,10 +382,9 @@
 		}	
 		
         //add to waiting list if the waiting_list parameter in the property file is set to true
-        
 
         WaitingList wL = WaitingList.getInstance();
-        if(wL.getFound()){
+        if( wL.getFound() && oscar.OscarProperties.getInstance().getBooleanProperty("DEMOGRAPHIC_WAITING_LIST", "true") ){
 
             String[] paramWLPosition = new String[1];
             paramWLPosition[0] = request.getParameter("list_id");

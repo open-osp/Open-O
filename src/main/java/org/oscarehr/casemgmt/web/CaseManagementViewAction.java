@@ -1767,6 +1767,7 @@ public class CaseManagementViewAction extends BaseCaseManagementViewAction {
 		String rxColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().rx + ";";
 		String invoiceColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().invoices + ";";
 		String ticklerNoteColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().ticklerNotes + ";";
+		String externalNoteColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().externalNotes + ";";
 
 		String bgColour = "color:#000000;background-color:#CCCCFF;";
 
@@ -1774,6 +1775,8 @@ public class CaseManagementViewAction extends BaseCaseManagementViewAction {
 			bgColour = "color:#FFFFFF;background-color:#" + getCppColour(noteDisplay) + ";";
 			if (noteDisplay.isTicklerNote()) {
 				bgColour = ticklerNoteColour;
+			} else if (noteDisplay.isExternalNote()) {
+				bgColour = externalNoteColour;
 			}
 		} else if (noteDisplay.isDocument()) {
 			bgColour = documentColour;

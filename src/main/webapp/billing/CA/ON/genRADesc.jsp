@@ -27,7 +27,7 @@
 <%@page import="org.oscarehr.common.model.Provider,org.oscarehr.PMmodule.dao.ProviderDao"%>
 <%@page import="org.oscarehr.common.model.BillingONPremium, org.oscarehr.common.dao.BillingONPremiumDao"%>
 
-<%@ page import="java.io.*, java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.io.*, java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="/errorpage.jsp"%>
 <%@ include file="../../../admin/dbconnection.jsp"%>
 
 <%@page import="org.oscarehr.common.model.RaHeader" %>

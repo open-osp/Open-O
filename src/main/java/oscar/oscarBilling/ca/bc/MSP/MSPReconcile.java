@@ -27,6 +27,7 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -88,10 +89,15 @@ public class MSPReconcile {
 	public static final String REP_INVOICE = "REP_INVOICE";
 	public static final String REP_PAYREF = "REP_PAYREF";
 	public static final String REP_PAYREF_SUM = "REP_PAYREF_SUM";
+	public static final String REP_PAYREF_GST = "REP_PAYREF_GST";
+	public static final String REP_PAYREF_SUM_GST = "REP_PAYREF_SUM_GST";
+	public static final String REP_GST_SUM = "REP_GST_SUM";
+	public static final String REP_GST_SUM_SPLIT = "REP_GST_SUM_SPLIT";
 	public static final String REP_ACCOUNT_REC = "REP_ACCOUNT_REC";
 	public static final String REP_REJ = "REP_REJ";
 	public static final String REP_WO = "REP_WO";
 	public static final String REP_MSPREM = "REP_MSPREM";
+	public static final String REP_MSPREM_NEW = "REP_MSPREM_NEW";
 	public static final String REP_MSPREMSUM = "REP_MSPREMSUM";
 	public static final String REP_MSPREMSUM_PRACTSUM = "REP_MSPREMSUM_PRACTSUM";
 	public static final String REP_MSPREMSUM_S23 = "REP_MSPREMSUM_S23";
@@ -355,7 +361,7 @@ public class MSPReconcile {
 					officeNumbers.add(forwardZero(justBillingMaster.get(i), 7));
 				}
 
-				for (TeleplanS00 ts : dao.findByOfficeNumbers(justBillingMaster)) {
+				for (TeleplanS00 ts : dao.findByOfficeNumbers(officeNumbers)) {
 					try {
 						int i = Integer.parseInt(ts.getOfficeNo()); // this kludge rids leading zeros
 						String exp[] = ts.getExps();
@@ -961,8 +967,7 @@ public class MSPReconcile {
 
 	/**
 	 * Updates the paymentMethod of the specified bill with the supplied paymentMethod code
-
-	 * @param paymentMethod String - The paymentMethod code
+	 * @param billingMasterNo String - The uid of the bill to be updated
 	 */
 	private void updatePaymentMethodHlp(String billingMasterNo, String paymentMethod) {
 		Billingmaster b = billingmasterDao.getBillingmaster(Integer.parseInt(billingMasterNo));
@@ -1120,7 +1125,7 @@ public class MSPReconcile {
 			orderByClause = "order by b.provider_no,bt.sortOrder,bm.service_date,b.demographic_name";
 			c12 = currentC12Records();
 		}
-		String p = "select provider.first_name,provider.last_name,b.billingtype, b.update_date, bm.billingmaster_no,b.billing_no, " + " b.demographic_name,b.demographic_no,bm.billing_unit,bm.billing_code,bm.bill_amount,bm.billingstatus,bm.mva_claim_code,bm.service_location," + " bm.phn,bm.service_end_time,service_start_time,bm.service_to_day,bm.service_date,bm.oin_sex_code,b.dob,dx_code1,b.provider_no,apptProvider_no,bt.sortOrder "
+		String p = "select provider.first_name,provider.last_name,b.billingtype, b.update_date, bm.billingmaster_no,b.billing_no, " + " b.demographic_name,b.demographic_no,bm.billing_unit,bm.billing_code,bm.bill_amount,bm.billingstatus,bm.mva_claim_code,bm.service_location," + " bm.phn,bm.service_end_time,service_start_time,bm.service_to_day,bm.service_date,bm.oin_sex_code,bm.gst,bm.gst_no,b.dob,dx_code1,b.provider_no,apptProvider_no,bt.sortOrder "
 		        + " from demographic,provider,billing as b left join billingtypes bt on b.billingtype = bt.billingtype ,billingmaster as bm left join billingstatus_types bs on bm.billingstatus = bs.billingstatus" + " where bm.billing_no=b.billing_no " + " and b.provider_no = provider.provider_no " + " and demographic.demographic_no = b.demographic_no " + criteriaQry + " " + orderByClause;
 
 		if (type.equals(REP_REJ)) {
@@ -1155,6 +1160,8 @@ public class MSPReconcile {
 				b.expString = "".equals(expStr) ? expStr : "(" + expStr + ")";
 				b.reason = this.getStatusDesc(b.reason);
 				b.amount = rs.getString("bill_amount");
+				b.setGst(rs.getString("gst"));
+				b.setGstNo(rs.getString("gst_no"));
 				b.code = rs.getString("billing_code");
 				b.dx1 = rs.getString("dx_code1");	
 				b.serviceDate = rs.getString("service_date").equals("") ? "00000000" : rs.getString("service_date");
@@ -1458,7 +1465,6 @@ public class MSPReconcile {
 	 * @param providerNo
 	 * @param startDate
 	 * @param endDate
-
 	 * @return BillSearch
 	 */
 	public MSPReconcile.BillSearch getPrivatePayments(String account, String payeeNo, String providerNo, String startDate, String endDate) {
@@ -1530,7 +1536,7 @@ public class MSPReconcile {
 		endDate = UtilMisc.replace(endDate, "-", "");
 		BillSearch billSearch = new BillSearch();
 		String criteriaQry = createCriteriaString(account, payeeNo, providerNo, startDate, endDate, true, true, false, true, "", "creation_date");
-		String p = "SELECT b.billingtype,bm.billingmaster_no,b.demographic_no,b.demographic_name,bm.service_date,b.apptProvider_no ,b.provider_no,bm.payee_no," + " bh.creation_date,bh.amount_received,payment_type_id" + " FROM billing_history bh left join billingmaster bm on bh.billingmaster_no = bm.billingmaster_no ,billing b" + " where bm.billing_no = b.billing_no " + " and bh.payment_type_id != " + MSPReconcile.PAYTYPE_IA + " " + criteriaQry + " and bm.billingstatus != '" + MSPReconcile.DELETED + "'";
+		String p = "SELECT b.billingtype, bm.gst, bm.gst_no, bm.bill_amount, bm.billingmaster_no,b.demographic_no,b.demographic_name,bm.service_date,b.apptProvider_no ,b.provider_no,bm.payee_no," + " bh.creation_date,bh.amount_received,payment_type_id" + " FROM billing_history bh left join billingmaster bm on bh.billingmaster_no = bm.billingmaster_no ,billing b" + " where bm.billing_no = b.billing_no and bh.payment_type_id != " + MSPReconcile.PAYTYPE_IA + " " + criteriaQry + " and bm.billingstatus != '" + MSPReconcile.DELETED + "'";
 		MiscUtils.getLogger().debug(p);
 		billSearch.list = new ArrayList<Object>();
 
@@ -1557,7 +1563,14 @@ public class MSPReconcile {
 				b.payeeName = this.getProvider(b.payeeNo, 1).getInitials();
 				b.provName = this.getProvider(b.apptDoctorNo, 0).getInitials();
 
-				b.amount = rs.getString("amount_received");
+				double amountReceived = Double.parseDouble(rs.getString("amount_received"));
+				double billAmount = Double.parseDouble(rs.getString("bill_amount"));
+				double gst = Double.parseDouble(rs.getString("gst"));
+				b.amount = "" + amountReceived;
+
+				b.setGst(new BigDecimal(billAmount == 0 ? 0 : (amountReceived * (gst / billAmount))).setScale(2, RoundingMode.HALF_UP).toString());
+				b.setGstNo(rs.getString("gst_no"));
+
 				b.paymentDate = this.fmt.format(rs.getDate("creation_date"));
 				b.paymentMethod = rs.getString("payment_type_id");
 				b.setPaymentMethodName(this.getPaymentMethodDesc(b.paymentMethod));
@@ -1583,8 +1596,7 @@ public class MSPReconcile {
 	/**
 	 * Returns a string description of a billing payment method
 	 * @todo This should actually be a cached lookup map to improve performance
-
-	 * @return String
+	 * @param id String
 	 */
 	private String getPaymentMethodDesc(String id) {
 		BillingPaymentTypeDao dao = SpringUtils.getBean(BillingPaymentTypeDao.class);
@@ -1607,7 +1619,8 @@ public class MSPReconcile {
 	 * @param excludeMSP boolean
 	 * @param excludePrivate boolean
 	 * @param exludeICBC boolean
-
+	 * @param repType String
+	 * @param dateFieldOption String
 	 * @return String
 	 */
 	private String createCriteriaString(String account, String payeeNo, String providerNo, String startDate, String endDate, boolean excludeWCB, boolean excludeMSP, boolean excludePrivate, boolean exludeICBC, String repType, String dateFieldOption) {
@@ -1759,6 +1772,71 @@ public class MSPReconcile {
 			MiscUtils.getLogger().error("Error", ex);
 		}
 		return rs;
+	}
+
+	/**
+	 * Returns a ResultSet containing remittance information for the specified S21 and payee number (including any adjustments)
+	 *
+	 * @param payeeNo String
+	 * @param s21Id String
+	 * @return ResultSet
+	 */
+	public ResultSet getAdjustmentsMSPRemittanceQuery(String payeeNo, String s21Id) {
+		MiscUtils.getLogger().debug(new java.util.Date() + ":MSPReconcile.getAdjustmentsMSPRemittanceQuery(payeeNo, s21Id)");
+
+		String qry = "SELECT b.billing_no, bm.billingmaster_no, bm.billing_code,p.first_name,p.last_name,ts00.t_practitionerno,ts00.t_s00type,ts00.t_msprcddate, bm.service_date,ts00.t_payment, ts00.t_datacenter,b.demographic_name,b.demographic_no,\n" +
+				"IF(t_paidamt/100>bm.bill_amount, \"+\", IF(t_paidamt/100<bm.bill_amount,\"-\",\"\")) as differential,ts00.t_paidamt,bm.bill_amount,\n" +
+				"ts00.t_exp1,ts00.t_exp2,ts00.t_exp3,ts00.t_exp4,ts00.t_exp5,ts00.t_exp6,ts00.t_dataseq,\n" +
+				"t_ajc1, t_aja1, t_ajc2, t_aja2, t_ajc3, t_aja3, t_ajc4, t_aja4, t_ajc5, t_aja5, t_ajc6, t_aja6, t_ajc7, t_aja7\n" +
+				"\n" +
+				"from teleplanS00 ts00\n" +
+				"join billingmaster bm on ts00.t_officeno = bm.billingmaster_no\n" +
+				"join billing b on bm.billing_no = b.billing_no\n" +
+				"join provider p on p.ohip_no= ts00.t_practitionerno\n" +
+				"where ts00.s21_id = " + s21Id + "\n" +
+				"and ts00.t_practitionerno != '' \n" +
+				"and ts00.t_payeeno = '" + payeeNo + "'\n" +
+				"order by p.first_name,bm.service_date,b.demographic_name;";
+
+		ResultSet rs = null;
+		try {
+
+			rs = DBHandler.GetSQL(qry);
+		} catch (SQLException ex) {
+			MiscUtils.getLogger().error("Error", ex);
+		}
+		return rs;
+	}
+
+	/**
+	 * Returns a boolean whether there is a record of a teleplan_submission_link matching on billingmaster_no, submission/received date and datacenter_no
+	 *
+	 * @param billingmasterNo String
+	 * @param receivedDate String
+	 * @param dataCenterNo String
+	 * @return boolean
+	 */
+	public boolean hasMatchingBillingRecord(String billingmasterNo, String receivedDate, String dataCenterNo) {
+		MiscUtils.getLogger().debug(new java.util.Date() + ":MSPReconcile.hasMatchingBillingRecord(String billingmasterNo, String receivedDate, String dataCenterNo)");
+
+		String qry = "SELECT tsl.id \n" +
+				"FROM teleplan_submission_link tsl \n" +
+				"JOIN billingmaster bm on bm.billingmaster_no = tsl.billingmaster_no\n" +
+				"JOIN billactivity ba on ba.id = tsl.bill_activity_id\n" +
+				"WHERE tsl.billingmaster_no = " + billingmasterNo + "\n" +
+				"AND bm.datacenter = '" + dataCenterNo + "'\n" +
+				"AND ba.sentdate like '" + receivedDate + "';";
+
+		ResultSet rs = null;
+		boolean hasResults = false;
+		try {
+
+			rs = DBHandler.GetSQL(qry);
+			hasResults = rs.next();
+		} catch (SQLException ex) {
+			MiscUtils.getLogger().error("Error", ex);
+		}
+		return hasResults;
 	}
 
 	/**

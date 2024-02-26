@@ -248,7 +248,7 @@ if (wPhoneExt != null)
 								<span class="span3 text-success">User was successfully added</span>
 	
 					            <span class="span3">
-					            	<a class="btn btn-primary btn-small" href="../../dms/ManageDocument.do?method=display&doc_no=<%=dispDocNo%>&providerNo=<%=user%>">Download Registration Letter</a></div>
+					            	<a class="btn btn-primary btn-small" href="../../documentManager/ManageDocument.do?method=display&doc_no=<%=dispDocNo%>&providerNo=<%=user%>">Download Registration Letter</a></div>
 					            </span>
 					        </td>
 					    </tr>	

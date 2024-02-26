@@ -122,7 +122,7 @@ public class EctDisplayEFormAction extends EctDisplayAction {
 	            NavBarDisplayDAO.Item item = NavBarDisplayDAO.Item();
 	            winName = eFormData.getFormName() + bean.demographicNo;
 	            hash = Math.abs(winName.hashCode());
-	            url = "popupPage( 700, 800, '" + hash + "', '" + request.getContextPath() + "/eform/efmshowform_data.jsp?fdid="+eFormData.getId()+"&appointment="+bean.appointmentNo+"&parentAjaxId="+cmd+"');";
+	            url = "popupPage( 800, 960, '" + hash + "', '" + request.getContextPath() + "/eform/efmshowform_data.jsp?fdid="+eFormData.getId()+"&appointment="+bean.appointmentNo+"&parentAjaxId="+cmd+"');";
 	            String formattedDate = DateUtils.formatDate(eFormData.getFormDate(),request.getLocale());
 	            key = StringUtils.maxLenString(eFormData.getFormName(), MAX_LEN_KEY, CROP_LEN_KEY, ELLIPSES) + "(" + formattedDate + ")";
 	            item.setLinkTitle(eFormData.getSubject());

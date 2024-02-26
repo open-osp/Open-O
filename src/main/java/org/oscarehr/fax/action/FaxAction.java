@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
+
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -47,16 +50,21 @@ import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.common.model.FaxConfig;
 import org.oscarehr.common.model.FaxJob;
 import org.oscarehr.common.model.FaxJob.STATUS;
+import org.oscarehr.documentManager.DocumentAttachmentManager;
 import org.oscarehr.managers.FaxManager;
 import org.oscarehr.managers.FaxManager.TransactionType;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.PDFGenerationException;
 import org.oscarehr.util.SpringUtils;
+import oscar.form.JSONAction;
 
 
-public class FaxAction extends DispatchAction {
+public class FaxAction extends JSONAction {
 
+	private static final Logger logger=MiscUtils.getLogger();
 	private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
+	private final DocumentAttachmentManager documentAttachmentManager = SpringUtils.getBean(DocumentAttachmentManager.class);
 	
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		return null;
@@ -136,6 +144,7 @@ public class FaxAction extends DispatchAction {
 		LoggedInInfo loggedInInfo 	= LoggedInInfo.getLoggedInInfoFromSession(request);
 		String faxFilePath 			= request.getParameter("faxFilePath");
 		String pageNumber			= request.getParameter("pageNumber");
+		String showAs = request.getParameter("showAs");
 		Path outfile 				= null;
 		int page 					= 1;
 		String jobId 				= request.getParameter("jobId");
@@ -153,9 +162,20 @@ public class FaxAction extends DispatchAction {
 			page = Integer.parseInt(pageNumber);
 		}
 		
+		/*
+		* Displaying the entire PDF using the default browser's view before faxing an EForm (in CoverPage.jsp), 
+		* and when viewing it in the fax records (Manage Faxes), it is shown as images.
+		*/
 		if(faxFilePath != null && ! faxFilePath.isEmpty())
 		{
-			outfile = faxManager.getFaxPreviewImage(loggedInInfo, faxFilePath, page);
+			if (showAs != null && showAs.equals("image")) {
+				outfile = faxManager.getFaxPreviewImage(loggedInInfo, faxFilePath, page);
+				response.setContentType("image/pnsg");
+				response.setHeader("Content-Disposition", "attachment;filename=" + outfile.getFileName().toString());
+			} else {
+				outfile = Paths.get(faxFilePath);
+				response.setContentType("application/pdf");
+			}
 		}
 
 		if(outfile != null)
@@ -163,9 +183,6 @@ public class FaxAction extends DispatchAction {
 			try(InputStream inputStream = Files.newInputStream(outfile);
 					BufferedInputStream bfis = new BufferedInputStream(inputStream);
 					ServletOutputStream outs = response.getOutputStream()){
-				
-				response.setContentType("image/png");
-				response.setHeader("Content-Disposition", "attachment;filename=" + outfile.getFileName().toString());
 				
 				int data;
 				while ((data = bfis.read()) != -1) {
@@ -194,6 +211,7 @@ public class FaxAction extends DispatchAction {
 		 */
 		String recipient 				= (String) faxActionForm.get("recipient");
 		String recipientFaxNumber 		= (String) faxActionForm.get("recipientFaxNumber");
+		String letterheadFax			= (String) faxActionForm.get("letterheadFax");
 		Integer demographicNo			= (Integer)faxActionForm.get("demographicNo");
 		Integer transactionId 			= (Integer)faxActionForm.get("transactionId");
 		TransactionType transactionType	= TransactionType.valueOf(faxActionForm.getString("transactionType").toUpperCase());		
@@ -207,7 +225,19 @@ public class FaxAction extends DispatchAction {
 		 */
 		if(! accounts.isEmpty())
 		{
-			pdfPath = faxManager.renderFaxDocument(loggedInInfo, transactionType, transactionId, demographicNo);
+			if (transactionType.equals(TransactionType.EFORM)) {
+				request.setAttribute("fdid", String.valueOf(transactionId));
+				request.setAttribute("demographicId", String.valueOf(demographicNo));
+
+				try {
+					pdfPath = documentAttachmentManager.renderEFormWithAttachments(request, response);
+				} catch (PDFGenerationException e) {
+					logger.error(e.getMessage(), e);
+					String errorMessage = "This eForm (and attachments, if applicable) cannot be faxed. \\n\\n" + e.getMessage();
+					request.setAttribute("errorMessage", errorMessage);
+					return mapping.findForward("eFormError");
+				}
+			}
 		} else {
 			request.setAttribute("message", "No active fax accounts found.");
 		}
@@ -222,6 +252,7 @@ public class FaxAction extends DispatchAction {
 			request.setAttribute("transactionType", transactionType.name());
 			request.setAttribute("transactionId", transactionId);
 			request.setAttribute("faxFilePath", pdfPath);
+			request.setAttribute("letterheadFax", letterheadFax);
 			request.setAttribute("professionalSpecialistName", recipient);
 			request.setAttribute("fax", recipientFaxNumber);
 			actionForward = mapping.findForward("preview");
@@ -249,12 +280,7 @@ public class FaxAction extends DispatchAction {
 		jsonObject.put("jobId", jobId);
 		jsonObject.put("pageCount", pageCount);
 
-		try (PrintWriter out = response.getWriter()) {
-			response.setContentType("application/json");
-			jsonObject.write(out);
-		} catch (IOException e) {
-			MiscUtils.getLogger().error("JSON writer error for fax job: " + jobId, e);
-		}
+		jsonResponse(response, jsonObject);
 	}
 
 }

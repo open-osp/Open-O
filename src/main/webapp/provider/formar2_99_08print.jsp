@@ -32,7 +32,7 @@
 %>
 <%@ page
 	import="java.util.*, java.sql.*, java.net.*, oscar.*, oscar.util.UtilMisc, oscar.form.graphic.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 
 <html>
 <head>

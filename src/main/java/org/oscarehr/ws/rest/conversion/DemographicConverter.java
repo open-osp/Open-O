@@ -52,7 +52,7 @@ public class DemographicConverter extends AbstractConverter<Demographic, Demogra
 		d.setPatientStatusDate(t.getPatientStatusDate());
 		d.setRosterStatus(t.getRosterStatus());
 		d.setProviderNo(t.getProviderNo());
-		d.setMyOscarUserName(t.getMyOscarUserName());
+//		d.setMyOscarUserName(t.getMyOscarUserName());
 		d.setHin(t.getHin());
 		d.setAddress(t.getAddress().getAddress());
 		d.setProvince(t.getAddress().getProvince());
@@ -99,7 +99,13 @@ public class DemographicConverter extends AbstractConverter<Demographic, Demogra
 		d.setCountryOfOrigin(t.getCountryOfOrigin());
 		d.setNewsletter(t.getNewsletter());
 		d.setMiddleNames(t.getMiddleNames());
-		
+		d.setGender(t.getGender());
+		d.setGenderId(t.getGenderId());
+		d.setPronoun(t.getPronoun());
+		d.setPronounId(t.getPronounId());
+		d.setCellPhone(t.getCellPhone());
+		d.setPhoneComment(t.getPhoneComment());
+
 		DemographicExt[] exts = new DemographicExt[t.getExtras().size()];
 		for (int i = 0; i < t.getExtras().size(); i++) {
 			exts[i] = demoExtConverter.getAsDomainObject(loggedInInfo,t.getExtras().get(i));
@@ -126,7 +132,7 @@ public class DemographicConverter extends AbstractConverter<Demographic, Demogra
 		t.setPatientStatusDate(d.getPatientStatusDate());
 		t.setRosterStatus(d.getRosterStatus());
 		t.setProviderNo(d.getProviderNo());
-		t.setMyOscarUserName(d.getMyOscarUserName());
+//		t.setMyOscarUserName(d.getMyOscarUserName());
 		t.setHin(d.getHin());
 		t.getAddress().setAddress(d.getAddress());
 		t.getAddress().setProvince(d.getProvince());
@@ -176,6 +182,13 @@ public class DemographicConverter extends AbstractConverter<Demographic, Demogra
 		t.setCountryOfOrigin(d.getCountryOfOrigin());
 		t.setNewsletter(d.getNewsletter());
 		t.setMiddleNames(d.getMiddleNames());
+		t.setGender(d.getGender());
+		t.setGenderId(d.getGenderId());
+		t.setPronoun(d.getPronoun());
+		t.setPronounId(d.getPronounId());
+		t.setCellPhone(d.getCellPhone());
+		t.setPhoneComment(d.getPhoneComment());
+
 		
 		if (d.getExtras() != null) {
 			for (DemographicExt ext : d.getExtras()) {

@@ -1,4 +1,12 @@
 
+CREATE TABLE IF NOT EXISTS `form_boolean_value` (
+    `form_name` varchar(50) NOT NULL,
+    `form_id` int(10) NOT NULL,
+    `field_name` varchar(50) NOT NULL,
+    `value` tinyint(1) DEFAULT NULL,
+    PRIMARY KEY (`form_name`,`form_id`,`field_name`)
+);
+
 CREATE TABLE IF NOT EXISTS `formRourke2020` (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
   `demographic_no` int(10) DEFAULT NULL,

@@ -38,8 +38,7 @@ public abstract class JSONAction extends DispatchAction {
     private final Logger logger = MiscUtils.getLogger();
 
     protected void jsonResponse(HttpServletResponse response, JSONObject jsonObject) {
-        try {
-            PrintWriter out = response.getWriter();
+        try (PrintWriter out = response.getWriter()) {
             response.setContentType(CONTENT_TYPE);
             response.setCharacterEncoding(ENCODING);
             out.print(jsonObject.toString());

@@ -121,7 +121,7 @@ $( document ).ready(function( $ ) {
 			
         if(qn.length>0){  		
             var data="method=addNewQueue&newQueueName="+qn;
-            var url="${ctx}/dms/inboxManage.do";
+            var url="${ctx}/documentManager/inboxManage.do";
 
         $.ajax({
             url: url,

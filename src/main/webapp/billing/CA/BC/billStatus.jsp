@@ -39,7 +39,7 @@ if(!authed) {
 }
 %>
 
-<%@ page import="java.math.*,java.util.*, java.sql.*, oscar.*, java.net.*,oscar.oscarBilling.ca.bc.MSP.*,oscar.util.*" %>
+<%@ page import="java.math.*,java.util.*,oscar.oscarBilling.ca.bc.MSP.*,oscar.util.*" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -100,278 +100,105 @@ boolean adminAccess = false;
 </security:oscarSec>
 
 
-<%@page import="org.oscarehr.util.MiscUtils"%><html>
+<%@page import="org.oscarehr.util.MiscUtils"%>
+<!DOCTYPE HTML>
+<html>
 <head>
 <html:base/>
 <title><bean:message key="admin.admin.editInvoices"/></title>
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+<script src="<%=request.getContextPath()%>/csrfguard" type="text/javascript"></script>
+    <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js" type="text/javascript"></script>
+    <script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js" type="text/javascript"></script>
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
-<script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
-
+    <link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet" type="text/css"/>
 <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css" >
 
 <script>
-addEvent(window, "load", sortables_init);
-
-var SORT_COLUMN_INDEX;
-
-function sortables_init() {
-	// Find all tables with class sortable and make them sortable
-    if (!document.getElementsByTagName) return;
-    tbls = document.getElementsByTagName("table");
-    
-    for (ti=0;ti<tbls.length;ti++) {   
-        thisTbl = tbls[ti];
-        
-        if (((' '+thisTbl.className+' ').indexOf("sortable") != -1) && (thisTbl.id)) {
-            ts_makeSortable(thisTbl);
-        }
-    }
-}
-
-function ts_makeSortable(table) {
-    if (table.rows && table.rows.length > 0) {
-        var firstRow = table.rows[0];
-    }
-    if (!firstRow) return;
-
-    // We have a first row: assume it's the header, and make its contents clickable links
-    for (var i=0;i<firstRow.cells.length;i++) {
-        var cell = firstRow.cells[i];
-        var txt = ts_getInnerText(cell);
-        cell.innerHTML = '<a href="#" class="sortheader" '+
-        'onclick="ts_resortTable(this, '+i+');return false;">' +
-        txt+'<span class="sortarrow">&nbsp;&nbsp;&nbsp;</span></a>';
-    }
-}
-
-function ts_getInnerText(el) {
-	if (typeof el == "string") return el;
-	if (typeof el == "undefined") { return el };
-	if (el.innerText) return el.innerText;	//Not needed but it is faster
-	var str = "";
-
-	var cs = el.childNodes;
-	var l = cs.length;
-	for (var i = 0; i < l; i++) {
-		switch (cs[i].nodeType) {
-			case 1: //ELEMENT_NODE
-				str += ts_getInnerText(cs[i]);
-				break;
-			case 3:	//TEXT_NODE
-				str += cs[i].nodeValue;
-				break;
-		}
-	}
-	return str;
-}
-
-function ts_resortTable(lnk,clid) {
-    // get the span
-    var span;
-    for (var ci=0;ci<lnk.childNodes.length;ci++) {
-        if (lnk.childNodes[ci].tagName && lnk.childNodes[ci].tagName.toLowerCase() == 'span') span = lnk.childNodes[ci];
-    }
-    var spantext = ts_getInnerText(span);
-    var td = lnk.parentNode;
-    var column = clid;
-    var table = getParent(td,'TABLE');
-
-    // Work out a type for the column
-    if (table.rows.length <= 1) return;
-
-
-    var itm = ts_getInnerText(table.rows[1].cells[column]);
-    sortfn = ts_sort_caseinsensitive;
-    if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^[�$]/)) sortfn = ts_sort_currency;
-    if (itm.match(/^[\d\.]+$/)) sortfn = ts_sort_numeric;
-    SORT_COLUMN_INDEX = column;
-    var firstRow = new Array();
-    var newRows = new Array();
-    for (i=0;i<table.rows[0].length;i++) { firstRow[i] = table.rows[0][i]; }
-    for (j=1;j<table.rows.length;j++) { newRows[j-1] = table.rows[j]; }
-
-    newRows.sort(sortfn);
-
-    if (span.getAttribute("sortdir") == 'down') {
-        ARROW = '&nbsp;&nbsp;&uarr;';
-        newRows.reverse();
-        span.setAttribute('sortdir','up');
-    } else {
-        ARROW = '&nbsp;&nbsp;&darr;';
-        span.setAttribute('sortdir','down');
-    }
-
-    // We appendChild rows that already exist to the tbody, so it moves them rather than creating new ones
-    // don't do sortbottom rows
-    for (i=0;i<newRows.length;i++) { if (!newRows[i].className || (newRows[i].className && (newRows[i].className.indexOf('sortbottom') == -1))) table.tBodies[0].appendChild(newRows[i]);}
-    // do sortbottom rows only
-    for (i=0;i<newRows.length;i++) { if (newRows[i].className && (newRows[i].className.indexOf('sortbottom') != -1)) table.tBodies[0].appendChild(newRows[i]);}
-
-    // Delete any other arrows there may be showing
-    var allspans = document.getElementsByTagName("span");
-    for (var ci=0;ci<allspans.length;ci++) {
-        if (allspans[ci].className == 'sortarrow') {
-            if (getParent(allspans[ci],"table") == getParent(lnk,"table")) { // in the same table as us?
-                allspans[ci].innerHTML = '&nbsp;&nbsp;&nbsp;';
-            }
+    function checkChecked()
+    {
+        if ($('input[name^="billCheck"]:checked').length > 0) {
+            $('#resubmitButton').attr("disabled", false);
+            $('#settleButton').attr("disabled", false);
+        } else {
+            $('#resubmitButton').attr("disabled", true);
+            $('#settleButton').attr("disabled", true);
         }
     }
 
-    span.innerHTML = ARROW;
-}
+    $( document ).ready(function() {
+        $(document).on("click", "input[name^='billCheck']", function (){checkChecked()});
+        $(document).on("change", "#checkAll", function (){checkChecked()});
+        checkChecked();
+    })
 
-function getParent(el, pTagName) {
-	if (el == null) return null;
-	else if (el.nodeType == 1 && el.tagName.toLowerCase() == pTagName.toLowerCase())	// Gecko bug, supposed to be uppercase
-		return el;
-	else
-		return getParent(el.parentNode, pTagName);
-}
-function ts_sort_date(a,b) {
-    // y2k notes: two digit years less than 50 are treated as 20XX, greater than 50 are treated as 19XX
-    aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]);
-    bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]);
-    if (aa.length == 10) {
-        dt1 = aa.substr(6,4)+aa.substr(3,2)+aa.substr(0,2);
-    } else {
-        yr = aa.substr(6,2);
-        if (parseInt(yr) < 50) { yr = '20'+yr; } else { yr = '19'+yr; }
-        dt1 = yr+aa.substr(3,2)+aa.substr(0,2);
+    function popupPage(vheight,vwidth,varpage) { //open a new popup window
+      var page = "" + varpage;
+      windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
+      var popup=window.open(page, "attachment", windowprops);
+      if (popup != null) {
+        if (popup.opener == null) {
+          popup.opener = self;
+        }
+       popup.focus();
+      }
     }
-    if (bb.length == 10) {
-        dt2 = bb.substr(6,4)+bb.substr(3,2)+bb.substr(0,2);
-    } else {
-        yr = bb.substr(6,2);
-        if (parseInt(yr) < 50) { yr = '20'+yr; } else { yr = '19'+yr; }
-        dt2 = yr+bb.substr(3,2)+bb.substr(0,2);
+
+    function popupPage2(vheight,vwidth,varpage,pagename) { //open a new popup window
+      var page = "" + varpage;
+      windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
+      var popup=window.open(page, pagename, windowprops);
+      if (popup != null) {
+        if (popup.opener == null) {
+          popup.opener = self;
+        }
+       popup.focus();
+      }
     }
-    if (dt1==dt2) return 0;
-    if (dt1<dt2) return -1;
-    return 1;
-}
+    function selectprovider(s) {
+      if(self.location.href.lastIndexOf("&providerview=") > 0 ) a = self.location.href.substring(0,self.location.href.lastIndexOf("&providerview="));
+      else a = self.location.href;
+        self.location.href = a + "&providerview=" +s.options[s.selectedIndex].value ;
+    }
+    function openBrWindow(theURL,winName,features) { //v2.0
+      window.open(theURL,winName,features);
+    }
+    function setfocus() {
+      this.focus();
+    }
+    function refresh() {
+          history.go(0);
 
-function ts_sort_currency(a,b) {
-    aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'');
-    bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'');
-    return parseFloat(aa) - parseFloat(bb);
-}
+    }
 
-function ts_sort_numeric(a,b) {
-    aa = parseFloat(ts_getInnerText(a.cells[SORT_COLUMN_INDEX]));
-    if (isNaN(aa)) aa = 0;
-    bb = parseFloat(ts_getInnerText(b.cells[SORT_COLUMN_INDEX]));
-    if (isNaN(bb)) bb = 0;
-    return aa-bb;
-}
+    function fillEndDate(d){
+        document.serviceform.xml_appointment_date.value= d;
 
-function ts_sort_caseinsensitive(a,b) {
-    aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]).toLowerCase();
-    bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).toLowerCase();
-    if (aa==bb) return 0;
-    if (aa<bb) return -1;
-    return 1;
-}
+    }
+    function setDemographic(demoNo){
+        document.serviceform.demographicNo.value = demoNo;
+    }
 
-function ts_sort_default(a,b) {
-    aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]);
-    bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]);
-    if (aa==bb) return 0;
-    if (aa<bb) return -1;
-    return 1;
-}
+    function billTypeOnly(showEle){
+       document.serviceform.showMSP.checked = false;
+       document.serviceform.showWCB.checked = false;
+       document.serviceform.showPRIV.checked = false;
+       document.serviceform.showICBC.checked = false;
+       document.serviceform.elements[showEle].checked = true;
+    }
 
+    $(document).on('click', '#checkAll', function() {
+        $("input[name^='billCheck']").prop('checked', $(this).is(':checked'));
+    })
 
-function addEvent(elm, evType, fn, useCapture)
-// addEvent and removeEvent
-// cross-browser event handling for IE5+,  NS6 and Mozilla
-// By Scott Andrew
-{
-  if (elm.addEventListener){
-    elm.addEventListener(evType, fn, useCapture);
-    return true;
-  } else if (elm.attachEvent){
-    var r = elm.attachEvent("on"+evType, fn);
-    return r;
-  } else {
-    alert("Handler could not be removed");
-  }
-}
-
+    function setOperation(value) {
+        let submitOperation = document.getElementById("submitOperation");
+        submitOperation.value = value;
+    }
 </script>
-<script language="JavaScript">
-<!--
-function popupPage(vheight,vwidth,varpage) { //open a new popup window
-  var page = "" + varpage;
-  windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
-  var popup=window.open(page, "attachment", windowprops);
-  if (popup != null) {
-    if (popup.opener == null) {
-      popup.opener = self;
-    }
-   popup.focus();
-  }
-}
-
-function popupPage2(vheight,vwidth,varpage,pagename) { //open a new popup window
-  var page = "" + varpage;
-  windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
-  var popup=window.open(page, pagename, windowprops);
-  if (popup != null) {
-    if (popup.opener == null) {
-      popup.opener = self;
-    }
-   popup.focus();
-  }
-}
-function selectprovider(s) {
-  if(self.location.href.lastIndexOf("&providerview=") > 0 ) a = self.location.href.substring(0,self.location.href.lastIndexOf("&providerview="));
-  else a = self.location.href;
-	self.location.href = a + "&providerview=" +s.options[s.selectedIndex].value ;
-}
-function openBrWindow(theURL,winName,features) { //v2.0
-  window.open(theURL,winName,features);
-}
-function setfocus() {
-  this.focus();
-}
-function refresh() {
-      history.go(0);
-
-}
-
-function fillEndDate(d){
-    document.serviceform.xml_appointment_date.value= d;
-
-}
-function setDemographic(demoNo){
-    document.serviceform.demographicNo.value = demoNo;
-}
-
-
-//-->
-
-function billTypeOnly(showEle){
-   document.serviceform.showMSP.checked = false;
-   document.serviceform.showWCB.checked = false;
-   document.serviceform.showPRIV.checked = false;
-   document.serviceform.showICBC.checked = false;
-   document.serviceform.elements[showEle].checked = true;
-}
-</script>
-
-<script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
 
 <style>
-	input[type="text"] {
-		height: 30px;
-		width: 100px;
-	}
 
 @media print {
 
@@ -390,43 +217,59 @@ function billTypeOnly(showEle){
 </head>
 
 <body>
-<div class="container-fluid">
+<div class="container">
 <h3><bean:message key="admin.admin.editInvoices"/></h3>
 
 <div class="row well hidden-print">
 
-<div align="right"><a href="javascript: function myFunction() {return false; }" onClick="popupPage(700,720,'../../../oscarReport/manageProvider.jsp?action=billingreport')">Manage Provider List</a></div>
+<div style="text-align: right;"><a href="javascript: function myFunction() {return false; }" onClick="popupPage(700,720,'../../../oscarReport/manageProvider.jsp?action=billingreport')">
+    Manage Provider List</a></div>
 
-<div align="right"><%=DateUtils.sumDate("yyyy-M-d","0")%></div>
+<div style="text-align: right;"><%=DateUtils.sumDate("yyyy-M-d","0")%></div>
 
 
 <%
 if("true".equals(readonly)){
 %>
-<div>
+<div class="row">
+    <div class="col-lg-12">
  <i>Results for Demographic</i>
       :
 <%=request.getParameter("lastName")%>      ,
 <%=request.getParameter("firstName")%>      (
 <%=request.getParameter("demographicNo")%>      )
-</div><%}%>
+    </div>
+</div>
+    <%}%>
 
 
-<form name="serviceform" method="get" action="billStatus.jsp" class="form-inline">
+<form name="serviceform" method="get" action="billStatus.jsp" class="form-inline" >
 	<input type="hidden" name="filterPatient" value="<%=readonly%>"/>
 	<input type="hidden" name="lastName" value="<%=request.getParameter("lastName")%>"/>
 	<input type="hidden" name="firstName" value="<%=request.getParameter("firstName")%>"/>
- 	<!--<input type="hidden" name="demographicNo" value="<%=demographicNo%>"/>-->
-
-
-    <input type="checkbox" name="showMSP" value="show"  <%=showMSP?"checked":""%>/><a onclick="billTypeOnly('showMSP')">MSP</a>
-    <input type="checkbox" name="showWCB" value="show"  <%=showWCB?"checked":""%>/><a onclick="billTypeOnly('showWCB')">WCB</a>
-    <input type="checkbox" name="showPRIV" value="show" <%=showPRIV?"checked":""%>/><a onClick="billTypeOnly('showPRIV')">Private</a>
-    <input type="checkbox" name="showICBC" value="show" <%=showICBC?"checked":""%>/><a onClick="billTypeOnly('showICBC')">ICBC</a><br><br>
-
-<div class="span3">
-    Select provider<br>
-    <select name="providerview">
+<div class="row">
+    <div class="col-lg-12">
+<div class="form-group">
+    <label class="checkbox-inline">
+        <input type="checkbox" id="showMSP" name="showMSP" value="show"  <%=showMSP?"checked":""%>/>
+        <a onclick="billTypeOnly('showMSP')">MSP</a></label>
+    <label class="checkbox-inline">
+        <input type="checkbox" name="showWCB" value="show"  <%=showWCB?"checked":""%>/><a onclick="billTypeOnly('showWCB')">WCB</a>
+    </label>
+    <label class="checkbox-inline">
+        <input type="checkbox" name="showPRIV" value="show" <%=showPRIV?"checked":""%>/><a onClick="billTypeOnly('showPRIV')">Private</a>
+    </label>
+    <label class="checkbox-inline">
+        <input type="checkbox" name="showICBC" value="show" <%=showICBC?"checked":""%>/><a onClick="billTypeOnly('showICBC')">ICBC</a>
+    </label>
+</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3">
+<div class="form-group">
+    <label for="providerview">Select provider</label>
+    <select name="providerview" id="providerview" class="form-control">
       <option value="ALL">All Providers</option>
       <%  String proFirst="";
                     String proLast="";
@@ -445,37 +288,44 @@ if("true".equals(readonly)){
       <%  } %>
     </select>
 </div>
-
+    </div>
     <input type="hidden" name="verCode" value="V03"/>
-    
-<div class="span2">		
-	Service Start Date:<br>
-	<div class="input-append">
-		<input type="text" name="xml_vdate" id="xml_vdate" value="<%=xml_vdate%>" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" autocomplete="off" />
-		<span class="add-on"><i class="icon-calendar"></i></span>
+    <div class="col-sm-3">
+<div class="form-group">
+    <label for="xml_vdate">Service Start Date:</label>
+	<div class="input-group">
+		<input type="text" name="xml_vdate" class="form-control" id="xml_vdate" value="<%=xml_vdate%>" placeholder="yyyy-mm-dd"
+               pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" autocomplete="off" />
+		<span class="input-group-addon"><i class="icon-calendar"></i></span>
 	</div>
 </div><!--span2-->
-	
-<div class="span3">		
-	Service End Date: 	<a href="javascript: function myFunction() {return false; }" onClick="fillEndDate('<%=DateUtils.sumDate("yyyy-M-d","-30")%>')" >30</a>&nbsp; <a href="javascript: function myFunction() {return false; }" onClick="fillEndDate('<%=DateUtils.sumDate("yyyy-M-d","-60")%>')" >60</a>&nbsp; <a href="javascript: function myFunction() {return false; }" onClick="fillEndDate('<%=DateUtils.sumDate("yyyy-M-d","-90")%>')" >90</a>&nbsp;
-<br>
-	<div class="input-append">
-		<input type="text" name="xml_appointment_date" id="xml_appointment_date" value="<%=xml_appointment_date%>" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" autocomplete="off" />
-		<span class="add-on"><i class="icon-calendar"></i></span>
+    </div>
+    <div class="col-sm-3">
+<div class="form-group">
+    <label style="white-space: nowrap;" for="xml_appointment_date">Service End Date: <a href="javascript: function myFunction() {return false; }" onClick="fillEndDate('<%=DateUtils.sumDate("yyyy-M-d","-30")%>')" >30</a> <a href="javascript: function myFunction() {return false; }" onClick="fillEndDate('<%=DateUtils.sumDate("yyyy-M-d","-60")%>')" >60</a> <a href="javascript: function myFunction() {return false; }" onClick="fillEndDate('<%=DateUtils.sumDate("yyyy-M-d","-90")%>')" >90</a></label>
+	<div class="input-group">
+		<input type="text" class="form-control" name="xml_appointment_date" placeholder="yyyy-mm-dd"
+               id="xml_appointment_date" value="<%=xml_appointment_date%>"
+               pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" autocomplete="off" />
+		<span class="input-group-addon"><i class="icon-calendar"></i></span>
 	</div>
 </div><!--span3-->
-
-<div class="span2">
-    Demographic:<br>
+    </div>
+    <div class="col-sm-3">
+<div class="form-group">
+    <label for="demographicNo">Demographic:</label>
 	<%
 		String readonlyStr = "true".equals(readonly)?"readonly":"";
 	%>
-    <input type="text" name="demographicNo" size="5" value="<%=xml_demoNo%>" <%=readonlyStr%>"/>
-</div><!-- span3-->	
+    <input type="text" class="form-control" id="demographicNo" name="demographicNo" size="6" value="<%=xml_demoNo%>" <%=readonlyStr%> />
+</div>
+    </div>
 
+</div>
+    <div class="row">
+        <div class="col-lg-12">
+<div class="form-group">
 
-<div class="span10">
-<br>
 <% String billTypes = request.getParameter("billTypes");
 if (billTypes == null){
     billTypes = MSPReconcile.REJECTED;
@@ -485,82 +335,123 @@ billTypes = "%";
 }
 
 %>
-	  <input type="radio" name="billTypes" value="<%=MSPReconcile.REJECTED%>"     <%=billTypes.equals(MSPReconcile.REJECTED)?"checked":""%>/>
-      Rejected
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.NOTSUBMITTED%>" <%=billTypes.equals(MSPReconcile.NOTSUBMITTED)?"checked":""%>/>
-      Not Submitted
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.SUBMITTED%>"    <%=billTypes.equals(MSPReconcile.SUBMITTED)?"checked":""%>/>
-      Submitted
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.SETTLED%>"      <%=billTypes.equals(MSPReconcile.SETTLED)?"checked":""%>/>
-      Settled
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.DELETED%>"      <%=billTypes.equals(MSPReconcile.DELETED)?"checked":""%>/>
-      Deleted
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.HELD%>"         <%=billTypes.equals(MSPReconcile.HELD)?"checked":""%>/>
-      Held
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.DATACENTERCHANGED%>" title="Data Center Changed" <%=billTypes.equals(MSPReconcile.DATACENTERCHANGED)?"checked":""%>/>
-      DCC
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.PAIDWITHEXP%>" title="Paid with Explanation"     <%=billTypes.equals(MSPReconcile.PAIDWITHEXP)?"checked":""%>/>
-      PwE
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.BADDEBT%>"      <%=billTypes.equals(MSPReconcile.BADDEBT)?"checked":""%>/>
-      Bad Debt
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.REFUSED%>"      <%=billTypes.equals(MSPReconcile.REFUSED)?"checked":""%>/>
-      Refused
-      <!--<input type="radio" name="billTypes" value="<%=MSPReconcile.WCB%>"          <%=billTypes.equals(MSPReconcile.WCB)?"checked":""%>/> WCB-->
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.CAPITATED%>"   title="Capitated"   <%=billTypes.equals(MSPReconcile.CAPITATED)?"checked":""%>/>
-      Cap
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.DONOTBILL%>"   title="Do Not Bill"    <%=billTypes.equals(MSPReconcile.DONOTBILL)?"checked":""%>/>
-      DNBill
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.BILLPATIENT%>"  <%=billTypes.equals(MSPReconcile.BILLPATIENT)?"checked":""%>/>
-      Bill Patient
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.PAIDPRIVATE%>" title="Paid Private"  <%=billTypes.equals(MSPReconcile.PAIDPRIVATE)?"checked":""%>/>
-      PPrivate
-      <input type="radio" name="billTypes" value="<%=MSPReconcile.COLLECTION%>"  title="Transfered to Collection"<%=billTypes.equals(MSPReconcile.COLLECTION)?"checked":""%>/>
-      Collection
-      <input type="radio" name="billTypes" value="%"                              <%=billTypes.equals("%")?"checked":""%>/>
-      All
-
-	  <input type="radio" name="billTypes" value="?"                              <%=billTypes.equals("?")?"checked":""%>/>
-      Fixable Receivables
-
-	  <input type="radio" name="billTypes" value="$"                              <%=billTypes.equals("$")?"checked":""%>/>
-	  Paid Bills
-</div><!-- span10 -->
-
-<div class="span10">
-<br>
-<input type="hidden" name="submitted" value="yes"/>
-<input class="btn btn-primary" type="submit" name="Submit" value="Create Report">
-</div><!-- span10 -->
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.REJECTED%>"     <%=billTypes.equals(MSPReconcile.REJECTED)?"checked":""%>/>
+    Rejected
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.NOTSUBMITTED%>" <%=billTypes.equals(MSPReconcile.NOTSUBMITTED)?"checked":""%>/>
+    Not Submitted
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.SUBMITTED%>"    <%=billTypes.equals(MSPReconcile.SUBMITTED)?"checked":""%>/>
+    Submitted
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.SETTLED%>"      <%=billTypes.equals(MSPReconcile.SETTLED)?"checked":""%>/>
+    Settled
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.DELETED%>"      <%=billTypes.equals(MSPReconcile.DELETED)?"checked":""%>/>
+    Deleted
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.HELD%>"         <%=billTypes.equals(MSPReconcile.HELD)?"checked":""%>/>
+    Held
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.DATACENTERCHANGED%>" title="Data Center Changed" <%=billTypes.equals(MSPReconcile.DATACENTERCHANGED)?"checked":""%>/>
+    DCC
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.PAIDWITHEXP%>" title="Paid with Explanation"     <%=billTypes.equals(MSPReconcile.PAIDWITHEXP)?"checked":""%>/>
+    PwE
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.BADDEBT%>"      <%=billTypes.equals(MSPReconcile.BADDEBT)?"checked":""%>/>
+    Bad Debt
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.REFUSED%>"      <%=billTypes.equals(MSPReconcile.REFUSED)?"checked":""%>/>
+    Refused
+    </label>
+    <label class="radio-inline">
+    <!--<input type="radio" name="billTypes" value="<%=MSPReconcile.WCB%>"          <%=billTypes.equals(MSPReconcile.WCB)?"checked":""%>/> WCB-->
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.CAPITATED%>"   title="Capitated"   <%=billTypes.equals(MSPReconcile.CAPITATED)?"checked":""%>/>
+    Cap
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.DONOTBILL%>"   title="Do Not Bill"    <%=billTypes.equals(MSPReconcile.DONOTBILL)?"checked":""%>/>
+    DNBill
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.BILLPATIENT%>"  <%=billTypes.equals(MSPReconcile.BILLPATIENT)?"checked":""%>/>
+    Bill Patient
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.PAIDPRIVATE%>" title="Paid Private"  <%=billTypes.equals(MSPReconcile.PAIDPRIVATE)?"checked":""%>/>
+    Private
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="<%=MSPReconcile.COLLECTION%>"  title="Transfered to Collection"<%=billTypes.equals(MSPReconcile.COLLECTION)?"checked":""%>/>
+    Collection
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="%"                              <%=billTypes.equals("%")?"checked":""%>/>
+    All
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="?"                              <%=billTypes.equals("?")?"checked":""%>/>
+    Fixable Receivables
+    </label>
+    <label class="radio-inline">
+    <input type="radio" name="billTypes" value="$"                              <%=billTypes.equals("$")?"checked":""%>/>
+    Paid Bills
+    </label>
+</div>
+        </div>
+    </div>
+<div class="form-group pull-right">
+    <input type="hidden" name="submitted" value="yes"/>
+    <input class="btn btn-primary" type="submit" name="Submit" value="Create Report">
+</div>
 
 </form>
+
 </div><!-- row well-->
 
-<div class="row">
-<input class="btn pull-right hidden-print" type='button' name='print' value='Print' onClick='window.print()'>
-<table class="table table-striped  table-condensed sortable" id="resultsTable">
+
+                <form name="ReProcessBillingForm" method="get" action="reprocessBill.do">
+
+                    <input type="hidden" id="hiddenFilterType" name="hiddenFilterType" value="<%=request.getParameter("billTypes")%>">
+
+
+<table class="table table-striped table-condensed sortable" id="resultsTable">
 <thead>
-	<tr>
-	<th align="center" title="INVOICE #" >INVOICE # </th>
-	<th align="center" title="LINE #" >SEQ # </th>
-    <th align="center" title="APP. DATE">APP. DATE</th>
-	<th align="center" title="TYPE" >TYPE </th>
+
+    <th class="no-sort"><label for="checkAll" class="checkbox-inline">
+        <input type="checkbox" id="checkAll" name="checkAll" >Select All</label></th>
+	<th title="INVOICE #" >INVOICE # </th>
+	<th title="LINE #" >SEQ # </th>
+    <th title="APP. DATE">APP. DATE</th>
+	<th title="TYPE" >TYPE </th>
 	<%
 		if(!"true".equals(readonly)){
 	%>
-    <th align="center" title="PATIENT" >PATIENT</th>
+    <th title="PATIENT" >PATIENT</th>
 	<%}%>
-	 <th align="center" title="PRACT" >PRACT.</th>
-	<th align="center" title="Status">STAT</th>
+	 <th title="PRACT" >PRACT.</th>
+	<th title="Status">STAT</th>
 
 
-    <th align="center" title="Fee Code">FEE CODE</th>
-    <th align="center" title="QTY">QTY</th>
-    <th align="center" title="Amount Billed">AMT</th>
-    <th align="center" title="Amount Paid"  >PAID</th>
-    <th align="center">OWED</th>
-    <th align="center">DX CODE </th>
-    <th align="center">MSGS</th>
-  </tr>
+    <th title="Fee Code">FEE CODE</th>
+    <th title="QTY">QTY</th>
+    <th title="Amount Billed">AMT</th>
+    <th title="Amount Paid"  >PAID</th>
+    <th>OWED</th>
+    <th>DX CODE </th>
+    <th>MSGS</th>
+
 </thead>
    <tbody>
   <%
@@ -608,7 +499,12 @@ billTypes = "%";
    %>
 
   <tr>
-      <td align="center">
+      <td>
+          <label>
+          <input type="checkbox" id="billCheck_<%=b.getBilling_no()%>" name="billCheck" value="<%=b.getBilling_no() + "_" + b.getBillMasterNo()%>">
+          </label>
+      </td>
+      <td>
         <%if("Pri".equals(b.billingtype)){%>
 	 	<a href="javascript:popupPage(800,800, '../../../billing/CA/BC/billingView.do?billing_no=<%=b.billing_no%>&receipt=yes')"><%=b.billing_no%>       </a>
 		<%}
@@ -618,34 +514,34 @@ billTypes = "%";
 		<%}%>		    </td>
 
 
-	<td align="center"><a href="javascript: function myFunction() {return false; }" onClick="popupPage2(500,1020,'genTAS00ByOfficeNo.jsp?officeNo=<%=b.billMasterNo%>','RecValues');"> <%=b.seqNum%> </a></td>
-	<td align="center"><%=b.apptDate%></td>
-	<td align="center"><%=b.billingtype%></td>
+	<td><a href="javascript: function myFunction() {return false; }" onClick="popupPage2(500,1020,'genTAS00ByOfficeNo.jsp?officeNo=<%=b.billMasterNo%>','RecValues');"> <%=b.seqNum%> </a></td>
+	<td><%=b.apptDate%></td>
+	<td><%=b.billingtype%></td>
 	<%
 		if(!"true".equals(readonly)){
 	%>
-   <td align="center"><a href="javascript: setDemographic('<%=b.demoNo%>');"><%=b.demoName%></a></td>
+   <td><a href="javascript: setDemographic('<%=b.demoNo%>');"><%=b.demoName%></a></td>
 	<%}%>
-	<td align="center"><%=b.providerLastName%>,<%=b.providerFirstName%></td>
-	 <td align="center" title="<%=msp.getStatusDesc(b.reason)%>" ><%=msp.getStatusDesc(b.reason)==null?"&nbsp":msp.getStatusDesc(b.reason)%></td>
+	<td><%=b.providerLastName%>,<%=b.providerFirstName%></td>
+	 <td title="<%=msp.getStatusDesc(b.reason)%>" ><%=msp.getStatusDesc(b.reason)==null?"&nbsp":msp.getStatusDesc(b.reason)%></td>
 
 
-    <td align="center"><%=b.code%></td>
-    <td align="center" <%=isBadVal(incorrectVal)%> ><%=b.quantity%></td>
-    <td align="center" <%=isBadVal(incorrectVal)%> ><%=nf.format(Double.parseDouble(b.amount))%> </td>
-    <td align="center"><%=nf.format(pAmount)%> </td>
+    <td><%=b.code%></td>
+    <td <%=isBadVal(incorrectVal)%> ><%=b.quantity%></td>
+    <td <%=isBadVal(incorrectVal)%> ><%=nf.format(Double.parseDouble(b.amount))%> </td>
+    <td><%=nf.format(pAmount)%> </td>
     <%
     double dblAmtOwed = msp.getAmountOwing(b.billMasterNo,b.amount,b.billingtype);
     BigDecimal amtOwed = new BigDecimal(dblAmtOwed).setScale(2, BigDecimal.ROUND_HALF_UP);
     owedTotal = owedTotal.add(amtOwed);
 
     %>
-    <td align="center"><%=nf.format(amtOwed)%> </td>
-    <td align="center"><%=s(b.dx1)%></td>
+    <td><%=nf.format(amtOwed)%> </td>
+    <td><%=s(b.dx1)%></td>
 
     <td>
       <% if (adminAccess){ %>  
-          <a href="javascript: popupPage(700,1000,'adjustBill.jsp?billing_no=<%=b.billMasterNo%>&invoiceNo=<%=b.billing_no%>')" >Edit </a>
+          <a href="javascript: popupPage(700,1000,'adjustBill.jsp?billingmaster_no=<%=b.billMasterNo%>&invoiceNo=<%=b.billing_no%>')" >Edit </a>
       <% } %>
       
       
@@ -660,35 +556,45 @@ billTypes = "%";
     if (rowCount == 0) {
     %>
   <tr>
-    <td colspan="14" align="center"> No bills </td>
+    <td style="background-color:white;"> No bills </td>
   </tr>
   <% }%>
     </tbody>
   <tfoot>
   <tr class="sortbottom">
-    <logic:notEqual parameter="filterPatient" value="true">
-      <td align="center">&nbsp;</td>
-    </logic:notEqual>
-    <td align="center">&nbsp;</td>
-    <td align="center">&nbsp;</td>
-    <td align="center">&nbsp;</td>
-    <td align="center">&nbsp;</td>
-    <td align="center">Count:</td>
-    <td align="center"><%=bSearch.list.size()%></td>
-    <td align="center">&nbsp;</td>
-    <td align="center">Total:</td>
-    <td align="center"><%=nf.format(total.doubleValue())%></td>
-    <td align="center"><%=nf.format(paidTotal.doubleValue())%></td>
-    <td align="center"><%=nf.format(owedTotal.doubleValue())%></td>
-    <td align="center">&nbsp;</td>
-    <td align="center">&nbsp;</td>
+      <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+      <logic:notEqual parameter="filterPatient" value="true">
+          <td></td>
+      </logic:notEqual>
+    <td>Count:</td>
+    <td><%=bSearch.list.size()%></td>
+    <td></td>
+    <td>Total:</td>
+    <td><%=nf.format(total.doubleValue())%></td>
+    <td><%=nf.format(paidTotal.doubleValue())%></td>
+    <td><%=nf.format(owedTotal.doubleValue())%></td>
+    <td></td>
+    <td></td>
 
   </tr>
   </tfoot>
 </table>
-</div><!--row-->
 
-<script language='javascript'>
+
+<input type="hidden" id="submitOperation" name="submitOperation" value="">
+        <div class="row">
+<button id="resubmitButton" type="submit" class="btn btn-primary" onclick="setOperation('Reprocess and Resubmit Bill')">Reprocess And Resubmit</button>
+<button id="settleButton" type="submit" class="btn btn-primary" onclick="setOperation('Settle Bill')">Settle</button>
+            <input class="btn hidden-print" type='button' name='print' value='Print' onClick='window.print()'>
+        </div>
+                </form>
+
+<script type="text/javascript">
+
 	var startDate = $("#xml_vdate").datepicker({
 		format : "yyyy-mm-dd"
 	});
@@ -697,9 +603,9 @@ billTypes = "%";
 		format : "yyyy-mm-dd"
 	});
 </script>
-<script language="javascript" src="../../../commons/scripts/sort_table/css.js"/>
-<script language="javascript" src="../../../commons/scripts/sort_table/common.js"/>
-<script language="javascript" src="../../../commons/scripts/sort_table/standardista-table-sorting.js"/>
+<script type="text/javascript" src="../../../commons/scripts/sort_table/css.js" ></script>
+<script type="text/javascript" src="../../../commons/scripts/sort_table/common.js" ></script>
+<script type="text/javascript" src="../../../commons/scripts/sort_table/standardista-table-sorting.js" ></script>
 </div><!--container-->
 </body>
 </html>
@@ -714,9 +620,9 @@ String getReasonEx(String reason){
 }
 
 String isRejected(String billingNo,Properties p,boolean wcb){
-    String s = "&nbsp;";
+    String s = "";
     if (p.containsKey(billingNo)){
-        s = "<a href=\"javascript: popupPage(700,1000,'adjustBill.jsp?billing_no="+billingNo+"')\" > "+p.getProperty(billingNo)+"</a>";
+        s = "<a href=\"javascript: popupPage(700,1000,'adjustBill.jsp?billingmaster_no="+billingNo+"')\" > "+p.getProperty(billingNo)+"</a>";
     }
     return s;
 }
@@ -731,7 +637,7 @@ String isRejected(String billingNo,Properties p,boolean wcb){
 
     String s(String str){
         if (str == null || str.length() == 0 ){
-            str = "&nbsp;";
+            str = "";
         }
         return str;
     }

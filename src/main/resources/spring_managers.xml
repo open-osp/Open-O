@@ -11,6 +11,7 @@
 
 	<!-- Managed JPA Beans -->
  	<context:component-scan base-package="org.oscarehr.managers" />
+    <context:component-scan base-package="org.oscarehr.documentManager" />
     <context:component-scan base-package="org.oscarehr.common.service" />
     <context:component-scan base-package="org.oscarehr.casemgmt.service" />
     <context:component-scan base-package="oscar.oscarDemographic.pageUtil" />

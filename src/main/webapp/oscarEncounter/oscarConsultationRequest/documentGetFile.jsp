@@ -92,9 +92,5 @@ if(!authed) {
   
   } else {
 %>
-<jsp:forward page='../dms/errorpage.jsp'>
-	<jsp:param name="msg"
-		value='<bean:message key="dms.documentGetFile.msgFileNotfound"/>' />
-</jsp:forward>
-
+<bean:message key="dms.documentGetFile.msgFileNotfound"/>
 <%}%>

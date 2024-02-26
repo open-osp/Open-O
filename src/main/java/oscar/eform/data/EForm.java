@@ -25,10 +25,10 @@
 
 package oscar.eform.data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,9 +46,9 @@ import org.oscarehr.util.DigitalSignatureUtils;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import org.owasp.encoder.Encode;
 import oscar.eform.EFormLoader;
 import oscar.eform.EFormUtil;
+import oscar.oscarEncounter.data.EctFormData;
 import oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBeanHandler;
 import oscar.oscarEncounter.oscarMeasurements.util.WriteNewMeasurements;
 import oscar.util.StringBuilderUtils;
@@ -331,7 +331,7 @@ public class EForm extends EFormBase {
 					"<input type='hidden' id='_oscarproviderno' name='_oscarproviderno' value='" + this.providerNo + "' />" +
 					"<input type='hidden' id='_oscarfid' name='_oscarfid' value='" + this.fid + "' />");
 
-			this.formHtml = html.insert(scriptEndLoc, "<script type='text/javascript' src='../share/javascript/jquery/jquery-1.4.2.js'></script>" +
+			this.formHtml = html.insert(scriptEndLoc, "<script type='text/javascript' src='../library/jquery/jquery-3.6.4.min.js'></script>" +
 			"<script type='text/javascript' src='../js/eform_highlight.js'></script>").toString();
 		}
 	}
@@ -382,9 +382,8 @@ public class EForm extends EFormBase {
 
 	public void setContextPath(String contextPath) {
 		if (StringUtils.isBlank(contextPath)) return;
-
-		String oscarJS = contextPath + "/share/javascript/";
-		this.formHtml = this.formHtml.replace(jsMarker, oscarJS);
+		Path oscarJs = Paths.get(contextPath, "library");
+		this.formHtml = this.formHtml.replace(jsMarker, oscarJs + "/");
 	}
 	
 	public void setFdid(String fdid) {
@@ -902,21 +901,109 @@ public class EForm extends EFormBase {
 				}
 			}
 
-			String signatureCode = "<script type='text/javascript' src='${oscar_javascript_path}../jquery/jquery-1.4.2.js'></script>" +
-			"<script type='text/javascript' src='${oscar_javascript_path}signature.js'></script>" +
-			"<script type='text/javascript'>\n" +
-			"var _signatureRequestId = '" + signatureRequestId + "';\n" + 
-			"var _imageUrl = '" + imageUrl + "';\n" +
-			"var _storedImgUrl = '" + storedImgUrl + "';\n" +
-			"var _contextPath = '" + contextPath + "';\n" + 
-			"var _digitalSignatureRequestIdKey = '" + DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY + "';\n" +
-			"var _browserType = '" + browserType + "';\n" +
-			"var _demographicNo = '" + demographicNo + "';\n" +
-			"</script>";
+			String signatureCode = "<script type='text/javascript' src='../library/jquery/jquery-3.6.4.min.js'></script>" +
+					"<script type='text/javascript' src='${oscar_javascript_path}signature.js'></script>" +
+					"<script type='text/javascript'>\n" +
+					"var _signatureRequestId = '" + signatureRequestId + "';\n" +
+					"var _imageUrl = '" + imageUrl + "';\n" +
+					"var _storedImgUrl = '" + storedImgUrl + "';\n" +
+					"var _contextPath = '" + contextPath + "';\n" +
+					"var _digitalSignatureRequestIdKey = '" + DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY + "';\n" +
+					"var _browserType = '" + browserType + "';\n" +
+					"var _demographicNo = '" + demographicNo + "';\n" +
+					"</script>";
 
 
 			html.replace(signatureLoc, signatureLoc + signatureMarker.length(), signatureCode);
 			this.formHtml = html.toString();
 		}
 	}
+
+	/* For overriding or adding Javascript to every eform
+	 * Add path to Javascript resource in OSCAR source code.
+	 */
+	public void addJavascript(String javascriptPath) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("<script ");
+		stringBuilder.append("type='text/javascript' ");
+		stringBuilder.append("src='").append(javascriptPath);
+		stringBuilder.append("' ></script>");
+		addHeadElement(stringBuilder.toString());
+	}
+
+	/* For overriding or adding CSS to every eform
+	 * Add path to CSS resource in OSCAR source code.
+	 */
+	public void addCSS(String cssPath, String mediaType) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("<link ");
+		stringBuilder.append("href='").append(cssPath).append("' ");
+		stringBuilder.append("rel='stylesheet' type='text/css' ");
+		stringBuilder.append("media='").append(mediaType).append("'/>");
+		addHeadElement(stringBuilder.toString());
+	}
+
+	/*
+	 * Adds use of custom font library such as
+	 */
+	public void addFontLibrary(String fontPath) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("<style>");
+		stringBuilder.append("@font-face { font-family: dejavu; src: url('").append(fontPath).append("'); }</style>");
+		addHeadElement(stringBuilder.toString());
+	}
+
+	private void addHeadElement(String element) {
+		if(! this.formHtml.contains("<head>") && ! this.formHtml.contains("</head>")) {
+			this.formHtml = this.formHtml.replace("<html>", "<html><head></head>");
+		}
+		this.formHtml = this.formHtml.replace("</head>", element + "\n</head>");
+	}
+
+	public void addHiddenAttachments(List<String> attachedDocumentIds, List<String> attachedEFormIds, List<String> attachedHRMDocumentIds, List<String> attachedLabIds, List<EctFormData.PatientForm> attachedForms) {
+		for (String docId : attachedDocumentIds) {
+			addHiddenInputElement("delegate_docNo" + docId, "docNo", "delegateAttachment", docId, null);
+		}
+
+		for (String eformId : attachedEFormIds) {
+			addHiddenInputElement("delegate_eFormNo" + eformId, "eFormNo", "delegateAttachment", eformId, null);
+		}
+
+		for (String hrmId : attachedHRMDocumentIds) {
+			addHiddenInputElement("delegate_hrmNo" + hrmId, "hrmNo", "delegateAttachment", hrmId, null);
+		}
+
+		for (String labId : attachedLabIds) {
+			addHiddenInputElement("delegate_labNo" + labId, "labNo", "delegateAttachment", labId, null);
+		}
+
+		for (EctFormData.PatientForm form : attachedForms) {
+			addHiddenInputElement("entry_formNo" + form.getFormId(), null, "delegateOldFormAttachment", null, "data-formName='" + form.getFormName() + "' data-formDate='" + form.getEdited() + "'");
+			addHiddenInputElement("delegate_formNo" + form.getFormId(), "formNo", "delegateAttachment", form.getFormId(), null);
+		}
+	}
+
+	public void addHiddenInputElement(String id, String value) {
+		addHiddenInputElement(id, null, null, value, null);
+	}
+
+	public void addHiddenInputElement(String id, String name, String className, String value, String additionalProperties) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("<input type='hidden' ");
+		if (id != null) { stringBuilder.append("id='").append(id).append("' "); }
+		if (name != null) { stringBuilder.append("name='").append(name).append("' "); }
+		if (className != null) { stringBuilder.append("class='").append(className).append("' "); }
+		if (value != null) { stringBuilder.append("value='").append(value).append("' "); }
+		if (additionalProperties != null) { stringBuilder.append(additionalProperties); }
+		stringBuilder.append(">");
+		addBodyElement(stringBuilder.toString());
+	}
+
+	private void addBodyElement(String element) {
+		if(! this.formHtml.contains("<body>") && ! this.formHtml.contains("</body>")) {
+			this.formHtml = this.formHtml.replace("</html>", "<body></body></html>");
+		}
+		this.formHtml = this.formHtml.replace("</body>", element + "\n</body>");
+	}
+
 }

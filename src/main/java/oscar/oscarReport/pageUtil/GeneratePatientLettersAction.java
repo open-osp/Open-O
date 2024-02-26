@@ -54,8 +54,8 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import oscar.dms.EDoc;
-import oscar.dms.EDocUtil;
+import org.oscarehr.documentManager.EDoc;
+import org.oscarehr.documentManager.EDocUtil;
 import oscar.eform.APExecute;
 import oscar.oscarPrevention.reports.FollowupManagement;
 import oscar.oscarReport.data.ManageLetters;

@@ -38,12 +38,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
@@ -95,13 +94,6 @@ public final class MessageUploader {
 	public static String routeReport(LoggedInInfo loggedInInfo, String serviceName, MessageHandler h, String hl7Body, int fileId, RouteReportResults results) throws Exception {
 			
 		String retVal = "";
-		// Get the system preference to determine if a label should be applied to a version of a lab even if the labs inside the version change, defaulting to true to maintain current expected behavior
-		Boolean applyLabelDifferentLabs = true;
-		SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
-		SystemPreferences applyLabelDifferentLabsPreference = systemPreferencesDao.findPreferenceByName("sticky_label_different_labs");
-		if (applyLabelDifferentLabsPreference != null) {
-			applyLabelDifferentLabs = Boolean.parseBoolean(applyLabelDifferentLabsPreference.getValue());
-		}
 
 		if(h == null) {
 			throw new Exception("Unabled to continue. No valid handler found.");
@@ -263,46 +255,11 @@ public final class MessageUploader {
 			hl7TextInfo.setAccessionNumber(accessionNum);
 			hl7TextInfo.setSendingFacility(sendingFacility);
 			hl7TextInfo.setFillerOrderNum(fillerOrderNum);
+
+			label = mergeLabLabels(hl7TextInfoDao.searchByAccessionNumberOrderByObrDate(accessionNum), label);
 			hl7TextInfo.setLabel(label);
 
-			// If a past lab with the same AccessionNumber exist carry over the label
-			List<Hl7TextInfo> matchingLabs = hl7TextInfoDao.searchByAccessionNumberOrderByObrDate(accessionNum);
-			for (Hl7TextInfo matchingLab : matchingLabs) {
-				String currentLabel = matchingLab.getLabel();
-				// if the lab has an entered label to carry over
-				if (!StringUtils.isBlank(currentLabel) && !StringUtils.isBlank(label)) {
-					// compare labels and eliminate duplicates.
-					String[] labelArray = label.split(" \\| ");
-					if(labelArray != null && labelArray.length > 0) {
-						for (String labelItem : labelArray) {
-							String regex = "\\|?\\s?" + labelItem;
-							currentLabel = currentLabel.replaceAll(regex, "");
-						}
-					}
-					currentLabel.trim();
-					hl7TextInfo.setLabel( currentLabel.isEmpty() ? label : currentLabel + " | " + label);
-				}
-			}
 			hl7TextInfoDao.persist(hl7TextInfo);
-		}
-
-		if("true".equals(OscarProperties.getInstance().getProperty("inbox.labels.sticky","false"))) {
-			String latestLabel = "";
-			String multiID = Hl7textResultsData.getMatchingLabs(String.valueOf(hl7TextMessage.getId()));
-			for(String id: multiID.split(",")) {
-				if(!id.equals(String.valueOf(hl7TextMessage.getId()))) {
-					List<Hl7TextInfo> infos = hl7TextInfoDao.findByLabId(Integer.parseInt(id));
-					for(Hl7TextInfo info:infos) {
-						if(!StringUtils.isEmpty(info.getLabel()) && (applyLabelDifferentLabs || discipline.equals(info.getDiscipline()))) {
-							latestLabel = info.getLabel();
-						}
-					}
-				}
-			}
-			if(!StringUtils.isEmpty(latestLabel)) {
-				hl7TextInfo.setLabel(latestLabel);
-				hl7TextInfoDao.merge(hl7TextInfo);
-			}
 		}
 
 		String demProviderNo = null;
@@ -909,8 +866,42 @@ public final class MessageUploader {
 			
 			fileUploadCheckDao.remove(fuc.getId());
 		}
+	}
 
-			
-			
+	/**
+	 * Merge lab label arrays into one array.
+	 * String arrays are delineated with a pipe |
+	 */
+	public static String mergeLabLabels(List<Hl7TextInfo> currentLabs, String incoming) {
+		// If a past lab with the same AccessionNumber exist carry over the label
+		String mergedLabel = StringUtils.trimToEmpty(incoming);
+		if(currentLabs == null) {
+			currentLabs = Collections.emptyList();
+		}
+		for (Hl7TextInfo matchingLab : currentLabs) {
+			String currentLabel = matchingLab.getLabel();
+			// if the lab has an entered label to carry over
+			if (!StringUtils.isBlank(currentLabel) && !StringUtils.isBlank(mergedLabel)) {
+				// compare labels and eliminate duplicates.
+				String[] labelArray = mergedLabel.split("\\s?\\|\\s?");
+				for (String labelItem : labelArray) {
+					if(! labelItem.isEmpty()) {
+						String regex = Pattern.quote(labelItem) + "\\s?\\|?\\s?";
+						currentLabel = currentLabel.replaceAll(regex, "");
+					}
+				}
+				currentLabel = StringUtils.trimToEmpty(currentLabel);
+
+				if(! currentLabel.isEmpty()) {
+					mergedLabel = currentLabel + " | " + mergedLabel;
+				}
+
+				if(mergedLabel.startsWith("|")) {
+					mergedLabel = mergedLabel.substring(1);
+					mergedLabel = mergedLabel.trim();
+				}
+			}
+		}
+		return mergedLabel;
 	}
 }

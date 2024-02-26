@@ -41,17 +41,17 @@ if(!authed) {
 
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page
-	import="java.util.ArrayList, oscar.dms.*, oscar.oscarLab.ca.on.*, oscar.util.StringUtils"%>
-<%@page import="org.oscarehr.util.SessionConstants"%>
+	import="java.util.ArrayList, oscar.oscarLab.ca.on.*, oscar.util.StringUtils"%>
 <%@page	import="java.util.List"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="oscar.util.DateUtils" %>
 <%@ page import="org.oscarehr.hospitalReportManager.dao.HRMDocumentDao" %>
 <%@ page import="org.oscarehr.hospitalReportManager.dao.HRMDocumentToDemographicDao" %>
 <%@ page import="org.oscarehr.hospitalReportManager.model.HRMDocument" %>
 <%@ page import="org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic" %>
 <%@ page import="org.oscarehr.common.model.EFormData" %>
 <%@ page import="oscar.eform.EFormUtil" %>
+<%@ page import="org.oscarehr.documentManager.EDocUtil" %>
+<%@ page import="org.oscarehr.documentManager.EDoc" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 
@@ -65,7 +65,7 @@ if(!authed) {
 	<%
             ArrayList privatedocs = new ArrayList();
             privatedocs = EDocUtil.listDocs(loggedInInfo, demo, requestId, EDocUtil.ATTACHED);
-            EDoc curDoc;                                        
+            EDoc curDoc;
             for(int idx = 0; idx < privatedocs.size(); ++idx)
             {                    
                 curDoc = (EDoc)privatedocs.get(idx);                                            

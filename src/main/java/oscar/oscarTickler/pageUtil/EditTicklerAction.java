@@ -160,6 +160,7 @@ public class EditTicklerAction extends DispatchAction{
             tc.setProviderNo(providerNo);
 
             t.getComments().add(tc);
+            t.setUpdateDate(now); //set this explicitly to ensure this value is consistently updated if a comment is added (this might not otherwise happen if no other tickler fields are being updated when a comment is added)
             isComment = true;
         }
 

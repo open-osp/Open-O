@@ -25,19 +25,27 @@ package org.oscarehr.managers;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.oscarehr.common.dao.EFormDataDao;
 import org.oscarehr.common.model.EFormData;
+import org.oscarehr.common.model.enumerator.DocumentType;
 import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.PDFGenerationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import oscar.dms.ConvertToEdoc;
-import oscar.dms.EDoc;
+import org.oscarehr.documentManager.ConvertToEdoc;
+import org.oscarehr.documentManager.DocumentAttachmentManager;
+import org.oscarehr.documentManager.EDoc;
+import org.oscarehr.hospitalReportManager.HRMUtil;
+
 import oscar.eform.EFormUtil;
 import oscar.eform.data.EForm;
 import oscar.log.LogAction;
+import oscar.oscarEncounter.data.EctFormData;
 
 @Service
 public class EformDataManager {
@@ -50,6 +58,12 @@ public class EformDataManager {
 	
 	@Autowired
 	DocumentManager documentManager;
+
+	@Autowired
+	private DocumentAttachmentManager documentAttachmentManager;
+
+	@Autowired
+	private FormsManager formsManager;
 	
 	public EformDataManager() {
 		// Default
@@ -104,20 +118,37 @@ public class EformDataManager {
 		
 		return documentId;
 	}
+
+	public Integer saveEFormWithAttachmentsAsEDoc(LoggedInInfo loggedInInfo, String fdid, String demographicId, Path eFormPDFPath) throws PDFGenerationException {
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.UPDATE, demographicId)) {
+			throw new RuntimeException("missing required security object (_eform)");
+		}
+
+		EFormData eForm = eFormDataDao.find(Integer.parseInt(fdid));
+		EDoc eDoc = ConvertToEdoc.from(eForm, eFormPDFPath);
+		documentManager.moveDocumentToOscarDocuments(loggedInInfo, eDoc.getDocument(), eDoc.getFilePath());
+		eDoc.setFilePath(null);
+		return documentManager.saveDocument(loggedInInfo, eDoc);
+	}
 	
 	/**
 	 * Saves an form as PDF in a temp directory.
 	 *  
 	 * Path to a temp file is returned. Remember to change the .tmp filetype and to delete the tmp file when finished. 
 	 */
-	public Path createEformPDF( LoggedInInfo loggedInInfo, int fdid ) {
+	public Path createEformPDF( LoggedInInfo loggedInInfo, int fdid ) throws PDFGenerationException {
 		
 		if ( ! securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.UPDATE, null)) {
 			throw new RuntimeException("missing required security object (_eform)");
 		}
 
-		EFormData eformData = eFormDataDao.find( fdid );			
-		Path path = ConvertToEdoc.saveAsTempPDF(eformData);
+		EFormData eformData = eFormDataDao.find( fdid );
+		Path path = null;			
+		try {
+			path = ConvertToEdoc.saveAsTempPDF(eformData);
+		} catch (Exception e) {
+			throw new PDFGenerationException("Error Details: EForm [" + eformData.getFormName() + "] could not be converted into a PDF", e);
+		}
 		
 		if( Files.isReadable(path) ) {
 			LogAction.addLogSynchronous(loggedInInfo, "EformDataManager.saveEformDataAsPDF", "Document saved at " + path.toString() );
@@ -149,5 +180,44 @@ public class EformDataManager {
 
 		return results;    	
     }
+
+	public ArrayList<HashMap<String, ? extends Object>> getHRMDocumentsAttachedToEForm(LoggedInInfo loggedInInfo, String fdid, String demographicId) {
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.READ, demographicId)) {
+			throw new RuntimeException("missing required security object (_eform)");
+		}
+
+		List<String> attachedHRMDocumentIds = documentAttachmentManager.getEFormAttachments(loggedInInfo, Integer.parseInt(fdid), DocumentType.HRM, Integer.parseInt(demographicId));
+		ArrayList<HashMap<String, ? extends Object>> allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicId,false);		
+		ArrayList<HashMap<String, ? extends Object>> filteredHRMDocuments = new ArrayList<>(attachedHRMDocumentIds.size());
+		for (String hrmId : attachedHRMDocumentIds) {
+			for (HashMap<String, ? extends Object> hrmDocument: allHRMDocuments) {
+				if (Integer.parseInt(hrmId) == (Integer)hrmDocument.get("id")) {
+					filteredHRMDocuments.add(hrmDocument);
+				}
+			}
+		}
+		//return the subset of listHRMDocuments that is attached
+		return filteredHRMDocuments;
+	}
+
+	public List<EctFormData.PatientForm> getFormsAttachedToEForm(LoggedInInfo loggedInInfo, String fdid, String demographicId) {
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.READ, demographicId)) {
+			throw new RuntimeException("missing required security object (_eform)");
+		}
+
+		List<String> attachedForms = documentAttachmentManager.getEFormAttachments(loggedInInfo, Integer.parseInt(fdid), DocumentType.FORM, Integer.parseInt(demographicId));
+		List<EctFormData.PatientForm> filteredForms = new ArrayList<>(attachedForms.size());
+		List<EctFormData.PatientForm> allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicId), true, true);
+		for (String formId : attachedForms) {
+			for (EctFormData.PatientForm form : allForms) {
+				if ((form.getFormId()).equals(formId)) {
+					filteredForms.add(form);
+					break;
+				}
+			}
+		}
+
+		return filteredForms;
+	}
 
 }

@@ -31,8 +31,8 @@
 
 body {
 	background-color:#486ebd;
-	margin:0px;
-	padding:0px;
+	margin:0;
+	padding:0;
 	overscroll-behavior: none;
 	height: 100%;
 	line-height: 1 !important;
@@ -47,13 +47,18 @@ body {
 	overflow: auto;
 }
 
+table {
+	width:100%;
+	border-collapse: collapse;
+}
+
 
  table#firstTable {
     width:100%;
     position: fixed;
-    top: 0px;
-    left:0px;
-    right:0px;
+    top: 0;
+    left:0;
+    right:0;
     background-color:white;
     z-index:1000;
     border-bottom: 1px solid #c0c0c0;
@@ -63,14 +68,6 @@ table#firstTable tr td.icon-container {
 	padding-left: 10px;
 }
 
- table#scheduleTable {
-	 margin-top: 49px;
- }
-
- table#caseloadTable {
-	margin-top:35px;
-
- }
  table#caseloadTable tr.caseloadRow td:first-of-type {
 	background-color: whitesmoke !important;
  }
@@ -113,7 +110,7 @@ table#firstTable td#userSettings ul#userSettingsMenu li {
 
 tr#ivoryBar td, table#monthScheduleNavigation tr td {
     background-color: whitesmoke;
-	padding:0px 10px;
+	padding:0 10px;
 }
 
 tr td.infirmaryView {
@@ -122,7 +119,7 @@ tr td.infirmaryView {
 	left:0;
 	margin-left: unset;
     height:25px;
-	padding: 0px 5px;
+	padding: 0 5px;
 }
 
 td#dateAndCalendar {
@@ -184,7 +181,7 @@ td.appt .appt-container {
 div.apt-tag a {
 	padding:1px 3px;
 	display:inline-block;
-	margin:0px;
+	margin:0;
 }
 
 
@@ -200,7 +197,7 @@ div.apt-tag:empty {
 div.apt-tag a img {
 	width: 100% !important;
 	max-width: 18px;
-	margin: 0px !important;
+	margin: 0 !important;
 }
 
 div.appt-container div.navigation-tag {
@@ -208,7 +205,7 @@ div.appt-container div.navigation-tag {
 }
 
 .hourmin {
-	padding: 0px 3px;
+	padding: 0 3px;
 	border-top: #486ebd 2px solid;
 	border-bottom: #486ebd 2px solid;
 }
@@ -218,6 +215,10 @@ div.appt-container div.navigation-tag {
 	border-right: #486ebd 2px solid;
     width: 5%;
 	min-width:5%;
+}
+
+table#scheduleTable {
+	margin-top: 49px;
 }
 
 .scheduleTimeNot00 a, .scheduleTime00 a {
@@ -264,7 +265,7 @@ input,select,textarea {
 }
 
 td {
-	font-family: "Arial";
+	font-family: "Arial", sans-serif;
 	font-size: 12px;
 }
 
@@ -275,11 +276,11 @@ hr {
 p {
 	margin-right: 10px;
 	margin-left: 10px;
-	margin-top: 0px;
+	margin-top: 0;
 }
 
 .adhour {
-	font-family: "Arial";
+	font-family: "Arial", sans-serif;
 	font-size: 12px;
 	color: white;
 	display: block;
@@ -290,54 +291,47 @@ p {
 	margin-top: 15px;
 	margin-left: 100px;
 	margin-right: 140px;
-	font-family: "Arial Black";
+	font-family: "Arial Black", sans-serif;
 	font-size: 9px;
 	color: #00408f;
 }
 
 .Monthappt {
-	font-family: "Arial Black";
+	font-family: "Arial Black", sans-serif;
 	font-size: 8px;
 	color: black;
 }
 
 .title {
-	font-family: "Times New Roman";
 	font-size: 14px;
 	color: black;
 }
 
 .text3 {
 	font-size: 12px;
-	font-family: "Arial";
 }
 
 .date {
-	font-family: "Times New Roman";
 	font-size: 16px;
 	color: red;
 	background: yellow;
 }
 
 .datepname {
-	font-family: "Times New Roman";
 	font-size: 12px;
 }
 
 .dateAppointment {
         font-weight:bold;
-        font-family: "Times New Roman";
         font-size: 14px;
 }
 
 .datephour {
-	font-family: "Times New Roman";
 	font-size: 12px;
 	color: brown;
 }
 
 .datepreason {
-	font-family: "Times New Roman";
 	font-size: 12px;
 	color: green;
 }
@@ -397,7 +391,7 @@ div.reason-tag a {
 	display: none;
 	position: absolute;
 	background-color: #f9f9f9;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 	white-space:initial;
 	overflow-wrap: break-word;
 	z-index: 1000;
@@ -419,8 +413,8 @@ div.reason-tag a {
 
 .dashboardDropdown ul {
 	list-style-type: none;
-	padding:0px;
-	margin:0px;
+	padding:0;
+	margin:0;
 }
 .dropdown:hover .dashboardDropdown {
     display: block;

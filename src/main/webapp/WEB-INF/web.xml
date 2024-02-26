@@ -271,17 +271,6 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
-	
-	<servlet>
-		<servlet-name>Html2Pdf</servlet-name>
-		<servlet-class> org.oscarehr.common.printing.HtmlToPdfServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>Html2Pdf</servlet-name>
-		<url-pattern>/html2pdf</url-pattern>
-	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>UploadDocument</servlet-name>

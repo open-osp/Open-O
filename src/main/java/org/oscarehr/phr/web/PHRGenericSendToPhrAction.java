@@ -60,9 +60,9 @@ import org.oscarehr.util.SpringUtils;
 import org.oscarehr.util.XmlUtils;
 import org.w3c.dom.Document;
 
-import oscar.dms.EDoc;
-import oscar.dms.EDocFactory;
-import oscar.dms.EDocUtil;
+import org.oscarehr.documentManager.EDoc;
+import org.oscarehr.documentManager.EDocFactory;
+import org.oscarehr.documentManager.EDocUtil;
 import oscar.oscarLab.ca.all.pageUtil.LabPDFCreator;
 import oscar.oscarPrevention.pageUtil.PreventionPrintPdf;
 

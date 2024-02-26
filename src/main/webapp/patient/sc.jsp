@@ -31,7 +31,7 @@
   String demographic_no = (String) session.getAttribute("demo_no");
 %>
 <%@ page import="java.util.*, java.sql.*, oscar.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 
 <jsp:useBean id="checklist" class="oscar.OBChecklist_99_12" scope="page" />
 <jsp:useBean id="risks" class="oscar.OBRisks_99_12" scope="page" />

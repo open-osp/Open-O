@@ -536,7 +536,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
 
         function handleLab(formid,labid,action){
-            var url='../../../dms/inboxManage.do';
+            var url='../../../documentManager/inboxManage.do';
                                            var data='method=isLabLinkedToDemographic&labid='+labid;
                                            new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
 
@@ -731,7 +731,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 		<script>
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runMacro(name,formid, closeOnSuccess) {
-	          		 var url='../../../dms/inboxManage.do';
+	          		 var url='../../../documentManager/inboxManage.do';
 	                 var data='method=isLabLinkedToDemographic&labid=<%= segmentID %>';
 	                 new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
 	                 var json=transport.responseText.evalJSON();
@@ -901,13 +901,13 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                                         }
                                                     }
                                                 }
-                                                if( multiID.length > 1 ) {
+//                                                if( multiID.length > 1 ) {
                                                     if ( searchProviderNo != null ) { // null if we were called from e-chart
                                                         %><a href="labDisplay.jsp?segmentID=<%=segmentID%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&searchProviderNo=<%= searchProviderNo %>&all=true">All</a>&#160;<%
                                                     }else{
                                                         %><a href="labDisplay.jsp?segmentID=<%=segmentID%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&all=true">All</a>&#160;<%
                                                     }
-                                                }
+//                                                }
                                                 %>
                                             </div>
                                         </td>

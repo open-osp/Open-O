@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -116,7 +117,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import oscar.OscarProperties;
-import oscar.dms.EDocUtil;
+import org.oscarehr.documentManager.EDocUtil;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 //import oscar.oscarEncounter.pageUtil.EctSessionBean;
@@ -383,9 +384,28 @@ public class CaseManagementManager {
 		return caseManagementNoteDAO.getNotesByDemographicDateRange(demographic_no, startDate, endDate);
 	}
 
-	/* Return only those notes with archived set to zero */
+	/**
+	 * @deprecated
+	 * Use the authenticated method: getActiveNotes(LoggedInInfo loggedInInfo, String demographic_no, String[] issues)
+	 * Return only those notes with archived set to zero
+	 */
+	@Deprecated
 	public List<CaseManagementNote> getActiveNotes(String demographic_no, String[] issues) {
 		List<CaseManagementNote> notes = caseManagementNoteDAO.getActiveNotesByDemographic(demographic_no, issues);
+		return notes;
+	}
+
+	/* Return only those notes with archived set to zero */
+	public List<CaseManagementNote> getActiveNotes(LoggedInInfo loggedInInfo, String demographic_no, String[] issues) {
+
+  		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_demographic", SecurityInfoManager.READ, demographic_no)) {
+			throw new RuntimeException("Missing privileges to access this demographic (_demographic)");
+		}
+
+		List<CaseManagementNote> notes = caseManagementNoteDAO.getActiveNotesByDemographic(demographic_no, issues);
+		
+		LogAction.addLog(loggedInInfo, "CaseManagementManager.getActiveNotes", "Issues", Arrays.toString(issues), demographic_no, CaseManagementNote.class.toString());
+		
 		return notes;
 	}
 
@@ -1100,6 +1120,18 @@ public class CaseManagementManager {
 		Integer intDemoNo = ConversionUtils.fromIntString(demographicNo);
 		Integer intProgramId = ConversionUtils.fromIntString(programId);
 		caseManagementTmpSaveDao.remove(providerNo, intDemoNo, intProgramId);
+	}
+
+	public CaseManagementTmpSave getTmpSave(String providerNo, String demographicNo, String programId) {
+		// If maxTmpSave is "true", "yes", "on", it is treated as active
+		if (oscar.OscarProperties.getInstance().isPropertyActive("maxTmpSave")) {
+				Calendar cal = Calendar.getInstance();
+				cal.add(Calendar.DAY_OF_MONTH, -14);
+				Date twoWeeksAgo = cal.getTime();
+				return restoreTmpSave(providerNo, demographicNo, programId, twoWeeksAgo);
+		} else {
+				return restoreTmpSave(providerNo, demographicNo, programId);
+		}
 	}
 
 	public CaseManagementTmpSave restoreTmpSave(String providerNo, String demographicNo, String programId) {

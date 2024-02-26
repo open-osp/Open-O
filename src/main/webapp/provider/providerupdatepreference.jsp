@@ -28,7 +28,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
-<%@ page import="java.sql.*, java.util.*, oscar.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.sql.*, java.util.*, oscar.*" errorPage="/errorpage.jsp"%>
 <%@page import="org.oscarehr.common.model.ProviderPreference"%>
 <%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean"%>
 <%@page import="org.oscarehr.util.SpringUtils" %>

@@ -39,7 +39,7 @@ if(!authed) {
 }
 %>
 
-<%@ page import="java.lang.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.lang.*" errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.OscarProperties"%>
 <%
 	String demographic_no = request.getParameter("demographic_no") ;

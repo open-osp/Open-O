@@ -28,7 +28,7 @@
   String user_no = (String) session.getAttribute("user");
 %>
 <%@ page import="java.util.*, java.sql.*, java.io.*, oscar.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
 <html>

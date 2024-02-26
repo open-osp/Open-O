@@ -49,6 +49,19 @@ public class BillingBCDao extends BillingDao {
 	     return query.getResultList();
     }
 
+	/**
+	 * Selects service code, type, group, status and order from the ctl_bilingservice table.
+	 */
+	@NativeSql({"ctl_billingservice"})
+	@SuppressWarnings("unchecked")
+	public List<Object[]> findBillingServicesByType(String serviceType) {
+		Query query = entityManager.createNativeQuery("SELECT DISTINCT service_code, servicetype, service_group, status, service_order "
+				+ "FROM ctl_billingservice where servicetype = ? order by service_order");
+
+		query.setParameter(1, serviceType);
+
+		return query.getResultList();
+	}
 
 	/**
 	 * Selects service code, description, value and percentage from ctl_bilingservice and billingservice tables.
@@ -89,7 +102,7 @@ public class BillingBCDao extends BillingDao {
 	@SuppressWarnings("unchecked")
     @NativeSql("billingvisit")
 	public List<Object[]> findBillingVisits(String billRegion) {
-	    Query query = entityManager.createNativeQuery("SELECT visittype, visit_desc FROM billingvisit WHERE region = ?");
+	    Query query = entityManager.createNativeQuery("SELECT visittype, visit_desc FROM billingvisit WHERE region = ? ORDER BY visittype ASC");
 	    query.setParameter(1, billRegion);
 	    return query.getResultList();
     }

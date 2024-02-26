@@ -223,7 +223,7 @@ public class RecordUxService extends AbstractServiceImpl {
 		//}
 				
 		if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.documents", "r", null)) {
-			morelist.add(new MenuItemTo1(idCounter++, "Documents", "../dms/documentReport.jsp?function=demographic&doctype=lab&functionid="+demographicNo));
+			morelist.add(new MenuItemTo1(idCounter++, "Documents", "../documentManager/documentReport.jsp?function=demographic&doctype=lab&functionid="+demographicNo));
 		}
 		
 		if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.decisionSupportAlerts", "r", null)) {

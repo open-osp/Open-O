@@ -2557,6 +2557,9 @@ insert into documentDescriptionTemplate (doctype,description,descriptionShortcut
 insert into `secObjectName` (`objectName`) values('_rx.dispense');
 insert into `secObjPrivilege` values('doctor','_rx.dispense','x',0,'999998');
 
+insert into `secObjectName` (`objectName`) values('_rx.editPharmacy');
+insert into `secObjPrivilege` values('doctor','_rx.editPharmacy','x',0,'999998');
+insert into `secObjPrivilege` values('admin','_rx.editPharmacy','x',0,'999998');
 
 insert into ProductLocation (name) values ('Default');
 
@@ -2605,7 +2608,7 @@ INSERT INTO `property`(`name`, `value`, `provider_no`) VALUES ('integrator_patie
 
 INSERT INTO `oscarcommlocations`(`locationId`, `locationDesc`, `locationAuth`, `current1`, `addressBook`, `remoteServerURL`) VALUES (145, 'Oscar Users', NULL, 1, '<?xml version=\"1.0\" encoding=\"UTF-8\"?><addressBook><group><group></group></group></addressBook>', NULL);
 
-INSERT INTO `fax_config`(`id`, `url`, `siteUser`, `passwd`, `faxUser`, `faxPasswd`, `queue`, `active`, `faxNumber`, `senderEmail`) VALUES (1, '', '', '', '', '', '', 0, '', '');
+INSERT INTO `fax_config`( `id`, `url`, `siteUser`, `passwd`, `gatewayName`, `faxUser`, `faxPasswd`, `queue`, `active`, `faxNumber`,`faxReply`, `senderEmail`, `accountName`, `download`) VALUES ( 1, '', '', '', '','', '', '', 0, '', '','','',1);
 
 INSERT INTO `dxCodeTranslations` VALUES ('172', 'Skin Cancer', '1'), ('173', 'basal cell carcinoma', '2'), ('2429', 'Hyperthyroid', '3'), ('2449', 'Hypothyroid', '4'), ('2564', 'polycystic ovarian synd
 rome', '5'), ('2720', 'Hypercholesterolemia', '6'), ('2722', 'Mixed hyperlipidemia', '7'), ('2724', 'Cholesterol', '8'), ('274', 'Gout', '9'), ('2768', 'hypokalemia', '10'), ('2778', 'Retinitis pigment

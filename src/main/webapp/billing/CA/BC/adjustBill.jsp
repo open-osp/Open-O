@@ -52,6 +52,9 @@ if(!authed) {
 <%@page import="org.oscarehr.common.dao.DemographicDao" %>
 <%@page import="org.oscarehr.common.model.Provider" %>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@ page import="oscar.oscarBilling.ca.on.administration.GstControlAction" %>
+<%@ page import="oscar.oscarBilling.ca.bc.administration.GstReport" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session" />
 
 
@@ -97,22 +100,19 @@ if(!authed) {
 
   ////
   BillingFormData billform = new BillingFormData();
-  BillingFormData.BillingPhysician[] billphysician = billform.getProviderList();
-  BillingFormData.BillingVisit[] billvisit = billform.getVisitType(billRegion);
+  List<BillingFormData.BillingVisit> billvisit = billform.getVisitType(billRegion);
   request.setAttribute("billvisit",billvisit);
-  BillingFormData.Location[] billlocation = billform.getLocationList(billRegion);
-  BillingFormData.BillingForm[] billformlist = billform.getFormList();
   int bFlag = 0;
-  String billNo = request.getParameter("billing_no");
-  if (billNo == null){
-    billNo = (String) request.getAttribute("billing_no");
+  String billingmasterNo = request.getParameter("billingmaster_no");
+  if (billingmasterNo == null){
+    billingmasterNo = (String) request.getAttribute("billingmaster_no");
   }
   MSPReconcile msp = new MSPReconcile();
-  Properties allFields = msp.getBillingMasterRecord(billNo);
+  Properties allFields = msp.getBillingMasterRecord(billingmasterNo);
   MSPBillingNote billingNote = new MSPBillingNote();
-  String corrNote = billingNote.getNote(billNo);
+  String corrNote = billingNote.getNote(billingmasterNo);
   BillingNote  bNote = new BillingNote();
-  String messageNotes = bNote.getNote(billNo);
+  String messageNotes = bNote.getNote(billingmasterNo);
   //TODO get note for this record and put it on screen and then be able to save a new note
 
   GregorianCalendar now=new GregorianCalendar();
@@ -120,27 +120,30 @@ if(!authed) {
   int curMonth = (now.get(Calendar.MONTH)+1);
   int curDay = now.get(Calendar.DAY_OF_MONTH);
 
-  String codes[] = {"W","O","P","N","X","T","D"};
+  String codes[] = {"W","O","P","N","X","T","D","I"};
   request.setAttribute("codes",codes);
   String serviceLocation = allFields.getProperty("serviceLocation");
 
 
   BillingmasterDAO billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean("BillingmasterDAO");
-  Billingmaster billingmaster = billingmasterDAO.getBillingMasterByBillingMasterNo(billNo);
+  Billingmaster billingmaster = billingmasterDAO.getBillingMasterByBillingMasterNo(billingmasterNo);
   Billing bill = billingmasterDAO.getBilling(billingmaster.getBillingNo());
   BillingCodeData bcd =  new BillingCodeData();
 
   //fixes bug where invoice number is null when
   //bill changed to Private
-  Billingmaster bm = billingMasterDao.getBillingmaster(Integer.parseInt(billNo));
+  Billingmaster bm = billingMasterDao.getBillingmaster(Integer.parseInt(billingmasterNo));
   if(bm != null) {
 	  request.setAttribute("invoiceNo",String.valueOf(bm.getBillingNo()));
   }
+    GstReport gstReport = new GstReport();
+    String gstPercent = (new GstControlAction()).readDatabase().getProperty("gstPercent", "");
 
 %>
 <html>
 <head>
    <title>oscarBillingBC Correction</title>
+<script src="<%=request.getContextPath()%>/csrfguard" type="text/javascript"></script>
    <link rel="stylesheet" type="text/css" media="all" href="../../../share/calendar/calendar.css" title="win2k-cold-1" />
    <script type="text/javascript" src="../../../share/calendar/calendar.js"></script>
    <script type="text/javascript" src="../../../share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
@@ -159,7 +162,7 @@ if(!authed) {
 
 		function checkTextLimit(textField, maximumlength) {
          if (textField.value.length > maximumlength + 1){
-            alert("Maximun "+maximumlength+" characters");
+            alert("Maximum "+maximumlength+" characters");
          }
          if (textField.value.length > maximumlength){
             textField.value = textField.value.substring(0, maximumlength);
@@ -167,13 +170,13 @@ if(!authed) {
       }
 
       function correspondenceNote(){
-         if (document.ReProcessBilling.correspondenceCode.value == "0" ){
+         if (document.forms['reprocessBilling'].correspondenceCode.value == "0" ){
             HideElementById('CORRESPONDENCENOTE');
-         }else if (document.ReProcessBilling.correspondenceCode.value == "C" ){
+         }else if (document.forms['reprocessBilling'].correspondenceCode.value == "C" ){
             HideElementById('CORRESPONDENCENOTE');
-         }else if (document.ReProcessBilling.correspondenceCode.value == "N" ){
+         }else if (document.forms['reprocessBilling'].correspondenceCode.value == "N" ){
             ShowElementById('CORRESPONDENCENOTE');
-         }else {(document.ReProcessBilling.correspondenceCode.value == "B" )
+         }else {(document.forms['reprocessBilling'].correspondenceCode.value == "B" )
             ShowElementById('CORRESPONDENCENOTE');
          }
       }
@@ -201,10 +204,10 @@ if(!authed) {
 
                 function ScriptAttach(elementName ) {
                     var d = elementName;
-                    t0 = escape(document.ReProcessBilling.elements[d].value);
+                    t0 = escape(document.forms['reprocessBilling'].elements[d].value);
                     t1 = escape("");
                     t2 = escape("");
-                    awnd=rs('att','<rewrite:reWrite jspPage="billingDigNewSearch.jsp"/>?name='+t0 + '&name1=' + t1 + '&name2=' + t2 + '&search=&formElement=' +d+ '&formName=ReProcessBilling',820,660,1);
+                    awnd=rs('att','<rewrite:reWrite jspPage="billingDigNewSearch.jsp"/>?name='+t0 + '&name1=' + t1 + '&name2=' + t2 + '&search=&formElement=' +d+ '&formName=reprocessBilling',820,660,1);
                     awnd.focus();
                 }
 
@@ -220,18 +223,18 @@ if(!authed) {
                 }
 
                 function OtherScriptAttach() {
-                      t0 = escape(document.ReProcessBilling.service_code.value);
+                      t0 = escape(document.forms['reprocessBilling'].service_code.value);
                       t1 = escape("");
                       t2 = escape("");
-                      awnd=rs('att','<rewrite:reWrite jspPage="billingCodeNewSearch.jsp"/>?name='+t0 + '&name1=' + t1 + '&name2=' + t2 + '&search=&formName=ReProcessBilling&formElement=service_code',820,660,1);
+                      awnd=rs('att','<rewrite:reWrite jspPage="billingCodeNewSearch.jsp"/>?name='+t0 + '&name1=' + t1 + '&name2=' + t2 + '&search=&formName=reprocessBilling&formElement=service_code',820,660,1);
                       awnd.focus();
                 }
 
                 function ReferralScriptAttach(elementName) {
                      var d = elementName;
-                     t0 = escape(document.ReProcessBilling.elements[d].value);
+                     t0 = escape(document.forms['reprocessBilling'].elements[d].value);
                      t1 = escape("");
-                     awnd=rs('att','<rewrite:reWrite jspPage="billingReferCodeSearch.jsp"/>?name='+t0 + '&name1=' + t1 + '&name2=&search=&formElement=' +d+ '&formName=ReProcessBilling',600,600,1);
+                     awnd=rs('att','<rewrite:reWrite jspPage="billingReferCodeSearch.jsp"/>?name='+t0 + '&name1=' + t1 + '&name2=&search=&formElement=' +d+ '&formName=reprocessBilling',600,600,1);
                      awnd.focus();
                 }
 
@@ -247,7 +250,7 @@ function ShowElementById(ele){
 
 
 function checkDebitRequest(){
-   if (document.ReProcessBilling.submissionCode.value == "E" ){
+   if (document.forms['reprocessBilling'].submissionCode.value == "E" ){
       ShowElementById('DEBITREQUEST');
       ShowElementById('submitButton');
    }else{
@@ -290,16 +293,23 @@ function validateNum(el){
    return true;
 }
 
-
+function isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
 function checkSubmitType(){
 	var billtype = document.getElementById('status').value;
 	if (billtype == 'W'){
-		if(document.forms[0].WCBid == null){
+		if(document.forms[0].WCBid == null || document.forms[0].WCBid.value == ""){
 	       alert("Please select a WCB form");
 	       return false;
 	    }
 	}
-
+	//Simple validation to prevent billing unit being invalid
+	var billingUnit = document.getElementById('billingUnit').value;
+    if (!isNumeric(billingUnit)){
+        alert("You must enter a valid billing unit/quantity.");
+        return false;
+    }
 }
 function popup( height, width, url, windowName){
   var page = url;
@@ -318,7 +328,8 @@ function popFeeItemList(form,field){
      var height = 400;
      var serviceDate = document.getElementById('serviceDate').value;
      var str = document.forms[form].elements[field].value;
-     var url = '<rewrite:reWrite jspPage="support/billingfeeitem.jsp"/>'+'?form=' +form+ '&field='+field+'&feeField=billingAmount&corrections=1&searchStr=' +str+'&serviceDate='+serviceDate;
+     var providerNo = document.getElementById('providerNo').value;
+     var url = '<rewrite:reWrite jspPage="support/billingfeeitem.jsp"/>'+'?form=' +form+ '&field='+field+'&feeField=billingAmount&corrections=1&searchStr=' +str+'&serviceDate='+serviceDate+'&providerNo='+providerNo;
      var windowName = field;
      popup(height,width,url,windowName);
 }
@@ -336,11 +347,34 @@ function popupPage(vheight,vwidth,varpage) { //open a new popup window
 }
 
 //Rounding function seems to use the right rules for MSP
+let GST = <%=gstPercent.isEmpty() ? 0 : gstPercent%>;
 function calculateFee(){
  var billValue = document.getElementById("billValue").value;
  var billUnit  = document.getElementById("billingUnit").value;
- var roundedValue = Math.round(billValue * billUnit * 100)/100;
+ var withGst = document.getElementById("isGst").value === "true";
+ let subTotal = billValue * billUnit;
+ if (withGst && GST > 0){
+     let gstVal = GST/100;
+     let gstTotal = gstVal * subTotal;
+
+     document.getElementById("gstTotal").value = (Math.round(gstTotal * 100)/100).toFixed(2);
+     subTotal += gstTotal;
+ } else {
+     document.getElementById("gstTotal").value = '0.00';
+ }
+ var roundedValue = Math.round(subTotal * 100)/100;
  document.getElementById("billingAmount").value = roundedValue.toFixed(2);
+}
+
+function calculateGst(){
+    var billAmount  = document.getElementById("billingAmount").value;
+    var withGst = document.getElementById("isGst").value === "true";
+    if(withGst && GST > 0){
+        var gstTotal = (GST/(100 + GST)) * billAmount;
+        document.getElementById("gstTotal").value = (Math.round(gstTotal * 100)/100).toFixed(2);
+    }else {
+        document.getElementById("gstTotal").value = '0.00';
+    }
 }
 
 </script>
@@ -378,11 +412,11 @@ function calculateFee(){
     }%>
   <table width="100%" border="0" bgcolor="#FFFFFF">
     <tr>
-      <td  align="left"  class="bCellData"><font color="#000000">
+      <td  align="left"  class="bCellData">
          Office Claim No
       </td>
       <td   class="bCellData">
-         <%=billNo%>
+         <%=billingmasterNo%>
       </td>
       <td  align="left"  class="bCellData">
          <font color="#000000">Last update: <%=UpdateDate%></font>
@@ -407,8 +441,8 @@ document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
 </script>
     <table>
     <%
-        ArrayList li = msp.getAllC12Records(billNo);
-        li.addAll(msp.getAllS00Records(billNo));
+        ArrayList li = msp.getAllC12Records(billingmasterNo);
+        li.addAll(msp.getAllS00Records(billingmasterNo));
 
         for ( int i = 0; i < li.size(); i++){
         String rejReason = (String) li.get(i);
@@ -432,6 +466,9 @@ document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
     visittype = bill.getVisitType();
 
  BillType = allFields.getProperty("billingstatus");
+ if (BillType.equalsIgnoreCase("O") && bill.getBillingtype().equalsIgnoreCase("ICBC")) {
+     BillType = "I";
+ }
  Demographic d = demographicDao.getDemographic(DemoNo);
  if(d != null){
      DemoName = d.getFormattedName();
@@ -454,13 +491,13 @@ document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
  }
 
 %>
-  <br><html:form  action="/billing/CA/BC/reprocessBill" onsubmit="return checkSubmitType()">
+ <html:form styleId="reprocessBilling" action="/billing/CA/BC/reprocessBill" onsubmit="return checkSubmitType()">
 <input type="hidden" name="update_date" value="<%=UpdateDate%>"/>
 <input type="hidden" name="demoNo" value="<%=DemoNo%>"/>
 <input type="hidden" name="billNumber" value="<%=allFields.getProperty("billingNo")%>"/>
 <table width="100%" border="0">
   <tr bgcolor="#CCCCFF">
-     <td height="21" colspan="2" class="bCellData">Patient Information<input type="hidden" name ="billingmasterNo" value="<%=billNo%>" />
+     <td height="21" colspan="2" class="bCellData">Patient Information<input type="hidden" name ="billingmasterNo" value="<%=billingmasterNo%>" />
 
 	 <%if(BillType.equals("A")||BillType.equals("P")){%>
 	 <a href="#" onClick="popupPage(800,800, '../../../billing/CA/BC/billingView.do?billing_no=<%=request.getAttribute("invoiceNo")%>&receipt=yes')">View Invoice</a>
@@ -472,9 +509,9 @@ document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
     <td width="54%"  class="bCellData">
         Patient Name:
         <a href=# onClick="popupPage2('../../../demographic/demographiccontrol.jsp?demographic_no=<%=DemoNo%>&displaymode=edit&dboperation=search_detail');return false;" title="<bean:message key="provider.appointmentProviderAdminDay.msgMasterFile"/>">
-        <%=DemoName%>
+        <%=Encode.forHtmlContent(DemoName)%>
         </a>
-        <input type="hidden" name="demo_name" value="<%=DemoName%>">
+        <input type="hidden" name="demo_name" value="<%=Encode.forHtmlAttribute(DemoName)%>">
     </td>
     <td width="46%"  class="bCellData">Health# :
       <% if (HCTYPE != null && HCTYPE.equals("BC")){ %>
@@ -500,11 +537,11 @@ document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
   <tr>
     <td  class="bCellData">
        Address: <%=DemoAddress%>
-       <input type="hidden" name="demo_address" value="<%=DemoAddress%>">
+       <input type="hidden" name="demo_address" value="<%=Encode.forHtmlAttribute(DemoAddress)%>">
     </td>
     <td  class="bCellData">
        City: <%=DemoCity%>
-       <input type="hidden" name="demo_city" value="<%=DemoCity%>">
+       <input type="hidden" name="demo_city" value="<%=Encode.forHtmlAttribute(DemoCity)%>">
     </td>
   </tr>
   <tr bgcolor="#EEEEFF">
@@ -566,7 +603,7 @@ document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
     </td>
     <td width="46%"  class="bCellData">
         Billing Physician#:
-        <select style="font-size:80%;" name="providerNo">
+        <select style="font-size:80%;" name="providerNo" id="providerNo">
             <option value="">--- Select Provider ---</option>
             <% 
                // Retrieving Provider
@@ -579,7 +616,7 @@ document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
                     proOHIP = p.getProviderNo();
 
             %>
-            <option value="<%=proOHIP%>" <%=Provider.equals(proOHIP)?"selected":""%>> <%=proOHIP%> | <%=proLast%>, <%=proFirst%></option>
+            <option value="<%=proOHIP%>" <%=Provider.equals(proOHIP)?"selected":""%>> <%=proOHIP%> | <%=Encode.forHtmlContent(proLast+", "+proFirst)%></option>
             <% } }%>
             <input type="hidden" name="xml_provider_no" value="<%=Provider%>">
     </td>
@@ -589,13 +626,12 @@ document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
     <td width="54%"  class="bCellData">
         Visit Type:
         <input type="hidden" name="xml_visittype" value="<%=visittype%>">
-              <select name="serviceLocation" style="font-size:80%;">
+              <select name="serviceLocation" style="font-size:80%;max-width:300px;">
               <%
-              for (int i = 0; i < billvisit.length; i++) {
-                oscar.oscarBilling.ca.bc.data.BillingFormData.BillingVisit visit = billvisit[i];
-                String selected = serviceLocation.equals(visit.getVisitType())?"selected":"";
+              for (BillingFormData.BillingVisit billingVisit : billvisit) {
+                String selected = serviceLocation.equals(billingVisit.getVisitType())?"selected":"";
               %>
-              <option value="<%=visit.getVisitType()%>" <%=selected%>><%=visit.getDescription()%> </option>
+              <option value="<%=Encode.forHtmlAttribute(billingVisit.getVisitType())%>" <%=selected%>><%=Encode.forHtmlContent(billingVisit.getDisplayName())%> </option>
               <%
               }
               %>
@@ -671,8 +707,10 @@ document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
 <%
 BillingService billService = bcd.getBillingCodeByCode(allFields.getProperty("billingCode"),billingmaster.getServiceDateAsDate());
 String billValue= "0.00";
+boolean gstFlag = false;
 if(billService != null){
     billValue = billService.getValue();
+    gstFlag = billService.getGstFlag();
 }
 %>
 <table width="100%" border=1>
@@ -690,12 +728,15 @@ if(billService != null){
       <td  class="bCellData">
 
         <input type="text" style="font-size:80%;" name="service_code" value="<%=allFields.getProperty("billingCode")%>" size="10" >
-        <input type="button" onClick="javascript:popFeeItemList('ReProcessBilling','service_code');return false;" value="Search/Update"/>
+        <input type="button" onClick="javascript:popFeeItemList('reprocessBilling','service_code');return false;" value="Search/Update"/>
       </td>
       <td width="50%"  class="bCellData">
-        <%=billform.getServiceDesc(allFields.getProperty("billingCode"),billRegion)%>   ($<span id="valueDisplay"><%=billValue%></span>)
+          <span id="description"><%=billform.getServiceDesc(allFields.getProperty("billingCode"),billRegion)%></span>   ($<span id="valueDisplay"><%=billValue%></span>)
         <input type="hidden" value="<%=billValue%>" id="billValue"/>
+        <input type="hidden" value="<%=gstFlag%>" id="isGst"/>
         <input type="button" value="Recalculate" onclick="calculateFee()"/>
+          <small style="float: right; display: <%=gstFlag? "" : "none"%>" id="currentGST"><%=("+ " + gstPercent + "% GST")%></small>
+          <input type="hidden" name="gstTotal" id="gstTotal" value="<%=allFields.getProperty("gst", "0.00")%>"/>
       </td>
       <td  class="bCellData">
         <input type="hidden" name="billing_unit" value="<%=allFields.getProperty("billingUnit")%>">
@@ -704,7 +745,7 @@ if(billService != null){
       <td   class="bCellData" nowrap>
         <div align="right">
            <input type="hidden" name="billing_amount" value="<%=allFields.getProperty("bilAmount")%>">
-           <input type="text" style="font-size:80%;" size="8" maxlength="8" name="billingAmount" value="<%=allFields.getProperty("billAmount")%>" onChange="javascript:validateNum(this)" id="billingAmount">
+           <input type="text" style="font-size:80%;" size="8" maxlength="8" name="billingAmount" value="<%=allFields.getProperty("billAmount")%>" onChange="javascript:validateNum(this); calculateGst()" id="billingAmount">
         </div>
       </td>
 	  <td>
@@ -720,8 +761,6 @@ if(billService != null){
     </tr>
  </table>
  <table width="100%" border=1>
-  <%
-   %>
 
     <tr>
         <td colspan=2 width="75%">
@@ -905,7 +944,7 @@ if(billService != null){
 
       <td colspan="3">
       <jsp:include flush="false" page="billTransactions.jsp">
-        <jsp:param name="billMasterNo" value="<%=billNo%>"/>
+        <jsp:param name="billMasterNo" value="<%=billingmasterNo%>"/>
       </jsp:include>
       </td>
 
@@ -1012,7 +1051,7 @@ if(billService != null){
           <td colspan="4"  class="bCellData">
             <input type="submit" name="submit" value="Reprocess Bill">
             <input type="submit" name="submit" value="Resubmit Bill">
-            <input type="submit" name="submit" value="Reprocess and Resubmit Bill" onClick="checkSubmitType()">
+            <input type="submit" name="submit" id="reprocessAndReSubmitBill" value="Reprocess and Resubmit Bill">
             <input type="submit" name="submit" value="Settle Bill">
 
           </td>
@@ -1020,7 +1059,10 @@ if(billService != null){
 <%}else{%>
        <tr>
           <td colspan="4"  class="bCellData">
-            <input type="submit" name="submit" id="submitButton" style="display:none;" value="Reprocess and Resubmit Bill" onClick="checkSubmitType()">
+            <input type="submit" name="submit" id="submitButton" style="display:none;" value="Reprocess and Resubmit Bill">
+    <% if (!bill.getBillingtype().equals("Pri")) { %>
+            <input type="submit" name="submit" value="Revert to PWE">
+    <% } %>
           </td>
        </tr>
 

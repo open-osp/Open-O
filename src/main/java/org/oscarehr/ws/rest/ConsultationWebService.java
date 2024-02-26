@@ -85,8 +85,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import net.sf.json.JSONObject;
-import oscar.dms.EDoc;
-import oscar.dms.EDocUtil;
+import org.oscarehr.documentManager.EDoc;
+import org.oscarehr.documentManager.EDocUtil;
 import oscar.eform.EFormUtil;
 import oscar.oscarDemographic.data.RxInformation;
 import oscar.oscarLab.ca.on.CommonLabResultData;
@@ -569,7 +569,7 @@ public class ConsultationWebService extends AbstractServiceImpl {
 	
 	private void getDocuments(List<EDoc> edocs, boolean attached, List<ConsultationAttachmentTo1> attachments) {
 		for (EDoc edoc : edocs) {
-			String url = "dms/ManageDocument.do?method=display&doc_no="+edoc.getDocId();
+			String url = "documentManager/ManageDocument.do?method=display&doc_no="+edoc.getDocId();
 			attachments.add(new ConsultationAttachmentTo1(ConversionUtils.fromIntString(edoc.getDocId()), ConsultationAttachmentTo1.TYPE_DOC, attached, edoc.getDescription(), url));
 		}
 	}

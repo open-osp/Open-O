@@ -31,7 +31,7 @@
 <%@page import="java.net.URLEncoder"%>
 <%@page import="oscar.OscarProperties"%>
 <%@page import="java.util.HashMap, oscar.log.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 	
 <%
 	String message = null;    		

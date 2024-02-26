@@ -96,7 +96,7 @@ public class FrmBCAR2020Record extends FrmRecord {
             props.setProperty("t_patientProvince", demographic.getProvince());
             props.setProperty("t_patientPostal", demographic.getPostal());
             props.setProperty("t_patientPhone", demographic.getPhone());
-            props.setProperty("t_patientPreferredName", demographic.getPrefName());
+            props.setProperty("t_patientPreferredName", demographic.getPrefName() + " / " + demographic.getPronoun());
             props.setProperty("t_patientPhoneWork", demographic.getPhone2());
             String cell = demographicExtDao.getValueForDemoKey(demographicNo, "demo_cell");
             if (cell != null) {

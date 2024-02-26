@@ -1,4 +1,43 @@
 
+
+table {
+    border-collapse: collapse;
+    margin:0;
+    padding:0;
+    width:100%;
+}
+
+table#editDemographic {
+    width:100%;
+    padding: 0;
+    margin: 0 !important;
+}
+table#editDemographic tr, table#editDemographic tr td table#waitingListTable tr {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    width:100%;
+}
+table#editDemographic tr td, table#editDemographic tr td table#waitingListTable tr td {
+    display:flex;
+    align-items: stretch;
+    width:100%;
+    margin:0 !important;
+}
+table#editDemographic tr td input, table#editDemographic tr td select, table#editDemographic tr td textarea{
+    width:100% !important;
+}
+
+table#editDemographic tr td b, table#editDemographic tr td strong, .alignRight{
+    text-indent: 5px
+}
+
+table#editDemographic tr:nth-of-type(odd){
+    background-color:white;
+}
+
+
 #pup {
   position:absolute;
   z-index:200; /* aaaalways on top*/
@@ -27,11 +66,10 @@ div.demographicSection h3 {
    background-color: #ccccff;
    font-size: 8pt;
    font-variant:small-caps;
-   font:bold;
-   margin-top:0px;
-   padding-top:0px;
-   margin-bottom:0px;
-   padding-bottom:0px;
+   margin-top:0;
+   padding-top:0;
+   margin-bottom:0;
+   padding-bottom:0;
 }
 
 div.demographicSection ul{
@@ -41,10 +79,10 @@ div.demographicSection ul{
        list-style-position:outside;
        padding-left:1px;
        margin-left:1px;
-       margin-top:0px;
+       margin-top:0;
        padding-top:1px;
-       margin-bottom:0px;
-       padding-bottom:0px;
+       margin-bottom:0;
+       padding-bottom:0;
 }
 
 
@@ -56,9 +94,6 @@ white-space: nowrap;
 
 div.demographicWrapper {
   background-color: #eeeeff;
-  margin-top: 5px;
-  margin-left:1px;
-  margin-right:1px;
 }
 
 /* popup menu style for encounter reason */

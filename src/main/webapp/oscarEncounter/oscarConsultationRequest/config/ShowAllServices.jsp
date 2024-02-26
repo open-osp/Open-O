@@ -44,9 +44,9 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<!DOCTYPE html>
 <html:html locale="true">
-<%//oscar.consultationRequest.pageUtil.ShowAllServicesUtil showAllServicesUtil = new oscar.consultationRequest.pageUtil.ShowAllServicesUtil();
-%>
+
 <jsp:useBean id="showAllServicesUtil" scope="session"
 	class="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConShowAllServicesUtil" />
 
@@ -57,18 +57,18 @@ if(!authed) {
 	key="oscarEncounter.oscarConsultationRequest.config.ShowAllServices.title" />
 </title>
 <html:base />
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+	<script>
+		function BackToOscar()
+		{
+			window.close();
+		}
+	</script>
+	<link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
 </head>
-<script language="javascript">
-function BackToOscar()
-{
-       window.close();
-}
-</script>
-<link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
+
 <body class="BodyStyle" vlink="#0000FF">
 <html:errors />
-<!--  -->
+<div id="service-providers-wrapper" style="margin:auto 10px;">
 <table class="MainTable" id="scrollNumber1" name="encounterTable">
 	<tr class="MainTableTopRow">
 		<td class="MainTableTopRowLeftColumn">Consultation</td>
@@ -90,8 +90,7 @@ function BackToOscar()
 		</td>
 		<td class="MainTableRightColumn">
 		<table cellpadding="0" cellspacing="2"
-			style="border-collapse: collapse" bordercolor="#111111" width="100%"
-			height="100%">
+			style="border-collapse: collapse" bordercolor="#111111" width="100%">
 
 			<!----Start new rows here-->
 			<tr>
@@ -119,10 +118,6 @@ function BackToOscar()
 									<td>
 									<%
                                           out.print("<a href=\"../../../oscarEncounter/ShowAllServices.do?serviceId="+id+"&serviceDesc="+desc+"\">"+desc+"</a>");
-
-                                         // <html:link page="/ShowAllServices.do" paramId="serviceId" paramName="showAllServicesUtil">
-                                         // sad
-                                         // </html:link>
                                        %>
 									</td>
 								</tr>
@@ -134,11 +129,7 @@ function BackToOscar()
 				</table>
 				</td>
 			</tr>
-			<!----End new rows here-->
 
-			<tr height="100%">
-				<td></td>
-			</tr>
 		</table>
 		</td>
 	</tr>
@@ -147,5 +138,6 @@ function BackToOscar()
 		<td class="MainTableBottomRowRightColumn"></td>
 	</tr>
 </table>
+</div>
 </body>
 </html:html>

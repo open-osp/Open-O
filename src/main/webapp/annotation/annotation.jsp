@@ -52,7 +52,7 @@
 		oscar.oscarEncounter.data.EctProgram,
 		java.util.Date, java.util.List"%>
 <%@page import="oscar.log.LogAction, oscar.log.LogConst"%>
-<%@page import="oscar.dms.EDocUtil"%>
+<%@page import="org.oscarehr.documentManager.EDocUtil"%>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>

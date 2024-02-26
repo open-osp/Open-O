@@ -48,7 +48,7 @@ if(!authed) {
 <body>
 <%@ page
 	import="java.io.*, java.sql.*, java.util.*,java.net.*, oscar.*, java.math.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 
 
 <jsp:useBean id="dbBillingDataBean" scope="page"

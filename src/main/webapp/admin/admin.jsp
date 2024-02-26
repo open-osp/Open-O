@@ -55,7 +55,7 @@
 	String userlastname = (String)session.getAttribute("userlastname");
 %>
 
-<%@ page errorPage="errorpage.jsp"%>
+<%@ page errorPage="/errorpage.jsp"%>
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 <%
 	String country = request.getLocale().getCountry();

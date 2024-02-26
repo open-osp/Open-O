@@ -43,6 +43,9 @@ import org.oscarehr.util.MiscUtils;
 
 import oscar.OscarProperties;
 
+/**
+ * Class for use with the Ontario MD / eHealth eConsult project
+ */
 public class EConsultAction extends DispatchAction  {
    
 	private final OscarProperties oscarProperties = OscarProperties.getInstance();

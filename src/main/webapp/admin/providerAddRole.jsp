@@ -24,19 +24,23 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-
 <%@ page errorPage="../errorpage.jsp"%>
 <%@ page import="java.util.*"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+
 <%@ page import="oscar.login.*"%>
 <%@ page import="oscar.log.*"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.SecRole" %>
 <%@ page import="org.oscarehr.common.dao.SecRoleDao" %>
 <%@ page import="org.oscarehr.PMmodule.utility.RoleCache" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%
 	SecRoleDao secRoleDao = SpringUtils.getBean(SecRoleDao.class);
 
@@ -55,16 +59,18 @@
 %>
 
 <%
+  java.util.ResourceBundle oscarRec = ResourceBundle.getBundle("oscarResources", request.getLocale());
+  String searchFirst = oscarRec.getString("admin.provideraddrole.title2");
   int ROLENAME_LENGTH = 30;
   String ip = request.getRemoteAddr();
-  String msg = "Type in a role name and search it first to see if it is available.";
+  String msg = searchFirst;
   String role_name = request.getParameter("role_name");
   String action = "search"; // add/edit
   Properties	prop  = new Properties();
 
   if (request.getParameter("submit") != null && request.getParameter("submit").equals("Save")) {
     // check the input data
-
+    String encodedRoleName = Encode.forHtmlContent(StringUtils.trimToEmpty(role_name));
     if(request.getParameter("action").startsWith("edit")) {
       	// update the code
       	SecRole secRole = secRoleDao.findByName(request.getParameter("action").substring(4));
@@ -72,12 +78,12 @@
 			secRole.setName(role_name);
 			secRoleDao.merge(secRole);
 			RoleCache.reload();
-			msg = role_name + " is updated.<br>" + "Type in a role name and search it first to see if it is available.";
+			msg = encodedRoleName + " is updated.<br>" + searchFirst;
   			action = "search";
 		    prop.setProperty("role_name", role_name);
 		    LogAction.addLog(curUser_no, LogConst.UPDATE, LogConst.CON_ROLE, role_name, ip);
 		} else {
-			msg = role_name + " is <font color='red'>NOT</font> updated. Action failed! Try edit it again." ;
+			msg = encodedRoleName + " is <font color='red'>NOT</font> updated. Action failed! Try edit it again." ;
 		    action = "edit" + role_name;
 		    prop.setProperty("role_name", role_name);
 		}
@@ -90,12 +96,12 @@
 			secRoleDao.persist(secRole);
 			RoleCache.reload();
 
-  			msg = role_name + " is added.<br>" + "Type in a role name and search it first to see if it is available.";
+  			msg = encodedRoleName + " is added.<br>" + searchFirst;
   			action = "search";
 		    prop.setProperty("role_name", role_name);
 		    LogAction.addLog(curUser_no, LogConst.ADD, LogConst.CON_ROLE, role_name, ip);
 		} else {
-      		msg = "You can <font color='red'>NOT</font> save the role  - " + role_name + ". Please search the role name first.";
+      		msg = "You can <font color='red'>NOT</font> save the role  - " + encodedRoleName + ". Please search the role name first.";
   			action = "search";
 		    prop.setProperty("role_name", role_name);
 		}
@@ -125,14 +131,19 @@
   }
 %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE HTML>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Add/Edit Role</title>
+<title><bean:message key="admin.admin.addRole"/></title>
+<script src="${pageContext.request.contextPath}/js/global.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
 
 <script type="text/javascript" language="JavaScript">
       <!--
@@ -161,7 +172,7 @@
 	        var b = true;
 	        if(document.forms[0].role_name.value.length<2){
 	            b = false;
-	            alert ("You must type in a role name.");
+	            alert ("<bean:message key="admin.provideraddrole.msgyoumusttype"/>");
 	        }
 	        return b;
 	    }
@@ -201,62 +212,54 @@
 	    }
 //-->
 
-</script>
-</head>
-<body bgcolor="ivory" onLoad="setfocus()" style="margin: 0px">
-<table BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
-	<tr>
-		<td align="left">&nbsp;</td>
-	</tr>
-</table>
-
-<center>
-<table BORDER="1" CELLPADDING="0" CELLSPACING="0" WIDTH="80%">
-	<tr BGCOLOR="#CCFFFF">
-		<th><%=msg%></th>
-	</tr>
-</table>
-</center>
-<form method="post" name="baseurl" action="providerAddRole.jsp">
-<table width="100%" border="0" cellspacing="2" cellpadding="2">
-	<tr>
-		<td>&nbsp;</td>
-	</tr>
-	<tr bgcolor="#EEEEFF">
-		<td align="right"><b>Role name</b></td>
-		<td><input type="text" name="role_name"
-			value="<%=prop.getProperty("role_name", "")%>" size='20'
-			maxlength='30' /> <input type="submit" name="submit" value="Search"
-			onclick="javascript:return onSearch();" /></td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-	</tr>
-	<tr>
-		<td align="center" bgcolor="#CCCCFF" colspan="2"><input
-			type="hidden" name="action" value='<%=action%>' /> <% if(!"search".equals(action)) {%>
-		<input type="submit" name="submit"
-			value="<bean:message key="admin.resourcebaseurl.btnSave"/>"
-			onclick="javascript:return onSave();" /> <% }%> 
-		</td>
-	</tr>
-</table>
-</form>
-
-<table>
-	<tr>
-		<td>Role Name:</td>
-	</tr>
+	$(document).ready(function() {
+        var currentRoles = [
 	<%
 	List<SecRole> secRoles = secRoleDao.findAll();
 	for(SecRole secRole:secRoles) {
 		%>
-		<tr>
-			<td><%=secRole.getName()%></td>
-		</tr>
+		"<%=Encode.forHtmlAttribute(secRole.getName())%>",
 	<%}%>
+        ""
+        ];
+		$("#role_name").autocomplete( {
+			source: currentRoles,
+			minLength: 2
+			}
+		);
 
-</table>
+
+    });
+</script>
+</head>
+<body onLoad="setfocus()" >
+<h4><bean:message key="admin.admin.addRole"/></h4>
+
+<span style="display: inline-block; width:100%; margin:auto; text-align:center;" class="alert"><%=msg%></span>
+<br><br>
+<div class="well">
+<form method="post" name="baseurl" action="providerAddRole.jsp" class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label" for="role_name" ><bean:message key="admin.provideraddrole.rolename"/></label>
+    <div class="controls">
+      <input type="text" name="role_name" id="role_name"
+			value="<%=Encode.forHtmlAttribute(prop.getProperty("role_name", ""))%>"
+			maxlength='30' >
+        <input type="submit" name="submit" value="Search" class="btn"
+			onclick="javascript:return onSearch();" >
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <input
+			type="hidden" name="action" value='<%=action%>' /> <% if(!"search".equals(action)) {%>
+		<input type="submit" name="submit" class="btn btn-primary"
+			value="<bean:message key="admin.resourcebaseurl.btnSave"/>"
+			onclick="javascript:return onSave();" > <% }%>
+    </div>
+  </div>
+</form>
+</div>
+
 </body>
 </html:html>

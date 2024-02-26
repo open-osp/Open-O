@@ -262,7 +262,7 @@ boolean isMulitSites = oscarProp.getBooleanProperty("multisites", "on");
 				if (site != null) {
 					if (site.getSiteLogoId() != null && site.getSiteLogoId() > 0) {
 					%>
-						<img src="<%=request.getContextPath() %>/dms/ManageDocument.do?method=display&doc_no=<%=site.getSiteLogoId() %>" />
+						<img src="<%=request.getContextPath() %>/documentManager/ManageDocument.do?method=display&doc_no=<%=site.getSiteLogoId() %>" />
 					<%
 					} else {
 					%>

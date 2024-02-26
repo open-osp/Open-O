@@ -29,7 +29,7 @@
   String user_no = (String) session.getAttribute("user");
   String resource_baseurl = "http://resource.oscarmcmaster.org/oscarResource/";
 %>
-<%@ page import="java.util.*, java.sql.*, java.net.URLEncoder, oscar.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, java.net.URLEncoder, oscar.*" errorPage="/errorpage.jsp"%>
 
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.common.dao.DemographicAccessoryDao" %>

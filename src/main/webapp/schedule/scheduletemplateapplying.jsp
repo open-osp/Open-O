@@ -205,14 +205,14 @@ function displayTemplate(s) {
 
 function selectrschedule(s) {
     var ref = "<rewrite:reWrite jspPage="scheduletemplateapplying.jsp"/>";
-    ref += "?provider_no=<%=request.getParameter("provider_no")%>&provider_name=<%=request.getParameter("provider_name")%>";
+    ref += "?provider_no=<%=request.getParameter("provider_no")%>&provider_name=<%=URLEncoder.encode(request.getParameter("provider_name"))%>";
     ref += "&sdate=" +s.options[s.selectedIndex].value;
     self.location.href = ref;
 }
 function onBtnDelete(s) {
   if( confirm("<bean:message key="schedule.scheduletemplateapplying.msgDeleteConfirmation"/>") ) {
     var ref = "<rewrite:reWrite jspPage="scheduletemplateapplying.jsp"/>";
-    ref += "?provider_no=<%=request.getParameter("provider_no")%>&provider_name=<%=request.getParameter("provider_name")%>";
+    ref += "?provider_no=<%=request.getParameter("provider_no")%>&provider_name=<%=URLEncoder.encode(request.getParameter("provider_name"))%>";
     ref += "&sdate=" +s.options[s.selectedIndex].value;
     ref += "&delete=1&deldate=all";
     self.location.href = ref;

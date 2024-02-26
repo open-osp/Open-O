@@ -72,7 +72,7 @@ if(!authed) {
   Properties codes = new MspErrorCodes();
   BillingFormData billform = new BillingFormData();
   String billRegion = OscarProperties.getInstance().getProperty("billRegion","BC");
-  BillingFormData.BillingVisit[] billvisit = billform.getVisitType(billRegion);
+  List<BillingFormData.BillingVisit> billvisit = billform.getVisitType(billRegion);
   request.setAttribute("billvisit",billvisit);
 %>
 <html:html>

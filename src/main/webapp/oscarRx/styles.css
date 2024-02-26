@@ -71,6 +71,36 @@ TABLE {
 	background-color: #f5f5f5
 }
 
+.pharmacyItem:hover{
+	background: #DCDCDC;
+	cursor: pointer;
+}
+
+#preferredList{
+	vertical-align: top;
+	width: 30%;
+}
+
+#preferredList div{
+	width: 95%;
+	margin: 10px 2.5% 2.5% 5px;
+	border: 1px solid #eda;
+	background-color: #FDFEC7;
+	vertical-align: middle;
+}
+
+.prefAction{
+	text-align: center;
+	width: 92px;
+	background-color: #fbf0b7;
+}
+
+.prefAction:hover{
+	color: #FFFFFF;
+	background-color: #ffba65;
+	cursor: pointer;
+}
+
 .ChoosePatientBox {
 	font-size: 80%;
 	height: 250px;
@@ -362,6 +392,21 @@ TABLE {
 	margin-bottom: 7px;
 }
 
+.DivContentSectionHeadTitle {
+	margin-left: -3px;
+	text-indent: 3px;
+	background: #FDFEC7;
+	color: #000000;
+	margin-top: 14px;
+	margin-bottom: 10px;
+	border: 1px solid #eda
+	font-weight: bold;
+	height: 17px;
+	padding-right:10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
 .DivContentSectionHead {
 	margin-left: -3px;
 	text-indent: 3px;
@@ -372,6 +417,8 @@ TABLE {
 	font-weight: bold;
 	height: 17px;
 	padding-right:10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .DivContentGeneric {
@@ -711,6 +758,14 @@ TABLE {
 	font-family: Verdana, Tahoma, Arial, sans-serif;
 }
 
+.ReturnToRx{
+	float: right;
+	margin-right: 10px;
+	margin-top: 8px;
+	font-size: 10px;
+	width: 100px;
+	height: 25px;
+}
 .ControlTextField {
 	font-family: Verdana, Tahoma, Arial, sans-serif;
 	font-size: 100%;
@@ -741,8 +796,46 @@ table.mhTable td{
     font-size:10pt;
 }
 
-@media print { 
+#sDate, #eDate{
+	width: 75px;
+	height: 17px;
+}
+
+#provider{
+	height: 17px;
+}
+
+@media print {
 .noPrint {
 	display:none; 
 	} 
-} 
+}
+
+table#pwtable{
+	border: 2px #808080 outset;
+	border-spacing: 0;
+	page-break-inside:auto;
+}
+thead.prescription-header {
+	display:table-header-group;
+}
+thead.prescription-header td {
+	border: 1px #808080 inset;
+	padding: 10px;
+}
+tbody.prescription-content td {
+	border-left: 1px #808080 inset;
+	border-right: 1px #808080 inset;
+	padding: 0 10px;
+}
+tbody.prescription-content tr {
+	page-break-inside:avoid;
+	page-break-after:auto;
+}
+tbody.prescription-content div {
+	page-break-inside:avoid;
+}
+
+tfoot.prescription-footer {
+	display: table-footer-group;
+}

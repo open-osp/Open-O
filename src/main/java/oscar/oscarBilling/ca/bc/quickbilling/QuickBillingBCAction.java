@@ -108,7 +108,7 @@ public class QuickBillingBCAction extends Action{
 
 	    	// add some needed form elements to the bean
 	    	BillingFormData billingFormData = new BillingFormData();    	
-	    	BillingVisit[] billingVisit = billingFormData.getVisitType(QuickBillingBCHandler.BILLING_PROV);
+	    	List<BillingVisit> billingVisit = billingFormData.getVisitType(QuickBillingBCHandler.BILLING_PROV);
 
 	    	List<ProviderData> activeProviders = quickBillingHandler.getProviderDao().findAll(false);
 

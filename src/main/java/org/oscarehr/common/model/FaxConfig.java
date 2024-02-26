@@ -23,11 +23,7 @@
  */
 package org.oscarehr.common.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="fax_config")
@@ -39,16 +35,21 @@ public class FaxConfig extends AbstractModel<Integer> {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer Id;
 	
-	private String url;
-	private String siteUser;
-	private String passwd;
-	private String faxUser;
-	private String faxPasswd;
-	private String faxNumber;
-	private String senderEmail;
-	private Boolean active;
-	private Integer queue;
-	private String accountName;
+	private String url = "";
+	private String siteUser = "";
+	private String passwd = "";
+	private String faxUser = "";
+	private String faxPasswd = "";
+	private String faxNumber = "";
+	private String senderEmail = "";
+
+	@Column(columnDefinition = "boolean default false")
+	private boolean active;
+	private Integer queue = 0;
+	private String accountName = "";
+
+	@Column(columnDefinition = "boolean default true")
+	private boolean download;
 
 	@Override
     public Integer getId() {
@@ -167,7 +168,7 @@ public class FaxConfig extends AbstractModel<Integer> {
 		Id = id;
 	}
 	
-	public Boolean isActive() {
+	public boolean isActive() {
 		return active;
 	}
 	
@@ -189,7 +190,7 @@ public class FaxConfig extends AbstractModel<Integer> {
 	/**
 	 * @return the active
 	 */
-	public Boolean getActive() {
+	public boolean getActive() {
 		return active;
 	}
 
@@ -197,7 +198,7 @@ public class FaxConfig extends AbstractModel<Integer> {
 	/**
 	 * @param active the active to set
 	 */
-	public void setActive(Boolean active) {
+	public void setActive(boolean active) {
 		this.active = active;
 	}
 
@@ -227,5 +228,14 @@ public class FaxConfig extends AbstractModel<Integer> {
 
 	public void setAccountName(String accountName) {
 		this.accountName = accountName;
+	}
+
+	public boolean isDownload() {
+		return download;
+	}
+
+
+	public void setDownload(boolean download) {
+		this.download = download;
 	}
 }

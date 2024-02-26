@@ -63,8 +63,8 @@ public class DemographicExt extends AbstractModel<Integer> implements Serializab
     private java.util.Date dateCreated;
     private boolean hidden;
     
-    public enum DemographicProperty { PHU, EmploymentStatus, HasPrimaryCarePhyscian, 
-    	informedConsent, privacyConsent, usSigned, fNationCom, statusNum, area, ethnicity, 
+    public enum DemographicProperty { PHU, EmploymentStatus, HasPrimaryCarePhysician,
+    	informedConsent, privacyConsent, usSigned, fNationCom, statusNum, area, ethnicity, fNationFamilyPosition, fNationFamilyNumber,
     	cytolNum, wPhoneExt, hPhoneExt, demo_cell, phoneComment }
     
 	@ManyToOne(fetch=FetchType.EAGER)

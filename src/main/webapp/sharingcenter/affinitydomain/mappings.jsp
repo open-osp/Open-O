@@ -57,7 +57,7 @@
 <%@page import="org.oscarehr.sharingcenter.model.CodeMappingDataObject"%>
 <%@page import="org.oscarehr.sharingcenter.model.AffinityDomainDataObject"%>
 <%@page import="org.oscarehr.sharingcenter.dao.AffinityDomainDao"%>
-<%@page import="oscar.dms.EDocUtil"%>
+<%@page import="org.oscarehr.documentManager.EDocUtil"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Set"%>

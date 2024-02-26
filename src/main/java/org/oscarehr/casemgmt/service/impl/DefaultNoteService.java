@@ -186,7 +186,7 @@ public class DefaultNoteService implements NoteService {
 		for (PatientForm patientForm : allPatientForms) {
 			EChartNoteEntry e = new EChartNoteEntry();
 			e.setId(new String[] { patientForm.getFormName(), patientForm.getFormId() });
-			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			try {
 				e.setDate(sdf.parse(patientForm.getEdited()));
 			} catch (ParseException e1) {

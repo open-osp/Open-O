@@ -63,7 +63,11 @@
 	    new Ajax.Request('clearSession.jsp','{asynchronous:true}');
 	}
 	jQuery(document).ready( function () {
-	    jQuery('.reportTable').DataTable();
+	    jQuery('.reportTable').DataTable(
+			{
+				"aLengthMenu": [[10,25,50,100,-1], [10,25,50,100,"All"]]
+			}
+		);
 	});
 </script>
 <style media="print">

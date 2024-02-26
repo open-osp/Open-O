@@ -23,7 +23,7 @@
 <%@ page import="java.util.*,java.sql.*,oscar.util.*,oscar.oscarBilling.ca.on.pageUtil.*,oscar.oscarBilling.ca.on.data.*,oscar.oscarProvider.data.*,java.math.* ,oscar.oscarBilling.ca.on.administration.*"%>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@ page import="org.springframework.web.context.WebApplicationContext"%>
-<%@ page errorPage="errorpage.jsp" import="java.util.*"%>
+<%@ page errorPage="/errorpage.jsp" import="java.util.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.pageUtil.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.*,org.oscarehr.common.model.*,org.oscarehr.common.dao.*"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>

@@ -307,6 +307,9 @@ public class EctFormData {
 	 */
 	public static class PatientForm {
 
+		private SimpleDateFormat dateTimeFormat = new SimpleDateFormat(EctFormData.DATETIME_FORMAT);
+		private SimpleDateFormat dateFormat = new SimpleDateFormat(EctFormData.DATE_FORMAT);
+
 		/**
 		 * This comparator sorts PatientForm descending based on the created date
 		 */
@@ -383,13 +386,11 @@ public class EctFormData {
 		}
 
 		public String getCreated() {
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
-			return simpleDateFormat.format(created);
+			return dateFormat.format(created);
 		}
 
 		public String getEdited() {
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATETIME_FORMAT);
-			return simpleDateFormat.format(edited);
+			return dateTimeFormat.format(edited);
 		}
 
 		public String getFormName() {

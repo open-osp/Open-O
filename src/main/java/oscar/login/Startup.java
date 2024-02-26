@@ -25,16 +25,15 @@
 
 package oscar.login;
 
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.util.MiscUtils;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
-import org.apache.logging.log4j.Logger;
-import org.oscarehr.util.MiscUtils;
 
 /**
  * This ContextListener is used to Initialize classes at startup - Initialize the DBConnection Pool.
@@ -142,6 +141,7 @@ public class Startup implements ServletContextListener {
 				logger.info("Found Base Document Dir: " + baseDocumentDir);
 				checkAndSetProperty(baseDocumentDir, contextPath, "HOME_DIR", "/billing/download/");
 				checkAndSetProperty(baseDocumentDir, contextPath, "DOCUMENT_DIR", "/document/");
+				checkAndSetProperty(baseDocumentDir, contextPath, "DOCUMENT_CACHE_DIR", "/document_cache/");
 				checkAndSetProperty(baseDocumentDir, contextPath, "eform_image", "/eform/images/");
 
 				checkAndSetProperty(baseDocumentDir, contextPath, "oscarMeasurement_css_upload_path", "/oscarEncounter/oscarMeasurements/styles/");

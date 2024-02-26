@@ -37,7 +37,7 @@
 <head>
 	<title><bean:message key="oscarMessenger.config.MessengerAdmin.title" /></title>
 	<link href="${pageContext.request.contextPath}/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css" rel="stylesheet" type="text/css"/>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-ui-1.10.2.custom.min.js" ></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js" ></script>
 	<style type="text/css">
 		summary{ cursor:pointer; }
 		.contact-group-buttons{

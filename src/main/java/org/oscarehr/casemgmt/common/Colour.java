@@ -80,4 +80,5 @@ public class Colour {
     public  String episode="045228";
     public  String contacts="045228";
     public  String ticklerNotes="FF6600";
+    public String externalNotes="005151";
 }

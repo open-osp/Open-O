@@ -53,7 +53,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page errorPage="errorpage.jsp"%>
+<%@ page errorPage="/errorpage.jsp"%>
 <%@ page import="java.util.*,java.net.*, java.sql.*, oscar.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.*"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>

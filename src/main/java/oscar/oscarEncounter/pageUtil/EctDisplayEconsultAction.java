@@ -116,7 +116,7 @@ public class EctDisplayEconsultAction extends EctDisplayAction {
  
                 // set the href path to the actual document.
                 eConsultDocumentUrl = new StringBuilder(request.getContextPath());
-                eConsultDocumentUrl.append(String.format("%1$s%2$s%3$s%4$s", File.separator, "dms", File.separator, "ManageDocument.do"));
+                eConsultDocumentUrl.append(String.format("%1$s%2$s%3$s%4$s", File.separator, "documentManager", File.separator, "ManageDocument.do"));
                 eConsultDocumentUrl.append(String.format("%1$s%2$s=%3$s", "?","method", "display"));
                 eConsultDocumentUrl.append(String.format("%1$s%2$s=%3$s", "&", "doc_no", documentId));
                 eConsultDocumentUrl.append(String.format("%1$s%2$s=%3$s", "&", "providerNo", user)); 

@@ -8,7 +8,7 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<%@ page import="oscar.dms.*,java.util.*" %>
+<%@ page import="java.util.*" %>
 <%@ page import="org.oscarehr.util.SpringUtils, org.oscarehr.common.model.Document" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -82,7 +82,7 @@
 						for (int i = 1; i <= thisDocument.getNumberofpages(); i++) {
 					%>
 							<li>
-								<img class="page" src='<%=request.getContextPath() + "/dms/ManageDocument.do?method=viewDocPage&doc_no=" + documentId + "&curPage=" + i%>' />
+								<img class="page" src='<%=request.getContextPath() + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + documentId + "&curPage=" + i%>' />
 							</li>
 					<%
 						}

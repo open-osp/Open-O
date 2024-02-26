@@ -27,9 +27,7 @@ import org.oscarehr.common.model.SystemPreferences;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -37,7 +35,15 @@ public class SystemPreferencesDao extends AbstractDao<SystemPreferences>
 {
     public SystemPreferencesDao() { super(SystemPreferences.class); }
 
-    public SystemPreferences findPreferenceByName(String name)
+
+    public <T extends Enum<T>> SystemPreferences findPreferenceByName(Enum<T> name) {
+        return findPreferenceByName(name.name());
+    }
+
+    /**
+     * DEPRECATED: use enumerator
+     */
+    private SystemPreferences findPreferenceByName(String name)
     {
         Query query = entityManager.createQuery("FROM SystemPreferences sp WHERE sp.name = :name");
         query.setParameter("name", name);
@@ -51,12 +57,30 @@ public class SystemPreferencesDao extends AbstractDao<SystemPreferences>
         return null;
     }
     
-    public List<SystemPreferences> findPreferencesByNames(List<String> names) {
+    private List<SystemPreferences> findPreferencesByNames(List<String> names) {
         Query query = entityManager.createQuery("FROM SystemPreferences sp WHERE sp.name IN (:names)");
         query.setParameter("names", names);
 
         List<SystemPreferences> results = query.getResultList();
         return results;
+    }
+
+
+    public <E extends Enum<E>> List<SystemPreferences> findPreferencesByNames(Class<E> clazz) {
+        List<String> parameters = new ArrayList<>();
+        for(Enum<E> enumValue : EnumSet.allOf(clazz)) {
+            parameters.add(enumValue.name());
+        }
+
+        return findPreferencesByNames(parameters);
+    }
+
+    public <E extends Enum<E>> Map<String, Boolean> findByKeysAsMap(Class<E> clazz) {
+        List<String> keyList = new ArrayList<>();
+        for(Enum<E> enumValue : EnumSet.allOf(clazz)) {
+            keyList.add(enumValue.name());
+        }
+        return findByKeysAsMap(keyList);
     }
 
     /**
@@ -65,7 +89,7 @@ public class SystemPreferencesDao extends AbstractDao<SystemPreferences>
      * @param keys List of preference keys to search for in the database
      * @return Map of preference keys with their associated boolean value
      */
-    public Map<String, Boolean> findByKeysAsMap(List<String> keys) {
+    private Map<String, Boolean> findByKeysAsMap(List<String> keys) {
         List<SystemPreferences> preferences = findPreferencesByNames(keys);
         Map<String, Boolean> preferenceMap = new HashMap<String, Boolean>();
         
@@ -92,13 +116,21 @@ public class SystemPreferencesDao extends AbstractDao<SystemPreferences>
         
         return preferenceMap;
     }
+
+    public <T extends Enum<T>> boolean isReadBooleanPreference(Enum<T> name) {
+        return isReadBooleanPreference(name.name());
+    }
     
-    public boolean isReadBooleanPreference(String name) {
+    private boolean isReadBooleanPreference(String name) {
         SystemPreferences preference = findPreferenceByName(name);
         return (preference != null && Boolean.parseBoolean(preference.getValue()));
     }
 
-    public boolean isPreferenceValueEquals(String preferenceName, String trueValueStr) {
+    public <T extends Enum<T>> boolean isPreferenceValueEquals(Enum<T> preferenceName, String trueValueStr) {
+        return isPreferenceValueEquals(preferenceName.name(), trueValueStr);
+    }
+
+    private boolean isPreferenceValueEquals(String preferenceName, String trueValueStr) {
         SystemPreferences preference = findPreferenceByName(preferenceName);
         return (preference != null && trueValueStr.equals(preference.getValue()));
     }

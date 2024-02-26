@@ -145,16 +145,27 @@ public class DemographicArchive extends AbstractModel<Long> implements Serializa
 	@Column(name = "lastUpdateDate")
 	@Temporal(TemporalType.DATE)
 	private Date lastUpdateDate = null;
-	
+	@Column(name="middleNames")
 	private String middleNames;
 	@Column(name="roster_enrolled_to")
 	private String rosterEnrolledTo;
-	
+	@Column(name="residentialAddress")
 	private String residentialAddress;
+	@Column(name="residentialCity")
     private String residentialCity;
+	@Column(name="residentialProvince")
 	private String residentialProvince;
+	@Column(name="residentialPostal")
 	private String residentialPostal;
-
+	@Column(name="genderId")
+	private Integer genderId;
+	@Column(name="gender")
+	private String gender;
+	@Column(name="pronounId")
+	private Integer pronounId;
+	@Column(name="pronoun")
+	private String pronoun;
+	
 	public DemographicArchive() {}
 	
 	public DemographicArchive(Demographic demographic) {
@@ -174,12 +185,15 @@ public class DemographicArchive extends AbstractModel<Long> implements Serializa
 		this.endDate = demographic.getEndDate();
 		this.familyDoctor = demographic.getFamilyDoctor();
 		this.firstName = demographic.getFirstName();
+		this.gender = demographic.getGender();
+		this.genderId = demographic.getGenderId();
 		this.hcRenewDate = demographic.getHcRenewDate();
 		this.hcType = demographic.getHcType();
 		this.hin = demographic.getHin();
 		this.lastName = demographic.getLastName();
 		this.lastUpdateDate = demographic.getLastUpdateDate();
 		this.lastUpdateUser = demographic.getLastUpdateUser();
+		this.middleNames = demographic.getMiddleNames();
 		this.monthOfBirth = demographic.getMonthOfBirth();
 		this.myOscarUserName = demographic.getMyOscarUserName();
 		this.newsletter = demographic.getNewsletter();
@@ -191,9 +205,16 @@ public class DemographicArchive extends AbstractModel<Long> implements Serializa
 		this.phone2 = demographic.getPhone2();
 		this.postal = demographic.getPostal();
 		this.previousAddress = demographic.getPreviousAddress();
+		this.pronoun = demographic.getPronoun();
+		this.pronounId = demographic.getPronounId();
 		this.providerNo = demographic.getProviderNo();
 		this.province = demographic.getProvince();
+		this.residentialAddress = demographic.getResidentialAddress();
+		this.residentialCity = demographic.getResidentialCity();
+		this.residentialProvince = demographic.getResidentialProvince();
+		this.residentialPostal = demographic.getResidentialPostal();		
 		this.rosterDate = demographic.getRosterDate();
+		this.rosterEnrolledTo = demographic.getRosterEnrolledTo();
 		this.rosterStatus = demographic.getRosterStatus();
 		this.rosterTerminationDate = demographic.getRosterTerminationDate();
 		this.rosterTerminationReason = demographic.getRosterTerminationReason();
@@ -204,12 +225,6 @@ public class DemographicArchive extends AbstractModel<Long> implements Serializa
 		this.title = demographic.getTitle();
 		this.ver = demographic.getVer();
 		this.yearOfBirth = demographic.getYearOfBirth();
-		this.middleNames = demographic.getMiddleNames();
-		this.rosterEnrolledTo = demographic.getRosterEnrolledTo();
-		this.residentialAddress = demographic.getResidentialAddress();
-		this.residentialCity = demographic.getResidentialCity();
-		this.residentialProvince = demographic.getResidentialProvince();
-		this.residentialPostal = demographic.getResidentialPostal();
 	}
 
 	public Integer getDemographicNo() {
@@ -594,6 +609,38 @@ public class DemographicArchive extends AbstractModel<Long> implements Serializa
 
 		public void setResidentialPostal(String residentialPostal) {
 			this.residentialPostal = residentialPostal;
+		}
+
+		public String getPronoun() {
+			return pronoun;
+		}
+
+		public void setPronoun(String pronoun) {
+			this.pronoun = pronoun;
+		}
+
+		public String getGender() {
+			return gender;
+		}
+
+		public void setGender(String gender) {
+			this.gender = gender;
+		}
+
+		public Integer getPronounId() {
+			return pronounId;
+		}
+
+		public void setPronounId(Integer pronounId) {
+			this.pronounId = pronounId;
+		}
+
+		public Integer getGenderId() {
+			return genderId;
+		}
+
+		public void setGenderId(Integer genderId) {
+			this.genderId = genderId;
 		}
 		
 		

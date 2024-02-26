@@ -24,6 +24,7 @@
 
 package oscar.oscarBilling.ca.bc.data;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -302,12 +303,25 @@ public class BillingmasterDAO {
 		query.setParameter("date", date);
 		query.setParameter("billingCode", billingCode);		
 		return query.getResultList();
-    }
-
-	public List<Object[]> getRecentReferralDoctors(Integer demographicNo) {
-		Query query = entityManager.createQuery("SELECT referralNo1, referralNo2 FROM Billingmaster WHERE demographic_no = ? AND (referralNo1 > 0 OR referralNo2 > 0) AND (referralNo1!='' OR referralNo2!='') AND (referralNo1 IS NOT NULL OR referralNo2 IS NOT NULL) ORDER BY billingmasterNo DESC");
-		query.setParameter(1, demographicNo);
-		return query.setMaxResults(3).getResultList();
 	}
 
+    public List<Object[]> getRecentReferralDoctors(Integer demographicNo) {
+        Query query = entityManager.createQuery("SELECT referralNo1, referralNo2 FROM Billingmaster WHERE demographic_no = ? AND (referralNo1!='' OR referralNo2!='') ORDER BY billingmasterNo DESC");
+        query.setParameter(1, demographicNo);
+        return query.setMaxResults(3).getResultList();
+    }
+
+    public List<Billingmaster> findBillingsByChronicCodes(Integer demographic_no, String chroniccodes) {
+    	String sql = "select bm from Billingmaster bm where bm.demographicNo = :demographic and bm.billingCode in (:chroniccodes)";
+    	Query query = entityManager.createQuery(sql);
+
+    	List<String> codeList = Arrays.asList(chroniccodes.split(","));
+
+    	query.setParameter("chroniccodes", codeList);
+    	query.setParameter("demographic", demographic_no);
+
+        @SuppressWarnings("unchecked")
+        List<Billingmaster> billings = query.getResultList();
+        return billings;
+    }
 }

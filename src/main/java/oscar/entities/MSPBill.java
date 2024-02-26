@@ -102,6 +102,8 @@ public class MSPBill {
   public String adjustmentCodeDesc="";
   public String amtOwing;
   public String adjustmentCodeAmt="";
+  public String gst="0.00";
+  public String gstNo="";
   public MSPBill() {
     ut = new UtilDateUtilities();
   }
@@ -592,6 +594,10 @@ public class MSPBill {
     return adjustmentCodeAmt;
   }
 
+  public String getGst() {
+    return gst;
+  }
+
   public void setPaymentMethodName(String paymentMethodName) {
     this.paymentMethodName = paymentMethodName;
   }
@@ -622,5 +628,17 @@ public class MSPBill {
 
   public void setAdjustmentCodeAmt(String adjustmentCodeAmt) {
     this.adjustmentCodeAmt = adjustmentCodeAmt;
+  }
+
+  public void setGst(String gst) {
+    this.gst = (gst != null && !gst.trim().isEmpty() ? gst : "0.00");
+  }
+
+  public String getGstNo() {
+    return gstNo;
+  }
+
+  public void setGstNo(String gstNo) {
+    this.gstNo = gstNo;
   }
 }

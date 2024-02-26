@@ -31,7 +31,7 @@ function newWindow(url) {
 }
 
 
-newWindow('../dms/inboxManage.do?method=prepareForIndexPage','inbox');
+newWindow('../documentManager/inboxManage.do?method=prepareForIndexPage','inbox');
 </script>
 <p class="info">Inbox Panel is popped-out..ensure you do not have a popup blocker running.</p>
 

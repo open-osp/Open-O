@@ -34,6 +34,10 @@ import org.oscarehr.common.dao.ClinicDAO;
 import org.oscarehr.common.model.Clinic;
 import org.oscarehr.util.SpringUtils;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 /**
  *
  * @author  Oscar
@@ -186,6 +190,43 @@ public class ClinicData {
 
 	public void setClinic_province(String clinic_province) {
 		this.clinic_province = clinic_province;
+	}
+
+	/*
+	 * returns all the clinic data in a formatted label
+	 */
+	public String getLabel() {
+		String strPhones = getClinicDelimPhone();
+		if (strPhones == null) {
+			strPhones = "";
+		}
+		String strFaxes = getClinicDelimFax();
+		if (strFaxes == null) {
+			strFaxes = "";
+		}
+		Set<String> vecPhones = new HashSet<>();
+		Set<String> vecFaxes = new HashSet<>();
+		StringTokenizer stringTokenizer = new StringTokenizer(strPhones, "|");
+		while (stringTokenizer.hasMoreTokens()) {
+			vecPhones.add(stringTokenizer.nextToken());
+		}
+		stringTokenizer = new StringTokenizer(strFaxes, "|");
+		while (stringTokenizer.hasMoreTokens()) {
+			vecFaxes.add(stringTokenizer.nextToken());
+		}
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(getClinicName())
+				.append("\n")
+				.append(getClinicAddress())
+				.append("\n")
+				.append(getClinicCity()).append(", ")
+				.append(getClinicProvince()).append(", ")
+				.append(getClinicPostal())
+				.append("\n")
+				.append("Telephone: ").append(!vecPhones.isEmpty() ? vecPhones.iterator().next() : getClinicPhone())
+				.append("\n")
+				.append("Fax: ").append(!vecFaxes.isEmpty() ? vecFaxes.iterator().next() : getClinicFax());
+		return stringBuilder.toString();
 	}
 
 }

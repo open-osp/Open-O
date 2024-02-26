@@ -179,13 +179,13 @@
                                                    rights="r">
                                     <li>
                                         <a HREF="#"
-                                           ONCLICK="popupInboxManager('../dms/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>', 'Lab');return false;"
+                                           ONCLICK="popupInboxManager('../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>', 'Lab');return false;"
                                            TITLE='<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>
                                             <span id="oscar_new_lab"><bean:message key="global.lab"/></span>
                                         </a>
                                         <oscar:newUnclaimedLab>
                                             <a id="unclaimedLabLink" class="tabalert" HREF="javascript:void(0)"
-                                               onclick="popupInboxManager('../dms/inboxManage.do?method=prepareForIndexPage&providerNo=0&searchProviderNo=0&status=N&lname=&fname=&hnum=&pageNum=1&startIndex=0', 'Lab');return false;"
+                                               onclick="popupInboxManager('../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=0&searchProviderNo=0&status=N&lname=&fname=&hnum=&pageNum=1&startIndex=0', 'Lab');return false;"
                                                title='<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>U</a>
                                         </oscar:newUnclaimedLab>
                                     </li>
@@ -279,7 +279,7 @@
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r">
                                 <li>
                                     <a HREF="#"
-                                       onclick="popup('700', '1024', '../dms/documentReport.jsp?function=provider&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');"
+                                       onclick="popup('700', '1024', '../documentManager/documentReport.jsp?function=provider&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');"
                                        TITLE='<bean:message key="provider.appointmentProviderAdminDay.viewEdoc"/>'><bean:message
                                             key="global.edoc"/></a>
                                 </li>

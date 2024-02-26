@@ -41,7 +41,7 @@ var formatDocumentDescriptionResults = function(oResultData, sQuery, sResultMatc
 function setupDocDescriptionTypeahead(docId) {
     if(jQuery("#docDesc_" + docId) ){
 
-        var  url = window.contextpath + "/dms/ManageDocument.do?method=searchDocumentDescriptions";
+        var  url = window.contextpath + "/documentManager/ManageDocument.do?method=searchDocumentDescriptions";
         
         jQuery( "#docDesc_" + docId ).autocomplete({
             source: url,

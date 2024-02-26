@@ -306,11 +306,11 @@ public class JdbcBillingReviewImpl {
 
 	//invoice report	
 	public List<BillingClaimHeader1Data> getBill(String[] billType, String statusType, String providerNo, String startDate, String endDate, String demoNo, List<String> serviceCodes, String dx, String visitType, String visitLocation, String paymentStartDate, String paymentEndDate) {	
-		return getBillWithSorting(billType,statusType,providerNo,startDate,endDate,demoNo,serviceCodes,dx,visitType, visitLocation,null,null,paymentStartDate,paymentEndDate);	
+		return getBillWithSorting(billType,statusType,providerNo,startDate,endDate,demoNo,serviceCodes,dx,visitType, visitLocation,null,null,paymentStartDate,paymentEndDate,null);	
 	}
 	
 	//invoice report
-	public List<BillingClaimHeader1Data> getBillWithSorting(String[] billType, String statusType, String providerNo, String startDate, String endDate, String demoNo, List<String> serviceCodes, String dx, String visitType, String visitLocation, String sortName, String sortOrder, String paymentStartDate, String paymentEndDate) {
+	public List<BillingClaimHeader1Data> getBillWithSorting(String[] billType, String statusType, String providerNo, String startDate, String endDate, String demoNo, List<String> serviceCodes, String dx, String visitType, String visitLocation, String sortName, String sortOrder, String paymentStartDate, String paymentEndDate, String claimNo) {
 		List<BillingClaimHeader1Data> retval = new ArrayList<BillingClaimHeader1Data>();
 
 		try {
@@ -326,7 +326,7 @@ public class JdbcBillingReviewImpl {
 			Integer CASH_PAYMENT_ID = billingPaymentTypeDao.findIdByName("CASH");
 			Integer DEBIT_PAYMENT_ID = billingPaymentTypeDao.findIdByName("DEBIT");
 			
-			for (Object[] o : dao.findByMagic2(Arrays.asList(billType), statusType, providerNo, ConversionUtils.fromDateString(startDate), ConversionUtils.fromDateString(endDate), ConversionUtils.fromIntString(demoNo), serviceCodes, dx, visitType, visitLocation, ConversionUtils.fromDateString(paymentStartDate),  ConversionUtils.fromDateString(paymentEndDate))) {
+			for (Object[] o : dao.findByMagic2(Arrays.asList(billType), statusType, providerNo, ConversionUtils.fromDateString(startDate), ConversionUtils.fromDateString(endDate), ConversionUtils.fromIntString(demoNo), serviceCodes, dx, visitType, visitLocation, ConversionUtils.fromDateString(paymentStartDate),  ConversionUtils.fromDateString(paymentEndDate), claimNo)) {
 				BillingONCHeader1 ch1 = (BillingONCHeader1) o[0];
 				BillingONItem bi = (BillingONItem) o[1];
 

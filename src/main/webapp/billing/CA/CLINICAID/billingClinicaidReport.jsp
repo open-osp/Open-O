@@ -29,7 +29,7 @@
 		"all":request.getParameter("providerview") ;
 %>
 
-<%@ page import="java.util.*, oscar.login.*, oscar.*, java.net.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, oscar.login.*, oscar.*, java.net.*" errorPage="/errorpage.jsp"%>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.ReportProvider" %>
 <%@ page import="org.oscarehr.common.dao.ReportProviderDao" %>

@@ -60,9 +60,10 @@ import oscar.oscarBilling.ca.bc.data.BillingmasterDAO;
 public class BillingSaveBillingAction extends Action {
 
     private static Logger log = MiscUtils.getLogger();
-    AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
-    OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+    private AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
+    private OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
 
+    private BillingmasterDAO billingmasterDAO = SpringUtils.getBean(BillingmasterDAO.class);
 
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -74,14 +75,9 @@ public class BillingSaveBillingAction extends Action {
         BillingSaveBillingForm frm = (BillingSaveBillingForm) form;
 
         oscar.oscarBilling.ca.bc.pageUtil.BillingSessionBean bean = (BillingSessionBean) request.getSession().getAttribute("billingSessionBean");
-        //  oscar.oscarBilling.data.BillingStoreData bsd = new oscar.oscarBilling.data.BillingStoreDate();
-        //  bsd.storeBilling(bean);
         
         bean.setCreator(loggedInInfo.getLoggedInProviderNo());
-        
-        //Get rid of this
-        WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-        BillingmasterDAO billingmasterDAO = (BillingmasterDAO) ctx.getBean("BillingmasterDAO");
+
         MiscUtils.getLogger().debug("appointment_no---: " + bean.getApptNo());
         oscar.appt.ApptStatusData as = new oscar.appt.ApptStatusData();
         
@@ -119,10 +115,7 @@ public class BillingSaveBillingAction extends Action {
             
         }
 
-
         char billingAccountStatus = getBillingAccountStatus( bean);
-
-       
 
         ArrayList<oscar.oscarBilling.ca.bc.pageUtil.BillingBillingManager.BillingItem> billItem = bean.getBillItem();
 
@@ -198,7 +191,6 @@ public class BillingSaveBillingAction extends Action {
 
         ActionForward af = mapping.findForward("success");
         if (frm.getSubmit().equals("Another Bill")) {
-            bean.setBillForm( OscarProperties.getInstance().getProperty("default_view", "GP") );
             af = mapping.findForward("anotherBill");
 
         } else if (frm.getSubmit().equals("Save & Print Receipt")) {
@@ -302,7 +294,6 @@ public class BillingSaveBillingAction extends Action {
 
     /**
      * Adds a new entry into the billing_history table
-     * @param newInvNo String
      */
     private void createBillArchive(String billingMasterNo) {
         BillingHistoryDAO dao = new BillingHistoryDAO();
@@ -359,7 +350,7 @@ public class BillingSaveBillingAction extends Action {
         bill.setBillingCode(serviceCode);//billItem.getServiceCode());
         bill.setBillAmount(billedAmount);
         bill.setPaymentMode(paymentMode);
-        bill.setServiceDate(convertDate8Char(bean.getServiceDate()));
+        bill.setServiceDate(convertDate8Char(bean.getServiceDate())); //aka: xml_appointment_date
         bill.setServiceToDay(bean.getService_to_date());
         bill.setSubmissionCode(bean.getSubmissionCode());
         bill.setExtendedSubmissionCode(" ");
@@ -388,7 +379,7 @@ public class BillingSaveBillingAction extends Action {
         bill.setFacilitySubNo(bean.getFacilitySubNum());
         bill.setPaymentMethod(Integer.parseInt(bean.getPaymentType()));
 
-        if (!bean.getPatientHCType().trim().equals(bean.getBillRegion().trim())) {
+        if (bean.getPatientHCType() != null && ! bean.getPatientHCType().isEmpty() && ! bean.getBillRegion().trim().equals(bean.getPatientHCType().trim())) {
 
             bill.setOinInsurerCode(bean.getPatientHCType());
             bill.setOinRegistrationNo(bean.getPatientPHN());

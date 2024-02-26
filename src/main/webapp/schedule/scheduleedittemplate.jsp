@@ -28,7 +28,7 @@
 
 %>
 <%@ page
-	import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*"
+	import="java.util.*, java.net.*, java.sql.*, oscar.*, java.text.*, java.lang.*"
 	errorPage="../appointment/errorpage.jsp"%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="oscar.OscarProperties"%>
@@ -103,7 +103,7 @@ function checkInput() {
 function changeGroup(s) {
 	var newGroupNo = s.options[s.selectedIndex].value;
 	newGroupNo = s.options[s.selectedIndex].value;
-	self.location.href = "scheduleedittemplate.jsp?providerid=<%=request.getParameter("providerid")%>&providername=<%=StringEscapeUtils.escapeJavaScript(request.getParameter("providername"))%>&step=" + newGroupNo;
+	self.location.href = "scheduleedittemplate.jsp?providerid=<%=request.getParameter("providerid")%>&providername=<%=URLEncoder.encode(request.getParameter("providername"))%>&step=" + newGroupNo;
 
 }
 //-->

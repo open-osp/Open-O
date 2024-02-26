@@ -25,13 +25,13 @@
 
 package org.oscarehr.ws.transfer_objects;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.oscarehr.common.model.Demographic;
 import org.springframework.beans.BeanUtils;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public final class DemographicTransfer2 {
 
@@ -97,6 +97,13 @@ public final class DemographicTransfer2 {
     private String residentialCity;
 	private String residentialProvince;
 	private String residentialPostal;
+
+	private String cellPhone;
+	private String phoneComment;
+	private String gender;
+	private String pronoun;
+	private Integer genderId;
+	private Integer pronounId;
 
 	
 	public Integer getDemographicNo() {
@@ -571,6 +578,54 @@ public final class DemographicTransfer2 {
 		this.residentialPostal = residentialPostal;
 	}
 
+	public String getCellPhone() {
+		return cellPhone;
+	}
+
+	public void setCellPhone(String cellPhone) {
+		this.cellPhone = cellPhone;
+	}
+
+	public String getPhoneComment() {
+		return phoneComment;
+	}
+
+	public void setPhoneComment(String phoneComment) {
+		this.phoneComment = phoneComment;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getPronoun() {
+		return pronoun;
+	}
+
+	public void setPronoun(String pronoun) {
+		this.pronoun = pronoun;
+	}
+
+	public Integer getGenderId() {
+		return genderId;
+	}
+
+	public void setGenderId(Integer genderId) {
+		this.genderId = genderId;
+	}
+
+	public Integer getPronounId() {
+		return pronounId;
+	}
+
+	public void setPronounId(Integer pronounId) {
+		this.pronounId = pronounId;
+	}
+
 	public static DemographicTransfer2 toTransfer(Demographic demographic) {
 		if (demographic==null) return(null);
 		
@@ -580,6 +635,8 @@ public final class DemographicTransfer2 {
 
 		return (demographicTransfer);
 	}
+
+
 
 	public static DemographicTransfer2[] toTransfers(List<Demographic> demographics) {
 		ArrayList<DemographicTransfer2> results = new ArrayList<DemographicTransfer2>();

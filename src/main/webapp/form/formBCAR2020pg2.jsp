@@ -956,7 +956,7 @@
 										Lifestyle/substance use
 									</td>
 									<td>
-										<input type="text" name="t_considerationsLifestyle" class="text-style" size="60" maxlength="150" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsLifestyle", "")) %>" />
+										<input type="text" name="t_considerationsLifestyle" class="text-style" size="60" maxlength="39" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsLifestyle", "")) %>" />
 									</td>
 								</tr>
 								<tr>
@@ -964,7 +964,7 @@
 										Pregnancy
 									</td>
 									<td>
-										<input type="text" name="t_considerationsPregnancy" class="text-style" size="60" maxlength="150" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsPregnancy", "")) %>" />
+										<input type="text" name="t_considerationsPregnancy" class="text-style" size="60" maxlength="48" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsPregnancy", "")) %>" />
 									</td>
 								</tr>
 								<tr>
@@ -972,7 +972,7 @@
 										Labour & birth
 									</td>
 									<td>
-										<input type="text" name="t_considerationsLabour" class="text-style" size="60" maxlength="150" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsLabour", "")) %>" />
+										<input type="text" name="t_considerationsLabour" class="text-style" size="60" maxlength="45" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsLabour", "")) %>" />
 									</td>
 								</tr>
 								<tr>
@@ -980,7 +980,7 @@
 										Breastfeeding
 									</td>
 									<td>
-										<input type="text" name="t_considerationsBreastfeeding" class="text-style" size="60" maxlength="150" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsBreastfeeding", "")) %>" />
+										<input type="text" name="t_considerationsBreastfeeding" class="text-style" size="60" maxlength="48" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsBreastfeeding", "")) %>" />
 									</td>
 								</tr>
 								<tr>
@@ -988,7 +988,7 @@
 										Postpartum
 									</td>
 									<td>
-										<input type="text" name="t_considerationsPostpartum" class="text-style" size="60" maxlength="150" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsPostpartum", "")) %>" />
+										<input type="text" name="t_considerationsPostpartum" class="text-style" size="60" maxlength="48" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsPostpartum", "")) %>" />
 									</td>
 								</tr>
 								<tr>
@@ -996,7 +996,7 @@
 										Contraception plan
 									</td>
 									<td>
-										<input type="text" name="t_considerationsContraception" class="text-style" size="60" maxlength="150" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsContraception", "")) %>" />
+										<input type="text" name="t_considerationsContraception" class="text-style" size="60" maxlength="41" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsContraception", "")) %>" />
 									</td>
 								</tr>
 								<tr>
@@ -1004,7 +1004,7 @@
 										Newborn
 									</td>
 									<td>
-										<input type="text" name="t_considerationsNewborn" class="text-style" size="60" maxlength="150" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsNewborn", "")) %>" />
+										<input type="text" name="t_considerationsNewborn" class="text-style" size="60" maxlength="48" value="<%= UtilMisc.htmlEscape(props.getProperty("t_considerationsNewborn", "")) %>" />
 									</td>
 								</tr>
 							</table>

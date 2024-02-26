@@ -8,9 +8,11 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
+<!DOCTYPE html>
 <%@ page
-	import="java.util.*, oscar.dms.EDocUtil"%>
+	import="java.util.*, org.oscarehr.documentManager.EDocUtil"%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
@@ -20,7 +22,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.document" rights="w" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin,_admin.document");%>
+	<%response.sendRedirect("{ pageContext.request.contextPath }/securityError.jsp?type=_admin,_admin.document");%>
 </security:oscarSec>
 <%
 if(!authed) {
@@ -29,10 +31,23 @@ if(!authed) {
 %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" />
 
-<% 
+<%
 ArrayList<String> doctypesD = EDocUtil.getDoctypes("demographic");
 ArrayList<String> doctypesP = EDocUtil.getDoctypes("provider");
 %>
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+    <link href="${ pageContext.request.contextPath }/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+    <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/js/global.js"></script>
+    <script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+
+<title> Document Categories</title>
+
 <script>
 
 
@@ -50,93 +65,79 @@ function popupPage(vheight,vwidth,varpage) { //open a new popup window
 
 function submitUpload(object) {
     object.Submit.disabled = true;
-    
+
     return true;
 }
 </script>
-    
+    <script>
+	    jQuery(document).ready( function () {
+	        jQuery('#demographicDocType').DataTable({
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+            });
+	    });
+    </script>
+    <script>
+	    jQuery(document).ready( function () {
+	        jQuery('#demographicDocType2').DataTable({
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+            });
+	    });
+    </script>
 
-<html>
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<c:out value="${ctx}/share/javascript/prototype.js"/>"></script>
-<script type="text/javascript" src="<c:out value="${ctx}/share/javascript/Oscar.js"/>"></script>
-<link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css" />
-<title> Document Categories</title>
 </head>
-<body class="mainbody">
-
-<table class="MainTable" id="scrollNumber1" name="documentCategoryTable" style="margin: 0px;">
-            <tr class="topbar">
-                <td class="MainTableTopRowLeftColumn" width="60px">Document Categories</td>
-                <td class="MainTableTopRowRightColumn">
-                    <table class="TopStatusBar">
-                        <tr>
-                            <td>Display Document Categories</td>
-                            <td style="text-align: right;"  >
-                                    <a href="javascript: popupStart(300, 400, 'Help.jsp')">Help</a> |
-                                    <a href="javascript: popupStart(300, 400, 'About.jsp')">About</a> |
-                                    <a href="javascript: popupStart(300, 400, 'License.jsp')">License</a>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
- 
-	           
-            <table class="docTypeTable" width="60px">
-            <br>
-            <br>
-            <tr>
-            <tr class="DocTableTopRowLeftColumn"  width="60px">Demographic Document Categories</tr>
-            
-            	<table width="50%" cellspacing="2" cellpadding="2" border="1" id="demographicDocType" style="margin: 0px;" >
-					<tr bgcolor="#ccccff">
-						<td width="10%" height="25"><b>Document Type</b></td>
-						<td width="10%" height="25"><b>Status</b></td>
+<body>
+<h4>Document Categories</h4>
+<div class="well">
+    <table style="width:100%;">
+        <tr><td style="width:50%; padding:15px; vertical-align:top;">
+    <h5>Demographic Document Categories</h5>
+            <table id="demographicDocType" class="table table-striped table-condensed" style="width:80%;">
+                <thead>
+					<tr>
+						<th>Document Type</th>
+						<th>Status</th>
 					</tr>
+                </thead>
+                <tbody>
 					<% for (String doctypeD : doctypesD) { %>
 					<tr>
-					    
-						<!--<td align="center" width="40%" height="25">Demographic</td>-->
-						<td width="10%" height="25"><%=doctypeD%></td>
-						
-						<td width="10%" height="25"><%=EDocUtil.getDocStatus("demographic",doctypeD)%></td>
-						
-						
-						
+						<td><%=doctypeD%></td>
+						<td><%=EDocUtil.getDocStatus("demographic",doctypeD)%></td>
 					</tr>
 					<% }%>
-					</table>
-			</tr>
-           <br><br>
-           <tr>
-            <td class="DocTableTopRowRightColumn"  width="60px">Provider Document Categories</td>
-            <table width="50%" cellspacing="2" cellpadding="2" border="1" id="demographicDocType" style="margin: 0px;" >
-					<tr bgcolor="#ccccff">
-						<td  width="10%" height="25"><b>Document Type</b></td>
-						<td  width="10%" height="25"><b>Status</b></td>
-					</tr>
+                </tbody>
+            </table>
+</td><td style="width:50%; padding:15px; vertical-align:top;">
+    <h5>Provider Document Categories</h5>
+            <table id="demographicDocType2" class="table table-striped table-condensed" style="width:80%;">
+                <thead>
+			        <tr>
+			            <th>Document Type</th>
+				        <th>Status</th>
+			        </tr>
+                </thead>
+                <tbody>
 					<% for (String doctypeP : doctypesP) { %>
-						
-						<tr>
-						<td  width="10%" height="25"><%=doctypeP%></td>
-						<td  width="10%" height="25"><%=EDocUtil.getDocStatus("provider",doctypeP)%></td>
-					   </tr>
+                    <tr>
+					    <td><%=doctypeP%></td>
+					    <td><%=EDocUtil.getDocStatus("provider",doctypeP)%></td>
+        			</tr>
 					<% }%>
-						
-			</table>
-			</tr>
-		
-		</table>
-		<br>
-		<br>
-          <tr>
-          <td> <input type="button" value="Add New" onclick='popupPage(550,800,&quot;<html:rewrite page="/dms/addNewDocumentCategories.jsp"/>&quot;);return false;' /> 
-           </td>
-           <td><input type="button" value="Update Status"  onclick='popupPage(550,800,&quot;<html:rewrite page="/dms/changeStatus.jsp"/>&quot;);return false;' /> </td>
-          </tr>
-</table>
+                </tbody>
+            </table>
+        </td></tr>
+    </table>
+
+           <input type="button" class="btn" value="Add New" onclick='popupPage(550,800,&quot;<html:rewrite page="/documentManager/addNewDocumentCategories.jsp"/>&quot;);return false;' />
+           <input type="button" class="btn" value="Update Status"  onclick='popupPage(550,800,&quot;<html:rewrite page="/documentManager/changeStatus.jsp"/>&quot;);return false;' />
+
+
+</div> <!-- well -->
+
 
 </body>
 </html>

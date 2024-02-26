@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 <%@page import="org.oscarehr.common.model.Drug"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.common.dao.DrugDao"%>
@@ -51,12 +52,10 @@
 <html:html locale="true">
 <head>
 
-<%-- <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script> 
+<link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script> --%>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
-<script type="text/javascript" src="${ oscar_context_path }/js/jquery-1.7.1.min.js" ></script>
-<script type="text/javascript" src="${ oscar_context_path }/js/jquery-ui-1.8.18.custom.min.js" ></script>
 <script type="text/javascript" >var ctx = '${ oscar_context_path }';</script>
 <title>Drug Reason</title>
 <html:base />
@@ -73,8 +72,7 @@ if("update".equals(request.getParameter("action"))) {
 	drugDao.merge(drug);
 }
 %>
- 
-<link rel="stylesheet" type="text/css" href="styles.css">
+
 <script type="text/javascript">
 <%
 if("update".equals(request.getParameter("action"))) {
@@ -82,15 +80,14 @@ if("update".equals(request.getParameter("action"))) {
 	window.opener.refresh();
 	window.close();
 <% } %>
-</script>	
+</script>
 </head>
-
-<body topmargin="0" leftmargin="0" vlink="#0000FF">
+<body>
 
 <form action="">
 
-<p>Current form is: <b><%=drugForm%></b></p>
-<br/> 
+<h3>Current form is: <b><%=drugForm%></b></h3>
+<br/>
 <b>Select new drug form :</b>
 
 <select name="drugForm">
@@ -192,7 +189,7 @@ if("update".equals(request.getParameter("action"))) {
 </select>
 <input type="hidden" name="id" value="<%=id%>"/>
 <input type="hidden" name="action" value="update"/>
-<input type="submit"/>
+<input type="submit" class="btn btn-primary" value="submit">
 </form>
 </body>
 

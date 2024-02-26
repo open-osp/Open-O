@@ -54,10 +54,10 @@ public class BillingPreference extends AbstractModel<Integer> {
 	private int referral = 1;
 
 	@Column(name = "providerNo", nullable = false)
-	private int providerNo;
+	private String providerNo;
 
 	@Column(name = "defaultPayeeNo", nullable = false)
-	private int defaultPayeeNo = 0;
+	private String defaultPayeeNo = "";
 
 	public BillingPreference() {
 	}
@@ -74,11 +74,11 @@ public class BillingPreference extends AbstractModel<Integer> {
 		this.referral = referral;
 	}
 
-	public void setProviderNo(int providerNo) {
+	public void setProviderNo(String providerNo) {
 		this.providerNo = providerNo;
 	}
 
-	public void setDefaultPayeeNo(int defaultPayeeNo) {
+	public void setDefaultPayeeNo(String defaultPayeeNo) {
 		this.defaultPayeeNo = defaultPayeeNo;
 	}
 
@@ -86,11 +86,11 @@ public class BillingPreference extends AbstractModel<Integer> {
 		return referral;
 	}
 
-	public int getProviderNo() {
+	public String getProviderNo() {
 		return providerNo;
 	}
 
-	public int getDefaultPayeeNo() {
+	public String getDefaultPayeeNo() {
 		return defaultPayeeNo;
 	}
 }

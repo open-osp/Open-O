@@ -227,7 +227,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
             var popup=window.open(varpage, windowname, windowprops);
         }
         handleLab=function(formid,labid,action){
-            var url='../dms/inboxManage.do';
+            var url='../documentManager/inboxManage.do';
                                            var data='method=isLabLinkedToDemographic&labid='+labid;
                                            new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
                                                                     var json=transport.responseText.evalJSON();

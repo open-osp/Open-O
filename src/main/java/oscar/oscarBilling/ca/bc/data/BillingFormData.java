@@ -61,7 +61,7 @@ public class BillingFormData {
 	public ArrayList<PaymentType> getPaymentTypes() {
 		ArrayList<PaymentType> types = new ArrayList<PaymentType>();
 
-		BillingPaymentTypeDao dao = (BillingPaymentTypeDao) SpringUtils.getBean(BillingPaymentTypeDao.class);
+		BillingPaymentTypeDao dao = SpringUtils.getBean(BillingPaymentTypeDao.class);
 		for (BillingPaymentType type : dao.findAll()) {
 			PaymentType tp = new PaymentType();
 			tp.setId(type.getId().toString());
@@ -141,6 +141,23 @@ public class BillingFormData {
 		return result.toArray(new BillingService[result.size()]);
 	}
 
+	/**
+	 * Checks to see if a service type exists in ctl_billingservice
+	 * The service type is a billing form
+	 *
+	 * @param serviceType the name of the service type/billing form
+	 * @return boolean value whether this type exists or not
+	 */
+	public boolean serviceExists(String serviceType) {
+		List<BillingService> result = new ArrayList<BillingService>();
+		BillingBCDao dao = SpringUtils.getBean(BillingBCDao.class);
+		List<Object[]> services = dao.findBillingServicesByType(serviceType);
+		if (services == null || services.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
 	public Diagnostic[] getDiagnosticList(String serviceType, String billRegion) {
 		CtlDiagCodeDao dao = SpringUtils.getBean(CtlDiagCodeDao.class);
 
@@ -161,14 +178,14 @@ public class BillingFormData {
 		return result.toArray(new Location[result.size()]);
 	}
 
-	public BillingVisit[] getVisitType(String billRegion) {
+	public List<BillingVisit> getVisitType(String billRegion) {
 		BillingBCDao dao = SpringUtils.getBean(BillingBCDao.class);
 
-		List<BillingVisit> result = new ArrayList<BillingVisit>();
+		List<BillingVisit> result = new ArrayList<>();
 		for (Object[] v : dao.findBillingVisits(billRegion)) {
 			result.add(new BillingVisit(v));
 		}
-		return result.toArray(new BillingVisit[result.size()]);
+		return result;
 	}
 
 	public BillingPhysician[] getProviderList() {
@@ -274,23 +291,22 @@ public class BillingFormData {
 
 	}
 
-	public class BillingVisit {
-		String billingvisit = "";
+	public static class BillingVisit {
+		String visitType = "";
 		String description = "";
-		String displayName = "";
 
 		public BillingVisit(Object[] o) {
 			this(String.valueOf(o[0]), String.valueOf(o[1]));
 		}
 
-		public BillingVisit(String billingvisit, String description) {
-			this.billingvisit = billingvisit;
+		public BillingVisit(String visitType, String description) {
+			this.visitType = visitType;
 			this.description = description;
 
 		}
 
 		public String getVisitType() {
-			return billingvisit;
+			return visitType;
 		}
 
 		public String getDescription() {
@@ -298,7 +314,7 @@ public class BillingFormData {
 		}
 
 		public String getDisplayName() {
-			return billingvisit + "|" + description;
+			return visitType.equalsIgnoreCase("clinicdefault") ? description : visitType + "|" + description;
 		}
 
 	}

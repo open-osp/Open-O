@@ -29,6 +29,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
       boolean authed=true;
@@ -61,8 +62,31 @@ function BackToOscar() {
 }
 
 function finishPage(secs){
-    setTimeout("window.close()",secs*500);    
+
+	// Print consultatin request form
+	const consultPDFName = '<%=request.getAttribute("consultPDFName")%>';
+	const consultPDF = '<%=request.getAttribute("consultPDF")%>';
+	const isPreviewReady = '<%=request.getAttribute("isPreviewReady")%>';
+	if (consultPDF !== 'null' && consultPDFName !== 'null' && isPreviewReady === 'true') {
+		downloadConsultForm(consultPDFName, consultPDF, function() {
+			setTimeout("window.close()", secs*1000);
+		});
+		return; 
+	}
+
+    setTimeout("window.close()", secs*500);    
     //window.opener.location.reload();    
+}
+
+function downloadConsultForm(consultPDFName, consultPDF, callback) {
+	const pdfData = new Uint8Array(atob(consultPDF).split('').map(char => char.charCodeAt(0)));
+	const pdfBlob = new Blob([pdfData], { type: 'application/pdf' });
+	const downloadLink = document.createElement('a');
+	downloadLink.href = URL.createObjectURL(pdfBlob);
+	downloadLink.download = consultPDFName;
+	downloadLink.click();
+	URL.revokeObjectURL(downloadLink.href);
+	callback();
 }
 
 </script>
@@ -82,18 +106,27 @@ function finishPage(secs){
 		<td class="MainTableRightColumn">
 		<table width="100%" height="100%">
 			<tr>
-				<td><bean:message
-					key="oscarEncounter.oscarConsultationRequest.ConfirmConsultationRequest.msgConsReq" />
-				<%
-                            String type = request.getParameter("transType") == null ? (String) request.getAttribute("transType") : request.getParameter("transType");
-                            if (type.equals("1")){ %> <bean:message
-					key="oscarEncounter.oscarConsultationRequest.ConfirmConsultationRequest.msgUpdated" />
-				<% }else if (type.equals("2")){ %> <bean:message
-					key="oscarEncounter.oscarConsultationRequest.ConfirmConsultationRequest.msgCreated" />
-				<% } %>
+				<td>
+					<c:choose>
+						<c:when test="${not empty requestScope.transType and requestScope.transType eq '1'}">
+							<bean:message key="oscarEncounter.oscarConsultationRequest.ConfirmConsultationRequest.msgConsReq" />
+							<bean:message key="oscarEncounter.oscarConsultationRequest.ConfirmConsultationRequest.msgUpdated" />
+						</c:when>
+						<c:when test="${not empty requestScope.transType and requestScope.transType eq '2'}">
+							<bean:message key="oscarEncounter.oscarConsultationRequest.ConfirmConsultationRequest.msgConsReq" />
+							<bean:message key="oscarEncounter.oscarConsultationRequest.ConfirmConsultationRequest.msgCreated" />
+						</c:when>
+						<c:otherwise>
+						</c:otherwise>
+					</c:choose>
 				
 				<%=WebUtils.popInfoMessagesAsHtml(session)%>
 				</td>
+			</tr>
+			<tr>
+				<c:if test="${not empty isPreviewReady and isPreviewReady eq 'true'}">
+					<td>Printing Consultation form.....</td>
+				</c:if>
 			</tr>
 			<tr>
 				<td><bean:message

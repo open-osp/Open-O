@@ -40,9 +40,9 @@ import org.oscarehr.ws.rest.to.model.SummaryItemTo1;
 import org.oscarehr.ws.rest.to.model.SummaryTo1;
 import org.springframework.stereotype.Component;
 
-import oscar.dms.EDoc;
-import oscar.dms.EDocUtil;
-import oscar.dms.EDocUtil.EDocSort;
+import org.oscarehr.documentManager.EDoc;
+import org.oscarehr.documentManager.EDocUtil;
+import org.oscarehr.documentManager.EDocUtil.EDocSort;
 import oscar.oscarLab.ca.on.CommonLabResultData;
 import oscar.oscarLab.ca.on.LabResultData;
 import oscar.util.StringUtils;
@@ -169,10 +169,10 @@ public class LabsDocsSummary implements Summary {
 	
 			
 			if( curDoc.getRemoteFacilityId()==null && curDoc.isPDF() ) {
-				url = "../dms/MultiPageDocDisplay.jsp?segmentID=" + dispDocNo + "&providerNo=" + loggedInInfo.getLoggedInProviderNo() + "&searchProviderNo=" + loggedInInfo.getLoggedInProviderNo() + "&status=A&demoName=";//'); return false;";
+				url = "../documentManager/MultiPageDocDisplay.jsp?segmentID=" + dispDocNo + "&providerNo=" + loggedInInfo.getLoggedInProviderNo() + "&searchProviderNo=" + loggedInInfo.getLoggedInProviderNo() + "&status=A&demoName=";//'); return false;";
 			}
 			else {
-				url = "";// "../dms/ManageDocument.do?method=display&doc_no=" + dispDocNo + "&providerNo=" + loggedInInfo.getLoggedInProviderNo() + (curDoc.getRemoteFacilityId()!=null?"&remoteFacilityId="+curDoc.getRemoteFacilityId();
+				url = "";// "../documentManager/ManageDocument.do?method=display&doc_no=" + dispDocNo + "&providerNo=" + loggedInInfo.getLoggedInProviderNo() + (curDoc.getRemoteFacilityId()!=null?"&remoteFacilityId="+curDoc.getRemoteFacilityId();
 			}
 			summaryItem.setAction(url);
 			if(summaryItem.getDisplayName().trim().equals("")){

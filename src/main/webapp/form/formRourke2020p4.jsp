@@ -136,16 +136,19 @@
 		<tr align="center">	
 			<td class="column"><a><bean:message key="oscarEncounter.formRourke1.msgDate"/></a></td>		
 			<td colspan="3">
+				<img src="../images/cal.gif" id="p4_date18m_cal" style="vertical-align: middle;">
 				<input readonly type="text" id="p4_date18m" name="p4_date18m" ondblclick="resetDate(this)" size="10" value="<%=UtilMisc.htmlEscape(props.getProperty("p4_date18m", ""))%>"/>
-				<img src="../images/cal.gif" id="p4_date18m_cal">
+				<img src="../images/clear.png" id="p4_date18m_delete" style="vertical-align: middle; cursor: pointer;" onClick="resetDateUsingID('p4_date18m')">
 			</td>
 			<td colspan="4">
+				<img src="../images/cal.gif" id="p4_date24m_cal" style="vertical-align: middle;">
 				<input readonly type="text" id="p4_date24m" name="p4_date24m" ondblclick="resetDate(this)" size="10" value="<%=UtilMisc.htmlEscape(props.getProperty("p4_date24m", ""))%>"/>
-				<img src="../images/cal.gif" id="p4_date24m_cal">
+				<img src="../images/clear.png" id="p4_date24m_delete" style="vertical-align: middle; cursor: pointer;" onClick="resetDateUsingID('p4_date24m')">
 			</td>
 			<td colspan="3">
+				<img src="../images/cal.gif" id="p4_date48m_cal" style="vertical-align: middle;">
 				<input readonly type="text" id="p4_date48m" name="p4_date48m" ondblclick="resetDate(this)" size="10" value="<%=UtilMisc.htmlEscape(props.getProperty("p4_date48m", ""))%>"/>
-				<img src="../images/cal.gif" id="p4_date48m_cal">
+				<img src="../images/clear.png" id="p4_date48m_delete" style="vertical-align: middle; cursor: pointer;" onClick="resetDateUsingID('p4_date48m')">
 			</td>
 			
 		</tr>
@@ -229,7 +232,7 @@
 				<input type="text" class="wide" ondblclick="htEnglish2Metric(this)" name="p4_hc24m" size="4" maxlength="5" value="<%= props.getProperty("p4_hc24m", "") %>"/>
 			</td>
 			<td>
-				<input type="text" class="wide" ondblclick="htEnglish2Metric(this)" name="p4_bmi24m" size="4" maxlength="5" value="<%= props.getProperty("p4_bmi24m", "") %>"/>
+				<input type="text" class="wide" name="p4_bmi24m" size="4" maxlength="5" value="<%= props.getProperty("p4_bmi24m", "") %>"/>
 			</td>
 			<td>
 				<input type="text" class="wide" ondblclick="htEnglish2Metric(this);" name="p4_ht48m" id="p4_ht48m" size="4" maxlength="5" value="<%= props.getProperty("p4_ht48m", "") %>"/>
@@ -238,7 +241,7 @@
 				<input type="text" class="wide" ondblclick="wtEnglish2Metric(this);" name="p4_wt48m" id="p4_wt48m" size="4" maxlength="5" value="<%= props.getProperty("p4_wt48m", "") %>"/>
 			</td>
 			<td>
-				<input type="text" class="wide" ondblclick="htEnglish2Metric(this);" name="p4_bmi48m" size="4" maxlength="5" value="<%= props.getProperty("p4_bmi48m", "") %>"/>
+				<input type="text" class="wide" name="p4_bmi48m" size="4" maxlength="5" value="<%= props.getProperty("p4_bmi48m", "") %>"/>
 			</td>
 		</tr>
 		<tr align="center">
@@ -249,7 +252,10 @@
 			
 		</tr>
 		<tr align="center" id="nutritionp4">
-					<td class="column"><a><bean:message key="oscarEncounter.formRourke1.msgNutrition"/>*</a></td>		
+			<td class="column"><a><bean:message key="oscarEncounter.formRourke1.msgNutrition"/>*</a><br/>
+				<img height="15" width="20" src="graphics/Checkmark_Lwhite.gif">
+				<bean:message key="oscarEncounter.formRourke2020.msgNutritionLegend" />
+			</td>
 			<td colspan="3">			
 				<table id="ntp41" cellpadding="0" cellspacing="0" width="100%">
 					<tr>
@@ -1271,9 +1277,6 @@
 			</td>
 			<td colspan="10" valign="top">
 				<table id="immt41" style="font-size: 9pt;" cellpadding="0" cellspacing="0" width="100%">
-					<tr>
-						<td colspan="9" style="text-align: center"><b><bean:message key="oscarEncounter.formRourke2006_1.msgImmunizationColTitle"/></b></td>
-					</tr>
 					<tr>
 						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
 						<td class="edcol" valign="top">X</td>

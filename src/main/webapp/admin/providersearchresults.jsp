@@ -23,14 +23,15 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 
-<%@ page import="java.sql.*, java.util.*, oscar.*" buffer="none" errorPage="errorpage.jsp"%>
+<%@ page import="java.sql.*, java.util.*, oscar.*" buffer="none"%>
 <%@ page import="org.oscarehr.util.SpringUtils"%>
 <%@ page import="org.oscarehr.common.model.ProviderData"%>
 <%@ page import="org.oscarehr.common.dao.ProviderDataDao"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -47,13 +48,18 @@
 	}
 %>
 
-	
+
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="admin.providersearchresults.title" /></title>
-<link rel="stylesheet" href="../web.css" />
-<script LANGUAGE="JavaScript">
+<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+
+<script>
 	function setfocus() {
 		document.searchprovider.keyword.focus();
 		document.searchprovider.keyword.select();
@@ -65,14 +71,22 @@
 
 	}
 </script>
+<script>
+    jQuery(document).ready( function () {
+        jQuery('#tblResults').DataTable({
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+            });
+    });
+</script>
+
 </head>
 
 <%
-		String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF";
-
-		//Defaults    		
+		//Defaults
 		String strOffset = "0";
-		String strLimit = "10";
+		String strLimit = "10000";
 
 		//OFFSET
 		if (request.getParameter("limit1") != null)
@@ -81,111 +95,105 @@
 		if (request.getParameter("limit2") != null)
 			strLimit = request.getParameter("limit2");
 
-		String keyword = request.getParameter("keyword");
+		String keyword = Encode.forHtmlContent(request.getParameter("keyword"));
 		String orderBy = request.getParameter("orderby");
 		String searchMode = request.getParameter("search_mode");
 		if (searchMode == null)
 			searchMode = "search_name";
 		if (orderBy == null)
 			orderBy = "last_name";
-		String[] searchStatuses = request
-				.getParameterValues("search_status");
-		String searchStatus = null;
 
-		if (searchStatuses != null) {
-			if (searchStatuses.length == 1) {
-				searchStatus = searchStatuses[0];
-			}
-		}
-		
+		String searchStatus = ("All".equalsIgnoreCase(request.getParameter("search_status")) ? null : request.getParameter("search_status"));
+
 		int offset = Integer.parseInt(strOffset);
 		int limit = Integer.parseInt(strLimit);
 %>
-<body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">
-<center>
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="<%=deepcolor%>">
-		<th><bean:message key="admin.providersearchresults.description" /></th>
-	</tr>
-</table>
-<table cellspacing="0" cellpadding="0" width="100%" border="0" BGCOLOR="<%=weakcolor%>">
-	<form method="post" action="providersearchresults.jsp" name="searchprovider" onsubmit="return onsub()">
-	<tr valign="top">
-		<td rowspan="2" align="right" valign="middle"><font
-			face="Verdana" color="#0000FF"><b><i><bean:message key="admin.search.formSearchCriteria" /></i></b></font></td>
-		<td nowrap><font size="1" face="Verdana" color="#0000FF">
-		<input type="radio" <%=searchMode.equals("search_name")?"checked":""%>
-			name="search_mode" value="search_name"
-			onclick="document.forms['searchprovider'].keyword.focus();">
-			<bean:message key="admin.providersearch.formLastName" /></font></td>
-		<td nowrap><font size="1" face="Verdana" color="#0000FF">
-		<input type="radio"	<%=searchMode.equals("search_providerno")?"checked":""%>
-			name="search_mode" value="search_providerno"
-			onclick="document.forms['searchprovider'].keyword.focus();">
-			<bean:message key="admin.provider.formProviderNo" /></font></td>
-		<td nowrap><font size="1" face="Verdana" color="#0000FF">
-		<input type="checkbox" name="search_status" value="1"
-			<%=request.getParameter("search_status")!=null?(request.getParameter("search_status").equals("1")?"checked":""):""%>>
-			<bean:message key="admin.providersearch.formActiveStatus" /><br />
-		<input type="checkbox" name="search_status" value="0"
-			<%=request.getParameter("search_status")!=null?(request.getParameter("search_status").equals("0")?"checked":""):""%>>
-			<bean:message key="admin.providersearch.formInactiveStatus" /> </font></td>
-		<td valign="middle" rowspan="2" ALIGN="left"><input type="text"
-			NAME="keyword" SIZE="17" MAXLENGTH="100"> <INPUT
-			TYPE="hidden" NAME="orderby" VALUE="last_name"> <INPUT
+<body onLoad="setfocus()">
 
-		<INPUT TYPE="hidden" NAME="limit1" VALUE="0"> <INPUT
-			TYPE="hidden" NAME="limit2" VALUE="10">  <INPUT
-			TYPE="SUBMIT" NAME="button"
-			VALUE=<bean:message key="admin.providersearchresults.btnSubmit"/>
-			SIZE="17"></td>
-	</tr>
-	</form>
-</table>
+<h4>
+<i class="icon-search" title="Patient Search"></i>&nbsp;<bean:message key="admin.providersearchresults.description" /></h4>
 
-<table width="100%" border="0">
+<form method="post" action="providersearchresults.jsp" name="searchprovider" onsubmit="return onsub()">
+<div class="well">
+<table style="width:100%">
 	<tr>
-		<td align="left"><i><bean:message key="admin.search.keywords" /></i> : <%=keyword%></td>
+		<td rowspan="2"  style="text-align:right; vertical-align:middle">
+			<b class="blue-text"><i><bean:message key="admin.search.formSearchCriteria" /></i>
+		</td>
+		<td style="white-space: nowrap;">
+				<input type="radio" <%=searchMode.equals("search_name")?"checked":""%> name="search_mode"
+					   value="search_name" onclick="document.forms['searchprovider'].keyword.focus();">
+				<bean:message key="admin.providersearch.formLastName" />
+		</td>
+		<td style="white-space: nowrap;">
+				<input type="radio"	<%=searchMode.equals("search_providerno")?"checked":""%> name="search_mode"
+					   value="search_providerno" onclick="document.forms['searchprovider'].keyword.focus();">
+				<bean:message key="admin.provider.formProviderNo" />
+		</td>
+		<td style="white-space: nowrap;">
+				<input type="radio" name="search_status" value="All" <%=searchStatus == null ? "checked" : ""%>>
+				<bean:message key="admin.providersearch.formAllStatus" />
+			<br/>
+				<input type="radio" name="search_status" value="1" <%="1".equals(searchStatus) ? "checked" : ""%>>
+				<bean:message key="admin.providersearch.formActiveStatus" />
+			<br/>
+				<input type="radio" name="search_status" value="0" <%="0".equals(searchStatus) ? "checked" : ""%>>
+				<bean:message key="admin.providersearch.formInactiveStatus" />
+		</td>
+		<td style="vertical-align:middle; text-align:left" rowspan="2" >
+            <div class="input-append">
+			    <input type="text" name="keyword" class="input input-large" maxlength="100" style="height:24px">
+                <button type="submit" name="button" class="btn add-on" style="height:24px" ><i class="icon-search" title="<bean:message key="admin.search.btnSubmit"/>"></i></button>
+            </div>
+			<input type="hidden" name="orderby" value="last_name">
+			<input type="hidden" name="limit1" value="0">
+			<input type="hidden" name="limit2" value="10000">
+
+		</td>
+	</tr>
+</table>
+</div>
+</form>
+
+<table>
+	<tr>
+		<td style="text-align:left"><i><bean:message key="admin.search.keywords" /></i> : <%=Encode.forHtml(keyword)%></td>
 	</tr>
 </table>
 
-<CENTER>
-<table width="100%" cellspacing="2" cellpadding="2" border="0"
-	bgcolor="ivory">
-	<tr bgcolor="<%=deepcolor%>">
-		<TH align="center" width="10%"><b><a
-			href="providersearchresults.jsp?keyword=<%=keyword%>&search_mode=<%=searchMode%>&orderby=provider_no&limit1=0&limit2=10">
-			<bean:message key="admin.providersearchresults.ID" /></a></b></TH>
-		<TH align="center" width="19%"><b><a
-			href="providersearchresults.jsp?keyword=<%=keyword%>&search_mode=<%=searchMode%>&orderby=first_name&limit1=0&limit2=10">
-			<bean:message key="admin.provider.formFirstName" /></a> </b></TH>
-		<TH align="center" width="19%"><b><a
-			href="providersearchresults.jsp?keyword=<%=keyword%>&search_mode=<%=searchMode%>&orderby=last_name&limit1=0&limit2=10">
-			<bean:message key="admin.provider.formLastName" /></a></b></TH>
-		<TH align="center" width="16%"><b>
-			<bean:message key="admin.provider.formSpecialty" /></b></TH>
-		<TH align="center" width="9%"><b>
-			<bean:message key="admin.provider.formTeam" /></b></TH>
-		<TH align="center" width="2%"><b>
-			<bean:message key="admin.provider.formSex" /></B></TH>
-		<TH align="center" width="15%"><b>
-			<bean:message key="admin.providersearchresults.phone" /></B></TH>
-		<TH align="center" width="15%"><b>
-			<bean:message key="admin.provider.formStatus" /></B></TH>
-		<TH align="center" width="15%"><b>
-			</B></TH>
+<table id="tblResults" style="width:100%" class="table table-hover table-striped table-condensed">
+    <thead>
+	<tr>
+		<th style="text-align:center; width:10%">
+			<bean:message key="admin.providersearchresults.ID" /></th>
+		<th style="text-align:center; width:20%; white-space: nowrap;">
+			<bean:message key="admin.provider.formLastName" />,&nbsp;
+			<bean:message key="admin.provider.formFirstName" /></th>
+		<th style="text-align:center; width:10%"><bean:message key="admin.provider.formProviderNo" /></th>
+		<th style="text-align:center; width:18%">
+			<bean:message key="admin.provider.formSpecialty" /></th>
+		<th style="text-align:center; width:14%">
+			<bean:message key="admin.provider.formTeam" /></th>
+		<th style="text-align:center; width:4%">
+			<bean:message key="admin.provider.formSex" /></th>
+		<th style="text-align:center; width:14%">
+			<bean:message key="admin.providersearchresults.phone" /></th>
+		<th style="text-align:center; width:10%">
+			<bean:message key="admin.provider.formStatus" /></th>
 	</tr>
+    </thead>
+    <tbody>
 <%
 	List<ProviderData> providerList = null;
 	ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);
-	
+
 	if(searchMode.equals("search_name")) {
 		providerList = providerDao.findByProviderName(keyword, searchStatus, limit, offset);
 	}
 	else if(searchMode.equals("search_providerno")) {
 		providerList = providerDao.findByProviderNo(keyword, searchStatus, limit, offset);
 	}
-	
+
 	if(orderBy.equals("last_name")) {
 		Collections.sort(providerList, ProviderData.LastNameComparator);
 	}
@@ -195,52 +203,52 @@
 	else if(orderBy.equals("provider_no")) {
 		Collections.sort(providerList, ProviderData.ProviderNoComparator);
 	}
-  
+
   boolean toggleLine=false;
   int nItems=0;
-  
+
   if(providerList == null) {
     out.println("failed!!!");
-  } 
+  }
   else {
-    
+
 	  for(ProviderData provider : providerList) {
 		  toggleLine = !toggleLine;
 		  nItems++;
 %>
-
-	<tr bgcolor="<%=toggleLine?"white":weakcolor%>">
-		<td align="center"><a href='providerupdateprovider.jsp?keyword=<%=provider.getId()%>'><%= provider.getId() %></a></td>
-		<td><%= provider.getFirstName() %></td>
-		<td><%= provider.getLastName() %></td>
-		<td><%= provider.getSpecialty() %></td>
-		<td><%= provider.getTeam() %></td>
-		<td align="center"><%= provider.getSex() %></td>
-		<td><%= provider.getPhone() %></td>
-		<td><% if ("1".equals(provider.getStatus())) { %><bean:message key="admin.provider.formStatusActive" /><% } else {%><bean:message key="admin.provider.formStatusInactive" /><% }%></td>
-		<td><input type="button" value="Audit Info" onClick="window.open('providerAudit.jsp?provider_no=<%=provider.getId() %>','pwin','width=800,height=1000');"></td>
+    <!-- getPractionerNo() getPractitionerNoType() getFormattedName() getComments() getBillingNo() getTitle() getEmail() getOhipNo() getAddress() -->
+	<tr>
+		<td style="text-align:center"><a href='providerupdateprovider.jsp?keyword=<%=provider.getId()%>'><%= provider.getId() %></a></td>
+		<td><%= Encode.forHtmlContent(provider.getLastName()+", "+provider.getFirstName()) %></td>
+		<td style="text-align:center"><%= Encode.forHtmlContent(provider.getOhipNo())%></td>
+		<td><%= Encode.forHtmlContent(provider.getSpecialty()) %></td>
+		<td><%= Encode.forHtmlContent(provider.getTeam()) %></td>
+		<td style="text-align:center"><%= Encode.forHtmlContent(provider.getSex()) %></td>
+		<td><%= Encode.forHtmlContent(provider.getPhone()) %></td>
+		<td><%= (provider.getStatus()!=null)?(provider.getStatus().equals("1")?"Active":"Inactive"):"" %></td>
 	</tr>
 	<%
     }
   }
 %>
-
+    </tbody>
 </table>
+
 <br>
 <%
   int nLastPage=0,nNextPage=0;
-  
+
   nNextPage=Integer.parseInt(strLimit)+Integer.parseInt(strOffset);
   nLastPage=Integer.parseInt(strOffset)-Integer.parseInt(strLimit);
   String searchStatusQ = (searchStatus!=null)?"&search_status="+searchStatus:"";
   if(nLastPage>=0) {
 %> <a
-	href="providersearchresults.jsp?keyword=<%= keyword %>&search_mode=<%= searchMode %><%= searchStatusQ %>&orderby=<%=orderBy%>&limit1=<%=nLastPage%>&limit2=<%=strLimit%>"><bean:message
+	href="providersearchresults.jsp?keyword=<%= Encode.forUriComponent(keyword) %>&search_mode=<%= searchMode %><%= searchStatusQ %>&orderby=<%=orderBy%>&limit1=<%=nLastPage%>&limit2=<%=strLimit%>"><bean:message
 	key="admin.providersearchresults.btnLastPage" /></a> | <%
   }
   if(nItems==Integer.parseInt(strLimit)) {
 %> <a
-	href="providersearchresults.jsp?keyword=<%= keyword %>&search_mode=<%= searchMode %><%= searchStatusQ %>&orderby=<%= orderBy %>&limit1=<%=nNextPage%>&limit2=<%=strLimit%>"><bean:message
+	href="providersearchresults.jsp?keyword=<%= Encode.forUriComponent(keyword) %>&search_mode=<%= searchMode %><%= searchStatusQ %>&orderby=<%= orderBy %>&limit1=<%=nNextPage%>&limit2=<%=strLimit%>"><bean:message
 	key="admin.providersearchresults.btnNextPage" /></a> <%
 }
 %>

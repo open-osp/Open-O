@@ -63,15 +63,15 @@
         <ViolationValue>/src/main/java/org/oscarehr/util/OntarioMD.java:h  = new Hashtable();</ViolationValue>
         <ViolationValue>/src/main/java/oscar/Misc.java:Hashtable H = new Hashtable();</ViolationValue>
         <ViolationValue>/src/main/java/oscar/Misc.java:Vector V = new Vector();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/AddEditDocumentAction.java:Hashtable errors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/AddEditHtmlAction.java:Hashtable errors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable docStatus = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable docType = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable patientDocs = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable patientIdNames = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable patientNumDoc = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable&lt;String, List&lt;String&gt;&gt; ab_NormalDoc = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable&lt;String, List&lt;String&gt;&gt; typeDocLab = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/AddEditDocumentAction.java:Hashtable errors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/AddEditHtmlAction.java:Hashtable errors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable docStatus = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable docType = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable patientDocs = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable patientIdNames = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable patientNumDoc = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable&lt;String, List&lt;String&gt;&gt; ab_NormalDoc = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable&lt;String, List&lt;String&gt;&gt; typeDocLab = new Hashtable();</ViolationValue>
         <ViolationValue>/src/main/java/oscar/entities/WCB.java:List errors = new ArrayList();</ViolationValue>
         <ViolationValue>/src/main/java/oscar/form/FrmBCINRRecord.java:Vector ret = new Vector();</ViolationValue>
         <ViolationValue>/src/main/java/oscar/form/pageUtil/FrmFormAction.java:Vector data2OSDSF = new Vector();</ViolationValue>
@@ -532,17 +532,17 @@
         <ViolationValue>/src/main/webapp/demographic/shnfieldsView.jsp:Hashtable h = new Hashtable();</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/vnativefieldsView.jsp:Hashtable h = new Hashtable();</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/vnativefieldsView.jsp:Hashtable h2 = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/addDocument.jsp:Hashtable docerrors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/addDocument.jsp:Hashtable linkhtmlerrors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/addedithtmldocument.jsp:Hashtable linkhtmlerrors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/documentReport.jsp:ArrayList categories = new ArrayList();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/documentReport.jsp:ArrayList categoryKeys = new ArrayList();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/documentReport.jsp:ArrayList privatedocs = new ArrayList();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/documentReport.jsp:ArrayList publicdocs = new ArrayList();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/editDocument.jsp:Hashtable docerrors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/previewDocHL7Inbox.jsp:ArrayList categories = new ArrayList();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/previewDocHL7Inbox.jsp:ArrayList categoryKeys = new ArrayList();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/previewDocHL7Inbox.jsp:ArrayList privatedocs = new ArrayList();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/addDocument.jsp:Hashtable docerrors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/addDocument.jsp:Hashtable linkhtmlerrors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/addedithtmldocument.jsp:Hashtable linkhtmlerrors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/documentReport.jsp:ArrayList categories = new ArrayList();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/documentReport.jsp:ArrayList categoryKeys = new ArrayList();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/documentReport.jsp:ArrayList privatedocs = new ArrayList();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/documentReport.jsp:ArrayList publicdocs = new ArrayList();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/editDocument.jsp:Hashtable docerrors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/previewDocHL7Inbox.jsp:ArrayList categories = new ArrayList();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/previewDocHL7Inbox.jsp:ArrayList categoryKeys = new ArrayList();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/previewDocHL7Inbox.jsp:ArrayList privatedocs = new ArrayList();</ViolationValue>
         <ViolationValue>/src/main/webapp/eform/efmformmanagerdownload.jsp:List catList=new ArrayList();</ViolationValue>
         <ViolationValue>/src/main/webapp/eform/efmformmanagerdownload.jsp:Vector params = new Vector();</ViolationValue>
         <ViolationValue>/src/main/webapp/eform/efmformmanagerdownload.jsp:Vector vec = new Vector();</ViolationValue>
@@ -1214,17 +1214,17 @@
         <ViolationValue>/src/main/java/oscar/Misc.java:public static String[] vectorToStringArray(Vector V) {</ViolationValue>
         <ViolationValue>/src/main/java/oscar/OBRisksHandler_99_12.java://	private Hashtable savedparams;</ViolationValue>
         <ViolationValue>/src/main/java/oscar/decision/DesAnnualReviewPlannerRiskHandler.java://	private Hashtable savedparams;</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/AddEditDocumentAction.java:Hashtable errors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/AddEditDocumentAction.java:import java.util.Hashtable;</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/AddEditHtmlAction.java:Hashtable errors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/AddEditHtmlAction.java:import java.util.Hashtable;</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable docStatus = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable docType = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable patientDocs = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable patientIdNames = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable patientNumDoc = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable&lt;String, List&lt;String&gt;&gt; ab_NormalDoc = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/dms/actions/DmsInboxManageAction.java:Hashtable&lt;String, List&lt;String&gt;&gt; typeDocLab = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/AddEditDocumentAction.java:Hashtable errors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/AddEditDocumentAction.java:import java.util.Hashtable;</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/AddEditHtmlAction.java:Hashtable errors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/AddEditHtmlAction.java:import java.util.Hashtable;</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable docStatus = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable docType = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable patientDocs = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable patientIdNames = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable patientNumDoc = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable&lt;String, List&lt;String&gt;&gt; ab_NormalDoc = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/documentManager/actions/DmsInboxManageAction.java:Hashtable&lt;String, List&lt;String&gt;&gt; typeDocLab = new Hashtable();</ViolationValue>
         <ViolationValue>/src/main/java/oscar/eform/EFormExportZip.java:Hashtable&lt;String, EForm&gt; eformTable = new Hashtable&lt;String,EForm&gt;(); //stores eforms constructed from eform.properties, no HTML</ViolationValue>
         <ViolationValue>/src/main/java/oscar/eform/EFormExportZip.java:Hashtable&lt;String, EForm&gt; eformTableFailed = new Hashtable&lt;String,EForm&gt;();  //stores eforms that are constructed from eform.properties that alredy exist and do not need to be imported</ViolationValue>
         <ViolationValue>/src/main/java/oscar/eform/EFormExportZip.java:Hashtable&lt;String, File&gt; tempFiles = new Hashtable&lt;String,File&gt;(); //references extracted files in the temp folder</ViolationValue>
@@ -2622,25 +2622,25 @@
         <ViolationValue>/src/main/webapp/demographic/vnativefieldsView.jsp:Hashtable h2 = new Hashtable();</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/vnativefieldsView.jsp:String getArea(Hashtable h2,String s){</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/vnativefieldsView.jsp:String getEth(Hashtable h,String s){</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/addDocument.jsp:Hashtable docerrors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/addDocument.jsp:Hashtable linkhtmlerrors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/addDocument.jsp:docerrors = (Hashtable) request.getAttribute("docerrors");</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/addDocument.jsp:linkhtmlerrors = (Hashtable) request.getAttribute("linkhtmlerrors");</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/addedithtmldocument.jsp:Hashtable linkhtmlerrors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/addedithtmldocument.jsp:linkhtmlerrors = (Hashtable) request.getAttribute("linkhtmlerrors");</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/documentBrowser.jsp:&lt;%@page import="java.util.Hashtable"%&gt;</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/documentBrowser.jsp:List&lt;Hashtable&gt; queues = queueDao.getQueues();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/documentBrowser.jsp:for (Hashtable ht : queues) {</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/editDocument.jsp:Hashtable docerrors = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/editDocument.jsp:docerrors = (Hashtable) request.getAttribute("docerrors");</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/html5AddDocuments.jsp:List&lt;Hashtable&gt; queues=queueDao.getQueues();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/html5AddDocuments.jsp:for (Hashtable ht : queues) {</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/incomingDocs.jsp:List&lt;Hashtable&gt; queues = queueDao.getQueues();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/incomingDocs.jsp:for (Hashtable ht : queues) {</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/listDocumentFromProvider.jsp:Hashtable providerDocs=(Hashtable)request.getSession().getAttribute("providerDocs");</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/listDocumentFromQueue.jsp:Hashtable queueDocs=(Hashtable)request.getSession().getAttribute("queueDocs");</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/showDocument.jsp:List&lt;Hashtable&gt; queues = queueDao.getQueues();</ViolationValue>
-        <ViolationValue>/src/main/webapp/dms/showDocument.jsp:for (Hashtable ht : queues) {</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/addDocument.jsp:Hashtable docerrors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/addDocument.jsp:Hashtable linkhtmlerrors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/addDocument.jsp:docerrors = (Hashtable) request.getAttribute("docerrors");</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/addDocument.jsp:linkhtmlerrors = (Hashtable) request.getAttribute("linkhtmlerrors");</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/addedithtmldocument.jsp:Hashtable linkhtmlerrors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/addedithtmldocument.jsp:linkhtmlerrors = (Hashtable) request.getAttribute("linkhtmlerrors");</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/documentBrowser.jsp:&lt;%@page import="java.util.Hashtable"%&gt;</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/documentBrowser.jsp:List&lt;Hashtable&gt; queues = queueDao.getQueues();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/documentBrowser.jsp:for (Hashtable ht : queues) {</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/editDocument.jsp:Hashtable docerrors = new Hashtable();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/editDocument.jsp:docerrors = (Hashtable) request.getAttribute("docerrors");</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/html5AddDocuments.jsp:List&lt;Hashtable&gt; queues=queueDao.getQueues();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/html5AddDocuments.jsp:for (Hashtable ht : queues) {</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/incomingDocs.jsp:List&lt;Hashtable&gt; queues = queueDao.getQueues();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/incomingDocs.jsp:for (Hashtable ht : queues) {</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/listDocumentFromProvider.jsp:Hashtable providerDocs=(Hashtable)request.getSession().getAttribute("providerDocs");</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/listDocumentFromQueue.jsp:Hashtable queueDocs=(Hashtable)request.getSession().getAttribute("queueDocs");</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/showDocument.jsp:List&lt;Hashtable&gt; queues = queueDao.getQueues();</ViolationValue>
+        <ViolationValue>/src/main/webapp/documentManager/showDocument.jsp:for (Hashtable ht : queues) {</ViolationValue>
         <ViolationValue>/src/main/webapp/eform/efmformmanagerdownload.jsp:Object holbrook = ((Hashtable) obj).get("Holbrook Drug Interactions");</ViolationValue>
         <ViolationValue>/src/main/webapp/eform/efmformmanagerdownload.jsp:Vector params = new Vector();</ViolationValue>
         <ViolationValue>/src/main/webapp/eform/efmformmanagerdownload.jsp:Vector vec = new Vector();</ViolationValue>

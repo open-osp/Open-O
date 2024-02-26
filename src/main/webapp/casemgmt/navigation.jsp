@@ -430,7 +430,7 @@ String backurl=bsurl+"/oscarEncounter/IncomingEncounter.do?";
 
 </caisi:isModuleLoad>
 <tr><td>
-    <a href="javascript:void(0)" onClick="popupPage('<%=bsurl%>/dms/documentReport.jsp?function=demographic&doctype=lab&functionid=<%=bean.demographicNo%>&curUser=<%=bean.curProviderNo%>');return false;">documents</a><br>
+    <a href="javascript:void(0)" onClick="popupPage('<%=bsurl%>/documentManager/documentReport.jsp?function=demographic&doctype=lab&functionid=<%=bean.demographicNo%>&curUser=<%=bean.curProviderNo%>');return false;">documents</a><br>
 </td></tr>
 
 <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">

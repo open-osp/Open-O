@@ -302,15 +302,25 @@ public class MDSHandler implements MessageHandler {
     }
 
     public int getOBXFinalResultCount(){
+        int obrCount = getOBRCount();
+        int obxCount;
         int count = 0;
-        try {
-            String accessionNum = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.MSH-10-1"));
-            count = Integer.parseInt(accessionNum.substring(accessionNum.lastIndexOf("-")+1));
-        } catch (Exception e) {
-            logger.error("could not retrieve message ordering number", e);
+        for (int i=0; i < obrCount; i++){
+            obxCount = getOBXCount(i);
+            for (int j=0; j < obxCount; j++){
+                String status = getOBXResultStatus(i, j);
+                if (status.equalsIgnoreCase("Final") || status.equalsIgnoreCase("Edited"))
+                    count++;
+            }
         }
+        String orderStatus = getOrderStatus();
+        // add extra so final reports are always the ordered as the latest
+        if (orderStatus.equalsIgnoreCase("F"))
+            count = count + 100;
+        
         return count;
     }
+
 
     /**
      *  Retrieve the possible segment headers from the OBX fields

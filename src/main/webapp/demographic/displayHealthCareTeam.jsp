@@ -109,7 +109,7 @@
 <body id="${ param.view }View" >
 	<table class="MainTable" >
 	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn" width="20%">Health Care Team</td>
+		<td class="MainTableTopRowLeftColumn" width="20%">&nbsp;Health Care Team</td>
 		<td class="MainTableTopRowRightColumn">
 		<table class="TopStatusBar">
 			<tr>

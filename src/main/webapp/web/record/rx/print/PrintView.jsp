@@ -46,6 +46,7 @@
 <%@page import="org.oscarehr.util.DigitalSignatureUtils"%>
 <%@page import="org.oscarehr.ui.servlet.ImageRenderingServlet"%>
 <!-- end -->
+<%@ page import="org.owasp.encoder.Encode" %>
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	String providerNo=loggedInInfo.getLoggedInProviderNo();
@@ -390,7 +391,7 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
                                             <table width=100% cellspacing=0 cellpadding=0>
                                                     <tr>
                                                             <td align=left valign=top><br>
-                                                            <%= patient.getFirstName() %> <%= patient.getSurname() %> <%if(showPatientDOB){%>&nbsp;&nbsp; DOB:<%= StringEscapeUtils.escapeHtml(patientDOBStr) %> <%}%><br>
+                                                            <%= Encode.forHtmlContent(patient.getFirstName()) %> <%= Encode.forHtmlContent(patient.getSurname()) %> <%if(showPatientDOB){%><br>DOB:<%= Encode.forHtmlContent(StringEscapeUtils.escapeHtml(patientDOBStr)) %> <%}%><br>
                                                             <%= patientAddress %><br>
                                                             <%= patientCityPostal %><br>
                                                             <%= patientPhone %><br>

@@ -10,7 +10,7 @@ angular.module('oscarFilters', []).filter('ticklerLink', function() {
 		  } else if(input.tableName == 'HL7') {
 			  url = "../lab/CA/ALL/labDisplay.jsp?segmentID=" + input.tableId;
 		  } else if(input.tableName == 'DOC') {
-			  url = "../dms/ManageDocument.do?method=display&doc_no=" + input.tableId;
+			  url = "../documentManager/ManageDocument.do?method=display&doc_no=" + input.tableId;
 		  } 
 		  
 		  return url;

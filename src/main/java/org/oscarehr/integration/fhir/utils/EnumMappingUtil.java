@@ -36,7 +36,7 @@ public final class EnumMappingUtil {
 			break;
 		case F : genderCode = AdministrativeGender.FEMALE;
 			break;
-		case T : genderCode = AdministrativeGender.OTHER;
+		case X : genderCode = AdministrativeGender.OTHER;
 			break;
 		case U : genderCode = AdministrativeGender.UNKNOWN;
 			break;
@@ -53,7 +53,7 @@ public final class EnumMappingUtil {
 			break;
 		case FEMALE : genderCode = Gender.F;
 			break;
-		case OTHER : genderCode = Gender.O;
+		case OTHER : genderCode = Gender.X;
 			break;
 		case UNKNOWN : genderCode = Gender.U;
 			break;

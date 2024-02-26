@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
+    Copyright (c) 2007 Peter Hutten-Czapski based on OSCAR general requirements
     This software is published under the GPL GNU General Public License.
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -23,9 +23,8 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<%-- This JSP is the first page you see when you enter 'report by template' --%>
+<!DOCTYPE HTML>
+
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -42,162 +41,96 @@ if(!authed) {
 }
 %>
 
-<%@ page import="java.util.*,oscar.oscarReport.reportByTemplate.*"%>
+<%@ page import="java.util.*"%>
+<%@ page import="oscar.oscarReport.reportByTemplate.*"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Clinic</title>
-<link rel="stylesheet" type="text/css"
-	href="../share/css/OscarStandardLayout.css">
 
-<script type="text/javascript" language="JavaScript"
-	src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" language="JavaScript"
-	src="../share/javascript/Oscar.js"></script>
+<script src="${pageContext.request.contextPath}/js/global.js"></script>
+<script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 
-<style type="text/css">
-table.outline {
-	margin-top: 50px;
-	border-bottom: 1pt solid #888888;
-	border-left: 1pt solid #888888;
-	border-top: 1pt solid #888888;
-	border-right: 1pt solid #888888;
-}
-
-table.grid {
-	border-bottom: 1pt solid #888888;
-	border-left: 1pt solid #888888;
-	border-top: 1pt solid #888888;
-	border-right: 1pt solid #888888;
-}
-
-td.gridTitles {
-	border-bottom: 2pt solid #888888;
-	font-weight: bold;
-	text-align: center;
-}
-
-td.gridTitlesWOBottom {
-	font-weight: bold;
-	text-align: center;
-}
-
-td.middleGrid {
-	border-left: 1pt solid #888888;
-	border-right: 1pt solid #888888;
-	text-align: center;
-}
-
-label {
-	float: left;
-	width: 120px;
-	font-weight: bold;
-}
-
-label.checkbox {
-	float: left;
-	width: 116px;
-	font-weight: bold;
-}
-
-label.fields {
-	float: left;
-	width: 80px;
-	font-weight: bold;
-}
-
-span.labelLook {
-	font-weight: bold;
-}
-
-input,textarea,select { //
-	margin-bottom: 5px;
-}
-
-textarea {
-	width: 450px;
-	height: 100px;
-}
-
-.boxes {
-	width: 1em;
-}
-
-#submitbutton {
-	margin-left: 120px;
-	margin-top: 5px;
-	width: 90px;
-}
-
-br {
-	clear: left;
-}
-</style>
 </head>
+<body class="BodyStyle">
+<h4><bean:message key="admin.admin.clinicAdmin" /></h4></h4>
+<div class="well">
 
-<body vlink="#0000FF" class="BodyStyle">
+<html:form	action="/admin/ManageClinic" styleClass="form-horizontal">
+<html:hidden property="clinic.id" />
+<html:hidden property="clinic.status" value="A" />
+<html:hidden property="method" value="update" />
 
-<table class="MainTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">admin</td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar" style="width: 100%;">
-			<tr>
-				<td>Manage Clinic Details</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn" valign="top" width="160px;">
-		&nbsp;</td>
-		<td class="MainTableRightColumn" valign="top">
-		<fieldset><legend>Clinic Details</legend> <html:form
-			action="/admin/ManageClinic">
-			<html:hidden property="clinic.id" />
-			<input type="hidden" name="method" value="update" />
+  <div class="control-group">
+    <label class="control-label" for="clinic.clinicName"><bean:message key="admin.k2a.clinicName" /></label>
+    <div class="controls">
+      <html:text property="clinic.clinicName" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="clinic.clinicAddress"><bean:message key="admin.provider.formAddress" /></label>
+    <div class="controls">
+      <html:text property="clinic.clinicAddress" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="clinic.clinicCity"><bean:message key="oscarReport.oscarReportCatchment.msgCity" /></label>
+    <div class="controls">
+      <html:text property="clinic.clinicCity" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="clinic.clinicPostal"><bean:message key="oscarReport.oscarReportCatchment.msgPostal" /></label>
+    <div class="controls">
+      <html:text property="clinic.clinicPostal" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="clinic.clinicPhone"><bean:message key="appointment.addappointment.msgPhone" /></label>
+    <div class="controls">
+      <html:text property="clinic.clinicPhone" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="clinic.clinicFax"><bean:message key="admin.provider.formFax" /></label>
+    <div class="controls">
+      <html:text property="clinic.clinicFax" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="clinic.clinicLocationCode" ><bean:message key="location" />&nbsp;  <bean:message key="billing.billingDigSearch.formCode" /></label>
+    <div class="controls">
+      <html:text property="clinic.clinicLocationCode" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="clinic.clinicProvince"><bean:message key="demographic.demographicaddrecordhtm.formprovince" /></label>
+    <div class="controls">
+      <html:text property="clinic.clinicProvince" />
+    </div>
+  </div>
+  <div class="control-group" title="Multi phone delimited by |">
+    <label class="control-label" for="clinic.clinicDelimPhone" ><bean:message key="appointment.addappointment.msgPhone" />|<bean:message key="appointment.addappointment.msgPhone" /></label>
+    <div class="controls">
+      <html:text property="clinic.clinicDelimPhone" />
+    </div>
+  </div>
+  <div class="control-group" title="Multi fax delimited by |">
+    <label class="control-label" for="clinic.clinicDelimFax" ><bean:message key="admin.provider.formFax" />|<bean:message key="admin.provider.formFax" /></label>
+    <div class="controls">
+      <html:text property="clinic.clinicDelimFax" />
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <input type="submit" value="<bean:message key="global.btnSubmit" />" class="btn btn-primary">
+    </div>
+  </div>
 
-			<label for="clinic.clinicName">Clinic Name</label>
-			<html:text property="clinic.clinicName" />
-			<br />
-			<label for="clinic.clinicAddress">Clinic Address</label>
-			<html:text property="clinic.clinicAddress" />
-			<br />
-			<label for="clinic.clinicCity">Clinic City</label>
-			<html:text property="clinic.clinicCity" />
-			<br />
-			<label for="clinic.clinicPostal">Clinic Postal</label>
-			<html:text property="clinic.clinicPostal" />
-			<br />
-			<label for="clinic.clinicPhone">Clinic Phone</label>
-			<html:text property="clinic.clinicPhone" />
-			<br />
-			<label for="clinic.clinicFax">Clinic Fax</label>
-			<html:text property="clinic.clinicFax" />
-			<br />
-			<label for="clinic.clinicLocationCode">Clinic Location Code</label>
-			<html:text property="clinic.clinicLocationCode" />
-			<br />
-			<html:hidden property="clinic.status" value="A" />
-			<br />
-			<label for="clinic.clinicProvince">Clinic Province</label>
-			<html:text property="clinic.clinicProvince" />
-			<br />
-			<label for="clinic.clinicDelimPhone">multi phone</label>
-			<html:text property="clinic.clinicDelimPhone" /> (Delimited by |) <br />
-			<label for="clinic.clinicDelimFax">multi fax</label>
-			<html:text property="clinic.clinicDelimFax" />  (Delimited by |)<br />
-			<input type="submit" value="submit" />
-		</html:form></fieldset>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn">&nbsp;</td>
+</html:form>
 
-		<td class="MainTableBottomRowRightColumn">&nbsp;</td>
-	</tr>
-</table>
+</div>
 </html:html>

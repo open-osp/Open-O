@@ -24,7 +24,7 @@
 
 --%>
 <%@page import="org.oscarehr.common.model.DemographicStudyPK"%>
-<%@ page import="java.util.*, java.sql.*, oscar.*, oscar.util.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, oscar.*, oscar.util.*" errorPage="/errorpage.jsp"%>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.common.model.DemographicStudy" %>
 <%@page import="org.oscarehr.common.dao.DemographicStudyDao" %>

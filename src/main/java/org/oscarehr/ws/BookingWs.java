@@ -54,7 +54,7 @@ import org.oscarehr.util.MiscUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import oscar.dms.EDocUtil;
+import org.oscarehr.documentManager.EDocUtil;
 
 @WebService
 @Component

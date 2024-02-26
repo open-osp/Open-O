@@ -677,7 +677,7 @@ function reportWindow(page) {
                                                 <%
                                                 	}else if (LabResultData.isDocument(type)){
                                                 %>
-                                                <a href="javascript:reportWindow('../dms/ManageDocument.do?method=display&doc_no=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')">ATT</a>
+                                                <a href="javascript:reportWindow('../documentManager/ManageDocument.do?method=display&doc_no=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')">ATT</a>
                                                 <%
                                                 	}else if (LabResultData.isHRM(type)){
                                                 %>

@@ -33,6 +33,7 @@
 <%@ page import="oscar.oscarLab.ca.on.LabResultData"%>
 <%@ page import="oscar.oscarMDS.data.*,oscar.oscarLab.ca.on.*"%>
 <%@ page import="oscar.util.DateUtils" %>
+<%@ page import="oscar.oscarLab.ca.all.Hl7textResultsData" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -75,7 +76,6 @@ if(!authed) {
        labs.addAll(remoteResults);
     }
     
-    Collections.sort(labs);
     
     int pageNum = 1;
     if ( request.getParameter("pageNum") != null ) {
@@ -84,17 +84,23 @@ if(!authed) {
     
     LabResultData result;
     
-    LinkedHashMap<String,LabResultData> accessionMap = new LinkedHashMap<String,LabResultData>();
+    // Comment out this code and instead using the correct method to
+    // get latest lab versions, which is the below.
+    // LinkedHashMap<String,LabResultData> accessionMap = new LinkedHashMap<String,LabResultData>();
+    // for (int i = 0; i < labs.size(); i++) {
+    // 	result = labs.get(i);
+    // 	if (result.accessionNumber == null || result.accessionNumber.equals("")) {
+    // 		accessionMap.put("noAccessionNum" + i + result.labType, result);
+    // 	} else {
+    // 		if (!accessionMap.containsKey(result.accessionNumber + result.labType)) accessionMap.put(result.accessionNumber + result.labType, result);
+    // 	}
+    // }
+    // labs = new ArrayList<LabResultData>(accessionMap.values());
 
-	for (int i = 0; i < labs.size(); i++) {
-		result = labs.get(i);
-		if (result.accessionNumber == null || result.accessionNumber.equals("")) {
-			accessionMap.put("noAccessionNum" + i + result.labType, result);
-		} else {
-			if (!accessionMap.containsKey(result.accessionNumber + result.labType)) accessionMap.put(result.accessionNumber + result.labType, result);
-		}
-	}
-	labs = new ArrayList<LabResultData>(accessionMap.values());
+    //First, getting the latest versions of the lab results and then sorting them ensures 
+    //that they will be displayed in the correct date order in the encounter window.
+    labs = getLatestLabVersions(labs);
+    Collections.sort(labs);
 	
 	
 %>
@@ -418,5 +424,24 @@ public Date getServiceDate(LoggedInInfo loggedInInfo, LabResultData labData) {
         return resultDate;
     }
     return labData.getDateObj();
+}
+
+public ArrayList<LabResultData> getLatestLabVersions(ArrayList<LabResultData> labs) {
+    List<String> allLabIds = new ArrayList<>();
+    ArrayList<LabResultData> latestLabVersions = new ArrayList<>();
+    for (LabResultData lab : labs) {
+        if (allLabIds.contains(lab.getSegmentID())) { continue; }
+
+        String[] allLabVersionIdsOfLab = Hl7textResultsData.getMatchingLabs(lab.getSegmentID()).split(",");
+        allLabIds.addAll(Arrays.asList(allLabVersionIdsOfLab));
+
+        for (LabResultData labResultData : labs) {
+            if (allLabVersionIdsOfLab[allLabVersionIdsOfLab.length - 1].equals(labResultData.getSegmentID())) {
+                latestLabVersions.add(labResultData);
+                break;
+            }
+        }
+    }
+    return latestLabVersions;
 }
 %>

@@ -27,6 +27,9 @@ package oscar.oscarBilling.ca.bc.pageUtil;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +64,9 @@ import oscar.util.StringUtils;
 
 public class BillingReProcessBillAction extends Action {
     private static final Logger logger = MiscUtils.getLogger();
-    private static BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
+    private final BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
+
+    private final BillingmasterDAO billingmasterDAO = SpringUtils.getBean(BillingmasterDAO.class);
 
   //Misc misc = new Misc();
   MSPReconcile msp = new MSPReconcile();
@@ -73,21 +78,35 @@ public class BillingReProcessBillAction extends Action {
       return (mapping.findForward("Logout"));
     }
 
-    BillingReProcessBillForm frm = (BillingReProcessBillForm) form;
-    String dataCenterId = OscarProperties.getInstance().getProperty("dataCenterId");
-    String billingmasterNo = frm.getBillingmasterNo();
-    String demographicNo = frm.getDemoNo();
-    DemographicData demoD = new DemographicData();
-    org.oscarehr.common.model.Demographic demo = demoD.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demographicNo);
+    boolean massEdit = request.getParameter("billCheck") != null;
 
-    WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-    BillingmasterDAO billingmasterDAO = (BillingmasterDAO) ctx.getBean("BillingmasterDAO");
-    logger.debug("RETRIEVING Using "+billingmasterNo);
-    Billingmaster billingmaster = billingmasterDAO.getBillingMasterByBillingMasterNo(billingmasterNo);
-    Billing bill = billingmasterDAO.getBilling(billingmaster.getBillingNo());
+    List<BillingReProcessBillForm> billingReProcessBillFormList = new ArrayList<BillingReProcessBillForm>();
+    if (massEdit) {
+        String[] billList = request.getParameterValues("billCheck");
+        for (String billId : billList) {
+            String billingMasterNo = billId.split("_")[1];
+            BillingReProcessBillForm billingReProcessBillForm = createBillingReProcessBillForm(billingMasterNo, billingmasterDAO, request);
+            billingReProcessBillFormList.add(billingReProcessBillForm);
+        }
+    } else {
+        BillingReProcessBillForm billingReProcessBillForm = (BillingReProcessBillForm) form;
+        billingReProcessBillFormList.add(billingReProcessBillForm);
+    }
+
+    for (BillingReProcessBillForm frm : billingReProcessBillFormList) {
+        String dataCenterId = OscarProperties.getInstance().getProperty("dataCenterId");
+        String billingmasterNo = frm.getBillingmasterNo();
+        String demographicNo = frm.getDemoNo();
+        DemographicData demoD = new DemographicData();
+        org.oscarehr.common.model.Demographic demo = demoD.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demographicNo);
+
+        logger.debug("RETRIEVING Using " + billingmasterNo);
+        Billingmaster billingmaster = billingmasterDAO.getBillingMasterByBillingMasterNo(billingmasterNo);
+        Billing bill = billingmasterDAO.getBilling(billingmaster.getBillingNo());
 
 
-    logger.debug("type "+bill.getBillingtype());
+        String billingType = bill.getBillingtype();
+        logger.debug("type " + billingType);
 
 
     BillingFormData billform = new BillingFormData();
@@ -169,15 +188,20 @@ public class BillingReProcessBillAction extends Action {
     String submit = frm.getSubmit();
     String secondSQL = null;
 
-    if ( (submit.equals("Resubmit Bill") || submit.equals("Reprocess and Resubmit Bill")) || billingStatus.equals("O")) {
-      if(!"W".equals(billingStatus)){
-        billingStatus = "O";
-      }
+        // If its a ICBC Bill and the status does not need to change, mark the billingStatus as ICBC NO SUB
+        billingStatus = StringUtils.isNullOrEmpty(billingStatus) && billingType.equals(MSPReconcile.BILLTYPE_ICBC) ? "I" : billingStatus;
+        if ((submit.equals("Resubmit Bill") || submit.equals("Reprocess and Resubmit Bill")) || billingStatus.equals("O")) {
+            if (!"W".equals(billingStatus) && !"I".equals(billingStatus)) {
+                billingStatus = "O";
+            }
 
-      secondSQL = "update billing set status = '"+billingStatus+"' where billing_no ='" + frm.getBillNumber() + "'";
-    } else if (submit.equals("Settle Bill")) {
-      billingStatus = "S";
-    }
+            secondSQL = "update billing set status = '" + billingStatus + "' where billing_no ='" + frm.getBillNumber() + "'";
+        } else if (submit.equals("Settle Bill")) {
+            billingStatus = "S";
+        } else if (submit.equals("Revert to PWE")) {
+            // Set to PWE
+            billingStatus = "E";
+        }
 
     if (hcType.equals(billRegion)) { //if its bc go on
       //oinInsurerCode = "";
@@ -248,10 +272,10 @@ public class BillingReProcessBillAction extends Action {
 
     try{
 
-      //BillingCodeData bcd = new BillingCodeData();
-      //BillingService billingService = bcd.getBillingCodeByCode(billingServiceCode, new Date());
-      String codePrice = request.getParameter("billingAmount"); //billingService.getValue();
-      logger.debug("codePrice=" + codePrice+" amount on form "+request.getParameter("billingAmount"));
+            //BillingCodeData bcd = new BillingCodeData();
+            //BillingService billingService = bcd.getBillingCodeByCode(billingServiceCode, new Date());
+            String codePrice = StringUtils.isNullOrEmpty(request.getParameter("billingAmount")) ? (StringUtils.isNullOrEmpty(frm.getBillingAmount()) ? "0.00" : frm.getBillingAmount()) : request.getParameter("billingAmount"); //billingService.getValue();
+            logger.debug("codePrice=" + codePrice + " amount on form " + request.getParameter("billingAmount"));
 
       if("E".equals(payment_mode)){
           codePrice = "0.00";
@@ -336,33 +360,34 @@ public class BillingReProcessBillAction extends Action {
         logger.debug("type 2"+bill.getBillingtype());
         logger.debug("WHAT IS BILL <ASTER2 "+billingmaster.getBillingmasterNo());
 
-      
-      
-      if (!StringUtils.isNullOrEmpty(billingStatus)) {  //What if billing status is null?? the status just doesn't get updated but everything else does??'
-          //Why does this get called??  update billing type based on the billing status.  I guess this is effective when you switch this to bill on
-        msp.updateBillingStatus(frm.getBillNumber(), billingStatus,billingmasterNo);
-      }
-      BillingHistoryDAO dao = new BillingHistoryDAO();
-      //If the adjustment amount field isn't empty, create an archive of the adjustment
-      if (frm.getAdjAmount() != null && !"".equals(frm.getAdjAmount())) {
-        double dblAdj = Math.abs(new Double(frm.getAdjAmount()).doubleValue());
-        //if 1 this adjustment is a debit
-        if ("1".equals(frm.getAdjType())) {
-          dblAdj = dblAdj * -1.0;
+
+        if (!StringUtils.isNullOrEmpty(billingStatus)) {  //What if billing status is null?? the status just doesn't get updated but everything else does??'
+            //Why does this get called??  update billing type based on the billing status.  I guess this is effective when you switch this to bill on
+            msp.updateBillingStatus(frm.getBillNumber(), billingStatus, billingmasterNo);
         }
-        dao.createBillingHistoryArchive(frm.getBillingmasterNo(), dblAdj,MSPReconcile.PAYTYPE_IA);
-        msp.settleIfBalanced(frm.getBillingmasterNo());
-      }else {
-        dao.createBillingHistoryArchive(billingmasterNo);
-      }
-      if (secondSQL != null) {
-        Billing b = billingDao.find(Integer.parseInt(frm.getBillNumber()));
-        if(b != null) {
-        	b.setStatus(billingStatus);
-        	billingDao.merge(b);
+        BillingHistoryDAO dao = new BillingHistoryDAO();
+        //If the adjustment amount field isn't empty, create an archive of the adjustment
+        if (frm.getAdjAmount() != null && !"".equals(frm.getAdjAmount())) {
+            double dblAdj = Math.abs(new Double(frm.getAdjAmount()).doubleValue());
+            //if 1 this adjustment is a debit
+            if ("1".equals(frm.getAdjType())) {
+                dblAdj = dblAdj * -1.0;
+            }
+            dao.createBillingHistoryArchive(frm.getBillingmasterNo(), dblAdj, MSPReconcile.PAYTYPE_IA);
+            msp.settleIfBalanced(frm.getBillingmasterNo());
+        } else {
+            dao.createBillingHistoryArchive(billingmasterNo);
         }
-       
-      }
+        if (secondSQL != null) {
+            // If its an No Sub ICBC billing, it needs to be set to set back to status "O"
+            billingStatus = billingStatus.equals("I") ? "O" : billingStatus;
+            Billing b = billingDao.find(Integer.parseInt(frm.getBillNumber()));
+            if (b != null) {
+                b.setStatus(billingStatus);
+                billingDao.merge(b);
+            }
+
+        }
 
       if (correspondenceCode.equals("N") || correspondenceCode.equals("B")) {
         MSPBillingNote n = new MSPBillingNote();
@@ -377,11 +402,12 @@ public class BillingReProcessBillAction extends Action {
       }
    
 
-    request.setAttribute("billing_no", billingmasterNo);
-    if (submit.equals("Reprocess and Resubmit Bill")) {
-      request.setAttribute("close", "true");
+        request.setAttribute("billingmaster_no", billingmasterNo);
+        if (submit.equals("Reprocess and Resubmit Bill")) {
+            request.setAttribute("close", "true");
+        }
     }
-    return mapping.findForward("success");
+    return massEdit ? mapping.findForward("save") : mapping.findForward("success");
   }
 
 
@@ -456,4 +482,91 @@ public class BillingReProcessBillAction extends Action {
     return retval;
   }
 
+    public String getDebitRequestSeqNum(String str){
+        return (str == null || str.length() < 12) ? "" : str.substring(5,12);
+    }
+
+    public String getDebitRequestDate (String str){
+        return (str == null || str.length() <12) ? "" : str.substring(13);
+    }
+
+    public BillingReProcessBillForm createBillingReProcessBillForm (String billingMasterNo, BillingmasterDAO billingmasterDAO, HttpServletRequest request) {
+        MSPReconcile msp = new MSPReconcile();
+        Properties allFields = msp.getBillingMasterRecord(billingMasterNo);
+
+        Billingmaster billingMaster = billingmasterDAO.getBillingMasterByBillingMasterNo(billingMasterNo);
+        Billing bill = billingmasterDAO.getBilling(billingMaster.getBillingNo());
+
+//        boolean reProcessBCP = request.getParameter("hiddenFilterType") != null && request.getParameter("hiddenFilterType").equals("BCP");
+
+        BillingReProcessBillForm billingReProcessBillForm = new BillingReProcessBillForm();
+        billingReProcessBillForm.setBillingmasterNo(String.valueOf(billingMasterNo));
+        billingReProcessBillForm.setInsurerCode(allFields.getProperty("oinInsurerCode"));
+        billingReProcessBillForm.setProviderNo(bill.getProviderNo());
+        billingReProcessBillForm.setDemoNo(String.valueOf(bill.getDemographicNo()));
+        billingReProcessBillForm.setDependentNo(allFields.getProperty("dependentNum"));
+        billingReProcessBillForm.setAfterHours(allFields.getProperty("afterHour"));
+        billingReProcessBillForm.setService_code(allFields.getProperty("billingCode"));
+
+        billingReProcessBillForm.setStatus("");
+
+        billingReProcessBillForm.setBillNumber(allFields.getProperty("billingNo"));
+        billingReProcessBillForm.setAnatomicalArea(allFields.getProperty("anatomicalArea"));
+        billingReProcessBillForm.setNewProgram(allFields.getProperty("newProgram"));
+        billingReProcessBillForm.setBilling_unit(allFields.getProperty("billingUnit"));
+        billingReProcessBillForm.setBillingUnit(allFields.getProperty("billingUnit"));
+        billingReProcessBillForm.setBillingAmount(allFields.getProperty("billAmount"));
+
+
+        billingReProcessBillForm.setDx1(allFields.getProperty("dxCode1"));
+        billingReProcessBillForm.setDx2(allFields.getProperty("dxCode2"));
+        billingReProcessBillForm.setDx3(allFields.getProperty("dxCode3"));
+        billingReProcessBillForm.setPaymentMode(allFields.getProperty("paymentMode"));
+        billingReProcessBillForm.setSubmissionCode(allFields.getProperty("submissionCode"));
+        billingReProcessBillForm.setServiceDate(allFields.getProperty("serviceDate"));
+        billingReProcessBillForm.setServiceToDay(allFields.getProperty("serviceToDay"));
+        billingReProcessBillForm.setServiceLocation(allFields.getProperty("serviceLocation"));
+        billingReProcessBillForm.setReferalPracCD1(allFields.getProperty("referralFlag1"));
+        billingReProcessBillForm.setReferalPrac1(allFields.getProperty("referralNo1"));
+        billingReProcessBillForm.setReferalPracCD2(allFields.getProperty("referralFlag2"));
+        billingReProcessBillForm.setReferalPrac2(allFields.getProperty("referralNo2"));
+        billingReProcessBillForm.setTimeCallRec(allFields.getProperty("timeCall"));
+        billingReProcessBillForm.setCorrespondenceCode(allFields.getProperty("correspondenceCode"));
+        billingReProcessBillForm.setMvaClaim(allFields.getProperty("mvaClaimCode"));
+        billingReProcessBillForm.setIcbcClaim(allFields.getProperty("icbcClaimNo"));
+
+        billingReProcessBillForm.setFacilityNum(billingMaster.getFacilityNo());
+        billingReProcessBillForm.setFacilitySubNum(billingMaster.getFacilitySubNo());
+
+        MSPBillingNote billingNote = new MSPBillingNote();
+        String corrNote = billingNote.getNote(billingMasterNo);
+
+        billingReProcessBillForm.setNotes(corrNote);
+
+        BillingNote  bNote = new BillingNote();
+        String messageNotes = bNote.getNote(billingMasterNo);
+
+        billingReProcessBillForm.setMessageNotes(messageNotes);
+
+        billingReProcessBillForm.setStartTime(allFields.getProperty("serviceStartTime"));
+        billingReProcessBillForm.setFinishTime(allFields.getProperty("serviceEndTime"));
+        billingReProcessBillForm.setSubmit(request.getParameter("submitOperation") != null ? request.getParameter("submitOperation") : "");
+        billingReProcessBillForm.setLocationVisit(allFields.getProperty("clarificationCode"));
+        billingReProcessBillForm.setService_code(allFields.getProperty("billingCode"));
+        billingReProcessBillForm.setBilling_amount(allFields.getProperty("bilAmount"));
+        billingReProcessBillForm.setShortComment(allFields.getProperty("claimComment"));
+
+        billingReProcessBillForm.setDependent(null);
+
+        billingReProcessBillForm.setDebitRequestSeqNum(getDebitRequestSeqNum(allFields.getProperty("originalClaim")));
+        billingReProcessBillForm.setDebitRequestDate(getDebitRequestDate(allFields.getProperty("originalClaim")));
+
+        billingReProcessBillForm.setAdjAmount("");
+        billingReProcessBillForm.setAdjType(null);
+
+        billingReProcessBillForm.setServlet(null);
+        billingReProcessBillForm.setMultipartRequestHandler(null);
+
+        return billingReProcessBillForm;
+    }
 }

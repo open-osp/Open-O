@@ -188,7 +188,7 @@ public class ConsultationClinicalDataAction extends DispatchAction  {
 		String demographicNo = request.getParameter("demographicNo");
 		IssueType issueTypeEnum = IssueType.valueOf(issueType.toUpperCase());
 		Issue issue = caseManagementManager.getIssueByCode( issueTypeEnum );
-		List<CaseManagementNote> issueNoteList = caseManagementManager.getNotes( loggedInInfo, demographicNo, new String[]{ issue.getId()+"" } );		
+		List<CaseManagementNote> issueNoteList = caseManagementManager.getActiveNotes(loggedInInfo, demographicNo, new String[]{ issue.getId()+"" });
 
 		JSONObject json = new JSONObject();
 		json.put( "noteType", issueTypeEnum.name() );

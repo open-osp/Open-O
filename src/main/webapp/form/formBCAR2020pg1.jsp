@@ -689,7 +689,7 @@
 												</div>
 											</div>
 											<div class="flex-row">
-											<input type="text" name="t_allergies" style="width: 100%" size="60" maxlength="150" class="calcField" ondblclick="appendNotify(this);" value="<%= UtilMisc.htmlEscape(props.getProperty("t_allergies", "")) %>" />
+											<input type="text" name="t_allergies" style="width: 100%" size="45" maxlength="37" class="calcField" ondblclick="appendNotify(this);" value="<%= UtilMisc.htmlEscape(props.getProperty("t_allergies", "")) %>" />
 											</div>
 										</div>
 									</td>
@@ -697,7 +697,7 @@
 										<div class="flex-row flex-justify">
 											<div>
 												Medications / OTC drugs / herbals / vitamins<br \>
-												<input type="text" name="t_medications" size="45" maxlength="150" style=""  class="calcField" ondblclick="appendNotify(this);" value="<%= UtilMisc.htmlEscape(props.getProperty("t_medications", "")) %>" />
+												<input type="text" name="t_medications" size="45" maxlength="40" class="calcField" ondblclick="appendNotify(this);" value="<%= UtilMisc.htmlEscape(props.getProperty("t_medications", "")) %>" />
 											</div>
 											<div class="flex-stack">
 												<div>

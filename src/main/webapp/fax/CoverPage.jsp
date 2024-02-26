@@ -59,15 +59,25 @@
 	<script type="text/javascript" src="${ctx}/library/jquery/jquery-ui.min.js" ></script>	
 	<script type="text/javascript" src="${ctx}/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script> 
 
-	<%-- 
-		Action to remove additional recipients from the form.
-	--%>
 	<script type="text/javascript">
 	
 		top.window.resizeTo("800","850");
 	
+		// Action to remove additional recipients from the form.
 		function removeRecipient(element) {
 			$(element).parent().parent().parent().remove();
+		}
+
+		// Show loading screen after submiting and validating the form.
+		function submitForm(event) {
+			const submit = event.submitter;
+			if (submit.id === 'btnCancel') { return true; }
+			
+			const coverPageForm = document.getElementById('coverPageForm');
+			if (coverPageForm.checkValidity()) {
+				return ShowSpin(true);
+			}
+			return false;
 		}
 	</script>
 	
@@ -171,7 +181,7 @@
 
 </head>
 <body>
-
+<jsp:include page="../images/spinner.jsp" flush="true"/>
 <div id="bodyrow" class="container-fluid">
 
 	<div id="bodycolumn" class="col-sm-12">
@@ -201,7 +211,7 @@
 				<c:set var="formAction" value="${ctx}/oscarEncounter/oscarConsultationRequest/ConsultationFormFax.do" />
 			</c:if>
 			
-			<form id="coverPageForm" class="form-inline" action='${ formAction }' method="post" novalidate>
+			<form id="coverPageForm" class="form-inline" action='${ formAction }' onsubmit="return submitForm(event)" method="post" novalidate>
 			
 				<input type="hidden" name="requestId" value="${ reqId }" />
 				<input type="hidden" name="reqId" value="${ reqId }" />
@@ -272,9 +282,7 @@
 									<label for="searchProfessionalSpecialist_fax">Fax</label>
 									<input class="form-control" type="text" name="recipientFaxNumber" value="${ not empty fax ? fax : param.fax }"
 										id="searchProfessionalSpecialist_fax" placeholder="xxx-xxx-xxxx"  required/>
-									<%-- to be removed soon below --%>
-							  		<input type="hidden" name="recipientsFaxNumber" value="${ not empty fax ? fax : param.fax }" />
-								</div>				
+								</div>
 							</div>
 						</div>
 					</div>
@@ -378,11 +386,11 @@
 					<div class="row">
 					<div class="col-sm-12">
 						<input type="hidden" id="submitMethod" name="method" value="queue" />
-						<button type="submit" class="btn btn-primary btn-md pull-right" value="Send">
+						<button type="submit" id="btnSend" class="btn btn-primary btn-md pull-right" value="Send">
 							<span class="btn-label"><i class="glyphicon glyphicon-send"></i></span>
 							Send
 						</button>					
-						<button formnovalidate="formnovalidate" type="submit" class="btn btn-danger btn-md pull-right" value="Cancel" 
+						<button formnovalidate="formnovalidate" id="btnCancel" type="submit" class="btn btn-danger btn-md pull-right" value="Cancel" 
 							onclick="document.getElementById('submitMethod').value = 'cancel'" >
 							<span class="btn-label"><i class="glyphicon glyphicon-remove-circle"></i></span>
 							Cancel
@@ -398,8 +406,9 @@
 				</div>
 			  	<div class="panel-body">
 			  		<div class="container">
-						<img src="${ ctx }/fax/faxAction.do?method=getPreview&faxFilePath=${ faxFilePath }" 
-							onerror="document.getElementById('preview-panel').style.display='block'; this.style.display='none'; "/>
+						<object id="previewPDF" data="${ctx}/fax/faxAction.do?method=getPreview&faxFilePath=${faxFilePath}" 
+								type="application/pdf" width="100%" height="800">
+						</object>
 					</div>
 				</div>
 			</div>

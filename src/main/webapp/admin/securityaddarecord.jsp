@@ -57,7 +57,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ page
 	import="java.lang.*, java.util.*, java.text.*,java.sql.*, oscar.*"
-	errorPage="errorpage.jsp"%>
+	errorPage="/errorpage.jsp"%>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.common.model.Provider" %>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
@@ -199,7 +199,7 @@
 			key="admin.securityrecord.formUserName" />:
 		</div>
 		</td>
-		<td><input type="text" name="user_name" size="20" maxlength="30">
+		<td><input type="text" name="user_name" size="20" maxlength="10">
 		</td>
 	</tr>
 	<tr>

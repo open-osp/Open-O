@@ -38,6 +38,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -80,9 +81,9 @@ public class BillingCreateBillingAction extends Action {
      * This service list is not necessary
      */
     String[] service = new String[0]; //frm.getService();
-    String other_service1 = frm.getXml_other1();
-    String other_service2 = frm.getXml_other2();
-    String other_service3 = frm.getXml_other3();
+    String other_service1 = StringUtils.trimToEmpty(frm.getXml_other1());
+    String other_service2 = StringUtils.trimToEmpty(frm.getXml_other2());
+    String other_service3 = StringUtils.trimToEmpty(frm.getXml_other3());
     String other_service1_unit = frm.getXml_other1_unit();
     String other_service2_unit = frm.getXml_other2_unit();
     String other_service3_unit = frm.getXml_other3_unit();

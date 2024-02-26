@@ -13,7 +13,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -27,46 +26,42 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.oscarehr.common.dao.ClinicDAO;
-import org.oscarehr.common.dao.FaxClientLogDao;
 import org.oscarehr.common.dao.FaxConfigDao;
 import org.oscarehr.common.dao.FaxJobDao;
 import org.oscarehr.common.model.Clinic;
-import org.oscarehr.common.model.FaxClientLog;
 import org.oscarehr.common.model.FaxConfig;
 import org.oscarehr.common.model.FaxJob;
 import org.oscarehr.fax.core.FaxAccount;
 import org.oscarehr.fax.core.FaxRecipient;
 
 import org.oscarehr.managers.FaxManager;
+import org.oscarehr.managers.NioFileManager;
 import org.oscarehr.managers.SecurityInfoManager;
+import org.oscarehr.managers.FaxManager.TransactionType;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.PDFGenerationException;
 import org.oscarehr.util.SpringUtils;
 
-import oscar.OscarProperties;
-import oscar.dms.EDoc;
-import oscar.dms.EDocUtil;
+import org.oscarehr.documentManager.DocumentAttachmentManager;
+import org.oscarehr.documentManager.EDocUtil;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
-import oscar.oscarLab.ca.all.pageUtil.LabPDFCreator;
-import oscar.oscarLab.ca.on.CommonLabResultData;
-import oscar.oscarLab.ca.on.LabResultData;
-import oscar.util.ConcatPDF;
-import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.DocumentException;
-import com.sun.xml.messaging.saaj.util.ByteInputStream;
-import com.sun.xml.messaging.saaj.util.ByteOutputStream;
 
 public class EctConsultationFormFaxAction extends Action {
 
 	private static final Logger logger = MiscUtils.getLogger();
-	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-    private static FaxClientLogDao faxClientLogDao = SpringUtils.getBean(FaxClientLogDao.class);
-	private static FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);				
-	private static FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
-	private static FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
-	private static ClinicDAO clinicDAO = SpringUtils.getBean(ClinicDAO.class);
-    
+	private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+	private final FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
+	private final FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
+	private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
+	private final ClinicDAO clinicDAO = SpringUtils.getBean(ClinicDAO.class);
+
+	private final DocumentAttachmentManager documentAttachmentManager = SpringUtils.getBean(DocumentAttachmentManager.class);
+
+	private final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
+
 	public EctConsultationFormFaxAction() {
 	}
 	    
@@ -80,6 +75,11 @@ public class EctConsultationFormFaxAction extends Action {
 		}
     	
     	EctConsultationFaxForm ectConsultationFaxForm = (EctConsultationFaxForm) form;
+
+		if ("cancel".equals(ectConsultationFaxForm.getMethod())){
+			return mapping.findForward("cancel");
+		}
+
     	ectConsultationFaxForm.setRequest(request);
 	   	String reqId = ectConsultationFaxForm.getRequestId();
 		String demoNo = ectConsultationFaxForm.getDemographicNo();
@@ -100,216 +100,121 @@ public class EctConsultationFormFaxAction extends Action {
 		sender.setAddress(clinic.getClinicAddress());
 		sender.setFacilityName(clinic.getClinicName());
 
-		ArrayList<EDoc> docs;
-		if (consultResponsePage==null) {
-			docs = EDocUtil.listDocs(loggedInInfo, demoNo, reqId, EDocUtil.ATTACHED);
-		} else {
-			docs = EDocUtil.listResponseDocs(loggedInInfo, demoNo, reqId, EDocUtil.ATTACHED);
-		}
-		
-		String path = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-		if(! path.endsWith(File.separator))
-		{
-			path = path + File.separator;
-		}
-		ArrayList<Object> pdfDocumentList = new ArrayList<Object>();
-		byte[] buffer;
-		ByteInputStream bis;
-		ByteOutputStream bos;
-		CommonLabResultData consultLabs = new CommonLabResultData();
-		ArrayList<InputStream> streams = new ArrayList<InputStream>();
-		String provider_no = loggedInInfo.getLoggedInProviderNo();		
-
-		ArrayList<LabResultData> labs;
-		if (consultResponsePage==null) {
-			labs = consultLabs.populateLabResultsData(loggedInInfo, demoNo, reqId, CommonLabResultData.ATTACHED);
-		} else {
-			labs = consultLabs.populateLabResultsDataConsultResponse(loggedInInfo, demoNo, reqId, CommonLabResultData.ATTACHED);
-		}
-		
+		/*
+		 * This is a temporary solution until the fax code is refactored and added to their respective manager classes.
+		 */
+		String provider_no = loggedInInfo.getLoggedInProviderNo();
 		String error = "";
-		Exception exception = null;
+ 		Exception exception = null;
+
+		request.setAttribute("reqId", reqId);
+		request.setAttribute("demographicId", demoNo);
+		Path faxPdf = null;
 		try {
+			faxPdf = documentAttachmentManager.renderConsultationFormWithAttachments(request, response);
+		} catch (PDFGenerationException e) {
+			logger.error(e.getMessage(), e);
+			String errorMessage = "This fax could not be sent. \\n\\n" + e.getMessage();
+			request.setAttribute("errorMessage", errorMessage);
+			return mapping.findForward("error");
+		}
+		String faxPdfPath = nioFileManager.copyFileToOscarDocuments(faxPdf.toString());
+		faxPdf = Paths.get(faxPdfPath);
+		Path pdfToFax;
+		List<FaxConfig> faxConfigs = faxConfigDao.findAll(null, null);
+		boolean validFaxNumber;
+		int count = 0;
+		Set<FaxRecipient> faxRecipients = ectConsultationFaxForm.getAllFaxRecipients();
+		try {
+			for (FaxRecipient faxRecipient : faxRecipients) {
 
-			if (consultResponsePage==null) { //fax for consultation request
-				bos = new ByteOutputStream();
-				// dont ask! Didnt want to break anything related.
-				request.setAttribute("reqId", reqId);				
-				ConsultationPDFCreator cpdfc = new ConsultationPDFCreator(ectConsultationFaxForm, bos);
-				cpdfc.printPdf(loggedInInfo);
+				// reset target pdf.
+				pdfToFax = faxPdf;
+
+				String faxNo = faxRecipient.getFax();
 				
-				buffer = bos.getBytes();
-				bis = new ByteInputStream(buffer, bos.getCount());
-				bos.close();
-				streams.add(bis);
-				pdfDocumentList.add(bis);
-			}
-			else { //fax for consultation response
-				String consultRespoonsePDF = ConsultResponsePDFCreator.create(consultResponsePage);
-				pdfDocumentList.add(consultRespoonsePDF);
-			}
-
-			for (int i = 0; i < docs.size(); i++) {
-				EDoc doc = docs.get(i);  
-				if (doc.isPrintable()) {
-					if (doc.isImage()) {
-						bos = new ByteOutputStream();
-						request.setAttribute("imagePath", path + doc.getFileName());
-						request.setAttribute("imageTitle", doc.getDescription());
-						ImagePDFCreator ipdfc = new ImagePDFCreator(request, bos);
-						ipdfc.printPdf();
-						
-						buffer = bos.getBytes();
-						bis = new ByteInputStream(buffer, bos.getCount());
-						bos.close();
-						streams.add(bis);
-						pdfDocumentList.add(bis);
-						
-					}
-					else if (doc.isPDF()) {
-						pdfDocumentList.add(path + doc.getFileName());
-					}
-					else {
-						logger.error("EctConsultationFormRequestPrintAction: " + doc.getType() + " is marked as printable but no means have been established to print it.");	
-					}
+				if(faxNo == null) {
+					faxNo = "";
 				}
-			}
 
-			// Iterating over requested labs.
-			for (int i = 0; labs != null && i < labs.size(); i++) {
-				// Storing the lab in PDF format inside a byte stream.
-				bos = new ByteOutputStream();
-				request.setAttribute("segmentID", labs.get(i).segmentID);
-				LabPDFCreator lpdfc = new LabPDFCreator(request, bos);
-				lpdfc.printPdf();
-
-				// Transferring PDF to an input stream to be concatenated with
-				// the rest of the documents.
-				buffer = bos.getBytes();
-				bis = new ByteInputStream(buffer, bos.getCount());
-				bos.close();
-				streams.add(bis);
-				pdfDocumentList.add(bis);
-
-			}
+				if (faxNo.length() < 7) { 
+					throw new DocumentException("Document target fax number '"+faxNo+"' is invalid."); 
+				}
+				
+				faxNo = faxNo.trim().replaceAll("\\D", "");
+				
+				logger.info("Setting up fax to: " + faxRecipient.getName() + " at " + faxRecipient.getFax());
 			
-			if (pdfDocumentList.size() > 0) {
- 
-				// Writing consultation request to disk as a pdf.
-				String faxPath = path;
-				String filename = "Consult_" + reqId + System.currentTimeMillis() + ".pdf";
-//				String faxPdf = String.format("%s%s%s", faxPath, File.separator, filename);
-				Path faxPdf = Paths.get(faxPath, filename);
-				try(FileOutputStream pdfOut = new FileOutputStream(faxPdf.toString())) {
-					ConcatPDF.concat(pdfDocumentList, pdfOut);
-				}
-
-				Path pdfToFax;
-				List<FaxConfig> faxConfigs = faxConfigDao.findAll(null, null);
-				boolean validFaxNumber;
-				int count = 0;
-				Set<FaxRecipient> faxRecipients = ectConsultationFaxForm.getAllFaxRecipients();
-				for (FaxRecipient faxRecipient : faxRecipients) {
-
-					// reset target pdf.
-					pdfToFax = faxPdf;
-
-				    String faxNo = faxRecipient.getFax();
-				    
-				    if(faxNo == null) {
-				    	faxNo = "";
-				    }
-
-				    if (faxNo.length() < 7) { 
-				    	throw new DocumentException("Document target fax number '"+faxNo+"' is invalid."); 
-				    }
-				    
-				    faxNo = faxNo.trim().replaceAll("\\D", "");
-				    
-				    logger.info("Setting up fax to: " + faxRecipient.getName() + " at " + faxRecipient.getFax());
+				validFaxNumber = false;
 				
-				    validFaxNumber = false;
-				    
-				    FaxJob faxJob = new FaxJob();
-		    		faxJob.setDestination(faxNo);
-		    		faxJob.setRecipient(faxRecipient.getName());
-		    		faxJob.setFax_line(faxNumber);
-		    		faxJob.setStamp(new Date());
-		    		faxJob.setOscarUser(provider_no);
-		    		faxJob.setDemographicNo(Integer.parseInt(demoNo));
-				    
-				    inner : for( FaxConfig faxConfig : faxConfigs ) {
-				    	if( faxConfig.getFaxNumber().equals(faxNumber) ) {
-				    						    		
-				    		faxJob.setStatus(FaxJob.STATUS.WAITING);
-				    		faxJob.setUser(faxConfig.getFaxUser());
-							sender.setFaxNumberOwner(faxConfig.getAccountName());
-				    		validFaxNumber = true;
-				    		break inner;
-				    	}
-				    }
-				    
-				    if( !validFaxNumber ) {
-				    	
-				    	faxJob.setStatus(FaxJob.STATUS.ERROR);
-				    	faxJob.setStatusString("Document outgoing fax number '"+faxNumber+"' is invalid.");
-				    	logger.error("PROBLEM CREATING FAX JOB", new DocumentException("Document outgoing fax number '"+faxNumber+"' is invalid."));
-				    }
-				    else {
-				    	// redundant, but, what the heck!
-				    	faxJob.setStatus(FaxJob.STATUS.WAITING);
-				    }
-
-					//todo rethink this process.  It takes up too much disc space.
-					if( doCoverPage ) {
-						pdfToFax = faxManager.addCoverPage(loggedInInfo, note, faxRecipient, sender, faxPdf);
-
-						// delete the source file to save some disc space
-						if(count == (faxRecipients.size() -1)) {
-							Files.deleteIfExists(faxPdf);
-						}
+				FaxJob faxJob = new FaxJob();
+				faxJob.setDestination(faxNo);
+				faxJob.setRecipient(faxRecipient.getName());
+				faxJob.setFax_line(faxNumber);
+				faxJob.setStamp(new Date());
+				faxJob.setOscarUser(provider_no);
+				faxJob.setDemographicNo(Integer.parseInt(demoNo));
+				
+				inner : for( FaxConfig faxConfig : faxConfigs ) {
+					if( faxConfig.getFaxNumber().equals(faxNumber) ) {
+													
+						faxJob.setStatus(FaxJob.STATUS.WAITING);
+						faxJob.setUser(faxConfig.getFaxUser());
+						sender.setFaxNumberOwner(faxConfig.getAccountName());
+						validFaxNumber = true;
+						break inner;
 					}
-
-					int numPages = EDocUtil.getPDFPageCount(pdfToFax.toString());
-
-					faxJob.setFile_name(pdfToFax.getFileName().toString());
-					faxJob.setNumPages(numPages);
-
-				    faxJobDao.persist(faxJob);
-				    
-				    // start up a log track each time the CLIENT was run.
-					FaxClientLog faxClientLog = new FaxClientLog();
-					faxClientLog.setFaxId(faxJob.getId()); // IMPORTANT! this is the id of the FaxJobID from the Faxes table. A 1:1 cardinality.
-					faxClientLog.setProviderNo(faxJob.getOscarUser()); // the provider that sent this fax
-					faxClientLog.setStartTime(new Date(System.currentTimeMillis())); // the exact time the fax was sent
-					faxClientLog.setRequestId(Integer.parseInt(reqId));
-					faxClientLogDao.persist(faxClientLog);
-
-					count++;
+				}
+				
+				if( !validFaxNumber ) {
+					
+					faxJob.setStatus(FaxJob.STATUS.ERROR);
+					faxJob.setStatusString("Document outgoing fax number '"+faxNumber+"' is invalid.");
+					logger.error("PROBLEM CREATING FAX JOB", new DocumentException("Document outgoing fax number '"+faxNumber+"' is invalid."));
+				}
+				else {
+					// redundant, but, what the heck!
+					faxJob.setStatus(FaxJob.STATUS.WAITING);
 				}
 
-				LogAction.addLog(provider_no, LogConst.SENT, LogConst.CON_FAX, "CONSULT "+ reqId);
-				request.setAttribute("faxSuccessful", true);
-				return mapping.findForward("success");
+				//todo rethink this process.  It takes up too much disc space.
+				if( doCoverPage ) {
+					pdfToFax = faxManager.addCoverPage(loggedInInfo, note, faxRecipient, sender, faxPdf);
+
+					// delete the source file to save some disc space
+					if(count == (faxRecipients.size() -1)) {
+						Files.deleteIfExists(faxPdf);
+					}
+				}
+
+				int numPages = EDocUtil.getPDFPageCount(pdfToFax.toString());
+
+				faxJob.setFile_name(pdfToFax.getFileName().toString());
+				faxJob.setNumPages(numPages);
+
+				faxJobDao.persist(faxJob);
+				
+				// start up a log track each time the CLIENT was run.
+				faxManager.logFaxJob(loggedInInfo, faxJob, TransactionType.CONSULTATION, Integer.parseInt(reqId));
+				// FaxClientLog faxClientLog = new FaxClientLog();
+				// faxClientLog.setFaxId(faxJob.getId()); // IMPORTANT! this is the id of the FaxJobID from the Faxes table. A 1:1 cardinality.
+				// faxClientLog.setProviderNo(faxJob.getOscarUser()); // the provider that sent this fax
+				// faxClientLog.setStartTime(new Date(System.currentTimeMillis())); // the exact time the fax was sent
+				// faxClientLog.setRequestId(Integer.parseInt(reqId));
+				// faxClientLogDao.persist(faxClientLog);
+
+				count++;
 			}
 
+			LogAction.addLog(provider_no, LogConst.SENT, LogConst.CON_FAX, "CONSULT "+ reqId);
+			request.setAttribute("faxSuccessful", true);
+			return mapping.findForward("success");
 		} catch (DocumentException de) {
 			error = "DocumentException";
 			exception = de;
 		} catch (IOException ioe) {
 			error = "IOException";
 			exception = ioe;
-		} catch (com.lowagie.text.DocumentException e) {
-			logger.error("error", e);
-		} finally {
-			// Cleaning up InputStreams created for concatenation.
-			for (InputStream is : streams) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					error = "IOException";
-				}
-			}
 		}
 		if (!error.equals("")) {
 			logger.error(error + " occured insided ConsultationPrintAction", exception);

@@ -41,7 +41,7 @@
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.common.dao.OscarAppointmentDao"%>
-<%@ page import="org.oscarehr.common.dao.FaxConfigDao" %>
+<%@ page import="org.oscarehr.managers.FaxManager" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page import="org.oscarehr.PMmodule.service.ProviderManager" %>
@@ -321,6 +321,10 @@ function printIframe(){
 		}
 		else
 		{
+			if ('function' === typeof window.onbeforeunload) {
+				window.onbeforeunload = null;
+			}
+
 			preview.focus();
 			preview.print();
 
@@ -786,12 +790,25 @@ function toggleView(form) {
 							onClick="printPaste2Parent(true, false, true);" /></span></td>
 					</tr>
 					<% if (OscarProperties.getInstance().isRxFaxEnabled()) {
-					    	FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
-					    	List<FaxConfig> faxConfigs = faxConfigDao.findAll(null, null);
-					    
+							FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
+							List<FaxConfig> faxConfigs = faxManager.getFaxGatewayAccounts(loggedInInfo);																							    
 					    %>
 					<tr>
-						<td style="padding-bottom: 0"><span><input type=button value="Fax"
+						<td style="padding-bottom: 0">							
+							<span>From Fax Number:</span>
+							<select id="faxNumber" name="faxNumber">
+							<%
+								for( FaxConfig faxConfig : faxConfigs ) {
+							%>
+									<option value="<%=faxConfig.getFaxNumber()%>" selected="<%=providerFax.equals(faxConfig.getFaxNumber())%>"><%=faxConfig.getAccountName()%></option>
+							<%	    
+								}                                 	
+							%>
+							</select>							
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-top: 0; padding-bottom: 0"><span><input type=button value="Fax"
 										 class="ControlPushButton" id="faxButton" style="width: 210px"
 										 onClick="sendFax();" disabled/></span>
 						</td>
@@ -800,19 +817,10 @@ function toggleView(form) {
                             <td style="padding-top: 0"><span><input type=button value="Fax &amp; Add to encounter note"
                                     class="ControlPushButton" id="faxPasteButton" style="width: 210px"
                                     onClick="printPaste2Parent(false, true, true);sendFax();" disabled/></span>
-                                 <span>
-                                 	<select id="faxNumber" name="faxNumber">
-                                 	<%
-                                 		for( FaxConfig faxConfig : faxConfigs ) {
-                                 	%>
-                                 			<option value="<%=faxConfig.getFaxNumber()%>" selected="<%=providerFax.equals(faxConfig.getFaxNumber())%>"><%=faxConfig.getAccountName()%></option>
-                                 	<%	    
-                                 		}                                 	
-                                 	%>
-                                 	</select>
-                                 </span>
+                                 
                            </td>
                     </tr>
+					
                     <% } %>
 					<tr>
 						<!--td width=10px></td-->

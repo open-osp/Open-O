@@ -94,8 +94,7 @@ public class BillingViewBean {
 	private String billStatus;
 	private String billNotes;
 	private String paymentMethod;
-	private String defaultPayeeFirstName;
-	private String defaultPayeeLastName;
+	private String defaultPayeeInfo;
 
 	public void loadBilling(String billing_no) {
 		BillingDao dao = SpringUtils.getBean(BillingDao.class);
@@ -117,11 +116,7 @@ public class BillingViewBean {
 			this.billRegion = "BC";
 			this.xml_location = bm.getClarificationCode();
 			this.xml_visittype = bm.getServiceLocation();
-			if (b.getStatusAsBoolean()) {
-				this.billingType = "MSP";
-			} else {
-				this.billingType = bm.getBillingstatus();
-			}
+			this.billingType = b.getBillingtype();
 			this.xml_appointment_date = ConversionUtils.toDateString(b.getBillingDate());
 			this.xml_vdate = ConversionUtils.toDateString(b.getVisitDate());
 			this.xml_starttime = bm.getServiceStartTime();
@@ -543,12 +538,8 @@ public class BillingViewBean {
 		return paymentMethod;
 	}
 
-	public String getDefaultPayeeFirstName() {
-		return defaultPayeeFirstName;
-	}
-
-	public String getDefaultPayeeLastName() {
-		return defaultPayeeLastName;
+	public String getDefaultPayeeInfo() {
+		return defaultPayeeInfo;
 	}
 
 	/**
@@ -575,12 +566,8 @@ public class BillingViewBean {
 		this.paymentMethod = paymentMethod;
 	}
 
-	public void setDefaultPayeeFirstName(String defaultPayeeFirstName) {
-		this.defaultPayeeFirstName = defaultPayeeFirstName;
-	}
-
-	public void setDefaultPayeeLastName(String defaultPayeeLastName) {
-		this.defaultPayeeLastName = defaultPayeeLastName;
+	public void setDefaultPayeeInfo(String defaultPayeeInfo) {
+		this.defaultPayeeInfo = defaultPayeeInfo;
 	}
 
 	public List<PaymentType> getPaymentTypes() {
@@ -602,7 +589,31 @@ public class BillingViewBean {
 		double ret = 0.0;
 		for (Iterator<BillingItem> iter = this.billitem.iterator(); iter.hasNext();) {
 			BillingItem billingItem = iter.next();
-			ret += billingItem.price;
+			ret += billingItem.price * billingItem.units;
+		}
+		return ret;
+	}
+
+	/**
+	 * calculateTotal
+	 */
+	public double calculateTotal() {
+		double ret = 0.0;
+		for (Iterator<BillingItem> iter = this.billitem.iterator(); iter.hasNext();) {
+			BillingItem billingItem = iter.next();
+			ret += billingItem.lineTotal;
+		}
+		return ret;
+	}
+
+	/**
+	 * calculateGstTotal
+	 */
+	public double calculateGstTotal() {
+		double ret = 0.0;
+		for (Iterator<BillingItem> iter = this.billitem.iterator(); iter.hasNext();) {
+			BillingItem billingItem = iter.next();
+			ret += billingItem.gstTotal;
 		}
 		return ret;
 	}

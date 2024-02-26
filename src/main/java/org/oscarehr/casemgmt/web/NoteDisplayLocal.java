@@ -280,6 +280,10 @@ public class NoteDisplayLocal implements NoteDisplay {
 		return containsIssue("TicklerNote");
 	}
 
+	public boolean isExternalNote() {
+		return containsIssue("ExternalNote");
+	}
+
 	@Override
     public Integer getAppointmentNo() {
 		return caseManagementNote.getAppointmentNo();

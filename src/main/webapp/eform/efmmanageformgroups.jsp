@@ -176,7 +176,7 @@ if(groupName.equals(groupView)){
 	<tr rel="popover" data-html="true" data-title="<%=curForm.get("formName")%>" data-content="<strong><bean:message key="eform.uploadhtml.btnSubject" />:</strong><br> <%=curForm.get("formSubject")%> <br> <small><bean:message key="eform.uploadhtml.btnFile" />: <%=curForm.get("formFileName")%></small>" data-trigger="hover" data-placement="bottom">
 
 		<td>
-		<a href="<%= request.getContextPath() %>/eforms/removeFromGroup.do?fid=<%=curForm.get("fid")%>&groupName=<%=groupView%>" title="remove from group" class="btn btn-small" title="delete eform from group" data-confirm="<i class='icon-warning-sign icon-large'></i> Are you sure you would like to remove this eform from this group?"><i class="icon-trash"></i></a>
+		<a href="<%= request.getContextPath() %>/eforms/removeFromGroup.do?fid=<%=curForm.get("fid")%>&groupName=<%=URLEncoder.encode(groupView, "UTF-8")%>" title="remove from group" class="btn btn-small" title="delete eform from group" data-confirm="<i class='icon-warning-sign icon-large'></i> Are you sure you would like to remove this eform from this group?"><i class="icon-trash"></i></a>
 		</td>
 
 		<td><a href="#"

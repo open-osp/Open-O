@@ -132,11 +132,11 @@ if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.Is
 <security:oscarSec roleName="<%=roleName$%>" objectName="_appointment.doctorLink" rights="r">
 				<oscar:oscarPropertiesCheck property="NOT_FOR_CAISI" value="no" defaultVal="true">
                                 <li>
-                                        <a HREF="#" ONCLICK ="popupInboxManager('<html:rewrite page="/dms/inboxManage.do?method=prepareForIndexPage"/>&providerNo=<%=curUser_no%>', 'Lab');return false;" title="<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>">
+                                        <a HREF="#" ONCLICK ="popupInboxManager('<html:rewrite page="/documentManager/inboxManage.do?method=prepareForIndexPage"/>&providerNo=<%=curUser_no%>', 'Lab');return false;" title="<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>">
                                             <span id="oscar_new_lab"><bean:message key="global.lab"/></span>
 					</a>
        				<oscar:newUnclaimedLab>
-       					<a class="tabalert" HREF="#" ONCLICK="popupInboxManager('<html:rewrite page="/dms/inboxManage.do?method=prepareForIndexPage"/>?providerNo=0&searchProviderNo=0&status=N&lname=&fname=&hnum=&pageNum=1&startIndex=0', 'Lab');return false;" TITLE='<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>*</a>
+       					<a class="tabalert" HREF="#" ONCLICK="popupInboxManager('<html:rewrite page="/documentManager/inboxManage.do?method=prepareForIndexPage"/>?providerNo=0&searchProviderNo=0&status=N&lname=&fname=&hnum=&pageNum=1&startIndex=0', 'Lab');return false;" TITLE='<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>*</a>
        				</oscar:newUnclaimedLab>
 				</li>
 				</oscar:oscarPropertiesCheck>
@@ -161,7 +161,7 @@ if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.Is
 				</security:oscarSec>
 				<security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r">
 				<li>
-					<a HREF="#" onclick="popup('700', '1000', '<html:rewrite page="/dms/documentReport.jsp"/>?function=provider&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');return false;" title="<bean:message key="provider.appointmentProviderAdminDay.viewEdoc"/>">e<u>D</u>oc</a>
+					<a HREF="#" onclick="popup('700', '1000', '<html:rewrite page="/documentManager/documentReport.jsp"/>?function=provider&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');return false;" title="<bean:message key="provider.appointmentProviderAdminDay.viewEdoc"/>">e<u>D</u>oc</a>
 				</li>
 				</security:oscarSec>
 				<security:oscarSec roleName="<%=roleName$%>" objectName="_tickler" rights="r">

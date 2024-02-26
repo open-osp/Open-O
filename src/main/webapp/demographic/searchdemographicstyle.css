@@ -22,14 +22,6 @@
  * Ontario, Canada
  */
 
-body {
-    font-family: Verdana, helvetica, sans-serif;
-    font-size: 14px;
-    margin: 0px;
-    padding: 0px;
-    padding-top:17px; /* push everything down, since the element with class title is at top */
-}
-
 form {
     margin: 0px;
     padding: 0px;
@@ -99,8 +91,9 @@ a:hover {
 .odd:hover {background-color:#FACC2E;}
 .even:hover {background-color:#FACC2E;}
 
+
 #searchResults {
-    clear:both;
+    margin: auto 15px;
 }
 
 #searchResults tr.tableHeadings {

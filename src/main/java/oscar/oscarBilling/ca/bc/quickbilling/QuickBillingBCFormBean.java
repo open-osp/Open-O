@@ -47,7 +47,7 @@ public class QuickBillingBCFormBean extends ActionForm {
 	private String billingProviderNo;
 	private String serviceDate;
 	private String visitLocation;
-	private BillingVisit[] billingVisitTypes; 
+	private List<BillingVisit> billingVisitTypes;
 	private List<ProviderData> providerList;
 	private Boolean isHeaderSet;
 	private String creator;
@@ -117,13 +117,13 @@ public class QuickBillingBCFormBean extends ActionForm {
 
 
 
-	public BillingVisit[] getBillingVisitTypes() {
+	public List<BillingVisit> getBillingVisitTypes() {
 		return billingVisitTypes;
 	}
 
 
 
-	public void setBillingVisitTypes(BillingVisit[] billingVisitTypes) {
+	public void setBillingVisitTypes(List<BillingVisit> billingVisitTypes) {
 		this.billingVisitTypes = billingVisitTypes;
 	}
 

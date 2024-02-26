@@ -41,7 +41,7 @@ if(!authed) {
 	boolean asc = new Boolean(orderAsc);
 
 	ArrayList<HashMap<String,? extends Object>> hrmdocs;
-	hrmdocs = HRMUtil.listHRMDocuments(loggedInInfo,orderBy, asc, demographic_no);
+	hrmdocs = HRMUtil.listHRMDocuments(loggedInInfo,orderBy, asc, demographic_no,true);
 
 %>
 
@@ -112,16 +112,12 @@ if(!authed) {
                     <thead>
 					<tr>
 
-						<th>
-							<a href="displayHRMDocList.jsp?demographic_no=<%=demographic_no%>&orderBy=report_name&orderAsc=<%=("report_name".equals(orderBy)) ? !asc : "true"%>">
-								<bean:message key="hrm.displayHRMDocList.reportType" />
-							</a>
-						</th>
+						<th><bean:message key="hrm.displayHRMDocList.reportType" /></th>
 						<th><bean:message	key="hrm.displayHRMDocList.description" /></th>
 						<th><bean:message	key="hrm.displayHRMDocList.reportStatus" /></th>
-						<th><a href="displayHRMDocList.jsp?demographic_no=<%=demographic_no%>&orderBy=report_date&orderAsc=<%=("report_date".equals(orderBy)) ? !asc : "false"%>">Report Date</a></th>
-						<th><a href="displayHRMDocList.jsp?demographic_no=<%=demographic_no%>&orderBy=time_received&orderAsc=<%=("time_received".equals(orderBy)) ? !asc : "false"%>"><bean:message key="hrm.displayHRMDocList.timeReceived" /></a></th>
-						<th><a href="displayHRMDocList.jsp?demographic_no=<%=demographic_no%>&orderBy=category&orderAsc=<%=("category".equals(orderBy)) ? !asc : "true"%>">Category</a></th>
+						<th>Report Date</th>
+						<th><bean:message key="hrm.displayHRMDocList.timeReceived" /></th>
+						<th>Category</th>
 						<th>Class/Subclass/Accompanying Subclass</th>
 					</tr>
                     </thead>
@@ -150,8 +146,14 @@ if(!authed) {
 							{
 					%>
 					<tr>
-						<td style="text-align: center;" colspan='7'><bean:message
-							key="eform.showmyform.msgNoData" /></td>
+						<td ><bean:message key="eform.showmyform.msgNoData" /></td>
+						<td></td><!-- this empty td is here so that the number of columns matches the <th>, an important requirement when using jquery datatables-->
+						<td></td><!-- this empty td is here so that the number of columns matches the <th>, an important requirement when using jquery datatables-->
+						<td></td><!-- this empty td is here so that the number of columns matches the <th>, an important requirement when using jquery datatables-->
+						<td></td><!-- this empty td is here so that the number of columns matches the <th>, an important requirement when using jquery datatables-->
+						<td></td><!-- this empty td is here so that the number of columns matches the <th>, an important requirement when using jquery datatables-->
+						<td></td><!-- this empty td is here so that the number of columns matches the <th>, an important requirement when using jquery datatables-->
+	
 					</tr>
 					<%
 						}

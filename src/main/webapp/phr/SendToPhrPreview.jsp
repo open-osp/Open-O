@@ -34,7 +34,7 @@
 
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ page import="oscar.oscarDemographic.data.DemographicData"%>
-<%@ page import="java.util.Enumeration,oscar.dms.EDoc,oscar.dms.EDocUtil"%>
+<%@ page import="java.util.Enumeration,org.oscarehr.documentManager.EDoc,org.oscarehr.documentManager.EDocUtil"%>
 <%@ page import="org.oscarehr.util.SpringUtils,org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page import="org.oscarehr.common.dao.Hl7TextInfoDao,org.oscarehr.common.model.Hl7TextInfo"%>
 

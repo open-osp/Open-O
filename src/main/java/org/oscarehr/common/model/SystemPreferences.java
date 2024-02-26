@@ -25,6 +25,7 @@ package org.oscarehr.common.model;
 
 import javax.persistence.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -32,20 +33,17 @@ import java.util.List;
 @Table(name="SystemPreferences")
 public class SystemPreferences extends AbstractModel<Integer>
 {
+//TODO upgrade to a nested Enum
+    public enum RX_PREFERENCE_KEYS { rx_paste_provider_to_echart, rx_show_end_dates,rx_show_start_dates, rx_show_refill_duration, rx_show_refill_quantity, rx_methadone_end_date_calc, save_rx_signature}
+    public enum SCHEDULE_PREFERENCE_KEYS {schedule_display_type, schedule_display_custom_roster_status}
+    public enum ECHART_PREFERENCE_KEYS {echart_hide_timer}
+    public enum MASTER_FILE_PREFERENCE_KEYS {display_former_name, redirect_for_contact}
+    public enum GENERAL_SETTINGS_KEYS {invoice_custom_clinic_info, invoice_use_custom_clinic_info}
+    public enum LAB_DISPLAY_PREFERENCE_KEYS {code_show_hide_column, inboxDateSearchType}
+    public enum EFORM_SETTINGS {rtl_template_document_type, patient_intake_eform, patient_intake_letter_eform}
+    public enum  REFERRAL_SOURCE_PREFERENCE_KEYS {enable_referral_source}
+    public enum DOCUMENT_SETTINGS_KEYS {document_description_typeahead, inbox_use_fax_dropdown }
 
-    public static final List<String> RX_PREFERENCE_KEYS = Arrays.asList("rx_paste_provider_to_echart", "rx_show_end_dates","rx_show_start_dates", "rx_show_refill_duration", "rx_show_refill_quantity", 
-            "rx_methadone_end_date_calc", "save_rx_signature");
-    public static final List<String> SCHEDULE_PREFERENCE_KEYS = Arrays.asList("schedule_display_type", "schedule_display_custom_roster_status");
-    public static final List<String> ECHART_PREFERENCE_KEYS = Arrays.asList("echart_hide_timer");
-    public static final List<String> MASTER_FILE_PREFERENCE_KEYS = Arrays.asList("display_former_name", "redirect_for_contact");
-    public static final List<String> GENERAL_SETTINGS_KEYS = Arrays.asList("replace_demographic_name_with_preferred", "msg_use_create_date");
-    public static final String LAB_DISPLAY_PREFERENCE_KEYS = "code_show_hide_column";
-    public static final List<String> EFORM_SETTINGS = Arrays.asList("rtl_template_document_type", "patient_intake_eform", "patient_intake_letter_eform");
-    public static final List<String> REFERRAL_SOURCE_PREFERENCE_KEYS = Arrays.asList("enable_referral_source");
-    public static final String KIOSK_DISPLAY_PREFERENCE_KEYS = "check_in_all_appointments";
-    public static final List<String> DOCUMENT_SETTINGS_KEYS = Arrays.asList("document_description_typeahead", "inbox_use_fax_dropdown");
-    public static final List<String> RTL_TEMPLATE_SETTINGS = Arrays.asList("rtl_template_document_type");
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -61,6 +59,10 @@ public class SystemPreferences extends AbstractModel<Integer>
     private Date updateDate;
 
     public SystemPreferences() {}
+    public SystemPreferences(final String name) {
+        this.name = name;
+        this.updateDate = new Date();
+    }
     public SystemPreferences(String name, String value) {
         this.name = name;
         this.value = value;

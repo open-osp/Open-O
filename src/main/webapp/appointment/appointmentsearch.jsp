@@ -29,7 +29,7 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
 
-<%@ page errorPage="errorpage.jsp"%>
+<%@ page errorPage="/errorpage.jsp"%>
 
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>

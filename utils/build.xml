@@ -52,7 +52,7 @@
 		<property name="root_document" location="${build}/document" />
 		<property name="classes_document" location="${root_document}/classes" />
 
-		<property name="JAVA_TARGET_VERSION" value="1.5" />
+		<property name="JAVA_TARGET_VERSION" value="1.8" />
 
 
 

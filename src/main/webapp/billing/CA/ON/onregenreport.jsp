@@ -24,7 +24,7 @@
 				response.sendRedirect("../../../logout.jsp");
 %>
 
-<%@ page import="java.util.*" errorPage="errorpage.jsp"%>
+<%@ page import="java.util.*" errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.oscarBilling.ca.on.pageUtil.*"%>
 <%@ page import="oscar.oscarBilling.ca.on.data.*"%>
 <%@ page import="oscar.oscarProvider.data.ProviderBillCenter"%>

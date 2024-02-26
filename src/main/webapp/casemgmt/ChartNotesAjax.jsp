@@ -38,11 +38,11 @@
 <%@page import="org.oscarehr.PMmodule.model.*"%>
 <%@page import="org.oscarehr.common.model.*"%>
 <%@page import="oscar.util.DateUtils"%>
-<%@page import="oscar.dms.EDocUtil"%>
+<%@page import="org.oscarehr.documentManager.EDocUtil"%>
 <%@page import="org.springframework.web.context.WebApplicationContext"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@page import="org.oscarehr.casemgmt.common.Colour"%>
-<%@page import="oscar.dms.EDoc"%>
+<%@page import="org.oscarehr.documentManager.EDoc"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@page import="com.quatro.dao.security.*,com.quatro.model.security.Secrole"%>
 <%@page import="org.oscarehr.util.EncounterUtil"%>
@@ -530,7 +530,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							String winName = "docs" + demographicNo;
 							int hash = Math.abs(winName.hashCode());
 
-							url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/dms/documentGetFile.jsp?document=" + StringEscapeUtils.escapeJavaScript(dispFilename) + "&type=" + dispStatus + "&doc_no=" + dispDocNo + "');";
+							url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
 							url = url + "return false;";
 
 							if (note.getRemoteFacilityId()==null) // only allow editing for local notes
@@ -559,7 +559,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							String winName = "docs" + demographicNo;
 							int hash = Math.abs(winName.hashCode());
 
-							url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/dms/documentGetFile.jsp?document=" + StringEscapeUtils.escapeJavaScript(dispFilename) + "&type=" + dispStatus + "&doc_no=" + dispDocNo + "');";
+							url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
 							url = url + "return false;";
 						 	%>
 							 	<a class="links" title="<bean:message key="oscarEncounter.view.docView"/>" id="view<%=globalNoteId%>" href="javascript:void(0);" onclick="<%=url%>" style="float: right; margin-right: 5px; font-size: 10px;color:black">

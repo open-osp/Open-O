@@ -784,7 +784,7 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 		<% } %>
 	<%
 	 String[] ColourCodesArray=new String[7];
-	 ColourCodesArray[1]="#F0F0E7"; //very light grey - completed or normal
+	 ColourCodesArray[1]="#F0F0E7"; //very light grey - completed
 	 ColourCodesArray[2]="#FFDDDD"; //light pink - Refused
 	 ColourCodesArray[3]="#FFCC24"; //orange - Ineligible
 	 ColourCodesArray[4]="#FF00FF"; //dark pink - pending
@@ -793,7 +793,7 @@ List<String> OTHERS = Arrays.asList(new String[]{"DTaP-Hib","TdP-IPV-Hib","HBTmf
 
 	 //labels for colour codes
 	 String[] lblCodesArray=new String[7];
-	 lblCodesArray[1]="Completed or Normal";
+	 lblCodesArray[1]="Completed";
 	 lblCodesArray[2]="Refused";
 	 lblCodesArray[3]="Ineligible";
 	 lblCodesArray[4]="Pending";

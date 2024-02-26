@@ -48,9 +48,10 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 
-<%@ page import="java.util.*, oscar.oscarDemographic.data.*"%>
+<%@ page import="java.util.*"%>
 <%@ page
 	import="oscar.oscarBilling.ca.bc.data.*,oscar.oscarBilling.ca.bc.pageUtil.*"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%
 
 String color = "", colorflag ="";
@@ -58,7 +59,7 @@ BillingViewBean bean = (BillingViewBean)pageContext.findAttribute("billingViewBe
 oscar.oscarDemographic.data.DemographicData demoData = new oscar.oscarDemographic.data.DemographicData();
 org.oscarehr.common.model.Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), bean.getPatientNo());
 
-ArrayList billItem = bean.getBillItem();
+List<BillingBillingManager.BillingItem> billItem = bean.getBillItem();
 BillingFormData billform = new BillingFormData();
 
 %>
@@ -150,8 +151,6 @@ function POP(n,h,v) {
 //-->
 </SCRIPT>
 <script language="JavaScript">
-<!--
-<!--
 function reloadPage(init) {  //reloads the window if Nav4 resized
   if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
     document.pgW=innerWidth; document.pgH=innerHeight; onresize=reloadPage; }}
@@ -211,11 +210,11 @@ function gotoPrintReceipt(){
 			</tr>
 			<tr>
 				<td width="12%" height="16">Patient Name:</td>
-				<td width="12%"><%=bean.getPatientLastName()%>, <%=bean.getPatientFirstName()%>&nbsp;</td>
+				<td width="12%"><%=Encode.forHtml(bean.getPatientLastName()+", "+bean.getPatientFirstName())%>&nbsp;</td>
 				<td width="16%">Patient PHN:</td>
-				<td width="17%"><%=bean.getPatientPHN()%></td>
+				<td width="17%"><%=Encode.forHtmlContent(bean.getPatientPHN())%></td>
 				<td width="19%">Health Card Type:</td>
-				<td width="24%"><%=bean.getPatientHCType()%></td>
+				<td width="24%"><%=Encode.forHtmlContent(bean.getPatientHCType())%></td>
 			</tr>
 			<tr>
 				<td height="16">Patient DoB:</td>
@@ -227,11 +226,11 @@ function gotoPrintReceipt(){
 			</tr>
 			<tr>
 				<td height="16">Patient Address:</td>
-				<td><%=bean.getPatientAddress1()%></td>
+				<td><%=Encode.forHtmlContent(bean.getPatientAddress1())%></td>
 				<td>City:</td>
-				<td><%=bean.getPatientAddress2()%></td>
+				<td><%=Encode.forHtmlContent(bean.getPatientAddress2())%></td>
 				<td>Postal:</td>
-				<td><%=bean.getPatientPostal()%></td>
+				<td><%=Encode.forHtmlContent(bean.getPatientPostal())%></td>
 			</tr>
 			<tr>
 				<td height="16">&nbsp;</td>
@@ -265,11 +264,11 @@ function gotoPrintReceipt(){
 			</tr>
 			<tr>
 				<td height="16">Billing Provider:</td>
-				<td><%=billform.getProviderName(bean.getBillingProvider())%></td>
+				<td><%=Encode.forHtmlContent(billform.getProviderName(bean.getBillingProvider()))%></td>
 				<td>Appointment Provider:</td>
-				<td><%=billform.getProviderName(bean.getApptProviderNo())%></td>
+				<td><%=Encode.forHtmlContent(billform.getProviderName(bean.getApptProviderNo()))%></td>
 				<td>Creator:</td>
-				<td><%=billform.getProviderName(bean.getCreator())%></td>
+				<td><%=Encode.forHtmlContent(billform.getProviderName(bean.getCreator()))%></td>
 			</tr>
 			<tr>
 				<td height="16">Referral Doctor1:</td>
@@ -348,14 +347,14 @@ function gotoPrintReceipt(){
 						<td height="14" colspan="4">Correspondence Note</td>
 					</tr>
 					<tr>
-						<td height="14" colspan="4"><%=bean.getMSPBillingNote()%></td>
+						<td height="14" colspan="4"><%=Encode.forHtmlContent(bean.getMSPBillingNote())%></td>
 					</tr>
 
 					<tr bgcolor="#EAEAFF">
 						<td height="14" colspan="4">Messages</td>
 					</tr>
 					<tr>
-						<td height="14" colspan="4"><%=bean.getMessageNotes()%></td>
+						<td height="14" colspan="4"><%=Encode.forHtmlContent(bean.getMessageNotes())%></td>
 					</tr>
 				</table>
 				<table width="100%" border="0">

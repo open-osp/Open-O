@@ -27,7 +27,7 @@
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
 
 <%@ include file="/casemgmt/taglibs.jsp" %>
-<%@page errorPage="/casemgmt/error.jsp" %>
+
 <%@page import="java.util.Enumeration, org.apache.commons.lang.StringEscapeUtils" %>
 <%@page import="org.oscarehr.casemgmt.web.formbeans.*, org.oscarehr.casemgmt.model.CaseManagementNote"%>
 <%@page import="org.oscarehr.common.dao.UserPropertyDAO, oscar.OscarProperties" %>
@@ -39,8 +39,6 @@
 <%@page import="org.oscarehr.common.model.ProviderData"%>
 <%@page import="java.util.List"%>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
 
 <%
     String roleName = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -59,19 +57,17 @@
     String encTimeMandatoryValue = OscarProperties.getInstance().getProperty("ENCOUNTER_TIME_MANDATORY","false");
 
 %>
-
 <html:html locale="true">
 <head>
+	<title>
+		Encounter
+	</title>
 <c:set var="ctx" value="${pageContext.request.contextPath}"	scope="request" />
-<link rel="stylesheet" href="<c:out value="${ctx}"/>/css/casemgmt.css" type="text/css">
-<link rel="stylesheet" href="<c:out value="${ctx}"/>/oscarEncounter/encounterStyles.css" type="text/css">
-<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/css/print.css" media="print">
+<link rel="stylesheet" href="<c:out value="${ctx}"/>/css/encounterStyles.css" type="text/css">
+	<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/css/print.css" media="print">
 
-<!-- 
-<script src="<c:out value="${ctx}/js/jquery.js"/>"></script>
- -->
  <script src="<c:out value="${ctx}/js/jquery-1.7.1.min.js"/>"></script>
-<script language="javascript">
+<script type="text/javascript">
      jQuery.noConflict();
 </script>
 
@@ -89,9 +85,6 @@
 <script src="<c:out value="${ctx}"/>/share/javascript/popupmenu.js" type="text/javascript"></script>
 <script src="<c:out value="${ctx}"/>/share/javascript/menutility.js" type="text/javascript"></script>
 
-<!-- library for rounded elements -->
-<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/share/css/niftyCorners.css" />">
-<script type="text/javascript" src="<c:out value="${ctx}/share/javascript/nifty.js"/>"></script>
 
 <!-- calendar stylesheet -->
 <link rel="stylesheet" type="text/css" media="all" href="<c:out value="${ctx}"/>/share/calendar/calendar.css" title="win2k-cold-1">
@@ -112,7 +105,7 @@
 <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/select.js"/>"></script>
 
 <!-- phr popups -->
-<script type="text/javascript" src="<c:out value="${ctx}/phr/phr.js"/>"></script>
+<%--<script type="text/javascript" src="<c:out value="${ctx}/phr/phr.js"/>"></script>--%>
 
 
 <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/css/oscarRx.css" />">
@@ -251,10 +244,10 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 
    function addCppRow(rowNumber) {
 		if(!document.getElementById("divR" + rowNumber)) {
-			var newDiv = makeElement('div',{'style':'width: 100%; height: 75px; margin-top: 0px; background-color: #FFFFFF;','id':'divR'+rowNumber});
+			var newDiv = makeElement('div',{'id':'divR'+rowNumber});
 
-			var i1 = makeElement('div',{'id':'divR' + rowNumber + 'I1','class':'topBox','style':'clear: left; float: left; width: 49%; margin-left: 3px;height: inherit;'});
-			var i2 = makeElement('div',{'id':'divR' + rowNumber + 'I2','class':'topBox','style':'clear: right; float: right; width: 49%; margin-right: 3px;height: inherit;'});
+			var i1 = makeElement('div',{'id':'divR' + rowNumber + 'I1','class':'topBox'});
+			var i2 = makeElement('div',{'id':'divR' + rowNumber + 'I2','class':'topBox'});
 			newDiv.appendChild(i1);
 			newDiv.appendChild(i2);
 			var prevRow = document.getElementById("divR"+(rowNumber-1));
@@ -334,6 +327,7 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
            }});
        }
 
+
        <%if(request.getParameter("appointmentNo") != null && request.getParameter("appointmentNo").length()>0) { %>
        var appointmentNo = <%=request.getParameter("appointmentNo")%>;
         <% } else { %>
@@ -343,7 +337,7 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
         var savedNoteId=0;
    </script>
 
-<script language="JavaScript" src='<c:out value="${ctx}"/>/jspspellcheck/spellcheck-caller.js'></script>
+<script type="text/javascript" src=" ${ctx}/jspspellcheck/spellcheck-caller.js" ></script>
 <script>
 	function spellCheck()
     {
@@ -354,9 +348,8 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
         elements[elements.length] = document.getElementById(caseNote);
 
         // Start the spell checker
-        startSpellCheck(ctx+'/jspspellcheck/',elements);
-
-    }
+        startSpellCheck(ctx + '\/jspspellcheck\/', elements);
+	}
 </script>
 
 <!-- set size of window if customized in preferences -->
@@ -390,294 +383,9 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	}
 %>
 <oscar:customInterface section="cme" />
-<style type="text/css">
-
-/*CPP Format */
-li.cpp {
-	color: #000000;
-	font-family: arial, sans-serif;
-	text-overflow: ellipsis;
-	overflow: hidden;
-}
-
-/*Note format */
-div.newNote {
-	color: #000000;
-	font-family: arial, sans-serif;
-	font-size: 0.8em;
-	margin: 5px 0px 5px 5px;
-	float: left;
-	width: 98%;
-}
-
-div.newNote pre {
-	color: #000000;
-	font-family: arial, sans-serif;
-	margin: 0px 3px 0px 3px;
-	width: 100%;
-	clear: left;
-}
-
-div.note {
-	color: #000000;
-	font-family: arial, sans-serif;
-	margin: 3px 0px 3px 5px;
-	float: left;
-	width: 98%;
-}
-
-div.note pre {
-	color: #000000;
-	font-family: arial, sans-serif;
-	margin: 0px 3px 0px 3px;
-	width: 100%;
-	clear: left;
-}
-
-.sig {
-	background-color: #CCCCFF;
-	color: #000000;
-	width: 100%;
-	font-size: 9px;
-}
-
-.txtArea {
-	font-family: arial, sans-serif;
-	font-size: 1.0em;
-	width: 99%;
-	rows: 10;
-	overflow: hidden;
-	border: none;
-	font-family: arial, sans-serif;
-	margin: 0px 3px 0px 3px;
-}
-
-p.passwd {
-	margin: 0px 3px 0px 3px;
-}
-
-/* span formatting for measurements div found in ajax call */
-span.measureCol1 {
-	float: left;
-	width: 50px;
-}
-
-span.measureCol2 {
-	float: left;
-	width: 55px;
-}
-
-span.measureCol3 {
-	float: left;
-}
-
-.topLinks {
-	color: black;
-	text-decoration: none;
-	font-size: 9px;
-}
-
-.topLinkhover {
-	color: blue;
-	text-decoration: underline;
-}
-
-/* formatting for navbar */
-.links {
-	color: blue;
-	text-decoration: none;
-	font-size: 9px;
-}
-
-.linkhover {
-	color: black;
-	text-decoration: underline;
-}
-
-/* template styles*/
-.enTemplate_name_auto_complete {
-	width: 350px;
-	background: #fff;
-	font-size: 9px;
-	text-align: left;
-}
-
-.enTemplate_name_auto_complete ul {
-	border: 1px solid #888;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	list-style-type: square;
-	list-style-position: inside;
-}
-
-.enTemplate_name_auto_complete ul li {
-	margin: 0;
-	padding: 3px;
-}
-
-.enTemplate_name_auto_complete ul li.selected {
-	background-color: #ffb;
-	text-decoration: underline;
-}
-
-.enTemplate_name_auto_complete ul strong.highlight {
-	color: #800;
-	margin: 0;
-	padding: 0;
-}
-
-/* CPP textareas */
-.rowOne {
-	height: <%--<nested:write name="rowOneSize"/>--%>10px;
-	width: 97%;
-	overflow: auto;
-}
-
-.rowTwo {
-	height: <%--<nested:write name="rowTwoSize"/>--%>10px;
-	width: 97%;
-	margin-left: 4px;
-	overflow: auto;
-}
-
-/* Encounter type select box */
-div.autocomplete {
-	position: absolute;
-	width: 400px;
-	background-color: white;
-	border: 1px solid #ccc;
-	margin: 0px;
-	padding: 0px;
-	font-size: 9px;
-	text-align: left;
-	max-height: 200px;
-	overflow: auto;
-}
-
-div.autocomplete ul {
-	list-style-type: none;
-	margin: 0px;
-	padding: 0px;
-}
-
-div.autocomplete ul li.selected {
-	background-color: #EAF2FB;
-}
-
-div.autocomplete ul li {
-	list-style-type: none;
-	display: block;
-	margin: 0;
-	padding: 2px;
-	cursor: pointer;
-}
-
-.encTypeCombo /* look&feel of scriptaculous select box*/ {
-	margin: 0px; /* 5px 10px 0px;*/
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-size: 9px;
-	width: 200px;
-	text-align: left;
-	vertical-align: middle;
-	background: #FFFFFF
-		url('<c:out value="${ctx}"/>/images/downarrow_inv.gif') no-repeat
-		right;
-	height: 18px;
-	cursor: pointer;
-	border: 1px solid #ccc;
-	color: #000000;
-}
-
-.printOps {
-	background-color: #CCCCFF;
-	font-size: 9px;
-	position: absolute;
-	display: none;
-	z-index: 1;
-	width: 200px;
-	right: 100px;
-	bottom: 200px;
-}
-
-.showEdContainer {
-	position: absolute;
-	display: none;
-	z-index: 100;
-	right: 100px;
-	bottom: 200px;
-	background-color: transparent;
-	font-size: 8px;
-	/*border: thin ridge black;*/
-	text-align: center;
-}
-
-.showEdPosition {
-	display: table-cell;
-	vertical-align: middle;
-}
-
-.showEdContent { /*border: thin ridge black;*/
-	background-color: #CCCCFF;
-	font-size: 9px;
-	position: absolute;
-	display: none;
-	z-index: 200;
-	right: 100px;
-	bottom: 200px;
-	text-align: center;
-}
-
-.showResident {
-    left: 0;
-    top: 0;
-    /*transform: translate(100%, 100%);*/
-    min-width: 100%;
-    min-height: 100%;
-    background: rgba(239,250,250,0.6);
-    
-    position: absolute;
-    display: none;
-    z-index: 300;    
-    text-align: center;
-    border-style: ridge;
-}
-
-.showResidentBorder {
-    background: rgba(239,250,250,1);
-    border-style: ridge;
-    text-align: center;
-    width: 45%;
-    height:auto;
-    margin: 40% auto;
-    position:relative;
-}
-
-.showResidentContent {
-    background: rgba(13,117,173,1);
-    text-align: center;
-    width:auto;
-    height: auto;
-    margin: 2% auto;
-    border-style: inset;   
-    position: relative;
-}
-
-.residentText {
-    font-family: "Times New Roman", Times, serif;
-    font-style: italic;
-}
-
-.supervisor {
-}
-
-.reviewer {
-}
-</style>
 
 <html:base />
-<title><bean:message key="oscarEncounter.Index.title" /> - <oscar:nameage
-		demographicNo="<%=request.getParameter(\"demographicNo\")%>" /></title>
+<title><bean:message key="oscarEncounter.Index.title" /></title>
 <script type="text/javascript">
     	ctx = "<c:out value="${ctx}"/>";
     	demographicNo = "<c:out value="${demographicNo}"/>";
@@ -755,12 +463,12 @@ function init() {
 
     Element.observe(window, "resize", monitorNavBars);
     
-    if(!NiftyCheck()) {
-        return;
-    }
-
-    Rounded("div.showEdContent","all","transparent","#CCCCCC","big border #000000");
-    Rounded("div.printOps","all","transparent","#CCCCCC","big border #000000");
+    // if(!NiftyCheck()) {
+    //     return;
+    // }
+	//
+    // Rounded("div.showEdContent","all","transparent","#CCCCCC","big border #000000");
+    // Rounded("div.printOps","all","transparent","#CCCCCC","big border #000000");
     Calendar.setup({ inputField : "printStartDate", ifFormat : "%d-%b-%Y", showsTime :false, button : "printStartDate_cal", singleClick : true, step : 1 });
     Calendar.setup({ inputField : "printEndDate", ifFormat : "%d-%b-%Y", showsTime :false, button : "printEndDate_cal", singleClick : true, step : 1 });
 
@@ -788,8 +496,8 @@ window.onbeforeunload = onClosing;
 
 </script>
 </head>
-<body id="body" style="margin: 0px;">
-
+<body id="body">
+<div id="newEncounterLayoutWrapper">
 	<%--
 	<caisi:isModuleLoad moduleName="eaaps.enabled">
 		<div id="eaaps" style="display: none;">
@@ -804,41 +512,23 @@ window.onbeforeunload = onClosing;
 	</caisi:isModuleLoad>
 	--%>
 	 
-	<div id="header">
+	<div id="header" class="row">
 		<tiles:insert attribute="header" />
 	</div>
 
-	<div id="rightNavBar"
-		style="display: inline; float: right; width: 20%; margin-left: -3px;">
-		<tiles:insert attribute="rightNavigation" />
-	</div>
+	<div id="navigation-layout" class="row">
+		<div id="rightNavBar">
+			<tiles:insert attribute="rightNavigation" />
+		</div>
 
-	<div id="leftNavBar" style="display: inline; float: left; width: 20%;">
-		<tiles:insert attribute="leftNavigation" />
-	</div>
+		<div id="leftNavBar" >
+			<tiles:insert attribute="leftNavigation" />
+		</div>
 
-	<div id="content"
-		style="display: inline; float: left; width: 60%; background-color: #CCCCFF;">
-		<tiles:insert attribute="body" />
+		<div id="content">
+			<tiles:insert attribute="body" />
+		</div>
 	</div>
-	
-	<!-- Display Integrated Data -->
-	<div id="showIntegratedNote" class="showEdContent" style="height:325px;">
-		<div id="integratedNoteWrapper" style="position:relative;width:99.5%;height:320px">
-		<div id="integratedNoteTitle"></div>
-		<textarea style="margin: 10px;" cols="50" rows="15" id="integratedNoteTxt" name="integratedNoteTxt" readonly></textarea>
-		<div id="integratedNoteDetails" style="text-align:left;padding-left:4px;font-size:10px;"></div> 
-		
-		<span style="position:absolute;right:10px;"> 
-					<input type="image"
-					src="<c:out value="${ctx}/oscarEncounter/graphics/system-log-out.png"/>"
-					title='<bean:message key="global.btnExit"/>'
-					onclick="this.focus();$('channel').style.visibility ='visible';$('showIntegratedNote').style.display='none';return false;">
-		</span>
-		
-		</div><!-- integratedNoteWrapper -->
-	</div><!-- showIntegratedNote -->
-
 	<!-- hovering divs -->
 	<div id="showEditNote" class="showEdContent">
 		<form id="frmIssueNotes" action="" method="post"
@@ -848,7 +538,7 @@ window.onbeforeunload = onClosing;
 			<input type="hidden" id="issueChange" name="issueChange" value="">
 			<input type="hidden" id="archived" name="archived" value="false">
 			<input type="hidden" id="annotation_attrib" name="annotation_attrib">
-			<div id="winTitle"></div>
+			<h3 id="winTitle"></h3>
 			<textarea style="margin: 10px;" cols="50" rows="15" id="noteEditTxt"
 				name="value"></textarea>
 			<br>
@@ -1139,6 +829,8 @@ if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", 
 %>
 		</form>
 	</div>
+</div>
+<div id="encounterModal" ></div>
 <%
     String apptNo = request.getParameter("appointmentNo");
     if( OscarProperties.getInstance().getProperty("resident_review", "false").equalsIgnoreCase("true") && 
@@ -1200,7 +892,7 @@ if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", 
                             <tr>
                                 <td colspan="2">
                                     <input id="submitResident" value="Continue" name="submitResident" type="submit" onclick="return subResident();"/>
-                                    <input id="submitResident" value="Return to Chart" name="submitResident" type="submit" onclick="return cancelResident();"/>                                
+                                    <input id="submitResidentReturn" value="Return to Chart" name="submitResident" type="submit" onclick="return cancelResident();"/>
                                 </td>                                
                             </tr>
                         </table>
@@ -1209,5 +901,6 @@ if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", 
                     
                 </div>
  <%}%>
+
 </body>
 </html:html>

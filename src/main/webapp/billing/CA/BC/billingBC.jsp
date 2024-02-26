@@ -49,110 +49,270 @@ if(!authed) {
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"  %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ page import="org.springframework.web.context.WebApplicationContext"%>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@page import="oscar.oscarDemographic.data.*"%>
-<%@page import="java.text.*, java.util.*, oscar.oscarBilling.ca.bc.data.*,oscar.oscarBilling.ca.bc.pageUtil.*,oscar.*,oscar.entities.*"%>
+<%@page import="java.util.*, oscar.oscarBilling.ca.bc.data.*,oscar.oscarBilling.ca.bc.pageUtil.*,oscar.*,oscar.entities.*"%>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.common.dao.BillingreferralDao" %>
 <%@ page import="oscar.oscarResearch.oscarDxResearch.util.dxResearchCodingSystem"%>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.oscarehr.common.dao.PropertyDao" %>
+<%@ page import="org.oscarehr.common.model.Property" %>
+<%@ page import="org.oscarehr.managers.DemographicManager,oscar.oscarBilling.ca.bc.MSP.ServiceCodeValidationLogic" %>
+<%@ page import="org.oscarehr.common.model.Demographic" %>
+<%@ page import="org.apache.commons.lang3.StringUtils" %>
 
 <%!
-  public void fillDxcodeList(BillingFormData.BillingService[] servicelist, Map dxcodeList) {
-    for (int i = 0; i < servicelist.length; i++) {
-      BillingAssociationPersistence per = new BillingAssociationPersistence();
-      ServiceCodeAssociation assoc = per.getServiceCodeAssocByCode(servicelist[i].getServiceCode());
-      List dxcodes = assoc.getDxCodes();
-      if (!dxcodes.isEmpty()) {
-        dxcodeList.put(servicelist[i].getServiceCode(), (String) dxcodes.get(0));
-      }
-    }
-  }
-  public String createAssociationJS(Map assocCodeMap,String assocArrayName) {
 
-    Set e = assocCodeMap.keySet();
-    StringBuffer out = new StringBuffer();
-    out.append("var " + assocArrayName + "  = new Array();");
-    out.append("\n");
-    int index = 0;
-    for (Iterator iter = e.iterator(); iter.hasNext(); ) {
-      String key = (String) iter.next();
-      String value = (String) assocCodeMap.get(key);
-      String rowName = assocArrayName + "row";
-      out.append("var " + rowName + index + " = new Array(2);\n");
-      out.append(rowName + index + "[0]='" + key + "'; ");
-      out.append(rowName + index + "[1]='" + value + "';\n");
-      out.append(assocArrayName + "[" + index + "]=" + rowName  + index + ";\n");
-      index++;
-    }
-    return out.toString();
-  }
+	public void fillDxcodeList(BillingFormData.BillingService[] servicelist, Map<String, String> dxcodeList) {
+		for (int i = 0; i < servicelist.length; i++) {
+		  BillingAssociationPersistence per = new BillingAssociationPersistence();
+		  ServiceCodeAssociation assoc = per.getServiceCodeAssocByCode(servicelist[i].getServiceCode());
+		  List dxcodes = assoc.getDxCodes();
+		  if (!dxcodes.isEmpty()) {
+		    dxcodeList.put(servicelist[i].getServiceCode(), (String) dxcodes.get(0));
+		  }
+		}
+	}
+	public String createAssociationJS(Map<String, String> assocCodeMap,String assocArrayName) {
+
+		Set e = assocCodeMap.keySet();
+		StringBuffer out = new StringBuffer();
+		out.append("var " + assocArrayName + "  = new Array();");
+		out.append("\n");
+		int index = 0;
+		for (Iterator iter = e.iterator(); iter.hasNext(); ) {
+		  String key = (String) iter.next();
+		  String value = (String) assocCodeMap.get(key);
+		  String rowName = assocArrayName + "row";
+		  out.append("var " + rowName + index + " = new Array(2);\n");
+		  out.append(rowName + index + "[0]='" + key + "'; ");
+		  out.append(rowName + index + "[1]='" + value + "';\n");
+		  out.append(assocArrayName + "[" + index + "]=" + rowName  + index + ";\n");
+		  index++;
+		}
+		return out.toString();
+	}
+
+	PropertyDao propertyDao = SpringUtils.getBean(PropertyDao.class);
+    DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+	BillingFormData billform = new BillingFormData();
+	ServiceCodeValidationLogic lgc = new ServiceCodeValidationLogic();
+	BillingreferralDao billingReferralDao = SpringUtils.getBean(BillingreferralDao.class);
+	SupServiceCodeAssocDAO supDao = SpringUtils.getBean(SupServiceCodeAssocDAO.class);
+	dxResearchCodingSystem codingSys = new dxResearchCodingSystem();
+	BillingPreferencesDAO billingPreferencesDAO = SpringUtils.getBean(BillingPreferencesDAO.class);
 %>
 <%
+	// current data is held in the session.
+	BillingSessionBean bean = (BillingSessionBean) pageContext.findAttribute("billingSessionBean");
 	LoggedInInfo loggedInInfo =	LoggedInInfo.getLoggedInInfoFromSession(request);
-  int year = 0; //Integer.parseInt(request.getParameter("year"));
-  int month = 0; //Integer.parseInt(request.getParameter("month"));
-  //int day = now.get(Calendar.DATE);
-  int delta = 0; //request.getParameter("delta")==null?0:Integer.parseInt(request.getParameter("delta")); //add or minus month
-  GregorianCalendar now = new GregorianCalendar();
-  year = now.get(Calendar.YEAR);
-  month = now.get(Calendar.MONTH) + 1;
-  String sxml_location = "", sxml_provider = "", sxml_visittype = "";
-  String color = "", colorflag = "";
-  BillingSessionBean bean = (BillingSessionBean) pageContext.findAttribute("billingSessionBean");
-  oscar.oscarDemographic.data.DemographicData demoData = new oscar.oscarDemographic.data.DemographicData();
-  org.oscarehr.common.model.Demographic demo = demoData.getDemographic(loggedInInfo, bean.getPatientNo());
-  bean.setPatientName(demo.getFullName());
-  oscar.oscarBilling.ca.bc.MSP.ServiceCodeValidationLogic lgc = new oscar.oscarBilling.ca.bc.MSP.ServiceCodeValidationLogic();
-  BillingFormData billform = new BillingFormData();
-  BillingFormData.BillingService[] billlist1 = lgc.filterServiceCodeList(billform.getServiceList("Group1", bean.getBillForm(), bean.getBillRegion(),new Date()), demo);
-  BillingFormData.BillingService[] billlist2 = lgc.filterServiceCodeList(billform.getServiceList("Group2", bean.getBillForm(), bean.getBillRegion(),new Date()), demo);
-  BillingFormData.BillingService[] billlist3 = lgc.filterServiceCodeList(billform.getServiceList("Group3", bean.getBillForm(), bean.getBillRegion(),new Date()), demo);
-  String group1Header = billform.getServiceGroupName("Group1", bean.getBillForm());
-  String group2Header = billform.getServiceGroupName("Group2", bean.getBillForm());
-  String group3Header = billform.getServiceGroupName("Group3", bean.getBillForm());
-  BillingFormData.BillingPhysician[] billphysician = billform.getProviderList();
-  BillingFormData.BillingVisit[] billvisit = billform.getVisitType(bean.getBillRegion());
-  BillingFormData.Location[] billlocation = billform.getLocationList(bean.getBillRegion());
-  BillingFormData.Diagnostic[] diaglist = billform.getDiagnosticList(bean.getBillForm(), bean.getBillRegion());
-  BillingFormData.BillingForm[] billformlist = billform.getFormList();
-  SupServiceCodeAssocDAO supDao = SpringUtils.getBean(SupServiceCodeAssocDAO.class);
-  HashMap assocCodeMap = new HashMap();
-  fillDxcodeList(billlist1, assocCodeMap);
-  fillDxcodeList(billlist2, assocCodeMap);
-  fillDxcodeList(billlist3, assocCodeMap);
-  String frmType = request.getParameter("billType");
-  if (frmType != null && frmType.equals("Pri")) {
-    billform.setPrivateFees(billlist1);
-    billform.setPrivateFees(billlist2);
-    billform.setPrivateFees(billlist3);
-  }
-  String loadFromSession = request.getParameter("loadFromSession");
-  if (request.getAttribute("loadFromSession") != null) {
-    loadFromSession = "y";
-  }
-  if (loadFromSession == null) {
-    request.getSession().removeAttribute("BillingCreateBillingForm");
-  }
+	Demographic demo = demographicManager.getDemographic(loggedInInfo, bean.getPatientNo());
 
-  BillingreferralDao billingReferralDao = (BillingreferralDao)SpringUtils.getBean("BillingreferralDAO");
-  
-  String newWCBClaim = (String)request.getAttribute("newWCBClaim");
-  
-  String mRecRefDoctor = "";
-  String mRecRefDoctorNum = "";
+	// billing type setting MSP, Private, ICBC, WCB, etc..
+	String frmType = request.getParameter("billType");
 
-  if(! "".equals(demo.getFamilyDoctorNumber())){
-   mRecRefDoctor = demo.getFamilyDoctorName();
-   mRecRefDoctorNum = demo.getFamilyDoctorNumber();
-  }else{
-   mRecRefDoctor = "none";
-  }
+	// not sure why this is needed. It's too costly to rewrite.
+	String loadFromSession = request.getParameter("loadFromSession");
 
-  ArrayList<String> recentList = billform.getRecentReferralDoctorsList(demo.getDemographicNo());
-  
-  dxResearchCodingSystem codingSys = new dxResearchCodingSystem();
-  pageContext.setAttribute("dxCodeSystemList", codingSys);
+	// load new WCB type
+	String newWCBClaim = (String)request.getAttribute("newWCBClaim");
+
+	/* billing from appointment will fetch the defaults for the provider whom the appointment was with
+	 * "sign save and bill" will fetch the defaults for the logged in provider who wrote and signed the encounter note
+	 * If "xml_provider" is null then the logged in provider is used
+	 */
+	String targetProvider = loggedInInfo.getLoggedInProviderNo();
+	String alternateProvider = request.getParameter("xml_provider");
+	if(alternateProvider != null && ! alternateProvider.isEmpty()) {
+		targetProvider = alternateProvider;
+	}
+
+	/*
+	 * find and default providers set for the current target provider in the
+	 * billing preference settings.
+	 * Target provider now becomes the provider set in the invoice settings.
+	 */
+	List<Property> defaultBillingProviderPropertyList = propertyDao.findByNameAndProvider(Property.PROPERTY_KEY.default_billing_provider, targetProvider);
+	if(defaultBillingProviderPropertyList != null && ! defaultBillingProviderPropertyList.isEmpty()) {
+		Property defaultBillingProvider = defaultBillingProviderPropertyList.get(0);
+		if (defaultBillingProvider != null && ! "clinicdefault".equalsIgnoreCase(defaultBillingProvider.getValue())) {
+			targetProvider = defaultBillingProvider.getValue();
+		}
+	}
+
+	/* the value set preset in the session overrides the parameter value
+	 * The target provider becomes "none". The remaining values are overridden by the
+	 * session bean.
+	 */
+	if(bean.getBillingProvider() == null) {
+		bean.setBillingProvider(targetProvider);
+	} else {
+		targetProvider = "none";
+	}
+
+	/* Billing settings:
+	 * 1. load the selected users preferences (targetProvider)
+	 * 2. if no selected user load the logged-in users preferences
+	 * 3. load system default preferences if no selected user and logged in user has no preferences (system default)
+	 */
+
+
+	/* sort out which Billing form to use based on global and provider settings.
+	 * 1. Default value set in the properties file
+	 */
+	String defaultBillingForm = OscarProperties.getInstance().getProperty("default_view");
+	if(defaultBillingForm != null) {
+		defaultBillingForm = defaultBillingForm.trim();
+	}
+
+	// 2. Default value set in Billing Settings
+	List<Property> defaultBillingFormPropertyList = propertyDao.findGlobalByName("default_billing_form");
+	if(defaultBillingFormPropertyList != null && ! defaultBillingFormPropertyList.isEmpty()) {
+		Property defaultBillingFormProperty = defaultBillingFormPropertyList.get(0);
+		String billingForm = null;
+		if(defaultBillingFormProperty != null) {
+			billingForm = defaultBillingFormProperty.getValue();
+		}
+		if(billingForm != null && !  billingForm.isEmpty()
+				&& ! "clinicdefault".equalsIgnoreCase( billingForm)) {
+			defaultBillingForm = billingForm;
+		}
+	}
+
+	// 3. individual provider billing preferences.
+	List<Property> userSetDefaultBillingFormPropertyList = propertyDao.findByNameAndProvider(Property.PROPERTY_KEY.default_billing_form, targetProvider);
+	if(userSetDefaultBillingFormPropertyList != null && ! userSetDefaultBillingFormPropertyList.isEmpty()) {
+		Property userSetDefaultBillingFormProperty = userSetDefaultBillingFormPropertyList.get(0);
+		String userSetBillingForm = null;
+		if (userSetDefaultBillingFormProperty != null) {
+			userSetBillingForm = userSetDefaultBillingFormProperty.getValue();
+		}
+		if( userSetBillingForm != null && !  userSetBillingForm.isEmpty()
+				&& ! "clinicdefault".equalsIgnoreCase(userSetBillingForm.trim())) {
+			// override the billingform preset/default in session with the providers preference.
+			defaultBillingForm = userSetBillingForm;
+		}
+	}
+
+	// 4. logged in user is overriding billing form preference during billing process.
+	/* horrible hack. Do not repeat.
+	 * If the targetProvider is set to "none" then this indicates that the
+	 * Billing sheet selection has been overiden from the billing form.
+	 * The strange part is that the billing form selection has already been
+	 * set into the "bean" object before reaching this point.
+	 * Normally not a big deal - but - in this case the billing sheet is loaded
+	 * into the billing interface dynamically.
+	 */
+	if("none".equals(targetProvider)) {
+		defaultBillingForm = bean.getBillForm();
+	}
+
+	if(billform.serviceExists(defaultBillingForm)) {
+		bean.setBillForm(defaultBillingForm);
+	}
+
+	// 1. global default billing visit location: oscar properties
+	String defaultServiceLocation = OscarProperties.getInstance().getProperty("visittype");
+
+	// 2. global billing settings
+	List<Property> userSetDefaultServiceLocationList = propertyDao.findGlobalByName("bc_default_service_location");
+	if(userSetDefaultServiceLocationList != null && ! userSetDefaultServiceLocationList.isEmpty()) {
+		Property uerSetDefaultServiceLocationProperty = userSetDefaultServiceLocationList.get(0);
+		String userSetDefaultServiceLocation = null;
+		if(uerSetDefaultServiceLocationProperty != null) {
+			userSetDefaultServiceLocation = uerSetDefaultServiceLocationProperty.getValue();
+		}
+		if(userSetDefaultServiceLocation != null) {
+			defaultServiceLocation = userSetDefaultServiceLocation;
+		}
+	}
+
+	// 3. override visit location "visittype" code preference by provider
+	List<Property> defaultServiceLocationList = propertyDao.findByNameAndProvider(Property.PROPERTY_KEY.bc_default_service_location, targetProvider);
+	if(defaultServiceLocationList != null && ! defaultServiceLocationList.isEmpty()) {
+		Property defaultServiceLocationProperty = defaultServiceLocationList.get(0);
+		String providerSetDefaultLocation = null;
+		if(defaultServiceLocationProperty != null) {
+			providerSetDefaultLocation = defaultServiceLocationProperty.getValue();
+		}
+		if(providerSetDefaultLocation != null && ! providerSetDefaultLocation.isEmpty()
+				&& ! "clinicdefault".equalsIgnoreCase(providerSetDefaultLocation)) {
+			// override default from Oscar properties or billing properties with the provider preference
+			defaultServiceLocation = providerSetDefaultLocation;
+		}
+	}
+
+	/*
+	 * only override if the session value is not already set.
+	 */
+	if(bean.getVisitType() == null) {
+		bean.setVisitType(defaultServiceLocation);
+	}
+
+	/*
+	 * Get the users preference for "Refer to" or "Refer by"
+	 */
+	BillingPreference billingPreference = billingPreferencesDAO.getUserBillingPreference(targetProvider);
+	String userReferralPref = "";
+	if (billingPreference != null) {
+		if (billingPreference.getReferral() == 1) {
+			userReferralPref = "T";
+		}
+		else if (billingPreference.getReferral() == 2) {
+			userReferralPref = "B";
+		}
+	}
+
+	// set up the selected billing form
+	BillingFormData.BillingService[] billlist1 = lgc.filterServiceCodeList(billform.getServiceList("Group1", bean.getBillForm(), bean.getBillRegion(),new Date()), demo);
+	BillingFormData.BillingService[] billlist2 = lgc.filterServiceCodeList(billform.getServiceList("Group2", bean.getBillForm(), bean.getBillRegion(),new Date()), demo);
+	BillingFormData.BillingService[] billlist3 = lgc.filterServiceCodeList(billform.getServiceList("Group3", bean.getBillForm(), bean.getBillRegion(),new Date()), demo);
+
+	HashMap<String, String> assocCodeMap = new HashMap<>();
+	fillDxcodeList(billlist1, assocCodeMap);
+	fillDxcodeList(billlist2, assocCodeMap);
+	fillDxcodeList(billlist3, assocCodeMap);
+
+	String group1Header = billform.getServiceGroupName("Group1", bean.getBillForm());
+	String group2Header = billform.getServiceGroupName("Group2", bean.getBillForm());
+	String group3Header = billform.getServiceGroupName("Group3", bean.getBillForm());
+
+	if (frmType != null && frmType.equals("Pri")) {
+		billform.setPrivateFees(billlist1);
+		billform.setPrivateFees(billlist2);
+		billform.setPrivateFees(billlist3);
+	}
+
+	// set up the form data elements
+	BillingFormData.BillingPhysician[] billphysician = billform.getProviderList();
+	List<BillingFormData.BillingVisit> billvisit = billform.getVisitType(bean.getBillRegion());
+	BillingFormData.Location[] billlocation = billform.getLocationList(bean.getBillRegion());
+	BillingFormData.Diagnostic[] diaglist = billform.getDiagnosticList(bean.getBillForm(), bean.getBillRegion());
+	BillingFormData.BillingForm[] billformlist = billform.getFormList();
+	ArrayList<String> recentReferralDoctorList = billform.getRecentReferralDoctorsList(demo.getDemographicNo());
+
+
+	if (request.getAttribute("loadFromSession") != null) {
+		loadFromSession = "y";
+	}
+	if (loadFromSession == null) {
+		request.getSession().removeAttribute("BillingCreateBillingForm");
+	}
+
+	// set up the referr-ing doctor
+	String mRecRefDoctor = "";
+	String mRecRefDoctorNum = "";
+
+	if(! "".equals(demo.getFamilyDoctorNumber())){
+		mRecRefDoctor = demo.getFamilyDoctorName();
+		mRecRefDoctorNum = demo.getFamilyDoctorNumber();
+	}else{
+		mRecRefDoctor = "none";
+	}
+
+
+	// set up useful pagecontext attributes.
+    pageContext.setAttribute("dxCodeSystemList", codingSys);
+
 %>
 <!DOCTYPE html>
 <html>
@@ -170,7 +330,7 @@ if(!authed) {
 
 
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/moment.js"></script>
-<script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/jquery/jquery-1.12.0.min.js"></script>
+<script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script> 
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/bootstrap-datetimepicker.min.js" ></script>
@@ -184,16 +344,35 @@ if(!authed) {
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/js/dxJSONCodeSearch.js"></script>
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/jquery/jquery.validate-1.19.5.min.js"></script>
 
-<style type="text/css">
-	table {
-	  margin-bottom: 5px !important;
-	}
+<style>
+
+    div.tool-table {
+        display: block;
+        width: 100%;
+        padding: 6px 12px;
+        vertical-align: middle;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+        -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	    margin-right: 3px;
+    }
+    table {
+	    margin-bottom: 5px !important;
+    }
+    div.tool-table:last-of-type {
+	    margin-right:0;
+    }
+
 	div#wcbForms p {
-		padding:0px;
-		margin:0px;
+		padding:0;
+		margin:0;
 	}
 	div#wcbForms table {
-		margin:0px 0 5px 0;
+		margin:0 0 5px 0;
 	}
 	div#wcbForms table th {
 		font-weight: normal;
@@ -226,36 +405,18 @@ if(!authed) {
 	}
 	
 	.wrapper {
-		margin: 40px 10px 10px 10px;
+		margin: 0 10px 10px 10px;
 	}
 	
 	div#page-header {
-		position: fixed;
+		position: sticky;
 		width: 100%;
 		top: 0;
 		left: 0;
+		right: 0;
 		z-index: 100000;
 	}
-	
-	div#page-header::after {
-    	clear: both;
-	}
-	
-	div#page-header::before, div#page-header::after {
-	    display: table;
-	    content: " ";
-	}
-	
-	div#page-header table {
-		margin:0px !important;
-	}
-	
-	#oscarBillingHeader {
-		width: 100%;
-		border-collapse: collapse;
-		background-color: #F3F3F3;
-	}
-	
+
 	table#oscarBillingHeader tr td {
 		padding: 1px 5px;
 		background-color: #F3F3F3;
@@ -267,7 +428,8 @@ if(!authed) {
 		background-color: black;	
 		border-bottom: black 1px solid;
 		line-height: 1;
-		border-top: black 1px solid;	
+		border-top: black 1px solid;
+        vertical-align: top;
 	}
 	
 	#oscarBillingHeader #oscarBillingHeaderLeftColumn h1 {
@@ -304,12 +466,12 @@ if(!authed) {
 		width: 100%;
 		border-top: red thin solid;
 		border-bottom: red thin solid;
-		margin: 0px;
+		margin: 0;
 		margin-top: 5px;
-		padding: 0px;
+		padding: 0;
 	}
 	h3 ul {
-		margin:0px;
+		margin:0;
 	}
 	
 	table#billingFormTable table.tool-table tr td table {
@@ -376,12 +538,6 @@ if(!authed) {
 	}
 	.has-error {
 		background-color: #f2dede;
-	}
-
-	@media only screen and (max-width: 820px) {
-		.wrapper {
-			margin: 80px 10px 10px 10px;
-		}
 	}
 	
 </style>
@@ -487,7 +643,7 @@ function ShowElementById(ele){
 	document.getElementById(ele).style.display='';
 }
 function CheckType(){
-	if (document.BillingCreateBillingForm.xml_billtype.value == "ICBC"){
+	if (document.BillingCreateBillingForm.xml_billtype.value === "ICBC"){
 		ShowElementById('ICBC');
 		document.BillingCreateBillingForm.mva_claim_code.options[1].selected = true;
 	}else{
@@ -544,40 +700,36 @@ function replaceWCB(id){
 }
 
 function gotoPrivate(){
-   if (document.BillingCreateBillingForm.xml_billtype.value == "Pri"){
- 	  var url = "<%=request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/" %>billing.do?billRegion=<%=bean.getBillRegion()%>&billForm=Pri&hotclick=&appointment_no=<%=bean.getApptNo()%>&demographic_name=<%=URLEncoder.encode(bean.getPatientName(),"UTF-8")%>&demographic_no=<%=bean.getPatientNo()%>&user_no=<%=bean.getCreator()%>&appointment_date=<%=bean.getApptDate()%>&status=<%=bean.getApptStatus()%>&start_time=<%=bean.getApptStart()%>&bNewForm=1&billType=Pri";
-	  url += "&providerview=" + jQuery("select[name='xml_provider']").val();
-	  url += "&apptProvider_no=" + jQuery("select[name='xml_provider']").val();
-
- 	  window.location.href = url;
+   if (document.BillingCreateBillingForm.xml_billtype.value === "Pri"){
+	   // change the billing sheet to private billing
+	   jQuery("#selectBillingForm").val("PRI").trigger('change');
    }
-   if (document.BillingCreateBillingForm.xml_billtype.value == "MSP"){
-	  var url = "<%=request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/" %>billing.do?billRegion=<%=bean.getBillRegion()%>&billForm=<%=OscarProperties.getInstance().getProperty("default_view")%>&hotclick=&appointment_no=<%=bean.getApptNo()%>&demographic_name=<%=URLEncoder.encode(bean.getPatientName(),"UTF-8")%>&demographic_no=<%=bean.getPatientNo()%>&user_no=<%=bean.getCreator()%>&appointment_date=<%=bean.getApptDate()%>&status=<%=bean.getApptStatus()%>&start_time=<%=bean.getApptStart()%>&bNewForm=1&billType=MSP";
-	  url += "&providerview=" + jQuery("select[name='xml_provider']").val();
-	  url += "&apptProvider_no=" + jQuery("select[name='xml_provider']").val(); 
-      window.location.href = url;
-   	}
+
+   // otherwise go back to the default billing form
+   else {
+	   jQuery("#selectBillingForm").val('${ billingSessionBean.billForm }').trigger('change');
+   }
 }
 
 function correspondenceNote(){
-	if (document.BillingCreateBillingForm.correspondenceCode.value == "0" ){
+	if (document.BillingCreateBillingForm.correspondenceCode.value === "0" ){
 		HideElementById('CORRESPONDENCENOTE');
-	}else if (document.BillingCreateBillingForm.correspondenceCode.value == "C" ){
+	}else if (document.BillingCreateBillingForm.correspondenceCode.value === "C" ){
 		HideElementById('CORRESPONDENCENOTE');
-	}else if (document.BillingCreateBillingForm.correspondenceCode.value == "N" ){
+	}else if (document.BillingCreateBillingForm.correspondenceCode.value === "N" ){
 	  ShowElementById('CORRESPONDENCENOTE');
-	}else {(document.BillingCreateBillingForm.correspondenceCode.value == "B" )
+	}else {(document.BillingCreateBillingForm.correspondenceCode.value === "B" )
      ShowElementById('CORRESPONDENCENOTE');
 	}
 }
 
 function quickPickDiagnostic(diagnos){
 
-	if (document.BillingCreateBillingForm.xml_diagnostic_detail1.value == ""){
+	if (document.BillingCreateBillingForm.xml_diagnostic_detail1.value === ""){
 		document.BillingCreateBillingForm.xml_diagnostic_detail1.value = diagnos;
-        }else if ( document.BillingCreateBillingForm.xml_diagnostic_detail2.value == ""){
+        }else if ( document.BillingCreateBillingForm.xml_diagnostic_detail2.value === ""){
 		document.BillingCreateBillingForm.xml_diagnostic_detail2.value= diagnos;
-	}else if ( document.BillingCreateBillingForm.xml_diagnostic_detail3.value == "" ){
+	}else if ( document.BillingCreateBillingForm.xml_diagnostic_detail3.value === "" ){
 		document.BillingCreateBillingForm.xml_diagnostic_detail3.value = diagnos;
 	}else{
 		alert("All of the Diagnostic Coding Boxes are full");
@@ -589,9 +741,9 @@ function isNumeric(strString){
         var strChar;
         var retval = true;
 
-        for (i = 0; i < strString.length && retval == true; i++){
+        for (i = 0; i < strString.length && retval === true; i++){
            strChar = strString.charAt(i);
-           if (validNums.indexOf(strChar) == -1){
+           if (validNums.indexOf(strChar) === -1){
               retval = false;
            }
         }
@@ -623,7 +775,7 @@ function rs(n,u,w,h,x) {
     if (remote.opener == null)
       remote.opener = self;
   }
-  if (x == 1) { return remote; }
+  if (x === 1) { return remote; }
 }
 
 
@@ -676,7 +828,7 @@ function grabEnter(event,callb){
 }
 
 function reloadPage(init) {  //reloads the window if Nav4 resized
-  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+  if (init===true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
     document.pgW=innerWidth; document.pgH=innerHeight; onresize=reloadPage; }}
   else if (innerWidth!=document.pgW || innerHeight!=document.pgH) location.reload();
 }
@@ -762,70 +914,47 @@ function setCodeToChecked(svcCode){
             myform.xml_other1.value = svcCode;
             return;
             //myform.xml_diagnostic_detail1.value = "";
-        }else if (myform.xml_other2.value == "") {
+        }else if (myform.xml_other2.value === "") {
             myform.xml_other2.value = svcCode;
             //myform.xml_diagnostic_detail2.value = "";
-        }else if (myform.xml_other3.value == "") {
+        }else if (myform.xml_other3.value === "") {
             myform.xml_other3.value  = svcCode;
             //myform.xml_diagnostic_detail3.value = "";
         }
     }
-    
-    
-    
-}
-
-/*
- * Sets the currently selected provider as the default on 
- * this client computer.
- */
-function setDefaultProvider() {
-	var selectedProvider = jQuery('select[name=xml_provider] option:selected');
-	var providerId = selectedProvider.val();
-	var providerName = selectedProvider.text();		
-	localStorage.setItem( 'default_billing_provider', providerId );		
-	alert(providerName + " is now set as the default billing physician on this computer.");
-
-}
-
-/*
- * Loads the default provider - only if - the provider is not 
- * already set from the billing or encounter interface.
- */
-function loadDefaultProvder() {
-	var currentProvider = document.BillingCreateBillingForm.xml_provider.value;
-
-	if(! currentProvider)
-	{
-		var providerId = localStorage.getItem('default_billing_provider');
-		jQuery("select[name=xml_provider]").val(providerId);
-	}
-}
-
-function setReferralDoctor() {
-	jQuery(".referral-doctor").on('click', function() {
-
-		 mRecordRefDocNum = jQuery(this).attr('data-num');  
-		 mRecordRefDoc= jQuery(this).attr('data-doc');  
-		 
-		 one = jQuery('[name="xml_refer1"]');
-		 two = jQuery('[name="xml_refer2"]');
-		 
-		 if(one.val().length>0){
-		  two.val(mRecordRefDocNum);
-		  two.attr("title", mRecordRefDoc );
-		 }else{
-		  one.val(mRecordRefDocNum);
-		  one.attr("title", mRecordRefDoc );
-		 }
-	});
 }
 
 jQuery(document).ready(function(jQuery){
-	setReferralDoctor();
-	loadDefaultProvder();
-	
+
 	jQuery("#bcBillingForm").attr('autocomplete', 'off');
+
+	jQuery(document).on('click', ".referral-doctor", function() {
+
+		mRecordRefDocNum = jQuery(this).attr('data-num');
+		mRecordRefDoc= jQuery(this).attr('data-doc');
+
+		one = jQuery('[name="xml_refer1"]');
+		two = jQuery('[name="xml_refer2"]');
+
+		if(one.val().length>0){
+			two.val(mRecordRefDocNum);
+			two.attr("title", mRecordRefDoc );
+		}else{
+			one.val(mRecordRefDocNum);
+			one.attr("title", mRecordRefDoc );
+		}
+	});
+
+	jQuery(document).on('change', '#xml_provider', function() {
+		let url = '${pageContext.servletContext.contextPath}/billing.do?demographic_no=' + '<%=Encode.forUriComponent(bean.getPatientNo())%>' + '&appointment_no=' + '<%=Encode.forUriComponent(bean.getApptNo())%>' + '&apptProvider_no=' + '<%=Encode.forUriComponent(bean.getApptProviderNo())%>' + '&demographic_name=' + '<%=URLEncoder.encode(bean.getPatientName(),"UTF-8")%>' + '&billRegion=BC&xml_provider=' + this.value;
+		console.log(url);
+		jQuery("#billingPatientInfoWrapper").load(url + " #billingPatientInfo", function(){
+			// re-bind all the javascript
+			jQuery("#selectBillingForm").trigger('change');
+			getDxInformation();
+			bindDxJSONEvents();
+		})
+	});
 	
 	/* for setting times */
     jQuery(function () {
@@ -833,19 +962,22 @@ jQuery(document).ready(function(jQuery){
             format: 'HH:mm'
         });
     });
-    
+
 	/* New billing form selection method*/
-    jQuery("#selectBillingForm").on('change',function() {
-    	var url = ctx + '/billing.do?demographic_no=' + <%=bean.getPatientNo()%> + '&appointment_no=' + <%=bean.getApptNo()%> + '&billRegion=BC&billForm=' + this.value;
-      	jQuery("#billingFormTableWrapper").load(url + " #billingFormTable", function(){
-      		// re-bind all the javascript
+    jQuery(document).on('change', "#selectBillingForm", function() {
+		let selectedValue = this.value;
+    	let url = ctx + '/billing.do?demographic_no=' + '<%=Encode.forUriComponent(bean.getPatientNo())%>' + '&appointment_no=' + '<%=Encode.forUriComponent(bean.getApptNo())%>' + '&apptProvider_no=' + '<%=Encode.forUriComponent(bean.getApptProviderNo())%>' + '&demographic_name=' + '<%=URLEncoder.encode(bean.getPatientName(),"UTF-8")%>' + '&xml_provider=none&billRegion=BC&billForm=' + selectedValue ;
+		jQuery("#billingFormTableWrapper").load(url + " #billingFormTable", function(){
+      		// if the selected billing type is private, then change the billing type to private
+			if(selectedValue === 'PRI') {
+				jQuery("#xml_billtype").val('Pri');
+			}
     		getDxInformation();
     		bindDxJSONEvents();
-    		setReferralDoctor();
       	});
     });
 
-	jQuery("#serviceStartTime").on('blur', function() {
+	jQuery(document).on('blur', "#serviceStartTime", function() {
 	    var time = this.value;
 	    if(time) {
 	        var hour = time.split(":")[0];
@@ -860,7 +992,7 @@ jQuery(document).ready(function(jQuery){
 	 })
 	 
 	 
-	 jQuery("#serviceEndTime").on('blur', function() {
+	 jQuery(document).on('blur', "#serviceEndTime", function() {
 	    var time = this.value;
 	    
 	    if(time) {    	
@@ -885,7 +1017,15 @@ jQuery(document).ready(function(jQuery){
 	 */
 	 jQuery("#bcBillingForm").validate({
  
-		 rules: {			 
+		 rules: {
+			 /*
+			  * Service date absolutely required
+			  */
+			 xml_appointment_date: {
+				 required: function(element) {
+					 return element.value.length === 0;
+				 }
+			 },
 			 /*
 			  * Is provider selected
 			  */
@@ -990,6 +1130,9 @@ jQuery(document).ready(function(jQuery){
 		  * Error messages to return on each validation
 		  */
 		 messages: {
+			 xml_appointment_date: {
+				 required: "Service date is required"
+			 },
 		 	 xml_diagnostic_detail1: {
 		 		 required: "At least 1 diagnostic code is required",
 		 		 remote: "Invalid diagnostic code 1"
@@ -1039,35 +1182,16 @@ jQuery(document).ready(function(jQuery){
 	 *  clears out the dx code list everytime 
 	 *  the code system is changed.
 	 */
-	 jQuery("#codingSystem").change(function(){
+	 jQuery(document).on('change', "#codingSystem", function(){
 		 jQuery("#jsonDxSearchInput-1").val(""); 
 		 jQuery("#jsonDxSearchInput-2").val(""); 
 		 jQuery("#jsonDxSearchInput-3").val(""); 
 	 })
 	 
-}); //<!-- End Document Ready //-->
+}) //<!-- End Document Ready //-->
 </script>
 </head>
-<%!
-  /**
-   Generates a string list of option tags in numeric order
-   **/
-  String generateNumericOptionList(int range,String selected) {
-    selected = selected == null?"":selected;
-    StringBuffer buff = new StringBuffer();
-    buff.append("<option value=''></option>");
-    for (int i = 0; i < range; i++) {
-      String prefix = i < 10 ? "0" : "";
-      String val = prefix + String.valueOf(i);
-      String sel = "";
-      if(val.equals(selected)){
-        sel = "selected";
-      }
-      buff.append("<option value='" + val + "' " + sel + ">" + val + "</option>");
-    }
-    return buff.toString();
-  }
-%>
+
 <body style="background-color:#FFFFFF;" onLoad="CheckType();correspondenceNote();">
 	<div id="page-header" >	
 		<table id="oscarBillingHeader" class="table-borderless">
@@ -1076,12 +1200,12 @@ jQuery(document).ready(function(jQuery){
 
 				<td id="oscarBillingHeaderCenterColumn">				
 					<span class="badge badge-primary"><bean:message key="billing.patient"/></span>
-	                <label class="label-text" ><%=demo.getLastName()%>, <%=demo.getFirstName()%></label>
+	                <label class="label-text" ><%=Encode.forHtmlContent(demo.getLastName())%>, <%=Encode.forHtmlContent(demo.getFirstName())%></label>
 	            	
 	            	<span class="badge badge-primary"><bean:message key="billing.patient.age"/></span>  
 	            	<label class="label-text"><%=demo.getAge()%></label>
 
-<%-- 	Keep until confirmed not needed.			
+<%-- 	Keep until confirmed not needed.
 
 					<span class="badge badge-primary"><bean:message key="billing.patient.status"/></span> 
 					<strong class="label-text"><%=demo.getPatientStatus()%></label>
@@ -1102,7 +1226,7 @@ jQuery(document).ready(function(jQuery){
 	                </label>
 
 					<security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="x" >
-		                <button type="button" class="btn btn-link" title="View this patient's Electronic Chart" onclick="popup(710, 1024,'${pageContext.servletContext.contextPath}/casemgmt/forward.jsp?action=view&demographicNo=<%=demo.getDemographicNo()%>&providerNo=<%=loggedInInfo.getLoggedInProviderNo()%>&providerName=<%=loggedInInfo.getLoggedInProvider().getFullName()%>&appointmentNo=&reason=null&appointmentDate=&start_time=&apptProvider=null&providerview=null&msgType=null&OscarMsgTypeLink=null&noteId=null','encounter',12556);return false;">
+		                <button type="button" class="btn btn-link" title="View this patient's Electronic Chart" onclick="popup(710, 1024,'${pageContext.servletContext.contextPath}/oscarEncounter/IncomingEncounter.do?providerNo=<%=loggedInInfo.getLoggedInProviderNo()%>&appointmentNo=&demographicNo=<%=demo.getDemographicNo()%>&curProviderNo=<%=loggedInInfo.getLoggedInProviderNo()%>&reason=&encType=face+to+face+encounter+with+client&userName=&curDate=<%= new Date().toString() %>&appointmentDate=&startTime=&status=&apptProvider_no=&providerview=<%=loggedInInfo.getLoggedInProviderNo()%>','encounter', 12556);return false;">
 							<bean:message key="billing.patient.encounter" />
 						</button>	
 					</security:oscarSec>
@@ -1111,17 +1235,17 @@ jQuery(document).ready(function(jQuery){
 						<bean:message key="demographic.demographiceditdemographic.msgInvoiceList"/>
 					</button>
 					
-					<button type="button" class="btn btn-link" title="Set a default Billing Physician to use when a physician is not pre-selected" onclick="setDefaultProvider()">
-						<bean:message key="billing.provider.defaultProvider"/>
-					</button>				
+<%--					<button type="button" class="btn btn-link" title="Set a default Billing Physician to use when a physician is not pre-selected" onclick="setDefaultProvider()">--%>
+<%--						<bean:message key="billing.provider.defaultProvider"/>--%>
+<%--					</button>				--%>
 				</td>
-				<td id="oscarBillingHeaderRightColumn" align=right>
-					<span class="HelpAboutLogout"> 
-						<a style="font-size: 10px; font-style: normal;" href="${ ctx }oscarEncounter/About.jsp" target="_new">About</a>
-						<a style="font-size: 10px; font-style: normal;" target="_blank"
-									href="http://www.oscarmanual.org/search?SearchableText=&Title=Chart+Interface&portal_type%3Alist=Document">Help</a>		
-					</span>
-				</td>
+<%--				<td id="oscarBillingHeaderRightColumn" align=right>--%>
+<%--					<span class="HelpAboutLogout"> --%>
+<%--						<a style="font-size: 10px; font-style: normal;" href="${ ctx }oscarEncounter/About.jsp" target="_new">About</a>--%>
+<%--						<a style="font-size: 10px; font-style: normal;" target="_blank"--%>
+<%--									href="http://www.oscarmanual.org/search?SearchableText=&Title=Chart+Interface&portal_type%3Alist=Document">Help</a>		--%>
+<%--					</span>--%>
+<%--				</td>--%>
 			</tr>
 		</table>
 	</div>
@@ -1150,81 +1274,87 @@ if(wcbneeds != null){%>
 <html:form styleId="bcBillingForm" styleClass="form-inline" action="/billing/CA/BC/CreateBilling" onsubmit="toggleWCB();">
 	<input autocomplete="false" name="hidden" type="text" style="display:none;">
   	<input type="hidden" name="fromBilling" value=""/>
+	<%
+		// set up this form
+		BillingCreateBillingForm thisForm = (BillingCreateBillingForm) request.getSession().getAttribute("BillingCreateBillingForm");
 
-<%
-  BillingCreateBillingForm thisForm = (BillingCreateBillingForm) request.getSession().getAttribute("BillingCreateBillingForm");
-  if (thisForm != null) {
-    sxml_provider = ((String) thisForm.getXml_provider());
-    sxml_location = ((String) thisForm.getXml_location());
-    sxml_visittype = ((String) thisForm.getXml_visittype());
-    
-    if(sxml_provider == null || "".equals(sxml_provider) || "none".equals(sxml_provider))
-    {
-        sxml_provider = bean.getApptProviderNo();
-    }
-    thisForm.setXml_provider(sxml_provider);
-    
-    if (sxml_location.compareTo("") == 0) {
-      sxml_location = OscarProperties.getInstance().getProperty("visitlocation");
-      sxml_visittype = OscarProperties.getInstance().getProperty("visittype");
-      thisForm.setXml_location(sxml_location);
-      thisForm.setXml_visittype(sxml_visittype);
-      if ( OscarProperties.getInstance().getProperty("BC_DEFAULT_ALT_BILLING") != null && OscarProperties.getInstance().getProperty("BC_DEFAULT_ALT_BILLING").equalsIgnoreCase("YES")){
-         thisForm.setXml_encounter("8");
-      }
-    }
-    String apDate = thisForm.getXml_appointment_date();
-    if (apDate != null && apDate.trim().length() == 0) {
-      thisForm.setXml_appointment_date(bean.getApptDate());
-    }
-    if (bean != null && bean.getBillType() != null) {
-      thisForm.setXml_billtype(bean.getBillType());
-    }
-    else if (request.getParameter("billType") != null) {
-      thisForm.setXml_billtype(request.getParameter("billType"));
-    }
-    if (demo != null && demo.getVer() != null && demo.getVer().equals("66")) {
-      thisForm.setDependent("66");
-    }
-    thisForm.setCorrespondenceCode(bean.getCorrespondenceCode());
-    oscar.oscarBilling.ca.bc.data.BillingPreferencesDAO dao = SpringUtils.getBean(oscar.oscarBilling.ca.bc.data.BillingPreferencesDAO.class);
-    oscar.oscarBilling.ca.bc.data.BillingPreference pref = null;
-    //checking for a bug where the passed in provider number is actually "none" rather than numeral 0
-    if (oscar.util.StringUtils.isNumeric(thisForm.getXml_provider())) {
-      pref = dao.getUserBillingPreference((String) thisForm.getXml_provider());
-    }
-    String userReferralPref = "";
-    if (pref != null) {
-      if (pref.getReferral() == 1) {
-        userReferralPref = "T";
-      }
-      else if (pref.getReferral() == 2) {
-        userReferralPref = "B";
-      }
-      thisForm.setRefertype1(userReferralPref);
-      thisForm.setRefertype2(userReferralPref);
-    }
-  }
-%>
+		if (thisForm != null) {
 
-  <table >
+			thisForm.setXml_provider(bean.getBillingProvider());
+			thisForm.setXml_location(OscarProperties.getInstance().getProperty("visitlocation"));
+			thisForm.setXml_visittype(bean.getVisitType());
+
+			if ( OscarProperties.getInstance().getProperty("BC_DEFAULT_ALT_BILLING") != null && OscarProperties.getInstance().getProperty("BC_DEFAULT_ALT_BILLING").equalsIgnoreCase("YES")){
+				thisForm.setXml_encounter("8");
+			}
+
+			String serviceDate = bean.getServiceDate();
+			if(serviceDate == null || serviceDate.isEmpty()) {
+				serviceDate = bean.getApptDate();
+			}
+			thisForm.setXml_appointment_date(serviceDate);
+
+			if (bean.getBillType() != null) {
+				thisForm.setXml_billtype(bean.getBillType());
+			}
+			else if (request.getParameter("billType") != null) {
+				thisForm.setXml_billtype(request.getParameter("billType"));
+			}
+
+			if (demo.getVer() != null && demo.getVer().equals("66")) {
+				thisForm.setDependent("66");
+			}
+
+			thisForm.setCorrespondenceCode(bean.getCorrespondenceCode());
+
+			thisForm.setRefertype1(userReferralPref);
+			thisForm.setRefertype2(userReferralPref);
+
+			/*
+			 * whether to auto populate referring doctor information into
+			 * every billing.
+			 */
+			boolean autoPopulateRefer = false;
+			if (StringUtils.isBlank(thisForm.getXml_refer1())) {
+				// Check to see if the global property for auto_populate_refer is enabled, and if so set that here
+				List<Property> globalAutoPopulateProperty = propertyDao.findGlobalByName("auto_populate_refer");
+				if (!globalAutoPopulateProperty.isEmpty()) {
+					for (Property p : globalAutoPopulateProperty) {
+						if (p.getValue().equalsIgnoreCase("true")) {
+							autoPopulateRefer = true;
+							break;
+						}
+					}
+				}
+				// If the global setting is not enabled, check the per-provider preference
+				if (!autoPopulateRefer) {
+					autoPopulateRefer = propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.auto_populate_refer, targetProvider);
+				}
+				if (autoPopulateRefer) {
+					thisForm.setXml_refer1(mRecRefDoctorNum);
+				}
+			}
+		}
+	%>
+  <table>
     <tr>
       <td>
+	      <div id="billingPatientInfoWrapper">
         <table class="tool-bar" id="billingPatientInfo">
           <tr>
           	<td>
 
 	          	<div class="form-group" > 
 			      
-			        <label><bean:message key="billing.billingform"/></label>
+			        <label for="selectBillingForm" ><bean:message key="billing.billingform"/></label>
 			        
           		    <select class="form-control" id="selectBillingForm">
           		      <% for (int i = 0; i < billformlist.length; i++) { %>
           		       <option <% if( bean.getBillForm().equalsIgnoreCase( billformlist[i].getFormCode() ) ) {%> 
           		       				selected 
           		       			<% } %> 
-          		      		value="<%=billformlist[i].getFormCode()%>" >
-          		      		<%= billformlist[i].getDescription() %>
+          		      		value="<%=Encode.forHtmlAttribute(billformlist[i].getFormCode())%>" >
+          		      		<%= Encode.forHtmlContent(billformlist[i].getDescription()) %>
           		      	</option>          		      
           		      <%} %>
           		    </select>
@@ -1236,13 +1366,14 @@ if(wcbneeds != null){%>
              <td>
               <div class="form-group" > 
 
-		        <label><bean:message key="billing.provider.billProvider"/></label>
-                <html:select styleClass="form-control" property="xml_provider" value="<%=sxml_provider%>">
+		        <label for="xml_provider" ><bean:message key="billing.provider.billProvider"/></label>
+                <html:select styleId="xml_provider" styleClass="form-control" property="xml_provider" >
+
                   <html:option value="">
                     Select Provider
                   </html:option>
-                <%for (int j = 0; j < billphysician.length; j++) {                %>
-                  <html:option value="<%=billphysician[j].getProviderNo()%>"><%=billphysician[j].getProviderName()%>
+                <% for (int j = 0; j < billphysician.length; j++) {                %>
+                  <html:option value="<%=billphysician[j].getProviderNo()%>"><%=Encode.forHtmlContent(billphysician[j].getProviderName())%>
                   </html:option>
                 <%}                %>
                 </html:select>
@@ -1254,8 +1385,8 @@ if(wcbneeds != null){%>
             <td>
                          <div class="form-group" > 
 		     
-           		 <label><bean:message key="billing.billingtype"/></label>
-                <html:select styleClass="form-control" property="xml_billtype" onchange="CheckType();gotoPrivate();">
+           		 <label for="xml_billtype" ><bean:message key="billing.billingtype"/></label>
+                <html:select styleClass="form-control" styleId="xml_billtype" property="xml_billtype" onchange="CheckType();gotoPrivate();">
                   <html:option value="MSP">Bill MSP</html:option>
                   <html:option value="WCB">Bill WCB</html:option>
                   <html:option value="ICBC">Bill ICBC</html:option>
@@ -1269,13 +1400,13 @@ if(wcbneeds != null){%>
             <td>
                <div class="form-group" > 
 		      
-                <label>Clarification Code</label>
-                <html:select styleClass="form-control" property="xml_location">
+                <label for="xml_location">Clarification Code</label>
+                <html:select styleClass="form-control" styleId="xml_location" property="xml_location">
                 <%
                   for (int i = 0; i < billlocation.length; i++) {
                     String locationDescription = billlocation[i].getBillingLocation() + "|" + billlocation[i].getDescription();
                 %>
-                  <html:option value="<%=locationDescription%>"><%=billlocation[i].getDescription()%>                  </html:option>
+                  <html:option value="<%=Encode.forHtmlAttribute(locationDescription)%>"><%=Encode.forHtmlContent(billlocation[i].getDescription())%></html:option>
                 <%}                %>
                 </html:select> 
                 </div>
@@ -1285,14 +1416,15 @@ if(wcbneeds != null){%>
             <td>
              <div class="form-group" > 
 		      		      
-		      <label>Service Location</label>
-                <html:select styleClass="form-control" property="xml_visittype">
+		      <label for="xml_visittype">Service Location</label>
+                <html:select styleClass="form-control" styleId="xml_visittype" property="xml_visittype">
                 <%
-                  for (int i = 0; i < billvisit.length; i++) {
-                    String visitTypeDescription = billvisit[i].getVisitType() + "|" + billvisit[i].getDescription();
+                  for (BillingFormData.BillingVisit billingVisit : billvisit) {
                 %>
-                  <html:option value="<%=visitTypeDescription%>"><%=visitTypeDescription%>                  </html:option>
-                <%}                %>
+                    <html:option value="<%=Encode.forHtmlAttribute(billingVisit.getDisplayName())%>">
+	                    <%=Encode.forHtmlContent(billingVisit.getDisplayName())%>
+                    </html:option>
+                <%}%>
                 </html:select>
                 
                 </div>
@@ -1300,6 +1432,7 @@ if(wcbneeds != null){%>
             </td>
           </tr>
         </table>
+	      </div>
 </td>
 </tr>
 <tr>
@@ -1310,7 +1443,7 @@ if(wcbneeds != null){%>
 			  <div class="form-group" > 
 		     
 	              <a href="javascript:void(0)" id="hlSDate">
-	                  <label><bean:message key="billing.servicedate"/></label>
+	                  <label for="xml_appointment_date"><bean:message key="billing.servicedate"/></label>
 	              </a>
 	              <html:text style="min-width:100px;" styleClass="form-control" property="xml_appointment_date" size="10" readonly="true" styleId="xml_appointment_date"/>
               </div>
@@ -1320,7 +1453,7 @@ if(wcbneeds != null){%>
 			<div class="form-group" > 
 		     
               <a href="javascript:void(0)" id="serviceToDate">
-                  <label>To Date</label>
+                  <label for="service_to_date">To Date</label>
               </a>
              
               <html:text styleClass="form-control" property="service_to_date" size="2" maxlength="2" styleId="service_to_date"/>
@@ -1330,8 +1463,8 @@ if(wcbneeds != null){%>
             <td>              
             <div class="form-group" > 
 		      
-           <label>After Hours</label>
-              <html:select styleClass="form-control" property="afterHours">
+           <label for="afterHours">After Hours</label>
+              <html:select styleClass="form-control" property="afterHours" styleId="afterHours">
                 <html:option value="0">No</html:option>
                 <html:option value="E">Evening</html:option>
                 <html:option value="N">Night</html:option>
@@ -1343,8 +1476,8 @@ if(wcbneeds != null){%>
             <td title="(HHMM 24hr):">
             <div class="form-group">
 		         
-                <label>Time Call</label>
-              <html:text styleClass="form-control" property="timeCall" />
+                <label for="timeCall">Time Call</label>
+              <html:text styleClass="form-control" property="timeCall" styleId="timeCall" />
               
               </div>
             </td>
@@ -1352,8 +1485,8 @@ if(wcbneeds != null){%>
 			<td>
 		
 		            <div class="form-group">
-		             <label>Start</label>
-		                <div class='input-group date datetimepicker'> 
+		             <label for="serviceStartTime">Start</label>
+		                <div class='input-group date datetimepicker'>
 		 
 		                    <input type='text' id="serviceStartTime" class="form-control" />
 		                  	<input type=hidden id="xml_starttime_hr" name="xml_starttime_hr" />
@@ -1366,7 +1499,7 @@ if(wcbneeds != null){%>
 			<td>			
 
 		            <div class="form-group">
-		            <label>End</label>
+		            <label for="serviceEndTime" >End</label>
 		                <div class='input-group date datetimepicker'>
 		                    <input type='text' id="serviceEndTime" class="form-control" />
 		                    <input type=hidden id="xml_endtime_hr" name="xml_endtime_hr" />
@@ -1382,8 +1515,8 @@ if(wcbneeds != null){%>
             <td>
                <div class="form-group" > 
 		                 
-                <label>Dependent</label>
-              <html:select styleClass="form-control"  property="dependent">
+                <label for="dependent">Dependent</label>
+              <html:select styleClass="form-control"  property="dependent" styleId="dependent">
                 <html:option value="00">No</html:option>
                 <html:option value="66">Yes</html:option>
               </html:select>
@@ -1393,8 +1526,8 @@ if(wcbneeds != null){%>
             <td title="Submission Code">              
              <div class="form-group" > 
 		     
-            	<label>Sub Code</label>
-              <html:select styleClass="form-control" property="submissionCode">
+            	<label for="submissionCode">Sub Code</label>
+              <html:select styleClass="form-control" property="submissionCode" styleId="submissionCode">
                 <html:option value="0">O - Normal</html:option>
                 <html:option value="D">D - Duplicate</html:option>
                 <html:option value="E">E - Debit</html:option>
@@ -1411,12 +1544,12 @@ if(wcbneeds != null){%>
             <td>
             <div class="form-group" > 
 		    
-                <label>Payment Method</label>
+                <label for="xml_encounter">Payment Method</label>
             <%
-              ArrayList types = billform.getPaymentTypes();
+              ArrayList<PaymentType> types = billform.getPaymentTypes();
               if ("Pri".equalsIgnoreCase(thisForm.getXml_billtype())) {
                 for (int i = 0; i < types.size(); i++) {
-                  PaymentType item = (PaymentType) types.get(i);
+                  PaymentType item = types.get(i);
                   if (item.getId().equals("6") || item.getId().equals("8")) {
                     types.remove(i);
                     break;
@@ -1425,7 +1558,7 @@ if(wcbneeds != null){%>
               }
               else {
                 for (int i = 0; i < types.size(); i++) {
-                  PaymentType item = (PaymentType) types.get(i);
+                  PaymentType item = types.get(i);
                   if (!item.getId().equals("6") && !item.getId().equals("8")) {
                     types.remove(i);
                     i = i - 1;
@@ -1446,8 +1579,8 @@ if(wcbneeds != null){%>
             <td>
 	            
 	            <div class="form-group">
-			       <label>BCP Facility</label> 
-	              	<html:text styleClass="form-control"  property="facilityNum" size="5" maxlength="5"/>
+			       <label for="facilityNum">BCP Facility</label>
+	              	<html:text styleClass="form-control"  property="facilityNum" styleId="facilityNum" size="5" maxlength="5"/>
 	             	
 	            </div> 
 	        </td>
@@ -1456,8 +1589,8 @@ if(wcbneeds != null){%>
 	       <td style="display: none;">
 	            
 	            <div class="form-group">
-			        <label>Sub Facility</label>
-	              		<html:text styleClass="form-control"  property="facilitySubNum" size="5" maxlength="5"/> 
+			        <label for="facilitySubNum">Sub Facility</label>
+	              		<html:text styleClass="form-control"  property="facilitySubNum" styleId="facilitySubNum" size="5" maxlength="5"/>
 	             	
 	            </div> 
 	        </td>
@@ -1499,12 +1632,12 @@ if(wcbneeds != null){%>
               <td>
     
 		      <div class='form-group'>
-                 <label>ICBC Claim No</label>
-					<html:text styleClass="form-control" property="icbc_claim_no" maxlength="8"/>
+                 <label for="icbc_claim_no">ICBC Claim No</label>
+					<html:text styleClass="form-control" property="icbc_claim_no" styleId="icbc_claim_no" maxlength="8"/>
 				</div>
 				<div class='form-group'> 
-					<label>MVA?</label>
-	                <html:select styleClass="form-control" property="mva_claim_code">
+					<label for="mva_claim_code">MVA?</label>
+	                <html:select styleClass="form-control" property="mva_claim_code" styleId="mva_claim_code">
 	                  <html:option value="N">No</html:option>
 	                  <html:option value="Y">Yes</html:option>
 	                </html:select>
@@ -1520,7 +1653,374 @@ if(wcbneeds != null){%>
 </td>
 </tr>
 <tr>
-<td>
+<td style="display:flex;">
+
+	<div class="tool-table">
+	<table class="table table-condensed table-borderless"><tr><td>
+				<table class="table table-condensed table-borderless">
+					<tr>
+						<td>
+							<label>
+								<bean:message key="billing.referral.doctor"/>
+							</label>
+						</td>
+						<td>
+							<label>
+								<bean:message key="billing.referral.type"/>
+							</label>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="input-group">
+								<html:text styleClass="form-control" property="xml_refer1" onkeypress="return grabEnter(event,'ReferralScriptAttach1()')"/>
+								<span class="input-group-btn">
+		                     	<button type="button" class="btn btn-primary" onclick="ReferralScriptAttach('xml_refer1')">
+	                            	<span class="glyphicon glyphicon-search"></span>
+	                          	</button>
+                          	</span>
+							</div>
+						</td>
+						<td>
+							<html:select styleClass="form-control" property="refertype1">
+								<html:option value="">Select Type</html:option>
+								<html:option value="T">Refer To</html:option>
+								<html:option value="B">Refer By</html:option>
+							</html:select>
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							<div class="input-group">
+								<html:text styleClass="form-control" property="xml_refer2" onkeypress="return grabEnter(event,'ReferralScriptAttach2()')"/>
+								<span class="input-group-btn">
+			                     	<button type="button" class="btn btn-primary" onclick="ReferralScriptAttach('xml_refer2')">
+		                            	<span class="glyphicon glyphicon-search"></span>
+		                          	</button>
+	                          	</span>
+							</div>
+						</td>
+						<td>
+							<html:select styleClass="form-control" property="refertype2">
+								<html:option value="">Select Type</html:option>
+								<html:option value="T">Refer To</html:option>
+								<html:option value="B">Refer By</html:option>
+							</html:select>
+						</td>
+					</tr>
+
+				</table>
+</td>
+
+</tr>
+	  <tr>
+		  <td>
+
+			  <table class="table table-condensed table-borderless">
+				  <tr><td>
+
+					  <table class="table table-condensed table-borderless" style="background-color:#fff;">
+						  <tr><td colspan="2">Recent Referral Doctors</td></tr>
+						  <%
+							  String bgColor="#fff";
+							  String rProvider = "";
+
+							  if(recentReferralDoctorList.size()>0){
+								  for (String r : recentReferralDoctorList){
+									  rProvider = billingReferralDao.getReferralDocName(r);
+						  %>
+						  <tr bgcolor="<%=bgColor%>">
+							  <td width="20%">
+								  <a href="javascript:void(0)" class="referral-doctor" data-num="<%=r%>" data-doc="<%=rProvider%>"><%=r%></a>
+							  </td>
+							  <td><%=rProvider%></td>
+						  </tr>
+						  <%
+								  if(bgColor=="#fff"){bgColor="#ccc";}else{bgColor="#fff";}
+
+							  }
+						  }else{
+						  %>
+						  <tr><td width="20%"></td><td>none</td></tr>
+						  <%
+							  }
+						  %>
+					  </table>
+
+				  </td>
+					  <td width="50%" valign="top">
+
+						  <table class="table table-condensed table-borderless" style="background-color:#fff;">
+							  <tr><td style="border-top:none;" colspan="2">Referral Doctor on Master Record</td></tr>
+							  <tr>
+								  <td width="20%">
+									  <a href="javascript:void(0)" title="Populate referral doctor from master record" class="referral-doctor" data-num="<%=mRecRefDoctorNum%>" data-doc="<%=mRecRefDoctor%>"><%=mRecRefDoctorNum%></a>
+								  </td>
+								  <td><%=mRecRefDoctor%></td>
+							  </tr>
+						  </table>
+
+					  </td></tr>
+			  </table>
+
+		  </td>
+	  </tr>
+  </table>
+
+
+
+
+</div>
+		<div class="tool-table">
+
+							<table class="table table-condensed table-borderless">
+								<tr>
+									<td width="70%">
+										<label><bean:message key="billing.service.otherservice"/></label>
+									</td>
+									<td width="30%">
+										<label><bean:message key="billing.service.unit"/></label>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="input-group">
+ 							<span class="input-group-addon">
+								1
+							</span>
+											<html:text styleClass="form-control" property="xml_other1" onblur="checkSelectedCodes()" onkeypress="return grabEnter(event,'OtherScriptAttach()')"/>
+											<span class="input-group-btn">
+		                     	<button type="button" class="btn btn-primary" title="Search code" onclick="OtherScriptAttach('xml_other1')">
+	                            	<span class="glyphicon glyphicon-search"></span>
+	                          	</button>
+                          	</span>
+										</div>
+									</td>
+									<td>
+										<div class="input-group">
+											<html:text styleClass="form-control" property="xml_other1_unit" size="6" maxlength="6" styleId="xml_other1_unit"/>
+											<span class="input-group-btn">
+                            	<button type="button" class="btn btn-primary" value=".5" onClick="$('xml_other1_unit').value = '0.5'">.5</button>
+                            </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="input-group">
+ 							<span class="input-group-addon">
+								2
+							</span>
+											<html:text styleClass="form-control" property="xml_other2" onblur="checkSelectedCodes()" onkeypress="return grabEnter(event,'OtherScriptAttach()')"/>
+											<span class="input-group-btn">
+		                     	<button type="button" class="btn btn-primary" title="Search code" onclick="OtherScriptAttach('xml_other2')">
+	                            	<span class="glyphicon glyphicon-search"></span>
+	                          	</button>
+                          	</span>
+										</div>
+									</td>
+									<td>
+										<div class="input-group">
+											<html:text styleClass="form-control" property="xml_other2_unit" size="6" maxlength="6" styleId="xml_other2_unit"/>
+											<span class="input-group-btn">
+                             	<button type="button" class="btn btn-primary" value=".5" onClick="$('xml_other2_unit').value = '0.5'" >.5</button>
+                             </span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="input-group">
+ 							<span class="input-group-addon">
+								3
+							</span>
+											<html:text styleClass="form-control" property="xml_other3" onblur="checkSelectedCodes()" onkeypress="return grabEnter(event,'OtherScriptAttach()')"/>
+											<span class="input-group-btn">
+		                     	<button type="button" class="btn btn-primary" title="Search code" onclick="OtherScriptAttach('xml_other3')">
+	                            	<span class="glyphicon glyphicon-search"></span>
+	                          	</button>
+                          	</span>
+										</div>
+									</td>
+									<td>
+										<div class="input-group">
+											<html:text styleClass="form-control" property="xml_other3_unit" styleId="xml_other3_unit"/>
+											<span class="input-group-btn">
+                            	<button type="button" class="btn btn-primary" value=".5" onClick="$('xml_other3_unit').value = '0.5'" >.5</button>
+                            </span>
+										</div>
+									</td>
+								</tr>
+								<!-- <tr>
+								<td></td>
+								  <td>
+									<button class="btn btn-info pull-right btn-xs" onclick="javascript:OtherScriptAttach()">
+										Code Search
+									</button>
+								  </td>
+								</tr> -->
+							</table>
+
+
+	<!-- ONSCREEN DX CODE DISPLAY -->
+		</div>
+	<div class="tool-table">
+				<table class="table table-condensed table-borderless">
+					<tr><td style="width:60%">
+						<div class="input-group">
+
+								<%--
+									If the list of coding systems includes ICD10, then offer a list of options
+									including the specific MSP Dx table.
+									If the user wants a coding system but does not want the MSP table then
+									the DISABLE_MSP_DX_SYSTEM switch can be set in OSCAR properties. When this is
+									disabled the user will be presented with the other selected tables.
+								 --%>
+							<c:set scope="page" var="icd10" value="false" />
+							<logic:iterate id="codeSystem" name="dxCodeSystemList" property="codingSystems">
+								<c:if test="${ codeSystem eq 'icd10' }">
+									<c:set scope="page" var="isIcd10" value="true" />
+								</c:if>
+							</logic:iterate>
+							<c:choose>
+								<c:when test="${ isIcd10 }">
+										<span class="input-group-addon">
+											<bean:message key="billing.diagnostic.code"/>
+										</span>
+									<select style="min-width: 70px;" class="form-control" name="dxCodeSystem" id="codingSystem" >
+										<oscar:oscarPropertiesCheck value="false" property="DISABLE_MSP_DX_SYSTEM">
+											<option value="msp" selected>MSP Dx</option>
+										</oscar:oscarPropertiesCheck>
+										<logic:iterate id="codeSystem" name="dxCodeSystemList" property="codingSystems">
+											<option value="<bean:write name="codeSystem"/>"><bean:write name="codeSystem" /></option>
+										</logic:iterate>
+									</select>
+								</c:when>
+								<c:otherwise>
+									<input type="hidden" id="codingSystem" value="msp" />
+									<bean:message key="billing.diagnostic.code"/>
+								</c:otherwise>
+							</c:choose>
+						</div>
+					</td>
+
+					</tr>
+					<tr><td>
+						<div class="input-group">
+								<span class="input-group-addon">
+									1
+								</span>
+							<html:text styleClass="form-control jsonDxSearchInput" styleId="jsonDxSearchInput-1" property="xml_diagnostic_detail1" />
+							<span class="input-group-btn">
+		                     		<button type="button" title="Search diagnostic code" class="btn btn-primary jsonDxSearchButton" value="jsonDxSearchInput-1">
+	                            		<span class="glyphicon glyphicon-search"></span>
+		                          	</button>
+	                          	</span>
+						</div>
+					</td>
+
+					</tr>
+					<tr><td>
+						<div class="input-group">
+  								<span class="input-group-addon">
+									2
+								</span>
+							<html:text styleClass="form-control jsonDxSearchInput" styleId="jsonDxSearchInput-2" property="xml_diagnostic_detail2" />
+							<span class="input-group-btn">
+		                     		<button type="button"  title="Search Dx Description" class="btn btn-primary jsonDxSearchButton" value="jsonDxSearchInput-2">
+	                            		<span class="glyphicon glyphicon-search"></span>
+	                          		</button>
+	                          	</span>
+						</div>
+					</td></tr>
+					<tr><td>
+						<div class="input-group">
+  								<span class="input-group-addon">
+									3
+								</span>
+							<html:text styleClass="form-control jsonDxSearchInput" styleId="jsonDxSearchInput-3" property="xml_diagnostic_detail3" />
+							<span class="input-group-btn">
+		                     		<button type="button" title="Search Dx Description" class="btn btn-primary jsonDxSearchButton" value="jsonDxSearchInput-3">
+	                            		<span class="glyphicon glyphicon-search"></span>
+	                          		</button>
+	                          	</span>
+						</div>
+					</td></tr>
+					<tr>
+
+						<td>
+							Recently used
+
+							<div id="DX_REFERENCE"></div>
+						</td>
+					</tr>
+
+				</table>
+
+	<!-- ONSCREEN DX CODE DISPLAY END-->
+	</div>
+	<div class="tool-table">
+
+	<table class="table table-condensed table-borderless">
+		<tr>
+			<td style="padding-top:5px !important;">
+				<label for="shortClaimNote"></label><label>Short Claim Note</label></label>
+				<html:text styleId="shortClaimNote" styleClass="form-control" property="shortClaimNote" />
+			</td>
+
+		</tr>
+
+		<tr>
+			<td align="left" colspan="2" >
+				<html:select styleClass="form-control" property="correspondenceCode" onchange="correspondenceNote();">
+					<html:option value="0">No Correspondence</html:option>
+					<html:option value="N">Electronic Correspondence</html:option>
+					<html:option value="C">Paper Correspondence</html:option>
+					<html:option value="B">Both</html:option>
+				</html:select>
+			</td>
+		</tr>
+		<tr>
+			<td style="padding-bottom:5px !important;" colspan="2" valign="top">
+				<div id="CORRESPONDENCENOTE" style="display:none;">
+					<html:textarea styleClass="form-control notes-box" property="notes" onkeyup="checkTextLimit(this.form.notes,400);"></html:textarea>
+					<small>400 characters max.</small>
+				</div>
+				<div>
+					<div>
+						<label>Billing Notes</label>
+						<small>(Internal use. Not sent to MSP)</small>
+					</div>
+					<html:textarea styleClass="form-control notes-box" property="messageNotes"></html:textarea>
+				</div>
+			</td>
+		</tr>
+
+	</table>
+	</div>
+
+</td>
+</tr>
+	  <tr><td>
+		  <div id="bcBillingError"></div>
+		  <div class="row-fluid pull-right ">
+			  <div id="ignoreWarningsButton">
+				  <label class="checkbox" for="ignoreWarn" title="Check to ignore validation warnings">
+					  <input type="checkbox" name="ignoreWarn" id="ignoreWarn"/>
+					  Ignore Warnings
+				  </label>
+			  </div>
+			  <div id="buttonRow" class="button-bar">
+				  <input class="btn btn-md btn-primary" type="submit" name="Submit" value="Continue">
+				  <input class="btn btn-md btn-danger" type="button" name="Button" value="Cancel" onClick="window.close();">
+			  </div>
+		  </div>
+	  </td></tr>
+	  <tr>
+		  <td>
+
+
 <div id="billingFormTableWrapper">
         <table id="billingFormTable">
           <tr>
@@ -1565,119 +2065,8 @@ if(wcbneeds != null){%>
                 </tr>
               <%}              %>
               </table>
-              <table style="background-color:#CC0000;" class="tool-table">
-                <tr>
-                  <td>
-                    <table>
-                      <tr>
-                        <td>
-                          <label>
-                              <bean:message key="billing.referral.doctor"/>
-                          </label>
-                        </td>
-                        <td>
-                          <label>
-                              <bean:message key="billing.referral.type"/>
-                          </label>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                        <div class="input-group">
-                            <html:text styleClass="form-control" property="xml_refer1" onkeypress="return grabEnter(event,'ReferralScriptAttach1()')"/>
-	                     	<span class="input-group-btn">
-		                     	<button type="button" class="btn btn-primary" onclick="ReferralScriptAttach('xml_refer1')">
-	                            	<span class="glyphicon glyphicon-search"></span>
-	                          	</button>
-                          	</span>
-	                    </div>
-                        </td>
-                        <td>
-                            <html:select styleClass="form-control" property="refertype1">
-                              <html:option value="">Select Type</html:option>
-                              <html:option value="T">Refer To</html:option>
-                              <html:option value="B">Refer By</html:option>
-                            </html:select>
-                        </td>
-                      </tr>
-         
-                      <tr>
-                        <td>
-                         	<div class="input-group">
-	                            <html:text styleClass="form-control" property="xml_refer2" onkeypress="return grabEnter(event,'ReferralScriptAttach2()')"/>
-	                            <span class="input-group-btn">
-			                     	<button type="button" class="btn btn-primary" onclick="ReferralScriptAttach('xml_refer2')">
-		                            	<span class="glyphicon glyphicon-search"></span>
-		                          	</button>
-	                          	</span>
-                          	</div>
-                        </td>
-                        <td>
-                            <html:select styleClass="form-control" property="refertype2">
-                              <html:option value="">Select Type</html:option>
-                              <html:option value="T">Refer To</html:option>
-                              <html:option value="B">Refer By</html:option>
-                            </html:select>
-                        </td>
-                      </tr>
+<!-- former tool table -->
 
-                    </table>
-                  </td>
-  
-                </tr>
-                <tr>
-                <td valign="top" >
-
-                <table style="background-color:#fff;" align="left">
-                <tr><td width="50%" valign="top">
-                
-                <table class="table table-condensed table-borderless" style="background-color:#fff;">
-                <tr><td colspan="2">Recent Referral Doctors</td></tr>
-                  <%
-                  String bgColor="#fff";
-                  String rProvider = "";
-
-				  if(recentList.size()>0){
-		                  for (String r : recentList){ 
-		                  rProvider = billingReferralDao.getReferralDocName(r);
-		                  %>
-		                	  <tr bgcolor="<%=bgColor%>">
-		                	  <td width="20%">
-		                	  	<a href="javascript:void(0)" class="referral-doctor" data-num="<%=r%>" data-doc="<%=rProvider%>"><%=r%></a>
-		                	  </td>
-		                	  <td><%=rProvider%></td>
-		                	  </tr> 
-		                  <%
-		                  if(bgColor=="#fff"){bgColor="#ccc";}else{bgColor="#fff";}
-		                  
-		                  }
-				  }else{
-				  %>
-		                	  <tr><td width="20%"></td><td>none</td></tr> 
-				  <%
-				  }
-                  %>
-                 </table> 
-                 
-                 </td>
-                 <td width="50%" valign="top">
-                 
-                <table class="table table-condensed table-borderless" style="background-color:#fff;">
-                <tr><td style="border-top:none;" colspan="2">Referral Doctor on Master Record</td></tr>
-                <tr>
-                	<td width="20%">
-                		<a href="javascript:void(0)" title="Populate referral doctor from master record" class="referral-doctor" data-num="<%=mRecRefDoctorNum%>" data-doc="<%=mRecRefDoctor%>"><%=mRecRefDoctorNum%></a>
-                	</td>
-                	<td><%=mRecRefDoctor%></td>
-                </tr> 
-                </table>
-                
-                </td></tr>
-                 </table>
-                 
-                </td>
-                </tr>
-              </table>
               
             </td>
             <td valign="top" style="width:32%; padding-right:5px;">
@@ -1715,99 +2104,7 @@ if(wcbneeds != null){%>
                 </tr>
               <%}              %>
               </table>
-              <table style="background-color:#999900;" class="tool-table table table-condensed table-borderless">
-                <tr>
-                  <td valign="top">
-                    <table>
-                      <tr>
-                        <td width="70%">
-                          <label><bean:message key="billing.service.otherservice"/></label>
-                        </td>
-                        <td width="30%">
-                          <label><bean:message key="billing.service.unit"/></label>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                        <div class="input-group">
- 							<span class="input-group-addon">
-								1
-							</span>
-                            <html:text styleClass="form-control" property="xml_other1" onblur="checkSelectedCodes()" onkeypress="return grabEnter(event,'OtherScriptAttach()')"/>
-                           	<span class="input-group-btn">
-		                     	<button type="button" class="btn btn-primary" title="Search code" onclick="OtherScriptAttach('xml_other1')">
-	                            	<span class="glyphicon glyphicon-search"></span>
-	                          	</button>
-                          	</span>
-                        </div>
-                        </td>
-                        <td>
-                        <div class="input-group">
-                            <html:text styleClass="form-control" property="xml_other1_unit" size="6" maxlength="6" styleId="xml_other1_unit"/>
-                             <span class="input-group-btn">
-                            	<button type="button" class="btn btn-primary" value=".5" onClick="$('xml_other1_unit').value = '0.5'">.5</button>
-                            </span>
-                        </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                        <div class="input-group">
- 							<span class="input-group-addon">
-								2
-							</span>
-                            <html:text styleClass="form-control" property="xml_other2" onblur="checkSelectedCodes()" onkeypress="return grabEnter(event,'OtherScriptAttach()')"/>
-                            <span class="input-group-btn">
-		                     	<button type="button" class="btn btn-primary" title="Search code" onclick="OtherScriptAttach('xml_other2')">
-	                            	<span class="glyphicon glyphicon-search"></span>
-	                          	</button>
-                          	</span>
-             			</div>
-                        </td>
-                        <td>
-                        <div class="input-group">
-                            <html:text styleClass="form-control" property="xml_other2_unit" size="6" maxlength="6" styleId="xml_other2_unit"/>
-                            <span class="input-group-btn"> 
-                             	<button type="button" class="btn btn-primary" value=".5" onClick="$('xml_other2_unit').value = '0.5'" >.5</button>
-                             </span>
-                         </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-						<div class="input-group">
- 							<span class="input-group-addon">
-								3
-							</span>
-                            <html:text styleClass="form-control" property="xml_other3" onblur="checkSelectedCodes()" onkeypress="return grabEnter(event,'OtherScriptAttach()')"/>
-                            <span class="input-group-btn">
-		                     	<button type="button" class="btn btn-primary" title="Search code" onclick="OtherScriptAttach('xml_other3')">
-	                            	<span class="glyphicon glyphicon-search"></span>
-	                          	</button>
-                          	</span>
-                        </div> 
-                        </td>
-                        <td>
-                        <div class="input-group">
-                            <html:text styleClass="form-control" property="xml_other3_unit" styleId="xml_other3_unit"/>
-                            <span class="input-group-btn"> 
-                            	<button type="button" class="btn btn-primary" value=".5" onClick="$('xml_other3_unit').value = '0.5'" >.5</button>
-                            </span>
-                        </div>
-                        </td>
-                      </tr>
-                      <!-- <tr>
-                      <td></td>
-                        <td>
-                          <button class="btn btn-info pull-right btn-xs" onclick="javascript:OtherScriptAttach()">
-                          	Code Search	
-                          </button>
-                        </td>
-                      </tr> -->
-                    </table>
-                  </td>
-                </tr>
-              </table>
+             <!-- former tool table -->
             </td>
             <td valign="top" style="width:32%;" >
               <table class="table table-condensed table-bordered serviceCodesTable">
@@ -1840,139 +2137,9 @@ if(wcbneeds != null){%>
                 </tr>
               <%}              %>
               </table>
-              <!-- ONSCREEN DX CODE DISPLAY -->
-              <table style="background-color:#CCCCFF;" class="tool-table table table-condensed table-borderless">
-                <tr>
-                  <td valign="top" width="80%">
-                         <table class="table table-condensed table-borderless">
-                         <tr><td style="width:60%">
-                            <div class="input-group">
- 
-								<%--
-									If the list of coding systems includes ICD10, then offer a list of options 
-									including the specific MSP Dx table. 
-									If the user wants a coding system but does not want the MSP table then 
-									the DISABLE_MSP_DX_SYSTEM switch can be set in OSCAR properties. When this is 
-									disabled the user will be presented with the other selected tables. 
-								 --%>
-								<c:set scope="page" var="icd10" value="false" />
-								<logic:iterate id="codeSystem" name="dxCodeSystemList" property="codingSystems">									
-									<c:if test="${ codeSystem eq 'icd10' }">									
-										<c:set scope="page" var="isIcd10" value="true" />
-									</c:if>								
-								</logic:iterate>
-								<c:choose>
-									<c:when test="${ isIcd10 }">
-										<span class="input-group-addon">
-											<bean:message key="billing.diagnostic.code"/>
-										</span>
-										<select style="min-width: 70px;" class="form-control" name="dxCodeSystem" id="codingSystem" >							
-											<oscar:oscarPropertiesCheck value="false" property="DISABLE_MSP_DX_SYSTEM">
-												<option value="msp" selected>MSP Dx</option>
-								 			</oscar:oscarPropertiesCheck>
-								 			<logic:iterate id="codeSystem" name="dxCodeSystemList" property="codingSystems">
-												<option value="<bean:write name="codeSystem"/>"><bean:write name="codeSystem" /></option>
-											</logic:iterate>									
-										</select>
-									</c:when>
-									<c:otherwise>
-										<input type="hidden" id="codingSystem" value="msp" />
-										<bean:message key="billing.diagnostic.code"/>
-									</c:otherwise>
-								</c:choose>
-							</div>	
-						</td>
-						<td style="width:40%">
-							Recently used
-						</td>
-						</tr>
-						<tr><td>
-							<div class="input-group">
-								<span class="input-group-addon">
-									1
-								</span> 
-                            	<html:text styleClass="form-control jsonDxSearchInput" styleId="jsonDxSearchInput-1" property="xml_diagnostic_detail1" />
-                            	<span class="input-group-btn">
-		                     		<button type="button" title="Search diagnostic code" class="btn btn-primary jsonDxSearchButton" value="jsonDxSearchInput-1">
-	                            		<span class="glyphicon glyphicon-search"></span>
-		                          	</button>
-	                          	</span>
-							</div>
-						</td>
-						<td rowspan="3" style="width:50%" valign="top" >
-							<div id="DX_REFERENCE"></div>
-						</td>
-						</tr>
-						<tr><td>
-  							<div class="input-group">
-  								<span class="input-group-addon">
-									2
-								</span>
-                            	<html:text styleClass="form-control jsonDxSearchInput" styleId="jsonDxSearchInput-2" property="xml_diagnostic_detail2" /> 
-								<span class="input-group-btn">
-		                     		<button type="button"  title="Search Dx Description" class="btn btn-primary jsonDxSearchButton" value="jsonDxSearchInput-2">
-	                            		<span class="glyphicon glyphicon-search"></span>
-	                          		</button>
-	                          	</span>
-							</div>
-						</td></tr>
-						<tr><td>	
-  							<div class="input-group">
-  								<span class="input-group-addon">
-									3
-								</span>
-	                            <html:text styleClass="form-control jsonDxSearchInput" styleId="jsonDxSearchInput-3" property="xml_diagnostic_detail3" />
-	                            <span class="input-group-btn">
-		                     		<button type="button" title="Search Dx Description" class="btn btn-primary jsonDxSearchButton" value="jsonDxSearchInput-3">
-	                            		<span class="glyphicon glyphicon-search"></span>
-	                          		</button>
-	                          	</span>
-							</div>
-						</td></tr>
-	
-						</table>
-                  </td>
-                </tr>
-              </table>
-              <!-- ONSCREEN DX CODE DISPLAY END-->
+
               
-              <table class="tool-table table table-condensed table-borderless">
-                <tr>
-                  <td style="padding-top:5px !important;">
-                      <label for="shortClaimNote"></label><label>Short Claim Note</label></label>
-                    <html:text styleClass="form-control" property="shortClaimNote" />
-                  </td>
-                  
-                </tr>
-                
-                <tr>
-                  <td align="left" colspan="2" >
-                    <html:select styleClass="form-control" property="correspondenceCode" onchange="correspondenceNote();">
-                      <html:option value="0">No Correspondence</html:option>
-                      <html:option value="N">Electronic Correspondence</html:option>
-                      <html:option value="C">Paper Correspondence</html:option>
-                      <html:option value="B">Both</html:option>
-                    </html:select>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding-bottom:5px !important;" colspan="2" valign="top">
-                    <div id="CORRESPONDENCENOTE" style="display:none;">
-                      <html:textarea styleClass="form-control notes-box" property="notes" onkeyup="checkTextLimit(this.form.notes,400);"></html:textarea>
-                      <small>400 characters max.</small>
-                    </div>
-                    <div>
-                      <div>
-                      <label>Billing Notes</label> 
-                      <small>(Internal use. Not sent to MSP)</small>
-                      </div>
-                      <html:textarea styleClass="form-control notes-box" property="messageNotes"></html:textarea>
-                    </div>
-                  </td>
-                </tr>
-                
-              </table>
-              <div id="bcBillingError"></div>
+
             </td>
           </tr>
         </table>
@@ -1981,18 +2148,6 @@ if(wcbneeds != null){%>
     </tr>
   </table>
 
-  	<div class="row-fluid pull-right ">
-  		<div id="ignoreWarningsButton">
-				<label class="checkbox" for="ignoreWarn" title="Check to ignore validation warnings">     
-				   <input type="checkbox" name="ignoreWarn" id="ignoreWarn"/> 
-				    Ignore Warnings
-				</label>
-        </div>
-		<div id="buttonRow" class="button-bar">
-            <input class="btn btn-md btn-primary" type="submit" name="Submit" value="Continue">
-              <input class="btn btn-md btn-danger" type="button" name="Button" value="Cancel" onClick="window.close();"> 
-		</div>
-	</div>
     <div class="container-fluid">
     	<div id="wcbForms"></div>
     </div>
@@ -2003,9 +2158,9 @@ if(wcbneeds != null){%>
 <oscar:oscarPropertiesCheck property="BILLING_DX_REFERENCE" value="yes">
 	<script type="text/javascript">
 		function getDxInformation(origRequest){
-		      var url = "DxReference.jsp";
-		      var ran_number=Math.round(Math.random()*1000000);
-		      var params = "demographicNo=<%=bean.getPatientNo()%>&rand="+ran_number;  //hack to get around ie caching the page
+		      let url = "DxReference.jsp";
+		      let ran_number=Math.round(Math.random()*1000000);
+		      let params = "demographicNo=<%=bean.getPatientNo()%>&rand="+ran_number;  //hack to get around ie caching the page
 		      new Ajax.Updater('DX_REFERENCE',url, {method:'get',parameters:params,asynchronous:true}); 
 		}
 		getDxInformation();

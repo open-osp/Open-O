@@ -30,22 +30,25 @@ import java.io.StringWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.oscarehr.util.LoggedInInfo;
-import oscar.dms.ConvertToEdoc.DocumentType;
+import org.oscarehr.documentManager.ConvertToEdoc.DocumentType;
 
 /**
  * 
  * @author denniswarren
  * 
- * Use this class to transport the output of an Oscar from from any 
+ * Use this class to transport the output of an Oscar form from any
  * servlet into the ConvertToEdoc Utility.  
  */
 public class FormTransportContainer {
 
 	private HttpServletResponseWrapper responseWrapper;
+
+	private HttpServletRequestWrapper requestWrapper;
 	private final static DocumentType documentType = DocumentType.form;
 	private final String HTML;
 	private final String contextPath;
@@ -55,7 +58,11 @@ public class FormTransportContainer {
 	private String providerNo; 
 	private String demographicNo;
 	private String formName;
-	
+	private static String FORM_FORWARD_PATH = "/form/forwardshortcutname.jsp";
+
+//	private final Map<String, String[]> modifiableParameters;
+//	private Map<String, String[]> allParameters = new TreeMap<>();
+
 	public FormTransportContainer( HttpServletResponse response, 
 			HttpServletRequest request, final String formPath ) throws ServletException, IOException {
 
@@ -71,16 +78,26 @@ public class FormTransportContainer {
 			public String toString() {
 			    return stringWriter.toString();
 			}
-		};	
-		
-		request.getRequestDispatcher( formPath ).include( request, responseWrapper );		
+
+		};
+
+		if(formPath != null) {
+			FORM_FORWARD_PATH = formPath;
+		}
+
+		request.getRequestDispatcher( FORM_FORWARD_PATH ).forward( request, responseWrapper );
+
 		this.HTML = responseWrapper.toString();
-		
 		this.loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession( request );		
 	    this.contextPath = request.getContextPath();
 	    
 	}
-	
+
+	public FormTransportContainer( HttpServletResponse response,
+								   HttpServletRequest request) throws ServletException, IOException {
+		this(response, request, null);
+	}
+
 	public final String getContextPath() {
 		return this.contextPath;
 	}

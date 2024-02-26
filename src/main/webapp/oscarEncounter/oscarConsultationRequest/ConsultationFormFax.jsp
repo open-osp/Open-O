@@ -123,7 +123,7 @@ return (isInteger(s) && s.length >= minDigitsInIPhoneNumber);
 
 function ValidateForm(){
         //alert("I GET CALLED");
-	var Phone=document.EctConsultationFaxForm.recipientsFaxNumber
+	var Phone=document.EctConsultationFaxForm.recipientFaxNumber
 	
 	if ((Phone.value==null)||(Phone.value=="")){
 		alert("Please Enter your Phone Number")
@@ -177,7 +177,7 @@ function ValidateForm(){
                     thisForm = (EctConsultationFaxForm ) request.getAttribute("EctConsultationFaxForm");
                     thisForm.setRecipient(reqFrm.getSpecailistsName(reqFrm.specialist));
                     thisForm.setFrom(reqFrm.getProviderName(curUser_no));
-                    thisForm.setRecipientsFaxNumber(reqFrm.specFax);
+                    thisForm.setRecipientFaxNumber(reqFrm.specFax);
                %>
 			<table>
 				<tr>
@@ -190,7 +190,7 @@ function ValidateForm(){
 				</tr>
 				<tr>
 					<td>Fax Number:</td>
-					<td><html:text property="recipientsFaxNumber" /></td>
+					<td><html:text property="recipientFaxNumber" /></td>
 				</tr>
 
 				<tr>

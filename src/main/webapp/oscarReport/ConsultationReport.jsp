@@ -243,7 +243,7 @@ nsult.do?requestId=<%=demoCon.requestId%>')"><%=demoCon.referalDate%></td>
                   %>
 							<tr>
 								<td class="fieldBox" bgcolor="#deddff"><a href=#
-									onclick="javascript:rs('new','../dms/documentGetFile.jsp?document=<%=demoLetter.docfileName%>&type=active&doc_no=<%=demoLetter.document_no%>', 480,480,1)"><%=demoLetter.docdesc%></a>
+									onclick="javascript:rs('new','../documentManager/documentGetFile.jsp?document=<%=demoLetter.docfileName%>&type=active&doc_no=<%=demoLetter.document_no%>', 480,480,1)"><%=demoLetter.docdesc%></a>
 								</td>
 								<td class="fieldBox" bgcolor="#deddff"><%=demoLetter.docDate.toString()%></td>
 							</tr>

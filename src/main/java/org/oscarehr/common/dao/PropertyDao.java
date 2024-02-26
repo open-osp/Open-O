@@ -65,7 +65,15 @@ public class PropertyDao extends AbstractDao<Property> {
 		query.setParameter(1, name);
 		return query.getResultList();
 	}
-	
+
+	public List<Property> findByNameAndProvider(Property.PROPERTY_KEY propertyName, String providerNo) {
+		return findByNameAndProvider(propertyName.name(), providerNo);
+	}
+
+	/**
+	 * use method with enum parameter
+	 */
+	@Deprecated
     public List<Property> findByNameAndProvider(String propertyName, String providerNo) {
        	Query query = createQuery("p", "p.name = :name AND p.providerNo = :pno");
    		query.setParameter("name", propertyName);
@@ -118,14 +126,24 @@ public class PropertyDao extends AbstractDao<Property> {
 		query.executeUpdate();
 	}
 
-	public Boolean isActiveBooleanProperty(String name) {
-		return isActiveBooleanProperty(name, false);
-	}
-	public Boolean isActiveBooleanProperty(String name, Boolean defaultValue) {
-		List<Property> properties = findByName(name);
-		return properties.isEmpty() ? defaultValue : "true".equals(properties.get(0).getValue());
+	public Boolean isActiveBooleanProperty(Property.PROPERTY_KEY name) {
+		return isActiveBooleanProperty(name.name());
 	}
 
+	@Deprecated
+	public Boolean isActiveBooleanProperty(String name) {
+		List<Property> properties = findByName(name);
+		return !properties.isEmpty() && "true".equals(properties.get(0).getValue());
+	}
+
+	public Boolean isActiveBooleanProperty(Property.PROPERTY_KEY name, String providerNo) {
+		return isActiveBooleanProperty(name.name(), providerNo);
+	}
+
+	/**
+	 * use method with the enum parameter
+	 */
+	@Deprecated
 	public Boolean isActiveBooleanProperty(String name, String providerNo) {
 		List<Property> properties = findByNameAndProvider(name, providerNo);
 		return !properties.isEmpty() && "true".equals(properties.get(0).getValue());

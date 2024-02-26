@@ -31,7 +31,8 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%@ page import="org.oscarehr.PMmodule.web.utils.UserRoleUtils"%>
 <%@ page import="org.oscarehr.util.SessionConstants"%>
-<%@ page import="java.util.*,java.net.*, oscar.util.*"%>
+<%@ page import="java.util.*,java.net.*, oscar.util.*"
+	errorPage="/errorpage.jsp"%>
 <%@ page import="oscar.OscarProperties" %>
 
 <caisi:isModuleLoad moduleName="caisi">

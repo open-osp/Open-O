@@ -67,9 +67,6 @@ public class ProviderManager2 {
 		if (active == null) results = providerDao.getProviders();
 		else results = providerDao.getProviders(active);
 
-		//--- log action ---
-		LogAction.addLogSynchronous(loggedInInfo, "ProviderManager.getProviders, active=" + active, null);
-
 		return (results);
 	}
 
@@ -77,12 +74,9 @@ public class ProviderManager2 {
 
 		Provider result = providerDao.getProvider(providerNo);
 
-		//--- log action ---
-		LogAction.addLogSynchronous(loggedInInfo, "ProviderManager.getProvider, providerNo=" + providerNo, null);
-
 		return (result);
 	}
-	
+
 	public Provider getProviderIfActive(@SuppressWarnings("unused") LoggedInInfo loggedInInfo, String providerNo)
 	{
 		Provider activeProvider = null;
@@ -100,7 +94,6 @@ public class ProviderManager2 {
 		List<Provider> results = new ArrayList<Provider>();
 		for(String id:ids) {
 			results.add(getProvider(loggedInInfo, id));
-			LogAction.addLogSynchronous(loggedInInfo, "ProviderManager.getProviders, providerNo=" + id, null);
 		}
 		return results;
 	}
@@ -108,10 +101,7 @@ public class ProviderManager2 {
 	public List<Property> getProviderProperties(LoggedInInfo loggedInInfo, String providerNo, String propertyName)
 	{
 		List<Property> results=propertyDao.findByNameAndProvider(propertyName, providerNo);
-		
-		//--- log action ---
-		LogAction.addLogSynchronous(loggedInInfo, "ProviderManager.getProviderProperties, providerNo=" + providerNo+", propertyName="+propertyName, null);
-		
+
 		return(results);
 	}
 	
@@ -125,11 +115,6 @@ public class ProviderManager2 {
 		if(logger.isDebugEnabled()) {
 			logger.debug("searchProviderByNames, searchString="+searchString+", result.size="+results.size());
 		}
-		
-		//--- log action ---
-		for (Provider provider : results) {
-			LogAction.addLogSynchronous(loggedInInfo, "ProviderManager.searchProviderByNames result", "provideRNo=" + provider.getProviderNo());
-		}
 
 		return (results);
 	}
@@ -140,11 +125,6 @@ public class ProviderManager2 {
 		
 		if(logger.isDebugEnabled()) {
 			logger.debug("search, active="+active+", term="+term+" result.size="+results.size());
-		}
-		
-		//--- log action --- this seems useless
-		for (Provider provider : results) {
-			LogAction.addLogSynchronous(loggedInInfo, "ProviderManager.search result", "providerNo=" + provider.getProviderNo());
 		}
 
 		return (results);

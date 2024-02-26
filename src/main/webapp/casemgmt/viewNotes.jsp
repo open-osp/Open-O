@@ -85,16 +85,16 @@
                 <div style="clear: both; height: inherit; overflow: auto;">
             </c:otherwise>
         </c:choose>
-<ul style="margin-left: 5px;">
+<ul>
 <% List<CaseManagementNoteExt> noteExts = (List<CaseManagementNoteExt>)request.getAttribute("NoteExts"); %>
 	<nested:iterate indexId="noteIdx" id="note" name="Notes"
 		type="org.oscarehr.casemgmt.model.CaseManagementNote">
                 <input type="hidden" id="<c:out value="${param.cmd}"/><nested:write name="note" property="id"/>" value="<nested:write name="noteIdx"/>">
 		<% if( noteIdx % 2 == 0 ) { %>
-		<li class="cpp"	style="clear: both; whitespace: nowrap; background-color: #F3F3F3;">
+		<li class="cpp"	style="background-color: #F3F3F3;">
 		<%}else {%>
 		
-		<li class="cpp" style="clear: both; whitespace: nowrap;">
+		<li class="cpp" >
 		<%}
                 //load up the prefs once
                 CppPreferencesUIBean prefsBean = new CppPreferencesUIBean(loggedInInfo.getLoggedInProviderNo());
@@ -164,12 +164,12 @@
 				htmlText = htmlText.replaceAll("\n", "<br>");
 				if( noteIdx % 2 == 0 ) {
 				%>				
-				<li class="cpp" style="clear: both; whitespace: nowrap; background-color: #FFCCCC;">
+				<li class="cpp" style="background-color: #FFCCCC;">
 				<%
 				}
 				else {
 				    %>
-				    <li class="cpp" style="clear: both; whitespace: nowrap; background-color: #CCA3A3">
+				    <li class="cpp" style="background-color: #CCA3A3">
 				    <%
 				}
 				%>
@@ -183,7 +183,7 @@
 		}
 	%>
 </ul>
-<br>
+
 <input type="hidden" id="<c:out value="${param.cmd}"/>num"
 	value="<nested:write name="num"/>">
 <input type="hidden" id="<c:out value="${param.cmd}"/>threshold"

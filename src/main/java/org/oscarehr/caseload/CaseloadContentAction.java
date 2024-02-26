@@ -598,7 +598,7 @@ public class CaseloadContentAction extends DispatchAction {
 				if (!newLabResult.isEmpty() && newLabResult.get(0).get("count(*)")!=null && !newLabResult.get(0).get("count(*)").toString().equals("") && !newLabResult.get(0).get("count(*)").toString().equals("0")) {
 					String clNewLab = newLabResult.get(0).get("count(*)").toString();
 
-					entry.add("<a href='#' onclick=\"popupPage('700', '1000', '../dms/inboxManage.do?method=prepareForIndexPage&providerNo="+curUser_no+"&selectedCategory=CATEGORY_PATIENT_SUB&selectedCategoryPatient="+demographic_no+"&selectedCategoryType=CATEGORY_TYPE_HL7'); return false;\">" + clNewLab + "</a>");
+					entry.add("<a href='#' onclick=\"popupPage('700', '1000', '../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo="+curUser_no+"&selectedCategory=CATEGORY_PATIENT_SUB&selectedCategoryPatient="+demographic_no+"&selectedCategoryType=CATEGORY_TYPE_HL7'); return false;\">" + clNewLab + "</a>");
 				} else {
 					entry.add("&nbsp;");
 				}
@@ -610,7 +610,7 @@ public class CaseloadContentAction extends DispatchAction {
 				List<Map<String, Object>> newDocResult = caseloadDao.getCaseloadDemographicData(newDocQuery, userDemoParam);
 				if (!newDocResult.isEmpty() && newDocResult.get(0).get("count(*)")!=null && !newDocResult.get(0).get("count(*)").toString().equals("") && !newDocResult.get(0).get("count(*)").toString().equals("0")) {
 					String clNewDoc = newDocResult.get(0).get("count(*)").toString();
-					entry.add("<a href='#' onclick=\"popupPage('700', '1000', '../dms/inboxManage.do?method=prepareForIndexPage&providerNo="+curUser_no+"&selectedCategory=CATEGORY_PATIENT_SUB&selectedCategoryPatient="+demographic_no+"&selectedCategoryType=CATEGORY_TYPE_DOC'); return false;\">" + clNewDoc + "</a>");
+					entry.add("<a href='#' onclick=\"popupPage('700', '1000', '../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo="+curUser_no+"&selectedCategory=CATEGORY_PATIENT_SUB&selectedCategoryPatient="+demographic_no+"&selectedCategoryType=CATEGORY_TYPE_DOC'); return false;\">" + clNewDoc + "</a>");
 				} else {
 					entry.add("&nbsp;");
 				}
