@@ -113,9 +113,8 @@
 
     MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
 
-    MeasurementFlowSheet mFlowsheet = null;
-
-    mFlowsheet = templateConfig.getFlowSheet(temp,loggedInInfo.getLoggedInProviderNo(),Integer.parseInt(demographic_no));
+    List<FlowSheetCustomization> custList = flowSheetCustomizationDao.getFlowSheetCustomizations(temp, loggedInInfo.getLoggedInProviderNo(), Integer.parseInt(demographic_no));
+    MeasurementFlowSheet mFlowsheet = templateConfig.getFlowSheet(temp,custList);
 
     if (mFlowsheet == null) {
         request.setAttribute("errorMessage", temp + "Flowsheet not found");
