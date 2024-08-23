@@ -341,7 +341,12 @@ Flowsheet: <span style="font-weight:normal"><%=flowsheet.toUpperCase()%></span>
 		                <%}else{%>
 		                <a href="UpdateFlowsheet.jsp?flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Edit" class="action-icon"><i class="icon-pencil"></i></a>
 		                <%}%>
-		                <a href="FlowSheetCustomAction.do?method=delete&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Delete" class="action-icon"><i class="icon-trash"></i></a>
+		                <%-- 
+		                    Commenting out the 'Delete' button for now because it is breaking flowsheets 
+		                    and seems to be incorrectly removing measurements. This code is commented 
+		                    out until a correct solution is found. 
+		                --%>
+		                <%-- <a href="FlowSheetCustomAction.do?method=delete&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Delete" class="action-icon"><i class="icon-trash"></i></a> --%>
 		               <%
 		                if(mFlowsheet.getFlowSheetItem(mstring).isHide()){
 		               %>
