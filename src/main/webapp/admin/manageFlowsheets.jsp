@@ -143,6 +143,7 @@ jQuery(function() {
 							<td><%=type %></td>
 							<td><%=enabled%></td>
 							<td>
+								<a href="/oscar/oscarEncounter/oscarMeasurements/adminFlowsheet/EditFlowsheet.jsp?flowsheet=<%=flowSheet.getName()%>">Edit</a>&nbsp;
 								<%if(enabled) { %>
 									<a href="manageFlowsheets.jsp?method=disable&name=<%=flowSheet.getName()%>">Disable</a>
 								<% } else { %>
