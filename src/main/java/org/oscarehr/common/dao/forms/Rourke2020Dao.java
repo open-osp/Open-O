@@ -53,7 +53,7 @@ public class Rourke2020Dao extends AbstractDao<FormRourke2020> {
     }
 
     @Override
-    public FormRourke2020 find(Object id) {
+    public FormRourke2020 find(int id) {
         // get form
         FormRourke2020 form = super.find(id);
         
