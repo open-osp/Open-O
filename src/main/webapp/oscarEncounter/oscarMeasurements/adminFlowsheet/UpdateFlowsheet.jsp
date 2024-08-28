@@ -63,15 +63,20 @@ MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheet
 String flowsheet   = request.getParameter("flowsheet");
 String measurement = request.getParameter("measurement");
 String demographic = request.getParameter("demographic");
+String scope = request.getParameter("scope");
 
 long start = System.currentTimeMillis() ;
 
 List<FlowSheetCustomization> custList = null;
 
-if(demographic == null || demographic.isEmpty()) {
-	custList = flowSheetCustomizationDao.getFlowSheetCustomizations( flowsheet,(String) session.getAttribute("user"));
+if(scope != null && "clinic".equals(scope)) {
+    custList = flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet);
 } else {
-	custList = flowSheetCustomizationDao.getFlowSheetCustomizations( flowsheet,(String) session.getAttribute("user"),Integer.parseInt(demographic));
+    if(demographic == null || demographic.isEmpty()) {
+        custList = flowSheetCustomizationDao.getFlowSheetCustomizations( flowsheet,(String) session.getAttribute("user"));
+    } else {
+        custList = flowSheetCustomizationDao.getFlowSheetCustomizationsForPatient(flowsheet,demographic);
+    }
 }
 
 String module="";
