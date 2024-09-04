@@ -302,6 +302,7 @@ public class MeasurementTemplateFlowSheetConfig implements InitializingBean {
             m.setRecommendationColour(flowSheetUserCreated.getRecommendationColour());
             flowsheets.put(m.getName(), m);
             String[] dxTrig = m.getDxTriggers();
+            addIndicatorsInCustomFlowsheet(m);
             addTriggers(dxTrig, m.getName());
             flowsheetDisplayNames.put(m.getName(), m.getDisplayName());
             Flowsheet tmp = flowsheetDao.findByName(m.getName());
@@ -1108,6 +1109,12 @@ public class MeasurementTemplateFlowSheetConfig implements InitializingBean {
         if (value != null) {
             element.setAttribute(attr, value);
         }
+    }
+
+    public void addIndicatorsInCustomFlowsheet(MeasurementFlowSheet m) {
+        m.AddIndicator("HIGH_1", "#E00000");
+        m.AddIndicator("HIGH", "orange");
+        m.AddIndicator("LOW", "#9999FF");
     }
 
 

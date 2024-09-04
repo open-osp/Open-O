@@ -457,6 +457,7 @@ public class FlowSheetCustomAction extends DispatchAction {
         m.addListItem(fsi);
 */
         MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
+        templateConfig.addIndicatorsInCustomFlowsheet(m);
         String name =  templateConfig.addFlowsheet( m );
         m.loadRuleBase();
     	/// END FLOWSHEET CODE
