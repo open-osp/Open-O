@@ -113,6 +113,10 @@ if(!authed2) {
 
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class); 
     Demographic demo = demographicDao.getDemographic(demographic);
+	if (demographic != null && demo == null) {
+		%> <script> alert("Invalid demographic number. Please enter a valid number."); </script> <%
+		return;
+	}
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -263,7 +267,7 @@ Flowsheet: <span style="font-weight:normal"><%=flowsheet.toUpperCase()%></span>
 						
 		            <%}else{%>
 						<security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w">
-							<a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%><%=demoStash%>">Patient</a>
+							<a href="#" onclick="editFlowsheetByDemographic('<%=flowsheet%>')">Patient</a>
 						</security:oscarSec>
 							| Your Patients
 						<security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w">
@@ -272,7 +276,7 @@ Flowsheet: <span style="font-weight:normal"><%=flowsheet.toUpperCase()%></span>
 		            <%}
 			   }else{%>
 						<security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w">
-							<a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%><%=demoStash%>">Patient</a>
+							<a href="#" onclick="editFlowsheetByDemographic('<%=flowsheet%>')">Patient</a>
 							| <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>">Your Patients</a>
 						</security:oscarSec>
 							| All Patients
@@ -643,6 +647,17 @@ $('#measurementTbl').dataTable({
 	                  aTargets: [ 0 ]
 	               }]
 });
+
+function editFlowsheetByDemographic(flowsheet) {
+	// Ask the user to enter the demographic number
+	const demographicNo = prompt("Enter demographic no:");
+
+	if (demographicNo && !isNaN(demographicNo) && demographicNo.trim() !== "") {
+		window.location.href = "EditFlowsheet.jsp?flowsheet=" + flowsheet + "&demographic=" + encodeURIComponent(demographicNo);
+	} else {
+		alert("Invalid demographic number. Please enter a valid number.");
+	}
+}
 
 
 </script>
