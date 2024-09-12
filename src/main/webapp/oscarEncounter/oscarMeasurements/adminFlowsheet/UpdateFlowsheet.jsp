@@ -129,6 +129,10 @@ right:15px;
 .mtype-details{
 display:inline-block;
 }
+
+.errorRuleValue { 
+    color: #E11640; 
+}
 </style>
 
 <style type="text/css" media="print">
@@ -158,7 +162,7 @@ if(request.getParameter("demographic")==null){ %>
 <div class="span8">
 <h3 style="display:inline">Update Measurement</h3> <em>for <strong><%=flowsheet%></strong> flowsheet </em>
 
-<form action="FlowSheetCustomAction.do">
+<form action="FlowSheetCustomAction.do" onsubmit="return validateRuleValue();">
 
 		    <%if(request.getParameter("htracker")!=null){ %>
 		    <input type="hidden" name="htracker" value="<%=module%>">
@@ -245,7 +249,8 @@ if(request.getParameter("demographic")==null){ %>
                             </div>
                                                               
                             <div class="mtype-details">       
-                                   Value: <br /><input type="text" name="value<%=count%>c<%=condCount%>" value="<%=cond.getValue()%>" />
+                                   Value: <br /><input type="text" class="ruleValue" name="value<%=count%>c<%=condCount%>" value="<%=cond.getValue()%>" placeholder="e.g. 5-10, >5, <10, 7"/>
+                                   <br><div class="errorRuleValue"></div>
                              </div>  
 
                                <%} condCount++;%>
@@ -264,7 +269,8 @@ if(request.getParameter("demographic")==null){ %>
                                    </div>
                                    
                                     <div class="mtype-details">
-                                    Value: <br /><input type="text" name="value<%=count%>c<%=condCount%>"  />
+                                        Value: <br /><input type="text" class="ruleValue" name="value<%=count%>c<%=condCount%>" placeholder="e.g. 5-10, >5, <10, 7" />
+                                        <br><div class="errorRuleValue"></div>
                                		</div>
 
                             <br/>
@@ -301,7 +307,8 @@ if(request.getParameter("demographic")==null){ %>
                     </div>
                     
                     <div class="mtype-details">
-                                   Value: <br /><input type="text" name="value<%=count%>c1"  />
+                                   Value: <br /><input type="text" class="ruleValue" name="value<%=count%>c1" placeholder="e.g. 5-10, >5, <10, 7" />
+                                   <br><div class="errorRuleValue"></div>
                     </div>           
     				</td></tr>
     				</table>
@@ -454,8 +461,9 @@ if(request.getParameter("demographic")==null){ %>
 
 <script>
 $(document).ready(function () {
-	var h = $(document).height();
-	parent.parent.document.getElementById('trackerSlim').style.height = h+"px";
+	let h = $(document).height();
+    const trackerSlim = parent?.parent?.document?.getElementById('trackerSlim');
+    if (trackerSlim) { trackerSlim.style.height = `${h}px`; }
 	
 	$(document).scroll(function () {
 	    var y = $(this).scrollTop();
@@ -465,8 +473,45 @@ $(document).ready(function () {
 	        $('#scrollToTop').fadeOut();
 	    }
 	});
-
 });
+
+function validateRuleValue() {
+    let isValid = true;
+    $('.ruleValue').each(function() {
+        const value = $(this).val().trim();
+        const errorMessage = validateCondition(value);
+
+        // Find the closest error container in the same form-group div
+        const errorContainer = $(this).parent().find('.errorRuleValue');
+
+        if (errorMessage) {
+            errorContainer.text(errorMessage);
+            isValid = false; // Mark form as invalid
+        } else {
+            errorContainer.empty(); // Clear any previous error messages
+        }
+    });
+
+    return isValid;
+}
+
+function validateCondition(value) {
+    if (!value) return "";
+
+    const patterns = {
+        range: /^\d+-\d+$/,
+        gt: /^>[\d.]+$/,
+        lt: /^<[\d.]+$/,
+        eq: /^\d+(\.\d+)?$/
+    };
+
+    for (const key in patterns) {
+        if (patterns[key].test(value)) {
+            return ""; // Valid input
+        }
+    }
+    return "Invalid input. Please enter a value in one of the following formats: 5-10, >5, <10, 7";
+}
 </script>
 
 </body>
