@@ -173,7 +173,7 @@ public AccessToken createAccessToken(AccessTokenRegistration reg) throws OAuthSe
     sat.setClientId(sc.getId());
     sat.setDateCreated(new Date());
     sat.setIssued(issuedAt);
-    sat.setLifetime(3600); // Assuming lifetime is 3600 seconds or should be set as per your application logic
+    sat.setLifetime(sc.getLifetime());
     sat.setTokenId(accessTokenString);
     sat.setTokenSecret(tokenSecretString);
     sat.setProviderNo(srt.getProviderNo());
