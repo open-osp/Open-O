@@ -419,12 +419,14 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							<%@ include file="noteIssueList.jsp"%>
 						</div>
 
-						
+						<c:if test="${sessionScope.passwordEnabled=='true'}">
+							<p style='background-color: #CCCCFF; display: none; margin: 0;' id='notePasswd'>Password:&nbsp;<input type="password" name="caseNote.password" value="" autocomplete="off" />&nbsp;Confirmation:&nbsp;<input type='password' name='caseNote.passwordConfirm' value="" autocomplete="off" /></p>
+						</c:if>
 					<%
 		 		}
 				else //else display contents of note for viewing
 				{
-					if (false)
+					if (note.isLocked())
 					{
 					%>
 						<div id="txt<%=globalNoteId%>">
@@ -546,7 +548,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							String winName = "docs" + demographicNo;
 							int hash = Math.abs(winName.hashCode());
 
-							url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
+							url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
 							url = url + "return false;";
 
 							if (note.getRemoteFacilityId()==null) // only allow editing for local notes
@@ -577,7 +579,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							String winName = "docs" + demographicNo;
 							int hash = Math.abs(winName.hashCode());
 
-							url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
+							url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
 							url = url + "return false;";
 						 	%>
 			                <div class="view-links" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""%>">
@@ -833,7 +835,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 		//so we store the ids here and list the event listeners at the end of this script
 		if (note.getNoteId()!=null && note.getNoteId() != savedId)
 		{
-			if (false)
+			if (note.isLocked())
 			{
 				lockedNotes.add(note.getNoteId());
 			}
@@ -869,7 +871,12 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 				<%@ include file="noteIssueList.jsp"%>
 			</div> <!-- end of div sig<%=savedId%> -->
 
-			
+			<c:if test="${sessionScope.passwordEnabled=='true'}">
+				<p style='background-color: #CCCCFF; display: none; margin: 0;' id='notePasswd'>Password:&nbsp;
+				<input type="password" name="caseNote.password" value="" autocomplete="off" />&nbsp;Confirmation:&nbsp;
+				<input type='password' name='caseNote.passwordConfirm' value="" autocomplete="off" />
+				</p>
+			</c:if>
 		</div> <!-- end of div n<%=savedId%>  -->
 	</div> <!-- end of div nc<%=offset%><%=savedId%> -->
 	

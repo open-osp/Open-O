@@ -56,6 +56,7 @@ import org.oscarehr.eyeform.model.Macro;
 import org.oscarehr.eyeform.web.FollowUpAction;
 import org.oscarehr.eyeform.web.ProcedureBookAction;
 import org.oscarehr.eyeform.web.TestBookAction;
+import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.managers.TicklerManager;
 import org.oscarehr.util.*;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -97,6 +98,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 	private IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
 	private CasemgmtNoteLockDao casemgmtNoteLockDao = SpringUtils.getBean(CasemgmtNoteLockDao.class);
 	private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
+	private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -142,7 +144,8 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 		logger.debug("Get demo and provider no");
 		String demono = getDemographicNo(request);
-		Integer demographicNo = Integer.parseInt(demono);
+		int demographicNo = 0;
+		Demographic demographic = demographicManager.getDemographic(loggedInInfo, demono);
 		current = System.currentTimeMillis();
 		logger.debug("Get demo and provider no " + String.valueOf(current - start));
 		start = current;
@@ -155,9 +158,16 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			logger.warn("Error parsing programId:" + programIdString, e);
 		}
 
-		request.setAttribute("demoName", getDemoName(demono));
-		request.setAttribute("demoAge", getDemoAge(demono));
-		request.setAttribute("demoDOB", getDemoDOB(demono));
+		if (demographic != null) {
+			demographicNo = demographic.getDemographicNo();
+            request.setAttribute("demoName", demographic.getFirstName() + " " + demographic.getLastName());
+            request.setAttribute("demoAge", demographic.getAge());
+            request.setAttribute("demoDOB", demographic.getFormattedDob());
+        } else {
+            request.setAttribute("demoName", "");
+            request.setAttribute("demoAge", "");
+            request.setAttribute("demoDOB", "");
+        }
 
 		/* process the request from other module */
 		if (!"casemgmt".equalsIgnoreCase(request.getParameter("from"))) {
