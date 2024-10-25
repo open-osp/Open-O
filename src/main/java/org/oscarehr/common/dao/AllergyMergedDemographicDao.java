@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -30,55 +33,18 @@ import org.oscarehr.common.merge.MergedDemographicTemplate;
 import org.oscarehr.common.model.Allergy;
 import org.springframework.stereotype.Repository;
 
-@Repository("AllergyDao")
-public class AllergyMergedDemographicDao extends AllergyDao {
+public interface AllergyMergedDemographicDao extends AbstractDao<Allergy>  {
 
-	@Override
-	public List<Allergy> findAllergies(final Integer demographic_no) {
-		List<Allergy> result = super.findAllergies(demographic_no);
-		MergedDemographicTemplate<Allergy> template = new MergedDemographicTemplate<Allergy>() {
-			@Override
-			public List<Allergy> findById(Integer demographic_no) {
-				return AllergyMergedDemographicDao.super.findAllergies(demographic_no);
-			}
-		};
-		return template.findMerged(demographic_no, result);
-	}
 
-	@Override
-	public List<Allergy> findActiveAllergies(final Integer demographic_no) {
-		List<Allergy> result = super.findActiveAllergies(demographic_no);
-		MergedDemographicTemplate<Allergy> template = new MergedDemographicTemplate<Allergy>() {
-			@Override
-			public List<Allergy> findById(Integer demographic_no) {
-				return AllergyMergedDemographicDao.super.findActiveAllergies(demographic_no);
-			}
-		};
-		return template.findMerged(demographic_no, result);
+	public List<Allergy> findAllergies(final Integer demographic_no);
 
-	}
 
-	@Override
-	public List<Allergy> findActiveAllergiesOrderByDescription(final Integer demographic_no) {
-		List<Allergy> result = super.findActiveAllergiesOrderByDescription(demographic_no);
-		MergedDemographicTemplate<Allergy> template = new MergedDemographicTemplate<Allergy>() {
-			@Override
-			public List<Allergy> findById(Integer demographic_no) {
-				return AllergyMergedDemographicDao.super.findActiveAllergiesOrderByDescription(demographic_no);
-			}
-		};
-		return template.findMerged(demographic_no, result);
-	}
+	public List<Allergy> findActiveAllergies(final Integer demographic_no);
 
-	@Override
-	public List<Allergy> findByDemographicIdUpdatedAfterDate(final Integer demographicId, final Date updatedAfterThisDate) {
-		List<Allergy> result = super.findByDemographicIdUpdatedAfterDate(demographicId, updatedAfterThisDate);
-		MergedDemographicTemplate<Allergy> template = new MergedDemographicTemplate<Allergy>() {
-			@Override
-			public List<Allergy> findById(Integer demographic_no) {
-				return AllergyMergedDemographicDao.super.findByDemographicIdUpdatedAfterDate(demographicId, updatedAfterThisDate);
-			}
-		};
-		return template.findMerged(demographicId, result);
-	}
+	
+	public List<Allergy> findActiveAllergiesOrderByDescription(final Integer demographic_no);
+	public List<Allergy> findByDemographicIdUpdatedAfterDate(final Integer demographicId,
+			final Date updatedAfterThisDate);
+
+    public List<Allergy> findAllCustomAllergiesWithNullNonDrugFlag(int start, int limit);
 }

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,30 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
 
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.IndivoDocs;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class IndivoDocsDao extends AbstractDao<IndivoDocs> {
-
-	public IndivoDocsDao() {
-		super(IndivoDocs.class);
-	}
-
-	public IndivoDocs findByOscarDocNo(Integer id) {
-		return findByOscarDocNo(id, "Rx");
-	}
-
-	public IndivoDocs findByOscarDocNo(Integer id, String docType) {
-		Query query = createQuery("i", "i.oscarDocNo = :docNo AND i.docType = :docType");
-		query.setParameter("docNo", id);
-		query.setParameter("docType", docType);
-		return getSingleResultOrNull(query);
-	}
+public interface IndivoDocsDao extends AbstractDao<IndivoDocs> {
+	IndivoDocs findByOscarDocNo(Integer id);
+	IndivoDocs findByOscarDocNo(Integer id, String docType);
 }

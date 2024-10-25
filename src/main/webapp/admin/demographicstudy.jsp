@@ -26,7 +26,9 @@
 <%@ page import="org.oscarehr.common.dao.StudyDao, org.oscarehr.common.model.Study" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="java.util.List" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -42,62 +44,21 @@ if(!authed) {
 }
 %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Manage Study</title>
-<style type="text/css">
-BODY {
-	font-family: Arial, Verdana, Tahoma, Helvetica, sans-serif;
-	background-color: #EEEEFF;
-}
 
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"><!-- Bootstrap 2.3.1 -->
+<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
+<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 
-table {
-	border: 1pt 1pt 1pt 1pt;
-	border-style:solid;
-	text-align:center;
-	margin-top: 20pt;
-}
-
-th {
-	font-size: 15pt;
-	font-weight: bold;
-	text-align: center;
-	background-color: #003399;;
-	color: #FFFFFF;	
-}
-
-td {
-	font-size: 10pt;	
-	border-bottom: 1pt dotted blue;
-}
-
-a:link {
-	text-decoration: none;
-	color: #003399;
-}
-
-a:active {
-	text-decoration: none;
-	color: #003399;
-}
-
-a:visited {
-	text-decoration: none;
-	color: #003399;
-}
-
-a:hover {
-	text-decoration: none;
-	color: #003399;
-}
-
-.smallButton { font-size: 8pt; }
-
-</style>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/jquery/jquery-1.4.2.js"></script>
 <script type="text/javascript">
 var popup;
 function popupStart(vheight,vwidth,varpage,windowname) {
@@ -107,45 +68,57 @@ function popupStart(vheight,vwidth,varpage,windowname) {
 }
 
 function changeStatus(id, value) {
-	
+
 	var url = "<%=request.getContextPath()%>/study/ManageStudy.do";
 	var data = "studyId=" + id + "&studyStatus=" + value;
 	var msg;
-	
+
 	if( value == 1 ) {
-		msg = "Turned on Study";		
+		msg = "Turned on Study";
 	}
 	else {
 		msg = "Study is now turned off";
 	}
-	
+
 	jQuery.post(url, {method: 'setStudyStatus', studyId: id, studyStatus: value },function(transport){
 			alert(msg);
 		}
 	);
-	
+
 }
 
 function reload() {
 	setTimeout(function(){window.location.reload();},2000);
 }
 
+
+    function initiate(){
+	    $('#study').DataTable({
+             "order": [],
+            "language": {
+                        "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+                    }
+        });
+        return;
+    }
 </script>
 
 </head>
-<body class="BODY">
+<body onload="initiate()">
 <form method="post" action="">
-<center>
-<input type="button" value="New Study" onclick="popupStart(450, 650, '<%= request.getContextPath() %>/admin/addStudy.jsp', 'editStudy')"/>
-<table>
-<tr>
-	<th>Name</th>
-	<th>Status</th>
-	<th>Add Demographic</th>
-	<th>Add Provider</th>	
-</tr>
-
-<% 
+<br>
+<div class="well">
+<table id="study" class="table table-striped">
+    <thead>
+        <tr>
+	        <th>Name</th>
+	        <th>Status</th>
+	        <th>Add Demographic</th>
+	        <th>Add Provider</th>
+        </tr>
+    </thead>
+    <tbody>
+<%
 StudyDao studyDao = (StudyDao)SpringUtils.getBean(StudyDao.class);
 
 List<Study> listStudies = studyDao.findAll();
@@ -153,19 +126,22 @@ boolean active;
 for( Study study : listStudies ) {
     active = study.getCurrent1() == 1;
 %>
-<tr>
-	<td><a href="#" onclick="popupStart(768, 1024, '<%= request.getContextPath() %>/admin/addStudy.jsp?studyId=<%=study.getId()%>', 'editStudy')"><%=study.getStudyName()%></a></td>
-	<td><input type="radio" name="status_<%=study.getId()%>" <%=active ? "checked" : ""%> value="active" onclick="changeStatus('<%=study.getId()%>','1');"/>&nbsp;Active<br/>
-		<input type="radio" name="status_<%=study.getId()%>" <%=active ? "" : "checked"%> value="inactive" onclick="changeStatus('<%=study.getId()%>','0');"/>Inactive
-	</td>
-	<td><input type="button" class="smallButton" value="Add Demographic" onclick="window.open('<%= request.getContextPath() %>/oscarReport/ReportDemographicReport.jsp?studyId=<%=study.getId()%>')"/></td>
-	<td><input type="button" class="smallButton" value="Add Provider" onclick="popupStart(768, 1024, '<%= request.getContextPath() %>/admin/addProvider.jsp?studyId=<%=study.getId()%>', 'providerselect')"/></td>
-</tr>
+        <tr>
+	        <td><a href="#" onclick="popupStart(800, 1200, '<%= request.getContextPath() %>/admin/addStudy.jsp?studyId=<%=study.getId()%>', 'editStudy')"><%=Encode.forHtml(study.getStudyName())%></a></td>
+	        <td><input type="radio" name="status_<%=study.getId()%>" <%=active ? "checked" : ""%> value="active" onclick="changeStatus('<%=study.getId()%>','1');"/>&nbsp;Active<br/>
+		        <input type="radio" name="status_<%=study.getId()%>" <%=active ? "" : "checked"%> value="inactive" onclick="changeStatus('<%=study.getId()%>','0');"/>Inactive
+	        </td>
+	        <td><input type="button" class="btn" value="Add Demographic" onclick="window.open('<%= request.getContextPath() %>/oscarReport/ReportDemographicReport.jsp?studyId=<%=study.getId()%>')"/></td>
+	        <td><input type="button" class="btn" value="Add Provider" onclick="popupStart(768, 1024, '<%= request.getContextPath() %>/admin/addProvider.jsp?studyId=<%=study.getId()%>', 'providerselect')"/></td>
+        </tr>
 <%
 }
 %>
+    </tbody>
 </table>
-</center>
+</div>
+<input type="button" class="btn btn-primary" value="New Study" onclick="popupStart(450, 650, '<%= request.getContextPath() %>/admin/addStudy.jsp', 'editStudy')"/>
+
 </form>
 </body>
 </html>

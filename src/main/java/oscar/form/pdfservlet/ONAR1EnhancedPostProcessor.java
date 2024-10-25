@@ -150,7 +150,7 @@ public class ONAR1EnhancedPostProcessor implements FrmPDFPostValueProcessor {
 		if(p.getProperty("pg1_language","").equals("FAS")) {p.setProperty("pg1_language", "Persian");}
 		if(p.getProperty("pg1_language","").equals("POL")) {p.setProperty("pg1_language", "Polish");}
 		if(p.getProperty("pg1_language","").equals("POR")) {p.setProperty("pg1_language", "Portuguese");}
-		if(p.getProperty("pg1_language","").equals("PUS")) {p.setProperty("pg1_language", "Pushto");}
+		if(p.getProperty("pg1_language","").equals("PUS")) {p.setProperty("pg1_language", "Pashto");}
 		if(p.getProperty("pg1_language","").equals("QUE")) {p.setProperty("pg1_language", "Quechua");}
 		if(p.getProperty("pg1_language","").equals("RON")) {p.setProperty("pg1_language", "Romanian");}
 		if(p.getProperty("pg1_language","").equals("ROH")) {p.setProperty("pg1_language", "Romansh");}

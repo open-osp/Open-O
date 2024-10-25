@@ -148,14 +148,14 @@ public class DocumentUploadAction extends DispatchAction {
 			String providerId = request.getParameter("provider");
 			if (providerId != null) { 
 				WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-				ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) ctx.getBean("providerInboxRoutingDAO");
+				ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) ctx.getBean(ProviderInboxRoutingDao.class);
 				providerInboxRoutingDao.addToProviderInbox(providerId, Integer.parseInt(doc_no), "DOC");
 			}
 	
 			String queueId=request.getParameter("queue");
 	        if (queueId !=null &&!queueId.equals("-1")) {
 	            WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-	            QueueDocumentLinkDao queueDocumentLinkDAO = (QueueDocumentLinkDao) ctx.getBean("queueDocumentLinkDAO");
+	            QueueDocumentLinkDao queueDocumentLinkDAO = (QueueDocumentLinkDao) ctx.getBean(QueueDocumentLinkDao.class);
 	            Integer qid=Integer.parseInt(queueId.trim());
 	            Integer did=Integer.parseInt(doc_no.trim());
 	            queueDocumentLinkDAO.addActiveQueueDocumentLink(qid,did);
@@ -237,7 +237,7 @@ public class DocumentUploadAction extends DispatchAction {
         	
         String user_no = (String) request.getSession().getAttribute("user");
         String destination=request.getParameter("destination");
-        UserPropertyDAO pref = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO pref = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         UserProperty up = pref.getProp(user_no, UserProperty.UPLOAD_DOCUMENT_DESTINATION);
 
         if (up == null) {
@@ -258,7 +258,7 @@ public class DocumentUploadAction extends DispatchAction {
         	
         String user_no = (String) request.getSession().getAttribute("user");
         String destFolder=request.getParameter("destFolder");
-        UserPropertyDAO pref = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO pref = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         UserProperty up = pref.getProp(user_no, UserProperty.UPLOAD_INCOMING_DOCUMENT_FOLDER);
 
         if (up == null) {

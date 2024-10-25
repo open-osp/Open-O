@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,72 +21,17 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.View;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class ViewDao extends AbstractDao<View>{
-
-	public ViewDao() {
-		super(View.class);
-	}
-
-    public Map<String, View> getView(String view, String role)
-    {
-	Query query = entityManager.createQuery("select v from View v where v.view_name=? and v.role=? and v.providerNo is null");
-	query.setParameter(1, view);
-    	query.setParameter(2, role);
-	
-	return getView(query);
-    }
-
-    public Map<String, View> getView(String view, String role, String providerNo) {
-    	Query query = entityManager.createQuery("select v from View v where v.view_name=? and v.role=? and v.providerNo = ?");
-    	query.setParameter(1, view);
-    	query.setParameter(2, role);
-	query.setParameter(3, providerNo);
-
-        return getView(query);
-    }
-
-    private Map<String, View> getView(Query query)
-    {
-
-        List<View> list = query.getResultList();
-        Map<String,View>map = new HashMap<String,View>();
-
-        for( View v : list ) {
-            map.put(v.getName(),v);
-        }
-
-        return map;
-    }
-
-    public void saveView(View v)
-    {
-       if(v != null && v.getId() != null && v.getId() > 0)
-       {
-    	   merge(v);
-       }
-       else
-       {
-    	   persist(v);
-       }
-    }
-
-    public void delete(View v) 
-    {
-        remove(v.getId());
-    }
+public interface ViewDao extends AbstractDao<View> {
+    Map<String, View> getView(String view, String role);
+    Map<String, View> getView(String view, String role, String providerNo);
+    void saveView(View v);
+    void delete(View v);
 }

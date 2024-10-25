@@ -28,13 +28,13 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.Hl7Message;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.common.model.PatientLabRouting;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class Hl7MessageDao extends AbstractDao<Hl7Message>{
+public class Hl7MessageDao extends AbstractDaoImpl<Hl7Message>{
 
 	public Hl7MessageDao() {
 		super(Hl7Message.class);

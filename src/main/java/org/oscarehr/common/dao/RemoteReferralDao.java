@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,33 +20,15 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.RemoteReferral;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class RemoteReferralDao extends AbstractDao<RemoteReferral> {
-
-	public RemoteReferralDao() {
-		super(RemoteReferral.class);
-	}
-	
-    public List<RemoteReferral> findByFacilityIdDemogprahicId(Integer facilityId, Integer demographicId) {
-    	String sql = "select x from "+modelClass.getSimpleName()+" x where x.facilityId=?1 and x.demographicId=?2";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,facilityId);
-    	query.setParameter(2,demographicId);
-    	
-        @SuppressWarnings("unchecked")
-        List<RemoteReferral> results = query.getResultList();
-        return results;
-    }    
+public interface RemoteReferralDao extends AbstractDao<RemoteReferral> {
+    List<RemoteReferral> findByFacilityIdDemogprahicId(Integer facilityId, Integer demographicId);
 }

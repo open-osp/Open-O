@@ -246,7 +246,7 @@ public class LabUploadAction extends Action {
 		ArrayList<Object> info = new ArrayList<Object>();
 
 		try {
-			PublicKeyDao publicKeyDao = (PublicKeyDao) SpringUtils.getBean("publicKeyDao");
+			PublicKeyDao publicKeyDao = (PublicKeyDao) SpringUtils.getBean(PublicKeyDao.class);
 			org.oscarehr.common.model.PublicKey publicKeyObject = publicKeyDao.find(service);
 
 			if (publicKeyObject != null) {
@@ -277,7 +277,7 @@ public class LabUploadAction extends Action {
 		byte[] privateKey;
 
 		try {
-			OscarKeyDao oscarKeyDao = (OscarKeyDao) SpringUtils.getBean("oscarKeyDao");
+			OscarKeyDao oscarKeyDao = (OscarKeyDao) SpringUtils.getBean(OscarKeyDao.class);
 			OscarKey oscarKey = oscarKeyDao.find("oscar");
 			logger.info("oscar key: " + oscarKey);
 

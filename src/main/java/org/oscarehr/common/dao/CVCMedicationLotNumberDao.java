@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -30,31 +33,11 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.CVCMedicationLotNumber;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class CVCMedicationLotNumberDao extends AbstractDao<CVCMedicationLotNumber>{
+public interface CVCMedicationLotNumberDao extends AbstractDao<CVCMedicationLotNumber> {
 
-	public CVCMedicationLotNumberDao() {
-		super(CVCMedicationLotNumber.class);
-	}
-	
-	public void removeAll() {
-		Query query = entityManager.createQuery("DELETE FROM CVCMedicationLotNumber");
-		query.executeUpdate();
-	}
-	
-	public CVCMedicationLotNumber findByLotNumber(String lotNumber) {
-		Query query = entityManager.createQuery("SELECT x FROM CVCMedicationLotNumber x WHERE x.lotNumber = :ln");
-		query.setParameter("ln", lotNumber);
-		
-		CVCMedicationLotNumber result = this.getSingleResultOrNull(query);
-		
-		return result;
-	}
-	
-	public List<CVCMedicationLotNumber> query(String term) {
-		Query query = entityManager.createQuery("SELECT x FROM CVCMedicationLotNumber x WHERE x.lotNumber like :term");
-		query.setParameter("term", term  + "%");
-		List<CVCMedicationLotNumber> results = query.getResultList();
-		return results;
-	}
+	public void removeAll();
+
+	public CVCMedicationLotNumber findByLotNumber(String lotNumber);
+
+	public List<CVCMedicationLotNumber> query(String term);
 }

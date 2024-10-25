@@ -46,7 +46,7 @@ if(!authed) {
 
 <%@page import="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConAddInstitutionForm"%>
 
-<html:html locale="true">
+<html:html lang="en">
 
 <%
   ResourceBundle oscarR = ResourceBundle.getBundle("oscarResources",request.getLocale());

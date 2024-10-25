@@ -43,7 +43,7 @@ import oscar.util.StringUtils;
 
 public class HRMDownloadFileAction extends DownloadAction{
     
-	private static HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
+	private static HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	 
     /** Creates a new instance of DownloadFileAction */

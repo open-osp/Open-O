@@ -61,7 +61,7 @@ public class RptRehabStudyAction extends Action {
 		List<Object[]> rows = null;
 		
 		try {
-            String sql = "select * from " + formName + " limit 1"; 
+            String sql = "select * from " + formName + "limit 1"; 
             ResultSet rs = null;
             try {
 	            rs = DBHandler.GetSQL(sql);

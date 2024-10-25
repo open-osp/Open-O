@@ -111,6 +111,7 @@ if(!authed) {
 			setState(this);
 		});
 		
+		getFaxSchedularStatus();
 		
 	});
 
@@ -205,13 +206,41 @@ if(!authed) {
 		} 
 		$(id).val($(elem).val());
 	}
+
+	function getFaxSchedularStatus() {
+		$.ajax({
+			url: "<%=request.getContextPath() %>/admin/ManageFax.do",
+			method: 'POST',
+			data: 'method=getFaxSchedularStatus',
+			success: function(data) {
+				$('#restartFaxSchedulerBtn').prop('disabled', data.isRunning);
+				$("#faxStatusDetails").text(data.faxSchedularStatus).css("color", data.isRunning ? "black" : "red");
+				HideSpin();
+			}
+		});
+	}
+
+	function rebootFaxSchedular() {
+		$.ajax({
+			url: "<%=request.getContextPath() %>/admin/ManageFax.do",
+			method: 'POST',
+			data: 'method=restartFaxScheduler',
+			success: function(data) {
+				console.log("Fax scheduler restarted successfully");
+				ShowSpin(true);
+				setTimeout(getFaxSchedularStatus, 3000);
+			}
+		});
+	}
 	
 
 </script>
+
 </head>
 
 
 <body>
+	<jsp:include page="../images/spinner.jsp" flush="true"/>
 	<div class="container-fluid">
 		<form id="configFrm" method="post" >
 		<input type="hidden" name="method" value="configure"/> 
@@ -249,6 +278,18 @@ if(!authed) {
 				</div>
 
 			</div>
+
+			<!-- #Fax Status -->
+			<security:oscarSec roleName="<%=roleName$%>" objectName="_admin.fax.restart" rights="r" reverse="<%=false%>">
+				<div class="row">			
+					<div class="span12" style="display: ruby">
+						<label>Fax Server Connection Status:&nbsp;</label><label id="faxStatusDetails"></label>
+					</div>
+					<div class="span12">
+						<button id="restartFaxSchedulerBtn" type="button" onclick="rebootFaxSchedular()" disabled>Restart Connection</button>
+					</div>			
+				</div>
+			</security:oscarSec>
 
 			</div>
 		</div>

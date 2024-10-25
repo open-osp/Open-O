@@ -25,27 +25,23 @@
 
 package oscar.eform.data;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.sf.json.JSONArray;
-
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionMessages;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.oscarehr.common.OtherIdManager;
 import org.oscarehr.common.dao.EFormDataDao;
 import org.oscarehr.common.model.EFormData;
+import org.oscarehr.documentManager.ConvertToEdoc;
 import org.oscarehr.ui.servlet.ImageRenderingServlet;
 import org.oscarehr.util.DigitalSignatureUtils;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
+import org.owasp.encoder.Encode;
 import oscar.eform.EFormLoader;
 import oscar.eform.EFormUtil;
 import oscar.oscarEncounter.data.EctFormData;
@@ -54,8 +50,14 @@ import oscar.oscarEncounter.oscarMeasurements.util.WriteNewMeasurements;
 import oscar.util.StringBuilderUtils;
 import oscar.util.UtilDateUtilities;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class EForm extends EFormBase {
-	private static EFormDataDao eFormDataDao = (EFormDataDao) SpringUtils.getBean("EFormDataDao");
+	private static EFormDataDao eFormDataDao = (EFormDataDao) SpringUtils.getBean(EFormDataDao.class);
 	private static Logger log = MiscUtils.getLogger();
 
 	private String appointment_no = "-1";
@@ -75,7 +77,7 @@ public class EForm extends EFormBase {
 	private static final String TABLE_NAME = "table_name";
 	private static final String TABLE_ID = "table_id";
 	private static final String OTHER_KEY = "other_key";
-        private static final String OPENER_VALUE = "link$eform";
+	private static final String OPENER_VALUE = "link$eform";
 
 	public EForm() {
 	}
@@ -387,7 +389,9 @@ public class EForm extends EFormBase {
 	}
 	
 	public void setFdid(String fdid) {
-		this.formHtml = this.formHtml.replace(fdidMarker, fdid);
+		if (this.formHtml != null && this.fdidMarker != null && fdid != null) {
+			this.formHtml = this.formHtml.replace(fdidMarker, fdid);
+		} 
 	}
 	
 	public void setSource(String source) {
@@ -919,45 +923,69 @@ public class EForm extends EFormBase {
 		}
 	}
 
-	/* For overriding or adding Javascript to every eform
+	/** For overriding or adding Javascript to every eform
 	 * Add path to Javascript resource in OSCAR source code.
 	 */
-	public void addJavascript(String javascriptPath) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("<script ");
-		stringBuilder.append("type='text/javascript' ");
-		stringBuilder.append("src='").append(javascriptPath);
-		stringBuilder.append("' ></script>");
-		addHeadElement(stringBuilder.toString());
+	public void addHeadJavascript(String javascriptPath) {
+		Element script = getDocument().createElement("script");
+		script.attr("type", "text/javascript");
+		script.attr("src", javascriptPath);
+		addHeadElement(script);
+	}
+
+	/**
+	 * Adds javascript files to the end of the body tag.
+	 * Useful if there is a dependency on previous javascript in the window load
+	 */
+	public void addBodyJavascript(String javascriptPath) {
+		Element script = getDocument().createElement("script");
+		script.attr("type", "text/javascript");
+		script.attr("src", javascriptPath);
+		addBodyElement(script);
 	}
 
 	/* For overriding or adding CSS to every eform
 	 * Add path to CSS resource in OSCAR source code.
 	 */
 	public void addCSS(String cssPath, String mediaType) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("<link ");
-		stringBuilder.append("href='").append(cssPath).append("' ");
-		stringBuilder.append("rel='stylesheet' type='text/css' ");
-		stringBuilder.append("media='").append(mediaType).append("'/>");
-		addHeadElement(stringBuilder.toString());
+		Element link = getDocument().createElement("link");
+		link.attr(ConvertToEdoc.ElementAttribute.href.name(), cssPath);
+		link.attr(ConvertToEdoc.ElementAttribute.rel.name(),"stylesheet");
+		link.attr(ConvertToEdoc.ElementAttribute.media.name(), mediaType);
+		link.attr(ConvertToEdoc.ElementAttribute.type.name(),"text/css");
+		addHeadElement(link);
 	}
 
 	/*
 	 * Adds use of custom font library such as
 	 */
 	public void addFontLibrary(String fontPath) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("<style>");
-		stringBuilder.append("@font-face { font-family: dejavu; src: url('").append(fontPath).append("'); }</style>");
-		addHeadElement(stringBuilder.toString());
+		String stringBuilder = "@font-face { font-family: dejavu; src: url('" + fontPath + "'); }";
+		Element style = getDocument().createElement("style");
+		style.text(stringBuilder);
+		addHeadElement(style);
 	}
 
-	private void addHeadElement(String element) {
-		if(! this.formHtml.contains("<head>") && ! this.formHtml.contains("</head>")) {
-			this.formHtml = this.formHtml.replace("<html>", "<html><head></head>");
-		}
-		this.formHtml = this.formHtml.replace("</head>", element + "\n</head>");
+	private void addHeadElement(Element element) {
+		Element headElement = getDocument().head();
+		Iterator<Element> iterator = headElement.children().iterator();
+//		if(iterator.hasNext()) {
+//			Element beforeElement;
+//			while (iterator.hasNext()) {
+//				beforeElement = iterator.next();
+//
+//				// always after the meta, title, and existing script tags.
+//				if (! beforeElement.nameIs("title") || ! beforeElement.nameIs("meta")
+//				|| ! beforeElement.nameIs("style") || ! beforeElement.nameIs("script")) {
+//					beforeElement.before(element);
+//					break;
+//				} else {
+//					headElement.prependChild(element);
+//				}
+//			}
+//		} else {
+			headElement.appendChild(element);
+//		}
 	}
 
 	public void addHiddenAttachments(List<String> attachedDocumentIds, List<String> attachedEFormIds, List<String> attachedHRMDocumentIds, List<String> attachedLabIds, List<EctFormData.PatientForm> attachedForms) {
@@ -978,7 +1006,10 @@ public class EForm extends EFormBase {
 		}
 
 		for (EctFormData.PatientForm form : attachedForms) {
-			addHiddenInputElement("entry_formNo" + form.getFormId(), null, "delegateOldFormAttachment", null, "data-formName='" + form.getFormName() + "' data-formDate='" + form.getEdited() + "'");
+			Map<String, String> additionalProperties = new HashMap<>();
+			additionalProperties.put("data-formName", form.getFormName());
+			additionalProperties.put("data-formDate", form.getEdited());
+			addHiddenInputElement("entry_formNo" + form.getFormId(), null, "delegateOldFormAttachment", null, additionalProperties);
 			addHiddenInputElement("delegate_formNo" + form.getFormId(), "formNo", "delegateAttachment", form.getFormId(), null);
 		}
 	}
@@ -987,23 +1018,77 @@ public class EForm extends EFormBase {
 		addHiddenInputElement(id, null, null, value, null);
 	}
 
-	public void addHiddenInputElement(String id, String name, String className, String value, String additionalProperties) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("<input type='hidden' ");
-		if (id != null) { stringBuilder.append("id='").append(id).append("' "); }
-		if (name != null) { stringBuilder.append("name='").append(name).append("' "); }
-		if (className != null) { stringBuilder.append("class='").append(className).append("' "); }
-		if (value != null) { stringBuilder.append("value='").append(value).append("' "); }
-		if (additionalProperties != null) { stringBuilder.append(additionalProperties); }
-		stringBuilder.append(">");
-		addBodyElement(stringBuilder.toString());
-	}
+	public void addHiddenInputElement(String id, String name, String className, String value, Map<String, String> additionalProperties) {
+		Element input = getDocument().createElement("input");
 
-	private void addBodyElement(String element) {
-		if(! this.formHtml.contains("<body>") && ! this.formHtml.contains("</body>")) {
-			this.formHtml = this.formHtml.replace("</html>", "<body></body></html>");
+		input.attr(ConvertToEdoc.ElementAttribute.type.name(), "hidden");
+
+		if(id != null && ! id.isEmpty()) {
+			input.attr(ConvertToEdoc.ElementAttribute.id.name(), Encode.forHtmlAttribute(id));
 		}
-		this.formHtml = this.formHtml.replace("</body>", element + "\n</body>");
+
+		if(name != null && ! name.isEmpty()) {
+			input.attr(ConvertToEdoc.ElementAttribute.name.name(), Encode.forHtmlAttribute(name));
+		}
+
+		if(value != null && ! value.isEmpty()) {
+			input.attr(ConvertToEdoc.ElementAttribute.value.name(), Encode.forHtmlAttribute(value));
+		}
+
+		if(className != null && ! className.isEmpty()) {
+			input.attr("class", Encode.forHtmlAttribute(className));
+		}
+
+		if(additionalProperties != null) {
+			Set<Map.Entry<String, String>> properties = additionalProperties.entrySet();
+			for(Map.Entry<String, String> property : properties) {
+				input.attr(Encode.forHtmlAttribute(property.getKey()), Encode.forHtmlAttribute(property.getValue()));
+			}
+		}
+
+		addBodyElement(input);
 	}
 
+	private void addBodyElement(Element element) {
+		Element bodyElement = getDocument().body();
+
+		// check if this element doesnt pre-exist first
+		Element existing = null;
+		String elementId = element.id();
+		if(elementId != null && ! elementId.isEmpty()) {
+			existing = bodyElement.getElementById(elementId);
+		}
+		if(existing != null) {
+			existing.remove();
+		}
+		bodyElement.appendChild(element);
+	}
+
+	/**
+	 * Part 3 of "counter hack for a hack" initialized in Javascript file
+	 * eform_floating_toolbar.js
+	 * This method fetches image paths stored in hidden fields and restores them
+	 * into empty image src values.
+	 * Empty image src values are the result of using Javascript in the eForm to dynamically
+	 * set paths for images.
+	 */
+	public void addImagePathPlaceholders(String[] imagePathPlaceholders) {
+		if(imagePathPlaceholders != null && imagePathPlaceholders.length > 0){
+			JSONArray placeHolders = JSONArray.fromObject(Arrays.toString(imagePathPlaceholders));
+			Elements imageElements = getDocument().getElementsByTag("img");
+			for(Object objekt : placeHolders) {
+				JSONObject placeHolder = (JSONObject) objekt;
+				String id = placeHolder.getString("id");
+				String value = placeHolder.getString("value");
+				if(!id.isEmpty() && !value.isEmpty() && (! value.startsWith("http") || ! value.startsWith("HTTP"))) {
+					for (Element imageElement : imageElements) {
+						if (id.equalsIgnoreCase(imageElement.id())) {
+							imageElement.attr("src", value);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
 }

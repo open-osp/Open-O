@@ -27,12 +27,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.sharingcenter.model.PatientPolicyConsent;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class PatientPolicyConsentDao extends AbstractDao<PatientPolicyConsent> {
+public class PatientPolicyConsentDao extends AbstractDaoImpl<PatientPolicyConsent> {
 
     public PatientPolicyConsentDao() {
         super(PatientPolicyConsent.class);
@@ -48,7 +48,7 @@ public class PatientPolicyConsentDao extends AbstractDao<PatientPolicyConsent> {
     public List<PatientPolicyConsent> findByDemographicId(int demographicId) {
         String sql = "FROM PatientPolicyConsent e where e.demographicNo = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, demographicId);
+        query.setParameter(0, demographicId);
 
         return query.getResultList();
     }
@@ -57,8 +57,8 @@ public class PatientPolicyConsentDao extends AbstractDao<PatientPolicyConsent> {
         String sql = "SELECT count(*) FROM PatientPolicyConsent e where e.demographicNo = ? and e.policyId = ?";
 
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, demographicId);
-        query.setParameter(2, policyId);
+        query.setParameter(0, demographicId);
+        query.setParameter(1, policyId);
 
         int retVal = ((Long) query.getSingleResult()).intValue();
         return retVal > 0;

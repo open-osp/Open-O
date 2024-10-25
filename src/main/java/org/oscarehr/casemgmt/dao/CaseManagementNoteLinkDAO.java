@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,79 +20,38 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.casemgmt.dao;
 
 import java.util.List;
 
 import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-public class CaseManagementNoteLinkDAO extends HibernateDaoSupport {
+public interface CaseManagementNoteLinkDAO {
 
-	public CaseManagementNoteLink getNoteLink(Long id) {
-		CaseManagementNoteLink noteLink = this.getHibernateTemplate().get(CaseManagementNoteLink.class, id);
-		return noteLink;
-	}
+	public CaseManagementNoteLink getNoteLink(Long id);
 
-	@SuppressWarnings("unchecked")
-    public List<CaseManagementNoteLink> getLinkByTableId(Integer tableName, Long tableId) {
-		Object[] param = {tableName, tableId};
-		String hql = "from CaseManagementNoteLink cLink where cLink.tableName = ? and cLink.tableId = ? order by cLink.id";
-		return this.getHibernateTemplate().find(hql, param);
-	}
+	public List<CaseManagementNoteLink> getLinkByTableId(Integer tableName, Long tableId);
 
-	@SuppressWarnings("unchecked")
-    public List<CaseManagementNoteLink> getLinkByTableId(Integer tableName, Long tableId,String otherId) {
-		Object[] param = {tableName, tableId, otherId};
-		String hql = "from CaseManagementNoteLink cLink where cLink.tableName = ? and cLink.tableId = ? and cLink.otherId=? order by cLink.id";
-		return this.getHibernateTemplate().find(hql, param);
-	}
+	public List<CaseManagementNoteLink> getLinkByTableId(Integer tableName, Long tableId, String otherId);
 
-	@SuppressWarnings("unchecked")
-    public List<CaseManagementNoteLink> getLinkByTableIdDesc(Integer tableName, Long tableId) {
-		Object[] param = {tableName, tableId};
-		String hql = "from CaseManagementNoteLink cLink where cLink.tableName = ? and cLink.tableId = ? order by cLink.id desc";
-		return this.getHibernateTemplate().find(hql, param);
-	}
+	public List<CaseManagementNoteLink> getLinkByTableIdDesc(Integer tableName, Long tableId);
 
-	@SuppressWarnings("unchecked")
-    public List<CaseManagementNoteLink> getLinkByTableIdDesc(Integer tableName, Long tableId,String otherId) {
-		Object[] param = {tableName, tableId, otherId};
-		String hql = "from CaseManagementNoteLink cLink where cLink.tableName = ? and cLink.tableId = ? and cLink.otherId=? order by cLink.id desc";
-		return this.getHibernateTemplate().find(hql, param);
-	}
+	public List<CaseManagementNoteLink> getLinkByTableIdDesc(Integer tableName, Long tableId, String otherId);
 
-	@SuppressWarnings("unchecked")
-    public List<CaseManagementNoteLink> getLinkByNote(Long noteId) {
-		String hql = "from CaseManagementNoteLink cLink where cLink.noteId = ? order by cLink.id";
-		return this.getHibernateTemplate().find(hql, noteId);
-	}
+	public List<CaseManagementNoteLink> getLinkByNote(Long noteId);
 
-	public CaseManagementNoteLink getLastLinkByTableId(Integer tableName, Long tableId,String otherId) {
-		return getLast(getLinkByTableId(tableName, tableId,otherId));
-	}
+	public CaseManagementNoteLink getLastLinkByTableId(Integer tableName, Long tableId, String otherId);
 
-	public CaseManagementNoteLink getLastLinkByTableId(Integer tableName, Long tableId) {
-		return getLast(getLinkByTableId(tableName, tableId));
-	}
+	public CaseManagementNoteLink getLastLinkByTableId(Integer tableName, Long tableId);
 
-	public CaseManagementNoteLink getLastLinkByNote(Long noteId) {
-		return getLast(getLinkByNote(noteId));
-	}
+	public CaseManagementNoteLink getLastLinkByNote(Long noteId);
 
-	private CaseManagementNoteLink getLast(List<CaseManagementNoteLink> listLink) {
-		if (listLink.isEmpty()) return null;
-		return listLink.get(listLink.size()-1);
-	}
+	public void save(CaseManagementNoteLink cLink);
 
-	public void save(CaseManagementNoteLink cLink) {
-		this.getHibernateTemplate().save(cLink);
-	}
-
-	public void update(CaseManagementNoteLink cLink) {
-		this.getHibernateTemplate().update(cLink);
-	}
+	public void update(CaseManagementNoteLink cLink);
 }

@@ -56,11 +56,11 @@ public final class PrescriptionQrCodeUIBean {
 
 	private static final Logger logger = MiscUtils.getLogger();
 
-	private static ClinicDAO clinicDAO = (ClinicDAO) SpringUtils.getBean("clinicDAO");
-	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
-	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-	private static PrescriptionDao prescriptionDao = (PrescriptionDao) SpringUtils.getBean("prescriptionDao");
-	private static DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
+	private static ClinicDAO clinicDAO = (ClinicDAO) SpringUtils.getBean(ClinicDAO.class);
+	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
+	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+	private static PrescriptionDao prescriptionDao = (PrescriptionDao) SpringUtils.getBean(PrescriptionDao.class);
+	private static DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
 
 	private PrescriptionQrCodeUIBean() {
 		// not meant to be instantiated, just a utility class

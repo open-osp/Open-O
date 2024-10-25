@@ -50,9 +50,14 @@ import org.apache.cxf.transport.common.gzip.GZIPOutInterceptor;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSPasswordCallback;
-import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.wss4j.common.WSS4JConstants;
+
+import org.apache.wss4j.common.ext.WSPasswordCallback;
+import org.apache.wss4j.dom.handler.WSHandlerConstants;
+
+
+// import org.apache.ws.security.handler.WSHandlerConstants;
+// import org.apache.wss4j.common.ext.WSSConstants;
 
 import oscar.OscarProperties;
 
@@ -160,18 +165,28 @@ public class CxfClientUtilsOld
 
 	public static <T extends CallbackHandler> void configureWSSecurity(Object wsPort, String user, T passwordCallbackInstance)
 	{
+        // Client cxfClient = ClientProxy.getClient(wsPort);
+        // Endpoint cxfEndpoint = cxfClient.getEndpoint();
+
+        // Map<String, Object> outProps = new HashMap<>();
+        // outProps.put(WSHandlerConstants.ACTION, WSS4JConstants.USERNAME_TOKEN);
+        // outProps.put(WSHandlerConstants.USER, user);
+        // outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSS4JConstants.PW_TEXT);
+        // outProps.put(WSHandlerConstants.PW_CALLBACK_REF, passwordCallbackInstance);
+
+        // WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        // cxfEndpoint.getOutInterceptors().add(wssOut);
 		Client cxfClient = ClientProxy.getClient(wsPort);
-		Endpoint cxfEndpoint = cxfClient.getEndpoint();
+        Endpoint cxfEndpoint = cxfClient.getEndpoint();
 
-		Map<String, Object> outProps = new HashMap<String, Object>();
-		outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
+        Map<String, Object> outProps = new HashMap<>();
+        outProps.put(WSHandlerConstants.ACTION, "UsernameToken");
+        outProps.put(WSHandlerConstants.USER, user);
+        outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSS4JConstants.PW_TEXT);
+        outProps.put(WSHandlerConstants.PW_CALLBACK_REF, passwordCallbackInstance);
 
-		outProps.put(WSHandlerConstants.USER, user);
-		outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
-		outProps.put(WSHandlerConstants.PW_CALLBACK_REF, passwordCallbackInstance);
-
-		WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
-		cxfEndpoint.getOutInterceptors().add(wssOut);
+        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        cxfEndpoint.getOutInterceptors().add(wssOut);
 	}
 
 	private static void configureTimeout(HTTPConduit httpConduit)

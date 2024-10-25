@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.managers;
 
@@ -33,25 +36,8 @@ import org.springframework.stereotype.Service;
 
 import oscar.log.LogAction;
 
-@Service
-public class OscarLogManager {
+public interface OscarLogManager{
+	public List<Object[]> getRecentDemographicsViewedByProvider(LoggedInInfo loggedInInfo, String providerNo, int startPosition, int itemsToReturn);
 
-	@Autowired 
-	private OscarLogDao oscarLogDao;
-	
-	public List<Object[]> getRecentDemographicsViewedByProvider(LoggedInInfo loggedInInfo, String providerNo, int startPosition, int itemsToReturn) {
-		List<Object[]> results = oscarLogDao.getRecentDemographicsViewedByProvider(providerNo, startPosition, itemsToReturn);
-		
-		LogAction.addLogSynchronous(loggedInInfo,"OscarLogManager.getRecentDemographicsViewedByProvider", "providerNo"+providerNo);
-		
-		return results;
-			
-	}
-
-	public List<Object[]> getRecentDemographicsViewedByProviderAfterDateIncluded(LoggedInInfo loggedInInfo, String providerNo, Date date, int startPosition, int itemsToReturn) {
-		List<Object[]> results = oscarLogDao.getRecentDemographicsViewedByProviderAfterDateIncluded(providerNo, date, startPosition, itemsToReturn);
-		LogAction.addLogSynchronous(loggedInInfo,"OscarLogManager.getRecentDemographicsViewedByProviderAfterDateIncluded", "providerNo"+providerNo);
-		return results;
-	}
-	
+	public List<Object[]> getRecentDemographicsViewedByProviderAfterDateIncluded(LoggedInInfo loggedInInfo, String providerNo, Date date, int startPosition, int itemsToReturn);
 }

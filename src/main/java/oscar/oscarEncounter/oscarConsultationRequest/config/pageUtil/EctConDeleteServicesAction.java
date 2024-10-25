@@ -43,7 +43,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class EctConDeleteServicesAction extends Action {
 
-	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao)SpringUtils.getBean("consultationServiceDao");
+	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao)SpringUtils.getBean(ConsultationServiceDao.class);
 	private static SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)

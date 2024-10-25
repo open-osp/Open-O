@@ -70,7 +70,7 @@ String last_name="", first_name="", mygroup="";
 %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="oscarReport.manageProvider.title" /></title>
 <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">

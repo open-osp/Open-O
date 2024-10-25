@@ -62,7 +62,6 @@ public class VacancyClientMatchDaoTest extends DaoTestFixtures {
 	}
 	
 	@Test
-	@Ignore
 	public void testFindByClientIdAndVacancyId() throws Exception {
 		
 		int clientId1 = 101, clientId2 = 202;

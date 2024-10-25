@@ -25,20 +25,19 @@
 
 package oscar.eform;
 
+import org.apache.commons.digester.Digester;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.util.MiscUtils;
+import oscar.eform.data.DatabaseAP;
+import oscar.eform.data.EForm;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-
-import org.apache.commons.digester.Digester;
-import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
-import org.oscarehr.util.MiscUtils;
-
-import oscar.eform.data.DatabaseAP;
-import oscar.eform.data.EForm;
 
 public class EFormLoader {
 	
@@ -141,9 +140,9 @@ public class EFormLoader {
         }
         
         if (apName.startsWith("m$")) {
-            logger.info("AP: "+apName+" was not found returning null"); //info level of logging because this a missing measurement is not a big deal
+            logger.debug("AP: "+apName+" was not found returning null"); //info level of logging because this a missing measurement is not a big deal
         } else {
-            logger.error("AP: "+apName+" was not found returning null"); //warn level of logging because this other missing oscarDb tags is more significant
+            logger.debug("AP: "+apName+" was not found returning null"); //warn level of logging because this other missing oscarDb tags is more significant
         }
         
         return null;

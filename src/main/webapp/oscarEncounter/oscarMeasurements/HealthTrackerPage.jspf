@@ -113,9 +113,9 @@
 
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
 
-    FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx.getBean("flowSheetCustomizationDao");
-    FlowSheetDrugDao flowSheetDrugDao = (FlowSheetDrugDao) ctx.getBean("flowSheetDrugDao");
-	FlowSheetDxDao flowSheetDxDao = (FlowSheetDxDao) ctx.getBean("flowSheetDxDao");
+    FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx.getBean(FlowSheetCustomizationDao.class);
+    FlowSheetDrugDao flowSheetDrugDao = (FlowSheetDrugDao) ctx.getBean(FlowSheetDrugDao.class);
+	FlowSheetDxDao flowSheetDxDao = (FlowSheetDxDao) ctx.getBean(FlowSheetDxDao.class);
     List<FlowSheetCustomization> custList = flowSheetCustomizationDao.getFlowSheetCustomizations( temp,(String) session.getAttribute("user"),Integer.parseInt(demographic_no));
 
 
@@ -681,7 +681,7 @@ function fsPopup(width,height,url,window) {
 				ArrayList<String> diagnosed=new ArrayList<String>();
 				ArrayList<String> flowsheetList=new ArrayList<String>();
 
-				FlowsheetDao flowsheetDao = (FlowsheetDao) SpringUtils.getBean("flowsheetDao");
+				FlowsheetDao flowsheetDao = (FlowsheetDao) SpringUtils.getBean(FlowsheetDao.class);
 				ArrayList<String> flowsheets = MeasurementTemplateFlowSheetConfig.getInstance().getUniveralFlowsheets();
 				dxResearchBeanHandler dxRes = new dxResearchBeanHandler(demographic_no);
 				Vector dxCodes = dxRes.getActiveCodeListWithCodingSystem();

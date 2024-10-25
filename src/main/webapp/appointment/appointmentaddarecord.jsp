@@ -54,7 +54,7 @@
 <%@page import="org.oscarehr.managers.DemographicManager" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 </head>
@@ -70,7 +70,7 @@
 
 LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 WaitingListDao waitingListDao = SpringUtils.getBean(WaitingListDao.class);
 
 String createDateTime = UtilDateUtilities.DateToString(new java.util.Date(),"yyyy-MM-dd HH:mm:ss");
@@ -154,26 +154,34 @@ if (request.getParameter("demographic_no") != null && !(request.getParameter("de
 
              //email patient appointment record
             if (request.getParameter("emailPt")!= null) {
-                try{
-                   
-                   Appointment aa =  appointmentDao.search_appt_no(request.getParameter("provider_no"), ConversionUtils.fromDateString(request.getParameter("appointment_date")), ConversionUtils.fromTimeStringNoSeconds(request.getParameter("start_time")),
-                    			ConversionUtils.fromTimeStringNoSeconds(request.getParameter("end_time")), ConversionUtils.fromTimestampString(createDateTime), request.getParameter("creator"), Integer.parseInt(param[16]));
-		   
-                    if (aa != null) {
-						Integer apptNo = aa.getId();
-                        DemographicManager demographicManager =  SpringUtils.getBean(DemographicManager.class);
-                        Demographic demographic = demographicManager.getDemographic(loggedInInfo,param[16]);
 
-                        if ((demographic != null) && (apptNo > 0)) {
-                            AppointmentMailer emailer = new AppointmentMailer(apptNo,demographic);
-                            emailer.prepareMessage();
-                            emailer.send();
-                        }
-                    }
+				out.print("Appointment mailing is broken.");
+				/*
+				* The send method in AppointmentMailer is not supported.
+				* For more details, please refer to the AppointmentMailer class.
+				*/
+				/*
+					try{
+					
+					Appointment aa =  appointmentDao.search_appt_no(request.getParameter("provider_no"), ConversionUtils.fromDateString(request.getParameter("appointment_date")), ConversionUtils.fromTimeStringNoSeconds(request.getParameter("start_time")),
+									ConversionUtils.fromTimeStringNoSeconds(request.getParameter("end_time")), ConversionUtils.fromTimestampString(createDateTime), request.getParameter("creator"), Integer.parseInt(param[16]));
+			
+						if (aa != null) {
+							Integer apptNo = aa.getId();
+							DemographicManager demographicManager =  SpringUtils.getBean(DemographicManager.class);
+							Demographic demographic = demographicManager.getDemographic(loggedInInfo,param[16]);
 
-                }catch(Exception e) {
-                    out.print(e.getMessage());
-                }
+							if ((demographic != null) && (apptNo > 0)) {
+								AppointmentMailer emailer = new AppointmentMailer(apptNo,demographic);
+								emailer.prepareMessage();
+								emailer.send();
+							}
+						}
+
+					}catch(Exception e) {
+						out.print(e.getMessage());
+					}
+				*/
             }
 
 

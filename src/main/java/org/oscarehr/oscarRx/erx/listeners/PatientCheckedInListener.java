@@ -63,7 +63,7 @@ public class PatientCheckedInListener implements ApplicationListener<Appointment
 			String providerId = event.getProvider_no();
 			logger.debug("AppointmentStatusChange for provider "+providerId+" appt "+event.getAppointment_no()+ " status is "+event.getStatus());
 	
-			ProviderPreferenceDao providerPreferenceDao = ((ProviderPreferenceDao) SpringUtils.getBean("providerPreferenceDao"));
+			ProviderPreferenceDao providerPreferenceDao = ((ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class));
 	
 			// Load provider preferences to see if we should continue
 			ProviderPreference providerPreference = providerPreferenceDao.find(providerId);
@@ -71,8 +71,8 @@ public class PatientCheckedInListener implements ApplicationListener<Appointment
 			// If the provider uses an external prescription provider, and it's enabled...
 			if ((providerPreference != null) && providerPreference.isERxEnabled()) {
 
-				DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-				OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean("oscarAppointmentDao");
+				DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+				OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 	
 				// If the appointment status is "Here" or "Empty room" or "Picked"...
 				String apptStatus = event.getStatus();

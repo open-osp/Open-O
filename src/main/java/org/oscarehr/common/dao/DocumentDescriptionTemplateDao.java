@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2012- Centre de Medecine Integree
  *
  * This software is published under the GPL GNU General Public License.
@@ -19,36 +20,15 @@
  * This software was written for
  * Centre de Medecine Integree, Saint-Laurent, Quebec, Canada to be provided
  * as part of the OSCAR McMaster EMR System
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-import javax.persistence.Query;
 import org.oscarehr.common.model.DocumentDescriptionTemplate;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class DocumentDescriptionTemplateDao extends AbstractDao<DocumentDescriptionTemplate> {
-
-	public DocumentDescriptionTemplateDao() {
-		super(DocumentDescriptionTemplate.class);
-	}
-
-    public List<DocumentDescriptionTemplate> findByDocTypeAndProviderNo(String docType,String providerNo) {
-        Query query;
-        if(providerNo==null) {
-            query = entityManager.createQuery("select x from DocumentDescriptionTemplate x where x.docType=?1 and x.providerNo is NULL order by x.descriptionShortcut,x.id"); 
-            query.setParameter(1, docType);
-        }
-        else
-        {
-            query = entityManager.createQuery("select x from DocumentDescriptionTemplate x where x.docType=?1 and x.providerNo=?2 order by x.descriptionShortcut,x.id"); 
-            query.setParameter(1, docType);
-            query.setParameter(2, providerNo);
-        }
-
-    	return query.getResultList();
-    }
+public interface DocumentDescriptionTemplateDao extends AbstractDao<DocumentDescriptionTemplate> {
+    List<DocumentDescriptionTemplate> findByDocTypeAndProviderNo(String docType,String providerNo);
 }

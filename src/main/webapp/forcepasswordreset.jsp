@@ -49,7 +49,7 @@
 	OscarProperties op = OscarProperties.getInstance();
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 	<title><bean:message key="provider.providerchangepassword.title" /></title>
 

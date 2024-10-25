@@ -64,7 +64,7 @@ public class FHIRCommunicationRequestHandler  implements MessageHandler{
 
 	protected static Logger logger = MiscUtils.getLogger();
 	private static FhirContext fhirContext = FhirContext.forDstu3();
-	private ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) SpringUtils.getBean("providerInboxRoutingDAO");
+	private ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) SpringUtils.getBean(ProviderInboxRoutingDao.class);
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     
     

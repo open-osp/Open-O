@@ -35,8 +35,8 @@ import org.oscarehr.util.SpringUtils;
 
 public class OcanReportingBean {
 
-	private static OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
-	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+	private static OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
+	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 
 	public static List<Demographic> getOCANClients(Integer facilityId) {
 		List<Integer> demographicIds = ocanStaffFormDao.getAllOcanClients(facilityId);

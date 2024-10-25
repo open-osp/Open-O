@@ -42,7 +42,7 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <title>MCEDT</title>
     <link href="mailbox/css/mcedt.css" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,900" rel="stylesheet" type="text/css">
+
 	
 	<% String tab = ((request.getParameter("tab")==null ||request.getParameter("tab").equals(""))?"first":request.getParameter("tab"));
 		String tabChange = ((request.getParameter("tabChange")==null)?"":request.getParameter("tabChange"));

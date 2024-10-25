@@ -28,7 +28,7 @@
 <%@ include file="/taglibs.jsp"%>
 <%
     WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean("genericIntakeManager");
+    GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean(GenericIntakeManager.class);
     IntakeNode itn = (IntakeNode) session.getAttribute("intakeNode");
     Integer frmVersion = (Integer) session.getAttribute("form_version");    
     String frmLabel = itn.getLabelStr();

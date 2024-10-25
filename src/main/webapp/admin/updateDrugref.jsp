@@ -48,7 +48,7 @@ if(!authed) {
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <html:base />
         <title><bean:message key="admin.admin.UpdateDrugref"/></title>

@@ -33,12 +33,15 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
 import org.oscarehr.common.model.BillingPaymentType;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class BillingPaymentTypeDaoTest extends DaoTestFixtures {
 
@@ -56,7 +59,7 @@ public class BillingPaymentTypeDaoTest extends DaoTestFixtures {
 		dao.persist(entity);
 		assertNotNull(entity.getId());
 	}
-	
+
 	@Test
 	public void testFindAll() throws Exception {
 		
@@ -75,6 +78,7 @@ public class BillingPaymentTypeDaoTest extends DaoTestFixtures {
 		List<BillingPaymentType> expectedResult = new ArrayList<BillingPaymentType>(Arrays.asList(bPT1, bPT2, bPT3));
 		List<BillingPaymentType> result = dao.findAll();
 
+		result.sort(Comparator.comparingInt(BillingPaymentType::getId));
 		Logger logger = MiscUtils.getLogger();
 		
 		if (result.size() != expectedResult.size()) {

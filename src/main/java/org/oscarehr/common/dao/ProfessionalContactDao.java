@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,63 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.Query;
-
-import org.apache.commons.lang.StringEscapeUtils;
 import org.oscarehr.common.model.ProfessionalContact;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class ProfessionalContactDao extends AbstractDao<ProfessionalContact> {
-
-	public ProfessionalContactDao() {
-		super(ProfessionalContact.class);
-	}
-	
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	//Only used in the migrate script.bad idea to try this under normal conditions.
-	public List<ProfessionalContact> findAll() {
-		Query query = createQuery("x", null);
-		return query.getResultList();
-	}
-	
-	public List<ProfessionalContact> search(String searchMode, String orderBy, String keyword) {
-		StringBuilder where = new StringBuilder();
-		List<String> paramList = new ArrayList<String>();
-	    
-		if(searchMode.equals("search_name")) {
-			String[] temp = keyword.split("\\,\\p{Space}*");
-			if(temp.length>1) {
-		      where.append("c.lastName like ?1 and c.firstName like ?2");
-		      paramList.add(temp[0]+"%");
-		      paramList.add(temp[1]+"%");
-		    } else {
-		      where.append("c.lastName like ?1");
-		      paramList.add(temp[0]+"%");
-		    }
-		}else {		
-			where.append("c." + StringEscapeUtils.escapeSql(searchMode) + " like ?1");
-			paramList.add(keyword+"%");
-		}			
-		String sql = "SELECT c from ProfessionalContact c where " + where.toString() + " order by " + orderBy;
-		
-		Query query = entityManager.createQuery(sql);
-		for(int x=0;x<paramList.size();x++) {
-			query.setParameter(x+1,paramList.get(x));
-		}		
-		
-		@SuppressWarnings("unchecked")
-		List<ProfessionalContact> contacts = query.getResultList();
-		return contacts;
-	}
-	
+public interface ProfessionalContactDao extends AbstractDao<ProfessionalContact>{
+    List<ProfessionalContact> findAll();
+    List<ProfessionalContact> search(String searchMode, String orderBy, String keyword);
 }

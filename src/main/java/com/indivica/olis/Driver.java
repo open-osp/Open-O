@@ -83,7 +83,7 @@ import oscar.oscarMessenger.data.MsgProviderData;
 
 public class Driver {
 
-	private static OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
+	private static OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
 //	private static OLISResultsDao olisResultsDao = SpringUtils.getBean(OLISResultsDao.class);
 	private static OLISQueryLogDao olisQueryLogDao = SpringUtils.getBean(OLISQueryLogDao.class);
 	

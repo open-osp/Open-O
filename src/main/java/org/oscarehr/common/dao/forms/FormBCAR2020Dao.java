@@ -23,12 +23,12 @@
  */
 package org.oscarehr.common.dao.forms;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import oscar.form.model.FormBCAR2020;
 
 import javax.persistence.Query;
 
-public class FormBCAR2020Dao extends AbstractDao<FormBCAR2020> {
+public class FormBCAR2020Dao extends AbstractDaoImpl<FormBCAR2020> {
     public FormBCAR2020Dao() { super(FormBCAR2020.class); }
 
     public Integer getLatestActiveFormIdByDemographic(Integer demographicNo) {

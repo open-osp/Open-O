@@ -50,7 +50,7 @@ public class IntegratorLocalStoreUpdateJob implements OscarRunnable {
 	private static final Logger logger = MiscUtils.getLogger();
 	
 	private FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
-	private UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+	private UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
 	private DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
 	
 	

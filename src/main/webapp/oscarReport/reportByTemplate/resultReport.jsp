@@ -45,7 +45,7 @@
 </security:oscarSec>
 <!DOCTYPE html>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title>Report by Template</title>
 
@@ -65,7 +65,7 @@
 	jQuery(document).ready( function () {
 	    jQuery('.reportTable').DataTable(
 			{
-				"aLengthMenu": [[10,25,50,100,-1], [10,25,50,100,"All"]]
+				"aLengthMenu": [[-1,10,25,50,100], ["All",10,25,50,100]]
 			}
 		);
 	});

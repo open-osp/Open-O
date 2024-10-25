@@ -733,7 +733,7 @@ angular.module("staticDataServices", [])
 				langs.push({"value":"Portuguese", "label":"Portuguese"});
 				langs.push({"value":"Prakrit Languages", "label":"Prakrit Languages"});
 				langs.push({"value":"Punjabi", "label":"Punjabi"});
-				langs.push({"value":"Pushto", "label":"Pushto"});
+				langs.push({"value":"Pashto", "label":"Pashto"});
 				langs.push({"value":"Quechua", "label":"Quechua"});
 				langs.push({"value":"Raeto-Romance", "label":"Raeto-Romance"});
 				langs.push({"value":"Rajasthani", "label":"Rajasthani"});

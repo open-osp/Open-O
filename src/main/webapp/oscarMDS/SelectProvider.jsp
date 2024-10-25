@@ -133,9 +133,9 @@ function prepSubmit() {
 	Favorites<br>
 	<select id="favorites" size="5" style="width:250px;height:100px;overflow:scroll;" multiple="multiple" ondblclick="removeProvider(this);">
 	<%
-	ProviderLabRoutingFavoritesDao favDao = (ProviderLabRoutingFavoritesDao)SpringUtils.getBean("ProviderLabRoutingFavoritesDao");
+	ProviderLabRoutingFavoritesDao favDao = (ProviderLabRoutingFavoritesDao)SpringUtils.getBean(ProviderLabRoutingFavoritesDao.class);
 	String user = (String)request.getSession().getAttribute("user");
-	ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+	ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 
 	List<ProviderLabRoutingFavorite>currentFavorites = favDao.findFavorites(user);
 	for( ProviderLabRoutingFavorite fav : currentFavorites) {

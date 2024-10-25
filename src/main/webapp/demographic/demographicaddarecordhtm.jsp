@@ -79,16 +79,17 @@
 <%@page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
 
 <%@page import="org.oscarehr.managers.PatientConsentManager" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <jsp:useBean id="apptMainBean" class="oscar.AppointmentMainBean" scope="session" />
 <%!
-	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
+	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 	ProgramManager pm = SpringUtils.getBean(ProgramManager.class);
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 	WaitingListNameDao waitingListNameDao = SpringUtils.getBean(WaitingListNameDao.class);
-	EFormDao eformDao = (EFormDao)SpringUtils.getBean("EFormDao");
-	ProgramDao programDao = (ProgramDao)SpringUtils.getBean("programDao");
+	EFormDao eformDao = (EFormDao)SpringUtils.getBean(EFormDao.class);
+	ProgramDao programDao = (ProgramDao)SpringUtils.getBean(ProgramDao.class);
 	ProgramManager2 programManager2 = SpringUtils.getBean(ProgramManager2.class);
     String privateConsentEnabledProperty = OscarProperties.getInstance().getProperty("privateConsentEnabled");
     boolean privateConsentEnabled = privateConsentEnabledProperty != null && privateConsentEnabledProperty.equals("true");
@@ -155,7 +156,7 @@
 	String today = fmt.format(new Date());
 %>
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 	<script src="${pageContext.request.contextPath}/csrfguard"></script>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -754,7 +755,7 @@ function updateResidentialProvinces(province) {
 	<% } %>
 </td></tr>
 <tr><td>
-<form method="post" id="adddemographic" name="adddemographic" action="demographicaddarecord.jsp" onsubmit="return aSubmit()">
+<form method="post" id="adddemographic" name="adddemographic" action="demographicaddarecord.jsp" onsubmit="return aSubmit()" autocomplete="off">
 <input type="hidden" name="fromAppt" value="<%=request.getParameter("fromAppt")%>">
 <input type="hidden" name="originalPage" value="<%=request.getParameter("originalPage")%>">
 <input type="hidden" name="bFirstDisp" value="<%=request.getParameter("bFirstDisp")%>">
@@ -1310,7 +1311,7 @@ function updateResidentialProvinces(province) {
 				<td align="right" id="hinLbl"><b><bean:message
 					key="demographic.demographicaddrecordhtm.formHIN" />: </b></td>
 				<td align="left" id="hinVer" >
-					<input type="text" name="hin" id="hin" onfocus="autoFillHin()" >
+					<input type="text" name="hin" id="hin" onfocus="autoFillHin()" oninput="sanitizeInput(this)">
 					<bean:message key="demographic.demographicaddrecordhtm.formVer" />:
 						<input type="text" id="ver" name="ver" value="" onBlur="upCaseCtrl(this)">
 				</td>
@@ -1490,7 +1491,7 @@ function updateResidentialProvinces(province) {
 						for (Provider p : providerDao.getActiveProvidersByRole("doctor")) {
 								String docProviderNo = p.getProviderNo();
 					%>
-					<option id="doc<%=docProviderNo%>" value="<%=docProviderNo%>"><%=Misc.getShortStr((p.getFormattedName()), "", 12)%></option>
+					<option id="doc<%=docProviderNo%>" value="<%=docProviderNo%>"><%=Encode.forHtmlContent(p.getFormattedName())%></option>
 					<%
 						}
 					%>
@@ -1503,7 +1504,7 @@ function updateResidentialProvinces(province) {
 					<%
 					for(Provider p: providerDao.getActiveProvidersByRole("nurse")) {
 %>
-					<option value="<%=p.getProviderNo()%>"><%=Misc.getShortStr( (p.getFormattedName()),"",12)%></option>
+					<option value="<%=p.getProviderNo()%>"><%=Encode.forHtmlContent(p.getFormattedName())%></option>
 					<%
   }
  
@@ -1519,7 +1520,7 @@ function updateResidentialProvinces(province) {
 					for(Provider p: providerDao.getActiveProvidersByRole("midwife")) {
 %>
 					<option value="<%=p.getProviderNo()%>">
-					<%=Misc.getShortStr( (p.getFormattedName()),"",12)%></option>
+					<%=Encode.forHtmlContent(p.getFormattedName())%></option>
 					<%
   }
  
@@ -1533,7 +1534,7 @@ function updateResidentialProvinces(province) {
 					for(Provider p: providerDao.getActiveProvidersByRole("doctor")) {
 %>
 					<option value="<%=p.getProviderNo()%>">
-					<%=Misc.getShortStr( (p.getFormattedName()),"",12)%></option>
+					<%=Encode.forHtmlContent(p.getFormattedName())%></option>
 					<%
   }
  
@@ -1544,7 +1545,7 @@ function updateResidentialProvinces(province) {
 				<td id="referralDocLbl" align="right" ><b><bean:message
 					key="demographic.demographicaddrecordhtm.formReferalDoctor" />:</b></td>
 				<td id="referralDocCell" align="left" >
-				<% if(oscarProps.getProperty("isMRefDocSelectList", "").equals("true") ) {
+				<% if("true".equals(oscarProps.getProperty("isMRefDocSelectList", "")) ) {
                                   		// drop down list
 									  Properties prop = null;
 									  Vector vecRef = new Vector();

@@ -26,11 +26,11 @@
 package oscar.oscarMDS.data;	
 	
 public class PatientInfo implements Comparable<PatientInfo> {
-	public String firstName = "",
-		          lastName = "";
-	public int    id,
-		   		  docCount = 0,
-		   		  labCount = 0;
+	private String firstName = "";
+	private String lastName = "";
+	private int id;
+	private int docCount = 0;
+	private int labCount = 0;
 	
 	@Override
 	public String toString() {
@@ -47,6 +47,31 @@ public class PatientInfo implements Comparable<PatientInfo> {
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public int getDocCount() {
 		return docCount;
 	}
@@ -57,7 +82,7 @@ public class PatientInfo implements Comparable<PatientInfo> {
 		return labCount;
 	}
 	public void setLabCount(int labCount) {
-		this.labCount = labCount;
+		this.labCount += labCount;
 	}
 	@Override
 	public int compareTo(PatientInfo that) {

@@ -43,9 +43,9 @@ import com.quatro.model.security.Secrole;
 
 public class CaseManagementIssue extends BaseObject {
 
-	private ProgramProviderDAO programProviderDao=(ProgramProviderDAO)SpringUtils.getBean("programProviderDAO");
-	private ProgramAccessDAO programAccessDao=(ProgramAccessDAO)SpringUtils.getBean("programAccessDAO");
-	private RoleProgramAccessDAO roleProgramAccessDAO=(RoleProgramAccessDAO)SpringUtils.getBean("RoleProgramAccessDAO");
+	private ProgramProviderDAO programProviderDao=(ProgramProviderDAO)SpringUtils.getBean(ProgramProviderDAO.class);
+	private ProgramAccessDAO programAccessDao=(ProgramAccessDAO)SpringUtils.getBean(ProgramAccessDAO.class);
+	private RoleProgramAccessDAO roleProgramAccessDAO=(RoleProgramAccessDAO)SpringUtils.getBean(RoleProgramAccessDAO.class);
 	
 	protected Long id;
 	protected Integer demographic_no;

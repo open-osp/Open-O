@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,8 +21,9 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.billing.CA.dao;
 
@@ -34,33 +36,9 @@ import org.oscarehr.billing.CA.model.BillActivity;
 import org.oscarehr.common.dao.AbstractDao;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class BillActivityDao extends AbstractDao<BillActivity>{
+public interface BillActivityDao extends AbstractDao<BillActivity> {
 
-	public BillActivityDao() {
-		super(BillActivity.class);
-	}
-	
-	public List<BillActivity> findCurrentByMonthCodeAndGroupNo(String monthCode, String groupNo, Date updateDateTime) {
-		Query q = entityManager.createQuery("SELECT b FROM BillActivity b WHERE b.monthCode=? AND b.groupNo=? AND b.updateDateTime > ? AND b.status != 'D' ORDER BY b.batchCount");
-		q.setParameter(1, monthCode);
-		q.setParameter(2, groupNo);
-		q.setParameter(3, updateDateTime);
-		
-		@SuppressWarnings("unchecked")
-		List<BillActivity> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<BillActivity> findCurrentByDateRange(Date startDate, Date endDate) {
-		Query q = entityManager.createQuery("SELECT b FROM BillActivity b WHERE b.updateDateTime >= ? AND  b.updateDateTime <= ? AND b.status != 'D' ORDER BY b.id DESC");
-		q.setParameter(1, startDate);
-		q.setParameter(2, endDate);
-	
-		@SuppressWarnings("unchecked")
-		List<BillActivity> results = q.getResultList();
-		
-		return results;
-	}
+	public List<BillActivity> findCurrentByMonthCodeAndGroupNo(String monthCode, String groupNo, Date updateDateTime);
+
+	public List<BillActivity> findCurrentByDateRange(Date startDate, Date endDate);
 }

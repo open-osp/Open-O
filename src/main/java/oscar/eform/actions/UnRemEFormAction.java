@@ -51,7 +51,7 @@ public class UnRemEFormAction extends Action {
     	
          String fdid = request.getParameter("fdid");
          if (!(fdid == null)) {
-        	 EFormDataDao eFormDataDao=(EFormDataDao) SpringUtils.getBean("EFormDataDao");
+        	 EFormDataDao eFormDataDao=(EFormDataDao) SpringUtils.getBean(EFormDataDao.class);
         	 EFormData eFormData=eFormDataDao.find(Integer.parseInt(fdid));
         	 eFormData.setCurrent(true);
         	 eFormDataDao.merge(eFormData);

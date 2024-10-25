@@ -25,7 +25,7 @@
 
 package org.oscarehr.common.dao.forms;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.util.SpringUtils;
 import org.springframework.stereotype.Repository;
 import oscar.form.model.FormBooleanValue;
@@ -38,7 +38,7 @@ import java.util.List;
 
 
 @Repository
-public class Rourke2017Dao extends AbstractDao<FormRourke2017> {
+public class Rourke2017Dao extends AbstractDaoImpl<FormRourke2017> {
 
     public Rourke2017Dao() {
         super(FormRourke2017.class);
@@ -65,10 +65,10 @@ public class Rourke2017Dao extends AbstractDao<FormRourke2017> {
         return form;
     }
 
-    @Override
+
     public FormRourke2017 saveEntity(FormRourke2017 form) {
         // save FormRourke2017 object
-        form = super.saveEntity(form);
+        super.saveEntity(form);
         
         // get boolean fields and persist them:
         for (FormBooleanValue value : form.getBooleanValueMap().values()) {

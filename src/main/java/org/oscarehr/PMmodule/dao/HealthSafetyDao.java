@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2005, 2009 IBM Corporation and others.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -17,48 +18,24 @@
  *
  * Contributors:
  *     <Quatro Group Software Systems inc.>  <OSCAR Team>
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
-package org.oscarehr.PMmodule.dao;
+ package org.oscarehr.PMmodule.dao;
 
-import java.util.List;
-
-import org.apache.logging.log4j.Logger;
-import org.oscarehr.PMmodule.model.HealthSafety;
-import org.oscarehr.util.MiscUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-
-public class HealthSafetyDao extends HibernateDaoSupport {
-
-    private Logger log=MiscUtils.getLogger();
-
-    public HealthSafety getHealthSafetyByDemographic(Long demographicNo) {
-        if (demographicNo == null || demographicNo.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        HealthSafety result = null;
-
-        List list = this.getHibernateTemplate().find("from HealthSafety c where c.demographicNo=? order by c.updateDate desc", demographicNo);
-        if (!list.isEmpty()) result = (HealthSafety)list.get(0);
-
-        if (log.isDebugEnabled()) {
-            log.debug("getHealthSafetyByDemographic:id=" + demographicNo + ",found=" + (result != null));
-        }
-
-        return result;
-    }
-
-    public void saveHealthSafetyByDemographic(HealthSafety healthsafety) {
-        if (healthsafety == null) {
-            throw new IllegalArgumentException();
-        }
-
-        this.getHibernateTemplate().save(healthsafety);
-
-        if (log.isDebugEnabled()) {
-            log.debug("saveHealthSafetyByDemographic:id=" + healthsafety.getId());
-        }
-    }
-
-}
+ import java.util.List;
+ 
+ import org.apache.logging.log4j.Logger;
+ import org.oscarehr.PMmodule.model.HealthSafety;
+ import org.oscarehr.util.MiscUtils;
+ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+ 
+ public interface HealthSafetyDao {
+ 
+     public HealthSafety getHealthSafetyByDemographic(Long demographicNo);
+ 
+     public void saveHealthSafetyByDemographic(HealthSafety healthsafety);
+ 
+ }
+ 

@@ -38,7 +38,7 @@ public class OtherIdManager {
 	final public static Integer APPOINTMENT = 2;
 	final public static Integer PROVIDER 	= 3;
 
-	private static OtherIdDAO otherIdDao = (OtherIdDAO) SpringUtils.getBean("otherIdDao");
+	private static OtherIdDAO otherIdDao = (OtherIdDAO) SpringUtils.getBean(OtherIdDAO.class);
 
 	public static void merge(OtherId otherId) {
 		otherIdDao.save(otherId);

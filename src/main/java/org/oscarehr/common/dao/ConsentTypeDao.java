@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -30,47 +33,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Collections;
 
-@Repository
-public class ConsentTypeDao extends AbstractDao<ConsentType>{
+public interface ConsentTypeDao extends AbstractDao<ConsentType> {
 
-	protected ConsentTypeDao() {
-		super(ConsentType.class);
-	}
-	
-	public ConsentType findConsentType(String type) {
-		String sql = "select x from "+modelClass.getSimpleName()+" x where x.type=?1 and x.active=1";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter( 1, type );
+	public ConsentType findConsentType(String type);
 
-		ConsentType consentType = getSingleResultOrNull(query);
+	public ConsentType findConsentTypeForProvider(String type, String providerNo);
 
-        return consentType;
-	}
-
-	public ConsentType findConsentTypeForProvider(String type,String providerNo) {
-		String sql = "select x from "+modelClass.getSimpleName()+" x where x.type=?1 and x.active=1 and x.providerNo = ?2";
-    		Query query = entityManager.createQuery(sql);
-    		query.setParameter( 1, type );
-    		query.setParameter(2,providerNo);
-		ConsentType consentType = getSingleResultOrNull(query);
-
-        return consentType;
-	}
-
-
-    public List<ConsentType> findAllActive()
-    {
-        Query q = entityManager.createQuery("select ct from ConsentType ct where ct.active=?1  order by ct.type asc");
-        q.setParameter(1,true);
-
-        @SuppressWarnings("unchecked")
-        List<ConsentType> result = q.getResultList();
-
-        if (result == null)
-        {
-            result = Collections.emptyList();
-        }
-
-        return result;
-    }
+	public List<ConsentType> findAllActive();
 }

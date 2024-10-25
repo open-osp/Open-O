@@ -68,7 +68,7 @@
 	
 	CaisiFormDao caisiFormDao = SpringUtils.getBean(CaisiFormDao.class);	
 	
-	OscarFormManager oscarFormManager = (OscarFormManager)SpringUtils.getBean("oscarFormManager");
+	OscarFormManager oscarFormManager = (OscarFormManager)SpringUtils.getBean(OscarFormManager.class);
 	
 	Map data = oscarFormManager.getFormReport(formId.intValue(),startDate,endDate);
 	CaisiForm form = caisiFormDao.find(formId.intValue());	

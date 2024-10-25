@@ -32,6 +32,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.dashboard.display.beans.GraphPlot;
 import org.oscarehr.managers.DashboardManager;
+import org.oscarehr.managers.DashboardManagerImpl;
 import org.oscarehr.util.MiscUtils;
 
 
@@ -63,7 +64,7 @@ public class IndicatorQueryHandler extends AbstractQueryHandler {
 		
 		List<?> results = null;
 		
-		if( DashboardManager.MULTI_THREAD_ON ) {
+		if( DashboardManagerImpl.MULTI_THREAD_ON ) {
 			results = super.execute( query );
 		} else {
 			this.setQuery( query );	

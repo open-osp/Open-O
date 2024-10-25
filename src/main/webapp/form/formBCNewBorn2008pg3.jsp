@@ -82,7 +82,7 @@
   if (request.getParameter("view") != null && request.getParameter("view").equals("1")) bView = true;
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <% response.setHeader("Cache-Control","no-cache");%>
 
 <head>

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,118 +21,25 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import org.oscarehr.common.model.SystemPreferences;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.Query;
 import java.util.*;
 
-@Repository
-@SuppressWarnings("unchecked")
-public class SystemPreferencesDao extends AbstractDao<SystemPreferences>
-{
-    public SystemPreferencesDao() { super(SystemPreferences.class); }
+public interface SystemPreferencesDao extends AbstractDao<SystemPreferences> {
 
+    <T extends Enum<T>> SystemPreferences findPreferenceByName(Enum<T> name);
 
-    public <T extends Enum<T>> SystemPreferences findPreferenceByName(Enum<T> name) {
-        return findPreferenceByName(name.name());
-    }
+    <E extends Enum<E>> List<SystemPreferences> findPreferencesByNames(Class<E> clazz);
 
-    /**
-     * DEPRECATED: use enumerator
-     */
-    private SystemPreferences findPreferenceByName(String name)
-    {
-        Query query = entityManager.createQuery("FROM SystemPreferences sp WHERE sp.name = :name");
-        query.setParameter("name", name);
+    <E extends Enum<E>> Map<String, Boolean> findByKeysAsMap(Class<E> clazz);
 
-        List<SystemPreferences> results = query.getResultList();
-        if (!results.isEmpty())
-        {
-            return results.get(0);
-        }
+    Map<String, SystemPreferences> findByKeysAsPreferenceMap(List<String> keys);
 
-        return null;
-    }
-    
-    private List<SystemPreferences> findPreferencesByNames(List<String> names) {
-        Query query = entityManager.createQuery("FROM SystemPreferences sp WHERE sp.name IN (:names)");
-        query.setParameter("names", names);
+    <T extends Enum<T>> boolean isReadBooleanPreference(Enum<T> name);
 
-        List<SystemPreferences> results = query.getResultList();
-        return results;
-    }
-
-
-    public <E extends Enum<E>> List<SystemPreferences> findPreferencesByNames(Class<E> clazz) {
-        List<String> parameters = new ArrayList<>();
-        for(Enum<E> enumValue : EnumSet.allOf(clazz)) {
-            parameters.add(enumValue.name());
-        }
-
-        return findPreferencesByNames(parameters);
-    }
-
-    public <E extends Enum<E>> Map<String, Boolean> findByKeysAsMap(Class<E> clazz) {
-        List<String> keyList = new ArrayList<>();
-        for(Enum<E> enumValue : EnumSet.allOf(clazz)) {
-            keyList.add(enumValue.name());
-        }
-        return findByKeysAsMap(keyList);
-    }
-
-    /**
-     * Gets a map of system preference values
-     * 
-     * @param keys List of preference keys to search for in the database
-     * @return Map of preference keys with their associated boolean value
-     */
-    private Map<String, Boolean> findByKeysAsMap(List<String> keys) {
-        List<SystemPreferences> preferences = findPreferencesByNames(keys);
-        Map<String, Boolean> preferenceMap = new HashMap<String, Boolean>();
-        
-        for (SystemPreferences preference : preferences) {
-            preferenceMap.put(preference.getName(), preference.getValueAsBoolean());
-        }
-        
-        return preferenceMap;
-    }
-
-    /**
-     * Gets a map of system preferences with the preference name as the key
-     * @param keys List of keys to get the preferences for
-     * @return A map of SystemPreferences with the preference name as the key
-     */
-    public Map<String, SystemPreferences> findByKeysAsPreferenceMap(List<String> keys) {
-        Map<String, SystemPreferences> preferenceMap = new HashMap<>();
-        
-        List<SystemPreferences> preferences = findPreferencesByNames(keys);
-        
-        for (SystemPreferences preference : preferences) {
-            preferenceMap.put(preference.getName(), preference);
-        }
-        
-        return preferenceMap;
-    }
-
-    public <T extends Enum<T>> boolean isReadBooleanPreference(Enum<T> name) {
-        return isReadBooleanPreference(name.name());
-    }
-    
-    private boolean isReadBooleanPreference(String name) {
-        SystemPreferences preference = findPreferenceByName(name);
-        return (preference != null && Boolean.parseBoolean(preference.getValue()));
-    }
-
-    public <T extends Enum<T>> boolean isPreferenceValueEquals(Enum<T> preferenceName, String trueValueStr) {
-        return isPreferenceValueEquals(preferenceName.name(), trueValueStr);
-    }
-
-    private boolean isPreferenceValueEquals(String preferenceName, String trueValueStr) {
-        SystemPreferences preference = findPreferenceByName(preferenceName);
-        return (preference != null && trueValueStr.equals(preference.getValue()));
-    }
+    <T extends Enum<T>> boolean isPreferenceValueEquals(Enum<T> preferenceName, String trueValueStr);
 }

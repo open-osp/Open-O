@@ -32,12 +32,14 @@ import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
 import org.oscarehr.common.model.Room;
 import org.oscarehr.util.SpringUtils;
+import org.oscarehr.common.model.Facility;
+import org.oscarehr.common.dao.FacilityDao;
+import java.util.List;
 
-//Ignored until we fix foreign keys with tests
-@Ignore
 public class RoomDaoTest extends DaoTestFixtures {
 
 	protected RoomDao dao = SpringUtils.getBean(RoomDao.class);
+	FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
 
 
 	@Before
@@ -49,6 +51,8 @@ public class RoomDaoTest extends DaoTestFixtures {
 	public void testCreate() throws Exception {
 		Room entity = new Room();
 		EntityDataGenerator.generateTestDataForModelClass(entity);
+		List<Facility> listFacility = facilityDao.findAll(true);
+		entity.setFacilityId(listFacility.get(0).getId());
 		dao.persist(entity);
 		assertNotNull(entity.getId());
 	}

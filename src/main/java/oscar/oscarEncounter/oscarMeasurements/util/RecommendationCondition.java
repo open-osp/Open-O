@@ -89,17 +89,17 @@ public class RecommendationCondition {
             }else if (toParse.indexOf("&gt;") != -1 ||  toParse.indexOf(">") != -1 ){ // greater than style
                 toParse = toParse.replaceFirst("&gt;","");
                 toParse = toParse.replaceFirst(">","");
-                int gt = Integer.parseInt(toParse.trim());
+                double gt = Double.parseDouble(toParse.trim());
                 list.add(new DSCondition("getLastDateRecordedInMonths", param, ">", ""+gt));
 
             }else if (toParse.indexOf("&lt;") != -1  ||  toParse.indexOf("<") != -1 ){ // less than style
                 toParse = toParse.replaceFirst("&lt;","");
                 toParse = toParse.replaceFirst("<","");
 
-                int lt = Integer.parseInt(toParse);
+                double lt = Double.parseDouble(toParse);
                 list.add(new DSCondition("getLastDateRecordedInMonths", param, "<=", ""+lt));
             }else if (!toParse.equals("")){ // equal style
-                int eq = Integer.parseInt(toParse.trim());
+                double eq = Double.parseDouble(toParse.trim());
                 list.add(new DSCondition("getLastDateRecordedInMonths", param, "==", ""+eq));
             }
         }else if ("lastValueAsInt".equals(type)){
@@ -114,21 +114,21 @@ public class RecommendationCondition {
             }else if (toParse.indexOf("&gt;") != -1 ||  toParse.indexOf(">") != -1 ){ // greater than style
                 toParse = toParse.replaceFirst("&gt;","");
                 toParse = toParse.replaceFirst(">","");
-                int gt = Integer.parseInt(toParse);
+                double gt = Double.parseDouble(toParse);
                 list.add(new DSCondition("getLastValueAsInt", param, ">", ""+gt));
 
             }else if (toParse.indexOf("&lt;") != -1  ||  toParse.indexOf("<") != -1 ){ // less than style
                 toParse = toParse.replaceFirst("&lt;","");
                 toParse = toParse.replaceFirst("<","");
 
-                int lt = Integer.parseInt(toParse);
+                double lt = Double.parseDouble(toParse);
                 list.add(new DSCondition("getLastValueAsInt", param, "<=", ""+lt));
             }else if (toParse.indexOf("!=") != -1 ){ // not equal style
                 toParse = toParse.replaceFirst("!=","");
-                int eq = Integer.parseInt(toParse);
+                double eq = Double.parseDouble(toParse);
                 list.add(new DSCondition("getLastValueAsInt", param, "!=", ""+eq));
             }else if (!toParse.equals("")){ // equal style
-                int eq = Integer.parseInt(toParse);
+                double eq = Double.parseDouble(toParse);
                 list.add(new DSCondition("getLastValueAsInt", param, "==", ""+eq));
             }
         }else if ("patientAge".equals(type)){

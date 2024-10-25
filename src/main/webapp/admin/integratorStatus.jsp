@@ -102,7 +102,7 @@ if(!authed) {
 	List<IntegratorFileLog> logs = integratorFileLogManager.getFileLogHistory(LoggedInInfo.getLoggedInInfoFromSession(request));
 	
 %>
-<html:html locale="true">
+<html:html lang="en">
     <head>
         <title>Integrator Status</title>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />

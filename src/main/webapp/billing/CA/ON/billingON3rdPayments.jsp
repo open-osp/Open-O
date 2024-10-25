@@ -101,12 +101,12 @@ List<String> errors = new ArrayList<String>();
 /* suppose that access is controlled by containing billingONCorrection.jsp page
 List<Site> providerSites = null;
 if(isSiteAccessPrivacy) {
-	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
 	providerSites = siteDao.getActiveSitesByProviderNo(providerNo);
 }
 List<Provider> teamProviders = null;
 if(isTeamBillingOnly || isTeamAccessPrivacy) {
-	ProviderDao providerDao = (ProviderDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("providerDao");
+	ProviderDao providerDao = (ProviderDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(ProviderDao.class);
  	teamProviders = providerDao.getActiveTeamProviders(providerNo);
 }
 */
@@ -367,7 +367,7 @@ function validateDiscountNumberic(idx) {
 </logic:present>
 </security:oscarSec>
 
-<%  BillingPaymentTypeDao paymentTypeDao = (BillingPaymentTypeDao) SpringUtils.getBean("billingPaymentTypeDao");
+<%  BillingPaymentTypeDao paymentTypeDao = (BillingPaymentTypeDao) SpringUtils.getBean(BillingPaymentTypeDao.class);;
 	BigDecimal sum = BigDecimal.valueOf(0);
 	BigDecimal balance = BigDecimal.valueOf(0);
 	int index = 0;

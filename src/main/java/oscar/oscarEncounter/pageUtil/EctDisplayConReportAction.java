@@ -46,7 +46,7 @@ import oscar.util.StringUtils;
 public class EctDisplayConReportAction extends EctDisplayAction {
     private static final String cmd = "conReport";
 
-    ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
+    ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
     DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 
  public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao, MessageResources messages) {

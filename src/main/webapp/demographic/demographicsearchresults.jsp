@@ -115,7 +115,7 @@
 	}
 
 %>
-<html:html locale="true">
+<html:html lang="en">
 	<script src="${pageContext.request.contextPath}/csrfguard"></script>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -212,9 +212,9 @@
 
 <body onLoad="setfocus()" >
 <div class="container">
-<div id="demographicSearch">
+<div id="demographicSearch" style="margin-bottom: 10px;">
 	<h2 style="margin:auto 15px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-		<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+		<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
 	</svg>Search Patient</h2>
     <a  href="javascript:void(0)" onclick="showHideItem('demographicSearch');" id="cancelButton" class="leftButton top"> <bean:message key="global.btnCancel" /> </a>
 	<%@ include file="zdemographicfulltitlesearch.jsp"%>
@@ -226,7 +226,7 @@
 
 <i><bean:message key="demographic.demographicsearchresults.msgSearchKeys" /></i> : <c:out value="${param.keyword}" />
 
-    <table id="patientResults" class="table table-condensed">
+    <table id="patientResults" class="table table-condensed table-striped table-responsive">
         <tr class="tableHeadings deep">
         
 		<% if ( fromMessenger ) {%>
@@ -277,9 +277,9 @@
                 </th>
 	</tr>
 	<%
-	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
-        OscarLogDao oscarLogDao = (OscarLogDao)SpringUtils.getBean("oscarLogDao");
-	CaseManagementManager caseManagementManager=(CaseManagementManager)SpringUtils.getBean("caseManagementManager");
+	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
+        OscarLogDao oscarLogDao = (OscarLogDao)SpringUtils.getBean(OscarLogDao.class);
+	CaseManagementManager caseManagementManager=(CaseManagementManager)SpringUtils.getBean(CaseManagementManager.class);
 	String providerNo = loggedInInfo.getLoggedInProviderNo();
 	boolean outOfDomain = true;
 	if(OscarProperties.getInstance().getProperty("ModuleNames","").indexOf("Caisi") != -1) {
@@ -453,7 +453,7 @@
 		<td class="name"><a  href="javascript:void(0)" onclick="location.href='<%= request.getContextPath() %>/PMmodule/ClientManager.do?id=<%=dem_no%>'"><%=Encode.forHtml(Misc.toUpperLowerCase(demo.getLastName()))%>, <%=Encode.forHtml(Misc.toUpperLowerCase(demo.getFirstName()))%></a></td>
 		</caisi:isModuleLoad>
 		<caisi:isModuleLoad moduleName="caisi" reverse="true">
-		<td class="name"><%=Encode.forHtml(Misc.toUpperLowerCase(demo.getLastName()+", "+Misc.toUpperLowerCase(demo.getFirstName())))%></td>
+		<td class="name"><%=Encode.forHtml(Misc.toUpperLowerCase(demo.getLastName()+", "+Misc.toUpperLowerCase(demo.getFirstName()) + " " + Misc.toUpperLowerCase(demo.getMiddleNames())))%></td>
 		</caisi:isModuleLoad>
 		<td class="chartNo"><%=Encode.forHtml(demo.getChartNo()==null||demo.getChartNo().equals("")?" ":demo.getChartNo())%></td>
 		<td class="sex"><%=demo.getSex()%></td>
@@ -479,13 +479,13 @@
   nLastPage=Integer.parseInt(strOffset)-Integer.parseInt(strLimit);
   if(nLastPage>=0) {
 %> 
-	<a href="demographiccontrol.jsp?keyword=<%=URLEncoder.encode(keyword,"UTF-8")%>&search_mode=<%=searchMode%>&displaymode=<%=displayMode%>&dboperation=<%=dboperation%>&orderby=<%=orderBy%>&limit1=<%=nLastPage%>&limit2=<%=strLimit%>&ptStatus=<%=ptStatus%>&firstPageShowIntegratedResults=<%=firstPageShowIntegratedResults%><%=nLastPage==0 && firstPageShowIntegratedResults?"&includeIntegratedResults=true":""%>">
+	<a href="demographiccontrol.jsp?keyword=<%=URLEncoder.encode(keyword,"UTF-8")%>&search_mode=<%=searchMode%>&displaymode=<%=displayMode%>&dboperation=<%=dboperation%>&orderby=<%=orderBy%>&limit1=<%=nLastPage%>&limit2=<%=strLimit%>&ptstatus=<%=ptStatus%>&firstPageShowIntegratedResults=<%=firstPageShowIntegratedResults%><%=nLastPage==0 && firstPageShowIntegratedResults?"&includeIntegratedResults=true":""%>">
 	<bean:message key="demographic.demographicsearchresults.btnLastPage" /></a> <%
   }
   if(nItems>=Integer.parseInt(strLimit)) {
       if (nLastPage>=0) {
 	%> | <%    } %> 
-	<a href="demographiccontrol.jsp?keyword=<%=URLEncoder.encode(keyword,"UTF-8")%>&search_mode=<%=searchMode%>&displaymode=<%=displayMode%>&dboperation=<%=dboperation%>&orderby=<%=orderBy%>&limit1=<%=nNextPage%>&limit2=<%=strLimit%>&ptStatus=<%=ptStatus%>&firstPageShowIntegratedResults=<%=firstPageShowIntegratedResults%>">
+	<a href="demographiccontrol.jsp?keyword=<%=URLEncoder.encode(keyword,"UTF-8")%>&search_mode=<%=searchMode%>&displaymode=<%=displayMode%>&dboperation=<%=dboperation%>&orderby=<%=orderBy%>&limit1=<%=nNextPage%>&limit2=<%=strLimit%>&ptstatus=<%=ptStatus%>&firstPageShowIntegratedResults=<%=firstPageShowIntegratedResults%>">
 	<bean:message key="demographic.demographicsearchresults.btnNextPage" /></a>
 <%
 }

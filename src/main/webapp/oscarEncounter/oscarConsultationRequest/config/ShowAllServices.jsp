@@ -45,7 +45,7 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 
 <jsp:useBean id="showAllServicesUtil" scope="session"
 	class="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConShowAllServicesUtil" />

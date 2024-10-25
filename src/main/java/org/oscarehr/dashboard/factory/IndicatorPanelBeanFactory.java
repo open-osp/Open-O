@@ -32,6 +32,7 @@ import org.oscarehr.dashboard.display.beans.IndicatorBean;
 import org.oscarehr.dashboard.display.beans.IndicatorPanelBean;
 import org.oscarehr.dashboard.handler.IndicatorTemplateXML;
 import org.oscarehr.managers.DashboardManager;
+import org.oscarehr.managers.DashboardManagerImpl;
 import org.oscarehr.util.MiscUtils;
 
 /** 
@@ -100,7 +101,7 @@ public class IndicatorPanelBeanFactory {
 					subcategory = "";
 				}
 				
-				if( DashboardManager.MULTI_THREAD_ON ) {
+				if( DashboardManagerImpl.MULTI_THREAD_ON ) {
 					// Multi-threaded method
 					indicatorPanelBean = createIndicatorPanelsWithIndicatorIds( subcategory );
 				} else {

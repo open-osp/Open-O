@@ -88,7 +88,7 @@ if (props.getProperty("pg1_lmp", "").equals("") ) 	props.setProperty("pg1_lmp", 
 if (props.getProperty("ar2_age", "").equals("") ) 	props.setProperty("ar2_age", props.getProperty("pg1_ageAtEDD", ""));
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <% response.setHeader("Cache-Control","no-cache");%>
 <head>
 <title>Antenatal Record 2</title>

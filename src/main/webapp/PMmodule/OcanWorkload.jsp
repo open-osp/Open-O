@@ -42,13 +42,13 @@
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
 <%@page import="org.oscarehr.common.model.Provider" %>
 <%
-	OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao)SpringUtils.getBean("ocanStaffFormDataDao");
-	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+	OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao)SpringUtils.getBean(OcanStaffFormDataDao.class);
+	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 	List<Provider> providers = providerDao.getActiveProviders();
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	Provider provider = loggedInInfo.getLoggedInProvider();
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
 <script src="<%=request.getContextPath() %>/js/jquery.dataTables.js" type="text/javascript"></script>

@@ -89,7 +89,7 @@ try {
             	f.setExternal(false);
             	f.setName(fs.getName());
             	
-            	FlowsheetDao flowsheetDao = (FlowsheetDao)SpringUtils.getBean("flowsheetDao");
+            	FlowsheetDao flowsheetDao = (FlowsheetDao)SpringUtils.getBean(FlowsheetDao.class);
             	flowsheetDao.persist(f);
             	MeasurementTemplateFlowSheetConfig.getInstance().reloadFlowsheets();            	
             } else {

@@ -84,7 +84,7 @@ public class CaseManagementNote extends BaseObject {
 	private Integer hourOfEncTransportationTime;
 	private Integer minuteOfEncTransportationTime;
 
-	CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean("CaseManagementNoteLinkDAO");
+	CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean(CaseManagementNoteLinkDAO.class);
 
 	private CaseManagementNoteLink cmnLink = null;
 	private boolean cmnLinkRetrieved = false;
@@ -518,6 +518,9 @@ public class CaseManagementNote extends BaseObject {
 		return isLinkTo(CaseManagementNoteLink.DOCUMENT);
 	}
 
+	public boolean isEmailNote() {
+		return isLinkTo(CaseManagementNoteLink.EMAIL);
+	}
 
     public boolean isRxAnnotation() {
 		return isLinkTo(CaseManagementNoteLink.DRUGS);

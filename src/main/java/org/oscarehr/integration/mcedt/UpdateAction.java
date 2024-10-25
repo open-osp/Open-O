@@ -58,7 +58,7 @@ public class UpdateAction extends DispatchAction {
 		
 		Detail details = (Detail) request.getSession().getAttribute(SESSION_KEY_UPLOAD_DETAILS);
 		if (details == null) {
-			EDTDelegate delegate = DelegateFactory.newDelegate();
+			EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 			try {
 				details = delegate.info(resourceIds);
 			} catch (Exception e) {
@@ -113,7 +113,7 @@ public class UpdateAction extends DispatchAction {
 		}
 		
 		try {
-			EDTDelegate delegate = DelegateFactory.newDelegate();
+			EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 			ResourceResult result = delegate.update(updates);
 			clearUpdateList(request);
 			saveMessages(request.getSession(), ActionUtils.addMessage("updateAction.sendUpdateRequest.success", McedtMessageCreator.resourceResultToString(result)));

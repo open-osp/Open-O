@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,64 +21,18 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.Date;
 import java.util.List;
-
-import org.oscarehr.common.merge.MergedDemographicTemplate;
 import org.oscarehr.common.model.Prevention;
-import org.springframework.stereotype.Repository;
 
-@Repository("preventionDao")
-public class PreventionMergedDemographicDao extends PreventionDao {
-
-	@Override
-	public List<Prevention> findByDemographicId(Integer demographicId) {
-		List<Prevention> result = super.findByDemographicId(demographicId);
-		MergedDemographicTemplate<Prevention> template = new MergedDemographicTemplate<Prevention>() {
-			@Override
-			protected List<Prevention> findById(Integer demographic_no) {
-				return PreventionMergedDemographicDao.super.findByDemographicId(demographic_no);
-			}
-		};
-		return template.findMerged(demographicId, result);
-	}
-
-	@Override
-	public List<Prevention> findByDemographicIdAfterDatetime(Integer demographicId, final Date dateTime) {
-		List<Prevention> result = super.findByDemographicIdAfterDatetime(demographicId, dateTime);
-		MergedDemographicTemplate<Prevention> template = new MergedDemographicTemplate<Prevention>() {
-			@Override
-			protected List<Prevention> findById(Integer demographic_no) {
-				return PreventionMergedDemographicDao.super.findByDemographicIdAfterDatetime(demographic_no, dateTime);
-			}
-		};
-		return template.findMerged(demographicId, result);
-	}
-
-	@Override
-	public List<Prevention> findNotDeletedByDemographicId(Integer demographicId) {
-		List<Prevention> result = super.findNotDeletedByDemographicId(demographicId);
-		MergedDemographicTemplate<Prevention> template = new MergedDemographicTemplate<Prevention>() {
-			@Override
-			protected List<Prevention> findById(Integer demographic_no) {
-				return PreventionMergedDemographicDao.super.findNotDeletedByDemographicId(demographic_no);
-			}
-		};
-		return template.findMerged(demographicId, result);
-	}
-
-	@Override
-	public List<Prevention> findByTypeAndDemoNo(final String preventionType, Integer demoNo) {
-		List<Prevention> result = super.findByTypeAndDemoNo(preventionType, demoNo);
-		MergedDemographicTemplate<Prevention> template = new MergedDemographicTemplate<Prevention>() {
-			@Override
-			protected List<Prevention> findById(Integer demographic_no) {
-				return PreventionMergedDemographicDao.super.findByTypeAndDemoNo(preventionType, demographic_no);
-			}
-		};
-		return template.findMerged(demoNo, result);
-	}
+public interface PreventionMergedDemographicDao {
+    List<Prevention> findByDemographicId(Integer demographicId);
+    List<Prevention> findByDemographicIdAfterDatetime(Integer demographicId, final Date dateTime);
+    List<Prevention> findNotDeletedByDemographicId(Integer demographicId);
+    List<Prevention> findByTypeAndDemoNo(final String preventionType, Integer demoNo);
 }

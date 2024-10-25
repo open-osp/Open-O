@@ -30,34 +30,21 @@
 
 package oscar.eform;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.util.MiscUtils;
+import oscar.eform.actions.DisplayImageAction;
+import oscar.eform.data.EForm;
+import oscar.eform.upload.ImageUploadAction;
+
+import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import org.apache.logging.log4j.Logger;
-import org.oscarehr.util.MiscUtils;
-
-import oscar.eform.actions.DisplayImageAction;
-import oscar.eform.data.EForm;
-import oscar.eform.upload.ImageUploadAction;
 
 /**
  *

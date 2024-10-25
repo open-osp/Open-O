@@ -716,6 +716,21 @@ function init() {
         .ui-widget-content {
             border:none !important;
         }
+
+		/* For checkmark image underline */
+		.checkmark-img-wrapper {
+			position: relative;
+			cursor: pointer;
+		}
+		.checkmark-img-wrapper:after {
+			content: '';
+			position: absolute;
+			bottom: 2px;
+			left: 6px;
+			width: 10px;
+			height: 1px;
+			background-color: black;
+		}
 	</style>
 </head>
 <body onload="init()">
@@ -783,6 +798,34 @@ function init() {
             event.preventDefault();
         }
     }
+
+	function selectAllOkRadioButtons(column) {
+		const columnIndex = jQuery(column).index() + 1;
+		let columnCellCount = 0;
+		for (let i = 0; i < columnIndex; i++) {
+			const prevColspan = parseInt(jQuery(column).prevAll().eq(i).attr('colspan')) || 1;
+			columnCellCount += prevColspan;
+		}
+
+		jQuery(column).closest('table').find('tbody tr').each(function() {
+			let colCount = 0;
+			jQuery(this).find('td').each(function() {
+				const colspan = jQuery(this).attr('colspan');
+				if (colspan === undefined || colspan === false) {
+					colCount += 1;
+				} else {
+					colCount += parseInt(colspan);
+				}
+				if (colCount >= columnCellCount) {
+					jQuery(this).find('input[type="radio"][id$="Ok"]').each(function() {
+						jQuery(this).prop('checked', true);
+						if (typeof jQuery(this).attr('onclick') !== 'undefined') { jQuery(this).click(); }
+					});
+					return false; // Break out of the loop
+				}
+			});
+		});
+	}
 </script>
 </body>
 </html>

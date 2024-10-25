@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,22 +20,14 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import org.oscarehr.common.model.FacilityDemographicPrimaryKey;
 import org.oscarehr.common.model.IntegratorConsentComplexExitInterview;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class IntegratorConsentComplexExitInterviewDao extends AbstractDao<IntegratorConsentComplexExitInterview> {
-
-	public IntegratorConsentComplexExitInterviewDao() {
-		super(IntegratorConsentComplexExitInterview.class);
-	}
-	
-    public IntegratorConsentComplexExitInterview find(FacilityDemographicPrimaryKey id) {
-        return(entityManager.find(IntegratorConsentComplexExitInterview.class, id));
-    }
-    
+public interface IntegratorConsentComplexExitInterviewDao extends AbstractDao<IntegratorConsentComplexExitInterview> {
+    IntegratorConsentComplexExitInterview find(FacilityDemographicPrimaryKey id);
 }

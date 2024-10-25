@@ -39,7 +39,7 @@ import oscar.util.UtilXML;
 
 public class EctImmConfigData {
 
-	private ConfigImmunizationDao configImmunizationDao = (ConfigImmunizationDao)SpringUtils.getBean("configImmunizationDao");
+	private ConfigImmunizationDao configImmunizationDao = (ConfigImmunizationDao)SpringUtils.getBean(ConfigImmunizationDao.class);
 
 	public String getImmunizationConfig() {
 

@@ -22,8 +22,8 @@
  * Ontario, Canada
  */
 
-
 package oscar.oscarEncounter.oscarMeasurements.util;
+
 //used by eforms for writing measurements
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +35,7 @@ import org.apache.commons.validator.GenericValidator;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.oscarehr.common.dao.MeasurementDao;
-import org.oscarehr.common.dao.MeasurementDao.SearchCriteria;
+import org.oscarehr.common.dao.MeasurementDaoImpl.SearchCriteria;
 import org.oscarehr.common.dao.MeasurementTypeDao;
 import org.oscarehr.common.model.Measurement;
 import org.oscarehr.common.model.MeasurementType;
@@ -47,28 +47,32 @@ import oscar.util.ConversionUtils;
 import oscar.util.UtilDateUtilities;
 
 public class WriteNewMeasurements {
-	
-	private static MeasurementTypeDao measurementTypeDao = SpringUtils.getBean(MeasurementTypeDao.class);
-	private static MeasurementDao dao = SpringUtils.getBean(MeasurementDao.class);
 
-    public static ActionMessages addMeasurements(ArrayList names, ArrayList values, String demographicNo, String providerNo) {
-            //must be called on the same eform object because it retrieves some of its properties
+    private static MeasurementTypeDao measurementTypeDao = SpringUtils.getBean(MeasurementTypeDao.class);
+    private static MeasurementDao dao = SpringUtils.getBean(MeasurementDao.class);
+
+    public static ActionMessages addMeasurements(ArrayList names, ArrayList values, String demographicNo,
+            String providerNo) {
+        // must be called on the same eform object because it retrieves some of its
+        // properties
         Vector measures = new Vector();
-        for (int i=0; i<names.size(); i++) {
-            if ((values.get(i) == null) || ((String) values.get(i)).equals("")) continue;
+        for (int i = 0; i < names.size(); i++) {
+            if ((values.get(i) == null) || ((String) values.get(i)).equals(""))
+                continue;
             String name = (String) names.get(i);
             int typeStart = name.indexOf("m$");
             int fieldStart = name.indexOf("#");
-            if ((typeStart < 0) || (fieldStart < 0)) continue;
+            if ((typeStart < 0) || (fieldStart < 0))
+                continue;
             typeStart += 2;
             fieldStart++;
 
-            String type = name.substring(typeStart, fieldStart-1);
+            String type = name.substring(typeStart, fieldStart - 1);
             String field = name.substring(fieldStart);
-            //--------type (i.e. vital signs) and field (i.e. BP) are extracted
+            // --------type (i.e. vital signs) and field (i.e. BP) are extracted
             int index;
-            index = getMeasurement(measures, type);  //checks if exists in our ArrayList
-            
+            index = getMeasurement(measures, type); // checks if exists in our ArrayList
+
             if (index >= 0) {
                 Hashtable curmeasure = (Hashtable) measures.get(index);
                 curmeasure.put(field, values.get(i));
@@ -79,49 +83,50 @@ public class WriteNewMeasurements {
                 measures.addElement(measure);
             }
         }
-        //--------All measurement values are organized in Hashtables in an arraylist
-        //--------validation......
+        // --------All measurement values are organized in Hashtables in an arraylist
+        // --------validation......
         preProcess(measures);
         ActionMessages errors = new ActionMessages();
-        //errors.add("value",
-           //new ActionError("errors.range", "value", "2", "3"));
+        // errors.add("value",
+        // new ActionError("errors.range", "value", "2", "3"));
         errors = validate(measures, demographicNo);
         if (errors.isEmpty()) {
             write(measures, demographicNo, providerNo);
         }
         return errors;
     }
-    
+
     static private int getMeasurement(Vector measures, String type) {
-        for (int i=0; i<measures.size(); i++) {
+        for (int i = 0; i < measures.size(); i++) {
             Hashtable curmeasure = (Hashtable) measures.get(i);
-            if (((String)curmeasure.get("type")).equals(type)) {
+            if (((String) curmeasure.get("type")).equals(type)) {
                 return i;
             }
         }
         return -1;
     }
+
     static private void preProcess(Vector measures) {
-        //fills in required values
-       
-        for (int i=0; i<measures.size(); i++) {
+        // fills in required values
+
+        for (int i = 0; i < measures.size(); i++) {
             Hashtable curmeasure = (Hashtable) measures.get(i);
             String type = (String) curmeasure.get("type");
-            String measuringInst = (String)curmeasure.get("measuringInstruction");
-            String comments = (String)curmeasure.get("comments");
-            String dateObserved = (String)curmeasure.get("dateObserved");
+            String measuringInst = (String) curmeasure.get("measuringInstruction");
+            String comments = (String) curmeasure.get("comments");
+            String dateObserved = (String) curmeasure.get("dateObserved");
             java.util.Date now = new Date();
             String dateEntered = UtilDateUtilities.DateToString(now, "yyyy-MM-dd HH:mm:ss");
             String sql;
             if (measuringInst == null || measuringInst.equals("")) {
-            	List<MeasurementType> tmp = measurementTypeDao.findByType(type);
-            	if(tmp.size() > 0) {
-            		 measuringInst = tmp.get(0).getMeasuringInstruction();
-                     curmeasure.put("measuringInstruction", measuringInst);
-            	} else {            		 
-                     continue;
-            	}
-            
+                List<MeasurementType> tmp = measurementTypeDao.findByType(type);
+                if (tmp.size() > 0) {
+                    measuringInst = tmp.get(0).getMeasuringInstruction();
+                    curmeasure.put("measuringInstruction", measuringInst);
+                } else {
+                    continue;
+                }
+
             }
             if (comments == null) {
                 curmeasure.put("comments", "");
@@ -131,15 +136,15 @@ public class WriteNewMeasurements {
             }
             curmeasure.put("dateEntered", dateEntered);
         }
-       
+
     }
-    
+
     static private ActionMessages validate(Vector measures, String demographicNo) {
         ActionMessages errors = new ActionMessages();
         EctValidation ectValidation = new EctValidation();
         List<Validations> vs;
         boolean valid = true;
-        for (int i=0; i<measures.size(); i++) {
+        for (int i = 0; i < measures.size(); i++) {
             Hashtable measure = (Hashtable) measures.get(i);
             String inputType = (String) measure.get("type");
             String inputValue = (String) measure.get("value");
@@ -161,59 +166,59 @@ public class WriteNewMeasurements {
             vs = ectValidation.getValidationType(inputType, mInstrc);
             regCharExp = ectValidation.getRegCharacterExp();
             if (!vs.isEmpty()) {
-    			Validations v = vs.iterator().next();
-    			dMax = v.getMaxValue();
-    			dMin = v.getMinValue();
-    			iMax = v.getMaxLength();
-    			iMin = v.getMinLength();
-    			regExp = v.getRegularExp();
-    		}
-            else {
-                //if type with instruction does not exist
-                errors.add(inputType, 
-                new ActionMessage("errors.oscarEncounter.Measurements.cannotFindType", inputType, mInstrc));
-                valid=false;
+                Validations v = vs.iterator().next();
+                dMax = v.getMaxValue();
+                dMin = v.getMinValue();
+                iMax = v.getMaxLength();
+                iMin = v.getMinLength();
+                regExp = v.getRegularExp();
+            } else {
+                // if type with instruction does not exist
+                errors.add(inputType,
+                        new ActionMessage("errors.oscarEncounter.Measurements.cannotFindType", inputType, mInstrc));
+                valid = false;
                 continue;
             }
 
-            if(!ectValidation.isInRange(dMax, dMin, inputValue)){
+            if (!ectValidation.isInRange(dMax, dMin, inputValue)) {
                 errors.add(inputType,
-                new ActionMessage("errors.range", inputType, Double.toString(dMin), Double.toString(dMax)));
-                valid=false;
+                        new ActionMessage("errors.range", inputType, Double.toString(dMin), Double.toString(dMax)));
+                valid = false;
             }
-            if(!ectValidation.maxLength(iMax, inputValue)){
+            if (!ectValidation.maxLength(iMax, inputValue)) {
                 errors.add(inputType,
-                new ActionMessage("errors.maxlength", inputType, Integer.toString(iMax)));
-                valid=false;
+                        new ActionMessage("errors.maxlength", inputType, Integer.toString(iMax)));
+                valid = false;
             }
-            if(!ectValidation.minLength(iMin, inputValue)){
+            if (!ectValidation.minLength(iMin, inputValue)) {
                 errors.add(inputType,
-                new ActionMessage("errors.minlength", inputType, Integer.toString(iMin)));
-                valid=false;
+                        new ActionMessage("errors.minlength", inputType, Integer.toString(iMin)));
+                valid = false;
             }
-            if(!ectValidation.matchRegExp(regExp, inputValue)){
+            if (!ectValidation.matchRegExp(regExp, inputValue)) {
                 errors.add(inputType,
-                new ActionMessage("errors.invalid", inputType));
-                valid=false;
+                        new ActionMessage("errors.invalid", inputType));
+                valid = false;
             }
-            if(!ectValidation.isValidBloodPressure(regExp, inputValue)){
+            if (!ectValidation.isValidBloodPressure(regExp, inputValue)) {
                 errors.add(inputType,
-                new ActionMessage("error.bloodPressure"));
-                valid=false;
+                        new ActionMessage("error.bloodPressure"));
+                valid = false;
             }
-            if(!ectValidation.isDate(dateObserved)&&inputValue.compareTo("")!=0){
+            if (!ectValidation.isDate(dateObserved) && inputValue.compareTo("") != 0) {
                 errors.add(inputType,
-                new ActionMessage("errors.invalidDate", inputType));
-                valid=false;
+                        new ActionMessage("errors.invalidDate", inputType));
+                valid = false;
             }
-            
-            if (!valid) continue;
+
+            if (!valid)
+                continue;
             inputValue = org.apache.commons.lang.StringEscapeUtils.escapeSql(inputValue);
             inputType = org.apache.commons.lang.StringEscapeUtils.escapeSql(inputType);
             mInstrc = org.apache.commons.lang.StringEscapeUtils.escapeSql(mInstrc);
             comments = org.apache.commons.lang.StringEscapeUtils.escapeSql(comments);
 
-            //Find if the same data has already been entered into the system
+            // Find if the same data has already been entered into the system
             MeasurementDao dao = SpringUtils.getBean(MeasurementDao.class);
             SearchCriteria sc = new SearchCriteria();
             sc.setDemographicNo(demographicNo);
@@ -222,21 +227,20 @@ public class WriteNewMeasurements {
             sc.setComments(comments);
             sc.setDateObserved(ConversionUtils.fromDateString(dateObserved));
             List<Measurement> ms = dao.find(sc);
-            
-            if(!ms.isEmpty()) {
+
+            if (!ms.isEmpty()) {
                 measures.remove(i);
                 i--;
                 continue;
             }
         }
-        
-        return errors;   
+
+        return errors;
     }
 
     static public void write(Vector measures, String demographicNo, String providerNo) {
-       
-            
-        for (int i=0; i<measures.size(); i++) {
+
+        for (int i = 0; i < measures.size(); i++) {
             Hashtable measure = (Hashtable) measures.get(i);
 
             String inputValue = (String) measure.get("value");
@@ -245,7 +249,7 @@ public class WriteNewMeasurements {
             String comments = (String) measure.get("comments");
             String dateObserved = (String) measure.get("dateObserved");
             String dateEntered = (String) measure.get("dateEntered");
-            //write....
+            // write....
             Measurement m = new Measurement();
             m.setType(inputType);
             m.setDemographicId(Integer.parseInt(demographicNo));
@@ -255,19 +259,19 @@ public class WriteNewMeasurements {
             m.setComments(comments);
             m.setDateObserved(ConversionUtils.fromTimestampString(dateObserved));
             dao.persist(m);
-           
+
         }
-        
+
     }
-    
-    static public void write(Hashtable measure, String demographicNo, String providerNo) { 
+
+    static public void write(Hashtable measure, String demographicNo, String providerNo) {
         String inputValue = (String) measure.get("value");
         String inputType = (String) measure.get("type");
         String mInstrc = (String) measure.get("measuringInstruction");
         String comments = (String) measure.get("comments");
         String dateObserved = (String) measure.get("dateObserved");
         String dateEntered = (String) measure.get("dateEntered");
-        //write....
+        // write....
         Measurement m = new Measurement();
         m.setType(inputType);
         m.setDemographicId(Integer.parseInt(demographicNo));
@@ -278,15 +282,16 @@ public class WriteNewMeasurements {
         m.setDateObserved(ConversionUtils.fromTimestampString(dateObserved));
         dao.persist(m);
     }
-    
-     public void write(final String followUpType, final String followUpValue, final String demographicNo, final String providerNo,final java.util.Date dateObserved,final String comment ) {        
+
+    public void write(final String followUpType, final String followUpValue, final String demographicNo,
+            final String providerNo, final java.util.Date dateObserved, final String comment) {
         Hashtable measure = new Hashtable();
-        measure.put("value",followUpValue);
-        measure.put("type",followUpType);
-        measure.put("measuringInstruction","");
-        measure.put("comments",  comment == null ? "":comment  );
-        measure.put("dateObserved",UtilDateUtilities.DateToString(dateObserved, "yyyy-MM-dd HH:mm:ss"));
-        measure.put("dateEntered",UtilDateUtilities.DateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
-        write(measure,demographicNo,providerNo);
+        measure.put("value", followUpValue);
+        measure.put("type", followUpType);
+        measure.put("measuringInstruction", "");
+        measure.put("comments", comment == null ? "" : comment);
+        measure.put("dateObserved", UtilDateUtilities.DateToString(dateObserved, "yyyy-MM-dd HH:mm:ss"));
+        measure.put("dateEntered", UtilDateUtilities.DateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
+        write(measure, demographicNo, providerNo);
     }
 }

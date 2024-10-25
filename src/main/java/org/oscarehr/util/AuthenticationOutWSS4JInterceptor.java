@@ -27,7 +27,7 @@ import java.util.HashMap;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
-import org.apache.ws.security.WSPasswordCallback;
+import org.apache.wss4j.common.ext.WSPasswordCallback;
 
 public class AuthenticationOutWSS4JInterceptor extends WSS4JOutInterceptor implements CallbackHandler {
     private String password = null;

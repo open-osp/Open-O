@@ -38,7 +38,7 @@
 %>
 
 <%@page import="org.oscarehr.common.model.Site"%>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Clinic</title>

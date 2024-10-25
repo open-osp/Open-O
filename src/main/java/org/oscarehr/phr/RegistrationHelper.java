@@ -56,9 +56,9 @@ import org.oscarehr.myoscar_server.ws.RelationshipTransfer4;
 public final class RegistrationHelper {
 	private static final String MYOSCAR_REGISTRATION_DEFAULTS_SESSION_KEY = "MYOSCAR_REGISTRATION_DEFAULTS";
 
-	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
-	private static PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean("propertyDao");
+	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
+	private static PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean(PropertyDao.class);
 	private static Random random = new Random();
 
 	public static String getDefaultUserName(int demographicId) {

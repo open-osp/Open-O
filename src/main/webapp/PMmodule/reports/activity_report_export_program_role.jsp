@@ -44,7 +44,7 @@
     	for(String programId : programIds )
     	programIdsString.add(programId);
     }
-    ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
+    ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
     if(functionalCentreIds!=null) {
 	    for(String functionalCentreId : functionalCentreIds) {
 	    	List<Program> programList = programDao.getProgramsByFacilityIdAndFunctionalCentreId(loggedInInfo.getCurrentFacility().getId(), functionalCentreId);

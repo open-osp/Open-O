@@ -48,10 +48,10 @@ public class MigrateRelationshipsToContactsHelper {
 	    
 	    for(Relationships relationship : relationshipsDao.findAll()) {
 	    	DemographicContact dc = new DemographicContact();
-	    	
+
 	    	dc.setCreated(relationship.getCreationDate());
 	    	dc.setCreator(relationship.getCreator());
-	    	dc.setDeleted(relationship.getDeleted() != null  && "1".equals(relationship.getDeleted())? true : false);
+	    	dc.setDeleted(relationship.isDeleted());
 	    	dc.setDemographicNo(relationship.getDemographicNo());
 	    	dc.setRole(relationship.getRelation());
 	    	dc.setContactId(String.valueOf(relationship.getRelationDemographicNo()));
@@ -63,7 +63,7 @@ public class MigrateRelationshipsToContactsHelper {
 	    	dc.setType(DemographicContact.TYPE_DEMOGRAPHIC);
 	    	dc.setCategory(DemographicContact.CATEGORY_PERSONAL);
 	    	dc.setConsentToContact(true);
-	    	
+
 	    	demographicContactDao.persist(dc);
 	    	
 	    	LogAction.addLog(loggedInInfo, "MIGRATION", "NewContacts", relationship.getId() + "->" + dc.getId(), String.valueOf(dc.getDemographicNo()), "");

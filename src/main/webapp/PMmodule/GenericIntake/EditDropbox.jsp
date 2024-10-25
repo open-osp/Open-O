@@ -29,7 +29,7 @@
 	import="java.util.*,org.oscarehr.PMmodule.dao.*,org.oscarehr.PMmodule.service.*,org.oscarehr.PMmodule.model.*,org.springframework.web.context.support.*,org.springframework.web.context.*"%>
 <%
     WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean("genericIntakeManager");
+    GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean(GenericIntakeManager.class);
     IntakeNode dbNode = (IntakeNode) session.getAttribute("dropboxNode");
     Integer lastTemplateId = (Integer) session.getAttribute("lastTemplateId");
     Integer lastElementId = (Integer) session.getAttribute("lastElementId");

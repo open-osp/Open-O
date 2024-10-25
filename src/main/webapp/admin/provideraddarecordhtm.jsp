@@ -98,7 +98,7 @@
 		isSiteAccessPrivacy=true;
 	%>
 </security:oscarSec>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.9.1.js"></script>
@@ -218,7 +218,7 @@ jQuery(document).ready( function() {
 		</td>
 		<td>
 <%
-	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
 List<Site> sites = ( isSiteAccessPrivacy ? siteDao.getActiveSitesByProviderNo(curProvider_no) : siteDao.getAllActiveSites());
 for (int i=0; i<sites.size(); i++) {
 %>
@@ -411,7 +411,7 @@ for (int i=0; i<sites.size(); i++) {
 			<td colspan="3">
 			<select name="xml_p_nbr">
 			<%
-				ClinicNbrDao clinicNbrDAO = (ClinicNbrDao)SpringUtils.getBean("clinicNbrDao");
+				ClinicNbrDao clinicNbrDAO = (ClinicNbrDao)SpringUtils.getBean(ClinicNbrDao.class);
 					List<ClinicNbr> nbrList = clinicNbrDAO.findAll();
 					Iterator<ClinicNbr> nbrIter = nbrList.iterator();
 					while (nbrIter.hasNext()) {

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,33 +20,14 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.CdsHospitalisationDays;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class CdsHospitalisationDaysDao extends AbstractDao<CdsHospitalisationDays> {
-
-	public CdsHospitalisationDaysDao() {
-		super(CdsHospitalisationDays.class);
-	}
-	
-	public List<CdsHospitalisationDays> findByClientId(Integer clientId)
-	{
-		String sqlCommand = "select x from "+modelClass.getSimpleName()+" x where x.clientId=?1";
-
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, clientId);
-
-		@SuppressWarnings("unchecked")
-		List<CdsHospitalisationDays> results=query.getResultList();
-		
-		return (results);		
-	}
+public interface CdsHospitalisationDaysDao extends AbstractDao<CdsHospitalisationDays> {
+	List<CdsHospitalisationDays> findByClientId(Integer clientId);
 }

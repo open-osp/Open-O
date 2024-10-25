@@ -37,13 +37,21 @@ import org.oscarehr.dashboard.query.RangeInterface;
 import org.oscarehr.dashboard.query.RangeInterface.Limit;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.SessionFactory;
 
 @Service
 public abstract class AbstractQueryHandler extends HibernateDaoSupport {
 	
 	private static Logger logger = MiscUtils.getLogger();
+	public SessionFactory sessionFactory;
+
+	@Autowired
+    public void setSessionFactoryOverride(SessionFactory sessionFactory) {
+        super.setSessionFactory(sessionFactory);
+    }
 
 	private static final String PLACE_HOLDER_PATTERN = "(\\$){1}(\\{){1}( )*##( )*(\\}){1}";
 	private static final String COMMENT_BLOCK_PATTERN = "/\\*(?:.|[\\n\\r])*?\\*/";
@@ -72,7 +80,8 @@ public abstract class AbstractQueryHandler extends HibernateDaoSupport {
 		
 		setResultList( null );
 		
-		Session session = getSession();
+		//Session session = getSession();
+		Session session = sessionFactory.getCurrentSession();
 		SQLQuery sqlQuery = session.createSQLQuery( query );
 		List<?> results = sqlQuery.setResultTransformer( Criteria.ALIAS_TO_ENTITY_MAP ).list();		
 
@@ -83,7 +92,8 @@ public abstract class AbstractQueryHandler extends HibernateDaoSupport {
 		// defined in the securityInfoManager object.
 		
 		setResultList( results );			
-		releaseSession( session );
+		//releaseSession( session );
+		session.close();
 
 		return results;
 	}

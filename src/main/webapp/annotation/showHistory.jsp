@@ -49,7 +49,7 @@
 <%
     HttpSession se = request.getSession();
     WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(se.getServletContext());
-    CaseManagementManager cmm = (CaseManagementManager) ctx.getBean("caseManagementManager");
+    CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
     
     String display = request.getParameter("display");
     String uuid = request.getParameter("uuid");

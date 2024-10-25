@@ -25,27 +25,17 @@
 
 package oscar.oscarRx.pageUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.Allergy;
 import org.oscarehr.phr.model.PHRMedication;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
-
 import oscar.OscarProperties;
-import oscar.oscarRx.data.RxAllergyWarningWorker;
-import oscar.oscarRx.data.RxDrugData;
-import oscar.oscarRx.data.RxInteractionData;
-import oscar.oscarRx.data.RxPatientData;
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.*;
+
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RxSessionBean  implements java.io.Serializable {
 	private static final Logger logger=MiscUtils.getLogger();
@@ -329,18 +319,26 @@ public class RxSessionBean  implements java.io.Serializable {
     }
 
     public void addAllergyWarnings(String atc,Allergy[] allergy){
-       allergyWarnings.put(atc, allergy);
+        if(atc != null && ! atc.isEmpty()) {
+            allergyWarnings.put(atc, allergy);
+        }
     }
 
     public void addMissingAllergyWarnings(String atc,Allergy[] allergy){
-        missingAllergyWarnings.put(atc, allergy);
+        if(atc != null && ! atc.isEmpty()) {
+            missingAllergyWarnings.put(atc, allergy);
+        }
      }
 
     public void addToWorkingAllergyWarnings(String atc,RxAllergyWarningWorker worker){
-       workingAllergyWarnings.put(atc,worker);
+        if(atc != null && ! atc.isEmpty()) {
+            workingAllergyWarnings.put(atc, worker);
+        }
     }
     public void removeFromWorkingAllergyWarnings(String atc){
-       workingAllergyWarnings.remove(atc);
+        if(atc != null && ! atc.isEmpty()) {
+            workingAllergyWarnings.remove(atc);
+        }
     }
 
 

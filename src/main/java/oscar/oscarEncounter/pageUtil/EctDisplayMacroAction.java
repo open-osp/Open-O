@@ -87,7 +87,7 @@ public class EctDisplayMacroAction extends EctDisplayAction {
     Dao.setRightHeadingID(cmd); //no menu so set div id to unique id for this action
         
 
-    MacroDao shDao = (MacroDao)SpringUtils.getBean("MacroDAO");
+    MacroDao shDao = (MacroDao)SpringUtils.getBean(MacroDao.class);
     List<Macro> shs = shDao.getAll();
 
     for(Macro sh:shs) {

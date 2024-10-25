@@ -25,13 +25,6 @@
 
 package oscar.oscarEncounter.pageUtil;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.util.MessageResources;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
@@ -40,11 +33,16 @@ import org.oscarehr.caisi_integrator.ws.CachedDemographicDrug;
 import org.oscarehr.provider.web.CppPreferencesUIBean;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
-
 import oscar.OscarProperties;
 import oscar.oscarRx.data.RxPrescriptionData.Prescription;
 import oscar.util.DateUtils;
 import oscar.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -142,17 +140,6 @@ public class EctDisplayRxAction extends EctDisplayAction {
             }
 
             NavBarDisplayDAO.Item item = NavBarDisplayDAO.Item();
-
-            String styleColor = "";
-            if (drug.isCurrent() && (drug.getEndDate().getTime() - now <= month)) {
-                styleColor="style=\"color:orange;font-weight:bold;\"";
-            }else if (drug.isCurrent() )  {
-                styleColor="style=\"color:blue;\"";
-            }else if (drug.isLongTerm() )  {
-                styleColor="style=\"color:grey;\"";
-            }else
-                continue;
-
             date = drug.getRxDate();
             serviceDateStr = DateUtils.formatDate(date, request.getLocale());
 
@@ -205,7 +192,6 @@ public class EctDisplayRxAction extends EctDisplayAction {
             item.setURL("return false;");
             Dao.addItem(item);
         }
-        //Dao.sortItems(NavBarDisplayDAO.DATESORT_ASC);
 
         return true;
         }

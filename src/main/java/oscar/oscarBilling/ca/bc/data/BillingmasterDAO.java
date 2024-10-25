@@ -54,7 +54,7 @@ import oscar.util.ConversionUtils;
 public class BillingmasterDAO {
 	private static Logger log = MiscUtils.getLogger();
 
-	@PersistenceContext
+	@PersistenceContext(unitName = "entityManagerFactory")
 	protected EntityManager entityManager = null;
 
 	/** Creates a new instance of BillingmasterDAO */
@@ -249,19 +249,16 @@ public class BillingmasterDAO {
 		return query.getResultList();
     }
 	
-	/*
-	 * Yes, this sucks, but it's only used in one place, and I can't figure out a good way to deal with it right now.
-	 */
 	public List<Object[]> select_user_bill_report_wcb(Integer billingMasterNo) {
 		Query q = entityManager.createNativeQuery(" SELECT b.demographic_no, b.billingmaster_no, d.first_name, d.last_name, d.address, d.city, d.province, d.postal,"+
-				" d.hin, d.month_of_birth, d.date_of_birth, d.year_of_birth, b.practitioner_no, b.billing_code, w.bill_amount, b.billing_unit, b.service_date,"+
-				" b.billing_no, t.t_dataseq,  w.w_servicelocation, w.w_icd9, w.w_reporttype, w.w_mname, w.w_gender, w.w_doi, w.w_area, w.w_phone, w.w_empname, "+
-				"w.w_emparea, w.w_empphone,w.w_wcbno, w.w_opaddress,w.w_opcity,w.w_rphysician,w.w_duration,w.w_ftreatment,w.w_problem,w.w_servicedate,"+
-				"w.w_diagnosis, w.w_icd9,w.w_bp,w.w_side,w.w_noi,w.w_work,w.w_workdate,w.w_clinicinfo,w.w_capability,w.w_capreason,w.w_estimate,w.w_rehab,"+
-				"w.w_rehabtype,w.w_estimatedate,w.w_tofollow,w.w_wcbadvisor,w.w_feeitem,w.w_extrafeeitem,b.billingstatus,w.formNeeded,w.provider_no,w.w_payeeno, w.w_pracno "+
-				" FROM billingmaster b LEFT JOIN teleplanC12  t ON t.t_officefolioclaimno=b.billingmaster_no, demographic d , wcb w "+
-				"WHERE b.demographic_no=d.demographic_no AND b.billing_no=w.billing_no AND b.billingmaster_no=?");
-		
+            " d.hin, d.month_of_birth, d.date_of_birth, d.year_of_birth, b.practitioner_no, b.billing_code, w.bill_amount, b.billing_unit, b.service_date,"+
+            " b.billing_no, t.t_dataseq,  w.w_servicelocation, w.w_icd9 AS w_icd9_1, w.w_reporttype, w.w_mname, w.w_gender, w.w_doi, w.w_area, w.w_phone, w.w_empname, "+
+            "w.w_emparea, w.w_empphone, w.w_wcbno, w.w_opaddress, w.w_opcity, w.w_rphysician, w.w_duration, w.w_ftreatment, w.w_problem, w.w_servicedate,"+
+            "w.w_diagnosis, w.w_icd9 AS w_icd9_2, w.w_bp, w.w_side, w.w_noi, w.w_work, w.w_workdate, w.w_clinicinfo, w.w_capability, w.w_capreason, w.w_estimate, w.w_rehab,"+
+            "w.w_rehabtype, w.w_estimatedate, w.w_tofollow, w.w_wcbadvisor, w.w_feeitem, w.w_extrafeeitem, b.billingstatus, w.formNeeded, w.provider_no, w.w_payeeno, w.w_pracno "+
+            " FROM billingmaster b LEFT JOIN teleplanC12  t ON t.t_officefolioclaimno=b.billingmaster_no, demographic d , wcb w "+
+            "WHERE b.demographic_no=d.demographic_no AND b.billing_no=w.billing_no AND b.billingmaster_no=?");
+
 		q.setParameter(1, billingMasterNo);
 		
 		@SuppressWarnings("unchecked")
@@ -272,7 +269,7 @@ public class BillingmasterDAO {
 	
 	public List<Billing> search_teleplanbill(Integer billingmasterNo) {
 		Query q = entityManager.createQuery("select b from Billing b, Billingmaster bm where b.id= bm.billingNo and bm.billingmasterNo=?");
-		q.setParameter(1, billingmasterNo);
+		q.setParameter(0, billingmasterNo);
 		
 		@SuppressWarnings("unchecked")
 		List<Billing> results = q.getResultList();
@@ -307,7 +304,7 @@ public class BillingmasterDAO {
 
     public List<Object[]> getRecentReferralDoctors(Integer demographicNo) {
         Query query = entityManager.createQuery("SELECT referralNo1, referralNo2 FROM Billingmaster WHERE demographic_no = ? AND (referralNo1!='' OR referralNo2!='') ORDER BY billingmasterNo DESC");
-        query.setParameter(1, demographicNo);
+        query.setParameter(0, demographicNo);
         return query.setMaxResults(3).getResultList();
     }
 

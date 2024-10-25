@@ -146,7 +146,7 @@
         edocTypes = EDocUtil.getDoctypes("demographic");
 
         // eForms
-        EFormDao eFormDao = (EFormDao) SpringUtils.getBean("EFormDao");
+        EFormDao eFormDao = (EFormDao) SpringUtils.getBean(EFormDao.class);
         eforms = eFormDao.findAll(true);
 
         // other documents (MISC types)

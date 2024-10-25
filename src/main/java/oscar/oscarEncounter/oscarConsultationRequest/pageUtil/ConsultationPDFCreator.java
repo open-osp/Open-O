@@ -9,24 +9,9 @@
 
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ResourceBundle;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.itextpdf.text.*;
-
 import com.itextpdf.text.pdf.*;
 import org.apache.logging.log4j.Logger;
-
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.DigitalSignatureDao;
@@ -41,11 +26,22 @@ import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.OscarProperties;
 import oscar.oscarClinic.ClinicData;
 import oscar.oscarRx.data.RxProviderData;
 import oscar.oscarRx.data.RxProviderData.Provider;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 public class ConsultationPDFCreator extends PdfPageEventHelper {
 
@@ -296,8 +292,8 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 
 		String filename = "";
 		if(props.getProperty("multisites")!=null && "on".equalsIgnoreCase(props.getProperty("multisites"))) {
-			DocumentDao documentDao = (DocumentDao) SpringUtils.getBean("documentDao");
-			SiteDao siteDao = (SiteDao) SpringUtils.getBean("siteDao");
+			DocumentDao documentDao = (DocumentDao) SpringUtils.getBean(DocumentDao.class);
+			SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
 			Site site = siteDao.getById(Integer.valueOf(reqFrm.siteName));
 			if(site!=null) {
 				if(site.getSiteLogoId()!=null) {
@@ -646,13 +642,30 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 	}
 
 	private void addSignature( PdfPTable pdfPTable ) {
-		float[] tableWidths = new float[]{ 0.55f, 2.75f };
-		PdfPTable table = new PdfPTable( tableWidths );
-		PdfPCell cell = new PdfPCell();
+		DigitalSignature digitalSignature = null;
+		String signatureImageId = reqFrm.getSignatureImg();
 
-		DigitalSignatureDao digitalSignatureDao = (DigitalSignatureDao) SpringUtils.getBean("digitalSignatureDao");
-		DigitalSignature digitalSignature = digitalSignatureDao.find(Integer.parseInt(reqFrm.signatureImg));
+		if(signatureImageId != null && ! signatureImageId.isEmpty()) {
+			/*
+			 *  This is not the preferred way to handle a potential NFE. Unfortunately
+			 *  this entire thread was not designed well from the beginning.
+			 *  Now maintainers are required to insert
+			 *  odd patches in order to save valuable time on a full refactor.
+			 */
+			try {
+				DigitalSignatureDao digitalSignatureDao = SpringUtils.getBean(DigitalSignatureDao.class);
+				digitalSignature = digitalSignatureDao.find(Integer.parseInt(signatureImageId));
+			} catch (Exception e) {
+				// do nothing
+				logger.warn("Consultation digital signature {} was not found or the identifier was incorrect", signatureImageId);
+			}
+		}
+
 		if (digitalSignature != null) {
+			float[] tableWidths = new float[]{ 0.55f, 2.75f };
+			PdfPTable table = new PdfPTable( tableWidths );
+			PdfPCell cell = new PdfPCell();
+
 			cell.setPhrase(new Phrase( getResource("msgSignature")));
 			cell.setBorder(0);
 			cell.setPadding(0);
@@ -673,13 +686,13 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 			} catch (BadElementException | IOException e) {
 				logger.error("An error occurred while trying to create an image from the signature", e);
 			}
-		}
 
-		addTable( pdfPTable, table );
+			addTable( pdfPTable, table );
+		}
 	}
 
 	private PdfPTable createReferringPracAndMRPDetailTable(LoggedInInfo loggedInInfo) {
-		ProviderDao proDAO = (ProviderDao) SpringUtils.getBean("providerDao");
+		ProviderDao proDAO = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 		org.oscarehr.common.model.Provider pro = proDAO.getProvider(reqFrm.providerNo);
 		DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 		Demographic demo = demographicManager.getDemographic( loggedInInfo, Integer.parseInt( reqFrm.demoNo ) );

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,56 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.ConsultResponseDoc;
-import org.springframework.stereotype.Repository;
 
-@Repository
-@SuppressWarnings("unchecked")
-public class ConsultResponseDocDao extends AbstractDao<ConsultResponseDoc>{
-	public ConsultResponseDocDao() {
-		super(ConsultResponseDoc.class);
-	}
-
-	public ConsultResponseDoc findByResponseIdDocNoDocType(Integer responseId, Integer documentNo, String docType) {
-	  	String sql = "select x from ConsultResponseDoc x where x.responseId=? and x.documentNo=? and x.docType=? and x.deleted IS NULL";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,responseId);
-    	query.setParameter(2,documentNo);
-    	query.setParameter(3,docType);
-
-        List<ConsultResponseDoc> results = query.getResultList();
-        if (results!=null && results.size()>0) return results.get(0);
-        else return null;
-	}
-
-	public List<ConsultResponseDoc> findByResponseId(Integer responseId) {
-	  	String sql = "select x from ConsultResponseDoc x where x.responseId=? and x.deleted IS NULL";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,responseId);
-
-        List<ConsultResponseDoc> results = query.getResultList();
-        return results;
-	}
-
-	public List<Object[]> findLabs(Integer consultResponseId) {
-		String sql = "FROM ConsultResponseDoc crd, PatientLabRouting plr " +
-				"WHERE plr.labNo = crd.documentNo " +
-				"AND crd.responseId = :consultResponseId " +
-				"AND crd.docType = :docType " +
-				"AND crd.deleted IS NULL " +
-				"ORDER BY crd.documentNo";
-		Query q = entityManager.createQuery(sql);
-		q.setParameter("consultResponseId", consultResponseId);
-		q.setParameter("docType", ConsultResponseDoc.DOCTYPE_LAB);
-		return q.getResultList();
-	}
+public interface ConsultResponseDocDao extends AbstractDao<ConsultResponseDoc>  {
+    ConsultResponseDoc findByResponseIdDocNoDocType(Integer responseId, Integer documentNo, String docType);
+    List<ConsultResponseDoc> findByResponseId(Integer responseId);
+    List<Object[]> findLabs(Integer consultResponseId);
 }

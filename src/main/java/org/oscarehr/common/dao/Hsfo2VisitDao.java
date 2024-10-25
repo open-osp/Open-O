@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (C) 2007  Heart & Stroke Foundation
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,149 +21,23 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.common.dao;
 
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.Hsfo2Visit;
-import org.springframework.stereotype.Repository;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import org.oscarehr.util.MiscUtils;
-import org.apache.logging.log4j.Logger;
-
-
-@Repository
-public class Hsfo2VisitDao extends AbstractDao<Hsfo2Visit>
-{
-	private static Logger logger = MiscUtils.getLogger();
-	public Hsfo2VisitDao() {
-		super(Hsfo2Visit.class);
-	}
-	
-    public Hsfo2Visit getHsfoVisitById (int id) {
-    	
-    	String sqlCommand = "select x from Hsfo2Visit x where x.id=?";
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, id);
-				
-		return getSingleResultOrNull(query);
-    }
-
-    public List<Hsfo2Visit> getHsfoVisitByDemographicNo( Integer demographic_no) {
-    	String sqlCommand = "select x from Hsfo2Visit x where x.demographic_no=? order by x.VisitDate_Id";
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, demographic_no);
-				
-		@SuppressWarnings("unchecked")
-		List<Hsfo2Visit> results=query.getResultList();		
-		
-		return results;
-    }
-     
-
-    public List<Hsfo2Visit> getLockedVisitByDemographicNo( String demographic_no ) {
-    	String sqlCommand = "select x from Hsfo2Visit x where x.locked=true and x.demographic_no=? order by x.VisitDate_Id";
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, demographic_no);
-				
-		@SuppressWarnings("unchecked")
-		List<Hsfo2Visit> results=query.getResultList();
-		
-		return results;
-    }
-    
-    
-    
-    public List<Hsfo2Visit> getVisitRecordByPatientId( String patientId ) {
-    	String sqlCommand = "select x FROM Hsfo2Visit x where x.id in (SELECT max(y.id) FROM Hsfo2Visit y WHERE y.Patient_Id = ? group by y.VisitDate_Id)";
-    	Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, patientId);
-				
-		@SuppressWarnings("unchecked")
-		List<Hsfo2Visit> results=query.getResultList();
-		
-		return results;
-    }
-    
-   
-
-  public Hsfo2Visit getPatientLatestVisitRecordByVisitDate( Date visitdate, String demographic_no ) {
-	  
-	  String sqlCommand = "select x FROM Hsfo2Visit x WHERE x.VisitDate_Id=?1 and x.demographic_no = ?2 order by x.id desc";
-	  Query query = entityManager.createQuery(sqlCommand);
-	  query.setParameter(1, visitdate);
-	  query.setParameter(2, demographic_no);
-	  return getSingleResultOrNull(query);
-  }	
-    
-
-  public List<Hsfo2Visit> getVisitRecordInDateRangeByDemographicNo( String patientId, String startDate, String endDate) { 
-	  
-	  String sqlCommand = "select x FROM Hsfo2Visit x where x.Patient_Id=?1 and x.VisitDate_Id>?2 and x.VisitDate_Id<?3 group by x.VisitDate_Id";  	  
-	  Query query = entityManager.createQuery(sqlCommand);
-	  query.setParameter(1, patientId);
-	  
-	  try {
-		  Date start = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-		  Date end = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
-		 
-		  query.setParameter(2, start);
-		  query.setParameter(3, end);
-	
-		  @SuppressWarnings("unchecked")
-		  List<Hsfo2Visit> results=query.getResultList();
-	  
-		  return results;
-		  
-	  	} catch (ParseException e) {
-
-			logger.error("[Hsfo2VisitDao] - formatDate: ", e);
-
-			return null;
-
-	  	}
-
-  }
-   
-  /**
-   * 
-   * @param patientId
-   * @return Hsfo2Visit
-   */
-  public Hsfo2Visit getFirstVisitRecordForThePatient( String patientId)
-  {
-	  String sqlCommand = "select * FROM form_hsfo2_visit x WHERE x.Patient_Id=? order by x.id ASC";
-	  Query query = entityManager.createNativeQuery(sqlCommand, modelClass);
-	  query.setParameter(1, patientId);	  
-	  return getSingleResultOrNull(query);
-  }
-   
-  public Hsfo2Visit getPatientBaseLineVisitData( String patientId )
-  {
-	  String sqlCommand = "select x FROM Hsfo2Visit x WHERE x.Patient_Id = ? and x.lastBaseLineRecord = 1";
-	  Query query = entityManager.createQuery(sqlCommand);
-	  query.setParameter(1, patientId);	  
-	  return getSingleResultOrNull(query);
-  }
- 
-  public int getMaxVisitId() {
-	  String sqlCommand = "select x from Hsfo2Visit x where x.id=(select max(x.id) from Hsfo2Visit x) " ;
-	  Query query = entityManager.createQuery(sqlCommand);
-	  int maxId = 1;
-	  Hsfo2Visit v = getSingleResultOrNull(query);
-	  if(v!=null) {
-		  maxId = v.getId().intValue();		 
-	  }
-	  return maxId;
-  }
-  
+public interface Hsfo2VisitDao extends AbstractDao<Hsfo2Visit> {
+    Hsfo2Visit getHsfoVisitById(int id);
+    List<Hsfo2Visit> getHsfoVisitByDemographicNo(Integer demographic_no);
+    List<Hsfo2Visit> getLockedVisitByDemographicNo(String demographic_no);
+    List<Hsfo2Visit> getVisitRecordByPatientId(String patientId);
+    Hsfo2Visit getPatientLatestVisitRecordByVisitDate(Date visitdate, String demographic_no);
+    List<Hsfo2Visit> getVisitRecordInDateRangeByDemographicNo(String patientId, String startDate, String endDate);
+    Hsfo2Visit getFirstVisitRecordForThePatient(String patientId);
+    Hsfo2Visit getPatientBaseLineVisitData(String patientId);
+    int getMaxVisitId();
 }
-
-

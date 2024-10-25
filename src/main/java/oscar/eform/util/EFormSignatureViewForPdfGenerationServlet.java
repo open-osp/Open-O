@@ -28,7 +28,7 @@ import org.oscarehr.util.SpringUtils;
 public final class EFormSignatureViewForPdfGenerationServlet extends HttpServlet {
 
 	private static final Logger logger=MiscUtils.getLogger();
-	private static DigitalSignatureDao digitalSignatureDao = (DigitalSignatureDao) SpringUtils.getBean("digitalSignatureDao");
+	private static DigitalSignatureDao digitalSignatureDao = (DigitalSignatureDao) SpringUtils.getBean(DigitalSignatureDao.class);
 	
 	@Override
 	public final void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{

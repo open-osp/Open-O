@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,46 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.MeasurementGroupStyle;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class MeasurementGroupStyleDao extends AbstractDao<MeasurementGroupStyle> {
-
-	public MeasurementGroupStyleDao() {
-		super(MeasurementGroupStyle.class);
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<MeasurementGroupStyle> findAll() {
-		Query query = entityManager.createQuery("SELECT x FROM " + modelClass.getSimpleName() + " x");
-		List<MeasurementGroupStyle> results = query.getResultList();
-		return results;
-	}
-	
-	public List<MeasurementGroupStyle> findByGroupName(String groupName) {
-		String sql = "select x from MeasurementGroupStyle x where x.groupName=?";
-		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, groupName);
-
-		@SuppressWarnings("unchecked")
-		List<MeasurementGroupStyle> results = query.getResultList();
-		return results;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<MeasurementGroupStyle> findByCssId(Integer cssId) {
-		Query query = createQuery("m", "m.cssId = :cssId");
-		query.setParameter("cssId", cssId);
-		return query.getResultList();
-	}
-
+public interface MeasurementGroupStyleDao extends AbstractDao<MeasurementGroupStyle>{
+    List<MeasurementGroupStyle> findAll();
+    List<MeasurementGroupStyle> findByGroupName(String groupName);
+    List<MeasurementGroupStyle> findByCssId(Integer cssId);
 }

@@ -28,11 +28,11 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.TeleplanAdjCodes;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TeleplanAdjCodesDao extends AbstractDao<TeleplanAdjCodes>{
+public class TeleplanAdjCodesDao extends AbstractDaoImpl<TeleplanAdjCodes>{
 
 	protected TeleplanAdjCodesDao() {
 	    super(TeleplanAdjCodes.class);

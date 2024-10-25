@@ -51,9 +51,9 @@ public class CreateAnonymousClientAction {
 	
 	public static Demographic generateAnonymousClient(String creatorProviderNo, int programId) {
 		logger.info("Create Anonymous Client!");
-		ClientManager clientManager = (ClientManager)SpringUtils.getBean("clientManager");
-		AdmissionManager admissionManager = (AdmissionManager)SpringUtils.getBean("admissionManager");
-		ProgramManager programManager = (ProgramManager)SpringUtils.getBean("programManager");
+		ClientManager clientManager = (ClientManager)SpringUtils.getBean(ClientManager.class);
+		AdmissionManager admissionManager = (AdmissionManager)SpringUtils.getBean(AdmissionManager.class);
+		ProgramManager programManager = (ProgramManager)SpringUtils.getBean(ProgramManager.class);
 		//create and save client record.
 		Demographic d = createDemographic(creatorProviderNo);
 		clientManager.saveClient(d);
@@ -72,9 +72,9 @@ public class CreateAnonymousClientAction {
 
     public static Demographic generatePEClient(String creatorProviderNo, int programId){
         logger.info("Create PE temporary Client!");
-        ClientManager clientManager = (ClientManager)SpringUtils.getBean("clientManager");
-        AdmissionManager admissionManager = (AdmissionManager)SpringUtils.getBean("admissionManager");
-        ProgramManager programManager = (ProgramManager)SpringUtils.getBean("programManager");
+        ClientManager clientManager = (ClientManager)SpringUtils.getBean(ClientManager.class);
+        AdmissionManager admissionManager = (AdmissionManager)SpringUtils.getBean(AdmissionManager.class);
+        ProgramManager programManager = (ProgramManager)SpringUtils.getBean(ProgramManager.class);
         //create and save client record.
         Demographic d = createDemographic(creatorProviderNo);
         d.setFirstName("phone encounter");

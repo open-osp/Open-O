@@ -51,6 +51,7 @@ import org.dom4j.util.XMLErrorHandler;
 import org.oscarehr.common.model.Dashboard;
 import org.oscarehr.common.model.IndicatorTemplate;
 import org.oscarehr.managers.DashboardManager;
+import org.oscarehr.managers.DashboardManagerImpl;
 import org.oscarehr.managers.DashboardManager.ObjectName;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;

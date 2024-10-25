@@ -46,11 +46,11 @@ import org.oscarehr.util.SpringUtils;
 
 public class ReportHelper {
 
-	static DxresearchDAO dxDao = (DxresearchDAO)SpringUtils.getBean("DxresearchDAO");
-	static DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+	static DxresearchDAO dxDao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
+	static DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 	static MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
 	static DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
-	static MeasurementMapDao measurementMapDao = (MeasurementMapDao)SpringUtils.getBean("measurementMapDao");
+	static MeasurementMapDao measurementMapDao = (MeasurementMapDao)SpringUtils.getBean(MeasurementMapDao.class);
 	static FormLabReq07Dao labReq07Dao = SpringUtils.getBean(FormLabReq07Dao.class);
 	static DrugDao drugDao = SpringUtils.getBean(DrugDao.class);
 	

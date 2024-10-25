@@ -36,7 +36,7 @@ String service_form="", service_name="";
 <%@page import="org.oscarehr.common.model.ClinicLocation" %>
 <%@page import="org.oscarehr.common.dao.ClinicLocationDao" %>
 <%
-	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean("clinicLocationDao");
+	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean(ClinicLocationDao.class);
 %>
 <%
 String clinicview = request.getParameter("billingform")==null?oscarVariables.getProperty("default_view"):request.getParameter("billingform");
@@ -47,7 +47,7 @@ if (request.getParameter("submit") != null && request.getParameter("submit").equ
 }
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="admin.admin.btnAddBillingLocation" /></title>
 <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">

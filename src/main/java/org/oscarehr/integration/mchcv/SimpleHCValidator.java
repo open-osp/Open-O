@@ -23,13 +23,13 @@
  */
 package org.oscarehr.integration.mchcv;
 
+import ca.ontario.health.hcv.HcvResults;
+import ca.ontario.health.hcv.Requests;
 import org.apache.commons.lang.StringUtils;
+import org.oscarehr.integration.ebs.client.EdtClientBuilder;
 
 public class SimpleHCValidator implements HCValidator {
 
-    private static final String VALID_RESPONSE_CODE = "51"; 
-    private static final String NOT_VALID_RESPONSE_CODE = "05";
-    
     @Override
     public HCValidationResult validate(String hcNumber, String versionCode) {
         boolean isValid = isValid(hcNumber, versionCode);
@@ -42,7 +42,26 @@ public class SimpleHCValidator implements HCValidator {
         }
         return result;
     }
-    
+
+    @Override
+    public HCValidationResult validate(String healthCardNumber, String versionCode, String serviceCode) {
+        return validate(healthCardNumber, versionCode);
+    }
+
+    @Override
+    /**
+     * not implemented.
+     */
+    public HcvResults validate(Requests requests, String local) {
+        //TODO Implement as needed.
+        return null;
+    }
+
+    @Override
+    public EdtClientBuilder getBuilder() {
+        return null;
+    }
+
     private boolean isValid(String hcNumber, String versionCode) {
         if (hcNumber == null) {
             return false;

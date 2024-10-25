@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,8 +21,9 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
@@ -32,42 +34,15 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.TicklerLink;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class TicklerLinkDao extends AbstractDao<TicklerLink>{
+public interface TicklerLinkDao extends AbstractDao<TicklerLink> {
 
-	public TicklerLinkDao() {
-		super(TicklerLink.class);
-	}
+	public TicklerLink getTicklerLink(Integer id);
 
-	public TicklerLink getTicklerLink(Integer id) {
-	    return find(id);
-	}
+	public List<TicklerLink> getLinkByTableId(String tableName, Long tableId);
 
-	public List<TicklerLink> getLinkByTableId(String tableName, Long tableId) {
-		Query query = entityManager.createQuery("SELECT tLink from TicklerLink tLink WHERE tLink.tableName = ? and tLink.tableId = ? order by tLink.id");
-		query.setParameter(1, tableName);
-		query.setParameter(2,tableId);
+	public List<TicklerLink> getLinkByTickler(Integer ticklerNo);
 
-		@SuppressWarnings("unchecked")
-		List<TicklerLink> results = query.getResultList();
+	public void save(TicklerLink cLink);
 
-		return results;
-	}
-
-	public List<TicklerLink> getLinkByTickler(Integer ticklerNo) {
-		Query query = entityManager.createQuery("SELECT tLink from TicklerLink tLink WHERE tLink.ticklerNo = ? order by tLink.id");
-		query.setParameter(1, ticklerNo);
-
-		@SuppressWarnings("unchecked")
-		List<TicklerLink> results = query.getResultList();
-		return results;
-	}
-
-	public void save(TicklerLink cLink) {
-	    persist(cLink);
-	}
-
-	public void update(TicklerLink cLink) {
-	    merge(cLink);
-	}
+	public void update(TicklerLink cLink);
 }

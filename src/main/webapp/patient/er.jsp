@@ -39,7 +39,7 @@
 <%@page import="org.oscarehr.common.dao.EncounterDao" %>
 <%@page import="org.oscarehr.common.model.Encounter" %>
 <%
-	DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao)SpringUtils.getBean("demographicAccessoryDao");
+	DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao)SpringUtils.getBean(DemographicAccessoryDao.class);
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 	EncounterDao encounterDao = SpringUtils.getBean(EncounterDao.class);
 %>

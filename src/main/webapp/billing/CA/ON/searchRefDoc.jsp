@@ -28,7 +28,7 @@
 <%@page import="org.oscarehr.common.model.ProfessionalSpecialist" %>
 <%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao" %>
 <%
-	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
+	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
 %>
 <%
     if (session.getAttribute("user") == null) {
@@ -104,7 +104,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <html:base />
 <title><bean:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.optChooseSpec" /></title>

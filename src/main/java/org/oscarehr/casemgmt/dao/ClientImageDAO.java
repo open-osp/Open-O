@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.casemgmt.dao;
@@ -31,57 +34,15 @@ import org.apache.logging.log4j.Logger;
 import org.oscarehr.casemgmt.model.ClientImage;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.QueueCache;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 /**
- * Anyone modifying get and set methods should take note of the dataCache and add/remove items as appropriate.
+ * Anyone modifying get and set methods should take note of the dataCache and
+ * add/remove items as appropriate.
  */
-public class ClientImageDAO extends HibernateDaoSupport {
+public interface ClientImageDAO {
 
-	private static final Logger logger = MiscUtils.getLogger();
+	public void saveClientImage(ClientImage clientImage);
 
-	/**
-	 * This is a simple cache for image data because the images are excessively large (relatively speaking). The Integer key is the demographic_no.
-	 */
-	private static final QueueCache<Integer, ClientImage> dataCache=new QueueCache<Integer, ClientImage>(4, 40, DateUtils.MILLIS_PER_HOUR, null);
-	
-	public void saveClientImage(ClientImage clientImage) {
-		ClientImage existing = getClientImage(clientImage.getDemographic_no());
-		if (existing != null) {
-			existing.setImage_data(clientImage.getImage_data());
-			existing.setImage_type(clientImage.getImage_type());
-			existing.setUpdate_date(new Date());
-		}
-		getHibernateTemplate().saveOrUpdate(clientImage);
-
-		// update cache
-		dataCache.remove(clientImage.getDemographic_no());
-	}
-
-	public ClientImage getClientImage(Integer clientId) {
-
-		// check cache
-		ClientImage clientImage = dataCache.get(clientId);
-		if (clientImage == null) {
-			logger.debug("dataCache miss : clientId=" + clientId);
-
-			// get from database
-			@SuppressWarnings("unchecked")
-			List<ClientImage> results = getHibernateTemplate().find("from ClientImage i where i.demographic_no=? order by update_date desc", clientId);
-			if (results.size() > 0) {
-				clientImage = results.get(0);
-
-				// add to cache if it's less than ... say 1 megs
-				if (clientImage.getImage_data().length<1024000)
-				{
-					dataCache.put(clientId, clientImage);
-					logger.debug("entry found in db, adding to dataCache : clientId=" + clientId);
-				}
-			}
-		} else {
-			logger.debug("dataCache hit : clientId=" + clientId);
-		}
-
-		return (clientImage);
-	}
+	public ClientImage getClientImage(Integer clientId);
 }

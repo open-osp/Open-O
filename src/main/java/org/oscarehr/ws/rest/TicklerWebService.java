@@ -103,7 +103,7 @@ public class TicklerWebService extends AbstractServiceImpl {
 		//basically if overdueOnly='property', I check Persona for what to return, this
 		//avoids cliend needing to know their preferences and passing them back.
 		if(json.containsKey("overdueOnly") && "property".equals(json.getString("overdueOnly"))) {
-			UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+			UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 			String strVal = propDao.getStringValue(getCurrentProvider().getProviderNo(), "dashboard.expiredTicklersOnly");
 			if(strVal != null && "true".equalsIgnoreCase(strVal) ) {
 				cf.setEndDate(new Date());

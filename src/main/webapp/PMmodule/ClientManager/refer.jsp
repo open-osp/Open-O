@@ -173,7 +173,7 @@
 		<display:column title="Referring Provider">
 			<%
 				String providerName=temp.getReferringProviderNo();
-				ProviderDao providerDao=(ProviderDao)SpringUtils.getBean("providerDao");
+				ProviderDao providerDao=(ProviderDao)SpringUtils.getBean(ProviderDao.class);
 				Provider provider=providerDao.getProvider(temp.getReferringProviderNo());
 				if (provider!=null) providerName=provider.getFormattedName();
 			%>

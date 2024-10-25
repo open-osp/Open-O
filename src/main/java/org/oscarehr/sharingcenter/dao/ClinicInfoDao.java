@@ -26,13 +26,13 @@ package org.oscarehr.sharingcenter.dao;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.sharingcenter.model.ClinicInfoDataObject;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ClinicInfoDao extends AbstractDao<ClinicInfoDataObject> {
+public class ClinicInfoDao extends AbstractDaoImpl<ClinicInfoDataObject> {
 
     public ClinicInfoDao() {
         super(ClinicInfoDataObject.class);

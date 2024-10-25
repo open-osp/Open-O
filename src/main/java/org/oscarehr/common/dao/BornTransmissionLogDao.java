@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,40 +21,14 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.BornTransmissionLog;
-import org.springframework.stereotype.Repository;
 
-import oscar.util.UtilDateUtilities;
-
-@Repository
-public class BornTransmissionLogDao extends AbstractDao<BornTransmissionLog>{
-
-	public BornTransmissionLogDao() {
-		super(BornTransmissionLog.class);
-	}
-	
-	public Long getSeqNoToday(String filenameStart, Integer id) {
-		String today = UtilDateUtilities.getToday("yyyy-MM-dd");
-		Date todayDate = UtilDateUtilities.StringToDate(today, "yyyy-MM-dd");
-		Calendar cal = GregorianCalendar.getInstance();
-		cal.setTime(todayDate);
-		cal.add(Calendar.DATE, 1);
-		String tomorrow = UtilDateUtilities.DateToString(cal.getTime(), "yyyy-MM-dd");
-		
-		String sql = "select count(*) from BornTransmissionLog b" +
-					 " where b.filename like '" + filenameStart + "%' and b.id < " + id +
-					 " and b.submitDateTime >= '" + today + "' and b.submitDateTime < '" + tomorrow + "'";
-		Query query = entityManager.createQuery(sql);
-
-		return (Long) query.getSingleResult()+1;
-	}
+public interface BornTransmissionLogDao extends AbstractDao<BornTransmissionLog>  {
+    Long getSeqNoToday(String filenameStart, Integer id);
 }

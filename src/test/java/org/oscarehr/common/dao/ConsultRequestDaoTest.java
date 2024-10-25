@@ -49,7 +49,7 @@ public class ConsultRequestDaoTest extends DaoTestFixtures {
 
 	@Before
 	public void before() throws Exception {
-		SchemaUtils.restoreTable("consultationRequests", "consultationServices", "demographic");
+		SchemaUtils.restoreTable("consultationRequests", "consultationServices", "demographic","professionalSpecialists","provider","lst_gender","demographic_merged","admission","program","health_safety","LookupListItem","serviceSpecialists");
 	}
 
 	@Test
@@ -170,7 +170,6 @@ public class ConsultRequestDaoTest extends DaoTestFixtures {
 	}
 	
 	@Test
-	@Ignore
 	public void testSearch() throws Exception {
 		
 		Demographic d1 = new Demographic();

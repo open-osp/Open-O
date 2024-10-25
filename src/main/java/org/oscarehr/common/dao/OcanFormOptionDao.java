@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,60 +20,15 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.OcanFormOption;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class OcanFormOptionDao extends AbstractDao<OcanFormOption> {
-
-	public OcanFormOptionDao() {
-		super(OcanFormOption.class);
-	}
-	
-	/**
-	 * @param formVersion should be the major cds version, i.e. '4' (we're assuming minor versions are compatable, if it's not we can use the full version number instead)
-	 * @param mainCatgeory should be the cds main category, i.e. for '016-06' the main category should be '016'
-	 * @return results are sorted by their name as per in the CDS spec aka insertion order, not alphabetically.   
-	 */
-	public List<OcanFormOption> findByVersionAndCategory(String formVersion, String mainCatgeory) {
-		// build sql string
-		String sqlCommand = "select x from OcanFormOption x where x.ocanFormVersion=?1 and x.ocanDataCategory=?2 order by x.ocanDataCategoryName";
-
-		// set parameters
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, formVersion);
-		query.setParameter(2, mainCatgeory);
-
-		// run query
-		@SuppressWarnings("unchecked")
-		List<OcanFormOption> results = query.getResultList();
-
-		return (results);
-	}
-
-	/**
-	 * @param formVersion should be the major cds version, i.e. '4' (we're assuming minor versions are compatable, if it's not we can use the full version number instead)
-	 */
-	public List<OcanFormOption> findByVersion(String formVersion) {
-		// build sql string
-		String sqlCommand = "select x from OcanFormOption x where x.ocanFormVersion=?1 order by x.id";
-
-		// set parameters
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, formVersion);
-
-		// run query
-		@SuppressWarnings("unchecked")
-		List<OcanFormOption> results = query.getResultList();
-
-		return (results);
-	}
-
+public interface OcanFormOptionDao extends AbstractDao<OcanFormOption> {
+	List<OcanFormOption> findByVersionAndCategory(String formVersion, String mainCatgeory);
+	List<OcanFormOption> findByVersion(String formVersion);
 }

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,33 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.StudyLogin;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class StudyLoginDao extends AbstractDao<StudyLogin> {
-
-	public StudyLoginDao() {
-		super(StudyLogin.class);
-	}
-
-	public List<StudyLogin> find(String providerNo, String studyId) {
-		return find(providerNo, Integer.parseInt(studyId));
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<StudyLogin> find(String providerNo, Integer studyId) {
-		Query query = entityManager.createQuery("FROM StudyLogin s WHERE s.providerNo = :providerNo and s.studyNo = :studyNo and s.current1 = 1");
-		query.setParameter("providerNo", providerNo);
-		query.setParameter("studyNo", studyId);
-		return query.getResultList();
-	}
+public interface StudyLoginDao extends AbstractDao<StudyLogin> {
+    List<StudyLogin> find(String providerNo, String studyId);
+    List<StudyLogin> find(String providerNo, Integer studyId);
 }

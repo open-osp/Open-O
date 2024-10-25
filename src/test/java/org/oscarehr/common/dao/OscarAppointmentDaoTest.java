@@ -44,7 +44,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class OscarAppointmentDaoTest extends DaoTestFixtures {
 
-	static OscarAppointmentDao dao = (OscarAppointmentDao) SpringUtils.getBean("oscarAppointmentDao");
+	static OscarAppointmentDao dao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 
 	@Before
 	public void before() throws Exception {
@@ -131,7 +131,6 @@ public class OscarAppointmentDaoTest extends DaoTestFixtures {
 	}
 
 	@Test
-	@Ignore
 	public void testFind() throws Exception {
 		Appointment appt = new Appointment();
 		EntityDataGenerator.generateTestDataForModelClass(appt);
@@ -185,7 +184,6 @@ public class OscarAppointmentDaoTest extends DaoTestFixtures {
 	}
 
 	@Test
-	@Ignore
 	public void testFindNextAppointment() throws Exception {
 		Integer demographicId = 999999;
 

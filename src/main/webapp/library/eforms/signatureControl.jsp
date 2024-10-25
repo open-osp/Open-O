@@ -35,8 +35,8 @@ var signatureControl = {
 			element.imgAttributes = "";
 			
 			var placeholder = jQuery(element.signatureInput);
-			if (placeholder == null || placeholder.size() == 0) { 
-				if (jQuery(".DoNotPrint").size() > 0) { 
+			if (!placeholder) {
+				if (jQuery(".DoNotPrint")) {
 					placeholder = jQuery("<div id='signatureInput'>&nbsp;</div>");
 					jQuery(".DoNotPrint").append(placeholder);				
 				}
@@ -57,16 +57,16 @@ var signatureControl = {
 				element.imgAttributes += options.height != null ? " height='"+options.height+"' ": "";
 			}			
 			
-			if (jQuery(element.signatureValue).size() > 0 && "" != jQuery(element.signatureValue).val()) {
+			if (jQuery(element.signatureValue) && "" != jQuery(element.signatureValue).val()) {
 				jQuery(element.signatureDisplay).html("<img " + element.imgAttributes + " src='" + jQuery(element.signatureValue).val() + "' alt='signature' />");
 			}
 			
 			element.refreshImage =  
 				function(e) {
-					if (jQuery(element.signatureDisplay).size() > 0) {
+					if (jQuery(element.signatureDisplay)) {
 						jQuery(element.signatureDisplay).html("<img " + element.imgAttributes + " src='" + e.storedImageUrl + "&r=" + Math.floor(Math.random() * 1001) + "' alt='signature' />");
 					}
-					if (jQuery(element.signatureValue).size() > 0) {
+					if (jQuery(element.signatureValue)) {
 						jQuery(element.signatureValue).val(e.storedImageUrl + "&r=" + Math.floor(Math.random() * 1001));
 					}
 				};
@@ -90,7 +90,7 @@ var signatureControl = {
 			element.isSignatureSaved = false;
 			element.refreshImage = options.refreshImage == null 
 			  ? function(e) {
-					if (jQuery(element.signatureDisplay).size() > 0) {
+					if (jQuery(element.signatureDisplay)) {
 						jQuery(element.signatureDisplay).attr("src", e.storedImageUrl + "&r=" + Math.floor(Math.random() * 1001));
 					}
 				} : options.refreshImage;
@@ -107,7 +107,7 @@ var signatureControl = {
 				  }
 			  }
 			  : options.signatureHandler;
-		if ($(element.signatureInput).size() > 0) {
+		if ($(element.signatureInput)) {
 			$(element.signatureInput).html(signaturePadIFrameStart + element.sigHTML + signaturePadIFrameEnd);
 		}
 		return element;

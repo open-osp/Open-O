@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,33 +21,14 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.CssStyle;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class CSSStylesDAO extends AbstractDao<CssStyle> {
-    
- 
-    public CSSStylesDAO() {
-    	super(CssStyle.class);
-    }
-   
-    @SuppressWarnings("unchecked")
-    public List<CssStyle> findAll() {
-    	String sql = "select css from CssStyle css where css.status = (:status) order by css.name";
-    	Query q = entityManager.createQuery(sql);
-    	q.setParameter("status", CssStyle.ACTIVE);
-    	
-    	return q.getResultList();
-    	
-    }            
+public interface CSSStylesDAO extends AbstractDao<CssStyle> {
+    List<CssStyle> findAll();
 }

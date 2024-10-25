@@ -25,11 +25,11 @@ package org.oscarehr.billing.CA.BC.dao;
 
 
 import org.oscarehr.billing.CA.BC.model.TeleplanResponseLog;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TeleplanResponseLogDao extends AbstractDao<TeleplanResponseLog>{
+public class TeleplanResponseLogDao extends AbstractDaoImpl<TeleplanResponseLog>{
 
 	public TeleplanResponseLogDao() {
 		super(TeleplanResponseLog.class);

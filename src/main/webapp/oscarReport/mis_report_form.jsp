@@ -54,8 +54,8 @@ if(!authed) {
 
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean("functionalCentreDao");
-	ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
+	FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean(FunctionalCentreDao.class);
+	ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
 	
 	List<FunctionalCentre> functionalCentres=functionalCentreDao.findInUseByFacility(loggedInInfo.getCurrentFacility().getId());
 	List<Program> programs=programDao.getProgramsByFacilityId(loggedInInfo.getCurrentFacility().getId());

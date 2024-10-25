@@ -69,7 +69,7 @@ import oscar.util.UtilDateUtilities;
  */
 public class Util {
 	static private final Logger logger = MiscUtils.getLogger();
-	static private final PartialDateDao partialDateDao = (PartialDateDao)SpringUtils.getBean("partialDateDao");
+	static private final PartialDateDao partialDateDao = (PartialDateDao)SpringUtils.getBean(PartialDateDao.class);
     
     static public String addLine(String baseStr, String addStr) {
 	return addLine(baseStr, "", addStr);

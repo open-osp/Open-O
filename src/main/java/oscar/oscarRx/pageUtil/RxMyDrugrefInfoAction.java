@@ -99,7 +99,7 @@ public final class RxMyDrugrefInfoAction extends DispatchAction {
             }
       try{
         WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServlet().getServletContext());
-        UserPropertyDAO  propDAO =  (UserPropertyDAO) ctx.getBean("UserPropertyDAO");
+        UserPropertyDAO  propDAO =  (UserPropertyDAO) ctx.getBean(UserPropertyDAO.class);
         String provider = (String) request.getSession().getAttribute("user");
 
         String retStr=RxUtil.findInterDrugStr(propDAO,provider,bean);
@@ -131,8 +131,8 @@ public final class RxMyDrugrefInfoAction extends DispatchAction {
         String provider = (String) request.getSession().getAttribute("user");
 
         WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServlet().getServletContext());
-        UserPropertyDAO  propDAO =  (UserPropertyDAO) ctx.getBean("UserPropertyDAO");
-        UserDSMessagePrefsDao  dsmessageDao =  (UserDSMessagePrefsDao) ctx.getBean("userDSMessagePrefsDao");
+        UserPropertyDAO  propDAO =  (UserPropertyDAO) ctx.getBean(UserPropertyDAO.class);
+        UserDSMessagePrefsDao  dsmessageDao =  (UserDSMessagePrefsDao) ctx.getBean(UserDSMessagePrefsDao.class);
         MiscUtils.getLogger().debug("hideResources is before "+request.getSession().getAttribute("hideResources"));
         Hashtable dsPrefs=new Hashtable();
         if (request.getSession().getAttribute("hideResources") == null){
@@ -238,7 +238,7 @@ public final class RxMyDrugrefInfoAction extends DispatchAction {
         }
 
 
-        DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+        DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
         DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
 
         DemographicExt demoWarn = demographicExtDao.getLatestDemographicExt(bean.getDemographicNo(), "rxInteractionWarningLevel");
@@ -381,7 +381,7 @@ public final class RxMyDrugrefInfoAction extends DispatchAction {
     public ActionForward setWarningToHide(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) {
 
         WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServlet().getServletContext());
-        UserDSMessagePrefsDao  dsmessageDao =  (UserDSMessagePrefsDao) ctx.getBean("userDSMessagePrefsDao");
+        UserDSMessagePrefsDao  dsmessageDao =  (UserDSMessagePrefsDao) ctx.getBean(UserDSMessagePrefsDao.class);
 
 
         String provider = (String) request.getSession().getAttribute("user");
@@ -424,7 +424,7 @@ public final class RxMyDrugrefInfoAction extends DispatchAction {
     public ActionForward setWarningToShow(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) {
 
         WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServlet().getServletContext());
-        UserDSMessagePrefsDao  dsmessageDao =  (UserDSMessagePrefsDao) ctx.getBean("userDSMessagePrefsDao");
+        UserDSMessagePrefsDao  dsmessageDao =  (UserDSMessagePrefsDao) ctx.getBean(UserDSMessagePrefsDao.class);
 
         String provider = (String) request.getSession().getAttribute("user");
         String resId = request.getParameter("resId");

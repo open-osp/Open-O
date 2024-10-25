@@ -36,7 +36,7 @@
 <%@page import="org.oscarehr.common.dao.DemographicDao" %>
 <%@page import="org.oscarehr.common.model.Demographic" %>
 <%
-	DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao)SpringUtils.getBean("demographicAccessoryDao");
+	DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao)SpringUtils.getBean(DemographicAccessoryDao.class);
 	FormDao formDao = SpringUtils.getBean(FormDao.class);
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 %>

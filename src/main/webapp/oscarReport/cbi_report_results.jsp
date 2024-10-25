@@ -75,9 +75,9 @@ if(!authed) {
  	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
    	Integer currentFacilityId=loggedInInfo.getCurrentFacility().getId();	
    		 
-	AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
-    ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
-	FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean("functionalCentreDao");
+	AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
+    ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+	FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean(FunctionalCentreDao.class);
 	
 	int totalCount = 0, successCount = 0, failureCount = 0;
 	

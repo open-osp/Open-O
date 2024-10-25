@@ -43,7 +43,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class EctConAddServiceAction extends Action
 {
-	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao)SpringUtils.getBean("consultationServiceDao");
+	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao)SpringUtils.getBean(ConsultationServiceDao.class);
 	private static SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
 

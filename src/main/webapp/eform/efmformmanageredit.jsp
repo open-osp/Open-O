@@ -59,7 +59,7 @@ if (request.getAttribute("submitted") != null) {
 	if(formHtml==null){formHtml="";}	
 %>
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="eform.edithtml.msgEditEform" /></title>

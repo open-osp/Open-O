@@ -56,7 +56,7 @@ public class NoteAddonAction extends DispatchAction {
 
 	static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 	
-	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 	protected EyeformProcedureBookDao procedureBookDao = SpringUtils.getBean(EyeformProcedureBookDao.class);
 	protected EyeformTestBookDao testDao = SpringUtils.getBean(EyeformTestBookDao.class);
 	protected EyeFormDao eyeformDao = SpringUtils.getBean(EyeFormDao.class);
@@ -74,8 +74,8 @@ public class NoteAddonAction extends DispatchAction {
 		EyeformFollowUpDao followUpDao = SpringUtils.getBean(EyeformFollowUpDao.class);
 		
 		
-		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-		DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
+		DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 		
 		List<EyeformFollowUp> followUps = followUpDao.getByAppointmentNo(Integer.parseInt(appointmentNo));
 		for(EyeformFollowUp fu:followUps) {

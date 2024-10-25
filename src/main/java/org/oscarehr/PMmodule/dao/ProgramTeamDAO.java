@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.PMmodule.dao;
@@ -31,126 +34,16 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.oscarehr.PMmodule.model.ProgramTeam;
 import org.oscarehr.util.MiscUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.SessionFactory;
 
-public class ProgramTeamDAO extends HibernateDaoSupport {
+public interface ProgramTeamDAO {
 
-    private Logger log=MiscUtils.getLogger();
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.oscarehr.PMmodule.dao.ProgramTeamDAO#teamExists(java.lang.Integer)
-     */
-    public boolean teamExists(Integer teamId) {
-        boolean exists = getHibernateTemplate().get(ProgramTeam.class, teamId) != null;
-        log.debug("teamExists: " + exists);
-
-        return exists;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.oscarehr.PMmodule.dao.ProgramTeamDAO#teamNameExists(java.lang.Integer, java.lang.String)
-     */
-    public boolean teamNameExists(Integer programId, String teamName) {
-        if (programId == null || programId.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (teamName == null || teamName.length() <= 0) {
-            throw new IllegalArgumentException();
-        }
-        Session session = getSession();
-        Query query = session.createQuery("select pt.id from ProgramTeam pt where pt.programId = ? and pt.name = ?");
-        query.setLong(0, programId.longValue());
-        query.setString(1, teamName);
-
-        List teams = new ArrayList();
-        try {
-        	teams = query.list();
-        }finally{
-        	this.releaseSession(session);
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("teamNameExists: programId = " + programId + ", teamName = " + teamName + ", result = " + !teams.isEmpty());
-        }
-
-        return !teams.isEmpty();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.oscarehr.PMmodule.dao.ProgramTeamDAO#getProgramTeam(java.lang.Integer)
-     */
-    public ProgramTeam getProgramTeam(Integer id) {
-        if (id == null || id.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        ProgramTeam result = this.getHibernateTemplate().get(ProgramTeam.class, id);
-
-        if (log.isDebugEnabled()) {
-            log.debug("getProgramTeam: id=" + id + ",found=" + (result != null));
-        }
-
-        return result;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.oscarehr.PMmodule.dao.ProgramTeamDAO#getProgramTeams(java.lang.Integer)
-     */
-    public List<ProgramTeam> getProgramTeams(Integer programId) {
-        if (programId == null || programId.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        List<ProgramTeam> results = this.getHibernateTemplate().find("from ProgramTeam tp where tp.programId = ?", programId);
-
-        if (log.isDebugEnabled()) {
-            log.debug("getProgramTeams: programId=" + programId + ",# of results=" + results.size());
-        }
-
-        return results;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.oscarehr.PMmodule.dao.ProgramTeamDAO#saveProgramTeam(org.oscarehr.PMmodule.model.ProgramTeam)
-     */
-    public void saveProgramTeam(ProgramTeam team) {
-        if (team == null) {
-            throw new IllegalArgumentException();
-        }
-
-        this.getHibernateTemplate().saveOrUpdate(team);
-
-        if (log.isDebugEnabled()) {
-            log.debug("saveProgramTeam: id=" + team.getId());
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.oscarehr.PMmodule.dao.ProgramTeamDAO#deleteProgramTeam(java.lang.Integer)
-     */
-    public void deleteProgramTeam(Integer id) {
-        if (id == null || id.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        this.getHibernateTemplate().delete(getProgramTeam(id));
-
-        if (log.isDebugEnabled()) {
-            log.debug("deleteProgramTeam: id=" + id);
-        }
-    }
-
+    public boolean teamExists(Integer teamId);
+    public boolean teamNameExists(Integer programId, String teamName);
+    public ProgramTeam getProgramTeam(Integer id);
+    public List<ProgramTeam> getProgramTeams(Integer programId);
+    public void saveProgramTeam(ProgramTeam team);
+    public void deleteProgramTeam(Integer id);
 }

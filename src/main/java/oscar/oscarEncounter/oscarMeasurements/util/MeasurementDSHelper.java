@@ -25,19 +25,14 @@
 
 package oscar.oscarEncounter.oscarMeasurements.util;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
-
 import oscar.oscarDemographic.data.DemographicData;
 import oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBean;
 import oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBeanHandler;
+
+import java.util.*;
 
 /**
  *
@@ -170,16 +165,37 @@ public class MeasurementDSHelper {
     
     public double getDataAsDouble() {
         log.debug("dataAsDouble");
+
         double ret = -1;
-        try{
-        	if(mdb != null && mdb.getDataField() != null) {
-        		ret = Double.parseDouble(mdb.getDataField());
-        	}
-        }catch(Exception e){
-            MiscUtils.getLogger().error("Error", e);
-            problem =true;
-        }  
-        log.debug("DOUBLE val : "+ret);
+        String dataField = null;
+
+        if(mdb != null) {
+            dataField = mdb.getDataField();
+        }
+
+        if (dataField != null) {
+            /*
+             * filter out comparators that were inserted
+             * accidentally in older measurement datasets.
+             */
+            if (dataField.contains("<")) {
+                dataField = dataField.replaceAll("<", "");
+            }
+
+            if (dataField.contains(">")) {
+                dataField = dataField.replaceAll(">", "");
+            }
+
+            if(!dataField.isEmpty()) {
+                try {
+                    ret = Double.parseDouble(dataField);
+                } catch (Exception e) {
+                    MiscUtils.getLogger().error("Fatal error while parsing double value {} for Flowsheet type {} in demographic number {}", ret, mdb.getType(), mdb.getDemo(), e);
+                    problem = true;
+                }
+            }
+        }
+	    log.debug("DOUBLE val : {}", ret);
         return ret;
     }       
     

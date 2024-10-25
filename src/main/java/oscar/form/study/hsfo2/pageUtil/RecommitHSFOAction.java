@@ -63,7 +63,7 @@ public class RecommitHSFOAction extends DispatchActionSupport
 {
 
   static Logger logger = MiscUtils.getLogger();
-  private static Hsfo2RecommitScheduleDao rd = (Hsfo2RecommitScheduleDao) SpringUtils.getBean("hsfo2RecommitScheduleDao");
+  private static Hsfo2RecommitScheduleDao rd = (Hsfo2RecommitScheduleDao) SpringUtils.getBean(Hsfo2RecommitScheduleDao.class);
   
   public ActionForward showSchedule( ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                      HttpServletResponse response )

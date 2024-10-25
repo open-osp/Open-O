@@ -23,34 +23,25 @@
  */
 package org.oscarehr.managers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.PMmodule.dao.ProviderDao;
-import org.oscarehr.util.MiscUtils;
 import org.oscarehr.caisi_integrator.ws.CachedFacility;
 import org.oscarehr.caisi_integrator.ws.CachedProvider;
 import org.oscarehr.caisi_integrator.ws.FacilityIdStringCompositePk;
 import org.oscarehr.common.dao.GroupMembersDao;
 import org.oscarehr.common.dao.GroupsDao;
 import org.oscarehr.common.dao.OscarCommLocationsDao;
-import org.oscarehr.common.model.Facility;
-import org.oscarehr.common.model.GroupMembers;
-import org.oscarehr.common.model.Groups;
-import org.oscarehr.common.model.OscarCommLocations;
-import org.oscarehr.common.model.Provider;
+import org.oscarehr.common.model.*;
 import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import oscar.oscarMessenger.data.ContactIdentifier;
 import oscar.oscarMessenger.data.MsgProviderData;
+
+import java.util.*;
 
 @Service
 public class MessengerGroupManager {
@@ -357,12 +348,13 @@ public class MessengerGroupManager {
 			return;
 		}
 		
-		for(MsgProviderData msgProviderData : msgProviderDataList) {			
+		for(MsgProviderData msgProviderData : msgProviderDataList) {
 			inner:for(GroupMembers groupMember : groupMembers) {
 				if(msgProviderData.getId().getContactId().equals(groupMember.getProviderNo()) 
 						&& msgProviderData.getId().getFacilityId() == groupMember.getFacilityId())
 				{
 					msgProviderData.setMember(Boolean.TRUE);
+					msgProviderData.getId().setGroupId(groupMember.getGroupId());
 					continue inner;
 				}
 			}
@@ -415,6 +407,11 @@ public class MessengerGroupManager {
 			}
 		}
 		checkMembership(messengerContactList);
+		/*
+		 * LocationNo: not sure why. It may be related to "multisites", but then how
+		 * is each provider identified??  Adding it anyway.
+		 */
+		setLocalLocationId(messengerContactList);
 		Collections.sort(messengerContactList, new SortLastName());		
 		return messengerContactList;
 	}
@@ -537,7 +534,22 @@ public class MessengerGroupManager {
 		groupMembers.setGroupId(groupId);
 		groupMembers.setProviderNo(contactIdentifier.getContactId());
 		groupMembers.setClinicLocationNo(contactIdentifier.getClinicLocationNo());
+
+		/*
+		 * A general membership registry with group id=0
+		 * needs to be added if this member was added directly into a group.
+		 * Indicated by a groupId greater than 0.
+		 * But first check if the general membership exists before adding.
+		 */
+		if(groupId > 0 && ! isRegistered(contactIdentifier)) {
+			GroupMembers registeredMember = new GroupMembers();
+			BeanUtils.copyProperties(groupMembers, registeredMember);
+			registeredMember.setGroupId(0);
+			groupMembersDao.persist(registeredMember);
+		}
+
 		groupMembersDao.persist(groupMembers);
+
 		return groupMembers.getId();
 	}
 	
@@ -561,6 +573,24 @@ public class MessengerGroupManager {
 		}
 		return removed;
 	}
+
+	/**
+	 * Remove a messenger member from any given group.
+	 * Does not remove member from other groups or from the main messenger membership registry.
+	 */
+	public boolean removeGroupMember(LoggedInInfo loggedInInfo, ContactIdentifier contactIdentifier) {
+		if(!securityInfoManager.hasPrivilege(loggedInInfo, "_admin", SecurityInfoManager.WRITE, null)) {
+			throw new SecurityException("missing required security object (_admin)");
+		}
+
+		List<GroupMembers> groupMembers = groupMembersDao.findGroupMember(contactIdentifier.getContactId(), contactIdentifier.getGroupId());
+		boolean removed = false;
+		for(GroupMembers groupMember : groupMembers)
+		{
+			removed = groupMembersDao.remove(groupMember.getId());
+		}
+		return removed;
+	}
 	
     public int getCurrentLocationId(){
     	List<OscarCommLocations> oscarCommLocations = oscarCommLocationsDao.findByCurrent1(1);
@@ -578,6 +608,24 @@ public class MessengerGroupManager {
        
         return oscarCommLocationsID;
     }
+
+	private void setLocalLocationId(List<MsgProviderData> msgProviderDataList){
+		int currentLocationId = getCurrentLocationId();
+		for(MsgProviderData msgProviderData : msgProviderDataList){
+			msgProviderData.getId().setClinicLocationNo(currentLocationId);
+		}
+	}
+
+	private boolean isRegistered(ContactIdentifier contactIdentifier) {
+		//override the group id with 0 to ensure registered status
+		int groupId = contactIdentifier.getGroupId();
+		contactIdentifier.setGroupId(0);
+		// pass to the database for validation
+		GroupMembers groupMember = groupMembersDao.findByIdentity(contactIdentifier);
+		// set the group id back to the original.
+		contactIdentifier.setGroupId(groupId);
+		return groupMember != null && groupMember.getId() != null;
+	}
     
     public boolean checkProviderStatus(String providerNo) {	
     	boolean status = Boolean.FALSE;

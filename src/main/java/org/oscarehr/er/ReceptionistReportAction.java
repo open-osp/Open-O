@@ -62,7 +62,7 @@ import oscar.oscarRx.pageUtil.RxSessionBean;
 public class ReceptionistReportAction extends DispatchAction {
 	private static Logger log = MiscUtils.getLogger();
 
-	private static IssueDAO issueDao = (IssueDAO)SpringUtils.getBean("IssueDAO");
+	private static IssueDAO issueDao = (IssueDAO)SpringUtils.getBean(IssueDAO.class);
 	
 	private ProgramManager programManager;
 	private ClientManager clientManager;

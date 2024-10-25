@@ -49,11 +49,11 @@ public class NextAppointmentSearchHelper {
 	static final int MAX_DAYS_TO_SEARCH = 180;
 
 	static Logger logger = MiscUtils.getLogger();
-	static ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");			 	
-	static ScheduleDateDao scheduleDateDao = (ScheduleDateDao)SpringUtils.getBean("scheduleDateDao");
-	static ScheduleTemplateDao scheduleTemplateDao = (ScheduleTemplateDao)SpringUtils.getBean("scheduleTemplateDao");
-	static ScheduleTemplateCodeDao scheduleTemplateCodeDao = (ScheduleTemplateCodeDao)SpringUtils.getBean("scheduleTemplateCodeDao");
-	static OscarAppointmentDao oscarAppointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	static ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);			 	
+	static ScheduleDateDao scheduleDateDao = (ScheduleDateDao)SpringUtils.getBean(ScheduleDateDao.class);
+	static ScheduleTemplateDao scheduleTemplateDao = (ScheduleTemplateDao)SpringUtils.getBean(ScheduleTemplateDao.class);
+	static ScheduleTemplateCodeDao scheduleTemplateCodeDao = (ScheduleTemplateCodeDao)SpringUtils.getBean(ScheduleTemplateCodeDao.class);
+	static OscarAppointmentDao oscarAppointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 	
 	/**
 	 * Search against schedule for next appointment.

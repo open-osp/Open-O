@@ -29,9 +29,9 @@
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%
 	WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    UserPropertyDAO userPropertyDAO = (UserPropertyDAO) ctx.getBean("UserPropertyDAO");
-    BillingONCHeader1Dao cheader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean("billingONCHeader1Dao");
-    BillingONExtDao extDao = (BillingONExtDao) SpringUtils.getBean("billingONExtDao");
+    UserPropertyDAO userPropertyDAO = (UserPropertyDAO) ctx.getBean(UserPropertyDAO.class);
+    BillingONCHeader1Dao cheader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
+    BillingONExtDao extDao = (BillingONExtDao) SpringUtils.getBean(BillingONExtDao.class);
     		
     		
 	if (session.getAttribute("user") == null) {

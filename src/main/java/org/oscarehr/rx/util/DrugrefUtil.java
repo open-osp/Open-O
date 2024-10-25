@@ -63,10 +63,10 @@ import oscar.oscarRx.util.RxDrugRef;
 
 public class DrugrefUtil {
 	private static final Logger logger = MiscUtils.getLogger();
-	UserPropertyDAO  propDAO =  (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
-    UserDSMessagePrefsDao  dsmessageDao =  (UserDSMessagePrefsDao) SpringUtils.getBean("userDSMessagePrefsDao");
+	UserPropertyDAO  propDAO =  (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
+    UserDSMessagePrefsDao  dsmessageDao =  (UserDSMessagePrefsDao) SpringUtils.getBean(UserDSMessagePrefsDao.class);
     
-    DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+    DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
     DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     
     

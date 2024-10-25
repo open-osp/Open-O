@@ -103,11 +103,11 @@ public class OscarChartPrinter {
     boolean newPage;
     private PdfContentByte cb;
 
-    private ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-    private DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
-    private DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
-    private OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
-    private PreventionDao preventionDao = (PreventionDao)SpringUtils.getBean("preventionDao");
+    private ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
+    private DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean(DemographicCustDao.class);
+    private DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
+    private OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
+    private PreventionDao preventionDao = (PreventionDao)SpringUtils.getBean(PreventionDao.class);
     private DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
     
@@ -686,8 +686,8 @@ public class OscarChartPrinter {
     }
 
     public void printDiseaseRegistry() throws DocumentException {
-    	DxresearchDAO dxDao = (DxresearchDAO)SpringUtils.getBean("DxresearchDAO");
-    	IssueDAO issueDao = (IssueDAO)SpringUtils.getBean("IssueDAO");
+    	DxresearchDAO dxDao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
+    	IssueDAO issueDao = (IssueDAO)SpringUtils.getBean(IssueDAO.class);
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     	List<Dxresearch> dxs = dxDao.getDxResearchItemsByPatient(demographic.getDemographicNo());
@@ -733,8 +733,8 @@ public class OscarChartPrinter {
     }
 
     public void printCurrentAdmissions() throws DocumentException {
-    	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean("admissionDao");
-    	ProgramDao programDao = (ProgramDao)SpringUtils.getBean("programDao");
+    	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean(AdmissionDao.class);
+    	ProgramDao programDao = (ProgramDao)SpringUtils.getBean(ProgramDao.class);
 
     	List<Admission> admissions = admissionDao.getCurrentAdmissions(demographic.getDemographicNo());
 
@@ -770,8 +770,8 @@ public class OscarChartPrinter {
     }
 
     public void printPastAdmissions() throws DocumentException {
-    	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean("admissionDao");
-    	ProgramDao programDao = (ProgramDao)SpringUtils.getBean("programDao");
+    	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean(AdmissionDao.class);
+    	ProgramDao programDao = (ProgramDao)SpringUtils.getBean(ProgramDao.class);
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     	List<Admission> admissions = admissionDao.getAdmissions(demographic.getDemographicNo());
@@ -813,7 +813,7 @@ public class OscarChartPrinter {
     }
 
     public void printCurrentIssues() throws  DocumentException {
-    	CaseManagementIssueDAO cmIssueDao = (CaseManagementIssueDAO)SpringUtils.getBean("CaseManagementIssueDAO");
+    	CaseManagementIssueDAO cmIssueDao = (CaseManagementIssueDAO)SpringUtils.getBean(CaseManagementIssueDAO.class);
 
     	List<CaseManagementIssue> issues = cmIssueDao.getIssuesByDemographic(String.valueOf(demographic.getDemographicNo()));
 

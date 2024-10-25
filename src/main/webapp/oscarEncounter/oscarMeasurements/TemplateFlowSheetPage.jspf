@@ -107,15 +107,19 @@
     boolean dsProblems = false;
 
 
-    FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) SpringUtils.getBean("flowSheetCustomizationDao");
-    FlowSheetDrugDao flowSheetDrugDao = (FlowSheetDrugDao) SpringUtils.getBean("flowSheetDrugDao");
-	FlowSheetDxDao flowSheetDxDao = (FlowSheetDxDao) SpringUtils.getBean("flowSheetDxDao");
+    FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) SpringUtils.getBean(FlowSheetCustomizationDao.class);
+    FlowSheetDrugDao flowSheetDrugDao = (FlowSheetDrugDao) SpringUtils.getBean(FlowSheetDrugDao.class);
+	FlowSheetDxDao flowSheetDxDao = (FlowSheetDxDao) SpringUtils.getBean(FlowSheetDxDao.class);
 
     MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
 
-    MeasurementFlowSheet mFlowsheet = null;
+    List<FlowSheetCustomization> custList = flowSheetCustomizationDao.getFlowSheetCustomizations(temp, loggedInInfo.getLoggedInProviderNo(), Integer.parseInt(demographic_no));
+    MeasurementFlowSheet mFlowsheet = templateConfig.getFlowSheet(temp,custList);
 
-    mFlowsheet = templateConfig.getFlowSheet(temp,loggedInInfo.getLoggedInProviderNo(),Integer.parseInt(demographic_no));
+    if (mFlowsheet == null) {
+        request.setAttribute("errorMessage", temp + "Flowsheet not found");
+        return;
+    }
 
     MeasurementInfo mi = new MeasurementInfo(demographic_no);
     List<String> measurementLs = mFlowsheet.getMeasurementList();
@@ -148,12 +152,14 @@
 
 %>
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <title><%=flowSheet%> - <oscar:nameage demographicNo="<%=demographic_no%>"/></title><!--I18n-->
 
 <script type="text/javascript" src="${ pageContext.request.contextPath }/share/javascript/Oscar.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 
 
@@ -171,7 +177,15 @@
 </script>
 <oscar:customInterface name="renal" section="diab"/>
 
-<style type="text/css">
+<style media="all">
+    :root *:not(h1,h2,h3,h4) {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+        font-size: 12px;
+        overscroll-behavior: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
     div.ImmSet { background-color: #ffffff;clear:left;margin-top:10px;}
     div.ImmSet h2 {  }
     div.ImmSet h2 span { font-size:smaller; }
@@ -181,26 +195,19 @@
     div.ImmSet li a:hover { text-decoration:none; color:red; }
     div.ImmSet li a:visited { text-decoration:none; color:blue;}
 
-    /*h3{font-size: 100%;margin:0 0 10px;padding: 2px 0;color: #497B7B;text-align: center}*/
-
 </style>
 
-<style type="text/css" media="print">
+<style media="print">
 .DoNotPrint {
 	display: none;
 }
 
 .noborder{
-    border: 0px solid #FFF;
+    border: 0 solid #FFF;
 }
 
-
-
 div.headPrevention {
-    position:relative;
-    margin-left:1px;
     width:22em;
-    /*height:2.9em;*/
 }
 
 div.headPrevention a:active { color:black; }
@@ -208,14 +215,21 @@ div.headPrevention a:hover { color:black; }
 div.headPrevention a:link { color:black; }
 div.headPrevention a:visited { color:black; }
 </style>
-<style type="text/css" media="screen">
+<style media="screen">
     .DoNotScreen{ display:none;}
 
+    div.panel {
+        background-color:whitesmoke;
+        padding:5px;
+margin-top:5px;
+        width:100%;
+        border-radius: 4px;
+    }
     div.headPrevention {
-    position:relative;
-    float:left;
-    width:12em;
-    /*height:2.9em;*/
+        width:12em;
+        background-color: silver;
+        box-shadow: 0 2px 4px 0 rgba(38,40,42,0.3);
+        border-radius: 4px;
 }
 
 
@@ -225,38 +239,15 @@ div.headPrevention a:link { color:black; }
 div.headPrevention a:visited { color:black; }
 
 div.headPrevention p {
-    background: silver;
-    font-family: verdana,tahoma,sans-serif;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
     margin:0;
-    padding: 4px 4px;
-    line-height: 1.2;
-/*text-align: justify;*/
-    height:2em;
-    font-family: sans-serif;
+    padding: 4px;
+    background-color:transparent;
 }
-
 
 </style>
 
-<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/niftyCorners.css" />
-<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/share/css/niftyPrint.css" media="print" />
-<script type="text/javascript" src="${ pageContext.request.contextPath }/share/javascript/nifty.js"></script>
-
 <script type="text/javascript">
-    window.onload=function(){
-        if(!NiftyCheck())
-            return;
-
-//Rounded("div.news","all","transparent","#FFF","small border #999");
-        Rounded("div.headPrevention","all","#CCF","#efeadc","small border blue");
-        Rounded("div.preventionProcedure","all","transparent","#F0F0E7","small border #999");
-
-//Rounded("span.footnote","all","transparent","#F0F0E7","small border #999");
-
-        Rounded("div.leftBox","top","transparent","#CCCCFF","small border #ccccff");
-        Rounded("div.leftBox","bottom","transparent","#EEEEFF","small border #ccccff");
-
-    }
 
     function isValidDate(dateString) {
     	  var regEx = /^\d{4}-\d{2}-\d{2}$/;
@@ -351,16 +342,26 @@ div.headPrevention p {
 </script>
 
 
-<style type="text/css">
-body {font-size:100%}
-
+<style>
+table {
+    width:100%;
+}
+    div#prevention-list {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        align-items: stretch;
+    }
 
 div.leftBox{
     width:90%;
-    margin-top: 2px;
+    margin-bottom: 5px;
     margin-left:3px;
     margin-right:3px;
     float: left;
+    background-color: transparent;
+    box-shadow: 0 2px 4px 0 rgba(38,40,42,0.3);
+    border-radius: 0 0 4px 4px ;
 }
 
 span.footnote {
@@ -371,29 +372,35 @@ span.footnote {
 
 div.leftBox h3 {
     background-color: silver;
-/*font-size: 1.25em;*/
-    font-size: 8pt;
-    font-variant:small-caps;
     font-weight:bold;
-    margin-top:0px;
-    padding-top:0px;
-    margin-bottom:0px;
-    padding-bottom:0px;
-    line-height: 16px;
+    font-size: 13px;
+    margin:0;
+    padding:5px;
+    line-height: initial;
+    border: 1px silver solid;
+    border-radius: 4px 4px 0 0;
+}
+div.leftBox h3 a {
+    display:block;
+}
+
+div.leftBox div.wrapper {
+    padding:5px;
+    border-radius: 0 0 4px 4px;
+    border: 1px silver solid;
+    border-top: none;
 }
 
 div.leftBox ul{
-/*border-top: 1px solid #F11;*/
-/*border-bottom: 1px solid #F11;*/
     list-style:none;
     list-style-type:none;
     list-style-position:outside;
     padding-left:1px;
     margin-left:1px;
-    margin-top:0px;
+    margin-top:0;
     padding-top:1px;
-    margin-bottom:0px;
-    padding-bottom:0px;
+    margin-bottom:0;
+    padding-bottom:0;
 }
 
 div.leftBox li {
@@ -401,58 +408,32 @@ div.leftBox li {
     white-space: nowrap;
 }
 
-<%--
-div.headPrevention {
-    position:relative;
-    float:left;
-    width:12em;
-    height:2.9em;
-}
-
-div.headPrevention p {
-    background: silver;
-    font-family: verdana,tahoma,sans-serif;
-    margin:0;
-    padding: 4px 4px;
-    line-height: 1.2;
-/*text-align: justify;*/
-    height:2em;
-    font-family: sans-serif;
-}
---%>
 div.headPrevention a {
     text-decoration:none;
 }
-<%--
-div.headPrevention a:active { color:blue; }
-div.headPrevention a:hover { color:blue; }
-div.headPrevention a:link { color:blue; }
-div.headPrevention a:visited { color:blue; }
---%>
 
 div.preventionProcedure{
     width:9em;
     float:left;
     margin-left:3px;
     margin-bottom:3px;
+    background-color: transparent;
+    box-shadow: 0 2px 4px 0 rgba(38,40,42,0.3);
+    border-radius: 4px;
 }
 
 div.preventionProcedure p {
-    font-size: 0.8em;
-    font-family: verdana,tahoma,sans-serif;
     background: #F0F0E7;
-    margin:0;
-    padding: 1px 2px;
-/*line-height: 1.3;*/
-/*text-align: justify*/
+    margin: 0;
+    padding: 0 4px;
+    border-radius: 4px;
 }
 
 div.preventionSection {
     width: 100%;
-    position:relative;
-    margin-top:5px;
-    float:left;
-    clear:left;
+    display: flex;
+    gap: 3px;
+    flex-direction: row;
 }
 
 div.preventionSet {
@@ -460,24 +441,16 @@ div.preventionSet {
     clear:left;
 }
 
-div.recommendations{
-    font-family: verdana,tahoma,sans-serif;
-    font-size: 1.2em;
-}
+
 
 div.recommendations ul{
     padding-left:15px;
     margin-left:1px;
-    margin-top:0px;
+    margin-top:0;
     padding-top:1px;
-    margin-bottom:0px;
-    padding-bottom:0px;
+    margin-bottom:0;
+    padding-bottom:0;
 }
-
-div.recommendations li{
-
-}
-
 
 
 </style>
@@ -485,17 +458,22 @@ div.recommendations li{
 </head>
 
 <body class="BodyStyle" >
-<!--  -->
+<div class="container">
 <table  class="MainTable" id="scrollNumber1" >
 <tr class="MainTableTopRow">
     <td class="MainTableTopRowLeftColumn"  >
         <h4><%=flowSheet%></h4>
     </td>
-    <td class="MainTableTopRowRightColumn">
+    <td class="MainTableTopRowRightColumn" style="text-align: center;">
+        <h4><oscar:nameage demographicNo="<%=demographic_no%>"/></h4>
+    </td>
+</tr>
+    <tr>
+    <td colspan="2">
         <table class="TopStatusBar">
             <tr>
-                <td colspan="3">
-                    <h4><oscar:nameage demographicNo="<%=demographic_no%>"/></h4>
+                <td>
+
                     <span class="DoNotPrint">
 
                     <a href="TemplateFlowSheet.jsp?demographic_no=<%=demographic_no%>&template=<%=temp%>&show=lastOnly">Last Only</a>
@@ -510,21 +488,31 @@ div.recommendations li{
              </tr>
              <tr>
              	<td>
-               		<span class="DoNotPrint">
-                    #Of Elements <input type="text" size="3" id="numEle" value="<%=request.getParameter("numEle") != null ? request.getParameter("numEle") : "" %>"/>
+               		<div class="DoNotPrint" style="display:flex; gap:3px; flex-direction: row;">
+                        <div class="form-group">
+                   <label for="numEle"> #Of Elements</label>
+                        <input type="text" size="3" id="numEle" value="<%=request.getParameter("numEle") != null ? request.getParameter("numEle") : "" %>"/>
+                        </div>
+                        <div class="form-group">
+                   <label for="flowsheetStartDate"> Start Date</label>
+                        <input type="date" size="10" id="flowsheetStartDate" value="<%=request.getParameter("sdate") != null ? request.getParameter("sdate") : "" %>" />
+                        </div>
+                        <div class="form-group">
+                   <label for="flowsheetEndDate"> End Date</label>
+                        <input type="date" size="10" id="flowsheetEndDate" value="<%=request.getParameter("edate") != null ? request.getParameter("edate") : "" %>"/>
+                        </div>
+                        <div class="button-group">
+                            <label>&nbsp;</label>
+                    <input type="button" class="btn" value="go" onclick="loadDifferentElements()"/>
+                        </div>
+                        <div class="button-group">
+                            <label>&nbsp;</label>
+                    <input type="button" class="btn" value="clear" onclick="clearDifferentElements()"/>
+                        </div>
 
-                    Start Date <input type="date" size="10" id="flowsheetStartDate" value="<%=request.getParameter("sdate") != null ? request.getParameter("sdate") : "" %>" />
-                    End Date <input type="date" size="10" id="flowsheetEndDate" value="<%=request.getParameter("edate") != null ? request.getParameter("edate") : "" %>"/>
-                    <input type="button" class="btn" value="go" onclick="javascript: loadDifferentElements()"/>
-                    <input type="button" class="btn" value="clear" onclick="javascript: clearDifferentElements()"/>
-                    </span>
+                    </div>
                 </td>
-                <td>
-                &nbsp;
-                </td>
-                <td style="text-align:right; vertical-align:bottom;">
-                    <oscar:help keywords="measurement" key="app.top1"/> | <a href="javascript:popupStart(300,400,'About.jsp')" ><bean:message key="global.about" /></a> | <a href="javascript:popupStart(300,400,'License.jsp')" ><bean:message key="global.license" /></a>
-                </td>
+
             </tr>
         </table>
     </td>
@@ -547,7 +535,7 @@ div.recommendations li{
     <!-- only show disease registry and prescriptions for flowsheets which aren't medical in nature -->
     <% if (mFlowsheet.isMedical()) {%>
     <div class="leftBox">
-        <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientdxlist" />  <a class="DoNotPrint"  href="#" onclick="toggle('dxFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
+        <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientdxlist" />  <a class="DoNotPrint"  href="javascript:void(0)" onclick="toggle('dxFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
         <div class="wrapper" id="dxFullListing"  >
             <ul>
             <%
@@ -585,7 +573,7 @@ div.recommendations li{
 
     <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r"  >
         <div class="leftBox">
-            <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientrxlist" />  <a class="DoNotPrint" href="#" onclick="toggle('rxFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
+            <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientrxlist" />  <a class="DoNotPrint" href="javascript:void(0)" onclick="toggle('rxFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
             <div class="wrapper" id="rxFullListing"  >
 
                 <%
@@ -620,7 +608,7 @@ div.recommendations li{
 
 
          <div class="leftBox">
-            <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientallergylist" />  <a class="DoNotPrint" href="#" onclick="toggle('allergFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
+            <h3>&nbsp;<bean:message key="oscarencounter.templateflowsheet.currentpatientallergylist" />  <a class="DoNotPrint" href="javascript:void(0)" onclick="toggle('allergFullListing'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a></h3>
             <div class="wrapper" id="allergFullListing"  >
 
                 <%
@@ -660,7 +648,7 @@ div.recommendations li{
 <% if (warnings.size() > 0 || recomendations.size() > 0  || dsProblems) { %>
 <div class="recommendations">
     <span style="font-size:larger;"><%=flowSheet%> Recommendations</span>
-    <a href="#" onclick="toggle('recomList'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a>
+    <a href="javascript:void(0)" onclick="toggle('recomList'); return false;" style="font-size:x-small;" ><bean:message key="oscarencounter.templateflowsheet.showhide" /></a>
     <ul id="recomList" style="display:none;">
         <% for (String warn : warnings){ %>
         <li style="color: red;"><%=warn%></li>
@@ -679,11 +667,8 @@ div.recommendations li{
 
 	out.print(mFlowsheet.getTopHTMLStream());
 %>
-<%--
-<img src="${ pageContext.request.contextPath }/oscarEncounter/GraphMeasurements.do?demographic_no=<%=demographic_no%>&type=INR&type2=COUM"/>
-<br/>
---%>
-<div >
+
+<div id="prevention-list">
 <%
 	//set add link array
 	String[] addAllLink = new String[measurements.size()];
@@ -804,16 +789,7 @@ div.recommendations li{
             if(k > num) {
             	 hider = "style=\"display:none;\"";
             }
-            /*
-            if(sdate != null && edate != null){
-                Date itDate = mdb.getDateObservedAsDate();
-                if (itDate.before(sdate) || itDate.after(edate)){
-                        hider = "style=\"display:none\"";
-                }
-            }else if ( k > num){
-                hider = "style=\"display:none;\"";
-            }
-*/
+
             String indColour = "";
             if ( mdb.getIndicationColour() != null ){
                 indColour = "style=\"background-color:"+mFlowsheet.getIndicatorColour(mdb.getIndicationColour())+"\"";
@@ -956,8 +932,8 @@ function createAddAll(d,t,h){
 if(temp.equals("diab2") || temp.equals("chf")) {
 %>
 
-<br style="clear:left;"/>
-<div style="margin-top: 20px;">
+
+<div class="panel panel-default">
 	<!-- drug reason -->
 	 <h3>Associated Rx History</h3>
 	 <br/>
@@ -1001,7 +977,7 @@ if(temp.equals("diab2") || temp.equals("chf")) {
 					<br/>
 					<ul>
 					<%
-						thisDrug.sort(new Drug.RxDateCompator());
+						thisDrug.sort(Drug.START_DATE_COMPARATOR);
 						Collections.reverse(thisDrug);
 						for(Drug d : thisDrug) {
 							%>
@@ -1020,8 +996,8 @@ if(temp.equals("diab2") || temp.equals("chf")) {
 </div>
 
 <% } %>
-<br style="clear:left;"/>
-<div style="margin-top: 20px;">
+
+<div class="panel panel-default">
     <h3>Comments</h3>
     <ol>
         <% for (int i = 0; i < comments.size(); i++){
@@ -1058,6 +1034,7 @@ if(idExists("WT") && idExists("HT" ) && idExists("BMI")){
     document.getElementById('add_custom').style.display = 'block'; // show
 }
 </script>
+</div>
 </body>
 </html:html>
 

@@ -63,7 +63,7 @@ reqIDL = LabRequestReportLink.getRequestTableIdByReport("labPatientPhysicianInfo
 String reqTableID = reqIDL==null ? "" : reqIDL.toString();
 
 String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_LABTEST2;
-CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
+CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 
 %>
     <%

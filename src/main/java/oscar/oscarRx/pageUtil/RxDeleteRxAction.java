@@ -63,7 +63,7 @@ import oscar.oscarEncounter.data.EctProgram;
 
 
 public final class RxDeleteRxAction extends DispatchAction {
-    private DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
+    private DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     private static final String PRIVILEGE_UPDATE = "u";
@@ -322,7 +322,7 @@ public ActionForward clearStash(ActionMapping mapping,ActionForm form,HttpServle
         cmn.setSigning_provider_no(user);
         cmn.setProgram_no(prog_no);
         
-        SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean("secRoleDao");
+        SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean(SecRoleDao.class);
 		SecRole doctorRole = secRoleDao.findByName("doctor");		
 		cmn.setReporter_caisi_role(doctorRole.getId().toString());
                 
@@ -333,7 +333,7 @@ public ActionForward clearStash(ActionMapping mapping,ActionForm form,HttpServle
         //cmn.setPosition(0);
         //save note
         WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(se.getServletContext());
-        CaseManagementManager cmm = (CaseManagementManager) ctx.getBean("caseManagementManager");
+        CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
         
         Long note_id = cmm.saveNoteSimpleReturnID(cmn);
         // Debugging purposes on the live server

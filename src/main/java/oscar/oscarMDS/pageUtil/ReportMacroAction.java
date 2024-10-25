@@ -148,7 +148,7 @@ public class ReportMacroAction extends DispatchAction {
     }
     
     private boolean skipComment(String providerNo) {
-		UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+		UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		UserProperty uProp = userPropertyDAO.getProp(providerNo, UserProperty.LAB_ACK_COMMENT);
 		boolean skipComment = false;
 		if( uProp != null && uProp.getValue().equalsIgnoreCase("yes")) {

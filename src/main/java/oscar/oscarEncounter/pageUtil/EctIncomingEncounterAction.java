@@ -59,6 +59,7 @@ import org.oscarehr.casemgmt.model.CaseManagementIssue;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
 import org.oscarehr.casemgmt.model.Issue;
 import org.oscarehr.casemgmt.service.CaseManagementManager;
+import org.oscarehr.casemgmt.service.CaseManagementManagerImpl;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.myoscar.client.ws_manager.AccountManager;
@@ -82,26 +83,29 @@ import oscar.util.UtilDateUtilities;
 public class EctIncomingEncounterAction extends Action {
 
 	private static Logger log = MiscUtils.getLogger();
-	private CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO) SpringUtils.getBean("caseManagementNoteDAO");
+	private CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO) SpringUtils
+			.getBean(CaseManagementNoteDAO.class);
 	private CaseManagementManager caseManagementMgr = SpringUtils.getBean(CaseManagementManager.class);
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-	
-	
-	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws IOException, ServletException {
 
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		String demoNo = request.getParameter("demographicNo");
 
-		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "r", null)) {
+		if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "r",
+				null)) {
 			throw new SecurityException("missing required security object (_demographic)");
 		}
-		
-		if(!"true".equals(OscarProperties.getInstance().getProperty("program_domain.show_echart", "false"))) {
-			if (!caseManagementMgr.isClientInProgramDomain(loggedInInfo.getLoggedInProviderNo(), demoNo) && !caseManagementMgr.isClientReferredInProgramDomain(loggedInInfo.getLoggedInProviderNo(), demoNo)) {
+
+		if (!"true".equals(OscarProperties.getInstance().getProperty("program_domain.show_echart", "false"))) {
+			if (!caseManagementMgr.isClientInProgramDomain(loggedInInfo.getLoggedInProviderNo(), demoNo)
+					&& !caseManagementMgr.isClientReferredInProgramDomain(loggedInInfo.getLoggedInProviderNo(),
+							demoNo)) {
 				return mapping.findForward("domain-error");
 			}
 		}
-		
 
 		EctSessionBean bean = new EctSessionBean();
 		String appointmentNo = null;
@@ -115,24 +119,24 @@ public class EctIncomingEncounterAction extends Action {
 			bean.setUpEncounterPage(loggedInInfo, request.getParameter("appointmentNo"));
 			bean.template = "";
 		} else if (request.getParameter("demographicSearch") != null) {
-			//Coming in from the demographicSearch page
+			// Coming in from the demographicSearch page
 			bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean");
-			//demographicNo is passed from search screen
+			// demographicNo is passed from search screen
 			bean.demographicNo = request.getParameter("demographicNo");
-			//no curProviderNo when viewing eCharts from search screen
-			//bean.curProviderNo="";
-			//no reason when viewing eChart from search screen
+			// no curProviderNo when viewing eCharts from search screen
+			// bean.curProviderNo="";
+			// no reason when viewing eChart from search screen
 			bean.reason = "";
-			//userName is already set
-			//bean.userName=request.getParameter("userName");
-			//no appointmentDate from search screen keep old date
-			//bean.appointmentDate="";
-			//no startTime from search screen
+			// userName is already set
+			// bean.userName=request.getParameter("userName");
+			// no appointmentDate from search screen keep old date
+			// bean.appointmentDate="";
+			// no startTime from search screen
 			bean.startTime = "";
-			//no status from search screen
+			// no status from search screen
 			bean.status = "";
-			//no date from search screen-keep old date
-			//bean.date="";
+			// no date from search screen-keep old date
+			// bean.date="";
 			bean.appointmentNo = "0";
 			bean.check = "myCheck";
 			bean.setUpEncounterPage(LoggedInInfo.getLoggedInInfoFromSession(request));
@@ -140,7 +144,7 @@ public class EctIncomingEncounterAction extends Action {
 		} else {
 			if ("yes".equals(request.getParameter("PEAttach"))) {
 				String selectClientmo = request.getParameter("selectId");
-				//save
+				// save
 				String lastId = request.getParameter("noteId");
 
 				CaseManagementNote note = caseManagementNoteDao.getNote(Long.parseLong(lastId));
@@ -162,43 +166,61 @@ public class EctIncomingEncounterAction extends Action {
 
 			bean.demographicNo = request.getParameter("demographicNo");
 			bean.appointmentNo = request.getParameter("appointmentNo");
-			//use this one.
-			if (bean.appointmentNo != null && !bean.appointmentNo.equalsIgnoreCase("null") && !"".equals(bean.appointmentNo) && appointmentNo != null) {
+			// use this one.
+			if (bean.appointmentNo != null && !bean.appointmentNo.equalsIgnoreCase("null")
+					&& !"".equals(bean.appointmentNo) && appointmentNo != null) {
 				bean.appointmentNo = appointmentNo;
 			}
 
 			bean.curProviderNo = request.getParameter("curProviderNo");
 			Provider provider = loggedInInfo.getLoggedInProvider();
-			if (bean.curProviderNo == null || bean.curProviderNo.trim().length() == 0) bean.curProviderNo = provider.getProviderNo();
+			if (bean.curProviderNo == null || bean.curProviderNo.trim().length() == 0)
+				bean.curProviderNo = provider.getProviderNo();
 			bean.reason = request.getParameter("reason");
 			bean.encType = request.getParameter("encType");
 			bean.userName = request.getParameter("userName");
 			if (bean.userName == null) {
-				bean.userName = ((String) request.getSession().getAttribute("userfirstname")) + " " + ((String) request.getSession().getAttribute("userlastname"));
+				bean.userName = ((String) request.getSession().getAttribute("userfirstname")) + " "
+						+ ((String) request.getSession().getAttribute("userlastname"));
 			}
 
 			bean.myoscarMsgId = request.getParameter("myoscarmsg");
 			if (request.getParameter("myoscarmsg") != null) {
 				ResourceBundle props = ResourceBundle.getBundle("oscarResources", request.getLocale());
 				try {
-					MessageTransfer3 messageTransfer = MyOscarMessagesHelper.readMessage(request.getSession(), Long.parseLong(bean.myoscarMsgId));
+					MessageTransfer3 messageTransfer = MyOscarMessagesHelper.readMessage(request.getSession(),
+							Long.parseLong(bean.myoscarMsgId));
 					String messageBeingRepliedTo = "";
 					String dateStr = "";
 
 					if (request.getParameter("remyoscarmsg") != null) {
-						MessageTransfer3 messageTransferOrig = MyOscarMessagesHelper.readMessage(request.getSession(), Long.parseLong(request.getParameter("remyoscarmsg")));
-						dateStr = StringEscapeUtils.escapeHtml(DateUtils.formatDateTime(messageTransferOrig.getSentDate(), request.getLocale()));
+						MessageTransfer3 messageTransferOrig = MyOscarMessagesHelper.readMessage(request.getSession(),
+								Long.parseLong(request.getParameter("remyoscarmsg")));
+						dateStr = StringEscapeUtils.escapeHtml(
+								DateUtils.formatDateTime(messageTransferOrig.getSentDate(), request.getLocale()));
 
-						MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(request.getSession());
-						MinimalPersonTransfer2 minimalPersonTransfer = AccountManager.getMinimalPerson(myOscarLoggedInInfo, messageTransferOrig.getSenderPersonId());
+						MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo
+								.getLoggedInInfo(request.getSession());
+						MinimalPersonTransfer2 minimalPersonTransfer = AccountManager
+								.getMinimalPerson(myOscarLoggedInInfo, messageTransferOrig.getSenderPersonId());
 						String originalMessageBody = MessageManager.getMessageBody(messageTransferOrig);
-						messageBeingRepliedTo = props.getString("myoscar.msg.From") + ": " + StringEscapeUtils.escapeHtml(minimalPersonTransfer.getLastName() + ", " + minimalPersonTransfer.getFirstName()) + " (" + dateStr + ")\n" + originalMessageBody + "\n-------------\n" + props.getString("myoscar.msg.Reply") + ":\n";
+						messageBeingRepliedTo = props.getString("myoscar.msg.From") + ": "
+								+ StringEscapeUtils.escapeHtml(minimalPersonTransfer.getLastName() + ", "
+										+ minimalPersonTransfer.getFirstName())
+								+ " (" + dateStr + ")\n" + originalMessageBody + "\n-------------\n"
+								+ props.getString("myoscar.msg.Reply") + ":\n";
 					} else {
-						dateStr = StringEscapeUtils.escapeHtml(DateUtils.formatDateTime(messageTransfer.getSentDate(), request.getLocale()));
+						dateStr = StringEscapeUtils.escapeHtml(
+								DateUtils.formatDateTime(messageTransfer.getSentDate(), request.getLocale()));
 
-						MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(request.getSession());
-						MinimalPersonTransfer2 minimalPersonTransfer = AccountManager.getMinimalPerson(myOscarLoggedInInfo, messageTransfer.getSenderPersonId());
-						messageBeingRepliedTo = props.getString("myoscar.msg.From") + ": " + StringEscapeUtils.escapeHtml(minimalPersonTransfer.getLastName() + ", " + minimalPersonTransfer.getFirstName()) + " (" + dateStr + ")\n";
+						MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo
+								.getLoggedInInfo(request.getSession());
+						MinimalPersonTransfer2 minimalPersonTransfer = AccountManager
+								.getMinimalPerson(myOscarLoggedInInfo, messageTransfer.getSenderPersonId());
+						messageBeingRepliedTo = props.getString("myoscar.msg.From") + ": "
+								+ StringEscapeUtils.escapeHtml(minimalPersonTransfer.getLastName() + ", "
+										+ minimalPersonTransfer.getFirstName())
+								+ " (" + dateStr + ")\n";
 					}
 
 					String subject = MessageManager.getSubject(messageTransfer);
@@ -226,12 +248,13 @@ public class EctIncomingEncounterAction extends Action {
 			}
 
 			long notesCount = caseManagementNoteDao.getNotesCountByDemographicId(bean.getDemographicNo());
-			if (notesCount == 0 && OscarProperties.getInstance().getProperty("wl_default_issue", "false").equals("true")) {
+			if (notesCount == 0
+					&& OscarProperties.getInstance().getProperty("wl_default_issue", "false").equals("true")) {
 				// assign default issues for a feature: WL: default issues assignment
 				String wlProgramId = (String) request.getSession().getAttribute(SessionConstants.CURRENT_PROGRAM_ID);
 				DefaultIssueDao defaultIssueDao = SpringUtils.getBean(DefaultIssueDao.class);
-				IssueDAO issueDao = (IssueDAO) SpringUtils.getBean("IssueDAO");
-				CaseManagementIssueDAO cmiDao = (CaseManagementIssueDAO) SpringUtils.getBean("CaseManagementIssueDAO");
+				IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
+				CaseManagementIssueDAO cmiDao = (CaseManagementIssueDAO) SpringUtils.getBean(CaseManagementIssueDAO.class);
 				Set<Long> issueIdSet = getIssueIdSet(bean.getCurProviderNo(), wlProgramId);
 				String[] issueIds = defaultIssueDao.findAllDefaultIssueIds();
 				for (String id : issueIds) {
@@ -264,12 +287,12 @@ public class EctIncomingEncounterAction extends Action {
 
 		ArrayList newDocArr = (ArrayList) request.getSession().getServletContext().getAttribute("newDocArr");
 		Boolean useNewEchart = (Boolean) request.getSession().getServletContext().getAttribute("useNewEchart");
-                
+
 		String proNo = (String) request.getSession().getAttribute("user");
 		if (proNo != null && newDocArr != null && Collections.binarySearch(newDocArr, proNo) >= 0) {
 			return (mapping.findForward("success2"));
 		} else if (useNewEchart != null && useNewEchart.equals(Boolean.TRUE)) {
-                    
+
 			return (mapping.findForward("success2"));
 		} else {
 			return (mapping.findForward("success"));
@@ -277,13 +300,15 @@ public class EctIncomingEncounterAction extends Action {
 	}
 
 	private Set<Long> getIssueIdSet(String providerNo, String wlProgramId) {
-		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
-		List<ProgramProvider> ppList = programProviderDao.getProgramProviderByProviderProgramId(providerNo, new Long(wlProgramId));
+		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
+		List<ProgramProvider> ppList = programProviderDao.getProgramProviderByProviderProgramId(providerNo,
+				new Long(wlProgramId));
 		ProgramProvider pp = ppList.get(0);
 		Secrole role = pp.getRole();
 
-		// get program accesses... program allows either all roles or not all roles (does this mean no roles?)
-		ProgramAccessDAO programAccessDAO = (ProgramAccessDAO) SpringUtils.getBean("programAccessDAO");
+		// get program accesses... program allows either all roles or not all roles
+		// (does this mean no roles?)
+		ProgramAccessDAO programAccessDAO = (ProgramAccessDAO) SpringUtils.getBean(ProgramAccessDAO.class);
 		List<ProgramAccess> paList = programAccessDAO.getAccessListByProgramId(new Long(wlProgramId));
 		Map<String, ProgramAccess> paMap = new HashMap<String, ProgramAccess>();
 		for (Iterator<ProgramAccess> iter = paList.iterator(); iter.hasNext();) {
@@ -292,11 +317,11 @@ public class EctIncomingEncounterAction extends Action {
 		}
 
 		// get all roles
-		CaseManagementManager cmm = new CaseManagementManager();
-		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean("secroleDao");
+		CaseManagementManager cmm = new CaseManagementManagerImpl();
+		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean(SecroleDao.class);
 		List<Secrole> allRoles = secroleDao.getRoles();
 
-		RoleProgramAccessDAO roleProgramAccessDAO = (RoleProgramAccessDAO) SpringUtils.getBean("RoleProgramAccessDAO");
+		RoleProgramAccessDAO roleProgramAccessDAO = (RoleProgramAccessDAO) SpringUtils.getBean(RoleProgramAccessDAO.class);
 
 		List<Secrole> allowableSearchRoles = new ArrayList<Secrole>();
 		for (Iterator<Secrole> iter = allRoles.iterator(); iter.hasNext();) {
@@ -317,7 +342,7 @@ public class EctIncomingEncounterAction extends Action {
 				allowableSearchRoles.add(r);
 			}
 		}
-		IssueDAO issueDAO = (IssueDAO) SpringUtils.getBean("IssueDAO");
+		IssueDAO issueDAO = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
 		List<Long> issIdList = issueDAO.getIssueCodeListByRoles(allowableSearchRoles);
 		Set<Long> issueSet = new HashSet<Long>();
 		for (Long id : issIdList) {

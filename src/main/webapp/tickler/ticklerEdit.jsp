@@ -117,7 +117,7 @@
     DateFormat timeOnlyFormat = new SimpleDateFormat("HH:mm:ss", locale);
 %>
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
     <head>
         <style>
             .tickler-comment-row:nth-child(odd) td {
@@ -347,7 +347,7 @@
                         <select class="form-control" name="suggestedText" id="suggestedText">
                             <option value="">---</option>
                             <%   
-                                TicklerTextSuggestDao ticklerTextSuggestDao = (TicklerTextSuggestDao) SpringUtils.getBean("ticklerTextSuggestDao");
+                                TicklerTextSuggestDao ticklerTextSuggestDao = (TicklerTextSuggestDao) SpringUtils.getBean(TicklerTextSuggestDao.class);
                                 for (TicklerTextSuggest tTextSuggest : ticklerTextSuggestDao. getActiveTicklerTextSuggests()) { %>
                                 <option><%=Encode.forHtmlContent(tTextSuggest.getSuggestedText())%></option>
                             <% } %>
@@ -397,7 +397,7 @@
                     <td colspan="2">
                         <select class="form-control" name="assignedToProviders" id="assignedToProviders">
                             <%
-                                ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+                                ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
                                 List<Provider> providers = providerDao.getActiveProviders(); 
                                 for (Provider p: providers) {
                                     

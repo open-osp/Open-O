@@ -33,17 +33,16 @@
  */
 package oscar.oscarLab.ca.all.upload;
 
-import java.io.InputStream;
-import java.util.List;
-
 import org.apache.logging.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.oscarehr.util.MiscUtils;
-
 import oscar.oscarLab.ca.all.upload.handlers.DefaultHandler;
 import oscar.oscarLab.ca.all.upload.handlers.MessageHandler;
+
+import java.io.InputStream;
+import java.util.List;
 
 public final class HandlerClassFactory {
     
@@ -65,11 +64,10 @@ public final class HandlerClassFactory {
             logger.debug("Type not specified using Default Handler");
             return( new DefaultHandler());
         }
-        try{
-            InputStream is = HandlerClassFactory.class.getClassLoader().getResourceAsStream("oscar/oscarLab/ca/all/upload/message_config.xml");
+        try(InputStream is = HandlerClassFactory.class.getClassLoader().getResourceAsStream("oscar/oscarLab/ca/all/upload/message_config.xml")){
+
             SAXBuilder parser = new SAXBuilder();
             doc = parser.build(is);
-            
             Element root = doc.getRootElement();
 
             @SuppressWarnings("unchecked")

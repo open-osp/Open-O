@@ -30,11 +30,11 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.TeleplanS23;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TeleplanS23Dao extends AbstractDao<TeleplanS23>{
+public class TeleplanS23Dao extends AbstractDaoImpl<TeleplanS23>{
 
 	public TeleplanS23Dao() {
 		super(TeleplanS23.class);
@@ -43,9 +43,9 @@ public class TeleplanS23Dao extends AbstractDao<TeleplanS23>{
 	@SuppressWarnings("unchecked")
 	public List<TeleplanS23> search_taS23 (Integer s21Id, String type, String aji) {
 		Query q = entityManager.createQuery("select t from TeleplanS23 t where t.s21Id=? and t.s23Type<>? and t.aji like ? order by t.id");
-		q.setParameter(1, s21Id);
-		q.setParameter(2, type);
-		q.setParameter(3, aji);
+		q.setParameter(0, s21Id);
+		q.setParameter(1, type);
+		q.setParameter(2, aji);
 		return q.getResultList();
 	}
 }

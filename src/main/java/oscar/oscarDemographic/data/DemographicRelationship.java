@@ -24,19 +24,14 @@
 
 package oscar.oscarDemographic.data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.oscarehr.common.dao.RelationshipsDao;
 import org.oscarehr.common.model.Relationships;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.util.ConversionUtils;
+
+import java.util.*;
 
 /**
  *
@@ -61,6 +56,7 @@ public class DemographicRelationship {
 		relationships.setNotes(notes);
 		relationships.setCreator(providerNo);
 		relationships.setCreationDate(new Date());
+		relationships.setDeleted(Boolean.FALSE);
 
 		RelationshipsDao dao = SpringUtils.getBean(RelationshipsDao.class);
 		dao.persist(relationships);
@@ -71,8 +67,10 @@ public class DemographicRelationship {
 		Relationships relationships = dao.find(ConversionUtils.fromIntString(id));
 		if (relationships == null) MiscUtils.getLogger().error("Unable to find demographic relationship to delete");
 
-		relationships.setDeleted(ConversionUtils.toBoolString(Boolean.TRUE));
-		dao.merge(relationships);
+		if(relationships != null) {
+			relationships.setDeleted(Boolean.TRUE);
+			dao.merge(relationships);
+		}
 	}
 
 	public ArrayList<Map<String, String>> getDemographicRelationships(String demographic) {
@@ -82,7 +80,7 @@ public class DemographicRelationship {
 		List<Relationships> relationships = dao.findByDemographicNumber(ConversionUtils.fromIntString(demographic));
 
 		if (relationships.isEmpty()) {
-			MiscUtils.getLogger().debug("Unable to find demographic relationship for demographic " + demographic);
+			MiscUtils.getLogger().warn("Unable to find demographic relationship for demographic {}", demographic);
 			return list;
 		}
 
@@ -105,7 +103,7 @@ public class DemographicRelationship {
 		Relationships r = dao.findActive(ConversionUtils.fromIntString(id));
 		ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		if (r == null) {
-			MiscUtils.getLogger().warn("Unable to find demographic relationship for ID " + id);
+			MiscUtils.getLogger().warn("Unable to find demographic relationship for ID {}", id);
 			return list;
 		}
 

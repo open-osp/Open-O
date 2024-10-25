@@ -41,6 +41,7 @@ import org.oscarehr.common.model.Prescription;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.managers.PrescriptionManager;
 import org.oscarehr.managers.RxManager;
+import org.oscarehr.managers.RxManagerImpl;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.rx.util.RxUtil;
 import org.oscarehr.util.LoggedInInfo;
@@ -438,7 +439,7 @@ public class RxWebService extends AbstractServiceImpl {
 
         List<Drug> drugs = new ArrayList<Drug>();
 
-        RxManager.PrescriptionDrugs pd;
+        RxManagerImpl.PrescriptionDrugs pd;
 
         try {
 

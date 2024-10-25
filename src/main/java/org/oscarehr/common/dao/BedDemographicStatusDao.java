@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -32,42 +35,11 @@ import org.oscarehr.common.model.BedDemographicStatus;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class BedDemographicStatusDao extends AbstractDao<BedDemographicStatus>{
+public interface BedDemographicStatusDao extends AbstractDao<BedDemographicStatus> {
 
-	private Logger log = MiscUtils.getLogger();
-	
-	public BedDemographicStatusDao() {
-		super(BedDemographicStatus.class);
-	}
-	
-  
-	public boolean bedDemographicStatusExists(Integer bedDemographicStatusId) {			   
-		Query query = entityManager.createQuery("select count(*) from BedDemographicStatus b where b.id = ?");
-		query.setParameter(1, bedDemographicStatusId);
-	
-		Long result = (Long)query.getSingleResult();
-	
-		return (result.intValue() == 1);
-	}
-	   
-	@SuppressWarnings("unchecked")    
-	public BedDemographicStatus[] getBedDemographicStatuses() {
-		   Query query = entityManager.createQuery("select b from BedDemographicStatus b");
-	   
-	   List<BedDemographicStatus> bedDemographicStatuses = query.getResultList();
-	    
-	   log.debug("getBedDemographicStatuses: size: " + bedDemographicStatuses.size());
-	
-	    return bedDemographicStatuses.toArray(new BedDemographicStatus[bedDemographicStatuses.size()]);
-	}
-	   
-	   
-	public BedDemographicStatus getBedDemographicStatus(Integer bedDemographicStatusId) {
-		BedDemographicStatus bedDemographicStatus = find(bedDemographicStatusId);
-		
-		log.debug("getBedDemographicStatus: id: " + (bedDemographicStatus != null?bedDemographicStatus.getId():null));
+	public boolean bedDemographicStatusExists(Integer bedDemographicStatusId);
 
-		return bedDemographicStatus;    
-	}
+	public BedDemographicStatus[] getBedDemographicStatuses();
+
+	public BedDemographicStatus getBedDemographicStatus(Integer bedDemographicStatusId);
 }

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (C) 2007  Heart & Stroke Foundation
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,49 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.Hsfo2Patient;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class Hsfo2PatientDao extends AbstractDao<Hsfo2Patient>
-{
-	public Hsfo2PatientDao() {
-		super(Hsfo2Patient.class);
-	}
-	
-
-	public Hsfo2Patient getHsfoPatientByPatientId(String patientId) {
-		String sqlCommand = "select x from Hsfo2Patient x where x.Patient_Id=? order by x.id desc ";
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, patientId);
-		List<Hsfo2Patient> results=query.getResultList();
-		if(results!=null && results.size()>0)
-			return results.get(0);
-		else 
-			return null;
-	}
-	
- 
-	public List<Hsfo2Patient> getAllHsfoPatients() {
-		String sqlCommand = "select x from Hsfo2Patient x";
-		Query query = entityManager.createQuery(sqlCommand);		
-				
-		@SuppressWarnings("unchecked")
-		List<Hsfo2Patient> results=query.getResultList();		
-		
-		return results;
-	}
-    
-
-  
+public interface Hsfo2PatientDao extends AbstractDao<Hsfo2Patient> {
+	Hsfo2Patient getHsfoPatientByPatientId(String patientId);
+	List<Hsfo2Patient> getAllHsfoPatients();
 }
-
-

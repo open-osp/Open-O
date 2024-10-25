@@ -30,7 +30,7 @@
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <%@ page import="java.util.*,oscar.oscarBilling.ca.bc.data.BillingCodeData,oscar.oscarBilling.ca.bc.pageUtil.*"%>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 	<title><bean:message key="admin.admin.ManagePrivFrm"/></title>
 	<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">

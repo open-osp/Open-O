@@ -508,7 +508,7 @@
 				<html:option value="TE"><bean:message key="demographic.demographiceditdemographic.optTerminated"/></html:option>
 				<html:option value="FS"><bean:message key="demographic.demographiceditdemographic.optFeeService"/></html:option>
 				<%
-				DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+				DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 				List<String> statuses = demographicDao.getRosterStatuses();
 				for(String status:statuses) {
 					%>
@@ -521,7 +521,7 @@
     	</td>
 	<td><label>Doctor<br/><html:select property="client.providerNo">
 		<html:option value=""></html:option>
-             	<% ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+             	<% ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 		List<Provider> doctors = providerDao.getBillableProviders();
 		for(Provider doctor : doctors) { 
 		%>

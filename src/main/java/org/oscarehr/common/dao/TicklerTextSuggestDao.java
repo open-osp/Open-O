@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
@@ -29,28 +32,8 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.TicklerTextSuggest;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class TicklerTextSuggestDao extends AbstractDao<TicklerTextSuggest>{
-    
-    public TicklerTextSuggestDao() {
-	super(TicklerTextSuggest.class);
-    }
+public interface TicklerTextSuggestDao extends AbstractDao<TicklerTextSuggest>{
 
-    public List<TicklerTextSuggest> getActiveTicklerTextSuggests() {
-        Query query = entityManager.createQuery("SELECT tTextSuggest from TicklerTextSuggest tTextSuggest WHERE tTextSuggest.active = ? order by tTextSuggest.suggestedText");
-        query.setParameter(1,true);
-
-	@SuppressWarnings("unchecked")
-	List<TicklerTextSuggest> results = query.getResultList();
-	return results;
-    }
-    
-    public List<TicklerTextSuggest> getInactiveTicklerTextSuggests() {
-        Query query = entityManager.createQuery("SELECT tTextSuggest from TicklerTextSuggest tTextSuggest WHERE tTextSuggest.active = ? order by tTextSuggest.suggestedText");
-        query.setParameter(1,false);
-
-	@SuppressWarnings("unchecked")
-	List<TicklerTextSuggest> results = query.getResultList();
-	return results;
-    }          
+    public List<TicklerTextSuggest> getActiveTicklerTextSuggests();
+    public List<TicklerTextSuggest> getInactiveTicklerTextSuggests();
 }

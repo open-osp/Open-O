@@ -259,7 +259,7 @@
 			<td colspan="3">			
 				<table id="ntp41" cellpadding="0" cellspacing="0" width="100%">
 					<tr>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top"><bean:message key="oscarEncounter.formRourke2009.formNo"/></td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
@@ -308,7 +308,7 @@
 			<td colspan="4">
 				<table id="ntp42" cellpadding="0" cellspacing="0" width="100%">
 					<tr>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top"><bean:message key="oscarEncounter.formRourke2009.formNo"/></td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td> 
@@ -361,7 +361,7 @@
 			<td colspan="3">			
 				<table id="ntp43" cellpadding="0" cellspacing="0" width="100%">
 					<tr>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top"><bean:message key="oscarEncounter.formRourke2009.formNo"/></td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td> 
@@ -411,7 +411,7 @@
 				<table id="edt41" style="font-size: 8pt;" cellpadding="0" cellspacing="0" width="100%">
 					<tr><td valign="top" colspan="4"><bean:message key="oscarEncounter.formRourke2006_1.formInjuryPrev"/></td></tr>
 					<tr>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 					</tr>
@@ -578,13 +578,13 @@
 
 					<tr><td valign="top" colspan="12"><bean:message key="oscarEncounter.formRourke2006_1.formInjuryPrev"/></td></tr>
 					<tr>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 					</tr>
@@ -795,7 +795,7 @@
 					</tr>
 					<tr><td colspan="4"><bean:message key="oscarEncounter.formRourke2006_4.formSocialEmotion"/>**</td></tr>
 					<tr>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 					</tr>
@@ -880,7 +880,7 @@
 							<table cellpadding="0" cellspacing="0" width="100%" height="100%">
 								<tr><td colspan="4"><bean:message key="oscarEncounter.formRourke2006_4.form2yrs"/>**</td></tr>
 								<tr>
-									<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+									<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 									<td class="edcol" valign="top">X</td>
 									<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 								</tr>
@@ -927,7 +927,7 @@
 							<table cellpadding="0" cellspacing="0" height="100%">
 								<tr><td colspan="4"><bean:message key="oscarEncounter.formRourke2006_4.form4yrs"/></td></tr>
 								<tr>
-									<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+									<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 									<td class="edcol" valign="top">X</td>
 									<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 								</tr>
@@ -968,7 +968,7 @@
 							<table cellpadding="0" cellspacing="0" width="100%" height="100%">
 								<tr><td colspan="4"><bean:message key="oscarEncounter.formRourke2006_4.form3yrs"/></td></tr>
 								<tr>
-									<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+									<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 									<td class="edcol" valign="top">X</td>
 									<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 								</tr>
@@ -1019,7 +1019,7 @@
 							<table cellpadding="0" cellspacing="0" width="100%" height="100%">
 								<tr><td colspan="4"><bean:message key="oscarEncounter.formRourke2006_4.form5yrs"/></td></tr>
 								<tr>
-									<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+									<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 									<td class="edcol" valign="top">X</td>
 									<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 								</tr>
@@ -1081,7 +1081,7 @@
 				<table id="pt41" cellpadding="0" cellspacing="0" width="100%">
 					<tr><td colspan="4">&nbsp;</td></tr>
 					<tr>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 					</tr>
@@ -1138,7 +1138,7 @@
 				<table id="pt42" cellpadding="0" cellspacing="0" width="100%">
 					<tr><td colspan="4">&nbsp;</td></tr>
 					<tr>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 					</tr>
@@ -1195,7 +1195,7 @@
 				<table id="pt43" cellpadding="0" cellspacing="0" width="100%">
 					<tr><td colspan="4">&nbsp;</td></tr>
 					<tr>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top" colspan="2"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 					</tr>
@@ -1278,10 +1278,10 @@
 			<td colspan="10" valign="top">
 				<table id="immt41" style="font-size: 9pt;" cellpadding="0" cellspacing="0" width="100%">
 					<tr>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top" colspan="3"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
-						<td style="padding-right: 5pt" valign="top"><img height="15" width="20" src="graphics/Checkmark_L.gif"></td>
+						<td style="padding-right: 5pt" valign="top" onclick="selectAllOkRadioButtons(this)"><div class="checkmark-img-wrapper"><img height="15" width="20" src="graphics/Checkmark_L.gif"></div></td>
 						<td class="edcol" valign="top">X</td>
 						<td class="edcol" valign="top" colspan="3"><bean:message key="oscarEncounter.formRourke2009.formNotDiscussed"/></td>
 					</tr>

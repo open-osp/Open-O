@@ -27,14 +27,6 @@
 // c_lastVisited, formId - if the form has multiple pages
 package oscar.form;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -43,11 +35,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.form.util.JasperReportPdfPrint;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public final class FrmAction extends JSONAction {
     
@@ -56,7 +53,7 @@ public final class FrmAction extends JSONAction {
     
     @SuppressWarnings("rawtypes")
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException {
+            HttpServletResponse response) {
     	
     	if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_form", "w", null)) {
 			throw new SecurityException("missing required security object (_form)");
@@ -111,7 +108,7 @@ public final class FrmAction extends JSONAction {
                    String name = (String) e.nextElement();
                    request.setAttribute(name,props.getProperty(name));                   
                }
-               newID = 0;
+               newID = formId;
             }
             //if we are printing all pages of form, grab info from db and merge with current page info
             else if( request.getParameter("submit").equals("printAll") || request.getParameter("submit").equals("printAllJasperReport")) {
@@ -140,7 +137,7 @@ public final class FrmAction extends JSONAction {
 	                newID = 0;
 					return null;
                 } else {
-                    props = rec.getFormRecord(loggedInInfo, Integer.parseInt(request.getParameter("demographic_no")), Integer.parseInt(request.getParameter("formId")));
+                    props = rec.getFormRecord(loggedInInfo, Integer.parseInt(request.getParameter("demographic_no")), formId);
 
                     String name;
                     for (Enumeration e = props.propertyNames(); e.hasMoreElements(); ) {
@@ -149,9 +146,10 @@ public final class FrmAction extends JSONAction {
                             request.setAttribute(name, props.getProperty(name));
                         }
                     }
+	                newID = formId;
                 }
             } else if( request.getParameter("update")!=null && request.getParameter("update").equals("true") ) {
-                boolean bMulPage = request.getParameter("c_lastVisited") != null ? true : false;
+                boolean bMulPage = request.getParameter("c_lastVisited") != null;
                 String name;
 
                 if (bMulPage) {
@@ -199,7 +197,7 @@ public final class FrmAction extends JSONAction {
                 return null;
             }
             else {
-                boolean bMulPage = request.getParameter("c_lastVisited") != null ? true : false;
+                boolean bMulPage = request.getParameter("c_lastVisited") != null;
                 String name;
 
                 if (bMulPage) {
@@ -270,7 +268,7 @@ public final class FrmAction extends JSONAction {
 
         } catch (Exception ex) {
             // throw new ServletException(ex);
-        	log.error("Exception for form " + formClassName + " Save failed.", ex );
+        	MiscUtils.getLogger().error("Exception for form " + formClassName + " Save failed.", ex );
         }
 
         log.info("Forwarding form " + formClassName + " to " + actionForward.getPath());

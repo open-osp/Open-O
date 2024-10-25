@@ -54,8 +54,8 @@ import com.itextpdf.text.DocumentException;
 
 public class EChartPrintAction extends DispatchAction {
 
-	CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO)SpringUtils.getBean("CaseManagementNoteDAO");
-	AllergyDao allergyDao = (AllergyDao)SpringUtils.getBean("allergyDao");
+	CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO)SpringUtils.getBean(CaseManagementNoteDAO.class);
+	AllergyDao allergyDao = (AllergyDao)SpringUtils.getBean(AllergyDao.class);
 	static String[] cppIssues = {"MedHistory","OMeds","SocHistory","FamHistory","Reminders","Concerns","RiskFactors"};
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	   
@@ -68,7 +68,7 @@ public class EChartPrintAction extends DispatchAction {
 	public ActionForward print(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 		String demographicNo = request.getParameter("demographicNo");
-		DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+		DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 		
 		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "r", demographicNo)) {
         	throw new SecurityException("missing required security object (_demographic)");

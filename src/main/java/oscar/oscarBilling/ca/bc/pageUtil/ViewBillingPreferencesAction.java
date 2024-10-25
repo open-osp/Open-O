@@ -24,11 +24,6 @@
 
 package oscar.oscarBilling.ca.bc.pageUtil;
 
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -39,12 +34,14 @@ import org.oscarehr.common.model.Property;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.OscarProperties;
-import oscar.oscarBilling.ca.bc.MSP.MSPReconcile;
 import oscar.oscarBilling.ca.bc.data.BillingFormData;
 import oscar.oscarBilling.ca.bc.data.BillingPreference;
 import oscar.oscarBilling.ca.bc.data.BillingPreferencesDAO;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 /**
  * Forwards flow of control to Billing Preferences Screen
@@ -86,7 +83,7 @@ public class ViewBillingPreferencesAction
     }
     BillingFormData billform = new BillingFormData();
     ArrayList billingFormList = new ArrayList<>();
-    oscar.oscarBilling.ca.bc.data.BillingFormData.BillingForm defaultBillingForm = billform.new BillingForm("Clinic Default", "CLINICDEFAULT");
+    oscar.oscarBilling.ca.bc.data.BillingFormData.BillingForm defaultBillingForm = billform.new BillingForm("Clinic Default", Property.PROPERTY_VALUE.clinicdefault.name());
     billingFormList.add(defaultBillingForm);
     billingFormList.addAll(Arrays.asList(billform.getFormList()));
     servletRequest.setAttribute("billingFormList", billingFormList);
@@ -114,7 +111,7 @@ public class ViewBillingPreferencesAction
 
     providerList = providerDao.getProvidersWithNonEmptyOhip(loggedInInfo);
     // add the clinic default selection to the select list
-    Provider defaultProvider = new Provider("clinicdefault", "", null, null, null, "Clinic Default");
+    Provider defaultProvider = new Provider(Property.PROPERTY_VALUE.clinicdefault.name(), "", null, null, null, "Clinic Default");
     if(providerList == null) {
       providerList = Collections.singletonList(defaultProvider);
     } else {
@@ -127,20 +124,20 @@ public class ViewBillingPreferencesAction
     if (!defaultServiceLocationPropertyList.isEmpty()) {
         frm.setDefaultServiceLocation(defaultServiceLocationPropertyList.get(0).getValue());
     } else {
-        frm.setDefaultServiceLocation("CLINICDEFAULT");
+        frm.setDefaultServiceLocation(Property.PROPERTY_VALUE.clinicdefault.name());
     }
 
     // Prepare a formatted list of service locations
     String billRegion = OscarProperties.getInstance().getProperty("billregion", "");
     BillingFormData billingFormData = new BillingFormData();
     ArrayList<BillingFormData.BillingVisit> billingVisits = new ArrayList<>();
-    billingVisits.add(new BillingFormData.BillingVisit("CLINICDEFAULT", "Clinic Default"));
+    billingVisits.add(new BillingFormData.BillingVisit(Property.PROPERTY_VALUE.clinicdefault.name(), "Clinic Default"));
     billingVisits.addAll(billingFormData.getVisitType(billRegion));
     servletRequest.setAttribute("serviceLocationList",billingVisits);
 
     // Prepare a list of default yes/no/clinic values for use on the preferences page (eg. display dx2/3)
     Map<String, String> defaultYesNoList = new HashMap<>();
-    defaultYesNoList.put("CLINICDEFAULT", "Clinic Default");
+    defaultYesNoList.put(Property.PROPERTY_VALUE.clinicdefault.name(), "Clinic Default");
     defaultYesNoList.put("true", "Yes");
     defaultYesNoList.put("false", "No");
     servletRequest.setAttribute("defaultYesNoList", defaultYesNoList);

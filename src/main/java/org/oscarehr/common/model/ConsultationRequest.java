@@ -25,25 +25,13 @@
 
 package org.oscarehr.common.model;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
 import org.apache.commons.lang.StringUtils;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "consultationRequests")
@@ -62,7 +50,7 @@ public class ConsultationRequest extends AbstractModel<Integer> implements Seria
 
 	private Integer serviceId;
 
-	@ManyToOne(fetch=FetchType.EAGER, targetEntity=ProfessionalSpecialist.class)
+	@ManyToOne(fetch=FetchType.EAGER, targetEntity=ProfessionalSpecialist.class, cascade= CascadeType.MERGE)
 	@JoinColumn( name="specId", referencedColumnName="specId"  )
 	private ProfessionalSpecialist professionalSpecialist;
 	
@@ -115,6 +103,9 @@ public class ConsultationRequest extends AbstractModel<Integer> implements Seria
     @ManyToOne(fetch=FetchType.EAGER, targetEntity=LookupListItem.class)
     @JoinColumn(name="appointmentInstructions", referencedColumnName="value", insertable = false, updatable = false)
     private LookupListItem lookupListItem;
+
+	@Transient
+	private List<ConsultationRequestExt> extras = Collections.emptyList();
     
 	@Override
     public Integer getId() {
@@ -419,6 +410,14 @@ public class ConsultationRequest extends AbstractModel<Integer> implements Seria
 
 	public void setLastUpdateDate(Date lastUpdateDate) {
 		this.lastUpdateDate = lastUpdateDate;
+	}
+
+	public List<ConsultationRequestExt> getExtras() {
+		return extras;
+	}
+	
+	public void setExtras(List<ConsultationRequestExt> extras) {
+		this.extras = extras;
 	}
 
 

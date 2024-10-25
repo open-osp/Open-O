@@ -91,7 +91,7 @@ if(!authed) {
     java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.struts.Globals.LOCALE_KEY);
     
     //referring doctor
-    org.oscarehr.common.dao.DemographicDao dao = (org.oscarehr.common.dao.DemographicDao)org.oscarehr.util.SpringUtils.getBean("demographicDao");
+    org.oscarehr.common.dao.DemographicDao dao = (org.oscarehr.common.dao.DemographicDao)org.oscarehr.util.SpringUtils.getBean(DemographicDao.class);
 	org.oscarehr.common.model.Demographic d= dao.getDemographic(demoNo);
 	String familyDoctorXml = d.getFamilyDoctor();
 	String rd = "";

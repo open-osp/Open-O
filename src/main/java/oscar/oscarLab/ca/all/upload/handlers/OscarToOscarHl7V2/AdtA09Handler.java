@@ -53,7 +53,7 @@ public final class AdtA09Handler {
 
 	private static final String WAITING_ROOM = "WAITING_ROOM";
 	private static final String PATIENT_CLASS = "P";
-	private static OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean("oscarAppointmentDao");
+	private static OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 	private static DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 	private static int checkInLateAllowance = Integer.parseInt(OscarProperties.getInstance().getProperty(AdtA09Handler.class.getSimpleName() + ".CHECK_IN_LATE_ALLOWANCE"));
 	private static int checkInEarlyAllowance = Integer.parseInt(OscarProperties.getInstance().getProperty(AdtA09Handler.class.getSimpleName() + ".CHECK_IN_EARLY_ALLOWANCE"));

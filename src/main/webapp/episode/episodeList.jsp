@@ -41,7 +41,7 @@
 <%
 
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
 <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>

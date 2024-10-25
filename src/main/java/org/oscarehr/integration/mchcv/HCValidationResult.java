@@ -23,19 +23,36 @@
  */
 package org.oscarehr.integration.mchcv;
 
+import ca.ontario.health.ebs.EbsFault;
+import ca.ontario.health.hcv.FeeServiceDetails;
+import ca.ontario.health.hcv.ResponseID;
+import org.apache.commons.beanutils.BeanUtils;
+import org.oscarehr.util.MiscUtils;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 public class HCValidationResult {
 
+    private String auditUID;
     private String responseCode;
     private String responseDescription;
     private String responseAction;
-    
+    private ResponseID responseID;
+    private String healthNumber;
+    private String versionCode;
     private String firstName;
+    private String secondName;
     private String lastName;
     private String birthDate;
     private String gender;
     private String expiryDate;
     private String issueDate;
-    
+    private EbsFault ebsFault;
+    private List<FeeServiceDetails> feeServiceDetails;
+
     public HCValidationResult() {
     }
     
@@ -97,6 +114,14 @@ public class HCValidationResult {
         this.firstName = value;
     }
 
+    public String getSecondName() {
+        return secondName;
+    }
+
+    public void setSecondName(String secondName) {
+        this.secondName = secondName;
+    }
+
     /**
      * MOHLTC stores this value as upper case characters.  
      * A maximum of 30 characters are kept on card.  
@@ -149,5 +174,134 @@ public class HCValidationResult {
 
     public void setIssueDate(String value) {
         this.issueDate = value;
+    }
+
+    public ResponseID getResponseID() {
+        return responseID;
+    }
+
+    public void setResponseID(ResponseID responseID) {
+        this.responseID = responseID;
+    }
+
+    public String getAuditUID() {
+        return auditUID;
+    }
+
+    public void setAuditUID(String auditUID) {
+        this.auditUID = auditUID;
+    }
+
+    public String getHealthNumber() {
+        return healthNumber;
+    }
+
+    public void setHealthNumber(String healthNumber) {
+        this.healthNumber = healthNumber;
+    }
+
+    public String getVersionCode() {
+        return versionCode;
+    }
+
+    public void setVersionCode(String versionCode) {
+        this.versionCode = versionCode;
+    }
+
+    public EbsFault getEbsFault() {
+        return ebsFault;
+    }
+
+    public void setEbsFault(EbsFault ebsFault) {
+        this.ebsFault = ebsFault;
+    }
+
+    public String getEbsFaultCode() {
+        if(ebsFault == null) {
+            return null;
+        }
+        return ebsFault.getCode();
+    }
+
+    public String getEbsFaultDescription() {
+        if(ebsFault == null) {
+            return null;
+        }
+        return ebsFault.getMessage();
+    }
+
+    public List<FeeServiceDetails> getFeeServiceDetails() {
+        if(feeServiceDetails == null) {
+            return Collections.emptyList();
+        }
+        return feeServiceDetails;
+    }
+
+    public void setFeeServiceDetails(List<FeeServiceDetails> feeServiceDetails) {
+        this.feeServiceDetails = feeServiceDetails;
+    }
+
+    public String getFeeServiceResponseCode(String feeServiceCode) {
+        return getFeeServiceDetailsbyFeeServiceCode(feeServiceCode).getFeeServiceResponseCode();
+    }
+
+    public String getFeeServiceResponseDescription(String feeServiceCode) {
+        return getFeeServiceDetailsbyFeeServiceCode(feeServiceCode).getFeeServiceResponseDescription();
+    }
+
+    public Date getFeeServiceDate(String feeServiceCode) {
+        XMLGregorianCalendar date = getFeeServiceDetailsbyFeeServiceCode(feeServiceCode).getFeeServiceDate();
+        if(date != null) {
+            return date.toGregorianCalendar().getTime();
+        }
+        return null;
+    }
+
+    private FeeServiceDetails getFeeServiceDetailsbyFeeServiceCode(String feeServiceCode) {
+        FeeServiceDetails selectedFeeServiceDetails = new FeeServiceDetails();
+        selectedFeeServiceDetails.setFeeServiceCode(feeServiceCode);
+        for(FeeServiceDetails feeServiceDetail : this.feeServiceDetails) {
+            if(feeServiceCode.equalsIgnoreCase(feeServiceDetail.getFeeServiceCode())) {
+                selectedFeeServiceDetails = feeServiceDetail;
+                try {
+                    BeanUtils.copyProperties(selectedFeeServiceDetails, feeServiceDetail);
+                } catch (Exception e) {
+                    MiscUtils.getLogger().warn("Bean Copy error. Fee Service code: " + feeServiceCode, e);
+                }
+                break;
+            }
+        }
+        return selectedFeeServiceDetails;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("")
+                .append("   Response Audit UID: " + auditUID + "\n")
+                .append("   Response Action: " + responseAction + "\n")
+                .append("   Response Code: " + responseCode + "\n")
+                .append("   Response Description: " + responseDescription + "\n")
+                .append("   Response ID: " + responseID + "\n")
+                .append("   Health Number: " + healthNumber + "\n")
+                .append("   Version Code: " + versionCode + "\n")
+                .append("   First Name: " + firstName + "\n")
+                .append("   Second Name: " + secondName + "\n")
+                .append("   Last Name: " + lastName + "\n")
+                .append("   Gender: " + gender + "\n")
+                .append("   Birth Date: " + birthDate + "\n")
+                .append("   Expiry Date: " + expiryDate + "\n")
+                .append("   Issue Date: " + issueDate + "\n")
+                .append("   Fault: " + getEbsFaultCode() + " : " + getEbsFaultDescription() + "\n");
+
+                for (FeeServiceDetails feeServiceDetails : getFeeServiceDetails()) {
+
+                    stringBuilder.append("   Fee Service Code: " + feeServiceDetails.getFeeServiceCode() + "\n")
+                            .append("   Fee Service Response Code: " + feeServiceDetails.getFeeServiceResponseCode() + "\n")
+                            .append("   Fee Service Response Description: " + feeServiceDetails.getFeeServiceResponseDescription() + "\n")
+                            .append("   Fee Service Date: " + feeServiceDetails.getFeeServiceDate() + "\n");
+
+                }
+
+        return stringBuilder.toString();
     }
 }

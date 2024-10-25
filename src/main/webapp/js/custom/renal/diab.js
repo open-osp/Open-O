@@ -10,7 +10,7 @@ function addToDx(codingSystem, code) {
 jQuery(document).ready(function(){
 	jQuery("#print_box").before(
 		"<div class=\"leftBox\">" +
-		"<h3>&nbsp;Renal  <a class=\"DoNotPrint\" href=\"#\" onclick=\"Element.toggle('renalFullListing'); return false;\" style=\"font-size:x-small;\" >show/hide</a></h3>" +
+		"<h3>&nbsp;Renal  <a class=\"DoNotPrint\" href=\"javascript:void(0)\" onclick=\"toggle('renalFullListing'); return false;\" style=\"font-size:x-small;\" >show/hide</a></h3>" +
 		"<div class=\"wrapper\" id=\"renalFullListing\">" +
 		"<ul id=\"dxaddshortcut_list\">" +
 		"<li><b>Next Steps:</b><span id='renal_next_steps'></span></li>" +

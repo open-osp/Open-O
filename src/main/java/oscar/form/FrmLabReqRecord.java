@@ -41,7 +41,7 @@ import oscar.util.UtilDateUtilities;
 
 public class FrmLabReqRecord extends FrmRecord {
 
-	private ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean("clinicDAO");
+	private ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean(ClinicDAO.class);
 
     public Properties getFormRecord(LoggedInInfo loggedInInfo, int demographicNo, int existingID) throws SQLException {
         Properties props = new Properties();

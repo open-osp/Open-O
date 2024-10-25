@@ -10,12 +10,12 @@ package org.oscarehr.olis.dao;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.olis.model.OLISSystemPreferences;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class OLISSystemPreferencesDao extends AbstractDao<OLISSystemPreferences>{
+public class OLISSystemPreferencesDao extends AbstractDaoImpl<OLISSystemPreferences>{
 
 	
 	public OLISSystemPreferencesDao() {

@@ -59,11 +59,12 @@
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
 <%@page import="org.oscarehr.common.model.Provider" %>
 
-<%
+<%!
 	CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
+	UserPropertyDAO propertyDao = SpringUtils.getBean(UserPropertyDAO.class);
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
@@ -333,7 +334,7 @@ function showHideERxPref() {
 								if (ticklerforproviderNo == null) {
 									ticklerforproviderNo = loggedInInfo.getLoggedInProviderNo();
 								}
-								ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+								ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 								List<Provider> listProvider = new ArrayList<Provider>();
 								if (providerDao != null) {
 									listProvider = providerDao.getProviders();
@@ -522,10 +523,21 @@ function showHideERxPref() {
 					</table>
 	            </td>
 			</tr>
-
+			<tr>
+				<td class="preferenceLabel">
+					Show Weekends in Week View:
+				</td>
+				<td class="preferenceValue">
+					<%
+						UserProperty showWeekendsProp = propertyDao.getProp(providerNo, UserProperty.SCHEDULE_WEEK_VIEW_WEEKENDS);
+						boolean weekendsEnabled = showWeekendsProp == null || Boolean.parseBoolean(showWeekendsProp.getValue());
+					%>
+					<input type="checkbox" name="schedule.week_view_weekends" value="true" <%=weekendsEnabled ? "checked=\"checked\"" : ""%> />
+				</td>
+			</tr>
 			<tr>
 				<%
-					UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+
 					UserProperty prop = propertyDao.getProp(providerNo,"rxInteractionWarningLevel");
 					String warningLevel = "0";
 					if(prop!=null) {
@@ -640,7 +652,7 @@ Event.observe('rxInteractionWarningLevel', 'change', function(event) {
     <td align="center">
 <% String br = OscarProperties.getInstance().getProperty("billregion");
    if (br.equals("BC")) { %>
-	<a href=# onClick ="popupPage(230,400,'../billing/CA/BC/viewBillingPreferencesAction.do?providerNo=<%=providerNo%>');return false;"><bean:message key="provider.btnBillPreference"/></a>
+	<a href=# onClick ="popupPage(900,500,'../billing/CA/BC/viewBillingPreferencesAction.do?providerNo=<%=providerNo%>');return false;"><bean:message key="provider.btnBillPreference"/></a>
 <% } else { %>
 	<a href=# onClick ="showHideBillPref();return false;"><bean:message key="provider.btnBillPreference"/></a>
 <% } %>

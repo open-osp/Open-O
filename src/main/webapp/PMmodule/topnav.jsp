@@ -65,7 +65,7 @@ String resourcebaseurl = oscarVariables.getProperty("resource_base_url");
 
 try{
 	//update resourcebaseurl if resource url set by provider
-	PropertyDao propDao = (PropertyDao)SpringUtils.getBean("propertyDao");
+	PropertyDao propDao = (PropertyDao)SpringUtils.getBean(PropertyDao.class);
 	Property p = propDao.checkByName("resource_baseurl");
 		
 	if(p!=null){

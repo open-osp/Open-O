@@ -42,7 +42,7 @@
 	<jsp:include page="../head-includes.jsp" />
 
 	<link href="<%= request.getContextPath() %>/mcedt/mailbox/css/mcedt.css" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,900" rel="stylesheet" type="text/css">
+
 
 	<script language="javascript">
 		function cancel(control) {

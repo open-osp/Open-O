@@ -49,9 +49,9 @@
 	SecRoleDao secRoleDao = SpringUtils.getBean(SecRoleDao.class);
 	ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);
 
-	SecuserroleDao secUserRoleDao = (SecuserroleDao)SpringUtils.getBean("secuserroleDao");
+	SecuserroleDao secUserRoleDao = (SecuserroleDao)SpringUtils.getBean(SecuserroleDao.class);
 	RecycleBinDao recycleBinDao = SpringUtils.getBean(RecycleBinDao.class);
-	ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
+	ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
 
 
 	String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");

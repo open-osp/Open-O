@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,36 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.BillCenter;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class BillCenterDao extends AbstractDao<BillCenter>{
-
-	public BillCenterDao() {
-		super(BillCenter.class);
-	}
-	
-	public List<BillCenter> findAll() {
-		Query query = entityManager.createQuery("SELECT b FROM BillCenter b");
-		
-		@SuppressWarnings("unchecked")
-        List<BillCenter> results = query.getResultList();
-		return results;
-	}
-	
-	public List<BillCenter> findByBillCenterDesc(String descr) {
-		Query query = entityManager.createQuery("SELECT b FROM BillCenter b WHERE b.billCenterDesc like ?");
-		query.setParameter(1,descr);
-		@SuppressWarnings("unchecked")
-        List<BillCenter> results = query.getResultList();
-		return results;
-	}
+public interface BillCenterDao extends AbstractDao<BillCenter> {
+	List<BillCenter> findAll();
+	List<BillCenter> findByBillCenterDesc(String descr);
 }

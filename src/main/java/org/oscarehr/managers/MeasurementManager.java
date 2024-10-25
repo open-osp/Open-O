@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.managers;
@@ -49,187 +52,70 @@ import oscar.OscarProperties;
 import oscar.log.LogAction;
 import oscar.oscarEncounter.oscarMeasurements.MeasurementFlowSheet;
 
-@Service
-public class MeasurementManager {
-	@Autowired
-	private MeasurementDao measurementDao;
+public interface MeasurementManager {
 
-	@Autowired
-	private MeasurementMapDao measurementMapDao;
-	
-	@Autowired
-	private PatientConsentManager patientConsentManager;
-	
-	public List<Measurement> getCreatedAfterDate(LoggedInInfo loggedInInfo, Date updatedAfterThisDateExclusive, int itemsToReturn) {
-		List<Measurement> results = measurementDao.findByCreateDate(updatedAfterThisDateExclusive, itemsToReturn);
+	public List<Measurement> getCreatedAfterDate(LoggedInInfo loggedInInfo, Date updatedAfterThisDateExclusive,
+			int itemsToReturn);
 
-		LogAction.addLogSynchronous(loggedInInfo, "MeasurementManager.getCreatedAfterDate", "updatedAfterThisDateExclusive=" + updatedAfterThisDateExclusive);
+	public Measurement getMeasurement(LoggedInInfo loggedInInfo, Integer id);
 
-		return (results);
-	}
+	public List<Measurement> getMeasurementByType(LoggedInInfo loggedInInfo, Integer id, List<String> types);
 
-	public Measurement getMeasurement(LoggedInInfo loggedInInfo, Integer id) {
-		Measurement result = measurementDao.find(id);
+	public List<Measurement> getMeasurementByDemographicIdAfter(LoggedInInfo loggedInInfo, Integer demographicId,
+			Date updateAfter);
 
-		//--- log action ---
-		if (result != null) {
-			LogAction.addLogSynchronous(loggedInInfo, "MeasurementManager.getMeasurement", "id=" + id);
-		}
+	public List<MeasurementMap> getMeasurementMaps();
 
-		return (result);
-	}
+	public Measurement addMeasurement(LoggedInInfo loggedInInfo, Measurement measurement);
 
-	public List<Measurement> getMeasurementByType(LoggedInInfo loggedInInfo, Integer id, List<String> types) {
-		List<Measurement> results = measurementDao.findByType(id, types);
-		if (results.size() > 0) {
-			LogAction.addLogSynchronous(loggedInInfo, "MeasurementManager.getMeasurementByType", "id=" + id);
-		}
-		return results;
-	}
+	public List<Measurement> getMeasurementsByProgramProviderDemographicDate(LoggedInInfo loggedInInfo,
+			Integer programId, String providerNo, Integer demographicId, Calendar updatedAfterThisDateExclusive,
+			int itemsToReturn);
 
-	public List<Measurement> getMeasurementByDemographicIdAfter(LoggedInInfo loggedInInfo, Integer demographicId, Date updateAfter) {
-		List<Measurement> results = new ArrayList<Measurement>();
-		ConsentType consentType = patientConsentManager.getProviderSpecificConsent(loggedInInfo);
-		if (patientConsentManager.hasPatientConsented(demographicId, consentType)) {
-			results = measurementDao.findByDemographicLastUpdateAfterDate(demographicId, updateAfter);
-			if (results.size() > 0) {
-				LogAction.addLogSynchronous(loggedInInfo, "MeasurementManager.getMeasurementByDemographicIdAfter", "demographicId="+demographicId+" updateAfter="+updateAfter);
-			}
-		}
-		return results;
-	}
+	public String getDShtml(String groupName);
 
-	public List<MeasurementMap> getMeasurementMaps() {
-		// should be safe to get all as they're a defined set of loinic codes or human entered entries
-		List<MeasurementMap> results = measurementMapDao.getAllMaps();
+	public boolean isProperty(String prop);
 
-		// not logging the read, this is not medicalData
+	public String findGroupId(String groupName);
 
-		return (results);
-	}
+	public void addMeasurementGroupDS(String groupName, String dsHTML);
 
-	public Measurement addMeasurement(LoggedInInfo loggedInInfo, Measurement measurement) {
-		measurementDao.persist(measurement);
-		LogAction.addLogSynchronous(loggedInInfo, "MeasurementManager.addMeasurement", "id=" + measurement.getId());
-		return(measurement);
-	}
+	public void removeMeasurementGroupDS(String propKey);
 
-	/**
-	 * ProgramId is not available in oscar right now but the method signature is correct for when it is available.
-	 */
-	public List<Measurement> getMeasurementsByProgramProviderDemographicDate(LoggedInInfo loggedInInfo, Integer programId, String providerNo, Integer demographicId, Calendar updatedAfterThisDateExclusive, int itemsToReturn) {
-		List<Measurement> results = measurementDao.findByProviderDemographicLastUpdateDate(providerNo, demographicId, updatedAfterThisDateExclusive.getTime(), itemsToReturn);
+	public List<Measurement> getLatestMeasurementsByDemographicIdObservedAfter(LoggedInInfo loggedInInfo, Integer demographicId, Date observedDate);
 
-		LogAction.addLogSynchronous(loggedInInfo, "MeasurementManager.getMeasurementsByProgramProviderDemographicDate", "programId=" + programId + ", providerNo=" + providerNo + ", demographicId=" + demographicId + ", updatedAfterThisDateExclusive=" + updatedAfterThisDateExclusive.getTime());
-
-		return (results);
-    }
-	
-	public static List<String> getFlowsheetDsHTML(){
+	public static List<String> getFlowsheetDsHTML() {
 		List<String> dsHtml = new ArrayList<String>();
 		String path_set_by_property = OscarProperties.getInstance().getProperty("MEASUREMENT_DS_HTML_DIRECTORY");
-		
-		if( path_set_by_property != null ){
+
+		if (path_set_by_property != null) {
 			File[] files1 = new File(path_set_by_property).listFiles();
-			
+
 			for (File file1 : files1) {
-			    if (file1.isFile()) {
-			    	dsHtml.add(file1.getName());
-			    }
+				if (file1.isFile()) {
+					dsHtml.add(file1.getName());
+				}
 			}
 		}
-		
-		URL path_of_resource = MeasurementFlowSheet.class.getClassLoader().getResource("/oscar/oscarEncounter/oscarMeasurements/flowsheets/html/");
+
+		URL path_of_resource = MeasurementFlowSheet.class.getClassLoader()
+				.getResource("/oscar/oscarEncounter/oscarMeasurements/flowsheets/html/");
 		File[] files2 = new File(path_of_resource.getPath()).listFiles();
-		
+
 		for (File file2 : files2) {
-		    if (file2.isFile()) {
-		    	dsHtml.add(file2.getName());
-		    }
+			if (file2.isFile()) {
+				dsHtml.add(file2.getName());
+			}
 		}
-		
-		
+
 		return dsHtml;
 	}
 	
-	public String getDShtml(String groupName){
-		
-    	String groupId = null;
-    	String propKey = null;
-    	
-    	groupId = findGroupId(groupName);
-    	propKey = "mgroup.ds.html."+groupId;
-
-    	String dsHTML = null;
-    	
-    	PropertyDao propertyDao = (PropertyDao)SpringUtils.getBean("propertyDao");
-		Property p = propertyDao.checkByName(propKey);
-		
-		if(p!=null){
-		dsHTML = p.getValue();
-		return MeasurementFlowSheet.getDSHTMLStream(dsHTML);
-		}
-		
-		return "";
-	}
-	
-	public boolean isProperty(String prop) {
-		PropertyDao propertyDao = (PropertyDao)SpringUtils.getBean("propertyDao");
-		Property props = propertyDao.checkByName(prop);
-		if(props!=null){
-			return true;
-		}		
-		return false;
-	}
-	
-	public String findGroupId(String groupName){
-		String id = null;
-		MeasurementGroupStyleDao measurementGroupStyleDao = (MeasurementGroupStyleDao)SpringUtils.getBean("measurementGroupStyleDao");
-		List<MeasurementGroupStyle> results = measurementGroupStyleDao.findByGroupName(groupName);
-		
-		if(results.size()>0){			
-			for(MeasurementGroupStyle result:results){
-				id = result.getId().toString();
-			}
-		}
-		
-		return id;
-	}
-
-	public void addMeasurementGroupDS(String groupName, String dsHTML){
-		PropertyDao propertyDao = (PropertyDao)SpringUtils.getBean("propertyDao");
-		String id = findGroupId(groupName);
-		boolean propertyExists = isProperty("mgroup.ds.html."+id);
-		if(propertyExists){
-			Property p = propertyDao.checkByName("mgroup.ds.html."+id);
-			p.setValue(dsHTML);
-			propertyDao.merge(p);
-		}else{
-			Property x = new Property();
-			x.setName("mgroup.ds.html."+id);
-			x.setValue(dsHTML);
-			propertyDao.persist(x);
-		}
-	}
-	
-	public void removeMeasurementGroupDS(String propKey){
-		PropertyDao propertyDao = (PropertyDao)SpringUtils.getBean("propertyDao");
-		boolean propertyExists = isProperty(propKey);
-		if(propertyExists){
-			Property p = propertyDao.checkByName(propKey);
-			Integer value = p.getId();
-			
-			propertyDao.remove(value);
-		}
-	}
-	
-	
-	public static String getPropertyValue(String prop){
-		PropertyDao propertyDao = (PropertyDao)SpringUtils.getBean("propertyDao");
+	public static String getPropertyValue(String prop) {
+		PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean(PropertyDao.class);
 		Property p = propertyDao.checkByName(prop);
 		String value = p.getValue();
-		
+
 		return value;
 	}
-	
 }

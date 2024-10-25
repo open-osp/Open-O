@@ -64,7 +64,7 @@ if(!authed) {
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	Provider provider = loggedInInfo.getLoggedInProvider();
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
 <script src="<%=request.getContextPath() %>/js/jquery.dataTables.js" type="text/javascript"></script>
@@ -80,16 +80,20 @@ if(!authed) {
 		window.open('../renal/Renal.do?method=generatePatientLetter&demographic_no='+demographicNo);
 	}
 	
-	function generateLetterAndEmail(demographicNo) {
+	/*
+	* This function is not supported as it utilizes RenalAction's sendPatientLetterAsEmail method.
+	* For more details, please refer to the sendPatientLetterAsEmail method.
+	*/
+	// function generateLetterAndEmail(demographicNo) {
 		
-		jQuery.ajax({url:'../renal/Renal.do?method=sendPatientLetterAsEmail&demographic_no='+demographicNo,async:false, dataType:'json', success:function(data) {
-			if(data.success == 'true')
-			  alert('email sent');		
-			else
-				alert(data.error);
-		}});	
-		//window.open('../renal/Renal.do?method=generatePatientLetter&demographic_no='+demographicNo);
-	}
+	// 	jQuery.ajax({url:'../renal/Renal.do?method=sendPatientLetterAsEmail&demographic_no='+demographicNo,async:false, dataType:'json', success:function(data) {
+	// 		if(data.success == 'true')
+	// 		  alert('email sent');		
+	// 		else
+	// 			alert(data.error);
+	// 	}});	
+	// 	//window.open('../renal/Renal.do?method=generatePatientLetter&demographic_no='+demographicNo);
+	// }
 	
 	function generateLabReq(demographicNo) {
 		var url = '<%=request.getContextPath()%>/form/formlabreq<%=labReqVer%>.jsp?demographic_no='+demographicNo+'&formId=0&provNo=<%=session.getAttribute("user")%>&fromSession=true';
@@ -240,7 +244,7 @@ body{
 						
 						<td nowrap="nowrap">
 							<a title="Generate Patient Letter <%=ckd.getLastPatientLetter()==null?"":" | " + ckd.getLastPatientLetter() %>" href="javascript:void(0);" onclick="generateLetter(<%=ckd.getDemographic().getDemographicNo()%>);return false;"><img src="../images/notepad_blank.gif" border="0"/></a>
-							<a title="Email Patient Letter <%=ckd.getLastPatientLetter()==null?"":" | " + ckd.getLastPatientLetter() %>" href="javascript:void(0);" onclick="generateLetterAndEmail(<%=ckd.getDemographic().getDemographicNo()%>);return false;"><img src="../images/email.jpg" border="0"/></a>						
+							<%-- <a title="Email Patient Letter <%=ckd.getLastPatientLetter()==null?"":" | " + ckd.getLastPatientLetter() %>" href="javascript:void(0);" onclick="generateLetterAndEmail(<%=ckd.getDemographic().getDemographicNo()%>);return false;"><img src="../images/email.jpg" border="0"/></a>						 --%>
 							<a title="Create Lab Requisition  <%=ckd.getLastLabReq()==null?"":" | " + ckd.getLastLabReq() %>" href="javascript:void(0);" onclick="generateLabReq(<%=ckd.getDemographic().getDemographicNo()%>);return false;"><img src="../images/lab_icon.png" height="16" border="0"/></a>
 							<a title="Add Chronic Renal Failure to Disease Registry, and disable further notifications" href="javascript.void(0);" onclick="popupPage(580,900,'../oscarResearch/oscarDxResearch/dxResearch.do?selectedCodingSystem=icd9&xml_research1=585&xml_research2=&xml_research3=&xml_research4=&xml_research5=&demographicNo=<%=ckd.getDemographic().getDemographicNo()%>&quickList=default&forward=');return false;"><img src="../images/kidney.jpg" height="16" border="0"/></a>
 						</td>

@@ -56,9 +56,9 @@ import org.oscarehr.util.SpringUtils;
 
 public class ManageLinkedClients {
 	public static Logger logger = MiscUtils.getLogger();
-	public static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-	public static ClientLinkDao clientLinkDao = (ClientLinkDao) SpringUtils.getBean("clientLinkDao");
-	public static ClientImageDAO clientImageDAO=(ClientImageDAO)SpringUtils.getBean("clientImageDAO");
+	public static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+	public static ClientLinkDao clientLinkDao = (ClientLinkDao) SpringUtils.getBean(ClientLinkDao.class);
+	public static ClientImageDAO clientImageDAO=(ClientImageDAO)SpringUtils.getBean(ClientImageDAO.class);
 
 	public static class LinkedDemographicHolder {
 		public int matchingScore = 0;

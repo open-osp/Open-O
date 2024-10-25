@@ -47,6 +47,7 @@ if(!authed) {
 <%@ page import="com.quatro.dao.security.SecobjprivilegeDao" %>
 <%@ page import="com.quatro.model.security.Secobjprivilege" %>
 <%@ page import="java.util.List, java.util.regex.Pattern, java.util.regex.Matcher" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"
 	scope="request" />
@@ -73,10 +74,9 @@ if(!authed) {
 
 		if( !rh.equals("") && securityMgr.hasWriteAccess("_" + ((String)request.getAttribute("cmd")).toLowerCase(),roleName$)) {
         %>
-<div id='menuTitle<%=rh%>'
-	style="width: 10%; float: right; text-align: center;">
-<h3 style="padding:0px; <%=getBackgroundColor(dao)%>"><a href="javascript:void(0);"
-	<%=dao.numPopUpMenuItems() > 0 ? "onmouseover" : "onclick"%>="<%=dao.getRightURL()%>">+</a></h3>
+<div class="nav-menu-heading" style="<%=getBackgroundColor(dao)%>">
+<div class="nav-menu-add-button" id='menuTitle<%=rh%>'>
+    <h3><a href="javascript:void(0);" <%=dao.numPopUpMenuItems() > 0 ? "onmouseover" : "onclick"%>="<%=dao.getRightURL()%>">&#43;</a></h3>
 </div>
 <%
         int num;
@@ -90,19 +90,22 @@ if(!authed) {
         menuWidth *= 2;
         }
         %>
-<div id='menu<%=rh%>' class='menu' style='width: <%=menuWidth%>;px'
+<div id='menu<%=rh%>' class='menu' style='width: <%=menuWidth%>px;'
 	onclick='event.cancelBubble = true;'>
 <h3 style='text-align: center'><%=dao.getMenuHeader()%></h3>
 <%
             for(int idx = 0; idx < num; ++idx) {
             if( columns )
-            style = idx % 2 == 0 ? "menuItemleft" : "menuItemright";
-            else
-            style = "menuItemleft";
-            %> <a href="#" class="<%=style%>"
+            {
+                style = idx % 2 == 0 ? "menuItemleft" : "menuItemright";
+            }
+            else {
+                style = "menuItemleft";
+            }%>
+    <a href="javascript:void(0)" class="<%=style%>"
 	onmouseover='this.style.color="black"'
 	onmouseout='this.style.color="white"'
-	onclick="<%=dao.getPopUpUrl(idx)%>; return false;"><%=dao.getPopUpText(idx)%></a>
+	onclick="<%=dao.getPopUpUrl(idx) + ";"%> return false;"><%=dao.getPopUpText(idx)%></a>
 <%
             if( columns && idx % 2 == 1) {
             %> <br>
@@ -122,19 +125,18 @@ if(!authed) {
         else {
         	if(!rh.equals("")) {
         	 %>
-             <div id='menuTitle<%=rh%>' style="width: 10%; float: right; text-align: center;">
-      			<h3 style="padding:0px; <%=getBackgroundColor(dao)%>">&nbsp;</h3>
+             <div id='menuTitle<%=rh%>' style="width:10%;">
+      			<h3 style="padding:0; <%=getBackgroundColor(dao)%>">&nbsp;</h3>
       	   </div>
              <%
         } }
 
         //left hand module header comes last as it's displayed as a block
         %>
-<div style="clear: left; float: left; width: 90%;">
-<h3 style="width:100%; <%=getBackgroundColor(dao)%>"><a href="#"
-	onclick="<%=dao.getLeftURL()%>; return false;"><%=dao.getLeftHeading()%></a></h3>
+<div class="nav-menu-title">
+<h3 onclick="<%=dao.getLeftURL() + ";"%> return false;"><a href="javascript:void(0)"><%=dao.getLeftHeading()%></a></h3>
 </div>
-
+</div>
 <ul id="<%=request.getAttribute("navbarName")%>list">
 	<%
             //now we display the actual items of the module
@@ -281,10 +283,10 @@ if(!authed) {
 										
                     if( item.isURLJavaScript() ) {
                 		divReloadInfo = trackWindowString(url, divReloadUrl, cmd, pattern);
-                    	out.println("...<a class='links' style='margin-right: 2px;" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href='#' onclick=\"" + divReloadInfo + url + "\" title='" + item.getLinkTitle() + "'>");
+                    	out.println("...<a class='links' style='" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href='#' onclick=\"" + divReloadInfo + url + "\" title='" + item.getLinkTitle() + "'>");
                     }
                     else {
-                    	out.println("...<a class='links' style='margin-right: 2px;" + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href=\"" + url + "\" title='" + item.getLinkTitle() + "' target=\"_blank\">");
+                    	out.println("...<a class='links' " + colour + "' onmouseover=\"this.className='linkhover'\" onmouseout=\"this.className='links'\" href=\"" + url + "\" title='" + item.getLinkTitle() + "' target=\"_blank\">");
                     }
 
                     if(item.getValue() != null && !item.getValue().trim().equals("")){

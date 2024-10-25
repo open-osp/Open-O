@@ -26,11 +26,13 @@ package org.oscarehr.casemgmt.model;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Date;
+
+import javax.sql.rowset.serial.SerialBlob;
 
 import org.apache.commons.codec.binary.Base64;
 import org.caisi.model.BaseObject;
-import org.hibernate.Hibernate;
 import org.oscarehr.util.MiscUtils;
 
 public class ClientImage extends BaseObject {
@@ -91,7 +93,13 @@ public class ClientImage extends BaseObject {
 		if(image_data == null) {
 			return null;
 		}
-		return Hibernate.createBlob(Base64.encodeBase64(getImage_data()));
+		try {
+			Blob imageBlob = new SerialBlob(Base64.encodeBase64(image_data));
+			return imageBlob;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public void setImage_contents(Blob image_contents) {

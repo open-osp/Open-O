@@ -58,7 +58,7 @@ public class FrmSetupSelectAction extends Action {
 			throw new SecurityException("missing required security object (_form)");
 		}
     	
-    	EncounterFormDao encounterFormDao=(EncounterFormDao)SpringUtils.getBean("encounterFormDao");
+    	EncounterFormDao encounterFormDao=(EncounterFormDao)SpringUtils.getBean(EncounterFormDao.class);
     	List<EncounterForm> forms=encounterFormDao.findAll();
          
     	TreeMap<Integer, EncounterForm> formShownVector=new TreeMap<Integer, EncounterForm>();

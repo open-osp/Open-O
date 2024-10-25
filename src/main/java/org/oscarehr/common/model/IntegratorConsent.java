@@ -41,7 +41,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.CollectionOfElements;
+import javax.persistence.ElementCollection;
+//import org.hibernate.annotations.CollectionOfElements;
 
 /**
  */
@@ -70,7 +71,7 @@ public class IntegratorConsent extends AbstractModel<Integer> {
 	/**
 	 * (Integer,Boolean) is (IntegratorFacilityId,ShareData).
 	 */
-	@CollectionOfElements(fetch = FetchType.EAGER)
+	@ElementCollection
 	@JoinTable(name = "IntegratorConsentShareDataMap")
 	private Map<Integer, Boolean> consentToShareData = new HashMap<Integer, Boolean>();
 

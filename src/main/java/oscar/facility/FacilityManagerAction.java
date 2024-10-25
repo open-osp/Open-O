@@ -46,8 +46,8 @@ import org.oscarehr.util.WebUtils;
 
 public class FacilityManagerAction extends DispatchAction {
 
-	private FacilityDao facilityDao=(FacilityDao) SpringUtils.getBean("facilityDao");
-	private IntegratorControlDao integratorControlDao = (IntegratorControlDao) SpringUtils.getBean("integratorControlDao");
+	private FacilityDao facilityDao=(FacilityDao) SpringUtils.getBean(FacilityDao.class);
+	private IntegratorControlDao integratorControlDao = (IntegratorControlDao) SpringUtils.getBean(IntegratorControlDao.class);
 
 	private static final String FORWARD_EDIT = "edit";
 	private static final String FORWARD_LIST = "list";

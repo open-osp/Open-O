@@ -201,7 +201,7 @@
 <html:hidden property="queueId" />
 
 <%
-	ProgramProviderDAO ppd =(ProgramProviderDAO)SpringUtils.getBean("programProviderDAO");
+	ProgramProviderDAO ppd =(ProgramProviderDAO)SpringUtils.getBean(ProgramProviderDAO.class);
 	boolean bShowEncounterLink = false; 
 	String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>

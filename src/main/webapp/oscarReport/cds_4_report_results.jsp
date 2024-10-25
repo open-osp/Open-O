@@ -55,8 +55,8 @@ if(!authed) {
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	ProviderManager2 providerManager = (ProviderManager2) SpringUtils.getBean("providerManager2");
-	ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
+	ProviderManager2 providerManager = (ProviderManager2) SpringUtils.getBean(ProviderManager2.class);
+	ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
 
     SimpleDateFormat sdf=new SimpleDateFormat(DateFormatUtils.ISO_DATE_FORMAT.getPattern());
 	Date startDate=sdf.parse(request.getParameter("startDate"));

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.billing.CA.dao;
 
@@ -31,19 +34,7 @@ import org.oscarehr.billing.CA.BC.model.WcbBpCode;
 import org.oscarehr.common.dao.AbstractDao;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class WcbBpCodeDao extends AbstractDao<WcbBpCode> {
+public interface WcbBpCodeDao extends AbstractDao<WcbBpCode> {
 
-	protected WcbBpCodeDao() {
-		super(WcbBpCode.class);
-	}
-	
-	@SuppressWarnings("unchecked")
-    public List<WcbBpCode> findByCodeOrAnyLevel(String code) {
-		String codeParamValue = code.substring(0, Math.min(code.length() - 1, 5));
-		Query query = createQuery("c", "c.code like :codeParamValue OR c.level1 like :c OR c.level2 like :c OR c.level3 like :c ORDER BY c.level1, c.level2, c.level3");
-		query.setParameter("codeParamValue", codeParamValue + "%");
-		query.setParameter("c", code + "%");
-		return query.getResultList();
-	}
+	public List<WcbBpCode> findByCodeOrAnyLevel(String code);
 }

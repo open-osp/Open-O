@@ -33,7 +33,7 @@
 
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean("demographicDao");
+	DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean(DemographicDao.class);
 
 	int currentDemographicId=Integer.parseInt(request.getParameter("demographicId"));
 	

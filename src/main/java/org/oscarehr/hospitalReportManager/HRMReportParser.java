@@ -217,7 +217,7 @@ public class HRMReportParser {
 		// We're going to check to see if there's a match in the database already for either of these
 		// report hash matches = duplicate report for same recipient
 		// no transaction info hash matches = duplicate report, but different recipient
-		HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
+		HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
 		List<Integer> exactMatchList = hrmDocumentDao.findByHash(noMessageIdHash);
 
 		if (exactMatchList == null || exactMatchList.size() == 0) {
@@ -272,7 +272,7 @@ public class HRMReportParser {
 		logger.info("Routing Report To Demographic, for file:"+report.getFileLocation());
 		
 		// Search the demographics on the system for a likely match and route it to them automatically
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 
 		List<Demographic> matchingDemographicListByHin = demographicDao.searchDemographicByHIN(report.getHCN());
 
@@ -321,7 +321,7 @@ public class HRMReportParser {
 		}
 		logger.info("Identifying if this is a report that we received before, but was sent to the wrong demographic, for file:"+report.getFileLocation());
 		
-		HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
+		HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
 
 		// Check #1: Identify if this is a report that we received before, but was sent to the wrong demographic.
 		// we set the parent on those other reports to this one. this way we can display the other versions when viewing.
@@ -386,9 +386,9 @@ public class HRMReportParser {
 
 
 	private static List<HRMReport> loadAllReportsRoutedToDemographic(LoggedInInfo loggedInInfo, String legalName) {
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-		HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean("HRMDocumentToDemographicDao");
-		HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+		HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean(HRMDocumentToDemographicDao.class);
+		HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
 
 		List<Demographic> matchingDemographicListByName = demographicDao.searchDemographic(legalName);
 
@@ -421,7 +421,7 @@ public class HRMReportParser {
 		
 		logger.info("Routing Report To SubClass, for file:"+report.getFileLocation());
 		
-		HRMDocumentSubClassDao hrmDocumentSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean("HRMDocumentSubClassDao");
+		HRMDocumentSubClassDao hrmDocumentSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean(HRMDocumentSubClassDao.class);
 
 		if (report.getFirstReportClass().equalsIgnoreCase("Diagnostic Imaging Report") || report.getFirstReportClass().equalsIgnoreCase("Cardio Respiratory Report")) {
 			List<List<Object>> subClassList = report.getAccompanyingSubclassList();
@@ -501,7 +501,7 @@ public class HRMReportParser {
 		}
 
 		if (OscarProperties.getInstance().isPropertyActive("queens_resident_tagging")) {
-			DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+			DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 			List<Demographic> matchingDemographicListByHin = demographicDao.searchDemographicByHIN(report.getHCN());
 			if (!matchingDemographicListByHin.isEmpty()) {
 				Demographic demographic = demographicDao.searchDemographicByHIN(report.getHCN()).get(0);
@@ -572,7 +572,7 @@ public class HRMReportParser {
 	}
 
 	public static void setDocumentParent(String reportId, String childReportId) {
-		HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
+		HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
 		try {
 			HRMDocument childDocument = hrmDocumentDao.find(childReportId);
 			childDocument.setParentReport(Integer.parseInt(reportId));
@@ -588,7 +588,7 @@ public class HRMReportParser {
 	}
 
 	public static void routeReportToProvider(Integer reportId, String providerNo) {
-		HRMDocumentToProviderDao hrmDocumentToProviderDao = (HRMDocumentToProviderDao) SpringUtils.getBean("HRMDocumentToProviderDao");
+		HRMDocumentToProviderDao hrmDocumentToProviderDao = (HRMDocumentToProviderDao) SpringUtils.getBean(HRMDocumentToProviderDao.class);
 		HRMDocumentToProvider providerRouting = new HRMDocumentToProvider();
 
 		providerRouting.setHrmDocumentId(reportId);
@@ -599,7 +599,7 @@ public class HRMReportParser {
 	}
 
 	public static void signOffOnReport(String providerRoutingId, Integer signOffStatus) {
-		HRMDocumentToProviderDao hrmDocumentToProviderDao = (HRMDocumentToProviderDao) SpringUtils.getBean("HRMDocumentToProviderDao");
+		HRMDocumentToProviderDao hrmDocumentToProviderDao = (HRMDocumentToProviderDao) SpringUtils.getBean(HRMDocumentToProviderDao.class);
 		HRMDocumentToProvider providerRouting = hrmDocumentToProviderDao.find(providerRoutingId);
 
 		if (providerRouting != null) {
@@ -610,7 +610,7 @@ public class HRMReportParser {
 	}
 
 	public static void routeReportToDemographic(Integer reportId, Integer demographicNo) {
-		HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean("HRMDocumentToDemographicDao");
+		HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean(HRMDocumentToDemographicDao.class);
 
 		HRMDocumentToDemographic demographicRouting = new HRMDocumentToDemographic();
 		demographicRouting.setDemographicNo(demographicNo);

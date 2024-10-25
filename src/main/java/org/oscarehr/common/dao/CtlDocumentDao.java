@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -30,28 +33,10 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.CtlDocument;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class CtlDocumentDao extends AbstractDao<CtlDocument>{
+public interface CtlDocumentDao extends AbstractDao<CtlDocument> {
 
-	public CtlDocumentDao() {
-		super(CtlDocument.class);
-	}
-	
-	public CtlDocument getCtrlDocument(Integer docId) {
-		Query query = entityManager.createQuery("select x from CtlDocument x where x.id.documentNo=?");
-		query.setParameter(1, docId);
-		
-		return(getSingleResultOrNull(query));
-	}
+	public CtlDocument getCtrlDocument(Integer docId);
 
-    public List<CtlDocument> findByDocumentNoAndModule(Integer ctlDocNo, String module) {
-		Query query = entityManager.createQuery("select x from CtlDocument x where x.id.documentNo=? and x.id.module = ?");
-		query.setParameter(1, ctlDocNo);
-		query.setParameter(2, module);
-		
-		@SuppressWarnings("unchecked")
-        List<CtlDocument> cList = query.getResultList();
-		return cList;
-    }
+	public List<CtlDocument> findByDocumentNoAndModule(Integer ctlDocNo, String module);
 
 }

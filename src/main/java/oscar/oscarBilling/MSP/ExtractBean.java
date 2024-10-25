@@ -24,16 +24,6 @@
 
 
 package oscar.oscarBilling.MSP;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Properties;
 
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.dao.LogTeleplanTxDao;
@@ -42,10 +32,16 @@ import org.oscarehr.common.dao.BillingDao;
 import org.oscarehr.common.model.Billing;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.OscarProperties;
 import oscar.entities.Billingmaster;
 import oscar.oscarBilling.ca.bc.data.BillingmasterDAO;
+
+import java.io.*;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Properties;
 
 
 public class ExtractBean extends Object implements Serializable {
@@ -277,7 +273,7 @@ public class ExtractBean extends Object implements Serializable {
                         BigTotal = BigTotal.add(bdFee);
                         
                         if (invCount == 0) {                            
-                            htmlContent = htmlContent + "<tr><td class='bodytext'>" + "<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billing_no="
+                            htmlContent = htmlContent + "<tr><td class='bodytext'>" + "<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billingmaster_no="
                             + forwardZero(rs2.getString("billingmaster_no"), 7)
                             + "','','resizable=yes,scrollbars=yes,top=0,left=0,width=900,height=600'); return false;\">" + invNo + "</a>" + "</td><td class='bodytext'>" + demoName + "</td><td class='bodytext'>" +rs2.getString("phn")+ "</td><td class='bodytext'>" +rs2.getString("service_date")+ "</td><td class='bodytext'>"+rs2.getString("billing_code") +"</td><td align='right' class='bodytext'>"+ rs2.getString("bill_amount")+"</td><td align='right' class='bodytext'>"+ backwardSpace(rs2.getString("dx_code1"), 5)+"</td><td align='right' class='bodytext'>"+ backwardSpace(rs2.getString("dx_code2"), 5) +"</td><td align='right' class='bodytext'>"+ backwardSpace(rs2.getString("dx_code3"), 5)+"</td><td class='bodytext'>"+forwardZero(rs2.getString("billingmaster_no"), 7)+"</td><td class='bodytext'>&nbsp;</td></tr>";
                         }else{

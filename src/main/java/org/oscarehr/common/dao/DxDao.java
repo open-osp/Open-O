@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,110 +20,27 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.common.dao;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.Query;
 
 import org.oscarehr.common.NativeSql;
 import org.oscarehr.common.model.DxAssociation;
-import org.oscarehr.util.MiscUtils;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class DxDao extends AbstractDao<DxAssociation> {
+public interface DxDao extends AbstractDao<DxAssociation> {
 
-	public DxDao() {
-		super(DxAssociation.class);
-	}
+	List<DxAssociation> findAllAssociations();
 
-	public List<DxAssociation> findAllAssociations()
-	{			
-		Query query = entityManager.createQuery("select x from DxAssociation x order by x.dxCodeType,x.dxCode");
-		
-		@SuppressWarnings("unchecked")
-		List<DxAssociation> results = query.getResultList();
+	int removeAssociations();
 
-		return(results);
-	}
-    
-    public int removeAssociations() {
-    	Query query = entityManager.createQuery("DELETE from DxAssociation");
-    	return query.executeUpdate();
-    }
-    
-    public DxAssociation findAssociation(String codeType, String code) {    	
-    	Query query = entityManager.createQuery("SELECT x from DxAssociation x where x.codeType = ?1 and x.code = ?2");
-    	query.setParameter(1, codeType);
-    	query.setParameter(2, code);
-    	    	
-        @SuppressWarnings("unchecked")
-    	List<DxAssociation> results = query.getResultList();
-    	if(!results.isEmpty()) {
-    		return results.get(0);
-    	}
-    	return null;
-    }
+	DxAssociation findAssociation(String codeType, String code);
 
-    @NativeSql
-    @SuppressWarnings("unchecked")
-	public List<Object[]> findCodingSystemDescription(String codingSystem, String code) {
-		try {
-			String sql = "SELECT " + codingSystem +", description FROM " + codingSystem + " WHERE " + codingSystem + " = :code";
-			Query query = entityManager.createNativeQuery(sql);
-			query.setParameter("code", code);
-			return query.getResultList();
-		} catch (Exception e) {
-			// TODO Add exclude to the test instead when it's merged  
-			return new ArrayList<Object[]>();
-		}
-    }
-	
-	@NativeSql
-    @SuppressWarnings("unchecked")
-	public List<Object[]> findCodingSystemDescription(String codingSystem, String[] keywords) {
-		try {
-			boolean flag=false;
-			StringBuilder buf = new StringBuilder("select " + codingSystem + ", description from " + codingSystem);
-			
-			for(String keyword : keywords){
-                if(keyword == null || keyword.trim().equals("")) {
-                	continue;
-                }
-                if(!flag) {
-                	buf.append(" where "); 
-                }
-                if(flag) {
-                	buf.append(" or ");
-                }
-                buf.append(" " + codingSystem + " like '%" + keyword + "%' or description like '%" + keyword + "%' ");
-                flag=true;
-            }
-			
-			Query query = entityManager.createNativeQuery(buf.toString());
-			return query.getResultList();
-		} catch (Exception e) {
-			MiscUtils.getLogger().error("error",e);
-			return new ArrayList<Object[]>();
-		}
-		
-	}
-	
-	@NativeSql
-	public String getCodeDescription(String codingSystem, String code) {
-		String desc="";
-		StringBuilder buf = new StringBuilder("select description from " + codingSystem + " where "+ codingSystem + "='" + code + "'");
-		try {
-			Query query = entityManager.createNativeQuery(buf.toString());
-			desc =  (String) query.getSingleResult();
-		} catch (Exception e) {
-			MiscUtils.getLogger().error("error "+buf,e);
-		}
-		return desc;
-	}
-		
+	List<Object[]> findCodingSystemDescription(String codingSystem, String code);
+
+	List<Object[]> findCodingSystemDescription(String codingSystem, String[] keywords);
+
+	String getCodeDescription(String codingSystem, String code);
 }

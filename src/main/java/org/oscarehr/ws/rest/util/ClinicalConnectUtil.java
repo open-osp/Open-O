@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -37,7 +38,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.logging.log4j.Logger;
-import org.apache.ws.security.util.Base64;
+
 import org.oscarehr.common.dao.DemographicDao;
 import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.Demographic;
@@ -174,33 +175,31 @@ public class ClinicalConnectUtil {
 		}
 		return null;
 	}
-	
-	private static String encryptAes(SecretKey secretKey, String plainData)
-	{
-		try {
-			byte[] b = null;
-			if (plainData != null) b = plainData.getBytes(MiscUtils.DEFAULT_UTF8_ENCODING);
-			byte[] encryptedData = encryptDecrypt("AES", Cipher.ENCRYPT_MODE, secretKey, b);
-			
-			return Base64.encode(encryptedData);
-		} catch (Exception e) {
-			logger.error("Cannot encrypt", e);
-		}
-		return null;
-	}
-	
-	private static String decryptAes(SecretKey secretKey, String encryptedDataStr)
-	{
-		try {
-			byte[] encryptedData = Base64.decode(encryptedDataStr);
-			
-			byte[] b = encryptDecrypt("AES", Cipher.DECRYPT_MODE, secretKey, encryptedData);
-			return(new String(b, MiscUtils.DEFAULT_UTF8_ENCODING));
-		} catch (Exception e) {
-			logger.error("Cannot decrypt", e);
-		}
-		return null;
-	}
+
+	private static String encryptAes(SecretKey secretKey, String plainData) {
+        try {
+            byte[] b = null;
+            if (plainData != null) b = plainData.getBytes(MiscUtils.DEFAULT_UTF8_ENCODING);
+            byte[] encryptedData = encryptDecrypt("AES", Cipher.ENCRYPT_MODE, secretKey, b);
+            
+            return Base64.getEncoder().encodeToString(encryptedData);
+        } catch (Exception e) {
+            logger.error("Cannot encrypt", e);
+        }
+        return null;
+    }
+    
+    private static String decryptAes(SecretKey secretKey, String encryptedDataStr) {
+        try {
+            byte[] encryptedData = Base64.getDecoder().decode(encryptedDataStr);
+            
+            byte[] b = encryptDecrypt("AES", Cipher.DECRYPT_MODE, secretKey, encryptedData);
+            return new String(b, MiscUtils.DEFAULT_UTF8_ENCODING);
+        } catch (Exception e) {
+            logger.error("Cannot decrypt", e);
+        }
+        return null;
+    }
 	
 	private static byte[] encryptDecrypt(String algorithm, int cipherMode, Key key, byte[] data) throws Exception
 	{

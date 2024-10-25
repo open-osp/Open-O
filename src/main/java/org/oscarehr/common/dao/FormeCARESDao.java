@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,47 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import org.oscarehr.common.model.FormeCARES;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.Query;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-@Repository
-public class FormeCARESDao extends AbstractDao<FormeCARES> {
-    protected FormeCARESDao() {
-        super(FormeCARES.class);
-    }
-
-    public List<FormeCARES> findAllByFormCreatedDateDemographicNo(Date createDate, int demographicNo) {
-        String sql = "select x from "+modelClass.getSimpleName()+" x where DATE(x.formCreated) = ?1 and x.demographicNo = ?2";
-        Query query = entityManager.createQuery(sql);
-        query.setParameter(1,createDate);
-        query.setParameter(2,demographicNo);
-        @SuppressWarnings("unchecked")
-        List<FormeCARES> formeCARESList = query.getResultList();
-        if(formeCARESList == null) {
-            formeCARESList = Collections.emptyList();
-        }
-        return formeCARESList;
-    }
-
-    public List<FormeCARES> findAllIncompleteByDemographicNumber(int demographicNo) {
-        String sql = "select x from "+modelClass.getSimpleName()+" x where x.completed = ?1 and x.demographicNo = ?2";
-        Query query = entityManager.createQuery(sql);
-        query.setParameter(1,false);
-        query.setParameter(2,demographicNo);
-        @SuppressWarnings("unchecked")
-        List<FormeCARES> formeCARESList = query.getResultList();
-        if(formeCARESList == null) {
-            formeCARESList = Collections.emptyList();
-        }
-        return formeCARESList;
-    }
-
+public interface FormeCARESDao extends AbstractDao<FormeCARES> {
+    List<FormeCARES> findAllByFormCreatedDateDemographicNo(Date createDate, int demographicNo);
+    List<FormeCARES> findAllIncompleteByDemographicNumber(int demographicNo);
 }

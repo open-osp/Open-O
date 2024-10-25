@@ -1508,6 +1508,7 @@ insert into `secPrivilege` values(5, 'o', 'No rights.');
 insert into `secPrivilege` values(6, 'u', 'Update');
 
 INSERT INTO `secObjectName`(`objectName`, `description`, `orgapplicable`) VALUES ('_fax', 'Send and Receive Faxes', 0);
+INSERT INTO `secObjectName`(`objectName`, `description`, `orgapplicable`) VALUES ('_email', 'Send and Receive Emails', 0);
 insert into `secObjectName` (`objectName`,`description`,`orgapplicable`) values('_appointment', 'Appointment',0);
 insert into `secObjectName`  (`objectName`,`description`,`orgapplicable`) values('_admin','Administration',0);
 insert into `secObjectName`  (`objectName`,`description`,`orgapplicable`) values('_eChart', 'Encounter', 0);
@@ -1539,6 +1540,8 @@ insert into `secObjectName` (`objectName`,`description`,`orgapplicable`) values(
 INSERT INTO `secObjectName` (`objectName`, `description`, `orgapplicable`) VALUES ('_team_schedule_only', 'Restrict schedule to only login provider and his team', '0');
 INSERT INTO `secObjectName` (`objectName`, `description`, `orgapplicable`) VALUES ('_team_billing_only', 'Restrict billing access to only login provider and his team', '0');
 INSERT INTO `secObjectName` (`objectName`, `description`, `orgapplicable`) VALUES ('_admin.fax', 'Configure & Manage Faxes', '0');
+INSERT INTO `secObjectName` (`objectName`, `description`, `orgapplicable`) VALUES ('_admin.email', 'Configure & Manage Emails', '0');
+INSERT INTO `secObjectName` (`objectName`, `description`, `orgapplicable`) VALUES ('_admin.fax.restart', 'Show status and restart fax scheduler', '0');
 
 insert into `secObjectName` (`objectName`) values ('_newCasemgmt.preventions');
 insert into `secObjectName` (`objectName`) values ('_newCasemgmt.viewTickler');
@@ -1746,6 +1749,8 @@ insert into `secObjPrivilege` values('admin','_admin.securityLogReport','x',0,'9
 insert into `secObjPrivilege` values('admin','_admin.systemMessage','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_admin.unlockAccount','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_admin.fax','x',0,'999998');
+insert into `secObjPrivilege` values('admin','_admin.email','x',0,'999998');
+insert into `secObjPrivilege` values('admin','_admin.fax.restart','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_admin.userCreatedForms','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_admin.measurements','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_appointment','x',0,'999998');
@@ -1818,6 +1823,10 @@ insert into secObjectName values('_queue.1','default',0);
 INSERT INTO `secObjPrivilege`(`roleUserGroup`, `objectName`, `privilege`, `priority`, `provider_no`) VALUES ('-1', '_fax', 'x', 0, '999999');
 INSERT INTO `secObjPrivilege`(`roleUserGroup`, `objectName`, `privilege`, `priority`, `provider_no`) VALUES ('admin', '_fax', 'x', 0, '999998');
 INSERT INTO `secObjPrivilege`(`roleUserGroup`, `objectName`, `privilege`, `priority`, `provider_no`) VALUES ('doctor', '_fax', 'x', 0, '999998');
+
+INSERT INTO `secObjPrivilege`(`roleUserGroup`, `objectName`, `privilege`, `priority`, `provider_no`) VALUES ('-1', '_email', 'x', 0, '999999');
+INSERT INTO `secObjPrivilege`(`roleUserGroup`, `objectName`, `privilege`, `priority`, `provider_no`) VALUES ('admin', '_email', 'x', 0, '999998');
+INSERT INTO `secObjPrivilege`(`roleUserGroup`, `objectName`, `privilege`, `priority`, `provider_no`) VALUES ('doctor', '_email', 'x', 0, '999998');
 
 -- for role locum
 insert into `secObjPrivilege` values('locum', '_appointment', 'x', 0, '999998');
@@ -2153,9 +2162,11 @@ INSERT INTO `appointment_status` VALUES
 (8,'c','Customized 3','#897DF8','3.gif',0,1,0,'CUST3'),
 (9,'d','Customized 4','#897DF8','4.gif',1,1,0,'CUST4'),
 (10,'e','Customized 5','#897DF8','5.gif',1,1,0,'CUST5'),
-(11,'N','No Show','#cccccc','noshow.gif',1,0,0,'NOSHO'),
-(12,'C','Cancelled','#999999','cancel.gif',1,0,0,'CAN'),
-(13,'B','Billed','#3ea4e1','billed.gif',1,0,0,'BILL');
+(11,'f','Customized 6', '#897DF8','5.gif',1,1,0,'CUST6'),
+(12,'h', 'Confirmed', '#2fcccf', 'thumb.png', 1,1,0,'CONF'),
+(13,'N','No Show','#cccccc','noshow.gif',1,0,0,'NOSHO'),
+(14,'C','Cancelled','#999999','cancel.gif',1,0,0,'CAN'),
+(15,'B','Billed','#3ea4e1','billed.gif',1,0,0,'BILL');
 
 
 insert into gstControl set gstPercent = 5;
@@ -2602,7 +2613,8 @@ INSERT INTO `secObjPrivilege`(`roleUserGroup`, `objectName`, `privilege`, `prior
 
 insert into lst_gender (code,description,isactive,displayorder) values ('M','Male',1,2);
 insert into lst_gender (code,description,isactive,displayorder) values ('F','Female',1,1);
-insert into lst_gender (code,description,isactive,displayorder) values ('T','Transgender',1,3);
+insert into lst_gender (code,description,isactive,displayorder) values ('X','Intersex',1,3);
+insert into lst_gender (code,description,isactive,displayorder) values ('U','Undisclosed',1,4);
 
 INSERT INTO `property`(`name`, `value`, `provider_no`) VALUES ('integrator_patient_consent', '1', NULL); 
 
@@ -2623,3 +2635,7 @@ bromyalgia', '41'), ('73390', 'osteopenia', '42'), ('7506', 'Hiatis Hernia', '43
 
 -- From update-2019-06-13.sql
 update ServiceClient set lifetime = -1 where lifetime is null;
+
+INSERT INTO `property`(`name`, `value`, `provider_no`) VALUES ('email_communication', 'electronic_communication_consent', NULL);
+INSERT INTO `property` (`name`, `value`, `provider_no`) VALUES ('default_ref_prac', '1', '999998');
+INSERT INTO `property` (`name`, `value`, `provider_no`) VALUES ('consultation_letterheadname_default', '1', '999998');

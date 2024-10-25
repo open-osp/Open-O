@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.PMmodule.dao;
@@ -26,19 +29,10 @@ package org.oscarehr.PMmodule.dao;
 import org.oscarehr.common.dao.SecObjPrivilegeDao;
 import org.oscarehr.util.SpringUtils;
 
-public class SurveySecurityDao {
+public interface SurveySecurityDao {
 
-	//switch the quatro security manager when available
-	//true = allowed
-	//false = restricted
-	public boolean checkPrivilege(String formName, String providerNo) {
-		//check to see if there's a privilege defined
-        SecObjPrivilegeDao dao = SpringUtils.getBean(SecObjPrivilegeDao.class);
-        int count = dao.countObjectsByName("_ucf." + formName);
-        if (count <= 0) {
-        	return true;
-        }
-        
-        return !dao.findByFormNamePrivilegeAndProviderNo("_ucf." + formName, "x", providerNo).isEmpty();
-	}
+	// switch the quatro security manager when available
+	// true = allowed
+	// false = restricted
+	public boolean checkPrivilege(String formName, String providerNo);
 }

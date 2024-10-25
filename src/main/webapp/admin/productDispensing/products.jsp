@@ -51,7 +51,7 @@ if(!authed) {
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	Provider provider = loggedInInfo.getLoggedInProvider();
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>OSCAR Products</title>

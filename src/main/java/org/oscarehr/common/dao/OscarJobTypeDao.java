@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,29 +21,14 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.OscarJobType;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class OscarJobTypeDao extends AbstractDao<OscarJobType> {
-
-	public OscarJobTypeDao() {
-		super(OscarJobType.class);
-	}
-	
-	@SuppressWarnings("unchecked")
-    public List<OscarJobType> findByClassName(String className) {
-		Query query = entityManager.createQuery("FROM OscarJobType d WHERE d.className = :className");
-		query.setParameter("className", className);
-		
-	    return query.getResultList();
-    }
-
+public interface OscarJobTypeDao extends AbstractDao<OscarJobType> {
+    List<OscarJobType> findByClassName(String className);
 }

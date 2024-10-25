@@ -90,7 +90,7 @@ public class CppPreferencesUIBean {
 	
 	public static final String ENABLE = "cpp.pref.enable";
 	
-	protected UserPropertyDAO userPropertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+	protected UserPropertyDAO userPropertyDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 	
 	private String providerNo;
 	

@@ -57,7 +57,7 @@ public class FollowUpAction extends DispatchAction {
     }
 
     public ActionForward form(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
     	request.setAttribute("providers",providerDao.getActiveProviders());
     	
     	
@@ -81,7 +81,7 @@ public class FollowUpAction extends DispatchAction {
     public ActionForward getNoteText(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
     	String appointmentNo = request.getParameter("appointmentNo");
     	
-    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
     	
     	
     	List<EyeformFollowUp> followUps = dao.getByAppointmentNo(Integer.parseInt(appointmentNo));
@@ -115,7 +115,7 @@ public class FollowUpAction extends DispatchAction {
     }
     
     public static String getTicklerText(int appointmentNo) {
-    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
     	
     	List<EyeformFollowUp> followUps = dao.getByAppointmentNo(appointmentNo);
     	StringBuilder sb = new StringBuilder();

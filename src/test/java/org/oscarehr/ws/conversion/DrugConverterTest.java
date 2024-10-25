@@ -31,6 +31,7 @@ import org.oscarehr.common.model.Drug;
 import org.oscarehr.managers.DrugLookUpManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.ws.rest.conversion.DrugConverter;
+import org.oscarehr.ws.rest.conversion.DrugConverterImpl;
 import org.oscarehr.ws.rest.to.model.DrugSearchTo1;
 import org.oscarehr.ws.rest.to.model.DrugTo1;
 
@@ -42,7 +43,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
-public class DrugConverterTest extends DrugConverter {
+public class DrugConverterTest extends DrugConverterImpl {
 
     @Before
     public void before(){

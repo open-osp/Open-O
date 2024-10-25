@@ -52,12 +52,12 @@ public class StudentImporter {
 
 	private static Logger logger = MiscUtils.getLogger();
 	
-	static ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-	static SecurityDao securityDao = (SecurityDao)SpringUtils.getBean("securityDao");
-	static SecRoleDao roleDao = (SecRoleDao)SpringUtils.getBean("secRoleDao");
-	static SecUserRoleDao secUserRoleDao = (SecUserRoleDao)SpringUtils.getBean("secUserRoleDao");
-	static ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
-	static ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
+	static ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
+	static SecurityDao securityDao = (SecurityDao)SpringUtils.getBean(SecurityDao.class);
+	static SecRoleDao roleDao = (SecRoleDao)SpringUtils.getBean(SecRoleDao.class);
+	static SecUserRoleDao secUserRoleDao = (SecUserRoleDao)SpringUtils.getBean(SecUserRoleDao.class);
+	static ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+	static ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
 	   
 	
 	public static int importStudentInfo(Integer currentFacilityId, List<StudentInfo> dataList) {

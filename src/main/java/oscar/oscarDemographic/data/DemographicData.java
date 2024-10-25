@@ -49,7 +49,7 @@ import oscar.util.UtilDateUtilities;
 @Deprecated
 public class DemographicData {
 
-	private DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
+	private DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean(DemographicCustDao.class);
 	private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 	
 	public DemographicData() {

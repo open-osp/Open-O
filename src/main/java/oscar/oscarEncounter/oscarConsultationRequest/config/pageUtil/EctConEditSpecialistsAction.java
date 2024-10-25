@@ -52,7 +52,7 @@ public class EctConEditSpecialistsAction extends Action {
 			throw new SecurityException("missing required security object (_con)");
 		}
 		
-		ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao)SpringUtils.getBean("professionalSpecialistDao");
+		ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao)SpringUtils.getBean(ProfessionalSpecialistDao.class);
 
 		EctConEditSpecialistsForm editSpecialistsForm = (EctConEditSpecialistsForm) form;
 		String specId = editSpecialistsForm.getSpecId();

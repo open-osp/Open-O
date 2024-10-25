@@ -28,6 +28,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.Logger;
@@ -123,7 +124,7 @@ public class DemographicServiceTest extends BaseRestServiceTest {
 		String newFirstName = "NEW FIRST NAME";
 		demo.setFirstName(newFirstName);
 		demographicService.updateDemographicData(demo);
-		demo = demographicService.getDemographicData(demoId);
+		demo = demographicService.getDemographicData(demoId, Collections.EMPTY_LIST);
 		assertTrue(newFirstName.equals(demo.getFirstName()));
 
 		/* test delete demo */

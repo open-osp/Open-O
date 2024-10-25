@@ -444,7 +444,7 @@ end broken -->
 		    <br>&nbsp;Provider
 <% if (bMultisites)
 { // multisite start ==========================================
-        	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+        	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
           	List<Site> sites = siteDao.getActiveSitesByProviderNo(user_no);
           	// now get all report providers
 

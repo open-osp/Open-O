@@ -31,7 +31,7 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ page import="java.lang.*,oscar.oscarEncounter.oscarMeasurements.pageUtil.*"%>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="oscarEncounter.Measurements.msgProcessMeasurementsSubmission" /></title>
 <html:base />

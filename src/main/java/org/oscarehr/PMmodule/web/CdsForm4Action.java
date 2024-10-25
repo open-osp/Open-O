@@ -35,8 +35,8 @@ import org.oscarehr.util.SpringUtils;
 
 public class CdsForm4Action {
 
-	private static CdsClientFormDao cdsClientFormDao = (CdsClientFormDao) SpringUtils.getBean("cdsClientFormDao");
-	private static CdsClientFormDataDao cdsClientFormDataDao = (CdsClientFormDataDao) SpringUtils.getBean("cdsClientFormDataDao");
+	private static CdsClientFormDao cdsClientFormDao = (CdsClientFormDao) SpringUtils.getBean(CdsClientFormDao.class);
+	private static CdsClientFormDataDao cdsClientFormDataDao = (CdsClientFormDataDao) SpringUtils.getBean(CdsClientFormDataDao.class);
 
 	public static CdsClientForm createCdsClientForm(LoggedInInfo loggedInInfo, Integer admissionId, Integer clientId, Date initialContactDate, Date assessmentDate, boolean signed)
 	{

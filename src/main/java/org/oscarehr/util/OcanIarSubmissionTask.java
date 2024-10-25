@@ -41,7 +41,7 @@ public class OcanIarSubmissionTask extends TimerTask {
 			logger.info("Running OCAN IAR Submission Task");
 			Facility currentWorkingFacility=null;
 
-			FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean("facilityDao");
+			FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean(FacilityDao.class);
 			List<Facility> facilities = facilityDao.findAll(null);
 			
 			// odd, by having this for loop here it means we only submit the first facility which has ocan enabled? 

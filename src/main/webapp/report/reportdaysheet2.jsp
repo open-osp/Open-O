@@ -55,8 +55,8 @@ if(!authed) {
 <%@ page import="org.oscarehr.common.dao.MyGroupDao"%>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
+	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 	SimpleDateFormat dayFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
 %>
@@ -76,7 +76,7 @@ if(!authed) {
 
     daySheetBean.doConfigure(dbQueries);
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="report.reportdaysheet.title" /></title>

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,35 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.RemoteAttachments;
-import org.springframework.stereotype.Repository;
 
-@Repository
-@SuppressWarnings("unchecked")
-public class RemoteAttachmentsDao extends AbstractDao<RemoteAttachments> {
-
-	public RemoteAttachmentsDao() {
-		super(RemoteAttachments.class);
-	}
-
-	public List<RemoteAttachments> findByDemoNo(Integer demoNo) {
-		Query query = createQuery("ra", "ra.demographicNo = :demoNo ORDER BY ra.date");
-		query.setParameter("demoNo", demoNo);
-		return query.getResultList();
-	}
-
-	public List<RemoteAttachments> findByDemoNoAndMessageId(Integer demographicNo, Integer messageId) {
-		Query query = createQuery("a", "a.demographicNo = :demographicNo and a.messageId = :messageId");
-		query.setParameter("demographicNo", demographicNo);
-		query.setParameter("messageId", messageId);
-		return query.getResultList();
-	}
+public interface RemoteAttachmentsDao extends AbstractDao<RemoteAttachments> {
+	List<RemoteAttachments> findByDemoNo(Integer demoNo);
+	List<RemoteAttachments> findByDemoNoAndMessageId(Integer demographicNo, Integer messageId);
 }

@@ -44,58 +44,45 @@ public class RptByExampleData {
     public String results= null;
     public String connect = null;
     DBPreparedHandler accessDB=null;
-  Properties oscarVariables = null;
-
+    Properties oscarVariables = null;
 
     public RptByExampleData() {
     }
 
-
     public String exampleTextGenerate (String sql, Properties oscarVariables ){
-	return exampleReportGenerate(sql, oscarVariables);
+	      return exampleReportGenerate(sql, oscarVariables);
     }
 
     public String exampleReportGenerate( String sql, Properties oscarVariables ){
+        if (sql == null || sql.trim().isEmpty()) {
+            return ""; 
+        }
+      
+        if (sql.compareTo("") != 0){
+            sql = replaceSQLString (";","",sql);
+            sql =  replaceSQLString("\"", "\'", sql);
+		}
 
-           if (sql.compareTo("") != 0){
-
-
-
-             sql = replaceSQLString (";","",sql);
-             sql =  replaceSQLString("\"", "\'", sql);
-
-		 }
         this.sql = sql;
         this.oscarVariables = oscarVariables;
 
-       try{
+        try{
+            accessDB = new DBPreparedHandler();
 
-accessDB = new DBPreparedHandler();
+            ResultSet rs = null;
+            rs = accessDB.queryResults(this.sql);
 
+            if (rs != null){
+                results =  RptResultStruct.getStructure(rs);
+            } else {
+	            results = "";
+            }
 
-ResultSet rs = null;
-rs = accessDB.queryResults(this.sql);
+            rs.close();
+        } catch (java.sql.SQLException e){ MiscUtils.getLogger().debug("Problems");   MiscUtils.getLogger().error("Error", e);  }
 
-
-
-      if (rs != null){
-
-             results =  RptResultStruct.getStructure(rs);
-} else {
-	results = "";
-
-}
-
-              rs.close();
-
-
-
-        }catch (java.sql.SQLException e){ MiscUtils.getLogger().debug("Problems");   MiscUtils.getLogger().error("Error", e);  }
-
-     return results;
+        return results;
     }
-
-
 
 public static String replaceSQLString
 (String oldString, String newString, String inputString){

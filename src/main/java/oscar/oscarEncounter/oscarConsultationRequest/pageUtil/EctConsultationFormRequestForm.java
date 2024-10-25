@@ -25,10 +25,6 @@
 
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionErrors;
@@ -36,6 +32,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.oscarehr.util.WebUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 public final class EctConsultationFormRequestForm extends ActionForm {
 
@@ -107,6 +106,8 @@ public final class EctConsultationFormRequestForm extends ActionForm {
 	private String professionalSpecialistAddress;
         private String followUpDate;
 	private boolean eReferral = false;
+	private String eReferralService = "";
+	private String eReferralId = null;
 	private Integer hl7TextMessageId;
 
 	private String letterheadName, letterheadAddress, letterheadPhone, letterheadFax;
@@ -123,6 +124,8 @@ public final class EctConsultationFormRequestForm extends ActionForm {
 	private String[] formNo;
 	private String[] eFormNo;
 	private String[] hrmNo;
+
+	private String faxAccount;
 	
 
 	public String getProfessionalSpecialistName() {
@@ -155,6 +158,20 @@ public final class EctConsultationFormRequestForm extends ActionForm {
 
 	public void seteReferral(boolean eReferral) {
 		this.eReferral = eReferral;
+	}
+
+	public String geteReferralService() {
+		return eReferralService;
+	}
+	public void seteReferralService(String eReferralService) {
+		this.eReferralService = eReferralService;
+	}
+	
+	public String geteReferralId() {
+		return eReferralId;
+	}
+	public void seteReferralId(String eReferralId) {
+		this.eReferralId = eReferralId;
 	}
 
 	public String getProviderName() {
@@ -673,5 +690,13 @@ public final class EctConsultationFormRequestForm extends ActionForm {
 	
 	public void setHrmNo(String[] hrmNo) {
 		this.hrmNo = hrmNo;
+	}
+
+	public String getFaxAccount() {
+		return faxAccount;
+	}
+
+	public void setFaxAccount(String faxAccount) {
+		this.faxAccount = faxAccount;
 	}
 }

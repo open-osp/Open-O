@@ -76,8 +76,8 @@ import com.indivica.olis.queries.Z50Query;
 
 public class OLISSearchAction extends DispatchAction {
 
-	private DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-	private ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+	private DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+	private ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 	
 	public static HashMap<String, Query> searchQueryMap = new HashMap<String, Query>();
 
@@ -97,7 +97,7 @@ public class OLISSearchAction extends DispatchAction {
 
 				String blockedInfoIndividual = request.getParameter("blockedInformationIndividual");
 				// Log the consent override
-				OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
+				OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
 				OscarLog logItem = new OscarLog();
 				logItem.setAction("OLIS");
 				logItem.setContent("consent override");
@@ -129,7 +129,7 @@ public class OLISSearchAction extends DispatchAction {
 			
 		}
 		else if (queryType != null) {
-			UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+			UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 			Query query = null;
 
 			String[] dateFormat = new String[] {
@@ -381,7 +381,7 @@ public class OLISSearchAction extends DispatchAction {
 
 				if (blockedInfoConsent != null && blockedInfoConsent.equalsIgnoreCase("Z")) {
 					// Log the consent override
-					OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
+					OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
 					OscarLog logItem = new OscarLog();
 					logItem.setAction("OLIS search");
 					logItem.setContent("consent override");
@@ -471,7 +471,7 @@ public class OLISSearchAction extends DispatchAction {
 
 				if (blockedInfoConsent != null && blockedInfoConsent.equalsIgnoreCase("Z")) {
 					// Log the consent override
-					OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
+					OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
 					OscarLog logItem = new OscarLog();
 					logItem.setAction("OLIS search");
 					logItem.setContent("consent override");

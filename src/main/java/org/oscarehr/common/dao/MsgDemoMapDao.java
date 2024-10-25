@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -30,76 +33,17 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.MsgDemoMap;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class MsgDemoMapDao extends AbstractDao<MsgDemoMap>{
+public interface MsgDemoMapDao extends AbstractDao<MsgDemoMap> {
 
-	public MsgDemoMapDao() {
-		super(MsgDemoMap.class);
-	}
-	
-	public List<MsgDemoMap> findByDemographicNo(Integer demographicNo) {
-		String sql = "select x from MsgDemoMap x where x.demographic_no=?1";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,demographicNo);
+	public List<MsgDemoMap> findByDemographicNo(Integer demographicNo);
 
-        @SuppressWarnings("unchecked")
-        List<MsgDemoMap> results = query.getResultList();
-        return results;
-	}
-	
-	public List<MsgDemoMap> findByMessageId(Integer messageId) {
-		String sql = "select x from MsgDemoMap x where x.messageID=?1";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,messageId);
+	public List<MsgDemoMap> findByMessageId(Integer messageId);
 
-        @SuppressWarnings("unchecked")
-        List<MsgDemoMap> results = query.getResultList();
-        return results;
-	}
+	public List<Object[]> getMessagesAndDemographicsByMessageId(Integer messageId);
 
-	@SuppressWarnings("unchecked")
-	public List<Object[]> getMessagesAndDemographicsByMessageId(Integer messageId) {
-		String sql = "FROM MsgDemoMap m, Demographic d " +
-				"WHERE m.messageID = :msgId " + 
-                "AND d.DemographicNo = m.demographic_no " +
-                "ORDER BY d.LastName, d.FirstName";
-		Query query = entityManager.createQuery(sql);
-		query.setParameter("msgId", messageId);
-        return query.getResultList();
-    }
+	public List<Object[]> getMapAndMessagesByDemographicNo(Integer demoNo);
 
-	public List<Object[]> getMapAndMessagesByDemographicNo(Integer demoNo) {
-	    // TODO Auto-generated method stub
-		String sql = "FROM MsgDemoMap map, MessageTbl m " +
-				"WHERE m.id = map.messageID " +
-				"AND map.demographic_no = :demoNo " +
-				"ORDER BY m.date DESC, m.id DESC";
-		Query query = entityManager.createQuery(sql);
-		query.setParameter("demoNo", demoNo);
-		return query.getResultList();	    
-    }
-        
-        public List<Object[]> getMapAndMessagesByDemographicNoAndType(Integer demoNo, Integer type) {	    
-		String sql = "FROM MsgDemoMap map, MessageTbl m " +
-				"WHERE m.id = map.messageID " +
-				"AND map.demographic_no = :demoNo " +
-				"AND m.type = :type ORDER BY m.date DESC, m.id DESC";
-		Query query = entityManager.createQuery(sql);
-		query.setParameter("demoNo", demoNo);
-                query.setParameter("type", type);
-		return query.getResultList();	    
-    }
-        
-        public void remove(Integer messageID, Integer demographicNo ) {
-            String sql = "select x from MsgDemoMap x where x.messageID = :id and x.demographic_no = :demoNo";
-            Query query = entityManager.createQuery(sql);
-            query.setParameter("id", messageID);
-            query.setParameter("demoNo", demographicNo);
-            
-            List<MsgDemoMap> list = query.getResultList();
-            for( MsgDemoMap demoMap : list ) {
-                this.remove(demoMap.getId());
-            }
-            
-        }
+	public List<Object[]> getMapAndMessagesByDemographicNoAndType(Integer demoNo, Integer type);
+
+	public void remove(Integer messageID, Integer demographicNo);
 }

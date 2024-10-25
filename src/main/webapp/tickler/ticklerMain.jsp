@@ -156,7 +156,7 @@
 
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 	<head>
 		<title><bean:message key="tickler.ticklerMain.title"/> Manager</title>
 
@@ -243,6 +243,14 @@
 				// });
 				let groupColumn = 11;
 				ticklerResultsTable = jQuery("#ticklerResults").dataTable({
+					// cache the datatable state to persist through page refreshes
+					bStateSave: true,
+					fnStateSave: function(oSettings, oData) {
+						localStorage.setItem('ticklerDataTable', JSON.stringify(oData));
+					},
+					fnStateLoad: function() {
+						return JSON.parse(localStorage.getItem('ticklerDataTable'));
+					},
 					"searching": false,
 					"aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
 					"iDisplayLength": 50,
@@ -609,7 +617,7 @@
 						<option value="all" <%=mrpview.equals("all") ? "selected" : ""%>><bean:message
 								key="tickler.ticklerMain.formAllProviders"/></option>
 						<%
-							ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+							ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 							List<Provider> providers = providerDao.getActiveProviders();
 							for (Provider p : providers) {
 						%>
@@ -642,7 +650,7 @@
 					<label for="assignedTo"><bean:message key="tickler.ticklerMain.msgAssignedTo"/></label>
 					<%
 						if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
-							SiteDao siteDao = (SiteDao) SpringUtils.getBean("siteDao");
+							SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
 							List<Site> sites = siteDao.getActiveSitesByProviderNo(user_no);
 					%>
 					<script>
@@ -923,14 +931,22 @@
 					</td>
 				</tr>
 				<% Set<TicklerComment> tcomments = tickler.getComments();
-					for (TicklerComment tc : tcomments) { %>
+					for (TicklerComment tc : tcomments) {
+						// Ugly and wrong. I know. No time to rewrite the bad part.
+						Provider commentProvider = tc.getProvider();
+						String formattedName = "";
+						if(commentProvider != null) {
+							formattedName = commentProvider.getFormattedName();
+						}
+				%>
+
 
 				<tr class="followup-comment-<%=tickler.getId()%> comment-row no-sort">
 					<td></td>
 					<td></td>
 					<td><%=Encode.forHtmlContent(demo.getLastName())%>,<%=Encode.forHtmlContent(demo.getFirstName())%> 
 					</td>
-					<td class="no sort"><%=Encode.forHtmlContent(tc.getProvider().getFormattedName())%>
+					<td class="no-sort"><%=Encode.forHtmlContent(formattedName)%>
 					</td>
 					<td><%=dateOnlyFormat.format(tickler.getServiceDate())%>
 					</td>
@@ -947,7 +963,7 @@
 					</td>
 					<td></td>
 					<td></td>
-					<td class="no sort" style="white-space:pre-wrap"><%=Encode.forHtmlContent(tc.getMessage())%>
+					<td class="no-sort" style="white-space:pre-wrap"><%=Encode.forHtmlContent(tc.getMessage())%>
 					</td>
 					<td></td>
 					<td><%=tickler.getId()%>

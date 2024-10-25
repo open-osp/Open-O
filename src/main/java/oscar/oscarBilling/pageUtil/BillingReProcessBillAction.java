@@ -26,6 +26,7 @@ package oscar.oscarBilling.pageUtil;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -87,7 +88,12 @@ public class BillingReProcessBillAction extends Action {
         String name_verify  = demographicFirstName.substring(0,1) + " " + demographicLastName.substring(0,2);  //d
         String billingGroupNo=billform.getGroupNo(providerNo);
         String practitionerNo=billform.getPracNo(providerNo);//p
-        String hcNo = demo.getHin().trim()+demo.getVer().trim();//d
+
+        // d
+        String hcNo = Objects.nonNull(demo.getHin()) ?
+                demo.getHin().trim() + (Objects.nonNull(demo.getVer()) ? demo.getVer().trim() : "")
+                : "";
+
         String dependentNo = frm.getDependentNo();//f
 
         String visitLocation = frm.getLocationVisit();//f

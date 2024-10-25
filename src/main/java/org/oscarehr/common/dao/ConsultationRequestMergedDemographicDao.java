@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,40 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import org.oscarehr.common.merge.MergedDemographicTemplate;
 import org.oscarehr.common.model.ConsultationRequest;
-import org.springframework.stereotype.Repository;
 
-@Repository("consultationRequestDao")
-public class ConsultationRequestMergedDemographicDao extends ConsultationRequestDao {
-
-	@Override
-	public List<ConsultationRequest> getConsults(Integer demoNo) {
-		List<ConsultationRequest> result = super.getConsults(demoNo);
-		MergedDemographicTemplate<ConsultationRequest> template = new MergedDemographicTemplate<ConsultationRequest>() {
-			@Override
-			protected List<ConsultationRequest> findById(Integer demographic_no) {
-				return ConsultationRequestMergedDemographicDao.super.getConsults(demographic_no);
-			}
-		};
-		return template.findMerged(demoNo, result);
-	}
-
-	@Override
-	public List<ConsultationRequest> getConsultationsByStatus(Integer demographicNo, final String status) {
-		List<ConsultationRequest> result = super.getConsultationsByStatus(demographicNo, status);
-		MergedDemographicTemplate<ConsultationRequest> template = new MergedDemographicTemplate<ConsultationRequest>() {
-			@Override
-			protected List<ConsultationRequest> findById(Integer demographic_no) {
-				return ConsultationRequestMergedDemographicDao.super.getConsultationsByStatus(demographic_no, status);
-			}
-		};
-		return template.findMerged(demographicNo, result);
-	}
-
+public interface ConsultationRequestMergedDemographicDao {
+    List<ConsultationRequest> getConsults(Integer demoNo);
+    List<ConsultationRequest> getConsultationsByStatus(Integer demographicNo, final String status);
 }

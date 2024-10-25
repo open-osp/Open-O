@@ -51,7 +51,7 @@ import oscar.login.DBHelp;
  */
 public class RptTableFieldNameCaption {
     private static final Logger logger = MiscUtils.getLogger();
-    private static EncounterFormDao encounterFormDao=(EncounterFormDao)SpringUtils.getBean("encounterFormDao");
+    private static EncounterFormDao encounterFormDao=(EncounterFormDao)SpringUtils.getBean(EncounterFormDao.class);
     private ReportTableFieldCaptionDao dao = SpringUtils.getBean(ReportTableFieldCaptionDao.class);
 
     String table_name;

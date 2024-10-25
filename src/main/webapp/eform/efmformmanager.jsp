@@ -35,7 +35,7 @@ else if (orderByRequest.equals("form_subject")) orderBy = EFormUtil.SUBJECT;
 else if (orderByRequest.equals("form_name")) orderBy = EFormUtil.NAME;
 else if (orderByRequest.equals("file_name")) orderBy = EFormUtil.FILE_NAME;
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -184,13 +184,13 @@ $(function ()  {
         <td>
                     
         <div  class="btn-group">        
-				<a class="btn btn-link" href="<%= request.getContextPath() %>/eform/efmformmanageredit.jsp?fid=<%= curForm.get("fid")%>" class="contentLink" title='<bean:message key="eform.uploadhtml.editform" /><%=curForm.get("formName")%>'><i class="icon-pencil" title="<bean:message key="eform.uploadhtml.editform" />"></i></a>
+				<a class="btn btn-link contentLink" href="<%= request.getContextPath() %>/eform/efmformmanageredit.jsp?fid=<%= curForm.get("fid")%>" title='<bean:message key="eform.uploadhtml.editform" /><%=curForm.get("formName")%>'><i class="icon-pencil" title="<bean:message key="eform.uploadhtml.editform" />"></i></a>
 				
 				                 
 				<a class="btn btn-link" href='<%= request.getContextPath() %>/eform/manageEForm.do?method=exportEForm&fid=<%=curForm.get("fid")%>' title='<bean:message key="eform.uploadhtml.btnExport" /> <%=curForm.get("formName")%>' ><i class="icon-download-alt" title="<bean:message key="eform.uploadhtml.btnExport" />"></i></a>
 				                    
 				
-				<a class="btn btn-link" href='<%= request.getContextPath() %>/eform/delEForm.do?fid=<%=curForm.get("fid")%>' title='<bean:message key="eform.uploadhtml.btnDelete" /> <%=curForm.get("formName")%>' class="contentLink"><i class="icon-trash" title="<bean:message key="eform.uploadhtml.btnDelete" />"></i></a>
+				<a class="btn btn-link contentLink" href='<%= request.getContextPath() %>/eform/delEForm.do?fid=<%=curForm.get("fid")%>' title='<bean:message key="eform.uploadhtml.btnDelete" /> <%=curForm.get("formName")%>'><i class="icon-trash" title="<bean:message key="eform.uploadhtml.btnDelete" />"></i></a>
 		</div>
 		</td>			
 		

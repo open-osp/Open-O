@@ -38,10 +38,10 @@ public class HRMUtil {
 	public static final String DATE = "time_received";
 	public static final String TYPE = " report_type";
 
-	private static HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
-	private static HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean("HRMDocumentToDemographicDao");
-	private static HRMSubClassDao hrmSubClassDao = (HRMSubClassDao) SpringUtils.getBean("HRMSubClassDao");
-	private static HRMDocumentSubClassDao hrmDocumentSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean("HRMDocumentSubClassDao");
+	private static HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
+	private static HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean(HRMDocumentToDemographicDao.class);
+	private static HRMSubClassDao hrmSubClassDao = (HRMSubClassDao) SpringUtils.getBean(HRMSubClassDao.class);
+	private static HRMDocumentSubClassDao hrmDocumentSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean(HRMDocumentSubClassDao.class);
 	private static HRMCategoryDao hrmCategoryDao = SpringUtils.getBean(HRMCategoryDao.class);
 	private static final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
 	private static final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
@@ -282,6 +282,42 @@ public class HRMUtil {
 
 		return hrmdocslist;
 
+	}
+
+	public static HRMDocument getHRMDocumentById(LoggedInInfo loggedInInfo, Integer hrmId) {
+		if(!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", "r", null)) {
+			throw new SecurityException("missing required security object (_hrm)");
+		}
+
+		HRMDocument hrmDocument = hrmDocumentDao.find(hrmId);
+		HRMReport hrmReport = HRMReportParser.parseReport(loggedInInfo, hrmDocument.getReportFile());
+		if (hrmReport == null) { return null; }
+		String dispSubClass = "";
+		HRMSubClass hrmSubClass;
+		List<HRMDocumentSubClass> subClassList = new ArrayList<>(hrmDocument.getAccompanyingSubClasses());
+		if (hrmReport.getFirstReportClass().equalsIgnoreCase("Diagnostic Imaging Report") || hrmReport.getFirstReportClass().equalsIgnoreCase("Cardio Respiratory Report")) {
+			//Get first sub class to display on eChart
+			if (subClassList != null && subClassList.size() > 0) {
+				HRMDocumentSubClass firstSubClass = subClassList.get(0);
+				hrmSubClass = hrmSubClassDao.findApplicableSubClassMapping(hrmReport.getFirstReportClass(), firstSubClass.getSubClass(), firstSubClass.getSubClassMnemonic(), hrmReport.getSendingFacilityId());
+				dispSubClass = hrmSubClass != null ? hrmSubClass.getSubClassDescription() : "";
+			}
+
+			if (StringUtils.isNullOrEmpty(dispSubClass) && hrmReport.getAccompanyingSubclassList().size() > 0){
+				// if sub class doesn't exist, display the accompanying subclass
+				dispSubClass = hrmReport.getFirstAccompanyingSubClass();
+			}
+		} else {
+			//Medical Records Report
+			String[] reportSubClass = hrmReport.getFirstReportSubClass() != null ? hrmReport.getFirstReportSubClass().split("\\^") : null;
+			if (reportSubClass != null && reportSubClass.length > 1) {
+				dispSubClass = reportSubClass[1];
+			}
+		}
+
+		String hrmDocumentDisplayName = getHRMDocumentDisplayName(hrmDocument.getDescription(), dispSubClass, hrmDocument.getReportType(), hrmDocument.getReportStatus());
+		hrmDocument.setDisplayName(hrmDocumentDisplayName);
+		return hrmDocument;
 	}
 
 	private static String getHRMDocumentDisplayName(String description, String subClass, String reportType, String reportStatus) {

@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.oscarehr.common.model.BillingONPayment;
 import org.oscarehr.common.dao.BillingONPaymentDao;
+import org.oscarehr.common.dao.BillingONPaymentDaoImpl;
 
 /**
  *

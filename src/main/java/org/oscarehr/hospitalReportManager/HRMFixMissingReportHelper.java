@@ -52,7 +52,7 @@ public class HRMFixMissingReportHelper {
 
 	private String downloadsDirectory= OscarProperties.getInstance().getProperty("OMD_downloads");
 
-	private HRMDocumentDao hrmDocumentDao = (HRMDocumentDao)SpringUtils.getBean("HRMDocumentDao");
+	private HRMDocumentDao hrmDocumentDao = (HRMDocumentDao)SpringUtils.getBean(HRMDocumentDao.class);
 	
 	private Logger logger = MiscUtils.getLogger();
 	

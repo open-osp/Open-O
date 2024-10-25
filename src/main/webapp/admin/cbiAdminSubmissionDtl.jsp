@@ -134,7 +134,7 @@ if(submissionLogList!=null)
 					DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					if(submissionLogList!=null && submissionLogList.size()>0)
 					{
-						AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
+						AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
 						
 						for(OcanSubmissionLog ocanSubmissionLog : submissionLogList)
 						{

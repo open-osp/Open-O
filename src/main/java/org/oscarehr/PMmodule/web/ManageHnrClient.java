@@ -46,10 +46,10 @@ import org.oscarehr.util.SpringUtils;
 
 public class ManageHnrClient {
 	private static Logger logger = MiscUtils.getLogger();
-	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-	private static ClientLinkDao clientLinkDao = (ClientLinkDao) SpringUtils.getBean("clientLinkDao");
-	private static ClientImageDAO clientImageDAO = (ClientImageDAO) SpringUtils.getBean("clientImageDAO");
-	private static HnrDataValidationDao hnrDataValidationDao = (HnrDataValidationDao) SpringUtils.getBean("hnrDataValidationDao");
+	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+	private static ClientLinkDao clientLinkDao = (ClientLinkDao) SpringUtils.getBean(ClientLinkDao.class);
+	private static ClientImageDAO clientImageDAO = (ClientImageDAO) SpringUtils.getBean(ClientImageDAO.class);
+	private static HnrDataValidationDao hnrDataValidationDao = (HnrDataValidationDao) SpringUtils.getBean(HnrDataValidationDao.class);
 
 	private Demographic demographic = null;
 	private ClientImage clientImage = null;

@@ -32,7 +32,7 @@ import java.util.Map;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.BillingTrayFee;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.common.model.BillingService;
 import org.springframework.stereotype.Repository;
 
@@ -42,7 +42,7 @@ import oscar.util.ConversionUtils;
  * Performing CRUD operations on Billing Procedure/Tray Fee Associations. Some Procedures are automatically associated with certain tray fees
  */
 @Repository
-public class SupServiceCodeAssocDAO extends AbstractDao<BillingTrayFee> {
+public class SupServiceCodeAssocDAO extends AbstractDaoImpl<BillingTrayFee> {
 
 	public static final String KEY_ASSOCIATION_STATUS = "associationStatus";
 	public static final String KEY_BILLING_SERVICE_TRAY_NO = "billingServiceTrayNo";

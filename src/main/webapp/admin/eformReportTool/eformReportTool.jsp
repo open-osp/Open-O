@@ -53,7 +53,7 @@ if(!authed) {
 			.getLoggedInInfoFromSession(request);
 	Provider provider = loggedInInfo.getLoggedInProvider();
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <html:base />
 <script src="<%=request.getContextPath()%>/js/global.js"></script>

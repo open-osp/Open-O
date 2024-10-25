@@ -92,8 +92,8 @@
 	OscarProperties props = OscarProperties.getInstance();
 
 	List<Demographic> demoList = null;  
-	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
-	OscarLogDao oscarLogDao = (OscarLogDao)SpringUtils.getBean("oscarLogDao");
+	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
+	OscarLogDao oscarLogDao = (OscarLogDao)SpringUtils.getBean(OscarLogDao.class);
 	String providerNo = loggedInInfo.getLoggedInProviderNo();
 	boolean outOfDomain = true;
 	if(OscarProperties.getInstance().getProperty("ModuleNames","").indexOf("Caisi") != -1) {
@@ -108,10 +108,11 @@
 %>
 
 <html>
-<script src="${pageContext.request.contextPath}/csrfguard"></script>
 <head>
+	<title><bean:message key="demographic.demographicsearch2apptresults.title" /></title>
+	<script src="${pageContext.request.contextPath}/csrfguard"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="demographic.demographicsearch2apptresults.title" /></title>
+
 
 <% 
 	if (isMobileOptimized) { 
@@ -126,6 +127,9 @@
 <% 
 	} 
 %>
+	<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js" type="text/javascript"></script>
+	<script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js" type="text/javascript"></script>
+	<link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet" type="text/css"/>
 <script language="javascript" type="text/javascript" src="../share/javascript/Oscar.js"></script>
 <script language="JavaScript">
 function setfocus() {
@@ -176,12 +180,15 @@ function searchAll() {
 </script>
 </head>
 <body onLoad="setfocus()">
-<div id="demographicSearch" class="searchBox" style="margin-bottom:10px;">
+<div class="container">
+<h2 style="margin:auto 15px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+	<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+</svg>Search Patient</h2>
 	<form method="post" name="titlesearch" action="../demographic/demographiccontrol.jsp" onSubmit="return checkTypeIn()">
-
-    <ul style="display: flex;">
-        <li>
-            <select class="wideInput" name="search_mode">
+		<div id="demographicSearch" class="searchBox input-group select-group" style="margin-bottom:10px;">
+<%--    <ul style="display: flex;">--%>
+<%--        <li>--%>
+            <select class="wideInput form-control input-group-addon" name="search_mode">
                 <option value="search_name" <%=request.getParameter("search_mode").equals("search_name")?"selected":""%>>
 					<bean:message key="demographic.demographicsearch2apptresults.optName" />
 				</option>
@@ -204,12 +211,12 @@ function searchAll() {
                     <bean:message key="demographic.demographicsearch2apptresults.demographicId"/>
                 </option>
             </select>
-        </li>
-        <li>
-            <div class="label"> </div>
-            <input type="text" class="wideInput" NAME="keyword" VALUE="<%=Encode.forHtmlAttribute(request.getParameter("keyword"))%>" SIZE="17" MAXLENGTH="100"/>
-        </li>
-        <li>
+<%--        </li>--%>
+<%--        <li>--%>
+
+            <input type="text" class="wideInput form-control" NAME="keyword" VALUE="<%=Encode.forHtmlAttribute(request.getParameter("keyword"))%>" SIZE="17" MAXLENGTH="100"/>
+<%--        </li>--%>
+<%--        <li>--%>
 	<INPUT TYPE="hidden" NAME="orderby" VALUE="last_name, first_name">
         <INPUT TYPE="hidden" NAME="dboperation" VALUE="search_titlename">
         <INPUT TYPE="hidden" NAME="limit1" VALUE="0">
@@ -249,47 +256,48 @@ function searchAll() {
 		<input type="hidden" name="<%=Encode.forHtmlAttribute(temp)%>" value="<%=Encode.forHtmlAttribute(request.getParameter(temp))%>">
  <% }
 %>
-       <a href="#" onclick="showHideItem('demographicSearch');" id="cancelButton" class="leftButton top"><bean:message key="global.btnCancel" /></a>
-       <input type="SUBMIT" class="rightButton blueButton top" name="displaymode"
-           value='<bean:message key="global.search"/>' size="17"
-           title='<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchActive"/>'>&nbsp;&nbsp;
-       <INPUT TYPE="button" id="inactiveButton"
+	<div class="input-group-btn">
+       <a href="#" onclick="showHideItem('demographicSearch');" id="cancelButton" class="leftButton top btn btn-link">
+	       <bean:message key="global.btnCancel" />
+       </a>
+       <input type="SUBMIT" class="btn btn-primary" name="displaymode"
+           value='<bean:message key="global.search"/>'
+           title='<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchActive"/>'>
+       <INPUT TYPE="button" id="inactiveButton" class="btn btn-secondary"
            onclick="searchInactive();"
            TITLE="<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchInactive"/>"
            VALUE="<bean:message key="demographic.search.Inactive"/>">
-       <INPUT TYPE="button" id="allButton"
+       <INPUT TYPE="button" id="allButton" class="btn btn-secondary"
            onclick="searchAll();"
            TITLE="<bean:message key="demographic.zdemographicfulltitlesearch.tooltips.searchAll"/>"
            VALUE="<bean:message key="demographic.search.All"/>">
+	</div>
 <%
 	if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()){
 %>
-    	<input type="checkbox" name="includeIntegratedResults" value="true"   <%="true".equals(request.getParameter("includeIntegratedResults"))?"checked":""%>/> <span style="font-size:small"><bean:message key="demographic.search.msgInclIntegratedResults"/></span>
+    	<input type="checkbox" class="checkbox-inline" name="includeIntegratedResults" value="true"   <%="true".equals(request.getParameter("includeIntegratedResults"))?"checked":""%>/> <span style="font-size:small"><bean:message key="demographic.search.msgInclIntegratedResults"/></span>
 <%	} %>
-   </li>
+<%--   </li>--%>
 <% if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()){%>
-        <li>
+<%--        <li>--%>
         	<jsp:include page="../admin/IntegratorStatus.jspf"></jsp:include>
-        </li>
+<%--        </li>--%>
 <%	} %>
-    </ul>
+<%--    </ul>--%>
+		</div>
 	</form>
-</div>
+
 
 
 
 <div id="searchResults" style="margin-bottom:10px;">
 
-<table>
-	<tr>
-            <td align="left">
+<div>
                     <%if(request.getParameter("keyword")!=null && request.getParameter("keyword").length()==0) { %>
                     <bean:message key="demographic.demographicsearch2apptresults.msgMostRecentPatients"/>
                     <% } else { %>
-                    <bean:message key="demographic.demographicsearch2apptresults.msgKeywords" /> <%=Encode.forHtml(request.getParameter("keyword"))%> <%}%></td>
-	</tr>
-</table>
-
+                    <bean:message key="demographic.demographicsearch2apptresults.msgKeywords" /> <%=Encode.forHtml(request.getParameter("keyword"))%> <%}%>
+</div>
 <script language="JavaScript">
 
 var fullname="";
@@ -332,35 +340,35 @@ function addNameCaisi(demographic_no,lastname,firstname,chartno,messageID) {
 	<form method="post" name="addform" action="../appointment/addappointment.jsp">
 	<input type="hidden" name="<csrf:tokenname/>" value="<csrf:tokenvalue/>"/>
 
-<table>
+<table class="table table-condensed table-striped table-responsive">
         <tr class="tableHeadings deep">
         
 
-		<td class="demoIdSearch">
+		<th class="demoIdSearch">
 		<bean:message key="demographic.demographicsearch2apptresults.demographicId" />
-       </td>
+       </th>
 
-		<td class="lastname">
+		<th class="lastname">
 		<bean:message key="demographic.demographicsearch2apptresults.lastName" />
-                </td>
-		<td class="firstname">
+                </th>
+		<th class="firstname">
 		<bean:message key="demographic.demographicsearch2apptresults.firstName" />
-                </td>
-		<td class="age">
+                </th>
+		<th class="age">
 		<bean:message key="demographic.demographicsearch2apptresults.age" />
-                </td>
-		<td class="rosterStatus">
+                </th>
+		<th class="rosterStatus">
 		<bean:message key="demographic.demographicsearch2apptresults.rosterStatus" />
-                </td>
-		<td class="sex">
+                </th>
+		<th class="sex">
 		<bean:message key="demographic.demographicsearch2apptresults.sex" />
-                </td>
-        <td class="dob">
+                </th>
+        <th class="dob">
         <bean:message key="demographic.demographicsearch2apptresults.DOB" />
-                </td>
-		<td class="doctor">
+                </th>
+		<th class="doctor">
 		<bean:message key="demographic.demographicsearch2apptresults.doctor" />
-                </td>
+                </th>
 	</tr>
 
 
@@ -481,11 +489,12 @@ function addNameCaisi(demographic_no,lastname,firstname,chartno,messageID) {
 <tr style="background-color: <%=bgColor%>" onMouseOver="this.style.cursor='hand';this.style.backgroundColor='pink';" onMouseout="this.style.backgroundColor='<%=bgColor%>';"
 		onClick="document.forms[0].demographic_no.value=<%=demo.getDemographicNo()%>;<% if(caisi) { out.print("addNameCaisi");} else { out.print("addName");} %>('<%=demo.getDemographicNo()%>','<%=URLEncoder.encode(demo.getLastName())%>','<%=URLEncoder.encode(demo.getFirstName())%>','<%=URLEncoder.encode(demo.getChartNo() == null ? "" : demo.getChartNo())%>','<%=request.getParameter("messageId")%>','<%=demo.getProviderNo()%>','')">
 
-		<td class="demoId"><input type="submit" class="mbttn" name="demographic_no" value="<%=demo.getDemographicNo()%>"
+		<td class="demoId">
+			<input type="submit" class="mbttn btn btn-default btn-sm" name="demographic_no" value="<%=demo.getDemographicNo()%>"
 			onClick="<% if(caisi) {out.print("addNameCaisi");} else {out.print("addName");} %>('<%=demo.getDemographicNo()%>','<%=URLEncoder.encode(demo.getLastName())%>','<%=URLEncoder.encode(demo.getFirstName())%>','<%=URLEncoder.encode(demo.getChartNo() == null ? "" : demo.getChartNo())%>','<%=request.getParameter("messageId")%>','<%=demo.getProviderNo()%>','')">
         </td>
 		<td class="lastName"><%=Encode.forHtml(Misc.toUpperLowerCase(demo.getLastName()))%></td>
-		<td class="firstName"><%=Encode.forHtml(Misc.toUpperLowerCase(demo.getFirstName()))%></td>
+		<td class="firstName"><%=Encode.forHtml(Misc.toUpperLowerCase(demo.getFirstName())) + " " + Encode.forHtml(Misc.toUpperLowerCase(demo.getMiddleNames()))%></td>
 		<td class="age"><%=demo.getAge()%></td>
 		<td class="rosterStatus"><%=demo.getRosterStatus()==null||demo.getRosterStatus().equals("")?"&nbsp;":demo.getRosterStatus()%></td>
 		<td class="sex"><%=demo.getSex()%></td>
@@ -511,7 +520,7 @@ function addNameCaisi(demographic_no,lastname,firstname,chartno,messageID) {
 		   <tr style="background-color: <%=bgColor%>" onMouseOver="this.style.cursor='hand';this.style.backgroundColor='pink';" onMouseout="this.style.backgroundColor='<%=bgColor%>';"
 			   onClick="document.forms[0].demographic_no.value=<%=demographicTransfer.getCaisiDemographicId()%>;addName('<%=demographicTransfer.getCaisiDemographicId()%>','<%=URLEncoder.encode(demographicTransfer.getLastName())%>','<%=URLEncoder.encode(demographicTransfer.getFirstName())%>','','<%=request.getParameter("messageId")%>','<%=demographicTransfer.getCaisiProviderId()%>','<%=demographicTransfer.getIntegratorFacilityId()%>')">
 			<td class="demoId" colspan="8">
-				<input type="submit" class="mbttn" name="demographic_no" value="Integrator <%=CaisiIntegratorManager.getRemoteFacility(loggedInInfo, loggedInInfo.getCurrentFacility(), demographicTransfer.getIntegratorFacilityId()).getName()%>:<%=demographicTransfer.getCaisiDemographicId()%>" />
+				<input type="submit" class="mbttn btn btn-default btn-sm" name="demographic_no" value="Integrator <%=CaisiIntegratorManager.getRemoteFacility(loggedInInfo, loggedInInfo.getCurrentFacility(), demographicTransfer.getIntegratorFacilityId()).getName()%>:<%=demographicTransfer.getCaisiDemographicId()%>" />
             </td>
 			<td class="lastName"><%=Misc.toUpperLowerCase(demographicTransfer.getLastName())%></td>
 			<td class="firstName"><%=Misc.toUpperLowerCase(demographicTransfer.getFirstName())%></td>
@@ -635,7 +644,7 @@ function addNameCaisi(demographic_no,lastname,firstname,chartno,messageID) {
 <%
 	if(nLastPage>=0) {
 %> 
-	<input type="submit" id="prevPageButton" name="submit"
+	<input type="submit" id="prevPageButton" name="submit" class="btn btn-default"
 	value="<bean:message key="demographic.demographicsearch2apptresults.btnPrevPage"/>"
 	onClick="last()"> 
 <%
@@ -643,7 +652,7 @@ function addNameCaisi(demographic_no,lastname,firstname,chartno,messageID) {
 
 	if(rowCounter==limit) {
 %> 
-	<input type="submit" id="nextPageButton" name="submit" value="<bean:message key="demographic.demographicsearch2apptresults.btnNextPage"/>" onClick="next()"> 
+	<input type="submit" id="nextPageButton" class="btn btn-default" name="submit" value="<bean:message key="demographic.demographicsearch2apptresults.btnNextPage"/>" onClick="next()">
 <%
 	}
 	for (Enumeration e = request.getParameterNames() ; e.hasMoreElements() ;) {
@@ -654,6 +663,7 @@ function addNameCaisi(demographic_no,lastname,firstname,chartno,messageID) {
 %>
 
 </form>
+</div>
 </div>
 </div>
 </body>

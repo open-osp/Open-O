@@ -62,6 +62,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.Logger;
@@ -85,10 +86,40 @@ public class SchemaUtils
 		String user=ConfigUtils.getProperty("db_user");
 		String password=ConfigUtils.getProperty("db_password");
 		String urlPrefix=ConfigUtils.getProperty("db_url_prefix");
-
 		Class.forName(driver).newInstance();
+		
+		Properties connectionProperties = new Properties();
+		connectionProperties.setProperty("user", user);
+		connectionProperties.setProperty("password", password);
+		
+		String[] dbPropertiesArray = null;
+		String dbProperties = ConfigUtils.getProperty("db_schema_properties");
 
-		return(DriverManager.getConnection(urlPrefix, user, password));
+		if(dbProperties.startsWith("?")) 
+		{
+			dbProperties = dbProperties.replaceFirst("\\?", "");
+		}
+		
+		if(dbProperties.contains("&")) 
+		{
+			dbPropertiesArray = dbProperties.split("&");
+		}
+		
+		if(dbPropertiesArray != null)
+		{
+			String[] dbPropertyItemArray;
+			for(String dbPropertyItem : dbPropertiesArray) {
+				if(dbPropertyItem.contains("="))
+				{
+					dbPropertyItemArray = dbPropertyItem.split("=");
+					connectionProperties.setProperty(dbPropertyItemArray[0], dbPropertyItemArray[1]);
+				}
+			}
+		}
+		
+		logger.debug("#------------>>  getConnection() : " + driver + " " + urlPrefix  + " " + connectionProperties);
+		
+		return DriverManager.getConnection(urlPrefix, connectionProperties);
 	}
 
 	/**
@@ -100,16 +131,17 @@ public class SchemaUtils
 	 */
 	public static void dropDatabaseIfExists() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
+		logger.info("#------------>> dropDatabaseIfExists() : " + ConfigUtils.getProperty("db_schema"));
+		
 		Connection c=getConnection();
-		try
-		{
+	
+		try {
 			Statement s=c.createStatement();
-			s.executeUpdate("drop database if exists "+ConfigUtils.getProperty("db_schema"));
-		}
-		finally
-		{
+			s.executeUpdate("drop database if exists " + ConfigUtils.getProperty("db_schema"));
+		} finally {
 			c.close();
 		}
+
 	}
 
 	/**
@@ -123,9 +155,14 @@ public class SchemaUtils
 	 */
 	public static void createDatabaseAndTables() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException, IOException
 	{
+		
+		logger.info("#------------>> createDatabaseAndTables()");
+		
 		boolean skipDbInit = false;
-		if(System.getProperty("oscar.dbinit.skip") != null && System.getProperty("oscar.dbinit.skip").equalsIgnoreCase("true")) 
+		if(System.getProperty("oscar.dbinit.skip") != null && System.getProperty("oscar.dbinit.skip").equalsIgnoreCase("true"))
+		{
 			skipDbInit=true;
+		}
 		
 		String schema=ConfigUtils.getProperty("db_schema");
 		logger.info("using schema : "+schema);
@@ -156,6 +193,8 @@ public class SchemaUtils
 
 	public static void dropTable(String... tableNames) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
+		logger.info("#------------>> dropTable() : " + tableNames);
+		
 		String schema=ConfigUtils.getProperty("db_schema");
 
 		Connection c=getConnection();
@@ -196,6 +235,20 @@ public class SchemaUtils
 				if (isWindows()) {
 					tableName = tableName.toLowerCase(); // make it case insensitive by default
 				}
+
+			// Drop foreign key constraints associated with tableName_maventest
+            Statement s1 = c.createStatement();
+            ResultSet newrs = s1.executeQuery("SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE " +
+                "WHERE TABLE_NAME = '" + tableName + "_maventest" + "' AND " +
+                "CONSTRAINT_NAME LIKE 'fk_%'");
+            while (newrs.next()) {
+				
+                String constraintName = newrs.getString("CONSTRAINT_NAME");
+                s.executeUpdate("ALTER TABLE " + tableName + "_maventest" + " DROP FOREIGN KEY " + constraintName);
+            }
+            newrs.close();
+            s1.close();
+
 				s.executeUpdate("drop table if exists " + tableName);
 				
 				String createTableStatement = createTableStatements.get(tableName);
@@ -225,6 +278,8 @@ public class SchemaUtils
 	
 	public static void restoreAllTables() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
+		logger.info("#------------>> restoreAllTables()");
+		
 		long start = System.currentTimeMillis();
 		String schema=ConfigUtils.getProperty("db_schema");
 
@@ -233,13 +288,28 @@ public class SchemaUtils
 		{
 			Statement s=c.createStatement();
 			s.executeUpdate("use "+schema);
-			for (String tableName:createTableStatements.keySet()) {
-				s.executeUpdate("drop table if exists " + tableName);
-				s.executeUpdate(createTableStatements.get(tableName));
-				s.executeUpdate("insert into " + tableName + " select * from " + tableName + "_maventest");
-            }
-			s.close();
+        	s.executeUpdate("SET foreign_key_checks = 0");
+			
+			// Drop foreign key constraints associated with tableName_maventest
+			for (String tableName : createTableStatements.keySet()) {
+			Statement s1 = c.createStatement();
+			ResultSet newrs = s1.executeQuery("SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE " +
+				"WHERE TABLE_NAME = '" + tableName + "_maventest" + "' AND " +
+				"CONSTRAINT_NAME LIKE 'fk_%'");
+			while (newrs.next()) {
+				String constraintName = newrs.getString("CONSTRAINT_NAME");
+				s.executeUpdate("ALTER TABLE " + tableName + "_maventest" + " DROP FOREIGN KEY " + constraintName);
+			}
+			newrs.close();
+			s1.close();
 
+			s.executeUpdate("drop table if exists " + tableName);
+			s.executeUpdate(createTableStatements.get(tableName));
+			s.executeUpdate("insert into " + tableName + " select * from " + tableName + "_maventest");
+            }
+			
+        s.executeUpdate("SET foreign_key_checks = 1");
+		s.close();
 		}
 		finally
 		{
@@ -253,6 +323,9 @@ public class SchemaUtils
 	}
 
 	public static int loadFileIntoMySQL(String filename) throws IOException {
+		
+		logger.info("#------------>> loadFileIntoMySQL() : " + filename);
+		
 		String dir = new File(filename).getParent();
                 String env[] = null;
                 String envStr = null;
@@ -266,22 +339,26 @@ public class SchemaUtils
                 }
 
         String[] commandString={"mysql","--user="+ConfigUtils.getProperty("db_user"),"--password="+ConfigUtils.getProperty("db_password"),"--host="+ConfigUtils.getProperty("db_host"),"-e","source "+filename,ConfigUtils.getProperty("db_schema")};
-        logger.info("Runtime exec command string : "+Arrays.toString(commandString));
+        logger.debug("Runtime exec command string : "+Arrays.toString(commandString));
 		Process p = Runtime.getRuntime().exec(commandString,env, new File(dir));
+
+		try(
 		BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+		BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
 
-        // read the output from the command
-        String s= null;
-        while ((s = stdInput.readLine()) != null) {
-            MiscUtils.getLogger().info(s);
-        }
+			// read the output from the command
+			String s = null;
+			while ((s = stdInput.readLine()) != null) {
+				MiscUtils.getLogger().info(s);
+			}
 
-        // read any errors from the attempted command
-        while ((s = stdError.readLine()) != null) {
-        	 MiscUtils.getLogger().info(s);
-        }
-
+			// read any errors from the attempted command
+			while ((s = stdError.readLine()) != null) {
+				if (!s.contains("[Warning]")) {
+					MiscUtils.getLogger().info(s);
+				}
+			}
+		}
         int exitValue = -1;
         try {
         	exitValue = p.waitFor();
@@ -289,20 +366,20 @@ public class SchemaUtils
         	throw new IOException("error with process");
         }
 
-        stdInput.close();
-        stdError.close();
-
 		return exitValue;
 	}
 
 	private static void runCreateTablesScript(Connection c) throws IOException
 	{
-		boolean skipDbInit = false;
-		if(System.getProperty("oscar.dbinit.skip") != null && System.getProperty("oscar.dbinit.skip").equalsIgnoreCase("true")) 
-			skipDbInit=true;
+		logger.info("#------------>> runCreateTablesScript()");
 		
+		boolean skipDbInit = false;
+		if(System.getProperty("oscar.dbinit.skip") != null && System.getProperty("oscar.dbinit.skip").equalsIgnoreCase("true")) {
+			skipDbInit = true;
+		}
+
 		if(!skipDbInit) {
-			String baseDir=System.getProperty("basedir");
+			String baseDir=System.getProperty("user.dir");
 			logger.info("using baseDir : "+baseDir);
 					
 			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/oscarinit.sql"),0);
@@ -404,10 +481,14 @@ public class SchemaUtils
 	public static void dropAndRecreateDatabase() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException, IOException
 	{
 		boolean skipDbInit = false;
-		if(System.getProperty("oscar.dbinit.skip") != null && System.getProperty("oscar.dbinit.skip").equalsIgnoreCase("true")) 
+		if(System.getProperty("oscar.dbinit.skip") != null && System.getProperty("oscar.dbinit.skip").equalsIgnoreCase("true"))
+		{
 			skipDbInit=true;
+		}
 		if(!skipDbInit)
+		{
 			dropDatabaseIfExists();
+		}
 		createDatabaseAndTables();
 	}
 

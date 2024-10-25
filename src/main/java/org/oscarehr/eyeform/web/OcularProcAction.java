@@ -70,7 +70,7 @@ public class OcularProcAction extends DispatchAction {
     }
 
     public ActionForward form(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
     	
     	request.setAttribute("providers",providerDao.getActiveProviders());
 
@@ -112,7 +112,7 @@ public class OcularProcAction extends DispatchAction {
 
     	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 
-    	EyeformOcularProcedureDao dao = (EyeformOcularProcedureDao)SpringUtils.getBean("ocularProcDao");
+    	EyeformOcularProcedureDao dao = (EyeformOcularProcedureDao)SpringUtils.getBean(EyeformOcularProcedureDao.class);
 		procedure.setProvider(loggedInInfo.getLoggedInProviderNo());
 
     	if(request.getParameter("proc.id") != null && request.getParameter("proc.id").length()>0) {

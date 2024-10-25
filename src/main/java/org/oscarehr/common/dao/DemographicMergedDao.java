@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -30,48 +33,13 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.DemographicMerged;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class DemographicMergedDao extends AbstractDao<DemographicMerged> {
+public interface DemographicMergedDao extends AbstractDao<DemographicMerged> {
 
-	public DemographicMergedDao() {
-		super(DemographicMerged.class);
-	}
-	
-	public List<DemographicMerged> findCurrentByMergedTo(int demographicNo) {
-		Query q = entityManager.createQuery("select d from DemographicMerged d where d.mergedTo=? and d.deleted=0");
-		q.setParameter(1, demographicNo);
-		
-		@SuppressWarnings("unchecked")
-		List<DemographicMerged> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<DemographicMerged> findCurrentByDemographicNo(int demographicNo) {
-		Query q = entityManager.createQuery("select d from DemographicMerged d where d.demographicNo=? and d.deleted=0");
-		q.setParameter(1, demographicNo);
-		
-		@SuppressWarnings("unchecked")
-		List<DemographicMerged> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<DemographicMerged> findByDemographicNo(int demographicNo) {
-		Query q = entityManager.createQuery("select d from DemographicMerged d where d.demographicNo=?");
-		q.setParameter(1, demographicNo);
-		
-		@SuppressWarnings("unchecked")
-		List<DemographicMerged> results = q.getResultList();
-		
-		return results;
-	}
+	public List<DemographicMerged> findCurrentByMergedTo(int demographicNo);
 
-	@SuppressWarnings("unchecked")
-    public List<DemographicMerged> findByParentAndChildIds(Integer parentId, Integer childId) {
-		Query q = createQuery("d", "d.demographicNo = :childId AND d.mergedTo = :parentId");
-		q.setParameter("parentId", parentId);
-		q.setParameter("childId", childId);
-		return q.getResultList();
-    }
+	public List<DemographicMerged> findCurrentByDemographicNo(int demographicNo);
+
+	public List<DemographicMerged> findByDemographicNo(int demographicNo);
+
+	public List<DemographicMerged> findByParentAndChildIds(Integer parentId, Integer childId);
 }

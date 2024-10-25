@@ -98,6 +98,8 @@ public class EmeraldHL7A04TransportTask extends TimerTask {
 			
 			String sendAddr = oscarProperties.getEmeraldHL7A04TransportAddr();
 			int sendPort = oscarProperties.getEmeraldHL7A04TransportPort();
+
+			System.out.println("Find here "+ sendAddr + "HH " + sendPort);
 			
 			Socket client = new Socket(sendAddr, sendPort);
 			//getting the o/p stream of that connection

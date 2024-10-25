@@ -41,7 +41,7 @@ public final class PreventionReportUtil {
 	private static Logger logger = MiscUtils.getLogger();
 
 	public static DemographicManager demographicManager =  SpringUtils.getBean(DemographicManager.class);
-	public static DemographicArchiveDao demographicArchiveDao = (DemographicArchiveDao) SpringUtils.getBean("demographicArchiveDao");
+	public static DemographicArchiveDao demographicArchiveDao = (DemographicArchiveDao) SpringUtils.getBean(DemographicArchiveDao.class);
 
 	public static boolean wasRostered(LoggedInInfo loggedInInfo, Integer demographicId, Date onThisDate) {
 		logger.debug("Checking rosterd:" + demographicId);

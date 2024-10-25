@@ -37,7 +37,7 @@ String curUser_no = (String) session.getAttribute("user");
 <%@page import="org.oscarehr.common.model.BillingService" %>
 
 <%
-	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean("clinicLocationDao");
+	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean(ClinicLocationDao.class);
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 	BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);

@@ -34,7 +34,7 @@ import javax.persistence.Table;
 public class MsgIntegratorDemoMap extends AbstractModel<Integer> {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private int messageId;
 	private int sourceDemographicNo;

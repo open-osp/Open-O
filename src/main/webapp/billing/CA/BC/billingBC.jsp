@@ -165,7 +165,7 @@ if(!authed) {
 	}
 
 	// 2. Default value set in Billing Settings
-	List<Property> defaultBillingFormPropertyList = propertyDao.findGlobalByName("default_billing_form");
+	List<Property> defaultBillingFormPropertyList = propertyDao.findGlobalByName(Property.PROPERTY_KEY.default_billing_form.name());
 	if(defaultBillingFormPropertyList != null && ! defaultBillingFormPropertyList.isEmpty()) {
 		Property defaultBillingFormProperty = defaultBillingFormPropertyList.get(0);
 		String billingForm = null;
@@ -173,7 +173,7 @@ if(!authed) {
 			billingForm = defaultBillingFormProperty.getValue();
 		}
 		if(billingForm != null && !  billingForm.isEmpty()
-				&& ! "clinicdefault".equalsIgnoreCase( billingForm)) {
+				&& ! Property.PROPERTY_VALUE.clinicdefault.name().equalsIgnoreCase(billingForm)) {
 			defaultBillingForm = billingForm;
 		}
 	}
@@ -187,16 +187,23 @@ if(!authed) {
 			userSetBillingForm = userSetDefaultBillingFormProperty.getValue();
 		}
 		if( userSetBillingForm != null && !  userSetBillingForm.isEmpty()
-				&& ! "clinicdefault".equalsIgnoreCase(userSetBillingForm.trim())) {
+				&& ! Property.PROPERTY_VALUE.clinicdefault.name().equalsIgnoreCase(userSetBillingForm.trim())) {
 			// override the billingform preset/default in session with the providers preference.
 			defaultBillingForm = userSetBillingForm;
 		}
 	}
 
+	// 3.a. in some situations if the default billing form is set as Private it may be possible
+	// to set the Billing Type to private as well
+	// The common code for a private billing form is PRI
+	if("PRI".equals(defaultBillingForm)) {
+		bean.setBillType("Pri");
+	}
+
 	// 4. logged in user is overriding billing form preference during billing process.
 	/* horrible hack. Do not repeat.
 	 * If the targetProvider is set to "none" then this indicates that the
-	 * Billing sheet selection has been overiden from the billing form.
+	 * Billing sheet selection has been overridden from the billing form.
 	 * The strange part is that the billing form selection has already been
 	 * set into the "bean" object before reaching this point.
 	 * Normally not a big deal - but - in this case the billing sheet is loaded
@@ -214,7 +221,7 @@ if(!authed) {
 	String defaultServiceLocation = OscarProperties.getInstance().getProperty("visittype");
 
 	// 2. global billing settings
-	List<Property> userSetDefaultServiceLocationList = propertyDao.findGlobalByName("bc_default_service_location");
+	List<Property> userSetDefaultServiceLocationList = propertyDao.findGlobalByName(Property.PROPERTY_KEY.bc_default_service_location);
 	if(userSetDefaultServiceLocationList != null && ! userSetDefaultServiceLocationList.isEmpty()) {
 		Property uerSetDefaultServiceLocationProperty = userSetDefaultServiceLocationList.get(0);
 		String userSetDefaultServiceLocation = null;
@@ -235,10 +242,15 @@ if(!authed) {
 			providerSetDefaultLocation = defaultServiceLocationProperty.getValue();
 		}
 		if(providerSetDefaultLocation != null && ! providerSetDefaultLocation.isEmpty()
-				&& ! "clinicdefault".equalsIgnoreCase(providerSetDefaultLocation)) {
+				&& ! Property.PROPERTY_VALUE.clinicdefault.name().equalsIgnoreCase(providerSetDefaultLocation))  {
 			// override default from Oscar properties or billing properties with the provider preference
 			defaultServiceLocation = providerSetDefaultLocation;
 		}
+	}
+
+	// this captures and modifies any legacy codes that may be still hanging around
+	if(defaultServiceLocation.contains("|")) {
+		defaultServiceLocation = defaultServiceLocation.split("\\|")[0].trim();
 	}
 
 	/*
@@ -324,10 +336,10 @@ if(!authed) {
 <link rel="stylesheet" type="text/css" media="all" href="${pageContext.servletContext.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" />
 <link rel="stylesheet" type="text/css" media="all" href="${pageContext.servletContext.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" />
 <link rel="stylesheet" type="text/css" media="all" href="${pageContext.servletContext.contextPath}/share/calendar/calendar.css" title="win2k-cold-1"/>
-<link rel="stylesheet" type="text/css" media="all" href="${pageContext.servletContext.contextPath}/library/bootstrap/3.0.0/css/bootstrap.min.css" />
+
 <link rel="stylesheet" type="text/css" media="all" href="${pageContext.servletContext.contextPath}/css/bootstrap-datetimepicker-standalone.css" />
 <link rel="stylesheet" type="text/css" media="all" href="${pageContext.servletContext.contextPath}/css/bootstrap-datetimepicker.min.css" />
-
+	<link rel="stylesheet" type="text/css" media="all" href="${pageContext.servletContext.contextPath}/library/bootstrap/3.0.0/css/bootstrap.min.css" />
 
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/moment.js"></script>
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
@@ -346,200 +358,195 @@ if(!authed) {
 
 <style>
 
-    div.tool-table {
-        display: block;
-        width: 100%;
-        padding: 6px 12px;
-        vertical-align: middle;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
-        box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
-        -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-	    margin-right: 3px;
+    :root * {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif, 'Glyphicons Halflings';
+
+        line-height: 1 !important;
     }
+
+    :root *:not(h1,h2,h3) {
+        font-size: 12px;
+    }
+
     table {
-	    margin-bottom: 5px !important;
-    }
-    div.tool-table:last-of-type {
-	    margin-right:0;
+        margin-bottom: unset !important;
+        width: 100%;
     }
 
-	div#wcbForms p {
-		padding:0;
-		margin:0;
-	}
-	div#wcbForms table {
-		margin:0 0 5px 0;
-	}
-	div#wcbForms table th {
-		font-weight: normal;
-	}
-	div#wcbForms pre {
-		display:none;
-	}
-	div#wcbForms table tr td, div#wcbForms table tr th, div#wcbForms table{
-		border-color:#ddd;
-	}
-	
-	.button-bar {
-		margin-bottom:15px;
-	}
-	
-	table {
-		width: 100%;
-	}
-	
-	table.tool-bar tr td {
-		vertical-align: bottom;
-	}
-	
-	strong, label {
-		font-weight: normal !important;
-	}
-	
-	#billingPatientInfo {
-		margin-top: 5px;
-	}
-	
-	.wrapper {
-		margin: 0 10px 10px 10px;
-	}
-	
-	div#page-header {
-		position: sticky;
-		width: 100%;
-		top: 0;
-		left: 0;
-		right: 0;
-		z-index: 100000;
-	}
+    .btn {
+        font-size: 14px !important;
+        font-weight: normal;
+        line-height: 1.428571429 !important;
+    }
+    .container-fluid ul {
+        margin:0;
+        padding:0;
+    }
 
-	table#oscarBillingHeader tr td {
-		padding: 1px 5px;
-		background-color: #F3F3F3;
-		vertical-align: middle;
-	}
-	
-	#oscarBillingHeader #oscarBillingHeaderLeftColumn {
-		width: 20% !important;
-		background-color: black;	
-		border-bottom: black 1px solid;
-		line-height: 1;
-		border-top: black 1px solid;
-        vertical-align: top;
-	}
-	
-	#oscarBillingHeader #oscarBillingHeaderLeftColumn h1 {
-		margin: 0px;
-		padding: 7px !important;
-		display: block;
-		font-size: large !important;
-		background-color: black;
-		color: white;
-		font-weight: bold;
-	}
-	
-	#oscarBillingHeaderRightColumn {
-		vertical-align: top !important;
-		text-align: right;
-		padding-top: 3px !important;
-		padding-right: 3px !important;
+    div.tool-table {
+        background-color: #fff;
+    }
 
-	}
-	
-	#oscarBillingHeader #oscarBillingHeaderRightColumn, #oscarBillingHeader #oscarBillingHeaderCenterColumn {
-		border-bottom: 1px solid #ccc;
-	}
-	
-	span.HelpAboutLogout a {
-		font-size: x-small;
-		color: black;
-		float: right;
-		padding: 0 3px;
-	}
-	
-	h3 {
-		font-size: small;
-		width: 100%;
-		border-top: red thin solid;
-		border-bottom: red thin solid;
-		margin: 0;
-		margin-top: 5px;
-		padding: 0;
-	}
-	h3 ul {
-		margin:0;
-	}
-	
-	table#billingFormTable table.tool-table tr td table {
-		background-color: whitesmoke;
-		margin: 4px 0;
-		border:#ccc thin solid;
-	}
-	
-	table#billingFormTable table.tool-table tr:nth-of-type(2) td table {
-		margin: 0 0 4px 0;
-	}
-	
-	table#billingFormTable table.tool-table {
-		background-color: whitesmoke;
-		margin-top: 5px;
-		border:#ccc thin solid;
-	}
+    div.tool-table table tr td {
+        padding: unset;
+    }
 
-	table#billingFormTable table.tool-table tr td table tr:first-of-type td {
-		padding-top:5px !important;
-	}
-	table#billingFormTable table.tool-table tr td table tr:last-of-type td {
-		padding-bottom:5px !important;
-	}
-	
-	.serviceCodesTable {
-		margin-bottom: 5px !important;
-	}
-	
-	.serviceCodesTable tr:nth-child(even) {
-		background: #f5f5f5
-	}
-	
-	.serviceCodesTable tr:nth-child(odd) {
-		background: #FFF
-	}
-	
-	#billingFormTable table tr td {
-		padding: 1px 5px !important;
-	}
-	
-	tr#buttonRow td {
-		padding-top: 15px !important;
-		padding-bottom: 15px !important;
-	}
-	
-	.ui-autocomplete {
-		max-height: 200px;
-		overflow-y: auto;
-		/* prevent horizontal scrollbar */
-		overflow-x: hidden;
-		width: 200px;
-	}
-	/* IE 6 doesn't support max-height
+    td > div.tool-table div.input-group, td > div.tool-table .form-control,
+    td > div.tool-table div .form-control {
+        padding-bottom: 5px;
+
+    }
+
+    div.tool-table table tr td:nth-of-type(2) {
+        padding-left: 3px !important;
+    }
+
+    table {
+        margin-bottom: unset !important;
+    }
+
+
+    div.tool-table:last-of-type{
+        margin-right:3px;
+    }
+
+    div.tool-table:first-of-type{
+        margin-left:3px;
+    }
+
+    div#wcbForms p {
+        padding:0;
+        margin:0;
+    }
+    div#wcbForms table {
+        margin:0 0 5px 0;
+    }
+    div#wcbForms table th {
+        font-weight: normal;
+    }
+    div#wcbForms pre {
+        display:none;
+    }
+    div#wcbForms table tr td, div#wcbForms table tr th, div#wcbForms table{
+        border-color:#ddd;
+    }
+
+    table.tool-bar tr td {
+        vertical-align: bottom;
+    }
+
+    strong, label {
+        font-weight: normal !important;
+        padding:0 3px 0 0;
+    }
+
+    #billingPatientInfo {
+        margin-top: 5px;
+    }
+
+    .wrapper {
+        margin: auto 15px;
+    }
+
+    div#page-header {
+        position: sticky;
+        width: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100000;
+        border-bottom: 1px solid #ccc;
+        padding: 1px 5px;
+        background-color: #F3F3F3;
+        display:flex;
+        align-items: first baseline;
+        gap: 5px;
+    }
+
+    div#page-header h3 {
+        margin:0;
+    }
+
+    table#billingFormTable table.tool-table tr td table {
+        background-color: whitesmoke;
+        margin: 4px 0;
+        border:#ccc thin solid;
+    }
+
+    table#billingFormTable table.tool-table tr:nth-of-type(2) td table {
+        margin: 0 0 4px 0;
+    }
+
+    table#billingFormTable table.tool-table {
+        background-color: whitesmoke;
+        margin-top: 5px;
+        border:#ccc thin solid;
+    }
+
+    table#billingFormTable table.tool-table tr td table tr:first-of-type td {
+        padding-top:5px !important;
+    }
+    table#billingFormTable table.tool-table tr td table tr:last-of-type td {
+        padding-bottom:5px !important;
+    }
+
+    .serviceCodesTable {
+        display: block;
+        display: -webkit-inline-box;
+        display: -webkit-box;
+        margin-bottom: 5px !important;
+        border-radius: 4px;
+    }
+
+    .serviceCodesTable tr:nth-child(even) {
+        background: #f5f5f5
+    }
+
+    .serviceCodesTable tr:nth-child(odd) {
+        background: #FFF
+    }
+
+    #billingFormTable table tr td {
+        padding: 1px 5px !important;
+    }
+
+    tr#buttonRow td {
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+    }
+
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+        width: 200px;
+    }
+    /* IE 6 doesn't support max-height
 		   * we use height instead, but this forces the menu to always be this tall
 		   */
-	* html .ui-autocomplete {
-		height: 100px;
-	}
-	
-	table.table-borderless tr td, table.table-borderless tr th, table.table-borderless {
-	   	border: none;
-		border: 0;
-	}
-	.has-error {
-		background-color: #f2dede;
-	}
-	
+    * html .ui-autocomplete {
+        height: 100px;
+    }
+
+    table.table-borderless tr td, table.table-borderless tr th, table.table-borderless {
+        border: none;
+        border: 0;
+    }
+    .has-error {
+        background-color: #f2dede;
+    }
+
+    table#billingFormTable tr td{
+        vertical-align: top;
+    }
+    .icon-container {
+        align-self: flex-start;
+        padding:3px 10px;
+    }
+
+
+
 </style>
 <script type="text/javascript" >
 
@@ -700,15 +707,16 @@ function replaceWCB(id){
 }
 
 function gotoPrivate(){
+
    if (document.BillingCreateBillingForm.xml_billtype.value === "Pri"){
 	   // change the billing sheet to private billing
 	   jQuery("#selectBillingForm").val("PRI").trigger('change');
    }
 
    // otherwise go back to the default billing form
-   else {
-	   jQuery("#selectBillingForm").val('${ billingSessionBean.billForm }').trigger('change');
-   }
+   <%--else {--%>
+	<%--   jQuery("#selectBillingForm").val('${ billingSessionBean.billForm }').trigger('change');--%>
+   <%--}--%>
 }
 
 function correspondenceNote(){
@@ -924,6 +932,19 @@ function setCodeToChecked(svcCode){
     }
 }
 
+function checkifSet(icd9,feeitem,extrafeeitem){
+	myform = document.forms[0];
+	oscarLog("icd9 "+icd9+" ,feeitem "+feeitem+" "+codeEntered(feeitem)+" extrafeeitem "+extrafeeitem+ " "+codeEntered(extrafeeitem));
+	if (myform.xml_diagnostic_detail1.value == ""){
+		myform.xml_diagnostic_detail1.value = icd9;
+	}
+	setCodeToChecked(feeitem);
+	oscarLog("feeitem did put "+codeEntered(feeitem));
+	setCodeToChecked(extrafeeitem);
+
+	oscarLog("extra feeitem did put"+codeEntered(extrafeeitem));
+}
+
 jQuery(document).ready(function(jQuery){
 
 	jQuery("#bcBillingForm").attr('autocomplete', 'off');
@@ -947,7 +968,7 @@ jQuery(document).ready(function(jQuery){
 
 	jQuery(document).on('change', '#xml_provider', function() {
 		let url = '${pageContext.servletContext.contextPath}/billing.do?demographic_no=' + '<%=Encode.forUriComponent(bean.getPatientNo())%>' + '&appointment_no=' + '<%=Encode.forUriComponent(bean.getApptNo())%>' + '&apptProvider_no=' + '<%=Encode.forUriComponent(bean.getApptProviderNo())%>' + '&demographic_name=' + '<%=URLEncoder.encode(bean.getPatientName(),"UTF-8")%>' + '&billRegion=BC&xml_provider=' + this.value;
-		console.log(url);
+
 		jQuery("#billingPatientInfoWrapper").load(url + " #billingPatientInfo", function(){
 			// re-bind all the javascript
 			jQuery("#selectBillingForm").trigger('change');
@@ -1193,65 +1214,49 @@ jQuery(document).ready(function(jQuery){
 </head>
 
 <body style="background-color:#FFFFFF;" onLoad="CheckType();correspondenceNote();">
-	<div id="page-header" >	
-		<table id="oscarBillingHeader" class="table-borderless">
-			<tr>
-				<td id="oscarBillingHeaderLeftColumn"><h1><bean:message key="billing.bc.title"/></h1></td>
+	<div id="page-header" >
+		<div class="icon-container">
+			<img alt="OSCAR EMR" src="${pageContext.servletContext.contextPath}/images/oscar_logo_small.png" width="19px">
+		</div>
+		<h3><bean:message key="billing.bc.title"/></h3>
+		<span class="badge badge-primary"><bean:message key="billing.patient"/></span>
+        <label class="label-text" ><%=Encode.forHtmlContent(demo.getLastName())%>, <%=Encode.forHtmlContent(demo.getFirstName())%></label>
 
-				<td id="oscarBillingHeaderCenterColumn">				
-					<span class="badge badge-primary"><bean:message key="billing.patient"/></span>
-	                <label class="label-text" ><%=Encode.forHtmlContent(demo.getLastName())%>, <%=Encode.forHtmlContent(demo.getFirstName())%></label>
-	            	
-	            	<span class="badge badge-primary"><bean:message key="billing.patient.age"/></span>  
-	            	<label class="label-text"><%=demo.getAge()%></label>
+        <span class="badge badge-primary"><bean:message key="billing.patient.age"/></span>
+        <label class="label-text"><%=demo.getAge()%></label>
 
 <%-- 	Keep until confirmed not needed.
 
-					<span class="badge badge-primary"><bean:message key="billing.patient.status"/></span> 
-					<strong class="label-text"><%=demo.getPatientStatus()%></label>
-	
-              <span class="badge badge-primary"><bean:message key="billing.patient.roster"/></span> 
-	                <label><%=demo.getRosterStatus()%></label> 
---%>	         
-	                <span class="badge badge-primary" title="Most Responsible Provider"><bean:message key="billing.provider.assignedProvider"/></span>
-	                <label class="label-text">
-		                <c:choose>
-		                	<c:when test="<%= demo.getProviderNo() != null && ! demo.getProviderNo().trim().isEmpty() %>">
-		                		<%=billform.getProviderName(demo.getProviderNo())%> 
-		                	</c:when>
-		                	<c:otherwise>
-		                		Unknown
-		                	</c:otherwise>
-		                </c:choose>
-	                </label>
+		<span class="badge badge-primary"><bean:message key="billing.patient.status"/></span>
+		<strong class="label-text"><%=demo.getPatientStatus()%></label>
 
-					<security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="x" >
-		                <button type="button" class="btn btn-link" title="View this patient's Electronic Chart" onclick="popup(710, 1024,'${pageContext.servletContext.contextPath}/oscarEncounter/IncomingEncounter.do?providerNo=<%=loggedInInfo.getLoggedInProviderNo()%>&appointmentNo=&demographicNo=<%=demo.getDemographicNo()%>&curProviderNo=<%=loggedInInfo.getLoggedInProviderNo()%>&reason=&encType=face+to+face+encounter+with+client&userName=&curDate=<%= new Date().toString() %>&appointmentDate=&startTime=&status=&apptProvider_no=&providerview=<%=loggedInInfo.getLoggedInProviderNo()%>','encounter', 12556);return false;">
-							<bean:message key="billing.patient.encounter" />
-						</button>	
-					</security:oscarSec>
-					
-	                <button type="button" class="btn btn-link" title="View previous invoices for this patient" onclick="popup(800, 1000, 'billStatus.jsp?lastName=<%=demo.getLastName()%>&firstName=<%=demo.getFirstName()%>&filterPatient=true&demographicNo=<%=demo.getDemographicNo()%>','InvoiceList');return false;">
-						<bean:message key="demographic.demographiceditdemographic.msgInvoiceList"/>
-					</button>
-					
-<%--					<button type="button" class="btn btn-link" title="Set a default Billing Physician to use when a physician is not pre-selected" onclick="setDefaultProvider()">--%>
-<%--						<bean:message key="billing.provider.defaultProvider"/>--%>
-<%--					</button>				--%>
-				</td>
-<%--				<td id="oscarBillingHeaderRightColumn" align=right>--%>
-<%--					<span class="HelpAboutLogout"> --%>
-<%--						<a style="font-size: 10px; font-style: normal;" href="${ ctx }oscarEncounter/About.jsp" target="_new">About</a>--%>
-<%--						<a style="font-size: 10px; font-style: normal;" target="_blank"--%>
-<%--									href="http://www.oscarmanual.org/search?SearchableText=&Title=Chart+Interface&portal_type%3Alist=Document">Help</a>		--%>
-<%--					</span>--%>
-<%--				</td>--%>
-			</tr>
-		</table>
+  <span class="badge badge-primary"><bean:message key="billing.patient.roster"/></span>
+        <label><%=demo.getRosterStatus()%></label>
+--%>	         
+        <span class="badge badge-primary" title="Most Responsible Provider"><bean:message key="billing.provider.assignedProvider"/></span>
+        <label class="label-text">
+            <c:choose>
+                <c:when test="<%= demo.getProviderNo() != null && ! demo.getProviderNo().trim().isEmpty() %>">
+                    <%=billform.getProviderName(demo.getProviderNo())%>
+                </c:when>
+                <c:otherwise>
+                    Unknown
+                </c:otherwise>
+            </c:choose>
+        </label>
+
+		<security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="x" >
+            <button type="button" class="btn btn-link" title="View this patient's Electronic Chart" onclick="popup(710, 1024,'${pageContext.servletContext.contextPath}/oscarEncounter/IncomingEncounter.do?providerNo=<%=loggedInInfo.getLoggedInProviderNo()%>&appointmentNo=&demographicNo=<%=demo.getDemographicNo()%>&curProviderNo=<%=loggedInInfo.getLoggedInProviderNo()%>&reason=&encType=face+to+face+encounter+with+client&userName=&curDate=<%= new Date().toString() %>&appointmentDate=&startTime=&status=&apptProvider_no=&providerview=<%=loggedInInfo.getLoggedInProviderNo()%>','encounter', 12556);return false;">
+				<bean:message key="billing.patient.encounter" />
+			</button>
+		</security:oscarSec>
+
+        <button type="button" class="btn btn-link" title="View previous invoices for this patient" onclick="popup(800, 1000, 'billStatus.jsp?lastName=<%=demo.getLastName()%>&firstName=<%=demo.getFirstName()%>&filterPatient=true&demographicNo=<%=demo.getDemographicNo()%>','InvoiceList');return false;">
+			<bean:message key="demographic.demographiceditdemographic.msgInvoiceList"/>
+		</button>
+
 	</div>
 <div class="wrapper">
-
-
 
 <div class="container-fluid">
 <html:errors/>
@@ -1272,8 +1277,10 @@ if(wcbneeds != null){%>
 <%}%>
 
 <html:form styleId="bcBillingForm" styleClass="form-inline" action="/billing/CA/BC/CreateBilling" onsubmit="toggleWCB();">
+
 	<input autocomplete="false" name="hidden" type="text" style="display:none;">
-  	<input type="hidden" name="fromBilling" value=""/>
+  	<input type="hidden" name="fromBilling" value="">
+
 	<%
 		// set up this form
 		BillingCreateBillingForm thisForm = (BillingCreateBillingForm) request.getSession().getAttribute("BillingCreateBillingForm");
@@ -1281,7 +1288,19 @@ if(wcbneeds != null){%>
 		if (thisForm != null) {
 
 			thisForm.setXml_provider(bean.getBillingProvider());
-			thisForm.setXml_location(OscarProperties.getInstance().getProperty("visitlocation"));
+			String visitLocation = OscarProperties.getInstance().getProperty("visitlocation");
+
+			// sometimes the visit locations tend to contain punctuation that is offending to struts.
+			if(visitLocation != null && ! visitLocation.isEmpty()) {
+				// split the code and description, then reassemble without punctuation
+				String visitLocationCode = visitLocation.split("\\|")[0];
+				String visitLocationDescription = visitLocation.split("\\|")[1];
+				visitLocationDescription = visitLocationDescription.replaceAll("[^A-Za-z]+", "").toUpperCase();
+				visitLocation = visitLocationCode + "|" + visitLocationDescription;
+
+				thisForm.setXml_location(visitLocation);
+			}
+
 			thisForm.setXml_visittype(bean.getVisitType());
 
 			if ( OscarProperties.getInstance().getProperty("BC_DEFAULT_ALT_BILLING") != null && OscarProperties.getInstance().getProperty("BC_DEFAULT_ALT_BILLING").equalsIgnoreCase("YES")){
@@ -1343,7 +1362,6 @@ if(wcbneeds != null){%>
         <table class="tool-bar" id="billingPatientInfo">
           <tr>
           	<td>
-
 	          	<div class="form-group" > 
 			      
 			        <label for="selectBillingForm" ><bean:message key="billing.billingform"/></label>
@@ -1404,7 +1422,7 @@ if(wcbneeds != null){%>
                 <html:select styleClass="form-control" styleId="xml_location" property="xml_location">
                 <%
                   for (int i = 0; i < billlocation.length; i++) {
-                    String locationDescription = billlocation[i].getBillingLocation() + "|" + billlocation[i].getDescription();
+                    String locationDescription = billlocation[i].getBillingLocation() + "|" + billlocation[i].getDescription().replaceAll("[^A-Za-z]+", "").toUpperCase();;
                 %>
                   <html:option value="<%=Encode.forHtmlAttribute(locationDescription)%>"><%=Encode.forHtmlContent(billlocation[i].getDescription())%></html:option>
                 <%}                %>
@@ -1421,8 +1439,8 @@ if(wcbneeds != null){%>
                 <%
                   for (BillingFormData.BillingVisit billingVisit : billvisit) {
                 %>
-                    <html:option value="<%=Encode.forHtmlAttribute(billingVisit.getDisplayName())%>">
-	                    <%=Encode.forHtmlContent(billingVisit.getDisplayName())%>
+                    <html:option value="<%=Encode.forHtmlAttribute(billingVisit.getVisitType())%>">
+	                    <%=Encode.forHtmlContent(billingVisit.getDescription())%>
                     </html:option>
                 <%}%>
                 </html:select>
@@ -1652,10 +1670,10 @@ if(wcbneeds != null){%>
 
 </td>
 </tr>
-<tr>
-<td style="display:flex;">
+	  <tr>
+<td style="display:flex;gap:3px;">
 
-	<div class="tool-table">
+	<div class="tool-table table-responsive" style="width:100%;flex-basis: 25%;">
 	<table class="table table-condensed table-borderless"><tr><td>
 				<table class="table table-condensed table-borderless">
 					<tr>
@@ -1717,10 +1735,10 @@ if(wcbneeds != null){%>
 	  <tr>
 		  <td>
 
-			  <table class="table table-condensed table-borderless">
+			  <table class="table table-condensed table-borderless" style="max-height: 100px;display: block;overflow-y: scroll">
 				  <tr><td>
 
-					  <table class="table table-condensed table-borderless" style="background-color:#fff;">
+					  <table class="table table-condensed table-borderless" >
 						  <tr><td colspan="2">Recent Referral Doctors</td></tr>
 						  <%
 							  String bgColor="#fff";
@@ -1731,7 +1749,7 @@ if(wcbneeds != null){%>
 									  rProvider = billingReferralDao.getReferralDocName(r);
 						  %>
 						  <tr bgcolor="<%=bgColor%>">
-							  <td width="20%">
+							  <td>
 								  <a href="javascript:void(0)" class="referral-doctor" data-num="<%=r%>" data-doc="<%=rProvider%>"><%=r%></a>
 							  </td>
 							  <td><%=rProvider%></td>
@@ -1742,19 +1760,21 @@ if(wcbneeds != null){%>
 							  }
 						  }else{
 						  %>
-						  <tr><td width="20%"></td><td>none</td></tr>
+						  <tr><td></td><td>
+							  none
+						  </td></tr>
 						  <%
 							  }
 						  %>
 					  </table>
 
 				  </td>
-					  <td width="50%" valign="top">
+					  <td>
 
-						  <table class="table table-condensed table-borderless" style="background-color:#fff;">
+						  <table class="table table-condensed table-borderless" >
 							  <tr><td style="border-top:none;" colspan="2">Referral Doctor on Master Record</td></tr>
 							  <tr>
-								  <td width="20%">
+								  <td>
 									  <a href="javascript:void(0)" title="Populate referral doctor from master record" class="referral-doctor" data-num="<%=mRecRefDoctorNum%>" data-doc="<%=mRecRefDoctor%>"><%=mRecRefDoctorNum%></a>
 								  </td>
 								  <td><%=mRecRefDoctor%></td>
@@ -1772,14 +1792,14 @@ if(wcbneeds != null){%>
 
 
 </div>
-		<div class="tool-table">
+		<div class="tool-table table-responsive" style="width:100%;flex-basis: 25%;">
 
 							<table class="table table-condensed table-borderless">
 								<tr>
-									<td width="70%">
+									<td>
 										<label><bean:message key="billing.service.otherservice"/></label>
 									</td>
-									<td width="30%">
+									<td>
 										<label><bean:message key="billing.service.unit"/></label>
 									</td>
 								</tr>
@@ -1797,7 +1817,7 @@ if(wcbneeds != null){%>
                           	</span>
 										</div>
 									</td>
-									<td>
+									<td style="width:40%;">
 										<div class="input-group">
 											<html:text styleClass="form-control" property="xml_other1_unit" size="6" maxlength="6" styleId="xml_other1_unit"/>
 											<span class="input-group-btn">
@@ -1865,7 +1885,7 @@ if(wcbneeds != null){%>
 
 	<!-- ONSCREEN DX CODE DISPLAY -->
 		</div>
-	<div class="tool-table">
+	<div class="tool-table table-responsive" style="width:100%;flex-basis: 15%;">
 				<table class="table table-condensed table-borderless">
 					<tr><td style="width:60%">
 						<div class="input-group">
@@ -1899,7 +1919,7 @@ if(wcbneeds != null){%>
 								</c:when>
 								<c:otherwise>
 									<input type="hidden" id="codingSystem" value="msp" />
-									<bean:message key="billing.diagnostic.code"/>
+									<label><bean:message key="billing.diagnostic.code"/></label>
 								</c:otherwise>
 							</c:choose>
 						</div>
@@ -1947,25 +1967,24 @@ if(wcbneeds != null){%>
 	                          	</span>
 						</div>
 					</td></tr>
-					<tr>
 
-						<td>
-							Recently used
-
-							<div id="DX_REFERENCE"></div>
-						</td>
-					</tr>
 
 				</table>
 
 	<!-- ONSCREEN DX CODE DISPLAY END-->
 	</div>
-	<div class="tool-table">
+	<div class="tool-table table-responsive" style="width:100%;flex-basis: 10%;">
 
-	<table class="table table-condensed table-borderless">
+			  <label for="DX_REFERENCE">Recent Dx codes</label>
+
+			  <div id="DX_REFERENCE"></div>
+	</div>
+	<div class="tool-table table-responsive" style="width:100%;flex-basis: 25%;">
+
+	<table class="table table-condensed table-borderless" style="height:100%">
 		<tr>
-			<td style="padding-top:5px !important;">
-				<label for="shortClaimNote"></label><label>Short Claim Note</label></label>
+			<td>
+				<label for="shortClaimNote">Short Claim Note</label>
 				<html:text styleId="shortClaimNote" styleClass="form-control" property="shortClaimNote" />
 			</td>
 
@@ -1982,17 +2001,33 @@ if(wcbneeds != null){%>
 			</td>
 		</tr>
 		<tr>
-			<td style="padding-bottom:5px !important;" colspan="2" valign="top">
+			<td>
 				<div id="CORRESPONDENCENOTE" style="display:none;">
 					<html:textarea styleClass="form-control notes-box" property="notes" onkeyup="checkTextLimit(this.form.notes,400);"></html:textarea>
 					<small>400 characters max.</small>
 				</div>
 				<div>
 					<div>
-						<label>Billing Notes</label>
-						<small>(Internal use. Not sent to MSP)</small>
+						<label for="billing-notes-box">Billing Notes
+						<small>(Internal use. Not sent to MSP)</small></label>
 					</div>
-					<html:textarea styleClass="form-control notes-box" property="messageNotes"></html:textarea>
+					<html:textarea styleClass="form-control notes-box" styleId="billing-notes-box" property="messageNotes"></html:textarea>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td style="height:100%;vertical-align: bottom;">
+				<div class="row-fluid pull-right ">
+					<div id="ignoreWarningsButton">
+						<label class="checkbox" for="ignoreWarn" title="Check to ignore validation warnings">
+							<input type="checkbox" name="ignoreWarn" id="ignoreWarn"/>
+							Ignore Warnings
+						</label>
+					</div>
+					<div id="buttonRow" class="button-bar">
+						<input class="btn btn-md btn-primary" type="submit" name="Submit" value="Continue">
+						<input class="btn btn-md btn-danger" type="button" name="Button" value="Cancel" onClick="window.close();">
+					</div>
 				</div>
 			</td>
 		</tr>
@@ -2004,18 +2039,7 @@ if(wcbneeds != null){%>
 </tr>
 	  <tr><td>
 		  <div id="bcBillingError"></div>
-		  <div class="row-fluid pull-right ">
-			  <div id="ignoreWarningsButton">
-				  <label class="checkbox" for="ignoreWarn" title="Check to ignore validation warnings">
-					  <input type="checkbox" name="ignoreWarn" id="ignoreWarn"/>
-					  Ignore Warnings
-				  </label>
-			  </div>
-			  <div id="buttonRow" class="button-bar">
-				  <input class="btn btn-md btn-primary" type="submit" name="Submit" value="Continue">
-				  <input class="btn btn-md btn-danger" type="button" name="Button" value="Cancel" onClick="window.close();">
-			  </div>
-		  </div>
+
 	  </td></tr>
 	  <tr>
 		  <td>
@@ -2024,8 +2048,8 @@ if(wcbneeds != null){%>
 <div id="billingFormTableWrapper">
         <table id="billingFormTable">
           <tr>
-            <td valign="top" style="width:32%; padding-right:5px;" >
-              <table class="table table-condensed table-bordered serviceCodesTable" >
+            <td style="width:33%;" >
+              <table class="table table-condensed serviceCodesTable" >
                 <tr style="background-color:#CCCCFF;">
                   <td width="25%">
                     <div align="left">
@@ -2069,8 +2093,8 @@ if(wcbneeds != null){%>
 
               
             </td>
-            <td valign="top" style="width:32%; padding-right:5px;">
-              <table class="table table-condensed table-bordered serviceCodesTable">
+            <td valign="top" style="width:33%;">
+              <table class="table table-condensed serviceCodesTable">
                 <tr style="background-color:#CCCCFF;">
                   <td width="21%">
                         <label>
@@ -2106,8 +2130,8 @@ if(wcbneeds != null){%>
               </table>
              <!-- former tool table -->
             </td>
-            <td valign="top" style="width:32%;" >
-              <table class="table table-condensed table-bordered serviceCodesTable">
+            <td valign="top" style="width:33%;" >
+              <table class="table table-condensed serviceCodesTable">
                 <tr style="background-color:#CCCCFF;">
                   <td width="25%" align="left" valign="middle">
                         <label><%=group3Header%></label>

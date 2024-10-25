@@ -193,7 +193,7 @@ public class OLISPollingUtil {
 	private static void pollZ04Query(LoggedInInfo loggedInInfo, String defaultStartTime,String defaultEndTime){
 		//Z04Query providerQuery;
 		List<Provider> allProvidersList = providerDao.getActiveProviders();
-	    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+	    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 	    for (Provider provider : allProvidersList) {
 	    	try {
 	    		String officialLastName  = userPropertyDAO.getStringValue(provider.getProviderNo(),UserProperty.OFFICIAL_LAST_NAME);

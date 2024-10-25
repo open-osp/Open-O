@@ -24,11 +24,11 @@
 package org.oscarehr.billing.CA.ON.dao;
 
 import org.oscarehr.billing.CA.ON.model.BillingONProc;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BillingONProcDao extends AbstractDao<BillingONProc> {
+public class BillingONProcDao extends AbstractDaoImpl<BillingONProc> {
 
 	public BillingONProcDao() {
 		super(BillingONProc.class);

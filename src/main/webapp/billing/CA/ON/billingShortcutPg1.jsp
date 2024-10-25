@@ -70,7 +70,7 @@
 <%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 <%
-	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
+	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
 %>
 <%
   boolean bHospitalBilling = true;
@@ -853,7 +853,7 @@ ctlCount = 0;
 						<td width="20%"><select name="xml_visittype">
 						<% if (OscarProperties.getInstance().getBooleanProperty("rma_enabled", "true")) { %>
 					    <%
-					    ClinicNbrDao cnDao = (ClinicNbrDao) SpringUtils.getBean("clinicNbrDao");
+					    ClinicNbrDao cnDao = (ClinicNbrDao) SpringUtils.getBean(ClinicNbrDao.class);
 						ArrayList<ClinicNbr> nbrs = cnDao.findAll();
 			            
 			            String providerSearch = apptProvider_no.equalsIgnoreCase("none") ? user_no : apptProvider_no;

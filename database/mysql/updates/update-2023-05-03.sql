@@ -5,6 +5,8 @@
 -- Data that is too large for the column width is truncated
 
 ALTER TABLE `demographic`
+    DROP INDEX `myOscarUserName`;
+ALTER TABLE `demographic`
     MODIFY COLUMN `myOscarUserName` varchar(1) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `email`,
     MODIFY COLUMN `provider_no` varchar(11) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `spoken_lang`,
     MODIFY COLUMN `previousAddress` varchar(60) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL AFTER `alias`,

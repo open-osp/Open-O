@@ -128,7 +128,7 @@ public class LabDisplayHelper {
 		String multiLabId = Hl7textResultsData.getMatchingLabs(lab.getSegmentID());
 		XmlUtils.appendChildToRoot(doc, "multiLabId", multiLabId);
 
-		Hl7TextMessageDao hl7TextMessageDao = (Hl7TextMessageDao) SpringUtils.getBean("hl7TextMessageDao");
+		Hl7TextMessageDao hl7TextMessageDao = (Hl7TextMessageDao) SpringUtils.getBean(Hl7TextMessageDao.class);
 		Hl7TextMessage hl7TextMessage = hl7TextMessageDao.find(Integer.parseInt(lab.getSegmentID()));
 		String type = hl7TextMessage.getType();
 		XmlUtils.appendChildToRoot(doc, "hl7TextMessageType", type);

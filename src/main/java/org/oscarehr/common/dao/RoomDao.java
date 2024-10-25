@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -33,264 +36,28 @@ import org.oscarehr.common.model.Room;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class RoomDao extends AbstractDao<Room>{
+public interface RoomDao extends AbstractDao<Room> {
 
-	private Logger log = MiscUtils.getLogger();
+	public boolean roomExists(Integer roomId);
 
-	public RoomDao() {
-		super(Room.class);
-	}
-	
-	
-	/**
-	 * Does room with id exist
-	 *
-	 * @param roomId
-	 *            id
-	 * @return true if room exists
-	 */
-    public boolean roomExists(Integer roomId) {
-    	Query query = entityManager.createQuery("select count(*) from Room r where r.id = ?");
-		query.setParameter(1, roomId);
-		
-		Long result = (Long)query.getSingleResult();
-		
-		boolean exists =  (result.intValue() == 1);
-		
-		log.debug("roomExists: " + exists);
+	public Room getRoom(Integer roomId);
 
-		return exists;
-	}
+	public Room[] getRooms(Integer facilityId, Integer programId, Boolean active);
 
+	public Room[] getAssignedBedRooms(Integer facilityId, Integer programId, Boolean active);
 
-	/**
-	 * Get room by id
-	 *
-	 * @param roomId
-	 *            id
-	 * @return room
-	 */
-    public Room getRoom(Integer roomId) {
-		Room room = find(roomId);
-		log.debug("getRoom: id: " + roomId);
+	public Room[] getAvailableRooms(Integer facilityId, Integer programId, Boolean active);
 
-		return room;
-	}
+	public void saveRoom(Room room);
 
-	/**
-	 * Get rooms
-	 *
-	 * @param active
-	 *            filter
-	 * @return list of rooms
-	 */
-    @SuppressWarnings("unchecked")
-    public Room[] getRooms(Integer facilityId, Integer programId, Boolean active) {
-    	//must be commented out as to add rooms in Bed.jsp
-    	//if(programId == null  ||  active == null){
-    	//	return null;
-    	//}
-		String queryString = getRoomsQueryString(facilityId, programId, active);
-		Object[] values = getRoomsValues(facilityId, programId, active);
-		
-		Query query = entityManager.createQuery(queryString);
-		if (facilityId != null || programId != null || active != null) {
-			for(int x=0;x<values.length;x++) {
-				query.setParameter(x+1, values[x]);
-			}
-			
-		}
-		
-		List<Room> rooms = query.getResultList();
-		
-		if(rooms != null){		
-				log.debug("RoomDAO.getRooms(): rooms.size() = " + rooms.size());
-			
-				return rooms.toArray(new Room[rooms.size()]);
-		} else
-			return null;
-	}
+	public void deleteRoom(Room room);
 
-	/**
-	 * Get assigned bed rooms
-	 *
-	 * @param facilityId
-	 * @param programId
-	 * @param active           
-	 * @return list of assigned bed rooms
-	 */
-    @SuppressWarnings("unchecked")
-    public Room[] getAssignedBedRooms(Integer facilityId, Integer programId, Boolean active) {
-    	//if(programId == null  ||  active == null){
-    	//	return null;
-    	//}
-		String queryString = getAssignedBedRoomsQueryString(facilityId, programId, active);
-		Object[] values = getRoomsValues(facilityId, programId, active);
-		
-		Query query = entityManager.createQuery(queryString);
-		if (facilityId != null || programId != null || active != null) {
-			for(int x=0;x<values.length;x++) {
-				query.setParameter(x+1, values[x]);
-			}
-			
-		}
-		
-		List<Room> rooms = query.getResultList();
-		
-		if(rooms!=null) {		
-			log.debug("getRooms: size: " + rooms.size());
-			return rooms.toArray(new Room[rooms.size()]);
-		} else {
-			return null;
-		}
-	}
+	public String getRoomsQueryString(Integer facilityId, Integer programId, Boolean active);
 
-    @SuppressWarnings("unchecked")
-    public Room[] getAvailableRooms(Integer facilityId, Integer programId, Boolean active) {
-    	//condition placed here on purpose to disallow rooms to display in dropdown list
-    	//when clients don't belong to any bed program -- to fix a bug
-    	if(programId == null  ||  active == null){
-    		return null;
-    	}
-		String queryString = getRoomsQueryString(facilityId, programId, active);
-		Object[] values = getRoomsValues(facilityId, programId, active);
-		
-		Query query = entityManager.createQuery(queryString);
-		if (facilityId != null || programId != null || active != null) {
-			for(int x=0;x<values.length;x++) {
-				query.setParameter(x+1, values[x]);
-			}
-			
-		}
-		
-		List<Room> rooms = query.getResultList();
-		
-		
-		if(rooms != null){		
-				log.debug("RoomDAO.getRooms(): rooms.size() = " + rooms.size());
-			
-				return rooms.toArray(new Room[rooms.size()]);
-		} else
-			return null;
-	}
+	public String getAssignedBedRoomsQueryString(Integer facilityId, Integer programId, Boolean active);
 
-	/**
-	 * Save room
-	 *
-	 * @param room
-	 *            room to save
-	 */
-    @Deprecated
-    public void saveRoom(Room room) {
-    	if(room == null)
-    		return;
-		//updateHistory(room);
-    	
-    	if(room.getId() == null || room.getId().intValue() == 0) 
-    		persist(room);
-    	else
-    		merge(room);
-		
-		log.debug("saveRoom: id: " + room.getId());
-	}
+	public Object[] getRoomsValues(Integer facilityId, Integer programId, Boolean active);
 
-    public void deleteRoom(Room room) {
-    	if(room != null){
-        	log.debug("deleteRoom: id " + room.getId());
-		}
-        remove(room.getId());
-    }
-
-	String getRoomsQueryString(Integer facilityId, Integer programId, Boolean active) {
-		StringBuilder queryBuilder = new StringBuilder("select r from Room r");
-
-        queryBuilder.append(" where ");
-
-        boolean andClause = false;
-        if (facilityId != null) {
-            queryBuilder.append("r.facilityId = ?");
-            andClause = true;
-        }
-
-        if (programId != null) {
-            if (andClause) queryBuilder.append(" and "); else andClause = true;
-            queryBuilder.append("r.programId = ?");
-        }
-
-
-        if (active != null) {
-            if (andClause) queryBuilder.append(" and ");
-            queryBuilder.append("r.active = ?");
-        }
-
-        return queryBuilder.toString();
-	}
-
-	String getAssignedBedRoomsQueryString(Integer facilityId, Integer programId, Boolean active) {
-		StringBuilder queryBuilder = new StringBuilder("select r from Room r");
-
-        queryBuilder.append(" where ");
-
-        boolean andClause = false;
-        if (facilityId != null) {
-            queryBuilder.append("r.facilityId = ?");
-            andClause = true;
-        }
-
-        if (programId != null) {
-            if (andClause){
-            	queryBuilder.append(" and "); 
-            }else{
-            	andClause = true;
-            }
-            queryBuilder.append("r.programId = ?");
-        }
-
-
-        if (active != null) {
-            if (andClause){
-            	queryBuilder.append(" and ");
-            }else{
-            	andClause = true;
-            }
-
-            queryBuilder.append("r.active = ?");
-        }
-        
-        if (andClause) {
-        	queryBuilder.append(" and ");
-        }
-        
-        queryBuilder.append("r.assignedBed = 1");
-
-        return queryBuilder.toString();
-	}
-	
-	Object[] getRoomsValues(Integer facilityId, Integer programId, Boolean active) {
-		List<Object> values = new ArrayList<Object>();
-
-        if (facilityId != null) {
-            values.add(facilityId);
-        }
-
-        if (programId != null) {
-			values.add(programId);
-		}
-
-		if (active != null) {
-			values.add(active);
-		}
-		return values.toArray(new Object[values.size()]);
-	}
-
-	void updateHistory(Room room) {
-		// TODO IC Bedlog Historical - update create and persist historical data
-		// get previous programroom
-		// set end date to today
-		// create new programroom
-		// set start date to today
-		// save previous and new programrooms
-	}
+	public void updateHistory(Room room);
 
 }

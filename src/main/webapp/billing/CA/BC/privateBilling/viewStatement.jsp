@@ -22,7 +22,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 
 <%@ page contentType="text/html" %><!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 <head>
   <meta charset="utf-8">
   <title><bean:message key="admin.admin.PrivateBillingStatement"/></title>

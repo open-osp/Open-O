@@ -85,6 +85,7 @@ public class NoteTo1 implements Serializable{
 	
 	private List<CaseManagementIssueTo1> assignedIssues = new ArrayList<CaseManagementIssueTo1>();
 	
+	private NoteExtTo1 noteExt;
 	
 	public Integer getNoteId() {
 		return noteId;
@@ -405,7 +406,12 @@ public class NoteTo1 implements Serializable{
 	public void setPosition(Integer position) {
 		this.position = position;
 	}
-	
 
-	
+	public NoteExtTo1 getNoteExt() {
+		return noteExt;
+	}
+
+	public void setNoteExt(NoteExtTo1 noteExt) {
+		this.noteExt = noteExt;
+	}
 }

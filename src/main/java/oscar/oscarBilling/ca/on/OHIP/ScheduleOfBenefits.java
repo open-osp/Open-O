@@ -90,7 +90,7 @@ public class ScheduleOfBenefits {
 						")  (anaes:"+getJBD((String) newPricingInfo.get("anaesthetistFee"))+
 						")  (non-a:"+getJBD((String) newPricingInfo.get("nonAnaesthetistFee"))+")";
 
-				BillingServiceDao bsd = (BillingServiceDao)SpringUtils.getBean("billingServiceDao");
+				BillingServiceDao bsd = (BillingServiceDao)SpringUtils.getBean(BillingServiceDao.class);
 				String defaultDescription = bsd.searchDescBillingCode((String) newPricingInfo.get("feeCode"), "ON");  
 
 				String newPrice = (String) newPricingInfo.get("gpFees");

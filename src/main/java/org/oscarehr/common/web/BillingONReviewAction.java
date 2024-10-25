@@ -51,8 +51,8 @@ import org.oscarehr.util.SpringUtils;
  */
 public class BillingONReviewAction extends DispatchAction {
     
-    private ClinicDAO clinicDao = (ClinicDAO) SpringUtils.getBean("clinicDAO");
-    private DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+    private ClinicDAO clinicDao = (ClinicDAO) SpringUtils.getBean(ClinicDAO.class);
+    private DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     
     

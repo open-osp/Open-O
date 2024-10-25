@@ -30,7 +30,7 @@ import org.oscarehr.common.model.OscarLog;
 public class OscarAuditLogger {
 
 	private static OscarAuditLogger instance = new OscarAuditLogger();
-	private static OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
+	private static OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
 
 	private OscarAuditLogger() {
 

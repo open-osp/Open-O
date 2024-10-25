@@ -77,15 +77,15 @@ public final class RefI12 {
 
 		fillRf1(referralMsg.getRF1(), null, null, null, null, consultationRequest.getId(), consultationRequest.getReferralDate(), null, null);
 
-		ProviderDao providerDao=(ProviderDao) SpringUtils.getBean("providerDao");
+		ProviderDao providerDao=(ProviderDao) SpringUtils.getBean(ProviderDao.class);
 		Provider referringProvider=providerDao.getProvider(consultationRequest.getProviderNo());
 		DataTypeUtils.fillPrd(referralMsg.getPROVIDER_CONTACT(0).getPRD(), referringProvider, "RP", "Referring Provider", clinic);
 
-		ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
+		ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
 		ProfessionalSpecialist referredToProfessionalSpecialist=professionalSpecialistDao.find(consultationRequest.getSpecialistId());
 		DataTypeUtils.fillPrd(referralMsg.getPROVIDER_CONTACT(1).getPRD(), referredToProfessionalSpecialist, "RT", "Referred to Provider");
 
-		DemographicDao demographicDao=(DemographicDao) SpringUtils.getBean("demographicDao");
+		DemographicDao demographicDao=(DemographicDao) SpringUtils.getBean(DemographicDao.class);
 		Demographic demographic=demographicDao.getDemographicById(consultationRequest.getDemographicId());		
 		DataTypeUtils.fillPid(referralMsg.getPID(), 1, demographic);
 

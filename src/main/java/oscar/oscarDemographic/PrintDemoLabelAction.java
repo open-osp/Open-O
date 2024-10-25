@@ -1,33 +1,30 @@
 
 package oscar.oscarDemographic;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.oscarehr.common.dao.UserPropertyDAO;
+import org.oscarehr.common.model.UserProperty;
+import org.oscarehr.managers.SecurityInfoManager;
+import org.oscarehr.util.DbConnectionFilter;
+import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
+import oscar.OscarAction;
+import oscar.OscarDocumentCreator;
+import oscar.OscarProperties;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.HashMap;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.oscarehr.managers.SecurityInfoManager;
-import org.oscarehr.common.dao.UserPropertyDAO;
-import org.oscarehr.common.model.UserProperty;
-import org.oscarehr.util.DbConnectionFilter;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
-
-import oscar.OscarAction;
-import oscar.OscarDocumentCreator;
-import oscar.OscarProperties;
 
 public class PrintDemoLabelAction extends OscarAction {
     
@@ -50,7 +47,7 @@ public class PrintDemoLabelAction extends OscarAction {
         System.setProperty("jasper.reports.compile.class.path", classpath);
         LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
         String curUser_no = loggedInInfo.getLoggedInProviderNo();
-        UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         UserProperty prop;
         String defaultPrinterName = "";
         Boolean silentPrint = false;
@@ -106,7 +103,7 @@ public class PrintDemoLabelAction extends OscarAction {
         }
         if (ins == null){
             try {
-                ServletContext context = getServlet().getServletContext();
+//                ServletContext context = getServlet().getServletContext();
                 ins = getClass().getResourceAsStream("/oscar/oscarDemographic/label.xml");
                 logger.debug("loading from : /oscar/oscarDemographic/label.xml " + ins);
             }

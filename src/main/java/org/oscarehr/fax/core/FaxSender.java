@@ -36,6 +36,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.common.util.Base64Utility;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.http.HttpStatus;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.logging.log4j.Logger;
@@ -80,6 +82,17 @@ public class FaxSender {
 				String login = faxConfig.getSiteUser() + ":" + faxConfig.getPasswd();
 				String authorizationHeader = "Basic " + Base64Utility.encode(login.getBytes());
 				client.header("Authorization", authorizationHeader);	    
+				
+				/*
+				 * Setting explicit timeout values to ensure that the WebClient does not wait indefinitely for responses.
+				 * Connection timeout set to 30 seconds, which is the same as the default timeout.
+				 * Receive timeout set to 60 seconds, which is also the same as the default timeout.
+				 */
+				HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
+				HTTPClientPolicy policy = new HTTPClientPolicy();
+				policy.setConnectionTimeout(30000); // 30 seconds
+				policy.setReceiveTimeout(60000); // 60 seconds
+				conduit.setClient(policy);
 
 				faxJobList = faxJobDao.getReadyToSendFaxes(faxConfig.getFaxNumber());
 				FaxJob faxJobId;

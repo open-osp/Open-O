@@ -33,12 +33,14 @@ import java.util.Vector;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.ConsultationRequestDao;
+import org.oscarehr.common.dao.ConsultationRequestExtDao;
 import org.oscarehr.common.dao.ConsultationServiceDao;
 import org.oscarehr.common.model.ConsultationRequest;
 import org.oscarehr.common.model.ConsultationServices;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.ProfessionalSpecialist;
 import org.oscarehr.common.model.Provider;
+import org.oscarehr.common.model.enumerator.ConsultationRequestExtKey;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -82,10 +84,11 @@ public class EctViewConsultationRequestsUtil {
       consultProvider = new Vector();
       
       try {
-          ConsultationRequestDao consultReqDao = (ConsultationRequestDao) SpringUtils.getBean("consultationRequestDao");
+          ConsultationRequestDao consultReqDao = (ConsultationRequestDao) SpringUtils.getBean(ConsultationRequestDao.class);
+          ConsultationRequestExtDao consultationRequestExtDao = SpringUtils.getBean(ConsultationRequestExtDao.class);
           DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
-          ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
-          ConsultationServiceDao serviceDao = (ConsultationServiceDao) SpringUtils.getBean("consultationServiceDao");
+          ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
+          ConsultationServiceDao serviceDao = (ConsultationServiceDao) SpringUtils.getBean(ConsultationServiceDao.class);
           ConsultationRequest consult;
           Demographic demo;
           Provider prov;
@@ -99,7 +102,17 @@ public class EctViewConsultationRequestsUtil {
           for( int idx = 0; idx < consultList.size(); ++idx ) {
               consult = (ConsultationRequest)consultList.get(idx);
               demo = demographicManager.getDemographic(loggedInInfo, consult.getDemographicId());
-              services = serviceDao.find(consult.getServiceId());
+              
+              String serviceDescription = "";
+              // If service id is 0, check the extensions table
+              if (consult.getServiceId() == 0) {
+                 serviceDescription = consultationRequestExtDao.getConsultationRequestExtsByKey(consult.getId(), ConsultationRequestExtKey.EREFERRAL_SERVICE.getKey());
+              } else {
+                 services = serviceDao.find(consult.getServiceId());
+                 if (services != null) {
+                    serviceDescription = services.getServiceDesc();
+                 }
+              }
 
               providerId = demo.getProviderNo();
               if( providerId != null && !providerId.equals("")) {
@@ -126,7 +139,7 @@ public class EctViewConsultationRequestsUtil {
               status.add(consult.getStatus());
               patient.add(demo.getFormattedName());
               provider.add(providerName);
-              service.add(services.getServiceDesc());
+              service.add(serviceDescription);
               vSpecialist.add(specialistName);
               urgency.add(consult.getUrgency());
               siteName.add(consult.getSiteName());
@@ -181,37 +194,34 @@ public class EctViewConsultationRequestsUtil {
       boolean verdict = true;      
       try {                           
 
-          ConsultationRequestDao consultReqDao = (ConsultationRequestDao) SpringUtils.getBean("consultationRequestDao");
-
-          ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+          ConsultationRequestDao consultReqDao = (ConsultationRequestDao) SpringUtils.getBean(ConsultationRequestDao.class);
+          ConsultationRequestExtDao consultationRequestExtDao = SpringUtils.getBean(ConsultationRequestExtDao.class);
+          ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
           DemographicManager demoManager = SpringUtils.getBean(DemographicManager.class);
-          ConsultationServiceDao serviceDao = (ConsultationServiceDao) SpringUtils.getBean("consultationServiceDao");
-          ConsultationRequest consult;
-          Provider prov;
-          Demographic demo;
-          ConsultationServices services;
-          String providerId, providerName;
+          ConsultationServiceDao serviceDao = (ConsultationServiceDao) SpringUtils.getBean(ConsultationServiceDao.class);
 
-          List consultList = consultReqDao.getConsults(Integer.parseInt(demoNo));
-          for( int idx = 0; idx < consultList.size(); ++idx ) {
-              consult = (ConsultationRequest)consultList.get(idx);
-              demo = demoManager.getDemographic(loggedInInfo, consult.getDemographicId());
-              providerId = demo.getProviderNo();
-              if( providerId != null && !providerId.equals("")) {
-              prov = providerDao.getProvider(demo.getProviderNo());
-                providerName = prov.getFormattedName();
-              }
-              else {
-                  providerName = "N/A";
+          List <ConsultationRequest> consultList = consultReqDao.getConsults(Integer.parseInt(demoNo));
+          for( ConsultationRequest consult : consultList ) {
+              String serviceDescription = "";
+              // If service id is 0, check the extensions table
+              if (consult.getServiceId() == 0) {
+                 serviceDescription = consultationRequestExtDao.getConsultationRequestExtsByKey(consult.getId(), ConsultationRequestExtKey.EREFERRAL_SERVICE.getKey());
+              } else {
+                 ConsultationServices services = serviceDao.find(consult.getServiceId());
+                 if (services != null) {
+                    serviceDescription = services.getServiceDesc();
+                 }
               }
 
-              services = serviceDao.find(consult.getServiceId());
+              Demographic demo = demoManager.getDemographic(loggedInInfo, consult.getDemographicId());
+              String providerId = demo.getProviderNo();
+              String providerName = (providerId != null && !providerId.isEmpty()) ? providerDao.getProvider(providerId).getFormattedName() : "N/A";
 
               ids.add(consult.getId().toString());
               status.add(consult.getStatus());
               patient.add(demo.getFormattedName());
               provider.add(providerName);
-              service.add(services.getServiceDesc());
+              service.add(serviceDescription);
               urgency.add(consult.getUrgency());
               patientWillBook.add(""+consult.isPatientWillBook());
               date.add(DateFormatUtils.ISO_DATE_FORMAT.format(consult.getReferralDate()));

@@ -57,9 +57,9 @@ public class PMMFilter implements Filter {
 	private void setProviderManager() {
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(config.getServletContext());
 
-		agencyManager = (AgencyManager) wac.getBean("agencyManager");
-		oscarSecurityManager = (OscarSecurityManager) wac.getBean("oscarSecurityManager");
-		providerManager = (ProviderManager) wac.getBean("providerManager");
+		agencyManager = (AgencyManager) wac.getBean(AgencyManager.class);
+		oscarSecurityManager = (OscarSecurityManager) wac.getBean(OscarSecurityManager.class);
+		providerManager = (ProviderManager) wac.getBean(ProviderManager.class);
 	}
 
 	public void init(FilterConfig config) throws ServletException {

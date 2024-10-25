@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,102 +20,35 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package com.quatro.service.security;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import com.quatro.dao.security.SecobjprivilegeDao;
-import com.quatro.dao.security.SecroleDao;
 import com.quatro.model.security.Secobjprivilege;
 import com.quatro.model.security.Secrole;
 
-@Transactional
-public class RolesManager {
+public interface RolesManager {
 
-	private SecroleDao secroleDao;
-	private SecobjprivilegeDao secobjprivilegeDao;
+    List<Secrole> getRoles();
 
-	public void setSecroleDao(SecroleDao dao) {
-		this.secroleDao = dao;
-	}
+    Secrole getRole(String id);
 
-	public List<Secrole> getRoles() {
-		return secroleDao.getRoles();
-	}
+    Secrole getRole(int id);
 
-	public Secrole getRole(String id) {
-		return secroleDao.getRole(Integer.parseInt(id));
-	}
+    Secrole getRoleByRolename(String roleName);
 
-	public Secrole getRole(int id) {
-		return secroleDao.getRole(id);
-	}
+    void save(Secrole secrole);
 
-	public Secrole getRoleByRolename(String roleName) {
-		return secroleDao.getRoleByName(roleName);
-	}
+    void saveFunction(Secobjprivilege secobjprivilege);
 
-	public void save(Secrole secrole) {
-		secroleDao.save(secrole);
-	}
+    void saveFunctions(Secrole secrole, List newLst, String roleName);
 
-	public void saveFunction(Secobjprivilege secobjprivilege) {
-		secobjprivilegeDao.save(secobjprivilege);
-	}
+    List<Secobjprivilege> getFunctions(String roleName);
 
-	public void saveFunctions(Secrole secrole, List newLst, String roleName) {
-		if(secrole!=null) secroleDao.save(secrole);
-		List existLst = secobjprivilegeDao.getFunctions(roleName);
+    String getFunctionDesc(String function_code);
 
-		ArrayList lstForDelete = new ArrayList();
-		for(int i = 0; i < existLst.size(); i++){
-		  boolean keepIt = false;
-		  Secobjprivilege sur1 = (Secobjprivilege)existLst.get(i);
-		  for(int j = 0; j < newLst.size(); j++){
-			Secobjprivilege sur2 = (Secobjprivilege)newLst.get(j);
-			if(compare(sur1, sur2)){
-			  keepIt = true;
-			  break;
-			}
-		  }
-		  if(!keepIt) lstForDelete.add(sur1);
-		}
-		for( int i = 0; i < lstForDelete.size(); i++){
-		  secobjprivilegeDao.delete((Secobjprivilege)lstForDelete.get(i));
-		}
-
-		secobjprivilegeDao.saveAll(newLst);
-	}
-
-	public boolean compare(Secobjprivilege sur1, Secobjprivilege sur2){
-		boolean isSame = false;
-		if(sur1.getObjectname_code().equals(sur2.getObjectname_code()) &&
-				sur1.getPrivilege_code().equals(sur2.getPrivilege_code()) &&
-				sur1.getRoleusergroup().equals(sur2.getRoleusergroup()))
-			isSame = true;
-		return isSame;
-	}
-
-	public List getFunctions(String roleName) {
-		return secobjprivilegeDao.getFunctions(roleName);
-	}
-
-	public String getFunctionDesc(String function_code ) {
-		return secobjprivilegeDao.getFunctionDesc(function_code);
-	}
-
-	public String getAccessDesc(String accessType_code ) {
-		return secobjprivilegeDao.getAccessDesc(accessType_code);
-	}
-
-	public void setSecobjprivilegeDao(SecobjprivilegeDao secobjprivilegeDao) {
-		this.secobjprivilegeDao = secobjprivilegeDao;
-	}
-
+    String getAccessDesc(String accessType_code);
 }

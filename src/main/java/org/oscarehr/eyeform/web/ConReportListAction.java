@@ -54,8 +54,8 @@ public class ConReportListAction extends DispatchAction {
 
 	Logger logger = MiscUtils.getLogger();
 	
-	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-	DemographicDao demographicDao= (DemographicDao)SpringUtils.getBean("demographicDao");
+	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
+	DemographicDao demographicDao= (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 	EyeformConsultationReportDao crDao = SpringUtils.getBean(EyeformConsultationReportDao.class);
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	

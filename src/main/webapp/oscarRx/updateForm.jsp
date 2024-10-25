@@ -49,7 +49,7 @@
 	}
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 
 <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->

@@ -54,6 +54,7 @@ import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.EncounterTemplate;
 import org.oscarehr.managers.ConsultationManager;
 import org.oscarehr.managers.PreferenceManager;
+import org.oscarehr.managers.PreferenceManagerImpl;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -150,7 +151,7 @@ public class RecordUxService extends AbstractServiceImpl {
 		
 		//PHR
 		if( ProviderMyOscarIdData.idIsSet(loggedInInfo.getLoggedInProviderNo())) {
-			DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean("demographicDao");
+			DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean(DemographicDao.class);
 			Demographic demographic=demographicDao.getDemographic(""+demographicNo);
 			
 			if (demographic.getMyOscarUserName()==null ||demographic.getMyOscarUserName().equals("")) {		/*register link -myoscar (strikethrough) links to create account*/
@@ -271,71 +272,71 @@ public class RecordUxService extends AbstractServiceImpl {
 		
 		if("right".equals(summaryName )){
 			summaryList = new ArrayList<SummaryTo1>();
-			if( (securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.documents", "r", null) || securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.labResult", "r", null) )  && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.INCOMING_POS) ) {
+			if( (securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.documents", "r", null) || securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.labResult", "r", null) )  && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.INCOMING_POS) ) {
 				summaryList.add(new SummaryTo1("Incoming",count++,SummaryTo1.INCOMING_CODE));
 			}
 			
-			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.decisionSupportAlerts", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.DS_SUPPORT_POS)) {
+			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.decisionSupportAlerts", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.DS_SUPPORT_POS)) {
 				summaryList.add(new SummaryTo1("Decision Support",count++,SummaryTo1.DECISIONSUPPORT_CODE)); 
 			}
 		}else if("left".equals(summaryName )){
 			summaryList = new ArrayList<SummaryTo1>();
-			if (securityInfoManager.hasPrivilege(loggedInInfo, "_prevention", "r", null)&& preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.PREVENTION_POS)) {
+			if (securityInfoManager.hasPrivilege(loggedInInfo, "_prevention", "r", null)&& preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.PREVENTION_POS)) {
 				summaryList.add(new SummaryTo1("Preventions",count++,SummaryTo1.PREVENTIONS));
 			}
 			
-			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.prescriptions", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.MEDS_POS)) {
+			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.prescriptions", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.MEDS_POS)) {
 				summaryList.add(new SummaryTo1("Medications",count++,SummaryTo1.MEDICATIONS_CODE));  
 			}
 			
-			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.otherMeds", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.OTHER_MEDS_POS)) {
+			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.otherMeds", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.OTHER_MEDS_POS)) {
 				summaryList.add(new SummaryTo1("Other Meds",count++,SummaryTo1.OTHERMEDS_CODE));
 			}
 			
-			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.ONGOING_POS)){
+			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.ONGOING_POS)){
 				summaryList.add(new SummaryTo1("Ongoing Concerns",count++,SummaryTo1.ONGOINGCONCERNS_CODE));
 			}
 			
-			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.medicalHistory", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.MED_HX_POS)) {
+			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.medicalHistory", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.MED_HX_POS)) {
 				summaryList.add(new SummaryTo1("Medical History",count++,SummaryTo1.MEDICALHISTORY_CODE)); 
 			}
 			
-			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.SOC_HX_POS)){
+			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.SOC_HX_POS)){
 				//summaryList[2] = new SummaryTo1("Social/Family History",2,"socfamhx");
 				summaryList.add(new SummaryTo1("Social History",count++,SummaryTo1.SOCIALHISTORY_CODE));
 			}
 			
-			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.familyHistory", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.FAM_HX_POS)) {
+			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.familyHistory", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.FAM_HX_POS)) {
 				summaryList.add(new SummaryTo1("Family History",count++,SummaryTo1.FAMILYHISTORY_CODE));
 			}
 	
-			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.REMINDERS_POS)){
+			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.REMINDERS_POS)){
 				summaryList.add(new SummaryTo1("Reminders",count++,SummaryTo1.REMINDERS_CODE));
 			}
 			
-			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.RISK_FACTORS_POS)){
+			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.RISK_FACTORS_POS)){
 			summaryList.add(new SummaryTo1("Risk Factors",count++,SummaryTo1.RISK_FACTORS));
 			}
 			
-			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.ALLERGIES_POS)){
+			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.ALLERGIES_POS)){
 			summaryList.add(new SummaryTo1("Allergies",count++,SummaryTo1.ALLERGIES));  
 			}
 			
-			if( (securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.forms", "r", null) || securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.eforms", "r", null)) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.ASSESSMENTS_POS)  ){
+			if( (securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.forms", "r", null) || securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.eforms", "r", null)) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.ASSESSMENTS_POS)  ){
 				summaryList.add(new SummaryTo1("Assessments",count++,SummaryTo1.ASSESSMENTS_CODE));
 			}
 			//summaryList[9] = new SummaryTo1("Outgoing",7,"outgoing");
 		}else if("rxLeft".equals(summaryName )){
 			summaryList = new ArrayList<SummaryTo1>();
 			
-			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.ALLERGIES_POS)){
+			if(preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.ALLERGIES_POS)){
 				summaryList.add(new SummaryTo1("Allergies",count++,SummaryTo1.ALLERGIES));  
 			}
 
 		}else if("rxRight".equals(summaryName )){
 			summaryList = new ArrayList<SummaryTo1>();
 			
-			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.decisionSupportAlerts", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManager.DS_SUPPORT_POS)) {
+			if(securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.decisionSupportAlerts", "r", null) && preferenceManager.displaySummaryItem(loggedInInfo, PreferenceManagerImpl.DS_SUPPORT_POS)) {
 				summaryList.add(new SummaryTo1("Decision Support",count++,SummaryTo1.DECISIONSUPPORT_CODE)); 
 			}
 		}

@@ -51,7 +51,7 @@
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	Provider provider = loggedInInfo.getLoggedInProvider();
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title>Flowsheet Manager</title>
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">

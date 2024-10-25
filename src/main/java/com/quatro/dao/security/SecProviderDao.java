@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2005, 2009 IBM Corporation and others.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -17,6 +18,8 @@
  *
  * Contributors:
  *     <Quatro Group Software Systems inc.>  <OSCAR Team>
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package com.quatro.dao.security;
@@ -29,9 +32,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.oscarehr.util.MiscUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import com.quatro.model.security.SecProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.SessionFactory;
 
 /**
  * 
@@ -39,9 +44,8 @@ import com.quatro.model.security.SecProvider;
  *
  */
 
-public class SecProviderDao extends HibernateDaoSupport {
-	private static final Logger logger = MiscUtils.getLogger();
-	// property constants
+public interface SecProviderDao {
+
 	public static final String LAST_NAME = "lastName";
 	public static final String FIRST_NAME = "firstName";
 	public static final String PROVIDER_TYPE = "providerType";
@@ -59,220 +63,57 @@ public class SecProviderDao extends HibernateDaoSupport {
 	public static final String COMMENTS = "comments";
 	public static final String PROVIDER_ACTIVITY = "providerActivity";
 
-	public void save(SecProvider transientInstance) {
-		logger.debug("saving Provider instance");
-		try {
-			this.getHibernateTemplate().save(transientInstance);
-			logger.debug("save successful");
-		} catch (RuntimeException re) {
-			logger.error("save failed", re);
-			throw re;
-		}
-	}
-	
-	public void saveOrUpdate(SecProvider transientInstance) {
-		logger.debug("saving Provider instance");
-		try {
-			this.getHibernateTemplate().saveOrUpdate(transientInstance);
-			logger.debug("save successful");
-		} catch (RuntimeException re) {
-			logger.error("save failed", re);
-			throw re;
-		}
-	}
-	public void delete(SecProvider persistentInstance) {
-		logger.debug("deleting Provider instance");
-		try {
-			this.getHibernateTemplate().delete(persistentInstance);
-			logger.debug("delete successful");
-		} catch (RuntimeException re) {
-			logger.error("delete failed", re);
-			throw re;
-		}
-	}
+	public void save(SecProvider transientInstance);
 
-	public SecProvider findById(java.lang.String id) {
-		logger.debug("getting Provider instance with id: " + id);
-		try {
-			SecProvider instance = (SecProvider) this.getHibernateTemplate().get(
-					"com.quatro.model.security.SecProvider", id);
-			return instance;
-		} catch (RuntimeException re) {
-			logger.error("get failed", re);
-			throw re;
-		}
-	}
-	public SecProvider findById(java.lang.String id,String status) {
-		logger.debug("getting Provider instance with id: " + id);
-		try {
-			String sql ="from SecProvider where id=? and status=?";
-			List lst=this.getHibernateTemplate().find(sql,new Object[]{id,status});			
-	        if(lst.size()==0)
-	          return null;
-	        else
-	          return (SecProvider) lst.get(0);
-				
-			} catch (RuntimeException re) {
-				logger.error("get failed", re);
-			throw re;
-		}
-	}
+	public void saveOrUpdate(SecProvider transientInstance);
 
-	public List findByExample(SecProviderDao instance) {
-		logger.debug("finding Provider instance by example");
-		Session session = getSession();
-		try {
-			List results = session.createCriteria(
-					"com.quatro.model.security.SecProvider").add(
-					Example.create(instance)).list();
-			logger.debug("find by example successful, result size: "
-					+ results.size());
-			return results;
-		} catch (RuntimeException re) {
-			logger.error("find by example failed", re);
-			throw re;
-		} finally {
-			this.releaseSession(session);
-		}
-	}
+	public void delete(SecProvider persistentInstance);
 
-	public List findByProperty(String propertyName, Object value) {
-		logger.debug("finding Provider instance with property: " + propertyName
-				+ ", value: " + value);
-		Session session = getSession();
-		try {
-			String queryString = "from Provider as model where model."
-					+ propertyName + "= ?";
-			Query queryObject = session.createQuery(queryString);
-			queryObject.setParameter(0, value);
-			return queryObject.list();
-		} catch (RuntimeException re) {
-			logger.error("find by property name failed", re);
-			throw re;
-		} finally {
-			this.releaseSession(session);
-		}
-	}
+	public SecProvider findById(java.lang.String id);
 
-	public List findByLastName(Object lastName) {
-		return findByProperty(LAST_NAME, lastName);
-	}
+	public SecProvider findById(java.lang.String id, String status);
 
-	public List findByFirstName(Object firstName) {
-		return findByProperty(FIRST_NAME, firstName);
-	}
+	public List findByExample(SecProviderDao instance);
 
-	public List findByProviderType(Object providerType) {
-		return findByProperty(PROVIDER_TYPE, providerType);
-	}
+	public List findByProperty(String propertyName, Object value);
 
-	public List findBySpecialty(Object specialty) {
-		return findByProperty(SPECIALTY, specialty);
-	}
+	public List findByLastName(Object lastName);
 
-	public List findByTeam(Object team) {
-		return findByProperty(TEAM, team);
-	}
+	public List findByFirstName(Object firstName);
 
-	public List findBySex(Object sex) {
-		return findByProperty(SEX, sex);
-	}
+	public List findByProviderType(Object providerType);
 
-	public List findByAddress(Object address) {
-		return findByProperty(ADDRESS, address);
-	}
+	public List findBySpecialty(Object specialty);
 
-	public List findByPhone(Object phone) {
-		return findByProperty(PHONE, phone);
-	}
+	public List findByTeam(Object team);
 
-	public List findByWorkPhone(Object workPhone) {
-		return findByProperty(WORK_PHONE, workPhone);
-	}
+	public List findBySex(Object sex);
 
-	public List findByOhipNo(Object ohipNo) {
-		return findByProperty(OHIP_NO, ohipNo);
-	}
+	public List findByAddress(Object address);
 
-	public List findByRmaNo(Object rmaNo) {
-		return findByProperty(RMA_NO, rmaNo);
-	}
+	public List findByPhone(Object phone);
 
-	public List findByBillingNo(Object billingNo) {
-		return findByProperty(BILLING_NO, billingNo);
-	}
+	public List findByWorkPhone(Object workPhone);
 
-	public List findByHsoNo(Object hsoNo) {
-		return findByProperty(HSO_NO, hsoNo);
-	}
+	public List findByOhipNo(Object ohipNo);
 
-	public List findByStatus(Object status) {
-		return findByProperty(STATUS, status);
-	}
+	public List findByRmaNo(Object rmaNo);
 
-	public List findByComments(Object comments) {
-		return findByProperty(COMMENTS, comments);
-	}
+	public List findByBillingNo(Object billingNo);
 
-	public List findByProviderActivity(Object providerActivity) {
-		return findByProperty(PROVIDER_ACTIVITY, providerActivity);
-	}
+	public List findByHsoNo(Object hsoNo);
 
-	public List findAll() {
-		logger.debug("finding all Provider instances");
-		Session session = getSession();
-		try {
-			String queryString = "from Provider";
-			Query queryObject = session.createQuery(queryString);
-			return queryObject.list();
-		} catch (RuntimeException re) {
-			logger.error("find all failed", re);
-			throw re;
-		} finally {
-			this.releaseSession(session);
-		}
-	}
+	public List findByStatus(Object status);
 
-	public SecProviderDao merge(SecProviderDao detachedInstance) {
-		logger.debug("merging Provider instance");
-		Session session = getSession();
-		try {
-			SecProviderDao result = (SecProviderDao) session.merge(detachedInstance);
-			logger.debug("merge successful");
-			return result;
-		} catch (RuntimeException re) {
-			logger.error("merge failed", re);
-			throw re;
-		} finally {
-			this.releaseSession(session);
-		}
-	}
+	public List findByComments(Object comments);
 
-	public void attachDirty(SecProviderDao instance) {
-		logger.debug("attaching dirty Provider instance");
-		Session session = getSession();
-		try {
-			session.saveOrUpdate(instance);
-			logger.debug("attach successful");
-		} catch (RuntimeException re) {
-			logger.error("attach failed", re);
-			throw re;
-		} finally {
-			this.releaseSession(session);
-		}
-	}
+	public List findByProviderActivity(Object providerActivity);
 
-	public void attachClean(SecProviderDao instance) {
-		logger.debug("attaching clean Provider instance");
-		Session session = getSession();
-		try {
-			session.lock(instance, LockMode.NONE);
-			logger.debug("attach successful");
-		} catch (RuntimeException re) {
-			logger.error("attach failed", re);
-			throw re;
-		} finally {
-			this.releaseSession(session);
-		}
-	}
+	public List findAll();
+
+	public SecProviderDao merge(SecProviderDao detachedInstance);
+
+	public void attachDirty(SecProviderDao instance);
+
+	public void attachClean(SecProviderDao instance);
 }

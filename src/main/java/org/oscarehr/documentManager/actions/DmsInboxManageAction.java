@@ -25,25 +25,9 @@
 
 package org.oscarehr.documentManager.actions;
 
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Properties;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.quatro.dao.security.SecObjectNameDao;
+import com.quatro.model.security.Secobjectname;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.impl.cookie.DateUtils;
 import org.apache.logging.log4j.Logger;
@@ -54,11 +38,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.PMmodule.dao.SecUserRoleDao;
 import org.oscarehr.PMmodule.model.SecUserRole;
 import org.oscarehr.PMmodule.utility.UtilDateUtilities;
-import org.oscarehr.common.dao.DocumentDao;
-import org.oscarehr.common.dao.InboxResultsDao;
-import org.oscarehr.common.dao.ProviderInboxRoutingDao;
-import org.oscarehr.common.dao.QueueDao;
-import org.oscarehr.common.dao.QueueDocumentLinkDao;
+import org.oscarehr.common.dao.*;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.ProviderInboxItem;
 import org.oscarehr.common.model.Queue;
@@ -69,27 +49,29 @@ import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.oscarLab.ca.all.Hl7textResultsData;
 import oscar.oscarLab.ca.on.CommonLabResultData;
 import oscar.oscarLab.ca.on.HRMResultsData;
 import oscar.oscarLab.ca.on.LabResultData;
 import oscar.oscarMDS.data.CategoryData;
-import oscar.oscarMDS.data.PatientInfo;
 import oscar.util.OscarRoleObjectPrivilege;
 
-import com.quatro.dao.security.SecObjectNameDao;
-import com.quatro.model.security.Secobjectname;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class DmsInboxManageAction extends DispatchAction {
 	
-	private static Logger logger=MiscUtils.getLogger();
+	private static final Logger logger = MiscUtils.getLogger();
 
 	private ProviderInboxRoutingDao providerInboxRoutingDAO = null;
 	private QueueDocumentLinkDao queueDocumentLinkDAO = null;
 	private SecObjectNameDao secObjectNameDao = null;
-	private SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean("secUserRoleDao");
-	private QueueDao queueDAO = (QueueDao) SpringUtils.getBean("queueDao");
+	private SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean(SecUserRoleDao.class);
+	private QueueDao queueDAO = (QueueDao) SpringUtils.getBean(QueueDao.class);
 
 	public void setProviderInboxRoutingDAO(ProviderInboxRoutingDao providerInboxRoutingDAO) {
 		this.providerInboxRoutingDAO = providerInboxRoutingDAO;
@@ -195,7 +177,7 @@ public class DmsInboxManageAction extends DispatchAction {
 
 		String providerNo = (String) session.getAttribute("user");
 		String searchProviderNo = request.getParameter("searchProviderNo");
-		Boolean searchAll = request.getParameter("searchProviderAll") != null;
+		boolean searchAll = request.getParameter("searchProviderAll") != null;
 		String status = request.getParameter("status");
 		List<String> abnormalStatusValues = Arrays.asList("all", "abnormalOnly", "normalOnly");
 		String abnormalStatus = request.getParameter("abnormalStatus");
@@ -249,21 +231,14 @@ public class DmsInboxManageAction extends DispatchAction {
 			request.setAttribute("patientFirstName", patientFirstName);
 			request.setAttribute("patientLastName", patientLastName);
 			request.setAttribute("patientHealthNumber", patientHealthNumber);
-			request.setAttribute("patients", new ArrayList<PatientInfo>(cData.getPatients().values()));
-			request.setAttribute("unmatchedDocs", cData.getUnmatchedDocs());
-			request.setAttribute("unmatchedLabs", cData.getUnmatchedLabs());
-			request.setAttribute("totalDocs", cData.getTotalDocs());
-			request.setAttribute("totalLabs", cData.getTotalLabs());
-			request.setAttribute("abnormalCount", cData.getAbnormalCount());
-			request.setAttribute("normalCount", cData.getNormalCount());
-			request.setAttribute("totalNumDocs", cData.getTotalNumDocs());
 			request.setAttribute("providerNo", providerNo);
 			request.setAttribute("searchProviderNo", searchProviderNo);
 			request.setAttribute("ackStatus", status);
 			request.setAttribute("abnormalStatus", abnormalStatus);
-			request.setAttribute("categoryHash", cData.getCategoryHash());
 			request.setAttribute("startDate", startDate);
 			request.setAttribute("endDate", endDate);
+			request.setAttribute("categoryData", cData);
+
 			return mapping.findForward("dms_index");
 		} catch (SQLException e) {
 			return mapping.findForward("error");
@@ -376,7 +351,7 @@ public class DmsInboxManageAction extends DispatchAction {
 			docQueue.put(i.toString(), n.toString());
 		}
 
-		InboxResultsDao inboxResultsDao = (InboxResultsDao) SpringUtils.getBean("inboxResultsDao");
+		InboxResultsDao inboxResultsDao = (InboxResultsDao) SpringUtils.getBean(InboxResultsDao.class);
 		String patientFirstName = StringEscapeUtils.escapeSql(request.getParameter("fname"));
 		String patientLastName = StringEscapeUtils.escapeSql(request.getParameter("lname"));
 		String patientHealthNumber = StringEscapeUtils.escapeSql(request.getParameter("hnum"));
@@ -626,7 +601,7 @@ public class DmsInboxManageAction extends DispatchAction {
 			String qn = request.getParameter("newQueueName");
 			qn = qn.trim();
 			if (qn != null && qn.length() > 0) {
-				QueueDao queueDao = (QueueDao) SpringUtils.getBean("queueDao");
+				QueueDao queueDao = (QueueDao) SpringUtils.getBean(QueueDao.class);
 				success = queueDao.addNewQueue(qn);
 				addQueueSecObjectName(qn, queueDao.getLastId());
 			}
@@ -751,7 +726,9 @@ public class DmsInboxManageAction extends DispatchAction {
 			if (roleName.length() != 0) {
 				roleName.append(',');
 			}
-			roleName.append(r.getRoleName());
+			if (r.getRoleName() != null) {
+				roleName.append(r.getRoleName());
+			}
 		}
 		roleName.append("," + searchProviderNo);
 
@@ -760,7 +737,7 @@ public class DmsInboxManageAction extends DispatchAction {
 		HashMap<Integer, List<Integer>> queueDocNos = new HashMap<Integer, List<Integer>>();
 		HashMap<Integer, String> docType = new HashMap<Integer, String>();
 		HashMap<Integer, List<Integer>> patientDocs = new HashMap<Integer, List<Integer>>();
-		DocumentDao documentDao = (DocumentDao) SpringUtils.getBean("documentDao");
+		DocumentDao documentDao = (DocumentDao) SpringUtils.getBean(DocumentDao.class);
 		Demographic demo = new Demographic();
 		List<Integer> docsWithPatient = new ArrayList<Integer>();
 		HashMap<Integer, String> patientIdNames = new HashMap<Integer, String>();// lbData.patientName = demo.getLastName()+ ", "+demo.getFirstName();

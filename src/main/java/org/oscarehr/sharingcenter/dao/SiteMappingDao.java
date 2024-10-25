@@ -27,12 +27,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.sharingcenter.model.SiteMapping;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class SiteMappingDao extends AbstractDao<SiteMapping> {
+public class SiteMappingDao extends AbstractDaoImpl<SiteMapping> {
 
     public SiteMappingDao() {
         super(SiteMapping.class);
@@ -56,7 +56,7 @@ public class SiteMappingDao extends AbstractDao<SiteMapping> {
     public SiteMapping findSiteMapping(int affinityDomain) {
         String sql = "FROM SiteMapping e where e.affinityDomain = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
+        query.setParameter(0, affinityDomain);
 
         query.setMaxResults(1);
         SiteMapping retVal = getSingleResultOrNull(query);
@@ -67,8 +67,8 @@ public class SiteMappingDao extends AbstractDao<SiteMapping> {
         String sql = "FROM SiteMapping e where e.affinityDomain = ? and e.source = ?";
 
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
-        query.setParameter(2, source);
+        query.setParameter(0, affinityDomain);
+        query.setParameter(1, source);
 
         query.setMaxResults(1);
         SiteMapping retVal = getSingleResultOrNull(query);

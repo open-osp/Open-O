@@ -50,7 +50,7 @@ import oscar.oscarRx.data.RxPatientData;
 public final class RxShowAllergyAction extends DispatchAction {
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-	private AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean("allergyDao");
+	private AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean(AllergyDao.class);
 
 
 
@@ -76,7 +76,7 @@ public final class RxShowAllergyAction extends DispatchAction {
         if(rx3!=null&&rx3.equalsIgnoreCase("yes")) {
         	useRx3=true;
         }
-        UserPropertyDAO userPropertyDAO = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO userPropertyDAO = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         String provider = (String) request.getSession().getAttribute("user");
         UserProperty propUseRx3 = userPropertyDAO.getProp(provider, UserProperty.RX_USE_RX3);
         if(propUseRx3!=null && propUseRx3.getValue().equalsIgnoreCase("yes"))

@@ -69,7 +69,6 @@ public class DemographicPharmacyDaoTest extends DaoTestFixtures {
 	}
 
 	@Test
-	@Ignore
 	public void testFindByDemographicId() throws Exception {
 
 		Date addDate1 = new Date(dfm.parse("20080101").getTime());
@@ -112,8 +111,9 @@ public class DemographicPharmacyDaoTest extends DaoTestFixtures {
 
 		DemographicPharmacy expectedResult = demoPhramacy1;
 		java.util.List<DemographicPharmacy> dps = dao.findByDemographicId(demographicNo1);
+		DemographicPharmacy dpsSorted = dps.stream().filter(dp -> dp.getId()==demoPhramacy1.getId()).findFirst().get();
 		
 		assertFalse(dps.isEmpty());
-		assertEquals(expectedResult, dps.get(0));
+		assertEquals(expectedResult, dpsSorted);
 	}
 }

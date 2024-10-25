@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,64 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import org.oscarehr.common.merge.MergedDemographicTemplate;
-import org.springframework.stereotype.Repository;
-
 import oscar.oscarLab.ca.on.LabResultData;
-import oscar.util.ConversionUtils;
 
-@Repository("documentResultsDao")
-public class DocumentResultsMergedDemographicDao extends DocumentResultsDao {
-
-	@Override
-    public ArrayList<LabResultData> populateDocumentResultsDataOfAllProviders(final String providerNo, String demographicNo, final String status) {
-		ArrayList<LabResultData> result = super.populateDocumentResultsDataOfAllProviders(providerNo, demographicNo, status);
-		if (false)
-			return result;
-		
-		MergedDemographicTemplate<LabResultData> template = new MergedDemographicTemplate<LabResultData>() {
-			@Override
-            protected List<LabResultData> findById(Integer demographic_no) {
-	            return DocumentResultsMergedDemographicDao.super.populateDocumentResultsDataOfAllProviders(providerNo, demographic_no.toString(), status);
-            }
-		};
-		return (ArrayList<LabResultData>) template.findMerged(ConversionUtils.fromIntString(demographicNo), result);
-    }
-
-	@Override
-    public ArrayList<LabResultData> populateDocumentResultsDataLinkToProvider(final String providerNo, String demographicNo, final String status) {
-		ArrayList<LabResultData> result = super.populateDocumentResultsDataLinkToProvider(providerNo, demographicNo, status);
-		if (false)
-			return result;
-		
-		MergedDemographicTemplate<LabResultData> template = new MergedDemographicTemplate<LabResultData>() {
-			@Override
-            protected List<LabResultData> findById(Integer demographic_no) {
-	            return DocumentResultsMergedDemographicDao.super.populateDocumentResultsDataLinkToProvider(providerNo, demographic_no.toString(), status);
-            }
-		};
-		return (ArrayList<LabResultData>) template.findMerged(ConversionUtils.fromIntString(demographicNo), result);
-    }
-
-	@Override
-    public ArrayList<LabResultData> populateDocumentResultsData(final String providerNo, String demographicNo, final String status) {
-		ArrayList<LabResultData> result = super.populateDocumentResultsData(providerNo, demographicNo, status);
-		if (false)
-			return result;
-		MergedDemographicTemplate<LabResultData> template = new MergedDemographicTemplate<LabResultData>() {
-			@Override
-            protected List<LabResultData> findById(Integer demographic_no) {
-	            return DocumentResultsMergedDemographicDao.super.populateDocumentResultsData(providerNo, demographic_no.toString(), status);
-            }
-		};
-		return (ArrayList<LabResultData>) template.findMerged(ConversionUtils.fromIntString(demographicNo), result);
-		
-    }
-
+public interface DocumentResultsMergedDemographicDao extends DocumentResultsDao{
+    ArrayList<LabResultData> populateDocumentResultsDataOfAllProviders(String providerNo, String demographicNo, String status);
+    ArrayList<LabResultData> populateDocumentResultsDataLinkToProvider(String providerNo, String demographicNo, String status);
+    ArrayList<LabResultData> populateDocumentResultsData(String providerNo, String demographicNo, String status);
 }

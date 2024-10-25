@@ -41,7 +41,7 @@ public class BasicTag extends TagSupport
 	public CaseManagementManager getCaseManagementManager() {
 		
 		CaseManagementManager bpm = (CaseManagementManager) getAppContext()
-				.getBean("caseManagementManager");
+				.getBean(CaseManagementManager.class);
 		return bpm;
 	}
 }

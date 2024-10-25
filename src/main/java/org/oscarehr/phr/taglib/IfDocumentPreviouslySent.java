@@ -56,7 +56,7 @@ public class IfDocumentPreviouslySent extends TagSupport {
 
     @Override
     public int doStartTag() {
-        PHRService service = (PHRService) SpringUtils.getBean("phrService");
+        PHRService service = (PHRService) SpringUtils.getBean(PHRService.class);
         if (service.isIndivoRegistered(MedicalDataType.BINARY_DOCUMENT.name(), documentOscarId)) {
             if (invertResult) return SKIP_BODY;
             else return EVAL_BODY_INCLUDE;

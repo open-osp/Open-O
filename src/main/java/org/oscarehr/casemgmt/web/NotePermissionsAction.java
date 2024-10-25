@@ -57,12 +57,12 @@ public class NotePermissionsAction extends DispatchAction {
 
 
 	public ActionForward getNoteScope(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
-		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
-		CaseManagementNoteDAO noteDao = (CaseManagementNoteDAO) SpringUtils.getBean("caseManagementNoteDAO");
-		ProgramAccessDAO programAccessDAO = (ProgramAccessDAO) SpringUtils.getBean("programAccessDAO");
-		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean("secroleDao");
-		RoleProgramAccessDAO roleProgramAccessDao = (RoleProgramAccessDAO) SpringUtils.getBean("RoleProgramAccessDAO");
+		ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
+		CaseManagementNoteDAO noteDao = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
+		ProgramAccessDAO programAccessDAO = (ProgramAccessDAO) SpringUtils.getBean(ProgramAccessDAO.class);
+		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean(SecroleDao.class);
+		RoleProgramAccessDAO roleProgramAccessDao = (RoleProgramAccessDAO) SpringUtils.getBean(RoleProgramAccessDAO.class);
 
 		String noteId = request.getParameter("noteId");
 		String programNo, role = "";
@@ -136,9 +136,9 @@ public class NotePermissionsAction extends DispatchAction {
 	}
 
 	public ActionForward setNotePermissions(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		CaseManagementNoteDAO noteDao = (CaseManagementNoteDAO) SpringUtils.getBean("caseManagementNoteDAO");
-		ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
-		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean("secroleDao");
+		CaseManagementNoteDAO noteDao = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
+		ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean(SecroleDao.class);
 
 		String noteId = request.getParameter("noteId");
 		String newProgramNo = request.getParameter("program");
@@ -203,8 +203,8 @@ public class NotePermissionsAction extends DispatchAction {
 		String providerNo=loggedInInfo.getLoggedInProviderNo();
 		String demoNo = request.getParameter("demoNo");
 
-		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
-		ProviderDefaultProgramDao defaultProgramDao = (ProviderDefaultProgramDao) SpringUtils.getBean("providerDefaultProgramDao");
+		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
+		ProviderDefaultProgramDao defaultProgramDao = (ProviderDefaultProgramDao) SpringUtils.getBean(ProviderDefaultProgramDao.class);
 
 		@SuppressWarnings("unchecked")
 		List<ProviderDefaultProgram> programs = defaultProgramDao.getProgramByProviderNo(providerNo);
@@ -294,11 +294,11 @@ public class NotePermissionsAction extends DispatchAction {
 	}
 
 	private boolean canNoteBeModified(String providerNo, String noteId) {
-		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
-		CaseManagementNoteDAO noteDao = (CaseManagementNoteDAO) SpringUtils.getBean("caseManagementNoteDAO");
-		ProgramAccessDAO programAccessDAO = (ProgramAccessDAO) SpringUtils.getBean("programAccessDAO");
-		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean("secroleDao");
-		RoleProgramAccessDAO roleProgramAccessDao = (RoleProgramAccessDAO) SpringUtils.getBean("RoleProgramAccessDAO");
+		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
+		CaseManagementNoteDAO noteDao = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
+		ProgramAccessDAO programAccessDAO = (ProgramAccessDAO) SpringUtils.getBean(ProgramAccessDAO.class);
+		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean(SecroleDao.class);
+		RoleProgramAccessDAO roleProgramAccessDao = (RoleProgramAccessDAO) SpringUtils.getBean(RoleProgramAccessDAO.class);
 
 		// Get the note
 		CaseManagementNote note = noteDao.getNote(Long.parseLong(noteId));
@@ -342,11 +342,11 @@ public class NotePermissionsAction extends DispatchAction {
 	}
 
 	public boolean providerHasAccess(String providerNo, String programNo, String roleId, String demographicNo) {
-		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
-		ProgramAccessDAO programAccessDAO = (ProgramAccessDAO) SpringUtils.getBean("programAccessDAO");
-		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean("secroleDao");
-		RoleProgramAccessDAO roleProgramAccessDao = (RoleProgramAccessDAO) SpringUtils.getBean("RoleProgramAccessDAO");
-		AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
+		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
+		ProgramAccessDAO programAccessDAO = (ProgramAccessDAO) SpringUtils.getBean(ProgramAccessDAO.class);
+		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean(SecroleDao.class);
+		RoleProgramAccessDAO roleProgramAccessDao = (RoleProgramAccessDAO) SpringUtils.getBean(RoleProgramAccessDAO.class);
+		AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
 
 		List<ProgramAccess> programAccessList = programAccessDAO.getAccessListByProgramId(new Long(programNo));
 		Map<String, ProgramAccess> programAccessMap = convertProgramAccessListToMap(programAccessList);
@@ -377,11 +377,11 @@ public class NotePermissionsAction extends DispatchAction {
 	}
 
 	public static HashMap<Program, List<Secrole>> getAllProviderAccessibleRolesForDemo(String providerNo, String demoNo) {
-		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
-		ProgramAccessDAO programAccessDAO = (ProgramAccessDAO) SpringUtils.getBean("programAccessDAO");
-		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean("secroleDao");
-		RoleProgramAccessDAO roleProgramAccessDao = (RoleProgramAccessDAO) SpringUtils.getBean("RoleProgramAccessDAO");
-		AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
+		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
+		ProgramAccessDAO programAccessDAO = (ProgramAccessDAO) SpringUtils.getBean(ProgramAccessDAO.class);
+		SecroleDao secroleDao = (SecroleDao) SpringUtils.getBean(SecroleDao.class);
+		RoleProgramAccessDAO roleProgramAccessDao = (RoleProgramAccessDAO) SpringUtils.getBean(RoleProgramAccessDAO.class);
+		AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
 
 		HashMap<Program, List<Secrole>> visibleRoles = new HashMap<Program, List<Secrole>>();
 

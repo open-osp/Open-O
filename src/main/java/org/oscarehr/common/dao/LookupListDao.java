@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -30,30 +33,9 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.LookupList;
 import org.springframework.stereotype.Repository;
 
+public interface LookupListDao extends AbstractDao<LookupList> {
 
-@Repository
-public class LookupListDao extends AbstractDao<LookupList>{
+	public List<LookupList> findAllActive();
 
-	public LookupListDao() {
-		super(LookupList.class);
-	}
-	
-	public List<LookupList> findAllActive() {
-		Query q = entityManager.createQuery("select l from LookupList l where l.active=? order by l.name asc");
-		q.setParameter(1,true);
-		
-		@SuppressWarnings("unchecked")
-		List<LookupList> result = q.getResultList();
-		
-		return result;
-	}
-	
-	public LookupList findByName(String name) {
-		Query q = entityManager.createQuery("select l from LookupList l where l.name=?");
-		q.setParameter(1,name);
-		
-		LookupList ll = this.getSingleResultOrNull(q);
-		
-		return ll;
-	}
+	public LookupList findByName(String name);
 }

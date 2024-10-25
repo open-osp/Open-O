@@ -31,7 +31,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.BillingPrivateTransactions;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 import oscar.entities.PrivateBillTransaction;
@@ -44,7 +44,7 @@ import oscar.util.ConversionUtils;
  * @author Joel Legris
  */
 @Repository
-public class PrivateBillTransactionsDAO extends AbstractDao<BillingPrivateTransactions> {
+public class PrivateBillTransactionsDAO extends AbstractDaoImpl<BillingPrivateTransactions> {
 
 	public PrivateBillTransactionsDAO() {
 		super(BillingPrivateTransactions.class);

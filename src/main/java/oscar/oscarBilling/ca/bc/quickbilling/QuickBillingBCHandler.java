@@ -113,11 +113,11 @@ public class QuickBillingBCHandler {
 	public QuickBillingBCHandler(){
 		
 		this.today = new Date();
-    	providerDao = (ProviderDataDao) SpringUtils.getBean("providerDataDao");
+    	providerDao = (ProviderDataDao) SpringUtils.getBean(ProviderDataDao.class);
     	oscarProperties = OscarProperties.getInstance();
     	bmanager = new BillingBillingManager();
     	billing = new Billing();
-		billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean("BillingmasterDAO");
+		billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean(BillingmasterDAO.class);
 		billingHistoryDAO = new BillingHistoryDAO();
 		
 	}
@@ -130,11 +130,11 @@ public class QuickBillingBCHandler {
 		this.quickBillingBCFormBean = quickBillingBCFormBean;
 		
 		this.today = new Date();
-    	providerDao = (ProviderDataDao) SpringUtils.getBean("providerDataDao");
+    	providerDao = (ProviderDataDao) SpringUtils.getBean(ProviderDataDao.class);
     	oscarProperties = OscarProperties.getInstance();
     	bmanager = new BillingBillingManager();
     	billing = new Billing();
-		billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean("BillingmasterDAO");
+		billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean(BillingmasterDAO.class);
 		billingHistoryDAO = new BillingHistoryDAO();
 		
 	}

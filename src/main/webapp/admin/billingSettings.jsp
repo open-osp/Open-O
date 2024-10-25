@@ -137,7 +137,7 @@
     pageContext.setAttribute("clinicData", new ClinicData());
 %>
 
-<html:html locale="true">
+<html:html lang="en">
     <head>
         <title>Billing Settings</title>
         <script src="<%=request.getContextPath()%>/csrfguard" type="text/javascript"></script>
@@ -198,10 +198,16 @@
                                 // Get the visittype property
                                 defaultServiceLocation = OscarProperties.getInstance().getProperty("visittype");
                             }
+
+                            // this captures and modifies any legacy codes that may be still hanging around
+                            if(defaultServiceLocation.contains("|")) {
+                                defaultServiceLocation = defaultServiceLocation.split("\\|")[0].trim();
+                            }
+
                             for(BillingFormData.BillingVisit billingVisit : billingVisits) {
                         %>
-                        <option value="<%=Encode.forHtmlAttribute(billingVisit.getDisplayName())%>" <%= billingVisit.getDisplayName().equals(defaultServiceLocation) ? "selected" : ""%>>
-                            <%=Encode.forHtmlContent(billingVisit.getDisplayName())%>
+                        <option value="<%=Encode.forHtmlAttribute(billingVisit.getVisitType())%>" <%= billingVisit.getVisitType().equalsIgnoreCase(defaultServiceLocation) ? "selected" : ""%>>
+                            <%=Encode.forHtmlContent(billingVisit.getDescription())%>
                         </option>
                         <%  } %>a
                     </select>
@@ -230,7 +236,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Set clinic information to display on invoice:</td>
+                    <td>Set clinic information to display on all private invoices:</td>
                     <td>
                         <label for="invoice_use_custom_clinic_info" class="checkbox">
                         <input type="checkbox" id="invoice_use_custom_clinic_info" name="invoice_use_custom_clinic_info" onclick="setClinicInfo()" ${ "on" eq dataBean["invoice_use_custom_clinic_info"] ? "checked" : ""} />
@@ -244,7 +250,6 @@
             </oscar:oscarPropertiesCheck>
             </tbody>
         </table>
-        <input type="hidden" name="dennis_the_menace" value="test_rouge_value" />
         <input type="button" onclick="document.forms['billingSettingsForm'].dboperation.value='Save'; document.forms['billingSettingsForm'].submit();" name="saveBillingSettings" value="Save"/>
        ${ success ? "<span style=\'color:green;\'>Settings Saved</span>" : "<span style=\'color:red;\'></span>" }
     </form>

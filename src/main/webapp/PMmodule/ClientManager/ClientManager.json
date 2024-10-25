@@ -15,8 +15,8 @@
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	String providerNo=loggedInInfo.getLoggedInProviderNo();
 	AdmissionDao admissionDao = SpringUtils.getBean(AdmissionDao.class);
-	ProgramProviderDAO programProviderDao = (ProgramProviderDAO)SpringUtils.getBean("programProviderDAO");
-	ClientReferralDAO referralDao = (ClientReferralDAO)SpringUtils.getBean("clientReferralDAO");
+	ProgramProviderDAO programProviderDao = (ProgramProviderDAO)SpringUtils.getBean(ProgramProviderDAO.class);
+	ClientReferralDAO referralDao = (ClientReferralDAO)SpringUtils.getBean(ClientReferralDAO.class);
 	
 	
 	boolean success = false;

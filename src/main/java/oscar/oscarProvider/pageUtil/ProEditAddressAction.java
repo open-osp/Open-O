@@ -38,7 +38,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class ProEditAddressAction extends Action {
 
-	private UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+	private UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
             throws Exception

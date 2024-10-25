@@ -58,9 +58,9 @@
 <%
 String id = request.getParameter("id");
 LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
-ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
+ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
+DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 
 Integer drugId = Integer.parseInt(id);
 

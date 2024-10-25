@@ -36,7 +36,7 @@ if( !ProviderMyOscarIdData.idIsSet(provNo)) {
 	return;
 }
 
-DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean("demographicDao");
+DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean(DemographicDao.class);
 Demographic demographic=demographicDao.getDemographic(demographicNo);
 String winName = "viewPatientPHR" + demographicNo;
 String winName2 = "SendMyoscarMsg" + demographicNo;

@@ -46,7 +46,7 @@ import oscar.util.DateUtils;
 
 public final class AllergyHelperBean {
 	private static Logger logger = MiscUtils.getLogger();
-	private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean("partialDateDao");
+	private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean(PartialDateDao.class);
 
 	public static List<AllergyDisplay> getAllergiesToDisplay(LoggedInInfo loggedInInfo, Integer demographicId, Locale locale)  {
 		ArrayList<AllergyDisplay> results = new ArrayList<AllergyDisplay>();

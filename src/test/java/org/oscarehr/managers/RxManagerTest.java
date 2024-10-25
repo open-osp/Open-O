@@ -29,6 +29,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.DrugDao;
+import org.oscarehr.common.dao.DrugDaoImpl;
 import org.oscarehr.common.exception.AccessDeniedException;
 import org.oscarehr.common.model.AbstractModel;
 import org.oscarehr.common.model.Drug;
@@ -43,7 +44,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.*;
 
-public class RxManagerTest extends RxManager {
+public class RxManagerTest extends RxManagerImpl {
 
     //Helper variables for testing.
 
@@ -660,7 +661,7 @@ public class RxManagerTest extends RxManager {
     // Uses to mock objects to get around dependancy injection
     // allows for more control over exactly what is tested.
 
-    public class MockPrescriptionManager extends PrescriptionManager{
+    public class MockPrescriptionManager extends PrescriptionManagerImpl{
 
         public MockPrescriptionManager(){
             super();
@@ -676,14 +677,12 @@ public class RxManagerTest extends RxManager {
     }
 
 
-    public class MockDrugDao extends DrugDao {
+    public class MockDrugDao extends DrugDaoImpl {
 
         List<Drug> drugs;
 
         public MockDrugDao() {
-
             Drug d;
-
             drugs = new ArrayList<Drug>();
 
             d = new Drug();
@@ -797,7 +796,21 @@ public class RxManagerTest extends RxManager {
 
             return null;
         }
+        /**
+         * Mock find() method that searches that test data
+         * for a drug with appropriate ID.
+         *
+         * @param i
+         *
+         * @return
+         */
+        public Drug find(int i) {
+            for (Drug d : this.drugs) {
+                if (i == d.getId()) return d;
+            }
 
+            return null;
+        }
         /**
          * Override method for testing purposes.
          */

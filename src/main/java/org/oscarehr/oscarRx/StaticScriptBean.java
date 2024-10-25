@@ -53,7 +53,7 @@ import oscar.util.DateUtils;
 
 public class StaticScriptBean {
 	private static final Logger logger = MiscUtils.getLogger();
-	private static DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
+	private static DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
 
 	public static class DrugDisplayData {
 		public static final Comparator<DrugDisplayData> DATE_COMPARATOR = new Comparator<DrugDisplayData>()

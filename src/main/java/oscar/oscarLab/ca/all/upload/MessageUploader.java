@@ -69,8 +69,8 @@ public final class MessageUploader {
 	private static PatientLabRoutingDao patientLabRoutingDao = SpringUtils.getBean(PatientLabRoutingDao.class);
 	private static ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
 	private static RecycleBinDao recycleBinDao = SpringUtils.getBean(RecycleBinDao.class);
-	private static Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean("hl7TextInfoDao");
-	private static Hl7TextMessageDao hl7TextMessageDao = (Hl7TextMessageDao) SpringUtils.getBean("hl7TextMessageDao");
+	private static Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);
+	private static Hl7TextMessageDao hl7TextMessageDao = (Hl7TextMessageDao) SpringUtils.getBean(Hl7TextMessageDao.class);
 	private static MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
 	private static MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
 	private static FileUploadCheckDao fileUploadCheckDao = SpringUtils.getBean(FileUploadCheckDao.class);
@@ -269,7 +269,7 @@ public final class MessageUploader {
 		} 
 		
 		if(type.equals("OLIS_HL7") && demProviderNo.equals("0")) {
-			OLISSystemPreferencesDao olisPrefDao = (OLISSystemPreferencesDao)SpringUtils.getBean("OLISSystemPreferencesDao");
+			OLISSystemPreferencesDao olisPrefDao = (OLISSystemPreferencesDao)SpringUtils.getBean(OLISSystemPreferencesDao.class);;
 		    OLISSystemPreferences olisPreferences =  olisPrefDao.getPreferences();
 
 		    try (Connection connection = DbConnectionFilter.getThreadLocalDbConnection()) {
@@ -318,7 +318,7 @@ public final class MessageUploader {
 	 */ 
 	private static ArrayList<String> findProvidersForSpireLab(List<String> docNames) {
 		List<String> docNums = new ArrayList<String>();
-		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 		
 		for (int i=0; i < docNames.size(); i++) {
 			String[] firstLastName = docNames.get(i).split("\\s");
@@ -657,7 +657,7 @@ public final class MessageUploader {
 
 			
 			try {
-	
+				if (hin.equalsIgnoreCase("UNKNOWN")) { hin = ""; }
 				if (hin != null) {
 					hinMod = new String(hin);
 					if (hinMod.length() == 12) {
@@ -665,7 +665,7 @@ public final class MessageUploader {
 					}
 				}
 	
-				if (dob != null && !dob.equals("")) {
+				if (dob != null && !dob.equals("") && !dob.equalsIgnoreCase("UNKNOWN")) {
 					String[] dobArray = dob.trim().split("-");
 					dobYear = dobArray[0];
 					dobMonth = dobArray[1];

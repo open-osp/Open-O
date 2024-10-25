@@ -46,7 +46,7 @@ public class RxHideCppAction extends DispatchAction {
 
 	private static final Logger logger = MiscUtils.getLogger();
 
-	private DrugDao drugDao = (DrugDao)SpringUtils.getBean("drugDao");
+	private DrugDao drugDao = (DrugDao)SpringUtils.getBean(DrugDao.class);
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	
     public ActionForward update(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

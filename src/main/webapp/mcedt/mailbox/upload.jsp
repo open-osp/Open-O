@@ -39,7 +39,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Upload</title>
-<script src="../../js/jquery-1.7.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery-1.7.1.min.js" type="application/javascript"></script>
 <script type="text/javascript" >
 $(window).load(function(){
 	$('input[type="checkbox"]').click(function () {
@@ -153,6 +153,7 @@ function add(control) {
 			<td><select class="fileTypes">
 					<option value="CL" <%= (file.getName().startsWith("H")? "selected":"") %> >Claims</option>
 					<option value="OB" <%= (file.getName().startsWith("OBEC")?"selected":"") %> >OBEC</option>
+					<option value="SDC">Stale Dated Claim</option>
 				</select> </td>
 			<td><%=new java.util.Date(file.lastModified()) %></td>		
 		</tr><% }	     

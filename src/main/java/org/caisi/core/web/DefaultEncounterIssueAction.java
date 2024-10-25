@@ -103,7 +103,7 @@ public class DefaultEncounterIssueAction extends DispatchAction {
 		if (issueNames == null || issueNames.length() == 0) {
 			return mapping.findForward("list");
 		}
-		IssueDAO issueDao = (IssueDAO) SpringUtils.getBean("IssueDAO");
+		IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
 		if (issueDao == null) {
 			return mapping.findForward("list");
 		}
@@ -174,7 +174,7 @@ public class DefaultEncounterIssueAction extends DispatchAction {
 		if (issueNames == null || issueNames.length() == 0) {
 			return mapping.findForward("list");
 		}
-		IssueDAO issueDao = (IssueDAO) SpringUtils.getBean("IssueDAO");
+		IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
 		if (issueDao == null) {
 			return mapping.findForward("list");
 		}

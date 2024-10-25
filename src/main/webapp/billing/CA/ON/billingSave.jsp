@@ -36,8 +36,8 @@ session.setAttribute("content", "");
 <%
 	BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
 	BillingDetailDao billingDetailDao = SpringUtils.getBean(BillingDetailDao.class);
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
+	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 %>
 <html>
 <head>

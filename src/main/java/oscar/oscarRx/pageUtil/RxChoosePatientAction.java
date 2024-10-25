@@ -98,7 +98,7 @@ public final class RxChoosePatientAction extends Action {
 
 		String provider = (String) request.getSession().getAttribute("user");
 		WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-		userPropertyDAO = (UserPropertyDAO) ctx.getBean("UserPropertyDAO");
+		userPropertyDAO = (UserPropertyDAO) ctx.getBean(UserPropertyDAO.class);
 		boolean providerUseRx3 = false;
 		UserProperty propUseRx3 = userPropertyDAO.getProp(provider, UserProperty.RX_USE_RX3);
 		

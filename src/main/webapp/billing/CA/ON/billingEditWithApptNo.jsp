@@ -61,7 +61,7 @@
     	provider_no = apptProvider_no;
     }
 	
-	ProviderPreferenceDao preferenceDao = (ProviderPreferenceDao) SpringUtils.getBean("providerPreferenceDao");	
+	ProviderPreferenceDao preferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
 	ProviderPreference preference = null;	
 	preference=preferenceDao.find(provider_no);
 	

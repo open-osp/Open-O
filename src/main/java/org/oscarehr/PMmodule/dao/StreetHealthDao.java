@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,15 +20,11 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.PMmodule.dao;
 
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-
-public class StreetHealthDao extends HibernateDaoSupport {
-	//empty
-	
-
-	
+public interface StreetHealthDao {
+    
 }

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,30 +21,14 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.Favorites;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class FavoritesDao extends AbstractDao<Favorites>{
-
-	public FavoritesDao() {
-		super(Favorites.class);	
-	}
-	
-	public List<Favorites> findByProviderNo(String providerNo) {
-		Query query = entityManager.createQuery("select x from Favorites x where x.providerNo=?");
-		query.setParameter(1, providerNo);
-		
-		@SuppressWarnings("unchecked")
-		List<Favorites> results = query.getResultList();
-		
-		return results;
-	}
+public interface FavoritesDao extends AbstractDao<Favorites> {
+    List<Favorites> findByProviderNo(String providerNo);
 }

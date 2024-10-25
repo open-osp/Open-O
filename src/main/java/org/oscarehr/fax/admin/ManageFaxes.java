@@ -57,6 +57,7 @@ import org.oscarehr.common.model.FaxConfig;
 import org.oscarehr.common.model.FaxJob;
 import org.oscarehr.fax.action.FaxAction;
 import org.oscarehr.managers.FaxManager;
+import org.oscarehr.managers.FaxManagerImpl;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;

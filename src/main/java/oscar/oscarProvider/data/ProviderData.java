@@ -664,7 +664,7 @@ public class ProviderData {
 
 	public String getDefaultBillingView(String providerNo) {
 
-		ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean("providerPreferenceDao");
+		ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
 		ProviderPreference providerPreference = providerPreferenceDao.find(providerNo);
 
 		if (providerPreference != null) return (providerPreference.getDefaultServiceType());

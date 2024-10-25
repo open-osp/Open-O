@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,8 +21,9 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.billing.CA.dao;
 
@@ -33,32 +35,9 @@ import org.oscarehr.billing.CA.model.BillingInr;
 import org.oscarehr.common.dao.AbstractDao;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class BillingInrDao extends AbstractDao<BillingInr>{
+public interface BillingInrDao extends AbstractDao<BillingInr> {
 
-	public BillingInrDao() {
-		super(BillingInr.class);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<Object[]> search_inrbilling_dt_billno(Integer billingInrNo) {
-		String sql = "from BillingInr b, Demographic d where d.DemographicNo=b.demographicNo and b.id=? and b.status<>'D'";
-		Query q = entityManager.createQuery(sql);
-		q.setParameter(1, billingInrNo);
-		
-		List<Object[]> results = q.getResultList();
-		
-		return results;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<BillingInr> findCurrentByProviderNo(String providerNo) {
-		String sql = "select b from BillingInr b where b.providerNo like ? and b.status<>'D'";
-		Query q = entityManager.createQuery(sql);
-		q.setParameter(1, providerNo);
-		
-		List<BillingInr> results = q.getResultList();
-		
-		return results;
-	}
+	public List<Object[]> search_inrbilling_dt_billno(Integer billingInrNo);
+
+	public List<BillingInr> findCurrentByProviderNo(String providerNo);
 }

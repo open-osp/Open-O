@@ -45,9 +45,9 @@ public class GroupNoteAction {
 
 	private static Logger logger = MiscUtils.getLogger();
 	
-    private static AdmissionManager admissionManager = (AdmissionManager) SpringUtils.getBean("admissionManager");
-	private static GroupNoteDao groupNoteDao = (GroupNoteDao)SpringUtils.getBean("groupNoteDao");
-	private static DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+    private static AdmissionManager admissionManager = (AdmissionManager) SpringUtils.getBean(AdmissionManager.class);
+	private static GroupNoteDao groupNoteDao = (GroupNoteDao)SpringUtils.getBean(GroupNoteDao.class);
+	private static DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 	
 	public static int saveGroupNote(LoggedInInfo loggedInInfo, CaseManagementEntryFormBean cform, String programId) {
 		logger.info("saving group note");

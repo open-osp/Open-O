@@ -49,7 +49,7 @@ if(!authed) {
 <%@page import="org.oscarehr.util.SpringUtils" %>
 
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title>Migration Tool</title>
 

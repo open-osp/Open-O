@@ -12,12 +12,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.olis.model.OLISRequestNomenclature;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class OLISRequestNomenclatureDao extends AbstractDao<OLISRequestNomenclature>{
+public class OLISRequestNomenclatureDao extends AbstractDaoImpl<OLISRequestNomenclature>{
 
 	
 	public OLISRequestNomenclatureDao() {
@@ -27,7 +27,7 @@ public class OLISRequestNomenclatureDao extends AbstractDao<OLISRequestNomenclat
 	public OLISRequestNomenclature findByNameId(String id) {
 		String sql = "select x from "+ this.modelClass.getName() + " x where x.nameId=?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, id);		
+		query.setParameter(0, id);		
 		return this.getSingleResultOrNull(query);
 	}
 	

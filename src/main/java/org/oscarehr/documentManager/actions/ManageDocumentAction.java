@@ -359,7 +359,7 @@ public class ManageDocumentAction extends DispatchAction {
 		String user_no = (String) se.getAttribute("user");
 		String prog_no = new EctProgram(se).getProgram(user_no);
 		WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(se.getServletContext());
-		CaseManagementManager cmm = (CaseManagementManager) ctx.getBean("caseManagementManager");
+		CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
 		cmn.setProviderNo("-1");// set the provider no to be -1 so the editor appear as 'System'.
 		Provider provider = EDocUtil.getProvider(user_no);
 		String provFirstName = "";
@@ -376,7 +376,7 @@ public class ManageDocumentAction extends DispatchAction {
 		cmn.setSigning_provider_no("-1");
 		cmn.setProgram_no(prog_no);
 		
-		SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean("secRoleDao");
+		SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean(SecRoleDao.class);
 		SecRole doctorRole = secRoleDao.findByName("doctor");		
 		cmn.setReporter_caisi_role(doctorRole.getId().toString());
 		

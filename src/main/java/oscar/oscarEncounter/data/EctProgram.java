@@ -80,7 +80,7 @@ public class EctProgram {
 
     public InfirmBedProgramManager getInfirmBedProgramManager() {
 		InfirmBedProgramManager bpm = (InfirmBedProgramManager) getAppContext()
-				.getBean("infirmBedProgramManager");
+				.getBean(InfirmBedProgramManager.class);
 		return bpm;
     }
     

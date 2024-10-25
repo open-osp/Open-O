@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,38 +20,14 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
 
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.HnrDataValidation;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class HnrDataValidationDao extends AbstractDao<HnrDataValidation> {
-
-	public HnrDataValidationDao() {
-		super(HnrDataValidation.class);
-	}
-
-	/**
-	 * @param facilityId can not be null
-	 * @param clientId can not be null
-	 * @param type can not be null
-	 */
-	public HnrDataValidation findMostCurrentByFacilityIdClientIdType(Integer facilityId, Integer clientId, HnrDataValidation.Type type) {
-		// build sql string
-		String sqlCommand="select * from HnrDataValidation where facilityId=?1 and clientId=?2 and validationType=?3 order by created desc";
-
-		// set parameters
-		Query query = entityManager.createNativeQuery(sqlCommand, modelClass);
-		query.setParameter(1, facilityId);
-		query.setParameter(2, clientId);
-		query.setParameter(3, type.name());
-		
-		// run query
-		return (getSingleResultOrNull(query));
-	}
+public interface HnrDataValidationDao extends AbstractDao<HnrDataValidation> {
+    HnrDataValidation findMostCurrentByFacilityIdClientIdType(Integer facilityId, Integer clientId, HnrDataValidation.Type type);
 }

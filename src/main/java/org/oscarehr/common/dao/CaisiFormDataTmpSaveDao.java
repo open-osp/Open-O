@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,31 +21,14 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
-
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.CaisiFormDataTmpSave;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class CaisiFormDataTmpSaveDao extends AbstractDao<CaisiFormDataTmpSave>{
-
-	public CaisiFormDataTmpSaveDao() {
-		super(CaisiFormDataTmpSave.class);
-	}
-	
-	 public List<CaisiFormDataTmpSave> getTmpFormData(Long tmpInstanceId) {
-    	Query query = entityManager.createQuery("select f from CaisiFormDataTmpSave f where f.tmpInstanceId = ?");
-		query.setParameter(1, tmpInstanceId);
-		
-		@SuppressWarnings("unchecked")
-        List<CaisiFormDataTmpSave> result = query.getResultList();
-		
-        return result;
-    }
+public interface CaisiFormDataTmpSaveDao extends AbstractDao<CaisiFormDataTmpSave> {
+    List<CaisiFormDataTmpSave> getTmpFormData(Long tmpInstanceId);
 }

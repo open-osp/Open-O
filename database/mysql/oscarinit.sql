@@ -543,7 +543,7 @@ CREATE TABLE IF NOT EXISTS demographic (
   phone varchar(20),
   phone2 varchar(20),
   email varchar(100),
-  myOscarUserName varchar(1) unique,
+  myOscarUserName varchar(1),
   year_of_birth varchar(4),
   month_of_birth varchar(2),
   date_of_birth varchar(2),
@@ -906,6 +906,8 @@ CREATE TABLE IF NOT EXISTS eform (
   roleType varchar(50) default NULL,
   programNo int(10) DEFAULT NULL,
   restrictToProgram tinyint(1) NOT NULL DEFAULT '0',
+  `stable` tinyint(1) NOT NULL DEFAULT 1,
+  `errorLog` tinyblob NULL,
   PRIMARY KEY  (fid),
   UNIQUE KEY id (fid)
 ) ;
@@ -7822,6 +7824,7 @@ CREATE TABLE IF NOT EXISTS `waitingList` (
 -- Table structure for table `pharmacyInfo`
 --
 CREATE TABLE IF NOT EXISTS pharmacyInfo (
+    `uid` int(10) NOT NULL,
   `recordID` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `address` varchar(255),
@@ -8165,7 +8168,7 @@ CREATE TABLE IF NOT EXISTS hl7TextInfo(
 	discipline varchar(100),
 	last_name varchar(30),
 	first_name varchar(30),
-	report_status varchar(10) NOT NULL,
+	report_status varchar(20) NOT NULL,
 	accessionNum varchar(255),
 	filler_order_num varchar(50),
 	sending_facility varchar(50),
@@ -9002,7 +9005,7 @@ CREATE TABLE IF NOT EXISTS demographicArchive (
   phone varchar(20),
   phone2 varchar(20),
   email varchar(100),
-  myOscarUserName varchar(255),
+  myOscarUserName varchar(1),
   year_of_birth varchar(4),
   month_of_birth char(2),
   date_of_birth char(2),
@@ -9489,7 +9492,9 @@ CREATE TABLE IF NOT EXISTS `HRMDocumentToDemographic` (
   `demographicNo` varchar(20) ,
   `hrmDocumentId` varchar(20) ,
   `timeAssigned` datetime ,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX idx_hrmDocumentId_hd (`hrmDocumentId`),
+  INDEX idx_demographicNo_hd (`demographicNo`)
 ) ;
 
 CREATE TABLE IF NOT EXISTS `HRMDocumentToProvider` (
@@ -9500,7 +9505,9 @@ CREATE TABLE IF NOT EXISTS `HRMDocumentToProvider` (
   `signedOffTimestamp` datetime ,
   `viewed` int(11),
   `filed` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX idx_hrmDocumentId_hp (`hrmDocumentId`),
+  INDEX idx_signedOff_providerNo_hp (`signedOff`, `providerNo`)
 ) ;
 
 CREATE TABLE IF NOT EXISTS `HrmLog` (
@@ -12371,7 +12378,8 @@ CREATE TABLE IF NOT EXISTS `Consent` (
   `optout_date` datetime,
   `edit_date` datetime,
   `deleted` tinyint(1),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `Consent_demographic_no_IDX` (`demographic_no`)
 );
 
 CREATE TABLE IF NOT EXISTS `consentType` (
@@ -13126,3 +13134,65 @@ CREATE TABLE IF NOT EXISTS billing_preferences (
   defaultPayeeNo varchar(11) NOT NULL default '0',
   PRIMARY KEY  (id)
 ) ;
+
+--
+-- Table structure for table `erefer_attachment` and `erefer_attachment_data`
+--
+-- Stores Ocean eRefer attachment data
+CREATE TABLE IF NOT EXISTS erefer_attachment (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    demographic_no INT,
+    created DATETIME,
+    archived BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS erefer_attachment_data (
+    erefer_attachment_id INT,
+    lab_id INT,
+    lab_type VARCHAR(20),
+    PRIMARY KEY(erefer_attachment_id, lab_id, lab_type)
+);
+
+
+-- Stores EmailLog and EmailConfig data
+CREATE TABLE IF NOT EXISTS emailConfig (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    emailType VARCHAR(20),
+    emailProvider VARCHAR(20),
+    active BOOLEAN DEFAULT FALSE,  -- Set default to false
+    senderFirstName VARCHAR(50),
+    senderLastName VARCHAR(50),
+    senderEmail VARCHAR(255),
+    configDetails VARCHAR(1000)
+);
+CREATE TABLE IF NOT EXISTS emailLog (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    configId BIGINT,
+    fromEmail VARCHAR(255),
+    toEmail VARCHAR(255),
+    subject VARCHAR(1024),
+    body BLOB,
+    status VARCHAR(20),
+    errorMessage VARCHAR(1000),
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    encryptedMessage BLOB,
+    password VARCHAR(50),
+    passwordClue VARCHAR(1024),
+    isEncrypted BOOLEAN DEFAULT FALSE,  -- Set default to false
+    isAttachmentEncrypted BOOLEAN DEFAULT FALSE,  -- Set default to false
+    chartDisplayOption VARCHAR(20),
+    transactionType VARCHAR(20),
+    demographicNo INT,
+    providerNo varchar(6),
+    additionalParams VARCHAR(1000),
+    FOREIGN KEY (configId) REFERENCES emailConfig (id)
+);
+CREATE TABLE IF NOT EXISTS emailAttachment (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    logId BIGINT,
+    fileName VARCHAR(100),
+    filePath VARCHAR(500),
+    documentType VARCHAR(20),
+    documentId INT,
+    FOREIGN KEY (logId) REFERENCES emailLog (id)
+);

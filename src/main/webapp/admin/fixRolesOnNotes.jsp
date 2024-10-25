@@ -32,7 +32,6 @@
 <%@page import="java.sql.*" %>
 <%@page import="java.util.*" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.hibernate.type.NullableType" %>
 <%@page import="org.oscarehr.util.DbConnectionFilter" %>
 <%@page import="org.oscarehr.util.MiscUtils" %>
 <%@page import="org.oscarehr.util.LoggedInInfo" %>

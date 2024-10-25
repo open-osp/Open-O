@@ -36,7 +36,7 @@ import javax.persistence.TemporalType;
 public class DHIRSubmissionLog extends AbstractModel<Integer> {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 
 	private Integer demographicNo;

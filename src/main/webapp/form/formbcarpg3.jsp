@@ -55,7 +55,7 @@
   boolean bView = false;
   if (request.getParameter("view") != null && request.getParameter("view").equals("1")) bView = true; 
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
     <title>Antenatal Record 2</title>
     <html:base/>

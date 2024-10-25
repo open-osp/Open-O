@@ -26,21 +26,20 @@
 package oscar.oscarEncounter.pageUtil;
 
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Date;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.struts.util.MessageResources;
 import org.oscarehr.common.model.Tickler;
 import org.oscarehr.managers.TicklerManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.util.DateUtils;
 import oscar.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.List;
 
 public class EctDisplayTicklerAction extends EctDisplayAction {
     private static final String cmd = "tickler";
@@ -114,7 +113,7 @@ public class EctDisplayTicklerAction extends EctDisplayAction {
         if( org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable() ) {
         	url = "popupPage(500,900,'" + hash + "','" + request.getContextPath() + "/Tickler.do?method=view&id="+t.getId()+"'); return false;";
         } else {
-        	url = "popupPage(500,900,'" + hash + "','" + request.getContextPath() + "/tickler/ticklerMain.jsp?demoview=" + bean.demographicNo + "&parentAjaxId=" + cmd + "'); return false;";
+	        url = "popupPage(500,900,'" + hash + "','" + request.getContextPath() + "/tickler/ticklerEdit.jsp?tickler_no=" + t.getId() + "&parentAjaxId=" + cmd + "'); return false;";
         }
         item.setURL(url);
         Dao.addItem(item);

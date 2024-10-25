@@ -27,7 +27,7 @@
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils,org.oscarehr.util.OntarioMD,java.util.Hashtable"%><%@page import="org.springframework.web.context.WebApplicationContext,org.oscarehr.common.dao.*,org.oscarehr.common.model.*"%><%
 
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    UserPropertyDAO userPropertyDAO = (UserPropertyDAO) ctx.getBean("UserPropertyDAO");
+    UserPropertyDAO userPropertyDAO = (UserPropertyDAO) ctx.getBean(UserPropertyDAO.class);
     
     UserProperty username = userPropertyDAO.getProp((String) session.getAttribute("user"),  UserProperty.ONTARIO_MD_USERNAME);
     UserProperty password = userPropertyDAO.getProp((String) session.getAttribute("user"),  UserProperty.ONTARIO_MD_PASSWORD);

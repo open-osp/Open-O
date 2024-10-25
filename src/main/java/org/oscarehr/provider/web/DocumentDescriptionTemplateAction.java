@@ -123,7 +123,7 @@ public class DocumentDescriptionTemplateAction extends DispatchAction {
     }
     public ActionForward saveDocumentDescriptionTemplatePreference(ActionMapping actionmapping, ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
 
-        UserPropertyDAO userPropertyDAO = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO userPropertyDAO = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         String DocumentDescriptionShorcut = request.getParameter("defaultShortcut");
         if (DocumentDescriptionShorcut == null || !DocumentDescriptionShorcut.equals(UserProperty.USER)) {
             DocumentDescriptionShorcut = UserProperty.CLINIC;

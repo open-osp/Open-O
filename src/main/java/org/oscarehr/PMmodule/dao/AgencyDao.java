@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,8 +20,9 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.PMmodule.dao;
 
 import java.util.List;
@@ -28,35 +30,12 @@ import java.util.List;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.Agency;
 import org.oscarehr.util.MiscUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-public class AgencyDao extends HibernateDaoSupport {
+public interface AgencyDao{
 
-    private Logger log=MiscUtils.getLogger();
+    public Agency getLocalAgency();
 
-    public Agency getLocalAgency() {
-        Agency agency = null;
-
-        List results = getHibernateTemplate().find("from Agency a");
-
-        if (!results.isEmpty()) {
-            agency = (Agency)results.get(0);
-        }
-
-        return agency;
-    }
-
-    public void saveAgency(Agency agency) {
-        if (agency == null) {
-            throw new IllegalArgumentException();
-        }
-
-        getHibernateTemplate().saveOrUpdate(agency);
-
-        if (log.isDebugEnabled()) {
-            log.debug("saveAgency : id = " + agency.getId());
-        }
-
-    }
+    public void saveAgency(Agency agency);
 
 }

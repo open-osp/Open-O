@@ -59,7 +59,7 @@ if(!authed) {
 <%
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 	DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);
-	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean("clinicLocationDao");
+	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean(ClinicLocationDao.class);
 	BillingDetailDao billingDetailDao = SpringUtils.getBean(BillingDetailDao.class);
 	BillingmasterDAO billingMasterDao = SpringUtils.getBean(BillingmasterDAO.class);
 	TeleplanC12Dao teleplanC12Dao = SpringUtils.getBean(TeleplanC12Dao.class);

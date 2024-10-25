@@ -27,11 +27,13 @@ package org.oscarehr.integration.fhir.interfaces;
 import org.oscarehr.integration.fhir.resources.constants.ContactRelationship;
 import org.oscarehr.integration.fhir.resources.constants.ContactType;
 
+import java.io.Serializable;
+
 
 /**
  * An interface used for all contact types in Oscar. 
  */
-public interface ContactInterface {
+public interface ContactInterface extends Serializable {
 
 	public void setContactRelationship(ContactRelationship contactRelationship);
 	public ContactRelationship getContactRelationship();

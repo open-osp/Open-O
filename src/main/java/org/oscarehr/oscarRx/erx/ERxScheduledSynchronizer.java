@@ -117,8 +117,8 @@ public class ERxScheduledSynchronizer {
 
                 RxDrugRef drugLookup = new RxDrugRef();
 
-                DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-                ProviderDataDao providerDataDao = (ProviderDataDao) SpringUtils.getBean("providerDataDao");
+                DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+                ProviderDataDao providerDataDao = (ProviderDataDao) SpringUtils.getBean(ProviderDataDao.class);
                 
                 // Construct a request and send it
                 untranslatedPrescriptions = communicator

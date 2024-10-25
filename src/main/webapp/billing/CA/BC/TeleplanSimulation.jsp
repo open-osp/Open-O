@@ -46,9 +46,10 @@ String user_no = (String) session.getAttribute("user");
 %>
 
 <%@ page import="java.util.*, java.sql.*, oscar.util.*,oscar.oscarProvider.data.ProviderData,oscar.oscarBilling.ca.bc.data.*,oscar.entities.*"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-html-el" prefix="html-el"%>
+<%@ taglib uri="http://struts.apache.org/tags-html-el" prefix="html-el"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%
@@ -120,7 +121,7 @@ function showHideLayers() { //v3.0
 //-->
 </script>
 
-<style type="text/css">
+<style>
 @media print {
 	.noprint {
 		display:none;
@@ -138,23 +139,26 @@ function showHideLayers() { //v3.0
 	
 		<html:form action="/billing/CA/BC/SimulateTeleplanFile.do"
 			onsubmit="return checkSubmit();" styleClass="form-inline">
-			Select provider
-			<select name="provider">
+			<label for="provider" >Select provider</label>
+			<select id="provider" name="provider">
 				<option value="all">All Providers</option>
 				<%ProviderData pd = new ProviderData();
 	                List list = pd.getProviderListWithInsuranceNo();
 	                for (int i=0;i < list.size(); i++){
 	                String provNo = (String) list.get(i);
 	                ProviderData provider = new ProviderData(provNo);%>
-				<option value="<%=provider.getOhip_no()%>"><%=provider.getLast_name()%>,<%=provider.getFirst_name()%></option>
+				<option value="<%=provider.getOhip_no()%>">
+					<%=Encode.forHtmlContent(provider.getLast_name())%>,<%=Encode.forHtmlContent(provider.getFirst_name())%>
+				</option>
 				<%}%>
-			</select></td>
+			</select>
 			<input class="btn btn-primary" type="submit" name="Submit" value="Create Report">
 		</html:form>
+
 	</div>
 
 <%if(request.getAttribute("TeleplanHtmlFile")!=null){%>
-<button class="btn noprint" type='button' value='Print' onClick="window.print()"/><i class="icon-print"></i> Print</button>
+<button class="btn noprint" type='button' value='Print' onClick="window.print()"><i class="icon-print"></i> Print</button>
 <%
 out.println(request.getAttribute("TeleplanHtmlFile"));
 }

@@ -63,6 +63,7 @@ if (request.getParameter("bFirstDisp")!=null) bFirstDisp= (request.getParameter(
 %>
 <%@ page 
 	import="oscar.oscarDemographic.data.*, java.util.Enumeration"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -71,9 +72,10 @@ if (request.getParameter("bFirstDisp")!=null) bFirstDisp= (request.getParameter(
 <%@ taglib uri="/WEB-INF/phr-tag.tld" prefix="phr"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="Encode" uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" %>
 
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
@@ -503,9 +505,9 @@ function fmtOscarMsg() {
 							<td bgcolor="#EEEEFF" ><input type="text"
 								name="selectedDemo" size="30" readonly
 								style="background: #EEEEFF; border: none" value="none" /> <script>
-                                            if ( "<%=demoName%>" != "null" && "<%=demoName%>" != "") {
-                                                document.forms[0].selectedDemo.value = "<%=demoName%>"
-                                                document.forms[0].demographic_no.value = "<%=demographic_no%>"
+                                            if ("<%=Encode.forJavaScript(demoName)%>" && "<%=Encode.forJavaScript(demoName)%>" !== "null") {
+                                                document.forms[0].selectedDemo.value = "<%=Encode.forJavaScript(demoName)%>"
+                                                document.forms[0].demographic_no.value = "<%=Encode.forJavaScript(demographic_no)%>"
                                             }
                                         </script> 
                                 </td>
@@ -536,8 +538,8 @@ function fmtOscarMsg() {
 							<c:forEach items="${ unlinkedDemographics }" var="unlinkedDemographic" >
 								<tr id="unlinkedDemographicDetails" >
 									<td bgcolor="#EEEEFF"></td>
-									<td bgcolor="#EEEEFF"> 
-										<input type="hidden" name="unlinkedIntegratorDemographicName" value="${ unlinkedDemographic.lastName }, ${ unlinkedDemographic.firstName }" />
+									<td bgcolor="#EEEEFF">
+										<input type="hidden" name="unlinkedIntegratorDemographicName" value="<Encode:forHtmlAttribute value='${ unlinkedDemographic.lastName }, ${ unlinkedDemographic.firstName }' />" />
 										<c:out value="${ unlinkedDemographic.lastName }" />, <c:out value="${ unlinkedDemographic.firstName }" /> <br />
 										<strong>Gender:</strong> <c:out value="${ unlinkedDemographic.gender }" /><br />
 										<strong>HIN:</strong> <c:out value="${ unlinkedDemographic.hin }" /><br />
@@ -560,7 +562,7 @@ function fmtOscarMsg() {
 								<td bgcolor="#EEEEFF">
 								<input type="text" size="30" readonly
 									style="background: #EEEEFF; border: none"
-									value="${ demographic.value }" /> 
+									value="<Encode:forHtmlAttribute value='${ demographic.value }' />" />
 								</td>
 								<td bgcolor="#EEEEFF">	
 								<a href="javascript:popupViewAttach(700,960,'../demographic/demographiccontrol.jsp?demographic_no=${ demographic.key }&displaymode=edit&dboperation=search_detail')">M</a>
@@ -568,7 +570,7 @@ function fmtOscarMsg() {
 								<%
 									//Hide old echart link
 									boolean showOldEchartLink = true;
-								    UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+								    UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 									UserProperty oldEchartLink = propDao.getProp(curUser_no, UserProperty.HIDE_OLD_ECHART_LINK_IN_APPT);
 									if (oldEchartLink!=null && "Y".equals(oldEchartLink.getValue())) showOldEchartLink = false;
 									CaseManagementNoteDAO caseManagementNoteDAO = SpringUtils.getBean(CaseManagementNoteDAO.class);

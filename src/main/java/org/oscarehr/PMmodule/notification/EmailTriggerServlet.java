@@ -76,30 +76,36 @@ public class EmailTriggerServlet extends HttpServlet {
 		doGet(request, response);
 	}
 	
-	/**
+	/*
+	 * The sendProxyEformNotification method in WaitListManager is no longer supported.
+	 * For more details, please refer to the sendProxyEformNotification method.
+	 * 
 	 * trigger email notification when proxy email is sent to oscar
 	 */
+	@Deprecated
 	public void trigerEmail(String app_ctx_path, String fid, String demographic_no, String appointment, String program_id) throws Exception {
-//		String programIdsString=StringUtils.trimToNull(OscarProperties.getInstance().getProperty("wait_list_email_notification_program_ids"));
-		String programIdsString = program_id;
-		
-		if (programIdsString==null) return;
-		
-		String[] programIdsStringSplit=programIdsString.split(",");
-	    
-		WaitListManager waitListManager=(WaitListManager) SpringUtils.getBean("waitListManager");
-		programDao = (ProgramDao) SpringUtils.getBean("programDao");
-		
-		for (String programIdString : programIdsStringSplit)
-		{
-			try {
-	            Integer programId=new Integer(programIdString);
-	            Program program=programDao.getProgram(programId);
-	            waitListManager.sendProxyEformNotification(program, app_ctx_path, fid);
-            } catch (Exception e) {
-            	logger.error("Unexpected error processing programId="+programIdString, e);
-            	throw new Exception("Failed to trigger email notification!");
-            }
-		}
+		// String programIdsString=StringUtils.trimToNull(OscarProperties.getInstance().getProperty("wait_list_email_notification_program_ids"));
+
+		throw new UnsupportedOperationException("This method is no longer supported.");
+		// 	String programIdsString = program_id;
+			
+		// 	if (programIdsString==null) return;
+			
+		// 	String[] programIdsStringSplit=programIdsString.split(",");
+			
+		// 	WaitListManager waitListManager=(WaitListManager) SpringUtils.getBean(WaitListManager.class);
+		// 	programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+			
+		// 	for (String programIdString : programIdsStringSplit)
+		// 	{
+		// 		try {
+		//             Integer programId=new Integer(programIdString);
+		//             Program program=programDao.getProgram(programId);
+		//             waitListManager.sendProxyEformNotification(program, app_ctx_path, fid);
+		//         } catch (Exception e) {
+		//         	logger.error("Unexpected error processing programId="+programIdString, e);
+		//         	throw new Exception("Failed to trigger email notification!");
+		//         }
+		// 	}
 	}
 }

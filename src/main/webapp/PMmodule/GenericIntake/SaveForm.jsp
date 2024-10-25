@@ -33,7 +33,7 @@
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 
     WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean("genericIntakeManager");
+    GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean(GenericIntakeManager.class);
     String published = request.getParameter("published");
     String formType = request.getParameter("form_type");
     int frmType = 0;

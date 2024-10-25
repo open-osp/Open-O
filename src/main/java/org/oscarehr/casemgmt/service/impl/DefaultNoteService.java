@@ -101,17 +101,19 @@ public class DefaultNoteService implements NoteService {
 		long startTime = System.currentTimeMillis();
 		long intTime = System.currentTimeMillis();
 
-		//Gets some of the note data, no relationships, not the note/history..just enough
+		// Gets some of the note data, no relationships, not the note/history..just
+		// enough
 		List<Map<String, Object>> notes = caseManagementNoteDao.getRawNoteInfoMapByDemographic(demoNo);
 		Map<String, Object> filteredNotes = new LinkedHashMap<String, Object>();
 
-		//This gets rid of old revisions (better than left join on a computed subset of itself
+		// This gets rid of old revisions (better than left join on a computed subset of
+		// itself
 		for (Map<String, Object> note : notes) {
 			if (filteredNotes.get(note.get("uuid")) != null) {
 				continue;
 			}
 			filteredNotes.put((String) note.get("uuid"), true);
-			
+
 			EChartNoteEntry e = new EChartNoteEntry();
 			e.setId(note.get("id"));
 			e.setDate((Date) note.get("observation_date"));
@@ -139,7 +141,8 @@ public class DefaultNoteService implements NoteService {
 		}
 
 		if (remoteNotesInfo != null) {
-			logger.debug("FETCHED " + remoteNotesInfo.size() + " REMOTE NOTE META IN " + (System.currentTimeMillis() - intTime) + "ms");
+			logger.debug("FETCHED " + remoteNotesInfo.size() + " REMOTE NOTE META IN "
+					+ (System.currentTimeMillis() - intTime) + "ms");
 		}
 		intTime = System.currentTimeMillis();
 
@@ -149,15 +152,16 @@ public class DefaultNoteService implements NoteService {
 				EChartNoteEntry e = new EChartNoteEntry();
 				e.setId(note.getNoteId());
 				e.setDate(note.getCreated());
-				//e.setProviderNo(note.get);
-				//e.setRoleId(roleId)
+				// e.setProviderNo(note.get);
+				// e.setRoleId(roleId)
 				e.setType("group_note");
 				entries.add(e);
 			}
 		}
 
 		if (groupNotesInfo != null) {
-			logger.debug("FETCHED " + groupNotesInfo.size() + " GROUP NOTES META IN " + (System.currentTimeMillis() - intTime) + "ms");
+			logger.debug("FETCHED " + groupNotesInfo.size() + " GROUP NOTES META IN "
+					+ (System.currentTimeMillis() - intTime) + "ms");
 		}
 		intTime = System.currentTimeMillis();
 
@@ -196,7 +200,8 @@ public class DefaultNoteService implements NoteService {
 			entries.add(e);
 		}
 
-		logger.debug("FETCHED " + allPatientForms.size() + " FORMS IN " + (System.currentTimeMillis() - intTime) + "ms");
+		logger.debug(
+				"FETCHED " + allPatientForms.size() + " FORMS IN " + (System.currentTimeMillis() - intTime) + "ms");
 		intTime = System.currentTimeMillis();
 
 		List<Map<String, Object>> bills = null;
@@ -213,19 +218,20 @@ public class DefaultNoteService implements NoteService {
 					logger.error("Unable to parse date " + date + " for note " + e.getId(), e1);
 				}
 				e.setProviderNo((String) h1.get("provider_no"));
-				//e.setProgramId(Integer.parseInt((String)note[3]));
-				//e.setRoleId(Integer.parseInt((String)note[4]));
+				// e.setProgramId(Integer.parseInt((String)note[3]));
+				// e.setRoleId(Integer.parseInt((String)note[4]));
 				e.setType("invoice");
 				entries.add(e);
 			}
 
-			logger.debug("FETCHED " + bills.size() + " INVIOCES META IN " + (System.currentTimeMillis() - intTime) + "ms");
+			logger.debug(
+					"FETCHED " + bills.size() + " INVIOCES META IN " + (System.currentTimeMillis() - intTime) + "ms");
 			intTime = System.currentTimeMillis();
 
 		}
 
-		//we now have this huge list
-		//sort it by date or whatever
+		// we now have this huge list
+		// sort it by date or whatever
 		if (criteria.isNoteSortSpecified()) {
 			String sort = criteria.getNoteSort();
 			if ("observation_date_desc".equals(sort)) {
@@ -242,49 +248,54 @@ public class DefaultNoteService implements NoteService {
 
 		String programId = criteria.getProgramId();
 
-		//apply CAISI permission filter - local notes
+		// apply CAISI permission filter - local notes
 		entries = caseManagementManager.filterNotes1(loggedInInfo.getLoggedInProviderNo(), entries, programId);
-		logger.debug("FILTER NOTES (CAISI) " + (System.currentTimeMillis() - intTime) + "ms entries size "+entries.size());
+		logger.debug(
+				"FILTER NOTES (CAISI) " + (System.currentTimeMillis() - intTime) + "ms entries size " + entries.size());
 		intTime = System.currentTimeMillis();
 
-		//TODO: role based filter for eforms?
+		// TODO: role based filter for eforms?
 
-		//apply provider filter
+		// apply provider filter
 		entries = applyProviderFilter(entries, criteria.getProviders());
-		logger.debug("FILTER NOTES PROVIDER " + (System.currentTimeMillis() - intTime) + "ms entries size "+entries.size());
+		logger.debug("FILTER NOTES PROVIDER " + (System.currentTimeMillis() - intTime) + "ms entries size "
+				+ entries.size());
 		intTime = System.currentTimeMillis();
 
-		//apply role filter
+		// apply role filter
 		entries = applyRoleFilter1(entries, criteria.getRoles());
-		logger.debug("FILTER NOTES ROLES " + (System.currentTimeMillis() - intTime) + "ms entries size "+entries.size());
+		logger.debug(
+				"FILTER NOTES ROLES " + (System.currentTimeMillis() - intTime) + "ms entries size " + entries.size());
 		intTime = System.currentTimeMillis();
 
-		//apply issues filter
+		// apply issues filter
 		entries = applyIssueFilter1(entries, criteria.getIssues());
-		logger.debug("FILTER NOTES ISSUES " + (System.currentTimeMillis() - intTime) + "ms entries size "+entries.size());
+		logger.debug(
+				"FILTER NOTES ISSUES " + (System.currentTimeMillis() - intTime) + "ms entries size " + entries.size());
 		intTime = System.currentTimeMillis();
 
-		//apply date range filter
-		entries = applyDateRangeFilter1(entries,criteria.getStartDate(),criteria.getEndDate());
-		logger.debug("FILTER NOTES BY DATE " + (System.currentTimeMillis() - intTime) + "ms entries size "+entries.size());
+		// apply date range filter
+		entries = applyDateRangeFilter1(entries, criteria.getStartDate(), criteria.getEndDate());
+		logger.debug(
+				"FILTER NOTES BY DATE " + (System.currentTimeMillis() - intTime) + "ms entries size " + entries.size());
 		intTime = System.currentTimeMillis();
 
 		NoteSelectionResult result = new NoteSelectionResult();
-		
+
 		List<EChartNoteEntry> slice = null;
-		if(criteria.isSliceFromEndOfList()){
-			slice = sliceFromEndOfList(criteria,entries,result);
-		}else{
-			slice = sliceFromStartOfList(criteria,entries,result);
+		if (criteria.isSliceFromEndOfList()) {
+			slice = sliceFromEndOfList(criteria, entries, result);
+		} else {
+			slice = sliceFromStartOfList(criteria, entries, result);
 		}
 		logger.debug("CREATED SLICE OF SIZE  " + slice.size() + " IN " + (System.currentTimeMillis() - intTime) + "ms");
 		intTime = System.currentTimeMillis();
 
-		//we now have the slice we want to return
+		// we now have the slice we want to return
 		ArrayList<NoteDisplay> notesToDisplay = new ArrayList<NoteDisplay>();
 
 		if (slice.size() > 0) {
-			//figure out what we need to retrieve
+			// figure out what we need to retrieve
 			List<Long> localNoteIds = new ArrayList<Long>();
 			List<CachedDemographicNoteCompositePk> remoteNoteIds = new ArrayList<CachedDemographicNoteCompositePk>();
 			List<Long> groupNoteIds = new ArrayList<Long>();
@@ -310,23 +321,26 @@ public class DefaultNoteService implements NoteService {
 			List<CachedDemographicNote> remoteNotes = new ArrayList<CachedDemographicNote>();
 			if (remoteNoteIds != null && remoteNoteIds.size() > 0) {
 				try {
-					remoteNotes = CaisiIntegratorManager.getLinkedNotes(loggedInInfo,remoteNoteIds);
+					remoteNotes = CaisiIntegratorManager.getLinkedNotes(loggedInInfo, remoteNoteIds);
 				} catch (MalformedURLException e) {
 					logger.error("Unable to load linked notes", e);
 				}
 			}
 
-			logger.debug("FETCHED " + remoteNotes.size() + " REMOTE NOTES IN " + (System.currentTimeMillis() - intTime) + "ms");
+			logger.debug("FETCHED " + remoteNotes.size() + " REMOTE NOTES IN " + (System.currentTimeMillis() - intTime)
+					+ "ms");
 			intTime = System.currentTimeMillis();
 
 			List<CaseManagementNote> groupNotes = caseManagementNoteDao.getNotes(groupNoteIds);
 
-			logger.debug("FETCHED " + groupNotes.size() + " GROUP NOTES IN " + (System.currentTimeMillis() - intTime) + "ms");
+			logger.debug("FETCHED " + groupNotes.size() + " GROUP NOTES IN " + (System.currentTimeMillis() - intTime)
+					+ "ms");
 			intTime = System.currentTimeMillis();
 
 			List<BillingONCHeader1> invoices = billingONCHeader1Dao.getInvoicesByIds(invoiceIds);
 
-			logger.debug("FETCHED " + invoices.size() + " INVOICES IN " + (System.currentTimeMillis() - intTime) + "ms");
+			logger.debug(
+					"FETCHED " + invoices.size() + " INVOICES IN " + (System.currentTimeMillis() - intTime) + "ms");
 			intTime = System.currentTimeMillis();
 
 			caseManagementManager.getEditors(localNotes);
@@ -335,11 +349,13 @@ public class DefaultNoteService implements NoteService {
 				if (entry.getType().equals("local_note")) {
 					notesToDisplay.add(new NoteDisplayLocal(loggedInInfo, findNote((Long) entry.getId(), localNotes)));
 				} else if (entry.getType().equals("remote_note")) {
-					notesToDisplay.add(new NoteDisplayIntegrator(loggedInInfo, findRemoteNote((CachedDemographicNoteCompositePk) entry.getId(), remoteNotes)));
+					notesToDisplay.add(new NoteDisplayIntegrator(loggedInInfo,
+							findRemoteNote((CachedDemographicNoteCompositePk) entry.getId(), remoteNotes)));
 				} else if (entry.getType().equals("eform")) {
 					notesToDisplay.add(new NoteDisplayNonNote(findEform((String) entry.getId(), eForms)));
 				} else if (entry.getType().equals("encounter_form")) {
-					notesToDisplay.add(new NoteDisplayNonNote(findPatientForm((String[]) entry.getId(), allPatientForms)));
+					notesToDisplay
+							.add(new NoteDisplayNonNote(findPatientForm((String[]) entry.getId(), allPatientForms)));
 				} else if (entry.getType().equals("invoice")) {
 					notesToDisplay.add(new NoteDisplayNonNote(findInvoice((Integer) entry.getId(), invoices)));
 				} else if (entry.getType().equals("group_note")) {
@@ -357,43 +373,46 @@ public class DefaultNoteService implements NoteService {
 		result.getNotes().addAll(notesToDisplay);
 		return result;
 	}
-	
-	private static List<EChartNoteEntry> sliceFromStartOfList(NoteSelectionCriteria criteria,List<EChartNoteEntry> entries,NoteSelectionResult result){
+
+	private static List<EChartNoteEntry> sliceFromStartOfList(NoteSelectionCriteria criteria,
+			List<EChartNoteEntry> entries, NoteSelectionResult result) {
 		List<EChartNoteEntry> slice = new ArrayList<EChartNoteEntry>();
 		int numToReturn = criteria.getMaxResults();
 		int offset = criteria.getFirstResult();
 		int startingPoint = offset;
-		int endingPoint = offset+numToReturn;
-		
-		if(offset < 0){
+		int endingPoint = offset + numToReturn;
+
+		if (offset < 0) {
 			startingPoint = 0;
 		}
-		
-		if(endingPoint > (entries.size())){
-			endingPoint = entries.size() ;
+
+		if (endingPoint > (entries.size())) {
+			endingPoint = entries.size();
 		}
-		logger.error("number of entries "+entries.size()+" starting "+startingPoint+" endpoint "+endingPoint+" offset "+offset+" numToReturn "+numToReturn);
-		for (int x = startingPoint ; x < endingPoint; x++) {
+		logger.error("number of entries " + entries.size() + " starting " + startingPoint + " endpoint " + endingPoint
+				+ " offset " + offset + " numToReturn " + numToReturn);
+		for (int x = startingPoint; x < endingPoint; x++) {
 			slice.add(entries.get(x));
 		}
-		logger.error("slice "+slice.size() +" max size "+ criteria.getMaxResults());
-		if(slice.size() == criteria.getMaxResults() ){
+		logger.error("slice " + slice.size() + " max size " + criteria.getMaxResults());
+		if (slice.size() == criteria.getMaxResults()) {
 			result.setMoreNotes(true);
 		}
 		return slice;
 	}
-	
-	
-	private static List<EChartNoteEntry> sliceFromEndOfList(NoteSelectionCriteria criteria,List<EChartNoteEntry> entries,NoteSelectionResult result){
+
+	private static List<EChartNoteEntry> sliceFromEndOfList(NoteSelectionCriteria criteria,
+			List<EChartNoteEntry> entries, NoteSelectionResult result) {
 		List<EChartNoteEntry> slice = new ArrayList<EChartNoteEntry>();
 		int numToReturn = criteria.getMaxResults();
 		int offset = criteria.getFirstResult();
-		
+
 		if (offset <= 0) {
-			//this is the first fetch, we want the last items up to numToReturn
+			// this is the first fetch, we want the last items up to numToReturn
 			int endOfTheList = entries.size();
 			int startingPoint = endOfTheList - numToReturn;
-			if (startingPoint < 0) startingPoint = 0;
+			if (startingPoint < 0)
+				startingPoint = 0;
 			for (int x = startingPoint; x < endOfTheList; x++) {
 				slice.add(entries.get(x));
 			}
@@ -401,7 +420,8 @@ public class DefaultNoteService implements NoteService {
 			if (entries.size() >= offset) {
 				int endingPoint = entries.size() - offset;
 				int startingPoint = endingPoint - numToReturn;
-				if (startingPoint < 0) startingPoint = 0;
+				if (startingPoint < 0)
+					startingPoint = 0;
 				for (int x = startingPoint; x < endingPoint; x++) {
 					slice.add(entries.get(x));
 				}
@@ -410,9 +430,6 @@ public class DefaultNoteService implements NoteService {
 		}
 		return slice;
 	}
-
-	
-	
 
 	private BillingONCHeader1 findInvoice(Integer id, List<BillingONCHeader1> invoices) {
 		for (BillingONCHeader1 invoice : invoices) {
@@ -461,7 +478,7 @@ public class DefaultNoteService implements NoteService {
 		} catch (Exception e) {
 			logger.error("Unexpected error.", e);
 
-			CaisiIntegratorManager.checkForConnectionError(loggedInInfo.getSession(),e);
+			CaisiIntegratorManager.checkForConnectionError(loggedInInfo.getSession(), e);
 		}
 
 		if (CaisiIntegratorManager.isIntegratorOffline(loggedInInfo.getSession())) {
@@ -496,7 +513,8 @@ public class DefaultNoteService implements NoteService {
 
 		for (Iterator<EChartNoteEntry> iter = notes.iterator(); iter.hasNext();) {
 			EChartNoteEntry note = iter.next();
-			if (!note.getType().equals("local_note") && !note.getType().equals("eform") && !note.getType().equals("encounter_form") && !note.getType().equals("invoice")) {
+			if (!note.getType().equals("local_note") && !note.getType().equals("eform")
+					&& !note.getType().equals("encounter_form") && !note.getType().equals("invoice")) {
 				filteredNotes.add(note);
 				continue;
 			}
@@ -541,48 +559,47 @@ public class DefaultNoteService implements NoteService {
 	private List<EChartNoteEntry> applyDateRangeFilter1(List<EChartNoteEntry> notes, Date startDate, Date endDate) {
 		List<EChartNoteEntry> filteredNotes = new ArrayList<EChartNoteEntry>();
 
-		for(EChartNoteEntry note:notes) {
-			if(startDate == null && endDate == null) {
+		for (EChartNoteEntry note : notes) {
+			if (startDate == null && endDate == null) {
 				filteredNotes.add(note);
-			} else if(startDate != null && endDate == null) {
-				if(note.getDate().after(startDate)) {
+			} else if (startDate != null && endDate == null) {
+				if (note.getDate().after(startDate)) {
 					filteredNotes.add(note);
 				}
-			} else if(startDate == null && endDate != null) {
-				if(note.getDate().before(endDate)) {
+			} else if (startDate == null && endDate != null) {
+				if (note.getDate().before(endDate)) {
 					filteredNotes.add(note);
 				}
 			} else {
-				if(note.getDate().after(startDate) && note.getDate().before(endDate)) {
+				if (note.getDate().after(startDate) && note.getDate().before(endDate)) {
 					filteredNotes.add(note);
 				}
 			}
 		}
 		return filteredNotes;
 	}
-	
+
 	private List<EChartNoteEntry> applyIssueFilter1(List<EChartNoteEntry> notes, List<String> issueId) {
 		if (issueId.isEmpty() || issueId.contains("a")) {
 			return notes;
 		}
-		
+
 		List<EChartNoteEntry> filteredNotes = new ArrayList<EChartNoteEntry>();
 
-		
-		if(issueId.contains("n")) {
-			for(EChartNoteEntry e:notes) {
-				List<CaseManagementIssue> issues = cmeIssueNotesDao.getNoteIssues((Integer.valueOf(e.getId().toString())));
-				if(issues.size() == 0 ) {
+		if (issueId.contains("n")) {
+			for (EChartNoteEntry e : notes) {
+				List<CaseManagementIssue> issues = cmeIssueNotesDao
+						.getNoteIssues((Integer.valueOf(e.getId().toString())));
+				if (issues.size() == 0) {
 					filteredNotes.add(e);
 				}
 			}
 			return filteredNotes;
 		}
 
-		
 		List<Integer> noteIds = cmeIssueNotesDao.getNoteIdsWhichHaveIssues(issueId.toArray(new String[] {}));
 
-		//Integer
+		// Integer
 		if (noteIds != null) {
 			for (EChartNoteEntry note : notes) {
 				if (!note.getType().equals("local_note")) {
@@ -609,9 +626,12 @@ public class DefaultNoteService implements NoteService {
 		return null;
 	}
 
-	private CachedDemographicNote findRemoteNote(CachedDemographicNoteCompositePk id, List<CachedDemographicNote> notes) {
+	private CachedDemographicNote findRemoteNote(CachedDemographicNoteCompositePk id,
+			List<CachedDemographicNote> notes) {
 		for (CachedDemographicNote note : notes) {
-			if (id.getIntegratorFacilityId().equals(note.getCachedDemographicNoteCompositePk().getIntegratorFacilityId()) && id.getUuid().equals(note.getCachedDemographicNoteCompositePk().getUuid())) {
+			if (id.getIntegratorFacilityId()
+					.equals(note.getCachedDemographicNoteCompositePk().getIntegratorFacilityId())
+					&& id.getUuid().equals(note.getCachedDemographicNoteCompositePk().getUuid())) {
 				return note;
 			}
 		}

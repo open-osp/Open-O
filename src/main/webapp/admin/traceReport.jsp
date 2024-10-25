@@ -44,7 +44,7 @@
 	}
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="admin.admin.traceabilityReport"/></title>
 <!--<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>-->

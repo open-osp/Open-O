@@ -36,7 +36,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.oscarehr.common.dao.MeasurementDao.SearchCriteria;
+import org.oscarehr.common.dao.MeasurementDaoImpl.SearchCriteria;
 import org.oscarehr.common.dao.utils.SchemaUtils;
 import org.oscarehr.common.model.Measurement;
 import org.oscarehr.util.SpringUtils;
@@ -47,11 +47,10 @@ public class MeasurementDaoTest extends DaoTestFixtures {
 
 	@Before
 	public void before() throws Exception {
-		SchemaUtils.restoreTable("measurements", "measurementType", "measurementsExt", "measurementMap", "provider");
+		SchemaUtils.restoreTable("measurements", "measurementType", "measurementsExt", "measurementMap", "provider","demographic","demographicExt");
 	}
 
 	@Test
-	@Ignore
 	public void testFind() {
 		Measurement m = populate();
 

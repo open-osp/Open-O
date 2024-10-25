@@ -57,7 +57,7 @@ if(!authed) {
 <%@page import="org.oscarehr.util.LoggedInInfo" %>
 <%
 	MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
-	DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean("DxresearchDAO");
+	DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 

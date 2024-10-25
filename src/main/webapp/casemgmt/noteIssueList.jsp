@@ -92,7 +92,7 @@
 </nested:notEmpty>
 </div>
 
-<div style="margin: 0px 3px 0px 0px; font-size: 11px;"><span style="float: right;">
+<div style="margin: 0 3px 0 0;"><span style="float: right;">
 <nested:notEmpty name="ajaxsave">
 	<bean:message key="oscarEncounter.encounterDate.title"/>:&nbsp;<span
 		id="obs<nested:write name="caseManagementEntryForm" property="caseNote.id" />">
@@ -115,11 +115,11 @@
 </nested:empty>
 </div>
 
-<div style="margin-left: 3px; font-size: 11px;"><span style="float: left;">
+<div style="margin-left: 3px;"><span style="float: left;">
 <bean:message key="oscarEncounter.editors.title"/>:</span> 
 <nested:equal
 	name="newNote" value="false">
-	<ul style="list-style: none inside none; margin: 0px;">
+	<ul style="list-style: none inside none; margin: 0;">
 		<nested:iterate indexId="eIdx" id="editor" property="caseNote.editors"
 			name="caseManagementEntryForm">
                 
@@ -136,7 +136,7 @@
 		</c:if>
 	</ul>
 </nested:equal> <nested:equal name="newNote" value="true">
-	<div style="margin: 0px;">&nbsp;</div>
+	<div style="margin: 0;">&nbsp;</div>
 </nested:equal>
 </div>
 
@@ -145,12 +145,12 @@ Facility currentFacility = loggedInInfo73557.getCurrentFacility();
 String programId = (String)request.getSession().getAttribute("case_program_id");
 Program currentProgram = null;
 if (programId != null) {
-    ProgramDao programDao=(ProgramDao)SpringUtils.getBean("programDao");
+    ProgramDao programDao=(ProgramDao)SpringUtils.getBean(ProgramDao.class);
     currentProgram = programDao.getProgram(Integer.valueOf(programId));
 }
 if(currentFacility.isEnableEncounterTime() || (currentProgram != null && currentProgram.getEnableEncounterTime())) {  
 %>
-<div style="clear: right; margin: 0px 30px 0px 0px; font-size: 11px; float: right;"><span>
+<div style="clear: right; margin: 0 30px 0 0; float: right;"><span>
 <nested:notEmpty name="ajaxsave">
 	<bean:message key="oscarEncounter.encounterTime.title"/>:&nbsp;
 	<span id="encTimeHr<nested:write name="caseManagementEntryForm" property="caseNote.id" />"	>
@@ -174,7 +174,7 @@ if(currentFacility.isEnableEncounterTime() || (currentProgram != null && current
 <%
 if(currentFacility.isEnableEncounterTransportationTime() || (currentProgram != null && currentProgram.isEnableEncounterTransportationTime())) {
 %>
-<div style="clear: right; margin: 0px 30px 0px 0px; font-size: 11px; float: right;"><span>
+<div style="clear: right; margin: 0 30px 0 0; float: right;"><span>
 <nested:notEmpty name="ajaxsave">
 	<bean:message key="oscarEncounter.encounterTransportation.title"/>:&nbsp;
 	<span id="encTransTimeHr<nested:write name="caseManagementEntryForm" property="caseNote.id" />"	>
@@ -200,7 +200,7 @@ if(currentFacility.isEnableEncounterTransportationTime() || (currentProgram != n
 <%
 	encSelect += noteIndex;
 %>
-<div style="clear: right; margin: 0px 3px 0px 0px; font-size: 11px; float: right;">
+<div style="clear: right; margin: 0 3px 0 0; float: right;">
 <bean:message key="oscarEncounter.encType.title"/>:&nbsp;
 <span id="encType<%=noteIndex%>">
 	<nested:empty name="ajaxsave">
@@ -239,7 +239,7 @@ if(currentFacility.isEnableEncounterTransportationTime() || (currentProgram != n
         <div>&nbsp;</div>
     </nested:equal> --%>
 <nested:greaterThan name="numIssues" value="0">
-	<div style="margin: 0px 0px 0px 3px; font-size: 11px;"><span style="float: left;"><bean:message key="oscarEncounter.assignedIssues.title"/>
+	<div style="margin: 0px 0px 0px 3px;"><span style="float: left;"><bean:message key="oscarEncounter.assignedIssues.title"/>
 	</span>
 	<ul style="float: left; list-style: circle inside; margin: 0px;">
 		<nested:iterate id="noteIssue" property="caseNote.issues"
@@ -257,10 +257,10 @@ if(currentFacility.isEnableEncounterTransportationTime() || (currentProgram != n
 
 
 <div id="noteIssues">
-<div id="noteIssues-resolved" style="margin: 0px; background-color: #CCCCFF; font-size: 11px; display: none;">
+<div id="noteIssues-resolved" style="margin: 0; background-color: #CCCCFF; display: none;">
 <b><bean:message key="oscarEncounter.referenceResolvedIssues.title"/></b>
 <% int countResolvedIssue = -1; %>
-<table id="setIssueList" style="font-size: 11px;">
+<table id="setIssueList">
 	<nested:iterate indexId="ind" id="issueCheckList" property="issueCheckList" name="caseManagementEntryForm" type="org.oscarehr.casemgmt.web.CheckBoxBean">
 		<nested:equal name="issueCheckList" property="issue.resolved" value="true">
 		<%
@@ -278,7 +278,7 @@ if(currentFacility.isEnableEncounterTransportationTime() || (currentProgram != n
 			%>
 
 
-			<td style="width: 50%; font-size: 11px; background-color: #CCCCFF;">
+			<td style="width: 50%; background-color: #CCCCFF;">
 				<%
 					String submitString = "this.form.method.value='issueChange';";
 					submitString = submitString + "this.form.lineId.value=" + "'" + ind.intValue() + "'; return ajaxUpdateIssues('issueChange', $('noteIssues').up().id);";
@@ -343,10 +343,10 @@ if(currentFacility.isEnableEncounterTransportationTime() || (currentProgram != n
 <!-- end of div noteIssues-resolved -->
 
 <% int countUnresolvedIssue = -1; %>
-<div id="noteIssues-unresolved" style="margin: 0px; background-color: #CCCCFF; font-size: 11px; display: none;">
+<div id="noteIssues-unresolved" style="margin: 0px; background-color: #CCCCFF; display: none;">
 <b><bean:message key="oscarEncounter.referenceUnresolvedIssues.title"/></b>
 	
-<table id="setIssueList" style="font-size: 11px;">
+<table id="setIssueList" >
 	<nested:iterate indexId="ind" id="issueCheckList" property="issueCheckList" name="caseManagementEntryForm" type="org.oscarehr.casemgmt.web.CheckBoxBean">
 
 	<nested:equal name="issueCheckList" property="issue.resolved" value="false">
@@ -363,7 +363,7 @@ if(currentFacility.isEnableEncounterTransportationTime() || (currentProgram != n
 		%> <tr> <% 
 	} 
 	%>
-	<td style="width: 50%; font-size: 11px; background-color: #CCCCFF;">
+	<td style="width: 50%; background-color: #CCCCFF;">
 		<%
 		String submitString = "this.form.method.value='issueChange';";
 		submitString = submitString + "this.form.lineId.value=" + "'" + ind.intValue() + "'; return ajaxUpdateIssues('issueChange', $('noteIssues').up().id);";

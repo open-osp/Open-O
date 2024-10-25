@@ -23,20 +23,6 @@
 
 package org.oscarehr.ui.servlet;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketException;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
@@ -47,13 +33,15 @@ import org.oscarehr.casemgmt.dao.ClientImageDAO;
 import org.oscarehr.common.dao.DigitalSignatureDao;
 import org.oscarehr.common.model.DigitalSignature;
 import org.oscarehr.common.model.Provider;
-import org.oscarehr.util.DigitalSignatureUtils;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SessionConstants;
-import org.oscarehr.util.SpringUtils;
-
+import org.oscarehr.util.*;
 import oscar.OscarProperties;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.net.SocketException;
 
 /**
  * This servlet requires a parameter called "source" which should signify where to get the image from. Examples include source=local_client, or source=hnr_client. Depending on the source, you may optionally need more parameters, as examples a local_client
@@ -68,8 +56,8 @@ import oscar.OscarProperties;
  */
 public final class ImageRenderingServlet extends HttpServlet {
 	private static Logger logger = MiscUtils.getLogger();
-	private static ClientImageDAO clientImageDAO = (ClientImageDAO) SpringUtils.getBean("clientImageDAO");
-	private static DigitalSignatureDao digitalSignatureDao = (DigitalSignatureDao) SpringUtils.getBean("digitalSignatureDao");
+	private static ClientImageDAO clientImageDAO = (ClientImageDAO) SpringUtils.getBean(ClientImageDAO.class);
+	private static DigitalSignatureDao digitalSignatureDao = (DigitalSignatureDao) SpringUtils.getBean(DigitalSignatureDao.class);
 
 	public static enum Source {
 		local_client, hnr_client, integrator_client, signature_preview, signature_stored,clinic_logo
@@ -186,7 +174,7 @@ public final class ImageRenderingServlet extends HttpServlet {
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
 	}
 
-	private static final void renderLocalClient(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private static void renderLocalClient(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// this expects clientId as a parameter
 
 		// security check
@@ -196,39 +184,40 @@ public final class ImageRenderingServlet extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
-
-		try {
-			// get image
-			org.oscarehr.casemgmt.model.ClientImage clientImage = clientImageDAO.getClientImage(Integer.parseInt(request.getParameter("clientId")));
-			if (clientImage != null && "jpg".equalsIgnoreCase(clientImage.getImage_type())) {
-				renderImage(response, clientImage.getImage_data(), "jpeg");
-				return;
-			} else {
-				renderImage(response, getDefaultImage(request), "jpeg");
-				return;
+		String clientId = request.getParameter("clientId");
+		if(clientId != null && ! clientId.isEmpty()) {
+			try {
+				// get image
+				org.oscarehr.casemgmt.model.ClientImage clientImage = clientImageDAO.getClientImage(Integer.parseInt(clientId));
+				if (clientImage != null && "jpg".equalsIgnoreCase(clientImage.getImage_type())) {
+					renderImage(response, clientImage.getImage_data(), "jpeg");
+					return;
+				} else {
+					renderImage(response, getDefaultImage(request), "jpeg");
+					return;
+				}
+			} catch (Exception e) {
+				logger.error("Could not render client image id {}", clientId, e);
 			}
-		} catch (Exception e) {
-			logger.error("Unexpected error.", e);
 		}
-
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
 	}
 	
 	private static byte[] getDefaultImage(HttpServletRequest request) {
 		String defaultClientImage = "/images/defaultG_img.jpg";
 
-        ByteArrayOutputStream bais = new ByteArrayOutputStream();
-        try {
-            InputStream is = request.getSession().getServletContext().getResourceAsStream(defaultClientImage);
+        try (ByteArrayOutputStream bais = new ByteArrayOutputStream();
+             InputStream is = request.getSession().getServletContext().getResourceAsStream(defaultClientImage)) {
             byte[] byteChunk = new byte[1024];
             int n;
             while ( (n = is.read(byteChunk)) > 0 ) {
             	bais.write(byteChunk, 0, n);
         	}
+	        return bais.toByteArray();
         } catch (IOException e) {
         	logger.error("Error reading default image.", e);
         }
-		return bais.toByteArray();
+		return null;
 	}
 
 	private void renderSignaturePreview(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -272,8 +261,7 @@ public final class ImageRenderingServlet extends HttpServlet {
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
 	}
 	
-	private static final void renderSignatureStored(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		// this expects digitalSignatureId as a parameter
+	private static void renderSignatureStored(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		// security check
 		HttpSession session = request.getSession();
@@ -283,21 +271,25 @@ public final class ImageRenderingServlet extends HttpServlet {
 			return;
 		}
 
-		try {
-			// get image
-			DigitalSignature digitalSignature = digitalSignatureDao.find(Integer.parseInt(request.getParameter("digitalSignatureId")));
-			if (digitalSignature != null) {
-				renderImage(response, digitalSignature.getSignatureImage(), "jpeg");
-				return;
-			}
-		} catch (Exception e) {
-			logger.error("Unexpected error.", e);
-		}
+		// this expects digitalSignatureId as a parameter
+		String digitalSignatureId = request.getParameter("digitalSignatureId");
 
+		if(digitalSignatureId != null && !digitalSignatureId.isEmpty()) {
+			try {
+				// get image
+				DigitalSignature digitalSignature = digitalSignatureDao.find(Integer.parseInt(digitalSignatureId));
+				if (digitalSignature != null) {
+					renderImage(response, digitalSignature.getSignatureImage(), "jpeg");
+					return;
+				}
+			} catch (Exception e) {
+				logger.error("Digital signature id {} is non-numeric", digitalSignatureId, e);
+			}
+		}
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
 	}
 	
-	private static final void renderClinicLogoStored(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private static void renderClinicLogoStored(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 		// security check
 		HttpSession session = request.getSession();

@@ -344,7 +344,7 @@ public class PersonaService extends AbstractServiceImpl {
 	public PatientListConfigTo1 getMyPatientListConfig(){
 		Provider provider = getCurrentProvider();
 		PatientListConfigTo1 patientListConfigTo1 = new PatientListConfigTo1();
-		UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+		UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		String numberOfApptsToShow = propDao.getStringValue(provider.getProviderNo(), "patientListConfig.numberOfApptsToShow");
 		if(numberOfApptsToShow != null){
 			try{
@@ -373,7 +373,7 @@ public class PersonaService extends AbstractServiceImpl {
 	public PatientListConfigTo1 saveMyPatientListConfig(PatientListConfigTo1 patientListConfigTo1){
 		Provider provider = getCurrentProvider();
 		
-		UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+		UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		Integer numberOfApptsToShow =  patientListConfigTo1.getNumberOfApptstoShow();
 		
 		if(numberOfApptsToShow != null && numberOfApptsToShow > 0){
@@ -425,7 +425,7 @@ public class PersonaService extends AbstractServiceImpl {
 		DashboardPreferences prefs = new DashboardPreferences();
 		
 		//this needs to be more structured after the alpha. Create a manager a way to load with defaults
-		UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+		UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		String strVal = propDao.getStringValue(provider.getProviderNo(), "dashboard.expiredTicklersOnly");
 		if(strVal == null) {
 			prefs.setExpiredTicklersOnly(true);
@@ -482,7 +482,7 @@ public class PersonaService extends AbstractServiceImpl {
 		
 		if(value != null) {
 
-			UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+			UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 			UserProperty prop = propDao.getProp(provider.getProviderNo(), "dashboard.expiredTicklersOnly");
 			if(prop != null) {
 				prop.setValue(String.valueOf(value));

@@ -31,12 +31,12 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.ON.model.BillingPercLimit;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class BillingPercLimitDao extends AbstractDao<BillingPercLimit>{
+public class BillingPercLimitDao extends AbstractDaoImpl<BillingPercLimit>{
 
 	public BillingPercLimitDao() {
 		super(BillingPercLimit.class);
@@ -55,8 +55,8 @@ public class BillingPercLimitDao extends AbstractDao<BillingPercLimit>{
     public BillingPercLimit findByServiceCodeAndEffectiveDate(String serviceCode,Date effectiveDate) {
     	String sql = "select x from BillingPercLimit x where x.service_code=? and x.effective_date=?";
     	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,serviceCode);
-    	query.setParameter(2, effectiveDate);
+    	query.setParameter(0,serviceCode);
+    	query.setParameter(1, effectiveDate);
 
         BillingPercLimit results = this.getSingleResultOrNull(query);
         return results;

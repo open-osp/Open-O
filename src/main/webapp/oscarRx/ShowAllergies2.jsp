@@ -60,7 +60,7 @@
 <%
 OscarProperties props = OscarProperties.getInstance();
 
-	PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean("partialDateDao");
+	PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean(PartialDateDao.class);
 %>
 
 <logic:notPresent name="RxSessionBean" scope="session">
@@ -78,7 +78,7 @@ String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.D
 
 com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="EditAllergies.title" /></title>
 
@@ -592,7 +592,7 @@ for(org.oscarehr.common.model.Allergy allergy : patient.getAllergies(LoggedInInf
 							<td><%=allergy.getLifeStageDesc() %></td>
 							<td><%=allergy.getAgeOfOnset()==null ? "" : allergy.getAgeOfOnset()%></td>
 <%
-		CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
+		CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 		@SuppressWarnings("unchecked")
 		List<CaseManagementNoteLink> existingAnnots = cmm.getLinkByTableId(org.oscarehr.casemgmt.model.CaseManagementNoteLink.ALLERGIES,Long.valueOf(allergy.getAllergyId()));
 %>

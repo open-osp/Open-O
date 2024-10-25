@@ -57,9 +57,9 @@ public class RxReorderAction extends DispatchAction {
 		int drugId = Integer.parseInt(request.getParameter("drugId"));
 		int swapDrugId = Integer.parseInt(request.getParameter("swapDrugId"));
 
-		CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
+		CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 		List<Drug> drugs = caseManagementManager.getPrescriptions(demographicNo, true);
-		DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
+		DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
 
 		Drug myDrug = null;
 		Drug swapDrug = null;

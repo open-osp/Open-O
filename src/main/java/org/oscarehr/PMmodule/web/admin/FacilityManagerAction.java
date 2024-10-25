@@ -67,7 +67,7 @@ public class FacilityManagerAction extends DispatchAction {
 	private LookupManager lookupManager;
 	
 	private FacilityDao facilityDao;
-    private EFormDao eFormDao = (EFormDao) SpringUtils.getBean("EFormDao");
+    private EFormDao eFormDao = (EFormDao) SpringUtils.getBean(EFormDao.class);
 
 	public void setFacilityDao(FacilityDao facilityDao) {
 		this.facilityDao = facilityDao;

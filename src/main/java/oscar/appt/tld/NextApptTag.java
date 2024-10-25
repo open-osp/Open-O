@@ -24,18 +24,13 @@
 
 package oscar.appt.tld;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.oscarehr.managers.AppointmentManager;
+import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import org.oscarehr.common.dao.OscarAppointmentDao;
-import org.oscarehr.common.model.Appointment;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
 
 /**
  *
@@ -60,25 +55,15 @@ public class NextApptTag extends TagSupport {
 	}
 
 	public int doStartTag() throws JspException {
-		Date nextApptDate = null;
-		if (demoNo != null && !demoNo.equalsIgnoreCase("") && !demoNo.equalsIgnoreCase("null")) {
-			Integer demographicId = Integer.parseInt(demoNo);
-			OscarAppointmentDao dao = SpringUtils.getBean(OscarAppointmentDao.class);
-			Appointment appt = dao.findNextAppointment(demographicId);
-			if(appt != null)
-				nextApptDate = appt.getAppointmentDate();
-		}
-
-		String s = "";
-		try {
-			if (nextApptDate != null) {
-				Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-				s = formatter.format(nextApptDate);
+		if(demoNo != null && ! demoNo.isEmpty()) {
+			try {
+				AppointmentManager appointmentManager = SpringUtils.getBean(AppointmentManager.class);
+				String nextAppointment = appointmentManager.getNextAppointmentDate(Integer.parseInt(demoNo));
+				JspWriter out = super.pageContext.getOut();
+				out.print(nextAppointment);
+			} catch (Exception e) {
+				MiscUtils.getLogger().error("Could not fetch next appointment for demo number " + demoNo, e);
 			}
-			JspWriter out = super.pageContext.getOut();
-			out.print(s);
-		} catch (Exception p) {
-			MiscUtils.getLogger().error("Error", p);
 		}
 		return (SKIP_BODY);
 	}

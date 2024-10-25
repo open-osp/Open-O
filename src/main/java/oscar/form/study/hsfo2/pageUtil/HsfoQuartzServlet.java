@@ -51,7 +51,7 @@ public class HsfoQuartzServlet implements Servlet
 
 	public static final String RESUBMIT_TRIGGER = "hsfoResubmitTrigger";
 
-	private static Hsfo2RecommitScheduleDao rDao = (Hsfo2RecommitScheduleDao) SpringUtils.getBean("hsfo2RecommitScheduleDao");
+	private static Hsfo2RecommitScheduleDao rDao = (Hsfo2RecommitScheduleDao) SpringUtils.getBean(Hsfo2RecommitScheduleDao.class);
 	
 	public static void schedule() throws Exception
 	{		
@@ -100,37 +100,42 @@ public class HsfoQuartzServlet implements Servlet
 		
 	}
 
+	@Override
 	public ServletConfig getServletConfig()
 	{
 		return null;
 	}
 
+	@Override
 	public String getServletInfo()
 	{
 		return null;
 	}
 
+	@Override
 	public void init(ServletConfig arg0) throws ServletException
 	{
-		OscarProperties props = OscarProperties.getInstance();
-		String id = props.getProperty("hsfo2.loginSiteCode", "");
-		if (id == null || "".equalsIgnoreCase(id))
-			return;
-		try
-		{
-			logger.info("============== start quartz scheduler ===========");
-			schedule();
-		} catch (Exception e)
-		{
-			logger.info( e.getMessage());
-		}
+		// OscarProperties props = OscarProperties.getInstance();
+		// String id = props.getProperty("hsfo2.loginSiteCode", "");
+		// if (id == null || "".equalsIgnoreCase(id))
+		// 	return;
+		// try
+		// {
+		// 	logger.info("============== start quartz scheduler ===========");
+		// 	schedule();
+		// } catch (Exception e)
+		// {
+		// 	logger.info( e.getMessage());
+		// }
 	}
 
+	@Override
 	public void service(ServletRequest arg0, ServletResponse arg1)
 			throws ServletException, IOException
 	{
 	}
 
+	@Override
 	public void destroy()
 	{
 	}

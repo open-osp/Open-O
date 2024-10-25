@@ -30,7 +30,7 @@
 <%@ include file="/taglibs.jsp"%>
 <%
 WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean("genericIntakeManager");
+GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean(GenericIntakeManager.class);
 String s_choice = request.getParameter("s_choice");
 String s_label = request.getParameter("s_label");
 String s_value = request.getParameter("s_value");

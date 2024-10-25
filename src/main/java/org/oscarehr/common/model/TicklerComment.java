@@ -23,26 +23,13 @@
  */
 package org.oscarehr.common.model;
 
-import java.util.Date;
-import java.util.Locale;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-
 import oscar.util.DateUtils;
+
+import javax.persistence.*;
+import java.util.Date;
+import java.util.Locale;
 
 @Entity
 @Table(name="tickler_comments")
@@ -69,7 +56,7 @@ public class TicklerComment extends AbstractModel<Integer> {
 	@JoinColumn(name="provider_no", referencedColumnName="provider_no", insertable=false, updatable=false)
 	@NotFound(action=NotFoundAction.IGNORE)
 	private Provider provider;
-	
+
 	public TicklerComment() {
 		updateDate = new Date();
 	}

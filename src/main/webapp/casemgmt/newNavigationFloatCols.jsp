@@ -28,9 +28,6 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-
-
 <script type="text/javascript">            
        
     //This object stores the key -> cmd value passed to action class and the id of the created div

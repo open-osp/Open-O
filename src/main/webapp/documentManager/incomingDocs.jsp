@@ -65,7 +65,7 @@
 <jsp:useBean id="LastPatientsBean" class="java.util.ArrayList" scope="session" />
     
     
-<style type="text/css">
+<style>
     .autocomplete_style {
         background: #fff;
         text-align: left;
@@ -91,12 +91,19 @@
         padding: 0px 5px;
         font-size: medium;
     }
-    .singlePage {
-        
-    }
+
     .topalign {
         vertical-align:text-top;
-    } 
+    }
+
+    #incoming-docs-wrapper {
+        margin:auto 15px;
+    }
+
+    * table {
+        border-collapse: collapse;
+        width: 100%;
+    }
 </style>
     
 <%
@@ -106,7 +113,7 @@
     String queueIdStr = IncomingDocUtil.getAndSetIncomingDocQueue(user_no, request.getParameter("defaultQueue"));
     String entryMode = IncomingDocUtil.getAndSetEntryMode(user_no, request.getParameter("entryMode"));
 
-    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
     UserProperty uProp = userPropertyDAO.getProp(user_no, UserProperty.DOCUMENT_DESCRIPTION_TEMPLATE);                        
     String useDocumentDescriptionTemplateType=UserProperty.CLINIC;
     if( uProp != null && uProp.getValue().equals(UserProperty.USER)) {
@@ -130,12 +137,12 @@
         
     java.util.Locale vLocale = (java.util.Locale) session.getAttribute(org.apache.struts.Globals.LOCALE_KEY);
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    ProviderLabRoutingDao providerLabRoutingDao = (ProviderLabRoutingDao) ctx.getBean("providerLabRoutingDao");
-    ProviderDao providerDao = (ProviderDao) ctx.getBean("providerDao");
-    DemographicDao demographicDao = (DemographicDao) ctx.getBean("demographicDao");
-    QueueDao queueDao = (QueueDao) ctx.getBean("queueDao");
+    ProviderLabRoutingDao providerLabRoutingDao = (ProviderLabRoutingDao) ctx.getBean(ProviderLabRoutingDao.class);
+    ProviderDao providerDao = (ProviderDao) ctx.getBean(ProviderDao.class);
+    DemographicDao demographicDao = (DemographicDao) ctx.getBean(DemographicDao.class);
+    QueueDao queueDao = (QueueDao) ctx.getBean(QueueDao.class);
 
-    CtlDocClassDao docClassDao = (CtlDocClassDao) ctx.getBean("ctlDocClassDao");
+    CtlDocClassDao docClassDao = (CtlDocClassDao) ctx.getBean(CtlDocClassDao.class);
     List<String> reportClasses = docClassDao.findUniqueReportClasses();
     ArrayList<String> subClasses = new ArrayList<String>();
     ArrayList<String> consultA = new ArrayList<String>();
@@ -508,16 +515,14 @@
                 {
                     width=getWidth()-450;
                 }
-                
-                if(pdfName.length==0) {
-                    
-                    url="";
-                    document.getElementById('pgnum').innerHTML = '';
-                    document.getElementById('docdisp').innerHTML = '<iframe	src=""  width="800" height="900" ></iframe>';
+                console.log("pdfName " + pdfName);
+                if(pdfName.length === 0) {
+                    document.getElementById('pgnum') ? document.getElementById('pgnum').innerHTML = '' : '';
+                    document.getElementById('docdisp') ? document.getElementById('docdisp').innerHTML = '<iframe	src=""  width="800" height="900" ></iframe>' : '';
                 } else  {
                     document.getElementById('pgnum').innerHTML = pn+ ' of <span class="<%= numOfPage > 1 ? "multiPage" : "singlePage" %>">'+totalPage+'</span>';
                     
-                    if(document.PdfInfoForm.imageType.value=="Pdf") {
+                    if(document.PdfInfoForm.imageType.value === "Pdf") {
                         url='<%=request.getContextPath()%>'+'/documentManager/ManageDocument.do?method=viewIncomingDocPageAsPdf'
                             +'&curPage='+pn+'&pdfDir='+encodeURIComponent(pdfDir)+'&queueId='+queueId+'&pdfName='+encodeURIComponent(pdfName)+"#view=fitV";
                     }
@@ -661,8 +666,6 @@
             
             window.onload=function(){
                 new Autocompleter.Local('docSubClass', 'docSubClass_list', docSubClassList);
-                if(!NiftyCheck())
-                    return;
             }
             
             var docSubClassList = [
@@ -748,9 +751,10 @@
             }
         </script>
     </head>
-    <body> 
+    <body>
+    <div id="incoming-docs-wrapper" class="container">
         <table>                
-            <tr>                   
+            <tr style="display: flex;">
                 <td align="left" valign="top" >
                     <form  method="post" name="PdfInfoForm" action="incomingDocs.jsp" >
                         <input type="hidden" name="pdfNo" value="<%=pdfNo%>">
@@ -1169,8 +1173,10 @@
                 }();
             </script>
         </table>
+    </div>
         <script type="text/javascript">
             showPageImg('<%=queueIdStr%>','<%=pdfDir%>','<%=pdfName%>','<%=pdfPageNumber%>');
         </script>
+
     </body>
 </html>

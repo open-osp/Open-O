@@ -162,7 +162,7 @@ function recreate(si) {
 
 var providerBillCenterMap = new Object();
 <%
-ProviderBillCenterDao providerBillCenterDao = (ProviderBillCenterDao)SpringUtils.getBean("providerBillCenterDao");
+ProviderBillCenterDao providerBillCenterDao = (ProviderBillCenterDao)SpringUtils.getBean(ProviderBillCenterDao.class);
 
 for(Provider p : providerDao.getBillableProviders()) {
 	String providerNo = p.getProviderNo();

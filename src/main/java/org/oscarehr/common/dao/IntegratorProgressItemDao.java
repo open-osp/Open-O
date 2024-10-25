@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,60 +21,17 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.IntegratorProgressItem;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class IntegratorProgressItemDao extends AbstractDao<IntegratorProgressItem> {
-
-	public IntegratorProgressItemDao() {
-		super(IntegratorProgressItem.class);
-	}
-
-	public IntegratorProgressItem find(int integratorProgressId, int demographicNo) {
-		Query query = entityManager.createQuery("SELECT f FROM IntegratorProgressItem f WHERE f.integratorProgressId=?1 and f.demographicNo = ?2");
-		query.setParameter(1, integratorProgressId);
-		query.setParameter(2, demographicNo);
-
-		return getSingleResultOrNull(query);
-	}
-	
-	public List<Integer> findOutstandingDemographicNos(int integratorProgressId) {
-		Query query = entityManager.createQuery("SELECT f.demographicNo FROM IntegratorProgressItem f WHERE f.integratorProgressId=?1 and f.status != ?2");
-		query.setParameter(1, integratorProgressId);
-		query.setParameter(2, IntegratorProgressItem.STATUS_COMPLETED);
-
-		@SuppressWarnings("unchecked")
-		List<Integer> results = query.getResultList();
-		
-		return results;
-		
-	}
-	
-	public Integer findTotalOutstandingDemographicNos(int integratorProgressId) {
-		Query query = entityManager.createQuery("SELECT count(f) FROM IntegratorProgressItem f WHERE f.integratorProgressId=?1 and f.status != ?2");
-		query.setParameter(1, integratorProgressId);	
-		query.setParameter(2, IntegratorProgressItem.STATUS_COMPLETED);
-
-		Long total = (Long)query.getSingleResult();
-		
-		return total.intValue();
-	}
-	
-	public Integer findTotalDemographicNos(int integratorProgressId) {
-		Query query = entityManager.createQuery("SELECT count(f) FROM IntegratorProgressItem f WHERE f.integratorProgressId=?1");
-		query.setParameter(1, integratorProgressId);	
-		
-		Long total = (Long)query.getSingleResult();
-		
-		return total.intValue();
-	}
-
+public interface IntegratorProgressItemDao extends AbstractDao<IntegratorProgressItem> {
+    IntegratorProgressItem find(int integratorProgressId, int demographicNo);
+    List<Integer> findOutstandingDemographicNos(int integratorProgressId);
+    Integer findTotalOutstandingDemographicNos(int integratorProgressId);
+    Integer findTotalDemographicNos(int integratorProgressId);
 }

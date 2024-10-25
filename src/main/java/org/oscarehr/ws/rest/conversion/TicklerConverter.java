@@ -28,6 +28,7 @@ import java.util.List;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.PMmodule.model.Program;
+import org.oscarehr.common.dao.ClinicDAO;
 import org.oscarehr.common.dao.DemographicDao;
 import org.oscarehr.common.dao.TicklerLinkDao;
 import org.oscarehr.common.model.Tickler;
@@ -45,7 +46,7 @@ import org.springframework.stereotype.Component;
 
 //this isn't working - not being injected
 @Component
-public class TicklerConverter extends AbstractConverter<Tickler, TicklerTo1> {
+public class TicklerConverter extends AbstractConverter<Tickler, TicklerTo1>{
 	
 	private boolean includeLinks;
 	private boolean includeComments;
@@ -75,7 +76,7 @@ public class TicklerConverter extends AbstractConverter<Tickler, TicklerTo1> {
 		ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 		DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 		TicklerLinkDao ticklerLinkDao = SpringUtils.getBean(TicklerLinkDao.class);
-		ProgramDao programDao = SpringUtils.getBean(ProgramDao.class);
+		ProgramDao programDao = SpringUtils.getBean(ClinicDAO.class);
 		
 		
 		TicklerTo1 d = new TicklerTo1();

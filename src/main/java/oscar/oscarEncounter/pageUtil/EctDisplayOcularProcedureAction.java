@@ -42,7 +42,7 @@ import org.oscarehr.util.SpringUtils;
 import oscar.util.StringUtils;
 
 public class EctDisplayOcularProcedureAction extends EctDisplayAction {
-	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 
     private static final String cmd = "ocularprocedure";
 
@@ -75,7 +75,7 @@ public class EctDisplayOcularProcedureAction extends EctDisplayAction {
 	
 	
 	    EyeformOcularProcedureDao opDao = (EyeformOcularProcedureDao)SpringUtils.getBean(EyeformOcularProcedureDao.class);
-	    ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+	    ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 	
 	
 	    List<EyeformOcularProcedure> ops = opDao.getByDemographicNo(Integer.parseInt(bean.demographicNo));

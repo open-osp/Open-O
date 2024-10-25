@@ -28,11 +28,11 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.ON.model.BillingONHeader;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BillingONHeaderDao extends AbstractDao<BillingONHeader>{
+public class BillingONHeaderDao extends AbstractDaoImpl<BillingONHeader>{
 
 	public BillingONHeaderDao() {
 		super(BillingONHeader.class);
@@ -40,8 +40,8 @@ public class BillingONHeaderDao extends AbstractDao<BillingONHeader>{
 	
 	public List<BillingONHeader> findByDiskIdAndProviderRegNum(Integer diskId, String providerRegNum) {
 		Query query = entityManager.createQuery("SELECT b FROM BillingONHeader b where b.diskId = ? AND b.providerRegNum=?");
-		query.setParameter(1, diskId);
-		query.setParameter(2, providerRegNum);
+		query.setParameter(0, diskId);
+		query.setParameter(1, providerRegNum);
 		
 		@SuppressWarnings("unchecked")
 		List<BillingONHeader> results = query.getResultList();

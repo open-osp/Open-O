@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,35 +21,25 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
-package org.oscarehr.PMmodule.dao;
+ package org.oscarehr.PMmodule.dao;
 
-import java.util.List;
+ import java.util.List;
+ 
+ import javax.persistence.Query;
+ 
+ import org.oscarehr.PMmodule.model.CriteriaSelectionOption;
+ import org.oscarehr.common.dao.AbstractDaoImpl;
+ import org.oscarehr.common.dao.AbstractDao;
+ import org.springframework.stereotype.Repository;
 
-import javax.persistence.Query;
+ public interface CriteriaSelectionOptionDao extends AbstractDao<CriteriaSelectionOption> {
 
-import org.oscarehr.PMmodule.model.CriteriaSelectionOption;
-import org.oscarehr.common.dao.AbstractDao;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public class CriteriaSelectionOptionDao extends AbstractDao<CriteriaSelectionOption> {
-
-	public CriteriaSelectionOptionDao() {
-		super(CriteriaSelectionOption.class);
-	}
-
-	public List<CriteriaSelectionOption> getCriteriaSelectedOptionsByCriteriaId(Integer criteriaId) {
-		Query query = entityManager.createQuery("select x from CriteriaSelectionOption x where x.criteriaId=?");
-		query.setParameter(1, criteriaId);
-		
-		@SuppressWarnings("unchecked")
-	    List<CriteriaSelectionOption> results = query.getResultList();
-		
-		return results;
-	}
-	
-
-}
-
+     public List<CriteriaSelectionOption> getCriteriaSelectedOptionsByCriteriaId(Integer criteriaId);
+ 
+ }
+ 
+ 

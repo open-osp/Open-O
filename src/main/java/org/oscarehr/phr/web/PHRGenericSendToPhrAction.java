@@ -273,7 +273,7 @@ public class PHRGenericSendToPhrAction extends DispatchAction {
 			Long medicalDataId=MyOscarMedicalDataManagerUtils.addMedicalData(providerNo, myOscarLoggedInInfo, medicalDataTransfer, "eDoc", eDoc.getDocId(), true, true);
 			
 			// log the send
-			RemoteDataLogDao remoteDataLogDao=(RemoteDataLogDao) SpringUtils.getBean("remoteDataLogDao");
+			RemoteDataLogDao remoteDataLogDao=(RemoteDataLogDao) SpringUtils.getBean(RemoteDataLogDao.class);
 			RemoteDataLog remoteDataLog=new RemoteDataLog();
 			remoteDataLog.setProviderNo(providerNo);
 			remoteDataLog.setDocumentId(MyOscarLoggedInInfo.getMyOscarServerBaseUrl(), "eDoc", eDoc.getDocId());

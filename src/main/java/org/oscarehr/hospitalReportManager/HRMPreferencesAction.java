@@ -37,7 +37,7 @@ public class HRMPreferencesAction extends DispatchAction  {
 	     	String interval = request.getParameter("interval");
 	     	
 	     	
-	     	UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+	     	UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
 	     	
 	     	try{
 	     		UserProperty prop;

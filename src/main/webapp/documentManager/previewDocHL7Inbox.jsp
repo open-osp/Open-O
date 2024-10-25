@@ -53,7 +53,7 @@
 <%@page import="org.oscarehr.util.SessionConstants"%>
 <%@ page import="org.oscarehr.documentManager.EDoc" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" />
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="dms.documentReport.title" /></title>
@@ -128,6 +128,7 @@ function checkSelected() {
 }
 
 function submitFile(){
+	console.log("File from: previewDocHL7Inbox.jsp");
    aBoxIsChecked = false;
     if (document.reassignForm.flaggedLabs.length == undefined) {
         if (document.reassignForm.flaggedLabs.checked == true) {

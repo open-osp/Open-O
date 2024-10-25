@@ -27,12 +27,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.sharingcenter.model.InfrastructureDataObject;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class InfrastructureDao extends AbstractDao<InfrastructureDataObject> {
+public class InfrastructureDao extends AbstractDaoImpl<InfrastructureDataObject> {
 
     public InfrastructureDao() {
         super(InfrastructureDataObject.class);
@@ -47,7 +47,7 @@ public class InfrastructureDao extends AbstractDao<InfrastructureDataObject> {
     public InfrastructureDataObject getInfrastructure(int id) {
         String sql = "FROM InfrastructureDataObject i where i.id = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, id);
+        query.setParameter(0, id);
 
         InfrastructureDataObject i = getSingleResultOrNull(query);
         return i;
@@ -65,7 +65,7 @@ public class InfrastructureDao extends AbstractDao<InfrastructureDataObject> {
     public boolean aliasExists(String alias) {
         String sql = "SELECT count(alias) FROM InfrastructureDataObject WHERE alias = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, alias);
+        query.setParameter(0, alias);
 
         int retVal = ((Long) query.getSingleResult()).intValue();
         return retVal > 0;

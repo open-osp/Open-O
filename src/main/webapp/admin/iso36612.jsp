@@ -39,7 +39,7 @@ if(!authed) {
 }
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 
 <%
 	ISO36612Dao iso = SpringUtils.getBean(ISO36612Dao.class);

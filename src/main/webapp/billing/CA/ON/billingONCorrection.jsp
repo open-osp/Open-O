@@ -60,8 +60,8 @@
 
 
     String userProviderNo = (String) session.getAttribute("user");
-    ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
-    BillingONExtDao bExtDao = (BillingONExtDao) SpringUtils.getBean("billingONExtDao");
+    ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
+    BillingONExtDao bExtDao = (BillingONExtDao) SpringUtils.getBean(BillingONExtDao.class);
 
     BillingONPaymentDao billingOnPaymentDao = SpringUtils.getBean(BillingONPaymentDao.class);
     Provider userProvider = providerDao.getProvider(userProviderNo);
@@ -91,7 +91,7 @@
     <%isTeamAccessPrivacy=true; %>
 </security:oscarSec>
 <%
-    ProviderSiteDao providerSiteDao = (ProviderSiteDao) SpringUtils.getBean("providerSiteDao");
+    ProviderSiteDao providerSiteDao = (ProviderSiteDao) SpringUtils.getBean(ProviderSiteDao.class);
     Set<String> providerAccessList = new HashSet<String>();
 
     //multisites function
@@ -120,7 +120,7 @@
     List<String> mgrSites = new ArrayList<String>();
 
     if (bMultisites) {
-        SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+        SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
         List<Site> sites = siteDao.getActiveSitesByProviderNo(userProviderNo);
         for (Site s : sites) {
                 mgrSites.add(s.getName());
@@ -170,7 +170,7 @@
     ResultSet rsPatient = null;
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="billing.billingCorrection.title" /></title>
 
@@ -420,9 +420,9 @@ function validateAmountNumberic(idx) {
 
 <body onload="setfocus();">
 <%//
-    RaDetailDao raDetailDao = (RaDetailDao) SpringUtils.getBean("raDetailDao");
-    BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao) SpringUtils.getBean("billingONCHeader1Dao");
-    BillingServiceDao bServiceDao = (BillingServiceDao) SpringUtils.getBean("billingServiceDao");
+    RaDetailDao raDetailDao = (RaDetailDao) SpringUtils.getBean(RaDetailDao.class);
+    BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
+    BillingServiceDao bServiceDao = (BillingServiceDao) SpringUtils.getBean(BillingServiceDao.class);
 
     // bFlag - fill in data?
     boolean bFlag = false;
@@ -527,7 +527,7 @@ function validateAmountNumberic(idx) {
                 HCTYPE = bCh1.getProvince();
                 HCSex = bCh1.getSex();
                 r_doctor_ohip = bCh1.getRefNum();
-                ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
+                ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
 				List<ProfessionalSpecialist> professionalSpecialists = professionalSpecialistDao.findByReferralNo(r_doctor_ohip);
 				if (professionalSpecialists != null)
 					r_doctor = professionalSpecialists.get(0).getLastName()+", "+professionalSpecialists.get(0).getFirstName();
@@ -600,7 +600,7 @@ function validateAmountNumberic(idx) {
 					}
 					/*
 
-					BillingONExtDao billingOnExtDao = (BillingONExtDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("billingONExtDao");
+					BillingONExtDao billingOnExtDao = (BillingONExtDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(BillingONExtDao.class);
 					BillingONExt paymentItem = billingOnExtDao.getClaimExtItem(Integer.parseInt(request.getParameter("billing_no").trim()), Integer.parseInt(DemoNo), BillingONExtDao.KEY_PAYMENT);
 					if (paymentItem != null) {
 						payment = new BigDecimal(paymentItem.getValue());
@@ -695,12 +695,12 @@ OHIP Claim No  <br>
 <!-- RA error -->
 <%
     if(bFlag) {
-        BillingONEAReportDao billingONEAReportDao = (BillingONEAReportDao) SpringUtils.getBean("billingONEAReportDao");
+        BillingONEAReportDao billingONEAReportDao = (BillingONEAReportDao) SpringUtils.getBean(BillingONEAReportDao.class);
 	List<String> lReject = billingONEAReportDao.getBillingErrorList(billingNo);
 	List<String> lError = raDetailDao.getBillingExplanatoryList(billingNo);
 	lError.addAll(lReject);
 
-        BillingONErrorCodeDao billingONErrorCodeDao = (BillingONErrorCodeDao) SpringUtils.getBean("billingONErrorCodeDao");
+        BillingONErrorCodeDao billingONErrorCodeDao = (BillingONErrorCodeDao) SpringUtils.getBean(BillingONErrorCodeDao.class);
 %>
 <table>
 <%
@@ -922,7 +922,7 @@ Pay Program:<br>
 
 <% // multisite start ==========================================
     if (bMultisites) {
-        SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+        SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
         List<Site> sites = siteDao.getActiveSitesByProviderNo(userProviderNo);
         // now get all providers eligible
 
@@ -1028,7 +1028,7 @@ function changeSite(sel) {
 <select name="clinic_ref_code">
 <option value=""><bean:message key="billing.billingCorrection.msgSelectLocation" /></option>
 <%//
-ClinicLocationDao clinicLocationDao = (ClinicLocationDao) SpringUtils.getBean("clinicLocationDao");
+ClinicLocationDao clinicLocationDao = (ClinicLocationDao) SpringUtils.getBean(ClinicLocationDao.class);
 List<ClinicLocation> clinicLocations = clinicLocationDao.findByClinicNo(1);
 	for (ClinicLocation clinicLoc : clinicLocations) {
 		BillLocationNo = clinicLoc.getClinicLocationNo();
@@ -1048,7 +1048,7 @@ List<ClinicLocation> clinicLocations = clinicLocationDao.findByClinicNo(1);
 <option value=""><bean:message key="billing.billingCorrection.msgSelectVisitType" /></option>
 <% if (OscarProperties.getInstance().getBooleanProperty("rma_enabled", "true")) { %>
  <%
-    ClinicNbrDao cnDao = (ClinicNbrDao) SpringUtils.getBean("clinicNbrDao");
+    ClinicNbrDao cnDao = (ClinicNbrDao) SpringUtils.getBean(ClinicNbrDao.class);
 	ArrayList<ClinicNbr> nbrs = cnDao.findAll();
 for (ClinicNbr clinic : nbrs) {
 		String valueString = String.format("%s | %s", clinic.getNbrValue(), clinic.getNbrString());
@@ -1110,7 +1110,7 @@ for (ClinicNbr clinic : nbrs) {
         String itemStatus = "";
 
         if (bFlag) {
-            BillingONService billingONService = (BillingONService) SpringUtils.getBean("billingONService");
+            BillingONService billingONService = (BillingONService) SpringUtils.getBean(BillingONService.class);
             List<BillingONItem> bItems = new ArrayList<BillingONItem>();
 
             if (bCh1 != null)

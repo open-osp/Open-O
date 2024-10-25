@@ -52,7 +52,7 @@ import oscar.util.ConversionUtils;
 */
 public class RptConsultReportData {
 
-	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao) SpringUtils.getBean("consultationServiceDao");
+	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao) SpringUtils.getBean(ConsultationServiceDao.class);
 
 	public ArrayList demoList = null;
 	public String days = null;

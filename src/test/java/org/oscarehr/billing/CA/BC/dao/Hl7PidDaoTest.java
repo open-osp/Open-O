@@ -34,7 +34,6 @@ import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
 import org.oscarehr.util.SpringUtils;
 
-@Ignore
 public class Hl7PidDaoTest extends DaoTestFixtures {
 
 	public Hl7PidDao dao = SpringUtils.getBean(Hl7PidDao.class);

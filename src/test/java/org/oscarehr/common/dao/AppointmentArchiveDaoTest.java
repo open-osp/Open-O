@@ -41,7 +41,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class AppointmentArchiveDaoTest extends DaoTestFixtures {
 
-	protected AppointmentArchiveDao dao = (AppointmentArchiveDao) SpringUtils.getBean("appointmentArchiveDao");
+	protected AppointmentArchiveDao dao = (AppointmentArchiveDao) SpringUtils.getBean(AppointmentArchiveDao.class);
 
 	public AppointmentArchiveDaoTest() {
 	}
@@ -70,7 +70,7 @@ public class AppointmentArchiveDaoTest extends DaoTestFixtures {
 
 	@Test
 	public void testArchiveAppointment() throws Exception {
-		OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean("oscarAppointmentDao");
+		OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 		Appointment appt = new Appointment();
 		EntityDataGenerator.generateTestDataForModelClass(appt);
 		appointmentDao.persist(appt);

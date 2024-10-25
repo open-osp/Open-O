@@ -45,7 +45,7 @@ public class InfoAction extends Action {
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		List<BigInteger> resourceIds = getResourceIds(request);
 
-		EDTDelegate delegate = DelegateFactory.newDelegate();
+		EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 		Detail detail = delegate.info(resourceIds);
 		request.setAttribute("detail", detail);
 

@@ -23,9 +23,10 @@
     Ontario, Canada
 
 --%>
-
+<%@ page import="org.owasp.encoder.Encode" %>
 <%
     String noteStr = (String)request.getAttribute("noteStr");
+    noteStr = Encode.forHtmlContent(noteStr);
     Boolean raw = (Boolean)request.getAttribute("raw");
     if( raw ) {
  %>

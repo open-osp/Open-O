@@ -31,7 +31,7 @@ import java.util.TimeZone;
 import javax.jws.WebService;
 
 import org.apache.cxf.annotations.GZIP;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Component;
 
 @WebService
@@ -50,7 +50,7 @@ public class SystemInfoWs extends AbstractWs {
 	}
 
 	public int getMaxListReturnSize() {
-		return (AbstractDao.MAX_LIST_RETURN_SIZE);
+		return (AbstractDaoImpl.MAX_LIST_RETURN_SIZE);
 	}
 
 	/**

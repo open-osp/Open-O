@@ -57,7 +57,7 @@ public final class PrescriptionMedicationManager {
 	private static final Logger logger = MiscUtils.getLogger();
 	private static final String OSCAR_PRESCRIPTION_DATA_TYPE = "PRESCRIPTION";
 	private static final String OSCAR_MEDICATION_DATA_TYPE = "MEDICATION";
-	private static final SentToPHRTrackingDao sentToPHRTrackingDao = (SentToPHRTrackingDao) SpringUtils.getBean("sentToPHRTrackingDao");
+	private static final SentToPHRTrackingDao sentToPHRTrackingDao = (SentToPHRTrackingDao) SpringUtils.getBean(SentToPHRTrackingDao.class);
 
 	public static void sendPrescriptionsMedicationsToMyOscar(LoggedInInfo loggedInInfo, MyOscarLoggedInInfo myOscarLoggedInInfo, Integer demographicId) throws ClassCastException {
 		// get last synced prescription info
@@ -85,7 +85,7 @@ public final class PrescriptionMedicationManager {
 	
 
 	private static void sendPrescriptionsToMyOscar(LoggedInInfo loggedInInfo, MyOscarLoggedInInfo myOscarLoggedInInfo, Integer demographicId, SentToPHRTracking sentToPHRTracking, HashMap<Drug, Long> remoteMedicationIdMap) {
-		PrescriptionDao prescriptionDao = (PrescriptionDao) SpringUtils.getBean("prescriptionDao");
+		PrescriptionDao prescriptionDao = (PrescriptionDao) SpringUtils.getBean(PrescriptionDao.class);
 		List<Prescription> changedPrescriptions = prescriptionDao.findByDemographicIdUpdatedAfterDate(demographicId, sentToPHRTracking.getSentDatetime());
 		for (Prescription prescription : changedPrescriptions) {
 			logger.debug("sendPrescriptionsMedicationsToMyOscar : prescriptionId=" + prescription.getId());
@@ -113,7 +113,7 @@ public final class PrescriptionMedicationManager {
 	}
 
 	private static HashMap<Drug, Long> sendMedicationsToMyOscar(LoggedInInfo loggedInInfo, MyOscarLoggedInInfo myOscarLoggedInInfo, Integer demographicId, SentToPHRTracking sentToPHRTracking) {
-		DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
+		DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
 		List<Drug> changedMedications = drugDao.findByDemographicIdUpdatedAfterDate(demographicId, sentToPHRTracking.getSentDatetime());
 		HashMap<Drug, Long> remoteIdMap = new HashMap<Drug, Long>();
 		for (Drug drug : changedMedications) {

@@ -35,7 +35,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class PharmacyInfoDaoTest extends DaoTestFixtures {
 
-	protected PharmacyInfoDao dao = (PharmacyInfoDao)SpringUtils.getBean("pharmacyInfoDao");
+	protected PharmacyInfoDao dao = (PharmacyInfoDao)SpringUtils.getBean(PharmacyInfoDao.class);
 
 	public PharmacyInfoDaoTest() {
 	}

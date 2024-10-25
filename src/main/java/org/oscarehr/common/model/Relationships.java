@@ -25,16 +25,8 @@
 
 package org.oscarehr.common.model;
 
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="relationships")
@@ -67,7 +59,7 @@ public class Relationships extends AbstractModel<Integer> {
 
 	private String notes;
 
-	private String deleted;
+	private boolean deleted;
 
 	private String creator;
 
@@ -143,11 +135,11 @@ public class Relationships extends AbstractModel<Integer> {
     	this.notes = notes;
     }
 
-	public String getDeleted() {
+	public boolean isDeleted() {
     	return deleted;
     }
 
-	public void setDeleted(String deleted) {
+	public void setDeleted(boolean deleted) {
     	this.deleted = deleted;
     }
 

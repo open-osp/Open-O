@@ -50,7 +50,7 @@
 <%@ page import="java.util.*,java.sql.*" errorPage="../provider/errorpage.jsp"%>
 
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 
 <title><bean:message key="admin.admindisplaymygroup.title" /></title>

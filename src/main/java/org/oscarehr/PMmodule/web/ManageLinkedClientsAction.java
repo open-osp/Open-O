@@ -43,7 +43,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class ManageLinkedClientsAction {
 	public static Logger logger = MiscUtils.getLogger();
-	public static ClientLinkDao clientLinkDao = (ClientLinkDao) SpringUtils.getBean("clientLinkDao");
+	public static ClientLinkDao clientLinkDao = (ClientLinkDao) SpringUtils.getBean(ClientLinkDao.class);
 
 	private Integer newHnrLinkedId = null;
 	private ArrayList<FacilityDemographicPrimaryKey> linkedCaisiIds = new ArrayList<FacilityDemographicPrimaryKey>();

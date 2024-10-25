@@ -68,7 +68,7 @@ if(!authed) {
 
 <body>
 
-<div class="container">
+<div class="container-fluid">
 <h1><bean:message key="oscarprevention.preventionlistmanager.title" /></h1>
 <p class="lead">Customize which prevention items to display on the prevention list.</p>
 <p style="margin-top:-20px"><span class="label label-info">Info</span> Any changes made here will affect every provider using the prevention module. To add/remove any item from the prevention list simply click on the item below. Green indicates that the item is available from the prevention module.</p>

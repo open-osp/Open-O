@@ -34,7 +34,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class ProgramAccessCache {
 
-	static ProgramAccessDAO programAccessDAO = (ProgramAccessDAO)SpringUtils.getBean("programAccessDAO");
+	static ProgramAccessDAO programAccessDAO = (ProgramAccessDAO)SpringUtils.getBean(ProgramAccessDAO.class);
 	static Map<String,Map> accessMaps = new HashMap<String,Map>();
 	
 	

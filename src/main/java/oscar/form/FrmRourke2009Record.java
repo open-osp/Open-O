@@ -182,7 +182,7 @@ public class FrmRourke2009Record extends FrmRecord {
                      "p1_wt1w", "p1_wt2w", "p1_wt1m", "p2_wt2m", "p2_wt4m", "p2_wt6m", "p3_wt9m", "p3_wt12m", "p3_wt15m", "p4_wt18m", "p4_wt24m",
                      "p1_ht1w", "p1_ht2w", "p1_ht1m", "p2_ht2m", "p2_ht4m", "p2_ht6m", "p3_ht9m", "p3_ht12m", "p3_ht15m", "p4_ht18m", "p4_ht24m"};
 
-                Rourke2009DAO rourkeDao = (Rourke2009DAO)SpringUtils.getBean("rourke2009Dao");
+                Rourke2009DAO rourkeDao = (Rourke2009DAO)SpringUtils.getBean(Rourke2009DAO.class);
                 FormRourke2009 frmRourke = rourkeDao.find(existingID);
 
                 if(frmRourke != null) {
@@ -263,7 +263,7 @@ public class FrmRourke2009Record extends FrmRecord {
                 Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographicNo);
                 
                 
-                MeasurementDao measurementDao = (MeasurementDao)SpringUtils.getBean("measurementDao");
+                MeasurementDao measurementDao = (MeasurementDao)SpringUtils.getBean(MeasurementDao.class);
                 
                 
                 

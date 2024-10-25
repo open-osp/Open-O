@@ -692,7 +692,7 @@ String curProvider_no = (String)session.getAttribute("user");
 					
 					<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">
 					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/keygen/keyManager.jsp"><bean:message key="admin.admin.keyPairGen" /></a></li>
-					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/FacilityManager.do"><bean:message key="admin.admin.manageFacilities" /></a></li>
+<%--					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/FacilityManager.do"><bean:message key="admin.admin.manageFacilities" /></a></li>--%>
 					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/oscarEncounter/oscarMeasurements/adminFlowsheet/NewFlowsheet.jsp">Create New Flowsheet</a></li>
 					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/manageFlowsheets.jsp"><bean:message key="admin.admin.flowsheetManager"/></a></li>
 			      	<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/lotnraddrecordhtm.jsp"><bean:message key="admin.admin.add_lot_nr.title"/></a></li>
@@ -771,6 +771,27 @@ String curProvider_no = (String)session.getAttribute("user");
 				</div>		
 </security:oscarSec>
 
+<!-- #Email Management -->
+<security:oscarSec roleName="<%=roleName$%>" objectName="_admin.email" rights="r" reverse="<%=false%>">
+	<div class="accordion-heading">
+		<a class="accordion-toggle" data-toggle="collapse" data-parent="#adminNav" href="#collapseSeventeen">
+			Emails
+			<i class="icon-chevron-right"></i>
+		</a>
+	</div>
+				
+	<div id="collapseSeventeen" class="accordion-body collapse">
+		<div class="accordion-inner">
+			<ul>
+				<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">
+					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/configureEmail.jsp">Configure Email</a></li>
+				</security:oscarSec>
+				<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/ManageEmails.do?method=showEmailManager">Manage Emails</a></li>
+			</ul>
+		</div>
+	</div>		
+</security:oscarSec>
+
 <!-- #SYSTEM REPORTS-->
 	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">
 				<div class="accordion-heading">
@@ -797,9 +818,9 @@ String curProvider_no = (String)session.getAttribute("user");
 					<bean:message key="admin.admin.traceabilityReport"/></a></li>
 				</security:oscarSec>				
 				
-				<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">
-					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/oscarStatus.do"><bean:message key="admin.oscarStatus.oscarStatus" /></a></li>
-				</security:oscarSec>	
+<%--				<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">--%>
+<%--					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/oscarStatus.do"><bean:message key="admin.oscarStatus.oscarStatus" /></a></li>--%>
+<%--				</security:oscarSec>	--%>
 							
 				</ul>	
 				</div>
@@ -823,10 +844,10 @@ String curProvider_no = (String)session.getAttribute("user");
 						<li>&nbsp;<a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/api/clients.jsp">REST Clients</a></li>
 						</ul>
 					</li>
-					<li><a  href='javascript:void(0);' class="xlink" rel="${ctx}/admin/integratorStatus.jsp">Integrator Status</a></li>
+<%--					<li><a  href='javascript:void(0);' class="xlink" rel="${ctx}/admin/integratorStatus.jsp">Integrator Status</a></li>--%>
 					
-					<li><a href='javascript:void(0);' class="xlink" rel='${ctx}/setProviderStaleDate.do?method=viewIntegratorProperties'><bean:message key="provider.btnSetIntegratorPreferences" /></a></li>
-					<li><a href='javascript:void(0);' class="xlink" rel='${ctx}/lab/CA/ALL/sendOruR01.jsp'><bean:message key="admin.admin.sendOruR01" /></a></li>
+<%--					<li><a href='javascript:void(0);' class="xlink" rel='${ctx}/setProviderStaleDate.do?method=viewIntegratorProperties'><bean:message key="provider.btnSetIntegratorPreferences" /></a></li>--%>
+<%--					<li><a href='javascript:void(0);' class="xlink" rel='${ctx}/lab/CA/ALL/sendOruR01.jsp'><bean:message key="admin.admin.sendOruR01" /></a></li>--%>
 					
 					<caisi:isModuleLoad moduleName="HRM">	
 						<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/hospitalReportManager/hospitalReportManager.jsp">Hospital Report Manager (HRM) Status</a></li>
@@ -866,7 +887,7 @@ String curProvider_no = (String)session.getAttribute("user");
 					<li><a href="javascript:void(0);" class="xlink" rel="${ctx}/admin/updateDrugref.jsp" ><bean:message key="admin.admin.UpdateDrugref"/></a></li>	
 <%--					<li><a href="javascript:void(0);" class="xlink" rel="${ctx}/admin/Know2actConfiguration.jsp" ><bean:message key="admin.admin.Know2ActConfig"/></a></li>--%>
 					<li><a href="javascript:void(0);" class="xlink" rel="${ctx}/admin/surveillanceConfiguration.jsp" ><bean:message key="admin.admin.surveillanceConfig"/></a></li>						
-					<li><a  href='javascript:void(0);' class="xlink" rel="${ctx}/admin/integratorPushStatus.jsp"><bean:message key="admin.admin.integratorPush" /></a></li>
+<%--					<li><a  href='javascript:void(0);' class="xlink" rel="${ctx}/admin/integratorPushStatus.jsp"><bean:message key="admin.admin.integratorPush" /></a></li>--%>
 
 					<caisi:isModuleLoad moduleName="BORN">	
 						<li><a  href='javascript:void(0);' class="xlink" rel="${ctx}/admin/born.jsp"><bean:message key="admin.admin.born" /></a></li>
@@ -892,16 +913,16 @@ String curProvider_no = (String)session.getAttribute("user");
 				<div id="collapseTwelve" class="accordion-body collapse">
 				<div class="accordion-inner">
 				<ul>
-					<li><a href='javascript:void(0);'
-						class="xlink" rel="${ctx}/admin/adminbackupdownload.jsp"><bean:message
-						key="admin.admin.btnAdminBackupDownload" /></a></li>
+<%--					<li><a href='javascript:void(0);'--%>
+<%--						class="xlink" rel="${ctx}/admin/adminbackupdownload.jsp"><bean:message--%>
+<%--						key="admin.admin.btnAdminBackupDownload" /></a></li>--%>
 						
 					<li><a href='javascript:void(0);'
 						class="xlink" rel="${ctx}/demographic/demographicExport.jsp"><bean:message key="admin.admin.DemoExport"/></a></li>
 		                        <li><a href='javascript:void(0);'
 						class="xlink" rel="${ctx}/demographic/demographicImport.jsp"><bean:message key="admin.admin.DemoImport"/></a></li>
-<%--					<li><a href='javascript:void(0);'--%>
-<%--						class="xlink" rel="${ctx}/admin/demographicmergerecord.jsp"><bean:message key="admin.admin.mergeRec"/></a></li>--%>
+					<li><a href='javascript:void(0);'
+						class="xlink" rel="${ctx}/admin/demographicmergerecord.jsp"><bean:message key="admin.admin.mergeRec"/></a></li>
 					<li><a href='javascript:void(0);'
 						class="xlink" rel="${ctx}/admin/updatedemographicprovider.jsp"><bean:message
 						key="admin.admin.btnUpdatePatientProvider" /></a></li>

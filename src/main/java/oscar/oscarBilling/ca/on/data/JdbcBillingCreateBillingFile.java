@@ -123,7 +123,7 @@ public class JdbcBillingCreateBillingFile {
 
 		//multisite, get site short name
 		clinicShortName = new HashMap<String, String>();
-		SiteDao siteDao = (SiteDao) SpringUtils.getBean("siteDao");
+		SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
 		List<Site> sites = siteDao.getAllSites();
 		for (Site s : sites) {
 			clinicShortName.put(s.getName(), s.getShortName());
@@ -530,7 +530,7 @@ public class JdbcBillingCreateBillingFile {
 					fee = boi.getFee();
 
 					if (!hasSliCode) {
-						BillingServiceDao bsd = (BillingServiceDao) SpringUtils.getBean("billingServiceDao");
+						BillingServiceDao bsd = (BillingServiceDao) SpringUtils.getBean(BillingServiceDao.class);
 						if (bsd.codeRequiresSLI(itemObj.getService_code())) {
 							errorPartMsg = "Service code '" + itemObj.getService_code() + "' requires an SLI code. <br/>";
 						}
@@ -598,7 +598,7 @@ public class JdbcBillingCreateBillingFile {
 
 	public void createSiteBillingFileStr(LoggedInInfo loggedInInfo, String bid, String[] statuses) {
 
-		SiteDao siteDao = (SiteDao) SpringUtils.getBean("siteDao");
+		SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
 
 		try {
 			if (!"0".equals(bid)) { // for simulation only

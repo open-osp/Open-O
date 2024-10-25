@@ -33,11 +33,11 @@
 
 <%
 
-ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 ArrayList<Provider> providers = new ArrayList<Provider>(providerDao.getActiveProviders());
 String provider = CommonLabResultData.NOT_ASSIGNED_PROVIDER_NO;
 
-QueueDao queueDao = (QueueDao) SpringUtils.getBean("queueDao");
+QueueDao queueDao = (QueueDao) SpringUtils.getBean(QueueDao.class);
 HashMap<Integer,String> queues = queueDao.getHashMapOfQueues();
 String queueIdStr = (String) request.getSession().getAttribute("preferredQueue");
 int queueId = 1;
@@ -47,7 +47,7 @@ if (queueIdStr != null) {
 }
 
     String user_no = (String) session.getAttribute("user");
-    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 
     UserProperty uProp = userPropertyDAO.getProp(user_no, UserProperty.UPLOAD_DOCUMENT_DESTINATION);
     String destination=UserProperty.PENDINGDOCS;

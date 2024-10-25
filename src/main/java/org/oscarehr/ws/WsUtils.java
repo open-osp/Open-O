@@ -37,7 +37,7 @@ import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
 public final class WsUtils {
-	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 	private static final Logger logger = MiscUtils.getLogger();
 
 	/**

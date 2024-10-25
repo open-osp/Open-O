@@ -44,7 +44,7 @@
 	import="org.springframework.web.context.*,org.springframework.web.context.support.*, org.oscarehr.PMmodule.service.ProviderManager, org.oscarehr.casemgmt.model.CaseManagementNote"%>
 <%
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    ProviderManager pMgr = (ProviderManager)ctx.getBean("providerManager");
+    ProviderManager pMgr = (ProviderManager)ctx.getBean(ProviderManager.class);
  %>
 <html>
 <head>

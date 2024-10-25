@@ -63,9 +63,9 @@ public class MacroAction extends DispatchAction {
 		sliCodeList.add(new LabelValueBean("OTN | Ontario Telemedicine Network","OTN"));
 	}
 
-	MacroDao dao = (MacroDao)SpringUtils.getBean("MacroDAO");
-	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-	BillingServiceDao billingServiceDao = (BillingServiceDao)SpringUtils.getBean("billingServiceDao");
+	MacroDao dao = (MacroDao)SpringUtils.getBean(MacroDao.class);
+	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
+	BillingServiceDao billingServiceDao = (BillingServiceDao)SpringUtils.getBean(BillingServiceDao.class);
 
 	@Override
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

@@ -70,18 +70,21 @@ public class SpringUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getBean(Class<?> clazz) {
+
 		// legacy code - I wonder if it's necessary since we are looking up a bean based directly on the class name anyways
 		// but to keep legacy logic working properly attempt to locate component based on the Spring conventions 
 		String className = WordUtils.uncapitalize(clazz.getSimpleName());
-		if (beanFactory.containsBean(className))
+		if (beanFactory.containsBean(className)) {
 			return (T) beanFactory.getBean(className);
-		
+		}
+
 		if (ListableBeanFactory.class.isAssignableFrom(beanFactory.getClass())) {
 			ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
 			String[] beanNames = listableBeanFactory.getBeanNamesForType(clazz);
 			if (beanNames.length > 0)
 				return (T) listableBeanFactory.getBean(beanNames[0]);
 		}
+		
 		throw new NoSuchBeanDefinitionException(clazz);
 	}
 }

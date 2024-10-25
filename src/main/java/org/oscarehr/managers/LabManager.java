@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.managers;
 
@@ -50,95 +53,11 @@ import oscar.oscarLab.ca.all.pageUtil.LabPDFCreator;
 import oscar.util.StringUtils;
 
 
-@Service
-public class LabManager {
-
-	private static final String TEMP_PDF_DIRECTORY = "hl7PDF";
-	private static final String DEFAULT_FILE_SUFFIX = ".pdf";
-
-	@Autowired
-	Hl7TextInfoDao hl7textInfoDao;
-
-	@Autowired
-	Hl7TextMessageDao hl7TextMessageDao;
-
-	@Autowired
-	private NioFileManager nioFileManager;
+public interface LabManager{
+	public List<Hl7TextMessage> getHl7Messages(LoggedInInfo loggedInInfo, Integer demographicNo, int offset, int limit);
+	public List<Hl7TextInfo> getHl7TextInfo(LoggedInInfo loggedInInfo, int demographicNo);
 	
-	@Autowired
-	private PatientLabRoutingDao patientLabRoutingDao;
-	
-	@Autowired
-	SecurityInfoManager securityInfoManager;
+	public Hl7TextMessage getHl7Message(LoggedInInfo loggedInInfo, int labId);
 
-	public List<Hl7TextMessage> getHl7Messages(LoggedInInfo loggedInInfo, Integer demographicNo, int offset, int limit) {
-		checkPrivilege(loggedInInfo, "r");
-		
-		LogAction.addLogSynchronous(loggedInInfo, "LabManager.getHl7Messages", "demographicNo="+demographicNo);
-		
-		List<Hl7TextMessage> results = hl7TextMessageDao.findByDemographicNo(demographicNo, offset, limit);
-
-		return results;
-	}
-	
-	public List<Hl7TextInfo> getHl7TextInfo(LoggedInInfo loggedInInfo, int demographicNo) {
-		checkPrivilege(loggedInInfo, "r");
-		
-		List<PatientLabRouting> patientLabRoutingList = patientLabRoutingDao.findByDemographicAndLabType(demographicNo, PatientLabRoutingDao.HL7);
-		List<Integer> labIds = new ArrayList<Integer>();
-		if(patientLabRoutingList != null) {
-			for(PatientLabRouting patientLabRouting : patientLabRoutingList) {
-				labIds.add(patientLabRouting.getLabNo());
-			}			
-		}
-		
-		LogAction.addLogSynchronous(loggedInInfo, "LabManager.getHl7TextInfo", "demographicNo="+demographicNo);
-		
-		return hl7textInfoDao.findByLabIdList(labIds);
-
-	}
-	
-	public Hl7TextMessage getHl7Message(LoggedInInfo loggedInInfo, int labId) {
-		checkPrivilege(loggedInInfo, "r");
-		
-		LogAction.addLogSynchronous(loggedInInfo, "LabManager.getHl7Message", "labId="+labId);
-		
-		Hl7TextMessage result = hl7TextMessageDao.find(labId);
-
-		return result;
-	}
-
-	public Path renderLab(LoggedInInfo loggedInInfo, Integer segmentId) throws PDFGenerationException {
-		checkPrivilege(loggedInInfo, "r");
-		LogAction.addLogSynchronous(loggedInInfo, "LabManager.getHl7MessageAsPDF", "labId="+segmentId);
-
-		Path path = null;
-		try {
-			String fileName = System.currentTimeMillis() + "_" + segmentId + "_LabReport";
-			File tempPDF = File.createTempFile(fileName, "pdf");
-			try (FileOutputStream fileOutputStream = new FileOutputStream(tempPDF);
-				 ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();) {
-				LabPDFCreator labPDFCreator = new LabPDFCreator(fileOutputStream, String.valueOf(segmentId), null);
-				labPDFCreator.printPdf();
-				labPDFCreator.addEmbeddedDocuments(tempPDF, byteOutputStream);
-				path = nioFileManager.saveTempFile("temporaryPDF" + new Date().getTime(), byteOutputStream);
-			}
-			tempPDF.delete();
-		} catch (IOException | DocumentException e) {
-			throw new PDFGenerationException("Error Details: Lab [" + getDisplayLabName(segmentId) + "] could not be converted into a PDF", e);
-		}
-
-		return path;
-	}
-
-	private void checkPrivilege(LoggedInInfo loggedInInfo, String privilege) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", privilege, null)) {
-			throw new RuntimeException("missing required security object (_lab)");
-		}
-	}
-
-	private String getDisplayLabName(Integer segmentId) {
-		Hl7TextInfo hl7TextInfo = hl7textInfoDao.findLabId(segmentId);
-		return StringUtils.isNullOrEmpty(hl7TextInfo.getDiscipline()) ? "UNLABELLED" : hl7TextInfo.getDiscipline();
-	}
+	public Path renderLab(LoggedInInfo loggedInInfo, Integer segmentId) throws PDFGenerationException;
 }

@@ -56,7 +56,7 @@
 		demographicTransfer=directLinks.get(0);
 	}		
 				
-	DemographicDao demographicDao=(DemographicDao) SpringUtils.getBean("demographicDao");
+	DemographicDao demographicDao=(DemographicDao) SpringUtils.getBean(DemographicDao.class);
 	Demographic demographic=demographicDao.getDemographicById(localDemographicId);
 	
 	
@@ -90,7 +90,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-html-el"
+<%@ taglib uri="http://struts.apache.org/tags-html-el"
 	prefix="html-el"%>
 
 <%@ page
@@ -101,7 +101,7 @@
 <%@ page import="org.oscarehr.common.dao.FlowsheetDao"%>
 <%@ page import="org.oscarehr.util.SpringUtils"%>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript"
 	src="<%= request.getContextPath() %>/js/global.js"></script>

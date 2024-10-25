@@ -69,7 +69,7 @@
 %>
 
 
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -154,7 +154,7 @@ if(bMultisites) {
 
     java.util.ResourceBundle rb = java.util.ResourceBundle.getBundle("oscarResources",request.getLocale());
 
-	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
 	List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
 
 	for (int i=0;i<sites.size();i++) {
@@ -421,7 +421,7 @@ function printPaste2Parent(print, fax, pasteRx){
 	function writeToEncounter(print, text) {
     	try {
 			var url = "<%=request.getContextPath() %>/oscarRx/WriteToEncounter.do";
-			var prefPharmacy = "<%=prefPharmacy != null ? prefPharmacy : ""%>";
+			var prefPharmacy = "<%=prefPharmacy != null ? Encode.forJavaScriptBlock(prefPharmacy) : ""%>";
 			new Ajax.Request(url, {method: 'post',
 				parameters: "prefPharmacy=" + encodeURIComponent(prefPharmacy) +
 						"&additionalNotes=" +
@@ -542,10 +542,10 @@ function unloadMess(){
 
 var isSignatureDirty = false;
 var isSignatureSaved = false;
+<% if (OscarProperties.getInstance().isRxFaxEnabled()) { %>
+	var hasFaxNumber = <%= pharmacy != null && pharmacy.getFax() != null && pharmacy.getFax().trim().length() > 0 ? "true" : "false" %>;
+<% } %>
 function signatureHandler(e) {
-	<% if (OscarProperties.getInstance().isRxFaxEnabled()) { %>
-		var hasFaxNumber = <%= pharmacy != null && pharmacy.getFax() != null && pharmacy.getFax().trim().length() > 0 ? "true" : "false" %>;
-	<% } %>
 	isSignatureDirty = e.isDirty;
 	isSignatureSaved = e.isSave;
 	e.target.onbeforeunload = null;
@@ -577,6 +577,12 @@ function enableExistingSignature() {
 	}
 }
 
+function showFaxWarning() {
+	if (typeof hasFaxNumber !== 'undefined' && !hasFaxNumber) {
+		document.getElementById("faxWarningNote").style.display = "block";
+	}
+}
+
 var requestIdKey = "<%=signatureRequestId %>";
 
 </script>
@@ -584,12 +590,21 @@ var requestIdKey = "<%=signatureRequestId %>";
         * {
 	        font:13px/1.231 arial,helvetica,clean,sans-serif;
         }
+
+		.warning-note {
+			background-color: #ffffcc;
+			color: #cc6600;
+			padding: 20px;
+			border: 1px solid #cc6600;
+			border-radius: 5px;
+			display: none;
+		}
 	</style>
 
 </head>
 
 <body topmargin="0" leftmargin="0" vlink="#0000FF"
-	onload="addressSelect();printPharmacy('<%=prefPharmacyId%>','<%=prefPharmacy%>')">
+	onload="addressSelect();printPharmacy('<%=prefPharmacyId%>');showFaxWarning();">
 
 <!-- added by vic, hsfo -->
 <%
@@ -662,15 +677,18 @@ function toggleView(form) {
 			<tr>
 				<td width=420px>
 				<div class="DivContentPadding"><!-- src modified by vic, hsfo -->
-				<iframe id='preview' name='preview' width=420px height=1000px
+				<iframe id='preview' name='preview' width=420px height=890px
 					src="<%= dx<0?"Preview2.jsp?scriptId="+request.getParameter("scriptId")+"&rePrint="+reprint+"&pharmacyId="+request.getParameter("pharmacyId"):dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
 					align=center border=0 frameborder=0></iframe></div>
 				</td>
 
 				<td valign=top><html:form action="/oscarRx/clearPending">
 					<html:hidden property="action" value="" />
+					<div class="warning-note" id="faxWarningNote">
+						<strong>Warning:</strong> faxing is disabled because no pharmacy fax number is available.</br></br>To enable faxing, close this window and select a pharmacy with a fax number before trying again.
+					</div>
 				</html:form>
-                                    <script type="text/javascript">
+							<script type="text/javascript">
                                 function clearPending(action){
                                     document.forms.RxClearPendingForm.action.value = action;
                                     document.forms.RxClearPendingForm.submit();
@@ -687,7 +705,7 @@ function toggleView(form) {
                                 }
 
 
-                                function printPharmacy(id,name){
+                                function printPharmacy(id){
                                     //ajax call to get all info about a pharmacy
                                     //use json to write to html
 	                                if(! id) {
@@ -711,17 +729,18 @@ function toggleView(form) {
                                 }
                                 function expandPreview(text){
                                     parent.document.getElementById('lightwindow_container').style.width="1140px";
+									parent.document.getElementById('lightwindow_container').style.left="-600px";
                                     parent.document.getElementById('lightwindow_contents').style.width="1120px";
-                                    document.getElementById('preview').style.width="580px";
+                                    document.getElementById('preview').style.width="600px";
                                     frames['preview'].document.getElementById('pharmInfo').innerHTML=text;
                                     //frames['preview'].document.getElementById('removePharm').show();
                                     $("selectedPharmacy").innerHTML='<bean:message key="oscarRx.printPharmacyInfo.paperSizeWarning"/>';
 
                                 }
                                 function reducePreview(){
-                                    parent.document.getElementById('lightwindow_container').style.width="980px";
-                                    parent.document.getElementById('lightwindow_contents').style.width="960px";
-                                    document.getElementById('preview').style.width="420px";
+                                    parent.document.getElementById('lightwindow_container').style.width="1000px";
+                                    parent.document.getElementById('lightwindow_contents').style.width="980px";
+                                    document.getElementById('preview').style.width="460px";
                                     frames['preview'].document.getElementById('pharmInfo').innerHTML="";
                                     $("selectedPharmacy").innerHTML="";
                                 }
@@ -852,13 +871,13 @@ function toggleView(form) {
                                         <tr>
 						<td colspan=2 style="font-weight: bold"><span><bean:message key="ViewScript.msgAddNotesRx"/></span></td>
 					</tr>
-                                        <tr>
+					<tr>
                                                 <!--td width=10px></td-->
-                                                <td>
-                                                    <textarea id="additionalNotes" style="width: 200px" onchange="javascript:addNotes();" ></textarea>
-                                                    <input type="button" value="Additional Rx Notes" onclick="javascript:addNotes();"/>
-                                                </td>
-                                        </tr>
+						<td>
+							<textarea id="additionalNotes" style="width: 200px" onchange="javascript:addNotes();" ></textarea>
+							<input type="button" value="Additional Rx Notes" onclick="javascript:addNotes();"/>
+						</td>
+					</tr>
 
                                         <%}%>
 					<% if (OscarProperties.getInstance().isRxSignatureEnabled() && !OscarProperties.getInstance().getBooleanProperty("signature_tablet", "yes")) { %>

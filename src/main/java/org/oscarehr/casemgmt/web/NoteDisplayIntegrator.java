@@ -48,7 +48,7 @@ import oscar.oscarRx.data.RxPrescriptionData;
 public class NoteDisplayIntegrator implements NoteDisplay {
 	private static final Logger logger=MiscUtils.getLogger();
 
-	private IssueDAO issueDao=(IssueDAO) SpringUtils.getBean("IssueDAO");
+	private IssueDAO issueDao=(IssueDAO) SpringUtils.getBean(IssueDAO.class);
 
 	private CachedDemographicNote cachedDemographicNote;
 	private String location="Integrated Facility : details n/a";
@@ -248,6 +248,10 @@ public class NoteDisplayIntegrator implements NoteDisplay {
 	}
 
 	public boolean isExternalNote() {
+		return false;
+	}
+
+	public boolean isEmailNote() {
 		return false;
 	}
 }

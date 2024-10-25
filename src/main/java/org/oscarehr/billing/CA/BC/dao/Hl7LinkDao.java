@@ -31,14 +31,14 @@ import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.Hl7Link;
 import org.oscarehr.common.NativeSql;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 import oscar.util.ConversionUtils;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class Hl7LinkDao extends AbstractDao<Hl7Link>{
+public class Hl7LinkDao extends AbstractDaoImpl<Hl7Link>{
 
 	public Hl7LinkDao() {
 		super(Hl7Link.class);

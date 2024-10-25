@@ -36,8 +36,8 @@ import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.logging.log4j.Logger;
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.wss4j.common.WSS4JConstants;
+import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.oscarehr.common.model.OscarLog;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -57,7 +57,7 @@ public class AuthenticationInWSS4JInterceptor extends WSS4JInInterceptor impleme
 	{
 		HashMap<String, Object> properties = new HashMap<String, Object>();
 		properties.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
-		properties.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
+		properties.put(WSHandlerConstants.PASSWORD_TYPE, WSS4JConstants.PW_TEXT);
 		properties.put(WSHandlerConstants.PW_CALLBACK_REF, this);
 
 		setProperties(properties);

@@ -28,7 +28,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.BillingHistory;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.common.model.BillingPaymentType;
 import org.springframework.stereotype.Repository;
 
@@ -36,7 +36,7 @@ import oscar.entities.Billingmaster;
 import oscar.oscarBilling.ca.bc.MSP.MSPReconcile;
 
 @Repository
-public class BillingHistoryDao extends AbstractDao<BillingHistory> {
+public class BillingHistoryDao extends AbstractDaoImpl<BillingHistory> {
 
 	public BillingHistoryDao() {
 		super(BillingHistory.class);

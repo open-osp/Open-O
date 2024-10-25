@@ -46,7 +46,7 @@
 	}
 %>
 <!DOCTYPE HTML>
-<html:html locale="true">
+<html:html lang="en">
 	<head>
 		<title><bean:message key="SelectPharmacy.title"/></title>
 		<html:base/>
@@ -320,22 +320,29 @@
 					});
 
 					$(".deletePharm").click(function () {
-						const deletingWarningStr = "WARNING - proceeding will delete this pharmacy from the clinic's database for all users. Only proceed if you are absolutely sure.\n\nType \"yes\" in the box below to proceed.";
-						const userInput = prompt(deletingWarningStr);
-						if (userInput == null || userInput.toLowerCase() != "yes") {
-							alert("This pharmacy has not been deleted because you did not type \"yes\" in the previous box.");
-							return false;
-						}
-						var data = "pharmacyId=" + $(this).closest("tr").attr("pharmId");
+						let pharmacyData = "pharmacyId=" + $(this).closest("tr").attr("pharmId");
 						ShowSpin(true);
-						$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=delete",
-							data, function (data) {
-								if (data.success) {
-									window.location.reload(false);
-								} else {
-									alert("There was an error deleting the Pharmacy");
-									HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
+						$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=getTotalDemographicsPreferedToPharmacy",
+							pharmacyData, function (data) {
+								HideSpin(true);
+								let deletingWarningStr = "WARNING - proceeding will delete this pharmacy from the clinic's database for all users. Only proceed if you are absolutely sure.\n\nType \"yes\" in the box below to proceed.";
+								if (data.totalDemographics && data.totalDemographics > 0) { deletingWarningStr = "This pharmacy is currently listed as a preferred pharmacy for [" + data.totalDemographics + "] patients.\n\nDeleting this pharmacy from the clinic's database will also remove it as a preferred pharmacy for all of these patients.\n\nOnly proceed if you are absolutely sure. Type \"yes\" in the box below to proceed"; }
+								const userInput = prompt(deletingWarningStr);
+								if (userInput == null || userInput.toLowerCase() != "yes") {
+									alert("This pharmacy has not been deleted because you did not type \"yes\" in the previous box.");
+									return false;
 								}
+
+								ShowSpin(true);
+								$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=delete",
+									pharmacyData, function (data) {
+										if (data.success) {
+											window.location.reload(false);
+										} else {
+											alert("There was an error deleting the Pharmacy");
+											HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
+										}
+									}, "json");
 							}, "json");
 					});
 

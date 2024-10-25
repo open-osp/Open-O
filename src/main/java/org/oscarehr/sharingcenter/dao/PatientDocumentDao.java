@@ -27,12 +27,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.sharingcenter.model.PatientDocument;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class PatientDocumentDao extends AbstractDao<PatientDocument> {
+public class PatientDocumentDao extends AbstractDaoImpl<PatientDocument> {
 
     public PatientDocumentDao() {
         super(PatientDocument.class);
@@ -48,7 +48,7 @@ public class PatientDocumentDao extends AbstractDao<PatientDocument> {
     public List<PatientDocument> findPatientDocuments(int demographicId) {
         String sql = "FROM PatientDocument e where e.demographic_no = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, demographicId);
+        query.setParameter(0, demographicId);
 
         @SuppressWarnings("unchecked")
         List<PatientDocument> retVal = query.getResultList();
@@ -66,8 +66,8 @@ public class PatientDocumentDao extends AbstractDao<PatientDocument> {
     public boolean documentExists(String documentUniqueId, String repositoryUniqueId) {
         String sql = "SELECT count(*) FROM PatientDocument e where e.uniqueDocumentId = ? AND e.repositoryUniqueId = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, documentUniqueId);
-        query.setParameter(2, repositoryUniqueId);
+        query.setParameter(0, documentUniqueId);
+        query.setParameter(1, repositoryUniqueId);
 
         int retVal = ((Long) query.getSingleResult()).intValue();
         return retVal > 0;
@@ -76,8 +76,8 @@ public class PatientDocumentDao extends AbstractDao<PatientDocument> {
     public PatientDocument getDocument(String documentUniqueId, String repositoryUniqueId) {
         String sql = "FROM PatientDocument e where e.uniqueDocumentId = ? AND e.repositoryUniqueId = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, documentUniqueId);
-        query.setParameter(2, repositoryUniqueId);
+        query.setParameter(0, documentUniqueId);
+        query.setParameter(1, repositoryUniqueId);
 
         query.setMaxResults(1);
         PatientDocument retVal = getSingleResultOrNull(query);
@@ -93,7 +93,7 @@ public class PatientDocumentDao extends AbstractDao<PatientDocument> {
     public int getDocumentCount(int demographicId) {
         String sql = "SELECT count(*) FROM PatientDocument e where e.demographic_no = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, demographicId);
+        query.setParameter(0, demographicId);
 
         int retVal = ((Long) query.getSingleResult()).intValue();
         return retVal;
@@ -111,7 +111,7 @@ public class PatientDocumentDao extends AbstractDao<PatientDocument> {
     public List<PatientDocument> findPatientDocumentsWithPagination(int demographicId, int offset, int elements) {
         String sql = "FROM PatientDocument e where e.demographic_no = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, demographicId);
+        query.setParameter(0, demographicId);
         query.setFirstResult(offset);
         query.setMaxResults(elements);
 

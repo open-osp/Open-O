@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.caisi.dao;
@@ -32,61 +35,15 @@ import javax.persistence.Query;
 import org.caisi.model.DefaultIssue;
 import org.oscarehr.common.dao.AbstractDao;
 
-public class DefaultIssueDao extends AbstractDao<DefaultIssue> {
+public interface DefaultIssueDao extends AbstractDao<DefaultIssue> {
 
-	public DefaultIssueDao(){
-		super(DefaultIssue.class);
-	}
-	
-	public DefaultIssue findDefaultIssue(Integer id) {
-		Query query = entityManager.createQuery("select x from DefaultIssue x where x.id = ?1");
-		query.setParameter(1, id);
-		return getSingleResultOrNull(query);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public DefaultIssue getLastestDefaultIssue() {
-		Query query = entityManager.createQuery("select x from DefaultIssue x order by x.assignedtime desc");
-		query.setMaxResults(1);
-		List<DefaultIssue> issueList = query.getResultList();
-		if (issueList == null || issueList.size() == 0) {
-			return null;
-		}
-		return issueList.get(0);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<DefaultIssue> findAll() {
-		Query query = entityManager.createQuery("select x from DefaultIssue x order by x.assignedtime desc");
-		return query.getResultList();
-	}
-	
-	public void saveDefaultIssue(DefaultIssue issue) {
-		if (issue.getId() != null && issue.getId() > 0) {
-			merge(issue);
-		} else {
-			persist(issue);
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public String[] findAllDefaultIssueIds() {
-		Query query = entityManager.createQuery("select x.issueIds from DefaultIssue x order by x.assignedtime");
-		query.setMaxResults(1);
-		List<String> issueIdsList = query.getResultList();
-		if (issueIdsList.size() == 0) {
-			return new String[0];
-		}
-		Set<String> issueIdsSet = new HashSet<String>();
-		for (String ids : issueIdsList) {
-			String[] idsArr = ids.split(",");
-			for (String id : idsArr) {
-				if (id.length() > 0) {
-					issueIdsSet.add(id);
-				}
-			}
-		}
-	
-		return issueIdsSet.toArray(new String[issueIdsSet.size()]);
-	}
+    public DefaultIssue findDefaultIssue(Integer id);
+
+    public DefaultIssue getLastestDefaultIssue();
+
+    public List<DefaultIssue> findAll();
+
+    public void saveDefaultIssue(DefaultIssue issue);
+
+    public String[] findAllDefaultIssueIds();
 }

@@ -47,8 +47,8 @@ import org.oscarehr.util.SpringUtils;
 
 public class ManageConsent {
 	private static Logger logger=MiscUtils.getLogger();
-	private static IntegratorConsentDao integratorConsentDao = (IntegratorConsentDao) SpringUtils.getBean("integratorConsentDao");
-	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+	private static IntegratorConsentDao integratorConsentDao = (IntegratorConsentDao) SpringUtils.getBean(IntegratorConsentDao.class);
+	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 
 	private LoggedInInfo loggedInInfo;
 	private int clientId = -1;

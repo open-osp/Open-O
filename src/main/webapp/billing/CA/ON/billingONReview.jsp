@@ -50,7 +50,7 @@
 
 <%
 	DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);
-        BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean("billingONCHeader1Dao");
+        BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
 %>
 <%//
 	if (session.getAttribute("user") == null) {
@@ -1045,7 +1045,7 @@ String clinicAddress = null;
 // get Site ID from billingON.jsp
 if (bMultisites) {
 	String siteName = request.getParameter("site");
-	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
   	List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
   	Site s = ApptUtil.getSiteFromName(sites, siteName);
 

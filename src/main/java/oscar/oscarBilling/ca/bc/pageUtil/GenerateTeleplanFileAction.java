@@ -96,7 +96,7 @@ public class GenerateTeleplanFileAction extends Action{
         synchronized (this)  { 
             try{
              
-            BillingmasterDAO billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean("BillingmasterDAO");
+            BillingmasterDAO billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean(BillingmasterDAO.class);
             DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
             TeleplanFileWriter teleplanWr = new TeleplanFileWriter();  
             teleplanWr.setBillingmasterDAO(billingmasterDAO);

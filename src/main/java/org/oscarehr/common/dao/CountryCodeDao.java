@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,73 +21,19 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.CountryCode;
-import org.springframework.stereotype.Repository;
 
-/**
- *
- * @author Jason Gallagher
- */
-@Repository
-public class CountryCodeDao extends AbstractDao<CountryCode> {
-
-    public CountryCodeDao() {
-    	super(CountryCode.class);
-    }
-    
-    public List<CountryCode> findAll(){
-    	Query query = entityManager.createQuery("SELECT cc from CountryCode cc");
-        @SuppressWarnings("unchecked")
-        List<CountryCode> codeList = query.getResultList();
-        return codeList;
-    }
-
-    public List<CountryCode> getAllCountryCodes(){
-    	return findAll();
-    }
-
-    //NOT USED YET
-    public List<CountryCode> getAllCountryCodes(String locale){
-    	Query query = entityManager.createQuery("SELECT cc from CountryCode cc where cc.clocale = ?");
-    	query.setParameter(1, locale);
-        @SuppressWarnings("unchecked")
-        List<CountryCode> codeList = query.getResultList();
-        return codeList;
-    }
-
-    public CountryCode getCountryCode(String countryCode){
-    	Query query = entityManager.createQuery("SELECT cc from CountryCode  cc where cc.countryId = ?");
-    	query.setParameter(1, countryCode);
-        @SuppressWarnings("unchecked")
-        List<CountryCode> codeList = query.getResultList();
-        if (codeList.size() >0){
-            return  codeList.get(0);
-        }
-        return null;
-    }
-
-
-    //NOT USED YET
-    public CountryCode getCountryCode(String countryCode,String locale){
-    	Query query = entityManager.createQuery("SELECT cc from CountryCode cc where cc.countryId = ? and cc.clocale=?");
-    	query.setParameter(1, countryCode);
-        query.setParameter(2, locale);
-        @SuppressWarnings("unchecked")
-        List<CountryCode> codeList = query.getResultList();
-
-    	CountryCode code = null;
-        if (codeList != null && codeList.size() >0){
-            code = codeList.get(0);
-        }
-        return code;
-    }
+public interface CountryCodeDao extends AbstractDao<CountryCode> {
+    List<CountryCode> findAll();
+    List<CountryCode> getAllCountryCodes();
+    List<CountryCode> getAllCountryCodes(String locale);
+    CountryCode getCountryCode(String countryCode);
+    CountryCode getCountryCode(String countryCode,String locale);
 }

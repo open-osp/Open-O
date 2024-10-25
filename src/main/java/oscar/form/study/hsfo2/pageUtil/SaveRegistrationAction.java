@@ -52,7 +52,7 @@ public class SaveRegistrationAction extends DispatchAction
 {
 	
 	Logger logger = MiscUtils.getLogger();
-	private static Hsfo2PatientDao hsfo2PatientDao = (Hsfo2PatientDao) SpringUtils.getBean("hsfo2PatientDao");
+	private static Hsfo2PatientDao hsfo2PatientDao = (Hsfo2PatientDao) SpringUtils.getBean(Hsfo2PatientDao.class);
 	
   protected static enum SaveType
   {
@@ -465,7 +465,7 @@ public class SaveRegistrationAction extends DispatchAction
     boolean monitor = parameterHasValue( request, "monitor");
     
     Hsfo2Visit visitData = new Hsfo2Visit();
-    Hsfo2VisitDao visitDao = (Hsfo2VisitDao) SpringUtils.getBean("hsfo2VisitDao");
+    Hsfo2VisitDao visitDao = (Hsfo2VisitDao) SpringUtils.getBean(Hsfo2VisitDao.class);
     String visit_id = request.getParameter("visit_form_id");
     if(visit_id!=null && Integer.parseInt(visit_id)!=0)
     	visitData = visitDao.getHsfoVisitById(Integer.parseInt(visit_id));

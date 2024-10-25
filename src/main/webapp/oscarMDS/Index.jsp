@@ -9,12 +9,7 @@
 
 --%>
 
-<%@ page import="oscar.oscarMDS.data.*,oscar.OscarProperties" %>
-<%@ page import="org.oscarehr.common.model.inbox.InboxResponse" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="oscar.oscarLab.ca.on.LabResultData" %>
-<%@ page import="java.util.List" %>
-<%@ page import="org.oscarehr.common.model.inbox.InboxItemDemographicCount" %>
+<%@ page import="oscar.OscarProperties" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
@@ -39,19 +34,11 @@ if(!authed) {
 <%
 //TODO all of this below needs to be removed. It is unsafe. Consider using proper JSTL.  
 @SuppressWarnings("unchecked")
-//ArrayList<PatientInfo> patients = (ArrayList<PatientInfo>) request.getAttribute("patients");
-//if (patients!=null) {
-//	Collections.sort(patients);
-//}
-//LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(session);
-//InboxResponse inboxResponseResults = (InboxResponse) request.getAttribute("inboxResponse");
-//List<LabResultData> labResultData = inboxResponseResults.getLabResultData(loggedInInfo);
-//List<InboxItemDemographicCount> demographicCounts = inboxResponseResults.getInboxDemographicCounts();
 
-Long categoryHash       = (Long) request.getAttribute("categoryHash");
+//Long categoryHash       = (Long) request.getAttribute("categoryHash");
 String  providerNo		= (String) request.getAttribute("providerNo");
 String searchProviderNo = (String) request.getAttribute("searchProviderNo");
-boolean searchUnclaimed = Boolean.parseBoolean((String)request.getAttribute("searchUnclaimed"));
+boolean searchUnclaimed = "true".equalsIgnoreCase((String)request.getAttribute("searchUnclaimed"));
 String demographicNo	= (String) request.getAttribute("demographicNo");
 String ackStatus 		= (String) request.getAttribute("ackStatus");
 String abnormalStatus   = (String) request.getAttribute("abnormalStatus");
@@ -65,14 +52,14 @@ if ("normalOnly".equals(abnormalStatus)) {
 //String selectedCategoryPatient = request.getParameter("selectedCategoryPatient");
 String selectedCategoryType    = request.getParameter("selectedCategoryType");
 String isListView			   = request.getParameter("isListView");
-String currentProviderNo 	   = request.getParameter("providerNo");
+//String currentProviderNo 	   = request.getParameter("providerNo");
 
 String patientFirstName    = (String) request.getAttribute("patientFirstName");
 String patientLastName     = (String) request.getAttribute("patientLastName");
 String patientHealthNumber = (String) request.getAttribute("patientHealthNumber");
 
-String startDate = (String) request.getAttribute("startDate");
-String endDate = (String) request.getAttribute("endDate");
+//String startDate = (String) request.getAttribute("startDate");
+//String endDate = (String) request.getAttribute("endDate");
 
 
 %>
@@ -127,6 +114,7 @@ String endDate = (String) request.getAttribute("endDate");
 </head>
 
 <body vlink="#0000FF" >
+<jsp:include page="/images/spinner.jsp" />
 <div id="inbox_wrapper">
     <form name="reassignForm" method="post" action="ReportReassign.do" id="lab_form">
         <table>
@@ -176,10 +164,10 @@ String endDate = (String) request.getAttribute("endDate");
 	                                <a href="javascript:popupPage(400, 1050,'<html:rewrite page="/hospitalReportManager/hospitalReportManager.jsp"/>')" style="color: #FFFFFF;">HRM Status/Upload</a>
 								<% } %>
 								
-								<span class="HelpAboutLogout">
-									<oscar:help keywords="&Title=Inbox&portal_type%3Alist=Document" key="app.top1" style="color: #FFFFFF"/>
-                                	<a href="javascript:popupStart(300,400,'${pageContext.servletContext.contextPath}/oscarEncounter/About.jsp')" style="color: #FFFFFF;" ><bean:message key="global.about"/></a>
-								</span>
+<%--								<span class="HelpAboutLogout">--%>
+<%--									<oscar:help keywords="&Title=Inbox&portal_type%3Alist=Document" key="app.top1" style="color: #FFFFFF"/>--%>
+<%--                                	<a href="javascript:popupStart(300,400,'${pageContext.servletContext.contextPath}/oscarEncounter/About.jsp')" style="color: #FFFFFF;" ><bean:message key="global.about"/></a>--%>
+<%--								</span>--%>
                             </td>
                         </tr>
                     </table>
@@ -193,29 +181,29 @@ String endDate = (String) request.getAttribute("endDate");
           <tr>
               <td id="categoryList" valign="top" style="background-color: #E0E1FF" >
 
-			<input type="hidden" id="categoryHash" value="<%=categoryHash%>" />
+			<input type="hidden" id="categoryHash" value="${requestScope.categoryData.categoryHash}" />
                <div class="documentSummaryList">
-               	<c:if test="${ totalNumDocs gt 0}" >
+               	<c:if test="${ requestScope.categoryData.totalNumDocs gt 0}" >
                		<details id="masterDocumentSummary" ${ param.providerNo gt 0 ? 'open' : ''}>    
                         <summary>
                         	<a id="totalAll" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_ALL);">
-                        		All (<span id="totalNumDocs"><c:out value="${totalNumDocs}" /></span>)
+                        		All (<span id="totalNumDocs"><c:out value="${requestScope.categoryData.totalNumDocs}" /></span>)
                         	</a>
                         </summary>
                         <ul>
     
-						<c:if test="${ totalDocs gt 0 }">
+						<c:if test="${ requestScope.categoryData.totalDocs gt 0 }">
 							<li>
 								<a id="totalDocs" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_DOCUMENTS);"
-								   title="Documents">Documents (<span id="totalDocsNum"><c:out value="${totalDocs}" /></span>)
+								   title="Documents">Documents (<span id="totalDocsNum"><c:out value="${requestScope.categoryData.totalDocs}" /></span>)
 							   </a>
 						   </li>
 					   </c:if>
 
-                     <c:if test="${ totalLabs  gt 0 }">
+                     <c:if test="${ requestScope.categoryData.totalLabs  gt 0 }">
                        <li>
                             <a id="totalHL7s" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_HL7);" title="HL7">
-                           		HL7 (<span id="totalHL7Num"><c:out value="${totalLabs}" /></span>)
+                           		HL7 (<span id="totalHL7Num"><c:out value="${requestScope.categoryData.totalLabs}" /></span>)
                            	</a>
                        </li>
 					</c:if>
@@ -235,27 +223,27 @@ String endDate = (String) request.getAttribute("endDate");
 					</details>
 				</c:if>	
 	
-				<c:if test="${ unmatchedDocs gt 0 or unmatchedLabs gt 0 }">	
+				<c:if test="${ requestScope.categoryData.unmatchedDocs gt 0 or requestScope.categoryData.unmatchedLabs gt 0 }">
 					<details class="unmatchedList" ${ param.providerNo eq 0 ? 'open' : '' }>
 						<summary>
        						<a id="patient0all" href="javascript:void(0);"  
        							onclick="un_bold(this);changeView(CATEGORY_PATIENT,0)" 
-       							title="Unmatched">Unmatched (<span id="patientNumDocs0"><c:out value="${unmatchedDocs+unmatchedLabs}" /></span>)
+       							title="Unmatched">Unmatched (<span id="patientNumDocs0"><c:out value="${requestScope.categoryData.unmatchedDocs + requestScope.categoryData.unmatchedLabs}" /></span>)
        						</a>
                     	</summary> 
                     		
                     		<ul id="labdoc0showSublist" >
-                    				<c:if test="${ unmatchedDocs gt 0}" >   
+                    				<c:if test="${ requestScope.categoryData.unmatchedDocs gt 0}" >
 			                        		<li>
 			                        			<a id="patient0docs" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,0,CATEGORY_TYPE_DOC);" title="Documents">
-			                        				Documents (<span id="pDocNum_0"><c:out value="${unmatchedDocs}" /></span>)
+			                        				Documents (<span id="pDocNum_0"><c:out value="${requestScope.categoryData.unmatchedDocs}" /></span>)
 			                       				</a>
 			                        		</li>
 			                        </c:if>
-			                        <c:if test="${ unmatchedLabs gt 0 }" >
+			                        <c:if test="${ requestScope.categoryData.unmatchedLabs gt 0 }" >
 			                     			<li>
 			                     				<a id="patient0hl7s" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,0,CATEGORY_TYPE_HL7);" title="HL7">
-			                     					HL7 (<span id="pLabNum_0"><c:out value="${unmatchedLabs}" /></span>)
+			                     					HL7 (<span id="pLabNum_0"><c:out value="${requestScope.categoryData.unmatchedLabs}" /></span>)
 			                   					</a>
 			                        		</li>
 			                        </c:if>
@@ -263,32 +251,26 @@ String endDate = (String) request.getAttribute("endDate");
 			                 </ul>
 			            </details>
 				</c:if>
-			<c:if test="${ not empty inboxResponse.inboxDemographicCounts }" >
-<%--				<% if(patients.size() > 0) { %>--%>
+
+			<c:if test="${ not empty requestScope.categoryData.patientList }" >
 
 				<div id="patientsdoclabs">
 				<details id="patientsdoclabsDetails" open>
 					<summary id="patientsdoclabsSummary" >Matched</summary>
-					<c:forEach items="${inboxResponse.inboxDemographicCounts}" var="inboxItemDemographicCount">
-<%--				    <%--%>
-<%--				         for (PatientInfo info : patients) {--%>
-<%--				                        String patientId= info.id + "";--%>
-<%--				                        String patientName= info.toString();--%>
-<%--				                        int numDocs= info.getDocCount() + info.getLabCount();--%>
-<%--				   %>--%>
-						<c:set var="patientId" value="${inboxItemDemographicCount.id.labPatientId}" />
-						<c:set var="patientName" value="${ inboxItemDemographicCount.lastName },  ${inboxItemDemographicCount.firstName}" />
-						<c:set var="numDocs" value="${ inboxItemDemographicCount.count }" />
+					<c:forEach items="${requestScope.categoryData.patientList}" var="patient">
+						<c:set var="patientId" value="${patient.id}" />
+						<c:set var="patientName" value="${ patient.lastName }, ${patient.firstName}" />
+						<c:set var="numDocs" value="${ patient.docCount + patient.labCount }" />
 
-						<c:if test="${inboxItemDemographicCount.labType eq 'DOC'}">
-							<c:set var="docCount" value="${ inboxItemDemographicCount.count }" />
-						</c:if>
-						<c:if test="${inboxItemDemographicCount.labType eq 'HL7'}">
-							<c:set var="labCount" value="${ inboxItemDemographicCount.count }" />
-						</c:if>
-						<c:if test="${inboxItemDemographicCount.labType eq 'HRM'}">
-							<c:set var="hrmCount" value="${ inboxItemDemographicCount.count }" />
-						</c:if>
+<%--						<c:if test="${inboxItemDemographicCount.labType eq 'DOC'}">--%>
+							<c:set var="docCount" value="${ patient.docCount }" />
+<%--						</c:if>--%>
+<%--						<c:if test="${inboxItemDemographicCount.labType eq 'HL7'}">--%>
+							<c:set var="labCount" value="${ patient.labCount }" />
+<%--						</c:if>--%>
+<%--						<c:if test="${inboxItemDemographicCount.labType eq 'HRM'}">--%>
+<%--							<c:set var="hrmCount" value="${ inboxItemDemographicCount.count }" />--%>
+<%--						</c:if>--%>
 
 
 					<details id="patientsdoclabsDetailList" >
@@ -314,17 +296,16 @@ String endDate = (String) request.getAttribute("endDate");
 				                   					</a>
 				                        		</li>
 									</c:if>
-									<c:if test="${not empty hrmCount}">
-										<li>
-											<a id="patient${patientId}hl7s" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,${patientId},CATEGORY_TYPE_HRM);" title="HL7">
-												HL7 (<span id="pLabNum_${patientId}">${hrmCount}</span>)
-											</a>
-										</li>
-									</c:if>
+<%--									<c:if test="${not empty hrmCount}">--%>
+<%--										<li>--%>
+<%--											<a id="patient${patientId}hl7s" href="javascript:void(0);" onclick="un_bold(this);changeView(CATEGORY_PATIENT_SUB,${patientId},CATEGORY_TYPE_HRM);" title="HL7">--%>
+<%--												HL7 (<span id="pLabNum_${patientId}">${hrmCount}</span>)--%>
+<%--											</a>--%>
+<%--										</li>--%>
+<%--									</c:if>--%>
                     		</ul>
                   </details>
-						<c:if test="${selectedCategoryPatient eq patientId}">
-
+						<c:if test="${requestScope.selectedCategoryPatient eq patientId}">
 							<script>
 								un_bold($("patient"+${patientId}<%=(selectedCategoryType.equals("CATEGORY_TYPE_HL7"))?"hl7s":(selectedCategoryType.equals("CATEGORY_TYPE_DOC")?"docs":"all")%>));
 							</script>
@@ -399,7 +380,7 @@ String endDate = (String) request.getAttribute("endDate");
 		var page = 1;
 		var pageSize = 20;
 		var selected_category = <%=(selectedCategory == null ? "1" : selectedCategory)%>;
-		let selected_category_patient = "${selectedCategoryPatient}";
+		let selected_category_patient = "${requestScope.selectedCategoryPatient}";
 		var selected_category_type = <%=(selectedCategoryType == null ? "\"\"" : selectedCategoryType)%>;
 		var searchProviderNo = "<%=(searchProviderNo == null ? "" : searchProviderNo)%>";
 		var firstName = "<%=(patientFirstName == null ? "" : patientFirstName)%>";
@@ -409,8 +390,8 @@ String endDate = (String) request.getAttribute("endDate");
 		var searchStatus = "<%=(ackStatus == null ? "": ackStatus)%>";
 		var abnormalStatus = "<%=abnormalStatus == null || "all".equals(abnormalStatus) ? "L" : (abnormalStatus.equals("normalOnly") ? "N" : "A")%>"
 		var url = ctx + "/documentManager/inboxManage.do?";
-		const startDate = "${startDate}";
-		const endDate = "${endDate}";
+		const startDate = "${requestScope.startDate}";
+		const endDate = "${requestScope.endDate}";
 		var request = null;
 		var canLoad = true;
 		console.log("<%= isListView == null %>");
@@ -420,8 +401,8 @@ String endDate = (String) request.getAttribute("endDate");
 		var oldestDate = null;
 	
 		window.changePage = function (p) {
-			if (p == "Next") { page++; }
-			else if (p == "Previous") { page--; }
+			if (p === "Next") { page++; }
+			else if (p === "Previous") { page--; }
 			else { page = p; }
 			if (request != null) { 
 				request.transport.onreadystatechange = Prototype.emptyFunction;
@@ -469,6 +450,7 @@ String endDate = (String) request.getAttribute("endDate");
 
 		function updateListView() {
 			var query = getQuery();
+console.log(query);
 			if (page == 1) {
 				document.getElementById("docViews").innerHTML = "";
 				canLoad = true;
@@ -492,7 +474,7 @@ String endDate = (String) request.getAttribute("endDate");
 			}	
 			jQuery("#readerSwitcher").prop("disabled",true);
 			jQuery("#listSwitcher").prop("disabled",true);
-	
+
 			return new Ajax.Updater(div,url,{
 				method:'get',
 				parameters:query,
@@ -564,11 +546,11 @@ String endDate = (String) request.getAttribute("endDate");
 				}
 				break;
 			case CATEGORY_NORMAL:
-				query  += "&abnormalStatus=N";
+				query  += "&view=normal";
 				query  += "&fname=" + firstName + "&lname=" + lastName + "&hnum=" + hin;
 				break;
 			case CATEGORY_ABNORMAL:
-				query  += "&abnormalStatus=A";
+				query  += "&view=abnormal";
 				query  += "&fname=" + firstName + "&lname=" + lastName + "&hnum=" + hin;
 				break;
 			case CATEGORY_PATIENT:
@@ -590,8 +572,8 @@ String endDate = (String) request.getAttribute("endDate");
 		    	break;
 		    }
 	
-			if (oldestLab != null) {
-				query += "&newestDate=" + encodeURIComponent(oldestLab);
+			if (oldestLab) {
+				query += "&newestDate=" + oldestLab;
 			}
 			
 			return query;

@@ -23,18 +23,17 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<c:out value="${ctx}/share/javascript/prototype.js"/>"></script>
 <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/screen.js"/>"></script>
 <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/rx.js"/>"></script>
-<script type="text/javascript" src="<c:out value="${ctx}/share/javascript/scriptaculous.js"/>"></script>
 <title>Edit Favorites</title>
 <html:base />
 
@@ -52,7 +51,6 @@
 oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean");
 %>
 <link rel="stylesheet" type="text/css" href="styles.css">
-</head>
 
 
 
@@ -68,26 +66,6 @@ oscar.oscarRx.data.RxCodesData.FrequencyCode[] freq = new oscar.oscarRx.data.RxC
 int i, j;
 %>
 
-<html:form action="/oscarRx/updateFavorite2">
-	<html:hidden property="favoriteId" />
-	<html:hidden property="favoriteName" />
-	<html:hidden property="customName" />
-	<html:hidden property="takeMin" />
-	<html:hidden property="takeMax" />
-	<html:hidden property="frequencyCode" />
-	<html:hidden property="duration" />
-	<html:hidden property="durationUnit" />
-	<html:hidden property="quantity" />
-	<html:hidden property="repeat" />
-	<html:hidden property="nosubs" />
-	<html:hidden property="prn" />
-	<html:hidden property="special" />
-	<html:hidden property="customInstr" />
-</html:form>
-
-<html:form action="/oscarRx/deleteFavorite2">
-	<html:hidden property="favoriteId" />
-</html:form>
 
 <script language=javascript>
     function ajaxUpdateRow(rowId){
@@ -111,7 +89,7 @@ int i, j;
         var dispenseInternal = eval('get.dispenseInternal'+rowId).value;
         customName			= encodeURI(customName);
         special				= encodeURI(special);
-        
+
         if(favoriteName==null || favoriteName.length < 1) {
             alert('Please enter a favorite name.');
             err = true;
@@ -141,9 +119,21 @@ int i, j;
             var data="favoriteId="+favoriteId+"&favoriteName="+favoriteName+"&customName="+customName+"&takeMin="+takeMin+"&takeMax="+takeMax+"&frequencyCode="+frequencyCode+
                 "&duration="+duration+"&durationUnit="+durationUnit+"&quantity="+quantity+"&repeat="+repeat+"&nosubs="+nosubs+"&prn="+prn+"&customInstr="+customInstr+"&special="+special+"&dispenseInternal="+dispenseInternal;
             var url="<c:out value="${ctx}"/>" + "/oscarRx/updateFavorite2.do?method=ajaxEditFavorite";
-            new Ajax.Request(url,{method:'post',postBody:data,onSuccess:function(transport){
-                    $("saveSuccess_"+rowId).show();
-        }});
+
+            fetch(url, {method:"post",
+               headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: data,
+            })
+            .then( function (response) { if ( response.status === 200 ) {
+                console.log("ok");
+                document.getElementById("saveSuccess_"+rowId).style.display = "block";
+            } else {
+                alert("Server Error" + response.status );
+                document.getElementById("saveSuccess_"+rowId).style.display = "none";
+            }});
+
         }
     }
 
@@ -162,22 +152,40 @@ int i, j;
 
 
 
+</head>
+<body>
+<html:form action="/oscarRx/updateFavorite2">
+	<html:hidden property="favoriteId" />
+	<html:hidden property="favoriteName" />
+	<html:hidden property="customName" />
+	<html:hidden property="takeMin" />
+	<html:hidden property="takeMax" />
+	<html:hidden property="frequencyCode" />
+	<html:hidden property="duration" />
+	<html:hidden property="durationUnit" />
+	<html:hidden property="quantity" />
+	<html:hidden property="repeat" />
+	<html:hidden property="nosubs" />
+	<html:hidden property="prn" />
+	<html:hidden property="special" />
+	<html:hidden property="customInstr" />
+</html:form>
 
-<body topmargin="0" leftmargin="0" vlink="#0000FF">
-<table border="0" cellpadding="0" cellspacing="0"
-	style="border-collapse: collapse; position: absolute; left: 0; top:0;" bordercolor="#111111" width="100%"
-	id="AutoNumber1" height="100%">
-	<%@ include file="TopLinks.jsp"%><!-- Row One included here-->
+<html:form action="/oscarRx/deleteFavorite2">
+	<html:hidden property="favoriteId" />
+</html:form>
+
+<table style="width:100%;"
+	id="AutoNumber1"><tr><td>
+		<h1><bean:message key="StaticScript.title.EditFavorites" /></h1>
+	<!-- <%@ include file="TopLinks.jsp"%>--><!-- Row One included here-->
+    </td></tr>
 	<tr>
-		<td></td>
 
-
-		<td width="100%" style="border-left: 2px solid #A9A9A9;" height="100%"
-			valign="top">
-		<table style="border-collapse: collapse" bordercolor="#111111"
-			width="100%" height="100%">
+		<td style="width:100%; height:100%; vertical-align:top">
+		<table style="width:100%; height:100%">
 			<tr>
-				<td width="0%" valign="top">
+				<td style="width:10%; vertical-align:top">
 				<div class="DivCCBreadCrumbs"><a href="SearchDrug3.jsp"> <bean:message
 					key="SearchDrug.title" /></a> > <b><bean:message
 					key="StaticScript.title.EditFavorites" /></b></div>
@@ -187,13 +195,6 @@ int i, j;
 
 			<!----Start new rows here-->
 
-			<tr>
-				<td>
-				<div class="DivContentPadding">
-				<div class="DivContentSectionHead">Favorites</div>
-				</div>
-				</td>
-			</tr>
 			<tr>
 				<td>
 				<div class=DivContentPadding><input type=button
@@ -266,9 +267,9 @@ int i, j;
                                                 %>><%=freq[j].getFreqCode()%></option>
 							<%
                                             }
-                                            
+
                                             String duration = f.getDuration() == null ? "" : f.getDuration();
-                                            
+
                                             %>
 						</select> <b>For:</b> <input type=text name="fldDuration<%= i%>"
 							class=tblRow size=3 value="<%= duration %>" /> <select
@@ -323,9 +324,9 @@ int i, j;
 									name="customInstr<%=i%>" <% if(f.getCustomInstr()) { %> checked
 									<%}%>></td>
 								<td width="100%">
-								<% 
+								<%
 									String s = f.getSpecial();
-									if (s == null || s.equals("null")) 
+									if (s == null || s.equals("null"))
 										s = "";
 								%>
 								<textarea name="fldSpecial<%= i%>" style="width: 100%" rows=5 ><%=s.trim()%></textarea></td>
@@ -333,13 +334,13 @@ int i, j;
 						</table>
 						</td>
 					</tr>
-					
+
 					<tr <%= style %>>
 						<td colspan=7>
 							Dispense Internally:&nbsp;<input type="checkbox" name="dispenseInternal<%=i%>" <% if(f.getDispenseInternal() != null && f.getDispenseInternal().booleanValue()) { %> checked <%}%>>
 						</td>
 					</tr>
-			
+
 					<tr>
 						<td colspan=7 valign=center>
 						<hr width=100%>
@@ -375,19 +376,6 @@ int i, j;
 			</tr>
 		</table>
 		</td>
-	</tr>
-	<tr>
-		<td height="0%"
-			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-		<td height="0%"
-			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-	</tr>
-	<tr>
-		<td width="100%" height="0%" colspan="2">&nbsp;</td>
-	</tr>
-	<tr>
-		<td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
-			colspan="2"></td>
 	</tr>
 </table>
 </body>

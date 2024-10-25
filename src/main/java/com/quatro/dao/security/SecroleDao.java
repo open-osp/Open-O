@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,71 +20,29 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package com.quatro.dao.security;
 
 import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import com.quatro.model.security.Secrole;
 
-public class SecroleDao extends HibernateDaoSupport {
+public interface SecroleDao {
 
-    private Logger logger = MiscUtils.getLogger();
+    public List<Secrole> getRoles();
 
-    public List<Secrole> getRoles() {
-        @SuppressWarnings("unchecked")
-        List<Secrole> results = this.getHibernateTemplate().find("from Secrole r order by roleName");
+    public Secrole getRole(Integer id);
 
-        logger.debug("getRoles: # of results=" + results.size());
+    public Secrole getRoleByName(String roleName);
 
-        return results;
-    }
+    public List getDefaultRoles();
 
-    public Secrole getRole(Integer id) {
-        if (id == null || id.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        Secrole result = this.getHibernateTemplate().get(Secrole.class, new Long(id));
-
-        logger.debug("getRole: id=" + id + ",found=" + (result != null));
-
-        return result;
-    }
-
-    public Secrole getRoleByName(String roleName) {
-    	Secrole result = null;
-    	if (roleName == null || roleName.length() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        List lst = this.getHibernateTemplate().find("from Secrole r where r.roleName='" + roleName + "'");
-        if(lst != null && lst.size() > 0)
-        	result = (Secrole) lst.get(0);
-
-        logger.debug("getRoleByName: roleName=" + roleName + ",found=" + (result != null));
-
-        return result;
-    }
-
-
-    public List getDefaultRoles() {
-        return this.getHibernateTemplate().find("from Secrole r where r.userDefined=0");
-    }
-
-    public void save(Secrole secrole) {
-        if (secrole == null) {
-            throw new IllegalArgumentException();
-        }
-
-        getHibernateTemplate().saveOrUpdate(secrole);
-
-    }
+    public void save(Secrole secrole);
 
 }

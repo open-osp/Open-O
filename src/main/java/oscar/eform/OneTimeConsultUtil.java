@@ -41,8 +41,8 @@ public class OneTimeConsultUtil{
 	private static final Logger logger = MiscUtils.getLogger();
 
 	
-	private static EFormDataDao eFormDataDao = (EFormDataDao) SpringUtils.getBean("EFormDataDao");
-	private static EFormValueDao eFormValueDao = (EFormValueDao) SpringUtils.getBean("EFormValueDao");
+	private static EFormDataDao eFormDataDao = (EFormDataDao) SpringUtils.getBean(EFormDataDao.class);
+	private static EFormValueDao eFormValueDao = (EFormValueDao) SpringUtils.getBean(EFormValueDao.class);
 
 
 	public static int[] getCDSReport(String cdsValue, String[] providerNo, String formId, String startStr, String endStr) {

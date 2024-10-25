@@ -39,9 +39,9 @@ import oscar.SxmlMisc;
 
 public class RxProviderData {
 
-	private ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-	private UserPropertyDAO userPropertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
-	private ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean("clinicDAO");
+	private ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
+	private UserPropertyDAO userPropertyDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
+	private ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean(ClinicDAO.class);
 	
 	public List<Provider> getAllProviders() {
 		List<org.oscarehr.common.model.Provider> providers = providerDao.getActiveProviders();

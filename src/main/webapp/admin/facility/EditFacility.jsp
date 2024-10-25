@@ -42,7 +42,7 @@
 		return;
 	}
 %>
-<html:html locale="true">
+<html:html lang="en">
     <head>
         <title>Edit Facility</title>
         <link rel="stylesheet" type="text/css" href='<html:rewrite page="/css/tigris.css" />' />

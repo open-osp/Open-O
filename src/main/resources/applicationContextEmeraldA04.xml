@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+<!-- <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd" default-autowire="no">
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd" default-autowire="no"> -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
 
 	<!-- ========================= SCHEDULED JOBS ========================= -->
-	<bean id="emeraldA04ScheduledPushTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="timerTask">
-			<bean class="org.oscarehr.common.hl7.v2.EmeraldHL7A04TransportTask">
-			</bean>
-		</property>
-		<property name="delay" value="1000" />
-		<property name="period" value="60000" />		<!--  every 30 mins =1800000 -->
-	</bean>
-	
-		<bean id="schedulerEmeraldA04" class="org.springframework.scheduling.timer.TimerFactoryBean">
-		<property name="scheduledTimerTasks">
-			<list>
-				<ref bean="emeraldA04ScheduledPushTask" />
-			</list>
-		</property>
-	</bean>
+	 <bean id="emeraldA04ScheduledPushTask" class="org.oscarehr.common.hl7.v2.EmeraldHL7A04TransportTask" />
+
+    <!-- Define the scheduled executor factory bean -->
+    <bean id="schedulerEmeraldA04" class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
+        <property name="scheduledExecutorTasks">
+            <list>
+                <!-- Configure the scheduled task -->
+                <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+                    <property name="delay" value="200000" />
+                    <property name="period" value="600000" />
+                    <property name="runnable" ref="emeraldA04ScheduledPushTask" />
+                </bean>
+            </list>
+       </property>
+    </bean>
 	
 </beans>

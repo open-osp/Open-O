@@ -71,7 +71,7 @@ public class SearchDemographicAutoCompleteAction extends Action {
     		outOfDomain=true;
     	}
     	
-        DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao"); 
+        DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class); 
         String searchStr = request.getParameter("demographicKeyword");
         
         if (searchStr == null){
@@ -136,7 +136,7 @@ public class SearchDemographicAutoCompleteAction extends Action {
             
             if (OscarProperties.getInstance().isPropertyActive("workflow_enhance")) {            	 
             	 h.put("nextAppointment", AppointmentUtil.getNextAppointment(demo.getDemographicNo() + ""));
-            	 DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
+            	 DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean(DemographicCustDao.class);
             	 DemographicCust demographicCust = demographicCustDao.find(demo.getDemographicNo());
             	 
             	 if (demographicCust!=null) {

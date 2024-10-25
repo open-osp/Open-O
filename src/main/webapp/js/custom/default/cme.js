@@ -7,15 +7,6 @@
                divR2I2:    ctx + "/CaseManagementView.do?hc=996633&method=listNotes&providerNo=" + providerNo + "&demographicNo=" + demographicNo + "&issue_code=Reminders&title=" + remindersLabel + "&cmd=divR2I2"                                         
        };
  
-       
-	   init();	   
+
+	   init();
      });
-
-
-   function notifyIssueUpdate() {
-	   
-   }
-
-   function notifyDivLoaded(divId) {	  
-   }
- 

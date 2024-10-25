@@ -24,16 +24,8 @@
 
 
 package oscar.oscarMessenger.pageUtil;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -43,14 +35,21 @@ import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.OscarMsgType;
 import org.oscarehr.common.model.UserProperty;
 import org.oscarehr.managers.MessagingManager;
+import org.oscarehr.managers.MessagingManagerImpl;
 import org.oscarehr.managers.MessengerDemographicManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.oscarMessenger.data.ContactIdentifier;
 import oscar.oscarMessenger.data.MsgProviderData;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class MsgCreateMessageAction extends Action {
 
@@ -113,11 +112,12 @@ public class MsgCreateMessageAction extends Action {
              * This message will not send until the non-consenting patient has consented -or- is removed 
              * from the message.
              */
-            if(demographic_no != null 
+            if(demographic_no != null
+		            && userPropertyDao.getProp( UserProperty.INTEGRATOR_PATIENT_CONSENT ) != null
             		&& ("1".equals( userPropertyDao.getProp( UserProperty.INTEGRATOR_PATIENT_CONSENT ).getValue()) 
             				|| "1".equals( userPropertyDao.getProp( UserProperty.INTEGRATOR_DEMOGRAPHIC_CONSENT ).getValue())))
             {
-            	if( MessagingManager.doesContainRemoteRecipient(loggedInInfo, providerListing)
+            	if( MessagingManagerImpl.doesContainRemoteRecipient(loggedInInfo, providerListing)
             			&& ! messengerDemographicManager.isPatientConsentedForIntegrator(loggedInInfo, Integer.parseInt(demographic_no)))
             	{
             		return error(mapping, request, (MsgCreateMessageForm) form, "oscarMessenger.CreateMessage.patientConsentError");
@@ -127,7 +127,7 @@ public class MsgCreateMessageAction extends Action {
             /*
              * The Integrator does not support attachments at this time.  Stop attachments from being sent externally. 
              */
-            if( (att != null || pdfAtt != null) &&  MessagingManager.doesContainRemoteRecipient(loggedInInfo, providerListing))
+            if( (att != null || pdfAtt != null) &&  MessagingManagerImpl.doesContainRemoteRecipient(loggedInInfo, providerListing))
             {
             	return error(mapping, request, (MsgCreateMessageForm) form, "oscarMessenger.CreateMessage.attachmentsNotPermitted");
             }
@@ -155,7 +155,7 @@ public class MsgCreateMessageAction extends Action {
 			request.setAttribute("messageSubject", form.getSubject());
 			request.setAttribute("messageBody", form.getMessage());
 			request.setAttribute("demographic_no", form.getDemographic_no());
-			List<ContactIdentifier> replyList = MessagingManager.createContactIdentifierList(form.getProvider());
+			List<ContactIdentifier> replyList = MessagingManagerImpl.createContactIdentifierList(form.getProvider());
             JSONArray jsonArray = new JSONArray();
 			request.setAttribute("replyList", jsonArray.addAll(replyList));
 	    	return mapping.findForward("error");

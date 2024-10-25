@@ -62,9 +62,9 @@ public class SurveyTestAction extends DispatchAction {
 
 	private static Logger log = MiscUtils.getLogger();
 
-	private SurveyManager surveyManager = (SurveyManager)SpringUtils.getBean("surveyManager");
-	private SurveyTestManager surveyTestManager = (SurveyTestManager)SpringUtils.getBean("surveyTestManager");
-	private UserManager userManager = (UserManager)SpringUtils.getBean("surveyUserManager");
+	private SurveyManager surveyManager = (SurveyManager)SpringUtils.getBean(SurveyManager.class);
+	private SurveyTestManager surveyTestManager = (SurveyTestManager)SpringUtils.getBean(SurveyTestManager.class);
+	private UserManager userManager = (UserManager)SpringUtils.getBean(UserManager.class);
 	
 	
 	protected void postMessage(HttpServletRequest request, String key, String val) {

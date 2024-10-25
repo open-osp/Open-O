@@ -36,8 +36,8 @@ import org.oscarehr.util.SpringUtils;
 
 public class RxCodesData {
 
-	private CtlFrequencyDao ctlFrequencyDao = (CtlFrequencyDao)SpringUtils.getBean("ctlFrequencyDao");
-	private CtlSpecialInstructionsDao ctlSpecialInstructionsDao = (CtlSpecialInstructionsDao)SpringUtils.getBean("ctlSpecialInstructionsDao");
+	private CtlFrequencyDao ctlFrequencyDao = (CtlFrequencyDao)SpringUtils.getBean(CtlFrequencyDao.class);
+	private CtlSpecialInstructionsDao ctlSpecialInstructionsDao = (CtlSpecialInstructionsDao)SpringUtils.getBean(CtlSpecialInstructionsDao.class);
 
     public FrequencyCode[] getFrequencyCodes() {
         FrequencyCode[] arr = {};

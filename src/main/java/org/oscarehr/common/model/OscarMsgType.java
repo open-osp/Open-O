@@ -64,7 +64,7 @@ public class OscarMsgType extends AbstractModel<Integer>implements Serializable 
     @Column(name = "description")
     private String description;
 	
-	@Enumerated(EnumType.STRING)
+	//@Enumerated(EnumType.STRING)
     private String code;
     
     public OscarMsgType() {

@@ -42,7 +42,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class LogAction {
 	private static Logger logger = MiscUtils.getLogger();
-	private static OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
+	private static OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
 	private static ExecutorService executorService = Executors.newCachedThreadPool(new DeamonThreadFactory(LogAction.class.getSimpleName()+".executorService", Thread.MAX_PRIORITY));
 
 	public static void addLogSynchronous(LoggedInInfo loggedInInfo, String action, String data)

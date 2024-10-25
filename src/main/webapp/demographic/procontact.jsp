@@ -30,7 +30,7 @@
 <%@page import="org.oscarehr.common.model.DemographicContact"%>
 <%
 	String id = request.getParameter("id");
-	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 	request.setAttribute("providers",providerDao.getActiveProviders());
 %>
 

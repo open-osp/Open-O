@@ -46,8 +46,8 @@
 <%@page import="org.oscarehr.PMmodule.dao.ProgramProviderDAO"%>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
 <%
-	ProgramProviderDAO ppd =(ProgramProviderDAO)SpringUtils.getBean("programProviderDAO");
-	IntegratorConsentDao integratorConsentDao=(IntegratorConsentDao)SpringUtils.getBean("integratorConsentDao");
+	ProgramProviderDAO ppd =(ProgramProviderDAO)SpringUtils.getBean(ProgramProviderDAO.class);
+	IntegratorConsentDao integratorConsentDao=(IntegratorConsentDao)SpringUtils.getBean(IntegratorConsentDao.class);
 	Demographic currentDemographic=(Demographic)request.getAttribute("client");
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	boolean caisiSearchWorkflow = Boolean.valueOf(OscarProperties.getInstance().getProperty("caisi.search.workflow","true"));
@@ -178,7 +178,7 @@ function openSurvey() {
 		<td rowspan="4" width="98px">
 		<div style="text-align:right">
 			<%
-				ClientImageDAO clientImageDAO=(ClientImageDAO)SpringUtils.getBean("clientImageDAO");
+				ClientImageDAO clientImageDAO=(ClientImageDAO)SpringUtils.getBean(ClientImageDAO.class);
 				ClientImage clientImage=clientImageDAO.getClientImage(currentDemographic.getDemographicNo());
 
 				String imagePlaceholder=ClientImage.imageMissingPlaceholderUrl;

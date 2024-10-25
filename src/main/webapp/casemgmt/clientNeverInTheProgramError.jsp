@@ -40,7 +40,7 @@ if (programId_str == null || programId_str.length() == 0) {
 } else {
 	programId = Integer.valueOf(programId_str);
 
-	ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
+	ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
 	programName = programDao.getProgramName(programId);
 }
 

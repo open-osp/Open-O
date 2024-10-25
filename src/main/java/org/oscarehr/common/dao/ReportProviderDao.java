@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,71 +21,19 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.ReportProvider;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class ReportProviderDao extends AbstractDao<ReportProvider>{
-
-	public ReportProviderDao() {
-		super(ReportProvider.class);
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<ReportProvider> findAll() {
-		Query query = createQuery("x", null);
-		return query.getResultList();
-	}
-	
-	public List<ReportProvider> findByAction(String action) {
-    	String sql = "select x from ReportProvider x where x.action=?";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,action);
-
-        @SuppressWarnings("unchecked")
-        List<ReportProvider> results = query.getResultList();
-        return results;
-    }
-	
-	public List<ReportProvider> findByProviderNoTeamAndAction(String providerNo, String team, String action) {
-    	String sql = "select x from ReportProvider x where x.providerNo=? and x.team=? and x.action=?";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,providerNo);
-    	query.setParameter(2,team);
-    	query.setParameter(3,action);
-    	
-        @SuppressWarnings("unchecked")
-        List<ReportProvider> results = query.getResultList();
-        return results;
-    }
-
-	public List<Object[]> search_reportprovider(String action) {
-		String sql = "from ReportProvider r, Provider p where r.providerNo=p.ProviderNo and r.status<>'D' and r.action=? order by r.team";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,action);
-
-        @SuppressWarnings("unchecked")
-        List<Object[]> results = query.getResultList();
-        return results;
-	}
-	
-	public List<Object[]> search_reportprovider(String action,String providerNo) {
-		String sql = "from ReportProvider r, Provider p where r.providerNo=p.ProviderNo and r.status<>'D' and r.action=? and p.ProviderNo like ? order by r.team";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,action);
-    	query.setParameter(2, providerNo);
-
-        @SuppressWarnings("unchecked")
-        List<Object[]> results = query.getResultList();
-        return results;
-	}
+public interface ReportProviderDao extends AbstractDao<ReportProvider> {
+	List<ReportProvider> findAll();
+	List<ReportProvider> findByAction(String action);
+	List<ReportProvider> findByProviderNoTeamAndAction(String providerNo, String team, String action);
+	List<Object[]> search_reportprovider(String action);
+	List<Object[]> search_reportprovider(String action,String providerNo);
 }

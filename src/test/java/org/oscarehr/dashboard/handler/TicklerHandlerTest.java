@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.Tickler;
 import org.oscarehr.managers.TicklerManager;
+import org.oscarehr.managers.TicklerManagerImpl;
 import org.oscarehr.util.LoggedInInfo;
 
 public class TicklerHandlerTest {
@@ -46,7 +47,7 @@ public class TicklerHandlerTest {
 		Provider provider = new Provider();
 		provider.setProviderNo("100");
 		loggedInInfo.setLoggedInProvider( provider );
-		ticklerHandler = new TicklerHandler( loggedInInfo, new TicklerManager() );
+		ticklerHandler = new TicklerHandler( loggedInInfo, new TicklerManagerImpl() );
 		
 		Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 		

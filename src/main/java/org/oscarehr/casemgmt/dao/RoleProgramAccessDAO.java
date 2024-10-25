@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.casemgmt.dao;
@@ -26,24 +29,13 @@ package org.oscarehr.casemgmt.dao;
 import java.util.List;
 
 import org.oscarehr.PMmodule.model.DefaultRoleAccess;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-public class RoleProgramAccessDAO extends HibernateDaoSupport {
+public interface RoleProgramAccessDAO {
 
-    @SuppressWarnings("unchecked")
-    public List<DefaultRoleAccess> getDefaultAccessRightByRole(Long roleId) {
-        String q = "from DefaultRoleAccess da where da.caisi_role.id=?";
-        return getHibernateTemplate().find(q, roleId);
-    }
+    public List<DefaultRoleAccess> getDefaultAccessRightByRole(Long roleId);
 
-    @SuppressWarnings("unchecked")
-	public List<DefaultRoleAccess> getDefaultSpecificAccessRightByRole(Long roleId, String accessType) {
-		String q = "from DefaultRoleAccess da where da.caisi_role.id=? and da.access_type.Name like ?";
-		return getHibernateTemplate().find(q, new Object[] { roleId, accessType });
-	}
+    public List<DefaultRoleAccess> getDefaultSpecificAccessRightByRole(Long roleId, String accessType);
 
-    public boolean hasAccess(String accessName, Long roleId) {
-    	String q = "from DefaultRoleAccess da where da.caisi_role.id=" + roleId+" and da.access_type.Name= ?";	
-    	return getHibernateTemplate().find(q, accessName).isEmpty()?false:true;
-    }
+    public boolean hasAccess(String accessName, Long roleId);
 }

@@ -78,10 +78,10 @@ public class EctDisplayAppointmentHistoryAction extends EctDisplayAction {
     Dao.setRightHeadingID(cmd); //no menu so set div id to unique id for this action
 
 
-   ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+   ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
    
 
-    OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+    OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
     List<Appointment> appts = appointmentDao.getAppointmentHistory(Integer.parseInt(bean.getDemographicNo()));
 
     int limit = 5;

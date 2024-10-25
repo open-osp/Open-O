@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,8 +21,9 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
@@ -33,106 +35,22 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.DemographicCust;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class DemographicCustDao extends AbstractDao<DemographicCust> {
+public interface DemographicCustDao extends AbstractDao<DemographicCust> {
 
-	public DemographicCustDao() {
-		super(DemographicCust.class);
-	}
+    public List<DemographicCust> findMultipleMidwife(Collection<Integer> demographicNos, String oldMidwife);
 
-    public List<DemographicCust> findMultipleMidwife(Collection<Integer> demographicNos, String oldMidwife) {
-    	String sql = "select x from DemographicCust x where x.id IN (?1) and x.midwife=?2";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,demographicNos);
-    	query.setParameter(2, oldMidwife);
+    public List<DemographicCust> findMultipleResident(Collection<Integer> demographicNos, String oldResident);
 
-        @SuppressWarnings("unchecked")
-        List<DemographicCust> results = query.getResultList();
-        return results;
-    }
+    public List<DemographicCust> findMultipleNurse(Collection<Integer> demographicNos, String oldNurse);
 
-    public List<DemographicCust> findMultipleResident(Collection<Integer> demographicNos, String oldResident) {
-    	String sql = "select x from DemographicCust x where x.id IN (?1) and x.resident=?2";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,demographicNos);
-    	query.setParameter(2, oldResident);
+    public List<DemographicCust> findByResident(String resident);
 
-        @SuppressWarnings("unchecked")
-        List<DemographicCust> results = query.getResultList();
-        return results;
-    }
+    public Integer select_demoname(String resident, String lastNameRegExp);
 
-    public List<DemographicCust> findMultipleNurse(Collection<Integer> demographicNos, String oldNurse) {
-    	String sql = "select x from DemographicCust x where x.id IN (?1) and x.nurse=?2";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,demographicNos);
-    	query.setParameter(2, oldNurse);
+    public Integer select_demoname1(String nurse, String lastNameRegExp);
 
-        @SuppressWarnings("unchecked")
-        List<DemographicCust> results = query.getResultList();
-        return results;
-    }
-    
-    public List<DemographicCust> findByResident(String resident) {
-    	String sql = "select x from DemographicCust x where x.resident like ?";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,resident);
-    	
-        @SuppressWarnings("unchecked")
-        List<DemographicCust> results = query.getResultList();
-        return results;
-    }
-    
-    public Integer select_demoname(String resident, String lastNameRegExp) {
-    	String sql = "select d.demographic_no from demographic d, demographiccust c where c.cust2=? and d.demographic_no=c.demographic_no and d.last_name REGEXP ?";
-    	Query query = entityManager.createNativeQuery(sql);
-    	query.setParameter(1,resident);
-    	query.setParameter(2,lastNameRegExp);
-    	
-        @SuppressWarnings("unchecked")
-        List<Integer> results = query.getResultList();
-        if(results.size()>0) {
-        	return results.get(0);
-        }
-        return null;
-    }
-    
-    public Integer select_demoname1(String nurse, String lastNameRegExp) {
-    	String sql = "select d.demographic_no from demographic d, demographiccust c where c.cust2=? and d.demographic_no=c.demographic_no and d.last_name REGEXP ?";
-    	Query query = entityManager.createNativeQuery(sql);
-    	query.setParameter(1,nurse);
-    	query.setParameter(2,lastNameRegExp);
-    	
-        @SuppressWarnings("unchecked")
-        List<Integer> results = query.getResultList();
-        if(results.size()>0) {
-        	return results.get(0);
-        }
-        return null;
-    }
-    
-    public Integer select_demoname2(String midwife, String lastNameRegExp) {
-    	String sql = "select d.demographic_no from demographic d, demographiccust c where c.cust2=? and d.demographic_no=c.demographic_no and d.last_name REGEXP ?";
-    	Query query = entityManager.createNativeQuery(sql);
-    	query.setParameter(1,midwife);
-    	query.setParameter(2,lastNameRegExp);
-    	
-        @SuppressWarnings("unchecked")
-        List<Integer> results = query.getResultList();
-        if(results.size()>0) {
-        	return results.get(0);
-        }
-        return null;
-    }
-    
-    public List<DemographicCust> findAllByDemographicNumber(int demographic_no) {
-    	String sql = "select x from DemographicCust x where x.id = ?";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,demographic_no);
-    	
-        @SuppressWarnings("unchecked")
-        List<DemographicCust> results = query.getResultList();
-        return results;
-    }
+    public Integer select_demoname2(String midwife, String lastNameRegExp);
+
+    public List<DemographicCust> findAllByDemographicNumber(int demographic_no);
 
 }

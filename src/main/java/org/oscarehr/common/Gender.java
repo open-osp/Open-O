@@ -27,6 +27,7 @@ public enum Gender {
 	M("Male"),
 	F("Female"),
 	X("Intersex"),
+	O("Other"),
 	U("Undisclosed");
 	
 	private final String text;

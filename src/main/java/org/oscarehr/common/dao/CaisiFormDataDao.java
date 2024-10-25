@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,46 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
-
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.CaisiFormData;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class CaisiFormDataDao extends AbstractDao<CaisiFormData>{
-
-	public CaisiFormDataDao() {
-		super(CaisiFormData.class);
-	}
-	
-	   public List<CaisiFormData> findByInstanceId(Integer instanceId) {
-	        Query query = entityManager.createQuery("SELECT f FROM CaisiFormData f where f.instanceId = ?");
-			query.setParameter(1,instanceId);
-			
-			@SuppressWarnings("unchecked")
-	        List<CaisiFormData> result = query.getResultList();
-			
-	        return result;
-	    }
-	   
-	   
-	   public List<CaisiFormData> find(Integer instanceId, Integer pageNumber, Integer sectionId, Integer questionId) {
-	        Query query = entityManager.createQuery("SELECT f FROM CaisiFormData f where f.instanceId = ? and f.pageNumber = ? and f.sectionId = ? and f.questionId = ?");
-			query.setParameter(1,instanceId);
-			query.setParameter(2,pageNumber);
-			query.setParameter(3,sectionId);
-			query.setParameter(4,questionId);
-			
-			
-			@SuppressWarnings("unchecked")
-	        List<CaisiFormData> result = query.getResultList();
-			
-	        return result;
-	    }
+public interface CaisiFormDataDao extends AbstractDao<CaisiFormData> {
+    List<CaisiFormData> findByInstanceId(Integer instanceId);
+    List<CaisiFormData> find(Integer instanceId, Integer pageNumber, Integer sectionId, Integer questionId);
 }

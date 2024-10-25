@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,58 +21,43 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
 import org.oscarehr.common.model.AbstractCodeSystemModel;
 
-public abstract class AbstractCodeSystemDao<T extends AbstractCodeSystemModel<?>> extends AbstractDao<T> {
+public interface AbstractCodeSystemDao<T extends AbstractCodeSystemModel<?>> extends AbstractDao<T> {
 
-	public static enum codingSystem {icd9,icd10,ichppccode,msp,SnomedCore}
-	
-	/**
-	 * Gets the name of the DAO for the specified code system
-	 * 
-	 * @param codeSystem
-	 * 		Code system to get DAO name for.
-	 * @return
-	 * 		Return the name of the DAO bean.
-	 */
-	public static String getDaoName(codingSystem codeSystem) {
-		String object;
-		switch(codeSystem) {
-		case SnomedCore: object = "snomedCoreDao";
-			break;
-		case icd10: object = "icd10Dao";
-			break;
-		case icd9: object = "icd9Dao";
-			break;
-		case ichppccode: object = "ichppccodeDao";
-			break;
-		case msp: object = "diagnosticCodeDao";
-			break;
-		default: throw new IllegalArgumentException("Unsupported code system: " + codeSystem + ". Please use one of icd9, ichppccode, snomedcore");				
-		}		
-		return object;
-	}
+    //public static enum codingSystem {icd9,icd10,ichppccode,msp,SnomedCore}
 
-	protected AbstractCodeSystemDao(Class<T> modelClass) {
-		super(modelClass);
-	}
+   // public static String getDaoName(codingSystem codeSystem);
 
-	public abstract List<T> searchCode(String term);
+    public List<T> searchCode(String term);
 
-	public abstract T findByCode(String code);
+    public T findByCode(String code);
 
-	/**
-	 * Finds the appropriate coding system by the specified coding system name. 
-	 * 
-	 * @param codingSystem Name of t he coding system to get the name for
-	 * @return
-	 * 		Returns the matching coding system or null if it's not found.
-	 */
-	public abstract AbstractCodeSystemModel<?> findByCodingSystem(String codingSystem);
+    public AbstractCodeSystemModel<?> findByCodingSystem(String codingSystem);
 
+    public static enum codingSystem {icd9,icd10,ichppccode,msp,SnomedCore}
+
+    public static String getDaoName(codingSystem codeSystem) {
+        String object;
+        switch(codeSystem) {
+            case SnomedCore: object = "snomedCoreDao";
+                break;
+            case icd10: object = "icd10Dao";
+                break;
+            case icd9: object = "icd9Dao";
+                break;
+            case ichppccode: object = "ichppccodeDao";
+                break;
+            case msp: object = "diagnosticCodeDao";
+                break;
+            default: throw new IllegalArgumentException("Unsupported code system: " + codeSystem + ". Please use one of icd9, ichppccode, snomedcore");
+        }
+        return object;
+    }
 }

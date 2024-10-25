@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SuppressWarnings("unchecked")
 public class FormsDao {
 
-	@PersistenceContext
+	@PersistenceContext(unitName = "entityManagerFactory")
 	protected EntityManager entityManager = null;
 
 	/**

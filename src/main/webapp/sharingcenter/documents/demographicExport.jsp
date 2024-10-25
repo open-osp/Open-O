@@ -64,7 +64,7 @@
 
     if (request.getParameter("demographic_no") != null) {
         int demographicId = Integer.parseInt(request.getParameter("demographic_no"));
-        DemographicDao demoDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+        DemographicDao demoDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
         demographic = demoDao.getDemographicById(demographicId);
     }
 

@@ -25,6 +25,7 @@ package org.oscarehr.managers;
 
 import org.apache.commons.lang.StringUtils;
 import org.oscarehr.common.dao.AbstractCodeSystemDao;
+import org.oscarehr.common.dao.AbstractCodeSystemDaoImpl;
 import org.oscarehr.common.model.AbstractCodeSystemModel;
 import org.oscarehr.util.SpringUtils;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class CodingSystemManager {
 
 	public String getCodeDescription(String codingSystem, String code) {
 		if(codingSystem != null && ! codingSystem.isEmpty() && code != null && ! code.isEmpty()) {		
-			String daoName = AbstractCodeSystemDao.getDaoName(AbstractCodeSystemDao.codingSystem.valueOf(codingSystem));
+			String daoName = AbstractCodeSystemDao.getDaoName(AbstractCodeSystemDaoImpl.codingSystem.valueOf(codingSystem));
 			if (daoName != null) {
 				AbstractCodeSystemDao<AbstractCodeSystemModel<?>> csDao = (AbstractCodeSystemDao<AbstractCodeSystemModel<?>>) SpringUtils.getBean(daoName);
 				if (csDao != null) {

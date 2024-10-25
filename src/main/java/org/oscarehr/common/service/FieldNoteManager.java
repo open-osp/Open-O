@@ -52,11 +52,11 @@ public class FieldNoteManager {
 	static HashMap<String, TreeSet<Integer>> residentFieldNotes = new HashMap<String, TreeSet<Integer>>();
 	static HashMap<String, HashMap<String, Integer>> supervisorFieldNotes = new HashMap<String, HashMap<String, Integer>>();
 	
-	private static PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean("propertyDao");
-	private static EFormDao eformDao = (EFormDao) SpringUtils.getBean("EFormDao");
-	private static EFormDataDao eformDataDao = (EFormDataDao) SpringUtils.getBean("EFormDataDao");
-	private static EFormValueDao eformValueDao = (EFormValueDao) SpringUtils.getBean("EFormValueDao");
-	private static ProviderDataDao providerDataDao = (ProviderDataDao) SpringUtils.getBean("providerDataDao");
+	private static PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean(PropertyDao.class);
+	private static EFormDao eformDao = (EFormDao) SpringUtils.getBean(EFormDao.class);
+	private static EFormDataDao eformDataDao = (EFormDataDao) SpringUtils.getBean(EFormDataDao.class);
+	private static EFormValueDao eformValueDao = (EFormValueDao) SpringUtils.getBean(EFormValueDao.class);
+	private static ProviderDataDao providerDataDao = (ProviderDataDao) SpringUtils.getBean(ProviderDataDao.class);
 
 	public static TreeSet<Integer> getFieldNoteEforms()
 	{

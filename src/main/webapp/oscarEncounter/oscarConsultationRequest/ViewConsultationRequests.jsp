@@ -41,6 +41,7 @@ if(!authed) {
 
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="org.oscarehr.common.dao.ConsultationRequestDao"%>
+
 <%@ page import="oscar.oscarEncounter.pageUtil.*,java.text.*,java.util.*"%>
 <%@ page import="java.sql.ResultSet"%>
 <%@ page import="org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty, org.springframework.web.context.support.WebApplicationContextUtils" %>
@@ -116,7 +117,7 @@ if (isSiteAccessPrivacy || isTeamAccessPrivacy) {
 HashMap<String,String> siteBgColor = new HashMap<String,String>();
 HashMap<String,String> siteShortName = new HashMap<String,String>();
 if (bMultisites) {
-   	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+   	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
    	
    	List<Site> sites = siteDao.getAllSites();
    	for (Site st : sites) {
@@ -130,7 +131,7 @@ if (bMultisites) {
 }
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 
 <%
 
@@ -418,7 +419,7 @@ function gotoPage(next) {
                             theRequests = new  oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequestsUtil();                            
                             theRequests.estConsultationVecByTeam(LoggedInInfo.getLoggedInInfoFromSession(request), team,includeCompleted,startDate,endDate,orderby,desc,searchDate,offset,limit);                                                        
                             boolean overdue;                            
-                            UserPropertyDAO pref = (UserPropertyDAO) WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext()).getBean("UserPropertyDAO");
+                            UserPropertyDAO pref = (UserPropertyDAO) WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext()).getBean(UserPropertyDAO.class);
                             String user = (String)session.getAttribute("user");
                             UserProperty up = pref.getProp(user, UserProperty.CONSULTATION_TIME_PERIOD_WARNING);
                             String timeperiod = null;

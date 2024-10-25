@@ -23,16 +23,17 @@
  */
 package org.oscarehr.billing.CA.BC.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.BillingStatusTypes;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BillingStatusTypesDao extends AbstractDao<BillingStatusTypes> {
+public class BillingStatusTypesDao extends AbstractDaoImpl<BillingStatusTypes> {
 
 	protected BillingStatusTypesDao() {
 	    super(BillingStatusTypes.class);
@@ -48,7 +49,11 @@ public class BillingStatusTypesDao extends AbstractDao<BillingStatusTypes> {
 	@SuppressWarnings("unchecked")
     public List<BillingStatusTypes> findByCodes(List<String> codes) {
 	    Query query = entityManager.createQuery("FROM " + modelClass.getSimpleName() + " bst WHERE bst.id IN (:typeCodes)");
-	    query.setParameter("typeCodes", codes);
+		List<Character> characterCodes = new ArrayList<>();
+		for (String code : codes) {
+			characterCodes.add(code.charAt(0));
+		}
+	    query.setParameter("typeCodes", characterCodes);
 	    return query.getResultList(); 
     }
 

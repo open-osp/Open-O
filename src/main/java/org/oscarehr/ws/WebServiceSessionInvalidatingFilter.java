@@ -59,7 +59,7 @@ public class WebServiceSessionInvalidatingFilter implements javax.servlet.Filter
 		finally
 		{
 			String requestURL = request.getRequestURL().toString();
-			
+
 			//don't apply to REST calls, we want those to be available to the web interface without losing session
 			if(requestURL.indexOf("/ws/rs/")==-1 && requestURL.indexOf("/ws/oauth/")==-1 && requestURL.indexOf("/ws/services/")==-1) {
 				HttpSession session = request.getSession(false);

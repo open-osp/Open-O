@@ -109,7 +109,7 @@ public class CBIUtil
 
 		// update submission id in OcanStaffForm
 		ocanStaffForm.setSubmissionId(submissionId);
-		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
+		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
 		ocanStaffFormDao.merge(ocanStaffForm);
 
 		logger.debug("out CBIUtil : submitCBIData");
@@ -167,14 +167,14 @@ public class CBIUtil
 	{
 		CbiDataItem cbiDataItem = new CbiDataItem();
 		
-		FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean("facilityDao");	
+		FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean(FacilityDao.class);	
 		
 		cbiDataItem.setOrgId(String.valueOf(facilityDao.find(ocanStaffForm.getFacilityId()).getOrgId()));
 		
 		//cbiDataItem.setFcAdmissionId(ocanStaffForm.getAdmissionId() + "");		
 		cbiDataItem.setProgramEnrollmentId(ocanStaffForm.getAdmissionId() + "");
 		
-		AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
+		AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
 		Admission admission = admissionDao.getAdmission(ocanStaffForm.getAdmissionId());
 		//set functional center id
 		if(admission.getProgram()!=null && admission.getProgram().getFunctionalCentreId()!=null && 
@@ -225,7 +225,7 @@ public class CBIUtil
 		cbiDataItem.setPostalCode(ocanStaffForm.getPostalCode());
 		cbiDataItem.setPhone(ocanStaffForm.getPhoneNumber());
 		
-		OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao) SpringUtils.getBean("ocanStaffFormDataDao");			
+		OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao) SpringUtils.getBean(OcanStaffFormDataDao.class);			
 		cbiDataItem.setLhinOfResidence(ocanStaffFormDataDao.findByQuestion(ocanStaffForm.getId(), "service_recipient_lhin").size()>0?ocanStaffFormDataDao.findByQuestion(ocanStaffForm.getId(), "service_recipient_lhin").get(0).getAnswer():"");	
 
 		cbiDataItem.setAction("I");
@@ -234,7 +234,7 @@ public class CBIUtil
 
 	private Integer insertIntoSubmissionLog(String result, String transactionId, String resultMsg)
 	{
-		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean("ocanSubmissionLogDao");
+		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean(OcanSubmissionLogDao.class);
 
 		OcanSubmissionLog submissionLog = new OcanSubmissionLog();
 		submissionLog.setResult(result);
@@ -255,7 +255,7 @@ public class CBIUtil
 	{
 		// if ocanStaffForm=null, then it will consider it as submitted
 		boolean flg = true;
-
+		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean(OcanSubmissionLogDao.class);
 		if (ocanStaffForm != null)
 		{
 			//Find if this admissionId already has cbi form submitted.
@@ -272,8 +272,7 @@ public class CBIUtil
 				// if submitted id is not 0, then check the submission date/time
 				// if submission_date_time < created_date_time then it is not
 				// submitted
-				OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils
-						.getBean("ocanSubmissionLogDao");
+
 				OcanSubmissionLog submissionLog = ocanSubmissionLogDao.find(ocanStaffForm.getSubmissionId());
 
 				if (submissionLog != null)
@@ -300,14 +299,14 @@ public class CBIUtil
 	 */
 	public List<OcanSubmissionLog> getCbiSubmissionLogRecords(Date submissionDate)
 	{
-		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean("ocanSubmissionLogDao");
+		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean(OcanSubmissionLogDao.class);
 		List<OcanSubmissionLog> list = ocanSubmissionLogDao.findBySubmissionDateType(submissionDate, "CBI");
 		return list;
 	}
 
 	public List<OcanSubmissionLog> getCbiSubmissionLogRecords(Date submissionStartDate, Date submissionEndDate)
 	{
-		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean("ocanSubmissionLogDao");
+		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean(OcanSubmissionLogDao.class);
 		GregorianCalendar endDateInclusive=new GregorianCalendar();
 		endDateInclusive.setTime(submissionEndDate);
 		endDateInclusive.add(GregorianCalendar.DAY_OF_YEAR, 1);
@@ -332,7 +331,7 @@ public class CBIUtil
 		{
 			admissionList = new ArrayList<Admission>();
 
-			AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
+			AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
 			List<Admission> tempAdmissionList = null;
 
 			for (Program program : programList)
@@ -353,7 +352,7 @@ public class CBIUtil
 	
 	
 	public List<OcanStaffForm> getUnsubmittedCbiForms() {
-		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
+		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
 		List<OcanStaffForm> allCbiForms = ocanStaffFormDao.getLatestCbiFormsByGroupOfAdmissionId();
 		List<OcanStaffForm> toBeSubmittedCbiForms = new ArrayList<OcanStaffForm>();
 		Integer admissionId_new = 0;
@@ -373,8 +372,8 @@ public class CBIUtil
 	}
 	
 	public OcanStaffForm getLatestCbiFormByDemographicNoAndProgramId(Integer facilityId, Integer demographicNo, Integer programId) {
-		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
-		AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
+		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
+		AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
 		Admission admission = admissionDao.getAdmission(programId, demographicNo);
 		Integer admissionId = Integer.valueOf(admission.getId().intValue());
 		OcanStaffForm cbiForm = ocanStaffFormDao.findLatestCbiFormsByFacilityAdmissionId(facilityId, admissionId, null); //could be signed or unsigned
@@ -384,7 +383,7 @@ public class CBIUtil
 	
 	private List<Program> getPrograms()
 	{
-		ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
+		ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
 
 		// get bed programs
 		Program[] bedProgramsArr = programDao.getProgramsByType(null, Program.BED_TYPE, null).toArray(new Program[0]);
@@ -405,7 +404,7 @@ public class CBIUtil
 	public OcanStaffForm getCBIFormData(LoggedInInfo loggedInInfo, Integer clientId)
 	{
 		Integer facilityId = getFacilityId(loggedInInfo, clientId);
-		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
+		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
 		OcanStaffForm ocanStaffForm = ocanStaffFormDao.findLatestByFacilityClient(facilityId, clientId, "CBI");
 
 		return ocanStaffForm;
@@ -415,7 +414,7 @@ public class CBIUtil
 	{
 		OcanStaffForm ocanStaffForm = null;
 
-		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
+		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
 		List<OcanStaffForm> ocanStaffFormList = ocanStaffFormDao.findBySubmissionId(facilityId, submissionId);
 		if (ocanStaffFormList != null && ocanStaffFormList.size() > 0)
 		{
@@ -436,7 +435,7 @@ public class CBIUtil
 		Integer facilityId = 0;
 
 		DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
-		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 		Demographic demographic = demographicManager.getDemographic(loggedInInfo, clientId);
 		if (demographic != null)
 		{
@@ -448,7 +447,7 @@ public class CBIUtil
 			{
 				// if provider not associated with facility then get the 1st one
 				// from facility table
-				FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean("facilityDao");
+				FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean(FacilityDao.class);
 				List<Facility> facilities = facilityDao.findAll(true);
 				if (facilities != null && facilities.size() >= 1)
 				{
@@ -469,7 +468,7 @@ public class CBIUtil
 	{
 		List<Date> list = null;
 
-		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean("ocanSubmissionLogDao");
+		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean(OcanSubmissionLogDao.class);
 		List<OcanSubmissionLog> submissionLogsList = ocanSubmissionLogDao.findAllByType("CBI");
 		if (submissionLogsList != null)
 		{
@@ -488,8 +487,8 @@ public class CBIUtil
 		
 		StringBuilder messages = new StringBuilder();		
 	
-		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean("ocanSubmissionLogDao");
-		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
+		OcanSubmissionLogDao ocanSubmissionLogDao = (OcanSubmissionLogDao) SpringUtils.getBean(OcanSubmissionLogDao.class);
+		OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
 		List<OcanSubmissionLog> failedSubmissionList = ocanSubmissionLogDao.findFailedSubmissionsByType("CBI");
 		if(failedSubmissionList!=null && !failedSubmissionList.isEmpty()) {
 			messages.append("Failed to upload CBI forms: ");			

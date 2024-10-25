@@ -65,7 +65,7 @@
   boolean bView = false;
   if (request.getParameter("view") != null && request.getParameter("view").equals("1")) bView = true; 
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>2 Minute Walk Test and Lower Extremity Function Test</title>

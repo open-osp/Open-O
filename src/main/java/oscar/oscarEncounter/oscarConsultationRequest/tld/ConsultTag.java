@@ -54,8 +54,8 @@ public class ConsultTag extends TagSupport {
             numNewLabs = 0;
 	    if(providerNo!=null){
                 try{
-	       ConsultationRequestDao tcm = (ConsultationRequestDao) WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext()).getBean("consultationRequestDao");
-               UserPropertyDAO pref = (UserPropertyDAO) WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext()).getBean("UserPropertyDAO");
+	       ConsultationRequestDao tcm = (ConsultationRequestDao) WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext()).getBean(ConsultationRequestDao.class);
+               UserPropertyDAO pref = (UserPropertyDAO) WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext()).getBean(UserPropertyDAO.class);
                
                // There are to two properties that could be set. One is the referal date and the other is the team
                // Date set /  team set      == search on  both

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,40 +21,14 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.HrmLog;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class HrmLogDao  extends AbstractDao<HrmLog> {
-
-	public HrmLogDao() {
-		super(HrmLog.class);
-	}
-	
-	@SuppressWarnings("unchecked")
-    public List<HrmLog> query(int start, int length, String orderColumn, String orderDirection, String providerNo) {
-		
-		String sql = "FROM HrmLog d ";
-		
-		if(providerNo != null) {
-			sql += " WHERE d.initiatingProviderNo = ?1";
-		}
-		Query query = entityManager.createQuery(sql + " order by d."+orderColumn+" " + orderDirection);
-		
-		if(providerNo != null) {
-			query.setParameter(1, providerNo);
-		}
-		query.setFirstResult(start);
-		query.setMaxResults(length);
-		
-	    return query.getResultList();
-    }
-	
+public interface HrmLogDao extends AbstractDao<HrmLog> {
+    List<HrmLog> query(int start, int length, String orderColumn, String orderDirection, String providerNo);
 }

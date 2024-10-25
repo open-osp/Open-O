@@ -66,7 +66,7 @@ public class EctDisplayDecisionSupportAlertsAction extends EctDisplayAction {
     private String cmd = "Guidelines";
     private static final Logger logger = MiscUtils.getLogger();
     
-    private DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean("DxresearchDAO");
+    private DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
 	
 
   public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao, MessageResources messages) {
@@ -96,7 +96,7 @@ public class EctDisplayDecisionSupportAlertsAction extends EctDisplayAction {
         String js = "";
 
         WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServlet().getServletContext());
-        DSService  dsService =  (DSService) ctx.getBean("dsService");
+        DSService  dsService =  (DSService) ctx.getBean(DSService.class);
 
         List<DSGuideline> dsGuidelines = dsService.getDsGuidelinesByProvider(bean.providerNo);
 

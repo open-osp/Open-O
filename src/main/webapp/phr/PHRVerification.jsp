@@ -36,7 +36,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-html-el" prefix="html-el" %>
+<%@ taglib uri="http://struts.apache.org/tags-html-el" prefix="html-el" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" />
@@ -61,7 +61,7 @@ if (demographicNo == null) demographicNo = request.getParameter("demographicNo")
 if (demographicNo == null) demographicNo = (String) request.getAttribute("demographicNo");
 Integer demoNo = Integer.parseInt(demographicNo);
 
-ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 
 AppManager appManager = SpringUtils.getBean(AppManager.class);
 ConsentDao consentDao = SpringUtils.getBean(ConsentDao.class);
@@ -81,7 +81,7 @@ if(appDef != null && appDef.getConsentTypeId() != null) {
 
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <script type="text/javascript" src="<c:out value="${ctx}"/>/js/jquery.js"></script>

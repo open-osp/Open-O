@@ -88,7 +88,7 @@ public class HRMAction extends DispatchAction {
 	Logger logger = MiscUtils.getLogger();
 
 	private HRMDocumentDao hrmDocumentDao = SpringUtils.getBean(HRMDocumentDao.class);
-	private UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+	private UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
 	private HRMCategoryDao hrmCategoryDao = SpringUtils.getBean(HRMCategoryDao.class);
 	private HrmLogDao hrmLogDao = SpringUtils.getBean(HrmLogDao.class);
 	private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
@@ -455,7 +455,7 @@ public class HRMAction extends DispatchAction {
 
 	public ActionForward getConfidentialityStatement(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-		HRMProviderConfidentialityStatementDao hrmProviderConfidentialityStatementDao = (HRMProviderConfidentialityStatementDao) SpringUtils.getBean("HRMProviderConfidentialityStatementDao");
+		HRMProviderConfidentialityStatementDao hrmProviderConfidentialityStatementDao = (HRMProviderConfidentialityStatementDao) SpringUtils.getBean(HRMProviderConfidentialityStatementDao.class);
 
 		String data = hrmProviderConfidentialityStatementDao.getConfidentialityStatementForProvider(loggedInInfo.getLoggedInProviderNo());
 		JSONObject res = new JSONObject();
@@ -469,7 +469,7 @@ public class HRMAction extends DispatchAction {
 	
 	public ActionForward saveConfidentialityStatement(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)  {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-		HRMProviderConfidentialityStatementDao hrmProviderConfidentialityStatementDao = (HRMProviderConfidentialityStatementDao) SpringUtils.getBean("HRMProviderConfidentialityStatementDao");
+		HRMProviderConfidentialityStatementDao hrmProviderConfidentialityStatementDao = (HRMProviderConfidentialityStatementDao) SpringUtils.getBean(HRMProviderConfidentialityStatementDao.class);
 
 		String value = request.getParameter("value");
 		

@@ -67,4 +67,4 @@ if (templateViewId == null) templateViewId = "";
 	<% } %>
 </ul>
 </div>
-</form>
+

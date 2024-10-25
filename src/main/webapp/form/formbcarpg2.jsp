@@ -59,7 +59,7 @@
 	if (props.getProperty("ar2_lmpDate", "").equals("") ) 	props.setProperty("ar2_lmpDate", props.getProperty("pg1_lmp", ""));
 	if (props.getProperty("ar2_age", "").equals("") ) 	props.setProperty("ar2_age", props.getProperty("pg1_ageAtEDD", ""));
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
     <title>Antenatal Record 2</title>
     <html:base/>

@@ -106,7 +106,7 @@
 
             String demographicID = curdoc.getModuleId();
             if ((demographicID != null) && !demographicID.isEmpty() && !demographicID.equals("-1")){
-                DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+                DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
                 Demographic demographic = demographicDao.getDemographic(demographicID);  
 				demoName = demographic.getLastName()+","+demographic.getFirstName();
 				LogAction.addLog((String) session.getAttribute("user"), LogConst.READ, LogConst.CON_DOCUMENT, documentNo, request.getRemoteAddr(),demographicID);
@@ -434,7 +434,7 @@
                                             <input type="hidden" name="demog" value="<%=demographicID%>" id="demofind<%=docId%>"/>   
                                             <input type="hidden" name="demofindName" value="<%=demoName%>" id="demofindName<%=docId%>"/>   
                                                                                    
-                                            <input type="checkbox" id="activeOnly<%=docId%>" name="activeOnly" checked="checked" value="true" onclick="setupDemoAutoCompletion()">Active Only<br>  
+                                            <input type="checkbox" id="activeOnly<%=docId%>" name="activeOnly" checked="checked" value="true" onclick="setupDemoAutoCompletion(<%=docId%>, '${pageContext.servletContext.contextPath}')">Active Only<br>
                                             <input type="text" id="autocompletedemo<%=docId%>" onchange="checkSave('<%=docId%>');" name="demographicKeyword" placeholder="Search Demographic"/>
                                             <div id="autocomplete_choices<%=docId%>" class="autocomplete"></div>
                                             
@@ -610,53 +610,7 @@
        
         var tmp;      
         
-        function setupDemoAutoCompletion() {
-        	if(jQuery("#autocompletedemo<%=docId%>") ){
-        		
-        		var url;
-                if( jQuery("#activeOnly<%=docId%>").is(":checked") ) {
-                	url = "${pageContext.servletContext.contextPath}/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=" + jQuery("#activeOnly<%=docId%>").val();
-                }
-                else {
-                	url = "${pageContext.servletContext.contextPath}/demographic/SearchDemographic.do?jqueryJSON=true";
-                } 
-                
-	            jQuery( "#autocompletedemo<%=docId%>" ).autocomplete({
-	              source: url,
-	              minLength: 2,  
-	              
-	              focus: function( event, ui ) {
-	            	  jQuery( "#autocompletedemo<%=docId%>" ).val( ui.item.label );	            	 
-	                  return false;
-	              },
-	              select: function(event, ui) {    	  
-	            	  jQuery( "#autocompletedemo<%=docId%>" ).val(ui.item.label);
-	            	  jQuery( "#demofind<%=docId%>").val(ui.item.value);
-	            	  jQuery( "#demofindName<%=docId%>" ).val(ui.item.formattedName);
-	            	  selectedDemos.push(ui.item.label);
-	            	  console.log(ui.item.providerNo);
-	            	  if( ui.item.providerNo != undefined && ui.item.providerNo != null &&ui.item.providerNo != "" && ui.item.providerNo != "null" ) {
-	            		  addDocToList(ui.item.providerNo, ui.item.provider + " (MRP)", "<%=docId%>");
-	            	  }
-	            	  
-	            	  //enable Save button whenever a selection is made
-	                  jQuery('#save<%=docId%>').removeAttr('disabled');
-	                  jQuery('#saveNext<%=docId%>').removeAttr('disabled');
-	                  
-	                  jQuery('#msgBtn_<%=docId%>').removeAttr('disabled');
-	                  jQuery('#mainTickler_<%=docId%>').removeAttr('disabled');
-	                  jQuery('#mainEchart_<%=docId%>').removeAttr('disabled');
-	                  jQuery('#mainMaster_<%=docId%>').removeAttr('disabled');
-	                  jQuery('#mainApptHistory_<%=docId%>').removeAttr('disabled');
-	                  return false;
-	              }      
-	            });
-        	}
-          }
-        
-        
-        jQuery(setupDemoAutoCompletion());
-        
+
         function setupProviderAutoCompletion() {
         	var url = "${pageContext.servletContext.contextPath}/provider/SearchProvider.do?method=labSearch";
         	
@@ -677,8 +631,11 @@
 	              }      
 	            });
       	}
-      
-        jQuery(setupProviderAutoCompletion());
+
+        jQuery(document).ready(function() {
+            setupDemoAutoCompletion(<%=docId%>, '${pageContext.servletContext.contextPath}');
+            setupProviderAutoCompletion()
+        });
         
 
 </script>

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -36,130 +39,21 @@ import org.oscarehr.common.model.BedDemographicPK;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class BedDemographicDao extends AbstractDao<BedDemographic>{
+public interface BedDemographicDao extends AbstractDao<BedDemographic> {
 
-	private Logger log = MiscUtils.getLogger();
+    public boolean demographicExists(int bedId);
 
-	public BedDemographicDao() {
-		super(BedDemographic.class);
-	}
-	
-    public boolean demographicExists(int bedId) {
-    	Query query = entityManager.createQuery("select count(*) from BedDemographic b where b.id.bedId = ?1");
-		query.setParameter(1, bedId);
-		
-		Long result = (Long)query.getSingleResult();
-		
-		return (result.intValue() == 1);
-    }
+    public boolean bedExists(int demographicNo);
 
-  
-    public boolean bedExists(int demographicNo) {
-    	Query query = entityManager.createQuery("select count(*) from BedDemographic b where b.id.demographicNo = ?");
-		query.setParameter(1, demographicNo);
-		
-		Long result = (Long)query.getSingleResult();
-		
-		return (result.intValue() == 1);
-    }
+    public BedDemographic getBedDemographicByBed(int bedId);
 
-    
-    public BedDemographic getBedDemographicByBed(int bedId) {
-    	Query query = entityManager.createQuery("select b from BedDemographic b where b.id.bedId = ?");
-		query.setParameter(1, bedId);
-		
-		@SuppressWarnings("unchecked")
-		List<BedDemographic> bedDemographics = query.getResultList();
-       
-        if (bedDemographics.size() > 1) {
-            throw new IllegalStateException("Bed is assigned to more than one client");
-        }
+    public BedDemographic getBedDemographicByDemographic(int demographicNo);
 
-        BedDemographic bedDemographic = ((bedDemographics.size() == 1)?bedDemographics.get(0):null);
+    public void saveBedDemographic(BedDemographic bedDemographic);
 
-        log.debug("getBedDemographicByBed: " + bedId);
+    public void deleteBedDemographic(BedDemographic bedDemographic);
 
-        return bedDemographic;
-    }
+    public boolean bedDemographicExists(BedDemographicPK id);
 
-   
-    public BedDemographic getBedDemographicByDemographic(int demographicNo) {
-    	Query query = entityManager.createQuery("select b from BedDemographic b where b.id.demographicNo = ?");
-		query.setParameter(1, demographicNo);
-		
-		@SuppressWarnings("unchecked")
-		List<BedDemographic> bedDemographics = query.getResultList();
-       
-        if (bedDemographics.size() > 1) {
-            throw new IllegalStateException("Client is assigned to more than one bed");
-        }
-
-        BedDemographic bedDemographic = ((bedDemographics.size() == 1)?bedDemographics.get(0):null);
-
-        log.debug("getBedDemographicByDemographic: " + demographicNo);
-
-        return bedDemographic;
-    }
-
-    
-    public void saveBedDemographic(BedDemographic bedDemographic) {
-    	if(bedDemographic == null)
-        	return;
-    	
-        updateHistory(bedDemographic);
-        
-        if(bedDemographic.getId().getBedId() == null || bedDemographic.getId().getBedId().intValue() == 0 || 
-        		bedDemographic.getId().getDemographicNo() == null || bedDemographic.getId().getDemographicNo().intValue() == 0 )
-        	persist(bedDemographic);
-        else
-        	merge(bedDemographic);
-  
-        log.debug("saveBedDemographic: " + bedDemographic);
-    }
-
-    public void deleteBedDemographic(BedDemographic bedDemographic) {
-        // save historical
-        if (!DateUtils.isSameDay(bedDemographic.getReservationStart(), Calendar.getInstance().getTime())) {
-            BedDemographicHistorical historical = BedDemographicHistorical.create(bedDemographic);
-            persist(historical);
-        }
-
-        // delete
-        remove(bedDemographic.getId());
-        
-    }
-
-    boolean bedDemographicExists(BedDemographicPK id) {
-    	Query query = entityManager.createQuery("select count(*) from BedDemographic b where  b.id.bedId = ? and b.id.demographicNo = ?");
-		query.setParameter(1, id.getBedId());
-		query.setParameter(2, id.getDemographicNo());
-		
-		Long result = (Long)query.getSingleResult();
-		
-		return (result.intValue() == 1);
-    }
-
-    void updateHistory(BedDemographic bedDemographic) {
-        BedDemographic existing = null;
-
-        BedDemographicPK id = bedDemographic.getId();
-
-        if (!bedDemographicExists(id)) {
-            Integer demographicNo = id.getDemographicNo();
-            Integer bedId = id.getBedId();
-
-            if (bedExists(demographicNo)) {
-                existing = getBedDemographicByDemographic(demographicNo);
-            }
-            else if (demographicExists(bedId)) {
-                existing = getBedDemographicByBed(bedId);
-            }
-        }
-
-        if (existing != null) {
-            deleteBedDemographic(existing);
-        }
-    }
+    public void updateHistory(BedDemographic bedDemographic);
 }
-

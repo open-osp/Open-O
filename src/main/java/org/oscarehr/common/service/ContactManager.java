@@ -36,8 +36,8 @@ import org.oscarehr.util.SpringUtils;
 
 public class ContactManager {
 
-	private ContactDao contactDao = (ContactDao)SpringUtils.getBean("contactDao");
-	private DemographicContactDao demographicContactDao = (DemographicContactDao)SpringUtils.getBean("demographicContactDao");
+	private ContactDao contactDao = (ContactDao)SpringUtils.getBean(ContactDao.class);
+	private DemographicContactDao demographicContactDao = (DemographicContactDao)SpringUtils.getBean(DemographicContactDao.class);
 
 	public List<Contact> getContactsByDemographicNo(int demographicNo) {
 		List<Contact> contacts = new ArrayList<Contact>();

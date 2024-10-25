@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,56 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.ScratchPad;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class ScratchPadDao extends AbstractDao<ScratchPad> {
-
-	public ScratchPadDao() {
-		super(ScratchPad.class);
-	}
-
-	public boolean isScratchFilled(String providerNo) {
-		String sSQL = "SELECT s FROM ScratchPad s WHERE s.providerNo = ? AND status=1 order by s.id";
-		Query query = entityManager.createQuery(sSQL);
-		query.setParameter(1, providerNo);
-
-		@SuppressWarnings("unchecked")
-		List<ScratchPad> results = query.getResultList();
-		if (results.size() > 0 && results.get(0).getText().trim().length() > 0) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Finds scratch pad for the specified provider.
-	 * 
-	 * @param providerNo Provider id to find the scratch pad for
-	 * @return
-	 * 		Returns the scratch pad for the specified id. 
-	 */
-	public ScratchPad findByProviderNo(String providerNo) {
-		Query query = createQuery("sp", "sp.providerNo = :providerNo AND sp.status=1 order by sp.id DESC");
-		query.setMaxResults(1);
-		query.setParameter("providerNo", providerNo);
-		return getSingleResultOrNull(query);
-	}
-	
-	@SuppressWarnings("unchecked")
-    public List<Object[]> findAllDatesByProviderNo(String providerNo) {
-		String sql = "Select sp.dateTime, sp.id from ScratchPad sp where sp.providerNo = :providerNo AND sp.status=1 order by sp.dateTime DESC";
-		Query query = entityManager.createQuery(sql);
-		query.setParameter("providerNo", providerNo);
-		return query.getResultList();
-	}
+public interface ScratchPadDao extends AbstractDao<ScratchPad> {
+    boolean isScratchFilled(String providerNo);
+    ScratchPad findByProviderNo(String providerNo);
+    List<Object[]> findAllDatesByProviderNo(String providerNo);
 }

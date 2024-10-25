@@ -25,25 +25,7 @@
 
 package oscar.oscarRx.pageUtil;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import net.sf.json.JSONObject;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -57,11 +39,7 @@ import org.oscarehr.common.dao.DrugDao;
 import org.oscarehr.common.dao.DrugReasonDao;
 import org.oscarehr.common.dao.PartialDateDao;
 import org.oscarehr.common.dao.UserPropertyDAO;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.Drug;
-import org.oscarehr.common.model.DrugReason;
-import org.oscarehr.common.model.PartialDate;
-import org.oscarehr.common.model.UserProperty;
+import org.oscarehr.common.model.*;
 import org.oscarehr.managers.CodingSystemManager;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.managers.SecurityInfoManager;
@@ -70,7 +48,6 @@ import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 import oscar.oscarRx.data.RxDrugData;
@@ -78,6 +55,14 @@ import oscar.oscarRx.data.RxDrugData.DrugMonograph.DrugComponent;
 import oscar.oscarRx.data.RxPrescriptionData;
 import oscar.oscarRx.util.RxUtil;
 import oscar.util.StringUtils;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public final class RxWriteScriptAction extends DispatchAction {
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
@@ -88,7 +73,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 	private static final Logger logger = MiscUtils.getLogger();
 	private static UserPropertyDAO userPropertyDAO;
 	private static final String DEFAULT_QUANTITY = "30";
-	private static final PartialDateDao partialDateDao = (PartialDateDao)SpringUtils.getBean("partialDateDao");
+	private static final PartialDateDao partialDateDao = (PartialDateDao)SpringUtils.getBean(PartialDateDao.class);
 
 	DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class) ;
     
@@ -202,7 +187,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 					/* Save annotation */
 					HttpSession se = request.getSession();
 					WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(se.getServletContext());
-					CaseManagementManager cmm = (CaseManagementManager) ctx.getBean("caseManagementManager");
+					CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
 					String attrib_name = attrib_names.get(i);
 					if (attrib_name != null) {
 						CaseManagementNote cmn = (CaseManagementNote) se.getAttribute(attrib_name);
@@ -286,7 +271,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
 			String provider = (String) request.getSession().getAttribute("user");
 			if (provider != null) {
-				userPropertyDAO = (UserPropertyDAO) ctx.getBean("UserPropertyDAO");
+				userPropertyDAO = (UserPropertyDAO) ctx.getBean(UserPropertyDAO.class);
 				UserProperty prop = userPropertyDAO.getProp(provider, UserProperty.RX_DEFAULT_QUANTITY);
 				if (prop != null) RxUtil.setDefaultQuantity(prop.getValue());
 				else RxUtil.setDefaultQuantity(DEFAULT_QUANTITY);
@@ -520,7 +505,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 		String success = "newRx";
 		// set default quantity
 		setDefaultQuantity(request);
-		userPropertyDAO = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+		userPropertyDAO = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
 		UserProperty propUseRx3 = userPropertyDAO.getProp( (String) request.getSession().getAttribute("user"), UserProperty.RX_USE_RX3);
 
 		oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
@@ -742,7 +727,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 					double nDays = 0d;
 					if (rx.getUnitName() != null || takeMin.equals("0") || takeMax.equals("0") || frequency.equals("")) {
 					} else {
-						if (durationUnit.equals("")) {
+						if (durationUnit == null || durationUnit.isEmpty()){
 							durationUnit = "D";
 						}
 
@@ -1247,7 +1232,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			// Save annotation
 			HttpSession se = request.getSession();
 			WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(se.getServletContext());
-			CaseManagementManager cmm = (CaseManagementManager) ctx.getBean("caseManagementManager");
+			CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
 			String attrib_name = attrib_names.get(i);
 			if (attrib_name != null) {
 				CaseManagementNote cmn = (CaseManagementNote) se.getAttribute(attrib_name);
@@ -1273,7 +1258,7 @@ public final class RxWriteScriptAction extends DispatchAction {
         
         Iterator<String> i = reRxDrugList.iterator();
         
-        DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao"); 
+        DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class); 
         
         while (i.hasNext()) {
         
@@ -1321,7 +1306,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			String providerNo, HttpServletRequest request ) {
 		
 		MessageResources mResources = MessageResources.getMessageResources( "oscarResources" );
-		DrugReasonDao drugReasonDao = (DrugReasonDao) SpringUtils.getBean("drugReasonDao");
+		DrugReasonDao drugReasonDao = (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class);
 		Integer drugId = Integer.parseInt(drugIdStr);
 		
 		// should this be instantiated with the Spring Utilities?

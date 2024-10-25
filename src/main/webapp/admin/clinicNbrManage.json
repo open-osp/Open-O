@@ -9,7 +9,7 @@
 	String method = request.getParameter("method");	
 	JSONObject json = new JSONObject();
 	json.put("method", method);
-	ClinicNbrDao cnDao = (ClinicNbrDao)SpringUtils.getBean("clinicNbrDao");
+	ClinicNbrDao cnDao = (ClinicNbrDao)SpringUtils.getBean(ClinicNbrDao.class);
 	if ("remove".equals(method)) {
 		Integer valOld = Integer.parseInt(request.getParameter("nbr"));
 		

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,44 +21,26 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
-package org.oscarehr.managers;
+ package org.oscarehr.managers;
 
-import java.util.List;
-
-import org.oscarehr.common.dao.FacilityDao;
-import org.oscarehr.common.model.Facility;
-import org.oscarehr.util.LoggedInInfo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import oscar.log.LogAction;
-
-@Service
-public class FacilityManager {
-	@Autowired
-	private FacilityDao facilityDao;
-
-	public Facility getDefaultFacility(LoggedInInfo loggedInInfo) {
-		List<Facility> results = facilityDao.findAll(true);
-		if (results.size() == 0) {
-			return (null);
-		} else {
-
-			//--- log action ---
-			LogAction.addLogSynchronous(loggedInInfo,"FacilityManager.getDefaultFacility", null);
-
-			return (results.get(0));
-		}
-	}
-
-	public List<Facility> getAllFacilities(LoggedInInfo loggedInInfo, Boolean active) {
-		List<Facility> results = facilityDao.findAll(active);
-		
-		//--- log action ---
-		LogAction.addLogSynchronous(loggedInInfo,"FacilityManager.getAllFacilities", null);
-
-		return (results);
-	}
-}
+ import java.util.List;
+ 
+ import org.oscarehr.common.dao.FacilityDao;
+ import org.oscarehr.common.model.Facility;
+ import org.oscarehr.util.LoggedInInfo;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
+ import oscar.log.LogAction;
+ 
+ public interface FacilityManager{
+ 
+     public Facility getDefaultFacility(LoggedInInfo loggedInInfo);
+ 
+     public List<Facility> getAllFacilities(LoggedInInfo loggedInInfo, Boolean active);
+ }
+ 

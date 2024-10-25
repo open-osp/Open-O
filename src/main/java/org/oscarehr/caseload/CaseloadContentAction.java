@@ -127,7 +127,7 @@ public class CaseloadContentAction extends DispatchAction {
 				break;
 		}
 
-		CaseloadDao caseloadDao = (CaseloadDao)SpringUtils.getBean("caseloadDao");
+		CaseloadDao caseloadDao = (CaseloadDao)SpringUtils.getBean(CaseloadDao.class);
 		List<Integer> demoSearchResult = caseloadDao.getCaseloadDemographicSet(clSearchQuery, clSearchParams, clSortParams, caseloadCategory, sortAscending ? "ASC" : "DESC", caseloadPage, caseloadPageSize);
 		JSONArray data = generateCaseloadDataForDemographics(request, response, caseloadProv, demoSearchResult);
 
@@ -405,7 +405,7 @@ public class CaseloadContentAction extends DispatchAction {
 				break;
 		}
 
-	    CaseloadDao caseloadDao = (CaseloadDao)SpringUtils.getBean("caseloadDao");
+	    CaseloadDao caseloadDao = (CaseloadDao)SpringUtils.getBean(CaseloadDao.class);
 		List<Integer> demoSearchResult = caseloadDao.getCaseloadDemographicSet(clSearchQuery, clSearchParams, clSortParams, caseloadCategory, sortAscending ? "ASC" : "DESC", caseloadPage, caseloadPageSize);
 		JSONArray data = generateCaseloadDataForDemographics(request, response, caseloadProv, demoSearchResult);
 
@@ -433,7 +433,7 @@ public class CaseloadContentAction extends DispatchAction {
 		String buttons;
 		JSONArray data = new JSONArray();
 
-		CaseloadDao caseloadDao = (CaseloadDao)SpringUtils.getBean("caseloadDao");
+		CaseloadDao caseloadDao = (CaseloadDao)SpringUtils.getBean(CaseloadDao.class);
 
 		HttpSession session = request.getSession();
 

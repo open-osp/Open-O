@@ -27,12 +27,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.sharingcenter.model.EFormMapping;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EFormMappingDao extends AbstractDao<EFormMapping> {
+public class EFormMappingDao extends AbstractDaoImpl<EFormMapping> {
 
     public EFormMappingDao() {
         super(EFormMapping.class);
@@ -56,7 +56,7 @@ public class EFormMappingDao extends AbstractDao<EFormMapping> {
     public List<EFormMapping> findByAffinityDomainId(int affinityDomain) {
         String sql = "FROM EFormMapping e where e.affinityDomain = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
+        query.setParameter(0, affinityDomain);
 
         return query.getResultList();
     }
@@ -65,9 +65,9 @@ public class EFormMappingDao extends AbstractDao<EFormMapping> {
         String sql = "FROM EFormMapping e where e.affinityDomain = ? and e.eformId = ? and e.source = ?";
 
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
-        query.setParameter(2, eformId);
-        query.setParameter(3, source);
+        query.setParameter(0, affinityDomain);
+        query.setParameter(1, eformId);
+        query.setParameter(2, source);
 
         query.setMaxResults(1);
         EFormMapping retVal = getSingleResultOrNull(query);
@@ -78,8 +78,8 @@ public class EFormMappingDao extends AbstractDao<EFormMapping> {
         String sql = "FROM EFormMapping e where e.affinityDomain = ? and e.eformId = ?";
 
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
-        query.setParameter(2, eformId);
+        query.setParameter(0, affinityDomain);
+        query.setParameter(1, eformId);
 
         query.setMaxResults(1);
         EFormMapping retVal = getSingleResultOrNull(query);

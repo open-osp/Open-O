@@ -71,8 +71,8 @@ public final class RxReasonAction extends DispatchAction {
 		}
 		
     		MessageResources mResources = MessageResources.getMessageResources( "oscarResources" );
-    		DrugReasonDao drugReasonDao     = (DrugReasonDao) SpringUtils.getBean("drugReasonDao");
-    		Icd9Dao icd9Dao = (Icd9Dao)  SpringUtils.getBean("Icd9DAO");
+    		DrugReasonDao drugReasonDao     = (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class);
+    		Icd9Dao icd9Dao = (Icd9Dao)  SpringUtils.getBean(Icd9Dao.class);
 
             String codingSystem = request.getParameter("codingSystem");
             String primaryReasonFlagStr = request.getParameter("primaryReasonFlag");
@@ -140,7 +140,7 @@ public final class RxReasonAction extends DispatchAction {
 		}
 		
     	MessageResources mResources = MessageResources.getMessageResources( "ApplicationResources" );
-		DrugReasonDao drugReasonDao     = (DrugReasonDao) SpringUtils.getBean("drugReasonDao");
+		DrugReasonDao drugReasonDao     = (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class);
 		String reasonId = request.getParameter("reasonId");
 		String archiveReason = request.getParameter("archiveReason");
 

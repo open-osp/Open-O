@@ -51,11 +51,11 @@ public final class MisReportUIBean {
 
 	private static Logger logger = MiscUtils.getLogger();
 
-	private FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean("functionalCentreDao");
-	private AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
-	private ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
-	private DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-	private CaseManagementNoteDAO caseManagementNoteDAO=(CaseManagementNoteDAO) SpringUtils.getBean("CaseManagementNoteDAO");
+	private FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean(FunctionalCentreDao.class);
+	private AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
+	private ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+	private DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+	private CaseManagementNoteDAO caseManagementNoteDAO=(CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
 	
 	private static int ELDERLY_AGE = 65;
 

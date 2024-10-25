@@ -23,18 +23,17 @@
  */
 package org.oscarehr.billing.CA.BC.dao;
 
-import java.sql.Date;
-import java.util.List;
+import org.oscarehr.billing.CA.BC.model.Hl7Pid;
+import org.oscarehr.common.dao.AbstractDaoImpl;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
-
-import org.oscarehr.billing.CA.BC.model.Hl7Pid;
-import org.oscarehr.common.dao.AbstractDao;
-import org.springframework.stereotype.Repository;
+import java.sql.Timestamp;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class Hl7PidDao extends AbstractDao<Hl7Pid>{
+public class Hl7PidDao extends AbstractDaoImpl<Hl7Pid>{
 
 	public Hl7PidDao() {
 		super(Hl7Pid.class);
@@ -84,7 +83,7 @@ public class Hl7PidDao extends AbstractDao<Hl7Pid>{
 	return query.getResultList();
 	}
 
-	public Date findObservationDateByMessageId(Integer messageId) {
+	public Timestamp findObservationDateByMessageId(Integer messageId) {
 	    String sql = "SELECT MAX(obr.resultsReportStatusChange) " +
 	    		"FROM Hl7Pid pid, Hl7Obr obr " +
 	    		"WHERE obr.pidId = pid.id " +
@@ -96,7 +95,7 @@ public class Hl7PidDao extends AbstractDao<Hl7Pid>{
 		if (resultList.isEmpty()) {
 			return null;
 		} else {
-			return (Date) resultList.get(0);
+			return (Timestamp) resultList.get(0);
 		}
     }
 

@@ -655,7 +655,7 @@ public class PATHL7HandlerTest {
 	@Test
 	public void testGetDOB() {
 		logger.info("testGetDOB() " + handler.getDOB());
-		Assert.assertEquals( PATHL7Handler.formatDateTime( sortStringToList( getElement( "PID.7", "TS.1" ) ).get(0) ), handler.getDOB() );
+		Assert.assertEquals( PATHL7Handler.formatDate( sortStringToList( getElement( "PID.7", "TS.1" ) ).get(0) ), handler.getDOB() );
 	}
 
 	@Test

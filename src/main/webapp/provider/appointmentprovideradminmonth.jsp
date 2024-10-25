@@ -168,7 +168,7 @@
 
 <%
     if (bMultisites) {
-        SiteDao siteDao = (SiteDao) SpringUtils.getBean("siteDao");
+        SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
         sites = siteDao.getAllActiveSites();
 
         String requestSite = request.getParameter("site");
@@ -315,7 +315,7 @@
 <%@page import="org.oscarehr.common.model.Site" %>
 <%@page import="oscar.appt.JdbcApptImpl" %>
 <%@page import="oscar.appt.ApptUtil" %>
-<html:html locale="true">
+<html:html lang="en">
     <body bgcolor="#EEEEFF" onLoad="refreshAllTabAlerts();">
 
     <head>
@@ -655,7 +655,7 @@
 
                                         List<String> ps = providerDao.getProvidersInTeam(providerDao.getProvider(curUser_no).getTeam());
                                         ps.add(curUser_no);
-                                        sds = scheduleDateDao.search_scheduledate_teamp(ConversionUtils.fromDateString(year + "-" + month + "-" + "01"), ConversionUtils.fromDateString(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "01"), "A", ps);
+                                        sds = scheduleDateDao.search_scheduledate_teamp(ConversionUtils.fromDateString(year + "-" + month + "-" + "01"), ConversionUtils.fromDateString(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "01"), 'A', ps);
 
                                     } else if (providerview.equals("all") || providerview.startsWith("_grp_", 0)) {
                                         param[0] = year + "-" + month + "-" + "1";
@@ -664,7 +664,7 @@
                                             sds = scheduleDateDao.search_scheduledate_datep(ConversionUtils.fromDateString(year + "-" + month + "-" + "01"), ConversionUtils.fromDateString(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "01"), "A");
                                         } else {
                                             List<String> ps = providerSiteDao.findByProviderNoBySiteName(selectedSite);
-                                            sds = scheduleDateDao.search_scheduledate_teamp(ConversionUtils.fromDateString(year + "-" + month + "-" + "01"), ConversionUtils.fromDateString(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "01"), "A", ps);
+                                            sds = scheduleDateDao.search_scheduledate_teamp(ConversionUtils.fromDateString(year + "-" + month + "-" + "01"), ConversionUtils.fromDateString(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "01"), 'A', ps);
 
                                         }
                                     } else {
@@ -672,7 +672,7 @@
                                         param1[0] = year + "-" + month + "-" + "1";
                                         param1[1] = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "1";
                                         param1[2] = providerview;
-                                        sds = scheduleDateDao.search_scheduledate_teamp(ConversionUtils.fromDateString(year + "-" + month + "-" + "01"), ConversionUtils.fromDateString(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "01"), "A", Arrays.asList(new String[]{providerview}));
+                                        sds = scheduleDateDao.search_scheduledate_teamp(ConversionUtils.fromDateString(year + "-" + month + "-" + "01"), ConversionUtils.fromDateString(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "01"), 'A', Arrays.asList(new String[]{providerview}));
 
                                     }
 

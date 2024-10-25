@@ -296,7 +296,7 @@ public class PHRMessageAction extends DispatchAction {
 
 		MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(request.getSession());
 
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 		Demographic demographic = demographicDao.getDemographicById(demographicId);
 		Long recipientMyOscarUserId = AccountManager.getUserId(myOscarLoggedInInfo, demographic.getMyOscarUserName());
 

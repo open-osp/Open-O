@@ -3,8 +3,8 @@
 	<groupId>org.oscarehr</groupId>
 	<artifactId>oscar</artifactId>
 	<packaging>war</packaging>
-	<version>0.0.0-SNAPSHOT</version>
-	<name>oscar</name>
+	<version>0-SNAPSHOT</version>
+	<name>OpenO</name>
 	<description>OSCAR McMaster is a web-based electronic medical record (EMR) system initially developed for academic primary care clinics. It has grown into a comprehensive EMR and billing system used by many doctor's offices and private medical clinics in Canada and other parts of the world. The name is derived from where it was created and an acronym; OSCAR stands for Open Source Clinical Application and Resource and McMaster refers to McMaster University, where it was developed. It enables the delivery of evidence resources at the point of care.</description>
 	<issueManagement>
 		<system>SourceForge Tracker</system>
@@ -26,10 +26,10 @@
 	<licenses>
 		<license>
 			<name>GPLv2</name>
-			<url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+			<url>https://www.gnu.org/licenses/gpl-2.0.txt</url>
 		</license>
 	</licenses>
-	<url>http://www.oscarcanada.org</url>
+	<url>https://www.oscarcanada.org</url>
 	<scm>
 		<url>https://bitbucket.org/openoscar/oscar/wiki/Home</url>
 		<connection>scm:git:https://bitbucket.org/openoscar/oscar/branch/master</connection>
@@ -53,12 +53,12 @@
 		<repository>
 			<id>hapi-sf</id>
 			<name>HAPI Sourceforge Repository</name>
-			<url>http://hl7api.sourceforge.net/m2</url>
+			<url>https://hl7api.sourceforge.net/m2</url>
 		</repository>
 
 		<repository>
 			<id>oscar_repo</id>
-			<url>http://oscarmcmaster.sourceforge.net/m2</url>
+			<url>https://oscarmcmaster.sourceforge.net/m2</url>
 		</repository>
 
 		<!-- for the com.github.openosp htmltopdf dependency only. Upgrades
@@ -67,6 +67,12 @@
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
+
+    	<repository>
+        	<id>central</id>
+       		<url>https://repo.maven.apache.org/maven2</url>
+    	</repository>
+
 	</repositories>
 
 	<pluginRepositories>
@@ -77,10 +83,20 @@
 
 		<pluginRepository>
 			<id>oscar_repo</id>
-			<url>http://oscarmcmaster.sourceforge.net/m2</url>
+			<url>https://oscarmcmaster.sourceforge.net/m2</url>
 		</pluginRepository>
 	</pluginRepositories>
-
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-framework-bom</artifactId>
+				<version>4.3.30.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 
 		<!-- For Jasper Reports and backwards compatibility -->
@@ -95,7 +111,7 @@
 		<dependency>
 			<groupId>net.bull.javamelody</groupId>
 			<artifactId>javamelody-core</artifactId>
-			<version>1.90.0</version>
+			<version>1.95.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -189,7 +205,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -240,48 +256,67 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>3.1.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			<version>3.1.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>3.1.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>3.2.1.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-ftp</artifactId>
-			<version>2.1.0.RELEASE</version>
+			<version>4.2.4.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-sftp</artifactId>
-			<version>2.2.5.RELEASE</version>
+			<version>4.2.4.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>
-			<version>2.5.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-mock</artifactId>
-			<version>2.0.8</version>
+			<artifactId>spring-test</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.onelogin</groupId>
 			<artifactId>java-saml</artifactId>
 			<version>2.9.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.santuario</groupId>
+					<artifactId>xmlsec</artifactId>
+				</exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.woodstox</groupId>
+                    <artifactId>woodstox-core</artifactId>
+                </exclusion>
+			</exclusions>
+		</dependency>
+
+		<!--
+			At present, the maximum version we can bump org.apache.santuario:xmlsec to is 2.1.8.
+			If we aim to go beyond this version, we'll need to update 'ebs-client', 'edt-stubs',
+			and 'hcv-stubs' as they are currently utilizing xmlsec version 1.5.6.
+			Thus, we need to update all dependencies together.
+		-->
+		<dependency>
+			<groupId>org.apache.santuario</groupId>
+			<artifactId>xmlsec</artifactId>
+			<version>2.1.8</version>
 		</dependency>
 
 		<!-- hibernate / sql -->
@@ -295,10 +330,10 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.25</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>3.4.0.GA</version>
+			<version>3.6.10.Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -307,9 +342,32 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.6.10.Final</version>
+		</dependency> -->
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>5.2.18.Final</version>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.hibernate</groupId>-->
+<!--			<artifactId>hibernate-entitymanager</artifactId>-->
+<!--			<version>5.2.18.Final</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<groupId>org.slf4j</groupId>-->
+<!--					<artifactId>slf4j-api</artifactId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
+
+		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib-nodep</artifactId>
-			<version>2.2</version>
+			<version>3.2.5</version>
 		</dependency>
 
 		<!-- pdf / jpedal -->
@@ -342,36 +400,93 @@
     		<artifactId>guava</artifactId>
     		<version>15.0-rc1</version>
 	    </dependency>
+
 		<!-- struts -->
-		<dependency>
-			<groupId>struts</groupId>
-			<artifactId>struts</artifactId>
-			<version>1.2.7</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>struts</groupId>-->
+<!--			<artifactId>struts</artifactId>-->
+<!--			<version>1.2.7</version>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts-menu</artifactId>
 			<version>UNKNOWN</version>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>struts</groupId>-->
+<!--			<artifactId>struts-el</artifactId>-->
+<!--			<version>1.2.7</version>-->
+<!--		</dependency>-->
+
+		<!--Struts 1.3.10-->
+		<!-- Struts Core Library -->
 		<dependency>
-			<groupId>struts</groupId>
-			<artifactId>struts-el</artifactId>
-			<version>1.2.7</version>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts-core</artifactId>
+			<version>1.3.8</version>
 		</dependency>
+
+		<!-- Struts Taglib Library -->
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts-taglib</artifactId>
+			<version>1.3.8</version>
+		</dependency>
+
+		<!-- Struts Tiles Library -->
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts-tiles</artifactId>
+			<version>1.3.8</version>
+		</dependency>
+
+		<!-- Struts Extras Library -->
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts-extras</artifactId>
+			<version>1.3.8</version>
+		</dependency>
+
+		<!-- Struts El Library -->
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts-el</artifactId>
+			<version>1.3.8</version>
+		</dependency>
+
+		<!-- Commons Digester Library -->
+		<dependency>
+			<groupId>commons-digester</groupId>
+			<artifactId>commons-digester</artifactId>
+			<version>1.8</version>
+		</dependency>
+
+		<!-- struts2 coming soon...-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.struts</groupId>-->
+<!--			<artifactId>struts2-core</artifactId>-->
+<!--			<version>2.5.33</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.struts</groupId>-->
+<!--			<artifactId>struts2-spring-plugin</artifactId>-->
+<!--			<version>2.5.33</version> -->
+<!--		</dependency>-->
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc-struts</artifactId>
 			<version>2.5.6.SEC03</version>
-			<exclusions>		
-				<exclusion>		
-					<groupId>org.springframework</groupId>		
-					<artifactId>spring-webmvc</artifactId>		
-				</exclusion>		
-				<exclusion>		
-					<groupId>org.springframework</groupId>		
-					<artifactId>spring-web</artifactId>		
-				</exclusion>		
-			</exclusions>			
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -693,15 +808,16 @@
 
 		<!-- email -->
 		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4</version>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>jakarta.mail</artifactId>
+			<version>1.6.7</version>
 		</dependency>
-		<dependency>
+
+		<!-- <dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-email</artifactId>
-			<version>1.1</version>
-		</dependency>
+			<version>1.5</version>
+		</dependency> -->
 
 		<!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
 		<dependency>
@@ -876,15 +992,15 @@
 		<dependency>
 		    <groupId>com.github.jtidy</groupId>
 		    <artifactId>jtidy</artifactId>
-		    <version>1.0.2</version>
+		    <version>1.0.5</version>
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>org.jsoup</groupId>
 		    <artifactId>jsoup</artifactId>
 		    <version>1.17.2</version>
 		</dependency>
-		
+
 		<!-- xerces -->
 		<dependency>
 			<groupId>xerces</groupId>
@@ -931,16 +1047,12 @@
 			<artifactId>olis-service</artifactId>
 			<version>20111111</version>
 		</dependency>
-	        <dependency>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcmail-jdk15on</artifactId>
-                        <version>1.64</version>
-                </dependency>
-                <dependency>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk15on</artifactId>
-                        <version>1.70</version>
-                </dependency>
+		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on-->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk18on</artifactId>
+			<version>1.78.1</version>
+		</dependency>
 
 		<!-- AXIS2 (for OLIS) -->
 
@@ -1020,9 +1132,13 @@
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>apache-cxf</artifactId>
-			<version>2.7.11</version>
+			<version>3.2.0</version>
 			<type>pom</type>
 			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-asm</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>org.apache.geronimo.specs</groupId>
 					<artifactId>geronimo-servlet_2.5_spec</artifactId>
@@ -1051,24 +1167,30 @@
 					<groupId>joda-time</groupId>
 					<artifactId>joda-time</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.woodstox</groupId>
+					<artifactId>woodstox-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-		    <groupId>org.codehaus.woodstox</groupId>
-		    <artifactId>woodstox-core-asl</artifactId>
-		    <version>4.4.1</version>
-		</dependency>
+
 		<dependency>
     		<groupId>org.apache.cxf</groupId>
     		<artifactId>cxf-rt-frontend-jaxws</artifactId>
-    		<version>2.7.11</version>
+    		<version>3.2.0</version>
+			<exclusions>
+        		<exclusion>
+            	<groupId>org.codehaus.woodstox</groupId>
+           		<artifactId>woodstox-core-asl</artifactId>
+        	</exclusion>
+    </exclusions>
 		</dependency>
+
 		<dependency>
     		<groupId>org.apache.cxf</groupId>
     		<artifactId>cxf-rt-transports-http</artifactId>
-    		<version>2.7.11</version>
+    		<version>3.2.0</version>
 		</dependency>
-		
 
 		<dependency>
 			<groupId>org.oscarehr</groupId>
@@ -1082,6 +1204,14 @@
 				<exclusion>
 					<groupId>org.oscarehr</groupId>
 					<artifactId>util</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.mail</groupId>
+					<artifactId>mail</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-email</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -1105,6 +1235,10 @@
 				<exclusion>
 					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.cxf</groupId>
+					<artifactId>apache-cxf</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -1133,6 +1267,10 @@
 					<groupId>joda-time</groupId>
 					<artifactId>joda-time</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.woodstox</groupId>
+					<artifactId>woodstox-core-asl</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -1144,6 +1282,12 @@
 			<groupId>org.marc.shic</groupId>
 			<artifactId>shic-pix</artifactId>
 			<version>1.0.8</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.mail</groupId>
+					<artifactId>mail</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.marc.shic</groupId>
@@ -1155,20 +1299,20 @@
 			<artifactId>shic-cda</artifactId>
 			<version>1.0.8</version>
 		</dependency>
-                
+
         <!-- Apache Tika - MimeType handling for downloaded files (ie. XDS) -->
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
             <version>1.5</version>
         </dependency>
-        
+
         <dependency>
     			<groupId>com.atlassian.commonmark</groupId>
     			<artifactId>commonmark</artifactId>
     			<version>0.10.0</version>
 		</dependency>
-		
+
 		<!--tagsoup-->
 		<dependency>
 			<groupId>org.ccil.cowan.tagsoup</groupId>
@@ -1181,13 +1325,13 @@
 				 <artifactId>cbi_ws_client</artifactId>
 				 <version>1.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>rome</groupId>
 			<artifactId>rome</artifactId>
 			<version>1.0</version>
 		</dependency>
-		
+
         <dependency>
                 <groupId>org.oscarehr.integration.ebs</groupId>
                 <artifactId>ebs-client</artifactId>
@@ -1219,20 +1363,12 @@
 		<artifactId>jackson-jaxrs</artifactId>
 		<version>1.9.13</version>
 	</dependency>
-	
-	<dependency>
-		<groupId>org.xhtmlrenderer</groupId>
-		<artifactId>flying-saucer-pdf</artifactId>
-		<version>9.1.22</version>
-		<exclusions>
-			<exclusion>
-				<groupId>org.bouncycastle</groupId>
-				<artifactId>bctsp-jdk14</artifactId>
-			</exclusion>
-		</exclusions>
-	</dependency>
-	
 
+		<dependency>
+			<groupId>org.owasp.encoder</groupId>
+			<artifactId>encoder-jsp</artifactId>
+			<version>1.2.3</version>
+		</dependency>
 	<dependency>
 		<groupId>org.owasp.encoder</groupId>
 		<artifactId>encoder</artifactId>
@@ -1273,20 +1409,23 @@
 	    <artifactId>jasypt</artifactId>
 	    <version>1.8</version>
 	</dependency>
-	
-	<dependency>
-	    <groupId>org.xhtmlrenderer</groupId>
-	    <artifactId>flying-saucer-core</artifactId>
-	    <version>9.1.22</version>
-	</dependency>
-	
-	<dependency>
-	    <groupId>org.xhtmlrenderer</groupId>
-	    <artifactId>flying-saucer-pdf-openpdf</artifactId>
-	    <version>9.1.22</version>
-	</dependency>
 
-	<!-- Caisi Integrator -->
+
+		<!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-core -->
+		<dependency>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-core</artifactId>
+			<version>9.4.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-pdf -->
+		<dependency>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-pdf</artifactId>
+			<version>9.4.1</version>
+		</dependency>
+
+		<!-- Caisi Integrator -->
 	<dependency>
 		<groupId>org.oscarehr.caisi_integrator</groupId>
 		<artifactId>integrator-objects</artifactId>
@@ -1298,13 +1437,13 @@
 			</exclusion>
 		</exclusions>
 	</dependency>
-	
+
 	<!-- This is a dependency for the Caisi Integrator Objects. Only required until
 	OpenJPA is no longer needed in Integrator. -->
     <dependency>
           <groupId>org.apache.openjpa</groupId>
           <artifactId>openjpa</artifactId>
-          <version>2.4.2</version>
+          <version>3.0.0</version>
     </dependency>
 
 	<dependency>
@@ -1349,7 +1488,11 @@
    <artifactId>flowsheets</artifactId>
    <version>1.0</version>
 </dependency>
-
+		<dependency>
+			<groupId>org.codehaus.woodstox</groupId>
+			<artifactId>woodstox-core-asl</artifactId>
+			<version>4.4.1</version>
+		</dependency>
 <!-- Coming soon: JAVA 11 -->
 <!--<dependency>-->
 <!--    <groupId>com.sun.xml.ws</groupId>-->
@@ -1358,7 +1501,9 @@
 <!--    <type>pom</type>-->
 <!--</dependency>-->
 
-	</dependencies>
+
+
+ </dependencies>
 
 	<build>
 	 <resources>
@@ -1371,8 +1516,32 @@
 		          </exclude>
 	          </excludes>
           </resource>
+		  <!-- <resource>
+            <directory>${basedir}/src/test/resources</directory>
+            <filtering>true</filtering>
+          </resource> -->
         </resources>
 	<plugins>
+
+		<plugin>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.8</version>
+			<executions>
+				<execution>
+					<goals>
+						<goal>prepare-agent</goal>
+					</goals>
+				</execution>
+				<execution>
+					<id>report</id>
+					<phase>prepare-package</phase>
+					<goals>
+						<goal>report</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -1452,8 +1621,7 @@
 								<replace file="target/classes/oscar_mcmaster.properties" token="${build.dateTime}" value="${build.dateTime.value}" />
 
 								<property environment="env" />
-								<echo message="ENVIRONMENT ${env}" />
-								<echo message="JOB_NAME - BUILD_NUMBER : ${env.JOB_NAME} - ${env.BUILD_NUMBER}" />
+								<echo message="JOB_NAME - BUILD_NUMBER : ${env.JOB_NAME}-${env.BUILD_NUMBER}" />
 								<replace file="target/classes/oscar_mcmaster.properties" token="${build.JOB_NAME}" value="${env.JOB_NAME}" />
 								<replace file="target/classes/oscar_mcmaster.properties" token="${build.BUILD_NUMBER}" value="${env.BUILD_NUMBER}" />
 							</target>
@@ -1461,7 +1629,9 @@
 					</execution>
 
 					<execution>
-						<!-- We're doing jspc this way because the codehaus jspc seems to be abandonded, it doesn't go beyond jdk 1.5 and the documentation is sparse, and the source code links to a broken page and I can't find the goals it supports. -->
+						<!-- We're doing jspc this way because the codehaus jspc seems to be abandonded,
+						it doesn't go beyond jdk 1.5 and the documentation is sparse, and the source
+						code links to a broken page and I can't find the goals it supports. -->
 						<id>jspc</id>
 						<phase>verify</phase>
 						<goals>
@@ -1470,7 +1640,7 @@
 						<configuration>
 							<target>
 								<property name="build.compiler" value="extJavac" />
-								<property name='jspc_target' value="${project.name}-${project.version}" />
+								<property name='jspc_target' value="${project.artifactId}-${project.version}" />
 								<ant antfile="jspc.xml" target="jspc" />
 							</target>
 						</configuration>
@@ -1539,8 +1709,11 @@
 			     <version>3.2.5</version>
 		        <configuration>
 		          <skipTests>false</skipTests>
-		          <argLine>-Xms512m -Xmx512m -Xss256k -XX:MaxNewSize=64m -XX:MaxPermSize=192m</argLine>
+						<!--Required to comment out the following line to run Jacoco reporting-->
+<!--		          <argLine>${surefireArgLine} -Xms4096m -Xmx4096m -Xss2048k -XX:MaxNewSize=256m -XX:MaxPermSize=512m</argLine>-->
 					<excludes>
+						<exclude>**/*EDTTest.java</exclude>
+						<exclude>**/HinValidatorTest.java</exclude>
 						<exclude>**/AR2005*.java</exclude>
 						<exclude>**/OntarioMDSpec4DataTest.java</exclude>
 						<exclude>**/ONAREnhancedBornConnectorTest.java</exclude>
@@ -1619,6 +1792,35 @@ Comming soon. After spring and java upgrades
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- Update lockfile - mvn se.vandmo:dependency-lock-maven-plugin:lock -->
+			<plugin>
+            	<groupId>se.vandmo</groupId>
+            	<artifactId>dependency-lock-maven-plugin</artifactId>
+            	<version>1.1.0</version>
+				<executions>
+					<execution>
+						<id>check</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+        	</plugin>
+
+			<plugin>
+			<groupId>org.owasp</groupId>
+			<artifactId>dependency-check-maven</artifactId>
+			<version>9.2.0</version> <!-- Use the latest version -->
+			<executions>
+				<execution>
+					<goals>
+						<goal>check</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
 		</plugins>
 
 			<!--     Maybe one day when the header licences are used again.

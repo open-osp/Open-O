@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+<!-- <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
 			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"> -->
+			
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-<!-- 
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd" default-autowire="no">
- -->
 
 	<!-- configure the available measurement flow sheets -->
 	<bean id="measurementTemplateFlowSheet" class="oscar.oscarEncounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig">
@@ -33,24 +39,24 @@
 	</bean>
 
 	<!-- DAO -->
-	<bean id="genericIntakeNodeDAO" class="org.oscarehr.PMmodule.dao.GenericIntakeNodeDAO" autowire="byName" />
-	<bean id="genericIntakeDAO" class="org.oscarehr.PMmodule.dao.GenericIntakeDAO" autowire="byName" />
-	<bean id="healthSafetyDao" class="org.oscarehr.PMmodule.dao.HealthSafetyDao" autowire="byName" />
-	<bean id="formsDAO" class="org.oscarehr.PMmodule.dao.FormsDAO" autowire="byName" />
-	<bean id="populationReportDao" class="org.oscarehr.common.dao.PopulationReportDao" autowire="byName" />
+	<bean id="genericIntakeNodeDAO" class="org.oscarehr.PMmodule.dao.GenericIntakeNodeDAOImpl" autowire="byName" />
+	<bean id="genericIntakeDAO" class="org.oscarehr.PMmodule.dao.GenericIntakeDAOImpl" autowire="byName" />
+	<bean id="healthSafetyDao" class="org.oscarehr.PMmodule.dao.HealthSafetyDaoImpl" autowire="byName" />
+	<bean id="formsDAO" class="org.oscarehr.PMmodule.dao.FormsDAOImpl" autowire="byName" />
+	<bean id="populationReportDao" class="org.oscarehr.common.dao.PopulationReportDaoImpl" autowire="byName" />
 
 
 	<!-- managers  -->
 	<bean id="issueAdminManager" class="org.caisi.service.IssueAdminManager" autowire="byName" />
 
 	<!-- Generic Intake -->
-	<bean id="genericIntakeManager" class="org.oscarehr.PMmodule.service.GenericIntakeManager" autowire="byName" />
+	<bean id="genericIntakeManager" class="org.oscarehr.PMmodule.service.GenericIntakeManagerImpl" autowire="byName" />
 	<bean id="streetHealthReportManager" class="org.oscarehr.PMmodule.service.impl.StreetHealthReportManagerImpl">
 		<property name="demographicDao" ref="demographicDao" />
 		<property name="genericIntakeManager" ref="genericIntakeManager" />
 	</bean>
 	<!-- Generic Intake -->
-	<bean id="healthSafetyManager" class="org.oscarehr.PMmodule.service.HealthSafetyManager">
+	<bean id="healthSafetyManager" class="org.oscarehr.PMmodule.service.HealthSafetyManagerImpl">
 		<property name="healthSafetyDao" ref="healthSafetyDao" />
 	</bean>
 
@@ -62,72 +68,126 @@
 		<property name="populationReportDao" ref="populationReportDao" />
 	</bean>
 	<!-- ========================= SCHEDULED JOBS ========================= -->
-	<bean id="scheduledBedProgramDischargeTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="timerTask">
-			<bean class="org.oscarehr.PMmodule.task.BedProgramDischargeTask" autowire="byType">
-				<property name="programManager" ref="programManager" />
-			</bean>
+
+	 <bean id="scheduledBedProgramDischargeTask" class="org.oscarehr.PMmodule.task.BedProgramDischargeTask" autowire="byType">
+		<property name="programManager" ref="programManager" />
+	</bean>
+    <!-- Define the scheduled executor factory bean -->
+	<bean id="schedulerBedProgramDischarge" class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
+		<property name="scheduledExecutorTasks">
+			<list>
+				<!-- Configure the scheduled task -->
+				<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+					<property name="delay" value="120000" />
+					<property name="period" value="3600000" />
+					<property name="runnable" ref="scheduledBedProgramDischargeTask" />
+				</bean>
+			</list>
 		</property>
-		<property name="delay" value="120000" />
-		<property name="period" value="3600000" />
 	</bean>
 
-	<bean id="scheduledErProgramDischargeTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="timerTask">
-			<bean class="org.oscarehr.PMmodule.task.ErProgramDischargeTask">
-				<property name="admissionManager" ref="admissionManager" />
-				<property name="providerManager" ref="providerManager" />
-			</bean>
+	
+
+	 <bean id="scheduledErProgramDischargeTask" class="org.oscarehr.PMmodule.task.ErProgramDischargeTask">
+		<property name="admissionManager" ref="admissionManager" />
+		<property name="providerManager" ref="providerManager" />
+	</bean>
+    <!-- Define the scheduled executor factory bean -->
+	<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
+		<property name="scheduledExecutorTasks">
+			<list>
+				<!-- Configure the scheduled task -->
+				<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+					<property name="delay" value="180000" />
+					<property name="period" value="300000" />
+					<property name="runnable" ref="scheduledErProgramDischargeTask" />
+				</bean>
+			</list>
 		</property>
-		<property name="delay" value="180000" />
-		<property name="period" value="300000" />
 	</bean>
 
-	<bean id="scheduledAnonymousClientDischargeTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="timerTask">
-			<bean class="org.oscarehr.PMmodule.task.AnonymousClientDischargeTask">
-			</bean>
-		</property>
 
-		<property name="delay" value="60000" />
-		<property name="period" value="3600000" />
-
-	</bean>
-
-	<bean id="scheduledOcanSubmissionTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="timerTask">
-			<bean class="oscar.ocan.task.OcanSubmissionTask">
-				<property name="genericIntakeManager" ref="genericIntakeManager" />
-				<property name="ocanDataProcessor" ref="ocanDataProcessor" />
-				<property name="useTestData" value="true" />
-				<property name="testDataPath" value="C:/TEMP/ocan_test" />
-			</bean>
-		</property>
-		<property name="delay" value="43200000000" />
-		<property name="period" value="86400000" />
-	</bean>
-
-	<bean id="ocanIarSubmissionTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-                <property name="timerTask">
-                        <bean class="org.oscarehr.util.OcanIarSubmissionTask">
-                        </bean>
-                </property>
-                <property name="delay" value="43200000000" />
-                <property name="period" value="86400000" />
+	<bean id="scheduledAnonymousClientDischargeTask" class="org.oscarehr.PMmodule.task.AnonymousClientDischargeTask" />
+    <!-- Define the scheduled executor factory bean -->
+    <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
+        <property name="scheduledExecutorTasks">
+            <list>
+                <!-- Configure the scheduled task -->
+                <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+                    <property name="delay" value="6000000" />
+                    <property name="period" value="3600000" />
+                    <property name="runnable" ref="scheduledAnonymousClientDischargeTask" />
+                </bean>
+            </list>
+        </property>
     </bean>
 
-	<bean id="schedulerCaisi" class="org.springframework.scheduling.timer.TimerFactoryBean">
+
+	 <bean id="scheduledOcanSubmissionTask" class="oscar.ocan.task.OcanSubmissionTask">
+		<property name="genericIntakeManager" ref="genericIntakeManager" />
+		<property name="ocanDataProcessor" ref="ocanDataProcessor" />
+		<property name="useTestData" value="true" />
+		<property name="testDataPath" value="C:/TEMP/ocan_test" />
+	</bean>
+    <!-- Define the scheduled executor factory bean -->
+	<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
+		<property name="scheduledExecutorTasks">
+			<list>
+				<!-- Configure the scheduled task -->
+				<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+					<property name="delay" value="43200000000" />
+					<property name="period" value="86400000" />
+					<property name="runnable" ref="scheduledOcanSubmissionTask" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="ocanIarSubmissionTask" class="org.oscarehr.util.OcanIarSubmissionTask" />
+    <!-- Define the scheduled executor factory bean -->
+    <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
+        <property name="scheduledExecutorTasks">
+            <list>
+                <!-- Configure the scheduled task -->
+                <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+                    <property name="delay" value="43200000000" />
+                    <property name="period" value="86400000" />
+                    <property name="runnable" ref="ocanIarSubmissionTask" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+	<bean id="schedulerCaisi" class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
+    <property name="scheduledExecutorTasks">
+        <list>
+            <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+                <property name="runnable" ref="scheduledBedProgramDischargeTask" />
+            </bean>
+            <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+                <property name="runnable" ref="scheduledAnonymousClientDischargeTask" />
+            </bean>
+            <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
+                <property name="runnable" ref="ocanIarSubmissionTask" />
+            </bean>
+        </list>
+    </property>
+</bean>
+
+
+
+	<!-- <bean id="schedulerCaisi" class="org.springframework.scheduling.timer.TimerFactoryBean">
 		<property name="scheduledTimerTasks">
 			<list>
 				<ref bean="scheduledBedProgramDischargeTask" />
 				<ref bean="scheduledAnonymousClientDischargeTask" />
 				 <ref bean="ocanIarSubmissionTask"/>
 
-				<!--            <ref bean="scheduledErProgramDischargeTask"/> -->
-				<!-- ref bean="scheduledOcanSubmissionTask" /-->
+				
 			</list>
 		</property>
-	</bean>
+	</bean> -->
 	<bean id="QuestionTypes" class="org.oscarehr.survey.model.QuestionTypes" scope="singleton" />
 	<!--
 		<bean id="UCRConfigurationManager" class="org.oscarehr.PMmodule.web.reports.custom.UCRConfigurationManager"> <property name="filename"> <value>org/oscarehr/PMmodule/web/reports/custom/test.xml</value> </property> </bean>

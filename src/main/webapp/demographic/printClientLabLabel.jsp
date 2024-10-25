@@ -45,7 +45,7 @@
 <%@ page import="org.oscarehr.util.SpringUtils"%>
 <%
     String curUser_no = (String) session.getAttribute("user");
-    UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+    UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
     String defaultPrinterName = "";
     boolean silentPrint = false;
     UserProperty prop = null;
@@ -60,7 +60,7 @@
         }
     }
 %>
-<html:html locale="true">
+<html:html lang="en">
     <head>
         <title><bean:message key="report.printLabel.title" /></title>
     </head>

@@ -31,7 +31,6 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.mail.EmailException;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -104,47 +103,51 @@ public class EditTicklerAction extends DispatchAction{
         boolean emailFailed = false;
         boolean isComment = false;        
 
-        boolean enabledTicklerEmail = Boolean.parseBoolean(OscarProperties.getInstance().getProperty("tickler_email_enabled"));
-        if (enabledTicklerEmail) {
-            boolean  emailDemographic = (Boolean) editForm.get("emailDemographic");
+        /*
+        * The sendNotification method in TicklerManager is no longer supported.
+        * For more details, please refer to the sendNotification method.
+        */
+        // boolean enabledTicklerEmail = Boolean.parseBoolean(OscarProperties.getInstance().getProperty("tickler_email_enabled"));
+        // if (enabledTicklerEmail) {
+        //     boolean  emailDemographic = (Boolean) editForm.get("emailDemographic");
 
-            if (emailDemographic) {
+        //     if (emailDemographic) {
 
                
-                try {
-                	ticklerManager.sendNotification(loggedInInfo,t);     
+        //         try {
+        //         	ticklerManager.sendNotification(loggedInInfo,t);     
 
-                    //add tickler comment noting patient was emailed
-                    TicklerComment tc = new TicklerComment();
-                    ResourceBundle prop = ResourceBundle.getBundle("oscarResources",request.getLocale());
-                    String emailedMsg = "";
-                    try {
-                        emailedMsg = prop.getString("tickler.ticklerEdit.emailedDemographic");
-                    }
-                    catch (Exception e) {
-                        emailedMsg = "Emailed Demographic";
-                    }
-                    tc.setMessage(emailedMsg);
-                    tc.setTicklerNo(ticklerNo);
-                    tc.setUpdateDate(now);
-                    tc.setProviderNo(providerNo);
+        //             //add tickler comment noting patient was emailed
+        //             TicklerComment tc = new TicklerComment();
+        //             ResourceBundle prop = ResourceBundle.getBundle("oscarResources",request.getLocale());
+        //             String emailedMsg = "";
+        //             try {
+        //                 emailedMsg = prop.getString("tickler.ticklerEdit.emailedDemographic");
+        //             }
+        //             catch (Exception e) {
+        //                 emailedMsg = "Emailed Demographic";
+        //             }
+        //             tc.setMessage(emailedMsg);
+        //             tc.setTicklerNo(ticklerNo);
+        //             tc.setUpdateDate(now);
+        //             tc.setProviderNo(providerNo);
 
-                    t.getComments().add(tc);
-                    isComment = true;
+        //             t.getComments().add(tc);
+        //             isComment = true;
 
-                }catch (EmailException e) {
-                    logger.error("Tickler Email cannot be sent",e);   
-                    emailFailed = true;                           
-                }catch (IOException e) {
-                    logger.error("Tickler Email Template probably can't be found",e);  
-                    emailFailed = true;
-                }
-                catch (Exception e) {
-                    logger.error("Unexpected error. Check your tickler email, and general email configuration",e);  
-                    emailFailed = true;
-                }                                   
-            }
-        }
+        //         }catch (EmailException e) {
+        //             logger.error("Tickler Email cannot be sent",e);   
+        //             emailFailed = true;                           
+        //         }catch (IOException e) {
+        //             logger.error("Tickler Email Template probably can't be found",e);  
+        //             emailFailed = true;
+        //         }
+        //         catch (Exception e) {
+        //             logger.error("Unexpected error. Check your tickler email, and general email configuration",e);  
+        //             emailFailed = true;
+        //         }                                   
+        //     }
+        // }
         
         String newMessage = request.getParameter("newMessage");
         
@@ -262,7 +265,7 @@ public class EditTicklerAction extends DispatchAction{
              return mapping.findForward("failure");
          }
          
-         TicklerTextSuggestDao ticklerTextSuggestDao = (TicklerTextSuggestDao) SpringUtils.getBean("ticklerTextSuggestDao");
+         TicklerTextSuggestDao ticklerTextSuggestDao = (TicklerTextSuggestDao) SpringUtils.getBean(TicklerTextSuggestDao.class);
          
          
          for (String activeTextStr : activeText) {

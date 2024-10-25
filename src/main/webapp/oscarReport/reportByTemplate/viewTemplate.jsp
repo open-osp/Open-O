@@ -44,7 +44,7 @@
 </security:oscarSec>
 <!DOCTYPE html>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">

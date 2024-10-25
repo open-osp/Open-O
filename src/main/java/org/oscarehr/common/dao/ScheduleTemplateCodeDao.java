@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,63 +21,17 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.ScheduleTemplateCode;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class ScheduleTemplateCodeDao extends AbstractDao<ScheduleTemplateCode> {
-	
-	public ScheduleTemplateCodeDao() {
-		super(ScheduleTemplateCode.class);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<ScheduleTemplateCode> findAll() {
-		Query query = createQuery("x", null);
-		return query.getResultList();
-	}
-		
-	public ScheduleTemplateCode getByCode(char code) {
-		Query query = entityManager.createQuery("select s from ScheduleTemplateCode s where s.code=?");
-		query.setParameter(1, code);
-		
-		@SuppressWarnings("unchecked")
-		List<ScheduleTemplateCode> results = query.getResultList();
-		if(!results.isEmpty()) {
-			return results.get(0);
-		}
-		return null;
-	}
-	
-	//"select code, duration from scheduletemplatecode where bookinglimit > 0 and duration != ''"
-	public List<ScheduleTemplateCode> findTemplateCodes() {
-		Query query = entityManager.createQuery("select s from ScheduleTemplateCode s where s.bookinglimit > 0 and s.duration <>''");
-		
-		@SuppressWarnings("unchecked")
-		List<ScheduleTemplateCode> results = query.getResultList();
-		
-		return results;
-	}
-	
-	public ScheduleTemplateCode findByCode(String code) {
-		Query query = entityManager.createQuery("select s from ScheduleTemplateCode s where s.code like ?");
-		query.setParameter(1, code);
-		
-		@SuppressWarnings("unchecked")
-		List<ScheduleTemplateCode> results = query.getResultList();
-		if(!results.isEmpty()) {
-			return results.get(0);
-		}
-		return null;
-	}
-
+public interface ScheduleTemplateCodeDao extends AbstractDao<ScheduleTemplateCode> {
+    List<ScheduleTemplateCode> findAll();
+    ScheduleTemplateCode getByCode(char code);
+    List<ScheduleTemplateCode> findTemplateCodes();
+    ScheduleTemplateCode findByCode(String code);
 }

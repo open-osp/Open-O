@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
@@ -35,201 +38,31 @@ import org.oscarehr.common.model.AbstractModel;
 import org.oscarehr.common.model.OscarLog;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class OscarLogDao extends AbstractDao<OscarLog> {
+public interface OscarLogDao extends AbstractDao<OscarLog> {
 
-	public OscarLogDao() {
-		super(OscarLog.class);
-	}
+	public List<OscarLog> findByDemographicId(Integer demographicId);
 
-    public List<OscarLog> findByDemographicId(Integer demographicId) {
+	public List<OscarLog> findByProviderNo(String providerNo);
 
-    	String sqlCommand="select x from "+modelClass.getSimpleName()+" x where x.demographicId=?1";
-    	
-    	Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, demographicId);
+	public boolean hasRead(String providerNo, String content, String contentId);
 
-	    @SuppressWarnings("unchecked")
-		List<OscarLog> results=query.getResultList();
-		
-		return(results);
-    }
-    
-    public List<OscarLog> findByProviderNo(String providerNo) {
+	public List<OscarLog> findByActionAndData(String action, String data);
 
-    	String sqlCommand="select x from "+modelClass.getSimpleName()+" x where x.providerNo=?1 order by x.created";
-    	
-    	Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, providerNo);
+	public List<OscarLog> findByAction(String action, int start, int length, String orderBy, String orderByDirection);
 
-	    @SuppressWarnings("unchecked")
-		List<OscarLog> results=query.getResultList();
-		
-		return(results);
-    }
-    
-    
-    public boolean hasRead(String providerNo, String content, String contentId){
-    	String sqlCommand="select x from "+modelClass.getSimpleName()+" x where x.action = 'read' and  x.providerNo=?1 and x.content = ?2 and x.contentId = ?3";
-    	Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, providerNo);
-		query.setParameter(2, content);
-		query.setParameter(3, contentId);
-		
-	    @SuppressWarnings("unchecked")
-		List<OscarLog> results=query.getResultList();
-	    if(results.size() == 0){
-	    	return false;
-	    }
-		
-		return true;
-    }
-    
-    public List<OscarLog> findByActionAndData(String action, String data) {
-    	String sqlCommand="select x from "+modelClass.getSimpleName()+" x where x.action = ?1 and x.data = ?2 order by x.created DESC";
-    	Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, action);
-		query.setParameter(2, data);
-		
-	    @SuppressWarnings("unchecked")
-		List<OscarLog> results=query.getResultList();
-	    
-	    return results;
-    }
-    
-    public List<OscarLog> findByAction(String action, int start, int length, String orderBy, String orderByDirection) {
-    	if(!"asc".equalsIgnoreCase(orderByDirection) && !"desc".equalsIgnoreCase(orderByDirection)) {
-    		return new ArrayList<OscarLog>();
-    	}	
-    	if(!"id".equals(orderBy) && !"created".equals(orderBy) && !"providerNo".equals(orderBy) && !"action".equals(orderBy) && !"content".equals(orderBy) &&
-    			!"contentId".equals(orderBy) && !"ip".equals(orderBy) && !"demographicId".equals(orderBy) && !"data".equals(orderBy) && !"securityId".equals(orderBy)) {
-    		return new ArrayList<OscarLog>();	
-    	}
+	public List<OscarLog> findByActionContentAndDemographicId(String action, String content, Integer demographicId);
 
-    	String sqlCommand="select x from "+modelClass.getSimpleName()+" x where x.action = ?1 order by x."+orderBy+" " + orderByDirection;
-    	Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, action);
-		query.setFirstResult(start);
-		query.setMaxResults(length);
-		
-	    @SuppressWarnings("unchecked")
-		List<OscarLog> results=query.getResultList();
-	    
-	    return results;
-    }
-    
-    
-    public List<OscarLog> findByActionContentAndDemographicId(String action, String content, Integer demographicId) {
+	public List<Integer> getDemographicIdsOpenedSinceTime(Date value);
 
-    	String sqlCommand="select x from "+modelClass.getSimpleName()+" x where x.action=?1 and x.content = ?2 and x.demographicId=?3 order by x.created desc";
-    	
-    	Query query = entityManager.createQuery(sqlCommand);
-    	query.setParameter(1, action);
-    	query.setParameter(2, content);
-		query.setParameter(3, demographicId);
+	public List<Integer> getRecentDemographicsAccessedByProvider(String providerNo, int startPosition,
+			int itemsToReturn);
 
-	    @SuppressWarnings("unchecked")
-		List<OscarLog> results=query.getResultList();
-		
-		return(results);
-    }
+	public List<Object[]> getRecentDemographicsViewedByProvider(String providerNo, int startPosition,
+			int itemsToReturn);
 
-	public List<Integer> getDemographicIdsOpenedSinceTime(Date value) {
-		String sqlCommand="select distinct demographicId from "+modelClass.getSimpleName()+" where dateTime >= ?1";
+	public List<Object[]> getRecentDemographicsViewedByProviderAfterDateIncluded(String providerNo, Date date,
+			int startPosition, int itemsToReturn);
 
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, value);
+	public int purgeLogEntries(Date maxDateToRemove);
 
-		@SuppressWarnings("unchecked")
-		List<Integer> results=query.getResultList();
-		results.removeAll(Collections.singleton(null));
-
-		return(results);
-	}
-
-        public List<Integer> getRecentDemographicsAccessedByProvider(String providerNo, int startPosition, int itemsToReturn) {
-		String sqlCommand="select distinct demographicId from "+modelClass.getSimpleName()+" l where l.providerNo = ?1 and l.demographicId is not null and l.demographicId != '-1' order by dateTime desc";
-
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, providerNo);
-		query.setFirstResult(startPosition);
-		setLimit(query,itemsToReturn);
-
-		@SuppressWarnings("unchecked")
-		List<Integer> results=query.getResultList();
-
-		return(results);
-	}
-	/**
-	 * 
-	 * @param providerNo
-	 * @param startPosition
-	 * @param itemsToReturn
-	 * @return List of Object array [demographicId (Integer), lastDateViewed Date]
-	 */
-	public List<Object[]> getRecentDemographicsViewedByProvider(String providerNo, int startPosition, int itemsToReturn) {
-		String sqlCommand="select l.demographicId,MAX(l.created) as dt from "+modelClass.getSimpleName()+" l where l.providerNo = ?1 and l.demographicId is not null and l.demographicId != '-1' group by l.demographicId order by MAX(l.created) desc";
-
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, providerNo);
-		query.setFirstResult(startPosition);
-		setLimit(query,itemsToReturn);
-
-		@SuppressWarnings("unchecked")
-		List<Object[]> results=query.getResultList();
-		
-		return(results);
-	}
-
-
-	/**
-	 *
-	 * @param providerNo
-	 * @param startPosition
-	 * @param itemsToReturn
-	 * @return List of Object array [demographicId (Integer), lastDateViewed Date]
-	 */
-	public List<Object[]> getRecentDemographicsViewedByProviderAfterDateIncluded(String providerNo, Date date, int startPosition, int itemsToReturn) {
-		String sqlCommand="select l.demographicId,MAX(l.created) as dt from "+modelClass.getSimpleName()+" l where l.providerNo = :providerNo and l.created >= :date and l.demographicId is not null and l.demographicId != '-1' group by l.demographicId order by MAX(l.created) desc";
-
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter("providerNo", providerNo);
-		query.setParameter("date", date);
-		query.setFirstResult(startPosition);
-		setLimit(query,itemsToReturn);
-
-		@SuppressWarnings("unchecked")
-		List<Object[]> results=query.getResultList();
-
-		return(results);
-	}
-
-	/*
-	 * Warning. Don't use this. It's only for the log purging feature.
-	 */
-	public int purgeLogEntries(Date maxDateToRemove) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		
-		String sqlCommand = "delete from " + modelClass.getSimpleName() + " WHERE dateTime <= ?";
-		
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, formatter.format(maxDateToRemove));
-		int ret = query.executeUpdate();
-		
-		return ret;
-		
-		
-	}
-	
-	@Override
-    public void remove(AbstractModel<?> o) {
-	    throw new SecurityException("Cannot remove audit log entries!");
-    }
-
-	@Override
-    public boolean remove(Object id) {
-		 throw new SecurityException("Cannot remove audit log entries!");
-    }
-	
-	
 }

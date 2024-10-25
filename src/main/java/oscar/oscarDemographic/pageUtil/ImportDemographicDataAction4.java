@@ -38,6 +38,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,8 +54,10 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.upload.FormFile;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.PMmodule.model.Program;
@@ -83,9 +86,11 @@ import org.oscarehr.common.dao.DrugReasonDao;
 import org.oscarehr.common.dao.MeasurementsExtDao;
 import org.oscarehr.common.dao.OscarAppointmentDao;
 import org.oscarehr.common.dao.PartialDateDao;
+import org.oscarehr.common.dao.PatientLabRoutingDao;
 import org.oscarehr.common.dao.PharmacyInfoDao;
 import org.oscarehr.common.dao.ProviderDataDao;
 import org.oscarehr.common.dao.ProviderLabRoutingDao;
+import org.oscarehr.common.model.AbstractModel;
 import org.oscarehr.common.model.Admission;
 import org.oscarehr.common.model.Allergy;
 import org.oscarehr.common.model.Appointment;
@@ -100,8 +105,10 @@ import org.oscarehr.common.model.Drug;
 import org.oscarehr.common.model.DrugReason;
 import org.oscarehr.common.model.MeasurementsExt;
 import org.oscarehr.common.model.PartialDate;
+import org.oscarehr.common.model.PatientLabRouting;
 import org.oscarehr.common.model.PharmacyInfo;
 import org.oscarehr.common.model.Provider;
+import org.oscarehr.common.model.ProviderLabRoutingModel;
 import org.oscarehr.hospitalReportManager.HRMReport;
 import org.oscarehr.hospitalReportManager.HRMReportParser;
 import org.oscarehr.hospitalReportManager.dao.HRMDocumentCommentDao;
@@ -114,6 +121,7 @@ import org.oscarehr.hospitalReportManager.model.HRMDocumentComment;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentSubClass;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToProvider;
+import org.oscarehr.managers.NioFileManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -146,6 +154,7 @@ import cds.DemographicsDocument.Demographics.PreferredPharmacy;
 import cds.FamilyHistoryDocument.FamilyHistory;
 import cds.ImmunizationsDocument.Immunizations;
 import cds.LaboratoryResultsDocument.LaboratoryResults;
+import cds.LaboratoryResultsDocument.LaboratoryResults.ResultReviewer;
 import cds.MedicationsAndTreatmentsDocument.MedicationsAndTreatments;
 import cds.NewCategoryDocument.NewCategory;
 import cds.OmdCdsDocument;
@@ -160,6 +169,7 @@ import cds.ReportsDocument.Reports.SourceAuthorPhysician;
 import cds.RiskFactorsDocument.RiskFactors;
 import cdsDt.AddressType;
 import cdsDt.AdverseReactionType;
+import cdsDt.DateTimeFullOrPartial;
 import cdsDt.DiabetesComplicationScreening.ExamCode;
 import cdsDt.DiabetesMotivationalCounselling.CounsellingPerformed;
 import cdsDt.PersonNamePartQualifierCode;
@@ -176,6 +186,14 @@ import oscar.oscarDemographic.data.DemographicData;
 import oscar.oscarEncounter.data.EctProgram;
 import oscar.oscarEncounter.oscarMeasurements.data.ImportExportMeasurements;
 import oscar.oscarLab.FileUploadCheck;
+import oscar.oscarLab.LabRequestReportLink;
+import oscar.oscarLab.ca.all.Hl7textResultsData;
+import oscar.oscarLab.ca.all.upload.HandlerClassFactory;
+import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
+import oscar.oscarLab.ca.all.upload.handlers.CMLHandler;
+import oscar.oscarLab.ca.all.upload.handlers.GDMLHandler;
+import oscar.oscarLab.ca.all.upload.handlers.MDSHandler;
+import oscar.oscarLab.ca.all.upload.handlers.MessageHandler;
 import oscar.oscarLab.ca.all.util.Utilities;
 import oscar.oscarPrevention.PreventionData;
 import oscar.oscarProvider.data.ProviderData;
@@ -215,28 +233,33 @@ public class ImportDemographicDataAction4 extends Action {
 
     boolean matchProviderNames = true;
     String admProviderNo = null;
+    Demographic demographic = null;
     String demographicNo = null;
     String patientName = null;
     String programId = null;
     HashMap<String, Integer> entries = new HashMap<String, Integer>();
     Integer importNo = 0;
     OscarProperties oscarProperties = OscarProperties.getInstance();
+    List<String> importErrors = new ArrayList<String>();
 
-    ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
-    AdmissionManager admissionManager = (AdmissionManager) SpringUtils.getBean("admissionManager");
-    AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
-    CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
-    DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
-    DrugReasonDao drugReasonDao = (DrugReasonDao) SpringUtils.getBean("drugReasonDao");
-    DemographicArchiveDao demoArchiveDao = (DemographicArchiveDao) SpringUtils.getBean("demographicArchiveDao");
-    ProviderDataDao providerDataDao = (ProviderDataDao) SpringUtils.getBean("providerDataDao");
-    PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean("partialDateDao");
-    DemographicExtDao demographicExtDao = (DemographicExtDao) SpringUtils.getBean("demographicExtDao");
-    OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+    ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
+    AdmissionManager admissionManager = (AdmissionManager) SpringUtils.getBean(AdmissionManager.class);
+    AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
+    CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
+    DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
+    DrugReasonDao drugReasonDao = (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class);
+    DemographicArchiveDao demoArchiveDao = (DemographicArchiveDao) SpringUtils.getBean(DemographicArchiveDao.class);
+    ProviderDataDao providerDataDao = (ProviderDataDao) SpringUtils.getBean(ProviderDataDao.class);
+    PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean(PartialDateDao.class);
+    DemographicExtDao demographicExtDao = (DemographicExtDao) SpringUtils.getBean(DemographicExtDao.class);
+    OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
+    PatientLabRoutingDao patientLabRoutingDao  = SpringUtils.getBean(PatientLabRoutingDao.class); 
     ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
     MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
     IssueDAO issueDao = SpringUtils.getBean(IssueDAO.class);
-    DemographicContactDao contactDao = (DemographicContactDao) SpringUtils.getBean("demographicContactDao");
+    DemographicContactDao contactDao = (DemographicContactDao) SpringUtils.getBean(DemographicContactDao.class);
+
+    private final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
 
     private LabUploadWs labUpload = new LabUploadWs();
 
@@ -247,17 +270,53 @@ public class ImportDemographicDataAction4 extends Action {
 			throw new SecurityException("missing required security object (_demographic)");
 		}
 
+        //TODO: More thought needs to be put into the user interface. Extra attention on multithreading is advised
+        //Status Quo of as 2024.02.03
+            // Importing single XML patient files (with embedded HL7 and PDFs) does work ok (most recently done with an Avaros export 2024.02.03)
+            // Importing multiple XML patient files also works ok (most recently done with ~500 Avaros exports 2024.02.03 amounting to 18GB in approximately 5 hours)
+            // The batch uploading is currently done via a javascript loop which uploads and processes each file, one at a time.  The browser window cannot be closed or navigated away during uploading. 
+            // The status of each file is individually reported back to the front end.        
+            // HOWEVER, if OSCAR session expires or after the user navigates away from the upload page, the whole process is lost.            
+            // To help overcome interuptions, consider reworking process to upload files quickly to temporary folder before batch back end procesing and reporting of status
+
+        // initialize
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-    	
+        ImportDemographicDataForm frm = (ImportDemographicDataForm) form;
         admProviderNo = (String) request.getSession().getAttribute("user");
         programId = new EctProgram(request.getSession()).getProgram(admProviderNo);
-        String tmpDir = oscarProperties.getProperty("TMP_DIR");
-        tmpDir = Util.fixDirName(tmpDir);
-        if (!Util.checkDir(tmpDir)) {
-            logger.debug("Error! Cannot write to TMP_DIR - Check oscar.properties or dir permissions.");
+        matchProviderNames = frm.getMatchProviderNames();
+        ArrayList<String> warnings = new ArrayList<>();
+        ArrayList<String[]> logs = new ArrayList<>();
+        validXmlFileList = new ArrayList<>();
+        String[] logResult;
+
+        /*
+         * get filename, filetype, and input stream of the import; then
+         * save the upload stream to a temp directory.  This should allow the HTTP
+         * thread to close gracefully while the import is being processed.
+         */
+        FormFile imp = frm.getImportFile();
+        String filename = imp.getFileName();
+        String filetype = imp.getContentType();
+        Path directory;
+        try(InputStream inputStream = imp.getInputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream())
+        {
+            int length;
+            byte[] bytes = new byte[1024];
+
+            // copy data from input stream to output stream
+            while ((length = inputStream.read(bytes)) != -1) {
+                byteArrayOutputStream.write(bytes, 0, length);
+            }
+
+            directory = nioFileManager.createTempFile(filename, byteArrayOutputStream);
         }
 
-        ImportDemographicDataForm frm = (ImportDemographicDataForm) form;
+        /*
+         * Perform a poorly understood "student" process.  Is this code block
+         * still needed??  Happy to delete if it's no longer applied.
+         */
         logger.debug("import to course id "  + frm.getCourseId() + " using timeshift value " + frm.getTimeshiftInDays());
         List<Provider> students = new ArrayList<Provider>();
         int courseId = 0;
@@ -275,17 +334,82 @@ public class ImportDemographicDataAction4 extends Action {
             }
         }
         logger.debug("apply this patient to " + students.size() + " students");
-        matchProviderNames = frm.getMatchProviderNames();
-//        FormFile imp = frm.getImportFile();
-//        String ifile = tmpDir + imp.getFileName();
-//        String ifile = tmpDir + "ChangTestExport.zip";
-        ArrayList<String> warnings = new ArrayList<>();
-        ArrayList<String[]> logs = new ArrayList<>();
-        validXmlFileList = new ArrayList<>();
-        Path directory = Paths.get("/Users/denniswarren/Documents/Colcamex/Clients/data_transfers/Maywood_Medaccess/ChangFinalExport_uxUD8FjFbHuaQPeS6ytZVGWs/ChangFinalExport");
-        String[] logResult;
 
-        try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+        /*
+         * Determine what kind of file was uploaded and process accordingly
+         * Single XML File: process accordingly.
+         * ZIP File: unzip into temp directory and delete source
+         * Link to Directory: recurse tree and process XML
+         *
+         * TODO: At the moment it is expected that an XML file is an import of a single patient file.
+         *  Whereas a ZIP file will contain a directory of several directories each representing
+         *  a patient file and each containing a single XML File and additional PDF's
+         *  Expectations of how uploaded export files are batched and formatted should be studied and standardized.
+         *
+         */
+
+        // if the saved temporary file is an XML import of a single patient file, then go straight to processing
+        if(filetype.contains("xml") && Files.exists(directory) && Files.isRegularFile(directory)) {
+            processXmlFile(loggedInInfo, directory, warnings, logs, request, frm.getTimeshiftInDays(), students, courseId);
+        }
+
+        //TODO if the saved temporary file is a zip file then go on to unzip and process the directory tree.
+        // more checks and standards needed.
+        else if(filetype.contains("zip") && Files.exists(directory)) {
+            // unzip into parent directory
+            Path rootDirectory = unzipFile(directory);
+            // process starting at parent directory.
+            processXmlFilesInDirectory(loggedInInfo, rootDirectory, warnings, logs, request, frm.getTimeshiftInDays(), students, courseId);
+        }
+
+        // if the saved temporary file is a directory tree; then search for and process the xml file in each directory
+        else if(Files.exists(directory)) {
+            processXmlFilesInDirectory(loggedInInfo, directory, warnings, logs, request, frm.getTimeshiftInDays(), students, courseId);
+        }
+
+        //TODO is it possible that the uploaded file is an batch file of XML files? If so, then a process is needed to
+        // parse the xml batch file into individual XML patient files.
+
+
+        // use the completed valid xml list to run through the contact imports.
+        for(Path validXmlFile : validXmlFileList) {
+            logResult = importContacts(loggedInInfo, validXmlFile.toString(), warnings, request, frm.getTimeshiftInDays(), students, courseId);
+            logs.add(logResult);
+        }
+
+        /*
+         * a new import log gets generated into the root of the temporary directory.
+         * It gets offered as a download to the end user.
+         * TODO this log should be stored so that it can be retrieved later by the end user.
+         */
+        File importLog = makeImportLog(logs, directory.getParent().toString());
+	
+        //channel warnings and importlog to browser
+        request.setAttribute("warnings", warnings);
+        request.setAttribute("importlog", importLog.getPath());
+        resetProviderBean(request);
+        generateResponse(response, warnings, importLog.getPath());
+        return mapping.findForward("success");
+    }
+
+    private void generateResponse(HttpServletResponse response, ArrayList<String> warnings, String importLog) {
+		JSONObject json = new JSONObject();
+		response.setContentType("text/javascript");
+		try {
+            json.put("warnings", warnings);
+            json.put("importLog", importLog);
+			response.getWriter().write(json.toString());
+		} catch (IOException | JSONException e) {
+			logger.error("An error occurred while writing JSON response to the output stream", e);
+		}
+	}
+
+    /**
+     * Search for all XML / CDS / CMS patient files in a given directory and process.
+     */
+    private void processXmlFilesInDirectory(LoggedInInfo loggedInInfo, Path fileDirectory, ArrayList<String> warnings, ArrayList<String[]> logs,
+                                            HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId) throws IOException {
+        try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fileDirectory)) {
             for (Path stream : directoryStream) {
 
                 if (Files.isDirectory(stream)) {
@@ -297,9 +421,7 @@ public class ImportDemographicDataAction4 extends Action {
                      */
                     Path xmlFile = Paths.get(currentDirectory, stream.toFile().getName() + ".xml");
                     if (Files.exists(xmlFile)) {
-                        logResult = importXML(loggedInInfo, xmlFile.toString(), warnings, request, frm.getTimeshiftInDays(), students, courseId, true);
-                        validXmlFileList.add(xmlFile);
-                        logs.add(logResult);
+                        processXmlFile(loggedInInfo, xmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
                     }
 
                     /*
@@ -309,9 +431,7 @@ public class ImportDemographicDataAction4 extends Action {
                         List<Path> possibleXmlFileList = searchFileByExtension(stream, warnings);
                         for (Path possibleXmlFile : possibleXmlFileList) {
                             if (Files.exists(xmlFile)) {
-                                logResult = importXML(loggedInInfo, possibleXmlFile.toString(), warnings, request, frm.getTimeshiftInDays(), students, courseId, true);
-                                validXmlFileList.add(xmlFile);
-                                logs.add(logResult);
+                                processXmlFile(loggedInInfo, possibleXmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
                             }
                         }
                     }
@@ -319,148 +439,62 @@ public class ImportDemographicDataAction4 extends Action {
                     warnings.add("Directory not found " + stream);
                 }
             }
+        } catch (Exception e) {
+	        throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Zip format only.
+     * Extracts entire contents to current directory
+     * TODO disk capacity should be evaluated first.
+     */
+    private Path unzipFile(Path zipFilePath) throws IOException {
+        Path directoryPath = zipFilePath.getParent();
+        byte[] buffer = new byte[1024];
+        try(ZipInputStream zis = new ZipInputStream(Files.newInputStream(Paths.get(zipFilePath.toString())))) {
+            ZipEntry zipEntry = zis.getNextEntry();
+            while (zipEntry != null) {
+                File newFile = Paths.get(directoryPath.toString(), zipEntry.getName()).toFile();
+                if (zipEntry.isDirectory()) {
+                    if (!newFile.isDirectory() && !newFile.mkdirs()) {
+                        throw new IOException("Failed to create directory " + newFile);
+                    }
+                } else {
+                    // fix for Windows-created archives
+                    File parent = newFile.getParentFile();
+                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                        throw new IOException("Failed to create directory " + parent);
+                    }
+
+                    // write file content
+                    try(FileOutputStream fos = new FileOutputStream(newFile)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                    } catch (Exception e) {
+                        throw new IOException("Failed to create directory " + e);
+                    }
+                }
+                zipEntry = zis.getNextEntry();
+            }
         }
 
-        // use the valid xml list to run through the contact imports.
-        for(Path validXmlFile : validXmlFileList) {
-            logResult = importContacts(loggedInInfo, validXmlFile.toString(), warnings, request, frm.getTimeshiftInDays(), students, courseId);
-            logs.add(logResult);
+        // delete the zip file
+        if(Files.exists(directoryPath)) {
+            Files.deleteIfExists(zipFilePath);
         }
+        return directoryPath;
+    }
 
-        File importLog = makeImportLog(logs, tmpDir);
-
-//	try(InputStream is = Files.newInputStream(Paths.get(ifile));
-//        OutputStream os = new FileOutputStream(ifile)) {
-//            byte[] buf = new byte[1024];
-//            int len;
-//            while ((len=is.read(buf)) > 0) {
-//                os.write(buf,0,len);
-//            }
-//            is.close();
-//            os.close();
-//
-//            if (matchFileExt(ifile, "zip")) {
-//            	saveParts(tmpDir,ifile);
-//                ZipInputStream in = new ZipInputStream(new FileInputStream(ifile));
-//                boolean noXML = true;
-//                ZipEntry entry = in.getNextEntry();
-//                String entryDir = "";
-//
-//                while (entry!=null) {
-//                    String entryName = entry.getName();
-//                    if (entry.isDirectory()) entryDir = entryName;
-//                    if (entryName.startsWith(entryDir)) entryName = entryName.substring(entryDir.length());
-//
-//                    String ofile = tmpDir + entryName;
-//                    if (matchFileExt(ofile, "xml")) {
-//                    	new File(ofile).getParentFile().mkdirs();
-//
-//                        noXML = false;
-//                        OutputStream out = null;
-//                        try {
-//	                        out = new FileOutputStream(ofile);
-//	                        while ((len=in.read(buf)) > 0) out.write(buf,0,len);
-//	                        out.close();
-//	                    } finally {
-//	                    	IOUtils.closeQuietly(out);
-//	                    }
-//                        logs.add(importXML(LoggedInInfo.getLoggedInInfoFromSession(request) , ofile, warnings, request,frm.getTimeshiftInDays(),students,courseId,true));
-//                        importNo++;
-//                        demographicNo=null;
-//                    }
-//                    entry = in.getNextEntry();
-//                }
-//                if (noXML) {
-//                    Util.cleanFile(ifile);
-//                        throw new Exception ("Error! No .xml file in zip");
-//                } else {
-//                    importLog = makeImportLog(logs, tmpDir);
-//                }
-//                in.close();
-////                Util.cleanFile(ifile);
-//
-//            } else if (matchFileExt(ifile, "xml")) {
-//                logs.add(importXML(LoggedInInfo.getLoggedInInfoFromSession(request), ifile, warnings, request,frm.getTimeshiftInDays(),students,courseId,false));
-//                demographicNo=null;
-//                importLog = makeImportLog(logs, tmpDir);
-//            } else {
-//                Util.cleanFile(ifile);
-//                throw new Exception ("Error! Import file must be .xml or .zip");
-//            }
-//	} catch (Exception e) {
-//            warnings.add("Error processing file: " + imp.getFileName());
-//            logger.error("Error processing file: " + imp.getFileName(), e);
-//	}
-//
-//
-//
-//	//CONTACTS MUST BE PROCESSED AFTER
-//	try {
-//		byte[] buf = new byte[1024];
-//        int len;
-//
-//        if (matchFileExt(ifile, "zip")) {
-//        	saveParts(tmpDir,ifile);
-//            ZipInputStream in = new ZipInputStream(new FileInputStream(ifile));
-//            boolean noXML = true;
-//            ZipEntry entry = in.getNextEntry();
-//            String entryDir = "";
-//
-//            while (entry!=null) {
-//                String entryName = entry.getName();
-//                if (entry.isDirectory()) entryDir = entryName;
-//                if (entryName.startsWith(entryDir)) entryName = entryName.substring(entryDir.length());
-//
-//                String ofile = tmpDir + entryName;
-//                if (matchFileExt(ofile, "xml")) {
-//                	new File(ofile).getParentFile().mkdirs();
-//
-//                    noXML = false;
-//                    OutputStream out = null;
-//                    try {
-//                        out = new FileOutputStream(ofile);
-//                        while ((len=in.read(buf)) > 0) out.write(buf,0,len);
-//                        out.close();
-//                    } finally {
-//                    	IOUtils.closeQuietly(out);
-//                    }
-//                    //process for contacts only
-//                  //  logger.info("processing for contacts - " + ofile);
-//                    logs.add(importContacts(LoggedInInfo.getLoggedInInfoFromSession(request) , ofile, warnings, request,frm.getTimeshiftInDays(),students,courseId));
-//
-//                    demographicNo=null;
-//                }
-//                entry = in.getNextEntry();
-//            }
-//            if (noXML) {
-//                Util.cleanFile(ifile);
-//                    throw new Exception ("Error! No .xml file in zip");
-//            } else {
-//               // importLog = makeImportLog(logs, tmpDir);
-//            }
-//            in.close();
-//            Util.cleanFile(ifile);
-//
-//        } else if (matchFileExt(ifile, "xml")) {
-//        	logger.info("processing for contacts - " + ifile);
-//        	logs.add(importContacts(LoggedInInfo.getLoggedInInfoFromSession(request), ifile, warnings, request,frm.getTimeshiftInDays(),students,courseId));
-//            demographicNo=null;
-//           // importLog = makeImportLog(logs, tmpDir);
-//        } else {
-//            Util.cleanFile(ifile);
-//            throw new Exception ("Error! Import file must be .xml or .zip");
-//        }
-//} catch (Exception e) {
-//        warnings.add("Error processing file: " + imp.getFileName());
-//        logger.error("Error", e);
-//}
-	
-	
-        //channel warnings and importlog to browser
-        request.setAttribute("warnings", warnings);
-        request.setAttribute("importlog", importLog.getPath());
-        resetProviderBean(request);
-        return mapping.findForward("success");
+    /**
+     * Process a single patient XML / CDS / CMS file import and add to OSCAR's database.
+     */
+    private void processXmlFile(LoggedInInfo loggedInInfo, Path xmlFile, ArrayList<String> warnings, ArrayList<String[]> logs, HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId) throws Exception {
+        String[] logResult = importXML(loggedInInfo, xmlFile.toString(), warnings, request, timeshiftInDays, students, courseId, false);
+        validXmlFileList.add(xmlFile);
+        logs.add(logResult);
     }
 
     private List<Path> searchFileByExtension(Path path, ArrayList<String> warnings) {
@@ -478,45 +512,45 @@ public class ImportDemographicDataAction4 extends Action {
         return filteredFileList;
     }
 
-    private void saveParts(String tmpDir,String ifile) throws Exception {
-    	int len = 0;
-    	byte[] buf = new byte[1024];
-    	
-        ZipInputStream in = new ZipInputStream(new FileInputStream(ifile));
-        ZipEntry entry = in.getNextEntry();
-        String entryDir = "";
-
-        while (entry!=null) {
-            String entryName = entry.getName();
-            if (entry.isDirectory()) 
-            	entryDir = entryName;
-            if (entryName.startsWith(entryDir)) 
-            	entryName = entryName.substring(entryDir.length());
-
-            if(entryName.isEmpty()) {
-            	entry = in.getNextEntry();
-            	continue;
-            }
-            	
-            
-            String ofile = tmpDir + entryDir +  entryName;
-            
-            if (!matchFileExt(ofile, "xml")) {
-                OutputStream out = null;    
-                try {
-                	String path = ofile.substring(0,ofile.lastIndexOf(File.separator));
-                	new File(path).mkdirs();
-                    out = new FileOutputStream(ofile);
-                    while ((len=in.read(buf)) > 0) out.write(buf,0,len);
-                    out.close();
-                } finally {
-                	IOUtils.closeQuietly(out);
-                }
-            }
-            entry = in.getNextEntry();
-        }
-        in.close();
-    }
+//    private void saveParts(String tmpDir,String ifile) throws Exception {
+//    	int len = 0;
+//    	byte[] buf = new byte[1024];
+//
+//        ZipInputStream in = new ZipInputStream(new FileInputStream(ifile));
+//        ZipEntry entry = in.getNextEntry();
+//        String entryDir = "";
+//
+//        while (entry!=null) {
+//            String entryName = entry.getName();
+//            if (entry.isDirectory())
+//            	entryDir = entryName;
+//            if (entryName.startsWith(entryDir))
+//            	entryName = entryName.substring(entryDir.length());
+//
+//            if(entryName.isEmpty()) {
+//            	entry = in.getNextEntry();
+//            	continue;
+//            }
+//
+//
+//            String ofile = tmpDir + entryDir +  entryName;
+//
+//            if (!matchFileExt(ofile, "xml")) {
+//                OutputStream out = null;
+//                try {
+//                	String path = ofile.substring(0,ofile.lastIndexOf(File.separator));
+//                	new File(path).mkdirs();
+//                    out = new FileOutputStream(ofile);
+//                    while ((len=in.read(buf)) > 0) out.write(buf,0,len);
+//                    out.close();
+//                } finally {
+//                	IOUtils.closeQuietly(out);
+//                }
+//            }
+//            entry = in.getNextEntry();
+//        }
+//        in.close();
+//    }
     
     private void resetProviderBean(HttpServletRequest request) {
     	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
@@ -739,7 +773,7 @@ public class ImportDemographicDataAction4 extends Action {
             		c.setEmail(cEmail);
             		
             		ContactDao cDao = SpringUtils.getBean(ContactDao.class);
-            		cDao.saveEntity(c);
+            		cDao.persist(c);
             		
 	                for (int j=0; j<rel.length; j++) {
 	                	if (rel[j]==null) continue;
@@ -794,6 +828,7 @@ public class ImportDemographicDataAction4 extends Action {
         ArrayList<String> err_summ = new ArrayList<String>(); //errors: summary
         ArrayList<String> err_othe = new ArrayList<String>(); //errors: other categories
         ArrayList<String> err_note = new ArrayList<String>(); //non-errors: notes
+        importErrors = new ArrayList<String>();
 
         String docDir = oscarProperties.getProperty("DOCUMENT_DIR");
         docDir = Util.fixDirName(docDir);
@@ -1151,8 +1186,6 @@ public class ImportDemographicDataAction4 extends Action {
         DemographicAddResult demoRes = null;
 
         //Check if Contact-only demographic exists
-        org.oscarehr.common.model.Demographic demographic = null;
-
         if(courseId == 0) {
             // make the cell phone a home phone if home phone is not defined.
             String phone = homePhone;
@@ -1266,10 +1299,12 @@ public class ImportDemographicDataAction4 extends Action {
 
             //to dumpsite: Extra demographic data
             if (StringUtils.filled(extra)) {
-	            extra = Util.addLine("imported.cms4.2011.06", extra);
-	            CaseManagementNote dmNote = prepareCMNote("2",null);
-	            dmNote.setNote(extra);
-	            saveLinkNote(dmNote, CaseManagementNoteLink.DEMOGRAPHIC, Long.valueOf(demographicNo));
+	            extra = Util.addLine("imported.cms4.2011.06", extra);                
+                if (!"imported.cms4.2011.06".equals(extra)){
+                    CaseManagementNote dmNote = prepareCMNote("2",null);
+                    dmNote.setNote(extra);
+                    saveLinkNote(dmNote, CaseManagementNoteLink.DEMOGRAPHIC, Long.valueOf(demographicNo));
+                }	            
             }
 
             if (!workExt.equals("")) demographicExtDao.addKey(primaryPhysician, Integer.parseInt(demographicNo), "wPhoneExt", workExt);
@@ -1499,7 +1534,8 @@ public class ImportDemographicDataAction4 extends Action {
                 String socialHist = "Imported Personal History";
                 StringBuilder stringBuilder = new StringBuilder();
                 for(cdsDt.ResidualInformation.DataElement dataElement : residualInformation.getDataElementArray()) {
-                    stringBuilder.append(dataElement.getName()).append(": ").append(dataElement.getContent()).append("\n");
+                    if (!"Personal History".equals(dataElement.getName())) stringBuilder.append(dataElement.getName()).append(": ");  //not prepending the phrase "Personal History" unnecessarily
+                    stringBuilder.append(dataElement.getContent()).append("\n");
                 }
                 if(stringBuilder.capacity() > 0) {
                     socialHist = stringBuilder.toString();
@@ -1562,9 +1598,11 @@ public class ImportDemographicDataAction4 extends Action {
                 //String diagCode = getCode(fHist[i].getDiagnosisProcedureCode(),"Diagnosis/Procedure");
                 //dump = Util.addLine(dump, diagCode);
                 dump = Util.addLine(dump, getResidual(fHist[i].getResidualInfo()));
-                cmNote = prepareCMNote("2",null);
-                cmNote.setNote(dump);
-                saveLinkNote(hostNoteId, cmNote);
+                if (!"imported.cms4.2011.06".equals(dump)){
+                    cmNote = prepareCMNote("2",null);
+                    cmNote.setNote(dump);
+                    saveLinkNote(hostNoteId, cmNote);
+                }                
 
                 //extra fields
                 CaseManagementNoteExt cme = new CaseManagementNoteExt();
@@ -1648,9 +1686,12 @@ public class ImportDemographicDataAction4 extends Action {
                 String diagCode = isICD9(pHealth[i].getDiagnosisProcedureCode()) || isICD9CM(pHealth[i].getDiagnosisProcedureCode()) || isICD10(pHealth[i].getDiagnosisProcedureCode()) ? null : getCode(pHealth[i].getDiagnosisProcedureCode(),"Diagnosis/Procedure");
                 dump = Util.addLine(dump, diagCode);
                 dump = Util.addLine(dump, getResidual(pHealth[i].getResidualInfo()));
-                cmNote = prepareCMNote("2",null);
-                cmNote.setNote(dump);
-                saveLinkNote(hostNoteId, cmNote);
+
+                if (!"imported.cms4.2011.06".equals(dump)){
+                    cmNote = prepareCMNote("2",null);
+                    cmNote.setNote(dump);
+                    saveLinkNote(hostNoteId, cmNote);
+                }                
 
                 //extra fields
                 CaseManagementNoteExt cme = new CaseManagementNoteExt();
@@ -1737,9 +1778,11 @@ public class ImportDemographicDataAction4 extends Action {
                     String diagCode = isICD9(probList[i].getDiagnosisCode()) || isICD9CM(probList[i].getDiagnosisCode()) || isICD10(probList[i].getDiagnosisCode())? null : getCode(probList[i].getDiagnosisCode(),"Diagnosis");
                     dump = Util.addLine(dump, diagCode);
                     dump = Util.addLine(dump, getResidual(probList[i].getResidualInfo()));
-                    cmNote = prepareCMNote("2",null);
-                    cmNote.setNote(dump);
-                    saveLinkNote(hostNoteId, cmNote);
+                    if (!"imported.cms4.2011.06".equals(dump)){
+                        cmNote = prepareCMNote("2",null);
+                        cmNote.setNote(dump);
+                        saveLinkNote(hostNoteId, cmNote);
+                    }                    
 
                     //extra fields
                     CaseManagementNoteExt cme = new CaseManagementNoteExt();
@@ -1807,9 +1850,11 @@ public class ImportDemographicDataAction4 extends Action {
                     dump = Util.addLine(dump, summary);
                     */
                     dump = Util.addLine(dump, getResidual(rFactors[i].getResidualInfo()));
-                    cmNote = prepareCMNote("2",null);
-                    cmNote.setNote(dump);
-                    saveLinkNote(hostNoteId, cmNote);
+                    if (!"imported.cms4.2011.06".equals(dump)){
+                        cmNote = prepareCMNote("2",null);
+                        cmNote.setNote(dump);
+                        saveLinkNote(hostNoteId, cmNote);
+                    }
 
                     //extra fields
                     CaseManagementNoteExt cme = new CaseManagementNoteExt();
@@ -1880,9 +1925,11 @@ public class ImportDemographicDataAction4 extends Action {
                     dump = Util.addLine(dump, summary);
                     */
                     dump = Util.addLine(dump, getResidual(alerts[i].getResidualInfo()));
-                    cmNote = prepareCMNote("2",null);
-                    cmNote.setNote(dump);
-                    saveLinkNote(hostNoteId, cmNote);
+                    if (!"imported.cms4.2011.06".equals(dump)){
+                        cmNote = prepareCMNote("2",null);
+                        cmNote.setNote(dump);
+                        saveLinkNote(hostNoteId, cmNote);
+                    }                    
 
                     //extra fields
                     CaseManagementNoteExt cme = new CaseManagementNoteExt();
@@ -1899,126 +1946,6 @@ public class ImportDemographicDataAction4 extends Action {
                         cme.setValue(dateFPGetPartial(alerts[i].getEndDate()));
                         caseManagementManager.saveNoteExt(cme);
                     }
-                }
-
-                //CLINICAL NOTES
-                ClinicalNotes[] cNotes = patientRec.getClinicalNotesArray();
-                Date observeDate = new Date(), createDate = new Date();
-                for (int i=0; i<cNotes.length; i++) {
-                    //encounter note
-                    String encounter = cNotes[i].getMyClinicalNotesContent();
-                    if (StringUtils.empty(encounter)) {
-                    	err_data.add("Empty clinical note ("+(i+1)+")");
-                    	//continue;
-                    	encounter = org.apache.commons.lang.StringUtils.trimToEmpty(encounter);
-                    }
-                    
-
-                    //create date
-                    /*
-                    if (cNotes[i].getEnteredDateTime()!=null) {
-                    	createDate = dateTimeFPtoDate(cNotes[i].getEnteredDateTime(),timeShiftInDays);
-                    	observeDate = createDate;
-                    }
-                    */
-
-                    //observation date
-                    if (cNotes[i].getEventDateTime()!=null) {
-                    	observeDate = dateTimeFPtoDate(cNotes[i].getEventDateTime(),timeShiftInDays);
-                    	//if (cNotes[i].getEnteredDateTime()==null) createDate = observeDate;
-
-                    }
-                    //NOTE: sets the createdate and observationdate to current datetime if they are not set in XML. 
-                    CaseManagementNote cmNote = prepareCMNote("1",null);
-                    cmNote.setCreate_date(createDate);
-                    cmNote.setObservation_date(observeDate);
-                    cmNote.setNote(encounter);
-
-                    String uuid = null;
-                    ClinicalNotes.ParticipatingProviders[] participatingProviders = cNotes[i].getParticipatingProvidersArray();
-                    ClinicalNotes.NoteReviewer[] noteReviewers = cNotes[i].getNoteReviewerArray();
-
-                    int p_total = participatingProviders.length + noteReviewers.length;
-                    for (int p=0; p<p_total; p++) {
-                        if (p>0) {
-                            cmNote = prepareCMNote("1",uuid);
-                            cmNote.setObservation_date(observeDate);
-                            cmNote.setCreate_date(createDate);
-                            cmNote.setNote(encounter);
-                        }
-
-                        //participating providers
-                        if (p<participatingProviders.length) {
-                            if (participatingProviders[p].getDateTimeNoteCreated()==null) cmNote.setUpdate_date(new Date());
-                            else cmNote.setUpdate_date(dateTimeFPtoDate(participatingProviders[p].getDateTimeNoteCreated(), timeShiftInDays));
-
-                            if (participatingProviders[p].getName()!=null) {
-                                HashMap<String,String> authorName = getPersonName(participatingProviders[p].getName());
-                                String authorOHIP = participatingProviders[p].getOHIPPhysicianId();
-                                String authorProvider = writeProviderData(authorName.get("firstname"), authorName.get("lastname"), authorOHIP);
-                                if (StringUtils.empty(authorProvider)) {
-                                    authorProvider = defaultProviderNo();
-                                    err_note.add("Clinical notes have no author; assigned to \"doctor oscardoc\" ("+(i+1)+")");
-                                }
-                                cmNote.setProviderNo(authorProvider);
-                                cmNote.setSigning_provider_no(authorProvider);
-                            }
-                        } else {
-
-                        	//note reviewers
-                        	int r = p-participatingProviders.length;
-                            if (noteReviewers[r].getName()!=null) {
-                                if (noteReviewers[r].getDateTimeNoteReviewed()==null) cmNote.setUpdate_date(new Date());
-                                else cmNote.setUpdate_date(dateTimeFPtoDate(noteReviewers[r].getDateTimeNoteReviewed(), timeShiftInDays));
-
-                                HashMap<String,String> authorName = getPersonName(noteReviewers[r].getName());
-                                String reviewerOHIP = noteReviewers[r].getOHIPPhysicianId();
-                                String reviewer = writeProviderData(authorName.get("firstname"), authorName.get("lastname"), reviewerOHIP);
-
-                                cmNote.setProviderNo(reviewer);
-                                cmNote.setSigning_provider_no(reviewer);
-                                Util.writeVerified(cmNote);
-                            }
-                        }
-                        
-                        if( cmNote.getProviderNo() == null ) {
-                        	cmNote.setProviderNo(defaultProviderNo());
-                        }
-                        
-                        if( cmNote.getSigning_provider_no() == null ) {
-                        	cmNote.setSigning_provider_no(defaultProviderNo());
-                        }
-                        
-                        caseManagementManager.saveNoteSimple(cmNote);
-
-                        //prepare for extra notes
-                        if (p==0) {
-                            addOneEntry(CLINICALNOTE);
-                            uuid = cmNote.getUuid();
-
-                            //create "header", cms4 only
-                        	CaseManagementNote headNote = prepareCMNote("2",null);
-                    		headNote.setCreate_date(createDate);
-                    		headNote.setUpdate_date(createDate);
-                    		headNote.setObservation_date(observeDate);
-                    		headNote.setNote("imported.cms4.2011.06"+uuid);
-                    		caseManagementManager.saveNoteSimple(headNote);
-                        }
-                    }
-                    if (p_total==0) {
-                        err_note.add("Clinical notes have no author; assigned to \"doctor oscardoc\" ("+(i+1)+")");
-                    	caseManagementManager.saveNoteSimple(cmNote);
-                    }
-
-                    //to dumpsite
-                    String noteType = cNotes[i].getNoteType();
-                    if (StringUtils.filled(noteType)) {
-                    	noteType = Util.addLine("imported.cms4.2011.06", "Note Type: ", noteType);
-                    }
-
-                    CaseManagementNote dumpNote = prepareCMNote("2",null);
-                    dumpNote.setNote(noteType);
-                    saveLinkNote(cmNote.getId(), dumpNote);
                 }
 
                 //ALLERGIES & ADVERSE REACTIONS
@@ -2095,11 +2022,13 @@ public class ImportDemographicDataAction4 extends Action {
                     */
                     dump = Util.addLine(dump, alg_extra);
                     dump = Util.addLine(dump, getResidual(aaReactArray[i].getResidualInfo()));
-                    dump = Util.addLine(dump, "Reaction Type=" + aaReactArray[i].getReactionType().toString());
+                    if (aaReactArray[i].getReactionType() != null) dump = Util.addLine(dump, "Reaction Type=" + aaReactArray[i].getReactionType().toString()); //conditional added because some imports are missing this information and results in NPE                    
                 
-                    cmNote = prepareCMNote("2",null);
-                    cmNote.setNote(dump);
-                    saveLinkNote(cmNote, CaseManagementNoteLink.ALLERGIES, Long.valueOf(allergyId));
+                    if (!"imported.cms4.2011.06".equals(dump)){
+                        cmNote = prepareCMNote("2",null);
+                        cmNote.setNote(dump);
+                        saveLinkNote(cmNote, CaseManagementNoteLink.ALLERGIES, Long.valueOf(allergyId));
+                    }                    
                 }
 
 
@@ -2362,9 +2291,11 @@ public class ImportDemographicDataAction4 extends Action {
                     dump = Util.addLine(dump, getResidual(medArray[i].getResidualInfo()));
                     dump = Util.addLine(dump, "Prescription Id: ", medArray[i].getPrescriptionIdentifier());
                     
-                    cmNote = prepareCMNote("2",null);
-                    cmNote.setNote(dump);
-                    saveLinkNote(cmNote, CaseManagementNoteLink.DRUGS, (long)drug.getId());
+                    if (!"imported.cms4.2011.06".equals(dump)){
+                        cmNote = prepareCMNote("2",null);
+                        cmNote.setNote(dump);
+                        saveLinkNote(cmNote, CaseManagementNoteLink.DRUGS, (long)drug.getId());
+                    }                    
                 }
 
 
@@ -2579,18 +2510,19 @@ public class ImportDemographicDataAction4 extends Action {
 
                 //REPORTS RECEIVED
 
-                HRMDocumentDao hrmDocDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
-                HRMDocumentCommentDao hrmDocCommentDao = (HRMDocumentCommentDao) SpringUtils.getBean("HRMDocumentCommentDao");
-                HRMDocumentSubClassDao hrmDocSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean("HRMDocumentSubClassDao");
-                HRMDocumentToDemographicDao hrmDocToDemoDao = (HRMDocumentToDemographicDao) SpringUtils.getBean("HRMDocumentToDemographicDao");
+                HRMDocumentDao hrmDocDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
+                HRMDocumentCommentDao hrmDocCommentDao = (HRMDocumentCommentDao) SpringUtils.getBean(HRMDocumentCommentDao.class);
+                HRMDocumentSubClassDao hrmDocSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean(HRMDocumentSubClassDao.class);
+                HRMDocumentToDemographicDao hrmDocToDemoDao = (HRMDocumentToDemographicDao) SpringUtils.getBean(HRMDocumentToDemographicDao.class);
 
                 Reports[] repR = patientRec.getReportsArray();
                 List<Reports> HRMreports = new ArrayList<Reports>();
                 for (int i=0; i<repR.length; i++) {
                 	Reports reportItem = repR[i];
-                	
-                    if (repR[i].getHRMResultStatus()!=null || repR[i].getOBRContentArray().length>0) { //HRM reports
+                    
+                    if (repR[i].getHRMResultStatus()!=null /*|| repR[i].getOBRContentArray().length>0*/) { //HRM reports   //commenting out the OBR content array check because PDFs might have OBR content as well.
                     	String HRMfile = "HRM_"+UtilDateUtilities.getToday("yyyy-MM-dd.HH.mm.ss") + "_" + repR[i].getSendingFacilityId() + "_" + repR[i].getSendingFacilityReport() + ".xml";
+                        HRMfile = HRMfile.replace("/",""); //stripping out / because sometimes the impored data (E.g. getSendingFacilityReport) has / within them and that messes up the file path
                         
                         HRMDocument hrmDoc = new HRMDocument();
                         HRMDocumentComment hrmDocComment = new HRMDocumentComment();
@@ -2681,7 +2613,6 @@ public class ImportDemographicDataAction4 extends Action {
                         CreateHRMFile.create(demo, HRMreports, HRMfile);
 
                         HRMReport report = HRMReportParser.parseReport(loggedInInfo, hrmDoc.getReportFile());
-                        
                         String reportFileData = report.getFileData();
 
                 		String noMessageIdFileData = reportFileData.replaceAll("<MessageUniqueID>.*?</MessageUniqueID>", "<MessageUniqueID></MessageUniqueID>");
@@ -2728,6 +2659,15 @@ public class ImportDemographicDataAction4 extends Action {
                                     if (binaryFormat) err_data.add("Error! No File Extension for Report ("+(i+1)+")");
                                 }
                                 String docDesc = repR[i].getSubClass();
+
+                                if (StringUtils.empty(docDesc)){ //improving the naming of documents where the document name is in the notes tag of the import                        
+                                    String documentNotes = repR[i].getNotes();
+
+                                    //setting docDesc assuming the format is usually in the form "Document Health Card created at Mon Mar 05 12:50:17 EST 2018 by Verona V." and naming docDesc = "Health Card" would be desirable in this situation
+                                    if (documentNotes != null && documentNotes.indexOf("created") > 1) docDesc = documentNotes.split("created")[0].trim(); 
+                                    if (docDesc != null && docDesc.indexOf("Document") == 0 && docDesc.split("Document").length >= 2) docDesc = docDesc.split("Document")[1].trim();
+                                }                                
+
                                 if (StringUtils.empty(docDesc)) docDesc = "ImportReport"+(i+1);
                                 
                                 if(b != null) {
@@ -2785,6 +2725,9 @@ public class ImportDemographicDataAction4 extends Action {
                                 }
 
                                 observationDate = dateFPtoString(repR[i].getEventDateTime(), timeShiftInDays);
+                                if (observationDate == null) observationDate = dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
+                                if ("".equals(observationDate)) observationDate = dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
+
                                 updateDateTime = dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
                                 contentDateTime= dateFPtoString(repR[i].getEventDateTime(), timeShiftInDays);
                                 
@@ -2803,9 +2746,11 @@ public class ImportDemographicDataAction4 extends Action {
 
                                 
                                 String notes = Util.addLine("Report Notes:", repR[i].getNotes());
-                                CaseManagementNote rpNote1 = prepareCMNote("2",null);
-                	            rpNote1.setNote(notes);
-                	            saveLinkNote(rpNote1, CaseManagementNoteLink.DOCUMENT, Long.valueOf(docNum));
+                                if (!"Report Notes:".equals(notes)){
+                                    CaseManagementNote rpNote1 = prepareCMNote("2",null);
+                                    rpNote1.setNote(notes);
+                                    saveLinkNote(rpNote1, CaseManagementNoteLink.DOCUMENT, Long.valueOf(docNum));
+                                }                                
                 	 
                 	            if(repR[i].getReportReviewedArray() != null && repR[i].getReportReviewedArray().length>1) {
                 	            	DocumentExtraReviewerDao derDao = SpringUtils.getBean(DocumentExtraReviewerDao.class); 
@@ -3026,6 +2971,125 @@ public class ImportDemographicDataAction4 extends Action {
     	            saveLinkNote(dmNote, CaseManagementNoteLink.DEMOGRAPHIC, Long.valueOf(demographicNo));
                 }
 
+                //CLINICAL NOTES
+                ClinicalNotes[] cNotes = patientRec.getClinicalNotesArray();
+                Date observeDate = new Date(), createDate = new Date();
+                for (int i=0; i<cNotes.length; i++) {
+                    //encounter note
+                    String encounter = cNotes[i].getMyClinicalNotesContent();
+                    if (StringUtils.empty(encounter)) {
+                    	err_data.add("Empty clinical note ("+(i+1)+")");
+                    	//continue;
+                    	encounter = org.apache.commons.lang.StringUtils.trimToEmpty(encounter);
+                    }
+                    
+
+                    //create date
+                    /*
+                    if (cNotes[i].getEnteredDateTime()!=null) {
+                    	createDate = dateTimeFPtoDate(cNotes[i].getEnteredDateTime(),timeShiftInDays);
+                    	observeDate = createDate;
+                    }
+                    */
+
+                    //observation date
+                    if (cNotes[i].getEventDateTime()!=null) {
+                    	observeDate = dateTimeFPtoDate(cNotes[i].getEventDateTime(),timeShiftInDays);
+                    	//if (cNotes[i].getEnteredDateTime()==null) createDate = observeDate;
+
+                    }
+                    //NOTE: sets the createdate and observationdate to current datetime if they are not set in XML. 
+                    CaseManagementNote cmNote = prepareCMNote("1",null);
+                    cmNote.setCreate_date(createDate);
+                    cmNote.setObservation_date(observeDate);
+                    cmNote.setNote(encounter);
+
+                    String uuid = null;
+                    ClinicalNotes.ParticipatingProviders[] participatingProviders = cNotes[i].getParticipatingProvidersArray();
+                    ClinicalNotes.NoteReviewer[] noteReviewers = cNotes[i].getNoteReviewerArray();
+
+                    int p_total = participatingProviders.length + noteReviewers.length;
+                    for (int p=0; p<p_total; p++) {
+                        if (p>0) {
+                            cmNote = prepareCMNote("1",uuid);
+                            cmNote.setObservation_date(observeDate);
+                            cmNote.setCreate_date(createDate);
+                            cmNote.setNote(encounter);
+                        }
+
+                        //participating providers
+                        if (p<participatingProviders.length) {
+                            if (participatingProviders[p].getDateTimeNoteCreated()==null) cmNote.setUpdate_date(new Date());
+                            else cmNote.setUpdate_date(dateTimeFPtoDate(participatingProviders[p].getDateTimeNoteCreated(), timeShiftInDays));
+
+                            if (participatingProviders[p].getName()!=null) {
+                                HashMap<String,String> authorName = getPersonName(participatingProviders[p].getName());
+                                String authorOHIP = participatingProviders[p].getOHIPPhysicianId();
+                                String authorProvider = writeProviderData(authorName.get("firstname"), authorName.get("lastname"), authorOHIP);
+                                if (StringUtils.empty(authorProvider)) {
+                                    authorProvider = defaultProviderNo();
+                                    err_note.add("Clinical notes have no author; assigned to \"doctor oscardoc\" ("+(i+1)+")");
+                                }
+                                cmNote.setProviderNo(authorProvider);
+                                cmNote.setSigning_provider_no(authorProvider);
+                            }
+                        } else {
+
+                        	//note reviewers
+                        	int r = p-participatingProviders.length;
+                            if (noteReviewers[r].getName()!=null) {
+                                if (noteReviewers[r].getDateTimeNoteReviewed()==null) cmNote.setUpdate_date(new Date());
+                                else cmNote.setUpdate_date(dateTimeFPtoDate(noteReviewers[r].getDateTimeNoteReviewed(), timeShiftInDays));
+
+                                HashMap<String,String> authorName = getPersonName(noteReviewers[r].getName());
+                                String reviewerOHIP = noteReviewers[r].getOHIPPhysicianId();
+                                String reviewer = writeProviderData(authorName.get("firstname"), authorName.get("lastname"), reviewerOHIP);
+
+                                cmNote.setProviderNo(reviewer);
+                                cmNote.setSigning_provider_no(reviewer);
+                                Util.writeVerified(cmNote);
+                            }
+                        }
+                        
+                        if( cmNote.getProviderNo() == null ) {
+                        	cmNote.setProviderNo(defaultProviderNo());
+                        }
+                        
+                        if( cmNote.getSigning_provider_no() == null ) {
+                        	cmNote.setSigning_provider_no(defaultProviderNo());
+                        }
+                        
+                        caseManagementManager.saveNoteSimple(cmNote);
+
+                        //prepare for extra notes
+                        if (p==0) {
+                            addOneEntry(CLINICALNOTE);
+                            uuid = cmNote.getUuid();
+
+                            //create "header", cms4 only
+                        	CaseManagementNote headNote = prepareCMNote("2",null);
+                    		headNote.setCreate_date(createDate);
+                    		headNote.setUpdate_date(createDate);
+                    		headNote.setObservation_date(observeDate);
+                    		headNote.setNote("imported.cms4.2011.06"+uuid);
+                    		caseManagementManager.saveNoteSimple(headNote);
+                        }
+                    }
+                    if (p_total==0) {
+                        err_note.add("Clinical notes have no author; assigned to \"doctor oscardoc\" ("+(i+1)+")");
+                    	caseManagementManager.saveNoteSimple(cmNote);
+                    }
+
+                    //to dumpsite
+                    String noteType = cNotes[i].getNoteType();
+                    if (StringUtils.filled(noteType)) {
+                    	noteType = Util.addLine("imported.cms4.2011.06", "Note Type: ", noteType);
+                    }
+
+                    CaseManagementNote dumpNote = prepareCMNote("2",null);
+                    dumpNote.setNote(noteType);
+                    saveLinkNote(cmNote.getId(), dumpNote);
+                }
                 
             }
             if(demoRes != null) {
@@ -3034,6 +3098,8 @@ public class ImportDemographicDataAction4 extends Action {
             if (cleanFile) {
             	Util.cleanFile(xmlFile);
             }
+
+            err_summ.addAll(importErrors);
 
             return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
 	}
@@ -3628,6 +3694,15 @@ public class ImportDemographicDataAction4 extends Action {
 
 		return ret;
 	}
+    
+    void addMeasurementsExt(Long measurementId, String key, String val, List<MeasurementsExt> exts) {
+        if (measurementId != null && StringUtils.filled(key) && StringUtils.filled(val)) {
+            MeasurementsExt mx = new MeasurementsExt(measurementId.intValue());
+            mx.setKeyVal(key);
+            mx.setVal(StringUtils.noNull(val));
+            exts.add(mx);
+        }
+    }
 
 	ProviderData getProviderByNames(String firstName, String lastName, boolean matchAll) {
 		ProviderData pd = new ProviderData();
@@ -4040,7 +4115,7 @@ public class ImportDemographicDataAction4 extends Action {
 
 	private static Integer saveRxAllergy(Integer demographicNo, Date entryDate, String description, Integer typeCode, String reaction, Date startDate, String severity, String regionalId, String lifeStage, boolean intolerance, boolean nonDrug) {
 
-		AllergyDao allergyDao=(AllergyDao) SpringUtils.getBean("allergyDao");
+		AllergyDao allergyDao=(AllergyDao) SpringUtils.getBean(AllergyDao.class);
 
 		Allergy allergy=new Allergy();
 		allergy.setDemographicNo(demographicNo);
@@ -4070,6 +4145,16 @@ public class ImportDemographicDataAction4 extends Action {
         try
         {
             SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return(sdf.parse(s));
+        }
+        catch (Exception e)
+        {
+        	// okay we couldn't parse it, we'll try another format
+        }
+
+        try
+        {
+            SimpleDateFormat sdf=new SimpleDateFormat("dd-MMM-yyyy");
             return(sdf.parse(s));
         }
         catch (Exception e)
@@ -4184,281 +4269,202 @@ public class ImportDemographicDataAction4 extends Action {
     
 */
 
-    /**
-     * TODO: Seriously messed up
-     */
-//	private Long findMeasurementId(Integer labNo, String testName) {
-//		List<MeasurementsExt> results = measurementsExtDao.findByKeyValue("lab_no", labNo.toString());
-//		if(!results.isEmpty()) {
-//			return new Long(results.get(0).getMeasurementId());
-//		}
-//		return null;
-//	}
-	private void importLabs(LoggedInInfo loggedInInfo, LaboratoryResults[] labResultArr) {
+	private Long findMeasurementId(Integer labNo, String testName) {
+		Integer measId = measurementsExtDao.getMeasurementIdByLabNoAndTestName(labNo.toString(), testName);
+        if (measId != null) {
+		    return new Long(measId);
+        } else {
+            return null;
+        }
+	}
+
+    private void importLabs(LoggedInInfo loggedInInfo, LaboratoryResults[] labResultArr) {
 		List<String> accessionsDone = new ArrayList<String>();
 		
 		for(LaboratoryResults labResult: labResultArr) {
-			if(labResult.getAccessionNumber() == null || labResult.getAccessionNumber().isEmpty()) {
-				//lets generate one!
-				UUID uuid = UUID.randomUUID();
-				labResult.setAccessionNumber("OSCAR-" + uuid.toString().substring(0, 10));
-			}
-			
-			else if(accessionsDone.contains(labResult.getAccessionNumber())) {
+			if(StringUtils.filled(labResult.getAccessionNumber()) && accessionsDone.contains(labResult.getAccessionNumber())) {
 				continue;
 			}
 			
 			try {
 				//find others with same accession number
-				LaboratoryResults[] reportResults = filterByAccession(labResultArr,labResult.getAccessionNumber());
-				accessionsDone.add(labResult.getAccessionNumber());
-
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
+				LaboratoryResults[] reportResults = null;
+				if (StringUtils.filled(labResult.getAccessionNumber())) {
+                    reportResults = filterByAccession(labResultArr,labResult.getAccessionNumber());
+                    accessionsDone.add(labResult.getAccessionNumber());
+                } else {
+				    reportResults = new LaboratoryResults[] {labResult};
+                }
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
 		        String filename = "Lab." + sdf.format(new Date()) + ".import.hl7";
-
-                String facilityName = labResult.getLaboratoryName();
-                if(facilityName == null || facilityName.isEmpty()) {
-                    facilityName = "OTHER";
-                }
-
-                //TODO change the case values as they are determined
-                switch (facilityName.toUpperCase()) {
-                    case "PATHL7":
-                    case "LIFELABS" :
-                    case "EXCELLERIS" :
-                        facilityName = "PATHL7";
-                        break;
-                    case "GDML" :
-                        facilityName = "GDML";
-                        break;
-                    case "IHA" :
-                        facilityName = "IHA";
-                        break;
-                    case "CDL" :
-                        facilityName = "CDL";
-                        break;
-                    case "CLS" :
-                        facilityName = "CLS";
-                        break;
-                    case "MDS" :
-                        facilityName = "MDS";
-                        break;
-                    case "CML" :
-                        facilityName = "CML";
-                        break;
-                    default : facilityName = "OTHER";
-                }
-
-		        ORU_R01 observationMsg = new ORU_R01();
+                HL7CreateFile hl7CreateFile = new HL7CreateFile(demographic);
+                String observationMsg = hl7CreateFile.generateHL7(Arrays.asList(reportResults));
 				
-				fillMsh(observationMsg.getMSH(), new Date(),"ORU", "R01", filename.substring(0,filename.length()-4), "2.3", facilityName);
-				fillPid(observationMsg.getRESPONSE().getPATIENT().getPID(),demographicNo, labResult.getAccessionNumber());
-				
-				for(int x=0;x<reportResults.length;x++) {
-					LaboratoryResults result = reportResults[x];
-					
-					ORU_R01_ORDER_OBSERVATION grp = observationMsg.getRESPONSE().insertORDER_OBSERVATION(x);
+		        InputStream formFileIs=null;
+		        InputStream localFileIs=null;
+		        
+		        Integer labNo = null;
+		        try{
+		            String type = hl7CreateFile.LAB_TYPE;
+		            
+		            InputStream stream = new ByteArrayInputStream(observationMsg.replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8));
+		            String filePath = Utilities.saveFile(stream, filename);
+		            File file = new File(filePath);
+		            
+		            localFileIs = new FileInputStream(filePath);
+		            
+		            int checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getName(),localFileIs,admProviderNo);            
+		            
+		            if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
+                        logger.debug("filePath" + filePath);
+                        logger.debug("Type :" + type);
+                        MessageHandler msgHandler = HandlerClassFactory.getHandler(type);
+                        if (msgHandler != null) {
+                            logger.debug("MESSAGE HANDLER " + msgHandler.getClass().getName());
+                        }
 
-					//OBR
-					OBR obr = grp.getOBR();
-					obr.getUniversalServiceIdentifier().getIdentifier().setValue(result.getLabTestCode());
-					obr.getUniversalServiceIdentifier().getText().setValue(result.getTestNameReportedByLab());
-					obr.getUniversalServiceIdentifier().getNameOfCodingSystem().setValue("0000");
-					obr.getUniversalServiceIdentifier().getAlternateIdentifier().setValue(result.getTestNameReportedByLab());
-					obr.getPriority().setValue("R"); //hard coded..not in OMD spec
-					
-					Calendar cal = Calendar.getInstance();
-					if(result.getCollectionDateTime().isSetFullDate()) {
-						cal = result.getCollectionDateTime().getFullDate();
-						obr.getObservationDateTime().getTimeOfAnEvent().setDatePrecision(cal.get(Calendar.YEAR),
-								cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH));
-						
-					} else {
-						cal = result.getCollectionDateTime().getFullDateTime();
-						obr.getObservationDateTime().getTimeOfAnEvent().setDateSecondPrecision(cal.get(Calendar.YEAR),
-								cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND));
-						
-					}
-					
-				
-					if(result.getLabRequisitionDateTime() != null) {
-						if(result.getLabRequisitionDateTime().isSetFullDate()) {
-							cal = result.getLabRequisitionDateTime().getFullDate();
-							obr.getRequestedDateTime().getTimeOfAnEvent().setDatePrecision(cal.get(Calendar.YEAR),
-									cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH));
-						} else {
-							cal = result.getLabRequisitionDateTime().getFullDateTime();
-							obr.getRequestedDateTime().getTimeOfAnEvent().setDateSecondPrecision(cal.get(Calendar.YEAR),
-									cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), cal.get(Calendar.SECOND));
-						}
-						
-						
-					}
-
-					//OBX
-					OBX obx = grp.getOBSERVATION().getOBX();
-					obx.getSetIDOBX().setValue(String.valueOf(x));
-					
-					obx.getObx2_ValueType().setValue("ST");
-					obx.getObx3_ObservationIdentifier().getIdentifier().setValue(result.getLabTestCode());
-					obx.getObx3_ObservationIdentifier().getText().setValue(result.getTestNameReportedByLab());
-					obx.getObx4_ObservationSubID().setValue("1");
-
-					if(result.getResult() != null && result.getResult().getValue() != null) {
-						ST st = new ST(observationMsg);
-						st.setValue(result.getResult().getValue());
-						Varies val = obx.insertObservationValue(0);
-						val.setData(st);
-					}
-					
-					
-					if(result != null && result.getResult() != null && result.getResult().getUnitOfMeasure() != null) {
-					//	obx.getObx6_Units().getCe2_Text().setValue(result.getResult().getUnitOfMeasure());
-						obx.getObx6_Units().getCe1_Identifier().setValue(result.getResult().getUnitOfMeasure());
-					}
-					
-					if(result.getReferenceRange() != null) {
-						String refRange = "";
-						if(result.getReferenceRange().isSetReferenceRangeText()) {
-							refRange = result.getReferenceRange().getReferenceRangeText();
-						}
-						
-						if(result.getReferenceRange().isSetLowLimit()) {
-							refRange = result.getReferenceRange().getLowLimit();
-						}
-
-						if(result.getReferenceRange().isSetHighLimit()) {
-							refRange += ("-" + result.getReferenceRange().getHighLimit());
-						}
-
-						obx.getObx7_ReferencesRange().setValue(refRange);
-					}
-					
-					if(result.getResultNormalAbnormalFlag() != null) {
-						ID abnormalFlags = obx.insertAbnormalFlags(0);
-						if(result.getResultNormalAbnormalFlag().isSetResultNormalAbnormalFlagAsPlainText()) {
-							abnormalFlags.setValue(result.getResultNormalAbnormalFlag().getResultNormalAbnormalFlagAsPlainText());
-						} else {
-							abnormalFlags.setValue(result.getResultNormalAbnormalFlag().getResultNormalAbnormalFlagAsEnum().toString());
-						}
-					
-					}
-					
-					if(result.getBlockedTestResult() != null && result.getBlockedTestResult() == YIndicator.Y) {
-						obx.getUserDefinedAccessChecks().setValue("BLOCKED");
-					}
-					
-					
-					if(!StringUtils.isNullOrEmpty(result.getTestResultStatus())) {
-						obx.getNatureOfAbnormalTest().setValue(result.getTestResultStatus());
-					}
-					
-					if(!StringUtils.isNullOrEmpty(result.getLaboratoryName())) {
-						obr.insertObr39_CollectorSComment(0).getCe1_Identifier().setValue(result.getLaboratoryName());
-					}
-					
-					if(!StringUtils.isNullOrEmpty(result.getNotesFromLab())) {
-						NTE nte = grp.getOBSERVATION().insertNTE(0);
-						nte.getNte1_SetIDNotesAndComments().setValue(obx.getSetIDOBX().getValue());
-						Terser.set(nte, 3, 0, 1, 1, result.getNotesFromLab());
-					}
-					
-				}
-//
-//                logger.info("Lab upload: " + result);
-//		        InputStream formFileIs=null;
-//		        InputStream localFileIs=null;
-//		        Integer labNo = null;
-
-                // save labs now and then process them later.
-                Path filepath;
-		        try(InputStream stream = new ByteArrayInputStream(observationMsg.encode().replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8))) {
-                    String savedFilePath = Utilities.saveFile(stream, filename);
-                    filepath = Paths.get(savedFilePath);
-		        }
-
-                try(InputStream localFileIs = Files.newInputStream(filepath)) {
-                    int checkFileUploadedSuccessfully = FileUploadCheck.addFile(filepath.getFileName().toString(),localFileIs,admProviderNo);
-
-                    if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE){
-                        logger.debug("FilePath: "+ filepath);
-                        logger.debug("Type :"+facilityName);
-//                        MessageHandler msgHandler = HandlerClassFactory.getHandler(facilityName);
-//                        if(msgHandler != null){
-//                            logger.debug("MESSAGE HANDLER " + msgHandler.getClass().getName());
-//                        }
-//                        if((msgHandler.parse(loggedInInfo, getClass().getSimpleName(), filepath.toString(), checkFileUploadedSuccessfully, "")) != null) {
-////                            labNo = msgHandler.getLastLabNo();
-//                            logger.debug("successfully added lab");
-//                        }
-                    }else{
-                        logger.info("uploaded previously");
+                        if (msgHandler instanceof CMLHandler && ((CMLHandler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
+                            labNo = ((CMLHandler) msgHandler).getLastLabNo();
+                            logger.info("successfully added lab");
+                            addOneEntry(LABS);
+                        } else if (msgHandler instanceof GDMLHandler && ((GDMLHandler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
+                            labNo = ((GDMLHandler) msgHandler).getLastLabNo();
+                            logger.info("successfully added lab");
+                            addOneEntry(LABS);
+                        } else if (msgHandler instanceof MDSHandler && ((MDSHandler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
+                            labNo = ((MDSHandler) msgHandler).getLastLabNo();
+                            logger.info("successfully added lab");
+                            addOneEntry(LABS);
+                        } else {
+                            importErrors.add("Unregcognized lab facility: " + type);
+                        }
                     }
-                }
+		        } catch(Exception e){
+		            logger.error("Error: ",e);
+                    importErrors.add("Error adding lab");
+		        }
+		        finally {
+		        	IOUtils.closeQuietly(formFileIs);
+		        	IOUtils.closeQuietly(localFileIs);
+		        }
 		        
 		        
-//		        if(labNo != null) {
-//		        	DateTimeFullOrPartial dt = labResult.getLabRequisitionDateTime();
-//		        	if(dt == null) {
-//		        		dt = labResult.getCollectionDateTime();
-//		        	}
-//
-//		        	LabRequestReportLink.save(null,null,dateFPtoString(dt,0),"labPatientPhysicianInfo",labNo.longValue());
-//
-//
-//			        for(ResultReviewer resultReviewer : labResult.getResultReviewerArray()) {
-//			        	String reviewDate = dateFPtoString(resultReviewer.getDateTimeResultReviewed(),0);
-//			        	String reviewer = writeProviderData(resultReviewer.getName().getFirstName(),resultReviewer.getName().getLastName(),resultReviewer.getOHIPPhysicianId());
-//
-//			        	String status = StringUtils.filled(reviewer) ? "A" : "N";
-//	                    reviewer = status.equals("A") ? reviewer : "0";
-//
-//	                    LabResultImport.updateProviderLabRouting(reviewer, labNo.toString() , status, "", reviewDate,"HL7");
-//
-//
-//			        }
-//
-//			        for(LaboratoryResults result : reportResults) {
-//
-//	                	Long measId = findMeasurementId(labNo,result.getTestName());
-//
-//	                	if(StringUtils.filled(result.getNotesFromLab())) {
-//	                		saveMeasurementsExt(measId, "comments", result.getNotesFromLab());
-//	                	}
-//
-//
-//	                	String annotation = labResult.getPhysiciansNotes();
-//		                if (StringUtils.filled(annotation)) {
-//		                    saveMeasurementsExt(measId, "other_id", "0-0");
-//		                    CaseManagementNote cmNote = prepareCMNote("2",null);
-//		                    cmNote.setNote(annotation);
-//		                    saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, labNo.longValue(), "0-0");
-//		                }
-//
-//						String olis_status = result.getTestResultStatus();
-//						if (StringUtils.filled(olis_status))  {
-//							if(measId != null) {
-//								saveMeasurementsExt(measId, "olis_status", olis_status);
-//							}
-//						}
-//
-//	                }
-//
-//
-//
-//			        String dump = Util.addLine("imported.cms4.2011.06",  "Physician Notes: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getPhysiciansNotes()));
-//			        dump = Util.addLine(dump,  "Test Results Info: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getTestResultsInformationReportedByTheLab()));
-//			        dump = Util.addLine(dump,  "Test Code: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getLabTestCode()));
-//			        dump = Util.addLine(dump,  "Test Name: ", org.apache.commons.lang.StringUtils.trimToEmpty(labResult.getTestName()));
-//			     //   dump = Util.addLine(dump,  "Lab Requisition DateTime: ", org.apache.commons.lang.StringUtils.trimToEmpty((dateFPtoString(labResult.getLabRequisitionDateTime(),0))));
-//
-//			        CaseManagementNote cmNote = prepareCMNote("2",null);
-//                    cmNote.setNote(dump);
-//                    saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, labNo.longValue(), "0-0");
-//		        }
+		        if(labNo != null) {
+                    Hl7textResultsData.populateMeasurementsTable(labNo.toString(), demographicNo);
+
+                    patientLabRoutingDao.persist(new PatientLabRouting(labNo, "HL7", Integer.parseInt(demographicNo)));
+		            
+		        	DateTimeFullOrPartial dt = labResult.getLabRequisitionDateTime();
+		        	if(dt == null) {
+		        		dt = labResult.getCollectionDateTime();
+		        	}
+		        	
+		        	LabRequestReportLink.save(null,null,dateFPtoString(dt,0),"labPatientPhysicianInfo",labNo.longValue());
+
+                    List<ProviderLabRoutingModel> providerLabRoutingQueue = new ArrayList<>();
+                    
+                    if (StringUtils.filled(demographic.getProviderNo())) {
+                        providerLabRoutingQueue.add(new ProviderLabRoutingModel(demographic.getProviderNo(), labNo , "N", "", new Date(), "HL7"));
+                    }
+                    
+			        for(ResultReviewer resultReviewer : labResult.getResultReviewerArray()) {
+			        	Date reviewDate = dateTimeFPtoDate(resultReviewer.getDateTimeResultReviewed(),0);
+                        
+			        	String reviewer = writeProviderData(resultReviewer.getName().getFirstName(),resultReviewer.getName().getLastName(),resultReviewer.getOHIPPhysicianId(), null);
+			        	
+                        String reviewerComment = "";
+			        	if (StringUtils.filled(labResult.getPhysiciansNotes())) {
+			        	    reviewerComment = labResult.getPhysiciansNotes();
+                        }
+                        
+			        	String status = StringUtils.filled(reviewer) ? "A" : "N";
+	                    reviewer = status.equals("A") ? reviewer : "0";
+	                 
+                        providerLabRoutingQueue.add(new ProviderLabRoutingModel(reviewer, labNo , status, reviewerComment, reviewDate, "HL7"));
+			        }
+
+                    providerLabRoutingDao.batchPersist(providerLabRoutingQueue);
+
+                    List<MeasurementsExt> measurementsExtsToSave = new ArrayList<>();
+			        for(int x=0;x<reportResults.length;x++) {
+	                	LaboratoryResults result = reportResults[x];
+	                	Long measId = findMeasurementId(labNo, result.getTestNameReportedByLab());
+                        HashMap<String, MeasurementsExt> measurementsExtMap = new HashMap<String, MeasurementsExt>();
+                        
+                        if (measId != null) {
+                           measurementsExtMap = measurementsExtDao.getMeasurementsExtMapByMeasurementId(measId.intValue());
+
+                            if(StringUtils.filled(result.getNotesFromLab()) && measurementsExtMap.get("comments") == null) {
+                                addMeasurementsExt(measId, "comments", result.getNotesFromLab(), measurementsExtsToSave);
+                            }
+
+                            String annotation = labResult.getPhysiciansNotes();
+                            if (StringUtils.filled(annotation)) {
+                                if (measurementsExtMap.get("other_id") == null) {
+                                    addMeasurementsExt(measId, "other_id", "0-0", measurementsExtsToSave);
+                                }
+                                CaseManagementNote cmNote = prepareCMNote("2",null);
+                                cmNote.setNote(annotation);
+                                saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, labNo.longValue(), "0-0");
+                            }
+
+                            String olis_status = result.getTestResultStatus();
+                            if (StringUtils.filled(olis_status)) {
+                                if(measId != null && measurementsExtMap.get("olis_status") == null) {
+                                    addMeasurementsExt(measId, "olis_status", olis_status, measurementsExtsToSave);
+                                }
+                            }
+
+                            if (result.getBlockedTestResult() != null && "Y".equals(result.getBlockedTestResult().toString()) && measurementsExtMap.get("reportBlocked") == null) {
+                                addMeasurementsExt(measId, "reportBlocked", "Y", measurementsExtsToSave);
+                            }
+
+                            if (result.isSetTestName() && measurementsExtMap.get("name_internal") == null) {
+                                addMeasurementsExt(measId, "name_internal", result.getTestName(), measurementsExtsToSave);
+                            }
+
+                            if(result.isSetReferenceRange()) {
+                                if (StringUtils.filled(result.getReferenceRange().getReferenceRangeText()) && measurementsExtMap.get("range") == null) {
+                                    addMeasurementsExt(measId, "range", result.getReferenceRange().getReferenceRangeText(), measurementsExtsToSave);
+                                }
+
+                                if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && StringUtils.filled(result.getReferenceRange().getHighLimit())
+                                        && measurementsExtMap.get("range") == null && measurementsExtMap.get("minimum") == null && measurementsExtMap.get("maximum") == null) {
+                                    addMeasurementsExt(measId, "range", result.getReferenceRange().getLowLimit() + "-" + result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
+                                    addMeasurementsExt(measId, "minimum", result.getReferenceRange().getLowLimit(), measurementsExtsToSave);
+                                    addMeasurementsExt(measId, "maximum", result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
+                                } else {
+                                    if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && measurementsExtMap.get("minimum") == null) {
+                                        addMeasurementsExt(measId, "minimum", result.getReferenceRange().getLowLimit(), measurementsExtsToSave);
+                                    }
+
+                                    if (StringUtils.filled(result.getReferenceRange().getHighLimit()) && measurementsExtMap.get("maximum") == null) {
+                                        addMeasurementsExt(measId, "maximum", result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
+                                    }
+
+                                    if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && StringUtils.filled(result.getReferenceRange().getHighLimit()) && measurementsExtMap.get("range") == null) {
+                                        addMeasurementsExt(measId, "range", result.getReferenceRange().getLowLimit() + "-" + result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
+                                    }
+                                }
+                            }
+                        }
+	                }
+			        
+			        measurementsExtDao.batchPersist(measurementsExtsToSave, 50);
+	                
+	                String labInfo = getLabDline(labResult, 0);
+	                if (StringUtils.filled(labInfo)) {
+	                    String dump = Util.addLine("imported.cms5.2017.06", labInfo);
+	                    CaseManagementNote cmNote = prepareCMNote("2",null);
+	                    cmNote.setNote(dump);
+	                    saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, labNo.longValue(), "0-0");
+	                }
+		        }
                   
-			}catch(Exception e) {
+			} catch(Exception e) {
 				logger.error("error", e);
+                importErrors.add("Error processing lab data");
 			}
 		}
 	}
@@ -4568,14 +4574,23 @@ public class ImportDemographicDataAction4 extends Action {
 		
 		if("Oral".equals(route)) {
 			ret = "PO";
-		}
-		else if("Intramuscular".equals(route)) {
+		} else if("PO".equals(route)) {
+			ret = "PO";
+		} else if("Intramuscular".equals(route)) {
+			ret = "IM";
+		} else if("IM".equals(route)) {
 			ret = "IM";
 		} else if("Intradermal".equals(route)) {
 			ret = "ID";
+		} else if("ID".equals(route)) {
+			ret = "ID";
 		} else if("Intranasal".equals(route)) {
 			ret = "IN";
+		} else if("IN".equals(route)) {
+			ret = "IN";
 		} else if("Subcutaneous".equals(route)) {
+			ret = "SC";
+		} else if("SC".equals(route)) {
 			ret = "SC";
 		}
 		

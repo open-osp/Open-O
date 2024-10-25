@@ -28,13 +28,13 @@ package org.oscarehr.eyeform.dao;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.eyeform.model.EyeForm;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EyeFormDao extends AbstractDao<EyeForm> {
+public class EyeFormDao extends AbstractDaoImpl<EyeForm> {
 
 	public EyeFormDao() {
 		super(EyeForm.class);

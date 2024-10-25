@@ -27,13 +27,14 @@ import oscar.OscarProperties;
 
 public class HCValidationFactory {
 
-    private static HCValidator validator;
+//    private static HCValidator validator;
 
     public static HCValidator getHCValidator() {
-        if (validator == null) {
-            validator = getValidator();
-        }
-        return validator;
+//        if (validator == null) {
+//            validator = getValidator();
+//        }
+//        return validator;
+        return getValidator();
     }
 
     public static HCValidator getSimpleValidator() {

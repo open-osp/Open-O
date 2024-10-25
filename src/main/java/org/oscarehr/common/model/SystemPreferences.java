@@ -24,17 +24,17 @@
 package org.oscarehr.common.model;
 
 import javax.persistence.*;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name="SystemPreferences")
 public class SystemPreferences extends AbstractModel<Integer>
 {
 //TODO upgrade to a nested Enum
-    public enum RX_PREFERENCE_KEYS { rx_paste_provider_to_echart, rx_show_end_dates,rx_show_start_dates, rx_show_refill_duration, rx_show_refill_quantity, rx_methadone_end_date_calc, save_rx_signature}
+    public enum RX_PREFERENCE_KEYS { rx_paste_provider_to_echart, rx_show_end_dates,rx_show_start_dates,
+    rx_show_highest_allergy_warning,
+    rx_show_refill_duration,
+    rx_show_refill_quantity, rx_methadone_end_date_calc, save_rx_signature}
     public enum SCHEDULE_PREFERENCE_KEYS {schedule_display_type, schedule_display_custom_roster_status}
     public enum ECHART_PREFERENCE_KEYS {echart_hide_timer}
     public enum MASTER_FILE_PREFERENCE_KEYS {display_former_name, redirect_for_contact}

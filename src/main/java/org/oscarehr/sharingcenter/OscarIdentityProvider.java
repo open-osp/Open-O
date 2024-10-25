@@ -32,7 +32,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class OscarIdentityProvider implements IIdentityProvider
 {
-    private SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean("secUserRoleDao");
+    private SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean(SecUserRoleDao.class);
         
     private String providerId;
 

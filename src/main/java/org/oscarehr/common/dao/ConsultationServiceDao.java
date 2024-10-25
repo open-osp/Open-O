@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,95 +21,24 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.ConsultationServices;
-import org.springframework.stereotype.Repository;
 
-/**
- *
- * @author rjonasz
- */
-@Repository
-public class ConsultationServiceDao extends AbstractDao<ConsultationServices> {
-	public final String REFERRING_DOCTOR = "Referring Doctor";
-    public final String ACTIVE = "1";
-    public final String INACTIVE = "02";
-    public final boolean ACTIVE_ONLY = true;
-    public final boolean WITH_INACTIVE = false;
+public interface ConsultationServiceDao extends AbstractDao<ConsultationServices>{
+    public String REFERRING_DOCTOR = "Referring Doctor";
+    public String ACTIVE = "1";
+    public String INACTIVE = "02";
+    public boolean ACTIVE_ONLY = true;
+    public boolean WITH_INACTIVE = false;
 	
-    public ConsultationServiceDao() {
-        super(ConsultationServices.class);
-    }
-
-    public List<ConsultationServices> findAll() {
-    	String sql = "select x from ConsultationServices x order by x.serviceDesc";
-    	Query query = entityManager.createQuery(sql);
-
-        @SuppressWarnings("unchecked")
-        List<ConsultationServices> results = query.getResultList();
-        return results;
-    }
-
-    public List<ConsultationServices> findActive() {
-    	String sql = "select x from ConsultationServices x where x.active=? order by x.serviceDesc";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,"1");
-
-        @SuppressWarnings("unchecked")
-        List<ConsultationServices> results = query.getResultList();
-        return results;
-    }
-    
-    public List<ConsultationServices> findActiveNames() {
-    	String sql = "select x.serviceId,x.serviceDesc from ConsultationServices x where x.active=? order by x.serviceDesc";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,"1");
-
-        @SuppressWarnings("unchecked")
-        List<ConsultationServices> results = query.getResultList();
-        return results;
-    }
-    
-    
-    public ConsultationServices findByDescription(String description) {
-    	String sql = "select x from ConsultationServices x where x.active=? and x.serviceDesc = ?";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,"1");
-    	query.setParameter(2, description);
-    	
-        return this.getSingleResultOrNull(query);
-    }
-
-    public ConsultationServices findReferringDoctorService(boolean activeOnly) {
-    	String sql = "select x from ConsultationServices x where x.serviceDesc=?";
-    	if (activeOnly) sql += " and x.active=?";
-    	
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1, REFERRING_DOCTOR);
-    	if (activeOnly) query.setParameter(2, ACTIVE);
-
-        @SuppressWarnings("unchecked")
-        List<ConsultationServices> results = query.getResultList();
-        
-        //filter out the first active one if multiple services are found
-        if (results!=null && results.size()>1) {
-        	for (ConsultationServices cs : results) {
-        		if (cs.getActive().equals(ACTIVE)) {
-        			results = new ArrayList<ConsultationServices>();
-        			results.add(cs);
-        			break;
-        		}
-        	}
-        }
-        return (results==null || results.isEmpty()) ? null : results.get(0);
-    }
+    public List<ConsultationServices> findAll();
+    public List<ConsultationServices> findActive();
+    public List<ConsultationServices> findActiveNames();
+    public ConsultationServices findByDescription(String description);
+    public ConsultationServices findReferringDoctorService(boolean activeOnly);
 }

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,56 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.FavoritesPrivilege;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class FavoritesPrivilegeDao extends AbstractDao<FavoritesPrivilege>{
-	
-	public FavoritesPrivilegeDao() {
-		super(FavoritesPrivilege.class);
-	}
-
-    public List<String> getProviders(){
-    	Query query = entityManager.createQuery("select x.providerNo from FavoritesPrivilege x where x.openToPublic=?");
-    	query.setParameter(1, true);
-    	
-    	@SuppressWarnings("unchecked")
-    	List<String> results = query.getResultList();
-    	
-    	return results;
-    }
-
-    public FavoritesPrivilege findByProviderNo(String providerNo) {
-    	Query query = entityManager.createQuery("select x from FavoritesPrivilege x where x.providerNo=?");
-    	query.setParameter(1, providerNo);
-    	
-    	FavoritesPrivilege result = this.getSingleResultOrNull(query);
-    	
-    	return result;
-    }
-    
-    public void setFavoritesPrivilege(String providerNo, boolean openpublic, boolean writeable) {
-    	
-    	FavoritesPrivilege fp = findByProviderNo(providerNo);
-    	if(fp != null) {
-    		fp.setOpenToPublic(openpublic);
-    		fp.setWriteable(writeable);
-    	} else {
-    		fp = new FavoritesPrivilege();
-    		fp.setProviderNo(providerNo);
-    		fp.setOpenToPublic(openpublic);
-    		fp.setWriteable(writeable);
-    		persist(fp);
-    	}
-    }
-
-    
+public interface FavoritesPrivilegeDao extends AbstractDao<FavoritesPrivilege> {
+    List<String> getProviders();
+    FavoritesPrivilege findByProviderNo(String providerNo);
+    void setFavoritesPrivilege(String providerNo, boolean openpublic, boolean writeable);
 }

@@ -41,6 +41,7 @@ public class ConsultationAttachmentTo1 implements Serializable {
 	private String shortName;
 	private String url;
 	
+	private DocumentTo1 document;
 	
 	public ConsultationAttachmentTo1() {}
 	
@@ -111,5 +112,13 @@ public class ConsultationAttachmentTo1 implements Serializable {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public DocumentTo1 getDocument() {
+		return document;
+	}
+
+	public void setDocument(DocumentTo1 document) {
+		this.document = document;
 	}
 }

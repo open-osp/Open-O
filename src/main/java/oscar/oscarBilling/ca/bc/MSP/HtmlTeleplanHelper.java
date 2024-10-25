@@ -25,11 +25,11 @@
 
 package oscar.oscarBilling.ca.bc.MSP;
 
+import oscar.Misc;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import oscar.Misc;
 
 /**
  * Used to consolidate the teleplan submission html into one place.
@@ -110,7 +110,7 @@ public class HtmlTeleplanHelper {
        StringBuilder htmlContent = new StringBuilder();
        htmlContent.append("<tr> \n");
           htmlContent.append("<td class='bodytext'> \n");
-             htmlContent.append("<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billing_no=");
+             htmlContent.append("<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billingmaster_no=");
                 htmlContent.append(Misc.forwardZero(billingMasterNo, 7));
                  htmlContent.append("','','resizable=yes,scrollbars=yes,top=0,left=0,width=900,height=600'); return false;\">");
                htmlContent.append(invNo);

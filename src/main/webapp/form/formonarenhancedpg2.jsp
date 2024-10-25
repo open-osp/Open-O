@@ -109,7 +109,7 @@
 	String hbsag = UtilMisc.htmlEscape(ar1Props.getProperty("pg1_labHBsAg",""));
 	String rubella = UtilMisc.htmlEscape(ar1Props.getProperty("pg1_labRubella",""));
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title>Antenatal Record 2</title>
 <html:base />

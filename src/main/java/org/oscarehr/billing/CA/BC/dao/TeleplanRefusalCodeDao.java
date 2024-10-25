@@ -26,11 +26,11 @@ package org.oscarehr.billing.CA.BC.dao;
 import java.util.List;
 
 import org.oscarehr.billing.CA.BC.model.TeleplanRefusalCode;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TeleplanRefusalCodeDao extends AbstractDao<TeleplanRefusalCode> {
+public class TeleplanRefusalCodeDao extends AbstractDaoImpl<TeleplanRefusalCode> {
 
 	protected TeleplanRefusalCodeDao() {
 		super(TeleplanRefusalCode.class);

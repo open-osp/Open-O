@@ -59,7 +59,7 @@
         <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css" />
 
         <%
-            QueueDao queueDao = (QueueDao) SpringUtils.getBean("queueDao");
+            QueueDao queueDao = (QueueDao) SpringUtils.getBean(QueueDao.class);
             List<Hashtable> queues=queueDao.getQueues();
             List providers = ProviderData.getProviderList();
             String queueIdStr = (String) request.getSession().getAttribute("preferredQueue");

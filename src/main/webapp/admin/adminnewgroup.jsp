@@ -51,7 +51,7 @@
 </security:oscarSec>
 
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 
 <title><bean:message key="admin.adminnewgroup.title" /></title>

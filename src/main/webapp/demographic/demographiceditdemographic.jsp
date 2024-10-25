@@ -122,8 +122,8 @@ if(!authed) {
 	OscarProperties oscarProps = OscarProperties.getInstance();
 	String privateConsentEnabledProperty = oscarProps.getProperty("privateConsentEnabled");
 	boolean privateConsentEnabled = (privateConsentEnabledProperty != null && privateConsentEnabledProperty.equals("true"));
-	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
-	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
+	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
+	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean(DemographicCustDao.class);
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 	List<Provider> providers = providerDao.getActiveProviders();
@@ -144,7 +144,7 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-logic" prefix="logic"%>
+<%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/special_tag.tld" prefix="special" %>
 
 <c:set var="ctx" value="${ pageContext.request.contextPath }" />
@@ -249,7 +249,7 @@ if(!authed) {
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="org.owasp.encoder.Encode" %>
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <title><bean:message key="demographic.demographiceditdemographic.title" /></title>
@@ -261,9 +261,8 @@ if(!authed) {
 </oscar:oscarPropertiesCheck>
 
 <!-- calendar stylesheet -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="../share/calendar/calendar.css" title="win2k-cold-1" />
-
+    <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1" />
+	<link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath()%>/library/jquery/jquery-ui-1.12.1.min.css" />
 	<script type="text/javascript" src="<%=request.getContextPath()%>/library/jquery/jquery-1.12.0.min.js"></script>
 	<script type="text/javascript" src="<%=request.getContextPath()%>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 <% if (oscarProps.getBooleanProperty("workflow_enhance", "true")) { %>
@@ -406,10 +405,10 @@ function checkHin() {
 	if (!isValidHin(hin, province))
 	{
 		alert ("<bean:message key="demographic.demographiceditdemographic.msgWrongHIN"/>");
-		return(false);
+		return false;
 	}
 
-	return(true);
+	return true;
 }
 
 
@@ -641,9 +640,10 @@ function hideItem(id){
 
 <security:oscarSec roleName="<%= roleName$ %>" objectName="_eChart" rights="r" reverse="<%= false %>" >
 var numMenus = 1;
-var encURL = "<c:out value="${ctx}"/>/oscarEncounter/IncomingEncounter.do?providerNo=<%=curProvider_no%>&appointmentNo=&demographicNo=<%=demographic_no%>&curProviderNo=&reason=<%=URLEncoder.encode(noteReason)%>&encType=<%=URLEncoder.encode("telephone encounter with client")%>&userName=<%=URLEncoder.encode( userfirstname+" "+userlastname) %>&curDate=<%=dateString%>&appointmentDate=&startTime=&status=";
+var encURL = "${ctx}/oscarEncounter/IncomingEncounter.do?providerNo=<%=curProvider_no%>&appointmentNo=&demographicNo=<%=demographic_no%>&curProviderNo=&reason=<%=URLEncoder.encode(noteReason)%>&encType=<%=URLEncoder.encode("telephone encounter with client")%>&userName=<%=URLEncoder.encode( userfirstname+" "+userlastname) %>&curDate=<%=dateString%>&appointmentDate=&startTime=&status=";
+
 function showMenu(menuNumber, eventObj) {
-    var menuId = 'menu' + menuNumber;
+    let menuId = 'menu' + menuNumber;
     return showPopup(menuId, eventObj);
 }
 
@@ -881,6 +881,25 @@ function updateEnrolledTo() {
 	}
 }
 
+function validateHC() {
+	const hin = jQuery("#hinBox").val();
+	const ver = jQuery("#verBox").val();
+	const hcType = jQuery("#hcTypeBox").val();
+
+    jQuery.ajax({
+        type: "GET",
+        url:  '<%=request.getContextPath() %>/ws/rs/patientDetailStatusService/validateHC?hin='+hin+'&ver='+ver,
+        dataType:'json',
+        contentType:'application/json',
+        success: function (data) {
+        	alert(data.responseDescription);
+        },
+        error: function(data) {
+        	alert('An error occured.');
+        }
+	});
+}
+
 </script>
 	<script type="application/javascript">
 <%
@@ -952,7 +971,7 @@ function updateEnrolledTo() {
                                 	notes = notes==null?"":notes;                               	
                                 }
 
-                                int age=0, dob_year=0, dob_month=0, dob_date=0;
+                                int dob_year=0, dob_month=0, dob_date=0;
                                 String birthYear="0000", birthMonth="00", birthDate="00";
 
                                 
@@ -983,10 +1002,10 @@ function updateEnrolledTo() {
                                                	dob_year = Integer.parseInt(birthYear);
                                                	dob_month = Integer.parseInt(birthMonth);
                                                	dob_date = Integer.parseInt(birthDate);
-                                                if(dob_year!=0) age=MyDateFormat.getAge(dob_year,dob_month,dob_date);
+
                         %> <%=demographic.getLastName()%>,
 				<%=demographic.getFirstName()%> <%=demographic.getSex()%>
-				<%=age%> years &nbsp;
+				<%=demographic.getAgeAsOf(new Date())%>
 
 				<span style="margin-left: 20px;font-style:italic">
 				<bean:message key="demographic.demographiceditdemographic.msgNextAppt"/>: <oscar:nextAppt demographicNo='<%=demographic.getDemographicNo().toString()%>' />
@@ -1051,7 +1070,7 @@ if(wLReadonly.equals("")){
 					else if("ON".equals(prov)) 
 					{
 					%>
-						<a href="javascript: function myFunction() {return false; }"
+						<a href="javascript:void(0)"
 							onClick="popupPage(500,800,'../billing/CA/ON/billinghistory.jsp?demographic_no=<%=demographic.getDemographicNo()%>&last_name=<%=URLEncoder.encode(demographic.getLastName())%>&first_name=<%=URLEncoder.encode(demographic.getFirstName())%>&orderby=appointment_date&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=10')">
 						<bean:message key="demographic.demographiceditdemographic.msgBillHistory"/></a>
 					<%
@@ -1059,15 +1078,18 @@ if(wLReadonly.equals("")){
 					else
 					{
 					%>
-						<a href="#"
-							onclick="popupPage(800,1000,'../billing/CA/BC/billStatus.jsp?lastName=<%=URLEncoder.encode(demographic.getLastName())%>&firstName=<%=URLEncoder.encode(demographic.getFirstName())%>&filterPatient=true&demographicNo=<%=demographic.getDemographicNo()%>');return false;">
+						<a href="javascript:void(0)" onclick="popupPage(800,1000,'../billing/CA/BC/billStatus.jsp?lastName=<%=URLEncoder.encode(demographic.getLastName())%>&firstName=<%=URLEncoder.encode(demographic.getFirstName())%>&filterPatient=true&demographicNo=<%=demographic.getDemographicNo()%>');return false;">
 						<bean:message key="demographic.demographiceditdemographic.msgInvoiceList"/></a>
 
 
 						<br/>
-						<a  href="javascript:void(0);" onclick="return !showMenu('2', event);" onmouseover="callEligibilityWebService('../billing/CA/BC/ManageTeleplan.do','returnTeleplanMsg');"><bean:message key="demographic.demographiceditdemographic.btnCheckElig"/></a>
-						<div id='menu2' class='menu' onclick='event.cancelBubble = true;' style="width:350px;">
-							<span id="search_spinner" ><bean:message key="demographic.demographiceditdemographic.msgLoading"/></span>
+						<a href="javascript:void(0);" onclick="checkInsuranceEligibility()">
+							<bean:message key="demographic.demographiceditdemographic.btnCheckElig"/>
+						</a>
+						<div id='menu2' style="display:none;width:350px;">
+							<span id="search_spinner" >
+								<bean:message key="demographic.demographiceditdemographic.msgLoading"/>
+							</span>
 							<span id="returnTeleplanMsg"></span>
 						</div>
 					<%}%>
@@ -1075,7 +1097,7 @@ if(wLReadonly.equals("")){
 			</tr>
 			<tr>
 				<td><a
-					href="javascript: function myFunction() {return false; }"
+					href="javascript:void(0)"
 					onClick="popupPage(700, 1000, '../billing.do?billRegion=<%=URLEncoder.encode(prov)%>&billForm=<%=URLEncoder.encode(oscarProps.getProperty("default_view"))%>&hotclick=&appointment_no=0&demographic_name=<%=URLEncoder.encode(demographic.getLastName())%>%2C<%=URLEncoder.encode(demographic.getFirstName())%>&demographic_no=<%=demographic.getDemographicNo()%>&providerview=<%=demographic.getProviderNo()%>&user_no=<%=curProvider_no%>&apptProvider_no=none&appointment_date=<%=dateString%>&start_time=00:00:00&bNewForm=1&status=t');return false;"
 					title="<bean:message key="demographic.demographiceditdemographic.msgBillPatient"/>"><bean:message key="demographic.demographiceditdemographic.msgCreateInvoice"/></a></td>
 			</tr>
@@ -1332,7 +1354,7 @@ if (iviewTag!=null && !"".equalsIgnoreCase(iviewTag.trim())){
 				<td>
 				<form method="post" name="updatedelete" id="updatedelete"
 					action="demographiccontrol.jsp"
-					onSubmit="return checkTypeInEdit();">
+					onSubmit="return checkTypeInEdit();" autocomplete="off">
 					<input type="hidden" name="demographic_no" value="<%=demographic.getDemographicNo()%>">
 				<table width="100%" class="demographicDetail">
 					<tr>
@@ -1472,7 +1494,7 @@ if(oscarProps.getProperty("new_label_print") != null && oscarProps.getProperty("
 							for (String key : demoExt.keySet()) {
 							    if (key.endsWith("_id")) {
 						%>
-						<input type="hidden" name="<%= key %>" value="<%=StringEscapeUtils.escapeHtml(StringUtils.trimToEmpty(demoExt.get(key)))%>"/>
+						<input type="hidden" name="<%= key %>" value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demoExt.get(key)))%>"/>
 						<%
 							    }
 							}
@@ -1480,7 +1502,7 @@ if(oscarProps.getProperty("new_label_print") != null && oscarProps.getProperty("
 						<ul>
 
 							<li><span class="label"><bean:message key="demographic.demographiceditdemographic.msgDemoTitle"/>:</span>
-								<span class="info"><%=StringUtils.trimToEmpty(demographic.getTitle())%></span>
+								<span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getTitle()))%></span>
 							</li>
 
                                                     <li><span class="label"><bean:message
@@ -1493,14 +1515,14 @@ if(oscarProps.getProperty("new_label_print") != null && oscarProps.getProperty("
 							</li>
 							   <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formMiddleNames" />:</span>
-                                                        <span class="info"> <c:out value="<%=Encode.forHtmlContent(demographic.getMiddleNames())%>" /></span>
+                                                        <span class="info"> <%=Encode.forHtmlContent(demographic.getMiddleNames())%> </span>
                                                     </li>
 													<li>
 														<span class="label" style="color:red;"><bean:message
 																key="demographic.demographicaddrecordhtm.formNameUsed" />:
 														</span>
 														<span class="info" style="color:red;">
-															<c:out value="<%=Encode.forHtml(demographic.getAlias())%>" />
+															<%=Encode.forHtmlContent(demographic.getAlias())%>
 														</span>
 													</li>
 
@@ -1514,8 +1536,8 @@ if(oscarProps.getProperty("new_label_print") != null && oscarProps.getProperty("
 														<span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getGender()))%></span>
 													</li>
                                                     <li><span class="label"><bean:message key="demographic.demographiceditdemographic.msgDemoAge"/>:</span>
-                                                        <span class="info"><%=age%>&nbsp;(<bean:message
-                                                            key="demographic.demographiceditdemographic.formDOB" />: <%=birthYear%>-<%=birthMonth%>-<%=birthDate%>)
+                                                        <span class="info"><%=demographic.getAgeAsOf(new Date())%>&nbsp;(
+	                                                        <bean:message key="demographic.demographiceditdemographic.formDOB" />: <%=birthYear%>-<%=birthMonth%>-<%=birthDate%>)
                                                         </span>
                                                     </li>
                                                     <li><span class="label"><bean:message key="demographic.demographiceditdemographic.msgDemoLanguage"/>:</span>
@@ -1540,7 +1562,7 @@ if(oscarProps.getProperty("new_label_print") != null && oscarProps.getProperty("
 						<% String sin = demographic.getSin();
 						   if (sin!=null && sin.length()>0) { %>
                                                <li><span class="label"><bean:message key="demographic.demographiceditdemographic.msgSIN"/>:</span>
-                                                   <span class="info"><%=sin%></span>
+                                                   <span class="info"><%=Encode.forHtmlContent(sin)%></span>
 							</li>
 						<% } %>
 
@@ -1613,8 +1635,8 @@ if(oscarProps.getProperty("new_label_print") != null && oscarProps.getProperty("
 						<bean:message key="demographic.demographiceditdemographic.msgManageContacts"/><!--i18n--></a></b></h3>
 						<ul>
 						<%
-							ContactDao contactDao = (ContactDao)SpringUtils.getBean("contactDao");
-							DemographicContactDao dContactDao = (DemographicContactDao)SpringUtils.getBean("demographicContactDao");
+							ContactDao contactDao = (ContactDao)SpringUtils.getBean(ContactDao.class);
+							DemographicContactDao dContactDao = (DemographicContactDao)SpringUtils.getBean(DemographicContactDao.class);
 							List<DemographicContact> dContacts = dContactDao.findByDemographicNo(demographic.getDemographicNo());
 							dContacts = ContactAction.fillContactNames(dContacts);
 							for(DemographicContact dContact:dContacts) {
@@ -1712,16 +1734,16 @@ if ( Dead.equals(PatStat) ) {%>
 							
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formChartNo" />:</span>
-                                                        <span class="info"><%=StringUtils.trimToEmpty(demographic.getChartNo())%></span>
+                                                        <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getChartNo()))%></span>
 							</li>
 							<% if (oscarProps.isPropertyActive("meditech_id")) { %>
                                                     <li><span class="label">Meditech ID:</span>
-                                                        <span class="info"><%=OtherIdManager.getDemoOtherId(demographic_no, "meditech_id")%></span>
+                                                        <span class="info"><%=Encode.forHtmlContent(OtherIdManager.getDemoOtherId(demographic_no, "meditech_id"))%></span>
 							</li>
 <% } %>
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.cytolNum" />:</span>
-                                                        <span class="info"><%=StringUtils.trimToEmpty(demoExt.get("cytolNum"))%></span></li>
+                                                        <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demoExt.get("cytolNum")))%></span></li>
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formDateJoined1" />:</span>
 							<span class="info"><%=MyDateFormat.getMyStandardDate(demographic.getDateJoined())%></span>
@@ -1938,25 +1960,25 @@ if ( Dead.equals(PatStat) ) {%>
 						<ul>
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formPhoneH" />(<span class="popup"  onmouseover="nhpup.popup(homePhoneHistory);" title="Home phone History">History</span>):</span>
-                                                        <span class="info"><%=StringUtils.trimToEmpty(demographic.getPhone())%> <%=StringUtils.trimToEmpty(demoExt.get("hPhoneExt"))%></span>
+                                                        <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getPhone()))%> <%=Encode.forHtmlContent(StringUtils.trimToEmpty(demoExt.get("hPhoneExt")))%></span>
 							</li>
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formPhoneW" />(<span class="popup"  onmouseover="nhpup.popup(workPhoneHistory);" title="Work phone History">History</span>):</span>
-                                                        <span class="info"><%=StringUtils.trimToEmpty(demographic.getPhone2())%> <%=StringUtils.trimToEmpty(demoExt.get("wPhoneExt"))%></span>
+                                                        <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getPhone2()))%> <%=Encode.forHtmlContent(StringUtils.trimToEmpty(demoExt.get("wPhoneExt")))%></span>
 							</li>
 	                        						<li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formPhoneC" />(<span class="popup"  onmouseover="nhpup.popup(cellPhoneHistory);" title="cell phone History">History</span>):</span>
-                                                        <span class="info"><%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%></span></li>
+                                                        <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demoExt.get("demo_cell")))%></span></li>
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographicaddrecordhtm.formPhoneComment" />:</span>
-                                                        <span class="info"><%=StringEscapeUtils.escapeHtml(StringUtils.trimToEmpty(demoExt.get("phoneComment")))%></span></li>
+                                                        <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demoExt.get("phoneComment")))%></span></li>
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formAddr" />(<span class="popup"  onmouseover="nhpup.popup(addressHistory);" title="Address History">History</span>):</span>
-                                                        <span class="info"><%=StringEscapeUtils.escapeHtml(StringUtils.trimToEmpty(demographic.getAddress()))%></span>
+                                                        <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getAddress()))%></span>
 							</li>
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formCity" />:</span>
-                                                        <span class="info"><%=StringEscapeUtils.escapeHtml(StringUtils.trimToEmpty(demographic.getCity()))%></span>
+                                                        <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getCity()))%></span>
                                                     </li>
                                                     <li><span class="label">
 							<% if(oscarProps.getProperty("demographicLabelProvince") == null) { %>
@@ -1977,11 +1999,11 @@ if ( Dead.equals(PatStat) ) {%>
 
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formResidentialAddr" />:</span>
-                                                        <span class="info"><%=StringEscapeUtils.escapeHtml(StringUtils.trimToEmpty(demographic.getResidentialAddress()))%></span>
+                                                        <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getResidentialAddress()))%></span>
 							</li>
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formResidentialCity" />:</span>
-                                                        <span class="info"><%=StringEscapeUtils.escapeHtml(StringUtils.trimToEmpty(demographic.getResidentialCity()))%></span>
+                                                        <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getResidentialCity()))%></span>
                                                     </li>
                                                     <li><span class="label">
 														<bean:message key="demographic.demographiceditdemographic.formResidentialProvince" />:</span>
@@ -1990,16 +2012,16 @@ if ( Dead.equals(PatStat) ) {%>
 							
 							<bean:message
 								key="demographic.demographiceditdemographic.formResidentialPostal" />:</span>
-                                                       <span class="info"><%=StringUtils.trimToEmpty(demographic.getResidentialPostal())%></span></li>
+                                                       <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getResidentialPostal()))%></span></li>
 
 
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formEmail" />:</span>
-                                                        <span class="info"><%=demographic.getEmail()!=null? demographic.getEmail() : ""%></span>
+                                                        <span class="info"><%= demographic.getEmail()!=null? Encode.forHtmlContent(demographic.getEmail()) : ""%></span>
 							</li>
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formNewsLetter" />:</span>
-                                                        <span class="info"><%=demographic.getNewsletter()!=null? demographic.getNewsletter() : "Unknown"%></span>
+                                                        <span class="info"><%=demographic.getNewsletter()!=null? Encode.forHtmlContent(demographic.getNewsletter()) : "Unknown"%></span>
 							</li>
 						</ul>
 						</div>
@@ -2009,12 +2031,12 @@ if ( Dead.equals(PatStat) ) {%>
 						<ul>
                                                     <li><span class="label"><bean:message
 								key="demographic.demographiceditdemographic.formHin" />:</span>
-                                                                <span class="info"><%=StringUtils.trimToEmpty(demographic.getHin())%>
-							&nbsp; <%=StringUtils.trimToEmpty(demographic.getVer())%></span>
+                                                                <span class="info"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getHin()))%>
+							&nbsp; <%=Encode.forHtmlContent(StringUtils.trimToEmpty(demographic.getVer()))%></span>
 							</li>
                                                     <li><span class="label"><bean:message
 								key="demographic.demographiceditdemographic.formHCType" />:</span>
-                                                        <span class="info"><%=demographic.getHcType()==null?"":demographic.getHcType() %></span>
+                                                        <span class="info"><%=demographic.getHcType()==null?"":Encode.forHtmlContent(demographic.getHcType()) %></span>
 							</li>
                                                     <li><span class="label"><bean:message
                                                             key="demographic.demographiceditdemographic.formEFFDate" />:</span>
@@ -2767,7 +2789,7 @@ if ( Dead.equals(PatStat) ) {%>
 								<bean:message
 									key="demographic.demographiceditdemographic.formResidentialPostal" /> : </b></td>
 								<td align="left"><input type="text" name="residentialPostal" size="30" <%=getDisabled("residentialPostal")%>
-									value="<%=StringUtils.trimToEmpty(demographic.getResidentialPostal())%>"
+									value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demographic.getResidentialPostal()))%>"
 									onBlur="upCaseCtrl(this)" onChange="isPostalCode2()"></td>
 							</tr>
 							
@@ -2778,23 +2800,23 @@ if ( Dead.equals(PatStat) ) {%>
 								<td align="left">
 								<input type="text" name="phone" onblur="formatPhoneNum();" <%=getDisabled("phone")%>
 									style="display: inline; width: auto;"
-									value="<%=StringUtils.trimToEmpty(StringUtils.trimToEmpty(demographic.getPhone()))%>">
+									value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demographic.getPhone()))%>">
 									<label for="hPhoneExt"><bean:message key="demographic.demographiceditdemographic.msgExt"/>:</label>
-									<input type="text" style="width:50% !important;" name="hPhoneExt" id="hPhoneExt" <%=getDisabled("hPhoneExt")%> value="<%=StringUtils.trimToEmpty(StringUtils.trimToEmpty(demoExt.get("hPhoneExt")))%>" size="4" />
-									<input type="hidden" name="hPhoneExtOrig" value="<%=StringUtils.trimToEmpty(StringUtils.trimToEmpty(demoExt.get("hPhoneExt")))%>" />
+									<input type="text" style="width:50% !important;" name="hPhoneExt" id="hPhoneExt" <%=getDisabled("hPhoneExt")%> value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demoExt.get("hPhoneExt")))%>" size="4" />
+									<input type="hidden" name="hPhoneExtOrig" value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demoExt.get("hPhoneExt")))%>" />
 								</td>
 								<td align="right"><b><bean:message
 									key="demographic.demographiceditdemographic.formPhoneW" />:</b></td>
 								<td align="left"><input type="text" name="phone2" <%=getDisabled("phone2")%>
 									onblur="formatPhoneNum();"
 									style="display: inline; width: auto;"
-									value="<%=StringUtils.trimToEmpty(demographic.getPhone2())%>">
+									value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demographic.getPhone2()))%>">
 									<label for="wPhoneExt"><bean:message key="demographic.demographiceditdemographic.msgExt"/>:</label>
 									<input type="text" style="width:50% !important;" name="wPhoneExt" id="wPhoneExt" <%=getDisabled("wPhoneExt")%>
-									value="<%=StringUtils.trimToEmpty(StringUtils.trimToEmpty(demoExt.get("wPhoneExt")))%>"
+									value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demoExt.get("wPhoneExt")))%>"
 									size="4" /> <input type="hidden"
 									name="wPhoneExtOrig"
-									value="<%=StringUtils.trimToEmpty(StringUtils.trimToEmpty(demoExt.get("wPhoneExt")))%>" />
+									value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demoExt.get("wPhoneExt")))%>" />
 								</td>
 							</tr>
 							<tr valign="top">
@@ -2803,16 +2825,16 @@ if ( Dead.equals(PatStat) ) {%>
 								<td align="left">
 								<input type="text" name="demo_cell" onblur="formatPhoneNum();"
 									style="display: inline; width: auto;" <%=getDisabled("demo_cell")%>
-									value="<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>">
+									value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demoExt.get("demo_cell")))%>">
 								<input type="hidden" name="demo_cellOrig"
-									value="<%=StringUtils.trimToEmpty(demoExt.get("demo_cell"))%>" />
+									value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demoExt.get("demo_cell")))%>" />
 								</td>
 								<td align="right"><b><bean:message
 										key="demographic.demographicaddrecordhtm.formPhoneComment" />: </b></td>
 								<td align="left" colspan="3">
 								<input type="hidden" name="phoneCommentOrig"
-									value="<%=StringEscapeUtils.escapeHtml(StringUtils.trimToEmpty(demoExt.get("phoneComment")))%>" />
-										<textarea rows="2" cols="30" name="phoneComment"><%=StringEscapeUtils.escapeHtml(StringUtils.trimToEmpty(demoExt.get("phoneComment")))%></textarea>
+									value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demoExt.get("phoneComment")))%>" />
+										<textarea rows="2" cols="30" name="phoneComment"><%=Encode.forHtmlContent(StringUtils.trimToEmpty(demoExt.get("phoneComment")))%></textarea>
 								</td>
 							</tr>							
 							<tr valign="top">
@@ -2956,8 +2978,8 @@ if ( Dead.equals(PatStat) ) {%>
 									<%} %>
 									</select>			
 
-									<label for="age">Age:</label> <input type="text"
-									name="age" id="age" value="<%=age%>" readonly>
+									<label for="age">Age:</label>
+									<input type="text" name="age" id="age" value="<%=demographic.getAgeAsOf(new Date())%>" readonly>
 
 								</td>
 								<td align="right" nowrap><b><bean:message
@@ -2975,11 +2997,11 @@ if ( Dead.equals(PatStat) ) {%>
 								<td align="right"><b><bean:message
 									key="demographic.demographiceditdemographic.formHin" />: </b></td>
 								<td align="left" nowrap><input type="text" name="hin" id="hinBox" <%=getDisabled("hin")%>
-									value="<%=StringUtils.trimToEmpty(demographic.getHin())%>" size="17">
+									value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demographic.getHin()))%>" size="17" oninput="sanitizeInput(this)">
 								<bean:message
 									key="demographic.demographiceditdemographic.formVer" /><input
 									type="text" name="ver" style="width:20% !important;" <%=getDisabled("ver")%>
-									value="<%=StringUtils.trimToEmpty(demographic.getVer())%>"
+									value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demographic.getVer()))%>"
 									onBlur="upCaseCtrl(this)" id="verBox">
 									<%if("online".equals(oscarProps.getProperty("hcv.type", "simple"))) { %>
 										<input type="button" value="Validate" onClick="validateHC()"/>
@@ -4221,17 +4243,20 @@ Calendar.setup({ inputField : "waiting_list_referral_date", ifFormat : "%Y-%m-%d
 
 Calendar.setup({ inputField : "paper_chart_archived_date", ifFormat : "%Y-%m-%d", showsTime :false, button : "archive_date_cal", singleClick : true, step : 1 });
 
-function callEligibilityWebService(url,id){
-
-       var ran_number=Math.round(Math.random()*1000000);
-       var params = "demographic=<%=demographic_no%>&method=checkElig&rand="+ran_number;  //hack to get around ie caching the page
-		 var response;
-       new Ajax.Request(url+'?'+params, {
-           onSuccess: function(response) {
-                document.getElementById(id).innerHTML=response.responseText ;
-                document.getElementById('search_spinner').innerHTML="";
-           }
-        } );
+function checkInsuranceEligibility() {
+	let params = {};
+	params.demographic =<%=demographic_no%>;
+	params.method = 'checkElig';
+	params.rand = Math.round(Math.random()*1000000);  //hack to get around ie caching the page
+    let url = '${ctx}/billing/CA/BC/ManageTeleplan.do';
+	jQuery.post(url, params, function() {
+		jQuery('#menu2').dialog({
+			title: "MSP Eligibility"
+		});
+	}).done(function(data){
+		jQuery('#menu2 #search_spinner').text("");
+		jQuery('#menu2 #returnTeleplanMsg').text(data);
+	})
  }
 
 <%

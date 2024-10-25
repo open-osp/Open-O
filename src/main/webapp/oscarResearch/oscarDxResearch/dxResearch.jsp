@@ -68,7 +68,7 @@
 %>
 
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="oscarResearch.oscarDxResearch.dxResearch.title" /></title>
 	

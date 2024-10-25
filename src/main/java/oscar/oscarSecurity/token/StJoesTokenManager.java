@@ -59,9 +59,9 @@ import oscar.oscarSecurity.SecurityTokenManager;
 
 public class StJoesTokenManager extends SecurityTokenManager {
 
-	private ProviderManager providerManager = (ProviderManager) SpringUtils.getBean("providerManager");
-    private FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean("facilityDao");
-    private SecUserRoleDao secUserRoleDao=(SecUserRoleDao)SpringUtils.getBean("secUserRoleDao");
+	private ProviderManager providerManager = (ProviderManager) SpringUtils.getBean(ProviderManager.class);
+    private FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean(FacilityDao.class);
+    private SecUserRoleDao secUserRoleDao=(SecUserRoleDao)SpringUtils.getBean(SecUserRoleDao.class);
     private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     
     
@@ -102,7 +102,7 @@ public class StJoesTokenManager extends SecurityTokenManager {
 		st.setProviderNo(request.getParameter("providerNo"));
 		
 		//store the token
-		SecurityTokenDao std = (SecurityTokenDao)SpringUtils.getBean("securityTokenDao");
+		SecurityTokenDao std = (SecurityTokenDao)SpringUtils.getBean(SecurityTokenDao.class);
 		std.persist(st);
 		
 		//set the redirect to display the token back
@@ -120,7 +120,7 @@ public class StJoesTokenManager extends SecurityTokenManager {
 			token = (String)request.getAttribute("token");
 		}
 		
-		SecurityTokenDao std = (SecurityTokenDao)SpringUtils.getBean("securityTokenDao");
+		SecurityTokenDao std = (SecurityTokenDao)SpringUtils.getBean(SecurityTokenDao.class);
 		SecurityToken st = std.getByTokenAndExpiry(token,new Date());
 
 		//token not valid

@@ -35,7 +35,7 @@ import org.oscarehr.util.SpringUtils;
 public class EctConShowAllServicesUtil
 {
 
-	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao)SpringUtils.getBean("consultationServiceDao");
+	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao)SpringUtils.getBean(ConsultationServiceDao.class);
 
 
     public void estServicesVectors()

@@ -45,7 +45,7 @@ public class ProviderRxInteractionWarningLevelAction extends DispatchAction {
 
 	private static final Logger logger = MiscUtils.getLogger();
 
-	private UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+	private UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 	
     public ActionForward update(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
     	String value = request.getParameter("value");

@@ -157,7 +157,7 @@ public class SharingCenterUtil {
     private static final ClinicInfoDao clinicInfoDao = SpringUtils.getBean(ClinicInfoDao.class);
     private static final AffinityDomainDao affinityDomainDao = SpringUtils.getBean(AffinityDomainDao.class);
     private static final PatientSharingNetworkDao sharedNetworksDao = SpringUtils.getBean(PatientSharingNetworkDao.class);
-    private static final DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+    private static final DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
     private static final RelationshipsDao relationshipsDao = SpringUtils.getBean(RelationshipsDao.class);
     private static final SiteMappingDao siteMappingDao = SpringUtils.getBean(SiteMappingDao.class);
     private static final EDocMappingDao eDocMappingDao = SpringUtils.getBean(EDocMappingDao.class);
@@ -731,7 +731,7 @@ public class SharingCenterUtil {
     public static PersonDemographic createPatientDemographic(int demographicId) {
         PersonDemographic retVal = new PersonDemographic();
 
-        DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+        DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
         Demographic patientDemographic = demographicDao.getDemographicById(demographicId);
 
         ClinicInfoDataObject clinicData = clinicInfoDao.getClinic();
@@ -1395,7 +1395,7 @@ public class SharingCenterUtil {
     public static Document retrieveEdoc(String id) {
         Document retVal = null;
 
-        DocumentDao documentDao = (DocumentDao) SpringUtils.getBean("documentDao");
+        DocumentDao documentDao = (DocumentDao) SpringUtils.getBean(DocumentDao.class);
         retVal = documentDao.getDocument(id);
 
         return retVal;
@@ -1404,7 +1404,7 @@ public class SharingCenterUtil {
     public static EFormData retrieveEform(String id) {
         EFormData retVal = null;
 
-        EFormDataDao eFormDataDao = (EFormDataDao) SpringUtils.getBean("EFormDataDao");
+        EFormDataDao eFormDataDao = (EFormDataDao) SpringUtils.getBean(EFormDataDao.class);
         retVal = eFormDataDao.findByFormDataId(Integer.parseInt(id));
 
         return retVal;
@@ -1422,7 +1422,7 @@ public class SharingCenterUtil {
     public static ProviderData retrieveProvider(int providerId) {
         ProviderData retVal = null;
 
-        ProviderDataDao providerDataDao = (ProviderDataDao) SpringUtils.getBean("providerDataDao");
+        ProviderDataDao providerDataDao = (ProviderDataDao) SpringUtils.getBean(ProviderDataDao.class);
         retVal = providerDataDao.findByProviderNo(Integer.toString(providerId));
 
         return retVal;

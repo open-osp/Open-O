@@ -109,7 +109,7 @@ public class ERxPatientRecordSynchronizer implements PatientRecordSynchronizer {
         ERxPatientData translatedPatient;
         Date patientLastModifiedDate;
 
-        DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+        DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 
         try {
             // Log what we're doing

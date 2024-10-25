@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,44 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.IntegratorProgress;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class IntegratorProgressDao extends AbstractDao<IntegratorProgress> {
-
-	public IntegratorProgressDao() {
-		super(IntegratorProgress.class);
-	}
-
-	public List<IntegratorProgress> findCompleted() {
-		Query query = entityManager.createQuery("select f from IntegratorProgress f where f.status = ? order by f.dateCreated DESC");
-		query.setParameter(1,IntegratorProgress.STATUS_COMPLETED);
-		@SuppressWarnings("unchecked")
-		List<IntegratorProgress> results = query.getResultList();
-
-		return results;
-
-	}
-	
-	/**
-	 * Returns the list of persisted IntegratorProgress objects with a status of "running".
-	 * 
-	 */
-	public List<IntegratorProgress> findRunning() {
-		Query query = entityManager.createQuery("select f from IntegratorProgress f where f.status = ?");
-		query.setParameter(1,IntegratorProgress.STATUS_RUNNING);
-		@SuppressWarnings("unchecked")
-		List<IntegratorProgress> results = query.getResultList();
-
-		return results;
-
-	}
+public interface IntegratorProgressDao extends AbstractDao<IntegratorProgress> {
+    List<IntegratorProgress> findCompleted();
+    List<IntegratorProgress> findRunning();
 }

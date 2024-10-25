@@ -104,7 +104,7 @@ public final class EFormPrintPDFUtil {
         //then set up cutoff for second page = 19 years of age
         //then we can compare measurement dates and slot them accordingly
         
-        MeasurementDao measurementDao = (MeasurementDao)SpringUtils.getBean("measurementDao");
+        MeasurementDao measurementDao = (MeasurementDao)SpringUtils.getBean(MeasurementDao.class);
 
         Date mDateHt, mDateWt;
         String date;

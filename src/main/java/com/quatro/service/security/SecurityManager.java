@@ -55,7 +55,7 @@ public class SecurityManager {
     public boolean hasReadAccess(String objectName, String roleNames) {
     	boolean result=false;
     	
-    	SecobjprivilegeDao secobjprivilegeDao = (SecobjprivilegeDao)SpringUtils.getBean("secobjprivilegeDao");
+    	SecobjprivilegeDao secobjprivilegeDao = (SecobjprivilegeDao)SpringUtils.getBean(SecobjprivilegeDao.class);
         
     	List<String> rl = new ArrayList<String>();
         for(String tmp:roleNames.split(",")) {
@@ -82,7 +82,7 @@ public class SecurityManager {
     public boolean hasWriteAccess(String objectName, String roleNames, boolean required) {
     	boolean result=false;
     	
-    	SecobjprivilegeDao secobjprivilegeDao = (SecobjprivilegeDao)SpringUtils.getBean("secobjprivilegeDao");
+    	SecobjprivilegeDao secobjprivilegeDao = (SecobjprivilegeDao)SpringUtils.getBean(SecobjprivilegeDao.class);
         
     	List<String> rl = new ArrayList<String>();
         for(String tmp:roleNames.split(",")) {
@@ -108,7 +108,7 @@ public class SecurityManager {
     public boolean hasDeleteAccess(String objectName, String roleNames) {
     	boolean result=false;
     	
-    	SecobjprivilegeDao secobjprivilegeDao = (SecobjprivilegeDao)SpringUtils.getBean("secobjprivilegeDao");
+    	SecobjprivilegeDao secobjprivilegeDao = (SecobjprivilegeDao)SpringUtils.getBean(SecobjprivilegeDao.class);
         
     	List<String> rl = new ArrayList<String>();
         for(String tmp:roleNames.split(",")) {

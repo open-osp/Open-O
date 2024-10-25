@@ -58,9 +58,9 @@ import org.oscarehr.util.SpringUtils;
 public final class MyOscarMedicalDataManagerUtils {
 	private static final Logger logger=MiscUtils.getLogger();
 	
-	private static final RemoteDataLogDao remoteDataLogDao = (RemoteDataLogDao) SpringUtils.getBean("remoteDataLogDao");
-	private static final SentToPHRTrackingDao sentToPHRTrackingDao = (SentToPHRTrackingDao) SpringUtils.getBean("sentToPHRTrackingDao");
-	private static final ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+	private static final RemoteDataLogDao remoteDataLogDao = (RemoteDataLogDao) SpringUtils.getBean(RemoteDataLogDao.class);
+	private static final SentToPHRTrackingDao sentToPHRTrackingDao = (SentToPHRTrackingDao) SpringUtils.getBean(SentToPHRTrackingDao.class);
+	private static final ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 	
 	
 	private MyOscarMedicalDataManagerUtils() {

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -30,59 +33,13 @@ import org.oscarehr.common.model.SecRole;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-@Transactional
-public class SecRoleDao extends AbstractDao<SecRole> {
+public interface SecRoleDao extends AbstractDao<SecRole> {
 
-	public SecRoleDao() {
-		super(SecRole.class);
-	}
+    public List<SecRole> findAll();
 
-    public List<SecRole> findAll()
-	{
-		StringBuilder sb=new StringBuilder();
-		sb.append("select x from SecRole x");
+    public List<String> findAllNames();
 
-		sb.append(" order by x.name");
+    public SecRole findByName(String name);
 
-		Query query = entityManager.createQuery(sb.toString());
-
-		@SuppressWarnings("unchecked")
-		List<SecRole> results = query.getResultList();
-
-		return(results);
-	}
-    
-    public List<String> findAllNames()
- 	{
- 		StringBuilder sb=new StringBuilder();
- 		sb.append("select x.name from SecRole x");
-
- 		sb.append(" order by x.name");
-
- 		Query query = entityManager.createQuery(sb.toString());
-
- 		@SuppressWarnings("unchecked")
- 		List<String> results = query.getResultList();
-
- 		return(results);
- 	}
-
-    public SecRole findByName(String name) {
-    	Query q = entityManager.createQuery("select x from SecRole x where x.name=?");
-
-    	q.setParameter(1, name);
-    	
-    	return this.getSingleResultOrNull(q);
-    }
-
-    public List<SecRole> findAllOrderByRole()
-	{
-		Query query = entityManager.createQuery("select x from SecRole x order by x.name");
-
-		@SuppressWarnings("unchecked")
-		List<SecRole> results = query.getResultList();
-
-		return(results);
-	}
+    public List<SecRole> findAllOrderByRole();
 }

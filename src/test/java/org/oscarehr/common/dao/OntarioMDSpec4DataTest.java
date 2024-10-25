@@ -106,7 +106,7 @@ import oscar.form.FrmLabReq07Record;
 
 
 public class OntarioMDSpec4DataTest extends DaoTestFixtures {
-	protected AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
+	protected AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
 	protected Integer oscarProgramID;
 	
 	@Before
@@ -665,28 +665,28 @@ public class OntarioMDSpec4DataTest extends DaoTestFixtures {
 	}
 
 	public void setupOntarioMDSpec4Data(){
-		OscarAppointmentDao appointmentDao=(OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
-		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-		DxresearchDAO dxResearchDAO = (DxresearchDAO) SpringUtils.getBean("dxresearchDAO");		
-		ProgramProviderDAO programProviderDAO = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
-		CaseManagementNoteDAO  caseManagementNoteDAO = (CaseManagementNoteDAO) SpringUtils.getBean("caseManagementNoteDAO");
-		IssueDAO issueDao = (IssueDAO) SpringUtils.getBean("IssueDAO");
-		CaseManagementIssueDAO caseManagementIssueDAO = (CaseManagementIssueDAO) SpringUtils.getBean("caseManagementIssueDAO");
-		CaseManagementNoteExtDAO caseManagementNoteExtDAO = (CaseManagementNoteExtDAO) SpringUtils.getBean("CaseManagementNoteExtDAO");
-		DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
-		DemographicContactDao demographicContactDao = (DemographicContactDao) SpringUtils.getBean("demographicContactDao");
-		CaseManagementNoteLinkDAO CaseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean("CaseManagementNoteLinkDAO");
-		DemographicQueryFavouritesDao demoQueryFavouriteDao = (DemographicQueryFavouritesDao) SpringUtils.getBean("demographicQueryFavouritesDao");
+		OscarAppointmentDao appointmentDao=(OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
+		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+		DxresearchDAO dxResearchDAO = (DxresearchDAO) SpringUtils.getBean(DxresearchDAO.class);		
+		ProgramProviderDAO programProviderDAO = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
+		CaseManagementNoteDAO  caseManagementNoteDAO = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
+		IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
+		CaseManagementIssueDAO caseManagementIssueDAO = (CaseManagementIssueDAO) SpringUtils.getBean(CaseManagementIssueDAO.class);
+		CaseManagementNoteExtDAO caseManagementNoteExtDAO = (CaseManagementNoteExtDAO) SpringUtils.getBean(CaseManagementNoteExtDAO.class);
+		DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
+		DemographicContactDao demographicContactDao = (DemographicContactDao) SpringUtils.getBean(DemographicContactDao.class);
+		CaseManagementNoteLinkDAO CaseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean(CaseManagementNoteLinkDAO.class);
+		DemographicQueryFavouritesDao demoQueryFavouriteDao = (DemographicQueryFavouritesDao) SpringUtils.getBean(DemographicQueryFavouritesDao.class);
 
-		ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
-		PreventionDao preventionDao = (PreventionDao) SpringUtils.getBean("preventionDao");
+		ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+		PreventionDao preventionDao = (PreventionDao) SpringUtils.getBean(PreventionDao.class);
 		MeasurementDao measurementsDao = SpringUtils.getBean(MeasurementDao.class);
-		SecurityDao securityDao = (SecurityDao) SpringUtils.getBean("securityDao");
-		SecUserRoleDao secuserroleDao = (SecUserRoleDao) SpringUtils.getBean("secUserRoleDao");
-		AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean("allergyDao");
-		DocumentDao documentDao = (DocumentDao) SpringUtils.getBean("documentDao");
-		CtlDocumentDao ctlDocumentDao = (CtlDocumentDao) SpringUtils.getBean("ctlDocumentDao");
+		SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
+		SecUserRoleDao secuserroleDao = (SecUserRoleDao) SpringUtils.getBean(SecUserRoleDao.class);
+		AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean(AllergyDao.class);
+		DocumentDao documentDao = (DocumentDao) SpringUtils.getBean(DocumentDao.class);
+		CtlDocumentDao ctlDocumentDao = (CtlDocumentDao) SpringUtils.getBean(CtlDocumentDao.class);
 		TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 		
 

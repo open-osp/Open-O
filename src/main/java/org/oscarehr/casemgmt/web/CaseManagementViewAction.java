@@ -23,33 +23,10 @@
 
 package org.oscarehr.casemgmt.web;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Vector;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.quatro.model.security.Secrole;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.processors.JsDateJsonBeanProcessor;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.logging.log4j.Logger;
@@ -63,43 +40,18 @@ import org.oscarehr.PMmodule.dao.SecUserRoleDao;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.PMmodule.model.ProgramTeam;
 import org.oscarehr.PMmodule.model.SecUserRole;
-import org.oscarehr.caisi_integrator.ws.CachedDemographicIssue;
-import org.oscarehr.caisi_integrator.ws.CachedDemographicNote;
-import org.oscarehr.caisi_integrator.ws.CachedFacility;
-import org.oscarehr.caisi_integrator.ws.CodeType;
-import org.oscarehr.caisi_integrator.ws.DemographicWs;
-import org.oscarehr.caisi_integrator.ws.NoteIssue;
+import org.oscarehr.caisi_integrator.ws.*;
 import org.oscarehr.casemgmt.common.Colour;
 import org.oscarehr.casemgmt.dao.CaseManagementNoteDAO;
 import org.oscarehr.casemgmt.dao.IssueDAO;
-import org.oscarehr.casemgmt.model.CaseManagementCPP;
-import org.oscarehr.casemgmt.model.CaseManagementIssue;
-import org.oscarehr.casemgmt.model.CaseManagementNote;
-import org.oscarehr.casemgmt.model.CaseManagementNoteExt;
-import org.oscarehr.casemgmt.model.CaseManagementSearchBean;
-import org.oscarehr.casemgmt.model.ClientImage;
-import org.oscarehr.casemgmt.model.Issue;
+import org.oscarehr.casemgmt.model.*;
 import org.oscarehr.casemgmt.service.CaseManagementManager;
 import org.oscarehr.casemgmt.service.NoteSelectionCriteria;
 import org.oscarehr.casemgmt.service.NoteSelectionResult;
 import org.oscarehr.casemgmt.service.NoteService;
 import org.oscarehr.casemgmt.web.formbeans.CaseManagementViewFormBean;
-import org.oscarehr.common.dao.BillingONCHeader1Dao;
-import org.oscarehr.common.dao.CaseManagementIssueNotesDao;
-import org.oscarehr.common.dao.DemographicDao;
-import org.oscarehr.common.dao.EncounterFormDao;
-import org.oscarehr.common.dao.GroupNoteDao;
-import org.oscarehr.common.model.Admission;
-import org.oscarehr.common.model.Allergy;
-import org.oscarehr.common.model.BillingONCHeader1;
-import org.oscarehr.common.model.CaseManagementTmpSave;
-import org.oscarehr.common.model.CustomFilter;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.Drug;
-import org.oscarehr.common.model.Dxresearch;
-import org.oscarehr.common.model.GroupNoteLink;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.UserProperty;
+import org.oscarehr.common.dao.*;
+import org.oscarehr.common.model.*;
 import org.oscarehr.eyeform.EyeformInit;
 import org.oscarehr.eyeform.dao.EyeformFollowUpDao;
 import org.oscarehr.eyeform.dao.EyeformTestBookDao;
@@ -112,7 +64,6 @@ import org.oscarehr.provider.web.CppPreferencesUIBean;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.OscarProperties;
 import oscar.eform.EFormUtil;
 import oscar.oscarEncounter.data.EctFormData;
@@ -121,7 +72,13 @@ import oscar.oscarRx.pageUtil.RxSessionBean;
 import oscar.util.ConversionUtils;
 import oscar.util.OscarRoleObjectPrivilege;
 
-import com.quatro.model.security.Secrole;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.util.*;
 
 /*
  * Updated by Eugene Petruhin on 21 jan 2009 while fixing missing "New Note" link
@@ -130,14 +87,14 @@ public class CaseManagementViewAction extends BaseCaseManagementViewAction {
 
 	private static final Integer MAX_INVOICES = 20;
 	private static Logger logger = MiscUtils.getLogger();
-	private CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
-	private IssueDAO issueDao = (IssueDAO) SpringUtils.getBean("IssueDAO");
-	private CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO) SpringUtils.getBean("caseManagementNoteDAO");
-	private SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean("secUserRoleDao");
-	private GroupNoteDao groupNoteDao = (GroupNoteDao) SpringUtils.getBean("groupNoteDao");
-	private DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-	private CaseManagementIssueNotesDao cmeIssueNotesDao = (CaseManagementIssueNotesDao) SpringUtils.getBean("caseManagementIssueNotesDao");
-	private BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean("billingONCHeader1Dao");
+	private CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
+	private IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
+	private CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
+	private SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean(SecUserRoleDao.class);
+	private GroupNoteDao groupNoteDao = (GroupNoteDao) SpringUtils.getBean(GroupNoteDao.class);
+	private DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+	private CaseManagementIssueNotesDao cmeIssueNotesDao = (CaseManagementIssueNotesDao) SpringUtils.getBean(CaseManagementIssueNotesDao.class);
+	private BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
 	private NoteService noteService = SpringUtils.getBean(NoteService.class);
 	private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 
@@ -380,7 +337,7 @@ public class CaseManagementViewAction extends BaseCaseManagementViewAction {
 			request.setAttribute("teamMembers", teamMembers);
 
 			/* prepare new form list for patient */
-			EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean("encounterFormDao");
+			EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean(EncounterFormDao.class);
 			se.setAttribute("casemgmt_newFormBeans", encounterFormDao.findAll());
 
 			/* prepare messenger list */
@@ -1561,7 +1518,7 @@ public class CaseManagementViewAction extends BaseCaseManagementViewAction {
 	}
 
 	public ActionForward run_macro_script(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		MacroDao macroDao = (MacroDao) SpringUtils.getBean("MacroDAO");
+		MacroDao macroDao = (MacroDao) SpringUtils.getBean(MacroDao.class);
 		Macro macro = macroDao.find(Integer.parseInt(request.getParameter("id")));
 		logger.info("loaded macro " + macro.getLabel());
 		StringBuilder sb = new StringBuilder();
@@ -1600,7 +1557,7 @@ public class CaseManagementViewAction extends BaseCaseManagementViewAction {
 	public ActionForward run_macro(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 
-		MacroDao macroDao = (MacroDao) SpringUtils.getBean("MacroDAO");
+		MacroDao macroDao = (MacroDao) SpringUtils.getBean(MacroDao.class);
 		Macro macro = macroDao.find(Integer.parseInt(request.getParameter("id")));
 		logger.info("loaded macro " + macro.getLabel());
 
@@ -1754,7 +1711,7 @@ public class CaseManagementViewAction extends BaseCaseManagementViewAction {
 
 	public static String getNoteColour(NoteDisplay noteDisplay) {
 		// set all colors
-		String blackColour = "000000";
+		String blackColour = "FFFFFF";
 		String documentColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().documents + ";";
 		//String diseaseColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().disease + ";";
 		String eFormsColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().eForms + ";";
@@ -1768,6 +1725,7 @@ public class CaseManagementViewAction extends BaseCaseManagementViewAction {
 		String invoiceColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().invoices + ";";
 		String ticklerNoteColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().ticklerNotes + ";";
 		String externalNoteColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().externalNotes + ";";
+		String emailNoteColour = "color:#" + blackColour + ";background-color:#" + Colour.getInstance().emailNotes + ";";
 
 		String bgColour = "color:#000000;background-color:#CCCCFF;";
 
@@ -1788,6 +1746,8 @@ public class CaseManagementViewAction extends BaseCaseManagementViewAction {
 			bgColour = formsColour;
 		} else if (noteDisplay.isInvoice()) {
 			bgColour = invoiceColour;
+		} else if (noteDisplay.isEmailNote()) {
+			bgColour = emailNoteColour;
 		}
 
 		return (bgColour);
@@ -1808,7 +1768,7 @@ public class CaseManagementViewAction extends BaseCaseManagementViewAction {
 	}
 
 	public static CaseManagementNote getLatestCppNote(String demographicNo, long issueId, int appointmentNo, boolean filterByAppointment) {
-		CaseManagementManager caseManagementMgr = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
+		CaseManagementManager caseManagementMgr = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 		Collection<CaseManagementNote> notes = caseManagementMgr.getActiveNotes(demographicNo, new String[] { String.valueOf(issueId) });
 		List<CaseManagementNote> filteredNotes = new ArrayList<CaseManagementNote>();
 

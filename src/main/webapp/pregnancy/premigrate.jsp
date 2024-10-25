@@ -52,7 +52,7 @@ if(!authed) {
 <%
 	Properties props = (Properties)request.getAttribute("props");
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title>Migration Tool</title>
 
@@ -367,7 +367,7 @@ function updateGtt() {
 						<option value="FAS">Persian</option>
 						<option value="POL">Polish</option>
 						<option value="POR">Portuguese</option>
-						<option value="PUS">Pushto</option>
+						<option value="PUS">Pashto</option>
 						<option value="QUE">Quechua</option>
 						<option value="RON">Romanian</option>
 						<option value="ROH">Romansh</option>

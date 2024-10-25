@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,68 +21,18 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.FlowSheetCustomization;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class FlowSheetCustomizationDao extends AbstractDao<FlowSheetCustomization>{
-
-	public FlowSheetCustomizationDao() {
-		super(FlowSheetCustomization.class);
-	}
-
-    public FlowSheetCustomization getFlowSheetCustomization(Integer id){
-    	return this.find(id);
-    }
-
-    public List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet,String provider,Integer demographic){
-    	Query query = entityManager.createQuery("SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=? and fd.archived=0 and ( fd.providerNo='' or (fd.providerNo=? and fd.demographicNo=0) or (fd.providerNo=? and fd.demographicNo=?) ) order by fd.providerNo, fd.demographicNo");
-    	query.setParameter(1, flowsheet);
-    	query.setParameter(2, provider);
-    	query.setParameter(3, provider);
-    	query.setParameter(4, String.valueOf(demographic));
-
-        @SuppressWarnings("unchecked")
-        List<FlowSheetCustomization> list = query.getResultList();
-        return list;
-    }
-    
-    public List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet,String provider){
-    	Query query = entityManager.createQuery("SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=? and fd.archived=0 and fd.providerNo = ?  and fd.demographicNo = 0");
-    	query.setParameter(1, flowsheet);
-    	query.setParameter(2, provider);
-    	
-        @SuppressWarnings("unchecked")
-        List<FlowSheetCustomization> list = query.getResultList();
-        return list;
-    }
-    
-    //clinic level
-    public List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet){
-    	Query query = entityManager.createQuery("SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=? and fd.archived=0 and fd.providerNo = ''  and fd.demographicNo = 0");
-    	query.setParameter(1, flowsheet);
-    	
-        @SuppressWarnings("unchecked")
-        List<FlowSheetCustomization> list = query.getResultList();
-        return list;
-    }
-    
-    public List<FlowSheetCustomization> getFlowSheetCustomizationsForPatient(String flowsheet,String demographicNo){
-    	Query query = entityManager.createQuery("SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=? and fd.archived=0 and fd.demographicNo = ?");
-    	query.setParameter(1, flowsheet);
-    	query.setParameter(2, demographicNo);
-    	
-        @SuppressWarnings("unchecked")
-        List<FlowSheetCustomization> list = query.getResultList();
-        return list;
-    }
+public interface FlowSheetCustomizationDao extends AbstractDao<FlowSheetCustomization> {
+    FlowSheetCustomization getFlowSheetCustomization(Integer id);
+    List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet, String provider, Integer demographic);
+    List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet, String provider);
+    List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet);
+    List<FlowSheetCustomization> getFlowSheetCustomizationsForPatient(String flowsheet, String demographicNo);
 }

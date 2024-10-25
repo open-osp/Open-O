@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,51 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.OLISResults;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class OLISResultsDao extends AbstractDao<OLISResults>{
-
-	public OLISResultsDao() {
-		super(OLISResults.class);
-	}
-
-	public boolean hasExistingResult(String requestingHICProviderNo, String queryType, String hash) {
-		Query query = entityManager.createQuery("select x from OLISResults x where x.requestingHICProviderNo=? and x.queryType=? and x.hash = ?");
-		query.setParameter(1, requestingHICProviderNo);
-		query.setParameter(2, queryType);
-		query.setParameter(3, hash);
-
-		if(!query.getResultList().isEmpty()) {
-			return true;
-		}
-		
-		return false;
-	}
-	
-	public List<OLISResults> getResultList(String requestingHICProviderNo, String queryType) {
-		Query query = entityManager.createQuery("select x from OLISResults x where x.requestingHICProviderNo=? and x.queryType=? and status IS NULL");
-		query.setParameter(1, requestingHICProviderNo);
-		query.setParameter(2, queryType);
-		
-		@SuppressWarnings("unchecked")
-		List<OLISResults> results = query.getResultList();
-		
-		return results;
-	}
-	
-	public OLISResults findByUUID(String uuid) {
-		Query query = entityManager.createQuery("select x from OLISResults x where x.uuid=?");
-		query.setParameter(1, uuid);
-		
-		return this.getSingleResultOrNull(query);
-	}
+public interface OLISResultsDao extends AbstractDao<OLISResults> {
+    boolean hasExistingResult(String requestingHICProviderNo, String queryType, String hash);
+    List<OLISResults> getResultList(String requestingHICProviderNo, String queryType);
+    OLISResults findByUUID(String uuid);
 }

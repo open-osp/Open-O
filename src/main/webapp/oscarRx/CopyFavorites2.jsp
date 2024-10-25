@@ -39,7 +39,7 @@
     FavoritesPrivilegeDao favoritesPrivilegeDao = SpringUtils.getBean(FavoritesPrivilegeDao.class);
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 %>
-<html:html locale="true">
+<html:html lang="en">
     <head>
         <script type="text/javascript" src="<%= request.getContextPath()%>/js/global.js"></script>
         <title><bean:message key="SearchDrug.title.CopyFavorites" /></title>
@@ -225,21 +225,21 @@
                                         name="fldDurationUnit<%= i%>" class=tblRow>
                                         <option
                                             <%
-                                if (fav.getDurationUnit().equals("D")) {%>
+                                if ("D".equals(fav.getDurationUnit())) {%>
                                             selected="selected"
                                             <% }
                                             %>
                                             value="D">Day(s)</option>
                                         <option
                                             <%
-                                if (fav.getDurationUnit().equals("W")) {%>
+                                if ("W".equals(fav.getDurationUnit())) {%>
                                             selected="selected"
                                             <% }
                                             %>
                                             value="W">Week(s)</option>
                                         <option
                                             <%
-                                if (fav.getDurationUnit().equals("M")) {%>
+                                if ("M".equals(fav.getDurationUnit())) {%>
                                             selected="selected"
                                             <% }
                                             %>

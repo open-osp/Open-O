@@ -45,6 +45,7 @@ if(!authed) {
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <%
+	pageContext.setAttribute("labTypes", org.oscarehr.common.model.enumerator.LabType.values());
 String outcome = (String) request.getAttribute("outcome");
 %>
 
@@ -274,36 +275,12 @@ String outcome = (String) request.getAttribute("outcome");
 	<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img alt="alert" src="../../../images/icon_alertsml.gif"/></span>
 
 	<br><br>
-				<bean:message key="lab.ca.all.testUploader.labType" /><br>
+				<label for="type"><bean:message key="lab.ca.all.testUploader.labType" /></label><br>
 				<select name="type" id="type" onchange="selectOther()">
 					<option value="0">Select Lab Type:</option>
-					<option value="ALPHA">ALPHA</option>
-					<option value="CML">CML</option>
-					<option value="EPSILON">EPSILON/MHL</option>
-					<option value="ExcellerisON">Excelleris (Ontario)</option>
-					<option value="PATHL7"
-					<oscar:oscarPropertiesCheck property="PATHNET_LABS" value="yes">Selected</oscar:oscarPropertiesCheck>>EXCELLERIS</option>
-					<option value="GDML">GDML</option>
-					<option value="HHSEMR">HHSEMR</option>
-					<option value="HRMXML">HRM XML</option>
-					<option value="ICL">ICL</option>
-					<option value="IHAPOI">IHAPOI</option>
-					<option value="MDS">MDS/Lifelabs</option>
-					<option value="MEDVUE">MEDVUE</option>
-					<!-- <option value="HL7">HL7</option> -->
-					<option value="OLIS_HL7">OLIS HL7</option>
-					<option value="OSCAR_TO_OSCAR_HL7_V2">OSCAR_TO_OSCAR_HL7_V2</option>
-					<option value="PFHT">PFHT</option>
-					<option value="SIOUX">SIOUX</option>
-					<option value="TDIS">TDIS</option>
-					<option value="Spire">Spire</option>
-					<option value="OUL_R21">OUL_R21</option>
-					<option value="ORU_R01">ORU_R01</option>
-					<option value="BIOTEST">BioTest</option>
-					<option value="CLS">Calgary Lab Services (CLS)</option>
-					<option value="CDL">CDL</option>
-					<option value="TRUENORTH">TRUENORTH</option>
-					<option value="MEDITECH">MEDITECH</option>
+					<c:forEach items="${pageScope.labTypes}" var="type">
+						<option value="${type}">${type}</option>
+					</c:forEach>
 					<option value="OTHER">Other</option>
 				</select>
 			<br>

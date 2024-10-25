@@ -45,7 +45,7 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <link rel="stylesheet" type="text/css"
 	href="../oscarEncounter/encounterStyles.css">
-<html:html locale="true">
+<html:html lang="en">
 <script language="JavaScript" type="text/JavaScript">
 
 </script>

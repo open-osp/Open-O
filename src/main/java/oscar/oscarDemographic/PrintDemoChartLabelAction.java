@@ -50,7 +50,7 @@ public class PrintDemoChartLabelAction extends OscarAction {
 		
 		Provider provider = loggedInInfo.getLoggedInProvider();
         String curUser_no = loggedInInfo.getLoggedInProviderNo();
-        UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         UserProperty prop;
         String defaultPrinterName = "";
         Boolean silentPrint = false;

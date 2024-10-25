@@ -102,7 +102,7 @@
 	if (request.getParameter("priority") != null) priority = request.getParameter("priority");
 	if (request.getParameter("recall") != null) recall = true;
 
-	UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+	UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
 	UserProperty prop = propertyDao.getProp(user_no, "tickler_task_assignee");
 
 //don't over ride taskTo query param
@@ -158,8 +158,9 @@
 <%@ page import="org.oscarehr.common.model.UserProperty" %>
 <%@ page import="org.oscarehr.PMmodule.dao.ProgramProviderDAO" %>
 <%@ page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 	<head>
 		<title><bean:message key="tickler.ticklerAdd.title"/></title>
 
@@ -377,7 +378,7 @@
 
 						<div class="input-group">
 							<input type="text" class="form-control" name="keyword" placeholder="Search Demographic"
-							       size="25" value="<%=demoName%>">
+							       size="25" value="<%=Encode.forHtmlAttribute(demoName)%>">
 							<span class="input-group-btn">
                             <input type="submit" name="Submit" class="btn btn-default"
                                    value="<bean:message key="tickler.ticklerAdd.btnSearch"/>">
@@ -473,7 +474,7 @@
 					<td class="tickler-label"><bean:message key="tickler.ticklerAdd.assignTaskTo"/>:</td>
 					<td>
 						<% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) { // multisite start ==========================================
-							SiteDao siteDao = (SiteDao) WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+							SiteDao siteDao = (SiteDao) WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
 							List<Site> sites = siteDao.getActiveSitesByProviderNo(user_no);
 							String appNo = (String) session.getAttribute("cur_appointment_no");
 							String location = null;
@@ -594,8 +595,8 @@
 									proOHIP = p.getProviderNo();
 
 							%>
-							<option value="<%=proOHIP%>" <%=taskTo.equals(proOHIP) ? "selected" : ""%>><%=proLast%>
-								, <%=proFirst%>
+							<option value="<%=proOHIP%>" <%=taskTo.equals(proOHIP) ? "selected" : ""%>><%=Encode.forHtmlContent(proLast)%>
+								, <%=Encode.forHtmlContent(proFirst)%>
 							</option>
 							<%
 								}

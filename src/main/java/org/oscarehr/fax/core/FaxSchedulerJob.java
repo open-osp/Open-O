@@ -23,22 +23,102 @@
  */
 package org.oscarehr.fax.core;
 
+import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.annotation.PreDestroy;
+
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.util.MiscUtils;
+import org.springframework.stereotype.Component;
+
+import oscar.OscarProperties;
+
+@Component
 public class FaxSchedulerJob extends TimerTask {
+	private static final Logger logger = MiscUtils.getLogger();
+
+	/*
+	 * This Java code defines a static variable 'isRunning' along with static getter and setter methods within the FaxSchedulerJob class.
+	 * This variable is used to determine whether the fax scheduler is currently running or not.
+     * By utilizing a static variable and associated static methods, it allows for checking the scheduler status without the need for creating instances of the FaxSchedulerJob class.
+	 * To check the scheduler status, one can simply invoke the static method 'isRunning()' using the class name, like so: FaxSchedulerJob.isRunning().
+	 */
+	private static boolean isRunning = false;
+
+	private static final String FAX_POLL_INTERVAL_KEY = "faxPollInterval";
+	private static Timer timer;
+	private static TimerTask timerTask = null;
 
 	@Override
 	public void run() {
-		
-		FaxImporter faxImporter = new FaxImporter();
-		faxImporter.poll();
-		
-		FaxSender faxSender = new FaxSender();
-		faxSender.send();
-		
-		FaxStatusUpdater faxStatusUpdater = new FaxStatusUpdater();
-		faxStatusUpdater.updateStatus();
+		try {
+			FaxImporter faxImporter = new FaxImporter();
+			faxImporter.poll();
+			
+			FaxSender faxSender = new FaxSender();
+			faxSender.send();
+			
+			FaxStatusUpdater faxStatusUpdater = new FaxStatusUpdater();
+			faxStatusUpdater.updateStatus();
 
+			setRunning(true);
+		} catch (Exception e) {
+			/*
+			* Catching any unexpected exception thrown by these methods here and logging it.
+			* Also, cancelling the thread so that an admin has to manually reboot the scheduler
+			* or restart the system to start the task again. Doing this because it would not be good
+			* to keep running the thread even after it throws an unknown error, which may lead to the
+			* fax scheduler going haywire.
+			*/
+			cancel();
+			logger.error("Fax scheduler has been stopped due to an unexpected error", e);
+			setRunning(false);
+
+			/*
+			 * Rethrowing the caught exception to ensure termination of the thread.
+			 */
+			throw e;
+		}
+	}
+
+	public synchronized void restartTask() {
+		cancelTask();
+		startTask();
+	}
+	
+	private synchronized void startTask() {
+		if (isRunning) { return; }
+		String faxPollInterval = (String) OscarProperties.getInstance().get(FAX_POLL_INTERVAL_KEY);
+		long period = 60000;
+		try {
+			period = Long.parseLong(faxPollInterval);
+		} catch (Exception e) {
+			logger.error("FaxSchedularJob not scheduled, period is missing or invalid in properties file : " + FAX_POLL_INTERVAL_KEY + ": " + faxPollInterval, e);
+			logger.error("Setting period to default: 60000 ms");
+		}
+		timerTask = new FaxSchedulerJob();
+		timer = new Timer("FaxSchedulerJob Timer");
+		timer.schedule(timerTask, 3000, period);
+	}
+
+	@PreDestroy
+	private synchronized void cancelTask() {
+		if (timerTask != null) { 
+			timerTask.cancel(); 
+			timer.cancel();
+		} else {
+			this.cancel();
+		}
+		setRunning(false);
+	}
+
+	public static Boolean isRunning() {
+		return isRunning;
+	}
+
+	public static void setRunning(Boolean isFaxSchedulerRunning) {
+		isRunning = isFaxSchedulerRunning;
 	}
 
 }

@@ -27,7 +27,7 @@
 <%@page import="oscar.OscarProperties"%>
 <%@page import="java.util.*" %>
 <%@page import="oscar.oscarRx.data.RxPrescriptionData" %>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-bean" prefix="bean"%>
+<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");

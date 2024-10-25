@@ -34,7 +34,7 @@
 
 <%@page import="oscar.login.LoginAction"%><h2>Please select which facility you would like to currently work in</h2> 
 <%
-	FacilityDao facilityDao=(FacilityDao)SpringUtils.getBean("facilityDao");
+	FacilityDao facilityDao=(FacilityDao)SpringUtils.getBean(FacilityDao.class);
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     		
 	Provider provider=(Provider)session.getAttribute("provider");

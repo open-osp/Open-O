@@ -1,0 +1,56 @@
+services:
+  oscar:
+    image: openosp/open-osp:latest
+    build: development
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../.:/workspace
+#      - m2-volume:/root/.m2
+      - ~/.m2:/root/.m2
+    env_file:
+      - ./development/config/shared/local.env
+    environment:
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US:en
+      TZ: America/Toronto
+    networks:
+      - oscar-network
+    depends_on:
+      - db
+
+  db:
+    build:
+      context: ./../
+      dockerfile: ./.devcontainer/db/Dockerfile
+    env_file:
+      - ./development/config/shared/local.env
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-files:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: drugref2
+      MYSQL_USER: oscar
+      TZ: America/Toronto
+      container: docker
+    networks:
+      - oscar-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "2"
+
+volumes:
+  mariadb-files:
+    driver: local
+
+  m2-volume:
+    driver: local
+
+networks:
+  oscar-network:
+    driver: bridge
+    name: oscar-network

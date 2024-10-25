@@ -34,13 +34,17 @@
 <%@page import="org.oscarehr.common.model.UserProperty" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 <%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="org.oscarehr.provider.web.CppPreferencesUIBean" %>
 <%@page import="org.oscarehr.casemgmt.common.Colour" %>
 <%@page import="org.oscarehr.common.dao.ProviderDataDao" %>
 <%@page import="org.oscarehr.common.model.ProviderData"%>
-<%@page import="java.util.List"%>
+<%@page import="org.owasp.encoder.Encode" %>
+<%@page import="java.util.List, java.util.Random"%>
 
 
 <%
+	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+
     String roleName = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 
     oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
@@ -56,17 +60,30 @@
 
     String encTimeMandatoryValue = OscarProperties.getInstance().getProperty("ENCOUNTER_TIME_MANDATORY","false");
 
+	CppPreferencesUIBean cppPreferences = new CppPreferencesUIBean(loggedInInfo.getLoggedInProviderNo());
+	cppPreferences.loadValues();
+	pageContext.setAttribute("cppPreferences", cppPreferences, PageContext.PAGE_SCOPE);
 %>
-<html:html locale="true">
+<!DOCTYPE html>
+<html:html lang="en">
 <head>
 	<title>
 		Encounter
 	</title>
 <c:set var="ctx" value="${pageContext.request.contextPath}"	scope="request" />
 <link rel="stylesheet" href="<c:out value="${ctx}"/>/css/encounterStyles.css" type="text/css">
+
+	<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/library/jquery/jquery-ui-1.12.1.min.css" />
+	<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/css/oscarRx.css" />">
+	<!-- calendar stylesheet -->
+	<link rel="stylesheet" type="text/css" media="all" href="<c:out value="${ctx}"/>/share/calendar/calendar.css" title="win2k-cold-1">
+	<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/js/messenger/messenger.css"/>
+	<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/js/messenger/messenger-theme-future.css"/>
+	<link rel="stylesheet" href="<c:out value="${ctx}"/>/css/encounterStyles.css" type="text/css">
 	<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/css/print.css" media="print">
 
- <script src="<c:out value="${ctx}/js/jquery-1.7.1.min.js"/>"></script>
+ <script type="text/javascript" src="<c:out value="${ctx}/js/jquery-1.7.1.min.js"/>"></script>
+	<script type="text/javascript" src="<c:out value="${ctx}/library/jquery/jquery-ui-1.12.1.min.js" />"></script>
 <script type="text/javascript">
      jQuery.noConflict();
 </script>
@@ -76,18 +93,11 @@
 
 <script type="text/javascript" src="<c:out value="${ctx}"/>/js/messenger/messenger.js"> </script>
 <script type="text/javascript" src="<c:out value="${ctx}"/>/js/messenger/messenger-theme-future.js"> </script>
-<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/js/messenger/messenger.css"> </link>
-<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/js/messenger/messenger-theme-future.css"> </link>
-
 <script type="text/javascript" src="newEncounterLayout.js.jsp"> </script>
 	
 <%-- for popup menu of forms --%>
 <script src="<c:out value="${ctx}"/>/share/javascript/popupmenu.js" type="text/javascript"></script>
 <script src="<c:out value="${ctx}"/>/share/javascript/menutility.js" type="text/javascript"></script>
-
-
-<!-- calendar stylesheet -->
-<link rel="stylesheet" type="text/css" media="all" href="<c:out value="${ctx}"/>/share/calendar/calendar.css" title="win2k-cold-1">
 
 <!-- main calendar program -->
 <script type="text/javascript" src="<c:out value="${ctx}"/>/share/calendar/calendar.js"></script>
@@ -104,13 +114,6 @@
 <!-- scriptaculous based select box -->
 <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/select.js"/>"></script>
 
-<!-- phr popups -->
-<%--<script type="text/javascript" src="<c:out value="${ctx}/phr/phr.js"/>"></script>--%>
-
-
-<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/css/oscarRx.css" />">
-
-
 <script type="text/javascript">
 var Colour = {
 	prevention: '<%=Colour.getInstance().prevention%>',
@@ -123,6 +126,7 @@ var Colour = {
 	messages: '<%=Colour.getInstance().messages%>',
 	measurements: '<%=Colour.getInstance().measurements%>',
 	consultation: '<%=Colour.getInstance().consultation%>',
+	hrmDocuments: '<%=Colour.getInstance().hrmDocuments%>',
 	allergy: '<%=Colour.getInstance().allergy%>',
 	rx: '<%=Colour.getInstance().rx%>',
 	omed: '<%=Colour.getInstance().omed%>',
@@ -131,11 +135,13 @@ var Colour = {
 	unresolvedIssues: '<%=Colour.getInstance().unresolvedIssues%>',
 	resolvedIssues: '<%=Colour.getInstance().resolvedIssues%>',
 	episode: '<%=Colour.getInstance().episode%>',
-	pregancies: '<%=Colour.getInstance().episode%>'
+	pregancies: '<%=Colour.getInstance().episode%>',
+	contacts: '<%=Colour.getInstance().contacts%>'
 };
 </script>
 
 
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/validateTextInputs.js"></script>
 <!--js code for newCaseManagementView.jsp -->
 <script type="text/javascript" src="<c:out value="${ctx}/js/newCaseManagementView.js.jsp"/>"></script>
 
@@ -152,14 +158,11 @@ var Colour = {
 <% if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", "true")) { %>
 	<link rel="stylesheet" href="<c:out value="${ctx}/casemgmt/noteProgram.css" />" />
 	<script type="text/javascript" src="<c:out value="${ctx}/casemgmt/noteProgram.js" />"></script>
-<% } 
-
-LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-%>
+<% } %>
 
 <script type="text/javascript">
 
-    jQuery(document).ready(function() {
+    jQuery(document).on("ready", function() {
            <%
   if( loggedInInfo.getLoggedInProvider().getProviderType().equals("resident"))  {
 %>    
@@ -337,52 +340,27 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
         var savedNoteId=0;
    </script>
 
-<script type="text/javascript" src=" ${ctx}/jspspellcheck/spellcheck-caller.js" ></script>
-<script>
-	function spellCheck()
-    {
-		// Build an array of form elements (not there values)
-        var elements = new Array(0);
-
-        // Your form elements that you want to have spell checked
-        elements[elements.length] = document.getElementById(caseNote);
-
-        // Start the spell checker
-        startSpellCheck(ctx + '\/jspspellcheck\/', elements);
-	}
-</script>
-
 <!-- set size of window if customized in preferences -->
 <%
-	UserPropertyDAO uPropDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
-	
+	UserPropertyDAO uPropDao = SpringUtils.getBean(UserPropertyDAO.class);
 	String providerNo=loggedInInfo.getLoggedInProviderNo();
 	UserProperty widthP = uPropDao.getProp(providerNo, "encounterWindowWidth");
 	UserProperty heightP = uPropDao.getProp(providerNo, "encounterWindowHeight");
 	UserProperty maximizeP = uPropDao.getProp(providerNo, "encounterWindowMaximize");
 
-	if(maximizeP != null && maximizeP.getValue().equals("yes")) {
-		%><script> jQuery(document).ready(function(){window.resizeTo(screen.width,screen.height);});</script>
-<%
-	} else if(widthP != null && widthP.getValue().length()>0 && heightP != null && heightP.getValue().length()>0) {
+	if(maximizeP != null && maximizeP.getValue().equals("yes")) {%>
+		<script> jQuery(window).load(function(){window.resizeTo(screen.width,screen.height);});</script>
+	<% } else if(widthP != null && !widthP.getValue().isEmpty() && heightP != null && !heightP.getValue().isEmpty()) {
 		String width = widthP.getValue();
-		String height = heightP.getValue();
-		%>
-<script> jQuery(document).ready(function(){
-    
-    window.resizeTo(<%=width%>,<%=height%>);
+		String height = heightP.getValue();%>
+		<script> jQuery(window).load(function(){window.resizeTo(<%=width%>,<%=height%>)}) </script>
+	<% } %>
 
-        
-   }   
-);
-
-    		
-
-</script>
-<%
-	}
-%>
-<oscar:customInterface section="cme" />
+<!-- Instead of importing cme.js using the CME tag (as done in Oscar19/OscarPro), we are opting to directly import cme.js without utilizing the CME tag. -->
+<% if ("ocean".equals(OscarProperties.getInstance().get("cme_js"))) { 
+	int randomNo = new Random().nextInt();%>
+<script id="mainScript" src="${ pageContext.request.contextPath }/js/custom/ocean/cme.js?no-cache=<%=randomNo%>&autoRefresh=true" ocean-host=<%=Encode.forUriComponent(OscarProperties.getInstance().getProperty("ocean_host"))%>></script>
+<% } %>
 
 <html:base />
 <title><bean:message key="oscarEncounter.Index.title" /></title>
@@ -451,24 +429,16 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
         month[10] = "<bean:message key="share.CalendarPopUp.msgNov"/>";
         month[11] = "<bean:message key="share.CalendarPopUp.msgDec"/>";
 
-function init() {
-	//scrollDownInnerBar();
+
+jQuery(window).on("load", function() {
+
 	viewFullChart(false);
-    showIssueNotes();
 
     var navBars = new navBarLoader();
     navBars.load();
 
-    monitorNavBars(null);
+	getPreferenceBasedEChart();
 
-    Element.observe(window, "resize", monitorNavBars);
-    
-    // if(!NiftyCheck()) {
-    //     return;
-    // }
-	//
-    // Rounded("div.showEdContent","all","transparent","#CCCCCC","big border #000000");
-    // Rounded("div.printOps","all","transparent","#CCCCCC","big border #000000");
     Calendar.setup({ inputField : "printStartDate", ifFormat : "%d-%b-%Y", showsTime :false, button : "printStartDate_cal", singleClick : true, step : 1 });
     Calendar.setup({ inputField : "printEndDate", ifFormat : "%d-%b-%Y", showsTime :false, button : "printEndDate_cal", singleClick : true, step : 1 });
 
@@ -478,17 +448,76 @@ function init() {
         <c:param name="providerNo" value="${providerNo}" />
         <c:param name="all" value="true" />
     </c:url>
-    var issueAutoCompleterCPP = new Ajax.Autocompleter("issueAutocompleteCPP", "issueAutocompleteListCPP", "<c:out value="${issueURLCPP}" />", {minChars: 3, indicator: 'busy2', afterUpdateElement: addIssue2CPP, onShow: autoCompleteShowMenuCPP, onHide: autoCompleteHideMenuCPP});    
+
+    <%--var issueAutoCompleterCPP = new Ajax.Autocompleter("issueAutocompleteCPP", "issueAutocompleteListCPP",--%>
+	<%--    "<c:out value="${issueURLCPP}" />", {minChars: 3, indicator: 'busy2', afterUpdateElement: addIssue2CPP,--%>
+	<%--	    onShow: autoCompleteShowMenuCPP, onHide: autoCompleteHideMenuCPP});--%>
     
     <nested:notEmpty name="DateError">
         alert("<nested:write name="DateError"/>");
     </nested:notEmpty>
+
+})
+
+/*
+ * Show and hide CPP categories according to user preferences, and display Social History, Medical History, Ongoing Concerns, and Reminders at user-specified positions
+ */
+function getPreferenceBasedEChart() {
+	const isCppPreferencesEnabled = '<c:out value="${cppPreferences.enable}" />';
+	if (isCppPreferencesEnabled !== 'on') {
+		showIssueNotes();
+		return;
+	}
+
+	const socialHxPosition = '<c:out value="${cppPreferences.socialHxPosition}" />';
+	const medicalHxPosition = '<c:out value="${cppPreferences.medicalHxPosition}" />';
+	const ongoingConcernsPosition = '<c:out value="${cppPreferences.ongoingConcernsPosition}" />';
+	const remindersPosition = '<c:out value="${cppPreferences.remindersPosition}" />';
+	showCustomIssueNotes(socialHxPosition, medicalHxPosition, ongoingConcernsPosition, remindersPosition);
+
+	const preventionsDisplay = '<c:out value="${cppPreferences.preventionsDisplay}" />';
+	const dxRegistryDisplay = '<c:out value="${cppPreferences.dxRegistryDisplay}" />';
+	const formsDisplay = '<c:out value="${cppPreferences.formsDisplay}" />';
+	const eformsDisplay = '<c:out value="${cppPreferences.eformsDisplay}" />';
+	const documentsDisplay = '<c:out value="${cppPreferences.documentsDisplay}" />';
+	const labsDisplay = '<c:out value="${cppPreferences.labsDisplay}" />';
+	const measurementsDisplay = '<c:out value="${cppPreferences.measurementsDisplay}" />';
+	const consultationsDisplay = '<c:out value="${cppPreferences.consultationsDisplay}" />';
+	const hrmDisplay = '<c:out value="${cppPreferences.hrmDisplay}" />';
+
+	const allergiesDisplay = '<c:out value="${cppPreferences.allergiesDisplay}" />';
+	const medicationsDisplay = '<c:out value="${cppPreferences.medicationsDisplay}" />';
+	const otherMedsDisplay = '<c:out value="${cppPreferences.otherMedsDisplay}" />';
+	const riskFactorsDisplay = '<c:out value="${cppPreferences.riskFactorsDisplay}" />';
+	const familyHxDisplay = '<c:out value="${cppPreferences.familyHxDisplay}" />';
+	const unresolvedIssuesDisplay = '<c:out value="${cppPreferences.unresolvedIssuesDisplay}" />';
+	const resolvedIssuesDisplay = '<c:out value="${cppPreferences.resolvedIssuesDisplay}" />';
+	const episodesDisplay = '<c:out value="${cppPreferences.episodesDisplay}" />';
+
+	// If any display variable is empty, it means that the corresponding cpp is hidden
+	if (!preventionsDisplay) { hideCpp('preventions'); }
+	if (!dxRegistryDisplay) { hideCpp('Dx'); }
+	if (!formsDisplay) { hideCpp('forms'); }
+	if (!eformsDisplay) { hideCpp('eforms'); }
+	if (!documentsDisplay) { hideCpp('docs'); }
+	if (!labsDisplay) { hideCpp('labs'); }
+	if (!measurementsDisplay) { hideCpp('measurements'); }
+	if (!consultationsDisplay) { hideCpp('consultation'); }
+	if (!hrmDisplay) { hideCpp('HRM'); }
+
+	if (!allergiesDisplay) { hideCpp('allergies'); }
+	if (!medicationsDisplay) { hideCpp('Rx'); }
+	if (!otherMedsDisplay) { hideCpp('OMeds'); }
+	if (!riskFactorsDisplay) { hideCpp('RiskFactors'); }
+	if (!familyHxDisplay) { hideCpp('FamHistory'); }
+	if (!unresolvedIssuesDisplay) { hideCpp('unresolvedIssues'); }
+	if (!resolvedIssuesDisplay) { hideCpp('resolvedIssues'); }
+	if (!episodesDisplay) { hideCpp('episode'); }
 }
 
 function doscroll(){
-	x=document.body.scrollHeight;
-	x=x+99999
-	window.scrollTo(0,x);
+	let bodyScroll = document.body.scrollHeight + 99999;
+	window.scrollTo(0,bodyScroll);
 }
 	
 window.onbeforeunload = onClosing;
@@ -497,26 +526,12 @@ window.onbeforeunload = onClosing;
 </script>
 </head>
 <body id="body">
-<div id="newEncounterLayoutWrapper">
-	<%--
-	<caisi:isModuleLoad moduleName="eaaps.enabled">
-		<div id="eaaps" style="display: none;">
-			  <div id="basic-template">
-		      <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-		      <h1>TITLE</h1>
-		      <p>text</p>
-	   </div>
+<jsp:include page="../images/spinner.jsp" flush="true"/>
+<div id="header" >
+	<tiles:insert attribute="header" />
+</div>
 
-			<!-- jsp : include page="/eaaps/status.jsp">< / jsp : include -->
-		</div>
-	</caisi:isModuleLoad>
-	--%>
-	 
-	<div id="header" class="row">
-		<tiles:insert attribute="header" />
-	</div>
-
-	<div id="navigation-layout" class="row">
+	<div id="navigation-layout" >
 		<div id="rightNavBar">
 			<tiles:insert attribute="rightNavigation" />
 		</div>
@@ -539,8 +554,9 @@ window.onbeforeunload = onClosing;
 			<input type="hidden" id="archived" name="archived" value="false">
 			<input type="hidden" id="annotation_attrib" name="annotation_attrib">
 			<h3 id="winTitle"></h3>
-			<textarea style="margin: 10px;" cols="50" rows="15" id="noteEditTxt"
-				name="value"></textarea>
+
+			<textarea  cols="50" rows="15" id="noteEditTxt"
+				name="value" class="boxsizingBorder"></textarea>
 			<br>
 
 			<table>
@@ -634,9 +650,11 @@ window.onbeforeunload = onClosing;
 					</select></td>
 				</tr>
 			</table>
+			<div class="control-panel">
 			<input type="hidden" id="startTag" value='<bean:message key="oscarEncounter.Index.startTime"/>'>
 			<input type="hidden" id="endTag" value='<bean:message key="oscarEncounter.Index.endTime"/>'>
-			<br> <span style="float: right; margin-right: 10px;"> <input
+			<br> <span style="float: right; margin-right: 10px;">
+				<input
 				type="image"
 				src="<c:out value="${ctx}/oscarEncounter/graphics/copy.png"/>"
 				title='<bean:message key="oscarEncounter.Index.btnCopy"/>'
@@ -657,25 +675,31 @@ window.onbeforeunload = onClosing;
 				title='<bean:message key="global.btnExit"/>'
 				onclick="this.focus();$('channel').style.visibility ='visible';$('showEditNote').style.display='none';return false;">
 			</span>
+				<label for="position">
 			<bean:message key="oscarEncounter.Index.btnPosition" />
-			<select id="position" name="position"><option id="popt0"
-					value="0">1</option>
+				</label>
+			<select id="position" name="position">
+				<option id="popt0" value="0">1</option>
 			</select>
-			<div id="issueNoteInfo" style="clear: both; text-align: left;"></div>
+			</div>
+			<div id="issueNoteInfo"></div>
 			<div id="issueListCPP"
 				style="background-color: #FFFFFF; height: 200px; width: 350px; position: absolute; z-index: 1; display: none; overflow: auto;">
-				<div class="enTemplate_name_auto_complete"
+				<div class="enTemplate_name_auto_complete issueAutocompleteList"
 					id="issueAutocompleteListCPP"
-					style="position: relative; left: 0px; display: none;"></div>
+					style="position: relative; left: 0; display: none;"></div>
 			</div>
+			<div class="add-issues">
+			<label for="issueAutocompleteCPP">
 			<bean:message key="oscarEncounter.Index.assnIssue" />
-			&nbsp;<input tabindex="100" type="text" id="issueAutocompleteCPP"
+			</label>
+			&nbsp;<input tabindex="100" type="text" id="issueAutocompleteCPP" class="issueAutocomplete"
 				name="issueSearch" style="z-index: 2;" size="25">&nbsp; <span
 				id="busy2" style="display: none"><img
 				style="position: absolute;"
 				src="<c:out value="${ctx}/oscarEncounter/graphics/busy.gif"/>"
 				alt="<bean:message key="oscarEncounter.Index.btnWorking"/>"></span>
-
+			</div>
 		</form>
 	</div>
 	<div id="printOps" class="printOps">
@@ -829,8 +853,7 @@ if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", 
 %>
 		</form>
 	</div>
-</div>
-<div id="encounterModal" ></div>
+	<div id="encounterModal" ></div>
 <%
     String apptNo = request.getParameter("appointmentNo");
     if( OscarProperties.getInstance().getProperty("resident_review", "false").equalsIgnoreCase("true") && 

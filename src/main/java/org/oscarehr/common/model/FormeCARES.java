@@ -34,7 +34,7 @@ import java.util.Date;
 public class FormeCARES  extends AbstractModel<Integer> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name="demographic_no")
     private int demographicNo;

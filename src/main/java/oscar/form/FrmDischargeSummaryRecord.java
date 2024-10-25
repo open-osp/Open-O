@@ -128,7 +128,7 @@ public class FrmDischargeSummaryRecord extends FrmRecord {
             
             
 
-            AllergyDao allergyDao=(AllergyDao) SpringUtils.getBean("allergyDao");
+            AllergyDao allergyDao=(AllergyDao) SpringUtils.getBean(AllergyDao.class);
             List<Allergy> allergies=allergyDao.findAllergies(demographicNo);
 			StringBuilder allergiesString = new StringBuilder();
 			for (Allergy allergy : allergies) {

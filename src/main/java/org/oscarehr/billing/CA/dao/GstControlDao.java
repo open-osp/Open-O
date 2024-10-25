@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 
@@ -36,16 +39,8 @@ import org.springframework.stereotype.Repository;
  *
  * @author rjonasz
  */
-@Repository
-public class GstControlDao extends AbstractDao<GstControl> {
 
-    public GstControlDao() {
-        super(GstControl.class);
-    }
-    
-	@SuppressWarnings("unchecked")
-	public List<GstControl> findAll() {
-		Query query = createQuery("x", null);
-		return query.getResultList();
-	}
+public interface GstControlDao extends AbstractDao<GstControl> {
+
+	public List<GstControl> findAll();
 }

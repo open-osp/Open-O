@@ -87,7 +87,7 @@
 
 <%
 LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);
 AppointmentStatusDao appointmentStatusDao = SpringUtils.getBean(AppointmentStatusDao.class);
 LookupListManager lookupListManager = SpringUtils.getBean(LookupListManager.class);
@@ -101,7 +101,7 @@ for(LookupListItem lli:reasonCodes.getItems()) {
 
 	if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
 		SiteDao siteDao = (SiteDao) WebApplicationContextUtils.getWebApplicationContext(application)
-				.getBean("siteDao");
+				.getBean(SiteDao.class);
 		sites = siteDao.getAllActiveSites();
 		//get all sites bgColors
 		for (Site st : sites) {
@@ -130,7 +130,7 @@ for(LookupListItem lli:reasonCodes.getItems()) {
 %>
 
 
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>

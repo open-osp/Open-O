@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
@@ -28,27 +31,11 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 import org.oscarehr.common.model.AppointmentType;
 
-@Repository
-public class AppointmentTypeDao extends AbstractDao<AppointmentType>{
+public interface AppointmentTypeDao extends AbstractDao<AppointmentType>{
 	
-	public AppointmentTypeDao() {
-		super(AppointmentType.class);
-	}
-	  
-   public List<AppointmentType> listAll() {
-	   	String sqlCommand = "select x from AppointmentType x order by x.name";
-		Query query = entityManager.createQuery(sqlCommand);
-						
-		@SuppressWarnings("unchecked")
-		List<AppointmentType> results=query.getResultList();
-		
-		return (results);  
-	  
-   }
+	
+   public List<AppointmentType> listAll();
     
-   public AppointmentType findByAppointmentTypeByName(String name) {
-	   Query query = entityManager.createQuery("from AppointmentType atype where atype.name = :_name").setParameter("_name", name);
-	   return this.getSingleResultOrNull(query);
-   }
+   public AppointmentType findByAppointmentTypeByName(String name);
 
 }

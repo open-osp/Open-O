@@ -39,7 +39,7 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 
 
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <title><bean:message key="admin.admin.scheduleOfBenefits"/></title>
@@ -106,7 +106,7 @@ function checkAll(formId){
 <div class="well">
 
 <div>
-1. Download the text file from <a href="http://www.health.gov.on.ca/en/pro/programs/ohip/sob/" target="_blank">OHIP Fee Schedule</a> and save it to your computer.
+1. Download the text file from <a href="https://www.health.gov.on.ca/en/pro/programs/ohip/sob/schedule_master/ohipfee_schedulemaster.txt" target="_blank">OHIP Fee Schedule</a> and save it to your computer.
 </div><!--#1-->
 
 <div>

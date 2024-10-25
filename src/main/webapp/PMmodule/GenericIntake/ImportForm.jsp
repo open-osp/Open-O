@@ -31,7 +31,7 @@
 <%@ include file="/taglibs.jsp"%>
 <%
     WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean("genericIntakeManager");
+    GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean(GenericIntakeManager.class);
  
     boolean isMultipart = FileUpload.isMultipartContent(request);
 	if(isMultipart) {

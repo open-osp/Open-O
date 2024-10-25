@@ -47,7 +47,7 @@
 <%
 	Episode episode = (Episode)request.getAttribute("episode");
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Episode Form</title>

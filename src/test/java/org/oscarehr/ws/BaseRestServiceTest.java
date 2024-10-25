@@ -42,7 +42,8 @@ import javax.xml.bind.Marshaller;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.cxf.jaxrs.ext.form.Form;
+//import org.apache.cxf.jaxrs.ext.form.Form;
+import javax.ws.rs.core.Form;
 import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
@@ -161,10 +162,10 @@ public abstract class BaseRestServiceTest {
 		client.replacePath("/login.do");
 
 		Form form = new Form();
-		form.set("username", userName);
-		form.set("password", password);
-		form.set("pin", pin);
-		form.set("propname", propName);
+		form.param("username", userName);
+		form.param("password", password);
+		form.param("pin", pin);
+		form.param("propname", propName);
 		// login
 		Response response = client.post(form);
 

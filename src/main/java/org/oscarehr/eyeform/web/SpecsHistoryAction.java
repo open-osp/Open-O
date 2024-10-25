@@ -73,7 +73,7 @@ public class SpecsHistoryAction extends DispatchAction {
     }
 
     public ActionForward form(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
     	
     	request.setAttribute("providers",providerDao.getActiveProviders());
 

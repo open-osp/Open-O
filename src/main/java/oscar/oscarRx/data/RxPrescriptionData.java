@@ -77,7 +77,7 @@ public class RxPrescriptionData {
 
 	public Prescription getPrescription(int drugId) {
 
-		DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
+		DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
 		Drug drug = drugDao.find(drugId);
 
 		Prescription prescription = new Prescription(drugId, drug.getProviderNo(), drug.getDemographicId());
@@ -1567,7 +1567,7 @@ public class RxPrescriptionData {
 
 		public void Delete() {
 			try {
-				DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
+				DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
 				Drug drug = drugDao.find(getDrugId());
 				if (drug != null) {
 					drug.setArchived(true);

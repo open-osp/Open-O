@@ -263,16 +263,16 @@
 
 
 <%
-ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 List<Provider> allProvidersList = providerDao.getActiveProviders(true); 
 
-//DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+//DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 //List allDemographics = demographicDao.getDemographics();
 
-OLISResultNomenclatureDao resultDao = (OLISResultNomenclatureDao) SpringUtils.getBean("OLISResultNomenclatureDao");
+OLISResultNomenclatureDao resultDao = (OLISResultNomenclatureDao) SpringUtils.getBean(OLISResultNomenclatureDao.class);
 List<OLISResultNomenclature> resultNomenclatureList = resultDao.findAll();
 
-OLISRequestNomenclatureDao requestDao = (OLISRequestNomenclatureDao) SpringUtils.getBean("OLISRequestNomenclatureDao");
+OLISRequestNomenclatureDao requestDao = (OLISRequestNomenclatureDao) SpringUtils.getBean(OLISRequestNomenclatureDao.class);
 List<OLISRequestNomenclature> requestNomenclatureList = requestDao.findAll();
 
 %>
@@ -355,7 +355,7 @@ List<OLISRequestNomenclature> requestNomenclatureList = requestDao.findAll();
 </td>
 </tr>
 <%
-	UserPropertyDAO upDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+	UserPropertyDAO upDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 	String providerNo = loggedInInfo.getLoggedInProviderNo();
 	UserProperty repLabProp = upDao.getProp(providerNo,"olis_reportingLab");
 	UserProperty exRepLabProp = upDao.getProp(providerNo,"olis_exreportingLab");

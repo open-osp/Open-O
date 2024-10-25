@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,65 +20,20 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.caisi.service;
 
 import java.util.List;
-
-import org.oscarehr.common.dao.FacilityMessageDao;
 import org.oscarehr.common.model.FacilityMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-public class FacilityMessageManager {
-
-	@Autowired
-	private FacilityMessageDao facilityMessageDao;	
-	
-	public FacilityMessage getMessage(String messageId) {
-		return facilityMessageDao.find(Integer.valueOf(messageId));
-	}
-	
-	public void saveFacilityMessage(FacilityMessage msg) {
-		if(msg.getId() == null || msg.getId().intValue() == 0) {
-			msg.setId(null);
-			facilityMessageDao.persist(msg);
-		} else {
-			facilityMessageDao.merge(msg);
-		}
-	}
-	
-	public List<FacilityMessage> getMessages() {
-		return facilityMessageDao.getMessages();
-	}
-
-	public List<FacilityMessage> getMessagesByFacilityId(Integer facilityId) {
-		if (facilityId == null || facilityId.intValue() == 0) {           
-        		return null;
-        	}
-		return facilityMessageDao.getMessagesByFacilityId(facilityId);
-	}
-	
-	public List<FacilityMessage> getMessagesByFacilityIdOrNull(Integer facilityId) {
-		if (facilityId == null || facilityId.intValue() == 0) {           
-        		return null;
-        	}
-		return facilityMessageDao.getMessagesByFacilityIdOrNull(facilityId);
-	}
-	
-	public List<FacilityMessage> getMessagesByFacilityIdAndProgramId(Integer facilityId, Integer programId) {
-		if (facilityId == null || facilityId.intValue() == 0) {           
-        		return null;
-        	}
-		return facilityMessageDao.getMessagesByFacilityIdAndProgramId(facilityId,programId);
-	}
-	
-	public List<FacilityMessage> getMessagesByFacilityIdOrNullAndProgramIdOrNull(Integer facilityId, Integer programId) {
-		if (facilityId == null || facilityId.intValue() == 0) {           
-        		return null;
-        	}
-		return facilityMessageDao.getMessagesByFacilityIdOrNullAndProgramIdOrNull(facilityId,programId);
-	}
+public interface FacilityMessageManager {
+    FacilityMessage getMessage(String messageId);
+    void saveFacilityMessage(FacilityMessage msg);
+    List<FacilityMessage> getMessages();
+    List<FacilityMessage> getMessagesByFacilityId(Integer facilityId);
+    List<FacilityMessage> getMessagesByFacilityIdOrNull(Integer facilityId);
+    List<FacilityMessage> getMessagesByFacilityIdAndProgramId(Integer facilityId, Integer programId);
+    List<FacilityMessage> getMessagesByFacilityIdOrNullAndProgramIdOrNull(Integer facilityId, Integer programId);
 }

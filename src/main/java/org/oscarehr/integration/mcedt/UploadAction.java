@@ -104,7 +104,7 @@ public class UploadAction extends DispatchAction {
 		List<UploadData> uploads = ActionUtils.getUploadList(request.getSession());
 		
 		try {
-			EDTDelegate delegate = DelegateFactory.newDelegate();
+			EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 			ResourceResult result = delegate.upload(uploads);
 			
 			clearSession(request);

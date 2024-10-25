@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,40 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.FormLabReq07;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class FormLabReq07Dao extends AbstractDao<FormLabReq07> {
-
-	public FormLabReq07Dao() {
-		super(FormLabReq07.class);
-	}
-	
-	public List<FormLabReq07> findCreatinine() {
-		Query q = entityManager.createQuery("select f from FormLabReq07 f where f.creatinine=?");
-		q.setParameter(1, true);
-		
-		@SuppressWarnings("unchecked")
-		List<FormLabReq07> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<FormLabReq07> findAcr() {
-		Query q = entityManager.createQuery("select f from FormLabReq07 f where f.acr=?");
-		q.setParameter(1, true);
-		
-		@SuppressWarnings("unchecked")
-		List<FormLabReq07> results = q.getResultList();
-		
-		return results;
-	}
+public interface FormLabReq07Dao extends AbstractDao<FormLabReq07> {
+	List<FormLabReq07> findCreatinine();
+	List<FormLabReq07> findAcr();
 }

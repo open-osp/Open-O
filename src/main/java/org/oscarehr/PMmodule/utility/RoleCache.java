@@ -40,8 +40,8 @@ import com.quatro.model.security.Secrole;
 
 public class RoleCache {
 	
-	static SecroleDao secroleDao = (SecroleDao)SpringUtils.getBean("secroleDao");
-	static DefaultRoleAccessDAO defaultRoleAccessDAO = (DefaultRoleAccessDAO)SpringUtils.getBean("defaultRoleAccessDAO");
+	static SecroleDao secroleDao = (SecroleDao)SpringUtils.getBean(SecroleDao.class);
+	static DefaultRoleAccessDAO defaultRoleAccessDAO = (DefaultRoleAccessDAO)SpringUtils.getBean(DefaultRoleAccessDAO.class);
 	static CaisiAccessTypeDao accessTypeDao = (CaisiAccessTypeDao)SpringUtils.getBean(CaisiAccessTypeDao.class);
 	
 	static Map<Long,Secrole> roleMap = new HashMap<Long,Secrole>();

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,43 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.ReportByExamplesFavorite;
-import org.springframework.stereotype.Repository;
 
-@Repository
-@SuppressWarnings("unchecked")
-public class ReportByExamplesFavoriteDao extends AbstractDao<ReportByExamplesFavorite>{
-
-	public ReportByExamplesFavoriteDao() {
-		super(ReportByExamplesFavorite.class);
-	}
-
-    public List<ReportByExamplesFavorite> findByQuery(String query) {
-		Query q = createQuery("ex", "ex.query LIKE :query");
-        q.setParameter("query", query);
-        return q.getResultList();
-    }
-
-	public List<ReportByExamplesFavorite> findByEverything(String providerNo, String favoriteName, String queryString) {
-		Query query = createQuery("ex", "ex.providerNo = :providerNo AND ex.name LIKE :name OR ex.query LIKE :query");
-        query.setParameter("providerNo", providerNo);
-        query.setParameter("name", favoriteName);
-        query.setParameter("query", queryString);
-        return query.getResultList();
-    }
-
-	public  List<ReportByExamplesFavorite> findByProvider(String providerNo) {
-		Query query = createQuery("ex", "ex.providerNo = :providerNo");
-        query.setParameter("providerNo", providerNo);
-        return query.getResultList();
-    }
+public interface ReportByExamplesFavoriteDao extends AbstractDao<ReportByExamplesFavorite> {
+    List<ReportByExamplesFavorite> findByQuery(String query);
+    List<ReportByExamplesFavorite> findByEverything(String providerNo, String favoriteName, String queryString);
+    List<ReportByExamplesFavorite> findByProvider(String providerNo);
 }

@@ -50,7 +50,7 @@ String connection = ((request.getParameter("connection")==null ||request.getPara
 	<title>Uploading Claims from Oscar to MCEDT</title>
 	<script src="../js/jquery-1.7.1.min.js"></script>
 	<link href="mailbox/css/mcedt.css" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,900" rel="stylesheet" type="text/css">
+
 
 	<script type="text/javascript" >
 

@@ -23,14 +23,8 @@
  */
 package org.oscarehr.common.model;
 
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 public class LookupListItem extends AbstractModel<Integer> {
@@ -71,6 +65,9 @@ public class LookupListItem extends AbstractModel<Integer> {
 	}
 
 	public String getLabel() {
+		if(label == null) {
+			return "";
+		}
 		return label;
 	}
 

@@ -90,7 +90,7 @@ public class FormUpdateAction extends Action {
 
 		WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(session.getServletContext());
 
-		FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx.getBean("flowSheetCustomizationDao");
+		FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx.getBean(FlowSheetCustomizationDao.class);
 
 		List<FlowSheetCustomization> custList = flowSheetCustomizationDao.getFlowSheetCustomizations(temp, providerNo, Integer.parseInt(demographic_no));
 
@@ -201,10 +201,10 @@ public class FormUpdateAction extends Action {
 	public void addNote(String demographic_no, String providerNo, String prog_no, String note, int apptNoInt, HttpServletRequest request){
 		HttpSession session = request.getSession();
 		WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(session.getServletContext());
-		CaseManagementManager cmm = (CaseManagementManager) ctx.getBean("caseManagementManager");
+		CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
 
 		
-		SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean("secRoleDao");
+		SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean(SecRoleDao.class);
 		SecRole doctorRole = secRoleDao.findByName("doctor");
 		String reporter_caisi_role=doctorRole.getId().toString();
 
@@ -244,7 +244,7 @@ public class FormUpdateAction extends Action {
 		String providerNo = (String) session.getAttribute("user");
 		String comments = comment;
 		
-		MeasurementDao measurementDao = (MeasurementDao) SpringUtils.getBean("measurementDao");
+		MeasurementDao measurementDao = (MeasurementDao) SpringUtils.getBean(MeasurementDao.class);
 
 		Measurement measurement = new Measurement();
 		measurement.setDemographicId(Integer.parseInt(demographicNo));
@@ -351,7 +351,7 @@ public class FormUpdateAction extends Action {
 				measurement.setProviderNo(providerNo);
 
 				//Find if the same data has already been entered into the system
-				MeasurementDao measurementDao = (MeasurementDao) SpringUtils.getBean("measurementDao");
+				MeasurementDao measurementDao = (MeasurementDao) SpringUtils.getBean(MeasurementDao.class);
 				List<Measurement> measurements = measurementDao.findMatching(measurement);
 				
 				if (measurements.size() == 0) {

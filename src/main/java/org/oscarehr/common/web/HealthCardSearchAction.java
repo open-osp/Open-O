@@ -44,7 +44,7 @@ public class HealthCardSearchAction extends DispatchAction {
         	throw new SecurityException("missing required security object (_demographic)");
         }
 		
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 		List<Demographic> matches = demographicDao.getDemographicsByHealthNum(hin);
 		
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();

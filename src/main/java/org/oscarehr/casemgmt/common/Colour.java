@@ -62,6 +62,7 @@ public class Colour {
     public  String eForms = "008000";
     public  String documents = "476BB3";
     public  String labs = "A0509C";
+    public  String hrmDocuments = "6699CC";
     public  String messages = "7F462C";
     public  String measurements = "344887";
     public  String rx="7D2252";
@@ -81,4 +82,5 @@ public class Colour {
     public  String contacts="045228";
     public  String ticklerNotes="FF6600";
     public String externalNotes="005151";
+    public  String emailNotes="345553";
 }

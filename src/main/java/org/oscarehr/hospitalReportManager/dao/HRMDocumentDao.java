@@ -16,12 +16,12 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.hospitalReportManager.model.HRMDocument;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class HRMDocumentDao extends AbstractDao<HRMDocument> {
+public class HRMDocumentDao extends AbstractDaoImpl<HRMDocument> {
 
 	public HRMDocumentDao() {
 	    super(HRMDocument.class);
@@ -30,7 +30,7 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
 	public List<HRMDocument> findById(int id) {
 		String sql = "select x from " + this.modelClass.getName() + " x where x.id=?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, id);
+		query.setParameter(0, id);
 		@SuppressWarnings("unchecked")
 		List<HRMDocument> documents = query.getResultList();
 		return documents;
@@ -60,7 +60,7 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
 	public List<Integer> findByHash(String hash) {
 		String sql = "select distinct id from " + this.modelClass.getName() + " x where x.reportHash=?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, hash);
+		query.setParameter(0, hash);
 		@SuppressWarnings("unchecked")
 		List<Integer> matches = query.getResultList();
 		return matches;
@@ -69,7 +69,7 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
 	public List<HRMDocument> findByNoTransactionInfoHash(String hash) {
 		String sql = "select x from " + this.modelClass.getName() + " x where x.reportLessTransactionInfoHash=?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, hash);
+		query.setParameter(0, hash);
 		@SuppressWarnings("unchecked")
 		List<HRMDocument> matches = query.getResultList();
 		return matches;
@@ -79,13 +79,13 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
     public List<Integer> findAllWithSameNoDemographicInfoHash(String hash) {
 		String sql = "select distinct parentReport from " + this.modelClass.getName() + " x where x.reportLessDemographicInfoHash=?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, hash);
+		query.setParameter(0, hash);
 		List<Integer> matches = query.getResultList();
 		
 		if (matches != null && matches.size() == 1 && matches.get(0) == null) {
 			sql = "select distinct id from " + this.modelClass.getName() + " x where x.reportLessDemographicInfoHash=?";
 			query = entityManager.createQuery(sql);
-			query.setParameter(1, hash);
+			query.setParameter(0, hash);
 			matches = query.getResultList();
 		}
 		return matches;
@@ -103,12 +103,12 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
 				// This is a child report; get the parent and all siblings of this report (which includes itself)
 				sql = "select x from " + this.modelClass.getName() + " x where x.id = ? order by x.id asc";
 				query = entityManager.createQuery(sql);
-				query.setParameter(1, firstDocument.getParentReport());
+				query.setParameter(0, firstDocument.getParentReport());
 				documentsWithRelationship.addAll(query.getResultList());
 				
 				sql = "select x from " + this.modelClass.getName() + " x where x.parentReport = ? order by x.id asc";
 				query = entityManager.createQuery(sql);
-				query.setParameter(1, firstDocument.getParentReport());
+				query.setParameter(0, firstDocument.getParentReport());
 				documentsWithRelationship.addAll(query.getResultList());
 
 				
@@ -116,8 +116,8 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
 				// This is a parent report; get all the children of this report as well as itself
 				sql = "select x from " + this.modelClass.getName() + " x where x.parentReport = ? or x.id = ?  order by x.id asc";
 				query = entityManager.createQuery(sql);
-				query.setParameter(1, firstDocument.getId());
-				query.setParameter(2, firstDocument.getId()); 
+				query.setParameter(0, firstDocument.getId());
+				query.setParameter(1, firstDocument.getId()); 
 				documentsWithRelationship = query.getResultList();
 			}
 		
@@ -130,8 +130,8 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
 	public List<HRMDocument> getAllChildrenOf(Integer docId) {
 		String sql = "select x from " + this.modelClass.getName() + " x where x.parentReport=? and x.id != ? order by id asc";
 		Query query = entityManager.createQuery(sql);
+		query.setParameter(0, docId);
 		query.setParameter(1, docId);
-		query.setParameter(2, docId);
 		@SuppressWarnings("unchecked")
 		List<HRMDocument> documents = query.getResultList();
 		return documents;
@@ -140,9 +140,9 @@ public class HRMDocumentDao extends AbstractDao<HRMDocument> {
 	public List<HRMDocument> findByKey(String sourceFacility, String sourceFacilityReportNo, String deliverToId) {
 		String sql = "select x from " + this.modelClass.getName() + " x where x.sourceFacility=? AND x.sourceFacilityReportNo = ? AND x.recipientId = ?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, sourceFacility);
-		query.setParameter(2, sourceFacilityReportNo);
-		query.setParameter(3, deliverToId);
+		query.setParameter(0, sourceFacility);
+		query.setParameter(1, sourceFacilityReportNo);
+		query.setParameter(2, deliverToId);
 		
 		@SuppressWarnings("unchecked")
 		List<HRMDocument> documents = query.getResultList();

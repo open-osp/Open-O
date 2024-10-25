@@ -28,12 +28,12 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.WcbNoiCode;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class WcbNoiCodeDao extends AbstractDao<WcbNoiCode> {
+public class WcbNoiCodeDao extends AbstractDaoImpl<WcbNoiCode> {
 
 	public WcbNoiCodeDao() {
 		super(WcbNoiCode.class);

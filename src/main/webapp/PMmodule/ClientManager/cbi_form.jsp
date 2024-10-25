@@ -71,7 +71,7 @@
 
 	//No matter if it's a new cbi form or not, always pre-populate phone extension.
 	String phoneExt = "";
-	DemographicExtDao demographicExtDao = (DemographicExtDao) SpringUtils.getBean("demographicExtDao");
+	DemographicExtDao demographicExtDao = (DemographicExtDao) SpringUtils.getBean(DemographicExtDao.class);
 	DemographicExt de = demographicExtDao.getDemographicExt(Integer.valueOf(currentDemographicId), "hPhoneExt");
 	if(de!=null) {
 		if(de.getValue()==null || de.getValue().equals("null"))
@@ -83,10 +83,10 @@
 		phoneExt = "";
 	}
 	
-	DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+	DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 	String hc_type = demographicDao.getDemographicById(currentDemographicId).getHcType();
 	String admissionDate = "0001-01-01";
-	AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");	
+	AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
 	List<Admission> admissions = admissionDao.getAdmissionsASC(currentDemographicId);
 	for(Admission ad : admissions) {
 		if(!"community".equalsIgnoreCase(ad.getProgramType())) {

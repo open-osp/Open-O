@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,58 +21,19 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
 
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.CtlBillingServicePremium;
-import org.springframework.stereotype.Repository;
 
-@Repository
-@SuppressWarnings("unchecked")
-public class CtlBillingServicePremiumDao extends AbstractDao<CtlBillingServicePremium>{
-
-	public CtlBillingServicePremiumDao() {
-		super(CtlBillingServicePremium.class);
-	}
-	
-	public List<CtlBillingServicePremium> findByServiceCode(String serviceCode) {
-		Query q = entityManager.createQuery("select x from CtlBillingServicePremium x where x.serviceCode=?");
-		q.setParameter(1, serviceCode);
-		
-		
-		List<CtlBillingServicePremium> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<CtlBillingServicePremium> findByStatus(String status) {
-		Query q = entityManager.createQuery("select x from CtlBillingServicePremium x where x.status=?");
-		q.setParameter(1, status);
-		
-		
-		List<CtlBillingServicePremium> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<Object[]> search_ctlpremium(String status) {
-		Query q = entityManager.createQuery("select b.serviceCode, c.description from CtlBillingServicePremium b, BillingService c where b.serviceCode=c.serviceCode and b.status=?");
-		q.setParameter(1, status);
-		
-		List<Object[]> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<CtlBillingServicePremium> findByServceCodes(List<String> serviceCodes) {
-		Query query = createQuery("p", "p.serviceCode in (:serviceCodes)");
-		query.setParameter("serviceCodes", serviceCodes);
-		return query.getResultList();
-	}
+public interface CtlBillingServicePremiumDao extends AbstractDao<CtlBillingServicePremium> {
+	List<CtlBillingServicePremium> findByServiceCode(String serviceCode);
+	List<CtlBillingServicePremium> findByStatus(String status);
+	List<Object[]> search_ctlpremium(String status);
+	List<CtlBillingServicePremium> findByServceCodes(List<String> serviceCodes);
 }

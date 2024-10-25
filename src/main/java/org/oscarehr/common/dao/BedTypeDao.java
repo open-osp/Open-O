@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -32,48 +35,8 @@ import org.oscarehr.common.model.BedType;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class BedTypeDao extends AbstractDao<BedType>{
-
-	private Logger log = MiscUtils.getLogger();
-
-	public BedTypeDao() {
-		super(BedType.class);
-	}
-	
-	/**
-	 * Return if this is a valid bed type
-	 *
-	 * @param bedTypeId type of bed
-	 * @return boolean
-	 */
-	public boolean bedTypeExists(Integer bedTypeId) {
-		Query query = entityManager.createQuery("select count(*) from BedType b where b.id = ?");
-		query.setParameter(1, bedTypeId);
-		
-		Long result = (Long)query.getSingleResult();
-		
-		return (result.intValue() == 1);
-	}
-	
-	//use find(bedTypeId)
-	@Deprecated
-	public BedType getBedType(Integer bedTypeId) {
-	    return find(bedTypeId);
-	}
-	
-	   /**
-     * @return all bed types
-     */
-    @SuppressWarnings("unchecked")
-    public BedType[] getBedTypes() {
-    	Query query = entityManager.createQuery("select b from BedType b");
-		
-        List<BedType> bedTypes = query.getResultList();
-        
-        log.debug("getRooms: size: " + bedTypes.size());
-
-        return bedTypes.toArray(new BedType[bedTypes.size()]);
-    }
-
+public interface BedTypeDao extends AbstractDao<BedType>{
+	public boolean bedTypeExists(Integer bedTypeId);
+	public BedType getBedType(Integer bedTypeId);
+    public BedType[] getBedTypes();
 }

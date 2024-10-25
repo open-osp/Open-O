@@ -24,6 +24,8 @@
 package org.oscarehr.ws.rest;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,16 +61,25 @@ import org.oscarehr.common.model.DemographicContact;
 import org.oscarehr.common.model.DemographicCust;
 import org.oscarehr.common.model.DemographicExt;
 import org.oscarehr.common.model.DemographicExt.DemographicProperty;
+import org.oscarehr.common.model.enumerator.CppCode;
+import org.oscarehr.common.model.Measurement;
 import org.oscarehr.common.model.ProfessionalSpecialist;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.WaitingList;
 import org.oscarehr.common.model.WaitingListName;
+import org.oscarehr.managers.AllergyManager;
 import org.oscarehr.managers.DemographicManager;
+import org.oscarehr.managers.MeasurementManager;
+import org.oscarehr.managers.NoteManager;
+import org.oscarehr.managers.RxManager;
 import org.oscarehr.managers.SecurityInfoManager;
+import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.web.DemographicSearchHelper;
+import org.oscarehr.ws.rest.conversion.AllergyConverter;
 import org.oscarehr.ws.rest.conversion.DemographicContactFewConverter;
 import org.oscarehr.ws.rest.conversion.DemographicConverter;
+import org.oscarehr.ws.rest.conversion.MeasurementConverter;
 import org.oscarehr.ws.rest.conversion.ProfessionalSpecialistConverter;
 import org.oscarehr.ws.rest.conversion.ProviderConverter;
 import org.oscarehr.ws.rest.conversion.WaitingListNameConverter;
@@ -81,6 +92,8 @@ import org.oscarehr.ws.rest.to.model.DemographicSearchRequest.SORTDIR;
 import org.oscarehr.ws.rest.to.model.DemographicSearchRequest.SORTMODE;
 import org.oscarehr.ws.rest.to.model.DemographicSearchResult;
 import org.oscarehr.ws.rest.to.model.DemographicTo1;
+import org.oscarehr.ws.rest.to.model.ProfessionalSpecialistTo1;
+import org.oscarehr.ws.rest.to.model.ProviderTo1;
 import org.oscarehr.ws.rest.to.model.StatusValueTo1;
 import org.oscarehr.ws.rest.to.model.WaitingListNameTo1;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +109,31 @@ import oscar.oscarWaitingList.util.WLWaitingListUtil;
 @Path("/demographics")
 @Component("demographicService")
 public class DemographicService extends AbstractServiceImpl {
+
+	private enum IncludeType {
+        ALLERGIES("allergies"),
+        MEASUREMENTS("measurements"),
+        NOTES("notes"),
+        MEDICATIONS("medications"),
+        CONTACTS("contacts");
+
+        private final String value;
+
+        IncludeType(String value) { this.value = value; }
+
+        public String getValue() { return value; }
+    }
+
+	public enum MeasurementType {
+		HEIGHT("ht"),
+		WEIGHT("wt");
+	
+		private final String abbreviation;
+	
+		MeasurementType(String abbreviation) { this.abbreviation = abbreviation; }
+	
+		public String getAbbreviation() { return abbreviation; }
+	}
 	
 	
 	@Autowired
@@ -103,15 +141,27 @@ public class DemographicService extends AbstractServiceImpl {
 	
 	@Autowired
 	private ContactDao contactDao;
+
+	@Autowired
+	private AllergyManager allergyManager;
+	
+	@Autowired
+	private MeasurementManager measurementManager;
 	
 	@Autowired
 	private WaitingListDao waitingListDao;
 	
 	@Autowired
 	private WaitingListNameDao waitingListNameDao;
+
+	@Autowired
+	private NoteManager noteManager;
 	
 	@Autowired
 	private ProviderDao providerDao;
+
+	@Autowired
+	private RxManager rxManager;
 	
 	@Autowired
 	private SecUserRoleDao secUserRoleDao;
@@ -175,7 +225,8 @@ public class DemographicService extends AbstractServiceImpl {
 	@GET
 	@Path("/{dataId}")
 	@Produces({MediaType.APPLICATION_JSON , MediaType.APPLICATION_XML})
-	public DemographicTo1 getDemographicData(@PathParam("dataId") Integer id) throws PatientDirectiveException {		
+	public DemographicTo1 getDemographicData(@PathParam("dataId") Integer id, @QueryParam("includes[]") List<String> include) throws PatientDirectiveException {
+		LoggedInInfo loggedInInfo = getLoggedInInfo();
 		Demographic demo = demographicManager.getDemographic(getLoggedInInfo(),id);
 		if (demo == null) return null;
 		
@@ -191,7 +242,6 @@ public class DemographicService extends AbstractServiceImpl {
 		if (demoCust!=null) {
 			result.setNurse(demoCust.getNurse());
 			result.setResident(demoCust.getResident());
-			result.setAlert(demoCust.getAlert());
 			result.setMidwife(demoCust.getMidwife());
 			result.setNotes(demoCust.getNotes());
 		}
@@ -206,55 +256,66 @@ public class DemographicService extends AbstractServiceImpl {
 		
 		List<WaitingListName> waitingListNames = waitingListNameDao.findAll(null, null);
 		if (waitingListNames!=null) {
+			List<WaitingListNameTo1> waitingListNameTo1s = new ArrayList<>();
 			for (WaitingListName waitingListName : waitingListNames) {
 				if (waitingListName.getIsHistory().equals("Y")) continue;
 				
-				WaitingListNameTo1 waitingListNameTo1 = waitingListNameConverter.getAsTransferObject(getLoggedInInfo(),waitingListName);
-				result.getWaitingListNames().add(waitingListNameTo1);
+				waitingListNameTo1s.add(waitingListNameConverter.getAsTransferObject(getLoggedInInfo(),waitingListName));
 			}
+			result.setWaitingListNames(waitingListNameTo1s);
 		}
 		
 		List<ProfessionalSpecialist> referralDocs = specialistDao.findAll();
 		if (referralDocs!=null) {
+			List<ProfessionalSpecialistTo1> professionalSpecialistTo1s = new ArrayList<>();
 			for (ProfessionalSpecialist referralDoc : referralDocs) {
 				if(referralDoc != null) {
-					result.getReferralDoctors().add(specialistConverter.getAsTransferObject(getLoggedInInfo(),referralDoc));
+					professionalSpecialistTo1s.add(specialistConverter.getAsTransferObject(getLoggedInInfo(),referralDoc));
 				}
 			}
+			result.setReferralDoctors(professionalSpecialistTo1s);
 		}
 		
 		List<SecUserRole> doctorRoles = secUserRoleDao.getSecUserRolesByRoleName("doctor");
+		List<ProviderTo1> providerTo1s = new ArrayList<>();
 		if (doctorRoles!=null) {
 			for (SecUserRole doctor : doctorRoles) {
 				Provider provider = providerDao.getProvider(doctor.getProviderNo());
 				if(provider != null) {
-					result.getDoctors().add(providerConverter.getAsTransferObject(getLoggedInInfo(),provider));
+					providerTo1s.add(providerConverter.getAsTransferObject(getLoggedInInfo(),provider));
 				}
 			}
+			result.setDoctors(providerTo1s);
 		}
 		
 		List<SecUserRole> nurseRoles = secUserRoleDao.getSecUserRolesByRoleName("nurse");
+		providerTo1s.clear();
 		if (nurseRoles!=null) {
 			for (SecUserRole nurse : nurseRoles) {
 				Provider provider = providerDao.getProvider(nurse.getProviderNo());
 				if(provider != null) {
-					result.getNurses().add(providerConverter.getAsTransferObject(getLoggedInInfo(),provider));
+					providerTo1s.add(providerConverter.getAsTransferObject(getLoggedInInfo(),provider));
 				}
 			}
+			result.setNurses(providerTo1s);
 		}
 		
 		List<SecUserRole> midwifeRoles = secUserRoleDao.getSecUserRolesByRoleName("midwife");
+		providerTo1s.clear();
 		if (midwifeRoles!=null) {
 			for (SecUserRole midwife : midwifeRoles) {
 				Provider provider = providerDao.getProvider(midwife.getProviderNo());
 				if(provider != null) {
-					result.getMidwives().add(providerConverter.getAsTransferObject(getLoggedInInfo(),provider));
+					providerTo1s.add(providerConverter.getAsTransferObject(getLoggedInInfo(),provider));
 				}
 			}
+			result.setMidwives(providerTo1s);
 		}
 		
 		List<DemographicContact> demoContacts = demographicManager.getDemographicContacts(getLoggedInInfo(),id);
 		if (demoContacts!=null) {
+			List<DemographicContactFewTo1> demographicContactFewTo1s = new ArrayList<>();
+			List<DemographicContactFewTo1> demographicContactFewTo1Pros = new ArrayList<>();
 			for (DemographicContact demoContact : demoContacts) {
 				Integer contactId = Integer.valueOf(demoContact.getContactId());
 				DemographicContactFewTo1 demoContactTo1 = new DemographicContactFewTo1();
@@ -272,7 +333,7 @@ public class DemographicService extends AbstractServiceImpl {
 						Contact contactC = contactDao.find(contactId);
 						demoContactTo1 = demoContactFewConverter.getAsTransferObject(demoContact, contactC);
 					}
-					result.getDemoContacts().add(demoContactTo1);
+					demographicContactFewTo1s.add(demoContactTo1);
 				}
 				else if (demoContact.getCategory().equals(DemographicContact.CATEGORY_PROFESSIONAL)) {
 					if (demoContact.getType()==DemographicContact.TYPE_PROVIDER) {
@@ -283,23 +344,176 @@ public class DemographicService extends AbstractServiceImpl {
 						ProfessionalSpecialist contactS = specialistDao.find(contactId);
 						demoContactTo1 = demoContactFewConverter.getAsTransferObject(demoContact, contactS);
 					}
-					result.getDemoContactPros().add(demoContactTo1);
+					demographicContactFewTo1Pros.add(demoContactTo1);
 				}
 			}
+			result.setDemoContacts(demographicContactFewTo1s);
+			result.setDemoContactPros(demographicContactFewTo1Pros);
 		}
 		
 		List<String> patientStatusList = demographicManager.getPatientStatusList();
 		List<String> rosterStatusList = demographicManager.getRosterStatusList();
+		List<StatusValueTo1> statusValueTo1s = new ArrayList<>();
 		if (patientStatusList!=null) {
 			for (String ps : patientStatusList) {
 				StatusValueTo1 value = new StatusValueTo1(ps);
-				result.getPatientStatusList().add(value);
+				statusValueTo1s.add(value);
 			}
+			result.setPatientStatusList(statusValueTo1s);
 		}
+		
+		statusValueTo1s.clear();
 		if (rosterStatusList!=null) {
 			for (String rs : rosterStatusList) {
 				StatusValueTo1 value = new StatusValueTo1(rs);
-				result.getRosterStatusList().add(value);
+				statusValueTo1s.add(value);
+			}
+			result.setRosterStatusList(statusValueTo1s);
+		}
+
+		if (include.contains(IncludeType.ALLERGIES.getValue())) {
+			result.setAllergies(new AllergyConverter().getAllAsTransferObjects(loggedInInfo, allergyManager.getActiveAllergies(getLoggedInInfo(), demo.getDemographicNo())));
+		}
+		
+		if (include.contains(IncludeType.MEASUREMENTS.getValue())) {
+			List<String> heightType = new ArrayList<>();
+			heightType.add(MeasurementType.HEIGHT.getAbbreviation());
+			List<String> weightType = new ArrayList<>();
+			weightType.add(MeasurementType.WEIGHT.getAbbreviation());
+			List<Measurement> heights = measurementManager.getMeasurementByType(loggedInInfo, demo.getDemographicNo(), heightType);
+			List<Measurement> weights = measurementManager.getMeasurementByType(loggedInInfo, demo.getDemographicNo(), weightType);
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.YEAR, -3);
+			List<Measurement> measurements = measurementManager.getLatestMeasurementsByDemographicIdObservedAfter(loggedInInfo, demo.getDemographicNo(), calendar.getTime());
+			//Just send most recent height and weight
+			if (!heights.isEmpty() && !measurements.contains(heights.get(0))) {
+				measurements.add(heights.get(0));
+			}
+			if (!weights.isEmpty() && !measurements.contains(weights.get(0))) {
+				measurements.add(weights.get(0));
+			}
+			result.setMeasurements(new MeasurementConverter().getAllAsTransferObjects(loggedInInfo, new ArrayList<>(measurements)));
+		}
+
+		if (include.contains(IncludeType.NOTES.getValue())) {
+			// Avoid sending out 'concerns' as it is too sensitive to pass
+			List<String> cppCodeList = CppCode.toStringList();
+			cppCodeList.remove(CppCode.CONCERNS.getCode());
+			result.setEncounterNotes(noteManager.getActiveCppNotes(loggedInInfo, demo.getDemographicNo(), cppCodeList.toArray(new String[0])));
+		}
+
+		if (include.contains(IncludeType.MEDICATIONS.getValue())) {
+			List<String> singleLineMedications = rxManager.getCurrentSingleLineMedications(loggedInInfo, demo.getDemographicNo());
+			result.setMedicationSummary(singleLineMedications);
+		}
+		
+		return result;
+	}
+
+	/**
+	 * Gets basic demographic data.
+	 *
+	 * @param id
+	 * 		Id of the demographic to get data for 
+	 * @param includes
+	 * 		An array of strings that include additional information in the returned data
+	 * 		Possible includes are:
+	 * 			- contacts = includes the DemographicContacts in the results	
+	 * @return
+	 * 		Returns data for the demographic provided 
+	 */
+	@GET
+	@Path("/basic/{dataId}")
+	@Produces({MediaType.APPLICATION_JSON , MediaType.APPLICATION_XML})
+	public DemographicTo1 getBasicDemographicData(@PathParam("dataId") Integer id, @QueryParam("includes[]") List<String> includes) throws PatientDirectiveException {
+		Demographic demo = demographicManager.getDemographic(getLoggedInInfo(),id);
+		if (demo == null) return null;
+
+		List<DemographicExt> demoExts = demographicManager.getDemographicExts(getLoggedInInfo(),id);
+		if (demoExts!=null && !demoExts.isEmpty()) {
+			DemographicExt[] demoExtArray = demoExts.toArray(new DemographicExt[demoExts.size()]);
+			demo.setExtras(demoExtArray);
+		}
+
+		DemographicTo1 result = demoConverter.getAsTransferObject(getLoggedInInfo(),demo);
+
+		DemographicCust demoCust = demographicManager.getDemographicCust(getLoggedInInfo(),id);
+		if (demoCust!=null) {
+			result.setNurse(demoCust.getNurse());
+			result.setResident(demoCust.getResident());
+			//result.setAlert(demoCust.getBookingAlert());
+			result.setMidwife(demoCust.getMidwife());
+			result.setNotes(demoCust.getNotes());
+		}
+
+		List<WaitingList> waitingList = waitingListDao.search_wlstatus(id);
+		if (waitingList!=null && !waitingList.isEmpty()) {
+			WaitingList wl = waitingList.get(0);
+			result.setWaitingListID(wl.getListId());
+			result.setWaitingListNote(wl.getNote());
+			result.setOnWaitingListSinceDate(wl.getOnListSince());
+		}
+		
+		List<String> patientStatusList = demographicManager.getPatientStatusList();
+		List<String> rosterStatusList = demographicManager.getRosterStatusList();
+		List<StatusValueTo1> statusValueTo1s = new ArrayList<>();
+		if (patientStatusList!=null) {
+			for (String ps : patientStatusList) {
+				StatusValueTo1 value = new StatusValueTo1(ps);
+				statusValueTo1s.add(value);
+			}
+			result.setPatientStatusList(statusValueTo1s);
+		}
+
+		statusValueTo1s.clear();
+		if (rosterStatusList!=null) {
+			for (String rs : rosterStatusList) {
+				StatusValueTo1 value = new StatusValueTo1(rs);
+				statusValueTo1s.add(value);
+			}
+			result.setRosterStatusList(statusValueTo1s);
+		}
+
+		// If the contacts are included add Demographic Contacts to the basic results (relationships/healthcareteam/etc)
+		if (includes.contains(IncludeType.CONTACTS.getValue())) {
+			List<DemographicContact> demoContacts = demographicManager.getDemographicContacts(getLoggedInInfo(), id);
+			if (demoContacts != null) {
+				List<DemographicContactFewTo1> demographicContactFewTo1s = new ArrayList<>();
+				List<DemographicContactFewTo1> demographicContactFewTo1Pros = new ArrayList<>();
+				for (DemographicContact demoContact : demoContacts) {
+					// Check if 'demoContact' has given consent to be contacted;
+					// if not, skip sharing 'demoContact'.
+					if (!demoContact.isConsentToContact()) { continue; }
+
+					Integer contactId = Integer.valueOf(demoContact.getContactId());
+					DemographicContactFewTo1 demoContactTo1 = new DemographicContactFewTo1();
+
+					if (demoContact.getCategory().equals(DemographicContact.CATEGORY_PERSONAL)) {
+						if (demoContact.getType() == DemographicContact.TYPE_DEMOGRAPHIC) {
+							Demographic contactD = demographicManager.getDemographic(getLoggedInInfo(), contactId);
+							demoContactTo1 = demoContactFewConverter.getAsTransferObject(demoContact, contactD);
+							if (demoContactTo1.getPhone() == null || demoContactTo1.getPhone().equals("")) {
+								DemographicExt ext = demographicManager.getDemographicExt(getLoggedInInfo(), id, "demo_cell");
+								if (ext != null) demoContactTo1.setPhone(ext.getValue());
+							}
+						} else if (demoContact.getType() == DemographicContact.TYPE_CONTACT) {
+							Contact contactC = contactDao.find(contactId);
+							demoContactTo1 = demoContactFewConverter.getAsTransferObject(demoContact, contactC);
+						}
+						demographicContactFewTo1s.add(demoContactTo1);
+					} else if (demoContact.getCategory().equals(DemographicContact.CATEGORY_PROFESSIONAL)) {
+						if (demoContact.getType() == DemographicContact.TYPE_PROVIDER) {
+							Provider contactP = providerDao.getProvider(contactId.toString());
+							demoContactTo1 = demoContactFewConverter.getAsTransferObject(demoContact, contactP);
+						} else if (demoContact.getType() == DemographicContact.TYPE_PROFESSIONALSPECIALIST) {
+							ProfessionalSpecialist contactS = specialistDao.find(contactId);
+							demoContactTo1 = demoContactFewConverter.getAsTransferObject(demoContact, contactS);
+						}
+						demographicContactFewTo1Pros.add(demoContactTo1);
+					}
+				}
+				result.setDemoContacts(demographicContactFewTo1s);
+				result.setDemoContactPros(demographicContactFewTo1Pros);
 			}
 		}
 		return result;
@@ -389,7 +603,7 @@ public class DemographicService extends AbstractServiceImpl {
 	@Path("/{dataId}")
 	public DemographicTo1 deleteDemographicData(@PathParam("dataId") Integer id) {
 		Demographic demo = demographicManager.getDemographic(getLoggedInInfo(),id);
-    	DemographicTo1 result = getDemographicData(id);
+    	DemographicTo1 result = getDemographicData(id, Collections.EMPTY_LIST);
     	if (demo == null) {
     		throw new IllegalArgumentException("Unable to find demographic record with ID " + id);
     	}

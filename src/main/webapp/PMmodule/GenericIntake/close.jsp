@@ -30,7 +30,7 @@
     Integer latestFrmId = (Integer) session.getAttribute("latestFrmId");
     session.removeAttribute("latestFrmId");
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <script language=javascript>

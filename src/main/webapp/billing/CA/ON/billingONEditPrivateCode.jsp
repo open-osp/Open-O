@@ -151,7 +151,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="admin.admin.managePrivBillingCode"/></title>
 

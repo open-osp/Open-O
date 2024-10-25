@@ -24,13 +24,12 @@
 
 package oscar.entities;
 
-import java.util.Date;
-import java.util.Enumeration;
-
 import org.oscarehr.util.MiscUtils;
-
 import oscar.util.DateUtils;
 import oscar.util.UtilDateUtilities;
+
+import java.util.Date;
+import java.util.Enumeration;
 
 /**
  *
@@ -102,8 +101,8 @@ public class MSPBill {
   public String adjustmentCodeDesc="";
   public String amtOwing;
   public String adjustmentCodeAmt="";
-  public String gst="0.00";
-  public String gstNo="";
+//  public String gst="0.00";
+//  public String gstNo="";
   public MSPBill() {
     ut = new UtilDateUtilities();
   }
@@ -594,9 +593,9 @@ public class MSPBill {
     return adjustmentCodeAmt;
   }
 
-  public String getGst() {
-    return gst;
-  }
+//  public String getGst() {
+//    return gst;
+//  }
 
   public void setPaymentMethodName(String paymentMethodName) {
     this.paymentMethodName = paymentMethodName;
@@ -630,15 +629,15 @@ public class MSPBill {
     this.adjustmentCodeAmt = adjustmentCodeAmt;
   }
 
-  public void setGst(String gst) {
-    this.gst = (gst != null && !gst.trim().isEmpty() ? gst : "0.00");
-  }
-
-  public String getGstNo() {
-    return gstNo;
-  }
-
-  public void setGstNo(String gstNo) {
-    this.gstNo = gstNo;
-  }
+//  public void setGst(String gst) {
+//    this.gst = (gst != null && !gst.trim().isEmpty() ? gst : "0.00");
+//  }
+//
+//  public String getGstNo() {
+//    return gstNo;
+//  }
+//
+//  public void setGstNo(String gstNo) {
+//    this.gstNo = gstNo;
+//  }
 }

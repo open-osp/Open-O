@@ -58,7 +58,7 @@
     java.util.Properties props = rec.getFormRecord(LoggedInInfo.getLoggedInInfoFromSession(request),demoNo, formId);
     
     String projectHome = request.getContextPath().substring(1);
-    ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+    ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
     String providerNo = props.getProperty("provider_no","");
     String providerName = "";
     if (providerNo != null && !providerNo.isEmpty() && !providerNo.equals("999998")){

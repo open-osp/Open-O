@@ -46,7 +46,7 @@ public class ConsentType extends AbstractModel<Integer> {
 	
 	private String name;
 	
-	@Enumerated(EnumType.STRING)
+	//@Enumerated(EnumType.STRING)
 	private String type;
 	
 	private String description;

@@ -111,8 +111,8 @@
 
 			<td class="MainTableRightColumn"><label for="defaultServiceLocation">Select Default Service Location:</label>
 				<html:select property="defaultServiceLocation" styleClass="form-control" styleId="defaultServiceLocation">
-					<html:options collection="serviceLocationList" property="displayName"
-								  labelProperty="displayName" />
+					<html:options collection="serviceLocationList" property="visitType"
+								  labelProperty="description" />
 				</html:select> </td>
 		</tr>
 		<tr>
@@ -138,7 +138,7 @@
 		<tr>
 			<td class="MainTableRightColumn">
 				<label>Example Payee Information:</label>
-				<div class="tableHeader rowSpacing">(This is what will display on invoices created for your provider)</div>
+				<div class="tableHeader rowSpacing">(This is the payee info displayed on your private invoices)</div>
 				<table class="table-condensed" style="border:thin solid grey;">
 					<%
 						Provider payeeProvider = providerDao.getProvider(billingPreference != null ? "" + billingPreference.getDefaultPayeeNo() : null);
@@ -190,8 +190,8 @@
 					%>
 
 					<tr>
-						<%  SystemPreferences invoiceClinicInfo = systemPreferencesDao.findPreferenceByName(SystemPreferences.GENERAL_SETTINGS_KEYS.invoice_use_custom_clinic_info);
-							if(invoiceClinicInfo == null || StringUtils.isNullOrEmpty(invoiceClinicInfo.getValue())) { %>
+						<%  SystemPreferences useCustomInvoiceClinicInfo = systemPreferencesDao.findPreferenceByName(SystemPreferences.GENERAL_SETTINGS_KEYS.invoice_use_custom_clinic_info);
+							if(useCustomInvoiceClinicInfo == null || StringUtils.isNullOrEmpty(useCustomInvoiceClinicInfo.getValue())) { %>
 						<td class="title4">
 							<%=Encode.forHtml(clinic.getClinicName())%>
 						</td>
@@ -204,9 +204,10 @@
 					</tr>
 					<tr>
 						<td class="address" id="clinicFax"> Fax: <%=vecFaxes.size() >= 1 ? vecFaxes.elementAt(0) : Encode.forHtml(clinic.getClinicFax())%> </td>
-						<% } else { %>
-
-						<td class="payeeInfo"><%= Encode.forHtml(invoiceClinicInfo.getValue())%></td>
+						<% } else {
+							SystemPreferences customInvoiceClinicInfo = systemPreferencesDao.findPreferenceByName(SystemPreferences.GENERAL_SETTINGS_KEYS.invoice_custom_clinic_info);
+						%>
+						<td class="payeeInfo"><%= Encode.forHtml(customInvoiceClinicInfo.getValue())%></td>
 
 						<% } %>
 					</tr>
@@ -244,6 +245,9 @@
         defaultPayeeSelect();
 
 		$( document ).ready(function() {
+
+			const defaultValue = "<%= Property.PROPERTY_VALUE.clinicdefault.name() %>";
+
 			$("#defaultBillingProvider").on("change", function () {
 				let selected = $("#defaultBillingProvider option:selected").val();
 				disableFields(selected);
@@ -251,7 +255,7 @@
 
 			function disableFields(selected) {
 				// disable other settings whenever a default provider is selected to override.
-				if (selected && selected !== "clinicdefault") {
+				if (selected && selected !== defaultValue) {
 
 					// $("#referral").prop('disabled', true);
 					// $("#autoPopulateRefer").prop('disabled', true);

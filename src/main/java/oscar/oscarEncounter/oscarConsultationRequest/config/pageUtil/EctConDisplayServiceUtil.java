@@ -41,7 +41,7 @@ import oscar.util.ConversionUtils;
 
 public class EctConDisplayServiceUtil
 {
-	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao)SpringUtils.getBean("consultationServiceDao");
+	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao)SpringUtils.getBean(ConsultationServiceDao.class);
 	
     public Vector<String> fNameVec;
     public Vector<String> lNameVec;

@@ -45,7 +45,7 @@
 	String addressQ = (String)request.getAttribute("address");
 	Boolean checked = (Boolean)request.getAttribute("showHidden");
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Referral Doctor</title>

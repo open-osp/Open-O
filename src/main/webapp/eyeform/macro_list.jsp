@@ -132,7 +132,7 @@ function editMacro(id) {
 <%!
 public String getFollowupWeb(Macro macro) {
 	if(macro.getFollowupNo()>0) {
-		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 		Provider provider = providerDao.getProvider(macro.getFollowupDoctorId());
 		if(provider!=null)
 			return macro.getFollowupNo() + " " + macro.getFollowupUnit() + " with Dr. " + provider.getFormattedName();
@@ -142,7 +142,7 @@ public String getFollowupWeb(Macro macro) {
 
 public String getTicklerWeb(Macro macro) {
 	if(macro.getTicklerRecipient()!=null && macro.getTicklerRecipient().length()>0) {
-		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 		Provider provider = providerDao.getProvider(macro.getTicklerRecipient());
 		if(provider!=null)
 		 	return provider.getFormattedName();

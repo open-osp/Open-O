@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (c) 2006-. OSCARservice, OpenSoft System. All Rights Reserved.
+    Copyright (c) 2007 Peter Hutten-Czapski based on OSCAR general requirements
     This software is published under the GPL GNU General Public License.
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -16,27 +16,41 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+    This software was written for the
+    Department of Family Medicine
+    McMaster University
+    Hamilton
+    Ontario, Canada
+
 --%>
-<%@page import="org.oscarehr.util.SessionConstants"%>
-<%@page import="org.oscarehr.common.model.ProviderPreference"%>
+
+<!DOCTYPE html>
+
 <%
     if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
-<%@ page
-	import="java.util.*,oscar.util.*, org.apache.struts.action.*, oscar.oscarWaitingList.bean.*"%>
+<%@page import="java.util.*"%>
+<%@page import="org.apache.struts.action.*"%>
+<%@page import="org.oscarehr.common.model.ProviderPreference"%>
+<%@page import="org.oscarehr.util.SessionConstants"%>
+<%@page import="org.owasp.encoder.Encode"%>
+<%@page import="oscar.oscarWaitingList.bean.*"%>
+<%@page import="oscar.util.*"%>
+
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 
-<link rel="stylesheet" type="text/css"
-	href="../oscarEncounter/encounterStyles.css">
-<html:html locale="true">
-
+<html:html lang="en">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="${pageContext.request.contextPath}/js/global.js"></script>
+<!-- Bootstrap 2.3.1 -->
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
+
 <title>Change Waiting List Name</title>
-</head>
-<script language="JavaScript">
+
+<script>
 
 function resetFields(actionType){
 
@@ -53,7 +67,7 @@ function resetFields(actionType){
 </script>
 <%
 	ProviderPreference providerPreference=(ProviderPreference)session.getAttribute(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE);
-	
+
 	String groupNo = "";
 	if(providerPreference.getMyGroupNo() != null){
 		groupNo = providerPreference.getMyGroupNo();
@@ -62,14 +76,8 @@ function resetFields(actionType){
 
    	List allWaitingListName = wlNameHd.getWaitingListNameList();
 %>
-<body bgproperties="fixed" " topmargin="0" leftmargin="0"
-	rightmargin="0">
-
-<table border=0 cellspacing=0 cellpadding=0 width="100%">
-	<tr border="#CCCCFF">
-		<th><font face="Helvetica">Create/Edit Waiting List Name</font></th>
-	</tr>
-</table>
+</head>
+<body>
 
 <%
 	String message = "";
@@ -78,90 +86,83 @@ function resetFields(actionType){
 	}
 %>
 
+
 <html:form
 	action="/oscarWaitingList/WLEditWaitingListNameAction.do?edit=Y">
 	<html:hidden property="actionChosen" />
-	<table border="0" width="100%">
-		<tr bgcolor="#EEEEFF">
-			<td width="25%" align="right" class="data4">Please select a
-			Waiting List name to be changed:</td>
-			<td align="right"><html:select property="selectedWL">
-				<option value=""></option>
-				<%
-                             for(int i=0; i<allWaitingListName.size(); i++){
+
+    <h3>&nbsp;&nbsp;<bean:message key="oscarwaitinglist.displayPatientWaitingList.waitinglist" /></h3>
+<%
+	if(message != null  &&  !message.equals("")){
+%>
+<div class="alert"><bean:message key="<%=message%>" /></div>
+<%
+	}
+%>
+    <div class="container-fluid  form-horizontal span12" id="editWrapper">
+        <div class="row">
+            <div class="span6">
+              <fieldset>
+                <legend><bean:message key="marc-hi.affinityDomains.manageExisting" /></legend>
+                <label class="control-label" for="selectedWL" ><bean:message key="oscarMessenger.config.MessengerAdmin.rename" /></label>
+                <div class="controls">
+                    <select name="selectedWL" id="selectedWL">
+				        <option value=""><bean:message key="demographic.demographicaddrecordhtm.cbselectwaitinglist" /></option>
+				        <%
+                        for(int i=0; i<allWaitingListName.size(); i++){
                                  WLWaitingListNameBean wLBean = (WLWaitingListNameBean) allWaitingListName.get(i);
                                  String id = wLBean.getId();
-                                 String name = wLBean.getWaitingListName();                                       
-                                 String selected = id.compareTo((String) request.getAttribute("WLId")==null?"0":(String) request.getAttribute("WLId"))==0?"SELECTED":"";                                        
+                                 String name = wLBean.getWaitingListName();
+                                 String selected = id.compareTo((String) request.getAttribute("WLId")==null?"0":(String) request.getAttribute("WLId"))==0?"SELECTED":"";
                          %>
-				<option value="<%=id%>" <%=selected%>><%=name%></option>
-				<%}%>
-			</html:select></td>
-			<td align="left"><html:text property="wlChangedName" size="45"
-				maxlength="255" /></td>
-			<td width="30%" align="left"><input type="submit"
-				value="Change Name"
-				onclick="resetFields('change');document.forms[0].actionChosen.value='change'">
-			</td>
-		</tr>
-		<tr bgcolor="#EEEEFF">
-			<td colspan="2" align="right">
-			<div align="right"><span class="data4">Create New Name:</span></div>
-			</td>
-
-			<td align="left"><html:text property="wlNewName" size="45"
-				maxlength="255" /></td>
-			<td width="30%" align="left"><input type="submit"
-				value="Create Name"
-				onclick="resetFields('create');document.forms[0].actionChosen.value='create'">
-			</td>
-		</tr>
-		<tr bgcolor="#EEEEFF">
-			<td width="25%" align="right" class="data4">Please select a
-			Waiting List name to be removed:</td>
-			<td align="right"><html:select property="selectedWL2">
-				<option value=""></option>
-				<%
-                             for(int i=0; i<allWaitingListName.size(); i++){
-                                 WLWaitingListNameBean wLBean2 = (WLWaitingListNameBean) allWaitingListName.get(i);
-                                 String id = wLBean2.getId();
-                                 String name = wLBean2.getWaitingListName();                                       
-                                 String selected = id.compareTo((String) request.getAttribute("WLId")==null?"0":(String) request.getAttribute("WLId"))==0?"SELECTED":"";                                        
+				        <option value="<%=id%>" <%=selected%>><%=name%></option>
+				        <%}%>
+                    </select>
+                    <input type="text" class="input-medium" name="wlChangedName" placeholder="" value="">
+                    <input type="submit" class="btn" value="<bean:message key="global.btnSave" />"
+				    onclick="resetFields('change');document.forms[0].actionChosen.value='change'">
+                </div> <!-- class="controls" -->
+              </fieldset>
+            </div> <!-- class="span4" -->
+            <div class="span6">
+              <fieldset>
+                <legend><bean:message key="oscarMDS.search.formReportStatusNew" /></legend>
+                <label class="control-label" for="wlNewName"><bean:message key="oscarMessenger.config.MessengerAdmin.newGroup" /></label>
+                <div class="controls">
+                    <input type="text" class="input-medium" name="wlNewName" placeholder="" value="">
+                    <input type="submit" class="btn"  value="<bean:message key="global.btnSave" />" onclick="resetFields('create');document.forms[0].actionChosen.value='create'">
+                </div> <!-- class="controls" -->
+              </fieldset>
+            </div> <!-- class="span4" -->
+            <div class="span6">
+              <fieldset>
+                <legend><bean:message key="global.btnDelete" /></legend>
+                <label class="control-label" for="selectedWL2"><bean:message key="global.btnDeleteList" /></label>
+                <div class="controls">
+                    <select name="selectedWL2" id="selectedWL">
+				        <option value=""><bean:message key="demographic.demographicaddrecordhtm.cbselectwaitinglist" /></option>
+				        <%
+                        for(int i=0; i<allWaitingListName.size(); i++){
+                                 WLWaitingListNameBean wLBean = (WLWaitingListNameBean) allWaitingListName.get(i);
+                                 String id = wLBean.getId();
+                                 String name = wLBean.getWaitingListName();
+                                 String selected = id.compareTo((String) request.getAttribute("WLId")==null?"0":(String) request.getAttribute("WLId"))==0?"SELECTED":"";
                          %>
-				<option value="<%=id%>" <%=selected%>><%=name%></option>
-				<%}%>
-			</html:select></td>
-			<td colspan="2" align="left"><input type="submit"
-				value="Remove Name"
-				onclick="resetFields('remove');document.forms[0].actionChosen.value='remove'">
-			</td>
-		</tr>
-
-	</table>
-
-	<table width="100%">
-		<tr bgcolor="#CCCCFF">
-			<td align="center"><input type="reset" value='Close'
-				onClick="window.close();"></td>
-		</tr>
-	</table>
-
+				        <option value="<%=id%>" <%=selected%>><%=name%></option>
+				        <%}%>
+                    </select>
+                    <input type="submit" class="btn btn-warning"  value="<bean:message key="global.btnDelete" />"
+				    onclick="resetFields('remove');document.forms[0].actionChosen.value='remove'">
+                </div> <!-- class="controls" -->
+              </fieldset>
+            </div> <!-- class="span4" -->
+        </div> <!-- class="row" -->
+    </div> <!-- end editWrapper -->
+<div>
+<input type="reset" class="btn btn-link"  value='<bean:message key="global.btnClose" />'
+				onClick="window.close();">
+</div>
 </html:form>
-<table width="100%">
-	<tr>
-		<td align="center"><span
-			style="color: red; font-weight: bold; font-size: 14;"> <%-- 								
-				<html:messages id="msg">
-					<bean:write name="msg"/><br/>
-				</html:messages>
---%> <%
-	if(message != null  &&  !message.equals("")){
-%> <bean:message key="<%=message%>" /> <%
-	}
-%> </span>
-	</tr>
-</table>
-
 
 </body>
 </html:html>

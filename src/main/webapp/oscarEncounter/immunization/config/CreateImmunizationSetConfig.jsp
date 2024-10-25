@@ -61,7 +61,7 @@ if(!authed) {
 %>
 
 
-<%@page import="org.oscarehr.util.MiscUtils"%><html:html locale="true">
+<%@page import="org.oscarehr.util.MiscUtils"%><html:html lang="en">
 
 
 <head>

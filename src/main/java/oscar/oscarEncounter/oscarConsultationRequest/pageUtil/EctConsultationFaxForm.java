@@ -25,16 +25,14 @@
 
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
+import net.sf.json.JSONObject;
 import org.apache.struts.action.ActionForm;
 import org.oscarehr.fax.core.FaxAccount;
 import org.oscarehr.fax.core.FaxRecipient;
 
-import net.sf.json.JSONObject;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class EctConsultationFaxForm extends ActionForm {
 
@@ -44,6 +42,7 @@ public final class EctConsultationFaxForm extends ActionForm {
     private String recipientFaxNumber;
     private String sendersPhone;
     private String sendersFax;
+	private String senderFaxNumber;
     private String comments;
     private String requestId;
     private String transType;
@@ -94,6 +93,15 @@ public final class EctConsultationFaxForm extends ActionForm {
 	public void setSendersFax(String sendersFax) {
 		this.sendersFax = sendersFax;
 	}
+
+	public String getSenderFaxNumber() {
+		return senderFaxNumber;
+	}
+
+	public void setSenderFaxNumber(String senderFaxNumber) {
+		this.senderFaxNumber = senderFaxNumber;
+	}
+
 	public String getComments() {
 		return comments;
 	}
@@ -166,10 +174,12 @@ public final class EctConsultationFaxForm extends ActionForm {
 			sender = new FaxAccount();
 		}
 
-		sender.setFax(getSendersFax());
+		sender.setFax(getSenderFaxNumber());
 		sender.setLetterheadName(getFrom());
 		sender.setPhone(getSendersPhone());
 
 		return sender;
 	}
+
+
 }

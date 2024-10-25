@@ -13,12 +13,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentSubClass;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class HRMDocumentSubClassDao extends AbstractDao<HRMDocumentSubClass> {
+public class HRMDocumentSubClassDao extends AbstractDaoImpl<HRMDocumentSubClass> {
 
 	public HRMDocumentSubClassDao() {
 		super(HRMDocumentSubClass.class);
@@ -27,7 +27,7 @@ public class HRMDocumentSubClassDao extends AbstractDao<HRMDocumentSubClass> {
 	public List<HRMDocumentSubClass> getSubClassesByDocumentId(Integer id) {
 		String sql = "select x from " + this.modelClass.getName() + " x where x.hrmDocumentId=?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, id);
+		query.setParameter(0, id);
 		@SuppressWarnings("unchecked")
 		List<HRMDocumentSubClass> subClasses = query.getResultList();
 		return subClasses;
@@ -36,7 +36,7 @@ public class HRMDocumentSubClassDao extends AbstractDao<HRMDocumentSubClass> {
 	public List<HRMDocumentSubClass> getActiveSubClassesByDocumentId(Integer id) {
 		String sql = "select x from " + this.modelClass.getName() + " x where x.hrmDocumentId=? and x.isActive=1";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, id);
+		query.setParameter(0, id);
 		@SuppressWarnings("unchecked")
 		List<HRMDocumentSubClass> subClasses = query.getResultList();
 		return subClasses;
@@ -45,7 +45,7 @@ public class HRMDocumentSubClassDao extends AbstractDao<HRMDocumentSubClass> {
 	public boolean setAllSubClassesForDocumentAsInactive(Integer id) {
 		String sql = "update " + this.modelClass.getName() + " x set isActive=false where x.hrmDocumentId=?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, id);
+		query.setParameter(0, id);
 		return query.executeUpdate() > 0;
 	}
 }

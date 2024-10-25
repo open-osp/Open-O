@@ -85,7 +85,7 @@ if (request.getParameter("view") != null && request.getParameter("view").equals(
 if (props.getProperty("pg1_lmp", "").equals("") ) 	props.setProperty("pg1_lmp", props.getProperty("pg1_lmp", ""));
 if (props.getProperty("ar2_age", "").equals("") ) 	props.setProperty("ar2_age", props.getProperty("pg1_ageAtEDD", ""));
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>Antenatal Record 2</title>

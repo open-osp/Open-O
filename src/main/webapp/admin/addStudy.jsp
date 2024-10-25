@@ -23,8 +23,13 @@
     Ontario, Canada
 
 --%>
-<%@ page import="org.oscarehr.common.dao.StudyDao, org.oscarehr.common.model.Study" %>
+<!DOCTYPE HTML>
+<%@ page import="org.oscarehr.common.dao.StudyDao" %>
+<%@ page import="org.oscarehr.common.model.Study" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -44,47 +49,35 @@ if(!authed) {
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Add Edit Study</title>
 
-<style type="text/css">
-BODY {
-	font-family: Arial, Verdana, Tahoma, Helvetica, sans-serif;
-	background-color: #EEEEFF;
-	color: #003399;
-	font-size: 10pt;
-	text-align:center;	
-}
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"><!-- Bootstrap 2.3.1 -->
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
 
-table {
-
-	margin-top: 20pt;
-}
-
-</style>
 <script type="text/javascript">
 function validateForm() {
 	var ret = true;
 	var msg = "";
 	var name = document.getElementById("studyName");
 	var desc = document.getElementById("studyDescription");
-	
+
 	if( name.value == null || name.value == "" ) {
 		msg = "Please enter a name for the study\n";
 		ret = false;
 	}
-	
+
 	if( desc.value == null || desc.value == "" ) {
 		msg += "Please enter a description for the study";
 		ret = false;
 	}
-	
+
 	if( !ret ) {
 		alert(msg);
 	}
 	else {
 		window.opener.reload();
 		// window.close();
-	}	
+	}
 
-		
+
 	return ret;
 }
 </script>
@@ -99,7 +92,7 @@ if( studyId == null ) {
     studyId = "";
 }
 else {
-    StudyDao studyDao = (StudyDao)SpringUtils.getBean(StudyDao.class);    
+    StudyDao studyDao = (StudyDao)SpringUtils.getBean(StudyDao.class);
     study = studyDao.find(Integer.parseInt(studyId));
 }
 
@@ -108,24 +101,31 @@ else {
 <form method="post" action="../study/ManageStudy.do">
 <input type="hidden" name="studyId" value="<%=studyId%>"/>
 <input type="hidden" name="method" value="saveUpdateStudy"/>
-<center>
-<table>
-<tr>
-	<td>Study Name<br><input type="text" id="studyName" name="studyName" value="<%=study == null ? "" : study.getStudyName()%>"/></td>
-	<td>Description<br><input type="text" id="studyDescription" name="studyDescription" value="<%=study == null || study.getDescription() == null ? "" : study.getDescription()%>"/></td>
-</tr>
-<tr>
-	<td>Form Name<br><input type="text" name="studyForm" value="<%=study == null || study.getFormName() == null ? "" : study.getFormName()%>"/></td>
-	<td>Remote Server URL<br><input type="text" name="studyRemoteURL" value="<%=study == null || study.getRemoteServerUrl() == null ? "" : study.getRemoteServerUrl()%>"/></td>
-</tr>
-<tr>
-	<td colspan="2" style="text-align:center;">Study Link<br><input type="text" name="studyLink" value="<%=study == null || study.getStudyLink() == null ? "" : study.getStudyLink()%>"/></td>
-</tr>
-<tr>
-	<td colspan="2" style="text-align:center;"><input type="submit" value="Save" onclick="return validateForm();"/></td>
-</tr>
-</table>
-</center>
+
+    <h3>&nbsp;&nbsp;<bean:message key="admin.admin.btnStudy" /></h3>
+
+    <div class="well">
+        <div class="row">
+            <div class="span4">
+              <fieldset>
+                <legend><bean:message key="admin.admin.btnStudy" /></legend>
+                <label><bean:message key="admin.providersearch.formName" /></label>
+                <input type="text" class="input-block-level" id="studyName" name="studyName" value="<%=study == null ? "" : Encode.forHtml(study.getStudyName())%>"/>
+                <label><bean:message key="issueAdmin.description" /></label>
+                <input type="text" class="input-block-level" id="studyDescription" name="studyDescription" value="<%=study == null || study.getDescription() == null ? "" : Encode.forHtml(study.getDescription())%>"/>
+                <label><bean:message key="oscarEncounter.formlist.formName" /></label>
+                <input type="text" class="input-block-level" name="studyForm" value="<%=study == null || study.getFormName() == null ? "" : Encode.forHtml(study.getFormName())%>"/>
+                <label><bean:message key="provider.eRx.labelURL" /></label>
+                <input type="text" class="input-block-level" name="studyRemoteURL" value="<%=study == null || study.getRemoteServerUrl() == null ? "" : Encode.forHtml(study.getRemoteServerUrl())%>"/>
+                <label>Study Link</label>
+                <input type="text" class="input-block-level" name="studyLink" value="<%=study == null || study.getStudyLink() == null ? "" : Encode.forHtml(study.getStudyLink())%>"/><br>
+                <input type="submit" class="btn btn-primary" value="<bean:message key="global.btnSave" />" onclick="return validateForm();">
+              </fieldset>
+            </div> <!-- class="span4" -->
+        </div> <!-- class="row" -->
+    </div> <!-- class="well" -->
+
+
 </form>
 <%if( !studyId.equals("") ) {%>
 	<jsp:include page="listDemographics.jsp"></jsp:include>

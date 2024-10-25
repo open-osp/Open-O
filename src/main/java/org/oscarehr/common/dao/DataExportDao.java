@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,42 +21,23 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.DataExport;
 
-import org.springframework.stereotype.Repository;
-
-@Repository
-public class DataExportDao extends AbstractDao<DataExport> {
+public interface DataExportDao extends AbstractDao<DataExport> {
 	
 	public static final String ROURKE = "Rourke";
 	public static final String CIHI_OMD4 = "CIHI_OMD4";
 	public static final String CIHI_PHC_VRS = "CIHI_PHC_VRS";
 	
-	public DataExportDao() {
-		super(DataExport.class);
-	}
+	public List<DataExport> findAll();
 	
-	public List<DataExport> findAll() {
-		Query query = entityManager.createQuery("select de from DataExport de order by de.daterun");
-		@SuppressWarnings("unchecked")
-		List<DataExport> list =  query.getResultList();
-		return list;
-	}
-	
-	public List<DataExport> findAllByType(String type) {
-		Query query = entityManager.createQuery("select de from DataExport de where de.type = :type order by de.daterun");
-		query = query.setParameter("type", type);
-		@SuppressWarnings("unchecked")		
-		List<DataExport> list =  query.getResultList();
-		return list;
-	}
+	public List<DataExport> findAllByType(String type);
 		
 }

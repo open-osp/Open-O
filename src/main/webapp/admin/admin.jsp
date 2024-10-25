@@ -27,7 +27,7 @@
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-html"
+<%@ taglib uri="http://struts.apache.org/tags-html"
 	prefix="html"%>
 <%
 	String roleName$ = (String)session.getAttribute("userrole") + "," + (String)session.getAttribute("user");
@@ -63,7 +63,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<%@page import="oscar.OscarProperties"%><html:html locale="true">
+<%@page import="oscar.OscarProperties"%><html:html lang="en">
 <head>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
 <title><bean:message key="admin.admin.page.title" /> Start Time : <%=oscar.OscarProperties.getInstance().getStartTime()%></title>

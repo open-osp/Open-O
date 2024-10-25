@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.billing.CA.dao;
@@ -32,31 +35,11 @@ import org.oscarehr.billing.CA.model.BillingDetail;
 import org.oscarehr.common.dao.AbstractDao;
 import org.springframework.stereotype.Repository;
 
-@Repository
-@SuppressWarnings("unchecked")
-public class BillingDetailDao extends AbstractDao<BillingDetail> {
+public interface BillingDetailDao extends AbstractDao<BillingDetail> {
 
-	public BillingDetailDao() {
-		super(BillingDetail.class);
-	}
+	public List<BillingDetail> findByBillingNo(int billingNo);
 
-	public List<BillingDetail> findByBillingNo(int billingNo) {
-		Query q = entityManager.createQuery("select x from BillingDetail x where x.billingNo=?");
-		q.setParameter(1, billingNo);
-		List<BillingDetail> results = q.getResultList();
-		return results;
-	}
+	public List<BillingDetail> findByBillingNoAndStatus(Integer billingNo, String status);
 
-	public List<BillingDetail> findByBillingNoAndStatus(Integer billingNo, String status) {
-		Query query = createQuery("bd", "bd.billingNo = :billingNo AND bd.status = :status");
-		query.setParameter("billingNo", billingNo);
-		query.setParameter("status", status);
-		return query.getResultList();
-	}
-	
-	public List<BillingDetail> findByBillingNo(Integer billingNo) {
-		Query query = createQuery("bd", "bd.billingNo = :billingNo AND bd.status <> 'D' ORDER BY service_code");
-		query.setParameter("billingNo", billingNo);
-		return query.getResultList();
-	}
+	public List<BillingDetail> findByBillingNo(Integer billingNo);
 }

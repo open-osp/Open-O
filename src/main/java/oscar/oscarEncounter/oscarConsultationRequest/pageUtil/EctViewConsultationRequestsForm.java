@@ -26,7 +26,7 @@
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
 import org.apache.struts.action.ActionForm;
-import org.oscarehr.common.dao.ConsultationRequestDao;
+import org.oscarehr.common.dao.ConsultationRequestDaoImpl;
 
 public final class EctViewConsultationRequestsForm extends ActionForm {
    
@@ -175,5 +175,5 @@ public final class EctViewConsultationRequestsForm extends ActionForm {
    String desc;
    String searchDate = null;
    Integer offset;
-   Integer limit = ConsultationRequestDao.DEFAULT_CONSULT_REQUEST_RESULTS_LIMIT;
+   Integer limit = ConsultationRequestDaoImpl.DEFAULT_CONSULT_REQUEST_RESULTS_LIMIT;
 }

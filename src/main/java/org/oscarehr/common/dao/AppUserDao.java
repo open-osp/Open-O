@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -30,22 +33,7 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.AppUser;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class AppUserDao extends AbstractDao<AppUser>{
+public interface AppUserDao extends AbstractDao<AppUser>{
 
-	public AppUserDao()  {
-		super(AppUser.class);
-	}
-	
-	public AppUser findForProvider(int appId,String providerNo){
-		Query query = entityManager.createQuery("select x from AppUser x where x.appId = ?1 and x.providerNo = ?2");
-		query.setParameter(1,appId);
-		query.setParameter(2,providerNo);
-		List<AppUser> list = query.getResultList();
-		if (list == null || list.size() == 0){
-			return null;
-		}
-		
-		return list.get(0);
-	}
+	public AppUser findForProvider(int appId,String providerNo);
 }

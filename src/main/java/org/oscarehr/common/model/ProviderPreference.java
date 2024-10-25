@@ -38,8 +38,8 @@ import javax.persistence.PostLoad;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.CollectionOfElements;
+import javax.persistence.ElementCollection;
+//import org.hibernate.annotations.CollectionOfElements;
 
 import oscar.OscarProperties;
 
@@ -175,17 +175,17 @@ public class ProviderPreference extends AbstractModel<String> implements Seriali
 	private String defaultBillingLocation;
 	
 	
-	@CollectionOfElements(targetElement = String.class)
+	@ElementCollection
 	@JoinTable(name = "ProviderPreferenceAppointmentScreenForm",joinColumns = @JoinColumn(name = "providerNo"))
 	@Column(name="appointmentScreenForm")
 	private Collection<String> appointmentScreenForms=new HashSet<>();
 	
-	@CollectionOfElements(targetElement = EformLink.class)
+	@ElementCollection
 	@JoinTable(name = "ProviderPreferenceAppointmentScreenEForm",joinColumns = @JoinColumn(name = "providerNo"))
 	@Column(name="appointmentScreenEForm")
 	private Collection<EformLink> appointmentScreenEForms=new HashSet<>();
 	
-	@CollectionOfElements(targetElement = QuickLink.class)
+	@ElementCollection
 	@JoinTable(name = "ProviderPreferenceAppointmentScreenQuickLink",joinColumns = @JoinColumn(name = "providerNo"))
 	private Collection<QuickLink> appointmentScreenQuickLinks=new HashSet<>();
 	

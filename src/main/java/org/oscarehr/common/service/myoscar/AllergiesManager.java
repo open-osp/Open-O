@@ -49,7 +49,7 @@ import org.w3c.dom.Document;
 public final class AllergiesManager {
 	private static final Logger logger = MiscUtils.getLogger();
 	private static final String OSCAR_ALLERGIES_DATA_TYPE = "ALLERGY";
-	private static final SentToPHRTrackingDao sentToPHRTrackingDao = (SentToPHRTrackingDao) SpringUtils.getBean("sentToPHRTrackingDao");
+	private static final SentToPHRTrackingDao sentToPHRTrackingDao = (SentToPHRTrackingDao) SpringUtils.getBean(SentToPHRTrackingDao.class);
 
 	public static void sendAllergiesToMyOscar(LoggedInInfo loggedInInfo, MyOscarLoggedInInfo myOscarLoggedInInfo, Integer demographicId) throws ClassCastException {
 		// get last synced info
@@ -62,7 +62,7 @@ public final class AllergiesManager {
 		SentToPHRTracking sentToPHRTracking = MyOscarMedicalDataManagerUtils.getExistingOrCreateInitialSentToPHRTracking(demographicId, OSCAR_ALLERGIES_DATA_TYPE, MyOscarLoggedInInfo.getMyOscarServerBaseUrl());
 		logger.debug("sendAllergiesToMyOscar : demographicId=" + demographicId + ", lastSyncTime=" + sentToPHRTracking.getSentDatetime());
 
-		AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean("allergyDao");
+		AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean(AllergyDao.class);
 		List<Allergy> changedAllergies = allergyDao.findByDemographicIdUpdatedAfterDate(demographicId, sentToPHRTracking.getSentDatetime());
 		for (Allergy allergy : changedAllergies) {
 			logger.debug("sendAllergiesToMyOscar : allergyId=" + allergy.getId());

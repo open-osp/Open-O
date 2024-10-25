@@ -133,7 +133,7 @@ public class DisplayInvoiceLogo extends DownloadAction{
 			logoDocType = "invoice letterhead";
 		}
 		logoDocType = logoDocType.trim();
-		DocumentDao docDao = (DocumentDao)SpringUtils.getBean("documentDao");
+		DocumentDao docDao = (DocumentDao)SpringUtils.getBean(DocumentDao.class);
 		if (docDao == null) {
 			MiscUtils.getLogger().info("Can't get DocumentDAO bean");
 			return fileName;

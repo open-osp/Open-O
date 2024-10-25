@@ -97,7 +97,15 @@ public class PreventionReportAction extends Action {
           asofDate = today.getTime();
        }
        request.setAttribute("asDate",asofDate);
+ 
        PreventionReport report = PreventionReportFactory.getPreventionReport(prevention);
+       if (report == null) {
+         return mapping.findForward("success"); // will stay on the same page if no report is found
+       }     
+
+      if ("ChildImmunizations".equals(prevention)) {
+         request.setAttribute("ReportType", prevention);
+      }
 
        Hashtable h =report.runReport(loggedInInfo, list,asofDate);
        request.setAttribute("up2date",h.get("up2date"));

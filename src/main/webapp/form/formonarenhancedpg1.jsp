@@ -87,7 +87,7 @@
   	if (request.getParameter("view") != null && request.getParameter("view").equals("1")) bView = true; 
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Antenatal Record 1</title>
@@ -2265,7 +2265,7 @@ function wk16VisitTool() {
 						<option value="FAS">Persian</option>
 						<option value="POL">Polish</option>
 						<option value="POR">Portuguese</option>
-						<option value="PUS">Pushto</option>
+						<option value="PUS">Pashto</option>
 						<option value="QUE">Quechua</option>
 						<option value="RON">Romanian</option>
 						<option value="ROH">Romansh</option>

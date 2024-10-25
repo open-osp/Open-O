@@ -72,7 +72,7 @@
 
 %>
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 	<title>BC Antenatal Record 2020 Part 1</title>
@@ -96,7 +96,7 @@
 	<script src="<%=request.getContextPath() %>/js/bootstrap-select.min.js" type="text/javascript"></script>
 
 	<script src="<%=request.getContextPath()%>/library/jquery/jquery-ui-1.12.1.min.js" type="text/javascript"></script>
-	<script src="<%=request.getContextPath()%>/js/fg.menu.js"></script>
+<%--	<script src="<%=request.getContextPath()%>/js/fg.menu.js"></script>--%>
 	<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.are-you-sure.js"></script>
 
 	<!-- Field Naming Scheme throughout BCAR2020
@@ -406,7 +406,7 @@
 											<option value="FAS">Persian</option>
 											<option value="POL">Polish</option>
 											<option value="POR">Portuguese</option>
-											<option value="PUS">Pushto</option>
+											<option value="PUS">Pashto</option>
 											<option value="QUE">Quechua</option>
 											<option value="RON">Romanian</option>
 											<option value="ROH">Romansh</option>

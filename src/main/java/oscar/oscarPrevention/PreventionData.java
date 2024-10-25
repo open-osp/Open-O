@@ -62,8 +62,8 @@ import oscar.util.UtilDateUtilities;
 public class PreventionData {
 
 	private static Logger log = MiscUtils.getLogger();
-	private static PreventionDao preventionDao = (PreventionDao) SpringUtils.getBean("preventionDao");
-	private static PreventionExtDao preventionExtDao = (PreventionExtDao) SpringUtils.getBean("preventionExtDao");
+	private static PreventionDao preventionDao = (PreventionDao) SpringUtils.getBean(PreventionDao.class);
+	private static PreventionExtDao preventionExtDao = (PreventionExtDao) SpringUtils.getBean(PreventionExtDao.class);
 	private static PartialDateDao partialDateDao = SpringUtils.getBean(PartialDateDao.class);
 	private PreventionData() {
 		// prevent instantiation

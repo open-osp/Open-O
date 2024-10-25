@@ -63,11 +63,11 @@
     FrmRecord rec = (new FrmRecordFactory()).factory(formClass);
     java.util.Properties props = rec.getFormRecord(LoggedInInfo.getLoggedInInfoFromSession(request),demoNo, formId);  
     
-    DemographicDao demoDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+    DemographicDao demoDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
     Demographic demo = demoDao.getDemographic(request.getParameter("demographic_no"));
     String demoName = demo.getFormattedName();   
 
-    ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+    ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
     String providerNo = props.getProperty("provider_no","");
     String providerName = "";
     if (providerNo != null && !providerNo.isEmpty() && !providerNo.equals("999998")){
@@ -80,7 +80,7 @@
 
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <% response.setHeader("Cache-Control","no-cache");%>
 
 <HEAD>

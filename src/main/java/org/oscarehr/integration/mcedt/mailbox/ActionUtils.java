@@ -285,7 +285,7 @@ public class ActionUtils {
 	}
 	
 	public static boolean isOHIPFile(String filename) {
-		String suffix = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
+		String suffix = filename.substring(filename.lastIndexOf(".") + 1);
 		String prefix = filename.substring(0,2);
 		if (suffix.length()== 3 && suffix.matches("\\d+") && prefix.matches("H[A-L]")) {
 			return true;
@@ -294,12 +294,14 @@ public class ActionUtils {
 	}
 	
 	public static boolean isOBECFile(String filename) {
-		String suffix = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
-		String prefix = filename.substring(0,4);
-		if (suffix.length()== 3 && suffix.equalsIgnoreCase("txt") && prefix.equals("OBEC")) {
-			return true;
+		String suffix = filename.substring(filename.lastIndexOf(".") + 1);
+		String prefix = "";
+		if (filename.length() < 4) {
+			logger.warn("Checked for OBEC file, found one with too short name: " + filename);
+		} else {
+			prefix = filename.substring(0, 4);
 		}
-		return false;
+		return suffix.equalsIgnoreCase("txt") && prefix.equals("OBEC");
 	}
 	
 	public static void moveOhipToOutBox(Date startDate, Date endDate) {
@@ -323,14 +325,19 @@ public class ActionUtils {
 					if (new Date(file.lastModified()).after(startDate) && new Date(file.lastModified()).before(endDate)) copyFileToDirectory(file, outbox, false, true);
 				}
 			}
-			for (File file : toOutbox) {
-				if (new Date(file.lastModified()).after(startDate) && new Date(file.lastModified()).before(endDate)) copyFileToDirectory(file, outbox,false, true);
-			}
+//			for (File file : toOutbox) {
+//				if (new Date(file.lastModified()).after(startDate) && new Date(file.lastModified()).before(endDate)) copyFileToDirectory(file, outbox,false, true);
+//			}
 		} catch (Exception e) {
 			logger.error("Unable to copy OHIP files to outbox", e);
 		}
 	}
 	
+	/*
+	 * The method ActionUtils.moveObecToOutBox is slow with many files in 'OscarDocument/oscar/document/'.
+	 * To optimize, we will move OBEC files during generation rather than during MCEDT mailbox opening.
+	 * See ObecData.writeFile() for details on the updated process.
+	 */
 	public static void moveObecToOutBox(Date startDate, Date endDate) {
 		try {
 			OscarProperties props = OscarProperties.getInstance();
@@ -356,6 +363,12 @@ public class ActionUtils {
 		} catch (Exception e) {
 			logger.error("Unable to copy OBEC files to outbox", e);
 		}
+	}
+
+	public static void createOnEDTOutboxDir() {
+		OscarProperties props = OscarProperties.getInstance();
+		File dateDir = new File(props.getProperty("ONEDT_OUTBOX", ""));
+		if (!dateDir.exists()) dateDir.mkdirs();
 	}
 	
 	public static Date getOutboxTimestamp() {

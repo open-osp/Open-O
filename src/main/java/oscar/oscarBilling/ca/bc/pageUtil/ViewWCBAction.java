@@ -128,7 +128,7 @@ public class ViewWCBAction extends Action {
     else {
       request.setAttribute("readonly", "true");
        WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-       BillingmasterDAO billingmasterDAO = (BillingmasterDAO) ctx.getBean("BillingmasterDAO");
+       BillingmasterDAO billingmasterDAO = (BillingmasterDAO) ctx.getBean(BillingmasterDAO.class);
 
        frm.setWCBForms(billingmasterDAO.getWCBForm(formId));
     }

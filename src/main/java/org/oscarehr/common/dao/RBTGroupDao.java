@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
@@ -32,89 +35,14 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.RBTGroup;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class RBTGroupDao extends AbstractDao<RBTGroup> {
+public interface RBTGroupDao extends AbstractDao<RBTGroup> {
 
-	public RBTGroupDao() {
-		super(RBTGroup.class);
-	}
+	public int deleteByNameAndTemplateId(String groupName, Integer templateId);
 
-	/**
-	 * Deletes groups with the specified name and, optionally, template ID.
-	 * 
-	 * @param groupName
-	 * 		Name of the group to delete
-	 * @param templateId
-	 * 		ID of the template for the group to be deleted. In case this value is set to null, only the group name is used for 
-	 * 		deletion selection
-	 * @return
-	 * 		Returns the number of the deleted groups
-	 */
-	public int deleteByNameAndTemplateId(String groupName, Integer templateId) {
-		StringBuilder buf = new StringBuilder("DELETE FROM " + modelClass.getSimpleName() + " g WHERE g.groupName = :groupName");
-		if (templateId != null) {
-			buf.append(" AND g.templateId = :templateId");
-		}
-		
-		Query query = entityManager.createQuery(buf.toString());
-		query.setParameter("groupName", groupName);
-		if (templateId != null) {
-			query.setParameter("templateId", templateId);
-		}
-		
-		return query.executeUpdate();
-	}
-	
-	/**
-	 * Deletes groups with the specified name.
-	 * 
-	 * @param groupName
-	 * 		The name of the group to delete
-	 * @return
-	 * 		Returns the number of the deleted groups
-	 */
-	
-	public int deleteByName(String groupName) {
-		return deleteByNameAndTemplateId(groupName, null);
-	}
-	
-	/**
-	 * Retrieves a group from the database
-	 * 
-	 * @param groupName
-	 * 		The name of the group to retrieve
-	 * @return
-	 * 		Returns a list of RBTGroup objects
-	 */
-	public List<RBTGroup> getByGroupName(String groupName) {
-		String sql = "select tg from RBTGroup tg where tg.groupName=?";
-		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, groupName);
+	public int deleteByName(String groupName);
 
-		@SuppressWarnings("unchecked")
-		List<RBTGroup> results = query.getResultList();
+	public List<RBTGroup> getByGroupName(String groupName);
 
-		return results;
-	}
-	
-	/**
-	 * Retrieves a list of group names from the database
-	 * 
-	 * @return
-	 * 		Returns a list of names of groups
-	 */
-	public List<String> getGroupNames() {
-		String sql = "select distinct tg.groupName from RBTGroup tg";
-		Query query = entityManager.createQuery(sql);
-
-		@SuppressWarnings("unchecked")
-		List<String> results = query.getResultList();
-		
-		if(results == null) {
-			results = Collections.emptyList();
-		}
-
-		return results;
-	}
+	public List<String> getGroupNames();
 
 }

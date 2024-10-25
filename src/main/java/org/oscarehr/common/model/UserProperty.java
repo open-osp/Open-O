@@ -24,15 +24,8 @@
 
 package org.oscarehr.common.model;
 
+import javax.persistence.*;
 import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name="property")
@@ -58,6 +51,7 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     public static final String DOC_DEFAULT_QUEUE="doc_default_queue";
     public static final String HC_TYPE= "HC_Type";
     public static final String DEFAULT_SEX= "default_sex";
+    public static final String DEFAULT_REF_PRACTITIONER= "default_ref_prac";
     public static final String EFORM_REFER_FAX = "eform_refer_fax";
     public static final String EFORM_FAVOURITE_GROUP = "favourite_eform_group";
     public static final String RX_SHOW_PATIENT_DOB="rx_show_patient_dob";
@@ -183,6 +177,11 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
 	public static final String PREVENTION_NON_ISPA_WARNING = "prevention_non_ispa_warning";
 	
 	public static final String TICKLER_TASK_ASSIGNEE = "tickler_task_assignee";
+
+    public static final String EMAIL_COMMUNICATION = "email_communication";
+
+    public static final String SCHEDULE_WEEK_VIEW_WEEKENDS = "schedule.week_view_weekends";
+
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -25,14 +25,6 @@
 package org.oscarehr.casemgmt.service;
 
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ColumnText;
@@ -48,9 +40,17 @@ import org.oscarehr.common.printing.PdfWriterFactory;
 import org.oscarehr.managers.ProgramManager2;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.OscarProperties;
 import oscar.oscarClinic.ClinicData;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -133,11 +133,13 @@ public class CaseManagementPrintPdf {
         String dob = propResource.getString("oscarEncounter.pdfPrint.dob") + " " + (String)request.getAttribute("demoDOB") + "\n";
         String age = propResource.getString("oscarEncounter.pdfPrint.age") + " " + (String)request.getAttribute("demoAge") + "\n";
         String mrp = propResource.getString("oscarEncounter.pdfPrint.mrp") + " " + (String)request.getAttribute("mrp") + "\n";
+        String phn = propResource.getString("oscarEncounter.pdfPrint.phn") + " " + (String)request.getAttribute("demoPhn") + "\n";
+
         String[] info;
         if("true".equals(OscarProperties.getInstance().getProperty("print.includeMRP", "true"))) {
-        	info = new String[] { title, gender, dob, age, mrp };
+        	info = new String[] { title, gender, dob, age, phn, mrp };
         } else {
-        	info = new String[] { title, gender, dob, age};
+        	info = new String[] { title, gender, dob, age, phn};
         }
 
         ClinicData clinicData = new ClinicData();

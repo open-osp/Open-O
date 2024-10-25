@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 
@@ -34,121 +37,29 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.PharmacyInfo;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class PharmacyInfoDao extends AbstractDao<PharmacyInfo>{
+public interface PharmacyInfoDao extends AbstractDao<PharmacyInfo>{
 	
-	public PharmacyInfoDao() {
-		super(PharmacyInfo.class);
-	}
 
-    synchronized public void addPharmacy(String name,String address,String city,String province,String postalCode, String phone1, String phone2, String fax, String email,String serviceLocationIdentifier, String notes) {
-    	PharmacyInfo pharmacyInfo = new PharmacyInfo();
-    	
-    	pharmacyInfo.setName(name);
-    	pharmacyInfo.setAddress(address);
-    	pharmacyInfo.setCity(city);
-    	pharmacyInfo.setProvince(province);
-    	pharmacyInfo.setPostalCode(postalCode);
-    	pharmacyInfo.setPhone1(phone1);
-    	pharmacyInfo.setPhone2(phone2);
-    	pharmacyInfo.setFax(fax);
-    	pharmacyInfo.setEmail(email);
-    	pharmacyInfo.setServiceLocationIdentifier(serviceLocationIdentifier);
-    	pharmacyInfo.setNotes(notes);
-    	pharmacyInfo.setStatus(PharmacyInfo.ACTIVE);
-    	pharmacyInfo.setAddDate(new Date());
-    	persist(pharmacyInfo);
-    }
+    public void addPharmacy(String name,String address,String city,String province,String postalCode, String phone1, String phone2, String fax, String email,String serviceLocationIdentifier, String notes);
 
-    public void updatePharmacy(Integer ID,String name,String address,String city,String province,String postalCode, String phone1, String phone2, String fax, String email, String serviceLocationIdentifier, String notes){
-    	PharmacyInfo pharmacyInfo = new PharmacyInfo();
-    	pharmacyInfo.setId(ID);
-    	pharmacyInfo.setName(name);
-    	pharmacyInfo.setAddress(address);
-    	pharmacyInfo.setCity(city);
-    	pharmacyInfo.setProvince(province);
-    	pharmacyInfo.setPostalCode(postalCode);
-    	pharmacyInfo.setPhone1(phone1);
-    	pharmacyInfo.setPhone2(phone2);
-    	pharmacyInfo.setFax(fax);
-    	pharmacyInfo.setEmail(email);
-    	pharmacyInfo.setServiceLocationIdentifier(serviceLocationIdentifier);
-    	pharmacyInfo.setNotes(notes);
-    	pharmacyInfo.setStatus(PharmacyInfo.ACTIVE);
-    	pharmacyInfo.setAddDate(new Date());
-    	merge(pharmacyInfo);
-     }
-
-    public void deletePharmacy(Integer ID){
-          String sql = "update PharmacyInfo set status = ? where id = ?";
-          Query query = entityManager.createQuery(sql);
-          query.setParameter(1, PharmacyInfo.DELETED);
-          query.setParameter(2, ID);
-          query.executeUpdate();
-     }
+    public void updatePharmacy(Integer ID,String name,String address,String city,String province,String postalCode, String phone1, String phone2, String fax, String email, String serviceLocationIdentifier, String notes);
+    public void deletePharmacy(Integer ID);
     
-    @SuppressWarnings("unchecked")
-    public List<PharmacyInfo> getPharmacies(List<Integer>idList) {
-    	String sql = "select x from PharmacyInfo x where x.id in (:list)";
-    	Query query = entityManager.createQuery(sql);
-    	    	
-    	query.setParameter("list",idList);
-    	
-    	return query.getResultList();
-    }
+    public List<PharmacyInfo> getPharmacies(List<Integer>idList);
 
-    public PharmacyInfo getPharmacy(Integer ID){
-    	return find(ID);
-     }
+    public PharmacyInfo getPharmacy(Integer ID);
 
-    public PharmacyInfo getPharmacyByRecordID(Integer recordID){
-    	String sql = "SELECT x FROM  PharmacyInfo x where x.id = ?";
-        Query query = entityManager.createQuery(sql);
-        query.setParameter(1,recordID);
-        @SuppressWarnings("unchecked")
-        List<PharmacyInfo> results = query.getResultList();
-        if(results.size()>0) {
-      	  return results.get(0);
-        }
-        return null;
-     }
+    public PharmacyInfo getPharmacyByRecordID(Integer recordID);
 
-    @SuppressWarnings("unchecked")
-    public List<PharmacyInfo> getAllPharmacies(){
-        List<PharmacyInfo>  pharmacyList =  new ArrayList<PharmacyInfo>();
-        String sql = "select x from PharmacyInfo x where x.status = :status order by name";
-        
-        Query query = entityManager.createQuery(sql);
-        query.setParameter("status", PharmacyInfo.ACTIVE);
-
-        pharmacyList = query.getResultList();
-
-        return pharmacyList;
-     }
+    public List<PharmacyInfo> getAllPharmacies();
     
-    @SuppressWarnings("unchecked")
-    public List<PharmacyInfo> searchPharmacyByNameAddressCity(String name, String city ) {
-    	
-    	String sql = "select x from PharmacyInfo x where x.status = :status and (x.name like :name or x.address like :address) and x.city like :city order by x.name, x.address";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter("status", PharmacyInfo.ACTIVE);
-    	query.setParameter("name", "%"+name+"%");
-    	query.setParameter("address", "%"+name+"%");
-    	query.setParameter("city", "%"+city+"%");
-    	
-    	return query.getResultList();
-    }
+    public List<PharmacyInfo> searchPharmacyByNameAddressCity(String name, String city );
     
-    @SuppressWarnings("unchecked")
-    public List<String> searchPharmacyByCity(String city ) {
-    
-    	String sql = "select distinct x.city from PharmacyInfo x where x.status = :status and x.city like :city";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter("status", PharmacyInfo.ACTIVE);
-    	query.setParameter("city", "%"+city+"%");
-    	
-    	return query.getResultList();
-    	
-    }
+    public List<String> searchPharmacyByCity(String city);
 
+	// public PharmacyInfo find(Integer id); 
+	// public void persist(PharmacyInfo pharmacyInfo); 
+	// public void merge(PharmacyInfo pharmacyInfo);
+	// public List<PharmacyInfo> findAll();
+	//public PharmacyInfo saveEntity(PharmacyInfo pharmacyInfo);
 }

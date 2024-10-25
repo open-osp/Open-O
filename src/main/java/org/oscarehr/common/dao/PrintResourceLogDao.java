@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,32 +21,14 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.PrintResourceLog;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class PrintResourceLogDao extends AbstractDao<PrintResourceLog>{
-
-	public PrintResourceLogDao() {
-		super(PrintResourceLog.class);
-	}
-	
-	public List<PrintResourceLog> findByResource(String resourceName, String resourceId) {
-		Query query = entityManager.createQuery("select x from " + modelClass.getName() + " x WHERE x.resourceName=? and x.resourceId = ? order by x.dateTime DESC");
-		query.setParameter(1, resourceName);
-		query.setParameter(2, resourceId);
-
-		@SuppressWarnings("unchecked")
-		List<PrintResourceLog> results = query.getResultList();
-
-		return results;
-
-	}
+public interface PrintResourceLogDao extends AbstractDao<PrintResourceLog> {
+    List<PrintResourceLog> findByResource(String resourceName, String resourceId);
 }

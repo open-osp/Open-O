@@ -73,7 +73,7 @@ if(!authed) {
 %>
 <%@page import="oscar.oscarDB.DBPreparedHandler"%>
 
-<%@page import="oscar.Misc"%><html:html locale="true">
+<%@page import="oscar.Misc"%><html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>PHCP Report</title>

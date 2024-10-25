@@ -82,10 +82,10 @@
 		}
 	}
 
-	DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+	DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 	String hc_type = demographicDao.getDemographicById(currentDemographicId).getHcType();
 	String admissionDate = "0001-01-01";
-	AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");	
+	AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
 	List<Admission> admissions = admissionDao.getAdmissionsASC(currentDemographicId);
 	for(Admission ad : admissions) {
 		if(!"community".equalsIgnoreCase(ad.getProgramType())) {

@@ -63,7 +63,14 @@ public class ResourceAction extends DispatchAction {
 		Date endDate = new Date();
 		if (startDate!=null && endDate!=null) {
 			ActionUtils.moveOhipToOutBox(startDate,endDate);
-			ActionUtils.moveObecToOutBox(startDate,endDate);			
+
+			/*
+			 * The method ActionUtils.moveObecToOutBox is slow with many files in 'OscarDocument/oscar/document/'.
+			 * To optimize, we will move OBEC files during generation rather than during MCEDT mailbox opening.
+			 * See ObecData.writeFile() for details on the updated process.
+			 */
+			// ActionUtils.moveObecToOutBox(startDate,endDate);	
+
 			ActionUtils.setOutboxTimestamp(endDate);
 		}
 		ActionUtils.setUploadResourceId(request, new BigInteger("-1"));
@@ -86,18 +93,10 @@ public class ResourceAction extends DispatchAction {
 	HttpServletResponse response) throws Exception {		
 
 		List<DetailDataCustom> resourceList;
-		try{			
-			
-			/*ResourceForm resourceForm= (ResourceForm)form;
-			resourceForm.setResourceType("");
-			resourceForm.setPageNo(1);*/
+		try{
 			resetPage(form);
 			resourceList = loadList(form,request,response,ResourceStatus.DOWNLOADABLE);			
-			
-			if(resourceList.size()>0){																					
-				request.getSession().setAttribute("resourceListDL",resourceList);
-			}			
-			
+			request.getSession().setAttribute("resourceListDL",resourceList);
 		}
 		catch(Exception e) {
 			logger.error("Unable to load resource list ", e);
@@ -118,32 +117,17 @@ public class ResourceAction extends DispatchAction {
 	public ActionForward loadSentList(ActionMapping mapping, ActionForm form, HttpServletRequest request, 
 			HttpServletResponse response) throws Exception {
 		ResourceForm resourceForm = (ResourceForm) form;
-		//resourceForm.setStatus("");
 		resetPage(form);
 		List<DetailDataCustom> resourceList;		
 		List<DetailDataCustom> resourceListFiltered = new ArrayList<DetailDataCustom>();
 		
 		try{
 			if(request.getSession().getAttribute("resourceTypeList")==null){
-				EDTDelegate delegate = DelegateFactory.newDelegate();
+				EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 				resourceForm.setTypeListResult(getTypeList(request, delegate));
-				//request.getSession().setAttribute("resourceTypeList",resourceForm.getTypeListResult());
-				//List<TypeListData> typeListData = getTypeList(request, delegate).getData();
-				//request.getSession().setAttribute("typeListData",typeListData);
 			}
-			//resourceForm.setResourceType("");
-			//resourceForm.setPageNo(1);
 			resourceForm.setStatus("UPLOADED");			
 			resourceList = loadList(form,request,response,ResourceStatus.UPLOADED);
-			/*if(resourceList.size()>0){
-				for(DetailDataCustom detailDataK:resourceList){
-					//if(ActionUtils.filterResourceStatus(detailDataK)){
-						resourceListFiltered.add(detailDataK);
-					//}
-				}				
-
-				request.getSession().setAttribute("resourceListSent",resourceListFiltered);
-			}*/
 			request.getSession().setAttribute("resourceListSent",resourceList);
 			request.getSession().setAttribute("resourceStatus","UPLOADED");
 		}
@@ -159,7 +143,7 @@ public class ResourceAction extends DispatchAction {
 			ResourceForm resourceForm = (ResourceForm) form;						
 			
 			try{
-				EDTDelegate delegate = DelegateFactory.newDelegate();			
+				EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 				
 				
 				if(request.getSession().getAttribute("resourceTypeList")==null){
@@ -247,83 +231,4 @@ public class ResourceAction extends DispatchAction {
 		}
 		return result;
     }
-	
-	/*public ActionForward delete(ActionMapping mapping, ActionForm form, 
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ResourceForm resourceForm = (ResourceForm) form;
-		List<BigInteger> ids = getResourceIds(request);
-		
-		ResourceResult result = null;
-		try {
-			EDTDelegate delegate = DelegateFactory.newDelegate();
-			result = delegate.delete(ids);
-		} catch (Exception e) {
-			logger.error("Unable to delete", e);
-			saveErrors(request, ActionUtils.addMessage("resourceAction.delete.fault", McedtMessageCreator.exceptionToString(e)));
-		}
-		reset(mapping, resourceForm, request, response);
-		
-		ActionMessages messages = new ActionMessages();
-		if (result != null) {
-			for(ResponseResult r : result.getResponse()) {
-				messages.add(ActionUtils.addMessage("resourceAction.delete.success", McedtMessageCreator.responseResultToString(r)));
-			}
-		}
-		saveMessages(request, messages);
-		
-		return mapping.findForward("success");
-	}*/
-	
-	/*public ActionForward submit(ActionMapping mapping, ActionForm form, 
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<BigInteger> ids = getResourceIds(request);
-		
-		try {
-			EDTDelegate delegate = DelegateFactory.newDelegate();
-			ResourceResult result = delegate.submit(ids);
-			
-			reset(mapping, form, request, response);
-			saveMessages(request, ActionUtils.addMessage("resourceAction.submit.success", McedtMessageCreator.resourceResultToString(result)));
-		} catch (Exception e) {
-			logger.error("Unable to submit", e);
-			saveErrors(request, ActionUtils.addMessage("resourceAction.submit.failure", McedtMessageCreator.exceptionToString(e)));
-		}
-		
-		return mapping.findForward("success");
-	}*/
-
-	/*public ActionForward download(ActionMapping mapping, ActionForm form, 
-			HttpServletRequest request, HttpServletResponse response) throws Exception {		
-		List<BigInteger> ids = getResourceIds(request);		
-		DownloadResult downloadResult = null;
-		try {
-			EDTDelegate delegate = DelegateFactory.newDelegate();
-			downloadResult = delegate.download(ids);
-		} catch (Exception e) {
-			saveErrors(request, ActionUtils.addMessage("resourceAction.download.fault", McedtMessageCreator.exceptionToString(e)));
-			return mapping.findForward("success");
-		}
-
-		response.setContentType("application/zip");
-		response.setHeader("Content-Transfer-Encoding", "binary");
-		response.setHeader("Content-Disposition","attachment; filename=\"mcedt_download_" + System.currentTimeMillis() + ".zip\"");
-		
-		ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
-		for(DownloadData d : downloadResult.getData()) {
-			byte[] inputBytes = d.getContent();
-			
-			String name = d.getResourceID().toString();
-			ZipEntry ze = new ZipEntry(name);
-			ze.setComment(d.getDescription());
-			ze.setSize(inputBytes.length);
-			
-			zos.putNextEntry(ze);
-			zos.write(inputBytes);
-			zos.closeEntry();
-			zos.flush();
-		}
-		zos.close();
-
-		return null;
-	}*/
 }

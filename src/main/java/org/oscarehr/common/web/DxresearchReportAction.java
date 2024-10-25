@@ -63,7 +63,7 @@ public class DxresearchReportAction extends DispatchAction {
     private final static String SUCCESS = "success";
     private final static String EDIT_DESC = "editdesc";
     private DxresearchDAO dxresearchdao ;
-    private MyGroupDao mygroupdao = (MyGroupDao)SpringUtils.getBean("myGroupDao");
+    private MyGroupDao mygroupdao = (MyGroupDao)SpringUtils.getBean(MyGroupDao.class);
     private static final String REPORTS_PATH = "org/oscarehr/common/web/DxResearchReport.jrxml";
 
     public void setDxresearchdao(DxresearchDAO dxresearchdao) {

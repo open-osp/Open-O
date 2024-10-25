@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,8 +21,9 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
@@ -36,38 +38,12 @@ import org.springframework.stereotype.Repository;
  *
  * @author Jason Gallagher
  */
-@Repository
-public class ClinicDAO extends AbstractDao<Clinic> {
+public interface ClinicDAO extends AbstractDao<Clinic> {
 
-    public ClinicDAO() {
-    	super(Clinic.class);
-    }
+    public List<Clinic> findAll();
 
-    @SuppressWarnings("unchecked")
- 	public List<Clinic> findAll() {
- 		Query query = entityManager.createQuery("SELECT x FROM " + modelClass.getSimpleName() + " x");
- 		List<Clinic> results = query.getResultList();
- 		return results;
- 	}
-    
-    public Clinic getClinic(){
-    	Query query = entityManager.createQuery("select c from Clinic c");
-        @SuppressWarnings("unchecked")
-        List<Clinic> codeList = query.getResultList();
-        if(codeList.size()>0) {
-        	return codeList.get(0);
-        }
-        return null;
-    }
+    public Clinic getClinic();
 
-
-    public void save(Clinic clinic) {
-        if(clinic.getId() != null && clinic.getId().intValue()>0) {
-        	merge(clinic);
-        } else {
-        	persist(clinic);
-        }
-    }
-
+    public void save(Clinic clinic);
 
 }

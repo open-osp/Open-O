@@ -23,46 +23,31 @@
  */
 package org.oscarehr.renal;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.casemgmt.dao.CaseManagementNoteDAO;
 import org.oscarehr.casemgmt.dao.IssueDAO;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
 import org.oscarehr.casemgmt.model.Issue;
-import org.oscarehr.common.dao.BillingONCHeader1Dao;
-import org.oscarehr.common.dao.DemographicDao;
-import org.oscarehr.common.dao.DemographicExtDao;
-import org.oscarehr.common.dao.DrugDao;
-import org.oscarehr.common.dao.DxresearchDAO;
-import org.oscarehr.common.dao.MeasurementDao;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.DemographicExt;
-import org.oscarehr.common.model.Drug;
-import org.oscarehr.common.model.Dxresearch;
-import org.oscarehr.common.model.Measurement;
+import org.oscarehr.common.dao.*;
+import org.oscarehr.common.model.*;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 import org.oscarmcmaster.ckd.CKDConfig;
 import org.oscarmcmaster.ckd.CkdConfigDocument;
 import org.oscarmcmaster.ckd.DxCodes.Code;
-
 import oscar.OscarProperties;
+
+import java.util.*;
 
 public class CkdScreener {
 	
 	private Logger logger = MiscUtils.getLogger();
 
-	private DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean("DxresearchDAO");
+	private DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
 	private MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
-	private CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO)SpringUtils.getBean("caseManagementNoteDAO");
-	private IssueDAO issueDao = (IssueDAO) SpringUtils.getBean("IssueDAO");
+	private CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO)SpringUtils.getBean(CaseManagementNoteDAO.class);
+	private IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
 	private DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
 	private BillingONCHeader1Dao billingDao = SpringUtils.getBean(BillingONCHeader1Dao.class);
 	private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
@@ -241,7 +226,7 @@ public class CkdScreener {
 		
 		boolean positiveAboriginalMatch=false;
 		DemographicExt ab = demographicExtDao.getLatestDemographicExt(demographicNo, "aboriginal");
-		if(ab != null && ab.getValue().equals("Yes")) {
+		if(ab != null && "Yes".equalsIgnoreCase(ab.getValue())) {
 			positiveAboriginalMatch=true;
 		}
 		logger.debug("Aboriginal match:"+positiveAboriginalMatch);

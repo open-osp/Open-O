@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,51 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
-import org.oscarehr.common.NativeSql;
 import org.oscarehr.common.model.CtlDiagCode;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class CtlDiagCodeDao extends AbstractDao<CtlDiagCode> {
-
-	public CtlDiagCodeDao() {
-		super(CtlDiagCode.class);
-	}
-
-	/**
-	 * Gets diagnostics for the specified region and service type.
-	 * 
-	 * @param billRegion
-	 * @param serviceType
-	 * @return
-	 * 		Returns rows containing diagnostic code and description
-	 */
-	@SuppressWarnings("unchecked")
-	@NativeSql({"ctl_diagcode", "diagnosticcode"})
-	public List<Object[]> getDiagnostics(String billRegion, String serviceType) {
-		Query query = entityManager.createNativeQuery("SELECT d.diagnostic_code, d.description FROM diagnosticcode d, " 
-				+ "ctl_diagcode c WHERE d.diagnostic_code=c.diagnostic_code and d.region = ? and c.servicetype = ?");
-		query.setParameter(1, billRegion);
-		query.setParameter(2, serviceType);
-		return query.getResultList();
-
-	}
-
-	public List<CtlDiagCode> findByServiceType(String serviceType) {
-		Query q = entityManager.createQuery("select x from CtlDiagCode x where x.serviceType = ?");
-		q.setParameter(1, serviceType);
-		
-		@SuppressWarnings("unchecked")
-		List<CtlDiagCode> results = q.getResultList();
-		
-		return results;
-	}
+public interface CtlDiagCodeDao extends AbstractDao<CtlDiagCode> {
+    List<Object[]> getDiagnostics(String billRegion, String serviceType);
+    List<CtlDiagCode> findByServiceType(String serviceType);
 }

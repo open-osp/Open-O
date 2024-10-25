@@ -135,7 +135,7 @@
 
 
 
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <title>OSCAR Prevention Review Screen</title><!--I18n-->

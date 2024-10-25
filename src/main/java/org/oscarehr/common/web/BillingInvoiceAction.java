@@ -113,50 +113,60 @@ public class BillingInvoiceAction extends DispatchAction {
        return mapping.findForward(actionResult);
     }
     
+    /*
+    * The sendInvoiceEmailNotification method in BillingManager is no longer supported.
+    * For more details, please refer to the sendInvoiceEmailNotification method.
+    */
+    @Deprecated
     public ActionForward sendEmail(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)  {
-        
-    	 if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_billing", "w", null)) {
-         	throw new SecurityException("missing required security object (_billing)");
-         }
+        throw new UnsupportedOperationException("This method is no longer supported.");
+    	//  if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_billing", "w", null)) {
+        //  	throw new SecurityException("missing required security object (_billing)");
+        //  }
     	 
-        String invoiceNoStr = request.getParameter("invoiceNo");
-        Integer invoiceNo = Integer.parseInt(invoiceNoStr);
-        Locale locale = request.getLocale();
-        String actionResult = "failure";
+        // String invoiceNoStr = request.getParameter("invoiceNo");
+        // Integer invoiceNo = Integer.parseInt(invoiceNoStr);
+        // Locale locale = request.getLocale();
+        // String actionResult = "failure";
         
-        if (invoiceNo != null) {
-            BillingONManager billingManager = (BillingONManager) SpringUtils.getBean("billingONManager");
-            billingManager.sendInvoiceEmailNotification(invoiceNo, locale);
-            billingManager.addEmailedBillingComment(invoiceNo, locale); 
-            actionResult = "success";
-        }
+        // if (invoiceNo != null) {
+        //     BillingONManager billingManager = (BillingONManager) SpringUtils.getBean(BillingONManager.class);
+        //     billingManager.sendInvoiceEmailNotification(invoiceNo, locale);
+        //     billingManager.addEmailedBillingComment(invoiceNo, locale); 
+        //     actionResult = "success";
+        // }
 
-        ActionRedirect redirect = new ActionRedirect(mapping.findForward(actionResult));
-        redirect.addParameter("billing_no", invoiceNo);
-        return redirect;
+        // ActionRedirect redirect = new ActionRedirect(mapping.findForward(actionResult));
+        // redirect.addParameter("billing_no", invoiceNo);
+        // return redirect;
     }
     
+    /*
+    * The sendInvoiceEmailNotification method in BillingManager is no longer supported.
+    * For more details, please refer to the sendInvoiceEmailNotification method.
+    */
+    @Deprecated
     public ActionForward sendListEmail(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)  {
-        
-    	 if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_billing", "w", null)) {
-         	throw new SecurityException("missing required security object (_billing)");
-         }
+        throw new UnsupportedOperationException("This method is no longer supported.");
+    	//  if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_billing", "w", null)) {
+        //  	throw new SecurityException("missing required security object (_billing)");
+        //  }
     	 
-        String actionResult = "failure";       
-        String[] invoiceNos = request.getParameterValues("invoiceAction");
-        Locale locale = request.getLocale();
+        // String actionResult = "failure";       
+        // String[] invoiceNos = request.getParameterValues("invoiceAction");
+        // Locale locale = request.getLocale();
         
-        if (invoiceNos != null) {
-            for (String invoiceNoStr : invoiceNos) {
-                Integer invoiceNo = Integer.parseInt(invoiceNoStr);
-                BillingONManager billingManager = (BillingONManager) SpringUtils.getBean("billingONManager");
-                billingManager.sendInvoiceEmailNotification(invoiceNo, locale);
-                billingManager.addEmailedBillingComment(invoiceNo, locale);               
-            }
-            actionResult = "listSuccess";
-        }
+        // if (invoiceNos != null) {
+        //     for (String invoiceNoStr : invoiceNos) {
+        //         Integer invoiceNo = Integer.parseInt(invoiceNoStr);
+        //         BillingONManager billingManager = (BillingONManager) SpringUtils.getBean(BillingONManager.class);
+        //         billingManager.sendInvoiceEmailNotification(invoiceNo, locale);
+        //         billingManager.addEmailedBillingComment(invoiceNo, locale);               
+        //     }
+        //     actionResult = "listSuccess";
+        // }
 
-        return mapping.findForward(actionResult);
+        // return mapping.findForward(actionResult);
     }
     
     private boolean processPrintPDF(Integer invoiceNo, Locale locale, OutputStream os) {
@@ -168,7 +178,7 @@ public class BillingInvoiceAction extends DispatchAction {
             PdfRecordPrinter printer = new PdfRecordPrinter(os);                           
             printer.printBillingInvoice(invoiceNo, locale);
 
-            BillingONManager billingManager = (BillingONManager) SpringUtils.getBean("billingONManager");
+            BillingONManager billingManager = (BillingONManager) SpringUtils.getBean(BillingONManager.class);
             billingManager.addPrintedBillingComment(invoiceNo, locale);
             bResult = true;          
         }

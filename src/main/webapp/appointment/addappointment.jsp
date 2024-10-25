@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -40,14 +40,67 @@
 	}
 %>
 
-<%@page import="org.oscarehr.util.SessionConstants"%>
-<%@page import="org.oscarehr.common.model.ProviderPreference"%>
-<%@page import="oscar.oscarBilling.ca.bc.decisionSupport.BillingGuidelines"%>
-<%@page import="org.oscarehr.decisionSupport.model.DSConsequence"%>
-<%@page import="org.oscarehr.util.MiscUtils"%>
-<%@page import="java.util.Set,java.util.HashSet"%>
-<%@page import="org.oscarehr.managers.ProgramManager2"%>
-<%@page import="oscar.OscarProperties" %>
+
+<%@ page import="java.util.Set"%>
+<%@ page import="java.util.HashSet"%>
+
+<%@ page import="java.text.SimpleDateFormat"%>
+<%@ page import="java.time.LocalDateTime" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.time.format.FormatStyle" %>
+<%@ page import="java.time.ZoneId" %>
+
+<%@ page import="java.util.*, java.lang.*, oscar.appt.*"%>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@ page import="oscar.appt.status.service.AppointmentStatusMgr"%>
+<%@ page import="oscar.appt.status.service.impl.AppointmentStatusMgrImpl"%>
+<%@ page import="oscar.oscarBilling.ca.bc.decisionSupport.BillingGuidelines"%>
+<%@ page import="oscar.oscarEncounter.data.EctFormData"%>
+<%@ page import="oscar.util.ConversionUtils" %>
+<%@ page import="oscar.OscarProperties" %>
+
+<%@ page import="org.oscarehr.common.model.AppointmentStatus"%>
+<%@ page import="org.oscarehr.common.model.DemographicCust" %>
+<%@ page import="org.oscarehr.common.dao.DemographicCustDao" %>
+<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="org.oscarehr.common.model.Demographic" %>
+<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
+<%@ page import="org.oscarehr.common.model.EncounterForm" %>
+<%@ page import="org.oscarehr.common.dao.EncounterFormDao" %>
+<%@ page import="org.oscarehr.common.model.Appointment" %>
+<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
+<%@ page import="org.oscarehr.PMmodule.model.Program" %>
+<%@ page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
+<%@ page import="org.oscarehr.common.model.Facility" %>
+<%@ page import="org.oscarehr.PMmodule.service.ProviderManager" %>
+<%@ page import="org.oscarehr.PMmodule.service.ProgramManager" %>
+<%@ page import="org.oscarehr.managers.ProgramManager2"%>
+<%@ page import="org.oscarehr.decisionSupport.model.DSConsequence"%>
+
+<%@ page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="org.oscarehr.util.SessionConstants"%>
+<%@ page import="org.oscarehr.common.model.ProviderPreference"%>
+
+<%@ page import="org.oscarehr.managers.LookupListManager"%>
+<%@ page import="org.oscarehr.common.model.LookupList"%>
+<%@ page import="org.oscarehr.common.dao.SiteDao"%>
+<%@ page import="org.oscarehr.common.model.Site"%>
+<%@ page import="org.oscarehr.common.dao.AppointmentTypeDao" %>
+<%@ page import="org.oscarehr.common.model.AppointmentType" %>
+<%@ page import="org.oscarehr.util.LoggedInInfo"%>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
+
+<%@ page import="org.owasp.encoder.Encode" %>
+
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+
+<jsp:useBean id="providerBean" class="java.util.Properties" scope="session" />
+
 <%
  
   String DONOTBOOK = "Do_Not_Book";
@@ -85,44 +138,10 @@
     MiscUtils.getLogger().error("Error", e);
   }
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*, oscar.appt.*" errorPage="/errorpage.jsp"%>
-<%@ page import="oscar.appt.status.service.AppointmentStatusMgr"%>
-<%@ page import="oscar.appt.status.service.impl.AppointmentStatusMgrImpl"%>
-<%@ page import="org.oscarehr.common.model.AppointmentStatus"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="oscar.oscarEncounter.data.EctFormData"%>
-<%@ page import="org.oscarehr.common.model.DemographicCust" %>
-<%@ page import="org.oscarehr.common.dao.DemographicCustDao" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.common.model.Demographic" %>
-<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="org.oscarehr.common.model.EncounterForm" %>
-<%@ page import="org.oscarehr.common.dao.EncounterFormDao" %>
-<%@ page import="org.oscarehr.common.model.Appointment" %>
-<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@ page import="oscar.util.ConversionUtils" %>
-<%@ page import="org.apache.commons.lang.StringUtils" %>
-<%@ page import="org.oscarehr.PMmodule.model.Program" %>
-<%@ page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
-<%@ page import="org.oscarehr.common.model.Facility" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProviderManager" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ page import="org.oscarehr.managers.LookupListManager"%>
-<%@ page import="org.oscarehr.common.model.LookupList"%>
-<%@ page import="org.oscarehr.common.model.LookupListItem"%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-
-<jsp:useBean id="providerBean" class="java.util.Properties" scope="session" />
 
 <%
-	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
+	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean(DemographicCustDao.class);
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 	EncounterFormDao encounterFormDao = SpringUtils.getBean(EncounterFormDao.class);
@@ -158,48 +177,148 @@
     
     ProgramManager2 programManager2 = SpringUtils.getBean(ProgramManager2.class);
 %>
-<%@page import="org.oscarehr.common.dao.SiteDao"%>
-<%@page import="org.oscarehr.common.model.Site"%>
-<html:html locale="true">
+
+<html:html lang="en">
 <head>
-<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
-<script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-<script src="<%=request.getContextPath()%>/js/fg.menu.js"></script>
-
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/cupertino/jquery-ui-1.8.18.custom.css">
-<link rel="stylesheet" href="<%=request.getContextPath()%>/css/fg.menu.css">
-
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/checkDate.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
-<% if (isMobileOptimized) { %>
-    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width" />
-    <link rel="stylesheet" href="../mobile/appointmentstyle.css" type="text/css">
-<% } else { %>
-    <link rel="stylesheet" href="appointmentstyle.css" type="text/css">
-<% }%>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><bean:message key="appointment.addappointment.title" /></title>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
-   <script>
-     jQuery.noConflict();
-   </script>
+
+
+
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+<link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
+
+
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-migrate-3.4.0.js"></script>
+
+<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js" ></script>
+
+<script src="<%= request.getContextPath() %>/js/global.js"></script>
+<script src="<%= request.getContextPath() %>/js/checkDate.js"></script>
+<script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+
+<style>
+    .form-wrapper {
+        display:flex;
+    }
+    * table tr td {
+        border:none !important;
+    }
+body, html {
+  --color: #945;
+  --size: 2rem;
+  --border: calc(var(--size) * 0.125);
+  --borderRadius: calc(var(--size) * 0.5);
+  --labelSize: calc(var(--size) * 0.75);
+  --margin: calc(var(--size) * 0.25);
+  --marginLeft: calc(var(--size) + calc(var(--size) * 0.5));
+}
+.time {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='18.5' fill='none' stroke='%23222' stroke-width='3' /><path d='M20,4 20,8 M4,20 8,20 M36,20 32,20 M20,36 20,32' stroke='%23bbb' stroke-width='1' /><circle cx='20' cy='20' r='2' fill='%23222' stroke='%23222' stroke-width='2' /></svg>");
+  background-position: var(--margin) 50%;
+  background-repeat: no-repeat;
+  background-size: var(--size) var(--size);
+  border: var(--border) ;
+  border-radius: var(--borderRadius);
+  color: #222;
+  font-size: var(--size);
+  padding: var(--margin) var(--margin) var(--margin) var(--marginLeft);
+  transition: backgroundImage 0.25s;
+}
+</style>
+<!-- override styles for ui select menu -->
+<style>
+.ui-selectmenu-button.ui-button {
+    background-color: white;
+    width: 190px;
+    margin-bottom: 10px;
+
+}
+.ui-icon-triangle-1-s {
+	border-style: solid;
+	border-width: 0.142em 0.142em 0 0;
+	content: '';
+	display: inline-block;
+	height: 0.33em;
+	left: 0.6em;
+	position: relative;
+	top: 0.17em;
+	transform: rotate(135deg);
+	vertical-align: top;
+	width: 0.34em;
+
+}
+
+</style>
+<%
+    // multisites start ==================
+    SiteDao siteDao = (SiteDao)SpringUtils.getBean("siteDao");
+    List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
+    boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+    // multisites end ==================
+    if (bMultisites) { %>
+<style>
+	        <% for (Site s:sites) { %>
+.<%=s.getShortName()%> {
+    background-color:<%=s.getBgColor()%>;
+}
+	        <% } %>
+</style>
+    <% } %>
+<style>
+	        <% for (int i = 0; i < allStatus.size(); i++) {%>
+.<%=(allStatus.get(i)).getStatus()%> {
+    background-color:<%=(allStatus.get(i)).getColor()%>;
+}
+	        <% } %>
+</style>
+
+<script>
+
+function updateTime(){
+    const reTime = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+      const time = document.ADDAPPT.start_time.value;
+      if (reTime.exec(time)) {
+        const minute = Number(time.substring(3,5));
+        const minuteDeg = Number(time.substring(3,5)) * 360/60;
+        const hourDeg = (Number(time.substring(0,2)) % 12 + (minute / 60)) * 360/12;
+console.log("minute="+minute+" minDeg ="+minuteDeg);
+        document.getElementById("header").style.backgroundImage = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='18.5' fill='none' stroke='%23222' stroke-width='3' /><path d='M20,4 20,8 M4,20 8,20 M36,20 32,20 M20,36 20,32' stroke='%23bbb' stroke-width='1' /><circle cx='20' cy='20' r='2' fill='%23222' stroke='%23222' stroke-width='2' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,4 20.5,4 21.5,24.5 Z' fill='%23222' style='transform:rotate(`+minuteDeg+`deg); transform-origin: 50% 50%;' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,8.5 20.5,8.5 21.5,24.5 Z' style='transform:rotate(`+hourDeg+`deg); transform-origin: 50% 50%;' /></svg>")`;
+      }
+}
+
+</script>
+
+
 <oscar:customInterface section="addappt"/>
-<script type="text/javascript">
+<script>
 
 function onAdd() {
-    if (document.ADDAPPT.notes.value.length > 255) {
-      window.alert("<bean:message key="appointment.editappointment.msgNotesTooBig"/>");
-      return false;
-    }
     return calculateEndTime() ;
 }
 
-
-<!--
 function setfocus() {
 	this.focus();
   document.ADDAPPT.keyword.focus();
   document.ADDAPPT.keyword.select();
+}
+
+function moveAppt() {
+	var determinator = 0;
+	determinator = localStorage.getItem('copyPaste');
+	if (determinator == 1) {  //This means we are moving an appt
+    pasteAppt(false) ;
+    document.forms['ADDAPPT'].displaymode.value='Add Appointment';
+	//$("#pasteButton").trigger( "click" );
+	//$("#addButton").trigger( "click" );
+	localStorage.setItem('copyPaste','0');  //reset
+	}
 }
 
 function upCaseCtrl(ctrl) {
@@ -315,7 +434,7 @@ function calculateEndTime() {
   }
 
   //no show
-  if(document.ADDAPPT.keyword.value.substring(0,1)=="." && document.ADDAPPT.demographic_no.value=="" ) {
+  if(document.ADDAPPT.keyword.value.substring(0,1) === "." && document.ADDAPPT.demographic_no.value === "" ) {
     document.ADDAPPT.status.value = 'N' ;
   }
 
@@ -357,33 +476,38 @@ function pasteAppt(multipleSameDayGroupAppt) {
         else {
            warnMsgId.style.display = "none";
         }
-        document.forms[0].duration.value = "<%=apptObj.getDuration()%>";
-        document.forms[0].keyword.value = "<%=apptObj.getName()%>";
-        document.forms[0].demographic_no.value = "<%=apptObj.getDemographic_no()%>";
-        document.forms[0].reason.value = "<%= StringEscapeUtils.escapeJavaScript(apptObj.getReason()) %>";
-        document.forms[0].notes.value = "<%= StringEscapeUtils.escapeJavaScript(apptObj.getNotes()) %>";
-        document.forms[0].resources.value = "<%=apptObj.getResources()%>";
-        document.forms[0].type.value = "<%=apptObj.getType()%>";
+
+        document.forms[0].duration.value = "<%=Encode.forJavaScriptBlock(apptObj.getDuration())%>";
+        //document.forms[0].chart_no.value = "<%=Encode.forJavaScriptBlock(apptObj.getChart_no())%>";
+        document.forms[0].keyword.value = "<%=Encode.forJavaScriptBlock(apptObj.getName())%>";
+        document.forms[0].demographic_no.value = "<%=Encode.forJavaScriptBlock(apptObj.getDemographic_no())%>";
+        document.forms[0].reason.value = "<%= Encode.forJavaScriptBlock(apptObj.getReason()) %>";
+        document.forms[0].reasonCode.value = "<%= Encode.forJavaScriptBlock(apptObj.getReasonCode()) %>";
+        document.forms[0].notes.value = "<%= Encode.forJavaScriptBlock(apptObj.getNotes()) %>";
+        document.forms[0].resources.value = "<%=Encode.forJavaScriptBlock(apptObj.getResources())%>";
+        document.forms[0].type.value = "<%=Encode.forJavaScriptBlock(apptObj.getType())%>";
+        document.forms[0].location.value = "<%=Encode.forJavaScriptBlock(apptObj.getLocation())%>";
         if('<%=apptObj.getUrgency()%>' == 'critical') {
                 document.forms[0].urgency.checked = "checked";
         }
 		document.forms[0].reasonCode.value = "<%=apptObj.getReasonCode() %>";
 		
 		<%if("true".equals(pros.getProperty("appointment.paste.status","false"))) {%>
-			document.forms[0].status.value = "<%=apptObj.getStatus()%>";
+            var statusCode = "<%=Encode.forJavaScriptBlock(apptObj.getStatus())%>";
+            statusCode = statusCode.substring(0,1); //the selector only supports setting the first status
+		    document.forms[0].status.value = statusCode;
 		<%}%>
 		<%if("true".equals(pros.getProperty("appointment.paste.location","false"))) {%>
-			document.forms[0].location.value = "<%=apptObj.getLocation()%>";
+			document.forms[0].location.value = "<%=Encode.forJavaScriptBlock(apptObj.getLocation())%>";
 		<%}%>
-		
-		//document.forms[0].chart_no.value = "<%=apptObj.getChart_no()%>";
-		
+
+
 }
 <% } %>
 
 
 	function openTypePopup () {
-		windowprops = "height=170,width=500,location=no,scrollbars=no,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=100,left=100";
+		windowprops = "height=230,width=500,location=no,scrollbars=no,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=100,left=100";
 		var popup=window.open("appointmentType.jsp?type="+document.forms['ADDAPPT'].type.value, "Appointment Type", windowprops);
 		if (popup != null) {
 			if (popup.opener == null) {
@@ -401,7 +525,7 @@ function pasteAppt(multipleSameDayGroupAppt) {
 		  document.forms['ADDAPPT'].duration.value = durSel;
 		  document.forms['ADDAPPT'].resources.value = resSel;
 		  var loc = document.forms['ADDAPPT'].location;
-		  if(loc.nodeName == 'SELECT') {
+		  if(loc.nodeName === 'SELECT') {
 		          for(c = 0;c < loc.length;c++) {
 		                  if(loc.options[c].innerHTML == locSel) {
 		                          loc.selectedIndex = c;
@@ -409,11 +533,95 @@ function pasteAppt(multipleSameDayGroupAppt) {
 		                          break;
 		                  }
 		          }
-		  } else if (loc.nodeName == "INPUT") {
+		  } else if (loc.nodeName === "INPUT") {
 			  document.forms['ADDAPPT'].location.value = locSel;
 		  }
 	}
 
+
+
+	$(document).ready(function() {
+		$( document ).tooltip();
+
+		var url = "<%= request.getContextPath() %>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=true";
+
+		$("#keyword").autocomplete( {
+			source: url,
+			minLength: 2,
+
+			focus: function( event, ui ) {
+				$("#keyword").val( ui.item.formattedName );
+				return false;
+			},
+			select: function( event, ui ) {
+				$("#demographic_no").val( ui.item.value );
+				$("#mrp").val( ui.item.provider );
+				$("#keyword").val( ui.item.formattedName );
+				return false;
+			}
+		})
+        .autocomplete( "instance" )._renderItem = function( ul, item ) {
+          return $( "<li>" )
+            .append( "<div><b>" + item.label + "</b>" + "<br>" + item.provider + "</div>" )
+            .appendTo( ul );
+        };
+
+
+        $.widget('custom.myselectmenu', $.ui.selectmenu, {
+
+              /**
+               * @see {@link https://api.jqueryui.com/selectmenu/#method-_renderItem}
+               */
+              _renderItem: function(ul, item) {
+                    var string = "<div><b>" + item.label + "</b> "
+                    if (item.element.attr("data-dur") && item.element.attr("data-dur").length > 0){
+                        string = string + item.element.attr("data-dur")+ "&nbsp;<bean:message key='provider.preference.min' />";
+                    }
+                    if (item.element.attr("data-notes") && item.element.attr("data-notes").length > 0){
+                        string = string + "&nbsp;&nbsp;" + "<span style='color:gray'> <i class='icon-pencil' title='" + "<bean:message key="Appointment.formNotes" />:&nbsp;" +
+                        item.element.attr("data-notes") + "'></i></span>";
+                    }
+                    string = string + "<br>";
+                    if (item.element.attr("data-reason") && item.element.attr("data-reason").length > 0){
+                        string = string + "<span style='color:gray'><i class='icon-tags' title='" + "<bean:message key="Appointment.formReason" />" + "'></i></span>&nbsp;&nbsp;" +
+                        item.element.attr("data-reason");
+                        }
+                    if (item.element.attr("data-resources") && item.element.attr("data-resources").length > 0){
+                        string = string + "<br>" + "<span style='color:gray'><i class='icon-cog' title='" + "<bean:message key="Appointment.formResources" />" + "'></i></span>&nbsp;&nbsp;" +
+                        item.element.attr("data-resources");
+                    }
+                    if (item.element.attr("data-loc") && item.element.attr("data-loc").length > 1){
+                        string = string + "<br>" + "<span style='color:gray'><i class='icon-home' title='" + "<bean:message key="Appointment.formLocation" />" + "'></i></span>&nbsp;&nbsp;" +
+                        item.element.attr("data-loc");
+                    }
+                    string = string + "</div>";
+                    return $( "<li>" )
+                        .append( string )
+                        .appendTo( ul );
+
+                    }
+        });
+
+        // render custom selectmenu
+        $('#type').myselectmenu({
+            change: function( event, data ) {
+                label=data.item.value;
+                origReason = $("textarea[name='reason']").val();
+                reason=data.item.element.attr("data-reason");
+                if (origReason.length > 0 ) {
+                    reason = reason.concat(" -- ".concat(origReason));
+                }
+                loc=data.item.element.attr("data-loc");
+                dur=data.item.element.attr("data-dur");
+                notes=data.item.element.attr("data-notes");
+                resources=data.item.element.attr("data-resources");
+                setType(label,reason,loc,dur,notes,resources);
+            }
+
+            });
+
+
+    });
 
 // stop javascript -->
 
@@ -444,7 +652,14 @@ function pasteAppt(multipleSameDayGroupAppt) {
         (request.getParameter("appointment_date") + " " + request.getParameter("start_time"))) ;
   }
 
-  String dateString1 = outform.format(apptDate );
+
+// Get localized pattern for UI
+DateTimeFormatter pattern2 = DateTimeFormatter.ofPattern("EEE").withLocale(request.getLocale());
+// Convert Java Date to Java LocalDateTime
+LocalDateTime apptd=apptDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+  //String dateString1 = outform.format(apptDate );
+  String dateString1 = pattern2.format(apptd);
   String dateString2 = inform.format(apptDate );
 
   GregorianCalendar caltime =new GregorianCalendar( );
@@ -487,19 +702,20 @@ function pasteAppt(multipleSameDayGroupAppt) {
         var timers = new Array();
 
 	$(document).ready(function(){
-           $(window).bind('beforeunload',function(){cancelPageLock();
-           });
-           //cancel any page view/locks held by provider on clicking 'X'
-           $("form#addappt").submit(function() {$(window).unbind('beforeunload');
-           });
 
-           calculateEndTime();
-           var endTime = document.forms[0].end_time.value;
-           var startTime = document.forms[0].start_time.value;
-           var apptDate = document.forms[0].appointment_date.value; 
-           updatePageLock(100,apptDate,startTime,endTime);	   
+		$(window).on('beforeunload',function(){cancelPageLock();
+		});
+		//cancel any page view/locks held by provider on clicking 'X'
+		$("form#addappt").on( "submit",function() {$(window).off('beforeunload');
+		});
+
+		calculateEndTime();
+		var endTime = document.forms[0].end_time.value;
+		var startTime = document.forms[0].start_time.value;
+		var apptDate = document.forms[0].appointment_date.value;
+		updatePageLock(100,apptDate,startTime,endTime);
 	});
-        
+
         function checkPageLock() {
            $("#searchBtn").attr("disabled","disabled");
            calculateEndTime();
@@ -607,25 +823,17 @@ function pasteAppt(multipleSameDayGroupAppt) {
     function cancelPageLock() { //don't do anything unless timeout/locking is enabled.
     }
 </script>
+
 <%
   }
-  String deepcolor = apptnum==0?"#CCCCFF":"gold", weakcolor = apptnum==0?"#EEEEFF":"ivory";
-  if (!isMobileOptimized) {
-%>
-      <!-- Change the background color of deep/weak sections -->
-      <style type="text/css">
-          .deep { background-color: <%= deepcolor %>; }
-          .weak { background-color: <%= weakcolor %>; }
-      </style>
-  
-<%
-  }
+  String deepcolor = apptnum==0?"#E8E8E8":"gold", weakcolor = apptnum==0?"#f3f6f9":"ivory";
+
   boolean bDnb = false;
   for(Appointment a : appts) {
 	  String apptName = a.getName();
 	  if (apptName.equalsIgnoreCase(DONOTBOOK)) bDnb = true;
   }
- 
+
 
   // select provider lastname & firstname
   String pLastname = "";
@@ -636,9 +844,73 @@ function pasteAppt(multipleSameDayGroupAppt) {
       pFirstname = p.getFirstName();
   }
 %>
+
+<script>
+function parseSearch() {
+    // sane defaults
+    document.forms['ADDAPPT'].displaymode.value='Search ';
+    document.getElementById("search_mode").value='search_name';
+
+    var keyObj = document.forms['ADDAPPT'].keyword;
+    var keyVal = keyObj.value;
+    console.log(keyVal);
+
+    // start with the loosest pattern
+    // address pattern 293 Meridian
+    const reAddr = /^\d{1,9}[\s]\w*/;
+    if (reAddr.exec(keyVal)) {
+        document.getElementById("search_mode").value="search_address";
+    }
+
+    // hin OHIP 10 didgits  MSP 9 didgits Regie 4 alpha + 8 digits
+    const reHIN = /^\d{9,10}$/;
+    if (reHIN.exec(keyVal)) {
+        document.getElementById("search_mode").value="search_hin";
+    }
+    const reRegie = /^[A-Z]{4}\d{8}$/;
+    if (reRegie.exec(keyVal)) {
+        document.getElementById("search_mode").value="search_hin";
+    }
+
+    //phone xxx-xxx-xxxx with varying delimiters
+    const rePhone = /^\d{3}[-\s.]\d{3}[-\s.]\d{4}$/;
+    if (rePhone.exec(keyVal)) {
+        const area =  keyVal.substring(0,3);
+        const p1 = keyVal.substring(4,7);
+        const p2 = keyVal.substring(8);
+        const phone = area +"-"+p1+"-"+p2;
+        keyObj.value = phone;
+        document.getElementById("search_mode").value="search_phone";
+    }
+
+    // DOB yyyy-mm-dd with varying delimiters
+    const reDOB=/^(19|20)\d\d([\/.-\s])(0[1-9]|1[012])[\/.-\s](0[1-9]|[12]\d|3[01])$/;
+    if (reDOB.exec(keyVal)) {
+        const yyyy = keyVal.substring(0,4);
+        const mm = keyVal.substring(5,7);
+        const dd = keyVal.substring(8);
+        const dob = yyyy+"-"+mm+"-"+dd;
+        keyObj.value = dob;
+        document.getElementById("search_mode").value="search_dob";
+    }
+
+    //swipe pattern
+    if (keyVal.indexOf('%b610054') == 0 && keyVal.length > 18){
+         keyObj.value = keyVal.substring(8,18);
+         document.getElementById("search_mode").value="search_hin";
+    }
+}
+
+function locale(){
+    // add style for multisites location
+    var loc = document.forms['ADDAPPT'].location;
+    if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options[loc.selectedIndex].style.backgroundColor;
+}
+
+</script>
 </head>
-<body bgproperties="fixed"
-	onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0">
+<body onLoad="setfocus(); moveAppt(); updateTime(); locale();" >
+<div class="container">
  <% if (timeoutSecs >0) { %>
     <div id="lock_notification">
         <span title="">Viewers: N/A</span>
@@ -670,9 +942,9 @@ function pasteAppt(multipleSameDayGroupAppt) {
 
         if (!bFirstDisp && (demographicNo != null) && (!demographicNo.equals(""))) {
 
-        	
+
         	appts = appointmentDao.search_group_day_appt(myGroupNo, Integer.parseInt(demographicNo), apptDate);
-            
+
             long numSameDayGroupAppts = appts.size() > 0 ? new Long(appts.size()) : 0;
             bMultipleSameDayGroupAppt = (numSameDayGroupAppts > 0);
         }
@@ -683,16 +955,10 @@ function pasteAppt(multipleSameDayGroupAppt) {
   }
   %>
   <div id="tooManySameDayGroupApptWarning" style="<%=displayStyle%>">
-    <table width="98%" BGCOLOR="red" border=1 align='center'>
-        <tr>
-            <th>
-                <font color='white'>
-                    <bean:message key='appointment.addappointment.titleMultipleGroupDayBooking'/><br/>
-                    <bean:message key='appointment.addappointment.MultipleGroupDayBooking'/>
-                </font>
-            </th>
-        </tr>
-    </table>
+    <div class="alert alert-error" >
+        <h4><bean:message key='appointment.addappointment.titleMultipleGroupDayBooking'/></h4>
+        <bean:message key='appointment.addappointment.MultipleGroupDayBooking'/>
+    </div>
 </div>
 <%
   if (!bFirstDisp && request.getParameter("demographic_no") != null && !request.getParameter("demographic_no").equals("")) {
@@ -714,7 +980,7 @@ function pasteAppt(multipleSameDayGroupAppt) {
 	      hin = d.getHin();
 	      String ver = d.getVer();
 	      hin = hin +" "+ ver;
-	        
+
 	      if (patientStatus == null || patientStatus.equalsIgnoreCase("AC")) {
 	        patientStatus = "";
 	      } else if (patientStatus.equalsIgnoreCase("FI")||patientStatus.equalsIgnoreCase("DE")||patientStatus.equalsIgnoreCase("IN")) {
@@ -727,19 +993,14 @@ function pasteAppt(multipleSameDayGroupAppt) {
 	      }
 
 	      if(!patientStatus.equals("") || !rosterStatus.equals("") ) {
-	      	String rsbgcolor = "BGCOLOR=\"orange\"" ;
 	        String exp = " null-undefined\n IN-inactive ID-deceased OP-out patient\n NR-not signed\n FS-fee for service\n TE-terminated\n SP-self pay\n TP-third party";
 
-%>
-<table width="98%" <%=rsbgcolor%> border=0 align='center'>
-	<tr>
-		<td><font color='blue' title='<%=exp%>'> <b><bean:message key="Appointment.msgPatientStatus" />:&nbsp;
-                    <font color='yellow'><%=patientStatus%></font>&nbsp;<bean:message key="Appointment.msgRosterStatus" />:&nbsp;
-                    <font color='yellow'><%=rosterStatus%></font></b></font>
-                </td>
-	</tr>
-</table>
-<%
+        %>
+<div class="alert alert-info" title='<%=exp%>'>
+    <h4><bean:message key="Appointment.msgPatientStatus" />:</h4>
+    <%=patientStatus%>&nbsp;<bean:message key="Appointment.msgRosterStatus" />:&nbsp;<%=rosterStatus%>
+</div>
+        <%
 
         }
 	}
@@ -749,12 +1010,10 @@ function pasteAppt(multipleSameDayGroupAppt) {
 		if (demographicCust != null && demographicCust.getAlert() != null && !demographicCust.getAlert().equals("") ) {
 
 %>
-<p>
-<table width="98%" BGCOLOR="yellow" border=1 align='center'>
-	<tr>
-		<td><font color='red'><bean:message key="Appointment.formAlert" />: <b><%=demographicCust.getAlert()%></b></font></td>
-	</tr>
-</table>
+<div class="alert alert-error">
+	<h4><bean:message key="Appointment.formAlert" />:</h4> <%=demographicCust.getAlert()%>
+</div>
+
 <%
 
 		}
@@ -765,307 +1024,372 @@ function pasteAppt(multipleSameDayGroupAppt) {
   if(apptnum!=0) {
 
 %>
-<table width="98%" class="deep" border=1 align='center'>
-	<tr>
-		<%--    <TH><font color='red'><%=apptnum>1?"Double ++ ":"Double"%> Booking</font></TH>--%>
-		<TH><font color='red'> <% if(apptnum>1) {
+<div class="alert alert-error" >
+    <h4><bean:message key='appointment.addappointment.msgDoubleBooking' /></h4>
+    <%
+			if(bDnb) out.println("<br/>You CANNOT book an appointment on this time slot.");
+    %>
+</div>
 
-         %> <bean:message key='appointment.addappointment.msgBooking' />
-		<%
 
-       } else {
-
-          %> <bean:message
-			key='appointment.addappointment.msgDoubleBooking' /> <%
-			if(bDnb) out.println("<br/>You can NOT book an appointment on this time slot.");
-       }
-
-     %> </font></TH>
-	</tr>
-</table>
 <% } %>
 
 <% if (billingRecommendations.size() > 0) { %>
-        <table width="98%" align="center" style="border:solid 3px red;padding-left:10px;line-height:150%;font-family:Arial;color: red; background-color: #FFFFFF; font-size: 18px; font-weight: bold; text-align:left;">
+        <table width="100%" class="alert alert-info" >
             <% for (String recommendation : billingRecommendations) { %>
                 <tr>
-                    <th><%=recommendation%></th>
+                    <td><%=recommendation%></td>
                 </tr>
             <% } %>
         </table>
 <% } %>
 
-<FORM NAME="ADDAPPT" id="addappt" METHOD="post" ACTION="<%=request.getContextPath()%>/appointment/appointmentcontrol.jsp"
-	onsubmit="return(onAdd())"><INPUT TYPE="hidden"
-	NAME="displaymode" value="">
+<form name="ADDAPPT" id="addappt" class="form-inline" method="post" action="<%=request.getContextPath()%>/appointment/appointmentcontrol.jsp"
+	onsubmit="return(onAdd())">
+	<input type="hidden" name="displaymode" value="">
 	<input type="hidden" name="year" value="<%=request.getParameter("year") %>" >
     <input type="hidden" name="month" value="<%=request.getParameter("month") %>" >
     <input type="hidden" name="day" value="<%=request.getParameter("day") %>" >
     <input type="hidden" name="fromAppt" value="1" >
-	
-<div class="header deep">
-    <div class="title">
+
+
+    <div class="time" id="header"><h4>
         <!-- We display a shortened title for the mobile version -->
         <% if (isMobileOptimized) { %><bean:message key="appointment.addappointment.msgMainLabelMobile" />
         <% } else { %><bean:message key="appointment.addappointment.msgMainLabel" />
         <%          out.println("("+pFirstname+" "+pLastname+")"); %>
-        <% } %>
+        <% } %></h4>
     </div>
-</div>
-<div class="panel">
-    <ul>
-        <li class="row weak">
-            <div class="label"><bean:message key="Appointment.formDate" /><font size='-1' color='brown'>(<%=dateString1%>)</font>:</div>
-            <div class="input">
-                <INPUT TYPE="TEXT" NAME="appointment_date"
-                    VALUE="<%=dateString2%>" WIDTH="25" HEIGHT="20" border="0"
-                    hspace="2" onChange="checkDateTypeIn(this);checkPageLock()">
-            </div>
-            <div class="space">&nbsp;</div>
-            <div class="label"><bean:message key="Appointment.formStatus" />:</div>
-            <div class="input">
-				<%
-            if (strEditable!=null&&strEditable.equalsIgnoreCase("yes")){
-            %> <select name="status" STYLE="width: 154px" HEIGHT="20"
-                    border="0">
-                    <% for (int i = 0; i < allStatus.size(); i++) { %>
-                    <option
-                            value="<%=(allStatus.get(i)).getStatus()%>"
-                            <%=(allStatus.get(i)).getStatus().equals(request.getParameter("status"))?"SELECTED":""%>><%=(allStatus.get(i)).getDescription()%></option>
-                    <% } %>
-            </select> <%
-            }
-            if (strEditable==null || !strEditable.equalsIgnoreCase("yes")){
-            %> <INPUT TYPE="TEXT" NAME="status"
-					VALUE='<%=bFirstDisp?"t":request.getParameter("status")==null?"":request.getParameter("status").equals("")?"":request.getParameter("status")%>'
-					WIDTH="25" HEIGHT="20" border="0" hspace="2"> <%}%>
-            </div>
-        </li>
-        <li class="row weak">
-            <div class="label"><bean:message key="Appointment.formStartTime" />:</div>
-            <div class="input">
-                <INPUT TYPE="TEXT" NAME="start_time"
-                    VALUE='<%=request.getParameter("start_time")%>' WIDTH="25"
-                    HEIGHT="20" border="0" onChange="checkTimeTypeIn(this);checkPageLock()">
-            </div>
-            <div class="space">&nbsp;</div>
+	<div class="well table-responsive" >
+	<div class="form-wrapper">
+	    <table class="table table-condensed table-responsive">
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formDate" />&nbsp;<span style="color:brown;">(<%=dateString1%>)</span>:
+	            </td>
+	            <td>
+	                <input type="date" class="form-control" name="appointment_date"
+	                    value="<%=dateString2%>"
+	                    onChange="checkDateTypeIn(this);checkPageLock()">
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formStartTime" />:
+	            </td>
+	            <td>
+	                <input type="time" name="start_time" class="form-control"
+	                    value='<%=request.getParameter("start_time")%>' onChange="checkTimeTypeIn(this);updateTime();checkPageLock()">
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formDuration" />:
+	            </td>
+	            <td>
+	                <input type="number" name="duration" id="duration" class="form-control"
+	                        value="<%=duration%>" onChange="checkPageLock()" onblur="calculateEndTime();">
+	                <input type="hidden" name="end_time"
+	                        value='<%=request.getParameter("end_time")%>'
+	                         onChange="checkTimeTypeIn(this)">
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                 <input type="submit" name="searchBtn" id="searchBtn" class="btn"
+	                    onclick="parseSearch(); document.forms['ADDAPPT'].displaymode.value='Search ';"
+	                    value="<bean:message key="appointment.addappointment.btnSearch"/>">
+	            </td>
+	            <td>
+	                <%
+	                    String name="";
+	                    name = String.valueOf((bFirstDisp && !bFromWL)?"":request.getParameter("name")==null?session.getAttribute("appointmentname")==null?"":session.getAttribute("appointmentname"):request.getParameter("name"));
+	                %>
+	                <input type="text" name="keyword" id="keyword" class="form-control"
+	                        value="<%=Encode.forHtmlAttribute(name)%>"
+	                        placeholder="<bean:message key="Appointment.formNamePlaceholder" />">
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+		            <label for="reasonCode">
+	                <bean:message key="Appointment.formReason" />:
+		            </label>
+	            </td>
+	            <td>
+	                <select name="reasonCode" id="reasonCode" class="form-control">
+		                <c:choose>
+		                    <c:when test="${ not empty reasonCodes  }">
+		                        <c:forEach items="${ reasonCodes.items }" var="reason" >
+		                        <c:if test="${ reason.active }">
+		                            <option value="${ reason.id }" id="${ reason.value }" >
+		                                <c:out value="${ reason.label }" />
+		                            </option>
+		                        </c:if>
+		                        </c:forEach>
+		                    </c:when>
+		                    <c:otherwise>
+		                        <option value="-1">Other</option>
+		                    </c:otherwise>
+		                </c:choose>
+					</select>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td></td><td>
+			    <textarea id="reason" name="reason" class="form-control" tabindex="2" rows="2" style="resize:none;" placeholder="<bean:message key="Appointment.formReason" />" cols="18" maxlength="80"><%=bFirstDisp?"":request.getParameter("reason").equals("")?"":Encode.forHtmlContent(request.getParameter("reason"))%></textarea>
+	            </td>
+	        </tr>
+	            <%
+					    boolean bMoreAddr = bMultisites? true : props.getProperty("scheduleSiteID", "").equals("") ? false : true;
+					    String tempLoc = "";
+					    if(bFirstDisp && bMoreAddr) {
+					            tempLoc = (new JdbcApptImpl()).getLocationFromSchedule(dateString2, curProvider_no);
+					    }
+					    String loc = bFirstDisp?tempLoc:request.getParameter("location");
+					    String colo = bMultisites
+					                                        ? ApptUtil.getColorFromLocation(sites, loc)
+					                                        : bMoreAddr? ApptUtil.getColorFromLocation(props.getProperty("scheduleSiteID", ""), props.getProperty("scheduleSiteColor", ""),loc) : "white";
+				%>
 
-            <%
-				    // multisites start ==================
-				    boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
-				    SiteDao siteDao = (SiteDao)SpringUtils.getBean("siteDao");
-				    List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
-				    // multisites end ==================
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formLocation" />:
+	            </td>
+	            <td>
+			<% // multisites start ==================
+			if (bMultisites) { %>
+		        <select tabindex="4" class="form-control" name="location" style="background-color: <%=colo%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
+		        <% for (Site s:sites) { %>
+		                <option value="<%=Encode.forHtmlAttribute(s.getName())%>" class="<%=s.getShortName()%>" style="background-color: <%=s.getBgColor()%>" <%=s.getName().equals(loc)?"selected":"" %>><%=Encode.forHtmlContent(s.getName())%></option>
+		        <% } %>
+		        </select>
+			<% } else {
+				// multisites end ==================
+				if (locationEnabled) {
+			%>
+				<select name="location" >
+	                <%
+	                String sessionLocation = "";
+	                ProgramProvider programProvider = programManager2.getCurrentProgramInDomain(loggedInInfo, loggedInInfo.getLoggedInProviderNo());
+	                if(programProvider!=null && programProvider.getProgram() != null) {
+	                    sessionLocation = programProvider.getProgram().getId().toString();
+	                }
+	                if (programs != null && !programs.isEmpty()) {
+				        for (Program program : programs) {
+				            String description = StringUtils.isBlank(program.getLocation()) ? program.getName() : program.getLocation();
+				    %>
+				        <option value="<%=program.getId()%>" <%=program.getId().toString().equals(sessionLocation) ? "selected='selected'" : ""%>><%=Encode.forHtmlAttribute(description)%></option>
+				    <%	}
+	                }
+				    %>
+	            </select>
+	            <% } else { %>
+	            <input type="TEXT" name="location" tabindex="4" value="<%=loc%>" width="25" height="20" border="0" hspace="2">
+	            <% } %>
+			<% } %>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formCreator" />:
+	            </td>
+	            <td>
+	                <input type="TEXT" name="user_id" readonly
+	                    value='<%=bFirstDisp?(Encode.forHtmlAttribute(userlastname)+", "+Encode.forHtmlAttribute(userfirstname)):request.getParameter("user_id").equals("")?"Unknown":Encode.forHtmlAttribute(request.getParameter("user_id"))%>'
+	                    >
+	            </td>
+	        </tr>
 
-				    boolean bMoreAddr = bMultisites? true : props.getProperty("scheduleSiteID", "").equals("") ? false : true;
-				    String tempLoc = "";
-				    if(bFirstDisp && bMoreAddr) {
-				            tempLoc = (new JdbcApptImpl()).getLocationFromSchedule(dateString2, curProvider_no);
-				    }
-				    String loc = bFirstDisp?tempLoc:request.getParameter("location");
-				    String colo = bMultisites
-				                                        ? ApptUtil.getColorFromLocation(sites, loc)
-				                                        : bMoreAddr? ApptUtil.getColorFromLocation(props.getProperty("scheduleSiteID", ""), props.getProperty("scheduleSiteColor", ""),loc) : "white";
-			%>                                    
-					<div class="input" style="text-align: right;"> <INPUT TYPE="button" NAME="typeButton" VALUE="<bean:message key="Appointment.formType"/>" onClick="openTypePopup()"> </div>
+	        <% if (pros.isPropertyActive("mc_number")) { %>
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formMC" />:
+	            </td>
+	            <td>
+	                <input type="text" name="appt_mc_number" tabindex="4" />
+	            </td>
+	        </tr>
 
-            <div class="input">
-                <INPUT TYPE="TEXT" NAME="type"
-                    VALUE='<%=bFirstDisp?"":request.getParameter("type").equals("")?"":request.getParameter("type")%>'
-                    WIDTH="25" HEIGHT="20" border="0" hspace="2">
-            </div>
-        </li>
-        <li class="row weak">
-            <div class="label"><bean:message key="Appointment.formDuration" />:</div> <!--font face="arial"> End Time :</font-->
-            <div class="input">
-                <INPUT TYPE="TEXT" NAME="duration"
-                        VALUE="<%=duration%>" WIDTH="25" HEIGHT="20" border="0" hspace="2" onChange="checkPageLock()">
-                <INPUT TYPE="hidden" NAME="end_time"
-                        VALUE='<%=request.getParameter("end_time")%>' WIDTH="25"
-                        HEIGHT="20" border="0" hspace="2" onChange="checkTimeTypeIn(this)">
-            </div>
-            <div class="space">&nbsp;</div>
-            <div class="label"><bean:message key="Appointment.formDoctor" />:</div>
-            <div class="input">
-                <INPUT type="TEXT" readonly
-                       value="<%=bFirstDisp ? "" : StringEscapeUtils.escapeHtml(providerBean.getProperty(curDoctor_no,""))%>">
-            </div>
-        </li>
-        <li class="row deep">
-            <div class="label"><bean:message key="appointment.addappointment.formSurName" />:</div>
-            <div class="input">
-            	<% 
-            		String name="";
-            		name = String.valueOf((bFirstDisp && !bFromWL)?"":request.getParameter("name")==null?session.getAttribute("appointmentname")==null?"":session.getAttribute("appointmentname"):request.getParameter("name"));
-            	%>
-                <INPUT TYPE="TEXT" NAME="keyword"
-                        VALUE="<%=name%>"
-                        HEIGHT="20" border="0" hspace="2" width="25" tabindex="1">
-            </div>
-            <div class="space">
-                <a href=# onclick="onNotBook();"><font size='-1' color='brown'>Not book</font></a>
-            </div>
-            <INPUT TYPE="hidden" NAME="orderby" VALUE="last_name, first_name">
+	        <% } %>
+
+	    </table>
+
+	    <table class="table table-condensed table-responsive">
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formStatus" />:
+	            </td>
+	            <td>
+					<%
+	            if (strEditable!=null&&strEditable.equalsIgnoreCase("yes")){
+	            %>
+
+	<select name="status" style="background-color:<%=(allStatus.get(0)).getColor()%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor' >
+	                    <% for (int i = 0; i < allStatus.size(); i++) { %>
+	                    <option class="<%=(allStatus.get(i)).getStatus()%>" style="background-color:<%=(allStatus.get(i)).getColor()%>"
+	                            value="<%=(allStatus.get(i)).getStatus()%>"
+	                            <%=(allStatus.get(i)).getStatus().equals(request.getParameter("status"))?"SELECTED":""%>><%=(allStatus.get(i)).getDescription()%></option>
+	                    <% } %>
+	            </select> <%
+	            }
+	            if (strEditable==null || !strEditable.equalsIgnoreCase("yes")){
+	            %> <input type="text" name="status"
+						value='<%=bFirstDisp?"t":request.getParameter("status")==null?"":request.getParameter("status").equals("")?"":request.getParameter("status")%>'
+						> <%}%>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formType"/>:
+	             </td>
+	             <td>
+	                <select name="type" id="type" title="<bean:message key="billing.billingCorrection.msgSelectVisitType"/>">
+	                <option data-dur="" data-reason=""></option><!-- important leave a blank top entry  -->
+
+	        <% AppointmentTypeDao appDao = (AppointmentTypeDao) SpringUtils.getBean(AppointmentTypeDao.class);
+	           List<AppointmentType> types = appDao.listAll();
+	                for(int j = 0;j < types.size(); j++) {
+	%>
+	                    <option data-dur="<%= types.get(j).getDuration() %>"
+	                            data-reason="<%= Encode.forHtmlAttribute(types.get(j).getReason()) %>"
+	                            data-loc="<%= Encode.forHtmlAttribute(types.get(j).getLocation()) %>"
+	                            data-notes="<%= Encode.forHtmlAttribute(types.get(j).getNotes()) %>"
+	                            data-resources="<%= Encode.forHtmlAttribute(types.get(j).getResources()) %>">
+	                        <%=Encode.forHtml(types.get(j).getName()) %>
+	                    </option>
+	                <% } %>
+	                </select>
+
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formDoctor" />:
+	            </td>
+	            <td>
+	                <input type="text" id="mrp" readonly
+	                       value="<%=bFirstDisp ? "" : StringEscapeUtils.escapeHtml(providerBean.getProperty(curDoctor_no,""))%>">
+	            </td>
+	        </tr>
+	        <tr>
+	            <td><input type="button" value="<bean:message key="Appointment.doNotBook" />" class="btn btn-link" style="padding-left:0px;" onclick="onNotBook();">
+
+	            </td>
+	            <td>
+
+	                <input type="text" name="demographic_no" id="demographic_no"
+	                    ONFOCUS="onBlockFieldFocus(this)" readonly
+	                    value='<%=(bFirstDisp && !bFromWL)?"":request.getParameter("demographic_no").equals("")?"":request.getParameter("demographic_no")%>' >
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formNotes" />:
+	            </td>
+	            <td>
+	                <textarea name="notes" tabindex="3" rows="2" style="resize:none;" placeholder="<bean:message key="Appointment.formNotes" />" cols="18" maxlength="255"><%=bFirstDisp?"":request.getParameter("notes").equals("")?"":request.getParameter("notes")%></textarea>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formResources" />:
+	            </td>
+	            <td>
+	                <input type="text" name="resources"
+	                    tabindex="5"
+	                    value='<%=bFirstDisp?"":request.getParameter("resources").equals("")?"": Encode.forHtmlAttribute(request.getParameter("resources"))%>'
+	                    >
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formDateTime" />:
+	            </td>
+	            <td>
+	<%
+	            GregorianCalendar now=new GregorianCalendar();
+	            GregorianCalendar cal = (GregorianCalendar) now.clone();
+	            cal.add(GregorianCalendar.DATE, 1);
+	            String strDateTime=now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.get(Calendar.DAY_OF_MONTH)+" "
+	                + now.get(Calendar.HOUR_OF_DAY)+":"+now.get(Calendar.MINUTE)+":"+now.get(Calendar.SECOND);
+
+	            LocalDateTime create=now.toZonedDateTime().toLocalDateTime();
+	            DateTimeFormatter pattern = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(request.getLocale()).withZone(ZoneId.systemDefault());
+
+	%>
+	                <input type="hidden" name="createdatetime" value="<%=strDateTime%>">
+	                <%=create.format(pattern)%>
+	                <input type="hidden" name="provider_no" value="<%=curProvider_no%>">
+	                <input type="hidden" name="dboperation" value="search_titlename">
+	                <input type="hidden" name="creator" value='<%=Encode.forHtmlAttribute(userlastname)+", "+Encode.forHtmlAttribute(userfirstname)%>'>
+	                <input type="hidden" name="remarks" value="">
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+		            <label for="urgency">
+	                <bean:message key="Appointment.formCritical" /> <i class="icon-warning-sign"></i>:
+		            </label>
+	            </td>
+	            <td>
+	                <input type="checkbox" class="checkbox" id="urgency" name="urgency" value="critical"><span class="checkmark"></span>
+	            </td>
+	        </tr>
+	            <% String emailReminder = pros.getProperty("emailApptReminder");
+	               if ((emailReminder != null) && emailReminder.equalsIgnoreCase("yes")) { %>
+	        <tr>
+	            <td>
+	                <bean:message key="Appointment.formEmailReminder" />:
+	            </td>
+	            <td>
+	                <input type="checkbox" name="emailPt" value="email reminder">
+	            </td>
+	        </tr>
+	             <%  }else { %>
+	        <tr><td></td>
+	            <td></td>
+	        </tr>
+		     <%  }%>
+
+	    </table>
+	</div>
+            <input type="hidden" name="orderby" value="last_name, first_name">
 <%
     String searchMode = request.getParameter("search_mode");
     if (searchMode == null || searchMode.isEmpty()) {
         searchMode = OscarProperties.getInstance().getProperty("default_search_mode","search_name");
     }
-%> 
-            <INPUT TYPE="hidden" NAME="search_mode" VALUE="<%=searchMode%>"> 
-            <INPUT TYPE="hidden" NAME="originalpage" VALUE="../appointment/addappointment.jsp"> 
-            <INPUT TYPE="hidden" NAME="limit1" VALUE="0"> 
-            <INPUT TYPE="hidden" NAME="limit2" VALUE="5"> 
-            <INPUT TYPE="hidden" NAME="ptstatus" VALUE="active"> 
-			<input type="hidden" name="outofdomain" value="<%=OscarProperties.getInstance().getProperty("pmm.client.search.outside.of.domain.enabled","true")%>"/> 
-            <!--input type="hidden" name="displaymode" value="Search " -->
-            <div class="label">
-                <INPUT TYPE="submit" name="searchBtn" id="searchBtn" style="width:auto;"
-                    onclick="document.forms['ADDAPPT'].displaymode.value='Search '"
-                    VALUE="<bean:message key="appointment.addappointment.btnSearch"/>">
-            </div>
-            <div class="input">
-                <input type="TEXT" name="demographic_no"
-                    ONFOCUS="onBlockFieldFocus(this)" readonly
-                    value='<%=(bFirstDisp && !bFromWL)?"":request.getParameter("demographic_no").equals("")?"":request.getParameter("demographic_no")%>'
-                    width="25" height="20" border="0" hspace="2">
-            </div>
-        </li>
-        <li class="row deep">
-            <div class="label"><bean:message key="Appointment.formReason" />:</div>
-            <div class="input">
-                <select name="reasonCode">                
-	                <c:choose>
-	                	<c:when test="${ not empty reasonCodes  }">
-	                		<c:forEach items="${ reasonCodes.items }" var="reason" >
-	                		<c:if test="${ reason.active }">
-	                			<option value="${ reason.id }" id="${ reason.value }" >
-	                				<c:out value="${ reason.label }" />
-	                			</option>
-	                		</c:if>
-	                		</c:forEach>     
-	                	</c:when>
-	                	<c:otherwise>
-	                		<option value="-1">Other</option>
-	                	</c:otherwise>
-	                </c:choose>
-				</select>
-				</br>
-				<textarea id="reason" name="reason" tabindex="2" rows="2" wrap="virtual" cols="18"><%=bFirstDisp?"":request.getParameter("reason").equals("")?"":request.getParameter("reason")%></textarea>
-            </div>
-            <div class="space">&nbsp;</div>
-            <div class="label"><bean:message key="Appointment.formNotes" />:</div>
-            <div class="input">
-                <textarea name="notes" tabindex="3" rows="2" wrap="virtual" cols="18"><%=bFirstDisp?"":request.getParameter("notes").equals("")?"":request.getParameter("notes")%></textarea>
-            </div>
-        </li>
-        <% if (pros.isPropertyActive("mc_number")) { %>
-        <li class="row deep">
-            <div class="label">M/C number:</div>
-            <div class="input">
-                <input type="text" name="appt_mc_number" tabindex="4" />
-            </div>
-            <div class="space">&nbsp;</div>
-            <div class="label">&nbsp;</div>
-            <div class="input">&nbsp;</div>
-        </li>
-        <% } %>
-        <li class="row weak">
-            <div class="label"><bean:message key="Appointment.formLocation" />:</div>
-
-            <div class="input">
-		<% // multisites start ==================
-		if (bMultisites) { %>
-	        <select tabindex="4" name="location" style="background-color: <%=colo%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
-	        <% for (Site s:sites) { %>
-	                <option value="<%=s.getName()%>" style="background-color: <%=s.getBgColor()%>" <%=s.getName().equals(loc)?"selected":"" %>><%=s.getName()%></option>
-	        <% } %>
-	        </select>
-		<% } else {
-			// multisites end ==================
-			if (locationEnabled) {
-		%>
-			<select name="location" >
-                <%
-                String sessionLocation = "";
-                ProgramProvider programProvider = programManager2.getCurrentProgramInDomain(loggedInInfo, loggedInInfo.getLoggedInProviderNo());
-                if(programProvider!=null && programProvider.getProgram() != null) {
-                	sessionLocation = programProvider.getProgram().getId().toString();
-                }
-                if (programs != null && !programs.isEmpty()) {
-			       	for (Program program : programs) {
-			       	    String description = StringUtils.isBlank(program.getLocation()) ? program.getName() : program.getLocation();
-			   	%>
-			        <option value="<%=program.getId()%>" <%=program.getId().toString().equals(sessionLocation) ? "selected='selected'" : ""%>><%=StringEscapeUtils.escapeHtml(description)%></option>
-			    <%	}
-                }
-			  	%>
-            </select>
-        	<% } else { %>
-        	<input type="TEXT" name="location" tabindex="4" value="<%=loc%>" width="25" height="20" border="0" hspace="2">	
-        	<% } %>
-		<% } %>
-            </div>
-            <div class="space">&nbsp;</div>
-            <div class="label"><bean:message key="Appointment.formResources" />:</div>
-            <div class="input">
-                <input type="TEXT" name="resources"
-                    tabindex="5"
-                    value='<%=bFirstDisp?"":request.getParameter("resources").equals("")?"":request.getParameter("resources")%>'
-                    width="25" height="20" border="0" hspace="2">
-            </div>
-        </li>
-        <li class="row weak">
-            <div class="label"><bean:message key="Appointment.formCreator" />:</div>
-            <div class="input">
-                <INPUT TYPE="TEXT" NAME="user_id" readonly
-                    VALUE='<%=bFirstDisp?(StringEscapeUtils.escapeHtml(userlastname)+", "+StringEscapeUtils.escapeHtml(userfirstname)):request.getParameter("user_id").equals("")?"Unknown":request.getParameter("user_id")%>'
-                    WIDTH="25" HEIGHT="20" border="0" hspace="2">
-            </div>
-            <div class="space">&nbsp;</div>
-            <div class="label"><bean:message key="Appointment.formDateTime" />:</div>
-            <div class="input">
-<%
-            GregorianCalendar now=new GregorianCalendar();
-            GregorianCalendar cal = (GregorianCalendar) now.clone();
-            cal.add(GregorianCalendar.DATE, 1);
-            String strDateTime=now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.get(Calendar.DAY_OF_MONTH)+" "
-                + now.get(Calendar.HOUR_OF_DAY)+":"+now.get(Calendar.MINUTE)+":"+now.get(Calendar.SECOND);
 %>
-                <INPUT TYPE="TEXT" NAME="createdatetime" readonly VALUE="<%=strDateTime%>" WIDTH="25" HEIGHT="20" border="0" hspace="2">
-                <INPUT TYPE="hidden" NAME="provider_no" VALUE="<%=curProvider_no%>">
-                <INPUT TYPE="hidden" NAME="dboperation" VALUE="search_titlename">
-                <INPUT TYPE="hidden" NAME="creator" VALUE='<%=StringEscapeUtils.escapeHtml(userlastname)+", "+StringEscapeUtils.escapeHtml(userfirstname)%>'>
-                <INPUT TYPE="hidden" NAME="remarks" VALUE="">
-            </div>
-        </li>
-        <li class="row weak">
-            <% String emailReminder = pros.getProperty("emailApptReminder");
-               if ((emailReminder != null) && emailReminder.equalsIgnoreCase("yes")) { %>
-                    <div class="label"><bean:message key="Appointment.formEmailReminder" />:</div>
-                    <div class="input"><input type="checkbox" name="emailPt" value="email reminder"></div>
-             <%  }else { %>
-                    <div class="label"></div>
-                    <div class="input"></div>
-	     <%  }%>
+            <input type="hidden" name="search_mode" id="search_mode" value="<%=searchMode%>">
+            <input type="hidden" name="originalpage" value="<%=request.getContextPath() %>/appointment/addappointment.jsp">
+            <input type="hidden" name="limit1" value="0">
+            <input type="hidden" name="limit2" value="5">
+            <input type="hidden" name="ptstatus" value="active">
+			<input type="hidden" name="outofdomain" value="<%=OscarProperties.getInstance().getProperty("pmm.client.search.outside.of.domain.enabled","true")%>" >
+            <!--input type="hidden" name="displaymode" value="Search " -->
 
-            <div class="space">&nbsp;</div>
-            <div class="label"><bean:message key="Appointment.formCritical" />:</div>
-            <div class="input">
-            	<input type="checkbox" name="urgency" value="critical"/>
-            </div>
-        </li>
-    </ul>
-</div>
+
+
+
+
+
 <%String demoNo = request.getParameter("demographic_no");%>
-<table class="buttonBar deep">
-    <tr>
+<div>
+
+
         <% if(!(bDnb || bMultipleSameDayGroupAppt)) { %>
-        <TD nowrap>
+
         <%    if (!props.getProperty("allowMultipleSameDayGroupAppt", "").equalsIgnoreCase("no")) {%>
-      <INPUT TYPE="submit" id="groupButton"
+        <input type="submit" id="addButton" class="btn btn-primary"
+            onclick="document.forms['ADDAPPT'].displaymode.value='Add Appointment'"
+            tabindex="6"
+            value="<% if (isMobileOptimized) { %><bean:message key="appointment.addappointment.btnAddAppointmentMobile" />
+                   <% } else { %><bean:message key="appointment.addappointment.btnAddAppointment"/><% } %>"
+            <%=disabled%>>
+      <input type="submit" id="groupButton" class="btn"
             onclick="document.forms['ADDAPPT'].displaymode.value='Group Appt'"
-            VALUE="<bean:message key="appointment.addappointment.btnGroupAppt"/>"
+            value="<bean:message key="appointment.addappointment.btnGroupAppt"/>"
             <%=disabled%>>
         <% }
 
@@ -1075,9 +1399,9 @@ function pasteAppt(multipleSameDayGroupAppt) {
 
         org.apache.struts.util.MessageResources resources = org.apache.struts.util.MessageResources.getMessageResources("oscarResources");
 
-        %> <INPUT TYPE="submit" id="addPrintPreviewButton"
+        %> <input type="submit" id="addPrintPreviewButton" class="btn"
             onclick="document.forms['ADDAPPT'].displaymode.value='Add Appt & PrintPreview'"
-            VALUE="<bean:message key='appointment.addappointment.btnAddApptPrintPreview'/>"
+            value="<bean:message key='appointment.addappointment.btnAddApptPrintPreview'/>"
             <%=disabled%>>
 
 
@@ -1085,25 +1409,23 @@ function pasteAppt(multipleSameDayGroupAppt) {
   }
 
 %>
-        <INPUT TYPE="submit" id="addButton" class="rightButton blueButton top"
-            onclick="document.forms['ADDAPPT'].displaymode.value='Add Appointment'"
-            tabindex="6"
-            VALUE="<% if (isMobileOptimized) { %><bean:message key="appointment.addappointment.btnAddAppointmentMobile" />
-                   <% } else { %><bean:message key="appointment.addappointment.btnAddAppointment"/><% } %>"
-            <%=disabled%>>
-        <INPUT TYPE="submit" id="printButton"
-            onclick="document.forms['ADDAPPT'].displaymode.value='Add Appt & PrintCard'"
-            VALUE="<bean:message key='global.btnPrint'/>"
-            <%=disabled%>>
-        <input TYPE="submit" id="printReceiptButton"
+
+        <input type="submit" id="printReceiptButton" class="btn"
             onclick="document.forms['ADDAPPT'].displaymode.value='Add Appointment';document.forms['ADDAPPT'].printReceipt.value='1';"
-            VALUE="<bean:message key='appointment.addappointment.btnPrintReceipt'/>"
+            value="<bean:message key='appointment.addappointment.btnPrintReceipt'/>"
             <%=disabled%>>
         <input type="hidden" name="printReceipt" value="">
-                </TD>
-		<TD></TD>
+<input type="submit" id="printButton"
+            onclick="document.forms['ADDAPPT'].displaymode.value='Add Appt & PrintCard'" class="btn"
+            value="<bean:message key='global.btnPrint'/>"
+            <%=disabled%>>
+
+
+
         <% } %>
-    <TD align="right">
+
+
+
         <%
            if(bFirstDisp && apptObj!=null) {
 
@@ -1123,44 +1445,46 @@ function pasteAppt(multipleSameDayGroupAppt) {
                     numSameDayGroupApptsPaste = appts.size() > 0 ? new Long(appts.size()) : 0;
                 }
           %>
-          <input type="button" id="pasteButton" value="Paste" onclick="pasteAppt(<%=(numSameDayGroupApptsPaste > 0)%>);">
+          <input type="button" id="pasteButton" value="Paste" class="btn" onclick="pasteAppt(<%=(numSameDayGroupApptsPaste > 0)%>);">
         <% }%>
-          <INPUT TYPE="RESET" id="backButton" class="leftButton top" VALUE="<bean:message key="appointment.addappointment.btnCancel"/>" onClick="cancelPageLock();window.close();">
+
        <% if (!props.getProperty("allowMultipleSameDayGroupAppt", "").equalsIgnoreCase("no")) {%>
-          <input type="button" id="apptRepeatButton" value="<bean:message key="appointment.addappointment.btnRepeat"/>" onclick="onButRepeat()" <%=disabled%>>
+          <input type="button" id="apptRepeatButton" class="btn" value="<bean:message key="appointment.addappointment.btnRepeat"/>" onclick="onButRepeat()" <%=disabled%>>
       <%  } %>
-   </TD>
-	</tr>
-</table>
+<input type="RESET" id="backButton" class="btn btn-link" value="<bean:message key="global.btnCancel"/>" onClick="cancelPageLock();window.close();">
+
+</div>
+</div>
+
 </FORM>
 
-
-<table align="center">
+<div class ="span12">
+<table style="margin-left:auto;">
 <tr>
-    <td valign="top">
+    <td style="vertical-align: top;">
         <%if( bFromWL && demoNo != null && demoNo.length() > 0 ) {%>
-        <table style="font-size: 9pt;" bgcolor="#c0c0c0" align="center" valign="top" cellpadding="3px">
-            <tr bgcolor="#ccccff">
+        <table style="font-size: 9pt; background-color:#e8e8e8; text-align:center; vertical-align: top; padding:3px;">
+            <tr style="background-color:#e8e8e8;">
                 <th colspan="2">
                     <bean:message key="appointment.addappointment.msgDemgraphics"/>
-                    <a title="Master File" onclick="popup(700,1000,'../demographic/demographiccontrol.jsp?demographic_no=<%=demoNo%>&amp;displaymode=edit&amp;dboperation=search_detail','master')" href="javascript: function myFunction() {return false; }"><bean:message key="appointment.addappointment.btnEdit"/></a>
+                    <a title="Master File" onclick="popup(700,1000,'<%=request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demoNo%>&amp;displaymode=edit&amp;dboperation=search_detail','master')" href="javascript: function myFunction() {return false; }"><bean:message key="appointment.addappointment.btnEdit"/></a>
 
                     <bean:message key="appointment.addappointment.msgSex"/>: <%=sex%> &nbsp; <bean:message key="appointment.addappointment.msgDOB"/>: <%=dob%>
                 </th>
             </tr>
-             <tr bgcolor="#ccccff">
-                <th style="padding-right: 20px" align="left"><bean:message key="appointment.addappointment.msgHin"/>:</th>
+             <tr style="background-color:#fdfdfd">
+                <th style="padding-right: 20px; text-align: left"><bean:message key="appointment.addappointment.msgHin"/>:</th>
                 <td><%=hin.replace("null", "")%> </td>
             </tr>
-            <tr bgcolor="#ccccff">
-                <th style="padding-right: 20px"align="left"><bean:message key="appointment.addappointment.msgAddress"/>:</th>
+            <tr style="background-color:#f3f6f9">
+                <th style="padding-right: 20px; text-align: left"><bean:message key="appointment.addappointment.msgAddress"/>:</th>
                 <td><%=StringUtils.trimToEmpty(address)%>, <%=StringUtils.trimToEmpty(city)%>, <%=StringUtils.trimToEmpty(province)%>, <%=StringUtils.trimToEmpty(postal)%></td>
             </tr>
-            <tr bgcolor="#ccccff">
-                <th style="padding-right: 20px" align="left"><bean:message key="appointment.addappointment.msgPhone"/>:</th>
+            <tr style="background-color:#fdfdfd">
+                <th style="padding-right: 20px; text-align: left"><bean:message key="appointment.addappointment.msgPhone"/>:</th>
                 <td><b><bean:message key="appointment.addappointment.msgH"/></b>:<%=StringUtils.trimToEmpty(phone)%> <b><bean:message key="appointment.addappointment.msgW"/></b>:<%=StringUtils.trimToEmpty(phone2)%> </td>
             </tr>
-            <tr bgcolor="#ccccff" align="left">
+            <tr style="background-color:#f3f6f9; text-align:left">
                 <th style="padding-right: 20px"><bean:message key="appointment.addappointment.msgEmail"/>:</th>
                 <td><%=StringUtils.trimToEmpty(email)%></td>
             </tr>
@@ -1168,7 +1492,7 @@ function pasteAppt(multipleSameDayGroupAppt) {
         </table>
         <%}%>
     </td>
-    <td valign="top">
+    <td style="vertical-align: top;">
     <%
         String formTblProp = props.getProperty("appt_formTbl","");
         String[] formTblNames = formTblProp.split(";");
@@ -1188,17 +1512,17 @@ function pasteAppt(multipleSameDayGroupAppt) {
                     }
                     numForms++;
                     if (numForms == 1) {
-               
+
     %>
-            <table style="font-size: 9pt;" bgcolor="#c0c0c0" align="center" valign="top" cellpadding="3px">
-                <tr bgcolor="#ccccff">
+            <table style="background-color: #e8e8e8; margin-left:auto; vertical-align: top;padding:3px">
+                <tr style="background-color:#f3f6f9">
                     <th colspan="2">
                         <bean:message key="appointment.addappointment.msgFormsSaved"/>
                     </th>
                 </tr>
     <%              }%>
 
-                <tr bgcolor="#c0c0c0" align="left">
+                <tr style="background-color:#e8e8e8; text-align:left">
                     <th style="padding-right: 20px"><c:out value="${formName}:"/></th>
     <%              if (formComplete){  %>
                         <td><bean:message key="appointment.addappointment.msgFormCompleted"/></td>
@@ -1216,12 +1540,12 @@ function pasteAppt(multipleSameDayGroupAppt) {
          </table>
     <%  }   %>
     </td>
-    <td valign="top">
-<table style="font-size: 8pt;" bgcolor="#c0c0c0" align="center" valign="top">
-	<tr bgcolor="#ccccff">
+    <td style="vertical-align: top;">
+<table style="font-size: 8pt; background-color:#e9e9e9; margin-left:auto; vertical-align: top;">
+	<tr style="background-color:#e8e8e8">
 		<th colspan="4"><bean:message key="appointment.addappointment.msgOverview" /></th>
 	</tr>
-	<tr bgcolor="#ccccff">
+	<tr style="background-color:#fdfdfd">
 		<th style="padding-right: 25px"><bean:message key="Appointment.formDate" /></th>
  		<th style="padding-right: 25px"><bean:message key="Appointment.formStartTime" /></th>
 		<th style="padding-right: 25px"><bean:message key="appointment.addappointment.msgProvider" /></th>
@@ -1240,19 +1564,19 @@ function pasteAppt(multipleSameDayGroupAppt) {
             cal2.add(Calendar.YEAR, 1);
             java.util.Date end = cal2.getTime();
             param2[2] = new java.sql.Date(cal2.getTime().getTime());
-            
+
             for(Object[] result : appointmentDao.search_appt_future(Integer.parseInt(demoNo), start, end)) {
             	Appointment a = (Appointment)result[0];
             	p = (Provider)result[1];
-           
+
                 iRow ++;
                 if (iRow > iPageSize) break;
     %>
-	<tr bgcolor="#eeeeff">
-		<td style="background-color: #CCFFCC; padding-right: 25px"><%=ConversionUtils.toDateString(a.getAppointmentDate())%></td>
-		<td style="background-color: #CCFFCC; padding-right: 25px"><%=ConversionUtils.toTimeString(a.getStartTime())%></td>
-		<td style="background-color: #CCFFCC; padding-right: 25px"><%=p.getFormattedName()%></td>
-		<td style="background-color: #CCFFCC;"><%=a.getStatus()==null?"":(a.getStatus().equals("N")?"No Show":(a.getStatus().equals("C")?"Cancelled":"") )%></td>
+	<tr style="background-color:#e8e8e8">
+		<td style="background-color: #e8e8e8; padding-right: 25px"><%=ConversionUtils.toDateString(a.getAppointmentDate())%></td>
+		<td style="background-color: #e8e8e8; padding-right: 25px"><%=ConversionUtils.toTimeString(a.getStartTime())%></td>
+		<td style="background-color: #e8e8e8; padding-right: 25px"><%=p.getFormattedName()%></td>
+		<td style="background-color: #e8e8e8;"><%=a.getStatus()==null?"":(a.getStatus().equals("N")?"No Show":(a.getStatus().equals("C")?"Cancelled":"") )%></td>
 	</tr>
 	<%
             }
@@ -1260,18 +1584,18 @@ function pasteAppt(multipleSameDayGroupAppt) {
             iRow=0;
             cal2 = Calendar.getInstance();
             cal2.add(Calendar.YEAR, -1);
-            
+
             for(Object[] result : appointmentDao.search_appt_past(Integer.parseInt(demoNo), start, cal2.getTime())) {
             	Appointment a = (Appointment)result[0];
             	p = (Provider)result[1];
                 iRow ++;
                 if (iRow > iPageSize) break;
     %>
-	<tr bgcolor="#eeeeff">
-		<td style="background-color: #CCFFCC; padding-right: 25px"><%=ConversionUtils.toDateString(a.getAppointmentDate())%></td>
-		<td style="background-color: #CCFFCC; padding-right: 25px"><%=ConversionUtils.toTimeString(a.getStartTime())%></td>
-		<td style="background-color: #CCFFCC; padding-right: 25px"><%=p.getFormattedName()%></td>
-		<td style="background-color: #CCFFCC;"><%=a.getStatus()==null?"":(a.getStatus().equals("N")?"No Show":(a.getStatus().equals("C")?"Cancelled":"") )%></td>
+	<tr style="background-color:#e8e8e8">
+		<td style="background-color: #e8e8e8; padding-right: 25px"><%=ConversionUtils.toDateString(a.getAppointmentDate())%></td>
+		<td style="background-color: #e8e8e8; padding-right: 25px"><%=ConversionUtils.toTimeString(a.getStartTime())%></td>
+		<td style="background-color: #e8e8e8; padding-right: 25px"><%=p.getFormattedName()%></td>
+		<td style="background-color: #e8e8e8;"><%=a.getStatus()==null?"":(a.getStatus().equals("N")?"No Show":(a.getStatus().equals("C")?"Cancelled":"") )%></td>
 	</tr>
 	<%
             }
@@ -1281,10 +1605,8 @@ function pasteAppt(multipleSameDayGroupAppt) {
 </td>
 </tr>
 </table>
-
+</div>
+</div>
 </body>
-<script type="text/javascript">
-var loc = document.forms['ADDAPPT'].location;
-if(loc.nodeName.toUpperCase() == 'SELECT') loc.style.backgroundColor=loc.options[loc.selectedIndex].style.backgroundColor;
-</script>
+
 </html:html>

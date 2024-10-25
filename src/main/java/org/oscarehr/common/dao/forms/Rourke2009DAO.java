@@ -30,7 +30,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 
 import oscar.form.model.FormRourke2009;
 
@@ -39,7 +39,7 @@ import oscar.form.model.FormRourke2009;
  * @author rjonasz
  */
 @Repository
-public class Rourke2009DAO extends AbstractDao<FormRourke2009> {
+public class Rourke2009DAO extends AbstractDaoImpl<FormRourke2009> {
 
     public Rourke2009DAO() {
         super(FormRourke2009.class);

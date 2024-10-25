@@ -219,4 +219,8 @@ public class RxPharmacyData {
 		demographicPharmacyDao.unlinkPharmacy(Integer.parseInt(pharmacyId), Integer.parseInt(demographicNo));
 		
 	}
+
+   public Long getTotalDemographicsPreferedToPharmacyByPharmacyId(String pharmacyId) {
+      return demographicPharmacyDao.getTotalDemographicsPreferedToPharmacyByPharmacyId(Integer.parseInt(pharmacyId));
+   }
 }

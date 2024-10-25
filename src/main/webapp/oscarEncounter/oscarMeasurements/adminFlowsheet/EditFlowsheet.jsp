@@ -83,7 +83,7 @@ if(!authed2) {
     Hashtable<String, String> flowsheetNames = templateConfig.getFlowsheetDisplayNames();
 
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx.getBean("flowSheetCustomizationDao");
+    FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx.getBean(FlowSheetCustomizationDao.class);
     List<FlowSheetCustomization> custList = null;
     if("clinic".equals(scope)) {
     	custList = flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet);
@@ -113,6 +113,10 @@ if(!authed2) {
 
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class); 
     Demographic demo = demographicDao.getDemographic(demographic);
+	if (demographic != null && demo == null) {
+		%> <script> alert("Invalid demographic number. Please enter a valid number."); </script> <%
+		return;
+	}
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -267,7 +271,7 @@ Flowsheet: <span style="font-weight:normal"><%=flowsheet.toUpperCase()%></span>
 						
 		            <%}else{%>
 						<security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w">
-							<a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%><%=demoStash%>">Patient</a>
+							<a href="#" onclick="editFlowsheetByDemographic('<%=flowsheet%>')">Patient</a>
 						</security:oscarSec>
 							| Your Patients
 						<security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w">
@@ -276,7 +280,7 @@ Flowsheet: <span style="font-weight:normal"><%=flowsheet.toUpperCase()%></span>
 		            <%}
 			   }else{%>
 						<security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w">
-							<a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%><%=demoStash%>">Patient</a>
+							<a href="#" onclick="editFlowsheetByDemographic('<%=flowsheet%>')">Patient</a>
 							| <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>">Your Patients</a>
 						</security:oscarSec>
 							| All Patients
@@ -345,7 +349,12 @@ Flowsheet: <span style="font-weight:normal"><%=flowsheet.toUpperCase()%></span>
 		                <%}else{%>
 		                <a href="UpdateFlowsheet.jsp?flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Edit" class="action-icon"><i class="icon-pencil"></i></a>
 		                <%}%>
-		                <a href="FlowSheetCustomAction.do?method=delete&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Delete" class="action-icon"><i class="icon-trash"></i></a>
+		                <%-- 
+		                    Commenting out the 'Delete' button for now because it is breaking flowsheets 
+		                    and seems to be incorrectly removing measurements. This code is commented 
+		                    out until a correct solution is found. 
+		                --%>
+		                <%-- <a href="FlowSheetCustomAction.do?method=delete&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Delete" class="action-icon"><i class="icon-trash"></i></a> --%>
 		               <%
 		                if(mFlowsheet.getFlowSheetItem(mstring).isHide()){
 		               %>
@@ -642,6 +651,17 @@ $('#measurementTbl').dataTable({
 	                  aTargets: [ 0 ]
 	               }]
 });
+
+function editFlowsheetByDemographic(flowsheet) {
+	// Ask the user to enter the demographic number
+	const demographicNo = prompt("Enter demographic no:");
+
+	if (demographicNo && !isNaN(demographicNo) && demographicNo.trim() !== "") {
+		window.location.href = "EditFlowsheet.jsp?flowsheet=" + flowsheet + "&demographic=" + encodeURIComponent(demographicNo);
+	} else {
+		alert("Invalid demographic number. Please enter a valid number.");
+	}
+}
 
 
 </script>

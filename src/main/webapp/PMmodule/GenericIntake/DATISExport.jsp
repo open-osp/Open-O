@@ -28,8 +28,8 @@
 <%@page import="org.oscarehr.common.dao.FacilityDao"%>
 <%
 WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean("genericIntakeManager");
-FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean("facilityDao");
+GenericIntakeManager  genericIntakeManager =  (GenericIntakeManager) ctx.getBean(GenericIntakeManager.class);
+FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean(FacilityDao.class);
 List<Integer> facilityIds =  genericIntakeManager.getIntakeFacilityIds();
 List<Facility> facilities = new ArrayList<Facility>();
 if(facilityIds != null && !facilityIds.isEmpty()) {

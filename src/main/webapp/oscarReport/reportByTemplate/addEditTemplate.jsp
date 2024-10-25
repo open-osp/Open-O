@@ -44,14 +44,14 @@
 </security:oscarSec>
 <!DOCTYPE html>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 
 	<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
 	<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
 
-    <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+	<script src="${pageContext.servletContext.contextPath}/library/jquery/jquery-1.12.0.min.js"></script>
     <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css">
@@ -128,7 +128,28 @@ $(function() {
 	</c:choose>
 </c:if>
 <c:if test="${ empty opentext and empty param.opentext }">
-	<html:form styleClass="form-horizontal" action="/oscarReport/reportByTemplate/uploadTemplates" enctype="multipart/form-data">
+	<!-- <html:form styleClass="form-horizontal" action="/oscarReport/reportByTemplate/uploadTemplates" enctype="multipart/form-data">
+	   <div class="row-fluid">
+		<div class="well">
+	        <div class="control-group">
+	        	<label class="control-label" for="uploadReportXml">Select template</label>
+	        	<div class="controls">
+	        		<input type="file" id="uploadReportXml" class="input-file" name="templateFile" title="Upload a formatted template file. The extension is usually xml or txt">
+	        	</div>
+	        </div>
+			<input type="hidden" name="action" value="${ action }">
+			<input type="hidden" name="opentext" value="${ empty opentext ? param.opentext : opentext }">
+			<input type="hidden" name="templateid" value="${ templateid }">
+			<input type="hidden" name="uuid" value="${ curreport.uuid }">
+			<div class="control-group">
+				<div class="controls">
+					<input type="submit" class="btn btn-primary pull-right" value="Upload & <%=StringUtils.capitalize(action)%>">
+				</div>
+			</div>
+		</div>
+	</div>
+	</html:form> -->
+	<html:form styleClass="form-horizontal" action="/oscarReport/reportByTemplate/uploadTemplates" enctype="multipart/form-data" onsubmit="return validateFileUpload()">
 	   <div class="row-fluid">
 		<div class="well">
 	        <div class="control-group">
@@ -181,6 +202,21 @@ $(function() {
 	jQuery("#xmltext").on( "keyup", function() {
 		jQuery(".alert").hide();
 	});
+</script>
+
+<script type="text/javascript">
+    function validateFileUpload() {
+        var fileUpload = document.getElementById('uploadReportXml');
+        if (fileUpload.files.length == 0) {
+            alert('Please upload a file before submitting the form.');
+            return false;
+        }
+        return true;
+    }
+
+    jQuery("#xmltext").on("keyup", function() {
+        jQuery(".alert").hide();
+    });
 </script>
 
 </body>

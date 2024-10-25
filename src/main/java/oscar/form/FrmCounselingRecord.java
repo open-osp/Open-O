@@ -57,7 +57,7 @@ public class FrmCounselingRecord extends FrmRecord{
         }
 
         //get local clinic information
-        ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean("clinicDAO");
+        ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean(ClinicDAO.class);
         Clinic clinic = clinicDao.getClinic();
 
             props.setProperty("clinicName",clinic.getClinicName()==null?"":clinic.getClinicName());

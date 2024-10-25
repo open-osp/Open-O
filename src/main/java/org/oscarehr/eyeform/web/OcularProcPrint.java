@@ -59,7 +59,7 @@ public class OcularProcPrint implements ExtPrint {
 		logger.info("demographicNo = "+demographicNo);
 		
 		EyeformOcularProcedureDao dao = SpringUtils.getBean(EyeformOcularProcedureDao.class);
-		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
     	
     	
 		List<EyeformOcularProcedure> procs = null;

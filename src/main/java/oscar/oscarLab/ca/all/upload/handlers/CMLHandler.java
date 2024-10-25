@@ -52,7 +52,13 @@ import oscar.oscarLab.ca.all.util.Utilities;
 public class CMLHandler implements MessageHandler {
 
 	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
-	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean("hl7TextInfoDao");
+	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean(Hl7TextInfoDao.class);
+	
+	private Integer labNo = null;
+	
+	public Integer getLastLabNo() {
+		return labNo;
+	}
 	
 	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {
 
@@ -76,6 +82,7 @@ public class CMLHandler implements MessageHandler {
 					return null;
 				}
 
+				labNo = routeResults.segmentId;
 			}
 		} catch (Exception e) {
 			MessageUploader.clean(fileId);

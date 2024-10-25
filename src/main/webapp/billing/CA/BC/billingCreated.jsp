@@ -55,7 +55,7 @@ if(!authed) {
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="java.util.ArrayList" %>
 <%
-	BillingreferralDao billingReferralDao = (BillingreferralDao)SpringUtils.getBean("BillingreferralDAO");
+	BillingreferralDao billingReferralDao = (BillingreferralDao)SpringUtils.getBean(BillingreferralDAO.class);
 %>
 <%
 
@@ -187,6 +187,12 @@ function showHideLayers() { //v3.0
 </script>
 
 <style type="text/css">
+
+    :root * {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif, 'Glyphicons Halflings';
+        font-size: 12px;
+        line-height: 1 !important;
+    }
 
 	.button-bar {
 		margin-bottom:15px;

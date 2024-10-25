@@ -30,7 +30,7 @@ if(!authed) {
 <%@page import="org.oscarehr.hospitalReportManager.dao.HRMCategoryDao"%>
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%
-	HRMCategoryDao hrmCategoryDao = (HRMCategoryDao) SpringUtils.getBean("HRMCategoryDao");
+	HRMCategoryDao hrmCategoryDao = (HRMCategoryDao) SpringUtils.getBean(HRMCategoryDao.class);
 
 	String action=request.getParameter("action");
 

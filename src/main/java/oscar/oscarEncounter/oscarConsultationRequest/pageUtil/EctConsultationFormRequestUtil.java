@@ -24,34 +24,11 @@
 
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-
 import org.oscarehr.PMmodule.dao.ProviderDao;
-import org.oscarehr.common.dao.ClinicDAO;
-import org.oscarehr.common.dao.ConsultationRequestDao;
-import org.oscarehr.common.dao.ConsultationRequestExtDao;
-import org.oscarehr.common.dao.ConsultationServiceDao;
-import org.oscarehr.common.dao.ContactDao;
-import org.oscarehr.common.dao.FaxClientLogDao;
-import org.oscarehr.common.dao.FaxJobDao;
-import org.oscarehr.common.dao.ProfessionalSpecialistDao;
-import org.oscarehr.common.model.Clinic;
-import org.oscarehr.common.model.ConsultationRequest;
-import org.oscarehr.common.model.ConsultationServices;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.DemographicContact;
-import org.oscarehr.common.model.DemographicExt;
+import org.oscarehr.common.dao.*;
+import org.oscarehr.common.model.*;
 import org.oscarehr.common.model.DemographicExt.DemographicProperty;
-import org.oscarehr.common.model.FaxClientLog;
-import org.oscarehr.common.model.FaxJob;
-import org.oscarehr.common.model.ProfessionalContact;
-import org.oscarehr.common.model.ProfessionalSpecialist;
-import org.oscarehr.common.model.Provider;
+import org.oscarehr.common.model.enumerator.ConsultationRequestExtKey;
 import org.oscarehr.fax.core.FaxRecipient;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.DemographicContactCreator;
@@ -61,6 +38,8 @@ import org.oscarehr.util.SpringUtils;
 import oscar.OscarProperties;
 import oscar.util.ConversionUtils;
 import oscar.util.StringUtils;
+
+import java.util.*;
 
 public class EctConsultationFormRequestUtil {
 
@@ -119,8 +98,12 @@ public class EctConsultationFormRequestUtil {
 	
 	private String appointmentInstructions;
 	private String appointmentInstructionsLabel;
+
+	public boolean isEReferral = false;
 	
-	private final ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao) SpringUtils.getBean("consultationServiceDao");
+	private final ConsultationRequestDao consultationRequestDao = SpringUtils.getBean(ConsultationRequestDao.class);
+	private final ConsultationRequestExtDao consultationRequestExtDao = SpringUtils.getBean(ConsultationRequestExtDao.class);
+	private final ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao) SpringUtils.getBean(ConsultationServiceDao.class);
 	private final DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 	private final ContactDao contactDao = SpringUtils.getBean(ContactDao.class);
 	private final FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
@@ -232,9 +215,7 @@ public class EctConsultationFormRequestUtil {
 		getSpecailistsName(id);
 	
 
-		ConsultationRequestDao dao = SpringUtils.getBean(ConsultationRequestDao.class);
-		ConsultationRequest cr = dao.find(ConversionUtils.fromIntString(id));
-		ConsultationRequestExtDao daoExt = (ConsultationRequestExtDao) SpringUtils.getBean("consultationRequestExtDao");
+		ConsultationRequest cr = consultationRequestDao.find(Integer.parseInt(id));
 		
 		if (cr != null) {
 			fdid = cr.getFdid();
@@ -309,7 +290,7 @@ public class EctConsultationFormRequestUtil {
 			setAppointmentInstructions( cr.getAppointmentInstructions() );
 			setAppointmentInstructionsLabel( cr.getAppointmentInstructionsLabel() );
 			letterheadName = cr.getLetterheadName();
-			letterheadTitle = daoExt.getConsultationRequestExtsByKey(ConversionUtils.fromIntString(id),"letterheadTitle");
+			letterheadTitle = consultationRequestExtDao.getConsultationRequestExtsByKey(Integer.parseInt(id),"letterheadTitle");
 			letterheadAddress = cr.getLetterheadAddress();
 			letterheadPhone = cr.getLetterheadPhone();
 			letterheadFax = cr.getLetterheadFax();
@@ -363,6 +344,8 @@ public class EctConsultationFormRequestUtil {
                 	appointmentPm = "";
 				}
             }
+
+			isEReferral = consultationRequestExtDao.getConsultationRequestExtsByKey(Integer.parseInt(id),ConsultationRequestExtKey.EREFERRAL_REF.getKey()) != null;
         }
 		
 		getFaxLogs(id);
@@ -405,7 +388,7 @@ public class EctConsultationFormRequestUtil {
 			
 
 			// isolate the main specialist fax log
-			if(faxRecipient != null && faxRecipient.getFax().equals(specialistFax)) {
+			if(faxRecipient != null && specialistFax.equals(faxRecipient.getFax())) {
 				setSpecialistFaxLog(faxRecipient);
 			} 
 			
@@ -510,7 +493,7 @@ public class EctConsultationFormRequestUtil {
 	}
 
 	public String getClinicName() {
-		ClinicDAO clinicDao = (ClinicDAO) SpringUtils.getBean("clinicDAO");
+		ClinicDAO clinicDao = (ClinicDAO) SpringUtils.getBean(ClinicDAO.class);
 
 		String retval = new String();
 		Clinic clinic = clinicDao.getClinic();

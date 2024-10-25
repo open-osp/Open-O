@@ -57,14 +57,14 @@ import org.oscarehr.util.SpringUtils;
 public class PopulationReportUIBean {
 
 	private static Logger logger=MiscUtils.getLogger();
-	private ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
+	private ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
 	
-	private IssueGroupDao issueGroupDao = (IssueGroupDao) SpringUtils.getBean("issueGroupDao");
-	private PopulationReportDao populationReportDao = (PopulationReportDao) SpringUtils.getBean("populationReportDao");
-	private SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean("secUserRoleDao");
-	private SecRoleDao secRoleDao=(SecRoleDao)SpringUtils.getBean("secRoleDao");
-	private ProviderDao providerDao=(ProviderDao)SpringUtils.getBean("providerDao");
-	private FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean("functionalCentreDao");
+	private IssueGroupDao issueGroupDao = (IssueGroupDao) SpringUtils.getBean(IssueGroupDao.class);
+	private PopulationReportDao populationReportDao = (PopulationReportDao) SpringUtils.getBean(PopulationReportDao.class);
+	private SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean(SecUserRoleDao.class);
+	private SecRoleDao secRoleDao=(SecRoleDao)SpringUtils.getBean(SecRoleDao.class);
+	private ProviderDao providerDao=(ProviderDao)SpringUtils.getBean(ProviderDao.class);
+	private FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean(FunctionalCentreDao.class);
 	
 	private Date startDate = null;
 	private Date endDate = null;

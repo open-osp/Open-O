@@ -222,7 +222,7 @@
 <% 
 boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
 List<AppointmentType> types = new ArrayList<AppointmentType>();
-AppointmentTypeDao dao = (AppointmentTypeDao) SpringUtils.getBean("appointmentTypeDao");
+AppointmentTypeDao dao = (AppointmentTypeDao) SpringUtils.getBean(AppointmentTypeDao.class);
 types = dao.listAll();
 
   int rowNum = 0;

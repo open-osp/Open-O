@@ -74,7 +74,7 @@ public class FaxJob extends AbstractModel<Integer> implements Comparable<FaxJob>
 	}
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
         
     private String user;

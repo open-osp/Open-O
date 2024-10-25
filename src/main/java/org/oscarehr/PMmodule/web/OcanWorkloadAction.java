@@ -51,9 +51,9 @@ public class OcanWorkloadAction extends DispatchAction {
 
 	Logger logger = MiscUtils.getLogger();
 
-	private OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
-	private OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao) SpringUtils.getBean("ocanStaffFormDataDao");
-	private AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean("admissionDao");
+	private OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
+	private OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao) SpringUtils.getBean(OcanStaffFormDataDao.class);
+	private AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean(AdmissionDao.class);
 
 	protected ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         return view(mapping,form,request,response);

@@ -64,9 +64,9 @@ public class ERxChartUpdater {
 		//bean.addAttributeName(prescription.getAtc() + "-" + String.valueOf(bean.getStashIndex()));
 		//rxStashIndex = bean.addStashItem(prescription);
 		//bean.setStashIndex(rxStashIndex);
-	    CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
-	    DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
-	    ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
+	    CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
+	    DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
+	    ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
 	      
  	    prescription.setPosition(0);
         drugDao.persist(prescription);

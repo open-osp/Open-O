@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,26 +21,14 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
+import org.oscarehr.common.model.Department;
 import java.util.List;
 
-import javax.persistence.Query;
-
-import org.oscarehr.common.model.Department;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public class DepartmentDao extends AbstractDao<Department>{
-
-	public DepartmentDao()  {
-		super(Department.class);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<Department> findAll() {
-		Query query = createQuery("x", null);
-		return query.getResultList();
-	}
+public interface DepartmentDao extends AbstractDao<Department> {
+    List<Department> findAll();
 }

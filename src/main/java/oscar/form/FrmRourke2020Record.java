@@ -275,7 +275,7 @@ public class FrmRourke2020Record extends FrmRecord implements JasperReportPdfPri
                 //then we can compare measurement dates and slot them accordingly
                 Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographicNo);
 
-                MeasurementDao measurementDao = (MeasurementDao)SpringUtils.getBean("measurementDao");
+                MeasurementDao measurementDao = (MeasurementDao)SpringUtils.getBean(MeasurementDao.class);
 
                 Date mDateHt, mDateWt;
                 Date dob = demographic.getBirthDay().getTime();

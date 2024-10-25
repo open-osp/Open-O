@@ -59,10 +59,10 @@ if(!authed) {
 <%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
 <%@page import="org.oscarehr.common.model.UserProperty"%>
 <%
-	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 	ProviderSiteDao providerSiteDao = SpringUtils.getBean(ProviderSiteDao.class);
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="admin.providerupdate.title" /></title>
@@ -117,7 +117,7 @@ if(!authed) {
   			if (provider_sites.length == 1) {
   				//get provider id range from site
   				String provider_site_id =  provider_sites[0];
-  				SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+  				SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
   				Site provider_site = siteDao.getById(new Integer(provider_site_id));
   				min_value = provider_site.getProviderIdFrom();
   				max_value = provider_site.getProviderIdTo();
@@ -148,7 +148,7 @@ if(!authed) {
   }
 
   if (!org.oscarehr.common.IsPropertiesOn.isProviderFormalizeEnable() || isProviderFormalize) {
-    ProviderArchiveDao providerArchiveDao = (ProviderArchiveDao)SpringUtils.getBean("providerArchiveDao");
+    ProviderArchiveDao providerArchiveDao = (ProviderArchiveDao)SpringUtils.getBean(ProviderArchiveDao.class);
 	Provider provider = providerDao.getProvider(request.getParameter("provider_no"));
 	ProviderArchive pa = new ProviderArchive();
 	BeanUtils.copyProperties(pa, provider);
@@ -193,7 +193,7 @@ if(!authed) {
 		  providerDao.updateProvider(p);
 		  
 		  
-		  UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+		  UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		 
 		  String clinicalConnectId = request.getParameter("clinicalConnectId");
 		  String clinicalConnectType = request.getParameter("clinicalConnectType");

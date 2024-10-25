@@ -50,7 +50,7 @@
 /* Should list vacancies based on facility, not role. So comment out the code lines below just in case we will use role again..
    	//We are filtering this list if you are an Agency Operator to only those in your program domain
     if(role.indexOf("Waitlist Agency Operator") != -1) {		
-		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
+		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
 		List<Integer> pids = new ArrayList<Integer>();
 		for(ProgramProvider pp:programProviderDao.getActiveProgramDomain(loggedInInfo.getLoggedInProviderNo())) {
 			pids.add(pp.getProgramId().intValue());
@@ -72,7 +72,7 @@
 	   filteredListVac.addAll(listVac);
    } else { //display the vacancies in program domain .
 	   Integer facilityId = loggedInInfo.getCurrentFacility().getId();
-	   ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
+	   ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
 		List<Integer> pids = new ArrayList<Integer>();
 		for(ProgramProvider pp:programProviderDao.getActiveProgramDomain(loggedInInfo.getLoggedInProviderNo())) {
 			pids.add(pp.getProgramId().intValue());

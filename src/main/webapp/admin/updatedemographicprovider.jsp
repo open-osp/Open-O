@@ -60,7 +60,7 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html:html locale="true">
+<html:html lang="en">
     <head>
         <title><bean:message key="admin.admin.btnUpdatePatientProvider"/></title>
 

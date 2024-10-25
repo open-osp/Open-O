@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,8 +20,9 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.PMmodule.service;
 
 import java.util.ArrayList;
@@ -37,97 +39,24 @@ import org.oscarehr.common.model.Facility;
 import org.oscarehr.common.model.Provider;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-public class ProviderManager
-{
-	private ProviderDao providerDao;
-	private AgencyDao agencyDao;
-	private ProgramProviderDAO programProviderDAO;
-	private SecUserRoleDao secUserRoleDao; 
-	
-	
-	public void setProviderDao(ProviderDao providerDao)	{
-		this.providerDao = providerDao;
-	}
-	
-	public void setAgencyDao(AgencyDao agencyDao) {
-		this.agencyDao = agencyDao;
-	}
-	
-	public void setProgramProviderDAO(ProgramProviderDAO dao) {
-		this.programProviderDAO = dao;
-	}
-	
-	public void setSecUserRoleDao(SecUserRoleDao secUserRoleDao) {
-		this.secUserRoleDao = secUserRoleDao;
-	}
-	
-	public Provider getProvider(String providerNo)
-	{
-		return providerDao.getProvider(providerNo);
-	}
-	
-	public String getProviderName(String providerNo)
-	{
-		return providerDao.getProviderName(providerNo);
-	}
-	
-	public List<Provider> getProviders()
-	{
-		return providerDao.getProviders();
-	}
-	
-	public List<Provider> getActiveProviders()
-	{
-		return providerDao.getActiveProviders();
-	}
-
-    public List<Provider> getActiveProviders(String facilityId, String programId) {
-		return providerDao.getActiveProviders(facilityId, programId);
-    }
-    /* get my collegues */
-    public List<Provider> getActiveProviders(String providerNo, Integer shelterId) {
-		return providerDao.getActiveProviders(providerNo, shelterId);
-    }
-	
-	public List<Provider> search(String name) {
-		return providerDao.search(name);
-	}
-
-    public List<ProgramProvider> getProgramDomain(String providerNo) {
-		return programProviderDAO.getProgramDomain(providerNo);
-	}
-
-    public List<ProgramProvider> getProgramDomainByFacility(String providerNo, Integer facilityId) {
-		return programProviderDAO.getProgramDomainByFacility(providerNo, facilityId);
-	}
-
-    public List<Facility> getFacilitiesInProgramDomain(String providerNo) {
-        return programProviderDAO.getFacilitiesInProgramDomain(providerNo);
-    }
-    
-	public List getShelterIds(String provider_no)
-	{
-		return providerDao.getShelterIds(provider_no);
-	}
-
-    public List<Agency> getAgencyDomain(String providerNo) {
-		Agency localAgency =  agencyDao.getLocalAgency();
-		List<Agency> agencies = new ArrayList<Agency>();
-		agencies.add(localAgency);
-		return agencies;
-	}
-	
-	public List<Provider> getProvidersByType(String type) {
-		return providerDao.getProvidersByType(type);
-	}
-	
-	public List<SecUserRole> getSecUserRoles(String providerNo) {
-		return secUserRoleDao.getUserRoles(providerNo);
-	}
-
-	public void saveUserRole(SecUserRole sur) {
-		secUserRoleDao.save(sur);
-	}
-	
+public interface ProviderManager {
+    void setProviderDao(ProviderDao providerDao);
+    void setAgencyDao(AgencyDao agencyDao);
+    void setProgramProviderDAO(ProgramProviderDAO dao);
+    void setSecUserRoleDao(SecUserRoleDao secUserRoleDao);
+    Provider getProvider(String providerNo);
+    String getProviderName(String providerNo);
+    List<Provider> getProviders();
+    List<Provider> getActiveProviders();
+    List<Provider> getActiveProviders(String facilityId, String programId);
+    List<Provider> getActiveProviders(String providerNo, Integer shelterId);
+    List<Provider> search(String name);
+    List<ProgramProvider> getProgramDomain(String providerNo);
+    List<ProgramProvider> getProgramDomainByFacility(String providerNo, Integer facilityId);
+    List<Facility> getFacilitiesInProgramDomain(String providerNo);
+    List getShelterIds(String provider_no);
+    List<Agency> getAgencyDomain(String providerNo);
+    List<Provider> getProvidersByType(String type);
+    List<SecUserRole> getSecUserRoles(String providerNo);
+    void saveUserRole(SecUserRole sur);
 }

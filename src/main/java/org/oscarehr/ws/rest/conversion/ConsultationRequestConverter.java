@@ -55,6 +55,10 @@ public class ConsultationRequestConverter extends AbstractConverter<Consultation
 		d.setStatus(t.getStatus());
 		d.setStatusText(t.getStatusText());
 		d.setUrgency(t.getUrgency());
+
+		if (t.getExtras() != null && !t.getExtras().isEmpty()) {
+			d.setExtras(new ConsultationRequestExtConverter().getAllAsDomainObjects(loggedInInfo, t.getExtras()));
+		}
 		
 		return d;
 	}
@@ -92,7 +96,13 @@ public class ConsultationRequestConverter extends AbstractConverter<Consultation
 		t.setStatus(d.getStatus());
 		t.setStatusText(d.getStatusText());
 		t.setUrgency(d.getUrgency());
-		t.setProfessionalSpecialist((new ProfessionalSpecialistConverter()).getAsTransferObject(loggedInInfo, d.getProfessionalSpecialist()));
+		if(d.getProfessionalSpecialist() != null) {
+			t.setProfessionalSpecialist((new ProfessionalSpecialistConverter()).getAsTransferObject(loggedInInfo, d.getProfessionalSpecialist()));
+		}
+		
+		if (t.getExtras() != null && !d.getExtras().isEmpty()) {
+			t.setExtras(new ConsultationRequestExtConverter().getAllAsTransferObjects(loggedInInfo, d.getExtras()));
+		}
 	
 		return t;
 	}

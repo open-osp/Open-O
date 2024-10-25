@@ -12,12 +12,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentComment;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class HRMDocumentCommentDao extends AbstractDao<HRMDocumentComment> {
+public class HRMDocumentCommentDao extends AbstractDaoImpl<HRMDocumentComment> {
 
 	public HRMDocumentCommentDao() {
 	    super(HRMDocumentComment.class);
@@ -27,7 +27,7 @@ public class HRMDocumentCommentDao extends AbstractDao<HRMDocumentComment> {
     public List<HRMDocumentComment> getCommentsForDocument(Integer documentId) {
 		String sql = "select x from " + this.modelClass.getName() + " x where x.hrmDocumentId=? and x.deleted=0 order by commentTime desc";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, documentId);
+		query.setParameter(0, documentId);
 		return query.getResultList();
 	}
 	

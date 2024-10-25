@@ -59,7 +59,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-html-el" prefix="html-el" %>
+<%@ taglib uri="http://struts.apache.org/tags-html-el" prefix="html-el" %>
 
 <%
 	Long messageId=new Long(request.getParameter("messageId"));
@@ -93,7 +93,7 @@
 	Demographic demographic=MyOscarUtils.getDemographicByMyOscarUserName(myOscarUserName);
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <link rel="stylesheet" type="text/css" href="../oscarMessenger/encounterStyles.css" media="screen">
 <link rel="stylesheet" type="text/css" href="../oscarMessenger/printable.css" media="print">    

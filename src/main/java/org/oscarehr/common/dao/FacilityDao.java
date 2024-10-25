@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,41 +20,14 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.Facility;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class FacilityDao extends AbstractDao<Facility> {
-
-	public FacilityDao() {
-		super(Facility.class);
-	}
-
-	/**
-     * Find all ordered by name.
-     * @param active null is find all, true is find only active, false is find only inactive.
-     */
-    public List<Facility> findAll(Boolean active)
-	{
-		StringBuilder sb=new StringBuilder();
-		sb.append("select x from Facility x");
-		if (active!=null) sb.append(" where x.disabled=?");
-		sb.append(" order by x.name");
-		
-		Query query = entityManager.createQuery(sb.toString());
-		if (active!=null) query.setParameter(1, !active);
-		
-		@SuppressWarnings("unchecked")
-		List<Facility> results = query.getResultList();
-
-		return(results);
-	}
-
+public interface FacilityDao extends AbstractDao<Facility> {
+    List<Facility> findAll(Boolean active);
 }

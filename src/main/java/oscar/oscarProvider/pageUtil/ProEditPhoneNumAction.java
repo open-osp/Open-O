@@ -51,7 +51,7 @@ public class ProEditPhoneNumAction extends Action {
 
         DynaActionForm frm = (DynaActionForm)form;
         
-        UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		UserProperty prop = propertyDao.getProp(providerNo,"rxPhone");			
 		if(prop != null) {
 			prop.setValue((String)frm.get("faxNumber"));			

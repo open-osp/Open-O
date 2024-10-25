@@ -126,7 +126,7 @@ public class PHRLoginAction extends DispatchAction
 	        SecretKeySpec key=MyOscarUtils.getDeterministicallyMangledPasswordSecretKeyFromSession(session);
 	        byte[] encryptedMyOscarPassword=EncryptionUtils.encrypt(key, myoscarPassword.getBytes("UTF-8"));
 
-	        ProviderPreferenceDao providerPreferenceDao=(ProviderPreferenceDao) SpringUtils.getBean("providerPreferenceDao");
+	        ProviderPreferenceDao providerPreferenceDao=(ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
 	        ProviderPreference providerPreference=providerPreferenceDao.find(providerNo);
 	        providerPreference.setEncryptedMyOscarPassword(encryptedMyOscarPassword);
 	        providerPreferenceDao.merge(providerPreference);

@@ -27,7 +27,7 @@
 
 <%
 OscarAppointmentDao appointmentDao = 
-	(OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	(OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 %>
 <html>
 <head>

@@ -3,9 +3,7 @@ package org.oscarehr.documentManager.actions;
 import net.sf.json.JSONObject;
 import oscar.eform.EFormUtil;
 import oscar.oscarEncounter.data.EctFormData;
-import oscar.oscarLab.ca.on.LabResultData;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -16,6 +14,7 @@ import org.oscarehr.common.model.enumerator.DocumentType;
 import org.oscarehr.documentManager.DocumentAttachmentManager;
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
+import org.oscarehr.documentManager.data.AttachmentLabResultData;
 import org.oscarehr.hospitalReportManager.HRMUtil;
 import org.oscarehr.managers.FormsManager;
 import org.oscarehr.util.LoggedInInfo;
@@ -25,10 +24,16 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.util.StringUtils;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +46,7 @@ public class DocumentPreviewAction extends DispatchAction {
 	private List<EDoc> allDocuments = new ArrayList<>();
 	private List<EFormData> allEForms = new ArrayList<>();
 	private ArrayList<HashMap<String,? extends Object>> allHRMDocuments = new ArrayList<>();
-	private Pair<List<LabResultData>, String> labResultPair;
+	private List<AttachmentLabResultData> allLabsSortedByVersions = new ArrayList<>();
 	private List<EctFormData.PatientForm> allForms = new ArrayList<>();
 
 	public void renderEDocPDF(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
@@ -102,6 +107,25 @@ public class DocumentPreviewAction extends DispatchAction {
 		}
 	}
 
+	public void renderPDF(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {		
+		String pdfPathString = StringUtils.isNullOrEmpty(request.getParameter("pdfPath")) ? "" : request.getParameter("pdfPath");
+		Path pdfPath = Paths.get(pdfPathString);
+		response.setContentType("application/pdf");
+		try (InputStream inputStream = Files.newInputStream(pdfPath);
+			 BufferedInputStream bfis = new BufferedInputStream(inputStream);
+			 ServletOutputStream outs = response.getOutputStream()) {
+
+			int data;
+			while ((data = bfis.read()) != -1) {
+				outs.write(data);
+			}
+			
+			outs.flush();
+		} catch (IOException e) {
+			logger.error("Error", e);	
+		}
+	}
+
 	public ActionForward fetchConsultDocuments(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		
@@ -110,7 +134,7 @@ public class DocumentPreviewAction extends DispatchAction {
 		allDocuments = EDocUtil.listDocs(loggedInInfo, "demographic", demographicNo, null, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE);
 		allEForms = EFormUtil.listPatientEformsCurrent(new Integer(demographicNo), true);
 		allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicNo,false);
-		labResultPair = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
+		allLabsSortedByVersions = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
 		allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicNo), false, true);
 
 		return forwardDocuments(mapping, request);
@@ -125,7 +149,7 @@ public class DocumentPreviewAction extends DispatchAction {
 		allDocuments = EDocUtil.listDocs(loggedInInfo, "demographic", demographicNo, null, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE);
 		allEForms = documentAttachmentManager.getAllEFormsExpectFdid(loggedInInfo, Integer.parseInt(demographicNo), Integer.parseInt(fdid));
 		allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicNo,false);
-		labResultPair = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
+		allLabsSortedByVersions = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
 		allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicNo), false, true);
 
 		return forwardDocuments(mapping, request);
@@ -156,8 +180,7 @@ public class DocumentPreviewAction extends DispatchAction {
 
 	private ActionForward forwardDocuments(ActionMapping mapping, HttpServletRequest request) {
 		request.setAttribute("allDocuments", allDocuments);
-		request.setAttribute("allLabsSortedByVersions", labResultPair.getLeft());
-		request.setAttribute("latestLabVersionIds", labResultPair.getRight());
+		request.setAttribute("allLabsSortedByVersions", allLabsSortedByVersions);
 		request.setAttribute("allForms", allForms);
 		request.setAttribute("allEForms", allEForms);
 		request.setAttribute("allHRMDocuments", allHRMDocuments);

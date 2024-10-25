@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.oscarehr.common.dao.AbstractCodeSystemDao;
+import org.oscarehr.common.dao.AbstractCodeSystemDaoImpl;
 import org.oscarehr.common.dao.QuickListDao;
 import org.oscarehr.common.dao.QuickListUserDao;
 import org.oscarehr.common.model.AbstractCodeSystemModel;
@@ -149,7 +150,7 @@ public class dxQuickListItemsHandler {
 	}
 
 	public static void updatePatientCodeDesc(String type, String code, String desc) {
-		String daoName = AbstractCodeSystemDao.getDaoName(AbstractCodeSystemDao.codingSystem.valueOf(type));
+		String daoName = AbstractCodeSystemDao.getDaoName(AbstractCodeSystemDaoImpl.codingSystem.valueOf(type));
 		@SuppressWarnings("unchecked")
 		AbstractCodeSystemDao<AbstractCodeSystemModel<?>> csDao = (AbstractCodeSystemDao<AbstractCodeSystemModel<?>>) SpringUtils.getBean(daoName);
 

@@ -68,7 +68,7 @@ if(!authed2) {
 <%@page import="org.oscarehr.common.model.BillingONCHeader1"%>
 <%@page import="oscar.util.ConversionUtils"%>
 <%
-	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean("clinicLocationDao");
+	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean(ClinicLocationDao.class);
 	ReportProviderDao reportProviderDao = SpringUtils.getBean(ReportProviderDao.class);
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 	BillingONCHeader1Dao billingOnCHeaderDao = SpringUtils.getBean(BillingONCHeader1Dao.class);

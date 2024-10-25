@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,8 +21,9 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
@@ -31,30 +33,9 @@ import org.oscarehr.common.model.PHRVerification;
 import org.springframework.stereotype.Repository;
 import javax.persistence.Query;
 
-@Repository
-public class PHRVerificationDao extends AbstractDao<PHRVerification> {
+public interface PHRVerificationDao extends AbstractDao<PHRVerification> {
 
-	public PHRVerificationDao() {
-		super(PHRVerification.class);
-	}
-	
-	public PHRVerification findLatestByDemographicId(Integer demographicId){
-        Query query = entityManager.createQuery("SELECT f FROM PHRVerification f WHERE f.demographicNo =? and archived = ? order by createdDate desc");
-        query.setParameter(1,demographicId);
-        query.setParameter(2, false);
-        
-        query.setMaxResults(1);
-        
-        return(getSingleResultOrNull(query));                
-     }
-	
-    public List<PHRVerification> findByDemographic(Integer demographicId, boolean active){
-        Query query = entityManager.createQuery("SELECT f FROM PHRVerification f WHERE f.demographicNo =? and archived = ? order by createdDate desc");
-        query.setParameter(1,demographicId);
-        query.setParameter(2, !active);
-        
-    	@SuppressWarnings("unchecked")
-    	List<PHRVerification> results=query.getResultList();
-        return(results);                
-     }
+    public PHRVerification findLatestByDemographicId(Integer demographicId);
+
+    public List<PHRVerification> findByDemographic(Integer demographicId, boolean active);
 }

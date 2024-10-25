@@ -44,7 +44,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class OlisPreferencesAction extends DispatchAction {
 
-	private UserPropertyDAO dao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+	private UserPropertyDAO dao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 	private OLISProviderPreferencesDao olisProviderPreferencesDao = SpringUtils.getBean(OLISProviderPreferencesDao.class);
 	
 	@Override	   

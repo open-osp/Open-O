@@ -210,7 +210,7 @@ public class TeleplanCorrectionActionWCB extends org.apache.struts.action.Action
         return actionForward;
     }
     private void updateUnitValue(String i, String billingno) {
-    	BillingmasterDAO dao = (BillingmasterDAO) SpringUtils.getBean("BillingmasterDAO");
+    	BillingmasterDAO dao = (BillingmasterDAO) SpringUtils.getBean(BillingmasterDAO.class);
     	dao.updateBillingUnitForBillingNumber(i, Integer.parseInt(billingno));
     }
 

@@ -23,6 +23,10 @@
  */
 package org.oscarehr.common.model;
 
+import org.oscarehr.common.dao.FaxConfigDao;
+import org.oscarehr.util.EncryptionUtils;
+import org.oscarehr.util.SpringUtils;
+
 import javax.persistence.*;
 
 @Entity
@@ -32,7 +36,7 @@ public class FaxConfig extends AbstractModel<Integer> {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer Id;
 	
 	private String url = "";
@@ -125,7 +129,20 @@ public class FaxConfig extends AbstractModel<Integer> {
 	 * @return the faxPasswd
 	 */
 	public String getFaxPasswd() {
-		return faxPasswd;
+		try {
+			if (EncryptionUtils.isEncrypted(this.faxPasswd)) {
+				return EncryptionUtils.decrypt(this.faxPasswd);
+			} else {
+				// the password is not encrypted, encrypt and save it for future use
+				this.setFaxPasswd(this.faxPasswd);
+				// Recursively calling this method to retrieve the newly encrypted password
+				FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
+				faxConfigDao.merge(this);
+				return this.getFaxPasswd();
+			}
+		} catch (Exception e) {
+			return this.faxPasswd;
+		}
 	}
 
 
@@ -133,8 +150,12 @@ public class FaxConfig extends AbstractModel<Integer> {
 	 * @param faxPasswd the faxPasswd to set
 	 */
 	public void setFaxPasswd(String faxPasswd) {
-		this.faxPasswd = faxPasswd;
-	}
+        try {
+			this.faxPasswd = EncryptionUtils.encrypt(faxPasswd);
+        } catch (Exception e) {
+			throw new RuntimeException("Error while securely saving the password.");
+        }
+    }
 
 
 	/**

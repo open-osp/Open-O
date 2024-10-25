@@ -145,7 +145,7 @@ public class AddEditHtmlAction extends Action {
 	    String attrib_name = request.getParameter("annotation_attrib");
 	    HttpSession se = request.getSession();
 	    WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(se.getServletContext());
-	    CaseManagementManager cmm = (CaseManagementManager) ctx.getBean("caseManagementManager");
+	    CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
 	    if (attrib_name!=null) {
 		CaseManagementNote cmn = (CaseManagementNote)se.getAttribute(attrib_name);
 		if (cmn!=null) {

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,38 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.Flowsheet;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class FlowsheetDao extends AbstractDao<Flowsheet>{
-
-	public FlowsheetDao() {
-		super(Flowsheet.class);
-	}
-	
-	public List<Flowsheet> findAll() {
-		Query query = entityManager.createQuery("select f from Flowsheet f");
-		
-		@SuppressWarnings("unchecked")
-		List<Flowsheet> results = query.getResultList();
-		
-		return results;
-	}
-	
-	public Flowsheet findByName(String name) {
-		Query query = entityManager.createQuery("select f from Flowsheet f where f.name=?");
-		query.setParameter(1, name);
-		
-		return getSingleResultOrNull(query);
-	}
+public interface FlowsheetDao extends AbstractDao<Flowsheet> {
+    List<Flowsheet> findAll();
+    Flowsheet findByName(String name);
 }

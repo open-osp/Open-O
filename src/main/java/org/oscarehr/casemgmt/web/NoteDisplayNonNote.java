@@ -46,7 +46,7 @@ import oscar.oscarRx.data.RxPrescriptionData.Prescription;
  */
 public class NoteDisplayNonNote implements NoteDisplay {
 
-	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	private Integer noteId;
@@ -117,7 +117,7 @@ public class NoteDisplayNonNote implements NoteDisplay {
       }                    
                 
 		StringBuilder tmpNote = new StringBuilder();
-                BillingONService billingONService = (BillingONService) SpringUtils.getBean("billingONService");
+                BillingONService billingONService = (BillingONService) SpringUtils.getBean(BillingONService.class);
 		List<BillingONItem>items = billingONService.getNonDeletedInvoices(h1.getId());
 		BillingONItem item;
 
@@ -311,6 +311,10 @@ public class NoteDisplayNonNote implements NoteDisplay {
 	}
 
 	public boolean isExternalNote() {
+		return false;
+	}
+
+	public boolean isEmailNote() {
 		return false;
 	}
 

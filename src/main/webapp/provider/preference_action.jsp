@@ -41,7 +41,7 @@
 		
 	String providerNo = parameters.get("provider_no")[0];
 	
-	ProviderPreferenceDao preferenceDao = (ProviderPreferenceDao) SpringUtils.getBean("providerPreferenceDao");
+	ProviderPreferenceDao preferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
 	ProviderPreference preference = ProviderPreferencesUIBean.updateOrCreateProviderPreferences(request);
 	
 	//preference.setDefaultDxCode(parameters.get("dxCode")[0]);

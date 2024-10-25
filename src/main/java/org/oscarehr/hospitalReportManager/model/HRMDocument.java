@@ -23,6 +23,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.oscarehr.common.model.AbstractModel;
 
@@ -65,6 +66,9 @@ public class HRMDocument extends AbstractModel<Integer> {
 	private String subClassName;
 	
 	private String sourceFacilityReportNo;
+
+	@Transient
+	private String displayName;
 	
 	@OneToMany(fetch=FetchType.EAGER)
 	@JoinColumn(name = "hrmDocumentId")
@@ -280,6 +284,14 @@ public class HRMDocument extends AbstractModel<Integer> {
 		this.sourceFacilityReportNo = sourceFacilityReportNo;
 	}
 
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 	public List<HRMDocumentToDemographic> getMatchedDemographics() {
 		return matchedDemographics;
 	}
@@ -317,6 +329,16 @@ public class HRMDocument extends AbstractModel<Integer> {
 		@Override
 		public int compare(HRMDocument o1, HRMDocument o2) {
 			return (o1.timeReceived.compareTo(o2.timeReceived));
+		}
+	};
+
+	/**
+	 * This comparator sorts HRM Docs ascending based on the report date
+	 */
+	public static final Comparator<HRMDocument> REPORT_DATE_COMPARATOR = new Comparator<HRMDocument>() {
+		@Override
+		public int compare(HRMDocument o1, HRMDocument o2) {
+			return (o1.reportDate.compareTo(o2.reportDate));
 		}
 	};
 

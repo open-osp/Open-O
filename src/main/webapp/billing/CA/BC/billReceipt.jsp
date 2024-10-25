@@ -498,7 +498,7 @@ if(!authed) {
                                                                 %>
 
                                                                 <tr>
-                                                                    <%  SystemPreferences invoiceClinicInfo = systemPreferencesDao.findPreferenceByName(SystemPreferences.GENERAL_SETTINGS_KEYS.invoice_custom_clinic_info);
+                                                                    <%  SystemPreferences invoiceClinicInfo = systemPreferencesDao.findPreferenceByName(SystemPreferences.GENERAL_SETTINGS_KEYS.invoice_use_custom_clinic_info);
                                                                         if(invoiceClinicInfo == null || StringUtils.isNullOrEmpty(invoiceClinicInfo.getValue())) { %>
                                                                     <td class="title4">
                                                                         <c:out value="<%=clinic.getClinicName()%>" />
@@ -512,9 +512,11 @@ if(!authed) {
                                                                 </tr>
                                                                 <tr>
                                                                     <td class="address" id="Fax"> Fax: <c:out value="<%=vecFaxes.size() >= 1 ? vecFaxes.elementAt(0) : clinic.getClinicFax()%>" /> </td>
-                                                                <% } else { %>
+                                                                <% } else {
+                                                                    SystemPreferences customInvoiceClinicInfo = systemPreferencesDao.findPreferenceByName(SystemPreferences.GENERAL_SETTINGS_KEYS.invoice_custom_clinic_info);
+                                                                %>
 
-                                                                    <td class="payeeInfo"><c:out value="<%= invoiceClinicInfo.getValue()%>" /></td>
+                                                                    <td class="payeeInfo"><c:out value="<%= customInvoiceClinicInfo.getValue()%>" /></td>
 
                                                                 <% } %>
                                                                 </tr>

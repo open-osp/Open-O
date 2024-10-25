@@ -50,7 +50,7 @@ String reqID = reqIDL==null ? "" : reqIDL.toString();
 reqIDL = preview ? null : LabRequestReportLink.getRequestTableIdByReport("hl7TextMessage",Long.valueOf(segmentID));
 String reqTableID = reqIDL==null ? "" : reqIDL.toString();
 
-PatientLabRoutingDao plrDao = (PatientLabRoutingDao) SpringUtils.getBean("patientLabRoutingDao");
+PatientLabRoutingDao plrDao = (PatientLabRoutingDao) SpringUtils.getBean(PatientLabRoutingDao.class);
 PatientLabRouting plr = preview ? null : plrDao.findDemographicByLabId(Integer.valueOf(segmentID));
 String demographicID = plr != null ? (preview || plr.getDemographicNo() == null ? "" : plr.getDemographicNo().toString()) : "";
 

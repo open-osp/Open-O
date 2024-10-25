@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
@@ -28,16 +31,7 @@ import org.oscarehr.common.model.DemographicCust;
 import org.oscarehr.common.model.DemographicCustArchive;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class DemographicCustArchiveDao extends AbstractDao<DemographicCustArchive> {
+public interface DemographicCustArchiveDao extends AbstractDao<DemographicCustArchive> {
 
-	public DemographicCustArchiveDao() {
-		super(DemographicCustArchive.class);
-	}
-	
-	public Integer archiveDemographicCust(DemographicCust dc) {
-		DemographicCustArchive dca = new DemographicCustArchive(dc);
-		persist(dca);
-		return dca.getId();
-	}
+	public Integer archiveDemographicCust(DemographicCust dc);
 }

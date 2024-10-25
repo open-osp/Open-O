@@ -73,14 +73,14 @@ if(!authed) {
 	BillingONCHeader1Dao billingONCHeader1Dao = SpringUtils.getBean(BillingONCHeader1Dao.class);
 	String providerNo = request.getParameter("providerNo");
 
-OscarAppointmentDao appointmentDao          	=(OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
-CaseManagementNoteDAO caseManagementNoteDao 	=(CaseManagementNoteDAO)SpringUtils.getBean("caseManagementNoteDAO");
-BillingDao billingDAO 							=(BillingDao)SpringUtils.getBean("billingDao");
-DrugDao drugDao 								= (DrugDao) SpringUtils.getBean("drugDao");
-ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) SpringUtils.getBean("providerInboxRoutingDAO");
+OscarAppointmentDao appointmentDao          	=(OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
+CaseManagementNoteDAO caseManagementNoteDao 	=(CaseManagementNoteDAO)SpringUtils.getBean(CaseManagementNoteDAO.class);
+BillingDao billingDAO 							=(BillingDao)SpringUtils.getBean(BillingDao.class);
+DrugDao drugDao 								= (DrugDao) SpringUtils.getBean(DrugDao.class);
+ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) SpringUtils.getBean(ProviderInboxRoutingDao.class);
 TicklerManager ticklerManager					= SpringUtils.getBean(TicklerManager.class);
-DocumentDao documentDao							=(DocumentDao) SpringUtils.getBean("documentDao");
-ProviderDao providerDao	                        = (ProviderDao)SpringUtils.getBean("providerDao");
+DocumentDao documentDao							=(DocumentDao) SpringUtils.getBean(DocumentDao.class);
+ProviderDao providerDao	                        = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 
 	List<Provider> providers = providerDao.getActiveProviders();
 %>
@@ -138,7 +138,7 @@ ProviderDao providerDao	                        = (ProviderDao)SpringUtils.getBe
 <%
 	if (providerNo != null) {
 		DemographicDao demographicDao = (DemographicDao) SpringUtils
-		.getBean("demographicDao");
+		.getBean(DemographicDao.class);
 		List<Demographic> demoList = demographicDao
 		.getDemographicByProvider(providerNo);
 

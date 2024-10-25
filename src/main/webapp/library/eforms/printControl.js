@@ -12,23 +12,27 @@ var printControl = {
 		submit.append("<input name='pdfButton' type='button'>");
 		var pdf = jQuery("input[name='pdfButton']");
 		var pdfSave = jQuery("input[name='pdfSaveButton']");
-		if (pdf.size() == 0) { pdf = jQuery("input[name='pdfButton']"); }
-		if (pdfSave.size() == 0) { pdfSave = jQuery("input[name='pdfSaveButton']"); }
+		if (! pdf) {
+			pdf = jQuery("input[name='pdfButton']");
+		}
+		if (! pdfSave) {
+			pdfSave = jQuery("input[name='pdfSaveButton']");
+		}
 	
 		pdf.insertAfter(submit);	
 		pdfSave.insertAfter(submit);
 
-		if (pdf.size() != 0) {
+		if (pdf) {
 			pdf.attr("onclick", "").unbind("click");
 			pdf.attr("value", "PDF");
 			pdf.click(function(){submitPrintButton(false);});
 		}
-		if (pdfSave.size() != 0) {
+		if (pdfSave) {
 			pdfSave.attr("onclick", "").unbind("click");
 			pdfSave.attr("value", "Submit & PDF");
 			pdfSave.click(function(){submitPrintButton(true);});
 		}
-		if (printSave.size() != 0) {
+		if (printSave) {
 			printSave.attr("value", "Submit & Print");
 		}
 
@@ -39,14 +43,14 @@ function submitPrintButton(save) {
 	
 	// Setting this form to print.
 	var printHolder = jQuery('#printHolder');
-	if (printHolder == null || printHolder.size() == 0) {
+	if (printHolder == null || ! printHolder) {
 		jQuery("form").append("<input id='printHolder' type='hidden' name='print' value='true' >");
 	}	
 	printHolder = jQuery('#printHolder');
 	printHolder.val("true");
 	
 	var saveHolder = jQuery("#saveHolder");
-	if (saveHolder == null || saveHolder.size() == 0) {
+	if (saveHolder == null || ! saveHolder) {
 		jQuery("form").append("<input id='saveHolder' type='hidden' name='skipSave' value='"+!save+"' >");
 	}
 	saveHolder = jQuery("#saveHolder");

@@ -103,7 +103,7 @@
     
     //Get list of providers           
     String curProviderNo = (String) session.getAttribute("user"); 
-    ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+    ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
     Provider provider = providerDao.getProvider(curProviderNo);
     
     List<Provider> pList = null;
@@ -120,14 +120,14 @@
         pList = providerDao.getBillableProviders();
     }
     
-    BillingONPremiumDao bPremiumDao = (BillingONPremiumDao) SpringUtils.getBean("billingONPremiumDao");
-    RaDetailDao raDetailDao = (RaDetailDao) SpringUtils.getBean("raDetailDao");
-    BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao) SpringUtils.getBean("billingONCHeader1Dao");
-    BillingONPaymentDao bPaymentDao = (BillingONPaymentDao) SpringUtils.getBean("billingONPaymentDao");
-    BillingOnItemPaymentDao bItemPaymentDao = (BillingOnItemPaymentDao) SpringUtils.getBean("billingOnItemPaymentDao");
-    BillingONExtDao bExtDao = (BillingONExtDao) SpringUtils.getBean("billingONExtDao");
-    DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");    
-    BillingONService billingONService = (BillingONService) SpringUtils.getBean("billingONService");
+    BillingONPremiumDao bPremiumDao = (BillingONPremiumDao) SpringUtils.getBean(BillingONPremiumDao.class);
+    RaDetailDao raDetailDao = (RaDetailDao) SpringUtils.getBean(RaDetailDao.class);
+    BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
+    BillingONPaymentDao bPaymentDao = (BillingONPaymentDao) SpringUtils.getBean(BillingONPaymentDao.class);
+    BillingOnItemPaymentDao bItemPaymentDao = (BillingOnItemPaymentDao) SpringUtils.getBean(BillingOnItemPaymentDao.class);
+    BillingONExtDao bExtDao = (BillingONExtDao) SpringUtils.getBean(BillingONExtDao.class);
+    DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+    BillingONService billingONService = (BillingONService) SpringUtils.getBean(BillingONService.class);
         
     List<RaDetail> raList = null;
     List<BillingONPremium> premiumList = null;
@@ -559,8 +559,8 @@ table td,th{font-size:12px;}
                                         numBillItems++;
 										
                                         List<BillingOnItemPayment> bItemPayList = bItemPaymentDao.getItemPaymentByInvoiceNoItemId(bCh1.getId(), bItem.getId());                                        
-                                        BigDecimal amtPaid = bItemPaymentDao.calculateItemPaymentTotal(bItemPayList);
-                                        BigDecimal amtRefund = bItemPaymentDao.calculateItemRefundTotal(bItemPayList);
+                                        BigDecimal amtPaid = BillingOnItemPaymentDao.calculateItemPaymentTotal(bItemPayList);
+                                        BigDecimal amtRefund = BillingOnItemPaymentDao.calculateItemRefundTotal(bItemPayList);
                                         if (numBillItems > 1) {
                      %>
                        </tr>

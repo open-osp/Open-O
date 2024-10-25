@@ -48,7 +48,7 @@
 <%@taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="org.oscarehr.casemgmt.model.*, org.oscarehr.common.dao.DemographicDao, org.oscarehr.util.SpringUtils, org.oscarehr.common.model.Demographic"%>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-bean" prefix="bean"%>
+<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -56,7 +56,7 @@
 	String remoteFacilityId = request.getParameter("remoteFacilityId");
 	String remoteProviderId = request.getParameter("remoteProviderId");
 	
-	DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao"); 
+	DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 	Demographic demographic = demographicDao.getDemographic(demographicId);
 %>
 <html>

@@ -28,11 +28,11 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.BillRecipients;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BillRecipientsDao extends AbstractDao<BillRecipients>{
+public class BillRecipientsDao extends AbstractDaoImpl<BillRecipients>{
 
 	public BillRecipientsDao() {
 		super(BillRecipients.class);
@@ -41,7 +41,7 @@ public class BillRecipientsDao extends AbstractDao<BillRecipients>{
 	public List<BillRecipients> findByBillingNo(int billingNo) {
 		Query q = entityManager.createQuery("SELECT b FROM BillRecipients b WHERE b.billingNo=?");
 		
-		q.setParameter(1, billingNo);
+		q.setParameter(0, billingNo);
 		
 		@SuppressWarnings("unchecked")
 		List<BillRecipients> results = q.getResultList();

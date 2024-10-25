@@ -33,11 +33,14 @@ import org.oscarehr.common.model.Drug;
 import org.oscarehr.common.model.Prescription;
 import org.oscarehr.managers.MockSecurityInfoManager;
 import org.oscarehr.managers.RxManager;
+import org.oscarehr.managers.RxManagerImpl;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.ws.rest.RxWebService;
 import org.oscarehr.ws.rest.conversion.ConversionException;
 import org.oscarehr.ws.rest.conversion.DrugConverter;
+import org.oscarehr.ws.rest.conversion.DrugConverterImpl;
 import org.oscarehr.ws.rest.conversion.PrescriptionConverter;
+import org.oscarehr.ws.rest.conversion.PrescriptionConverterImpl;
 import org.oscarehr.ws.rest.to.DrugResponse;
 import org.oscarehr.ws.rest.to.DrugSearchResponse;
 import org.oscarehr.ws.rest.to.GenericRESTResponse;
@@ -506,7 +509,7 @@ public class RxWebServiceTest {
     //
 
 
-    public class MockRxManager extends RxManager {
+    public class MockRxManager extends RxManagerImpl {
 
         protected List<Drug> drugs;
 
@@ -649,7 +652,7 @@ public class RxWebServiceTest {
 
     }
 
-    public class MockDrugConverter extends DrugConverter {
+    public class MockDrugConverter extends DrugConverterImpl {
 
         public MockDrugConverter() {
             super();
@@ -675,7 +678,7 @@ public class RxWebServiceTest {
             this.rxManager = new MockRxManager();
             this.drugConverter = new MockDrugConverter();
             this.securityInfoManager = new MockSecurityInfoManager();
-            this.prescriptionConverter = new PrescriptionConverter();
+            this.prescriptionConverter = new PrescriptionConverterImpl();
         }
 
         protected LoggedInInfo getLoggedInInfo() {

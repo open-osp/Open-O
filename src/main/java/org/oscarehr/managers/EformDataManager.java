@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.managers;
 
@@ -47,117 +50,26 @@ import oscar.eform.data.EForm;
 import oscar.log.LogAction;
 import oscar.oscarEncounter.data.EctFormData;
 
-@Service
-public class EformDataManager {
-
-	@Autowired
-	SecurityInfoManager securityInfoManager;
+public interface EformDataManager{
 	
-	@Autowired
-	EFormDataDao eFormDataDao;
-	
-	@Autowired
-	DocumentManager documentManager;
-
-	@Autowired
-	private DocumentAttachmentManager documentAttachmentManager;
-
-	@Autowired
-	private FormsManager formsManager;
-	
-	public EformDataManager() {
-		// Default
-	}
-	
-	public Integer saveEformData( LoggedInInfo loggedInInfo, EForm eform ) {
-		Integer formid = null;
-		
-		if ( ! securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.UPDATE, null)) {
-			throw new RuntimeException("missing required security object (_eform)");
-		}
-
-		EFormData eFormData = EFormUtil.toEFormData( eform );
-		eFormDataDao.persist( eFormData );
-		formid = eFormData.getId();
-		
-		if( formid != null ) {
-			LogAction.addLogSynchronous(loggedInInfo, "EformDataManager.saveEformData", "Saved EformDataID=" + formid);
-		} else {
-			LogAction.addLogSynchronous(loggedInInfo, "EformDataManager.saveEformData", "Failed to save eform EformDataID=" + formid);
-		}
-		
-		return formid;
-	}
+	public Integer saveEformData( LoggedInInfo loggedInInfo, EForm eform );
 	
 	/**
 	 * Saves an form as PDF EDoc. 
 	 * Returns the Eform id that was saved.
 	 */
-	public Integer saveEformDataAsEDoc( LoggedInInfo loggedInInfo, String fdid ) {
-		
-		if ( ! securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.UPDATE, null)) {
-			throw new RuntimeException("missing required security object (_eform)");
-		}
-		Integer documentId = null;
-		Integer formid = null;
-		
-		if( fdid != null ) {
-			formid = Integer.parseInt( fdid );
-			EFormData eformData = eFormDataDao.find( formid );			
-			EDoc edoc = ConvertToEdoc.from( eformData );
-			documentManager.moveDocumentToOscarDocuments( loggedInInfo, edoc.getDocument(), edoc.getFilePath());
-			edoc.setFilePath(null);
-			documentId = documentManager.saveDocument( loggedInInfo, edoc );
-		}
-		
-		if( documentId != null ) {
-			LogAction.addLogSynchronous(loggedInInfo, "EformDataManager.saveEformDataAsEDoc", "Document ID saved: " + documentId );
-		} else {
-			LogAction.addLogSynchronous(loggedInInfo, "EformDataManager.saveEformDataAsEDoc", "Document conversion for Eform id: " + formid + " failed.");
-		}
-		
-		return documentId;
-	}
+	public Integer saveEformDataAsEDoc( LoggedInInfo loggedInInfo, String fdid );
 
-	public Integer saveEFormWithAttachmentsAsEDoc(LoggedInInfo loggedInInfo, String fdid, String demographicId, Path eFormPDFPath) throws PDFGenerationException {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.UPDATE, demographicId)) {
-			throw new RuntimeException("missing required security object (_eform)");
-		}
-
-		EFormData eForm = eFormDataDao.find(Integer.parseInt(fdid));
-		EDoc eDoc = ConvertToEdoc.from(eForm, eFormPDFPath);
-		documentManager.moveDocumentToOscarDocuments(loggedInInfo, eDoc.getDocument(), eDoc.getFilePath());
-		eDoc.setFilePath(null);
-		return documentManager.saveDocument(loggedInInfo, eDoc);
-	}
+	public Integer saveEFormWithAttachmentsAsEDoc(LoggedInInfo loggedInInfo, String fdid, String demographicId, Path eFormPDFPath) throws PDFGenerationException;
+	
+	public EFormData findByFdid(LoggedInInfo loggedInInfo, Integer fdid);
 	
 	/**
 	 * Saves an form as PDF in a temp directory.
 	 *  
 	 * Path to a temp file is returned. Remember to change the .tmp filetype and to delete the tmp file when finished. 
 	 */
-	public Path createEformPDF( LoggedInInfo loggedInInfo, int fdid ) throws PDFGenerationException {
-		
-		if ( ! securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.UPDATE, null)) {
-			throw new RuntimeException("missing required security object (_eform)");
-		}
-
-		EFormData eformData = eFormDataDao.find( fdid );
-		Path path = null;			
-		try {
-			path = ConvertToEdoc.saveAsTempPDF(eformData);
-		} catch (Exception e) {
-			throw new PDFGenerationException("Error Details: EForm [" + eformData.getFormName() + "] could not be converted into a PDF", e);
-		}
-		
-		if( Files.isReadable(path) ) {
-			LogAction.addLogSynchronous(loggedInInfo, "EformDataManager.saveEformDataAsPDF", "Document saved at " + path.toString() );
-		} else {
-			LogAction.addLogSynchronous(loggedInInfo, "EformDataManager.saveEformDataAsPDF", "Document failed to save for eform id " + fdid);
-		}
-		
-		return path;
-	}
+	public Path createEformPDF( LoggedInInfo loggedInInfo, int fdid ) throws PDFGenerationException;
 	
 	
     /**
@@ -166,58 +78,12 @@ public class EformDataManager {
      * 
      * Returns a map - not an entity
      */
-    public List<Map<String,Object>> findCurrentByDemographicIdNoData(LoggedInInfo loggedInInfo, Integer demographicId){
-    	
-  		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.READ, null)) {
-			throw new RuntimeException("missing required security object (_eform)");
-		}
-    	
-    	List<Map<String,Object>> results = eFormDataDao.findByDemographicIdCurrentNoData(demographicId, Boolean.TRUE);
-    	
-    	if (results != null && results.size() > 0) {
-			LogAction.addLogSynchronous(loggedInInfo, "FormsManager.findCurrentByDemographicIdNoData", "demo" + demographicId);
-		}
+    public List<Map<String,Object>> findCurrentByDemographicIdNoData(LoggedInInfo loggedInInfo, Integer demographicId);
 
-		return results;    	
-    }
+	public ArrayList<HashMap<String, ? extends Object>> getHRMDocumentsAttachedToEForm(LoggedInInfo loggedInInfo, String fdid, String demographicId);
 
-	public ArrayList<HashMap<String, ? extends Object>> getHRMDocumentsAttachedToEForm(LoggedInInfo loggedInInfo, String fdid, String demographicId) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.READ, demographicId)) {
-			throw new RuntimeException("missing required security object (_eform)");
-		}
+	public List<EctFormData.PatientForm> getFormsAttachedToEForm(LoggedInInfo loggedInInfo, String fdid, String demographicId);
 
-		List<String> attachedHRMDocumentIds = documentAttachmentManager.getEFormAttachments(loggedInInfo, Integer.parseInt(fdid), DocumentType.HRM, Integer.parseInt(demographicId));
-		ArrayList<HashMap<String, ? extends Object>> allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicId,false);		
-		ArrayList<HashMap<String, ? extends Object>> filteredHRMDocuments = new ArrayList<>(attachedHRMDocumentIds.size());
-		for (String hrmId : attachedHRMDocumentIds) {
-			for (HashMap<String, ? extends Object> hrmDocument: allHRMDocuments) {
-				if (Integer.parseInt(hrmId) == (Integer)hrmDocument.get("id")) {
-					filteredHRMDocuments.add(hrmDocument);
-				}
-			}
-		}
-		//return the subset of listHRMDocuments that is attached
-		return filteredHRMDocuments;
-	}
-
-	public List<EctFormData.PatientForm> getFormsAttachedToEForm(LoggedInInfo loggedInInfo, String fdid, String demographicId) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.READ, demographicId)) {
-			throw new RuntimeException("missing required security object (_eform)");
-		}
-
-		List<String> attachedForms = documentAttachmentManager.getEFormAttachments(loggedInInfo, Integer.parseInt(fdid), DocumentType.FORM, Integer.parseInt(demographicId));
-		List<EctFormData.PatientForm> filteredForms = new ArrayList<>(attachedForms.size());
-		List<EctFormData.PatientForm> allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicId), true, true);
-		for (String formId : attachedForms) {
-			for (EctFormData.PatientForm form : allForms) {
-				if ((form.getFormId()).equals(formId)) {
-					filteredForms.add(form);
-					break;
-				}
-			}
-		}
-
-		return filteredForms;
-	}
+	public void removeEFormData(LoggedInInfo loggedInInfo, String fdid);
 
 }

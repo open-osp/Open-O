@@ -49,7 +49,7 @@ if(!authed) {
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%
 	PropertyDao dao = (PropertyDao)SpringUtils.getBean(PropertyDao.class);
-	ConsultationManager manager = new ConsultationManager();
+	ConsultationManager manager = (ConsultationManager)SpringUtils.getBean(ConsultationManager.class);
 		
 	boolean consultRequestEnabled = false;
 	boolean consultResponseEnabled = false;
@@ -61,7 +61,7 @@ if(!authed) {
 
 	if (!consultRequestEnabled && !consultResponseEnabled) consultRequestEnabled = true;
 %>
-<html:html locale="true">
+<html:html lang="en">
 
 
 <head>

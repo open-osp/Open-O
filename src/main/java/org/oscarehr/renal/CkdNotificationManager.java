@@ -45,7 +45,7 @@ public class CkdNotificationManager {
 
 	private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 	private MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
-	private DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean("DxresearchDAO");
+	private DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
 	
 
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

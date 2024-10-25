@@ -71,7 +71,7 @@ public class GenerateEnvelopesAction  extends Action {
     String[] demos = request.getParameterValues("demos");
  
        String curUser_no = (String) request.getSession().getAttribute("user");
-       UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+       UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
        UserProperty prop;
        String defaultPrinterNamePDFLabel = "";
        Boolean silentPrintPDFLabel = false;

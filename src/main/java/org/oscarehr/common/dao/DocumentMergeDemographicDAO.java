@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,42 +21,17 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.Date;
 import java.util.List;
-
-import org.oscarehr.common.merge.MergedDemographicTemplate;
 import org.oscarehr.common.model.Document;
-
 import org.oscarehr.documentManager.EDocUtil.EDocSort;
-import oscar.util.ConversionUtils;
 
-public class DocumentMergeDemographicDAO extends DocumentDao {
-
-	@Override
-	public List<Object[]> findDocuments(final String module, String moduleid, final String docType, final boolean includePublic, final boolean includeDeleted, final boolean includeActive, final EDocSort sort, final Date since) {
-		List<Object[]> result = super.findDocuments(module, moduleid, docType, includePublic, includeDeleted, includeActive, sort,null);
-		MergedDemographicTemplate<Object[]> template = new MergedDemographicTemplate<Object[]>() {
-			@Override
-			protected List<Object[]> findById(Integer demographic_no) {
-				return DocumentMergeDemographicDAO.super.findDocuments(module, demographic_no.toString(), docType, includePublic, includeDeleted, includeActive, sort, since);
-			}
-		};
-		return template.findMerged(ConversionUtils.fromIntString(moduleid), result);
-	}
-
-	@Override
-	public List<Document> findByDemographicId(String demoNo) {
-		List<Document> result = super.findByDemographicId(demoNo);
-		MergedDemographicTemplate<Document> template = new MergedDemographicTemplate<Document>() {
-			@Override
-			protected List<Document> findById(Integer demographic_no) {
-				return DocumentMergeDemographicDAO.super.findByDemographicId(demographic_no.toString());
-			}
-		};
-		return template.findMerged(ConversionUtils.fromIntString(demoNo), result);
-	}
-
+public interface DocumentMergeDemographicDAO extends DocumentDao{
+    List<Object[]> findDocuments(String module, String moduleid, String docType, boolean includePublic, boolean includeDeleted, boolean includeActive, EDocSort sort, Date since);
+    List<Document> findByDemographicId(String demoNo);
 }

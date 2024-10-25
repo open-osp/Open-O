@@ -91,7 +91,7 @@ public class EctDisplayFormAction extends EctDisplayAction {
 				String key;
 				int hash;
 				// grab all of the forms
-				EncounterFormDao encounterFormDao=(EncounterFormDao)SpringUtils.getBean("encounterFormDao");
+				EncounterFormDao encounterFormDao=(EncounterFormDao)SpringUtils.getBean(EncounterFormDao.class);
 				List<EncounterForm> encounterForms = encounterFormDao.findAll();
 				Collections.sort(encounterForms, EncounterForm.BC_FIRST_COMPARATOR);
 				

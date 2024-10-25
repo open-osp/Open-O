@@ -27,12 +27,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.sharingcenter.model.AffinityDomainDataObject;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class AffinityDomainDao extends AbstractDao<AffinityDomainDataObject> {
+public class AffinityDomainDao extends AbstractDaoImpl<AffinityDomainDataObject> {
 
     public AffinityDomainDao() {
         super(AffinityDomainDataObject.class);
@@ -47,7 +47,7 @@ public class AffinityDomainDao extends AbstractDao<AffinityDomainDataObject> {
     public AffinityDomainDataObject getAffinityDomain(int id) {
         String sql = "FROM AffinityDomainDataObject a where a.id = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, id);
+        query.setParameter(0, id);
 
         AffinityDomainDataObject retVal = getSingleResultOrNull(query);
         return retVal;

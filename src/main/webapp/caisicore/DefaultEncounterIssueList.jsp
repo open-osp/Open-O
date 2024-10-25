@@ -94,7 +94,7 @@
 	boolean flag = true;
 	String style="color:black;", bgcolor="white";
 	IssueDAO issueDao = SpringUtils.getBean(IssueDAO.class);
-	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 	List<DefaultIssue> issueList = (List<DefaultIssue>)request.getAttribute("issueList");
 	if (issueList != null) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

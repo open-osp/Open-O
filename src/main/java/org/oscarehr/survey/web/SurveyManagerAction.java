@@ -73,13 +73,13 @@ import org.oscarehr.util.SpringUtils;
 public class SurveyManagerAction extends AbstractSurveyAction {
 	private static Logger log = MiscUtils.getLogger();
 
-	private SurveyManager surveyManager = (SurveyManager)SpringUtils.getBean("surveyManager");
-	private SurveyTestManager surveyTestManager = (SurveyTestManager)SpringUtils.getBean("surveyTestManager");
-	private SurveyLaunchManager surveyLaunchManager = (SurveyLaunchManager)SpringUtils.getBean("surveyLaunchManager");
-	private QuestionTypes questionTypes = (QuestionTypes)SpringUtils.getBean("QuestionTypes");
+	private SurveyManager surveyManager = (SurveyManager)SpringUtils.getBean(SurveyManager.class);
+	private SurveyTestManager surveyTestManager = (SurveyTestManager)SpringUtils.getBean(SurveyTestManager.class);
+	private SurveyLaunchManager surveyLaunchManager = (SurveyLaunchManager)SpringUtils.getBean(SurveyLaunchManager.class);
+	private QuestionTypes questionTypes = (QuestionTypes)SpringUtils.getBean(QuestionTypes.class);
 	private CaisiFormDao caisiFormDao = SpringUtils.getBean(CaisiFormDao.class);
-	private OscarFormManager oscarFormManager = (OscarFormManager)SpringUtils.getBean("oscarFormManager");
-	private UserManager surveyUserManager = (UserManager)SpringUtils.getBean("surveyUserManager");
+	private OscarFormManager oscarFormManager = (OscarFormManager)SpringUtils.getBean(OscarFormManager.class);
+	private UserManager surveyUserManager = (UserManager)SpringUtils.getBean(UserManager.class);
 	
 	public void setSurveyManager(SurveyManager mgr) {
 		this.surveyManager = mgr;

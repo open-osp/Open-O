@@ -61,21 +61,24 @@ public class SQLReporter implements Reporter {
         }
         
         String sql = curReport.getPreparedSQL(parameterMap);
-        if (sql == "" || sql == null) {
+        if (sql == null || sql.trim().isEmpty()) {
             request.setAttribute("errormsg", "Error: Cannot find all parameters for the query.  Check the template.");
             request.setAttribute("templateid", templateId);
             return false;
         }
-        ResultSet rs = null;
+
         String rsHtml = "An SQL query error has occured ";
         String csv = "";
-        try {           
-            rs = DBHandler.GetSQL(sql);
-            rsHtml = RptResultStruct.getStructure2(rs);  //makes html from the result set
-            StringWriter swr = new StringWriter();
-            CSVPrinter csvp = new CSVPrinter(swr);
-            csvp.writeln(UtilMisc.getArrayFromResultSet(rs));
-            csv = swr.toString();
+        try( StringWriter swr = new StringWriter();
+             ResultSet rs = DBHandler.GetSQL(sql) ) {           
+            if (!rs.isBeforeFirst()) {
+                rsHtml = "The query returned no results.";
+            } else {
+                rsHtml = RptResultStruct.getStructure2(rs);  //makes html from the result set
+                CSVPrinter csvp = new CSVPrinter(swr);
+                csvp.writeln(UtilMisc.getArrayFromResultSet(rs));
+                csv = swr.toString();
+            }            
         } catch (SQLException sqe) {
         	rsHtml += sqe.getCause() != null ? sqe.getCause() : sqe.getMessage();
             MiscUtils.getLogger().error("Error", sqe);
@@ -107,18 +110,18 @@ public class SQLReporter implements Reporter {
                 return false;
             }
         	
-            ResultSet rs = null;
             String rsHtml = "An SQL query error has occured ";
             String csv = "";
-            try {
-                
-                rs = DBHandler.GetSQL(sql);
-                rsHtml = RptResultStruct.getStructure2(rs);  //makes html from the result set
-                StringWriter swr = new StringWriter();
-                CSVPrinter csvp = new CSVPrinter(swr);
-                csvp.writeln(UtilMisc.getArrayFromResultSet(rs));
-                csv = swr.toString();
-                 
+            try( StringWriter swr = new StringWriter();
+                ResultSet rs = DBHandler.GetSQL(sql) ) {           
+                if (!rs.isBeforeFirst()) {
+                    rsHtml = sql + "<br/>The query returned no results.";
+                } else {
+                    rsHtml = RptResultStruct.getStructure2(rs);  //makes html from the result set
+                    CSVPrinter csvp = new CSVPrinter(swr);
+                    csvp.writeln(UtilMisc.getArrayFromResultSet(rs));
+                    csv = swr.toString();
+                }            
             } catch (SQLException sqe) {
               	rsHtml += sqe.getCause() != null ? sqe.getCause() : sqe.getMessage();
                 MiscUtils.getLogger().error("Error", sqe);

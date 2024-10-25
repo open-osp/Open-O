@@ -60,7 +60,7 @@ public class EctDeleteDataAction extends Action {
 		request.getSession().setAttribute("EctDeleteDataForm", frm);
 		String[] deleteCheckbox = frm.getDeleteCheckbox();
 
-		MeasurementsDeletedDao measurementsDeletedDao = (MeasurementsDeletedDao) SpringUtils.getBean("measurementsDeletedDao");
+		MeasurementsDeletedDao measurementsDeletedDao = (MeasurementsDeletedDao) SpringUtils.getBean(MeasurementsDeletedDao.class);
 		MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
 		if (deleteCheckbox != null) {
 

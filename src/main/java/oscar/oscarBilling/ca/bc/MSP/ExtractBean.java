@@ -24,12 +24,6 @@
 
 
 package oscar.oscarBilling.ca.bc.MSP;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.dao.LogTeleplanTxDao;
@@ -41,13 +35,19 @@ import org.oscarehr.common.model.Billing;
 import org.oscarehr.util.DateRange;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.Misc;
 import oscar.OscarProperties;
 import oscar.entities.Billingmaster;
 import oscar.oscarBilling.ca.bc.data.BillingHistoryDAO;
 import oscar.oscarBilling.ca.bc.data.BillingmasterDAO;
 import oscar.util.ConversionUtils;
+
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 
 
@@ -529,7 +529,7 @@ public class ExtractBean extends Object implements Serializable {
        String htmlContent =
        "<tr>" +
           "<td class='bodytext'>" +
-             "<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billing_no=" +
+             "<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billingmaster_no=" +
                 Misc.forwardZero(billingMasterNo, 7) +
                  "','','resizable=yes,scrollbars=yes,top=0,left=0,width=900,height=600'); return false;\">"  +
                invNo +

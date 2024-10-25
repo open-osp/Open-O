@@ -40,7 +40,7 @@ import oscar.util.SqlUtils;
  * @author  root
  */
 public final class BillingCodeData implements Comparable      {
-    private static BillingServiceDao billingServiceDao = (BillingServiceDao) SpringUtils.getBean("billingServiceDao");
+    private static BillingServiceDao billingServiceDao = (BillingServiceDao) SpringUtils.getBean(BillingServiceDao.class);
   
 
   /*

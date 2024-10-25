@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,46 +20,15 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.CtlDocClass;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class CtlDocClassDao extends AbstractDao<CtlDocClass> {
-
-	public CtlDocClassDao() {
-		super(CtlDocClass.class);
-	}
-
-    public List<String> findUniqueReportClasses() {
-
-    	String sqlCommand = "select distinct x.reportClass from CtlDocClass x order by lower(x.reportClass)";
-
-        Query query = entityManager.createQuery(sqlCommand);
-
-        @SuppressWarnings("unchecked")
-        List<String> results = query.getResultList();
-
-        return (results);
-    }
-
-    public List<String> findSubClassesByReportClass(String reportClass) {
-
-    	String sqlCommand = "select x.subClass from CtlDocClass x where x.reportClass=?1 order by x.subClass";
-
-        Query query = entityManager.createQuery(sqlCommand);
-        query.setParameter(1, reportClass);
-
-        @SuppressWarnings("unchecked")
-        List<String> results = query.getResultList();
-
-        return (results);
-    }
+public interface CtlDocClassDao extends AbstractDao<CtlDocClass> {
+    List<String> findUniqueReportClasses();
+    List<String> findSubClassesByReportClass(String reportClass);
 }

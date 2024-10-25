@@ -37,7 +37,7 @@ private String getSiteHTML(String reason, List<Site> sites) {
 %>
 <%
 if (bMultisites) {
-	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+	SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
 	sites = siteDao.getAllSites();
 }
 //multisite ends =====================
@@ -68,7 +68,7 @@ if (bMultisites) {
 <%@page import="oscar.util.ConversionUtils" %>
 <%
 	ScheduleDateDao scheduleDateDao = SpringUtils.getBean(ScheduleDateDao.class);
-	RScheduleDao rScheduleDao = (RScheduleDao)SpringUtils.getBean("rScheduleDao");
+	RScheduleDao rScheduleDao = (RScheduleDao)SpringUtils.getBean(RScheduleDao.class);
 	ScheduleHolidayDao scheduleHolidayDao = SpringUtils.getBean(ScheduleHolidayDao.class);
 %>
 <%
@@ -230,7 +230,7 @@ if(request.getParameter("bFirstDisp")==null || request.getParameter("bFirstDisp"
 <%@page import="org.oscarehr.common.model.Site"%>
 <%@page import="oscar.appt.ApptUtil"%>
 <%@page import="org.oscarehr.common.dao.SiteDao"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%><html:html locale="true">
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%><html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="schedule.schedulecreatedate.title" /></title>

@@ -241,7 +241,7 @@
                     }
                 }
 
-				CSSStylesDAO cssStylesDao = (CSSStylesDAO) SpringUtils.getBean("CSSStylesDAO");
+				CSSStylesDAO cssStylesDao = (CSSStylesDAO) SpringUtils.getBean(CSSStylesDAO.class);
 				styles = cssStylesDao.findAll();
 
 				if( count == 0 ) {
@@ -288,14 +288,14 @@
         }
     }
 
-    CSSStylesDAO cssStylesDao = (CSSStylesDAO) SpringUtils.getBean("CSSStylesDAO");
+    CSSStylesDAO cssStylesDao = (CSSStylesDAO) SpringUtils.getBean(CSSStylesDAO.class);
 	styles = cssStylesDao.findAll();
   }
 
 %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="admin.admin.manageBillingServiceCode"/></title>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>

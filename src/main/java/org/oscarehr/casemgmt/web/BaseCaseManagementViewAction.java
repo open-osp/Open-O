@@ -52,7 +52,7 @@ public class BaseCaseManagementViewAction extends DispatchAction {
 	protected RolesManager roleMgr;
 	protected ProgramManager programMgr;
 	protected AdmissionManager admissionMgr;
-	protected SurveyManager surveyMgr = (SurveyManager)SpringUtils.getBean("surveyManager2");
+	protected SurveyManager surveyMgr = (SurveyManager) SpringUtils.getBean("surveyManager2");
 
 
 	public ApplicationContext getAppContext() {
@@ -60,7 +60,7 @@ public class BaseCaseManagementViewAction extends DispatchAction {
 	}
 
 	public AdmissionManager getAdmissionManager() {
-		return (AdmissionManager) getAppContext().getBean("admissionManager");
+		return (AdmissionManager) getAppContext().getBean(AdmissionManager.class);
 	}
 
 	public void setAdmissionManager(AdmissionManager admMgr){

@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -127,7 +128,10 @@ public class BillingReProcessBillAction extends Action {
     String billingGroupNo = billform.getGroupNo(providerNo);
     String practitionerNo = billform.getPracNo(providerNo); //p
 
-    String hcNo = demo.getHin().trim()+demo.getVer().trim(); //d
+    //d
+    String hcNo = Objects.nonNull(demo.getHin()) ?
+            demo.getHin().trim() + (Objects.nonNull(demo.getVer()) ? demo.getVer().trim() : "")
+            : "";
     String dependentNo = frm.getDependentNo(); //f
 
     String visitLocation = frm.getLocationVisit(); //f

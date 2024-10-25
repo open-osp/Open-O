@@ -69,8 +69,8 @@ public final class ClinicLogoUtility {
 
         String filename = "";
         if(props.getProperty("multisites")!=null && "on".equalsIgnoreCase(props.getProperty("multisites")) && ectConsultationFormRequestUtil != null) {
-            DocumentDao documentDao = (DocumentDao) SpringUtils.getBean("documentDao");
-            SiteDao siteDao = (SiteDao) SpringUtils.getBean("siteDao");
+            DocumentDao documentDao = (DocumentDao) SpringUtils.getBean(DocumentDao.class);
+            SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
             Site site = siteDao.getById(Integer.valueOf(ectConsultationFormRequestUtil.siteName));
             if(site!=null) {
                 if(site.getSiteLogoId()!=null) {

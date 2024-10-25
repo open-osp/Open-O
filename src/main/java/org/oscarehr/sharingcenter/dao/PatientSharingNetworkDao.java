@@ -27,12 +27,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.sharingcenter.model.PatientSharingNetworkDataObject;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class PatientSharingNetworkDao extends AbstractDao<PatientSharingNetworkDataObject> {
+public class PatientSharingNetworkDao extends AbstractDaoImpl<PatientSharingNetworkDataObject> {
 
     public PatientSharingNetworkDao() {
         super(PatientSharingNetworkDataObject.class);
@@ -56,7 +56,7 @@ public class PatientSharingNetworkDao extends AbstractDao<PatientSharingNetworkD
     public List<PatientSharingNetworkDataObject> findByDemographicId(int demographicId) {
         String sql = "FROM PatientSharingNetworkDataObject e where e.demographicNo = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, demographicId);
+        query.setParameter(0, demographicId);
 
         return query.getResultList();
     }
@@ -65,8 +65,8 @@ public class PatientSharingNetworkDao extends AbstractDao<PatientSharingNetworkD
         String sql = "FROM PatientSharingNetworkDataObject e where e.affinityDomain = ? and e.demographicNo = ?";
 
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
-        query.setParameter(2, demographicId);
+        query.setParameter(0, affinityDomain);
+        query.setParameter(1, demographicId);
 
         query.setMaxResults(1);
         PatientSharingNetworkDataObject retVal = getSingleResultOrNull(query);
@@ -77,8 +77,8 @@ public class PatientSharingNetworkDao extends AbstractDao<PatientSharingNetworkD
         String sql = "SELECT count(*) FROM PatientSharingNetworkDataObject e where e.affinityDomain = ? and e.demographicNo = ? and e.sharingEnabled = 1";
 
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
-        query.setParameter(2, demographicId);
+        query.setParameter(0, affinityDomain);
+        query.setParameter(1, demographicId);
 
         int retVal = ((Long) query.getSingleResult()).intValue();
         return retVal > 0;

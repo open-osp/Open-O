@@ -107,7 +107,7 @@
  * Ontario, Canada 
  */
 -->
-<html:html locale="true">
+<html:html lang="en">
 <% response.setHeader("Cache-Control","no-cache");%>
 
 <head>

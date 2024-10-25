@@ -13,12 +13,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.hospitalReportManager.model.HRMSubClass;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class HRMSubClassDao extends AbstractDao<HRMSubClass> {
+public class HRMSubClassDao extends AbstractDaoImpl<HRMSubClass> {
 
 	public HRMSubClassDao() {
 		super(HRMSubClass.class);
@@ -27,7 +27,7 @@ public class HRMSubClassDao extends AbstractDao<HRMSubClass> {
 	public List<HRMSubClass> findById(int id) {
 		String sql = "select x from " + this.modelClass.getName() + " x where x.id=?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, id);
+		query.setParameter(0, id);
 		@SuppressWarnings("unchecked")
 		List<HRMSubClass> documents = query.getResultList();
 		return documents;

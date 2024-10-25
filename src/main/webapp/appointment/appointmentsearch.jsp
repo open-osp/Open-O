@@ -50,7 +50,7 @@
 
   //providers
   String providerNo = request.getParameter("provider_no")!=null?request.getParameter("provider_no"):"";
-  ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+  ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
   List<Provider> providers = providerDao.getActiveProviders();
   
   //day of week
@@ -89,7 +89,7 @@
   
   //code
   String code = request.getParameter("code")!=null?request.getParameter("code"):"";  
-  ScheduleTemplateCodeDao scheduleTemplateCodeDao = (ScheduleTemplateCodeDao)SpringUtils.getBean("scheduleTemplateCodeDao");
+  ScheduleTemplateCodeDao scheduleTemplateCodeDao = (ScheduleTemplateCodeDao)SpringUtils.getBean(ScheduleTemplateCodeDao.class);
   List<ScheduleTemplateCode> codes = scheduleTemplateCodeDao.findAll();
   
   //numberOfResults

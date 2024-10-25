@@ -70,8 +70,8 @@ import oscar.oscarBilling.ca.on.data.BillingClaimsErrorReportBeanHandlerSave;
 
 public class BillingDocumentErrorReportUploadAction extends Action {
 
-	private BatchEligibilityDao batchEligibilityDao = (BatchEligibilityDao)SpringUtils.getBean("batchEligibilityDao");
-	private DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
+	private BatchEligibilityDao batchEligibilityDao = (BatchEligibilityDao)SpringUtils.getBean(BatchEligibilityDao.class);
+	private DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean(DemographicCustDao.class);
 	private DemographicManager demographicManager =  SpringUtils.getBean(DemographicManager.class);
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,

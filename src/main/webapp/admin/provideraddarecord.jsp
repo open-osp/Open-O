@@ -65,11 +65,11 @@
 <%@page import="org.oscarehr.common.model.ProviderSitePK"%>
 <%@page import="org.oscarehr.common.dao.ProviderSiteDao"%>
 <%
-	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 	ProviderSiteDao providerSiteDao = SpringUtils.getBean(ProviderSiteDao.class);
 	boolean alreadyExists=false;
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="admin.provideraddrecord.title" /></title>
@@ -149,7 +149,7 @@ if (org.oscarehr.common.IsPropertiesOn.isProviderFormalizeEnable()) {
 			if (provider_sites.length == 1) {
 				//get provider id range from site
 				String provider_site_id =  provider_sites[0];
-				SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+				SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
 				Site provider_site = siteDao.getById(new Integer(provider_site_id));
 				min_value = provider_site.getProviderIdFrom();
 				max_value = provider_site.getProviderIdTo();

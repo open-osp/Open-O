@@ -27,37 +27,27 @@ import com.lowagie.text.DocumentException;
 import io.woo.htmltopdf.HtmlToPdf;
 import io.woo.htmltopdf.HtmlToPdfObject;
 import io.woo.htmltopdf.PdfPageSize;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.oscarehr.common.model.EFormData;
+import org.oscarehr.email.core.EmailData;
 import org.oscarehr.managers.NioFileManager;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.PDFGenerationException;
 import org.oscarehr.util.SpringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.pdf.ITextRenderer;
-import org.xml.sax.SAXException;
 import oscar.OscarProperties;
 import oscar.form.util.FormTransportContainer;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,21 +56,20 @@ import java.util.*;
 
 /**
  * A utility that converts HTML into a PDF and returns an Oscar eDoc object.
- * 
+
  * This is useful for converting Forms and eForms with well structured HTML into 
  * PDF documents that can be attached to Consultation Requests, Faxes or transferred 
  * to other file systems.
- * 
+
  * NOT ALL DOCUMENTS ARE CONVERTABLE. USE AT OWN RISK.
  */
-public class ConvertToEdoc {
+public final class ConvertToEdoc {
 
 	private static final Logger logger = MiscUtils.getLogger();
 
 	public enum DocumentType { eForm, form }
-	private enum PathAttribute { src, href }
-	private enum FileType { pdf, css, jpeg, png, gif }
-
+	public enum ElementAttribute { src, href, value, name, id, title, type, rel, media }
+	private enum FileType { pdf, css, jpeg, png, gif, js, jpg }
 	public static final String CUSTOM_STYLESHEET_ID = "pdfMediaStylesheet";
 	private static final String DEFAULT_IMAGE_DIRECTORY = String.format( "%1$s", OscarProperties.getInstance().getProperty( "eform_image" ) );
 	private static final String DEFAULT_FILENAME = "temporaryPDF";
@@ -89,12 +78,11 @@ public class ConvertToEdoc {
 	private static final String SYSTEM_ID = "-1";
 	private static String contextPath;
 	private static String realPath;
-
 	private static final NioFileManager nioFileManager = SpringUtils.getBean( NioFileManager.class );
 
 	/**
 	 * Convert EForm to EDoc
-	 * 
+
 	 * Returns an EDoc Object with a filename that is saved in this class' 
 	 * temporary DEFAULT_FILE_PATH. This file can be persisted by moving from the 
 	 * temporary path to a file storage path prior to persisting this Object to the 
@@ -105,7 +93,7 @@ public class ConvertToEdoc {
 		String eformString = eform.getFormData();	
 		String demographicNo = eform.getDemographicId() + "";
 		String filename = buildFilename( eform.getFormName(), demographicNo );
-		String eDocDescription = "".equals(eform.getSubject().trim()) ? eform.getFormName() : eform.getSubject();
+		String eDocDescription = eform.getSubject().trim().isEmpty() ? eform.getFormName() : eform.getSubject();
 		EDoc edoc = null;		
 		Path path = execute( eformString, filename );
 		
@@ -127,7 +115,7 @@ public class ConvertToEdoc {
 	public synchronized static EDoc from(EFormData eForm, Path eFormPDFPath) throws PDFGenerationException {
 		String demographicNo = eForm.getDemographicId() + "";
 		String filename = buildFilename( eForm.getFormName(), demographicNo );
-		String eDocDescription = "".equals(eForm.getSubject().trim()) ? eForm.getFormName() : eForm.getSubject();
+		String eDocDescription = eForm.getSubject().trim().isEmpty() ? eForm.getFormName() : eForm.getSubject();
 		EDoc edoc = null;
 
 		if(Files.isReadable(eFormPDFPath)) {
@@ -147,14 +135,13 @@ public class ConvertToEdoc {
 
 	/**
 	 * Convert Form to EDoc
-	 * 
+
 	 * Returns an EDoc Object with a filename that is saved in this class' 
 	 * temporary DEFAULT_FILE_PATH. This file can be persisted by moving from the 
 	 * temporary path to a file storage path prior to persisting this Object to the 
 	 * database. 
-	 * 
+
 	 * Example use:
-	 * 
 	 * public ActionForward eDocument(ActionMapping mapping, ActionForm form, 
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
@@ -234,6 +221,20 @@ public class ConvertToEdoc {
 		String filename = buildFilename( formTransportContainer.getFormName(), formTransportContainer.getDemographicNo() );
 		return execute( htmlString, filename );
 	}
+
+	/**
+	 * 
+	 * Save the document as a temporary PDF. Does not save or return an eDoc entity. 
+	 * This is a temporary file location. Ensure that the file is deleted after it's used. 
+	 * 
+	 * @param emailData An object representing email-related data, including HTML content.
+	 * @return temporary path to the produced PDF.. 
+	 */
+	public synchronized static Path saveAsTempPDF(EmailData emailData) {
+		String htmlString = emailData.getEncryptedMessage();
+		String filename = buildFilename("emailbody_", "");
+		return execute(htmlString, filename);
+	}
 	
 	/**
 	 * Execute building and saving PDF to temp directory.
@@ -254,7 +255,7 @@ public class ConvertToEdoc {
 	}
 
 	/**
-	 * creates a filename
+	 * create a well-formed filename
 	 */
 	private static String buildFilename( String filename, String demographicNo ) {
 		
@@ -316,7 +317,7 @@ public class ConvertToEdoc {
 			put("load.blockLocalFileAccess", "false");
 			put("web.enableIntelligentShrinking", "true");
 	        put("web.minimumFontSize", "10");
-	        put("load.zoomFactor", "0.92");
+//	        put("load.zoomFactor", "0.92");
 	        put("web.printMediaType", "true");
 	        put("web.defaultEncoding", "utf-8");
 	        put("T", "10mm");
@@ -339,96 +340,81 @@ public class ConvertToEdoc {
 			sharedContext.setInteractive(false);
 			sharedContext.setReplacedElementFactory(new ReplacedElementFactoryImpl());
 			sharedContext.getTextRenderer().setSmoothingThreshold(0);
-			renderer.setDocument( getDocument(document),null);
+			renderer.setDocumentFromString(document,null);
 			renderer.layout();
 			renderer.createPDF( os, true );
 		}
 	}
 
 	/**
-	 * Build this HTML document. 
-	 * - adds translated image paths
-	 * - inserts custom stylesheets.
+	 * Clean and parse the HTML document string into a manageable DOM
+	 * with JSoup tools
+	 * Also validates all URL paths to resources.
+	 * @param documentString raw HTML string
+	 * @return org.jsoup.nodes.Document JSoup DOM
 	 */
-	private static Document buildDocument( final String documentString ) {
-		Document document = getDocument( documentString );
-		if( document != null ) {
-			translateResourcePaths( document );
-			setHeadElement( document );
-			addCss( document );
-		}
-		return document;
-	}
-	
-	/**
-	 * Get a W3C XML document from well formed XML
-	 */
-	private static Document getDocument( final String documentString ) {
+	public static Document getDocument(final String documentString ){
+		String incomingDocumentString = "";
 
-		DocumentBuilder builder;
-		Document document = null;					
-
-		try(ByteArrayInputStream bais = new ByteArrayInputStream( documentString.getBytes() )) {
-			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			document = builder.parse(bais);			
-		} catch (SAXException | ParserConfigurationException | IOException e) {
-			logger.error( "", e );
+		// null check
+		if(documentString != null) {
+			incomingDocumentString = documentString;
 		}
 
+		// DOCTYPE declarations are mandatory. HTML5 if none is declared.
+//		if(! incomingDocumentString.startsWith("<!DOCTYPE") || ! incomingDocumentString.startsWith("<!doctype")) {
+//			incomingDocumentString = "<!DOCTYPE html>" + incomingDocumentString;
+//		}
+
+		//TODO: COMING SOON.  EForms should be selectively sanitized against potential injection attacks and etc...
+//		Safelist safelist = Safelist.relaxed();
+//		safelist.addTags().addTags() etc...
+//		String sanitized = Jsoup.clean(documentString, safeList);
+
+		Document document = Jsoup.parse(incomingDocumentString);
+
+		//TODO add any other custom Document.OutputSettings here.
+		document.outputSettings().prettyPrint(Boolean.FALSE);
+
+		/*
+		 * remove invalid, suspicious, and CDN links
+		 */
+		validateResourcePaths(document);
+
+		/*
+		 * Returns a Document object.
+		 * Document will contain a blank HTML page if the incoming HTML
+		 * string is NULL, empty, or if an error occurs.
+		 */
 		return document;
 	}
 	
 	/**
 	 * Adds custom CSS templates to the Document.
-	 * 
 	 * Normally the stylesheets should be included with the HTML being converted. This method may be
 	 * required to alter the current style for better print to PDF. Or if the original stylesheet gets 
 	 * stripped out of the HTML like with the Rich Text Letter Editor
-	 * 
 	 * A stylesheet reference can be set into the origin HTML document with a hidden input tag: 
 	 * <input type="hidden" id="customStylesheet" name="customStylesheet" value="<stylesheet filename>" />
 	 * This tag would be inserted between the section tag of a Rich Text Letter Template. 
 	 * The custom stylesheet will be retrieved from Oscar's images directory. Only the filename needs to be 
 	 * given by the input tag. This method will build the filepath.
-
 	 * - Adds a head element to the document if one does not exist.
 	 *   
 	 */
 	private static void addCss( Document document ) {
-
-		XPath xpath = XPathFactory.newInstance().newXPath();
-		Element styleSheetElement = null;
-
-		try {
-			styleSheetElement = (Element) xpath.evaluate("//*[@id='" + CUSTOM_STYLESHEET_ID + "']", document, XPathConstants.NODE);
-		} catch (XPathExpressionException e) {
-			logger.error("Error", e);
-		}
-
-		if( styleSheetElement != null ) {
-			setParameterInjectedCss( document, styleSheetElement.getAttribute("value") );
+		Element styleSheetElement = document.getElementById(CUSTOM_STYLESHEET_ID);
+		if( styleSheetElement != null && "hidden".equalsIgnoreCase(styleSheetElement.attributes().getIgnoreCase("type")) ) {
+			setParameterInjectedCss( document, styleSheetElement.attributes().getIgnoreCase("value") );
 		}
 	}
 	
 	/**
-	 * It is critical that a head element is present for this given document. 
+	 * It is critical that a head element is present.
 	 */
 	private static void setHeadElement( Document document ) {
-		
-		Node headNode = null;
-		Node htmlNode = document.getDocumentElement();
-		NodeList nodeList = htmlNode.getChildNodes();
-		
-		for( int i = 0; i < nodeList.getLength(); i++ ) {
-			Node node = nodeList.item(i);
-
-			if( "head".equals( node.getNodeName() )) {
-				headNode = node;
-			}
-		}
-		
-		if( headNode == null ) {              
-	      	htmlNode.appendChild( document.createElement("head") );
+		if(! document.head().isBlock()) {
+			document.appendElement("head");
 		}
 	}
 	
@@ -436,7 +422,8 @@ public class ConvertToEdoc {
 	 * Returns the head element directly from the given Document 
 	 */
 	private static Element getHeadElement( Document document ) {
-		return (Element) document.getElementsByTagName("head").item(0);
+		setHeadElement(document);
+		return document.head();
 	}
 	
 	/**
@@ -450,70 +437,109 @@ public class ConvertToEdoc {
 		// add a stylesheet ie: link <link rel="stylesheet" href=".." />
 		if( filename != null ) {
 			Element linkElement = document.createElement("link");
-			linkElement.setAttribute("rel", "stylesheet");
-			linkElement.setAttribute("href", filename);
+			linkElement.attr("rel", "stylesheet");
+			linkElement.attr("href", filename);
 			getHeadElement( document ).appendChild( linkElement );
 		}		
 	}
 
 	/**
 	 * HTTP request paths routed through Struts need to be 
-	 * translated into a relative path to the global images directory.
+	 * translated into an absolute path to the global image directory.
 	 */
 	private static void translateResourcePaths( Document document ) {
-		translateLinkPaths( document );
-		translateImagePaths( document );
-	}
-	
-	/**
-	 * This method handles paths set into a link element
-	 */
-	private static void translateLinkPaths( Document document ) {
-		NodeList linkNodeList = document.getElementsByTagName("link");
-		if( linkNodeList != null ) {
-			translatePaths( linkNodeList, PathAttribute.href );
-		}
-	}
-	
-	/**
-	 * This method handles paths set into an image element.
-	 */
-	private static void translateImagePaths( Document document ) {
-		NodeList imageNodeList = document.getElementsByTagName("img");
-		if( imageNodeList != null ) {
-			translatePaths( imageNodeList, PathAttribute.src );
-		}
-	}
-	
-	/**
-	 * Translate any given Link or Image element resource path from 
-	 * a Struts HTTP request parameter or HTTP relative context path.
-	 * 
-	 * All resource links in the document must be absolute for the PDF 
-	 * creator to work.
-	 */
-	private static void translatePaths( NodeList nodeList, PathAttribute pathAttribute ) {
+		Map<List<String>, Element> pathTranslationMap = new HashMap<>();
+		translateLinkPaths( document, pathTranslationMap );
+		translateImagePaths( document, pathTranslationMap );
 
-		for( int i = 0; i < nodeList.getLength(); i++ ) {
-			
-			Element element = (Element) nodeList.item(i);			
-			String path = element.getAttribute( pathAttribute.name() );
-			String validLink;
+		for(Map.Entry<List<String>, Element> pathSet : pathTranslationMap.entrySet()) {
+			if(! pathSet.getKey().isEmpty()) {
+				Element element = pathSet.getValue();
+				List<String> path = pathSet.getKey();
+
+				if(element.hasAttr(ElementAttribute.href.name())) {
+					element.attr(ElementAttribute.href.name(), path.get(0));
+				}
+
+				if(element.hasAttr(ElementAttribute.src.name())) {
+					element.attr(ElementAttribute.src.name(), path.get(0));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * CSS (link) resource links
+	 */
+	private static void translateLinkPaths( Document document, Map<List<String>, Element> pathTranslationMap ) {
+		Elements linkNodeList = document.getElementsByTag("link");
+		translatePaths(linkNodeList, ElementAttribute.href, pathTranslationMap);
+	}
+
+	/**
+	 * Javascript resource links
+	 */
+	private static void translateJavascriptPaths( Document document, Map<List<String>, Element> pathTranslationMap ) {
+		Elements linkNodeList = document.getElementsByTag("script");
+		translatePaths(linkNodeList, ElementAttribute.src, pathTranslationMap);
+	}
+	
+	/**
+	 * Image resource links
+	 */
+	private static void translateImagePaths( Document document, Map<List<String>, Element> pathTranslationMap ) {
+		Elements imageNodeList = document.getElementsByTag("img");
+		translatePaths( imageNodeList, ElementAttribute.src , pathTranslationMap);
+	}
+
+	/**
+	 * Translate any given Link or Image element resource path from
+	 * a Struts HTTP request parameter or HTTP relative context path.
+	 * All resource links in the document must be absolute for the PDF
+	 * creator to work.
+	 * TODO filter out relative URI's and external URL's without a proper place holder so they can be removed
+	 * @param nodeList jsoup Elements collection of potential resource links
+	 * @param pathAttribute jsoup ElementAttribute to be translated to an absolute link
+	 * @param pathTranslationMap Map to collect translated URI's
+	 */
+	private static void translatePaths( Elements nodeList, ElementAttribute pathAttribute, Map<List<String>, Element> pathTranslationMap) {
+		for(Element element : nodeList) {
+			// go no further if there is no link attribute.
+			if(! element.hasAttr(pathAttribute.name())) {
+				continue;
+			}
+
+			String path = element.attributes().get( pathAttribute.name() );
 			String parameters = null;
 			String[] parameterList = null;		
 			List<String> potentialFilePaths = new ArrayList<>();
 
-			if( path.contains("?") ) {
+			/*
+			 * NO EXTERNAL LINKS. These are removed.
+			 * eForms are often imported from unknown sources.
+			 * Developers tend to use insecure CDN's, links to images, tracking tokens,
+			 * and advertisements.
+			 */
+			if(path.startsWith("http") || path.startsWith("HTTP")) {
+				element.remove();
+			}
+
+			// internal GET links are validated.
+			else if( path.contains("?") ) {
 				// image or link paths with parameters
 				parameters = path.split("\\?")[1];
-			} else {
+			}
+
+			else if(! path.isEmpty()) {
 				// these are most likely relative context paths
 				path = getRealPath( path );
-				potentialFilePaths.add( path );
+				if(! path.isEmpty()) {
+					potentialFilePaths.add(path);
+				}
 			}
 			
 			/* parse the parameters and test if any are links to the eForm
-			 * images library. Otherwise these resources are no good.
+			 * images library. Otherwise, these resources are no good.
 			 */
 			if( parameters != null && parameters.contains("&") ) {
 				parameterList = parameters.split("&");
@@ -532,31 +558,25 @@ public class ConvertToEdoc {
 				potentialFilePaths.add( path );
 			}
 
-			/* there really should be only one valid path.
-			 * Only use the one that validates
-			 */
-			validLink = validateLink( potentialFilePaths );
-			
-			/* change the element resource link to something absolute
-			 * that can be used by the PDF creator.
-			 */
-			if( validLink != null ) {
-				element.setAttribute( pathAttribute.name(), validLink );
+			if(! potentialFilePaths.isEmpty()) {
+				pathTranslationMap.put(potentialFilePaths, element);
 			}
 		}
 	}
 	
 	/**
-	 * Feed this method a filename and it will return a full path to the Oscar images directory. 
+	 * Feed this method a filename, it will return a full path to the Oscar images directory.
 	 */
 	private static String buildImageDirectoryPath( String filename ) {
 		return Paths.get(getImageDirectory(), filename).toString();
 	}
-	
+
 	/**
-	 * Convert a given context path into a file system absolute path.
+	 * Convert a given URI into a file system absolute path.
+	 * @param uri URI input
+	 * @return String fully resolved absolute path
 	 */
-	private static String getRealPath(String uri ) {
+	private static String getRealPath(String uri) {
 		String contextRealPath = "";
 		
 		logger.debug( "Context path set to " + contextPath );
@@ -569,6 +589,24 @@ public class ConvertToEdoc {
 		logger.debug( "Absolute file path " + contextRealPath );
 
 		return contextRealPath;
+	}
+
+	/**
+	 * remove paths to the filesystem or to external sources that are not valid.
+	 */
+	private static void validateResourcePaths(Document document) {
+		Map<List<String>, Element> pathTranslationMap = new HashMap<>();
+		translateLinkPaths( document, pathTranslationMap );
+		translateImagePaths( document, pathTranslationMap );
+		translateJavascriptPaths( document, pathTranslationMap );
+		for(Map.Entry<List<String>, Element> pathSet : pathTranslationMap.entrySet()) {
+			Element element = pathSet.getValue();
+			List<String> paths = pathSet.getKey();
+			if(validateLink(paths) == null) {
+				// vamoose
+				element.remove();
+			}
+		}
 	}
 	
 	/**
@@ -597,9 +635,14 @@ public class ConvertToEdoc {
 		
 		return finalLinks;
 	}
-	
+
 	/**
 	 * Returns the first valid file link from a list of potential valid links.
+	 * Used in conjunction with as an overload method.
+	 * See use in methods: setParameterInjectedCss() and validateLinks
+	 * @param potentialLinks Collection of links to validate. A Collection is
+	 *                       as a wrapper for a single link ie: potentialLinks.get(0)
+	 * @return String a single valid link
 	 */
 	private static String validateLink( List<String> potentialLinks ) {
 
@@ -613,23 +656,26 @@ public class ConvertToEdoc {
 		
 		return null;
 	}
-	
+
 	/**
-	 * Returns only 1 valid file link.
+	 * Main link validation method
+	 * See overload above
+	 * @param potentialLink String link to validate
+	 * @return String valid link
 	 */
 	private static String validateLink( String potentialLink ) {
 
-		File file = null;
 		String absolutePath = null;
-				
-		for( FileType fileType : FileType.values() ) {
-			if( ( potentialLink.endsWith( fileType.name().toLowerCase() ) )) {
-				file = new File( potentialLink );
-			}			
+		Path path = null;
+
+		potentialLink = filterFileType(potentialLink);
+
+		if(potentialLink != null) {
+			path = Paths.get(potentialLink);
 		}
 
-		if( file != null && file.isFile() ) {
-			absolutePath = file.getAbsolutePath(); 
+		if(path != null && Files.exists(path)) {
+			absolutePath = path.toAbsolutePath().toString();
 			
 			logger.debug( "Validated path " + absolutePath );
 		}
@@ -638,138 +684,58 @@ public class ConvertToEdoc {
 	}
 
 	/**
-	 * Clean up any artifacts or poorly formed XML
+	 * File type filtering.  Links with invalid filetypes
+	 * will be removed.
+	 * See Enum: ConvertToEdoc FileType for complete list.
 	 */
-	private static String tidyDocument( final String documentString ) {
+	private static String filterFileType(String path) {
+		String pathFileType = FilenameUtils.getExtension(path);
+		for( FileType legalFileType : FileType.values() ) {
+			if (legalFileType.name().equalsIgnoreCase(pathFileType)) {
+				return path;
+			}
+		}
+		return null;
+	}
 
-		Tidy tidy = getTidy();
-		StringReader reader = new StringReader( documentString );
-		StringWriter writer = new StringWriter();
-		String correctedDocument = "";
-
-		/*
-		 * clean the HTML document with JTidy tools
-		 */
-		Document document = tidy.parseDOM( reader, writer );
+	/**
+	 * Clean up any artifacts or poorly formed XHTML
+	 * and fetch the HTML template resources.
+	 */
+	private static String tidyDocument( final String documentString) {
+		Document document = getDocument(documentString);
 
 		/*
 		 * Use the w3c Document output to interpret the external image
 		 * and css links into absolute links that can be
 		 * read by the HTMLtoPDF parser.
 		 */
-		translateResourcePaths( document );
-		setHeadElement( document );
-		addCss( document );
+		translateResourcePaths(document);
+		addCss(document);
 
 		/*
-		 * Pretty print the final HTML output for use with the HTMLtoPDF parser.
+		 * Convert edited Document object back to String
+		 * Mostly because the htmltopdf tools require String input
+		 * for some strange reason.
 		 */
-		try(OutputStream os = new ByteArrayOutputStream()) {
-			tidy.pprint(document, os);
-			correctedDocument = os.toString();
-		} catch (IOException e) {
-			logger.error("JTidy pretty print document error ", e);
-		}
-
-		writer.flush();
-
-		try {
-			writer.close();
-		} catch (IOException e) {
-			logger.error( "Error closing writer stream for JTidy", e );
-		}
-
-		return correctedDocument;
+		return documentToString(document);
 	}
-	
+
 	/**
-	 * Instantiate the Tidy HTML validator
+	 * fetch the default EForm image directory in the host file system
+	 * @return String directory path
 	 */
-	private static Tidy getTidy() {
-		Tidy tidy = new Tidy();
-
-		/* Properties intentionally hard-coded.
-		 * These settings cannot be overriden in the properties file.
-		 */
-		tidy.setForceOutput( Boolean.TRUE ); 	// output the XHTML even if it fails the validator.
-		tidy.setDropEmptyParas(Boolean.TRUE);
-		tidy.setMakeClean( Boolean.TRUE );
-		tidy.setLogicalEmphasis( Boolean.TRUE ); // replace the b and em tags with proper <strong> tags
-		tidy.setInputEncoding("UTF-8");
-		tidy.setOutputEncoding("UTF-8");
-
-		// For debug logging only.
-		if( logger.isDebugEnabled() ) {
-			tidy.setHideComments( Boolean.FALSE );
-			tidy.setQuiet( Boolean.FALSE );
-		} else {
-			tidy.setHideComments( Boolean.TRUE );
-			tidy.setQuiet( Boolean.TRUE );
-		}
-
-		try (InputStream is = ConvertToEdoc.class.getClassLoader().getResourceAsStream( "/oscar/documentManager/ConvertToEdoc.properties" )) {
-			if( is != null ) {
-				Properties properties = new Properties();
-				properties.load( is );
-				tidy.getConfiguration().addProps( properties );
-			}
-		} catch (IOException e) {
-			logger.warn("Could not load Tidy properties ", e);
-		}
-
-		logger.debug( printTidyConfig( tidy ) );
-		
-		return tidy;
-	}
-
 	private static String getImageDirectory() {
 		return DEFAULT_IMAGE_DIRECTORY;
 	}
-	
+
 	/**
-	 * Prints the document contents to console. Used for debugging.
+	 * Print a well-formed HTML Document object to String using Jtidy tools
+	 * @param document w3c DOM
+	 * @return String HTML output
 	 */
-	private static String printDocument( Document doc ) {
-	    TransformerFactory tf = TransformerFactory.newInstance();
-	    StreamResult streamResult = null;
-	    try {
-			Transformer transformer = tf.newTransformer();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			transformer.setOutputProperty(OutputKeys.METHOD, "html");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-			streamResult = new StreamResult();
-			streamResult.setOutputStream( new ByteArrayOutputStream() );
-			transformer.transform( new DOMSource(doc), streamResult );
-
-		} catch (Exception e) {
-			logger.error("error debugging document " + e );
-		} finally {
-			if( streamResult != null ) {
-				try {
-					streamResult.getOutputStream().close();
-				} catch (IOException e) {
-					logger.error("error debugging document " + e );
-				}
-			}
-		}
-
-		assert streamResult != null;
-		return streamResult.getOutputStream().toString();
+	public static String documentToString(Document document) {
+		return document.outerHtml();
 	}
-	
-	public static String printTidyConfig( Tidy tidy ) {
 
-		String log = "No config found";
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		     OutputStreamWriter osw = new OutputStreamWriter( baos );){
-			tidy.getConfiguration().printConfigOptions( osw, true );
-			log = baos.toString();
-		} catch (IOException e) {
-			logger.error("Error", e);
-		}
-
-		return log;
-	}
 }

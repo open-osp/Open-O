@@ -34,8 +34,8 @@ import oscar.util.UtilDateUtilities;
 
 public class JdbcApptImpl {
 	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
-    OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
+    OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 
 	public boolean deleteAppt(String apptNo) {
                 Appointment appt = appointmentDao.find(Integer.parseInt(apptNo));

@@ -63,7 +63,7 @@
 	if (location==null) location=new String();
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 	<title>Clinical Connects Config</title>
 	<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">

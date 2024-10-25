@@ -28,11 +28,11 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.CtlServiceCodesDxCodes;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CtlServiceCodesDxCodesDao extends AbstractDao<CtlServiceCodesDxCodes>{
+public class CtlServiceCodesDxCodesDao extends AbstractDaoImpl<CtlServiceCodesDxCodes>{
 
 	public CtlServiceCodesDxCodesDao() {
 		super(CtlServiceCodesDxCodes.class);

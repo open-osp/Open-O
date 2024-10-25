@@ -62,7 +62,7 @@ public class ReSubmitAction extends Action {
 		try{		
 			
 			ResourceResult result=null;
-			EDTDelegate delegate = DelegateFactory.newDelegate(serviceId);
+			EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance(serviceId);
 			if (resourceIds.size()>0) result =delegate.submit(resourceIds);
 			for (ResponseResult edtResponse: result.getResponse()) {
 				if (edtResponse.getResult().getCode().equals("IEDTS0001")) {
@@ -100,7 +100,7 @@ public class ReSubmitAction extends Action {
 		    		resourceType = null;
 		    	}
 	    	
-		    	EDTDelegate delegate = DelegateFactory.newDelegate();		    	
+		    	EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 		    	result = delegate.list(resourceType, resourceForm.getStatusAsResourceStatus(), resourceForm.getPageNoAsBigInt());								
 		    	
 		    	BigInteger resultSize = null;				

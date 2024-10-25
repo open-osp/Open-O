@@ -35,7 +35,7 @@ if(!authed) {
 }
 %>
 
-<html:html locale="true">
+<html:html lang="en">
     <head>
 
         <title>Dx Register Report</title>

@@ -55,7 +55,7 @@ public class PlanAction extends DispatchAction {
 	protected EyeformFollowUpDao followUpDao = SpringUtils.getBean(EyeformFollowUpDao.class);
 	protected EyeformProcedureBookDao procBookDao = SpringUtils.getBean(EyeformProcedureBookDao.class);
 	protected EyeformTestBookDao testBookDao = SpringUtils.getBean(EyeformTestBookDao.class);
-	static ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+	static ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 
 	@Override
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

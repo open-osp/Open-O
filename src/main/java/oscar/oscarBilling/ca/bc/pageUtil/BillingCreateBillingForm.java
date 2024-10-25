@@ -25,16 +25,15 @@
 
 package oscar.oscarBilling.ca.bc.pageUtil;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.oscarehr.util.MiscUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public final class BillingCreateBillingForm extends ActionForm {
   private static final Logger _log = MiscUtils.getLogger();
@@ -627,8 +626,32 @@ public final class BillingCreateBillingForm extends ActionForm {
     return requestId;
   }
 
+  /**
+   * Setter for property facilitySubNum.
+   * @param facilitySubNum New value of property facilitySubNum.
+   */
+  public void setFacilitySubNum(java.lang.String facilitySubNum) {
+    this.facilitySubNum = facilitySubNum;
+  }
+
   public void setMode(String mode) {
     this.mode = mode;
+  }
+
+  public void setXml_endtime_hr(String xml_endtime_hr) {
+    this.xml_endtime_hr = xml_endtime_hr;
+  }
+
+  public void setXml_endtime_min(String xml_endtime_min) {
+    this.xml_endtime_min = xml_endtime_min;
+  }
+
+  public void setXml_starttime_hr(String xml_starttime_hr) {
+    this.xml_starttime_hr = xml_starttime_hr;
+  }
+
+  public void setXml_starttime_min(String xml_starttime_min) {
+    this.xml_starttime_min = xml_starttime_min;
   }
 
   public void setRequestId(String requestId) {
@@ -727,4 +750,4 @@ public final class BillingCreateBillingForm extends ActionForm {
     return errors;
   }
 
-} //CreateMessageForm
+}

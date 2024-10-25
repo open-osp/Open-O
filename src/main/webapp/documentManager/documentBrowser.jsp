@@ -44,6 +44,7 @@
 <%@page import="org.oscarehr.common.dao.CtlDocClassDao,org.oscarehr.common.dao.QueueDao" %>
 <%@page import="org.springframework.web.context.WebApplicationContext"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -84,9 +85,8 @@
             errorMessage= e.getMessage();
         }
     }
-    
-    WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    QueueDao queueDao = (QueueDao) ctx.getBean("queueDao");
+
+    QueueDao queueDao = SpringUtils.getBean(QueueDao.class);
     List<Hashtable> queues = queueDao.getQueues();
     int queueId=1;
 

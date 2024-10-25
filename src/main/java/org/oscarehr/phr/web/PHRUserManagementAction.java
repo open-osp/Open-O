@@ -132,7 +132,7 @@ public class PHRUserManagementAction extends DispatchAction {
 
 		int intialNameOffset = 180;
 
-		PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean("propertyDao");
+		PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean(PropertyDao.class);
 
 		try {
 			List<Property> propertyList = propertyDao.findByName("MYOSCAR_REGISTRATION_LETTER_NAME_OFFSET");
@@ -173,7 +173,7 @@ public class PHRUserManagementAction extends DispatchAction {
 	 */
 	public ByteArrayOutputStream generateUserRegistrationLetter(String demographicNo, String username, String password) throws Exception {
 		log.debug("Demographic " + demographicNo + " username " + username + " password " + password);
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 		Demographic demographic = demographicDao.getDemographic(demographicNo);
 
 		Document document = new Document();
@@ -341,7 +341,7 @@ public class PHRUserManagementAction extends DispatchAction {
 	public ActionForward setRegistrationLetterData(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		String nameOffset = request.getParameter("nameOffset");
 
-		PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean("propertyDao");
+		PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean(PropertyDao.class);
 
 		try {
 			List<Property> propertyList = propertyDao.findByName("MYOSCAR_REGISTRATION_LETTER_NAME_OFFSET");
@@ -476,7 +476,7 @@ public class PHRUserManagementAction extends DispatchAction {
             document.setContentdatetime(registrationDate);
 			document.setDoctype("others");
 
-			DocumentDao documentDAO = (DocumentDao) SpringUtils.getBean("documentDao");
+			DocumentDao documentDAO = (DocumentDao) SpringUtils.getBean(DocumentDao.class);
 			documentDAO.persist(document);
 
 			CtlDocumentPK ctlDocumentPK = new CtlDocumentPK(Integer.parseInt("" + document.getId()), "demographic");
@@ -642,7 +642,7 @@ public class PHRUserManagementAction extends DispatchAction {
 
 		MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(request.getSession());
 		try {
-			DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+			DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 			Demographic demographic = demographicDao.getDemographic(demoNo);
 			Long patientMyOscarUserId = AccountManager.getUserId(myOscarLoggedInInfo, demographic.getMyOscarUserName());
 

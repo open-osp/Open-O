@@ -57,7 +57,7 @@ public class EctDisplayLabAction2 extends EctDisplayAction {
 		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 		
 		logger.debug("EctDisplayLabAction2");
-		OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
+		OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
 
 		if(!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", "r", null)) {
 			return true; // Lab result link won't show up on new CME screen.

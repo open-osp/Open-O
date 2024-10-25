@@ -25,11 +25,11 @@
 --%>
 
 
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-bean"
+<%@ taglib uri="http://struts.apache.org/tags-bean"
 	prefix="bean"%>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-html"
+<%@ taglib uri="http://struts.apache.org/tags-html"
 	prefix="html"%>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-logic"
+<%@ taglib uri="http://struts.apache.org/tags-logic"
 	prefix="logic"%>
 
 That is the footer page.

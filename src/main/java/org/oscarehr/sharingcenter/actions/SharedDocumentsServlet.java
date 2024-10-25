@@ -53,7 +53,7 @@ import org.oscarehr.util.SpringUtils;
 public class SharedDocumentsServlet extends Action {
 
     private static final AffinityDomainDao affinityDomainDao = SpringUtils.getBean(AffinityDomainDao.class);
-    private static final DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+    private static final DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {

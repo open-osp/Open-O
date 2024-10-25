@@ -236,7 +236,7 @@ public class AddPreventionAction  extends Action {
         	 partialDateDao.setPartialDate(PartialDate.PREVENTION, preventionId, PartialDate.PREVENTION_PREVENTIONDATE , partialDateFormat);
          }
 
-         PreventionManager prvMgr = (PreventionManager) SpringUtils.getBean("preventionMgr");
+         PreventionManager prvMgr = (PreventionManager) SpringUtils.getBean(PreventionManager.class);
          prvMgr.removePrevention(demographic_no); 
          MiscUtils.getLogger().debug("Given "+given+" prevDate "+prevDate+" providerName "+providerName+" provider "+providerNo);
 

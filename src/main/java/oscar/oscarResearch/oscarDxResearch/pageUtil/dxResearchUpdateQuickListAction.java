@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.oscarehr.common.dao.AbstractCodeSystemDao;
+import org.oscarehr.common.dao.AbstractCodeSystemDaoImpl;
 import org.oscarehr.common.dao.QuickListDao;
 import org.oscarehr.common.model.AbstractCodeSystemModel;
 import org.oscarehr.common.model.QuickList;
@@ -96,7 +97,7 @@ public class dxResearchUpdateQuickListAction extends Action {
 		boolean valid = true;
 		String[] xml_research = frm.getXmlResearch();
 		ActionMessages errors = new ActionMessages();
-		AbstractCodeSystemDao<AbstractCodeSystemModel<?>> dao = (AbstractCodeSystemDao<AbstractCodeSystemModel<?>>) SpringUtils.getBean(AbstractCodeSystemDao.getDaoName(AbstractCodeSystemDao.codingSystem.valueOf(codingSystem)));
+		AbstractCodeSystemDao<AbstractCodeSystemModel<?>> dao = (AbstractCodeSystemDao<AbstractCodeSystemModel<?>>) SpringUtils.getBean(AbstractCodeSystemDao.getDaoName(AbstractCodeSystemDaoImpl.codingSystem.valueOf(codingSystem)));
 
 		for (int i = 0; i < xml_research.length; i++) {
 			if (xml_research[i] == null || xml_research[i].equals("")) {

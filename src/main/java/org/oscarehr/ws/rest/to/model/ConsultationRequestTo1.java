@@ -26,6 +26,7 @@
 package org.oscarehr.ws.rest.to.model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -62,12 +63,14 @@ public class ConsultationRequestTo1 implements Serializable {
 	private String letterheadAddress;
 	private String letterheadPhone;
 	private String letterheadFax;
-    private List<ConsultationAttachmentTo1> attachments;
+    private List<ConsultationAttachmentTo1> attachments = Collections.emptyList();
 	
 	private List<LetterheadTo1> letterheadList;
 	private List<FaxConfigTo1> faxList;
 	private List<ConsultationServiceTo1> serviceList;
 	private List<String> sendToList;
+
+	private List<ConsultationRequestExtTo1> extras = Collections.emptyList();
 	
 	
 	public Integer getId() {
@@ -250,5 +253,11 @@ public class ConsultationRequestTo1 implements Serializable {
 	}
 	public void setSendToList(List<String> sendToList) {
 		this.sendToList = sendToList;
+	}
+	public List<ConsultationRequestExtTo1> getExtras() {
+		return extras;
+	}
+	public void setExtras(List<ConsultationRequestExtTo1> extras) {
+		this.extras = extras;
 	}
 }

@@ -139,7 +139,7 @@ public static String checkNames(String k){
      
 public static boolean isDisabled(){
 	String getStatus="";
-	PropertyDao propDao = (PropertyDao)SpringUtils.getBean("propertyDao");
+	PropertyDao propDao = (PropertyDao)SpringUtils.getBean(PropertyDao.class);
 	List<Property> pList = propDao.findByName("hide_prevention_stop_signs"); 
 	
   	Iterator<Property> i = pList.iterator();
@@ -162,7 +162,7 @@ public static boolean isDisabled(){
 
 public static boolean isCreated(){
 	String getStatus="";
-	PropertyDao propDao = (PropertyDao)SpringUtils.getBean("propertyDao");
+	PropertyDao propDao = (PropertyDao)SpringUtils.getBean(PropertyDao.class);
 	List<Property> pList = propDao.findByName("hide_prevention_stop_signs"); 
 	
   	Iterator<Property> i = pList.iterator();
@@ -183,7 +183,7 @@ public static boolean isCreated(){
 
 public static boolean isPrevDisabled(String name){
 	String getStatus="";
-	PropertyDao propDao = (PropertyDao)SpringUtils.getBean("propertyDao");
+	PropertyDao propDao = (PropertyDao)SpringUtils.getBean(PropertyDao.class);
 	List<Property> pList = propDao.findByName("hide_prevention_stop_signs"); 
 	
   	Iterator<Property> i = pList.iterator();

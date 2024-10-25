@@ -74,8 +74,8 @@ if(!authed) {
     String deepColor = "#CCCCFF", weakColor = "#EEEEFF" ;
     int count = 0;	
 
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
+	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 	MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
 	ProviderDataDao providerDataDao = SpringUtils.getBean(ProviderDataDao.class);
 
@@ -116,7 +116,7 @@ if (isSiteAccessPrivacy || isTeamAccessPrivacy) {
 	}
 }
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="report.reportdaysheet.title" /></title>

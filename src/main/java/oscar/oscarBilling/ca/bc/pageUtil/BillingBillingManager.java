@@ -23,19 +23,12 @@
  */
 package oscar.oscarBilling.ca.bc.pageUtil;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.oscarehr.common.dao.BillingDao;
 import org.oscarehr.common.dao.BillingServiceDao;
 import org.oscarehr.common.model.Billing;
 import org.oscarehr.common.model.BillingService;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.entities.Billingmaster;
 import oscar.entities.WCB;
 import oscar.oscarBilling.ca.bc.data.BillingmasterDAO;
@@ -43,8 +36,15 @@ import oscar.oscarBilling.ca.on.administration.GstControlAction;
 import oscar.util.ConversionUtils;
 import oscar.util.StringUtils;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class BillingBillingManager {
+
+public class BillingBillingManager implements Serializable {
 	private String billTtype;
 	private String gstPercent = (new GstControlAction()).readDatabase().getProperty("gstPercent", "");
 
@@ -245,7 +245,7 @@ public class BillingBillingManager {
 
 	}
 
-	public class BillingItem {
+	public class BillingItem implements Serializable {
 
 		String service_code;
 		String description;

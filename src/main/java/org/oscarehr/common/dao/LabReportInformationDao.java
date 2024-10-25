@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,32 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.LabReportInformation;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class LabReportInformationDao extends AbstractDao<LabReportInformation> {
-
-	public LabReportInformationDao() {
-		super(LabReportInformation.class);
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Object[]> findReportsByPhysicianId(Integer physicianId) {
-		String sql = "FROM LabReportInformation lri, LabPatientPhysicianInfo lpp " 
-				+ "WHERE lpp.id = :physicianId "
-				+ "AND lri.id = lpp.labReportInfoId";
-		Query q = entityManager.createQuery(sql);
-		q.setParameter("physicianId", physicianId);
-		return q.getResultList();
-
-	}
+public interface LabReportInformationDao extends AbstractDao<LabReportInformation> {
+	List<Object[]> findReportsByPhysicianId(Integer physicianId);
 }

@@ -17,7 +17,7 @@
 		isPdfEmbedded="false" />
 
 	<parameter name="demo" isForPrompting="true" class="java.lang.String" />
-	<queryString><![CDATA[select d.last_name, d.chart_no, d.first_name, d.address, d.city , d.province, d.postal, d.phone, d.phone2, d.year_of_birth, d.month_of_birth, d.date_of_birth, d.hin, d.ver, d.sex, CONCAT(p.last_name, ', ' ,p.first_name) as doc_name from demographic d, provider p where demographic_no =$P{demo} and d.provider_no = p.provider_no]]></queryString>
+	<queryString><![CDATA[select d.last_name, d.chart_no, d.first_name, d.address, d.city , d.province, d.postal, d.phone, d.phone2, d.email, d.year_of_birth, d.month_of_birth, d.date_of_birth, d.hin, d.ver, d.sex, CONCAT(p.last_name, ', ' ,p.first_name) as doc_name from demographic d, provider p where demographic_no =$P{demo} and d.provider_no = p.provider_no]]></queryString>
 
 	<field name="last_name" class="java.lang.String" />
 	<field name="chart_no" class="java.lang.String" />
@@ -28,6 +28,7 @@
 	<field name="postal" class="java.lang.String" />
 	<field name="phone" class="java.lang.String" />
 	<field name="phone2" class="java.lang.String" />
+	<field name="email" class="java.lang.String" />
 	<field name="year_of_birth" class="java.lang.String" />
 	<field name="month_of_birth" class="java.lang.String" />
 	<field name="date_of_birth" class="java.lang.String" />
@@ -96,7 +97,7 @@
 				<textElement>
 					<font size="12" />
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["HOME: " + $F{phone} + "   " + "Dr. " + $F{doc_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["HOME: " + $F{phone} + "EMAIL: " + $F{email} + " + "Dr. " + $F{doc_name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

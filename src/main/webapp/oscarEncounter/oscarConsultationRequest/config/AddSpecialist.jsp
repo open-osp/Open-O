@@ -76,7 +76,7 @@ if(!authed) {
     
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 
 <%
   ResourceBundle oscarR = ResourceBundle.getBundle("oscarResources",request.getLocale());

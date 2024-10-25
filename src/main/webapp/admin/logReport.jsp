@@ -93,7 +93,7 @@ boolean authed=true;
 
 <%@page import="oscar.Misc"%>
 <%@ page import="org.owasp.encoder.Encode" %>
-<html:html locale="true">
+<html:html lang="en">
 	<script src="${pageContext.request.contextPath}/csrfguard"></script>
 <head>
 

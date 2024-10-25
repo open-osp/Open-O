@@ -49,7 +49,7 @@ public final class RxRxPageSizeInfoAction extends DispatchAction {
         String provider = (String) request.getSession().getAttribute("user");
 
         WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServlet().getServletContext());
-        UserPropertyDAO  propDAO =  (UserPropertyDAO) ctx.getBean("UserPropertyDAO");
+        UserPropertyDAO  propDAO =  (UserPropertyDAO) ctx.getBean(UserPropertyDAO.class);
 
         UserProperty prop = propDAO.getProp(provider, UserProperty.RX_PAGE_SIZE);
         String rxPageSize = null;

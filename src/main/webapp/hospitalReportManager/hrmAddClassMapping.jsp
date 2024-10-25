@@ -85,7 +85,7 @@ if(!authed) {
 			<div class="controls">
 				<select name="category">
 				<%
-					HRMCategoryDao categoryDao = (HRMCategoryDao) SpringUtils.getBean("HRMCategoryDao");
+					HRMCategoryDao categoryDao = (HRMCategoryDao) SpringUtils.getBean(HRMCategoryDao.class);
 					List<HRMCategory> categoryList = categoryDao.findAll();
 					for (HRMCategory category : categoryList) {
 				%>

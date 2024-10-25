@@ -39,7 +39,7 @@ public class BornFtpManager {
 
 	public static void uploadONAREnhancedDataToRepository(String path, String filename) throws Exception {
 		String remotePath = OscarProperties.getInstance().getProperty("born_sftp_remote_dir","");
-		DefaultSftpSessionFactory ftpFactory = (DefaultSftpSessionFactory)SpringUtils.getBean("ftpClientFactory");
+		DefaultSftpSessionFactory ftpFactory = (DefaultSftpSessionFactory)SpringUtils.getBean(DefaultSftpSessionFactory.class);
 		Session session = null;		
 		try {
 			session = ftpFactory.getSession();		
@@ -54,7 +54,7 @@ public class BornFtpManager {
 	
 	public static boolean upload18MEWBVDataToRepository(byte[] xmlFile, String filename) {
 		String remotePath = OscarProperties.getInstance().getProperty("born18m_sftp_remote_dir","");
-		DefaultSftpSessionFactory ftpFactory = (DefaultSftpSessionFactory)SpringUtils.getBean("ftpClientFactoryBORN18M");		
+		DefaultSftpSessionFactory ftpFactory = (DefaultSftpSessionFactory)SpringUtils.getBean(DefaultSftpSessionFactory.class);		
 		Session session = null;
 		
 		boolean success = false;

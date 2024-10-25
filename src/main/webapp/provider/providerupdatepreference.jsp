@@ -35,8 +35,9 @@
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
 <%@ page import="org.oscarehr.common.model.UserProperty" %>
+<%@ page import="org.oscarehr.provider.web.ProviderPropertyAction" %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <script LANGUAGE="JavaScript">
@@ -66,7 +67,7 @@
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	String curUser_providerno = loggedInInfo.getLoggedInProviderNo();
 	String ticklerforproviderno = request.getParameter("ticklerforproviderno");
-	UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+	UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 	UserProperty prop = propDao.getProp(curUser_providerno, UserProperty.PROVIDER_FOR_TICKLER_WARNING);
 	if (prop == null) {
 		prop = new UserProperty();
@@ -76,7 +77,8 @@
 	prop.setValue(ticklerforproviderno);
 	propDao.saveProp(prop);
 	
-	ProviderPreference providerPreference=ProviderPreferencesUIBean.updateOrCreateProviderPreferences(request);
+	ProviderPreference providerPreference = ProviderPreferencesUIBean.updateOrCreateProviderPreferences(request);
+	ProviderPropertyAction.updateOrCreateProviderProperties(request);
 
 	//--- 
 	session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE, providerPreference);

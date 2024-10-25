@@ -40,7 +40,7 @@ public class AnonymousClientDischargeTask extends TimerTask {
 
 	public void run() {
 		try {
-			AdmissionManager admissionManager = (AdmissionManager) SpringUtils.getBean("admissionManager");
+			AdmissionManager admissionManager = (AdmissionManager) SpringUtils.getBean(AdmissionManager.class);
 
 			List<Admission> admissions = admissionManager.getActiveAnonymousAdmissions();
 

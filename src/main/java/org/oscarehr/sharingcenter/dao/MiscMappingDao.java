@@ -27,12 +27,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.sharingcenter.model.MiscMapping;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MiscMappingDao extends AbstractDao<MiscMapping> {
+public class MiscMappingDao extends AbstractDaoImpl<MiscMapping> {
 
     public MiscMappingDao() {
         super(MiscMapping.class);
@@ -56,7 +56,7 @@ public class MiscMappingDao extends AbstractDao<MiscMapping> {
     public List<MiscMapping> findByAffinityDomainId(int affinityDomain) {
         String sql = "FROM MiscMapping e where e.affinityDomain = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
+        query.setParameter(0, affinityDomain);
 
         return query.getResultList();
     }
@@ -65,9 +65,9 @@ public class MiscMappingDao extends AbstractDao<MiscMapping> {
         String sql = "FROM MiscMapping e where e.affinityDomain = ? and e.type = ? and e.source = ?";
 
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
-        query.setParameter(2, miscType);
-        query.setParameter(3, source);
+        query.setParameter(0, affinityDomain);
+        query.setParameter(1, miscType);
+        query.setParameter(2, source);
 
         query.setMaxResults(1);
         MiscMapping retVal = getSingleResultOrNull(query);
@@ -78,8 +78,8 @@ public class MiscMappingDao extends AbstractDao<MiscMapping> {
         String sql = "FROM MiscMapping e where e.affinityDomain = ? and e.type = ?";
 
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
-        query.setParameter(2, miscType);
+        query.setParameter(0, affinityDomain);
+        query.setParameter(1, miscType);
 
         query.setMaxResults(1);
         MiscMapping retVal = getSingleResultOrNull(query);

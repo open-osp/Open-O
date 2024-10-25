@@ -38,7 +38,7 @@ import org.oscarehr.util.SpringUtils;
 public class DxresearchDAOTest extends DaoTestFixtures {
 
 	// TODO Make it protected when test ignores are merged in
-	private DxresearchDAO dao = (DxresearchDAO)SpringUtils.getBean("DxresearchDAO");
+	private DxresearchDAO dao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
 
 	public DxresearchDAOTest() {
 	}

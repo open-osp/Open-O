@@ -5,7 +5,7 @@
 buildDateTime=foo
 db_driver=com.mysql.cj.jdbc.Driver
 db_user=root
-db_password=openosp
+db_password=password
 db_url_prefix=jdbc:mysql://db/
 # zeroDateTimeBehavior: Change the behavior of date 0000-00-00 to automatically become a valid date by rounding. The
 #                       new default is to throw an exception, whereas previous versions of Connector/J converted to
@@ -20,5 +20,5 @@ db_url_prefix=jdbc:mysql://db/
 # IMPORTANT: The fields listed after the ? are required! Otherwise, OSCAR will not behave properly as it depends on
 #            legacy functionality. Ensure that you leave the tags behind the field when renaming the database.
 db_schema_properties=?zeroDateTimeBehavior=round&useOldAliasMetadataBehavior=true&jdbcCompliantTruncation=false&useSSL=false
-db_schema=oscar
+db_schema=oscar_test
 db_host=db

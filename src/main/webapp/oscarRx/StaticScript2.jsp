@@ -60,7 +60,7 @@
 	}
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
 <title><bean:message key="StaticScript.title" /></title>
@@ -194,7 +194,7 @@ oscar.oscarRx.pageUtil.RxSessionBean rxBean = null;
 						<th colspan="2"></th>
 					</tr>
 					<%
-						PartialDateDao partialDateDao = (PartialDateDao)SpringUtils.getBean("partialDateDao");
+						PartialDateDao partialDateDao = (PartialDateDao)SpringUtils.getBean(PartialDateDao.class);
 						for (StaticScriptBean.DrugDisplayData drug : drugs)
 							{
 								String arch="";

@@ -23,13 +23,13 @@
  */
 package org.oscarehr.common.dao.forms;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import oscar.form.model.FormBCAR2020Text;
 
 import javax.persistence.Query;
 import java.util.List;
 
-public class FormBCAR2020TextDao extends AbstractDao<FormBCAR2020Text> {
+public class FormBCAR2020TextDao extends AbstractDaoImpl<FormBCAR2020Text> {
     public FormBCAR2020TextDao() { super(FormBCAR2020Text.class); }
 
     public List<FormBCAR2020Text> findFields(Integer formId) {

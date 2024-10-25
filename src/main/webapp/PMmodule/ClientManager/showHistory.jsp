@@ -37,7 +37,7 @@
 <%
 	String admissionId = request.getParameter("id");
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    ProviderManager pMgr = (ProviderManager)ctx.getBean("providerManager");
+    ProviderManager pMgr = (ProviderManager)ctx.getBean(ProviderManager.class);
     AdmissionDao admissionDao = SpringUtils.getBean(AdmissionDao.class);
     
     Admission admission = admissionDao.find(Integer.parseInt(admissionId));

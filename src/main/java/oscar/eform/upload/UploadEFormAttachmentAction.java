@@ -72,7 +72,7 @@ public class UploadEFormAttachmentAction extends Action {
 			document.setUpdatedatetime(eformUploadDate);
 			document.setDoctype("others");
 
-			DocumentDao documentDao = (DocumentDao) SpringUtils.getBean("documentDao");
+			DocumentDao documentDao = (DocumentDao) SpringUtils.getBean(DocumentDao.class);
 			CtlDocumentDao ctlDocumentDao = SpringUtils.getBean(CtlDocumentDao.class);
 			documentDao.persist(document);
 

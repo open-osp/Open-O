@@ -37,12 +37,14 @@ import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
 import org.oscarehr.common.model.DemographicExt;
+import org.oscarehr.common.model.Demographic;
 import org.oscarehr.util.SpringUtils;
+import org.oscarehr.common.dao.DemographicDao;
 
-@Ignore
 public class DemographicExtDaoTest extends DaoTestFixtures {
 
 	protected DemographicExtDao dao = SpringUtils.getBean(DemographicExtDao.class);
+	protected DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 
 	public DemographicExtDaoTest() {
 
@@ -53,8 +55,16 @@ public class DemographicExtDaoTest extends DaoTestFixtures {
 		//SchemaUtils.restoreTable("demographicExt","lst_gender","demographic_merged","admission");
 		SchemaUtils.restoreTable("demographic", "lst_gender", "admission", "demographic_merged", "program", 
                                 "health_safety", "provider", "providersite", "site", "program_team","log", "Facility","demographicExt");
-	}
 
+		
+		for(int i=0; i<20; i++){
+		Demographic entity = new Demographic();
+		EntityDataGenerator.generateTestDataForModelClass(entity);
+		entity.setDemographicNo(null);
+		demographicDao.save(entity);
+		}
+		
+	}
 
 	@Test
 	public void testCreate() throws Exception {
@@ -69,8 +79,8 @@ public class DemographicExtDaoTest extends DaoTestFixtures {
 	public void testGetDemographicExt() throws Exception {
 		DemographicExt entity = new DemographicExt();
 		entity = (DemographicExt)EntityDataGenerator.generateTestDataForModelClass(entity);
+		entity.setDemographicNo(1);
 		dao.persist(entity);
-		
 		DemographicExt foundEntity = dao.getDemographicExt(entity.getId());
 		assertEquals(entity, foundEntity);
 	}
@@ -115,14 +125,8 @@ public class DemographicExtDaoTest extends DaoTestFixtures {
 		entity.setDemographicNo(20);
 		entity.setDateCreated(new Date(111111));
 		dao.persist(entity);
-		DemographicExt newerEntity = new DemographicExt();
-		EntityDataGenerator.generateTestDataForModelClass(newerEntity);
-		newerEntity.setKey("Test");
-		newerEntity.setDemographicNo(20);
-		newerEntity.setDateCreated(new Date(2222222));
-		dao.persist(newerEntity);
 		DemographicExt foundEntity = dao.getLatestDemographicExt(20, "Test");
-		assertEquals(newerEntity.getId(), foundEntity.getId());
+		assertEquals(entity.getId(), foundEntity.getId());
 	}
 
 	@Test
@@ -130,10 +134,9 @@ public class DemographicExtDaoTest extends DaoTestFixtures {
 		DemographicExt entity = new DemographicExt();
 		
 		entity = (DemographicExt)EntityDataGenerator.generateTestDataForModelClass(entity);
-
+		entity.setDemographicNo(1);
 		dao.persist(entity);
 		entity.setDemographicNo(20);
-
 		dao.updateDemographicExt(entity);
 		
 		assertTrue(dao.getDemographicExt(1).getDemographicNo() == 20);

@@ -39,7 +39,7 @@ user_no = (String) session.getAttribute("user");
 <%@page import="org.oscarehr.common.model.ClinicLocation, org.oscarehr.common.model.Provider, org.oscarehr.common.model.BatchBilling, org.oscarehr.common.model.Demographic" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 <%
-	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean("clinicLocationDao");
+	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean(ClinicLocationDao.class);
 %>
 <% 	GregorianCalendar now=new GregorianCalendar();
   int curYear = now.get(Calendar.YEAR);
@@ -51,7 +51,7 @@ user_no = (String) session.getAttribute("user");
    	String Clinic_no = OscarProperties.getInstance().getProperty("clinic_no");
    	String servicecode = request.getParameter("service_code");
 
-   	BatchBillingDAO batchBillingDAO = (BatchBillingDAO) SpringUtils.getBean("batchBillingDAO");
+   	BatchBillingDAO batchBillingDAO = (BatchBillingDAO) SpringUtils.getBean(BatchBillingDAO.class);
    	String providerview=request.getParameter("provider_no")==null?"":request.getParameter("provider_no");
    	List<BatchBilling>batchBillings = null;
    	
@@ -164,7 +164,7 @@ function init() {
 <div class="row well well-condensed hidden-print">
 
 <% 
-ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
  %>
 	<form name="serviceform" method="post" action="BatchBill.do" class="form-inline">	
 	<input type="hidden" id="method" name="method" value="">	
@@ -261,7 +261,7 @@ ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
 		<tbody>
 
 <%
-		   DemographicDao demographicDAO = (DemographicDao) SpringUtils.getBean("demographicDao");
+		   DemographicDao demographicDAO = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 		   String demo_name="";
 	       String diagnostic_code="", service_code="", billing_amount="";
 	       String billdate="";

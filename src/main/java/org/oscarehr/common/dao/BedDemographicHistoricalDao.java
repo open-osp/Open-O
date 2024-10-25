@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -34,25 +37,7 @@ import org.oscarehr.common.model.BedDemographicHistorical;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class BedDemographicHistoricalDao extends AbstractDao<BedDemographicHistorical>{
+public interface BedDemographicHistoricalDao extends AbstractDao<BedDemographicHistorical> {
 
-	private Logger log = MiscUtils.getLogger();
-	
-	public BedDemographicHistoricalDao() {
-		super(BedDemographicHistorical.class);
-	}
-	   
-	@SuppressWarnings("unchecked")    
-	public BedDemographicHistorical[] getBedDemographicHistoricals(Date since) {
-		Query query = entityManager.createQuery("select bdh from BedDemographicHistorical bdh where bdh.usageEnd >= ?");
-		query.setParameter(1, DateTimeFormatUtils.getDateFromDate(since));
-		
-		List<BedDemographicHistorical> bedDemographicHistoricals = query.getResultList();
-		
-		log.debug("getBedDemographicHistoricals: size: " + bedDemographicHistoricals.size());
-
-	        
-		return bedDemographicHistoricals.toArray(new BedDemographicHistorical[bedDemographicHistoricals.size()]);
-	}
+	public BedDemographicHistorical[] getBedDemographicHistoricals(Date since);
 }

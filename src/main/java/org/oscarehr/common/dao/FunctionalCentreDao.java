@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,39 +20,15 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.FunctionalCentre;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class FunctionalCentreDao extends AbstractDao<FunctionalCentre> {
-
-    public FunctionalCentreDao() {
-        super(FunctionalCentre.class);
-    }
-
-    public List<FunctionalCentre> findAll() {
-        Query query = entityManager.createQuery("select x from "+modelClass.getSimpleName()+" x");
-
-        @SuppressWarnings("unchecked")
-        List<FunctionalCentre> results = query.getResultList();
-
-        return(results);
-    }
-    
-    public List<FunctionalCentre> findInUseByFacility(Integer facilityId) {
-        Query query = entityManager.createNativeQuery("select distinct FunctionalCentre.* from program,FunctionalCentre where facilityId=?1 and program.functionalCentreId=FunctionalCentre.accountId", modelClass);
-        query.setParameter(1, facilityId);
-        
-        @SuppressWarnings("unchecked")
-        List<FunctionalCentre> results = query.getResultList();
-
-        return(results);
-    }
+public interface FunctionalCentreDao extends AbstractDao<FunctionalCentre> {
+    List<FunctionalCentre> findAll();
+    List<FunctionalCentre> findInUseByFacility(Integer facilityId);
 }

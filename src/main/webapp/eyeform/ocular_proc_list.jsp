@@ -66,10 +66,10 @@ else
 
 
 List<EyeformOcularProcedure> procs = (List<EyeformOcularProcedure>)request.getAttribute("procs");
-ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Ocular Procedures

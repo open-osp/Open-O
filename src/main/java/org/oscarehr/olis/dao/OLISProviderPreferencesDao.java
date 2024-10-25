@@ -12,12 +12,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.olis.model.OLISProviderPreferences;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class OLISProviderPreferencesDao extends AbstractDao<OLISProviderPreferences>{
+public class OLISProviderPreferencesDao extends AbstractDaoImpl<OLISProviderPreferences>{
 
 	
 	public OLISProviderPreferencesDao() {
@@ -28,7 +28,7 @@ public class OLISProviderPreferencesDao extends AbstractDao<OLISProviderPreferen
 		try {
 			String sql = "select x from "+ this.modelClass.getName() + " x where x.providerId=?";
 			Query query = entityManager.createQuery(sql);
-			query.setParameter(1, id);		
+			query.setParameter(0, id);		
 			return (OLISProviderPreferences)query.getSingleResult();
 		}
 		catch (javax.persistence.NoResultException nre) {

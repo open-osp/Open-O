@@ -31,8 +31,8 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
 public final class AppointmentProviderAdminDayUIBean {
-	private static EFormDao eFormDao=(EFormDao)SpringUtils.getBean("EFormDao");
-	private static ProviderPreferenceDao providerPreferenceDao=(ProviderPreferenceDao)SpringUtils.getBean("providerPreferenceDao");
+	private static EFormDao eFormDao=(EFormDao)SpringUtils.getBean(EFormDao.class);
+	private static ProviderPreferenceDao providerPreferenceDao=(ProviderPreferenceDao)SpringUtils.getBean(ProviderPreferenceDao.class);
 	
 	public static String getLengthLimitedLinkName(LoggedInInfo loggedInInfo, String formName) {
 		int maxLength=3;

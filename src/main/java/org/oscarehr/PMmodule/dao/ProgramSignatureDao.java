@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.PMmodule.dao;
@@ -29,55 +32,13 @@ import java.util.List;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.ProgramSignature;
 import org.oscarehr.util.MiscUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-public class ProgramSignatureDao extends HibernateDaoSupport {
+public interface ProgramSignatureDao {
 
-    private static final Logger log=MiscUtils.getLogger();
+    public ProgramSignature getProgramFirstSignature(Integer programId);
 
-    //get the creator of the program
-    public ProgramSignature getProgramFirstSignature(Integer programId) {
-        ProgramSignature programSignature = null;
-        if (programId == null || programId.intValue() <= 0) {
-            return null;
-        }
-        List ps = getHibernateTemplate().find("FROM ProgramSignature ps where ps.programId = ? ORDER BY ps.updateDate ASC", programId);
+    public List<ProgramSignature> getProgramSignatures(Integer programId);
 
-        if (!ps.isEmpty()) {
-            programSignature = (ProgramSignature)ps.get(0);
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("getProgramFirstSignature: " + ((programSignature != null)?String.valueOf(programSignature.getId()):"null"));
-        }
-
-        return programSignature;
-    }
-
-    public List<ProgramSignature> getProgramSignatures(Integer programId) {
-        if (programId == null || programId.intValue() <= 0) {
-            return null;
-        }
-
-        List rs = getHibernateTemplate().find("FROM ProgramSignature ps WHERE ps.programId = ? ORDER BY ps.updateDate ASC", programId);
-
-        if (log.isDebugEnabled()) {
-            log.debug("getProgramSignatures: # of programs: " + rs.size());
-        }
-        return rs;
-
-    }
-
-    public void saveProgramSignature(ProgramSignature programSignature) {
-        if (programSignature == null) {
-            throw new IllegalArgumentException();
-        }
-        programSignature.setUpdateDate(new Date());
-        getHibernateTemplate().saveOrUpdate(programSignature);
-        getHibernateTemplate().flush();
-
-        if (log.isDebugEnabled()) {
-            log.debug("saveAdmission: id= " + programSignature.getId());
-        }
-    }
+    public void saveProgramSignature(ProgramSignature programSignature);
 }

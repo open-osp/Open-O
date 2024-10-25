@@ -44,7 +44,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class BillingEDTOBECOutputSpecificationBeanHandler {
 
-	private BatchEligibilityDao batchEligibilityDao = (BatchEligibilityDao) SpringUtils.getBean("batchEligibilityDao");
+	private BatchEligibilityDao batchEligibilityDao = (BatchEligibilityDao) SpringUtils.getBean(BatchEligibilityDao.class);
 
 	Vector<BillingEDTOBECOutputSpecificationBean> EDTOBECOutputSecifiationBeanVector = new Vector<BillingEDTOBECOutputSpecificationBean>();
 	public boolean verdict = true;

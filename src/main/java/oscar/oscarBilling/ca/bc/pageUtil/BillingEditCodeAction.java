@@ -48,7 +48,7 @@ import oscar.oscarBilling.ca.bc.data.BillingCodeData;
 import oscar.util.UtilDateUtilities;
 
 public final class BillingEditCodeAction extends DispatchAction {
-     private static BillingServiceDao billingServiceDao = (BillingServiceDao) SpringUtils.getBean("billingServiceDao");
+     private static BillingServiceDao billingServiceDao = (BillingServiceDao) SpringUtils.getBean(BillingServiceDao.class);
 
     public ActionForward ajaxCodeUpdate(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response)throws IOException  {
         String id  =  request.getParameter("id");

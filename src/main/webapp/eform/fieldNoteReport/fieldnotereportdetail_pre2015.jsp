@@ -89,7 +89,7 @@
     
     HashMap<Integer, List<EFormValue>> residentFieldNoteValues = FieldNoteManager.getResidentFieldNoteValues(residentId);
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="admin.fieldNote.report"/></title>
 <link rel="stylesheet" href="../../share/css/OscarStandardLayout.css">

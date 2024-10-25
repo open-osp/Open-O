@@ -78,7 +78,7 @@
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="billing.billingCorrection.title" /></title>
@@ -476,7 +476,7 @@ if(bFlag) {
 				key="billing.billingCorrection.msgSelectVisitType" /></option>
 				 <% if (OscarProperties.getInstance().getBooleanProperty("rma_enabled", "true")) { %>
                    <% 
-			    ClinicNbrDao cnDao = (ClinicNbrDao) SpringUtils.getBean("clinicNbrDao"); 
+			    ClinicNbrDao cnDao = (ClinicNbrDao) SpringUtils.getBean(ClinicNbrDao.class); 
 				ArrayList<ClinicNbr> nbrs = cnDao.findAll();
                	for (ClinicNbr clinic : nbrs) {
 					String valueString = String.format("%s | %s", clinic.getNbrValue(), clinic.getNbrString());

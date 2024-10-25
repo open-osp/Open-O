@@ -47,7 +47,7 @@ import org.oscarehr.util.SpringUtils;
  */
 public class ApplyPractitionerPremiumAction extends DispatchAction{
     
-    private BillingONPremiumDao bPremiumDao = (BillingONPremiumDao) SpringUtils.getBean("billingONPremiumDao");
+    private BillingONPremiumDao bPremiumDao = (BillingONPremiumDao) SpringUtils.getBean(BillingONPremiumDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     
     public ActionForward applyPremium(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response){
@@ -66,7 +66,7 @@ public class ApplyPractitionerPremiumAction extends DispatchAction{
             //check this provider is in OSCAR
             String providerNo = request.getParameter("providerNo" + premiumId);
             if (providerNo != null && !providerNo.isEmpty()) {
-                ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+                ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
                 Provider p = providerDao.getProvider(providerNo);
                                
                 String premiumSelected = request.getParameter("choosePremium" + premiumId);

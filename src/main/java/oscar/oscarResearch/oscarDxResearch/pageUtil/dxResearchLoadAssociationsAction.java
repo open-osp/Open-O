@@ -60,7 +60,7 @@ import com.Ostermiller.util.ExcelCSVPrinter;
 
 public class dxResearchLoadAssociationsAction extends DispatchAction {
 
-	private DxDao dxDao = (DxDao) SpringUtils.getBean("dxDao");
+	private DxDao dxDao = (DxDao) SpringUtils.getBean(DxDao.class);
 	private static SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	
 	private static final String PRIVILEGE_READ = "r";
@@ -179,10 +179,10 @@ public class dxResearchLoadAssociationsAction extends DispatchAction {
 		checkPrivilege(request, PRIVILEGE_WRITE);
 		
 		int recordsAdded = 0;
-		CaseManagementIssueDAO cmiDao = (CaseManagementIssueDAO) SpringUtils.getBean("CaseManagementIssueDAO");
-		CaseManagementManager cmMgr = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
-		IssueDAO issueDao = (IssueDAO) SpringUtils.getBean("IssueDAO");
-		DxresearchDAO dxrDao = (DxresearchDAO) SpringUtils.getBean("DxresearchDAO");
+		CaseManagementIssueDAO cmiDao = (CaseManagementIssueDAO) SpringUtils.getBean(CaseManagementIssueDAO.class);
+		CaseManagementManager cmMgr = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
+		IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
+		DxresearchDAO dxrDao = (DxresearchDAO) SpringUtils.getBean(DxresearchDAO.class);
 
 		//clear existing entries
 		dxrDao.removeAllAssociationEntries();

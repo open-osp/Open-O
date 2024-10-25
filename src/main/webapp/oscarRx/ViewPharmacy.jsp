@@ -46,7 +46,7 @@
     String type = request.getParameter("type");
 %>
 
-<html:html locale="true">
+<html:html lang="en">
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
@@ -80,7 +80,7 @@
             <% } %>
         </script>
         <title><bean:message key="ManagePharmacy.title" /></title>
-<script src="<%=request.getContextPath()%>/JavaScriptServlet" type="text/javascript"></script>
+<script src="<%=request.getContextPath()%>/csrfguard" type="text/javascript"></script>
         <html:base />
 
         <logic:notPresent name="RxSessionBean" scope="session">

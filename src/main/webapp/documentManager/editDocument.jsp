@@ -121,7 +121,7 @@ ArrayList doctypes = EDocUtil.getDoctypes(formdata.getFunction());
 String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_DOCUMENT;
 String annotation_tableid = editDocumentNo;
 
-CtlDocClassDao docClassDao = (CtlDocClassDao)SpringUtils.getBean("ctlDocClassDao");
+CtlDocClassDao docClassDao = (CtlDocClassDao)SpringUtils.getBean(CtlDocClassDao.class);
 List<String> reportClasses = docClassDao.findUniqueReportClasses();
 ArrayList<String> subClasses = new ArrayList<String>();
 ArrayList<String> consultA = new ArrayList<String>();

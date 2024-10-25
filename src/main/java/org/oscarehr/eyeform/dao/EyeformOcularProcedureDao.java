@@ -31,13 +31,13 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.apache.logging.log4j.Logger;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.eyeform.model.EyeformOcularProcedure;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EyeformOcularProcedureDao extends AbstractDao<EyeformOcularProcedure> {
+public class EyeformOcularProcedureDao extends AbstractDaoImpl<EyeformOcularProcedure> {
 	
 	Logger logger = MiscUtils.getLogger();
 	
@@ -58,9 +58,9 @@ public class EyeformOcularProcedureDao extends AbstractDao<EyeformOcularProcedur
 	public List<EyeformOcularProcedure> getByDateRange(int demographicNo,Date startDate, Date endDate) {
 		String sql="select x from "+modelClass.getSimpleName()+" x where x.demographicNo=? and x.date >= ? and x.date <=?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, demographicNo);
-		query.setParameter(2, startDate);
-		query.setParameter(3, endDate);
+		query.setParameter(0, demographicNo);
+		query.setParameter(1, startDate);
+		query.setParameter(2, endDate);
 	    
 		@SuppressWarnings("unchecked")
 	    List<EyeformOcularProcedure> results=query.getResultList();
@@ -98,8 +98,8 @@ public class EyeformOcularProcedureDao extends AbstractDao<EyeformOcularProcedur
 	public List<EyeformOcularProcedure> getAllPreviousAndCurrent(int demographicNo, int appointmentNo) {
 		String sql="select x from "+modelClass.getSimpleName()+" x where x.demographicNo = ? and x.appointmentNo<=?";
 		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, demographicNo);	    
-		query.setParameter(2, appointmentNo);
+		query.setParameter(0, demographicNo);	    
+		query.setParameter(1, appointmentNo);
 	    
 		@SuppressWarnings("unchecked")
 	    List<EyeformOcularProcedure> results=query.getResultList();

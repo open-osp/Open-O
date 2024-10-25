@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.managers;
@@ -43,160 +46,24 @@ import org.springframework.stereotype.Service;
 
 import oscar.log.LogAction;
 
-@Service
-public class AppManager {
-	protected Logger logger = MiscUtils.getLogger();
-	 
-	@Autowired
-	private AppDefinitionDao appDefinitionDao;
+public interface AppManager {
 
-	@Autowired
-	private AppUserDao appUserDao;
-	
-	@Autowired
-	private SecurityInfoManager securityInfoManager;
-	
 
-	public List<AppDefinitionTo1> getAppDefinitions(LoggedInInfo loggedInInfo){
-		List<AppDefinition> appList = appDefinitionDao.findAll();
-		List<AppDefinitionTo1> returningAppList = new ArrayList<AppDefinitionTo1>(appList.size());
-		for(AppDefinition app: appList) {
-			AppDefinitionTo1 appTo = new AppDefinitionTo1();
-			appTo.setId(app.getId());
-			appTo.setAdded(app.getAdded());
-			appTo.setAppType(app.getAppType());
-			appTo.setName(app.getName());
-			appTo.setActive(app.getActive());
-			appTo.setAddedBy(app.getAddedBy());
-			AppUser appuser = appUserDao.findForProvider(app.getId(),loggedInInfo.getLoggedInProviderNo());
-			if (appuser != null){
-				appTo.setAuthenticated(true);
-			}else{
-				appTo.setAuthenticated(false);
-			}
-			returningAppList.add(appTo);
-		}
-		
-		//--- log action ---
-		if (returningAppList!=null && returningAppList.size()>0) {
-			String resultIds=AppDefinition.getIdsAsStringList(appList);
-			LogAction.addLogSynchronous(loggedInInfo, "AppManager.getAppDefinitions", "ids returned=" + resultIds);
-		}
-		
-		return returningAppList;
-	}
+	public List<AppDefinitionTo1> getAppDefinitions(LoggedInInfo loggedInInfo);
+	public AppDefinition saveAppDefinition(LoggedInInfo loggedInInfo,  AppDefinition appDef);
 	
-	public AppDefinition saveAppDefinition(LoggedInInfo loggedInInfo,  AppDefinition appDef){
-		//Can user create new AppDefinitions?
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_appDefinition", "w", null)) {
-			throw new RuntimeException("Access Denied");
-		}
-		
-		appDefinitionDao.persist(appDef);
-		
-		//--- log action ---
-		if (appDef!=null) {
-			LogAction.addLogSynchronous(loggedInInfo, "AppManager.saveAppDefinition", "id=" + appDef.getId());
-		}
-		return appDef;
-	}
+	public AppDefinition updateAppDefinition(LoggedInInfo loggedInInfo,  AppDefinition appDef);
 	
-	public AppDefinition updateAppDefinition(LoggedInInfo loggedInInfo,  AppDefinition appDef){
-		//Can user create new AppDefinitions?
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_appDefinition", "w", null)) {
-			throw new RuntimeException("Access Denied");
-		}
-		
-		appDefinitionDao.merge(appDef);
-		
-		//--- log action ---
-		if (appDef!=null) {
-			LogAction.addLogSynchronous(loggedInInfo, "AppManager.updateAppDefinition", "id=" + appDef.getId());
-		}
-		return appDef;
-	}
+	public AppDefinition getAppDefinition(LoggedInInfo loggedInInfo,  String appName);
 	
-	public AppDefinition getAppDefinition(LoggedInInfo loggedInInfo,  String appName){
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_appDefinition", "r", null)) {
-			throw new RuntimeException("Access Denied");
-		}
-		AppDefinition appDef = appDefinitionDao.findByName(appName);
-		
-		//--- log action ---
-		if (appDef!=null) {
-			LogAction.addLogSynchronous(loggedInInfo, "AppManager.getAppDefinition", "id=" + appDef.getId());
-		}
-		return appDef;
-	}
+	public boolean hasAppDefinition(LoggedInInfo loggedInInfo,  String appName);
 	
-	public boolean hasAppDefinition(LoggedInInfo loggedInInfo,  String appName){
-		AppDefinition appDef = appDefinitionDao.findByName(appName);
-		
-		//--- log action ---
-		if (appDef!=null) {
-			LogAction.addLogSynchronous(loggedInInfo, "AppManager.hasAppDefinition", "id=" + appDef.getId());
-			return true;
-		}
-		
-		LogAction.addLogSynchronous(loggedInInfo, "AppManager.hasAppDefinition", "Not found:" + appName);
-		return false;
-	}
+	public Integer getAppDefinitionConsentId(LoggedInInfo loggedInInfo,  String appName);
+	public boolean isK2AUser(LoggedInInfo loggedInInfo);
+	public boolean isK2AUser(String providerNo);
 	
-	public Integer getAppDefinitionConsentId(LoggedInInfo loggedInInfo,  String appName){
-		AppDefinition appDef = appDefinitionDao.findByName(appName);
-		Integer retval = null;
-		//--- log action ---
-		if (appDef!=null) {
-			retval = appDef.getConsentTypeId();
-			LogAction.addLogSynchronous(loggedInInfo, "AppManager.getAppDefinitionConsentId", "id=" + retval);
-		}
-		return retval;
-	}
+	public boolean isK2AEnabled();
 	
-	
-
-	
-	public boolean isK2AUser(LoggedInInfo loggedInInfo){
-		return isK2AUser(loggedInInfo.getLoggedInProviderNo());
-	}
-	
-	public boolean isK2AUser(String providerNo){
-		AppDefinition k2aApp = appDefinitionDao.findByName("K2A");
-		if(k2aApp != null) {
-			AppUser k2aUser = appUserDao.findForProvider(k2aApp.getId(),providerNo);
-			if(k2aUser != null) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean isK2AEnabled(){
-		AppDefinition k2aApp = appDefinitionDao.findByName("K2A");
-		if(k2aApp != null){
-			return true;
-		}
-		return false;
-	}
-	
-	public String getK2ANotificationNumber(LoggedInInfo loggedInInfo){
-		String retval = "-";
-		AppDefinition k2aApp = appDefinitionDao.findByName("K2A");
-		if(k2aApp != null) {
-			AppUser k2aUser = appUserDao.findForProvider(k2aApp.getId(),loggedInInfo.getLoggedInProviderNo());
-				
-			if(k2aUser != null) {
-				String notificationStr = null;
-				try{
-					notificationStr = OAuth1Utils.getOAuthGetResponse(loggedInInfo,k2aApp, k2aUser, "/ws/api/notification", "/ws/api/notification");
-					JSONObject notifyObject = JSONObject.fromObject(notificationStr);
-					retval = notifyObject.getString("numberOfNotifications");
-				}catch(Exception e){
-					logger.error("User is not logged in "+notificationStr);
-				}
-			}
-		}
-		return retval;
-	}
+	public String getK2ANotificationNumber(LoggedInInfo loggedInInfo);
 	
 }

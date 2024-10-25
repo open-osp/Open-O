@@ -26,13 +26,18 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ page import="oscar.oscarMDS.data.ProviderData, java.util.ArrayList"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
+<!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/checkDate.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+	<title><bean:message key="oscarMDS.search.title" /></title>
+	<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+	<script type="text/javascript" src="<%= request.getContextPath() %>/js/checkDate.js"></script>
+
+	<script type="text/javascript" src="<%= request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+	<script type="text/javascript" src="<%= request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+	<link rel="stylesheet" href="<%= request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.css" />
 
 <script type="text/javascript" >
 var readOnly=false;
@@ -96,83 +101,82 @@ $(function() {
 
 </script>
 
-<style type="text/css">
+<style>
 
-.ui-autocomplete {
-	background-color: #CEF6CE;
-	border: 3px outset #2EFE2E;
-	width:300px;
-}
+	body *:not(h2) {
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+		font-size: 12px;
+	}
 
-.ui-menu-item:hover {
-		background-color:#426FD9;
-		color:#FFFFFF;
-}
+	#content-wrapper {
+		margin: auto 15px;
+	}
 
 </style>
 
-<link rel="stylesheet" type="text/css" href="encounterStyles.css">
-<title><bean:message key="oscarMDS.search.title" /></title>
+
 </head>
 
 <body>
+<div id="content-wrapper">
 <form id="searchFrm" method="POST" action="" onSubmit="return onSubmitCheck();"> 
     <input type="hidden" name="method" value="prepareForIndexPage"/>
-<table width="100%" height="100%" border="0">
+<table style="width: 100%;height: 100vh;">
 	<tr class="MainTableTopRow">
-		<td class="MainTableTopRow" colspan="9" align="left">
-		<table width="100%">
+		<td class="MainTableTopRow">
+		<table style="width:100%;">
 			<tr>
-				<td align="left"><input type="button"
-					value=" <bean:message key="global.btnClose"/> "
-					onClick="window.close()"></td>
-				<td align="right"><oscar:help keywords="document" key="app.top1"/> | <a
-					href="javascript:popupStart(300,400,'About.jsp')"><bean:message
-					key="global.about" /></a> | <a
-					href="javascript:popupStart(300,400,'License.jsp')"><bean:message
-					key="global.license" /></a></td>
+			<td>
+				<h2>Search All Inboxes</h2>
+				</td>
+		<td style="text-align: right;"><input type="button"
+		            value=" <bean:message key="global.btnClose"/> "
+		            onClick="window.close()"></td>
+
+		<td>
 			</tr>
 		</table>
 		</td>
 	</tr>
 	<tr>
-		<td valign="middle">
-		<center>
-		<table border="0" cellpadding="5" cellspacing="5">
+		<td style="text-align: center; text-align: -moz-center;vertical-align: middle;height: 100%;">
+		<table style="width:400px; text-align: left;">
 			<tr>
-				<td><bean:message key="oscarMDS.search.formPatientLastName" />:
+				<td><label for="lname"><bean:message key="oscarMDS.search.formPatientLastName" />:</label>
 				</td>
-				<td><input type="text" id="lname" name="lname" size="20"></td>
+				<td><input type="text" id="lname" name="lname"></td>
 			</tr>
 			<tr>
-				<td><bean:message key="oscarMDS.search.formPatientFirstName" />:
+				<td><label for="fname"></label><bean:message key="oscarMDS.search.formPatientFirstName" />:</label>
 				</td>
-				<td><input type="text" id="fname" name="fname" size="20"></td>
+				<td><input type="text" id="fname" name="fname" ></td>
 			</tr>
 			<tr>
-				<td><bean:message key="oscarMDS.search.formPatientHealthNumber" />:
+				<td><label for="hnum"><bean:message key="oscarMDS.search.formPatientHealthNumber" />:</label>
 				</td>
-				<td><input type="text" id="hnum" name="hnum" size="15"></td>
-			</tr>
-			
-			<tr>
-				<td>Start Date:(yyyy-mm-dd)
-				</td>
-				<td><input type="text" id="startDate" name="startDate" size="15" id="startDate"></td>
-			</tr>
-			<tr>
-				<td>End Date:(yyyy-mm-dd)
-				</td>
-				<td><input type="text" id="endDate" name="endDate" size="15" id="endDate"></td>
+				<td><input type="text" id="hnum" name="hnum"></td>
 			</tr>
 			
+			<tr>
+				<td><label for="startDate">Start Date:</label>
+				</td>
+				<td><input type="date" id="startDate" name="startDate" ></td>
+			</tr>
+			<tr>
+				<td><label for="endDate">End Date:</label>
+				</td>
+				<td><input type="date" id="endDate" name="endDate" ></td>
+			</tr>
+			
 			
 			
 			<tr>
-				<td valign="top"><bean:message
+				<td><bean:message
 					key="oscarMDS.search.formPhysician" />:</td>
-				<td><input type="radio" name="searchProviderAll" value="-1" ondblclick="this.checked = false;">&nbsp;<bean:message key="oscarMDS.search.formPhysicianAll" />
-					<input type="radio" name="searchProviderAll" value="0" ondblclick="this.checked = false;">&nbsp;<bean:message key="oscarMDS.search.formPhysicianUnclaimed" />
+				<td><input type="radio" name="searchProviderAll" id="searchProviderAll-physician" value="-1" ondblclick="this.checked = false;">
+					<label for="searchProviderAll-physician"><bean:message key="oscarMDS.search.formPhysicianAll" /></label>
+					<input type="radio" name="searchProviderAll" id="searchProviderAll-unclaimed" value="0" ondblclick="this.checked = false;">
+					<label for="searchProviderAll-unclaimed"><bean:message key="oscarMDS.search.formPhysicianUnclaimed" /></label>
 					<input type="hidden" name="providerNo" value="<%= request.getParameter("providerNo") %>">
 				</td>
 			</tr>
@@ -185,29 +189,37 @@ $(function() {
 			</tr>
 			<tr>
 				<td colspan="2">
-				<center><bean:message
-					key="oscarMDS.search.formReportStatus" />: <input type="radio"
-					name="status" value=""><bean:message
-					key="oscarMDS.search.formReportStatusAll" /> <input type="radio"
-					name="status" value="N" checked><bean:message
-					key="oscarMDS.search.formReportStatusNew" /> <input type="radio"
-					name="status" value="A"><bean:message
-					key="oscarMDS.search.formReportStatusAcknowledged" /> <input
-					type="radio" name="status" value="F">Filed</center>
+				<label><bean:message
+					key="oscarMDS.search.formReportStatus" />: </label>
+					<input type="radio"
+					name="status" id="status-all" value="">
+					<label for="status-all"><bean:message
+							key="oscarMDS.search.formReportStatusAll" /></label>
+					<input type="radio"
+					name="status" id="status-new" value="N" checked>
+						<label for="status-new"><bean:message
+								key="oscarMDS.search.formReportStatusNew" /></label>
+					<input type="radio"
+					name="status" id="status-ack" value="A">
+							<label for="status-ack"><bean:message
+									key="oscarMDS.search.formReportStatusAcknowledged" /></label>
+					<input
+					type="radio" name="status" id="status-filed" value="F">
+					<label for="status-filed">Filed</label>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2">
-				<center><input type="submit"
+				<td colspan="2" style="text-align: right;">
+				<input type="submit"
 					value=" <bean:message key="oscarMDS.search.btnSearch"/> ">
-				</center>
+
 				</td>
 			</tr>
 		</table>
-		</center>
 		</td>
 	</tr>
 </table>
 </form>
+</div>
 </body>
 </html>

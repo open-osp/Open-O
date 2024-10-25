@@ -132,7 +132,7 @@ String annotation_tableid = editDocumentNo;
 Long now = new Date().getTime();
 String annotation_attrib = "anno"+now;
 
-CtlDocClassDao docClassDao = (CtlDocClassDao)SpringUtils.getBean("ctlDocClassDao");
+CtlDocClassDao docClassDao = (CtlDocClassDao)SpringUtils.getBean(CtlDocClassDao.classs);
 List<String> reportClasses = docClassDao.findUniqueReportClasses();
 ArrayList<String> subClasses = new ArrayList<String>();
 ArrayList<String> consultA = new ArrayList<String>();

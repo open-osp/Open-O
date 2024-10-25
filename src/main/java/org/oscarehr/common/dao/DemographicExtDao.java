@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,8 +21,9 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
@@ -33,294 +35,51 @@ import org.oscarehr.common.model.DemographicExt;
 import org.oscarehr.common.model.enumerator.DemographicExtKey;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class DemographicExtDao extends AbstractDao<DemographicExt>{
+public interface DemographicExtDao extends AbstractDao<DemographicExt> {
 
-	public DemographicExtDao() {
-		super(DemographicExt.class);
-	}
+	public DemographicExt getDemographicExt(Integer id);
 
- 	public DemographicExt getDemographicExt(Integer id) {
- 		return find(id);
- 	}
+	public List<DemographicExt> getDemographicExtByDemographicNo(Integer demographicNo);
 
-     public List<DemographicExt> getDemographicExtByDemographicNo(Integer demographicNo) {
+	public DemographicExt getDemographicExt(Integer demographicNo, DemographicExtKey demographicExtKey);
 
- 		if (demographicNo == null || demographicNo.intValue() <= 0) {
- 			throw new IllegalArgumentException();
- 		}
+	public DemographicExt getDemographicExt(Integer demographicNo, String key);
 
- 		Query query = entityManager.createQuery("SELECT d from DemographicExt d where d.demographicNo=? order by d.dateCreated");
- 		query.setParameter(1, demographicNo);
+	public List<DemographicExt> getDemographicExtByKeyAndValue(DemographicExtKey demographicExtKey, String value);
 
- 	    @SuppressWarnings("unchecked")
- 		List<DemographicExt> results = query.getResultList();
+	public List<DemographicExt> getDemographicExtByKeyAndValue(String key, String value);
 
- 		return results;
- 	}
+	public DemographicExt getLatestDemographicExt(Integer demographicNo, String key);
 
-	public DemographicExt getDemographicExt(Integer demographicNo, DemographicExtKey demographicExtKey) {
-		return getDemographicExt(demographicNo, demographicExtKey.getKey());
-	}
+	public void updateDemographicExt(DemographicExt de);
 
-	/**
-	 * @Deprecated: use alternate method with DemographicExtKey parameter
-	 */
-	 @Deprecated
- 	public DemographicExt getDemographicExt(Integer demographicNo, String key) {
+	public void saveDemographicExt(Integer demographicNo, String key, String value);
 
- 		if (demographicNo == null || demographicNo.intValue() <= 0) {
- 			throw new IllegalArgumentException();
- 		}
+	public void removeDemographicExt(Integer id);
 
- 		if (key == null || key.length() <= 0) {
- 			throw new IllegalArgumentException();
- 		}
+	public void removeDemographicExt(Integer demographicNo, String key);
 
- 		Query query = entityManager.createQuery("SELECT d from DemographicExt d where d.demographicNo=? and d.key = ? order by d.dateCreated DESC");
- 		query.setParameter(1, demographicNo);
- 		query.setParameter(2, key);
+	public Map<String, String> getAllValuesForDemo(Integer demo);
 
- 	    @SuppressWarnings("unchecked")
- 		List<DemographicExt> results = query.getResultList();
+	public void addKey(String providerNo, Integer demo, String key, String value);
 
- 	    if (results.isEmpty()) return null;
- 		DemographicExt result = results.get(0);
+	public void addKey(String providerNo, Integer demo, String key, String newValue, String oldValue);
 
- 		return result;
- 	}
+	public List<String[]> getListOfValuesForDemo(Integer demo);
 
-	public List<DemographicExt> getDemographicExtByKeyAndValue(DemographicExtKey demographicExtKey,String value) {
-		return getDemographicExtByKeyAndValue(demographicExtKey.getKey(), value);
-	}
+	public String getValueForDemoKey(Integer demo, String key);
 
-	/**
-	 * @Deprecated: use alternate method with DemographicExtKey parameter
-	 */
-	 @Deprecated
- 	public List<DemographicExt> getDemographicExtByKeyAndValue(String key,String value) {
+	public List<Integer> findDemographicIdsByKeyVal(DemographicExtKey demographicExtKey, String val);
 
- 		Query query = entityManager.createQuery("SELECT d from DemographicExt d where d.key = ? and d.value=? order by d.dateCreated DESC");
- 		query.setParameter(1, key);
- 		query.setParameter(2, value);
- 		return query.getResultList();
- 	}
- 	
- 	
- 	public DemographicExt getLatestDemographicExt(Integer demographicNo, String key) {
-
- 		if (demographicNo == null || demographicNo.intValue() <= 0) {
- 			throw new IllegalArgumentException();
- 		}
-
- 		if (key == null || key.length() <= 0) {
- 			throw new IllegalArgumentException();
- 		}
-
- 		Query query = entityManager.createQuery("SELECT d from DemographicExt d where d.demographicNo=? and d.key = ? order by d.dateCreated DESC, d.id DESC");
- 		query.setParameter(1, demographicNo);
- 		query.setParameter(2, key);
-
- 	    @SuppressWarnings("unchecked")
- 		List<DemographicExt> results = query.getResultList();
-
-  		if (results.isEmpty()) return null;
- 		DemographicExt result = results.get(0);
-
- 		return result;
- 	}
-
- 	public void updateDemographicExt(DemographicExt de) {
-
- 		if (de == null) {
- 			throw new IllegalArgumentException();
- 		}
-
- 		merge(de);
- 	}
-
- 	public void saveDemographicExt(Integer demographicNo, String key, String value) {
-
- 		if (demographicNo == null || demographicNo.intValue() <= 0) {
- 			throw new IllegalArgumentException();
- 		}
-
- 		if (key == null || key.length() <= 0) {
- 			throw new IllegalArgumentException();
- 		}
-
- 		if (value == null) {
- 			return;
- 		}
-
- 		DemographicExt existingDe = this.getDemographicExt(demographicNo, key);
-
- 		if (existingDe != null) {
- 			existingDe.setDateCreated(new Date());
- 			existingDe.setValue(value);
- 			merge(existingDe);
- 		}
- 		else {
- 			DemographicExt de = new DemographicExt();
- 			de.setDateCreated(new Date());
- 			de.setDemographicNo(demographicNo);
- 			de.setHidden(false);
- 			de.setKey(key);
- 			de.setValue(value);
- 			persist(de);
- 		}
-
- 	}
-
- 	public void removeDemographicExt(Integer id) {
- 		if (id == null || id.intValue() <= 0) {
- 			throw new IllegalArgumentException();
- 		}
-
- 		remove(id);
- 	}
-
- 	public void removeDemographicExt(Integer demographicNo, String key) {
-
- 		if (demographicNo == null || demographicNo.intValue() <= 0) {
- 			throw new IllegalArgumentException();
- 		}
-
- 		if (key == null || key.length() <= 0) {
- 			throw new IllegalArgumentException();
- 		}
-
- 		DemographicExt tmp = getDemographicExt(demographicNo, key);
- 		if(tmp != null) {
- 			remove(tmp.getId());
- 		}
- 	}
-
-    public Map<String,String> getAllValuesForDemo(Integer demo){
-    	Map<String,String> retval =  new HashMap<String,String>();
-    	Query query = entityManager.createQuery("SELECT d from DemographicExt d where d.demographicNo=? order by d.dateCreated");
- 		query.setParameter(1, demo);
-
- 		@SuppressWarnings("unchecked")
-        List<DemographicExt> demographicExts = query.getResultList();
- 		for(DemographicExt demographicExt:demographicExts) {
-			retval.put(demographicExt.getKey(), demographicExt.getValue());
-			retval.put(demographicExt.getKey() + "_id", demographicExt.getId().toString());
- 		}
-
-        return retval;
-
-     }
-
-    /**
-     * This Method is used to add a key value pair for a patient
-     * @param providerNo providers Number entering the key value pair
-     * @param demo Demographic number of the patient that the  key/value  pair is for
-     * @param value The value for this key
-     */
-    public void addKey(String providerNo, Integer demo,String key, String value){
-    	DemographicExt demographicExt = new DemographicExt();
-    	demographicExt.setProviderNo(providerNo);
-    	demographicExt.setDemographicNo(demo);
-    	demographicExt.setKey(key);
-    	demographicExt.setValue(value);
-    	demographicExt.setDateCreated(new java.util.Date());
-    	persist(demographicExt);
-    }
-
-
-    public void addKey(String providerNo, Integer demo,String key, String newValue,String oldValue){
-       if ( oldValue == null ){
-    	   oldValue = "";
-       }
-       if (newValue != null && !oldValue.equalsIgnoreCase(newValue)){
-			DemographicExt demographicExt = new DemographicExt();
-			demographicExt.setProviderNo(providerNo);
-			demographicExt.setDemographicNo(demo);
-			demographicExt.setKey(key);
-			demographicExt.setValue(newValue);
-			demographicExt.setDateCreated(new java.util.Date());
-			persist(demographicExt);
-
-       }
-    }
-
-    List<String[]> hashtable2ArrayList(Map<String,String> h){
-        Iterator<String> e= h.keySet().iterator();
-        List<String[]> arr = new ArrayList<String[]>();
-        while(e.hasNext()){
-           String key = e.next();
-           String val = h.get(key);
-           String[] sArr = new String[] {key,val};
-           arr.add(sArr);
-        }
-
-        return  arr;
-     }
-
-     public List<String[]> getListOfValuesForDemo(Integer demo){
-        return hashtable2ArrayList(getAllValuesForDemo(demo));
-     }
-
-     public String getValueForDemoKey(Integer demo, String key){
-    	 DemographicExt ext = this.getDemographicExt(demo, key);
-    	 if(ext != null) {
-    		 return ext.getValue();
-    	 }
-    	 return null;
-     }
-
-	public List<Integer> findDemographicIdsByKeyVal(DemographicExtKey demographicExtKey, String val) {
-		return findDemographicIdsByKeyVal(demographicExtKey.getKey(), val);
-	}
-
-	/**
-	 * @Deprecated: use alternate method with DemographicExtKey parameter
-	 * @param key
-	 * @param val
-	 * @return
-	 */
-	@Deprecated
-	public List<Integer> findDemographicIdsByKeyVal(String key, String val) {
-	 		Query query = entityManager.createQuery("SELECT distinct d.demographicNo from DemographicExt d where d.key=? and d.value=?");
-	 		query.setParameter(1, key);
-	 		query.setParameter(2, val);
-
-	 		return query.getResultList();
-	}
+	public List<Integer> findDemographicIdsByKeyVal(String key, String val);
 
 	public List<DemographicExt> getMultipleDemographicExtKeyForDemographicNumbersByProviderNumber(
 			final DemographicExtKey demographicExtKey,
 			final Collection<Integer> demographicNumbers,
-			final String midwifeNumber
-	) {
-		String sql = "select x from DemographicExt x where x.demographicNo IN (?1) "
-				+ "and x.key = ?2 "
-				+ "and x.value = ?3";
-		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, demographicNumbers);
-		query.setParameter(2, demographicExtKey.getKey());
-		query.setParameter(3, midwifeNumber);
-
-		return query.getResultList();
-	}
-
+			final String midwifeNumber);
 
 	public List<Integer> getDemographicNumbersByDemographicExtKeyAndProviderNumberAndDemographicLastNameRegex(
 			final DemographicExtKey key,
 			final String providerNumber,
-			final String lastNameRegex
-	) {
-		String sql = "select d.demographic_no from demographic d, demographicExt e "
-				+ "where e.key_val = ? "
-				+ "and e.value = ? "
-				+ "and d.demographic_no = e.demographic_no "
-				+ "and d.last_name REGEXP ?";
-		Query query = entityManager.createNativeQuery(sql);
-		query.setParameter(1, key.getKey());
-		query.setParameter(2, providerNumber);
-		query.setParameter(3, lastNameRegex);
-
-		return query.getResultList();
-	}
+			final String lastNameRegex);
 }

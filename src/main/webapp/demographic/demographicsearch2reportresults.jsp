@@ -67,7 +67,7 @@
 
 <%
 List<Demographic> demoList = null;  
-DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 
 String[] statusArray = { "IN","DE","IC","ID","MO","FI" };
 List<String> statusList = Arrays.asList(statusArray);

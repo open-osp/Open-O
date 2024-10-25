@@ -71,6 +71,10 @@ public class RptDemographicQueryBuilder {
 		MiscUtils.getLogger().debug("in buildQuery");
 
 		String[] select = frm.getSelect();
+		if (select == null || select.length == 0) {
+			MiscUtils.getLogger().debug("No columns selected. Returning empty result.");
+        	return new ArrayList<>();
+		}
 		stringBuffer = new StringBuilder("select ");
 
 		String ageStyle = frm.getAgeStyle();

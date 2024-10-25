@@ -23,39 +23,14 @@
 
 package org.oscarehr.casemgmt.web;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.quatro.model.security.Secrole;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
+import net.sf.json.processors.JsDateJsonBeanProcessor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.logging.log4j.Logger;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.*;
 import org.oscarehr.PMmodule.dao.ProgramProviderDAO;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.PMmodule.model.Program;
@@ -63,34 +38,13 @@ import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.PMmodule.service.AdmissionManager;
 import org.oscarehr.PMmodule.service.ProgramManager;
 import org.oscarehr.billing.CA.dao.GstControlDao;
-import org.oscarehr.casemgmt.dao.CaseManagementIssueDAO;
-import org.oscarehr.casemgmt.dao.CaseManagementNoteDAO;
-import org.oscarehr.casemgmt.dao.CaseManagementNoteExtDAO;
-import org.oscarehr.casemgmt.dao.CaseManagementNoteLinkDAO;
-import org.oscarehr.casemgmt.dao.IssueDAO;
-import org.oscarehr.casemgmt.model.CaseManagementCPP;
-import org.oscarehr.casemgmt.model.CaseManagementIssue;
-import org.oscarehr.casemgmt.model.CaseManagementNote;
-import org.oscarehr.casemgmt.model.CaseManagementNoteExt;
-import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
-import org.oscarehr.casemgmt.model.ClientImage;
-import org.oscarehr.casemgmt.model.Issue;
+import org.oscarehr.casemgmt.dao.*;
+import org.oscarehr.casemgmt.model.*;
 import org.oscarehr.casemgmt.service.CaseManagementPrint;
 import org.oscarehr.casemgmt.web.CaseManagementViewAction.IssueDisplay;
 import org.oscarehr.casemgmt.web.formbeans.CaseManagementEntryFormBean;
-import org.oscarehr.common.dao.BillingServiceDao;
-import org.oscarehr.common.dao.CasemgmtNoteLockDao;
-import org.oscarehr.common.dao.DemographicDao;
-import org.oscarehr.common.dao.OscarAppointmentDao;
-import org.oscarehr.common.dao.ProviderDefaultProgramDao;
-import org.oscarehr.common.model.Appointment;
-import org.oscarehr.common.model.CaseManagementTmpSave;
-import org.oscarehr.common.model.CasemgmtNoteLock;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.PartialDate;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.ProviderDefaultProgram;
-import org.oscarehr.common.model.Tickler;
+import org.oscarehr.common.dao.*;
+import org.oscarehr.common.model.*;
 import org.oscarehr.eyeform.dao.EyeFormDao;
 import org.oscarehr.eyeform.dao.EyeformFollowUpDao;
 import org.oscarehr.eyeform.dao.EyeformTestBookDao;
@@ -103,25 +57,9 @@ import org.oscarehr.eyeform.web.FollowUpAction;
 import org.oscarehr.eyeform.web.ProcedureBookAction;
 import org.oscarehr.eyeform.web.TestBookAction;
 import org.oscarehr.managers.TicklerManager;
-import org.oscarehr.util.EncounterUtil;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SessionConstants;
-import org.oscarehr.util.SpringUtils;
-import org.oscarehr.util.WebUtils;
+import org.oscarehr.util.*;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.WebApplicationContext;
-
-import com.quatro.model.security.Secrole;
-import java.util.GregorianCalendar;
-
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.processors.JsDateJsonBeanProcessor;
-import org.oscarehr.common.dao.ProviderDataDao;
-import org.oscarehr.common.dao.ResidentOscarMsgDao;
-import org.oscarehr.common.model.ProviderData;
-import org.oscarehr.common.model.ResidentOscarMsg;
 import oscar.OscarProperties;
 import oscar.appt.ApptStatusData;
 import oscar.log.LogAction;
@@ -132,6 +70,19 @@ import oscar.oscarEncounter.pageUtil.EctSessionBean;
 import oscar.oscarSurveillance.SurveillanceMaster;
 import oscar.util.UtilDateUtilities;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 /*
  * Updated by Eugene Petruhin on 12 and 13 jan 2009 while fixing #2482832 & #2494061
  * Updated by Eugene Petruhin on 21 jan 2009 while fixing missing "New Note" link
@@ -140,16 +91,20 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 	private static Logger logger = MiscUtils.getLogger();
 
-	private CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO) SpringUtils.getBean("caseManagementNoteDAO");
-	private CaseManagementIssueDAO caseManagementIssueDao = (CaseManagementIssueDAO) SpringUtils.getBean("caseManagementIssueDAO");
-	private CaseManagementNoteExtDAO caseManagementNoteExtDao = (CaseManagementNoteExtDAO) SpringUtils.getBean("CaseManagementNoteExtDAO");
-	private IssueDAO issueDao = (IssueDAO) SpringUtils.getBean("IssueDAO");
-	//private AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
+	private CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
+	private CaseManagementIssueDAO caseManagementIssueDao = (CaseManagementIssueDAO) SpringUtils.getBean(CaseManagementIssueDAO.class);
+	private CaseManagementNoteExtDAO caseManagementNoteExtDao = (CaseManagementNoteExtDAO) SpringUtils.getBean(CaseManagementNoteExtDAO.class);
+	private IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
 	private CasemgmtNoteLockDao casemgmtNoteLockDao = SpringUtils.getBean(CasemgmtNoteLockDao.class);
-	//private NoteService noteService = SpringUtils.getBean(NoteService.class);
 	private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		if(loggedInInfo == null) {
+			String message = "Illegal operation! Empty user session. LoggedInInfo " + loggedInInfo + " request " + request.getQueryString();
+			logger.error(message);
+			return null;
+		}
 		return edit(mapping, form, request, response);
 	}
 
@@ -709,7 +664,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				Date now = new Date();
 				ResourceBundle props = ResourceBundle.getBundle("oscarResources", Locale.ENGLISH);
 
-				ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+				ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 				String providerName = providerDao.getProviderName(providerNo);
 
 				String signature = "[" + props.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigned") + " " + dt.format(now) + " " + props.getString("oscarEncounter.class.EctSaveEncounterAction.msgSigBy") + " " + providerName + "]";
@@ -717,7 +672,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			}
 
 			if (request.getParameter("signAndExit") != null && request.getParameter("signAndExit").equalsIgnoreCase("true")) {
-				OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean("oscarAppointmentDao");
+				OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 				try {
 					Appointment appointment = appointmentDao.find(Integer.parseInt(appointmentNo));
 					if (appointment != null) {
@@ -735,8 +690,8 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		}
 
 		// Determines what program & role to assign the note to
-		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
-		ProviderDefaultProgramDao defaultProgramDao = (ProviderDefaultProgramDao) SpringUtils.getBean("providerDefaultProgramDao");
+		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
+		ProviderDefaultProgramDao defaultProgramDao = (ProviderDefaultProgramDao) SpringUtils.getBean(ProviderDefaultProgramDao.class);
 		boolean programSet = false;
 
 		List<ProviderDefaultProgram> programs = defaultProgramDao.getProgramByProviderNo(providerNo);
@@ -883,8 +838,8 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 		WebApplicationContext ctx = this.getSpringContext();
 
-		ProgramManager programManager = (ProgramManager) ctx.getBean("programManager");
-		AdmissionManager admissionManager = (AdmissionManager) ctx.getBean("admissionManager");
+		ProgramManager programManager = (ProgramManager) ctx.getBean(ProgramManager.class);
+		AdmissionManager admissionManager = (AdmissionManager) ctx.getBean(AdmissionManager.class);
 
 		String role = null;
 		String team = null;
@@ -1748,8 +1703,8 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		note.setProgram_no(programId);
 
 		WebApplicationContext ctx = this.getSpringContext();
-		ProgramManager programManager = (ProgramManager) ctx.getBean("programManager");
-		AdmissionManager admissionManager = (AdmissionManager) ctx.getBean("admissionManager");
+		ProgramManager programManager = (ProgramManager) ctx.getBean(ProgramManager.class);
+		AdmissionManager admissionManager = (AdmissionManager) ctx.getBean(AdmissionManager.class);
 
 		String role = null;
 		try {
@@ -1867,16 +1822,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		LogAction.addLog((String) session.getAttribute("user"), logAction, LogConst.CON_CME_NOTE, String.valueOf(note.getId()), request.getRemoteAddr(), demo, note.getAuditString());
 
 		return mapping.findForward("issueList_ajax");
-		/*
-		 * CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean) form;
-		 *
-		 * String oldId = cform.getCaseNote().getId() == null ? request.getParameter("newNoteIdx") : String.valueOf(cform.getCaseNote().getId()); long newId = noteSave(cform, request);
-		 *
-		 * if( newId > -1 ) { log.debug("OLD ID " + oldId + " NEW ID " + String.valueOf(newId)); cform.setMethod("view"); session.setAttribute("newNote", false); session.setAttribute("caseManagementEntryForm", cform);
-		 * request.setAttribute("caseManagementEntryForm", cform); request.setAttribute("ajaxsave", newId); request.setAttribute("origNoteId", oldId); return mapping.findForward("issueList_ajax"); }
-		 *
-		 * return null;
-		 */
+
 	}
 
 	private void releaseNoteLock(String providerNo, Integer demographicNo, Long noteId) {
@@ -2161,52 +2107,44 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		}
 
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-
 		String programId = (String) session.getAttribute("case_program_id");
-		CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean) form;
-
-		String demono = request.getParameter("amp;demographicNo");
-		if (demono == null) demono = request.getParameter("demographicNo");
-
-		// get current providerNo
-		// String providerNo = request.getParameter("amp;providerNo");
+//		CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean) form;
 		String providerNo = loggedInInfo.getLoggedInProviderNo();
 
 		// get the issue list have search string
 		String search = request.getParameter("issueSearch");
+		if(search == null || search.isEmpty()) {
+			search = request.getParameter("term");
+		}
 
-		List searchResults;
-		searchResults = caseManagementMgr.searchIssues(providerNo, programId, search);
+		List<Issue> searchResults = caseManagementMgr.searchIssues(providerNo, programId, search);
 
 		// Don't remove issues which we already have. But don't insert duplicate issues when save the issues.
-		List existingIssues = new ArrayList<Issue>();
-		List<Issue> filteredSearchResults;
+//		List<CaseManagementIssue> existingIssues = new ArrayList<>();
+//		List<Issue> filteredSearchResults;
+//
+//		if (request.getParameter("amp;all") != null) {
+//			filteredSearchResults = new ArrayList<>(searchResults);
+//		} else {
+//			filteredSearchResults = new ArrayList<>();
+//			Map<Long, CaseManagementIssue> existingIssuesMap = convertIssueListToMap(existingIssues);
+//			for (Issue issue : searchResults) {
+//				if (existingIssuesMap.get(issue.getId()) == null) {
+//					filteredSearchResults.add(issue);
+//				}
+//			}
+//
+//		}
 
-		if (request.getParameter("amp;all") != null) {
-			filteredSearchResults = new ArrayList<Issue>(searchResults);
-		} else {
-			filteredSearchResults = new ArrayList<Issue>();
-			Map existingIssuesMap = convertIssueListToMap(existingIssues);
-			for (Iterator iter = searchResults.iterator(); iter.hasNext();) {
-				Issue issue = (Issue) iter.next();
-				if (existingIssuesMap.get(issue.getId()) == null) {
-					filteredSearchResults.add(issue);
-				}
-			}
-
-		}
-
-		CheckIssueBoxBean[] issueList = new CheckIssueBoxBean[filteredSearchResults.size()];
-		for (int i = 0; i < filteredSearchResults.size(); i++) {
-			issueList[i] = new CheckIssueBoxBean();
-			issueList[i].setIssue(filteredSearchResults.get(i));
-
-		}
-		cform.setNewIssueCheckList(issueList);
-
-		request.setAttribute("issueList", filteredSearchResults);
-
-		return mapping.findForward("issueAutoCompletion");
+//		CheckIssueBoxBean[] issueList = new CheckIssueBoxBean[filteredSearchResults.size()];
+//		for (int i = 0; i < filteredSearchResults.size(); i++) {
+//			issueList[i] = new CheckIssueBoxBean();
+//			issueList[i].setIssue(filteredSearchResults.get(i));
+//		}
+//
+//		cform.setNewIssueCheckList(issueList);
+		super.jsonResponse(response,JsonUtil.pojoCollectionToJson(searchResults));
+		return null;
 	}
 
 	public ActionForward issueSearch(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
@@ -2939,7 +2877,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 	public ActionForward runMacro(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean) form;
-		MacroDao macroDao = (MacroDao) SpringUtils.getBean("macroDao");
+		MacroDao macroDao = (MacroDao) SpringUtils.getBean(MacroDao.class);
 		Macro macro = macroDao.find(Integer.parseInt(request.getParameter("macro.id")));
 		logger.debug("loaded macro " + macro.getLabel());
 		/*
@@ -3020,11 +2958,11 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 			// billing
 			if (macro.getBillingCodes() != null && macro.getBillingCodes().length() > 0) {
-				GstControlDao gstControlDao = (GstControlDao) SpringUtils.getBean("gstControlDao");
-				BillingServiceDao billingServiceDao = (BillingServiceDao) SpringUtils.getBean("billingServiceDao");
-				DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+				GstControlDao gstControlDao = (GstControlDao) SpringUtils.getBean(GstControlDao.class);
+				BillingServiceDao billingServiceDao = (BillingServiceDao) SpringUtils.getBean(BillingServiceDao.class);
+				DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 				Provider provider = loggedInInfo.getLoggedInProvider();
-				OscarAppointmentDao apptDao = (OscarAppointmentDao) SpringUtils.getBean("oscarAppointmentDao");
+				OscarAppointmentDao apptDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 
 				Appointment appt = null;
 				if (cform.getAppointmentNo() != null && cform.getAppointmentNo().length() > 0 && !cform.getAppointmentDate().equals("0")) {
@@ -3455,7 +3393,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		link.setTableId(Long.parseLong(ticklerNo));
 		link.setTableName(CaseManagementNoteLink.TICKLER);
 
-		CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean("CaseManagementNoteLinkDAO");
+		CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean(CaseManagementNoteLinkDAO.class);
 		caseManagementNoteLinkDao.save(link);
 
 		Issue issue = this.issueDao.findIssueByTypeAndCode("system", "TicklerNote");
@@ -3490,7 +3428,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 	public ActionForward ticklerGetNote(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String ticklerNo = request.getParameter("ticklerNo");
 
-		CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean("CaseManagementNoteLinkDAO");
+		CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean(CaseManagementNoteLinkDAO.class);
 		CaseManagementNoteLink link = caseManagementNoteLinkDao.getLastLinkByTableId(CaseManagementNoteLink.TICKLER, Long.valueOf(ticklerNo));
 		JSONObject json = JSONObject.fromObject("{}");
 
@@ -3519,8 +3457,8 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 	public static boolean determineNoteRole(CaseManagementNote note, String providerNo, String demographicNo) {
 		// Determines what program & role to assign the note to
-		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
-		ProviderDefaultProgramDao defaultProgramDao = (ProviderDefaultProgramDao) SpringUtils.getBean("providerDefaultProgramDao");
+		ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
+		ProviderDefaultProgramDao defaultProgramDao = (ProviderDefaultProgramDao) SpringUtils.getBean(ProviderDefaultProgramDao.class);
 		boolean programSet = false;
 
 		if (note.getProgram_no() != null && note.getProgram_no().length() > 0 && !"null".equals(note.getProgram_no())) {

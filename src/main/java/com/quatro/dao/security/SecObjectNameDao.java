@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,12 +21,13 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package com.quatro.dao.security;
 
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import com.quatro.model.security.Secobjectname;
 
@@ -33,16 +35,6 @@ import com.quatro.model.security.Secobjectname;
  *
  * @author jackson
  */
-public class SecObjectNameDao extends HibernateDaoSupport{
-    	public void saveOrUpdate(Secobjectname t) {
-
-		try {
-
-			this.getHibernateTemplate().saveOrUpdate(t);
-
-		} catch (RuntimeException re) {
-
-			throw re;
-		}
-	}
+public interface SecObjectNameDao {
+	public void saveOrUpdate(Secobjectname t);
 }

@@ -44,7 +44,7 @@ import oscar.OscarProperties;
 public class EFormAttachHRMReports {
 
 	private static EFormDocsDao eformDocsDao = SpringUtils.getBean(EFormDocsDao.class);
-	private static HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao)SpringUtils.getBean("HRMDocumentToDemographicDao");
+	private static HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao)SpringUtils.getBean(HRMDocumentToDemographicDao.class);
 	
     public final static boolean ATTACHED = true;
     public final static boolean UNATTACHED = false;

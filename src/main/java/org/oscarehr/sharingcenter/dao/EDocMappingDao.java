@@ -27,12 +27,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.sharingcenter.model.EDocMapping;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EDocMappingDao extends AbstractDao<EDocMapping> {
+public class EDocMappingDao extends AbstractDaoImpl<EDocMapping> {
 
     public EDocMappingDao() {
         super(EDocMapping.class);
@@ -56,7 +56,7 @@ public class EDocMappingDao extends AbstractDao<EDocMapping> {
     public List<EDocMapping> findByAffinityDomainId(int affinityDomain) {
         String sql = "FROM EDocMapping e where e.affinityDomain = ?";
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
+        query.setParameter(0, affinityDomain);
 
         return query.getResultList();
     }
@@ -65,9 +65,9 @@ public class EDocMappingDao extends AbstractDao<EDocMapping> {
         String sql = "FROM EDocMapping e where e.affinityDomain = ? and e.docType = ? and e.source = ?";
 
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
-        query.setParameter(2, docType);
-        query.setParameter(3, source);
+        query.setParameter(0, affinityDomain);
+        query.setParameter(1, docType);
+        query.setParameter(2, source);
 
         query.setMaxResults(1);
         EDocMapping retVal = getSingleResultOrNull(query);
@@ -78,8 +78,8 @@ public class EDocMappingDao extends AbstractDao<EDocMapping> {
         String sql = "FROM EDocMapping e where e.affinityDomain = ? and e.docType = ?";
 
         Query query = entityManager.createQuery(sql);
-        query.setParameter(1, affinityDomain);
-        query.setParameter(2, docType);
+        query.setParameter(0, affinityDomain);
+        query.setParameter(1, docType);
 
         query.setMaxResults(1);
         EDocMapping retVal = getSingleResultOrNull(query);

@@ -56,3 +56,12 @@ function isValidHin(hin, province) {
 	
 	return(mod10Check(hin));
 }
+
+/**
+ * Remove spaces and punctuation, keeping only letters and numbers.
+ **/
+function sanitizeInput(element) {
+	if (element && element.value) {
+		element.value = element.value.replace(/[^A-Za-z0-9]/g, '');
+	}
+}

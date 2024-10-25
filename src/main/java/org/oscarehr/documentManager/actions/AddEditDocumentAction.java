@@ -139,7 +139,7 @@ public class AddEditDocumentAction extends DispatchAction {
 
 		if (providerId != null) { // TODO: THIS NEEDS TO RUN THRU THE lab forwarding rules!
 			WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-			ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) ctx.getBean("providerInboxRoutingDAO");
+			ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) ctx.getBean(ProviderInboxRoutingDao.class);
 			providerInboxRoutingDao.addToProviderInbox(providerId, Integer.parseInt(doc_no), "DOC");
 		}
 		// add to queuelinkdocument
@@ -147,7 +147,7 @@ public class AddEditDocumentAction extends DispatchAction {
 
 		if (queueId != null && !queueId.equals("-1")) {
 			WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-			QueueDocumentLinkDao queueDocumentLinkDAO = (QueueDocumentLinkDao) ctx.getBean("queueDocumentLinkDAO");
+			QueueDocumentLinkDao queueDocumentLinkDAO = (QueueDocumentLinkDao) ctx.getBean(QueueDocumentLinkDao.class);
 			Integer qid = Integer.parseInt(queueId.trim());
 			Integer did = Integer.parseInt(doc_no.trim());
 			queueDocumentLinkDAO.addActiveQueueDocumentLink(qid, did);
@@ -355,7 +355,7 @@ public class AddEditDocumentAction extends DispatchAction {
 				String user_no = (String) se.getAttribute("user");
 				String prog_no = new EctProgram(se).getProgram(user_no);
 				WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(se.getServletContext());
-				CaseManagementManager cmm = (CaseManagementManager) ctx.getBean("caseManagementManager");
+				CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
 				cmn.setProviderNo("-1");// set the provider no to be -1 so the editor appear as 'System'.
 
 				Provider provider = EDocUtil.getProvider(fm.getDocCreator());
@@ -373,7 +373,7 @@ public class AddEditDocumentAction extends DispatchAction {
 				cmn.setSigning_provider_no("-1");
 				cmn.setProgram_no(prog_no);
 				
-				SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean("secRoleDao");
+				SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean(SecRoleDao.class);
 				SecRole doctorRole = secRoleDao.findByName("doctor");		
 				cmn.setReporter_caisi_role(doctorRole.getId().toString());
 								
@@ -549,7 +549,7 @@ public class AddEditDocumentAction extends DispatchAction {
 			docStor.setFileContents(fileContents);
 			docStor.setDocumentNo(documentNo);
 			docStor.setUploadDate(new Date());
-			DocumentStorageDao documentStorageDao = (DocumentStorageDao) SpringUtils.getBean("documentStorageDao");
+			DocumentStorageDao documentStorageDao = (DocumentStorageDao) SpringUtils.getBean(DocumentStorageDao.class);
 			documentStorageDao.persist(docStor);
 			ret = docStor.getId();
 		}catch(Exception e){

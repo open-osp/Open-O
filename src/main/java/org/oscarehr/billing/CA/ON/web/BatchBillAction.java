@@ -53,7 +53,7 @@ import org.oscarehr.util.SpringUtils;
  */
 public class BatchBillAction extends DispatchAction {
 
-    private BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean("billingONCHeader1Dao");
+    private BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     
 
@@ -133,7 +133,7 @@ public class BatchBillAction extends DispatchAction {
 		String clinic_view = request.getParameter("clinic_view");
 		String curUser = (String)request.getSession().getAttribute("user");		
 		String[] billingInfo = request.getParameterValues("bill");
-		BatchBillingDAO batchBillingDAO = (BatchBillingDAO) SpringUtils.getBean("batchBillingDAO");
+		BatchBillingDAO batchBillingDAO = (BatchBillingDAO) SpringUtils.getBean(BatchBillingDAO.class);
 		List<BatchBilling> batchBillingList;
 		BatchBilling batchBilling;
 		String total;
@@ -177,7 +177,7 @@ public class BatchBillAction extends DispatchAction {
         }
     	
 		String[] billingInfo = request.getParameterValues("bill");
-		BatchBillingDAO batchBillingDAO = (BatchBillingDAO) SpringUtils.getBean("batchBillingDAO");
+		BatchBillingDAO batchBillingDAO = (BatchBillingDAO) SpringUtils.getBean(BatchBillingDAO.class);
 		List<BatchBilling> batchBillingList;
 		BatchBilling batchBilling;
 		
@@ -212,7 +212,7 @@ public class BatchBillAction extends DispatchAction {
         	throw new SecurityException("missing required security object (_billing)");
         }
     	
-    		BatchBillingDAO batchBillingDAO = (BatchBillingDAO) SpringUtils.getBean("batchBillingDAO");
+    		BatchBillingDAO batchBillingDAO = (BatchBillingDAO) SpringUtils.getBean(BatchBillingDAO.class);
     		Integer demographicNo = Integer.parseInt(request.getParameter("demographic_no").trim());
     		String billingProviderNo = request.getParameter("provider").trim();
     		String creatorProviderNo = request.getParameter("creator").trim();

@@ -48,9 +48,9 @@ if(!authed) {
 <%@page import="org.oscarehr.common.model.Billingreferral" %>
 <%@page import="org.oscarehr.common.dao.BillingreferralDao" %>
 <%
-	BillingreferralDao billingReferralDao = (BillingreferralDao)SpringUtils.getBean("BillingreferralDAO");
+	BillingreferralDao billingReferralDao = (BillingreferralDao)SpringUtils.getBean(BillingreferralDAO.class);
 %>
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <title><bean:message key="admin.admin.ManageReferralDoc"/></title>

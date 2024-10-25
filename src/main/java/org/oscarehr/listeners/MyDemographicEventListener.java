@@ -33,10 +33,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MyDemographicEventListener implements ApplicationListener {
+public class MyDemographicEventListener implements ApplicationListener<ApplicationEvent> {
 
 	private Logger log = MiscUtils.getLogger();
 	
+	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
 		
 		if(event instanceof DemographicCreateEvent) {

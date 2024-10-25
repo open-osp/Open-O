@@ -88,7 +88,7 @@ String nameage = demoInfo[0] + ", " + demoInfo[1] + " " + demoInfo[2] + " " + ag
 %>
 
 
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <title>

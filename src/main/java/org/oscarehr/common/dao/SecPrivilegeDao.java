@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,33 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.SecPrivilege;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class SecPrivilegeDao extends AbstractDao<SecPrivilege>{
-
-	public SecPrivilegeDao() {
-		super(SecPrivilege.class);
-	}
-
-	public List<SecPrivilege> findAll() {
-		String sql = "SELECT s FROM SecPrivilege s order by s.id";
-
-		Query query = entityManager.createQuery(sql);
-
-		@SuppressWarnings("unchecked")
-		List<SecPrivilege> result =  query.getResultList();
-
-		return result;
-	}
+public interface SecPrivilegeDao extends AbstractDao<SecPrivilege> {
+    List<SecPrivilege> findAll();
 }

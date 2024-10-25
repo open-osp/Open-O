@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,30 +21,14 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.DemographicAccessory;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class DemographicAccessoryDao extends AbstractDao<DemographicAccessory>{
-
-	public DemographicAccessoryDao() {
-		super(DemographicAccessory.class);
-	}
-
-    public long findCount(Integer demographicNo) {
-    	String sql = "select count(x) from DemographicAccessory x where x.demographicNo=?1";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter(1,demographicNo);
-
-        Long count = (Long)query.getSingleResult();
-
-        return count;
-    }
+public interface DemographicAccessoryDao extends AbstractDao<DemographicAccessory> {
+    long findCount(Integer demographicNo);
 }

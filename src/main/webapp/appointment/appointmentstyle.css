@@ -22,11 +22,14 @@
  * Ontario, Canada
  */
 
-body {
-    font-family:"Arial";
-    font-size:17px;
+:root {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
     margin:0;
     padding:0;
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .title {
@@ -93,6 +96,13 @@ input[readonly] {
 
 .buttonBar {
     width:100%;
+}
+table.buttonBar tr td {
+    padding-top:10px;
+
+}
+table.buttonBar tr td input, table.buttonBar tr td a {
+    margin-bottom:10px;
 }
 
 .panel {

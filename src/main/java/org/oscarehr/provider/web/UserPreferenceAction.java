@@ -77,8 +77,8 @@ import oscar.oscarBilling.ca.bc.MSP.MSPReconcile;
 public class UserPreferenceAction extends DispatchAction {
 	
 	private Logger logger = MiscUtils.getLogger();
-	protected SecurityDao securityDao = (SecurityDao)SpringUtils.getBean("securityDao");
-	protected UserPropertyDAO userPropertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+	protected SecurityDao securityDao = (SecurityDao)SpringUtils.getBean(SecurityDao.class);
+	protected UserPropertyDAO userPropertyDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 	static Map<String,String> defaults = new HashMap<String,String>();	
 	protected Map<String,String> siteDefaults = new HashMap<String,String>();	
 	private boolean inited = false;
@@ -311,7 +311,7 @@ public class UserPreferenceAction extends DispatchAction {
 			options.add(new LabelValueBean("No","no"));		
 		}
 		if(key.equals("pref."+UserProperty.EFORM_FAVOURITE_GROUP)) {	
-			EFormGroupDao eFormGroupDao = (EFormGroupDao) SpringUtils.getBean("EFormGroupDao");	
+			EFormGroupDao eFormGroupDao = (EFormGroupDao) SpringUtils.getBean(EFormGroupDao.class);	
 			options.add(new LabelValueBean("None",""));
 			List<String> groups = eFormGroupDao.getGroupNames();
 			for(String group:groups) {
@@ -440,7 +440,7 @@ public class UserPreferenceAction extends DispatchAction {
     public static ArrayList<LabelValueBean> constructWorkloadManagementList() {
         ArrayList<LabelValueBean> results = new ArrayList<LabelValueBean>();
 
-        CtlBillingServiceDao ctlBillingServiceDao = (CtlBillingServiceDao)SpringUtils.getBean("ctlBillingServiceDao");
+        CtlBillingServiceDao ctlBillingServiceDao = (CtlBillingServiceDao)SpringUtils.getBean(CtlBillingServiceDao.class);
         List<Object[]> cbsList = ctlBillingServiceDao.getUniqueServiceTypes();
         for(Object[] cbs:cbsList) {
         	results.add(new LabelValueBean((String)cbs[1],(String)cbs[0]));
@@ -470,7 +470,7 @@ public class UserPreferenceAction extends DispatchAction {
     public static ArrayList<LabelValueBean> constructMyGroupList() {
         ArrayList<LabelValueBean> results = new ArrayList<LabelValueBean>();
 
-        MyGroupDao myGroupDao = (MyGroupDao)SpringUtils.getBean("myGroupDao");
+        MyGroupDao myGroupDao = (MyGroupDao)SpringUtils.getBean(MyGroupDao.class);
         List<String> cbsList = myGroupDao.getGroups();
         for(String cbs:cbsList) {
         	results.add(new LabelValueBean(cbs,cbs));
@@ -481,7 +481,7 @@ public class UserPreferenceAction extends DispatchAction {
     public static ArrayList<LabelValueBean> constructEncounterFormList() {
     	ArrayList<LabelValueBean> results = new ArrayList<LabelValueBean>();
 
-    	EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean("encounterFormDao");
+    	EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean(EncounterFormDao.class);
     	List<EncounterForm> forms = encounterFormDao.findAll();
     	Collections.sort(forms, EncounterForm.FORM_NAME_COMPARATOR);
     	for(EncounterForm form:forms) {
@@ -514,7 +514,7 @@ public class UserPreferenceAction extends DispatchAction {
     public static ArrayList<LabelValueBean> constructEformList() {
     	ArrayList<LabelValueBean> results = new ArrayList<LabelValueBean>();
 
-    	EFormDao eFormDao = (EFormDao) SpringUtils.getBean("EFormDao");
+    	EFormDao eFormDao = (EFormDao) SpringUtils.getBean(EFormDao.class);
     	List<EForm> forms = eFormDao.findAll(true);
 		Collections.sort(forms, EForm.FORM_NAME_COMPARATOR);
 		
@@ -547,7 +547,7 @@ public class UserPreferenceAction extends DispatchAction {
     public static ArrayList<LabelValueBean> constructProviderTeamList() {
     	ArrayList<LabelValueBean> results = new ArrayList<LabelValueBean>();
 
-    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
     	List<String> teams = providerDao.getUniqueTeams();
     	for(String team:teams) {
     		if(team.length()>0) {

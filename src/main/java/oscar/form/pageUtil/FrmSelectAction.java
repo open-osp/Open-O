@@ -102,7 +102,7 @@ public class FrmSelectAction extends Action {
 	}
 
 	private void addForm(String formName) {
-		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean("encounterFormDao");
+		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean(EncounterFormDao.class);
 		List<EncounterForm> encounterForms = encounterFormDao.findAll();
 
 		int maxCurrentDisplayCount = 0;
@@ -123,7 +123,7 @@ public class FrmSelectAction extends Action {
 	}
 
 	private void deleteForm(String formName) {
-		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean("encounterFormDao");
+		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean(EncounterFormDao.class);
 		List<EncounterForm> encounterForms = encounterFormDao.findAll();
 
 		// go through the forms list and set this form display to 0
@@ -144,7 +144,7 @@ public class FrmSelectAction extends Action {
 	}
 
 	private void moveUpOne(String formName) {
-		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean("encounterFormDao");
+		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean(EncounterFormDao.class);
 		List<EncounterForm> encounterForms = encounterFormDao.findAll();
 
 		int oldPosition = -1;
@@ -169,7 +169,7 @@ public class FrmSelectAction extends Action {
 	}
 
 	private void moveDown(String formName) {
-		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean("encounterFormDao");
+		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean(EncounterFormDao.class);
 		List<EncounterForm> encounterForms = encounterFormDao.findAll();
 
 		int oldPosition = -1;

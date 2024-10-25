@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,8 +20,9 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package com.quatro.dao.security;
 
@@ -31,179 +33,33 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.oscarehr.util.MiscUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.SessionFactory;
 
 import com.quatro.model.security.Secobjprivilege;
 
-public class SecobjprivilegeDao extends HibernateDaoSupport {
+public interface SecobjprivilegeDao {
 
-    private Logger logger = MiscUtils.getLogger();
+	public void save(Secobjprivilege secobjprivilege);
 
-  
-    public void save(Secobjprivilege secobjprivilege) {
-        if (secobjprivilege == null) {
-            throw new IllegalArgumentException();
-        }
-        
-        getHibernateTemplate().saveOrUpdate(secobjprivilege);
+	public void saveAll(List list);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("SecobjprivilegeDao : save: " + secobjprivilege.getRoleusergroup() + ":" + secobjprivilege.getObjectname_desc());
-        }
-        
-    }
-    public void saveAll(List list) {
-		logger.debug("saving ALL Secobjprivilege instances");
-		try {
-			for(int i =0; i< list.size(); i++){
-				Secobjprivilege obj = (Secobjprivilege)list.get(i);
-				
-				int rowcount = update(obj);
-				
-				if(rowcount <= 0){
-					save(obj);
-				}
-				
-			}
-						
-			logger.debug("save ALL successful");
-		} catch (RuntimeException re) {
-			logger.error("save ALL failed", re);
-			throw re;
-		}
-	}
-    public int update(Secobjprivilege instance) {
-		logger.debug("update Secobjprivilege instance");
-		Session session = getSession();
-		try {
-			String queryString = "update Secobjprivilege as model set model.providerNo ='" + instance.getProviderNo() + "'"
-				+ " where model.objectname_code ='" + instance.getObjectname_code() + "'"
-				+ " and model.privilege_code ='" + instance.getPrivilege_code() + "'"
-				+ " and model.roleusergroup ='" + instance.getRoleusergroup() + "'";
-			
-			Query queryObject = session.createQuery(queryString);
-			
-			return queryObject.executeUpdate();
-						
-		} catch (RuntimeException re) {
-			logger.error("Update failed", re);
-			throw re;
-		} finally {
-			this.releaseSession(session);
-		}
-	}
-    public int deleteByRoleName(String roleName) {
-		logger.debug("deleting Secobjprivilege by roleName");
-		try {
-			
-			return getHibernateTemplate().bulkUpdate("delete Secobjprivilege as model where model.roleusergroup =?", roleName);
-			
-		} catch (RuntimeException re) {
-			logger.error("delete failed", re);
-			throw re;
-		}
-	}
-    public void delete(Secobjprivilege persistentInstance) {
-		logger.debug("deleting Secobjprivilege instance");
-		try {
-			getHibernateTemplate().delete(persistentInstance);
-			logger.debug("delete successful");
-		} catch (RuntimeException re) {
-			logger.error("delete failed", re);
-			throw re;
-		}
-	}
-    public String getFunctionDesc(String function_code) {
-		try {
-			String queryString = "select description from Secobjectname obj where obj.objectname='" + function_code+"'";
-			
-			List lst = getHibernateTemplate().find(queryString);
-			if(lst.size()>0 && lst.get(0)!=null)
-				return lst.get(0).toString();
-			else
-				return "";
-		} catch (RuntimeException re) {
-			logger.error("find by property name failed", re);
-			throw re;
-		}
-	}
-	public String getAccessDesc(String accessType_code) {
-		try {
-			String queryString = "select description from Secprivilege obj where obj.privilege='" + accessType_code +"'";
-			
-			List lst = getHibernateTemplate().find(queryString);
-			if(lst.size()>0 && lst.get(0)!=null)
-				return lst.get(0).toString();
-			else
-				return "";
-		} catch (RuntimeException re) {
-			logger.error("find by property name failed", re);
-			throw re;
-		}
-	}
-    public List getFunctions(String roleName) {
-        if (roleName == null) {
-            throw new IllegalArgumentException();
-        }
-        
-        List result = findByProperty("roleusergroup", roleName);
-        if (logger.isDebugEnabled()) {
-            logger.debug("SecobjprivilegeDao : getFunctions: ");
-        }
-        return result;
-    }
-    public List findByProperty(String propertyName, Object value) {
-		logger.debug("finding Secobjprivilege instance with property: " + propertyName
-				+ ", value: " + value);
-		Session session = getSession();
-		try {
-			String queryString = "from Secobjprivilege as model where model."
-					+ propertyName + "= ? order by objectname_code";
-			Query queryObject = session.createQuery(queryString);
-			queryObject.setParameter(0, value);
-			return queryObject.list();
-		} catch (RuntimeException re) {
-			logger.error("find by property name failed", re);
-			throw re;
-		} finally {
-			this.releaseSession(session);
-		}
-	}
-    
-    public List<Secobjprivilege> getByObjectNameAndRoles(String o,List<String> roles) {    	
-		String queryString = "from Secobjprivilege obj where obj.objectname_code='" + o +"'";
-		List<Secobjprivilege> results = new ArrayList<Secobjprivilege>();
-		
-		@SuppressWarnings("unchecked")
-		List<Secobjprivilege> lst = getHibernateTemplate().find(queryString);
-		
-		for(Secobjprivilege p:lst) {
-			if(roles.contains(p.getRoleusergroup())) {
-				results.add(p);
-			}
-		}
-		return results;
-    }
-    
-    public List<Secobjprivilege> getByRoles(List<String> roles) {    	
-		String queryString = "from Secobjprivilege obj where obj.roleusergroup IN (:roles)";
-		List<Secobjprivilege> results = new ArrayList<Secobjprivilege>();
-		
-		
-		Session session = getSession();
-		try {
-			Query q = session.createQuery(queryString);
-			
-			
-			q.setParameterList("roles", roles);
+	public int update(Secobjprivilege instance);
 
-			results = q.list();
-		}finally {
-			this.releaseSession(session);
-		}
-		
-		return results;
-    }
+	public int deleteByRoleName(String roleName);
+
+	public void delete(Secobjprivilege persistentInstance);
+
+	public String getFunctionDesc(String function_code);
+
+	public String getAccessDesc(String accessType_code);
+
+	public List getFunctions(String roleName);
+
+	public List findByProperty(String propertyName, Object value);
+
+	public List<Secobjprivilege> getByObjectNameAndRoles(String o, List<String> roles);
+
+	public List<Secobjprivilege> getByRoles(List<String> roles);
 }
-
-

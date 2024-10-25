@@ -167,7 +167,7 @@ public class TDISHandler implements MessageHandler {
 		Base64 base64 = new Base64(0);
 		ArrayList<String> ret = new ArrayList<String>();
 		int monthsBetween = 0;
-		Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean("hl7TextInfoDao");
+		Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);
 		
 
 		try {
@@ -805,7 +805,7 @@ public class TDISHandler implements MessageHandler {
 		//return (getString(msg.getMSH().getSendingFacility().getNamespaceID().getValue()));
 		String locacronym = getString(msg.getMSH().getSendingFacility().getNamespaceID().getValue());
 		String location = null;
-		HL7HandlerMSHMappingDao hL7HandlerMSHMappingDao = (HL7HandlerMSHMappingDao) SpringUtils.getBean("hl7HandlerMSHMappingDao");
+		HL7HandlerMSHMappingDao hL7HandlerMSHMappingDao = (HL7HandlerMSHMappingDao) SpringUtils.getBean(HL7HandlerMSHMappingDao.class);
 		
 		try{
 			HL7HandlerMSHMapping mapping = hL7HandlerMSHMappingDao.findByFacility(locacronym);
@@ -921,7 +921,7 @@ public class TDISHandler implements MessageHandler {
 	}
 
 	public ArrayList<String> getDocNums() {
-		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 		String docNum = "";
 		ArrayList<String> nums = new ArrayList<String>();
 		int i = 0;

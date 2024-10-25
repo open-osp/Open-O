@@ -49,7 +49,7 @@
 %>
 
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="admin.providersearchresults.title" /></title>
 <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">

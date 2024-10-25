@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,84 +21,18 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.IncomingLabRules;
-import org.oscarehr.common.model.Provider;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class IncomingLabRulesDao extends AbstractDao<IncomingLabRules>{
-
-	public IncomingLabRulesDao() {
-		super(IncomingLabRules.class);
-	}
-	
-	public List<IncomingLabRules> findCurrentByProviderNoAndFrwdProvider(String providerNo, String frwdProvider) {
-		Query q = entityManager.createQuery("select i from IncomingLabRules i where i.providerNo=?1 and i.frwdProviderNo=?2 and i.archive=?3");
-		q.setParameter(1, providerNo);
-		q.setParameter(2, frwdProvider);
-		q.setParameter(3, "0");
-		
-		@SuppressWarnings("unchecked")
-		List<IncomingLabRules> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<IncomingLabRules> findByProviderNoAndFrwdProvider(String providerNo, String frwdProvider) {
-		Query q = entityManager.createQuery("select i from IncomingLabRules i where i.providerNo=?1 and i.frwdProviderNo=?2");
-		q.setParameter(1, providerNo);
-		q.setParameter(2, frwdProvider);
-
-		
-		@SuppressWarnings("unchecked")
-		List<IncomingLabRules> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<IncomingLabRules> findCurrentByProviderNo(String providerNo) {
-		Query q = entityManager.createQuery("select i from IncomingLabRules i where i.providerNo=?1 and i.archive=?2");
-		q.setParameter(1, providerNo);
-		q.setParameter(2, "0");
-		
-		@SuppressWarnings("unchecked")
-		List<IncomingLabRules> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<IncomingLabRules> findByProviderNo(String providerNo) {
-		Query q = entityManager.createQuery("select i from IncomingLabRules i where i.providerNo=?1");
-		q.setParameter(1, providerNo);
-		
-		@SuppressWarnings("unchecked")
-		List<IncomingLabRules> results = q.getResultList();
-		
-		return results;
-	}
-
-	/**
-	 * @param providerNo
-	 * @return
-	 * 		Returns a list of pairs {@link IncomingLabRules}, {@link Provider}
-	 */
-	@SuppressWarnings("unchecked")
-    public List<Object[]> findRules(String providerNo) {
-    	// assume archive represents boolean with 0 == false and 1 == true
-		Query q = entityManager.createQuery("FROM IncomingLabRules i, " + Provider.class.getSimpleName() + " p " +
-				"WHERE i.archive <> '1' " + // non-archived rules
-				"AND i.providerNo = :providerNo " +
-				"AND p.id = i.frwdProviderNo");
-		q.setParameter("providerNo", providerNo);
-		return q.getResultList();
-    }
+public interface IncomingLabRulesDao extends AbstractDao<IncomingLabRules> {
+    List<IncomingLabRules> findCurrentByProviderNoAndFrwdProvider(String providerNo, String frwdProvider);
+    List<IncomingLabRules> findByProviderNoAndFrwdProvider(String providerNo, String frwdProvider);
+    List<IncomingLabRules> findCurrentByProviderNo(String providerNo);
+    List<IncomingLabRules> findByProviderNo(String providerNo);
+    List<Object[]> findRules(String providerNo);
 }

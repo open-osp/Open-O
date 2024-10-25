@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -28,21 +31,7 @@
  */
 package org.oscarehr.common.dao;
 
-import java.io.Serializable;
-
 import org.oscarehr.common.model.OscarMsgType;
-import org.springframework.stereotype.Repository;
 
-/**
- *
- * @author rjonasz
- */
-@Repository
-public class OscarMsgTypeDao extends AbstractDao<OscarMsgType> implements Serializable {
-
-    public OscarMsgTypeDao() {
-        super(OscarMsgType.class);
-    }
-
-    
+public interface OscarMsgTypeDao extends AbstractDao<OscarMsgType> {
 }

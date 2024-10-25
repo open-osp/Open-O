@@ -48,8 +48,8 @@ import com.quatro.service.security.UserAccessManager;
 
 public final class ShelterSelectionAction extends DispatchAction {
 
-    private ProviderManager providerManager = (ProviderManager) SpringUtils.getBean("providerManager");
-    private LookupManager lookupManager = (LookupManager) SpringUtils.getBean("lookupManager");
+    private ProviderManager providerManager = (ProviderManager) SpringUtils.getBean(ProviderManager.class);
+    private LookupManager lookupManager = (LookupManager) SpringUtils.getBean(LookupManager.class);
    
     public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	
@@ -90,7 +90,7 @@ public final class ShelterSelectionAction extends DispatchAction {
              request.getSession(true).setAttribute(KeyConstants.SESSION_KEY_SHELTER, new LookupCodeValue());
          }
          // initiate security manager
-         UserAccessManager userAccessManager = (UserAccessManager) SpringUtils.getBean("userAccessManager");
+         UserAccessManager userAccessManager = (UserAccessManager) SpringUtils.getBean(UserAccessManager.class);
          
          SecurityManager secManager = userAccessManager.getUserSecurityManager(providerNo,null,lookupManager);
          request.getSession(true).setAttribute(KeyConstants.SESSION_KEY_SECURITY_MANAGER, secManager);
@@ -108,7 +108,7 @@ public final class ShelterSelectionAction extends DispatchAction {
         request.getSession(true).setAttribute(KeyConstants.SESSION_KEY_SHELTER, shelterObj);
         
         // initiate security manager
-        UserAccessManager userAccessManager = (UserAccessManager) SpringUtils.getBean("userAccessManager");
+        UserAccessManager userAccessManager = (UserAccessManager) SpringUtils.getBean(UserAccessManager.class);
          
         SecurityManager secManager = userAccessManager.getUserSecurityManager(providerNo,shelterId,lookupManager);
         request.getSession(true).setAttribute(KeyConstants.SESSION_KEY_SECURITY_MANAGER, secManager);

@@ -63,7 +63,7 @@ public final class MyOscarUtils {
 	private static ExecutorService asyncAutoLoginThreadPool=Executors.newFixedThreadPool(4, new DeamonThreadFactory("asyncAutoLoginThreadPool", Thread.MIN_PRIORITY));
 	
 	public static Demographic getDemographicByMyOscarUserName(String myOscarUserName) {
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 		Demographic demographic = demographicDao.getDemographicByMyOscarUserName(myOscarUserName);
 		return (demographic);
 	}
@@ -86,7 +86,7 @@ public final class MyOscarUtils {
 	}
 
 	public static boolean isMyOscarSendButtonEnabled(MyOscarLoggedInInfo myOscarLoggedInInfo, Integer demographicId) {
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 		Demographic demographic = demographicDao.getDemographicById(demographicId);
 
 		return (isMyOscarSendButtonEnabled(myOscarLoggedInInfo, demographic));
@@ -119,7 +119,7 @@ public final class MyOscarUtils {
 
 	public static String getMyOscarUserNameFromOscar(String providerNo)
 	{
-		PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean("propertyDao");
+		PropertyDao propertyDao = (PropertyDao) SpringUtils.getBean(PropertyDao.class);
 		List<org.oscarehr.common.model.Property> myOscarUserNameProperties=propertyDao.findByNameAndProvider("MyOscarId", providerNo); 
 		if (myOscarUserNameProperties.size()>0) return(myOscarUserNameProperties.get(0).getValue());
 		return(null);
@@ -141,7 +141,7 @@ public final class MyOscarUtils {
 	
 	public static Long getMyOscarUserIdFromOscarDemographicId(MyOscarLoggedInInfo myOscarLoggedInInfo, Integer demographicId)
 	{
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 		Demographic demographic = demographicDao.getDemographicById(demographicId);
 		return(AccountManager.getUserId(myOscarLoggedInInfo, demographic.getMyOscarUserName()));
 	}
@@ -153,7 +153,7 @@ public final class MyOscarUtils {
 		}
 		HttpSession session = loggedInInfo.getSession();
 
-		ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean("providerPreferenceDao");
+		ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
 		ProviderPreference providerPreference = providerPreferenceDao.find(loggedInInfo.getLoggedInProviderNo());
 		String myOscarUserName = null;
 		

@@ -45,7 +45,7 @@ public class CreateLabelTDISAction extends Action{
 			
 		}
 		//response.setContentType("application/json");
-		Hl7TextInfoDao hl7dao = (Hl7TextInfoDao) SpringUtils.getBean("hl7TextInfoDao");
+		Hl7TextInfoDao hl7dao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);
 
 		try {
 			

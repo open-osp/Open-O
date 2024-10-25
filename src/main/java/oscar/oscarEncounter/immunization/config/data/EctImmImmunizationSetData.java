@@ -39,7 +39,7 @@ import oscar.util.UtilXML;
 
 public class EctImmImmunizationSetData {
 
-	private ConfigImmunizationDao configImmunizationDao = (ConfigImmunizationDao)SpringUtils.getBean("configImmunizationDao");
+	private ConfigImmunizationDao configImmunizationDao = (ConfigImmunizationDao)SpringUtils.getBean(ConfigImmunizationDao.class);
 
 	public Vector createDateVec;
 	public Vector setIdVec;

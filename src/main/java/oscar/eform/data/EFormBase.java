@@ -25,12 +25,14 @@
 
 package oscar.eform.data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Properties;
-
+import org.jsoup.nodes.Document;
+import org.oscarehr.documentManager.ConvertToEdoc;
+import org.oscarehr.util.MiscUtils;
 import oscar.util.StringBuilderUtils;
 import oscar.util.UtilDateUtilities;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class EFormBase {
     protected final String imageMarker = "${oscar_image_path}";
@@ -38,6 +40,7 @@ public class EFormBase {
 	protected final String signatureMarker = "${oscar_signature_code}";
 	protected final String sourceMarker = "${source}";
 	protected final String fdidMarker = "${fdid}";
+
     protected String fdid;
     protected String fid;
     protected String formName;
@@ -52,6 +55,7 @@ public class EFormBase {
     protected boolean showLatestFormOnly=false;
     protected boolean patientIndependent=false;
     protected String roleType;
+    private Document document;
 
     protected ArrayList<String> updateFields = new ArrayList<String>();
 
@@ -84,8 +88,6 @@ public class EFormBase {
     }
 
     public void setImagePath() {
-        Properties prop = oscar.OscarProperties.getInstance();
-        String projHome = prop.getProperty("project_home");
         String output = "../eform/displayImage.do?imagefile=";
         StringBuilder html = new StringBuilder(formHtml);
         int pointer = StringBuilderUtils.indexOfIgnoreCase(html, imageMarker, 0);
@@ -128,6 +130,14 @@ public class EFormBase {
         this.roleType = roleType;
     }
     public String getFormHtml() {
+        if(this.document != null) {
+            /*
+             * This ensures that HTML edited in a DOM object
+             * is fetched as a required String object.
+             */
+            this.formHtml = document.outerHtml();
+            this.document = null;
+        }
         return formHtml;
     }
     public void setFormHtml(String formHtml) {
@@ -193,4 +203,22 @@ public class EFormBase {
     public void setPatientIndependent(boolean patientIndependent) {
         this.patientIndependent = patientIndependent;
     }
+
+    /*
+     * Parse and fetch the JSoup DOM for clean HTML and accurate editing.
+     * TODO this method should be used in all of the extended classes in place of the String.replace methods
+     */
+    protected Document getDocument() {
+        if(this.document == null && this.formHtml != null) {
+            /*
+             * use the ConvertToEdoc utilities for consistent use of the JSoup parser.
+             */
+            this.document = ConvertToEdoc.getDocument(this.formHtml);
+        }
+        if(this.document == null) {
+            MiscUtils.getLogger().error("There was a problem while parsing this eForm into a JSoup DOM. Exception needed?");
+        }
+        return document;
+    }
+
 }

@@ -156,6 +156,7 @@ function checkSelected() {
 }
 
 function submitFile(){
+	console.log("File from: DemographicLab.jsp");
    aBoxIsChecked = false;    
     if (document.reassignForm.flaggedLabs.length == undefined) {
         if (document.reassignForm.flaggedLabs.checked == true) {

@@ -39,6 +39,7 @@ public class CaseManagementNoteLink {
 	public static final Integer LABTEST2 = 9; //repesents the labPatientPhysicianInfo table
 	public static final Integer TICKLER = 10;
 	public static final Integer APPOINTMENT = 11;
+	public static final Integer EMAIL = 12;
 	
 	public static final String DISP_PRESCRIP = "Prescriptions";
 	public static final String DISP_ALLERGY = "Allergies";
@@ -49,6 +50,7 @@ public class CaseManagementNoteLink {
 	public static final String DISP_PREV = "Preventions";
 	public static final String DISP_TICKLER = "Ticklers";
 	public static final String DISP_APPOINTMENT = "Appointments";
+	public static final String DISP_EMAIL = "Email Logs";
 	
 	private Long id;
 	private Integer tableName;

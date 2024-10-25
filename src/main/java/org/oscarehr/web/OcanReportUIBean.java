@@ -48,7 +48,7 @@ import javax.xml.ws.BindingProvider;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
-import org.apache.ws.security.WSPasswordCallback;
+import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.apache.xmlbeans.XmlOptions;
 import org.oscarehr.PMmodule.dao.OcanSubmissionLogDao;
 import org.oscarehr.PMmodule.model.OcanSubmissionLog;
@@ -215,14 +215,14 @@ public class OcanReportUIBean implements CallbackHandler {
 	//static Log logger = LogFactory.getLog(OcanReportUIBean.class);
 	private static final Logger logger = MiscUtils.getLogger();
 
-	private static OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
-	private static OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao) SpringUtils.getBean("ocanStaffFormDataDao");
-	private static FacilityDao facilityDao = (FacilityDao)SpringUtils.getBean("facilityDao");
-	private static AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean("admissionDao");
+	private static OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
+	private static OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao) SpringUtils.getBean(OcanStaffFormDataDao.class);
+	private static FacilityDao facilityDao = (FacilityDao)SpringUtils.getBean(FacilityDao.class);
+	private static AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean(AdmissionDao.class);
 
-	private static OcanConnexOptionDao ocanConnexOptionDao = (OcanConnexOptionDao) SpringUtils.getBean("ocanConnexOptionDao");
+	private static OcanConnexOptionDao ocanConnexOptionDao = (OcanConnexOptionDao) SpringUtils.getBean(OcanConnexOptionDao.class);
 
-	private static OcanSubmissionLogDao logDao = (OcanSubmissionLogDao)SpringUtils.getBean("ocanSubmissionLogDao");
+	private static OcanSubmissionLogDao logDao = (OcanSubmissionLogDao)SpringUtils.getBean(OcanConnexOptionDao.class);
 
 
 	public static List<OcanStaffForm> getAllUnsubmittedOcanForms(Integer facilityId) {

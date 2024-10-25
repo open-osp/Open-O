@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -32,36 +35,11 @@ import org.oscarehr.common.model.MessageTbl;
 import org.oscarehr.common.model.MsgDemoMap;
 import org.springframework.stereotype.Repository;
 
-@Repository
-@SuppressWarnings("unchecked")
-public class MessageTblDao extends AbstractDao<MessageTbl>{
+public interface MessageTblDao extends AbstractDao<MessageTbl> {
 
-	public MessageTblDao() {
-		super(MessageTbl.class);
-	}
-	
-	public List<MessageTbl> findByMaps(List<MsgDemoMap> m) {
-		String sql = "select x from MessageTbl x where x.id in (:m)";
-    	Query query = entityManager.createQuery(sql);
-    	List<Integer> ids = new ArrayList<Integer>();
-    	for(MsgDemoMap temp:m) {
-    		ids.add(temp.getMessageID());
-    	}
-    	query.setParameter("m", ids);
-        List<MessageTbl> results = query.getResultList();
-        return results;
-	}
-	
-	public List<MessageTbl> findByProviderAndSendBy(String providerNo, Integer sendBy) {
-		Query query = createQuery("m", "m.sentByNo = :providerNo and m.sentByLocation = :sendBy");
-		query.setParameter("providerNo", providerNo);
-		query.setParameter("sendBy", sendBy);
-		return query.getResultList();
-	}
+	public List<MessageTbl> findByMaps(List<MsgDemoMap> m);
 
-	public List<MessageTbl> findByIds(List<Integer> ids) {
-		Query query = createQuery("m", "m.id in (:ids) order by m.date");
-		query.setParameter("ids", ids);
-		return query.getResultList();
-    }
+	public List<MessageTbl> findByProviderAndSendBy(String providerNo, Integer sendBy);
+
+	public List<MessageTbl> findByIds(List<Integer> ids);
 }

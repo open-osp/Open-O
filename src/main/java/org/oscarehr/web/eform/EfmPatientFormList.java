@@ -33,7 +33,7 @@ import org.oscarehr.util.SpringUtils;
 
 public final class EfmPatientFormList {
 	
-	private static DemographicDao demographicDao=(DemographicDao) SpringUtils.getBean("demographicDao");
+	private static DemographicDao demographicDao=(DemographicDao) SpringUtils.getBean(DemographicDao.class);
 	
 	private EfmPatientFormList() {
 		// not meant to instantiate this

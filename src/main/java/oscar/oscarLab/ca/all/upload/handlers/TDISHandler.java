@@ -76,7 +76,7 @@ public class TDISHandler implements MessageHandler {
 
 	// recheck the abnormal status of the last 'n' labs
 	private void updateLabStatus(int n)  {
-		Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean("hl7TextInfoDao");
+		Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);
 		 List<Hl7TextInfo> labList = hl7TextInfoDao.getAllLabsByLabNumberResultStatus();
 		 Collections.sort(labList, Collections.reverseOrder(new Comparator<Hl7TextInfo>() {
 			 public int compare(Hl7TextInfo o1, Hl7TextInfo o2) {

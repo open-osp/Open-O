@@ -29,12 +29,12 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.oscarehr.eyeform.model.EyeformProcedureBook;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class EyeformProcedureBookDao extends AbstractDao<EyeformProcedureBook> {
+public class EyeformProcedureBookDao extends AbstractDaoImpl<EyeformProcedureBook> {
 	
 	public EyeformProcedureBookDao() {
 		super(EyeformProcedureBook.class);

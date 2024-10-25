@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2013-2015. Department of Computer Science, University of Victoria. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * LeadLab
  * University of Victoria
  * Victoria, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.ws.rest.conversion;
@@ -30,85 +33,13 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.ws.rest.to.model.PrescriptionTo1;
 import org.springframework.stereotype.Component;
-
-/**
- * Converts between domain Drug object and transfer Drug objects.
- *
- * This class represents the transformation between a the SQL schema
- * and the data model that is presented to a client.
- */
-@Component
-public class PrescriptionConverter extends AbstractConverter<Prescription, PrescriptionTo1> {
-
-    private static Logger logger = MiscUtils.getLogger();
-
-    /**
-     * Converts from a transfer object to a Drug domain object.
-     *
-     * @param loggedInInfo information regarding the current logged in user.
-     * @param t            the transfer object to copy the data from
-     *
-     * @return a Prescription domain object representing this data.
-     *
-     * @throws ConversionException if conversion did not complete properly.
-     */
-    @Override
-    public Prescription getAsDomainObject(LoggedInInfo loggedInInfo, PrescriptionTo1 t) {
-
-        Prescription p = new Prescription();
-
-        try {
-
-            p.setProviderNo(t.getProviderNo().toString());
-            p.setDemographicId(t.getDemographicNo());
-            p.setDatePrescribed(t.getDatePrescribed());
-            p.setDatePrinted(t.getDatePrinted());
-            p.setTextView(t.getTextView());
-
-        } catch (RuntimeException re) {
-
-            logger.error(re.toString());
-            throw new ConversionException();
-
-        }
-
-        return p;
-
-    }
-
-    /**
-     * Converts from the Drug domain model object to a serializable Drug transfer object.
-     *
-     * @param loggedInInfo information for the logged in user (unused).
-     * @param p            the Prescription domain object to convert from.
-     *
-     * @return a serializable transfer object that represents the Drug object
-     *
-     * @throws ConversionException if the conversion fails.
-     */
-    @Override
-    public PrescriptionTo1 getAsTransferObject(LoggedInInfo loggedInInfo, Prescription p) {
-
-        PrescriptionTo1 t = new PrescriptionTo1();
-
-        try{
-        		t.setScriptId(p.getId());
-            t.setDemographicNo(p.getDemographicId());
-            t.setProviderNo(Integer.parseInt(p.getProviderNo()));
-            t.setDatePrescribed(p.getDatePrescribed());
-            t.setDatePrinted(p.getDatePrinted());
-            t.setTextView(p.getTextView());
-            t.setReprintCount(p.getReprintCount());
-
-        }catch(RuntimeException e){
-
-            logger.error(e.toString());
-            throw new ConversionException();
-
-        }
-
-        return t;
-    }
+import java.util.List;
 
 
+public interface PrescriptionConverter {
+
+    public Prescription getAsDomainObject(LoggedInInfo loggedInInfo, PrescriptionTo1 t);
+    public PrescriptionTo1 getAsTransferObject(LoggedInInfo loggedInInfo, Prescription p);
+    public List<PrescriptionTo1> getAllAsTransferObjects(LoggedInInfo loggedInInfo, List<Prescription> ds) throws ConversionException;
+    
 }

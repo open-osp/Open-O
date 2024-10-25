@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.oscarehr.common.model.Demographic;
 import oscar.form.pharmaForms.formBPMH.bean.BpmhDrug;
@@ -61,6 +62,7 @@ public class JsonUtilTest {
 		demographic.setHin("9374636728674");
 		demographic.setEffDate(new java.sql.Date(new Date().getTime()));
 		demographic.setFamilyDoctor("<rd>Who, Doctor</rd><rdohip>973637</rdohip>");
+		demographic.setFamilyPhysician("<rd>Who, Doctor</rd><rdohip>973637</rdohip>");
 		
 		bpmhDrug1 = new BpmhDrug();
 		bpmhDrug1.setGenericName("GENERIC DRUG");

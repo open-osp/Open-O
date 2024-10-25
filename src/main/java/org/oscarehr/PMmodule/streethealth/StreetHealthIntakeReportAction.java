@@ -409,7 +409,7 @@ public class StreetHealthIntakeReportAction extends DispatchAction {
         loadNodeIdsWithNoLabels();
         
         //initialize business manager
-        this.mgr = (StreetHealthReportManager) SpringUtils.getBean("streetHealthReportManager");
+        this.mgr = (StreetHealthReportManager) SpringUtils.getBean(StreetHealthReportManager.class);
         
       
         //check to make sure use is logged in

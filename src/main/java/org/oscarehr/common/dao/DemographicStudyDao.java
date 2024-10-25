@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,59 +21,20 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
-
-
-import java.util.List;
-
-import javax.persistence.Query;
 
 import org.oscarehr.common.model.DemographicStudy;
 import org.oscarehr.common.model.DemographicStudyPK;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class DemographicStudyDao extends AbstractDao<DemographicStudy>{
+import java.util.List;
 
-	public DemographicStudyDao() {
-		super(DemographicStudy.class);
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<DemographicStudy> findAll() {
-		Query query = createQuery("x", null);
-		return query.getResultList();
-	}
-	
-	public int removeByDemographicNo(Integer demographicNo) {
-		Query query = entityManager.createQuery("delete from DemographicStudy x where x.id.demographicNo=?");
-		query.setParameter(1, demographicNo);
-		return query.executeUpdate();
-	}
-
-	public DemographicStudy findByDemographicNoAndStudyNo(int demographicNo, int studyNo) {
-		DemographicStudyPK pk = new DemographicStudyPK();
-		pk.setDemographicNo(demographicNo);
-		pk.setStudyNo(studyNo);
-
-		return find(pk);
-	}
-	
-	@SuppressWarnings("unchecked")
-
-	public List<DemographicStudy> findByStudyNo(int studyNo) {
-		Query query = entityManager.createQuery("select x from DemographicStudy x where x.id.studyNo=?");
-		query.setParameter(1, studyNo);
-		return query.getResultList();
-	}
-
-	public List<DemographicStudy> findByDemographicNo(int demographicNo) {
-		Query query = entityManager.createQuery("select x from DemographicStudy x where x.id.demographicNo=?");
-		query.setParameter(1, demographicNo);
-		return query.getResultList();
-	}
-
+public interface DemographicStudyDao extends AbstractDao<DemographicStudy> {
+    List<DemographicStudy> findAll();
+    int removeByDemographicNo(Integer demographicNo);
+    DemographicStudy findByDemographicNoAndStudyNo(int demographicNo, int studyNo);
+    List<DemographicStudy> findByStudyNo(int studyNo);
+    List<DemographicStudy> findByDemographicNo(int demographicNo);
 }

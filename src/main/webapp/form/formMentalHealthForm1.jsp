@@ -47,7 +47,7 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Laboratory Requisition</title>
@@ -77,7 +77,7 @@
 
    if (request.getParameter("labType") != null){
       if (formId == 0 ){
-         FrmLabReqPreSetDao preSetDao = (FrmLabReqPreSetDao) SpringUtils.getBean("frmLabReqPreSetDao");
+         FrmLabReqPreSetDao preSetDao = (FrmLabReqPreSetDao) SpringUtils.getBean(FrmLabReqPreSetDao.class);
          String labPreSet = request.getParameter("labType");
          props = preSetDao.fillPropertiesByLabType(labPreSet,props);
       }

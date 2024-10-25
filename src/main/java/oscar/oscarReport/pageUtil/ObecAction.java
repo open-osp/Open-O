@@ -95,7 +95,7 @@ public class ObecAction extends Action {
       
       String endDate = dateUtils.NextDay(startDay, startMonth, startYear, numDays);
       
-      String obectxt = obecData1.generateOBEC(startDate, endDate, proppies)==null?"":obecData1.generateOBEC(startDate, endDate, proppies);
+      String obectxt = obecData1.generateOBEC(startDate, endDate, proppies);
       request.setAttribute("obectxt", obectxt);
       
       return mapping.findForward("success");

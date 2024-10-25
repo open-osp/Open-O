@@ -41,7 +41,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class EctImmDeleteImmunizationSetAction extends Action {
 
-	private ConfigImmunizationDao configImmunizationDao = (ConfigImmunizationDao)SpringUtils.getBean("configImmunizationDao");
+	private ConfigImmunizationDao configImmunizationDao = (ConfigImmunizationDao)SpringUtils.getBean(ConfigImmunizationDao.class);
 
 
    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)

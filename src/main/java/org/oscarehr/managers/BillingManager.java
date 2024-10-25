@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.managers;
 
@@ -32,34 +35,10 @@ import org.oscarehr.util.LoggedInInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class BillingManager {
-
-	@Autowired
-	CtlBillingServiceDao ctlBillingServiceDao;
+public interface BillingManager {
 	
-	
-	/*
-	 * I'm only doing that conversion in the manager because I don't have time to refactor the DAO method..but given more time..that's where I would do it.
-	 * Regardless those other calls should be moved over to calling this one.
-	 */
-	public List<ServiceType> getUniqueServiceTypes(LoggedInInfo loggedInInfo) {
-		return getUniqueServiceTypes(loggedInInfo,CtlBillingServiceDao.DEFAULT_STATUS);
-	}
-	
-	/*
-	 * I'm only doing that conversion in the manager because I don't have time to refactor the DAO method..but given more time..that's where I would do it.
-	 * Regardless those other calls should be moved over to calling this one.
-	 */
-	public List<ServiceType> getUniqueServiceTypes(LoggedInInfo loggedInInfo, String type) {
-		List<ServiceType> result = new ArrayList<ServiceType>(); 
-		
-		for(Object[] r:ctlBillingServiceDao.getUniqueServiceTypes(type)) {
-			result.add(new ServiceType((String)r[0],(String)r[1]));
-		}
-	
-		return result;
-	}
+	public List<ServiceType> getUniqueServiceTypes(LoggedInInfo loggedInInfo);
+	public List<ServiceType> getUniqueServiceTypes(LoggedInInfo loggedInInfo, String type);
 }
 
 

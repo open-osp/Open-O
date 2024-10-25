@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,62 +21,17 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-import java.util.ListIterator;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.JointAdmission;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class JointAdmissionDao extends AbstractDao<JointAdmission> {
-
-	public JointAdmissionDao() {
-		super(JointAdmission.class);
-	}
-	
-    public List<JointAdmission> getSpouseAndDependents(Integer clientId){
-		Query query = entityManager.createQuery("SELECT x FROM JointAdmission x WHERE x.archived=0 and x.headClientId=?");
-		query.setParameter(1,clientId);
-		@SuppressWarnings("unchecked")
-        List<JointAdmission> results = query.getResultList();
-		return results;
-    }
-    
-    public JointAdmission getJointAdmission(Integer clientId){
-    	Query query = entityManager.createQuery("SELECT x FROM JointAdmission x WHERE x.archived=0 and x.clientId=?");
-		query.setParameter(1,clientId);
-		@SuppressWarnings("unchecked")
-        List<JointAdmission> results = query.getResultList();
-		
-        ListIterator<JointAdmission> li = results.listIterator();
-        
-        if(li.hasNext()){
-            return li.next();
-        }else{
-            return null;
-        }
-    }
-    
-    public void removeJointAdmission(Integer clientId,String providerNo){
-        JointAdmission jadm = getJointAdmission(clientId);
-        if(jadm != null) {
-        	jadm.setArchivingProviderNo(providerNo);
-        	removeJointAdmission(jadm);
-        }
-    }
-    
-    
-    public void removeJointAdmission(JointAdmission admission){
-    	JointAdmission tmp = find(admission.getId());
-    	if(tmp != null) {
-    		tmp.setArchived(true);
-    		merge(tmp);
-    	}
-    }
-    
+public interface JointAdmissionDao extends AbstractDao<JointAdmission>{
+    List<JointAdmission> getSpouseAndDependents(Integer clientId);
+    JointAdmission getJointAdmission(Integer clientId);
+    void removeJointAdmission(Integer clientId,String providerNo);
+    void removeJointAdmission(JointAdmission admission);
 }

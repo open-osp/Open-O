@@ -61,7 +61,7 @@ String providerNo = loggedInInfo.getLoggedInProviderNo();
 Facility facility = loggedInInfo.getCurrentFacility();
 
 //List<Program> programs = programManager.getActiveProgramByFacility(providerNo, facility.getId());
-InfirmBedProgramManager bpm = (InfirmBedProgramManager) SpringUtils.getBean("infirmBedProgramManager");
+InfirmBedProgramManager bpm = (InfirmBedProgramManager) SpringUtils.getBean(InfirmBedProgramManager.class);
 List<LabelValueBean> programs = bpm.getProgramBeans(providerNo, facility.getId());
 
 int defaultprogramId = bpm.getDefaultProgramId(providerNo);

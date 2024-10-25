@@ -63,7 +63,7 @@ public class MEDVUEHandler implements MessageHandler {
 	// recheck the abnormal status of the last 'n' labs
 	private void updateLabStatus(int n) {
 
-		 Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean("hl7TextInfoDao");
+		 Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);
 		 List<Hl7TextInfo> labList = hl7TextInfoDao.getAllLabsByLabNumberResultStatus();
 		 ListIterator<Hl7TextInfo> iter = labList.listIterator();
 

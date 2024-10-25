@@ -67,7 +67,7 @@ public class OscarRoleObjectPrivilege {
 		ArrayList<Object> ret = new ArrayList<Object>();
 		Properties prop = new Properties();
 
-		SecObjPrivilegeDao dao = (SecObjPrivilegeDao) SpringUtils.getBean("secObjPrivilegeDao");
+		SecObjPrivilegeDao dao = (SecObjPrivilegeDao) SpringUtils.getBean(SecObjPrivilegeDao.class);
 		String[] objectNames = getVecObjectName(objName);
 		ArrayList<String> objects = new ArrayList<String>();
 

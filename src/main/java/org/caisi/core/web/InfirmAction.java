@@ -53,9 +53,9 @@ import oscar.OscarProperties;
 public class InfirmAction extends DispatchAction
 {
 	private static final Logger logger = MiscUtils.getLogger();
-	private static InfirmBedProgramManager bpm = (InfirmBedProgramManager) SpringUtils.getBean("infirmBedProgramManager");
-	private ProgramManager pm = (ProgramManager) SpringUtils.getBean("programManager");
-	private AdmissionManager mgr = (AdmissionManager) SpringUtils.getBean("admissionManager");
+	private static InfirmBedProgramManager bpm = (InfirmBedProgramManager) SpringUtils.getBean(InfirmBedProgramManager.class);
+	private ProgramManager pm = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
+	private AdmissionManager mgr = (AdmissionManager) SpringUtils.getBean(AdmissionManager.class);
 	
 
 	public static void updateCurrentProgram(String programId, String providerNo) {

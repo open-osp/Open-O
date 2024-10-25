@@ -57,7 +57,7 @@ public class EyeformUtilAction extends DispatchAction {
 	
 	
 	public ActionForward getProviders(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 		List<Provider> activeProviders = providerDao.getActiveProviders();
 
 		HashMap<String, List<Provider>> hashMap = new HashMap<String, List<Provider>>();
@@ -104,7 +104,7 @@ public class EyeformUtilAction extends DispatchAction {
 	}
 
 	public ActionForward getBillingAutocompleteList(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		BillingServiceDao billingServiceDao = (BillingServiceDao) SpringUtils.getBean("billingServiceDao");
+		BillingServiceDao billingServiceDao = (BillingServiceDao) SpringUtils.getBean(BillingServiceDao.class);
 
 		String query = request.getParameter("query");
 
@@ -124,7 +124,7 @@ public class EyeformUtilAction extends DispatchAction {
 	}
 
 	public ActionForward getBillingDxAutocompleteList(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		DiagnosticCodeDao diagnosticCodeDao = (DiagnosticCodeDao) SpringUtils.getBean("diagnosticCodeDao");
+		DiagnosticCodeDao diagnosticCodeDao = (DiagnosticCodeDao) SpringUtils.getBean(DiagnosticCodeDao.class);
 
 		String query = request.getParameter("query");
 
@@ -145,7 +145,7 @@ public class EyeformUtilAction extends DispatchAction {
 
 
 	public ActionForward getMacroList(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		EyeformMacroDao eyeformMacroDao = (EyeformMacroDao) SpringUtils.getBean("eyeformMacroDao");
+		EyeformMacroDao eyeformMacroDao = (EyeformMacroDao) SpringUtils.getBean(EyeformMacroDao.class);
 
 		List<EyeformMacro> macroList = eyeformMacroDao.getMacros();
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
@@ -161,7 +161,7 @@ public class EyeformUtilAction extends DispatchAction {
 	}
 
 	public ActionForward saveMacro(ActionMapping maping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		EyeformMacroDao eyeformMacroDao = (EyeformMacroDao) SpringUtils.getBean("eyeformMacroDao");
+		EyeformMacroDao eyeformMacroDao = (EyeformMacroDao) SpringUtils.getBean(EyeformMacroDao.class);
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 
 		try {
@@ -214,8 +214,8 @@ public class EyeformUtilAction extends DispatchAction {
 		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 
-		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
-		SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean("secUserRoleDao");
+		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
+		SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean(SecUserRoleDao.class);
 		
 		List<Provider> activeReceptionists = new ArrayList<Provider>();
 		for(SecUserRole sur:secUserRoleDao.getSecUserRolesByRoleName("receptionist")) {
@@ -246,8 +246,8 @@ public class EyeformUtilAction extends DispatchAction {
 
 		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 
-		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-		OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean("oscarAppointmentDao");
+		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+		OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 
 		Appointment appointment = null;
 		try {
@@ -309,7 +309,7 @@ public class EyeformUtilAction extends DispatchAction {
 	public ActionForward updateAppointmentReason(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HashMap<String, Object> hashMap = new HashMap<String, Object>();
 
-		OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean("oscarAppointmentDao");
+		OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 
 		Appointment appointment = appointmentDao.find(Integer.parseInt(request.getParameter("appointmentNo")));
 

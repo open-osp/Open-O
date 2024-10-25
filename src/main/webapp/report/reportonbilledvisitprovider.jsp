@@ -25,7 +25,7 @@ if(!authed) {
 <%@ page import="com.quatro.model.security.Secuserrole"%>
 <%@ page import="com.quatro.dao.security.SecuserroleDao"%>
 <%
-	SecuserroleDao secuserroleDao = (SecuserroleDao)SpringUtils.getBean("secuserroleDao");
+	SecuserroleDao secuserroleDao = (SecuserroleDao)SpringUtils.getBean(SecuserroleDao.class);
 %>
 <%
   DBPreparedHandler dbObj = new DBPreparedHandler();

@@ -58,7 +58,7 @@ public class SpecsHistoryPrint implements ExtPrint {
 		logger.debug("endDate = "+endDate);
 		logger.debug("demographicNo = "+demographicNo);
 		
-		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 		EyeformSpecsHistoryDao dao = (EyeformSpecsHistoryDao)SpringUtils.getBean(EyeformSpecsHistoryDao.class);
 		
     	

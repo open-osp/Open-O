@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,89 +21,22 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
+import java.util.HashMap;
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.MeasurementsExt;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class MeasurementsExtDao extends AbstractDao<MeasurementsExt>{
-
-	public MeasurementsExtDao() {
-		super(MeasurementsExt.class);
-	}
-	
-	public List<MeasurementsExt> getMeasurementsExtByMeasurementId(Integer measurementId) {
-		String queryStr = "select m FROM MeasurementsExt m WHERE m.measurementId = ?1";
-		Query q = entityManager.createQuery(queryStr);
-		q.setParameter(1, measurementId);
-		
-		@SuppressWarnings("unchecked")
-		List<MeasurementsExt> rs = q.getResultList();
-
-		return rs;
-	}
-
-	public List<MeasurementsExt> getMeasurementsExtListByMeasurementIdList(List<Integer> measurementIdList) {
-		String queryStr = "select m FROM MeasurementsExt m WHERE m.measurementId IN (?1) order by m.measurementId";
-		Query q = entityManager.createQuery(queryStr);
-		q.setParameter(1, measurementIdList);
-		return q.getResultList();
-	}
-	
-	public MeasurementsExt getMeasurementsExtByMeasurementIdAndKeyVal(Integer measurementId, String keyVal) {
-		String queryStr = "select m FROM MeasurementsExt m WHERE m.measurementId = ?1 AND m.keyVal = ?2";
-		Query q = entityManager.createQuery(queryStr);
-		q.setParameter(1, measurementId);
-		q.setParameter(2, keyVal);
-		
-		@SuppressWarnings("unchecked")
-		List<MeasurementsExt> rs = q.getResultList();
-
-		if(rs.isEmpty()) {
-			return null;
-		}
-		return rs.get(0);
-	}
-	
-	public Integer getMeasurementIdByKeyValue(String key, String value) {
-		String queryStr = "select m FROM MeasurementsExt m WHERE m.keyVal=?1 AND m.val=?2";
-		Query q = entityManager.createQuery(queryStr);
-		q.setParameter(1, key);
-		q.setParameter(2, value);
-		
-		@SuppressWarnings("unchecked")
-		List<MeasurementsExt> rs =q.getResultList();
-		
-		if (rs.size()>0) return rs.get(0).getMeasurementId();
-		return null;
-	}
-	
-	public List<MeasurementsExt> findByKeyValue(String key, String value) {
-		String queryStr = "select m FROM MeasurementsExt m WHERE m.keyVal=?1 AND m.val=?2";
-		Query q = entityManager.createQuery(queryStr);
-		q.setParameter(1, key);
-		q.setParameter(2, value);
-		
-		@SuppressWarnings("unchecked")
-		List<MeasurementsExt> rs = q.getResultList();
-		
-		return rs;
-	}
-
-	/**
-	 *  Find an example of a single measurement id where the LOINC identifier is
-	 *  NOT mapped in OSCAR's measurement map.
-	 */
-	public List<Integer> findUnmappedMeasuremntIds(List<String> excludeList) {
-		String queryStr = "SELECT MAX(m.measurementId) FROM MeasurementsExt m WHERE m.keyVal LIKE 'identifier' AND m.val NOT IN (?1)";
-		Query q = entityManager.createQuery(queryStr);
-		q.setParameter(1, excludeList);
-		return q.getResultList();
-	}
+public interface MeasurementsExtDao extends AbstractDao<MeasurementsExt> {
+	List<MeasurementsExt> getMeasurementsExtByMeasurementId(Integer measurementId);
+	HashMap<String, MeasurementsExt> getMeasurementsExtMapByMeasurementId(Integer measurementId);
+	List<MeasurementsExt> getMeasurementsExtListByMeasurementIdList(List<Integer> measurementIdList);
+	MeasurementsExt getMeasurementsExtByMeasurementIdAndKeyVal(Integer measurementId, String keyVal);
+	Integer getMeasurementIdByKeyValue(String key, String value);
+	public Integer getMeasurementIdByLabNoAndTestName(String labNo, String testName);//new
+	List<MeasurementsExt> findByKeyValue(String key, String value);
+	List<Integer> findUnmappedMeasuremntIds(List<String> excludeList);
 }

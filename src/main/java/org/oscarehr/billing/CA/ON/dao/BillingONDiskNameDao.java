@@ -29,11 +29,11 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.ON.model.BillingONDiskName;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BillingONDiskNameDao extends AbstractDao<BillingONDiskName>{
+public class BillingONDiskNameDao extends AbstractDaoImpl<BillingONDiskName>{
 
 	public BillingONDiskNameDao() {
 		super(BillingONDiskName.class);
@@ -42,7 +42,7 @@ public class BillingONDiskNameDao extends AbstractDao<BillingONDiskName>{
 	public BillingONDiskName getLatestSoloMonthCodeBatchNum(String providerOhipNo) {
 		String q = "select d from BillingONDiskName d, BillingONFilename f where f.providerOhipNo=? and d.groupNo='' and d.id=f.diskId order by d.id desc";
 		Query query = entityManager.createQuery(q);
-		query.setParameter(1, providerOhipNo);
+		query.setParameter(0, providerOhipNo);
 		query.setMaxResults(1);
 		
 		BillingONDiskName result = this.getSingleResultOrNull(query);
@@ -53,7 +53,7 @@ public class BillingONDiskNameDao extends AbstractDao<BillingONDiskName>{
 	public BillingONDiskName findByGroupNo(String groupNo) {
 		String q = "SELECT b FROM BillingONDiskName b WHERE b.groupNo=? order by b.createDateTime DESC";
 		Query query = entityManager.createQuery(q);
-		query.setParameter(1, groupNo);
+		query.setParameter(0, groupNo);
 		query.setMaxResults(1);
 		
 		BillingONDiskName result = getSingleResultOrNull(query);
@@ -64,8 +64,8 @@ public class BillingONDiskNameDao extends AbstractDao<BillingONDiskName>{
 	public BillingONDiskName getPrevDiskCreateDate(Date date, String groupNo) {
 		String q = "SELECT b FROM BillingONDiskName b WHERE  b.createDateTime<? and groupno=? order by createdatetime DESC";
 		Query query = entityManager.createQuery(q);
-		query.setParameter(1, date);
-		query.setParameter(2, groupNo);
+		query.setParameter(0, date);
+		query.setParameter(1, groupNo);
 		query.setMaxResults(1);
 		
 		BillingONDiskName result = getSingleResultOrNull(query);

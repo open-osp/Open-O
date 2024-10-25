@@ -51,7 +51,7 @@ String service_form="", service_name="";
 String clinicview = request.getParameter("billingform")==null?oscarVariables.getProperty("default_view"):request.getParameter("billingform");
 String reportAction=request.getParameter("reportAction")==null?"":request.getParameter("reportAction");
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="billing.manageBillingform.title" /></title>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>

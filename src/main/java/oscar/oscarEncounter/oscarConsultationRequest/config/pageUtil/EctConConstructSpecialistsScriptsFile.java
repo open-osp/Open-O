@@ -44,7 +44,7 @@ import oscar.oscarEncounter.oscarConsultationRequest.config.data.EctConConfigura
 import oscar.util.ConversionUtils;
 
 public class EctConConstructSpecialistsScriptsFile {
-	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao) SpringUtils.getBean("consultationServiceDao");
+	private ConsultationServiceDao consultationServiceDao = (ConsultationServiceDao) SpringUtils.getBean(ConsultationServiceDao.class);
 
 	Vector<String> serviceId;
 	Vector<String> serviceDesc;

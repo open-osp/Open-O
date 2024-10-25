@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,64 +21,29 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
-package org.oscarehr.PMmodule.dao;
+ package org.oscarehr.PMmodule.dao;
 
-import java.util.List;
+ import java.util.List;
+ 
+ import javax.persistence.Query;
+ 
+ import org.oscarehr.PMmodule.model.CriteriaType;
+ import org.oscarehr.common.dao.AbstractDaoImpl;
+ import org.oscarehr.common.dao.AbstractDao;
+ import org.springframework.stereotype.Repository;
+ 
+ public interface CriteriaTypeDao extends AbstractDao<CriteriaType> {
 
-import javax.persistence.Query;
-
-import org.oscarehr.PMmodule.model.CriteriaType;
-import org.oscarehr.common.dao.AbstractDao;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public class CriteriaTypeDao extends AbstractDao<CriteriaType> {
-
-	public CriteriaTypeDao() {
-		super(CriteriaType.class);
-	}
-	
-	public List<CriteriaType> findAll() {
-		Query query = entityManager.createQuery("select x from CriteriaType x");
-		
-		@SuppressWarnings("unchecked")
-	    List<CriteriaType> results = query.getResultList();
-		
-		return results;
-	}
-
-	public CriteriaType findByName(String fieldName) {		
-		Query query = entityManager.createQuery("select x from CriteriaType x where x.fieldName=?");
-		query.setParameter(1, fieldName);	
-		
-		@SuppressWarnings("unchecked")
-	    List<CriteriaType> results = query.getResultList();
-		
-		if(results.size()>0)
-			return results.get(0);
-		
-		return null;
-	}
-	
-	public List<CriteriaType> getAllCriteriaTypes() {
-		Query query = entityManager.createQuery("select x from CriteriaType x where x.wlProgramId=? order by x.fieldType DESC");
-		query.setParameter(1, 1);
-		
-		@SuppressWarnings("unchecked")
-	    List<CriteriaType> results = query.getResultList();
-		
-		return results;
-	}
-	
-	public List<CriteriaType> getAllCriteriaTypesByWlProgramId(Integer wlProgramId) {
-		Query query = entityManager.createQuery("select x from CriteriaType x where x.wlProgramId=? order by x.fieldType DESC");
-		query.setParameter(1, wlProgramId);
-		
-		@SuppressWarnings("unchecked")
-	    List<CriteriaType> results = query.getResultList();
-		
-		return results;
-	}
-}
+     public List<CriteriaType> findAll();
+ 
+     public CriteriaType findByName(String fieldName);
+     
+     public List<CriteriaType> getAllCriteriaTypes();
+     
+     public List<CriteriaType> getAllCriteriaTypesByWlProgramId(Integer wlProgramId);
+ }
+ 

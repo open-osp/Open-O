@@ -25,21 +25,20 @@
 
 package oscar.oscarBilling.ca.bc.Teleplan;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
-
 import oscar.Misc;
 import oscar.OscarProperties;
 import oscar.entities.Billingmaster;
 import oscar.entities.WCB;
 import oscar.oscarBilling.ca.bc.MSP.TeleplanFileWriter;
+
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 /**
  *
  * @author jaygallagher
@@ -61,7 +60,7 @@ public class WCBTeleplanSubmission {
         String htmlContent =
                 "<tr>" +
                 "<td class='bodytext'>" +
-                "<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billing_no=" +
+                "<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billingmaster_no=" +
                 Misc.forwardZero(billingMasterNo, 7) +
                 "','','resizable=yes,scrollbars=yes,top=0,left=0,width=900,height=600'); return false;\">" +
                 invNo +
@@ -132,7 +131,7 @@ public class WCBTeleplanSubmission {
 
        
         String ret = "<tr bgcolor='red'><td colspan='11'>"
-                + "<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billing_no="
+                + "<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billingmaster_no="
                 + Misc.forwardZero(""+bm.getBillingmasterNo(), 7)
                 + "','','resizable=yes,scrollbars=yes,top=0,left=0,width=900,height=600'); return false;\">"
                 + m.toString() + "</a>" + "</td></tr>";
@@ -293,7 +292,7 @@ public class WCBTeleplanSubmission {
       dLine.append( Misc.zero(2));
       dLine.append( "W");//Misc.zero(1) //Submission Code
       dLine.append( Misc.space(1));
-      dLine.append( Misc.forwardZero(bm.getDxCode1(), 5));
+      dLine.append( Misc.backwardSpace(bm.getDxCode1(), 5));
       dLine.append( Misc.space(5 + 5 + 15));
       dLine.append( Misc.backwardSpace(bm.getServiceLocation(),1));// wcb.getW_servicelocation(), 1)
 

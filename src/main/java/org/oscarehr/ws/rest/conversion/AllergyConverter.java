@@ -27,6 +27,8 @@ import org.oscarehr.common.model.Allergy;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.ws.rest.to.model.AllergyTo1;
 
+import oscar.util.StringUtils;
+
 public class AllergyConverter extends AbstractConverter<Allergy, AllergyTo1> {
 
 	@Override
@@ -54,7 +56,7 @@ public class AllergyConverter extends AbstractConverter<Allergy, AllergyTo1> {
 	   t.setOnsetOfReaction(d.getOnsetOfReaction());
 	   t.setPosition(d.getPosition());
 	   t.setProviderNo(d.getProviderNo());
-	   t.setReaction(d.getReaction());
+	   t.setReaction(StringUtils.isNullOrEmpty(d.getReaction()) ? "No reaction noted" : d.getReaction());
 	   t.setRegionalIdentifier(d.getRegionalIdentifier());
 	   t.setSeverityOfReaction(d.getSeverityOfReaction());
 	   t.setStartDate(d.getStartDate());

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -30,35 +33,11 @@ import javax.persistence.Query;
 import org.oscarehr.common.model.CVCMedication;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class CVCMedicationDao extends AbstractDao<CVCMedication> {
+public interface CVCMedicationDao extends AbstractDao<CVCMedication> {
 
-	public CVCMedicationDao() {
-		super(CVCMedication.class);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<CVCMedication> findByDIN(String din) {
-		Query query = entityManager.createQuery("SELECT x FROM CVCMedication x WHERE x.din = :din");
-		query.setParameter("din", din);
-		List<CVCMedication> result = query.getResultList();
-		return result;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public CVCMedication findBySNOMED(String conceptId) {
-		Query query = entityManager.createQuery("SELECT x FROM CVCMedication x WHERE x.snomedCode = :code");
-		query.setParameter("code", conceptId);
-		query.setMaxResults(1);
-		List<CVCMedication> result = query.getResultList();
-		if(!result.isEmpty()) {
-			return result.get(0);
-		}
-		return null;
-	}
-	
-	public void removeAll() {
-		Query query = entityManager.createQuery("DELETE FROM CVCMedication");
-		query.executeUpdate();
-	}
+	public List<CVCMedication> findByDIN(String din);
+
+	public CVCMedication findBySNOMED(String conceptId);
+
+	public void removeAll();
 }

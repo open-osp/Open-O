@@ -129,21 +129,20 @@ if (heading != null){
 
         <%
 	        List<Drug> prescriptDrugs = null;
-            CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
+            CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 
             if(showall) {
             	prescriptDrugs = caseManagementManager.getPrescriptions(loggedInInfo, patient.getDemographicNo(), showall);
-            	//Collections.sort(prescriptDrugs,new oscar.oscarRx.util.ShowAllSorter());
             }
             else {
                 prescriptDrugs = caseManagementManager.getCurrentPrescriptions(patient.getDemographicNo());
             }
 
-            DrugReasonDao drugReasonDao  = (DrugReasonDao) SpringUtils.getBean("drugReasonDao");
+            DrugReasonDao drugReasonDao  = (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class);
 			
             DrugDispensingManager drugDispensingManager = SpringUtils.getBean(DrugDispensingManager.class);
             List<String> reRxDrugList=bean.getReRxDrugIdList();
-
+            Collections.sort(prescriptDrugs, Drug.START_DATE_COMPARATOR);
 
             long now = System.currentTimeMillis();
             long month = 1000L * 60L * 60L * 24L * 30L;

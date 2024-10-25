@@ -57,7 +57,7 @@
 	String msg = (String)request.getAttribute("msg");
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title>Audit Log Purge Tool</title>
 

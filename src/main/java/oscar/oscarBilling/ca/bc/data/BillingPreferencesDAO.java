@@ -28,7 +28,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -39,7 +39,7 @@ import org.springframework.stereotype.Repository;
  * @version 1.0
  */
 @Repository
-public class BillingPreferencesDAO extends AbstractDao<BillingPreference> {
+public class BillingPreferencesDAO extends AbstractDaoImpl<BillingPreference> {
 
 	public BillingPreferencesDAO() {
 		super(BillingPreference.class);

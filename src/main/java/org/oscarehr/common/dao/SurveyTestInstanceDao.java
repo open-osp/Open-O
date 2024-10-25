@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,48 +21,14 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
-import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.SurveyTestInstance;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class SurveyTestInstanceDao extends AbstractDao<SurveyTestInstance>{
-
-	public SurveyTestInstanceDao() {
-		super(SurveyTestInstance.class);
-	}
-	
-	public SurveyTestInstance getSurveyInstance(Integer surveyId, Integer clientId) {
-		Query query = entityManager.createQuery("select s from SurveyTestInstance s where s.surveyId = ?1 and s.clientId = ?2 order by s.dateCreated DESC");
-		query.setParameter(1,surveyId);
-		query.setParameter(2, clientId);
-		
-		@SuppressWarnings("unchecked")
-        List<SurveyTestInstance> results = query.getResultList();
-		
-		if(results.size()>0) {
-			return results.get(0);
-		}
-		return null;
-	}
-	
-	public void clearTestData(Integer surveyId) {
-		Query query = entityManager.createQuery("select s from SurveyTestInstance s where s.surveyId = ?1");
-		query.setParameter(1,surveyId);
-		
-		@SuppressWarnings("unchecked")
-        List<SurveyTestInstance> results = query.getResultList();
-		
-
-		for(SurveyTestInstance instance:results) {
-			remove(instance.getId());
-		}
-		
-	}
+public interface SurveyTestInstanceDao extends AbstractDao<SurveyTestInstance> {
+	SurveyTestInstance getSurveyInstance(Integer surveyId, Integer clientId);
+	void clearTestData(Integer surveyId);
 }

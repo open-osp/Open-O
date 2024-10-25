@@ -191,16 +191,16 @@ import oscar.util.UtilDateUtilities;
 public class DemographicExportAction4 extends Action {
 
 	private static final Logger logger = MiscUtils.getLogger();
-	private static final DemographicArchiveDao demoArchiveDao = (DemographicArchiveDao) SpringUtils.getBean("demographicArchiveDao");
-	private static final DemographicContactDao contactDao = (DemographicContactDao) SpringUtils.getBean("demographicContactDao");
-	private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean("partialDateDao");
-	private static final HRMDocumentToDemographicDao hrmDocToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean("HRMDocumentToDemographicDao");
-	private static final HRMDocumentDao hrmDocDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
-	private static final HRMDocumentCommentDao hrmDocCommentDao = (HRMDocumentCommentDao) SpringUtils.getBean("HRMDocumentCommentDao");
-	private static final CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
-	private static final Hl7TextInfoDao hl7TxtInfoDao = (Hl7TextInfoDao)SpringUtils.getBean("hl7TextInfoDao");
-	private static final Hl7TextMessageDao hl7TxtMssgDao = (Hl7TextMessageDao)SpringUtils.getBean("hl7TextMessageDao");
-	private static final DemographicExtDao demographicExtDao = (DemographicExtDao) SpringUtils.getBean("demographicExtDao");
+	private static final DemographicArchiveDao demoArchiveDao = (DemographicArchiveDao) SpringUtils.getBean(DemographicArchiveDao.class);
+	private static final DemographicContactDao contactDao = (DemographicContactDao) SpringUtils.getBean(DemographicContactDao.class);
+	private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean(PartialDateDao.class);
+	private static final HRMDocumentToDemographicDao hrmDocToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean(HRMDocumentToDemographicDao.class);
+	private static final HRMDocumentDao hrmDocDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
+	private static final HRMDocumentCommentDao hrmDocCommentDao = (HRMDocumentCommentDao) SpringUtils.getBean(HRMDocumentCommentDao.class);
+	private static final CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
+	private static final Hl7TextInfoDao hl7TxtInfoDao = (Hl7TextInfoDao)SpringUtils.getBean(Hl7TextInfoDao.class);
+	private static final Hl7TextMessageDao hl7TxtMssgDao = (Hl7TextMessageDao)SpringUtils.getBean(Hl7TextMessageDao.class);
+	private static final DemographicExtDao demographicExtDao = (DemographicExtDao) SpringUtils.getBean(DemographicExtDao.class);
 	private static final String PATIENTID = "Patient";
 	private static final String ALERT = "Alert";
 	private static final String ALLERGY = "Allergy";
@@ -1555,7 +1555,7 @@ public class DemographicExportAction4 extends Action {
 					}
 					addOneEntry(MEDICATION);
 
-					DrugReasonDao drugReasonDao = (DrugReasonDao) SpringUtils.getBean("drugReasonDao");
+					DrugReasonDao drugReasonDao = (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class);
 					List<DrugReason> drugReasons = drugReasonDao.getReasonsForDrugID(arr[p].getDrugId(), true);
 					if (drugReasons.size()>0 && StringUtils.filled(drugReasons.get(0).getCode()))
 						medi.setProblemCode(drugReasons.get(0).getCode());
@@ -2495,7 +2495,7 @@ public class DemographicExportAction4 extends Action {
 	}
 
 	//create ReadMe.txt & ExportEvent.log
-	files.add(makeReadMe(files));
+	files.add(makeReadMe(dirs, files));
 	dirs.add("");
 	files.add(makeExportLog(files.get(0).getParentFile()));
 	dirs.add("");
@@ -2691,13 +2691,17 @@ public class DemographicExportAction4 extends Action {
 	}
 }
 
-	File makeReadMe(ArrayList<File> fs) throws IOException {
+	File makeReadMe(ArrayList<String> dirs, ArrayList<File> fs) throws IOException {
+        ClinicData clinicData = new ClinicData();
 		File readMe = new File(fs.get(0).getParentFile(), "ReadMe.txt");
 		BufferedWriter out = new BufferedWriter(new FileWriter(readMe));
-		out.write("Physician Group					: ");
-		out.write(new ClinicData().getClinicName());
+		out.write("Physician Group               : ");
+		out.write(clinicData.getClinicName());
 		out.newLine();
-		out.write("CMS Vendor, Product & Version	  : ");
+		out.write("Contact Information           : ");
+		out.write(clinicData.getClinicAddress() + ", " + clinicData.getClinicCity() + ", " + clinicData.getClinicProvince() + ", " + clinicData.getClinicPostal() + ". " + clinicData.getClinicPhone());
+		out.newLine();
+		out.write("CMS Vendor, Product & Version : ");
 		String vendor = oscarProperties.getProperty("Vendor_Product");
 		if (StringUtils.empty(vendor)) {
 			exportError.add("Error! Vendor_Product not defined in oscar.properties");
@@ -2705,7 +2709,7 @@ public class DemographicExportAction4 extends Action {
 			out.write(vendor);
 		}
 		out.newLine();
-		out.write("Application Support Contact		: ");
+		out.write("Application Support Contact   : ");
 		String support = oscarProperties.getProperty("Support_Contact");
 		if (StringUtils.empty(support)) {
 			exportError.add("Error! Support_Contact not defined in oscar.properties");
@@ -2713,12 +2717,23 @@ public class DemographicExportAction4 extends Action {
 			out.write(support);
 		}
 		out.newLine();
-		out.write("Date and Time stamp				: ");
+		out.write("Date and Time stamp           : ");
 		out.write(UtilDateUtilities.getToday("yyyy-MM-dd hh:mm:ss aa"));
 		out.newLine();
-		out.write("Total patients files extracted	 : ");
-		out.write(String.valueOf(fs.size()));
+		out.write("Total patients files extracted per physician:");
 		out.newLine();
+		Map<String, Integer> fileCount = new HashMap<>();
+        for (String dir : dirs) {
+            if (fileCount.containsKey(dir)) {
+                fileCount.put(dir, fileCount.get(dir) + 1);
+            } else {
+                fileCount.put(dir, 1);
+            }
+        }
+		for (Map.Entry<String, Integer> entry : fileCount.entrySet()) {
+            out.write("	" + entry.getKey().split("_")[0] + " " + entry.getKey().split("_")[1] + ": " + entry.getValue());
+			out.newLine();
+        }
 		out.write("Number of errors				   : ");
 		out.write(String.valueOf(exportError.size()));
 		if (exportError.size()>0) out.write(" (See ExportEvent.log for detail)");

@@ -42,7 +42,7 @@ String user_no = (String) session.getAttribute("user");
 <%@page import="org.oscarehr.common.dao.ClinicLocationDao" %>
 <%@page import="org.oscarehr.common.model.ClinicLocation" %>
 <%
-	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean("clinicLocationDao");
+	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean(ClinicLocationDao.class);
 %>
 <% 	GregorianCalendar now=new GregorianCalendar();
   int curYear = now.get(Calendar.YEAR);

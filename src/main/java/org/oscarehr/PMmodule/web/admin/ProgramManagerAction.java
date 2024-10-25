@@ -74,6 +74,7 @@ import org.oscarehr.PMmodule.service.ProgramManager;
 import org.oscarehr.PMmodule.service.ProgramQueueManager;
 import org.oscarehr.PMmodule.service.ProviderManager;
 import org.oscarehr.PMmodule.service.VacancyTemplateManager;
+import org.oscarehr.PMmodule.service.VacancyTemplateManagerImpl;
 import org.oscarehr.PMmodule.utility.ProgramAccessCache;
 import org.oscarehr.caisi_integrator.ws.CachedProvider;
 import org.oscarehr.caisi_integrator.ws.DemographicTransfer;
@@ -1642,17 +1643,17 @@ public class ProgramManagerAction extends DispatchAction {
 	}
 
 	/**
-     * @return the vacancyTemplateManager
+     * @return the VacancyTemplateManager
      */
     public VacancyTemplateManager getVacancyTemplateManager() {
-    	return vacancyTemplateManager;
+    	return this.vacancyTemplateManager;
     }
 
 	/**
-     * @param vacancyTemplateManager the vacancyTemplateManager to set
+     * @param VacancyTemplateManager the VacancyTemplateManager to set
      */
-    public void setVacancyTemplateManager(VacancyTemplateManager vacancyTemplateManager) {
-    	this.vacancyTemplateManager = vacancyTemplateManager;
+    public void setVacancyTemplateManager(VacancyTemplateManager VacancyTemplateManager) {
+    	this.vacancyTemplateManager = VacancyTemplateManager;
     }
 
 	protected Integer getParameterAsInteger(HttpServletRequest request, String name, Integer defaultVal) {

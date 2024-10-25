@@ -187,7 +187,7 @@ public final class LoginCheckLoginBean {
 
 	private Security getUserID() {
 
-		SecurityDao securityDao = (SecurityDao) SpringUtils.getBean("securityDao");
+		SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
 		List<Security> results = securityDao.findByUserName(username);
 		Security security = null;
 		if (results.size() > 0) security = results.get(0);
@@ -199,7 +199,7 @@ public final class LoginCheckLoginBean {
 		}
 
 		// find the detail of the user
-		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 		Provider provider = providerDao.getProvider(security.getProviderNo());
 
 		if (provider != null) {
@@ -210,7 +210,7 @@ public final class LoginCheckLoginBean {
 		}
 
 		// retrieve the oscar roles for this Provider as a comma separated list
-		SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean("secUserRoleDao");
+		SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean(SecUserRoleDao.class);
 		List<SecUserRole> roles = secUserRoleDao.getUserRoles(security.getProviderNo());
 		for (SecUserRole role : roles) {
 			if (rolename == null) {
@@ -224,7 +224,7 @@ public final class LoginCheckLoginBean {
 	}
 	
 	private Security getUserIDWithSSOKey() {
-		SecurityDao securityDao = (SecurityDao) SpringUtils.getBean("securityDao");
+		SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
 		List<Security> securityResults = securityDao.findByOneIdKey(ssoKey); 
 		Security securityRecord = null;
 		
@@ -238,7 +238,7 @@ public final class LoginCheckLoginBean {
 			}
 			
 			// Gets the provider record
-			ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+			ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 			Provider provider = providerDao.getProvider(securityRecord.getProviderNo());
 
 			if (provider == null || (provider.getStatus() != null && provider.getStatus().equals("0"))) {
@@ -252,7 +252,7 @@ public final class LoginCheckLoginBean {
 			}
 
 			// retrieve the oscar roles for this Provider as a comma separated list
-			SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean("secUserRoleDao");
+			SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean(SecUserRoleDao.class);
 			List<SecUserRole> roles = secUserRoleDao.getUserRoles(securityRecord.getProviderNo());
 			for (SecUserRole role : roles) {
 				if (rolename == null) {

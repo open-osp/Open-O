@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,80 +21,20 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.common.dao;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Query;
 
 import org.oscarehr.common.model.MyGroup;
 import org.oscarehr.common.model.WaitingListName;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
+import java.util.List;
 
-@Repository
-public class WaitingListNameDao extends AbstractDao<WaitingListName> {
-
-	
-	public WaitingListNameDao() {
-		super(WaitingListName.class);
-	}
-
-	/**
-	 * Gets the number of waiting list names where history flag is set to "N".
-	 * 
-	 * @return
-	 * 		Gets the number of waiting lists.
-	 */
-	public long countActiveWatingListNames() {
-		Query query = entityManager.createQuery("SELECT COUNT(*) FROM WaitingListName n WHERE n.isHistory = 'N'");
-		query.setMaxResults(1);
-		return (Long) query.getSingleResult();
-	}
-	
-	
-	 public List<WaitingListName> findCurrentByNameAndGroup(String name, String group) {
-	    	
-	    	String sql = "select x from WaitingListName x where x.name = ? AND x.groupNo = ? and x.isHistory='N'";
-	    	Query query = entityManager.createQuery(sql);
-	    	query.setParameter(1,name);
-	    	query.setParameter(2,group);
-
-	        @SuppressWarnings("unchecked")
-	        List<WaitingListName> results = query.getResultList();
-	        return results;
-	    }
-
-    public List<WaitingListName> findByMyGroups(String providerNo, List<MyGroup> myGroups) {
-    	List<String> groupIds = new ArrayList<String>();
-    	for(MyGroup mg:myGroups) {
-    		groupIds.add(mg.getId().getMyGroupNo());
-    	}
-    	if (!groupIds.contains(providerNo)) {
-    		groupIds.add(providerNo);
-    	}
-    	groupIds.add(".default");
-    	
-    	String sql = "select x from WaitingListName x where x.groupNo IN (:groupNo) and x.isHistory='N' order by x.name ASC";
-    	Query query = entityManager.createQuery(sql);
-    	query.setParameter("groupNo",groupIds);
-
-        @SuppressWarnings("unchecked")
-        List<WaitingListName> results = query.getResultList();
-        return results;
-    }
-    
-	 public List<WaitingListName> findCurrentByGroup(String group) {
-	    	
-	    	String sql = "select x from WaitingListName x where x.groupNo = ? and x.isHistory='N' order by x.name";
-	    	Query query = entityManager.createQuery(sql);
-	    	query.setParameter(1,group);
-
-	        @SuppressWarnings("unchecked")
-	        List<WaitingListName> results = query.getResultList();
-	        return results;
-	    }
-    
+@Component
+public interface WaitingListNameDao extends AbstractDao<WaitingListName> {
+    long countActiveWatingListNames();
+    List<WaitingListName> findCurrentByNameAndGroup(String name, String group);
+    List<WaitingListName> findByMyGroups(String providerNo, List<MyGroup> myGroups);
+    List<WaitingListName> findCurrentByGroup(String group);
 }

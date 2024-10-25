@@ -111,6 +111,9 @@ public class ClinicData {
 
 	public String getClinicName() {
 		fillClinicData();
+		if(clinic_name == null) {
+			return "";
+		}
 		return clinic_name;
 	}
 

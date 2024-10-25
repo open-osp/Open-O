@@ -61,12 +61,12 @@ import org.oscarehr.util.SpringUtils;
 public final class SendOruR01UIBean {
 	
 	private static Logger logger=MiscUtils.getLogger();
-	private static ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
-	private static Hl7TextMessageDao hl7TextMessageDao = (Hl7TextMessageDao) SpringUtils.getBean("hl7TextMessageDao");
-	private static PublicKeyDao publicKeyDao = (PublicKeyDao) SpringUtils.getBean("publicKeyDao");
+	private static ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
+	private static Hl7TextMessageDao hl7TextMessageDao = (Hl7TextMessageDao) SpringUtils.getBean(Hl7TextMessageDao.class);
+	private static PublicKeyDao publicKeyDao = (PublicKeyDao) SpringUtils.getBean(PublicKeyDao.class);
 	private static DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
-	private static CaseManagementNoteDAO caseManagementNoteDAO = (CaseManagementNoteDAO) SpringUtils.getBean("caseManagementNoteDAO");
-	private static CaseManagementIssueNotesDao caseManagementIssueNotesDao= (CaseManagementIssueNotesDao) SpringUtils.getBean("caseManagementIssueNotesDao");
+	private static CaseManagementNoteDAO caseManagementNoteDAO = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
+	private static CaseManagementIssueNotesDao caseManagementIssueNotesDao= (CaseManagementIssueNotesDao) SpringUtils.getBean(CaseManagementIssueNotesDao.class);
 	
 	private Integer professionalSpecialistId=null;
 	private String clientFirstName=null;

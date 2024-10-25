@@ -126,10 +126,10 @@ public class PdfRecordPrinter {
 
     private PdfWriter writer;
     
-    private BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean("billingONCHeader1Dao");
-    private BillingONExtDao billingONExtDao = (BillingONExtDao) SpringUtils.getBean("billingONExtDao");
-    private ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
-    private ClinicDAO clinicDao = (ClinicDAO) SpringUtils.getBean("clinicDAO");
+    private BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
+    private BillingONExtDao billingONExtDao = (BillingONExtDao) SpringUtils.getBean(BillingONExtDao.class);
+    private ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
+    private ClinicDAO clinicDao = (ClinicDAO) SpringUtils.getBean(ClinicDAO.class);
     
     public PdfRecordPrinter(OutputStream os) {
         this.os = os;
@@ -728,7 +728,7 @@ public class PdfRecordPrinter {
     }
 
     public void printOcularProcedures(List<EyeformOcularProcedure> ocularProcedures) throws DocumentException {
-    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+    	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 
  /*
 		if( getNewPage() )
@@ -1234,7 +1234,7 @@ public class PdfRecordPrinter {
     public void printDiagrams(List<EFormValue> diagrams) throws DocumentException {
     	writer.setStrictImageSequence(true);
 
-    	EFormValueDao eFormValueDao = (EFormValueDao) SpringUtils.getBean("EFormValueDao");
+    	EFormValueDao eFormValueDao = (EFormValueDao) SpringUtils.getBean(EFormValueDao.class);
 
         if(diagrams.size()>0) {
         	Font obsfont = new Font(getBaseFont(), FONTSIZE, Font.UNDERLINE);

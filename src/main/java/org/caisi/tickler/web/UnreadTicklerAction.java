@@ -75,9 +75,9 @@ public class UnreadTicklerAction extends DispatchAction {
         	throw new SecurityException("missing required security object (_tickler)");
         }
 		
-		UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+		UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		UserProperty prop = propDao.getProp(providerNo, UserProperty.PROVIDER_FOR_TICKLER_WARNING);
-		ProviderDao provDao = (ProviderDao)SpringUtils.getBean("providerDao");
+		ProviderDao provDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 		Provider prov = provDao.getProvider((prop != null) ? prop.getValue() : providerNo);
 		request.setAttribute("tklerProviderName", prov.getFormattedName());
 		

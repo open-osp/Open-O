@@ -62,7 +62,7 @@ public class ERxDoctorPreferences {
         ERxDoctorPreferences answer;
         // The object we will use to get the data
         ProviderPreference providerPreference = ((ProviderPreferenceDao) SpringUtils
-                .getBean("providerPreferenceDao")).find(providerId);
+                .getBean(ProviderPreferenceDao.class)).find(providerId);
 
         // Die if the provider was not found
         if (providerPreference == null) {

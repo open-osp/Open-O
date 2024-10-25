@@ -54,7 +54,7 @@ import org.w3c.dom.Document;
 public final class ImmunizationsManager {
 	private static final Logger logger = MiscUtils.getLogger();
 	private static final String OSCAR_IMMUNIZATIONS_DATA_TYPE = "IMMUNIZATION";
-	private static final SentToPHRTrackingDao sentToPHRTrackingDao = (SentToPHRTrackingDao) SpringUtils.getBean("sentToPHRTrackingDao");
+	private static final SentToPHRTrackingDao sentToPHRTrackingDao = (SentToPHRTrackingDao) SpringUtils.getBean(SentToPHRTrackingDao.class);
 	
 	private static HashMap<String,String> preventionExtLabels = null; 
 
@@ -69,8 +69,8 @@ public final class ImmunizationsManager {
 		SentToPHRTracking sentToPHRTracking = MyOscarMedicalDataManagerUtils.getExistingOrCreateInitialSentToPHRTracking(demographicId, OSCAR_IMMUNIZATIONS_DATA_TYPE, MyOscarLoggedInInfo.getMyOscarServerBaseUrl());
 		logger.debug("sendImmunizationsToMyOscar : demographicId=" + demographicId + ", lastSyncTime=" + sentToPHRTracking.getSentDatetime());
 
-		PreventionDao preventionDao = (PreventionDao) SpringUtils.getBean("preventionDao");
-		PreventionExtDao preventionExtDao = (PreventionExtDao) SpringUtils.getBean("preventionExtDao");
+		PreventionDao preventionDao = (PreventionDao) SpringUtils.getBean(PreventionDao.class);
+		PreventionExtDao preventionExtDao = (PreventionExtDao) SpringUtils.getBean(PreventionExtDao.class);
 		List<Prevention> changedPreventions = preventionDao.findByDemographicIdAfterDatetime(demographicId, sentToPHRTracking.getSentDatetime());
 		for (Prevention prevention : changedPreventions) {
 			HashMap<String,String> preventionExt = preventionExtDao.getPreventionExt(prevention.getId());

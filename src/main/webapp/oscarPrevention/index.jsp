@@ -148,8 +148,7 @@ if(!authed) {
 
 
 
-<%@page import="org.oscarehr.util.SessionConstants"%><html:html
-	locale="true">
+<%@page import="org.oscarehr.util.SessionConstants"%><html:html>
 
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>

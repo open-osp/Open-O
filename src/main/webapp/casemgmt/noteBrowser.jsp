@@ -92,7 +92,7 @@
     }
     
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    QueueDao queueDao = (QueueDao) ctx.getBean("queueDao");
+    QueueDao queueDao = (QueueDao) ctx.getBean(QueueDao.class);
     List<Hashtable> queues = queueDao.getQueues();
     int queueId=1;
 
@@ -553,7 +553,7 @@
                         <fieldset><legend><bean:message key="oscarEncounter.noteBrowser.encounterNote"/> </legend>
                             <select MULTIPLE SIZE=5 id="encounterlist" onchange="getEncounter();">
                             <% 
-                                CaseManagementManager caseManagementManager=(CaseManagementManager)SpringUtils.getBean("caseManagementManager");
+                                CaseManagementManager caseManagementManager=(CaseManagementManager)SpringUtils.getBean(CaseManagementManager.class);
                                 List<CaseManagementNote> notes =  caseManagementManager.getNotes(demographicID);
                
                                 ArrayList<NoteDisplay> notesToDisplay = new ArrayList<NoteDisplay>();

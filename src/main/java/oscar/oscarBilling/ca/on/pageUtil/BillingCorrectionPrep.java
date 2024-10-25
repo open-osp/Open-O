@@ -59,9 +59,10 @@ public class BillingCorrectionPrep {
 	private static final Logger _logger = org.oscarehr.util.MiscUtils.getLogger();
 
 	JdbcBillingCorrection dbObj = new JdbcBillingCorrection();
-	BillingONCHeader1Dao cheader1Dao = (BillingONCHeader1Dao)SpringUtils.getBean(BillingONCHeader1Dao.class);
-	BillingONItemDao billOnItemDao = (BillingONItemDao)SpringUtils.getBean(BillingONItemDao.class);
-	
+	BillingONCHeader1Dao cheader1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
+	BillingONItemDao billOnItemDao = (BillingONItemDao) SpringUtils.getBean(BillingONItemDao.class);
+	BillingONExtDao billOnExtDao = SpringUtils.getBean(BillingONExtDao.class);
+
 	public List getBillingRecordObj(String id) {
 		List ret = dbObj.getBillingRecordObj(id);
 		return ret;
@@ -77,26 +78,26 @@ public class BillingCorrectionPrep {
 	public List getBillingRejectList(String id) {
 		List ret = dbObj.getBillingRejectList(id);
 		return ret;
-	}	
-	
+	}
+
 	// compare the obj first, push old record to repo if needed.
 	public boolean updateBillingClaimHeader(BillingClaimHeader1Data ch1Obj,
 			HttpServletRequest requestData) throws ParseException {
 		BillingClaimHeader1Data ch1DataBackup = new BillingClaimHeader1Data();
 		ch1DataBackup.clone(ch1Obj);
-		
+
 		boolean ret = true;
 		String status;
-		if (isChangedBillingClaimHeader(ch1Obj, requestData)) {			
-			
+		if (isChangedBillingClaimHeader(ch1Obj, requestData)) {
+
 			status = requestData.getParameter("status").substring(0, 1);
 			if (status.equals("S") && !ch1Obj.getStatus().equals(status)) {
 				this.updateExt("payDate", requestData);
 			}
 			ch1Obj.setStatus(status);
-			
-			if(requestData.getParameter("status").substring(0,1).equals("N")){
-				ch1Obj.setPay_program("NOT");				
+
+			if (requestData.getParameter("status").substring(0, 1).equals("N")) {
+				ch1Obj.setPay_program("NOT");
 			}
 
 			ch1Obj.setRef_num(requestData.getParameter("rdohip"));
@@ -127,12 +128,12 @@ public class BillingCorrectionPrep {
 
 			ch1Obj.setPay_program(requestData.getParameter("payProgram"));
 			ret = dbObj.updateBillingClaimHeader(ch1Obj);
-			
+
 			if ("D".equals(ch1Obj.getStatus())) {
-				// change status in billing_on_item table				
+				// change status in billing_on_item table
 				List<BillingONItem> billOnItems = billOnItemDao.getBillingItemByCh1Id(Integer.parseInt(ch1Obj.getId()));
 				for (BillingONItem billOnItem : billOnItems) {
-					billOnItem.setStatus("D");					
+					billOnItem.setStatus("D");
 					billOnItemDao.merge(billOnItem);
 				}
 			}
@@ -171,38 +172,40 @@ public class BillingCorrectionPrep {
 				ch1Obj.setBillto(requestData.getParameter("billTo"));
 			}
 		}
-		
+
 		if (isChangedBillingClaimHeader(ch1DataBackup, ch1Obj)) {
 			// add transaction log refer to https://github.com/oscaremr/oscar/issues/233
-			BillingOnTransactionDao billTransDao = (BillingOnTransactionDao)SpringUtils.getBean(BillingOnTransactionDao.class);
-			BillingOnTransaction billTrans = billTransDao.getUpdateCheader1TransTemplate(ch1Obj, (String)requestData.getSession().getAttribute("user"));
+			BillingOnTransactionDao billTransDao = (BillingOnTransactionDao) SpringUtils
+					.getBean(BillingOnTransactionDao.class);
+			BillingOnTransaction billTrans = billTransDao.getUpdateCheader1TransTemplate(ch1Obj,
+					(String) requestData.getSession().getAttribute("user"));
 			billTransDao.persist(billTrans);
 		}
-		
+
 		return ret;
 	}
 
-		public void setInactive(String key, HttpServletRequest request) {
-			JdbcBilling3rdPartImpl tobj = new JdbcBilling3rdPartImpl();
-			String billingNo = request.getParameter("xml_billing_no");
-			tobj.updateKeyStatus(billingNo, key, JdbcBilling3rdPartImpl.INACTIVE);
-		}
+	public void setInactive(String key, HttpServletRequest request) {
+		JdbcBilling3rdPartImpl tobj = new JdbcBilling3rdPartImpl();
+		String billingNo = request.getParameter("xml_billing_no");
+		tobj.updateKeyStatus(billingNo, key, JdbcBilling3rdPartImpl.INACTIVE);
+	}
 
-        /*
-         * Need to use billing extension table to capture data for invoices in
-         * addition to 3rd party bills
-         */
-        public void updateExt(String key, HttpServletRequest request) {
-            update3rdPartyItem(key, request);
-        }
+	/*
+	 * Need to use billing extension table to capture data for invoices in
+	 * addition to 3rd party bills
+	 */
+	public void updateExt(String key, HttpServletRequest request) {
+		update3rdPartyItem(key, request);
+	}
 
-        public boolean update3rdPartyItem(String key, HttpServletRequest request) {
+	public boolean update3rdPartyItem(String key, HttpServletRequest request) {
 		boolean ret = true;
 		JdbcBilling3rdPartImpl tobj = new JdbcBilling3rdPartImpl();
 		String billingNo = request.getParameter("xml_billing_no");
 		if (tobj.keyExists(billingNo, key)) {
 			String val = request.getParameter(key);
-			if (val == null && BillingONExtDao.isNumberKey(key)) {
+			if (val == null && billOnExtDao.isNumberKey(key)) {
 				val = "0.00";
 			}
 			ret = tobj.updateKeyValue(billingNo, key, val);
@@ -255,7 +258,7 @@ public class BillingCorrectionPrep {
 			} else {
 				vecStatus.add(ch1Obj.getStatus());
 			}
-			
+
 		}
 
 		// update item first
@@ -264,7 +267,7 @@ public class BillingCorrectionPrep {
 			BillingItemData iObj = (BillingItemData) lItemObj.get(i);
 			BillingONItem billOnItem = changeItem(ch1Obj, iObj, updateProviderNo, dx, serviceDate,
 					vecName.get(i), vecUnit.get(i), vecFee.get(i), vecStatus.get(i));
-			//claimId = iObj.getCh1_id();
+			// claimId = iObj.getCh1_id();
 			if (billOnItem != null) {
 				// this condition indicates one service code item was changed
 				iObj.setService_code(billOnItem.getServiceCode());
@@ -289,9 +292,9 @@ public class BillingCorrectionPrep {
 			}
 			String sFee = vecFee.get(i);
 			if (sFee == null || sFee.trim().isEmpty()) {
-				//sFee = "0.00";
+				// sFee = "0.00";
 				sFee = getFee(sFee, sUnit, sName, serviceDate);
-				vecFee.set(i,  sFee);
+				vecFee.set(i, sFee);
 			}
 			String sStatus = vecStatus.get(i);
 			ret = addItem(ch1Obj, lItemObj, updateProviderNo, dx, serviceDate,
@@ -307,8 +310,7 @@ public class BillingCorrectionPrep {
 		// update total field in billing_on_ext if pay_program is 3rd party
 		if (ch1Obj.getPay_program().matches(
 				BillingDataHlp.BILLINGMATCHSTRING_3RDPARTY)) {
-			BillingONExtDao billOnExtDao = SpringUtils
-					.getBean(BillingONExtDao.class);
+			// BillingONExtDao billOnExtDao = SpringUtils.getBean(BillingONExtDao.class);
 			if (null != billOnExtDao) {
 				int billingNo = Integer.parseInt(ch1Obj.getId());
 				int demographicNo = Integer
@@ -365,82 +367,83 @@ public class BillingCorrectionPrep {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getProvince().equals(newData.getProvince())) {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getMan_review().equals(newData.getMan_review())) {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getBilling_date().equals(newData.getBilling_date())) {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getStatus().equals(newData.getStatus())) {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getPay_program().equals(newData.getPay_program())) {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getFacilty_num().equals(newData.getFacilty_num())) {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getProviderNo().equals(newData.getProviderNo())) {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getVisittype().equals(newData.getVisittype())) {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getAdmission_date().equals(newData.getAdmission_date())) {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getLocation().equals(newData.getLocation())) {
 				ret = true;
 				break;
 			}
-			
+
 			if (!oldData.getComment().equals(newData.getComment())) {
 				ret = true;
 				break;
 			}
-			
-			if (oldData.getBillto()!=null && newData.getBillto()!=null && !oldData.getBillto().equals(newData.getBillto())) {
+
+			if (oldData.getBillto() != null && newData.getBillto() != null
+					&& !oldData.getBillto().equals(newData.getBillto())) {
 				ret = true;
 				break;
 			}
-			
-			if(oldData.getBillto()==null && newData.getBillto()!=null) {
+
+			if (oldData.getBillto() == null && newData.getBillto() != null) {
 				ret = true;
 				break;
 			}
-			
-			if(oldData.getBillto()!=null && newData.getBillto()==null) {
+
+			if (oldData.getBillto() != null && newData.getBillto() == null) {
 				ret = true;
 				break;
 			}
-			
-		} while(false);
-		
+
+		} while (false);
+
 		return ret;
 	}
-	
+
 	// sql - set key=value, key1=value1, ...
 	private boolean isChangedBillingClaimHeader(
 			BillingClaimHeader1Data existObj, HttpServletRequest request) {
@@ -495,8 +498,8 @@ public class BillingCorrectionPrep {
 
 		if ((existObj.getStatus() != null
 				&& request.getParameter("status") != null && !existObj
-				.getStatus().equals(
-						request.getParameter("status").substring(0, 1)))
+						.getStatus().equals(
+								request.getParameter("status").substring(0, 1)))
 				|| (existObj.getPay_program() != null && !existObj
 						.getPay_program().equals(
 								request.getParameter("payProgram")))
@@ -530,7 +533,7 @@ public class BillingCorrectionPrep {
 		}
 		return ret;
 	}
-	
+
 	private BillingONItem changeItem(BillingClaimHeader1Data ch1Obj,
 			BillingItemData oldObj, String updateProviderNo, String sDx,
 			String serviceDate, String serviceCode, String unit, String fee,
@@ -539,7 +542,7 @@ public class BillingCorrectionPrep {
 		if (oldObj.getService_code().equals(serviceCode)) {
 			// change to settle or not
 			boolean bStatusChange = false;
-			//String cStatus = (String) oldObj.getStatus();
+			// String cStatus = (String) oldObj.getStatus();
 			String cStatus = status;
 			if ((!oldObj.getStatus().equals("S") && cStatus.equals("S"))
 					|| (oldObj.getStatus().equals("S") && !cStatus.equals("S"))) {
@@ -551,10 +554,12 @@ public class BillingCorrectionPrep {
 					|| !oldObj.getDx().equals(sDx)
 					|| !oldObj.getService_date().equals(serviceDate)
 					|| bStatusChange) {
-				/*int j = dbObj.addRepoOneItem(oldObj);
-				if (j == 0) {
-					return null;
-				}*/
+				/*
+				 * int j = dbObj.addRepoOneItem(oldObj);
+				 * if (j == 0) {
+				 * return null;
+				 * }
+				 */
 				oldObj.setSer_num(getUnit(unit));
 				oldObj.setFee(getFee(fee, getUnit(unit), serviceCode, serviceDate));
 				oldObj.setService_date(serviceDate);
@@ -568,9 +573,10 @@ public class BillingCorrectionPrep {
 		} else {
 			oldObj.setStatus("D");
 			ret = dbObj.updateBillingOneItem(oldObj);
-			// add one transaction: delete a service code			
+			// add one transaction: delete a service code
 			BillingONCHeader1 billCheader1 = cheader1Dao.find(Integer.parseInt(oldObj.getCh1_id()));
-			BillingOnTransactionDao billOnTransDao = (BillingOnTransactionDao)SpringUtils.getBean(BillingOnTransactionDao.class);
+			BillingOnTransactionDao billOnTransDao = (BillingOnTransactionDao) SpringUtils
+					.getBean(BillingOnTransactionDao.class);
 			BillingOnTransaction billTrans = new BillingOnTransaction();
 			billTrans.setActionType(BillingDataHlp.ACTION_TYPE.D.name());
 			try {
@@ -601,11 +607,12 @@ public class BillingCorrectionPrep {
 			billTrans.setUpdateDatetime(new Timestamp(new Date().getTime()));
 			billTrans.setStatus("D");
 			billOnTransDao.persist(billTrans);
-			
+
 			if (serviceCode != null && !serviceCode.isEmpty()) {
 				// this condition indicates modification
 				// persist a new service code item
-				BillingONItem newBillItem = addItem(oldObj, updateProviderNo, sDx, serviceDate, serviceCode, unit, fee, status);
+				BillingONItem newBillItem = addItem(oldObj, updateProviderNo, sDx, serviceDate, serviceCode, unit, fee,
+						status);
 				// add one transaction: add a service code
 				billTrans = new BillingOnTransaction();
 				billTrans.setActionType(BillingDataHlp.ACTION_TYPE.C.name());
@@ -640,22 +647,24 @@ public class BillingCorrectionPrep {
 
 				if (ch1Obj.getPay_program().matches(BillingDataHlp.BILLINGMATCHSTRING_3RDPARTY)) {
 					// get which item_payments are associated to this service code
-					BillingOnItemPaymentDao billOnItemPaymentDao = (BillingOnItemPaymentDao)SpringUtils.getBean(BillingOnItemPaymentDao.class);
-					List<BillingOnItemPayment> billOnItemPaymentList = billOnItemPaymentDao.getAllByItemId(Integer.parseInt(oldObj.getId()));
-					
+					BillingOnItemPaymentDao billOnItemPaymentDao = (BillingOnItemPaymentDao) SpringUtils
+							.getBean(BillingOnItemPaymentDao.class);
+					List<BillingOnItemPayment> billOnItemPaymentList = billOnItemPaymentDao
+							.getAllByItemId(Integer.parseInt(oldObj.getId()));
+
 					// update item_payments
 					if (billOnItemPaymentList != null && billOnItemPaymentList.size() > 0) {
 						for (BillingOnItemPayment billOnItemPayment : billOnItemPaymentList) {
 							billOnItemPayment.setBillingOnItemId(newBillItem.getId());
-							billOnItemPaymentDao.merge(billOnItemPayment);							
+							billOnItemPaymentDao.merge(billOnItemPayment);
 						}
 					}
 				}
-				
+
 				return newBillItem;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -679,13 +688,13 @@ public class BillingCorrectionPrep {
 		billOnItem.setDx1(oldObj.getDx1());
 		billOnItem.setDx2(oldObj.getDx2());
 		billOnItem.setLastEditDT(new Date());
-		BillingONItemDao billOnItemDao = (BillingONItemDao)SpringUtils.getBean(BillingONItemDao.class);
-		
+		BillingONItemDao billOnItemDao = (BillingONItemDao) SpringUtils.getBean(BillingONItemDao.class);
+
 		billOnItemDao.persist(billOnItem);
-		
+
 		return billOnItem;
 	}
-	
+
 	private boolean addItem(BillingClaimHeader1Data ch1Obj, List lItemObj,
 			String updateProviderNo, String sDx, String serviceDate,
 			String sName, String sUnit, String sFee, String sStatus) throws ParseException {
@@ -727,20 +736,20 @@ public class BillingCorrectionPrep {
 	}
 
 	public List getBillingNoStatusByBillNo(String billNo) {
-	       List ret = dbObj.getBillingCH1NoStatusByBillNo(billNo);
-	       return ret;
+		List ret = dbObj.getBillingCH1NoStatusByBillNo(billNo);
+		return ret;
 	}
-	
+
 	// for appt unbill;
 	public boolean deleteBilling(String id, String status, String providerNo) {
 		boolean ret = dbObj.updateBillingStatus(id, status, providerNo);
 		if ("D".equals(status)) {
 			// change status in billing_on_item table
-			
+
 			List<BillingONItem> billOnItems = billOnItemDao.getBillingItemByCh1Id(Integer.parseInt(id));
 			for (BillingONItem billOnItem : billOnItems) {
 				billOnItem.setStatus("D");
-				billOnItemDao.merge(billOnItem); // this statement can update billing_on_item table 
+				billOnItemDao.merge(billOnItem); // this statement can update billing_on_item table
 			}
 		}
 		return ret;
@@ -750,7 +759,7 @@ public class BillingCorrectionPrep {
 		JdbcBillingPageUtil dbPageObj = new JdbcBillingPageUtil();
 		List ret = dbPageObj.getFacilty_num();
 		return ret;
-	}	
+	}
 
 	private String sumFee(Vector vecFee) {
 		String ret = "";
@@ -779,7 +788,6 @@ public class BillingCorrectionPrep {
 		}
 	}
 
-	
 	private String getUnit(String unit) {
 		String ret = unit;
 		if (!ret.matches("\\d+")) {

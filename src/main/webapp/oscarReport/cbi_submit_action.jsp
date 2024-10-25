@@ -45,7 +45,7 @@ if(!authed) {
 <%@page import="java.util.List"%>
 <%
 	String[] cbiFormIds = request.getParameterValues("cbiFormIdsSelected"); 
-    OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
+    OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
     CBIUtil cbiUtil = new CBIUtil();
     for(int i=0; i<cbiFormIds.length; i++) {
     	OcanStaffForm cbiForm = ocanStaffFormDao.findOcanStaffFormById(Integer.valueOf(cbiFormIds[i]));

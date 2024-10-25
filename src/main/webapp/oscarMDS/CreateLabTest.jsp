@@ -50,13 +50,13 @@ if(!authed) {
 
 <div id="test_<%=id%>">
 					<input type="hidden" name="test_<%=id%>.id" id="test_<%=id%>.id" value="<%=id%>"/>
-								
-					<fieldset>            	
+
+					<fieldset>
                 <legend>Test Information</legend>
 
                 <table border="0">
 					<tr>
-						<td><label>Date:</label><input type="text" name="test_<%=id%>.valDate" id="test_<%=id%>.valDate" size="14"/><img src="<%=request.getContextPath()%>/images/cal.gif" id="test_<%=id%>.valDate_cal" /></td>
+						<td  class="input-append"><label>Date:</label><input type="text" name="test_<%=id%>.valDate" id="test_<%=id%>.valDate" class="input-medium" required><img src="<%=request.getContextPath()%>/images/cal.gif" id="test_<%=id%>.valDate_cal" class="add-on" required></td>
 						<td><label>Flag:</label>
                  		<select name="test_<%=id%>.flag" id="test_<%=id%>.flag">
                         	<option value="">None</option>
@@ -69,33 +69,33 @@ if(!authed) {
                     		<option value="F">Final</option>
                    			<option value="P">Partial</option>
                         </select>
-                    </td>                
+                    </td>
                  		</tr>
-                 
+
                 	<tr>
-                		
+
                 		<td><label>Code Type:</label>
                 			<select name="test_<%=id%>.codeType" id="test_<%=id%>.codeType">
-                            	<option value="ST">ST</option>
-                                <option value="FT">FT</option>
+                            	<option value="ST">ST-short text</option>
+                                <option value="FT">FT-formatted text</option>
                             </select>
                         </td>
                   	<td><label>Code:</label><input type="text" name="test_<%=id%>.code" size="10" id="test_<%=id%>.code"/></td>
-                  	<td><label>Name:</label><input type="text" name="test_<%=id%>.lab_test_name" size="15" id="test_<%=id%>.lab_test_name"/></td>
+                  	<td><label>Name:</label><input type="text" name="test_<%=id%>.lab_test_name" size="15" id="test_<%=id%>.lab_test_name" required></td>
                  	<td colspan="2"><label>Description:</label><input type="text" name="test_<%=id%>.test_descr" size="40" id="test_<%=id%>.test_descr"/></td>
-                 	
+
                   </tr>
-                 
-                 
+
+
                  <tr>
                  	<td><label>Value:</label><input type="text" name="test_<%=id%>.codeVal" size="10" id="test_<%=id%>.codeVal"/></td>
                  	<td><label>Unit:</label><input type="text" name="test_<%=id%>.codeUnit" size="10" id="test_<%=id%>.codeUnit"/></td>
-                 	
+
                  	<td><label>refRange (low):</label><input type="text" name="test_<%=id%>.refRangeLow" id="test_<%=id%>.refRangeLow" size="5"/></td>
                  	<td><label>refRange (high):</label><input type="text" name="test_<%=id%>.refRangeHigh" id="test_<%=id%>.refRangeHigh" size="5"/></td>
                  	<td><label>refRange (text):</label><input type="text" name="test_<%=id%>.refRangeText" id="test_<%=id%>.refRangeText" size="5"/></td>
-                 </tr>                
-                 
+                 </tr>
+
  			     <tr>
  			     	<td><label>Lab Notes:</label></td><td colspan="2"><textarea name="test_<%=id%>.labnotes" id="test_<%=id%>.labnotes" rows="5" cols="30"></textarea></td>
  			     	<td colspan="2">
@@ -106,11 +106,11 @@ if(!authed) {
  			     		</select>
  			     	</td>
  			     </tr>
-                                 
+
                 </table>
-                
+
                 <a href="#" onclick="deleteTest(<%=id%>); return false;">[Delete]</a>
-										
+
 		       </fieldset>
 		       <script>
 			       Calendar.setup({ inputField : "test_<%=id%>.valDate", ifFormat : "%Y-%m-%d %H:%m", showsTime :true, button : "test_<%=id%>.valDate_cal" });

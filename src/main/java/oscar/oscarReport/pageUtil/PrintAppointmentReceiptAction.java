@@ -74,7 +74,7 @@ public class PrintAppointmentReceiptAction extends OscarAction {
         System.setProperty("jasper.reports.compile.class.path", classpath);
         LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
         String curUser_no = loggedInInfo.getLoggedInProviderNo();
-        OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean("oscarAppointmentDao");
+        OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
         DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
         ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);
         
@@ -100,7 +100,7 @@ public class PrintAppointmentReceiptAction extends OscarAction {
         
         ClinicDAO clinicDao = SpringUtils.getBean(ClinicDAO.class);
         Clinic clinic = clinicDao.getClinic();
-        UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         UserProperty prop;
         String defaultPrinterName = "";
         Boolean silentPrint = false;

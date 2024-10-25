@@ -45,7 +45,7 @@ String providerview = request.getParameter("providerview")==null?"all":request.g
 	ReportProviderDao reportProviderDao = SpringUtils.getBean(ReportProviderDao.class);
 	BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
 	BillingDetailDao billingDetailDao = SpringUtils.getBean(BillingDetailDao.class);
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 %>
 
 <%

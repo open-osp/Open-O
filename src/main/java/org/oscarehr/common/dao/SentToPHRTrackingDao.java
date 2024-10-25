@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,30 +20,14 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.SentToPHRTracking;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class SentToPHRTrackingDao extends AbstractDao<SentToPHRTracking> {
-
-	public SentToPHRTrackingDao() {
-		super(SentToPHRTracking.class);
-	}
-
-	public SentToPHRTracking findByDemographicObjectServer(Integer demographicNo, String objectName, String sentToServer) {
-		String sql = "select x from SentToPHRTracking x where x.demographicNo=?1 and x.objectName=?2 and x.sentToServer=?3";
-		Query query = entityManager.createQuery(sql);
-		query.setParameter(1, demographicNo);
-		query.setParameter(2, objectName);
-		query.setParameter(3, sentToServer);
-
-		return(getSingleResultOrNull(query));
-	}
+public interface SentToPHRTrackingDao extends AbstractDao<SentToPHRTracking> {
+    SentToPHRTracking findByDemographicObjectServer(Integer demographicNo, String objectName, String sentToServer);
 }

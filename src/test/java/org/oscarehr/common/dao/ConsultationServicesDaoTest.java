@@ -39,7 +39,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class ConsultationServicesDaoTest extends DaoTestFixtures {
 
-	protected ConsultationServiceDao dao = (ConsultationServiceDao) SpringUtils.getBean("consultationServiceDao");
+	protected ConsultationServiceDao dao = (ConsultationServiceDao) SpringUtils.getBean(ConsultationServiceDao.class);
 
 	@Before
 	public void before() throws Exception {

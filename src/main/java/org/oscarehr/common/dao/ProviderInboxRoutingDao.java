@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
@@ -40,99 +43,16 @@ import oscar.oscarLab.ca.on.CommonLabResultData;
  *
  * @author jay gallagher
  */
-@Repository
-public class ProviderInboxRoutingDao extends AbstractDao<ProviderInboxItem> {
+public interface ProviderInboxRoutingDao extends AbstractDao<ProviderInboxItem> {
 
-	public ProviderInboxRoutingDao() {
-		super(ProviderInboxItem.class);
-	}
-    
+	public boolean removeLinkFromDocument(String docType, Integer docId, String providerNo);
 
+	public List<ProviderInboxItem> getProvidersWithRoutingForDocument(String docType, Integer docId);
 
+	public boolean hasProviderBeenLinkedWithDocument(String docType, Integer docId, String providerNo);
 
-    public boolean removeLinkFromDocument(String docType, Integer docId, String providerNo) {
-    	return CommonLabResultData.updateReportStatus(docId, providerNo, 'X', "Archived", "DOC");    	
-    }
+	public int howManyDocumentsLinkedWithAProvider(String providerNo);
 
-	public List<ProviderInboxItem> getProvidersWithRoutingForDocument(String docType, Integer docId) {
-		Query query = entityManager.createQuery("select p from ProviderInboxItem p where p.labType = ? and p.labNo = ?");
-		query.setParameter(1, docType);
-		query.setParameter(2, docId);
-
-		@SuppressWarnings("unchecked")
-		List<ProviderInboxItem> results = query.getResultList();
-
-		return results;
-	}
-
-	public boolean hasProviderBeenLinkedWithDocument(String docType, Integer docId, String providerNo) {
-		Query query = entityManager.createQuery("select p from ProviderInboxItem p where p.labType = ? and p.labNo = ? and p.providerNo=?");
-		query.setParameter(1, docType);
-		query.setParameter(2, docId);
-		query.setParameter(3, providerNo);
-
-		@SuppressWarnings("unchecked")
-		List<ProviderInboxItem> results = query.getResultList();
-
-		return (results.size() > 0);
-	}
-
-	public int howManyDocumentsLinkedWithAProvider(String providerNo) {
-		Query query = entityManager.createQuery("select p from ProviderInboxItem p where p.providerNo=?");
-		query.setParameter(1, providerNo);
-
-		@SuppressWarnings("unchecked")
-		List<ProviderInboxItem> results = query.getResultList();
-
-		return results.size();
-	}
-
-	/**
-	 * Adds lab results to the provider inbox
-	 * 
-	 * @param providerNo
-	 * 		Provider to add lab results to
-	 * @param labNo
-	 * 		Document id to be added to the inbox
-	 * @param labType
-	 * 		Type of the document to be added. Available document types are defined in {@link oscar.oscarLab.ca.on.LabResultData} class.
-	 * 
-	 */
-	// TODO Replace labType parameter with an enum
-	@SuppressWarnings("unchecked")
-    public void addToProviderInbox(String providerNo, Integer labNo, String labType) {
-		ArrayList<String> listofAdditionalProviders = new ArrayList<String>();
-		boolean fileForMainProvider = false;
-
-		try {
-			Query rulesQuery = entityManager.createQuery("FROM IncomingLabRules r WHERE r.archive = 0 AND r.providerNo = :providerNo");
-			rulesQuery.setParameter("providerNo", providerNo);
-
-			for (IncomingLabRules rules : (List<IncomingLabRules>) rulesQuery.getResultList()) {
-				String status = rules.getStatus();
-				String frwdProvider = rules.getFrwdProviderNo();
-
-				listofAdditionalProviders.add(frwdProvider);
-				if (status != null && status.equals("F")) fileForMainProvider = true;
-			}
-
-			ProviderInboxItem p = new ProviderInboxItem();
-			p.setProviderNo(providerNo);
-			p.setLabNo(labNo);
-			p.setLabType(labType);
-			p.setStatus(fileForMainProvider ? ProviderInboxItem.FILE : ProviderInboxItem.NEW);
-
-			if (!hasProviderBeenLinkedWithDocument(labType, labNo, providerNo)) persist(p);
-
-			for (String s : listofAdditionalProviders) {
-				if (!hasProviderBeenLinkedWithDocument(labType, labNo, s)) {
-					addToProviderInbox(s, labNo, labType);
-				}
-			}
-		} catch (Exception e) {
-			MiscUtils.getLogger().error("Error", e);
-		}
-
-	}
+	public void addToProviderInbox(String providerNo, Integer labNo, String labType);
 
 }

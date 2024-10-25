@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,88 +21,18 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.Relationships;
-import org.springframework.stereotype.Repository;
 
-import oscar.util.ConversionUtils;
-
-@Repository
-public class RelationshipsDao extends AbstractDao<Relationships> {
-
-	public RelationshipsDao() {
-		super(Relationships.class);
-	}
-
-	//find all of them - for migration script
-	public List<Relationships> findAll() {
-		String sql = "select x from Relationships x order by x.demographicNo";
-		Query query = entityManager.createQuery(sql);
-		@SuppressWarnings("unchecked")
-		List<Relationships> results = query.getResultList();
-		return results;
-	}
-
-	/**
-	 * Finds active relationship with the specified ID
-	 * 
-	 * @param id
-	 * 		ID of the relationship to be loaded 
-	 * @return
-	 * 		Returns the non-deleted rel'p with the specified ID or null if it can't be found
-	 */
-	public Relationships findActive(Integer id) {
-		// TODO replace by getBaseQuery(), when becomes available
-		Query query = entityManager.createQuery("FROM " + modelClass.getSimpleName() + " r WHERE r.id = :id AND (r.deleted IS NULL OR r.deleted = '0')");
-		query.setParameter("id", id);
-		// query.setParameter("deleted", ConversionUtils.toBoolString(Boolean.TRUE));
-		return getSingleResultOrNull(query);
-	}
-
-	/**
-	 * Finds all active relationships for the specified demographic ID
-	 * 
-	 * @param demographicNumber
-	 * 		demographic id
-	 * @return
-	 * 		Returns the non-deleted rel'p with the specified ID or null if it can't be found
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Relationships> findByDemographicNumber(Integer demographicNumber) {
-		// TODO replace by getBaseQuery(), when becomes available
-		Query query = entityManager.createQuery("FROM " + modelClass.getSimpleName() + " r WHERE r.demographicNo = :dN AND (r.deleted IS NULL OR r.deleted = '0')");
-		query.setParameter("dN", demographicNumber);
-		return query.getResultList();
-	}
-
-	/**
-	 * Finds all active relationships that are marked as sub decision maker.
-	 * 
-	 * @param demographicNumber
-	 * 		Demographic ID to find the relationships for
-	 * @return
-	 * 		Returns the non-deleted relationships with the sub decision maker flag set to true for the specified demographic ID   
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Relationships> findActiveSubDecisionMaker(Integer demographicNumber) {
-		Query query = entityManager.createQuery("FROM " + modelClass.getSimpleName() + " r WHERE r.demographicNo = :dN AND r.subDecisionMaker = :sdm AND (r.deleted IS NULL OR r.deleted = '0')");
-		query.setParameter("dN", demographicNumber);
-		query.setParameter("sdm", ConversionUtils.toBoolString(Boolean.TRUE));
-		return query.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-    public List<Relationships> findActiveByDemographicNumberAndFacility(Integer demographicNumber, Integer facilityId) {
-		Query query = entityManager.createQuery("FROM " + modelClass.getSimpleName() + " r WHERE r.demographicNo = :dN AND r.facilityId = :facilityId AND (r.deleted IS NULL OR r.deleted = '0')");
-		query.setParameter("dN", demographicNumber);
-		query.setParameter("facilityId", facilityId);
-		return query.getResultList();
-	}
+public interface RelationshipsDao extends AbstractDao<Relationships> {
+    List<Relationships> findAll();
+    Relationships findActive(Integer id);
+    List<Relationships> findByDemographicNumber(Integer demographicNumber);
+    List<Relationships> findActiveSubDecisionMaker(Integer demographicNumber);
+    List<Relationships> findActiveByDemographicNumberAndFacility(Integer demographicNumber, Integer facilityId);
 }

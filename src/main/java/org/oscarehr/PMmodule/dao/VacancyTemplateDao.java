@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.PMmodule.dao;
@@ -32,44 +35,15 @@ import org.oscarehr.PMmodule.model.VacancyTemplate;
 import org.oscarehr.common.dao.AbstractDao;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class VacancyTemplateDao extends AbstractDao<VacancyTemplate> {
+public interface VacancyTemplateDao extends AbstractDao<VacancyTemplate> {
 
-	public VacancyTemplateDao() {
-		super(VacancyTemplate.class);
-	}
+	public void saveVacancyTemplate(VacancyTemplate obj);
 
-	public void saveVacancyTemplate(VacancyTemplate obj) {
-		persist(obj);
-	}
-	
-	public void mergeVacancyTemplate(VacancyTemplate obj) {
-		merge(obj);
-	}
-	
-	public VacancyTemplate getVacancyTemplate(Integer templateId) {
-		return find(templateId);
-	}
-	
-	public List<VacancyTemplate> getVacancyTemplateByWlProgramId(Integer wlProgramId) {
-		Query query = entityManager.createQuery("select x from VacancyTemplate x where x.wlProgramId=?");
-		query.setParameter(1, wlProgramId);
-		
-		@SuppressWarnings("unchecked")
-		List<VacancyTemplate> results = query.getResultList();
-		
-		
-		return results;	
-	}
-	
-	 public List<VacancyTemplate> getActiveVacancyTemplatesByWlProgramId(Integer wlProgramId) {
-		Query query = entityManager.createQuery("select x from VacancyTemplate x where x.wlProgramId=? and x.active=?");
-		query.setParameter(1, wlProgramId);
-		query.setParameter(2, true);
-		
-		@SuppressWarnings("unchecked")
-		List<VacancyTemplate> results = query.getResultList();
-		
-		return results;	
-	}
+	public void mergeVacancyTemplate(VacancyTemplate obj);
+
+	public VacancyTemplate getVacancyTemplate(Integer templateId);
+
+	public List<VacancyTemplate> getVacancyTemplateByWlProgramId(Integer wlProgramId);
+
+	public List<VacancyTemplate> getActiveVacancyTemplatesByWlProgramId(Integer wlProgramId);
 }

@@ -31,7 +31,7 @@ import org.oscarehr.util.LoggedInInfo;
  * session.
  * TO BE USED FOR TEST PURPOSES ONLY!
  */
-public class MockSecurityInfoManager extends SecurityInfoManager {
+public class MockSecurityInfoManager extends SecurityInfoManagerImpl {
 
     public MockSecurityInfoManager() {
 

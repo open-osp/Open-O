@@ -25,15 +25,6 @@
 
 package oscar.eform.upload;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -43,12 +34,20 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.OscarProperties;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ImageUploadAction extends Action {
     
-	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+	private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
     	
@@ -58,18 +57,16 @@ public class ImageUploadAction extends Action {
     	
          ImageUploadForm fm = (ImageUploadForm) form;
          FormFile image = fm.getImage();
-         try {
+         try (OutputStream fos = ImageUploadAction.getEFormImageOutputStream(image.getFileName())) {
              byte[] imagebytes = image.getFileData();
-             OutputStream fos = ImageUploadAction.getEFormImageOutputStream(image.getFileName());
              fos.write(imagebytes);
          } catch (Exception e) { MiscUtils.getLogger().error("Error", e); }
          return mapping.findForward("success");
     }
 
-    public static OutputStream getEFormImageOutputStream(String imageFileName) throws FileNotFoundException {
-        String filepath = OscarProperties.getInstance().getProperty("eform_image") + "/" + imageFileName;
-        FileOutputStream fos = new FileOutputStream(new File(filepath));
-        return fos;
+    public static OutputStream getEFormImageOutputStream(String imageFileName) throws IOException {
+        Path path = Paths.get(OscarProperties.getInstance().getEformImageDirectory(), imageFileName);
+        return Files.newOutputStream(path);
     }
 
     public static File getImageFolder() throws IOException {

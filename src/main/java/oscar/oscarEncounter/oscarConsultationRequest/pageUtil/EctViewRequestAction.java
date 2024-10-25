@@ -30,6 +30,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -45,17 +47,21 @@ import org.apache.xml.security.exceptions.Base64DecodingException;
 import org.apache.xml.security.utils.Base64;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.ConsultationRequestDao;
+import org.oscarehr.common.dao.ConsultationRequestExtDao;
 import org.oscarehr.common.dao.Hl7TextMessageDao;
 import org.oscarehr.common.hl7.v2.oscar_to_oscar.DataTypeUtils;
 import org.oscarehr.common.hl7.v2.oscar_to_oscar.OscarToOscarUtils;
 import org.oscarehr.common.hl7.v2.oscar_to_oscar.RefI12;
 import org.oscarehr.common.model.ConsultationRequest;
+import org.oscarehr.common.model.ConsultationRequestExt;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.DemographicExt;
 import org.oscarehr.common.model.DemographicExt.DemographicProperty;
 import org.oscarehr.common.model.Hl7TextMessage;
 import org.oscarehr.common.model.ProfessionalSpecialist;
 import org.oscarehr.common.model.Provider;
+import org.oscarehr.common.model.enumerator.ConsultationRequestExtKey;
+import org.oscarehr.managers.ConsultationManager;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
@@ -125,8 +131,13 @@ public class EctViewRequestAction extends Action {
 
         public static void fillFormValues(LoggedInInfo loggedInInfo, EctConsultationFormRequestForm thisForm, Integer requestId) {
         	checkPrivilege(loggedInInfo);
+
+            ConsultationManager consultationManager = SpringUtils.getBean(ConsultationManager.class);
+            ConsultationRequestExtDao consultationRequestExtDao = SpringUtils.getBean(ConsultationRequestExtDao.class);
+            List<ConsultationRequestExt> extras = consultationRequestExtDao.getConsultationRequestExts(requestId);
+            Map<String, String> extraMap = consultationManager.getExtValuesAsMap(extras);
         	
-            ConsultationRequestDao consultDao = (ConsultationRequestDao)SpringUtils.getBean("consultationRequestDao");
+            ConsultationRequestDao consultDao = (ConsultationRequestDao)SpringUtils.getBean(ConsultationRequestDao.class);;
             ConsultationRequest consult = consultDao.find(requestId);
 
             thisForm.setAllergies(consult.getAllergies());
@@ -177,11 +188,18 @@ public class EctViewRequestAction extends Action {
             thisForm.setPatientEmail(demo.getEmail());
             thisForm.setPatientAge(demo.getAge());
 
-            ProviderDao provDao = (ProviderDao)SpringUtils.getBean("providerDao");
+            ProviderDao provDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
             Provider prov = provDao.getProvider(consult.getProviderNo());
             thisForm.setProviderName(prov.getFormattedName());
 
-            thisForm.seteReferral(false);
+            boolean isEReferral = extraMap.containsKey(ConsultationRequestExtKey.EREFERRAL_REF.getKey());
+            thisForm.seteReferral(isEReferral);
+            if (isEReferral) {
+                thisForm.setProfessionalSpecialistName(extraMap.getOrDefault(ConsultationRequestExtKey.EREFERRAL_DOCTOR.getKey(), ""));
+                thisForm.seteReferralService(extraMap.getOrDefault(ConsultationRequestExtKey.EREFERRAL_SERVICE.getKey(), ""));
+                thisForm.seteReferralId(extraMap.get(ConsultationRequestExtKey.EREFERRAL_REF.getKey()));
+            }
+
             thisForm.setFdid(consult.getFdid());
         }
 
@@ -236,7 +254,7 @@ public class EctViewRequestAction extends Action {
 	
 	public static void fillFormValues(EctConsultationFormRequestForm thisForm, String segmentId) throws HL7Exception, UnsupportedEncodingException, Base64DecodingException
 	{
-		Hl7TextMessageDao hl7TextMessageDao=(Hl7TextMessageDao) SpringUtils.getBean("hl7TextMessageDao");
+		Hl7TextMessageDao hl7TextMessageDao=(Hl7TextMessageDao) SpringUtils.getBean(Hl7TextMessageDao.class);
 		Hl7TextMessage hl7TextMessage=hl7TextMessageDao.find(Integer.parseInt(segmentId));
 		
 		String encodedMessage=hl7TextMessage.getBase64EncodedeMessage();

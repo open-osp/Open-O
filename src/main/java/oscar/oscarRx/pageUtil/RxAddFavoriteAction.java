@@ -77,7 +77,7 @@ public final class RxAddFavoriteAction extends DispatchAction {
         if(frm.getDrugId()!=null) {
             int drugId = Integer.parseInt(frm.getDrugId());
             
-        	DrugDao drugDao=(DrugDao) SpringUtils.getBean("drugDao");        	
+        	DrugDao drugDao=(DrugDao) SpringUtils.getBean(DrugDao.class);        	
             Drug drug=drugDao.find(drugId);
             RxPrescriptionData.addToFavorites(providerNo, favoriteName, drug);
         }
@@ -120,7 +120,7 @@ public final class RxAddFavoriteAction extends DispatchAction {
 
         if(drugIdStr!=null){
             int drugId=Integer.parseInt(drugIdStr);
-        	DrugDao drugDao=(DrugDao) SpringUtils.getBean("drugDao");        	
+        	DrugDao drugDao=(DrugDao) SpringUtils.getBean(DrugDao.class);        	
             Drug drug=drugDao.find(drugId);
             RxPrescriptionData.addToFavorites(providerNo, favoriteName, drug);
         }

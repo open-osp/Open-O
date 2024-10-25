@@ -46,7 +46,7 @@ public class DiseaseRegistryHandlerTest {
 
 //	private static Logger logger = MiscUtils.getLogger();
 	private static DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
-	private DxresearchDAO dXdao = (DxresearchDAO)SpringUtils.getBean("DxresearchDAO");
+	private DxresearchDAO dXdao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
 	Date now = new java.util.Date();
 	static Demographic demographic;
 	static String providerNo = "999998";

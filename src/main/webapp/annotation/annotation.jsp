@@ -80,7 +80,7 @@
     String user_no = (String) se.getAttribute("user");
 
     WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(se.getServletContext());
-    CaseManagementManager cmm = (CaseManagementManager) ctx.getBean("caseManagementManager");
+    CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
 
     Integer tableName = cmm.getTableNameByDisplay(display);
     String note = "";
@@ -177,7 +177,7 @@
 %>
 
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
     <title>Annotation</title>
     <% if (isMobileOptimized) { %>
@@ -253,7 +253,7 @@
 	    cmNote.setSigned(true);
 	    cmNote.setProgram_no(program_no);
 	    
-	    SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean("secRoleDao");
+	    SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean(SecRoleDao.class);
 		SecRole doctorRole = secRoleDao.findByName("doctor");		
 		cmNote.setReporter_caisi_role(doctorRole.getId().toString());
 	    	    

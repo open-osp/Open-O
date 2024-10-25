@@ -225,7 +225,7 @@ public class FormsService extends AbstractServiceImpl {
 	@Path("/getFavouriteFormGroup")
 	@Produces("application/json")
 	public SummaryTo1 getFavouriteFormGroups(){
-		UserPropertyDAO userPropertyDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+		UserPropertyDAO userPropertyDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		String groupName = userPropertyDao.getStringValue(getLoggedInInfo().getLoggedInProviderNo(),"favourite_eform_group");
 		logger.debug("favourite eform group name "+groupName);
 		if(groupName == null) return null;
@@ -335,7 +335,7 @@ public class FormsService extends AbstractServiceImpl {
 
 		//formMenu.add(idCounter++, bundle.getString("global.saveAsPDF"), "PDF", "URL"); 
 		if( ProviderMyOscarIdData.idIsSet(getLoggedInInfo().getLoggedInProviderNo())) {
-			DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean("demographicDao");
+			DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean(DemographicDao.class);
 			Demographic demographic=demographicDao.getDemographic(""+demographicNo);
 			if (demographic.getMyOscarUserName()!=null && !demographic.getMyOscarUserName().equals("")) {		/*register link -myoscar (strikethrough) links to create account*/
 				formMenu.add(idCounter++, bundle.getString("global.send2PHR"), "send2PHR", "url");

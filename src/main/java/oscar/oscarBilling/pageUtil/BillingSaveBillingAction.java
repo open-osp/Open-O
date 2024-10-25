@@ -54,8 +54,8 @@ import oscar.util.ConversionUtils;
 
 public class BillingSaveBillingAction extends Action {
 
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
-    OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
+    OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
     private BillingDao billingdao = SpringUtils.getBean(BillingDao.class);
     private BillingmasterDAO billingmasterDao = SpringUtils.getBean(BillingmasterDAO.class);
     

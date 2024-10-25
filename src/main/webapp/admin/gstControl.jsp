@@ -37,7 +37,7 @@ if(!authed) {
 }
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 
 <%
 

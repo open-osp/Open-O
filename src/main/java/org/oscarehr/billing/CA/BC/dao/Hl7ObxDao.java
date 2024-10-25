@@ -28,12 +28,12 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.BC.model.Hl7Obx;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class Hl7ObxDao extends AbstractDao<Hl7Obx> {
+public class Hl7ObxDao extends AbstractDaoImpl<Hl7Obx> {
 
 	public Hl7ObxDao() {
 		super(Hl7Obx.class);

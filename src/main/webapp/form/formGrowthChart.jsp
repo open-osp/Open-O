@@ -40,7 +40,7 @@
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>WHO Growth Charts</title>
@@ -191,7 +191,7 @@ function isChecked(s) {
         var b = true;
 
         for (var i =0; i <document.forms[0].elements.length; i++) {
-            if (document.forms[0].elements[i].name.indexOf("age_")>=0 || document.forms[0].elements[i].name.indexOf("stature_")>=0 || document.forms[0].elements[i].name.indexOf("bmi_")>=0) {
+            if (document.forms[0].elements[i].name.indexOf("age_")>=0 || document.forms[0].elements[i].name.indexOf("stature_")>=0 || document.forms[0].elements[i].name.indexOf("weight_")>=0 || document.forms[0].elements[i].name.indexOf("bmi_")>=0) {
                if(!isNumber(document.forms[0].elements[i]))
                  b=false;
     	    }
@@ -289,20 +289,15 @@ function calcBMIMetric(source) {
 	    }
         return temp;
     }
-	function isNumber(ss){
-		var s = ss.value;
-        var i;
-        for (i = 0; i < s.length; i++){
-            // Check that current character is number.
-            var c = s.charAt(i);
-			if (c == '.') {
-				continue;
-			} else if (((c < "0") || (c > "9"))) {
-                alert('Invalid '+s+' in field ' + ss.name);
-                ss.focus();
-                return false;
-			}
-        }
+	function isNumber(input){
+		const value = input.value;
+		if (value.trim() === '') {
+			return true;
+		} else if (isNaN(input.value) || value < 0.001) {
+			alert('Invalid ' + value +' in field ' + input.name);
+			input.focus();
+			return false;
+		}
         // All characters are numbers.
         return true;
     }

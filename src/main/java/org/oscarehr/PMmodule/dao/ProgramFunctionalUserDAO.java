@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.PMmodule.dao;
@@ -32,138 +35,27 @@ import org.hibernate.Session;
 import org.oscarehr.PMmodule.model.FunctionalUserType;
 import org.oscarehr.PMmodule.model.ProgramFunctionalUser;
 import org.oscarehr.util.MiscUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.SessionFactory;
 
-public class ProgramFunctionalUserDAO extends HibernateDaoSupport {
+public interface ProgramFunctionalUserDAO {
 
-    private static Logger log = MiscUtils.getLogger();
+    public List<FunctionalUserType> getFunctionalUserTypes();
 
-    public List<FunctionalUserType> getFunctionalUserTypes() {
-        List<FunctionalUserType> results = this.getHibernateTemplate().find("from FunctionalUserType");
+    public FunctionalUserType getFunctionalUserType(Long id);
 
-        if (log.isDebugEnabled()) {
-            log.debug("getFunctionalUserTypes: # of results=" + results.size());
-        }
-        return results;
-    }
+    public void saveFunctionalUserType(FunctionalUserType fut);
 
-    public FunctionalUserType getFunctionalUserType(Long id) {
-        if (id == null || id.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
+    public void deleteFunctionalUserType(Long id);
 
-        FunctionalUserType result = this.getHibernateTemplate().get(FunctionalUserType.class, id);
+    public List<FunctionalUserType> getFunctionalUsers(Long programId);
 
-        if (log.isDebugEnabled()) {
-            log.debug("getFunctionalUserType: id=" + id + ",found=" + (result != null));
-        }
+    public ProgramFunctionalUser getFunctionalUser(Long id);
 
-        return result;
-    }
+    public void saveFunctionalUser(ProgramFunctionalUser pfu);
 
-    public void saveFunctionalUserType(FunctionalUserType fut) {
-        if (fut == null) {
-            throw new IllegalArgumentException();
-        }
+    public void deleteFunctionalUser(Long id);
 
-        this.getHibernateTemplate().saveOrUpdate(fut);
-
-        if (log.isDebugEnabled()) {
-            log.debug("saveFunctionalUserType:" + fut.getId());
-        }
-    }
-
-    public void deleteFunctionalUserType(Long id) {
-        if (id == null || id.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        this.getHibernateTemplate().delete(getFunctionalUserType(id));
-
-        if (log.isDebugEnabled()) {
-            log.debug("deleteFunctionalUserType:" + id);
-        }
-    }
-
-    public List<FunctionalUserType> getFunctionalUsers(Long programId) {
-        if (programId == null || programId.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        List<FunctionalUserType> results = this.getHibernateTemplate().find("from ProgramFunctionalUser pfu where pfu.ProgramId = ?", programId);
-
-        if (log.isDebugEnabled()) {
-            log.debug("getFunctionalUsers: programId=" + programId + ",# of results=" + results.size());
-        }
-        return results;
-    }
-
-    public ProgramFunctionalUser getFunctionalUser(Long id) {
-        if (id == null || id.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        ProgramFunctionalUser result = this.getHibernateTemplate().get(ProgramFunctionalUser.class, id);
-
-        if (log.isDebugEnabled()) {
-            log.debug("getFunctionalUser: id=" + id + ",found=" + (result != null));
-        }
-
-        return result;
-    }
-
-    public void saveFunctionalUser(ProgramFunctionalUser pfu) {
-        if (pfu == null) {
-            throw new IllegalArgumentException();
-        }
-
-        this.getHibernateTemplate().saveOrUpdate(pfu);
-
-        if (log.isDebugEnabled()) {
-            log.debug("saveFunctionalUser:" + pfu.getId());
-        }
-    }
-
-    public void deleteFunctionalUser(Long id) {
-        if (id == null || id.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        this.getHibernateTemplate().delete(getFunctionalUser(id));
-
-        if (log.isDebugEnabled()) {
-            log.debug("deleteFunctionalUser:" + id);
-        }
-    }
-
-    public Long getFunctionalUserByUserType(Long programId, Long userTypeId) {
-        if (programId == null || programId.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-        if (userTypeId == null || userTypeId.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        Long result = null;
-
-        Session session = getSession();
-        Query q = session.createQuery("select pfu.ProgramId from ProgramFunctionalUser pfu where pfu.ProgramId = ? and pfu.UserTypeId = ?");
-        q.setLong(0, programId.longValue());
-        q.setLong(1, userTypeId.longValue());
-        List results = new ArrayList();
-        try {
-        	 results = q.list();
-        }finally {
-        	releaseSession(session);
-        }
-        if (results.size() > 0) {
-            result = (Long)results.get(0);
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("getFunctionalUserByUserType: programId=" + programId + ",userTypeId=" + userTypeId + ",result=" + result);
-        }
-
-        return result;
-    }
+    public Long getFunctionalUserByUserType(Long programId, Long userTypeId);
 }

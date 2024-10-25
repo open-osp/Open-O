@@ -72,7 +72,7 @@ public class PrintClientLabLabelAction extends OscarAction {
         if (classpath==null) classpath = (String)request.getSession().getServletContext().getAttribute("com.ibm.websphere.servlet.application.classpath");
         System.setProperty("jasper.reports.compile.class.path", classpath);
         LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-        UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         UserProperty prop;
         String defaultPrinterName = "";
         Boolean silentPrint = false;

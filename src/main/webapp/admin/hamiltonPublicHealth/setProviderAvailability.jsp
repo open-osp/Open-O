@@ -51,10 +51,10 @@ if(!authed) {
 <%@page import="org.oscarehr.common.model.UserProperty"%>		 
 
 <%
-	ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
+	ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
     LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
     ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
-    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 
     if("save".equals(request.getParameter("method"))) {
     	for(Object keyO:request.getParameterMap().keySet()) {

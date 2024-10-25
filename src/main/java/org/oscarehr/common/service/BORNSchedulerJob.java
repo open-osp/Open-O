@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.TimerTask;
 
 import org.apache.logging.log4j.Logger;
-import org.caisi.dao.ProviderDAO;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.SecurityDao;
 import org.oscarehr.common.model.Provider;
@@ -54,7 +53,7 @@ public class BORNSchedulerJob extends TimerTask {
 				return;
 			}
 			
-			ProviderDAO providerDao = SpringUtils.getBean(ProviderDao.class);
+			ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 			Provider provider = providerDao.getProvider(providerNo);
 			
 			if(provider == null) {

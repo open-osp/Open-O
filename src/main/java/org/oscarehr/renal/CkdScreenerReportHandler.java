@@ -46,7 +46,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class CkdScreenerReportHandler {
 
-	private DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean("DxresearchDAO");
+	private DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
 	private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 	private DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
 	private CkdScreener ckdScreener = new CkdScreener();

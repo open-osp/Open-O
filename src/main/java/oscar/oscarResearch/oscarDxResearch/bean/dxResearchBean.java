@@ -31,7 +31,7 @@ import org.oscarehr.util.SpringUtils;
 
 
 public class dxResearchBean{
-		private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean("partialDateDao");
+		private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean(PartialDateDao.class);
 
        String description;
        String dxResearchNo;

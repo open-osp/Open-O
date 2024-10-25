@@ -124,7 +124,7 @@ maybe use jquery/ajax to post this data instead of submitting a form to send ALL
 
     String temp = request.getParameter("template");
 
-    FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) SpringUtils.getBean("flowSheetCustomizationDao");
+    FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) SpringUtils.getBean(FlowSheetCustomizationDao.class);
     FlowSheetDrugDao flowSheetDrugDAO = SpringUtils.getBean(FlowSheetDrugDao.class);
 
     ////Start
@@ -159,7 +159,7 @@ maybe use jquery/ajax to post this data instead of submitting a form to send ALL
 
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <title><oscar:nameage demographicNo="<%=demographic_no%>"/> - <%=flowSheet%> Custom Print</title><!--I18n-->

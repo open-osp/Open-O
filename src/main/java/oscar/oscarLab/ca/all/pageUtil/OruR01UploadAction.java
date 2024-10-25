@@ -82,10 +82,10 @@ public class OruR01UploadAction extends Action {
 	        
 	    	Provider sendingProvider=loggedInInfo.getLoggedInProvider();
 
-	    	ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao)SpringUtils.getBean("professionalSpecialistDao");
+	    	ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao)SpringUtils.getBean(ProfessionalSpecialistDao.class);
 	    	ProfessionalSpecialist professionalSpecialist=professionalSpecialistDao.find(oruR01UploadForm.getProfessionalSpecialistId());
 	        
-	    	ClinicDAO clinicDAO=(ClinicDAO) SpringUtils.getBean("clinicDAO");
+	    	ClinicDAO clinicDAO=(ClinicDAO) SpringUtils.getBean(ClinicDAO.class);
 	    	Clinic clinic=clinicDAO.getClinic();
 	    	
 	        ORU_R01 hl7Message=OruR01.makeOruR01(clinic, demographic, observationData, sendingProvider, professionalSpecialist);

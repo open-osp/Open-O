@@ -54,91 +54,151 @@
 	<title><bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.title" /></title>
 
 	<style>
-		.attachmentContainer {
-			display: flex;
-			width: 95vw;
-		}
 
-		@media (min-width: 2400px) {
-			.attachmentContainer {
-				width: 97vw;
-			}
-		}
+        .attachmentContainer * {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+            font-size: 12px !important;
+	        color:black;
+        }
 
-		.attachmentList {
-			overflow: auto;
-			min-width: 320px;
-			min-height: 580px;
-			height: 94vh;
-		}
+        .attachmentContainer table {
+            border-collapse: collapse;
+            border: none;
+        }
 
-		@media (min-height: 1600px) {
-			.attachmentList {
-				height: 97vh;
-			}
-		}
+        .attachmentContainer table, .attachmentContainer table tr td {
+            background-color:white !important;
+        }
 
-		#attachDocumentsPanel {
-			width: 100%;
-			font-size: x-small;
-		}
+        .attachmentContainer {
+            display: flex;
+            width: 95vw;
+            background-color: white !important;
+        }
 
-		.preview-button {
-			padding: 2px 4px;
-			color: black;
-			border: none;
-			border-radius: 2px;
+        @media (min-width: 2400px) {
+            .attachmentContainer {
+                width: 97vw;
+            }
+        }
+
+        .attachmentList {
+            overflow-y: scroll;
+            min-width: 320px;
+            min-height: 580px;
+            width: 100%;
+            flex-basis: 40%;
+        }
+
+        @media (min-height: 1600px) {
+            .attachmentList {
+                height: 97vh;
+            }
+        }
+
+        #attachDocumentsPanel {
+            width: 100%;
+            font-size: x-small;
+        }
+
+        .preview-button {
+            padding: 2px 4px;
+            color: black;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        #attachDocumentsForm li.selectAllHeading {
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: black thin inset
+        }
+
+        .show-all-button {
+            padding: 2px 4px;
+            color: black;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            margin-left: auto;
+            background-color:lightblue;
+        }
+
+        #pdfPreview {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-basis: 60%;
+        }
+
+        #pdfObject {
+            width: 100%;
+            height: 100%;
+        }
+
+        .preview-filler {
+            border: 2px solid black;
+            border-radius: 7px;
+            padding: 10px;
+        }
+
+        .preview-pane {
+            background-color: lightgray;
+        }
+
+        .flex {
+            display: flex !important;
+        }
+
+        .hide {
+            display: none !important;
+        }
+
+        .attachmentContainer ul li:nth-of-type(odd) {
+            background-color: white;
+        }
+
+        .attachmentContainer ul li:nth-of-type(even) {
+            background-color: whitesmoke;
+        }
+
+		.attachmentContainer .collapse-arrow {
 			cursor: pointer;
 		}
 
-		#attachDocumentsForm li.selectAllHeading {
-			justify-content: space-between;
-			align-items: center;
-			border-bottom: black thin inset
+		.attachmentContainer .collapsible-content {
+			display: none;
+			padding: 0 0 0 20px !important;
 		}
 
-		.show-all-button {
-			padding: 2px 4px;
-			color: black;
-			border: none;
-			border-radius: 2px;
-			cursor: pointer;
-			margin-left: auto;
-			background-color:lightblue;
+		.attachmentContainer .caret {
+			display: inline-block;
+            width: 6px;
+            height: 6px;
+            border: solid black;
+            border-width: 0 3px 3px 0;
+            transform: rotate(-45deg);
+            border-radius: 0px;
 		}
 
-		#pdfPreview {
-			width: 100%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-
-		#pdfObject {
-			width: 100%;
-			height: 100%;
-		}
-
-		.preview-filler {
-			border: 2px solid black;
-			border-radius: 7px;
-			padding: 10px;
-		}
-		
-		.preview-pane {
-			background-color: lightgray;			
-		}
-
-		.flex {
-			display: flex !important;
-		}
-
-		.hide {
-			display: none !important;
+		.attachmentContainer .caret-down{
+        	transform: rotate(45deg) !important; 
 		}
 	</style>
 
 	<script type="text/javascript">
+		function toggleLabVersionList(collapseBtn) {
+			jQuery(collapseBtn).toggleClass('caret-down');
+			jQuery(collapseBtn).parent().find('.collapsible-content').slideToggle(100);
+		}
+
+		function expandLabVersionList(collapseBtn) {
+			jQuery(collapseBtn).addClass('caret-down');
+			jQuery(collapseBtn).parent().find('.collapsible-content').slideDown(100);
+		}
+			
 		if (typeof pdfCache == 'undefined') {
 			var pdfCache = []; //because this is a global variable, only redeclare it if it doesn't exist. This is relevant when opening the attachment window multiple times in sequence
 		}
@@ -187,7 +247,7 @@
 			if (errorMessage) {
 				alert("A preview of this document could not be generated.\n\n" + errorMessage);
 			} else {
-				alert("Failed to render PDF :( Please check logs for more details.");
+				alert("A preview of this document could not be generated.");
 			}
 			HideSpin();
 		}
@@ -241,7 +301,7 @@
 					</tr>
 					<tr>
 						<td>
-							<ul id="eFormList" style="list-style-type: none;padding:0px;">
+							<ul id="eFormList" style="list-style-type: none;padding:0;">
 								<li class="selectAllHeading ${allEForms.size() > 5 ? 'flex' : ''}">
 									<input id="selectAllEForms" type="checkbox" onclick="toggleSelectAll(this, 'eForm_');" value="eForm_check" title="Select/un-select all eForms."/>
 									<label for="selectAllEForms">Select all</label>
@@ -298,36 +358,30 @@
 									<button class="show-all-button ${allLabsSortedByVersions.size() > 20 ? '' : 'hide'}" type="button" title="Show ${allLabsSortedByVersions.size() - 20} More Labs" onclick="showAll(this, 'lab')">Show ${allLabsSortedByVersions.size() - 20} More Labs</button>
 								</li>
 								<c:forEach items="${ allLabsSortedByVersions }" var="lab" varStatus="loop">
-									<c:set var="labName" value="${fn:trim(lab.label) != '' ? fn:substring(lab.label, 0, 30) : fn:substring(lab.discipline, 0, 30)}" />
-									<c:set var="labId" value=",${lab.segmentID}Lab" />
+									<c:set var="labName" value="${fn:substring(lab.labName, 0, 30)}"/>
+									<c:set var="totalVersions" value="${fn:length(lab.labVersionIds)}" />
 									<li class="lab ${loop.index > 19 ? 'hide' : ''}">
-										<c:set var="description" value="${ lab.description }" />
-										<c:if test="${empty description}"><c:set var="description" value="UNLABELLED" /></c:if>
-										<c:if test="${fn:contains(latestLabVersionIds, labId)}">
-											<input type="checkbox" disabled style="opacity:0"/> <!--included so that the description of a group of labs is spaced nicely but we want it to be invisible-->
-											<label title="${ description }" ><c:out value="${ description }" /></label><br/>
+										<input class="lab_check" type="checkbox" name="labNo" id="labNo${ lab.segmentID }" value="${lab.segmentID}" title="<c:out value='${ labName }' />" />
+										<label for="labNo${lab.segmentID}" title="<c:out value='${ labName }' />" ><c:out value="${ labName }" />&nbsp;</label>
+										<label for="labNo${lab.segmentID}" class="lab-date">${lab.labDateFormated}</label>
+										<c:if test="${not empty lab.labVersionIds}">
+											&nbsp;<i class="caret collapse-arrow" onclick="toggleLabVersionList(this)"></i>&nbsp;
 										</c:if>
-										<c:choose>
-											<c:when test="${fn:startsWith(labName, '...Version')}">
-												<c:set var="versionNumber" value="${fn:replace(labName, '...Version ', '')}" />
-												<input class="lab_check" type="checkbox" name="labNo" id="labNo${ lab.segmentID }" value="${lab.segmentID}" title="v${ versionNumber } ${ description }" />
-												<em>
-													<label for="labNo${lab.segmentID}" title="v${ versionNumber } ${ description }" >
-														<c:out value="${ labName }" />&nbsp;
-													</label>
-													<label for="labNo${lab.segmentID}" class="lab-date">(${lab.dateObjFormated})</label>
-												</em>
-											</c:when>
-											<c:otherwise>
-												<c:if test="${empty labName}"><c:set var="labName" value="UNLABELLED" /></c:if>
-												<input class="lab_check" type="checkbox" name="labNo" id="labNo${ lab.segmentID }" value="${lab.segmentID}" title="${ labName }" />
-												<label for="labNo${lab.segmentID}" title="${ labName }" >
-													<c:out value="${ labName }" />&nbsp;
-												</label>
-												<label for="labNo${lab.segmentID}" class="lab-date">${lab.dateObjFormated}</label>
-											</c:otherwise>
-										</c:choose>
 										<button class="preview-button" type="button" title="Preview" onclick="getPdf('LAB', '${lab.segmentID}', 'method=renderLabPDF&segmentId=${lab.segmentID}')">Preview</button>
+										<ul class="collapsible-content" style="list-style-type: none;padding:0px;">
+											<c:forEach items="${ lab.labVersionIds }" var="version" varStatus="versionLoop">
+											<li>
+												<input class="lab_check" data-version="${totalVersions - versionLoop.index}" type="checkbox" name="labNo" id="labNo${ version.key }" value="${version.key}" title="v${totalVersions - versionLoop.index} ${ labName }" />
+												<em>
+													<label for="labNo${version.key}" title="v${totalVersions - versionLoop.index} ${ labName }" >
+														<c:out value="Earlier Version ${ totalVersions - versionLoop.index } of ${ totalVersions + 1 }" />&nbsp;
+													</label>
+													<label for="labNo${version.key}" class="lab-date">(${version.value})</label>
+												</em>
+												<button class="preview-button" type="button" title="Preview" onclick="getPdf('LAB', '${version.key}', 'method=renderLabPDF&segmentId=${version.key}')">Preview</button>
+											</li>
+											</c:forEach>
+										</ul>
 									</li>
 								</c:forEach>
 							</ul>
@@ -341,7 +395,7 @@
 					</tr>
 					<tr>
 						<td>
-							<ul id="hrmList" style="list-style-type: none;padding:0px;">
+							<ul id="hrmList" style="list-style-type: none;padding:0;">
 								<li class="selectAllHeading ${allHRMDocuments.size() > 20 ? 'flex' : ''}">
 									<input id="selectAllHRMS" type="checkbox" onclick="toggleSelectAll(this, 'hrm_');" value="hrm_check" title="Select/un-select all HRM documents."/>
 									<label for="selectAllHRMS">Select all</label>
@@ -367,7 +421,7 @@
 					</tr>
 					<tr>
 						<td>
-							<ul id="formList" style="list-style-type: none;padding:0px;">
+							<ul id="formList" style="list-style-type: none;padding:0;">
 								<li class="selectAllHeading ${allForms.size() > 20 ? 'flex' : ''}">
 									<input id="selectAllForms" type="checkbox" onclick="toggleSelectAll(this, 'form_');" value="form_check" title="Select/un-select all forms."/>
 									<label for="selectAllForms">Select all</label>

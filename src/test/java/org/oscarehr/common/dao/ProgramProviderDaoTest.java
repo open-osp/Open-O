@@ -25,6 +25,7 @@ package org.oscarehr.common.dao;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.oscarehr.PMmodule.dao.ProgramProviderDAO;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
@@ -48,6 +49,6 @@ public class ProgramProviderDaoTest extends DaoTestFixtures {
 		
 		dao.saveProgramProvider(pp);
 		
-		dao.updateProviderRoles(pp.getId(), 19999l);
+		dao.updateProviderRole(pp, 19999l);
 	}
 }

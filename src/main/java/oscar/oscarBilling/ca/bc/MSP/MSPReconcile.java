@@ -23,39 +23,10 @@
  */
 package oscar.oscarBilling.ca.bc.MSP;
 
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Vector;
-
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
-import org.oscarehr.billing.CA.BC.dao.BillRecipientsDao;
-import org.oscarehr.billing.CA.BC.dao.BillingHistoryDao;
-import org.oscarehr.billing.CA.BC.dao.TeleplanAdjCodesDao;
-import org.oscarehr.billing.CA.BC.dao.TeleplanC12Dao;
-import org.oscarehr.billing.CA.BC.dao.TeleplanRefusalCodeDao;
-import org.oscarehr.billing.CA.BC.dao.TeleplanS00Dao;
-import org.oscarehr.billing.CA.BC.dao.TeleplanS21Dao;
-import org.oscarehr.billing.CA.BC.model.BillRecipients;
-import org.oscarehr.billing.CA.BC.model.TeleplanAdjCodes;
-import org.oscarehr.billing.CA.BC.model.TeleplanC12;
-import org.oscarehr.billing.CA.BC.model.TeleplanRefusalCode;
-import org.oscarehr.billing.CA.BC.model.TeleplanS00;
-import org.oscarehr.billing.CA.BC.model.TeleplanS21;
+import org.oscarehr.billing.CA.BC.dao.*;
+import org.oscarehr.billing.CA.BC.model.*;
 import org.oscarehr.common.dao.BillingDao;
 import org.oscarehr.common.dao.BillingPaymentTypeDao;
 import org.oscarehr.common.model.Billing;
@@ -63,7 +34,6 @@ import org.oscarehr.common.model.BillingPaymentType;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.entities.Billingmaster;
 import oscar.entities.MSPBill;
 import oscar.entities.Provider;
@@ -72,11 +42,16 @@ import oscar.oscarBilling.ca.bc.data.BillRecipient;
 import oscar.oscarBilling.ca.bc.data.BillingHistoryDAO;
 import oscar.oscarBilling.ca.bc.data.BillingmasterDAO;
 import oscar.oscarDB.DBHandler;
-import oscar.util.BeanUtilHlp;
-import oscar.util.ConversionUtils;
-import oscar.util.SqlUtils;
-import oscar.util.StringUtils;
-import oscar.util.UtilMisc;
+import oscar.util.*;
+
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class MSPReconcile {
 	private static Logger log = MiscUtils.getLogger();
@@ -89,10 +64,10 @@ public class MSPReconcile {
 	public static final String REP_INVOICE = "REP_INVOICE";
 	public static final String REP_PAYREF = "REP_PAYREF";
 	public static final String REP_PAYREF_SUM = "REP_PAYREF_SUM";
-	public static final String REP_PAYREF_GST = "REP_PAYREF_GST";
-	public static final String REP_PAYREF_SUM_GST = "REP_PAYREF_SUM_GST";
-	public static final String REP_GST_SUM = "REP_GST_SUM";
-	public static final String REP_GST_SUM_SPLIT = "REP_GST_SUM_SPLIT";
+//	public static final String REP_PAYREF_GST = "REP_PAYREF_GST";
+//	public static final String REP_PAYREF_SUM_GST = "REP_PAYREF_SUM_GST";
+//	public static final String REP_GST_SUM = "REP_GST_SUM";
+//	public static final String REP_GST_SUM_SPLIT = "REP_GST_SUM_SPLIT";
 	public static final String REP_ACCOUNT_REC = "REP_ACCOUNT_REC";
 	public static final String REP_REJ = "REP_REJ";
 	public static final String REP_WO = "REP_WO";
@@ -1125,7 +1100,7 @@ public class MSPReconcile {
 			orderByClause = "order by b.provider_no,bt.sortOrder,bm.service_date,b.demographic_name";
 			c12 = currentC12Records();
 		}
-		String p = "select provider.first_name,provider.last_name,b.billingtype, b.update_date, bm.billingmaster_no,b.billing_no, " + " b.demographic_name,b.demographic_no,bm.billing_unit,bm.billing_code,bm.bill_amount,bm.billingstatus,bm.mva_claim_code,bm.service_location," + " bm.phn,bm.service_end_time,service_start_time,bm.service_to_day,bm.service_date,bm.oin_sex_code,bm.gst,bm.gst_no,b.dob,dx_code1,b.provider_no,apptProvider_no,bt.sortOrder "
+		String p = "select provider.first_name,provider.last_name,b.billingtype, b.update_date, bm.billingmaster_no,b.billing_no, " + " b.demographic_name,b.demographic_no,bm.billing_unit,bm.billing_code,bm.bill_amount,bm.billingstatus,bm.mva_claim_code,bm.service_location," + " bm.phn,bm.service_end_time,service_start_time,bm.service_to_day,bm.service_date,bm.oin_sex_code,b.dob,dx_code1,b.provider_no,apptProvider_no,bt.sortOrder "
 		        + " from demographic,provider,billing as b left join billingtypes bt on b.billingtype = bt.billingtype ,billingmaster as bm left join billingstatus_types bs on bm.billingstatus = bs.billingstatus" + " where bm.billing_no=b.billing_no " + " and b.provider_no = provider.provider_no " + " and demographic.demographic_no = b.demographic_no " + criteriaQry + " " + orderByClause;
 
 		if (type.equals(REP_REJ)) {
@@ -1160,8 +1135,6 @@ public class MSPReconcile {
 				b.expString = "".equals(expStr) ? expStr : "(" + expStr + ")";
 				b.reason = this.getStatusDesc(b.reason);
 				b.amount = rs.getString("bill_amount");
-				b.setGst(rs.getString("gst"));
-				b.setGstNo(rs.getString("gst_no"));
 				b.code = rs.getString("billing_code");
 				b.dx1 = rs.getString("dx_code1");	
 				b.serviceDate = rs.getString("service_date").equals("") ? "00000000" : rs.getString("service_date");
@@ -1536,7 +1509,7 @@ public class MSPReconcile {
 		endDate = UtilMisc.replace(endDate, "-", "");
 		BillSearch billSearch = new BillSearch();
 		String criteriaQry = createCriteriaString(account, payeeNo, providerNo, startDate, endDate, true, true, false, true, "", "creation_date");
-		String p = "SELECT b.billingtype, bm.gst, bm.gst_no, bm.bill_amount, bm.billingmaster_no,b.demographic_no,b.demographic_name,bm.service_date,b.apptProvider_no ,b.provider_no,bm.payee_no," + " bh.creation_date,bh.amount_received,payment_type_id" + " FROM billing_history bh left join billingmaster bm on bh.billingmaster_no = bm.billingmaster_no ,billing b" + " where bm.billing_no = b.billing_no and bh.payment_type_id != " + MSPReconcile.PAYTYPE_IA + " " + criteriaQry + " and bm.billingstatus != '" + MSPReconcile.DELETED + "'";
+		String p = "SELECT b.billingtype,bm.billingmaster_no,b.demographic_no,b.demographic_name,bm.service_date,b.apptProvider_no ,b.provider_no,bm.payee_no," + " bh.creation_date,bh.amount_received,payment_type_id" + " FROM billing_history bh left join billingmaster bm on bh.billingmaster_no = bm.billingmaster_no ,billing b" + " where bm.billing_no = b.billing_no " + " and bh.payment_type_id != " + MSPReconcile.PAYTYPE_IA + " " + criteriaQry + " and bm.billingstatus != '" + MSPReconcile.DELETED + "'";
 		MiscUtils.getLogger().debug(p);
 		billSearch.list = new ArrayList<Object>();
 
@@ -1564,12 +1537,12 @@ public class MSPReconcile {
 				b.provName = this.getProvider(b.apptDoctorNo, 0).getInitials();
 
 				double amountReceived = Double.parseDouble(rs.getString("amount_received"));
-				double billAmount = Double.parseDouble(rs.getString("bill_amount"));
-				double gst = Double.parseDouble(rs.getString("gst"));
+//				double billAmount = Double.parseDouble(rs.getString("bill_amount"));
+//				double gst = Double.parseDouble(rs.getString("gst"));
 				b.amount = "" + amountReceived;
 
-				b.setGst(new BigDecimal(billAmount == 0 ? 0 : (amountReceived * (gst / billAmount))).setScale(2, RoundingMode.HALF_UP).toString());
-				b.setGstNo(rs.getString("gst_no"));
+//				b.setGst(new BigDecimal(billAmount == 0 ? 0 : (amountReceived * (gst / billAmount))).setScale(2, RoundingMode.HALF_UP).toString());
+//				b.setGstNo(rs.getString("gst_no"));
 
 				b.paymentDate = this.fmt.format(rs.getDate("creation_date"));
 				b.paymentMethod = rs.getString("payment_type_id");

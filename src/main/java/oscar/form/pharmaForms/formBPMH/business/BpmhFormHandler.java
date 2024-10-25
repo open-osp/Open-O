@@ -164,7 +164,7 @@ public class BpmhFormHandler {
     	setDemographicCustDao( (DemographicCustDao) SpringUtils.getBean(DemographicCustDao.class) );
     	setDrugDao( (DrugDao) SpringUtils.getBean(DrugDao.class) );
     	setDrugReasonDao( (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class) );
-    	setProviderDao( (ProviderDao) SpringUtils.getBean("providerDao") );
+    	setProviderDao( (ProviderDao) SpringUtils.getBean(ProviderDao.class) );
     	setAppointmentDao( (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class) );
     	setIcd9Dao( (Icd9Dao) SpringUtils.getBean(Icd9Dao.class) );
     	setDxCodeTranslationsDao((Icd9SynonymDao) SpringUtils.getBean(Icd9SynonymDao.class) );

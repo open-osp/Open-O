@@ -1,640 +1,1590 @@
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (1, 1, 'ADVANCED CARE SPECIALTY PHARMACY', '118 - 5589 Byrne Rd', 'Burnaby', 'BC', 'V5J 3J1', '(866) 496-8630', NULL, '(844) 901-2254', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (2, 2, 'BC DRUGS PHARMACY', '9618 Cameron St', 'Burnaby', 'BC', 'V3J 1M2', '(604) 422-8216', NULL, '(604) 422-8221', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (3, 3, 'BETA PHARMACY', '4705A Hastings St', 'Burnaby', 'BC', 'V5C 2K8', '(604) 299-6004', NULL, '(604) 299-5004', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (4, 4, 'BONSOR PHARMACY', '#107 - 6411 Nelson Avenue', 'Burnaby', 'BC', 'V5H 4H3', '(604) 431-8877', NULL, '(604) 430-4700', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (5, 5, 'BRENTWOOD PHARMACY', '4451 Lougheed Hwy', 'Burnaby', 'BC', 'V5C 3Z2', '(604) 564-3334', NULL, '(604) 564-3335', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (6, 6, 'BURNABY PHARMACY', '100A - 3300 Boundary Rd', 'Burnaby', 'BC', 'V5M 4A4', '(604) 453-0136', NULL, '(604) 453-0137', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (7, 7, 'BURNABY SQUARE PRESCRIPTIONS', '#107 - 7885 6th St', 'Burnaby', 'BC', 'V3N 3N4', '(604) 523-1400', NULL, '(604) 523-1404', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (8, 8, 'CALEA PHARMACY', '#130 - 8061 Lougheed Hwy', 'Burnaby', 'BC', 'V5A 1W9', '(604) 294-1500', NULL, '(604) 299-3940', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (9, 9, 'CAPITOL HILL PHARMACY REMEDY\'S RX', '4655 Hastings St', 'Burnaby', 'BC', 'V5C 2K6', '(604) 299-9255', NULL, '(604) 299-9257', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (10, 10, 'CARERX VANCOUVER', '8610 Commerce Court', 'Burnaby', 'BC', 'V5A 4N6', '(604) 985-8844', NULL, '(604) 985-8842', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (11, 11, 'CENTRAL PARK PHARMACY', '3963 Kingsway', 'Burnaby', 'BC', 'V5H 1Y7', '(604) 433-0110', NULL, '(604) 433-0110', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (12, 12, 'COMMUNITY APOTHECARY', '402 - 3701 Hastings St', 'Burnaby', 'BC', 'V5C 2H6', '(604) 757-1254', NULL, '(604) 563-7852', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (13, 13, 'COSTCO PHARMACY # 51', '3550 Brighton Ave.', 'Burnaby', 'BC', 'V5A 4W3', '(604) 420-9811', NULL, '(604) 420-2771', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (14, 14, 'COSTCO PHARMACY # 548', '4500 Still Creek Dr', 'Burnaby', 'BC', 'V5C 0E5', '(604) 296-5109', NULL, '(604) 296-5106', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (15, 15, 'CRYSTAL PHARMACY & MEDICAL SUPPLIES', '1611 - 4500 Kingsway', 'Burnaby', 'BC', 'V5H 2A9', '(604) 433-2821', NULL, '(604) 433-2830', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (16, 16, 'DAWSON PHARMACY', '4218 Dawson St', 'Burnaby', 'BC', 'V5C 0B8', '(604) 428-9755', NULL, '(604) 428-9756', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (17, 17, 'DRUGLAND PHARMACY', '#107 - 7738 Edmonds St', 'Burnaby', 'BC', 'V3N 1B8', '(604) 636-0666', NULL, '(604) 636-0663', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (18, 18, 'EDMONDS PHARMACY', '105 - 7315 Edmonds St', 'Burnaby', 'BC', 'V3N 1A7', '(604) 526-1110', NULL, '(604) 526-1926', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (19, 19, 'EXPRESS SCRIPTS CANADA PHARMACY', 'Unit 125 - 2250 Boundary Rd', 'Burnaby', 'BC', 'V5M 3Z3', '1-888-249-6094', NULL, '1-888-807-6972', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (20, 20, 'FAIRWAY DRUG MART', '7595 - 6th Street', 'Burnaby', 'BC', 'V3N 3M6', '(604) 521-9133', NULL, '(604) 521-9133', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (21, 21, 'GALENA PHARM', '4315 Canada Way', 'Burnaby', 'BC', 'V5G 1J3', '(604) 428-5210', NULL, '(604) 428-5211', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (22, 22, 'GENERATION PHARMACY', '7749 6th St', 'Burnaby', 'BC', 'V3N 3M9', '(604) 544-7111', NULL, '(604) 544-8333', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (23, 23, 'GILMORE REMEDY\'S RX', '320 Gilmore Ave', 'Burnaby', 'BC', 'V5C 4R1', '(604) 568-8383', NULL, '(604) 568-8332', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (24, 24, 'GRACE PHARMACY', '3835 Sunset St', 'Burnaby', 'BC', 'V5G 1T4', '(604) 434-1722', NULL, '(604) 909-1722', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (25, 25, 'HIGH GATE PHARMACY LTD.', '#102 - 7188 Kingsway', 'Burnaby', 'BC', 'V5E 1G3', '(604) 777-4267', NULL, '(604) 777-4268', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (26, 26, 'IMPERIAL NEIGHBOURHOOD PHARMACY', '4648 Imperial St', 'Burnaby', 'BC', 'V5J 1B8', '(604) 428-9647', NULL, '(604) 428-9649', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (27, 27, 'INNOMAR PHARMACY', '100 - 5898 Trapp Ave', 'Burnaby', 'BC', 'V3N5G4', '(604) 563-2700', NULL, '(604) 563-2701', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (28, 28, 'INWELL PHARMACY METROTOWN', 'Unit 1 - 4655 Central Blvd', 'Burnaby', 'BC', 'V5H 4J5', '(604) 568-8713', NULL, '(604) 568-8723', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (29, 29, 'LOBLAW PHARMACY #1518', '1105 Eaton Centre 4700 Kingsway', 'Burnaby', 'BC', 'V5H 4M1', '(604) 439-4404', NULL, '(604) 439-4466', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (30, 30, 'LONDON DRUGS # 6 - BURNABY', '4970 Kingsway', 'Burnaby', 'BC', 'V5H 2E2', '(604) 437-9621', NULL, '(604) 435-0996', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (31, 31, 'LONDON DRUGS #25', 'Lougheed Mall 9855 Austin Rd', 'Burnaby', 'BC', 'V3J 1N4', '(604) 444-2222', NULL, '(604) 444-9988', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (32, 32, 'LONDON DRUGS #56', 'Brentwood Mall #400 - 4567 Lougheed Hwy.', 'Burnaby', 'BC', 'V5C 3Z6', '(604) 570-0252', NULL, '(604) 570-0061', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (33, 33, 'LONDON DRUGS #71 - MARINE & BYRNE', '7280 Market Crossing', 'Burnaby', 'BC', 'V5J 0A2', '(604) 412-4171', NULL, '(604) 412-4181', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (34, 34, 'MEDICAL PHARMACY #48', '180 - 3700 North Fraser Way', 'Burnaby', 'BC', 'V5J 5H4', '(604) 872-6762', NULL, '(604) 872-6764', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (35, 35, 'MEDICINE SHOPPE #292', 'Unit M41 - 4277 Kingsway', 'Burnaby', 'BC', 'V5H 3Z2', '(604) 435-5353', NULL, '(604) 435-5358', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (36, 36, 'MEDICINE SHOPPE #402', '3982 Hastings St', 'Burnaby', 'BC', 'V5C 6C1', '(604) 229-8353', NULL, '(604) 229-7975', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (37, 37, 'METROCARE PHARMACY', '4649 Kingsway', 'Burnaby', 'BC', 'V5H 2B3', '(604) 568-1222', NULL, '(604) 566-9213', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (38, 38, 'NESTER\'S PHARMACY SFU', '9000 University High St', 'Burnaby', 'BC', 'V5A 0C1', '(604) 298-1566', NULL, '(604) 298-1535', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (39, 39, 'PHARMACHOICE SOUTH SLOPE', '5203 Rumble Street', 'Burnaby', 'BC', 'V5J 2B7', '(604) 245-5299', NULL, '(604) 245-5299', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (40, 40, 'PHARMACY APOTEKA', 'Unit A - 7487 Edmonds St', 'Burnaby', 'BC', 'V3N 1B3', '(604) 526-7778', NULL, '(604) 540-1555', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (41, 41, 'PHARMASAVE # 084', '1007 - 3713 Kensington Ave', 'Burnaby', 'BC', 'V5B 0A7', '(604) 294-2227', NULL, '(604) 294-0110', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (42, 42, 'PHARMASAVE # 203', '8697 - 10th Ave', 'Burnaby', 'BC', 'V3N 2S9', '(604) 522-8050', NULL, '(604) 522-8779', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (43, 43, 'PHARMASAVE # 278', '4367 Hastings St', 'Burnaby', 'BC', 'V5C 2J7', '(604) 298-5910', NULL, '(604) 298-5930', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (44, 44, 'PHARMASAVE HEALTH CENTRE # 092', '10 - 1601 Burnwood Dr', 'Burnaby', 'BC', 'V5A 4H1', '(604) 428-2648', NULL, '(604) 428-2649', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (45, 45, 'PHARMASAVE HEALTH CENTRE #1008 - METROTOWN', '4390 Beresford St', 'Burnaby', 'BC', 'V5H 0E7', '(604) 563-4390', NULL, '(604) 563-4391', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (46, 46, 'PRICESMART FOODS PHARMACY #2281 - STATION SQUARE', '110 - 4650 Kingsway', 'Burnaby', 'BC', 'V5H 4L9', '(604) 433-3760', NULL, '(604) 433-7109', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (47, 47, 'PURE INTEGRATIVE PHARMACY #20', '105A - 7635 North Fraser Way', 'Burnaby', 'BC', 'V5J 0B8', '(604) 565-7873', NULL, '(604) 428-3426', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (48, 48, 'REXALL #7163', 'Station Square 140 - 6200 McKay Ave', 'Burnaby', 'BC', 'V5H 4L7', '(604) 438-9370', NULL, '(604) 438-9375', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (49, 49, 'RXCARE PHARMACY & COMPOUNDING', '4695 Canada Way', 'Burnaby', 'BC', 'V5G 1K9', '(604) 428-7911', NULL, '(604) 428-7912', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (50, 50, 'SAFEWAY PHARMACY #4911', '4440 Hastings St', 'Burnaby', 'BC', 'V5C 2K2', '(604) 205-7497', NULL, '(604) 205-5876', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (51, 51, 'SAFEWAY PHARMACY #4913', '6564 Hastings St.', 'Burnaby', 'BC', 'V5B 1S2', '(604) 291-0118', NULL, '(604) 291-1339', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (52, 52, 'SAVE-ON-FOODS PHARMACY # 907 - HIGHGATE', '200 - 7155 Kingsway', 'Burnaby', 'BC', 'V5E 2V1', '(604) 540-1389', NULL, '(604) 540-1452', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (53, 53, 'SAVE-ON-FOODS PHARMACY # 996 - MADISON', '4399 Lougheed Hwy.', 'Burnaby', 'BC', 'V5C 3Y7', '(604) 298-5173', NULL, '(604) 298-4891', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (54, 54, 'SAVE-ON-FOODS PHARMACY #2221 - CAMERON', '#102 - 3433 North Rd', 'Burnaby', 'BC', 'V3J 0A9', '(604) 415-9992', NULL, '(604) 415-0288', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (55, 55, 'SAVE-ON-FOODS PHARMACY #2225', '4469 Kingsway', 'Burnaby', 'BC', 'V5H 2A1', '(604) 435-8283', NULL, '(604) 436-5131', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (56, 56, 'SAVE-ON-FOODS PHARMACY #2228 - MARINE WAY', '7501 Market Crossing', 'Burnaby', 'BC', 'V5J 0A3', '(604) 433-6314', NULL, '(604) 433-6814', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (57, 57, 'SCRIPT CARE PHARMACY', '114 - 6741 Cariboo Rd', 'Burnaby', 'BC', 'V3N 4A3', '(604) 415-9607', NULL, '(604) 415-9608', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (58, 58, 'SHAFA PHARMACY', '7333 Edmonds St', 'Burnaby', 'BC', 'V3N 1A7', '(778) 398-1800', NULL, '(778) 398-1700', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (59, 59, 'SHOPPERS DRUG MART # 214', '6508 Hastings St.', 'Burnaby', 'BC', 'V5B 1S2', '(604) 291-0638', NULL, '(604) 291-0122', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (60, 60, 'SHOPPERS DRUG MART # 246', 'Old Orchard Shopping Ctr. 4429 Kingsway', 'Burnaby', 'BC', 'V5H 2A1', '(604) 434-2408', NULL, '(604) 434-0476', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (61, 61, 'SHOPPERS DRUG MART # 253', '#250 - 7155 Kingsway', 'Burnaby', 'BC', 'V5E 2V1', '(604) 526-2848', NULL, '(604) 526-1219', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (62, 62, 'SHOPPERS DRUG MART #2127', '4303 Hastings St', 'Burnaby', 'BC', 'V5C 2J7', '(604) 298-4101', NULL, '(604) 298-4131', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (63, 63, 'SHOPPERS DRUG MART #2210', '4460 Lougheed Hwy', 'Burnaby', 'BC', 'V5C 3Z3', '(604) 235-9027', NULL, '(604) 235-9032', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (64, 64, 'SHOPPERS DRUG MART #2250', 'Metrotown Centre Unit 343 - 4800 Kingsway', 'Burnaby', 'BC', 'V5H 4J2', '(604) 419-0524', NULL, '(604) 419-0230', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (65, 65, 'SHOPPERS DRUG MART #2255', '104 - 3433 North Rd', 'Burnaby', 'BC', 'V3J 0A9', '(604) 415-0312', NULL, '(604) 415-0314', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (66, 66, 'SHOPPERS DRUG MART #2283', '4827 Kingsway', 'Burnaby', 'BC', 'V5H 4T6', '(604) 433-2721', NULL, '(604) 433-2736', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (67, 67, 'SHOPPERS DRUG MART #6071', '150 - 8518 Glenlyon Pky', 'Burnaby', 'BC', 'V5J 0B6', '(604) 431-5172', NULL, '(604) 431-5176', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (68, 68, 'SUNSET PHARMACY LTD.', '3818 Sunset St.', 'Burnaby', 'BC', 'V5G 1T3', '(604) 435-3830', NULL, '(604) 435-3834', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (69, 69, 'T & T PHARMACY (METROTOWN)', '147 - 4800 Kingsway', 'Burnaby', 'BC', 'V5H 4J2', '(778) 328-8770', NULL, '(778) 328-8773', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (70, 70, 'UPRX', '224 - 3989 Henning Drive', 'Burnaby', 'BC', 'V5C 6P8', '604-291-1094', NULL, '604-291-0827', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (71, 71, 'VILLAGE PHARMACY', '9537 Erickson Drive', 'Burnaby', 'BC', 'V3J 1M9', '(604) 421-4388', NULL, '(604) 421-4589', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (72, 72, 'WAL-MART PHARMACY #1213', '4545 Central Blvd', 'Burnaby', 'BC', 'V5H 4J1', '(778) 328-1121', NULL, '(778) 783-4275', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (73, 73, 'WAL-MART PHARMACY #3008', '300 Lougheed Mall 9855 Austin Ave', 'Burnaby', 'BC', 'V3J 1N5', '(604) 421-0353', NULL, '(604) 421-5941', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (74, 74, 'WELLNESS PHARMACY NO. 13', 'Unit A - 4828 Hastings St', 'Burnaby', 'BC', 'V5C 0J7', '604-298-8098', NULL, '604-298-8878', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (75, 75, 'WESCANA PHARMACY # 6', '4012 Hastings St', 'Burnaby', 'BC', 'V5C 2H9', '(604) 291-1205', NULL, '(604) 291-1206', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (76, 76, 'COSTCO PHARMACY # 255', '2370 Ottawa St Port', 'Coquitlam', 'BC', 'V3B 7Z1', '(604) 552-2298', NULL, '(604) 552-5488', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (77, 77, 'EVERGREEN PHARMACY', '104 - 1168 The High St', 'Coquitlam', 'BC', 'V3B 0C6', '(604) 474-3837', NULL, '(604) 474-3835', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (78, 78, 'GLEN PHARMACY', '208 - 1175 Johnson St', 'Coquitlam', 'BC', 'V3B 7K1', '(604) 944-5500', NULL, '(604) 944-3301', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (79, 79, 'GUARDIAN HANIN PHARMACY', '210 - 329 North Rd', 'Coquitlam', 'BC', 'V3K 3V8', '(604) 939-7880', NULL, '(604) 939-7875', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (80, 80, 'LINCOLN PHARMACY', '137 - 3030 Lincoln Ave', 'Coquitlam', 'BC', 'V3B 6B4', '(604) 464-1033', NULL, '(604) 464-1035', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (81, 81, 'LOBLAW PHARMACY #1519', '1301 Lougheed Highway', 'Coquitlam', 'BC', 'V3K 6P9', '(604) 520-8304', NULL, '(604) 520-8348', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (82, 82, 'LOBLAW PHARMACY #1526', '3000 Lougheed Hwy.', 'Coquitlam', 'BC', 'V3B 1C5', '(604) 468-6735', NULL, '(604) 468-6732', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (83, 83, 'LOBLAW PHARMACY #4596', '455 North Rd', 'Coquitlam', 'BC', 'V3K 3V9', '(604) 937-1205', NULL, '(604) 937-1209', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (84, 84, 'LONDON DRUGS #15', 'Unit 1030  Centre 2929 Barnet Hwy.', 'Coquitlam', 'BC', 'V3B 5R5', '(604) 464-3322', NULL, '(604) 464-4376', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (85, 85, 'MARY\'S PHARMACY', '#201B - 1194 Lansdowne Dr', 'Coquitlam', 'BC', 'V3E 1J7', '(604) 941-0454', NULL, '(604) 941-0421', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (86, 86, 'MEDICINE SHOPPE #409', '1146 - 1470 Prairie Ave Port', 'Coquitlam', 'BC', 'V3B 5M8', '604-554-0950', NULL, '604-554-0953', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (87, 87, 'MEDICINE SHOPPE PHARMACY #254', 'Pinetree Village 53 - 2991 Lougheed Hwy', 'Coquitlam', 'BC', 'V3B 6J6', '(604) 468-4711', NULL, '(604) 468-4707', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (88, 88, 'MEDIGLEN PHARMACY & COMPOUNDING', '102 - 1173 The High St', 'Coquitlam', 'BC', 'V3B 0B1', '(778) 285-8811', NULL, '(778) 285-8812', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (89, 89, 'MEDIS PHARMACY', '#6 - 2755 Lougheed Hwy Port', 'Coquitlam', 'BC', 'V3B 5Y9', '(604) 944-5544', NULL, '(604) 944-5548', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (90, 90, 'OH PHARMACY', '#100A - 504 Cottonwood Ave', 'Coquitlam', 'BC', 'V3J 2R5', '(604) 931-2396', NULL, '(604) 939-8311', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (91, 91, 'P.D.C. PHARMACY', '2370 United Blvd', 'Coquitlam', 'BC', 'V3K 6A3', '(604) 927-2620', NULL, '(604) 941-0532', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (92, 92, 'PACIFIC PRESCRIPTIONS & MEDICAL SUPPLIES NO. 2', '#110 - 3001 Gordon Ave', 'Coquitlam', 'BC', 'V3C 2K7', '(604) 552-6941', NULL, '(604) 552-6942', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (93, 93, 'PHARMASAVE # 102', '1109 Austin Ave.', 'Coquitlam', 'BC', 'V3K 3P4', '(604) 936-1488', NULL, '(604) 936-1409', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (94, 94, 'PINETREE PHARMACY', '103 - 3007 Glen Dr', 'Coquitlam', 'BC', 'V3B 0L8', '(604) 474-4977', NULL, '(604) 474-4978', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (95, 95, 'REXALL #7110', 'Rm.108 - 1015 Austin Ave.', 'Coquitlam', 'BC', 'V3K 3N9', '(604) 937-3122', NULL, '(604) 937-3143', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (96, 96, 'RIDGEWAY PHARMACY REMEDY\'SRX', '1057 Ridgeway Ave.', 'Coquitlam', 'BC', 'V3J 1S6', '(604) 931-5252', NULL, '(604) 931-8300', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (97, 97, 'SAFEWAY PHARMACY #4977', '580 Clarke Rd', 'Coquitlam', 'BC', 'V3J 3X5', '(604) 931-0111', NULL, '(604) 931-0116', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (98, 98, 'SAFEWAY PHARMACY #4980', '1033 Austin Ave', 'Coquitlam', 'BC', 'V3K 3P2', '(604) 939-1764', NULL, '(604) 939-7007', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (99, 99, 'SAVE-ON-FOODS PHARMACY # 991 - AUSTIN', '2662 Austin Ave', 'Coquitlam', 'BC', 'V3K 6C4', '604-931-0503', NULL, '604-931-0679', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (100, 100, 'SAVE-ON-FOODS PHARMACY # 998 - PINETREE', '2991 Lougheed Hwy.', 'Coquitlam', 'BC', 'V3B 6J6', '(604) 464-8811', NULL, '(604) 552-4705', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (101, 101, 'SHOPPERS DRUG MART # 231', '108 - 1960 Como Lake Ave', 'Coquitlam', 'BC', 'V3J 3R3', '(604) 936-1433', NULL, '(604) 936-6148', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (102, 102, 'SHOPPERS DRUG MART # 251', '107 - 552 Clarke Rd', 'Coquitlam', 'BC', 'V3J 3X5', '(604) 936-8993', NULL, '(604) 936-7294', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (103, 103, 'SHOPPERS DRUG MART #2112', '102 - 3387 David Ave', 'Coquitlam', 'BC', 'V3E 0K4', '(778) 284-2701 x 33', NULL, '(778) 284-2705', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (104, 104, 'SHOPPERS DRUG MART #2203', 'Sunwood Square 810 - 3025 Lougheed Hwy', 'Coquitlam', 'BC', 'V3B 6S2', '(604) 468-8814', NULL, '(604) 468-8815', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (105, 105, 'SHOPPERS DRUG MART #2236', 'F8 - 1410 Parkway Blvd', 'Coquitlam', 'BC', 'V3E 3J7', '(604) 468-8878', NULL, '(604) 468-8765', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (106, 106, 'SHOPPERS SIMPLY PHARMACY #3087', 'G - 1001 Austin Ave', 'Coquitlam', 'BC', 'V3K 3N9', '(604) 936-0024', NULL, '(604) 936-0034', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (107, 107, 'SPS PRESCRIPTION SERVICES', '69 Glacier St', 'Coquitlam', 'BC', 'V3K 5Z1', '(604) 468-3395', NULL, '(604) 942-7917', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (108, 108, 'TOWN CENTRE PHARMACY', '130 - 1153 The High St', 'Coquitlam', 'BC', 'V3B 0B7', '(604) 475-8508', NULL, '(604) 475-8509', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (109, 109, 'WAL-MART PHARMACY #1208', 'Centre 2929 Barnet Hwy', 'Coquitlam', 'BC', 'V3B 5R5', '(778) 284-3311', NULL, '(778) 284-2542', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (110, 110, 'BAINS PHARMACY LTD.', '8681 120 St', 'Delta', 'BC', 'V4C 6R4', '(604) 543-0911', NULL, '(604) 507-0988', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (111, 111, 'COMMUNITY OUTREACH PHARMACY', '#301 - 800 Carleton Crt', 'Delta', 'BC', 'V3M 6Y6', '(778) 654-7172', NULL, '(778) 654-7172', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (112, 112, 'DELTA PRESCRIPTION CLINIC', '#101 - 8425 120th St', 'Delta', 'BC', 'V4C 6R2', '(604) 594-4499', NULL, '(604) 594-4155', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (113, 113, 'FAMILY CARE PHARMACY #2', '8925 120 St', 'Delta', 'BC', 'V4C 6R6', '(604) 599-0211', NULL, '(604) 599-4318', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (114, 114, 'GLOBAL OUTREACH PHARMACY', 'Unit 5 - 1080 Cliveden Ave', 'Delta', 'BC', 'V3M 6G6', '(604) 515-4088', NULL, '(604) 515-9717', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (115, 115, 'HARVEST DRIVE PHARMACY', '#100 - 4515 Harvest Dr.', 'Delta', 'BC', 'V4K 4L1', '(604) 946-5220', NULL, '(604) 946-3902', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (116, 116, 'LOBLAW PHARMACY #1554', '8195 120 St', 'Delta', 'BC', 'V4C 6P7', '(604) 592-5235', NULL, '(604) 592-5232', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (117, 117, 'LONDON DRUGS #17', '7303 - 120th Street', 'Delta', 'BC', 'V4C 6P5', '(604) 591-9544', NULL, '(604) 591-6852', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (118, 118, 'LONDON DRUGS #37', 'Trenant Park Mall (48th) 5237 Ladner Trunk Road', 'Delta', 'BC', 'V4K 1W4', '(604) 946-5642', NULL, '(604) 946-8723', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (119, 119, 'MARKS PHARMACY', '#101 - 8035 - 120th Street', 'Delta', 'BC', 'V4C 6P8', '(604) 596-1774', NULL, '(604) 596-8334', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (120, 120, 'NAZ\'S PHARMACY #3', '105 - 9385 120 St', 'Delta', 'BC', 'V4C 0B5', '(604) 585-1210', NULL, '(604) 585-2601', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (121, 121, 'PACIFIC PHARMACY #2', '11944 88 Ave', 'Delta', 'BC', 'V4C 3C8', '(778) 578-6900', NULL, '(778) 578-6901', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (122, 122, 'PHARMASAVE # 151', '11198 - 84th Ave.', 'Delta', 'BC', 'V4C 2L7', '(604) 596-9551', NULL, '(604) 596-9527', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (123, 123, 'PHARMASAVE # 246', '4857 Elliott St.', 'Delta', 'BC', 'V4K 2X7', '(604) 946-7685', NULL, '(604) 940-6816', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (124, 124, 'SAFEWAY PHARMACY #4903', '6401 - 120th Street', 'Delta', 'BC', 'V4E 3G3', '(604) 596-5634', NULL, '(604) 590-8296', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (125, 125, 'SAVE-ON-FOODS PHARMACY # 943 - TSAWWASSEN', '1143 - 56th St', 'Delta', 'BC', 'V4L 2A6', '(604) 943-0514', NULL, '(604) 943-5531', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (126, 126, 'SAVE-ON-FOODS PHARMACY # 963 - NORTH DELTA', 'Scottsdale Mall 7015 - 120th St. North', 'Delta', 'BC', 'V4E 2A9', '(604) 596-7784', NULL, '(604) 596-9338', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (127, 127, 'SCOTT ROAD PHARMACY', '102 - 6905 120th St', 'Delta', 'BC', 'V4E 2A8', '(604) 591-5080', NULL, '(604) 591-3855', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (128, 128, 'SHOPPERS DRUG MART # 211', '1215C 56 St', 'Delta', 'BC', 'V4L 2A6', '(604) 943-1144', NULL, '(604) 943-8466', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (129, 129, 'THE MEDICINE SHOPPE PHARMACY #367', '#4 - 1363 56 St', 'Delta', 'BC', 'V4L 2P7', '(778) 434-3300', NULL, '(778) 434-3303', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (130, 130, 'TSAWWASSEN PHARMACY', '#104 - 1077 - 56th St.', 'Delta', 'BC', 'V4L 2A2', '(604) 943-9341', NULL, '(604) 943-2935', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (131, 131, 'VIVA MED PHARMACY', 'Unit 120 - 6345 120 St', 'Delta', 'BC', 'V4E 2A6', '(604) 599-9442', NULL, '(604) 599-9380', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (132, 132, 'WAL-MART PHARMACY #1207', '7155 120 St', 'Delta', 'BC', 'V4E 2B1', '(604) 595-3618', NULL, '(604) 595-5553', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (133, 133, 'WESCANA PHARMACY # 3', '#103 - 6935 - 120 St', 'Delta', 'BC', 'V4E 2A8', '(604) 591-7453', NULL, '(604) 591-7463', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (134, 134, 'WESCANA PHARMACY # 9', '#107 - 7445 120 St', 'Delta', 'BC', 'V4C 0B3', '(604) 572-7755', NULL, '(604) 572-7752', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (135, 135, 'COLUMBIA PRESCRIPTION X-PRESS', '317 Columbia St E', 'New Westminster', 'BC', 'V3L 3W8', '(604) 525-3784', NULL, '(604) 525-3734', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (136, 136, 'HEALTHCARE PHARMACY', '866 Twelfth St', 'New Westminster', 'BC', 'V3M 4K3', '(604) 540-1325', NULL, '(604) 540-4315', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (137, 137, 'IMPERIAL PHARMACY #2', '981 Carnarvon St', 'New Westminster', 'BC', 'V3M 1G2', '(604) 523-6767', NULL, '(604) 523-6768', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (138, 138, 'INDIGO PHARMACY', '447 East Columbia Street', 'New Westminster', 'BC', 'V3L 3X3', '(604) 553-8996', NULL, '(604) 553-8993', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (139, 139, 'LONDON DRUGS # 3 - NEW WESTMINSTER', 'Westminster Centre #100 - 555 Sixth St', 'New Westminster', 'BC', 'V3L 5H1', '(604) 524-1121', NULL, '(604) 520-5417', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (140, 140, 'LONGEVITY COMPOUNDING PHARMACY', '711 Columbia St', 'New Westminster', 'BC', 'V3M 1B2', '(604) 544-7760', NULL, '(604) 544-7761', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (141, 141, 'MEDICINE SHOPPE #142 (THE)', '413 East Columbia St.', 'New Westminster', 'BC', 'V3L 3X3', '(604) 521-9313', NULL, '(604) 521-9614', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (142, 142, 'NEW WEST PHARMACHOICE', '25 - Eighth Ave', 'New Westminster', 'BC', 'V3L 1X6', '(604) 525-2474', NULL, '(604) 525-6286', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (143, 143, 'PHARMASAVE # 275', '130 - 1005 Columbia St', 'New Westminster', 'BC', 'V3M 6H5', '(604) 525-5607', NULL, '(604) 525-5608', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (144, 144, 'PHARMASAVE HEALTH CENTRE # 020', '#103 - 625 - 5th Ave', 'New Westminster', 'BC', 'V3M 1X4', '(604) 526-2233', NULL, '(604) 526-2205', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (145, 145, 'PURE INTEGRATIVE PHARMACY #21', '#101 - 301 Columbia St E', 'New Westminster', 'BC', 'V3L 3W5', '(604) 553-7145', NULL, '(604) 553-7146', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (146, 146, 'QUEENSBOROUGH COMMUNITY PHARMACY', '1028 Ewen Ave', 'New Westminster', 'BC', 'V3M 5E1', '(778) 397-1132', NULL, '(778) 397-1129', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (147, 147, 'REXALL #7162', '700 Sixth St', 'New Westminster', 'BC', 'V3L 3C5', '(604) 395-1445', NULL, '(604) 395-1448', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (148, 148, 'SAFEWAY PHARMACY #4917', '800 McBride Blvd', 'New Westminster', 'BC', 'V3L 2B8', '(604) 516-6547', NULL, '(604) 516-6247', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (149, 149, 'SAFEWAY PHARMACY #4930', '#220 - 800 Carnarvon St', 'New Westminster', 'BC', 'V3M 0G3', '(604) 522-2069', NULL, '(604) 522-2843', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (150, 150, 'SAVE-ON-FOODS PHARMACY # 916 - SAPPERTON', '270 Columbia St E', 'New Westminster', 'BC', 'V3L 0E3', '(604) 523-2583', NULL, '(604) 523-2584', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (151, 151, 'SAVE-ON-FOODS PHARMACY # 919 - ROYAL CITY', 'Lower Level 198 - 610 Sixth St', 'New Westminster', 'BC', 'V3L 3C2', '(604) 520-6087', NULL, '(604) 515-9409', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (152, 152, 'SHOPPERS DRUG MART # 279', '#141 - 610 Sixth St', 'New Westminster', 'BC', 'V3L 3C2', '(604) 521-0767', NULL, '(604) 521-8237', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (153, 153, 'SHOPPERS DRUG MART #2243', 'Unit 1 - 811 Columbia St', 'New Westminster', 'BC', 'V3M 1B9', '(604) 395-5717', NULL, '(604) 395-5721', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (154, 154, 'SHOPPERS DRUG MART #2254', '288 Columbia St E', 'New Westminster', 'BC', 'V3L 0E7', '(604) 395-1410', NULL, '(604) 395-1416', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (155, 155, 'ULTRACARE GUARDIAN PHARMACY #2', '424 Columbia St', 'New Westminster', 'BC', 'V3L 1B1', '(604) 522-3400', NULL, '(604) 522-3402', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (156, 156, 'WAL-MART PHARMACY #1192', 'Royal City Center 610 Sixth St', 'New Westminster', 'BC', 'V3L 3C2', '(604) 395-8482', NULL, '(604) 395-8304', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (157, 157, 'WAL-MART PHARMACY #5777', '805 Boyd St', 'New Westminster', 'BC', 'V3M 5G7', '(604) 524-1264', NULL, '(604) 524-1329', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (158, 158, 'WEST END MEDICINE CENTRE', '2004 Eighth Ave.', 'New Westminster', 'BC', 'V3M 2T5', '(604) 522-5636', NULL, '(604) 524-6488', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (159, 159, 'ANDERSON\'S PHARMACY NO. 1', '127 3rd St W', 'North Vancouver', 'BC', 'V7M 1E7', '(604) 988-5271', NULL, '(604) 998-1271', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (160, 160, 'CENTRAL LONSDALE PHARMACY', '1562 Lonsdale Ave', 'North Vancouver', 'BC', 'V7M 2J3', '(604) 971-4464', NULL, '(604) 971-4465', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (161, 161, 'DAVIES PRESCRIPTIONS - ST. GEORGES', '1401 St. Georges Ave.', 'North Vancouver', 'BC', 'V7L 3J3', '(604) 985-8771', NULL, '(604) 985-8262', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (162, 162, 'DEEP COVE PHARMACY', '4322 Gallant Ave', 'North Vancouver', 'BC', 'V7G 1K8', '(604) 985-3539', NULL, '(604) 985-3540', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (163, 163, 'HEALTHRX PHARMACY', '100 - 135 15th St E', 'North Vancouver', 'BC', 'V7L 2P7', '(604) 770-1609', NULL, '(604) 770-1610', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (164, 164, 'LOBLAW PHARMACY #1560', '333 Seymour Blvd.', 'North Vancouver', 'BC', 'V7J 2J4', '(604) 904-5535', NULL, '(604) 904-5533', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (165, 165, 'LOBLAW PHARMACY #4590', '1650 Lonsdale Ave', 'North Vancouver', 'BC', 'V7M 2J3', '(604) 983-3332', NULL, '(604) 983-3392', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (166, 166, 'LONDON DRUGS # 5 - NORTH VANCOUVER', '2032 Lonsdale Ave.', 'North Vancouver', 'BC', 'V7M 2K5', '(604) 980-3661', NULL, '(604) 980-6791', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (167, 167, 'LONDON DRUGS #44 - PARK ROYAL', '875 Park Royal North West Vancouver', 'North Vancouver', 'BC', 'V7T 1H9', '(604) 926-9616', NULL, '(604) 926-4519', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (168, 168, 'LONSDALE & 3RD PHARMACY', '105 3rd St E', 'North Vancouver', 'BC', 'V7M 2G1', '(604) 971-5499', NULL, '(604) 971-5498', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (169, 169, 'LONSDALE PHARMACY', '1531 Lonsdale Ave', 'North Vancouver', 'BC', 'V7M 2J2', '(604) 985-1901', NULL, '(604) 985-1907', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (170, 170, 'LYNN VALLEY PHARMACY', '104 - 1200 Lynn Valley Rd', 'North Vancouver', 'BC', 'V7J 2A2', '(604) 960-1187', NULL, '(604) 909-1786', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (171, 171, 'MIRACLE PRESCRIPTIONS REMEDY\'SRX', '1268 Marine Dr', 'North Vancouver', 'BC', 'V7P 1T2', '(604) 770-2030', NULL, '(604) 770-2035', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (172, 172, 'NORTH WEST MARINE PHARMACY', '1877 Marine Dr', 'North Vancouver', 'BC', 'V7P 1V5', '(604) 982-0981', NULL, '(604) 982-0903', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (173, 173, 'NORTHMOUNT PHARMACY LTD.', '#101 - 145 East 13th St.', 'North Vancouver', 'BC', 'V7L 2L4', '(604) 985-8241', NULL, '(604) 985-1240', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (174, 174, 'NORTHSHORE DRUGSTORE', '113 West 16th St', 'North Vancouver', 'BC', 'V7M 1T3', '(604) 770-3299', NULL, '(604) 770-3298', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (175, 175, 'NORTHVIEW PHARMACY', '120 - 1100 Lonsdale Ave', 'North Vancouver', 'BC', 'V7M 2H3', '(604) 904-9992', NULL, '(604) 904-0222', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (176, 176, 'PHARMACHOICE #9057', '102 - 1200 Lonsdale Ave', 'North Vancouver', 'BC', 'V7M 3H6', '(604) 984-0686', NULL, '(604) 984-2766', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (177, 177, 'PHARMALIFE PHARMACY', 'Capilano Mall 60 - 935 Marine Dr', 'North Vancouver', 'BC', 'V7P 1S3', '(778) 340-1800', NULL, '(778) 340-1888', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (178, 178, 'PHARMASAVE # 081', '302 - 1150 Marine Dr', 'North Vancouver', 'BC', 'V7P 1S8', '(604) 971-5163', NULL, '(604) 971-5183', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (179, 179, 'PHARMASAVE EDGEMONT #107', '3233 Connaught Cres', 'North Vancouver', 'BC', 'V7R 2V7', '(604) 988-6396', NULL, '(604) 988-3403', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (180, 180, 'PHARMASAVE LIONS GATE', '152 E 13th Street', 'North Vancouver', 'BC', 'V7L 4W8', '(778) 340-1018', NULL, '1-833-952-0979', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (181, 181, 'PURE INTEGRATIVE PHARMACY #19', '103 - 3053 Edgemont Blvd', 'North Vancouver', 'BC', 'V7R 2N5', '(604) 770-3501', NULL, '(604) 770-3503', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (182, 182, 'PURE INTEGRATIVE PHARMACY #29', '102 - 88 Lonsdale Avenue', 'North Vancouver', 'BC', 'V7M 2E6', '(604) 770-3390', NULL, '(604) 770-3391', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (183, 183, 'SAFEMED PHARMACY', '852 Marine Dr', 'North Vancouver', 'BC', 'V7P 1M5', '(604) 770-4414', NULL, '(604) 770-4415', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (184, 184, 'SAFEWAY PHARMACY #4905', 'Westview Shopping Centre #780 - 2601 Westview Dr', 'North Vancouver', 'BC', 'V7N 3X4', '(604) 988-4476', NULL, '(604) 988-5853', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (185, 185, 'SAFEWAY PHARMACY #4950', 'Westlynn Mall 1170 East 27th Street', 'North Vancouver', 'BC', 'V7J 1S1', '(604) 988-7095', NULL, '(604) 980-8272', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (186, 186, 'SAFEWAY PHARMACY #4958', '1175 Mt. Seymour Road', 'North Vancouver', 'BC', 'V7H 2Y4', '(604) 924-1325', NULL, '(604) 929-3153', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (187, 187, 'SAVE-ON-FOODS PHARMACY # 989 - LYNN VALLEY', '1221 - 1199 Lynn Valley Rd', 'North Vancouver', 'BC', 'V7J 3H2', '(604) 980-4658', NULL, '(604) 980-6972', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (188, 188, 'SAVE-ON-FOODS PHARMACY # 990 - PARK & TILFORD', '333 Brooksbank Ave.', 'North Vancouver', 'BC', 'V7J 3S8', '(604) 983-2147', NULL, '(604) 983-0669', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (189, 189, 'SAVE-ON-FOODS PHARMACY # 999 - NORTH VANCOUVER', 'Pemberton Plaza 1250 Marine Drive', 'North Vancouver', 'BC', 'V7P 1T2', '(604) 985-2150', NULL, '(604) 985-3779', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (190, 190, 'SAVE-ON-FOODS PHARMACY #2249 - CAPILANO', '140 - 879 Marine Dr', 'North Vancouver', 'BC', 'V7P 1R7', '(604) 983-2299', NULL, '(604) 983-2279', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (191, 191, 'SHOPPERS DRUG MART # 252', '3650 Mt. Seymour Parkway', 'North Vancouver', 'BC', 'V7H 2Y5', '(604) 924-1788', NULL, '(604) 924-0488', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (192, 192, 'SHOPPERS DRUG MART # 291', 'Lynn Valley Shopping Centre 1199 Lynn Valley Rd', 'North Vancouver', 'BC', 'V7J 3H2', '(604) 987-4468', NULL, '(604) 984-9187', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (193, 193, 'SHOPPERS DRUG MART #2100', '3260 Edgemont Blvd', 'North Vancouver', 'BC', 'V7R 0A7', '(778) 338-6363', NULL, '(778) 338-6367', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (194, 194, 'SHOPPERS DRUG MART #2160', '730 - 333 Brooksbank Ave', 'North Vancouver', 'BC', 'V7J 3S8', '(778) 338-6183', NULL, '(778) 338-6187', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (195, 195, 'SHOPPERS DRUG MART #2200', '1306 Lonsdale Avenue', 'North Vancouver', 'BC', 'V7M 2H8', '(604) 904-0505', NULL, '(604) 904-0504', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (196, 196, 'SHOPPERS DRUG MART #2223', '#120 - 150 Esplanade W', 'North Vancouver', 'BC', 'V7M 1A3', '(604) 904-0150', NULL, '(604) 904-0160', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (197, 197, 'SHOPPERS DRUG MART #2225', 'Unit 110 - 879 Marine Dr', 'North Vancouver', 'BC', 'V7P 1R7', '(604) 983-3631', NULL, '(604) 983-7037', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (198, 198, 'ST GEORGES PHARMACY', '1309 St. Georges Ave', 'North Vancouver', 'BC', 'V7L 3J2', '(604) 988-7199', NULL, '(604) 985-8855', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (199, 199, 'THE PHARMACY WESTVIEW (PHARMACHOICE)', '#760 - 2601 Westview Drive', 'North Vancouver', 'BC', 'V7N 3X4', '(604) 986-2292', NULL, '(604) 986-2293', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (200, 200, 'WAL-MART PHARMACY #3057', 'Capilano Mall 925 Marine Drive', 'North Vancouver', 'BC', 'V7P 1S2', '(604) 984-3441', NULL, '(604) 984-3345', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (201, 201, 'WELLNESS PHARMACY NO. 6', '100 - 1133 Lonsdale Ave', 'North Vancouver', 'BC', 'V7M 2H4', '(604) 971-5400', NULL, '(604) 971-5401', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (202, 202, 'BURKE MOUNTAIN PHARMACY', '110 - 1465 Salisbury Ave', 'Port Coquitlam', 'BC', 'V3B 6J3', '(604) 941-5575', NULL, '(604) 941-5576', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (203, 203, 'MED-X PHARMACY LTD.', '7 - 1449 Prairie Ave', 'Port Coquitlam', 'BC', 'V3B 1S9', '(604) 474-3050', NULL, '(604) 474-3051', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (204, 204, 'OXFORD PHARMACY', '3190 - 1971 Lougheed Hwy', 'Port Coquitlam', 'BC', 'V3B 0K2', '(604) 945-9591', NULL, '(604) 945-9592', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (205, 205, 'PHARMACHOICE 007', '2529 Shaughnessy St.', 'Port Coquitlam', 'BC', 'V3C 3G1', '(604) 941-2413', NULL, '(604) 941-6754', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (206, 206, 'PHARMASAVE # 190', '3295 Coast Meridian Rd.', 'Port Coquitlam', 'BC', 'V3B 3N3', '(604) 942-9813', NULL, '(604) 942-1561', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (207, 207, 'PHARMASAVE HEALTH CENTRE # 001', '#100 - 2255 Elgin Ave.', 'Port Coquitlam', 'BC', 'V3C 2B4', '(604) 942-7117', NULL, '(604) 942-1651', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (208, 208, 'SAFEWAY PHARMACY #4936', '#1100 - 2850 Shaughnessy St.', 'Port Coquitlam', 'BC', 'V3C 6K5', '(604) 945-7018', NULL, '(604) 945-6242', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (209, 209, 'SAVE-ON-FOODS PHARMACY # 942 - PRAIRIE', '1430 Prairie Ave', 'Port Coquitlam', 'BC', 'V3B 5M8', '(604) 464-5089', NULL, '(604) 464-5174', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (210, 210, 'SAVE-ON-FOODS PHARMACY # 957 - PORT COQUITLAM', '2385 Ottawa St', 'Port Coquitlam', 'BC', 'V3B 8A4', '(604) 464-5046', NULL, '(604) 464-3814', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (211, 211, 'SHOPPERS DRUG MART #2143', 'Shaughnessy Station Mall 3150 - 2850 Shaughnessy St', 'Port Coquitlam', 'BC', 'V3C 6K5', '(604) 461-7506', NULL, '(604) 461-7535', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (212, 212, 'SHOPPERS DRUG MART #2264', '876 Village Dr', 'Port Coquitlam', 'BC', 'V3B 0G9', '(604) 944-8690', NULL, '(604) 944-8675', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (213, 213, 'WAL-MART PHARMACY #1112', '2150 Hawkins St', 'Port Coquitlam', 'BC', 'V3B 0G6', '(604) 472-1260', NULL, '(604) 472-1216', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (214, 214, 'WESTWOOD PHARMACY', '103 - 2664 Kingsway Ave', 'Port Coquitlam', 'BC', 'V3C 1T8', '(604) 945-5888', NULL, '(604) 945-5446', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (215, 215, 'WILSON PHARMACY', '#3 - 2185 Wilson Ave.', 'Port Coquitlam', 'BC', 'V3C 6C1', '(604) 942-4611', NULL, '(604) 942-1554', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (216, 216, 'WILSON PHARMACY NO. 2', '709 - 2071 Kingsway Ave', 'Port Coquitlam', 'BC', 'V3C 6N2', '(778) 285-2800', NULL, '(604) 554-0201', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (217, 217, 'ACKROYD PHARMACY', '160 - 8100 Ackroyd Rd', 'Richmond', 'BC', 'V6X 3K2', '(604) 207-9972', NULL, '(604) 207-9080', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (218, 218, 'ALLIANCE PHARMACY GROUP', '#165 - 21320 Gordon Way', 'Richmond', 'BC', 'V6W 1J8', '(604) 370-1999', NULL, '(604) 370-2030', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (219, 219, 'BIOSCRIPT PHARMACY LTD.', '4050 - 8171 Ackroyd Rd', 'Richmond', 'BC', 'V6X 3K1', '(604) 214-3784', NULL, '(604) 244-3784', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (220, 220, 'BIOSENSE COMPOUNDING PHARMACY', '145 - 13988 Maycrest Way', 'Richmond', 'BC', 'V6V 3C3', '(604) 278-7955', NULL, '(604) 278-7960', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (221, 221, 'C.R.C. DRUGS', '180 - 6971 Elmbridge Way', 'Richmond', 'BC', 'V7C 0A5', '(604) 285-2555', NULL, '(604) 285-2556', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (222, 222, 'CHEMMART PHARMACY', '1900 - 8171 Ackroyd Rd', 'Richmond', 'BC', 'V6X 3K1', '(604) 270-9091', NULL, '(604) 270-9092', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (223, 223, 'CONTINENTAL PHARMACY', '1196 - 3779 Sexsmith Rd', 'Richmond', 'BC', 'V6X 3Z9', '(604) 276-8938', NULL, '(604) 276-8940', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (224, 224, 'COSTCO PHARMACY # 54', '9151 Bridgeport Road', 'Richmond', 'BC', 'V6X 3L9', '(604) 270-1163', NULL, '(604) 270-2245', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (225, 225, 'COSTCO PHARMACY #1240', 'Unit 103 - 7435 Nelson Rd', 'Richmond', 'BC', 'V6W 1G3', '(778) 732-1456', NULL, '(778) 732-1460', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (226, 226, 'FRESHCO PHARMACY #4252', '6140 Blundell Road', 'Richmond', 'BC', 'V7C 1H6', '(604) 274-7370', NULL, '(604) 274-7647', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (227, 227, 'FRESHCO PHARMACY #4254', '10151 No. 3 Road', 'Richmond', 'BC', 'V7A 4R6', '(604) 271-7734', NULL, '(604) 271-7713', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (228, 228, 'HEALTHPLUS PHARMACY', '4115 No. 5 Rd', 'Richmond', 'BC', 'V6X 2T9', '(604) 304-1294', NULL, '(604) 304-1295', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (229, 229, 'HEALTHPLUS PHARMACY #2', '170 - 8980 No. 3 Rd', 'Richmond', 'BC', 'V6Y 2E8', '(604) 370-6799', NULL, '(604) 370-6798', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (230, 230, 'LOBLAW PHARMACY #1557', '4651 No. 3 Road', 'Richmond', 'BC', 'V6X 2C4', '(604) 233-2430', NULL, '(604) 233-2432', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (231, 231, 'LONDON DRUGS #11 - RICHMOND', 'London Plaza 5971 No. 3 Road', 'Richmond', 'BC', 'V6X 2E3', '(604) 278-4521', NULL, '(604) 278-4898', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (232, 232, 'LONDON DRUGS #52 - IRONWOOD PLAZA', '#3200 - 11666 Steveston Hwy.', 'Richmond', 'BC', 'V7A 5J3', '(604) 448-5468', NULL, '(604) 448-9547', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (233, 233, 'MCCUE PHARMACY', '#100 - 8120 Cook Road', 'Richmond', 'BC', 'V6Y 1T9', '(604) 278-9601', NULL, '(604) 273-5321', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (234, 234, 'MEDICARE PHARMACY', 'Unit 190 - 7031 Westminster Hwy', 'Richmond', 'BC', 'V6X 1A3', '(604) 278-7133', NULL, '(604) 278-7135', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (235, 235, 'MEDICINE SHOPPE #310', '11 - 3993 Chatham St', 'Richmond', 'BC', 'V7E 2Z6', '(778) 297-5777', NULL, '(778) 297-5778', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (236, 236, 'MEDICINE SHOPPE #312', '130 - 8171 Cook Rd', 'Richmond', 'BC', 'V6Y 3T8', '(604) 278-3828', NULL, '(604) 278-3839', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (237, 237, 'MEDISAVE PHARMACY #6', '#125 - 8291 Ackroyd Rd', 'Richmond', 'BC', 'V6X 3K5', '(604) 232-0811', NULL, '(604) 232-0851', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (238, 238, 'MEDISYSTEM PHARMACY WEST LIMITED', 'Unit 1110 Ground Floor 13560 Maycrest Way', 'Richmond', 'BC', 'V6V 2W9', '(604) 270-4590', NULL, '(604) 270-4594', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (239, 239, 'MINORU PHARMACY', '#102 - 7380 Westminster Hwy', 'Richmond', 'BC', 'V6X 1A1', '(604) 270-2320', NULL, '(604) 273-3342', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (240, 240, 'MJ\'S NATURAL PHARMACY #3', 'Public Market 1130 - 8260 Westminster Hwy', 'Richmond', 'BC', 'V6X 3Y2', '(604) 232-1293', NULL, '(604) 232-1296', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (241, 241, 'PARK PACIFIC PHARMACY', 'Yaohan Centre #2260 - 3700 No. 3 Road', 'Richmond', 'BC', 'V6X 3X2', '(604) 273-9812', NULL, '(604) 270-2228', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (242, 242, 'PHARMASAVE # 022', 'Suite 1103.8 - 3880 Grant McConachie Way Vanc. Int\'l Airport Domestic Terminal', 'Richmond', 'BC', 'V7B 0A5', '(604) 303-7033', NULL, '(604) 303-0739', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (243, 243, 'PHARMASAVE # 028', 'Unit 1020 - 4151 Hazelbridge Way', 'Richmond', 'BC', 'V6X 4J7', '(604) 273-8020', NULL, '(604) 273-8999', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (244, 244, 'PHARMASAVE HEALTH CENTRE # 038', 'Richlea Shopping Centre 116 - 10151 No. 3 Rd', 'Richmond', 'BC', 'V7A 4R6', '(604) 241-2898', NULL, '(604) 241-2810', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (245, 245, 'PHARMASAVE STEVESTON VILLAGE', '105 - 12420 No. 1 Rd', 'Richmond', 'BC', 'V7E 6N2', '(604) 232-0159', NULL, '(604) 232-0526', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (246, 246, 'PRICESMART FOODS PHARMACY #2274 - RICHMOND', '8200 Ackroyd Road', 'Richmond', 'BC', 'V6X 1B5', '(604) 278-8408', NULL, '(604) 278-7227', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (247, 247, 'PURE INTEGRATIVE PHARMACY #28', 'Unit 160 - 6111 River Rd', 'Richmond', 'BC', 'V7C 0A2', '(604) 244-2050', NULL, '(604) 244-2059', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (248, 248, 'REGENCY MEDICINE CENTRE', '#100 - 6091 Gilbert Road', 'Richmond', 'BC', 'V7C 5L9', '(604) 273-5544', NULL, '(604) 273-5037', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (249, 249, 'RX COUNTER', '138 - 11860 Hammersmith Way', 'Richmond', 'BC', 'V7A 5G1', '(604) 275-3279', NULL, '(604) 275-2976', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (250, 250, 'SAFEWAY PHARMACY #4967', '8671 No. 1 Road', 'Richmond', 'BC', 'V7C 1V2', '(604) 241-4013', NULL, '(604) 271-7647', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (251, 251, 'SAVE-ON-FOODS PHARMACY # 969 - IRONWOOD MALL', 'Ironwood Mall #3000-11666 Steveston Hwy.', 'Richmond', 'BC', 'V7A 5J3', '(604) 448-1203', NULL, '(604) 448-1261', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (252, 252, 'SAVE-ON-FOODS PHARMACY # 971 - TERRA NOVA', 'Terra Nova Village 3673 Westminster Highway', 'Richmond', 'BC', 'V7C 5V2', '(604) 273-3939', NULL, '(604) 273-5247', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (253, 253, 'SAVE-ON-FOODS PHARMACY #2252', '120 - 12088 3rd Ave', 'Richmond', 'BC', 'V7E 0C3', '(604) 272-9741', NULL, '(604) 272-4408', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (254, 254, 'SERVICE PLUS #3', 'Unit 1560 - 4380 No. 3 Rd', 'Richmond', 'BC', 'V6X 3V7', '(604) 278-8830', NULL, '(604) 278-8830', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (255, 255, 'SHOPPERS DRUG MART # 227', '#11 - 8671 No. 1 Road', 'Richmond', 'BC', 'V7C 1V2', '(604) 277-2611', NULL, '(604) 277-0173', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (256, 256, 'SHOPPERS DRUG MART # 228', '#380 - 9100 Blundell Road', 'Richmond', 'BC', 'V6Y 3X9', '(604) 276-8757', NULL, '(604) 278-4435', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (257, 257, 'SHOPPERS DRUG MART # 236', '#152 - 8180 No. 2 Road', 'Richmond', 'BC', 'V7C 5K1', '(604) 274-3023', NULL, '(604) 271-0995', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (258, 258, 'SHOPPERS DRUG MART # 237', '2286 - 6060 Minoru Blvd', 'Richmond', 'BC', 'V6Y 2V7', '(604) 273-6187', NULL, '(604) 214-3714', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (259, 259, 'SHOPPERS DRUG MART #2109', '#100 - 7820 Williams Rd', 'Richmond', 'BC', 'V7A 1G3', '(778) 296-4065', NULL, '(778) 296-4069', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (260, 260, 'SHOPPERS DRUG MART #2118', '3868 Steveston Highway', 'Richmond', 'BC', 'V7E 2K1', '(604) 288-6343', NULL, '(604) 288-6347', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (261, 261, 'SHOPPERS DRUG MART #2230', '#155-5555 Gilbert Road', 'Richmond', 'BC', 'V7C 0B8', '(604) 295-4080', NULL, '(604) 295-4085', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (262, 262, 'SHOPPERS DRUG MART #2237', 'Cambie Plaza 11800 Cambie Rd', 'Richmond', 'BC', 'V6X 1L5', '(604) 278-9105', NULL, '(604) 270-6415', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (263, 263, 'STEVESTON PHARMACY', '#101 - 3811 Chatham St.', 'Richmond', 'BC', 'V7E 2Z4', '(604) 271-2820', NULL, '(604) 271-2820', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (264, 264, 'SUPER GROCER AND PHARMACY', '12051 No. 1 Road', 'Richmond', 'BC', 'V7E 1T5', '(604) 274-7874', NULL, '(604) 274-7800', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (265, 265, 'T & T PHARMACY (LANSDOWNE)', 'MAJ1 - 8311 Lansdowne Rd', 'Richmond', 'BC', 'V6X 3A4', '(604) 370-3718', NULL, '(604) 370-5510', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (266, 266, 'TERRA NOVA PHARMACHOICE', '135 - 6011 No 1 Rd', 'Richmond', 'BC', 'V7C 1T4', '(604) 284-3784', NULL, '(604) 284-3785', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (267, 267, 'WAL-MART PHARMACY #3652', '9251 Alderbridge Way', 'Richmond', 'BC', 'V6X 0N1', '(604) 288-4396', NULL, '(778) 783-5389', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (268, 268, 'WELLNESS PHARMACY NO. 4', '115 - 6180 Blundell Rd', 'Richmond', 'BC', 'V7C 4W7', '(604) 277-3747', NULL, '(604) 277-3748', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (269, 269, '108 STOP PHARMACY', '13444 108 Ave', 'Surrey', 'BC', 'V3T 2K1', '(604) 957-0711', NULL, '(604) 953-1700', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (270, 270, 'ALL CURE PHARMACY', '101 - 12827 76 Ave', 'Surrey', 'BC', 'V3W 2V3', '(778) 592-2500', NULL, '(778) 592-2501', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (271, 271, 'ASPEN REMEDY\'SRX PHARMACY', '102 - 2099 152 St', 'Surrey', 'BC', 'V4A 4N7', '(604) 560-2720', NULL, '(604) 560-2722', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (272, 272, 'BAYSHORE PHARMACY', '206 - 2828 152 St', 'Surrey', 'BC', 'V4P 1G6', '1-855-237-2473', NULL, '1-855-233-3146', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (273, 273, 'BELL PHARMACY', '10519 King George Blvd', 'Surrey', 'BC', 'V3T 2X1', '(604) 585-3355', NULL, '(604) 585-3350', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (274, 274, 'BEYOND PHARMACY', '#101 - 19211 Fraser Hwy', 'Surrey', 'BC', 'V3S 7C9', '(604) 245-6069', NULL, '(604) 245-6102', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (275, 275, 'BRIDGEVIEW PHARMACY', '105 - 11267 125A St', 'Surrey', 'BC', 'V3V 8C5', '(778) 293-4402', NULL, '(778) 293-4403', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (276, 276, 'CANADAWIDE PHARMACY', '#102 - 15129 100 Ave', 'Surrey', 'BC', 'V3R 9P4', '(604) 581-4000', NULL, '(604) 581-4187', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (277, 277, 'CANDRUG', '#202 - 8322 130 St', 'Surrey', 'BC', 'V3W 8J9', '(604) 543-8711', NULL, '(604) 507-8706', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (278, 278, 'CARE BOOST PHARMACY', '#101 - 9450 120 St', 'Surrey', 'BC', 'V3V 4B9', '(604) 582-5111', NULL, '(604) 582-6262', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (279, 279, 'CARE IN MOTION PHARMACY', '2 - 9880 120 St', 'Surrey', 'BC', 'V3V 4C9', '(604) 496-2225', NULL, '(604) 496-2234', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (280, 280, 'CARE N CURE PHARMACY', '177 - 8138 128 St', 'Surrey', 'BC', 'V3W 1R1', '(604) 598-3233', NULL, '(604) 598-3234', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (281, 281, 'CAREVILLE PHARMACY FLEETWOOD', '107 - 8927 152 St', 'Surrey', 'BC', 'V3R 4E5', '(604) 634-1074', NULL, '(604) 634-1075', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (282, 282, 'CEDAR HILLS DRUG MART', '10269 128 St', 'Surrey', 'BC', 'V3T 2Z2', '(604) 930-0030', NULL, '(604) 930-0031', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (283, 283, 'CHOICES PHARMACY', '105 - 9093 King George Blvd.', 'Surrey', 'BC', 'V3V 5V7', '(604) 593-5322', NULL, '(604) 593-5320', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (284, 284, 'CLAYTON HEIGHTS PHARMACY', '102 - 7170 188 St', 'Surrey', 'BC', 'V4N 6R4', '(604) 372-3808', NULL, '(604) 372-3812', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (285, 285, 'COASTAL CARE PHARMACY', '101 - 10183 152A St', 'Surrey', 'BC', 'V3R 4H6', '(604) 588-0484', NULL, '(604) 588-0485', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (286, 286, 'COASTAL CARE PHARMACY #2', '103 - 15420 Fraser Hwy', 'Surrey', 'BC', 'V3R 3P5', '(604) 589-9064', NULL, '(604) 589-9066', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (287, 287, 'COMMUNITY CARE PHARMACY #7164', '1001 - 7495 132 St', 'Surrey', 'BC', 'V3W 1J8', '(604) 501-2681', NULL, '(604) 597-5436', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (288, 288, 'COSTCO PHARMACY # 55', '7423 King George Blvd', 'Surrey', 'BC', 'V3W 5A8', '(604) 596-0757', NULL, '(604) 596-2216', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (289, 289, 'DEAN PHARMACY', '102 - 6844 King George Blvd', 'Surrey', 'BC', 'V3W 4Z9', '(778) 564-3326', NULL, '(778) 564-3777', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (290, 290, 'EAST TO WEST HOLISTIC PHARMACY', '102 - 14045 104 Ave', 'Surrey', 'BC', 'V3T 1X4', '(604) 498-0663', NULL, '(604) 498-0673', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (291, 291, 'EASTON PHARMACY LTD.', '#101 - 10663 King George Blvd', 'Surrey', 'BC', 'V3T 2X6', '(604) 496-3330', NULL, '(604) 496-3320', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (292, 292, 'FAMILY CARE PHARMACY', '12815B 96 Ave', 'Surrey', 'BC', 'V3V 6V9', '(604) 581-1900', NULL, '(604) 581-1902', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (293, 293, 'FLEETWOOD PHARMACY REMEDY\'SRX', '305 - 9014 152 St', 'Surrey', 'BC', 'V3R 4E7', '(604) 496-3303', NULL, '(604) 496-3301', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (294, 294, 'FRASER HEIGHTS PHARMACY LTD.', '#102 - 16033 - 108th Ave.', 'Surrey', 'BC', 'V4N 1P2', '(604) 930-9544', NULL, '(604) 930-9785', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (295, 295, 'FRESHCO PHARMACY #4255', '7165 - 138th Street', 'Surrey', 'BC', 'V3W 7T9', '(604) 594-4515', NULL, '(604) 594-4802', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (296, 296, 'FRESHCO PHARMACY #4257', '7450 - 120th Street', 'Surrey', 'BC', 'V3W 3M9', '(604) 594-9866', NULL, '(604) 594-1167', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (297, 297, 'GAIN PHARMACY', '#101 - 10677 King George Blvd', 'Surrey', 'BC', 'V3T 2X6', '(604) 582-4246', NULL, '(604) 582-4276', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (298, 298, 'GATEWAY PHARMACY', '101 - 10751 King George Blvd', 'Surrey', 'BC', 'V3T 2X6', '(604) 930-8608', NULL, '(604) 930-2732', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (299, 299, 'GLENCOURT DISTRIBUTORS', '105-106 19515 - 56th Ave', 'Surrey', 'BC', 'V3S 6K3', '(604) 539-0375', NULL, '(604) 539-1464', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (300, 300, 'GUARDIAN HEALTH CENTRE PHARMACY', '103 - 6321 King George Blvd', 'Surrey', 'BC', 'V3X 1G1', '(778) 564-1898', NULL, '(778) 564-1897', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (301, 301, 'GUILDFORD DRUGS', '200 - 15135 101 Ave', 'Surrey', 'BC', 'V3R 7Z1', '(778) 394-3784', NULL, '(778) 395-3784', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (302, 302, 'HEALTH MART PHARMACY', '#109 - 8556 120 St', 'Surrey', 'BC', 'V3W 3N5', '604-503-3162', NULL, '604-503-3168', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (303, 303, 'HOMELINX PHARMACY', '110 - 6245 136 St', 'Surrey', 'BC', 'V3X 1H3', '(604) 503-6470', NULL, '(604) 503-6469', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (304, 304, 'ICARE REMEDY\'SRX', '103 - 13805 104 Ave', 'Surrey', 'BC', 'V3T 1W7', '(604) 498-0480', NULL, '(604) 498-0481', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (305, 305, 'KING GEORGE MEDIC PHARMACY', '102 - 14333 104 Ave', 'Surrey', 'BC', 'V3T 0E1', '(778) 394-4990', NULL, '(778) 394-4991', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (306, 306, 'KINGSTONS PHARMACY', '10051 Whalley Blvd', 'Surrey', 'BC', 'V3T 4G1', '(604) 585-0525', NULL, '(604) 585-0522', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (307, 307, 'KROLL\'S SURREY PHARMACY LTD.', '#101 - 9645 137 St', 'Surrey', 'BC', 'V3T 4G8', '(604) 581-3636', NULL, '(604) 581-3637', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (308, 308, 'LANCASTER MEDICAL SUPPL. & PRESC. #4', '#101 - 13710 94A Ave', 'Surrey', 'BC', 'V3V 1N1', '(604) 582-9181', NULL, '(604) 582-9167', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (309, 309, 'LIFECONNECT PHARMACY', '102 - 5967 168 St', 'Surrey', 'BC', 'V3S 3X5', '(604) 372-0912', NULL, '(604) 372-0913', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (310, 310, 'LOBLAW PHARMACY #1521', '7550 King George Blvd', 'Surrey', 'BC', 'V3W 2T2', '(604) 599-3704', NULL, '(604) 599-3705', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (311, 311, 'LOBLAW PHARMACY #1551', '2332 160 St', 'Surrey', 'BC', 'V3Z 0R5', '(778) 545-0478', NULL, '(778) 545-0480', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (312, 312, 'LOBLAW PHARMACY #1556', '14650 - 104 Ave', 'Surrey', 'BC', 'V3R 1M3', '(604) 587-8535', NULL, '(604) 587-8532', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (313, 313, 'LOBLAW PHARMACY #4616', '18765 Fraser Hwy RR 10', 'Surrey', 'BC', 'V3S 8E7', '(604) 576-3126', NULL, '(604) 576-6844', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (314, 314, 'LONDON DRUGS # 8 - SURREY', '10348 King George Blvd', 'Surrey', 'BC', 'V3T 2W5', '(604) 584-7300', NULL, '(604) 581-6771', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (315, 315, 'LONDON DRUGS # 9 - GUILDFORD', '2300 10355 152nd St', 'Surrey', 'BC', 'V3R 7B9', '(604) 588-7881', NULL, '(604) 588-7347', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (316, 316, 'LONDON DRUGS #42 - PENINSULA VILLAGE', '#100 - 15355 - 24 Ave', 'Surrey', 'BC', 'V4A 2H9', '(604) 535-3281', NULL, '(604) 535-5402', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (317, 317, 'LONDON DRUGS #75', '821 - 17685 64 Ave', 'Surrey', 'BC', 'V3S 1Z2', '(604) 575-5880', NULL, '(604) 575-4630', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (318, 318, 'LONDON DRUGS #81', '#130 - 15850 26 Ave', 'Surrey', 'BC', 'V3Z 2N6', '(778) 545-5380', NULL, '(604) 531-7022', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (319, 319, 'MEDICA PHARMACY LTD.', '9839 138 St', 'Surrey', 'BC', 'V3T 5E3', '(604) 496-1903', NULL, '(604) 496-1909', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (320, 320, 'MEDICAL CENTRE PRESCRIPTIONS', '10225 King George Blvd', 'Surrey', 'BC', 'V3T 2W6', '(604) 581-2411', NULL, '(604) 589-2020', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (321, 321, 'MEDICINE GURU', '9180 120 St', 'Surrey', 'BC', 'V3V 4B5', '(604) 585-4878', NULL, '(604) 585-4876', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (322, 322, 'MEDICINE SHOPPE #156', 'Fleetwood Professional Centre #104 - 16088 - 84th Ave', 'Surrey', 'BC', 'V4N 0V9', '(604) 507-0190', NULL, '(604) 507-0192', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (323, 323, 'MEDICINE SHOPPE PHARMACY #240', '#303 - 15988 Fraser Hwy', 'Surrey', 'BC', 'V4N 0X8', '(604) 507-0970', NULL, '(604) 507-0971', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (324, 324, 'MEDISAVE PHARMACY #07', '#104 - 8056 King George Blvd', 'Surrey', 'BC', 'V3W 5B5', '(604) 599-5403', NULL, '(604) 599-5404', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (325, 325, 'MEDISAVE PHARMACY #3', '#2 - 8181 - 120A Street', 'Surrey', 'BC', 'V3W 3P2', '(604) 501-1114', NULL, '(604) 501-1914', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (326, 326, 'MEDISAVE PHARMACY #4', 'Unit 12 - 6828 128 St', 'Surrey', 'BC', 'V3W 4C9', '(604) 501-7719', NULL, '(604) 501-7759', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (327, 327, 'MORGAN CREEK MEDICINE CENTRE', '105A - 15252 32 Ave', 'Surrey', 'BC', 'V3Z 0R7', '(604) 538-6333', NULL, '(604) 538-6387', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (328, 328, 'NAZ\'S PHARMACY #2', '113 - 12578 72nd Ave', 'Surrey', 'BC', 'V3W 2M6', '(604) 596-3241', NULL, '(604) 597-3267', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (329, 329, 'NAZ\'S PHARMACY #4', '101 - 12565 88 Ave', 'Surrey', 'BC', 'V3W 3J7', '(604) 543-8850', NULL, '(604) 543-8857', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (330, 330, 'NAZ\'S PHARMACY NO. 5', 'Unit 17 - 15300 105 Ave', 'Surrey', 'BC', 'V3R 6A7', '(604) 634-0303', NULL, '(604) 634-0304', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (331, 331, 'PACIFIC PHARMACY #1', '101 - 15122 72 Ave', 'Surrey', 'BC', 'V3S 2G2', '(604) 590-0399', NULL, '(604) 590-0349', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (332, 332, 'PACIFIC PHARMACY #3', '101 - 8386 120 St', 'Surrey', 'BC', 'V3W 3N4', '(604) 503-5515', NULL, '(604) 503-5516', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (333, 333, 'PEOPLES PHARMACY #325', '107 - 15551 Fraser Hwy', 'Surrey', 'BC', 'V3S 2V8', '(604) 585-6227', NULL, '(604) 585-0105', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (334, 334, 'PEOPLES PHARMACY #369', '104 - 8140 120 St', 'Surrey', 'BC', 'V3W 3N3', '(604) 593-1788', NULL, '(604) 593-1769', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (335, 335, 'PEOPLES PHARMACY #377', '115-6363 168 St', 'Surrey', 'BC', 'V3S 3Y2', '(604) 576-6815', NULL, '(604) 576-6857', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (336, 336, 'PHARMACITY DRUGSTORE', '101 - 8338 120 St', 'Surrey', 'BC', 'V3W 3N4', '(604) 595-2873', NULL, '(604) 595-2840', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (337, 337, 'PHARMACITY DRUGSTORE #3', '#105 - 15240 56 Ave', 'Surrey', 'BC', 'V3S 5K7', '(604) 574-3331', NULL, '(604) 574-3342', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (338, 338, 'PHARMASAVE # 179', 'Dell Shopping Centre 10654 King George Blvd', 'Surrey', 'BC', 'V3T 2X3', '(604) 581-4431', NULL, '(604) 581-4130', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (339, 339, 'PHARMASAVE # 206', '#119 - 15280 - 101st Ave.', 'Surrey', 'BC', 'V3R 8X7', '(604) 584-3331', NULL, '(604) 584-3321', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (340, 340, 'PHARMASAVE # 21', '105 - 13585 16 Ave', 'Surrey', 'BC', 'V4A 1P6', '(604) 385-1175', NULL, '(604) 385-1177', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (341, 341, 'PHARMASAVE # 248', '#409 - 15940 Fraser Highway', 'Surrey', 'BC', 'V4N 0X8', '(604) 501-2711', NULL, '(604) 501-2710', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (342, 342, 'PHARMASAVE # 287 SULLIVAN SQUARE', '106 - 15325 56 Ave', 'Surrey', 'BC', 'V3S 0X9', '(604) 303-6345', NULL, '(604) 372-2772', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (343, 343, 'PHARMASAVE # 71', '110 - 6350 120 St', 'Surrey', 'BC', 'V3X 3K1', '(604) 507-3999', NULL, '(604) 507-3939', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (344, 344, 'PHARMASAVE GATEWAY CROSSING', '376 175A St', 'Surrey', 'BC', 'V3S 6S7', '(604) 542-4646', NULL, '(604) 542-3661', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (345, 345, 'PHARMASAVE HEALTH CENTRE # 015', '5778 - 176A St', 'Surrey', 'BC', 'V3S 4H3', '(604) 576-2888', NULL, '(604) 576-2882', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (346, 346, 'PHARMASAVE HEALTH CENTRE # 050', '15168 Fraser Hwy', 'Surrey', 'BC', 'V3R 3P1', '(604) 580-1456', NULL, '(604) 580-1455', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (347, 347, 'PHARMASAVE HEALTH CENTRE # 091 NEWTON', '107 - 14199 62 Ave', 'Surrey', 'BC', 'V3X 0B1', '(604) 568-4750', NULL, '(604) 503-5181', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (348, 348, 'PHARMASAVE HEALTH CENTRE # 099', '#10 - 2448 160 St', 'Surrey', 'BC', 'V3Z 0C8', '(604) 531-2690', NULL, '(604) 531-2691', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (349, 349, 'PHARMASAVE HEALTH CENTRE #1000', '101 - 1688 152 St', 'Surrey', 'BC', 'V4A 4N2', '(604) 538-6334', NULL, '(604) 538-6389', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (350, 350, 'PHARMASAVE HEALTH CENTRE #1001', 'Unit 103B - 19161 Fraser Hwy', 'Surrey', 'BC', 'V3S 7H2', '(604) 372-1234', NULL, '(604) 372-1254', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (351, 351, 'PHARMASAVE NO. 008', '#110 - 13798 - 94A Ave.', 'Surrey', 'BC', 'V3V 1N1', '(604) 585-8555', NULL, '(604) 583-5402', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (352, 352, 'PHARMASAVE SCOTT TOWN #167', '9558 - 120th St', 'Surrey', 'BC', 'V3V 4C1', '(604) 581-4671', NULL, '(604) 581-4673', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (353, 353, 'PHARMAWISE PHARMACY', '101 - 8488 160 St.', 'Surrey', 'BC', 'V4N 0V7', '778-565-0600', NULL, '778-565-0700', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (354, 354, 'PLATINUM CARE PHARMACY', '3 - 3238 King George Blvd', 'Surrey', 'BC', 'V4P 1A5', '(604) 385-0188', NULL, '(604) 385-0189', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (355, 355, 'POCKETPILLS', '233 - 18525 53 Ave', 'Surrey', 'BC', 'V3S 7A4', '(604) 372-3754', NULL, '(604) 372-3756', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (356, 356, 'PRIMECARE PHARMACY', '#101 - 7093 King George Blvd', 'Surrey', 'BC', 'V3W 5A2', '(778) 654-0013', NULL, '(778) 654-0039', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (357, 357, 'PROSPER PHARMACY NO. 3', '3 - 12818 72 Ave', 'Surrey', 'BC', 'V3W 2M9', '(604) 543-6677', NULL, '(604) 543-4433', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (358, 358, 'PURE CURE PHARMACY', '#100 - 8820 120th Street', 'Surrey', 'BC', 'V3V 0C9', '236-598-8896', NULL, '236-598-8895', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (359, 359, 'PURE INTEGRATIVE PHARMACY # 1', '111 - 15388 24 Ave', 'Surrey', 'BC', 'V4A 2J2', '(604) 542-7780', NULL, '(604) 542-3263', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (360, 360, 'REXALL #7131', '9025 160 St', 'Surrey', 'BC', 'V4N 2X7', '(604) 589-0012', NULL, '(604) 589-0344', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (361, 361, 'REXALL #7157', '150 - 17475 56 Ave', 'Surrey', 'BC', 'V3S 2X6', '(604) 576-7823', NULL, '(604) 576-7829', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (362, 362, 'REXALL #7167', '107 - 15331 16 Ave.', 'Surrey', 'BC', 'V4A 1R6', '(604) 536-4211', NULL, '(604) 536-6864', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (363, 363, 'REXALL #7169', 'Ocean Park Shopping Ctr. 12851 - 16th Ave.', 'Surrey', 'BC', 'V4A 1N5', '(604) 536-7611', NULL, '(604) 536-4261', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (364, 364, 'REXALL DIRECT', '1003 - 7495 132 St', 'Surrey', 'BC', 'V3W 1J8', '(604) 421-8498', NULL, '(604) 596-5027', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (365, 365, 'REXALL DRUG STORE #7152', '#107 - 15966 108 Ave', 'Surrey', 'BC', 'V4N 1J6', '(604) 588-8330', NULL, '(604) 588-8342', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (366, 366, 'RITECARE PHARMACY', '#103 - 12837 88 Ave', 'Surrey', 'BC', 'V3W 3K2', '(778) 565-5925', NULL, '(778) 565-5926', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (367, 367, 'RITECARE PHARMACY #2', '110 - 18438 64 Ave', 'Surrey', 'BC', 'V3S 1E9', '(604) 372-3388', NULL, '(604) 372-3387', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (368, 368, 'SAFEWAY PHARMACY #4900', '10355 King George Blvd', 'Surrey', 'BC', 'V3T 2W6', '(604) 584-7812', NULL, '(604) 584-7197', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (369, 369, 'SAFEWAY PHARMACY #4914', '#700 - 15355 - 24th Ave', 'Surrey', 'BC', 'V4A 2H9', '(604) 535-8879', NULL, '(604) 535-2226', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (370, 370, 'SAFEWAY PHARMACY #4920', '8870 - 152nd Street', 'Surrey', 'BC', 'V3R 4E4', '(604) 589-5226', NULL, '(604) 589-3717', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (371, 371, 'SAFEWAY PHARMACY #4939', '12825 - 16th Ave', 'Surrey', 'BC', 'V4A 1N5', '(604) 531-9694', NULL, '(604) 531-2602', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (372, 372, 'SATNAM PHARMACY', 'Satnam Plaza #115 - 7130 120 St', 'Surrey', 'BC', 'V3W 3M8', '(604) 597-5947', NULL, '(604) 597-5945', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (373, 373, 'SAVE-ON-FOODS PHARMACY # 903 - SURREY', 'South Point Exchange 3033 - 152nd Street', 'Surrey', 'BC', 'V4P 3K1', '(604) 538-5467', NULL, '(604) 538-6451', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (374, 374, 'SAVE-ON-FOODS PHARMACY # 910 - NEWTON', '100 - 7320 King George Blvd', 'Surrey', 'BC', 'V3W 5A5', '(604) 599-6702', NULL, '(604) 599-6703', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (375, 375, 'SAVE-ON-FOODS PHARMACY # 918', '9014 - 152nd St', 'Surrey', 'BC', 'V3R 4E7', '(604) 930-1120', NULL, '(604) 582-4852', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (376, 376, 'SAVE-ON-FOODS PHARMACY # 939 - NORDEL CROSSING', '12130 Nordel Way', 'Surrey', 'BC', 'V3W 1P6', '(604) 501-9354', NULL, '(604) 501-9364', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (377, 377, 'SAVE-ON-FOODS PHARMACY #2207 - KING GEORGE', '10312 King George Blvd', 'Surrey', 'BC', 'V3T 2W5', '(604) 588-6292', NULL, '(604) 930-4883', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (378, 378, 'SAVE-ON-FOODS PHARMACY #2263 - CLAYTON', '18710 Fraser Hwy', 'Surrey', 'BC', 'V3S 7Y4', '(604) 574-1231', NULL, '(604) 574-1264', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (379, 379, 'SCOTTCARE PHARMACY', 'Unit 202 - 204 9278 120 St', 'Surrey', 'BC', 'V3V 4B8', '(604) 498-0856', NULL, '(604) 498-0857', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (380, 380, 'SHOPPERS DRUG MART # 265', 'Clover Square Village Unit 104 - 17790 No. 10 Highway', 'Surrey', 'BC', 'V3S 1C7', '(604) 574-7436', NULL, '(604) 574-0857', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (381, 381, 'SHOPPERS DRUG MART # 267', 'Central City Shopping Centre #3100 - 10153 King George Blvd', 'Surrey', 'BC', 'V3T 2W1', '(604) 588-6451', NULL, '(604) 588-4926', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (382, 382, 'SHOPPERS DRUG MART # 273', '15105 16 Ave', 'Surrey', 'BC', 'V4A 6G3', '(604) 536-8211', NULL, '(604) 536-5047', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (383, 383, 'SHOPPERS DRUG MART #2141', 'Outpatient Clinic Unit 151 - 9750 140 St', 'Surrey', 'BC', 'V3V 5Z5', '(604) 495-0400', NULL, '(604) 495-0406', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (384, 384, 'SHOPPERS DRUG MART #2144', '101 - 10835 City Pwky', 'Surrey', 'BC', 'V3T 0L2', '(604) 495-9949', NULL, '(604) 495-9953', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (385, 385, 'SHOPPERS DRUG MART #2212', '8962 152 St', 'Surrey', 'BC', 'V3R 4E4', '(604) 581-4544', NULL, '(604) 583-7642', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (386, 386, 'SHOPPERS DRUG MART #2222', '#100 - 7322 King George Blvd', 'Surrey', 'BC', 'V3W 5A5', '(604) 590-2271', NULL, '(604) 590-2241', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (387, 387, 'SHOPPERS DRUG MART #2224', '14867A 108 Ave', 'Surrey', 'BC', 'V3R 1W2', '(604) 584-8393', NULL, '(604) 581-4089', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (388, 388, 'SHOPPERS DRUG MART #2231', 'Unit 6 - 12830 96 Ave', 'Surrey', 'BC', 'V3V 6A8', '(604) 588-3488', NULL, '(604) 588-2065', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (389, 389, 'SHOPPERS DRUG MART #2235', '7538 120 St', 'Surrey', 'BC', 'V3W 3N1', '(604) 495-8382', NULL, '(604) 495-8386', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (390, 390, 'SHOPPERS DRUG MART #2238', '101-12080 Nordel Way', 'Surrey', 'BC', 'V3W 1P6', '(604) 543-8155', NULL, '(604) 543-8165', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (391, 391, 'SHOPPERS DRUG MART #2239', '18677 Fraser Hwy', 'Surrey', 'BC', 'V3S 8E7', '(604) 575-4994', NULL, '(604) 575-4995', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (392, 392, 'SHOPPERS DRUG MART #2263', '105 - 16050 24 Ave', 'Surrey', 'BC', 'V3Z 0R5', '(604) 538-1893', NULL, '(604) 536-2600', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (393, 393, 'SHOPPERS DRUG MART #2270', '100 - 15157 - No. 10 Hwy', 'Surrey', 'BC', 'V3S 9A5', '(604) 574-1081', NULL, '(604) 574-1053', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (394, 394, 'SMART SAVE PHARMACY', '103 - 7110 120 St', 'Surrey', 'BC', 'V3W 3M8', '(778) 565-5760', NULL, '(778) 565-5761', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (395, 395, 'SOMERSET PHARMACY SERVICES', '#7 - 13791 - 72nd Ave', 'Surrey', 'BC', 'V3W 9Y9', '(604) 590-5509', NULL, '(604) 590-5523', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (396, 396, 'SUKH\'S PHARMACY', '7166 120 St', 'Surrey', 'BC', 'V3W 3M8', '(604) 594-0069', NULL, '(604) 594-0804', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (397, 397, 'SULLIVAN HEIGHTS PHARMACY', '#105 - 14340 64 Ave', 'Surrey', 'BC', 'V3W 1Z1', '(778) 564-0018', NULL, '(778) 564-0012', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (398, 398, 'SULLIVAN PHARMACY', '#202 - 6355 152 St', 'Surrey', 'BC', 'V3S 3K8', '(778) 593-0052', NULL, '(778) 593-0053', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (399, 399, 'SUNNYSIDE EVERGREEN PHARMACY', '2397 King George Blvd', 'Surrey', 'BC', 'V4A 5A4', '(604) 536-4404', NULL, '(604) 536-4572', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (400, 400, 'SURLANG MEDICINE CENTRE PHARMACY', '105 - 19475 Fraser Hwy', 'Surrey', 'BC', 'V3S 6K7', '(604) 533-1041', NULL, '(604) 533-1051', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (401, 401, 'SURREY PHARMACY', '7141 King George Blvd', 'Surrey', 'BC', 'V3W 5A4', '(604) 572-3060', NULL, '(604) 572-3065', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (402, 402, 'THE MEDICINE SHOPPE #163 - SURREY', '#122 - 1959 - 152nd St', 'Surrey', 'BC', 'V4A 9E3', '(604) 531-4400', NULL, '(604) 531-6560', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (403, 403, 'THRIFTY FOODS AND PHARMACY #9472', '#102 - 15745 Croydon Dr', 'Surrey', 'BC', 'V3Z 2L5', '(604) 542-7853', NULL, '(604) 542-7854', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (404, 404, 'UNIVERSAL PHARMACY', '1115 - 7318 137 St', 'Surrey', 'BC', 'V3W 1A3', '(604) 594-9535', NULL, '(604) 594-9540', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (405, 405, 'VIVA CARE PHARMACY', '104 - 14888 104 Ave', 'Surrey', 'BC', 'V3R 1M4', '(778) 293-2273', NULL, '(778) 293-2274', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (406, 406, 'VIVA CARE PHARMACY - NEWTON', '#126 - 15299 68 Ave', 'Surrey', 'BC', 'V3S 2C1', '(778) 218-4102', NULL, '(778) 218-4103', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (407, 407, 'WAL-MART PHARMACY #1205', '2151 - 10153 King George Blvd', 'Surrey', 'BC', 'V3T 2W3', '(604) 495-8698', NULL, '(604) 495-8682', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (408, 408, 'WAL-MART PHARMACY #3098', '1000 Guildford Town Ctr.', 'Surrey', 'BC', 'V3R 7C3', '(604) 585-7440', NULL, '(604) 588-3759', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (409, 409, 'WAL-MART PHARMACY #5838', '12451 - 88 Ave', 'Surrey', 'BC', 'V3W 1P8', '(604) 597-9169', NULL, '(604) 597-6178', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (410, 410, 'WAL-MART PHARMACY #5853', '2355 160 St', 'Surrey', 'BC', 'V3Z 9N6', '(604) 541-8567', NULL, '(604) 541-6074', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (411, 411, 'WE CARE PHARMACY', '100 - 6329 King George Blvd', 'Surrey', 'BC', 'V3X 1G1', '(604) 593-6924', NULL, '(604) 593-6925', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (412, 412, 'WE CARE PHARMACY #2', '13588 88 Ave Unit #110', 'Surrey', 'BC', 'V3W 3K8', '(778) 565-7988', NULL, '(778) 565-7989', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (413, 413, 'WELLNESS PHARMACY NO. 3', '103 - 13737 96 Ave', 'Surrey', 'BC', 'V3V 0C6', '(604) 951-1002', NULL, '(604) 951-1003', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (414, 414, 'WESCANA PHARMACY # 2', '#7 - 8388 - 128th Street', 'Surrey', 'BC', 'V3W 4G2', '(604) 572-5009', NULL, '(604) 572-6009', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (415, 415, 'WESCANA PHARMACY # 7', '8585 160 St', 'Surrey', 'BC', 'V4N 1G4', '(778) 578-5160', NULL, '(778) 578-5165', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (416, 416, 'YORK PHARMACY', '110 - 7938 128 St', 'Surrey', 'BC', 'V3W 4E8', '(604) 598-4679', NULL, '(604) 598-4684', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (417, 417, 'ALBERTO PHARMACY # 1', '2516 Commercial Dr', 'Vancouver', 'BC', 'V5N 4C2', '(604) 873-4111', NULL, '(604) 873-6734', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (418, 418, 'ALBERTO PHARMACY NO. 2', '#101 - 2620 Commercial Dr', 'Vancouver', 'BC', 'V5N 4C4', '(604) 879-8481', NULL, '(604) 879-8482', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (419, 419, 'BAY PHARMACY', '6355 Bruce St West', 'Vancouver', 'BC', 'V7W 2G5', '(604) 305-0330', NULL, '(604) 281-0330', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (420, 420, 'BIOPRO BIOLOGICS PHARMACY', '845 Broadway W', 'Vancouver', 'BC', 'V5Z 1J9', '(778) 379-8161', NULL, '(778) 379-8160', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (421, 421, 'BOND STREET PHARMACY', '609 East Broadway', 'Vancouver', 'BC', 'V5T 1X7', '(604) 874-4755', NULL, '(604) 874-4788', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (422, 422, 'BOOMER DRUGS', '8574 Granville St', 'Vancouver', 'BC', 'V6P 4Z7', '(604) 266-9010', NULL, '(604) 568-9838', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (423, 423, 'BROADWAY PHARMASAVE #73', '101 - 2025 West Broadway', 'Vancouver', 'BC', 'V6J 1Z6', '(604) 737-2025', NULL, '(604) 737-2046', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (424, 424, 'CAMBIE PHARMASAVE', '4054 Cambie St', 'Vancouver', 'BC', 'V5Z 2X8', '(604) 873-9277', NULL, '(604) 873-9270', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (425, 425, 'CANPHARM DRUGS', '5853 Victoria Drive', 'Vancouver', 'BC', 'V5P 3W5', '(604) 321-5133', NULL, '(604) 324-4510', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (426, 426, 'CLOUD PHARMACY', '4918 Victoria Drive', 'Vancouver', 'BC', 'V5P 3T6', '(604) 558-1690', NULL, '(604) 558-1691', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (427, 427, 'COAL HARBOUR PHARMACY', 'Unit B - 622 Bute St', 'Vancouver', 'BC', 'V6E 3M1', '(604) 336-3038', NULL, '(604) 336-3044', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (428, 428, 'CONTINENTAL PHARMACY #2', '5316 Victoria Dr', 'Vancouver', 'BC', 'V5P 3V7', '(604) 327-6823', NULL, '(604) 327-0272', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (429, 429, 'CORNING DRUGS #2', '102-236 Georgia St E', 'Vancouver', 'BC', 'V6A 1Z7', '(604) 685-7609', NULL, '(604) 685-7672', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (430, 430, 'CORNING DRUGS LTD.', '515 Main St.', 'Vancouver', 'BC', 'V6A 2V1', '(604) 685-9056', NULL, '(604) 685-8681', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (431, 431, 'COSTCO PHARMACY # 552', '605 Expo Blvd', 'Vancouver', 'BC', 'V6B 1V4', '(604) 622-5059', NULL, '(604) 622-5056', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (432, 432, 'DAVIE PHARMACY', '1232 Davie St', 'Vancouver', 'BC', 'V6E 1N3', '(604) 559-9952', NULL, '(604) 559-7752', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (433, 433, 'DOWNTOWN CLINIC PHARMACY', '569 Powell Street', 'Vancouver', 'BC', 'V6A 1G8', '(604) 216-4257', NULL, '(604) 216-4270', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (434, 434, 'DTES CONNECTIONS PHARMACY', '120 - 623 Powell St', 'Vancouver', 'BC', 'V6A 1H2', '(604) 675-3605', NULL, '(604) 675-3609', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (435, 435, 'DUNDAS REMEDY\'S RX PHARMACY', '2081 Dundas St', 'Vancouver', 'BC', 'V5L 1J5', '(778) 379-5095', NULL, '(778) 379-5094', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (436, 436, 'EAST END PHARMACY', '2021 Commercial Drive', 'Vancouver', 'BC', 'V5N 4B1', '(604) 255-9890', NULL, '(604) 255-9815', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (437, 437, 'EASTSIDE PHARMACY LTD.', '398 Hastings St E', 'Vancouver', 'BC', 'V6A 1P4', '(604) 255-1714', NULL, '(604) 255-1753', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (438, 438, 'EVERWELL PHARMACY', '8179 Granville St', 'Vancouver', 'BC', 'V6P 4Z6', '(604) 563-8282', NULL, '(604) 563-8280', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (439, 439, 'FINLANDIA NATURAL PHARMACY', '1111 West Broadway', 'Vancouver', 'BC', 'V6H 1G1', '(604) 733-5323', NULL, '(604) 733-5340', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (440, 440, 'FRASER NEIGHBOURHOOD PHARMACY', '3373 Fraser Street', 'Vancouver', 'BC', 'V5V 4C2', '(604) 669-4364', NULL, '(604) 669-4308', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (441, 441, 'FRASER OUTREACH PHARMACY', '4127 Fraser St', 'Vancouver', 'BC', 'V5V 4E9', '(604) 620-8278', NULL, '(604) 620-8277', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (442, 442, 'FRASER PHARMACHOICE', '4207 Fraser St', 'Vancouver', 'BC', 'V5V 4G1', '(604) 872-1151', NULL, '(604) 872-1187', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (443, 443, 'FRASER PHARMACY', '6448 Fraser St.', 'Vancouver', 'BC', 'V5W 3A4', '(604) 325-8288', NULL, '(604) 558-0578', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (444, 444, 'GARLANE PHARMACY LTD.', '232 East Hastings St', 'Vancouver', 'BC', 'V6A 1P1', '(604) 684-6720', NULL, '(604) 684-6720', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (445, 445, 'GARLANE PRESCRIPTIONS', '#102 - 409 W. Broadway', 'Vancouver', 'BC', 'V5Y 1R4', '(604) 879-1933', NULL, '(604) 879-1923', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (446, 446, 'HARVARD PHARMACY', '492 Kingsway', 'Vancouver', 'BC', 'V5T 3J9', '(604) 875-0200', NULL, '(604) 639-0020', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (447, 447, 'HEALTH HUB PHARMACY', '5848 Fraser Street', 'Vancouver', 'BC', 'V5W 2Z5', '604-321-8888', NULL, '(604) 565-5022', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (448, 448, 'HEALTHSIDE PHARMACY', '5448 Victoria Drive', 'Vancouver', 'BC', 'V5P 3V8', '(604) 327-6768', NULL, '(604) 327-6761', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (449, 449, 'INDIGO PHARMACY COMMERCIAL', '1623 Commercial Dr', 'Vancouver', 'BC', 'V5L 3Y3', '(604) 566-8963', NULL, '(604) 566-8962', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (450, 450, 'JEFF\'S PHARMACY', '410 East Hastings Street', 'Vancouver', 'BC', 'V6A 1P7', '(604) 215-1229', NULL, '(604) 215-1290', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (451, 451, 'JERICHO PHARMACY & HEALTH FOOD STORE', 'Unit 290 - 2083 Alma St.', 'Vancouver', 'BC', 'V6R 4N6', '(604) 228-8978', NULL, '(604) 228-0798', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (452, 452, 'KERRISDALE MEDICINE CENTRE PHARMACY', '5591 West Boulevard', 'Vancouver', 'BC', 'V6M 3W6', '(604) 261-0333', NULL, '(604) 261-0311', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (453, 453, 'KINGSWAY PHARMACY', '1671 Kingsway', 'Vancouver', 'BC', 'V5N 2S2', '(604) 559-3784', NULL, '(604) 559-3785', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (454, 454, 'KRIPPS HEALTHCARE RX', '5413 West Blvd', 'Vancouver', 'BC', 'V6M 3W5', '(604) 687-2564', NULL, '(604) 685-9721', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (455, 455, 'LANCASTER MEDICAL SUPPL. & PRESC. #1', 'Unit 1 601 West Broadway', 'Vancouver', 'BC', 'V5Z 4C2', '(604) 873-8585', NULL, '(604) 873-2381', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (456, 456, 'LAUREL PRESCRIPTIONS', '#102 - 888 West 8th Ave.', 'Vancouver', 'BC', 'V5Z 3Y1', '(604) 873-5511', NULL, '(604) 873-5581', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (457, 457, 'LG PHARMACY', '1519 Robson St', 'Vancouver', 'BC', 'V6G 1C3', '(604) 558-2006', NULL, '(604) 974-5444', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (458, 458, 'LITTLE MOUNTAIN PHARMACY', '4484 Main Street', 'Vancouver', 'BC', 'V5V 3R3', '(604) 876-6410', NULL, '(604) 875-6808', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (459, 459, 'LOBLAW PHARMACY #1517', '350 Marine Dr SE', 'Vancouver', 'BC', 'V5X 2S5', '(604) 322-3706', NULL, '(604) 322-7321', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (460, 460, 'LOBLAW PHARMACY #1520', '3185 Grandview Hwy.', 'Vancouver', 'BC', 'V5M 2E9', '(604) 436-6406', NULL, '(604) 436-6446', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (461, 461, 'LOBLAW PHARMACY #4617', 'Champlain Mall 7190 Kerr Street', 'Vancouver', 'BC', 'V5S 4W2', '(604) 430-3381', NULL, '(604) 433-5347', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (462, 462, 'LOBLAW PHARMACY #4979', '310 Broadway St W', 'Vancouver', 'BC', 'V5Y 1R2', '(604) 708-8084', NULL, '(604) 708-8663', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (463, 463, 'LONDON DRUGS # 2', '710 Granville St', 'Vancouver', 'BC', 'V6Z 1E4', '(604) 685-5292', NULL, '(604) 685-5819', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (464, 464, 'LONDON DRUGS # 4 - BROADWAY', '525 Broadway W', 'Vancouver', 'BC', 'V5Z 1E6', '(604) 872-5177', NULL, '(604) 872-5207', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (465, 465, 'LONDON DRUGS # 7 - HASTINGS', '2585 E. Hastings St.', 'Vancouver', 'BC', 'V5K 1Z1', '(604) 253-4484', NULL, '(604) 251-5401', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (466, 466, 'LONDON DRUGS #10', '2091 West 42nd Ave', 'Vancouver', 'BC', 'V6M 2B4', '(604) 263-1811', NULL, '(604) 261-0297', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (467, 467, 'LONDON DRUGS #19', '1187 Robson St.', 'Vancouver', 'BC', 'V6E 1B5', '(604) 669-7374', NULL, '(604) 669-7341', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (468, 468, 'LONDON DRUGS #28', '3328 Kingsway', 'Vancouver', 'BC', 'V5R 5L1', '(604) 433-4700', NULL, '(604) 433-5606', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (469, 469, 'LONDON DRUGS #50 - DAVIE ST.', '1650 Davie Street', 'Vancouver', 'BC', 'V6G 1V9', '(604) 669-2884', NULL, '(604) 669-2244', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (470, 470, 'LONDON DRUGS #53 - VICTORIA DRIVE', '5639 Victoria Drive', 'Vancouver', 'BC', 'V5P 3W2', '(604) 322-6050', NULL, '(604) 322-6549', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (471, 471, 'LONDON DRUGS #74', '2230 Broadway W', 'Vancouver', 'BC', 'V6K 2E3', '(604) 742-6000', NULL, '(604) 742-1843', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (472, 472, 'LONDON DRUGS #78', '150 - 351 Abbott St', 'Vancouver', 'BC', 'V6B 0G6', '(604) 622-7030', NULL, '(604) 689-8836', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (473, 473, 'LONDON DRUGS #82', '1622 Salt St', 'Vancouver', 'BC', 'V5Y 0E4', '(604) 707-2030', NULL, '(604) 872-8690', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (474, 474, 'LONDON DRUGS #88', '4588 Dunbar St', 'Vancouver', 'BC', 'V6S 2G6', '778-372-5272', NULL, '(604) 267-7712', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (475, 475, 'LONDON DRUGS #90', '201 - 1431 Continental St', 'Vancouver', 'BC', 'V6Z 0G3', '(778) 309-1413', NULL, '(778) 372-3765', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (476, 476, 'LOW COST WESTERN PHARMACY', '535 Main St.', 'Vancouver', 'BC', 'V6A 2V1', '(604) 689-5555', NULL, '(604) 689-5268', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (477, 477, 'LOW COST WESTERN PHARMACY #2', '#7 - 5579 Victoria Dr', 'Vancouver', 'BC', 'V5P 3W2', '(604) 322-6588', NULL, '(604) 322-6501', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (478, 478, 'MACDONALD\'S PRESCRIPTIONS #3', '2188 W. Broadway', 'Vancouver', 'BC', 'V6K 2C8', '(604) 738-0733', NULL, '(604) 738-5400', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (479, 479, 'MACDONALD\'S PRESCRIPTIONS #4', '#130 - 943 W. Broadway', 'Vancouver', 'BC', 'V5Z 1K3', '(604) 734-4311', NULL, '(604) 734-4366', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (480, 480, 'MACDONALD\'S PRESCRIPTIONS LTD.', 'Fairmont Medical Bldg. 746 W. Broadway', 'Vancouver', 'BC', 'V5Z 1G8', '(604) 872-2662', NULL, '(604) 876-0242', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (481, 481, 'MACDONALD\'S PRESCRIPTIONS RENAL PHARMACY', '2nd Floor - 148 West 6th Ave', 'Vancouver', 'BC', 'V5Y 1K6', '(604) 872-4200', NULL, '(604) 872-4255', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (482, 482, 'MAGGIE\'S PHARMACY', '2591 Commercial Dr', 'Vancouver', 'BC', 'V5N 4C1', '(778) 371-8721', NULL, '(778) 371-8722', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (483, 483, 'MAIN PRESCRIPTIONS', '506 Main St', 'Vancouver', 'BC', 'V6A 2T9', '(604) 683-6381', NULL, '(604) 683-8623', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (484, 484, 'MAIN STATION PHARMACY', '1149 Main St', 'Vancouver', 'BC', 'V6A 4B6', '(604) 662-3883', NULL, '(604) 662-3887', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (485, 485, 'MAINCARE PHARMACY', '7297 Main St', 'Vancouver', 'BC', 'V5X 3J3', '(604) 325-0544', NULL, '(604) 325-0574', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (486, 486, 'MARDALE PHARMACY', '15 E. Hastings St.', 'Vancouver', 'BC', 'V6A 1M9', '(604) 681-6371', NULL, '(604) 608-6371', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (487, 487, 'MARK\'S MARINE PHARMACY', '239 Marine Dr SE', 'Vancouver', 'BC', 'V5X 2S4', '(604) 325-9265', NULL, '(604) 325-9805', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (488, 488, 'MARMAR PHARMACY', '#212 - 1200 Burrard St', 'Vancouver', 'BC', 'V6Z 2C7', '(604) 605-0211', NULL, '(604) 602-0210', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (489, 489, 'MEDICAL CENTRE PHARMACY', '1175 Denman St', 'Vancouver', 'BC', 'V6G 2N1', '(604) 682-4321', NULL, '(604) 568-2023', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (490, 490, 'MEDICINE SHOPPE #116', '#6 - 3195 Granville St.', 'Vancouver', 'BC', 'V6H 3K2', '(604) 732-0777', NULL, '(604) 732-1199', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (491, 491, 'MEDICINE SHOPPE #149', '6495 Victoria Dr.', 'Vancouver', 'BC', 'V5P 3X5', '(604) 327-5567', NULL, '(604) 327-1426', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (492, 492, 'MEDICINE SHOPPE #221', '#101 - 777 West Broadway', 'Vancouver', 'BC', 'V5Z 4J7', '(604) 675-6300', NULL, '(604) 675-6320', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (493, 493, 'MEDICINE SHOPPE #231 (THE)', '6180 Fraser St', 'Vancouver', 'BC', 'V5W 3A1', '(604) 327-3898', NULL, '(604) 327-3803', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (494, 494, 'MEDICINE SHOPPE #239', '2030 Kingsway', 'Vancouver', 'BC', 'V5N 2T3', '(604) 876-2511', NULL, '(604) 876-2519', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (495, 495, 'MJ\'S NATURAL PHARMACY', '6255 Victoria Dr', 'Vancouver', 'BC', 'V5P 3X5', '(604) 323-1293', NULL, '(604) 323-1294', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (496, 496, 'MJ\'S NATURAL PHARMACY NO. 2', '6689 Victoria Dr', 'Vancouver', 'BC', 'V5P 3Y2', '(604) 324-1293', NULL, '(604) 324-1273', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (497, 497, 'MOUNT PLEASANT PHARMACY', '93 Kingsway', 'Vancouver', 'BC', 'V5T 3J1', '(604) 872-2039', NULL, '(604) 872-2049', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (498, 498, 'NANAIMO PHARMACY', '1299 Nanaimo St', 'Vancouver', 'BC', 'V5L 4T5', '(604) 251-1299', NULL, '(604) 251-1280', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (499, 499, 'NAZ\'S PRESCRIPTION PLUS PHARMACY', '6410 Main St.', 'Vancouver', 'BC', 'V5W 2V4', '(604) 325-3241', NULL, '(604) 325-3276', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (500, 500, 'NEW LIFE PHARMACY', '463 Hastings St E', 'Vancouver', 'BC', 'V6A 1P5', '(604) 255-4900', NULL, '(604) 255-4839', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (501, 501, 'NURTURE RX PHARMACY', '2732 41st Ave E', 'Vancouver', 'BC', 'V5R 2X1', '(604) 428-6455', NULL, '(604) 428-6457', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (502, 502, 'OCEAN PHARMACY', '1880 Marine Drive West', 'Vancouver', 'BC', 'V7V 1J6', '(604) 922-1238', NULL, '(604) 926-3908', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (503, 503, 'OMNICARE PHARMACY LTD.', '#130 - 1 East Cordova St', 'Vancouver', 'BC', 'V6A 4H3', '(604) 633-1289', NULL, '(604) 633-1298', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (504, 504, 'OWL DRUGS', '199 East Hastings St.', 'Vancouver', 'BC', 'V6A 1N5', '(604) 681-3024', NULL, '(604) 681-3048', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (505, 505, 'P & A PHARMACY', '4336 Fraser St.', 'Vancouver', 'BC', 'V5V 4G3', '(604) 876-4424', NULL, '(604) 876-8845', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (506, 506, 'PACIFIC CARE PHARMACY', '2651 Kingsway', 'Vancouver', 'BC', 'V5R 5H4', '(604) 438-6200', NULL, '(604) 438-6201', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (507, 507, 'PHARMACHOICE MAIN', '3882 Main St', 'Vancouver', 'BC', 'V5V 3N9', '(604) 872-3882', NULL, '(604) 872-3888', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (508, 508, 'PHARMACHOICE PHARMACY #9072', '571 West 57th Ave.', 'Vancouver', 'BC', 'V6P 1R8', '(604) 324-2258', NULL, '(604) 324-2259', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (509, 509, 'PHARMACHOICE WESBROOK PHARMACY', '3317 Wesbrook Mall', 'Vancouver', 'BC', 'V6S 0B1', '(604) 800-0223', NULL, '(604) 800-0224', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (510, 510, 'PHARMACISTS CLINIC', '2405 Wesbrook Mall', 'Vancouver', 'BC', 'V6T 1Z3', '(604) 827-2584', NULL, '(604) 827-2579', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (511, 511, 'PHARMACY 24 NO. 4', '4973 Victoria Dr', 'Vancouver', 'BC', 'V5P 3T7', '(604) 336-9440', NULL, '(604) 336-9441', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (512, 512, 'PHARMASAVE # 018', '1517 57 Ave W', 'Vancouver', 'BC', 'V6P 6E9', '(604) 566-1517', NULL, '(604) 566-1515', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (513, 513, 'PHARMASAVE # 026', '6447 Fraser St', 'Vancouver', 'BC', 'V5W 3A6', '(604) 336-3144', NULL, '(604) 336-3145', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (514, 514, 'PHARMASAVE # 065', '1308 Commercial Dr', 'Vancouver', 'BC', 'V5L 3X6', '(604) 215-5500', NULL, '(604) 215-5504', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (515, 515, 'PHARMASAVE # 082', '4628 Main St', 'Vancouver', 'BC', 'V5V 3R7', '(604) 873-3138', NULL, '(604) 873-3132', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (516, 516, 'PHARMASAVE # 214', '5331 Headland Dr West', 'Vancouver', 'BC', 'V7W 3C6', '(604) 926-5331', NULL, '(604) 926-4819', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (517, 517, 'PHARMASAVE # 281', '101 - 2280 Hastings St E', 'Vancouver', 'BC', 'V5L 1V4', '(604) 305-0345', NULL, '(604) 305-0346', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (518, 518, 'PHARMASAVE # 79', '#205 - 650 West 41st Ave.', 'Vancouver', 'BC', 'V5Z 2M9', '(604) 266-8455', NULL, '(604) 266-8975', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (519, 519, 'PHARMASAVE # 87', '1070 Howe St', 'Vancouver', 'BC', 'V6Z 1P5', '(604) 899-0930', NULL, '(604) 899-0934', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (520, 520, 'PHARMASAVE #1012', '101 - 1590 Bellevue Ave West', 'Vancouver', 'BC', 'V7V 1A7', '(604) 926-9047', NULL, '(604) 926-9651', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (521, 521, 'PHARMASAVE #1101', '400 - 1055 Dunsmuir St PO Box 49326 - Van Stn Bentall Centre', 'Vancouver', 'BC', 'V7X 1L4', '(604) 682-7785', NULL, '(604) 682-7744', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (522, 522, 'PHARMASAVE HEALTH CENTRE # 002', '#106 - 2800 1st Ave E', 'Vancouver', 'BC', 'V5M 4N8', '(604) 215-8284', NULL, '(604) 215-8443', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (523, 523, 'PHARMASAVE HEALTH CENTRE # 010', '#101 - 1160 Burrard St.', 'Vancouver', 'BC', 'V6Z 2E8', '(604) 669-7700', NULL, '(604) 669-7282', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (524, 524, 'PHARMASAVE HEALTH CENTRE # 017', '1025 15th Ave W', 'Vancouver', 'BC', 'V6H 1R7', '(604) 558-4006', NULL, '(604) 558-4007', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (525, 525, 'PHARMASAVE HEALTH CENTRE # 027', 'Unit J3 - 925 Main Street West', 'Vancouver', 'BC', 'V7T 2Z3', '(604) 925-3304', NULL, '(604) 925-3312', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (526, 526, 'PHARMASAVE HEALTH CENTRE # 058', '102 - 2048 41st Ave W', 'Vancouver', 'BC', 'V6M 1Y8', '(604) 261-3335', NULL, '(604) 261-3336', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (527, 527, 'PHARMASAVE HEALTH CENTRE # 063', '2580 Granville St', 'Vancouver', 'BC', 'V6H 3G8', '(604) 558-3003', NULL, '(604) 558-3004', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (528, 528, 'PHARMASAVE HEALTH CENTRE # 077', '1671 Broadway E', 'Vancouver', 'BC', 'V5N 1V9', '(604) 251-1293', NULL, '(604) 251-1248', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (529, 529, 'PHARMASAVE HEALTH CENTRE # 080', '5791 Oak St', 'Vancouver', 'BC', 'V6M 2V7', '(604) 269-3617', NULL, '(604) 269-3761', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (530, 530, 'PHARMASAVE HEALTH CENTRE # 094', '1808 Kingsway', 'Vancouver', 'BC', 'V5N 2S7', '(778) 379-4470', NULL, '(778) 379-4472', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (531, 531, 'PHARMASAVE HEALTH CENTRE #1022', '#1 - 1530 West 7th Avenue', 'Vancouver', 'BC', 'V6J 1S2', '(604) 738-7181', NULL, '(604) 738-7127', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (532, 532, 'PHARMATRUST PHARMACY #2', '178 Keefer Street', 'Vancouver', 'BC', 'V6A1X4', '(604) 694-0988', NULL, '(604) 694-0933', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (533, 533, 'PIER HEALTH RESOURCE CENTRE', '223 Main St', 'Vancouver', 'BC', 'V6A 2S7', '(604) 891-1480', NULL, '(604) 891-1490', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (534, 534, 'POINT GREY PHARMACY', '4520 West 10th Ave.', 'Vancouver', 'BC', 'V6R 2J1', '(604) 224-1377', NULL, '(604) 225-0019', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (535, 535, 'PURE INTEGRATIVE PHARMACY # 4', '3533 4th Ave W', 'Vancouver', 'BC', 'V6R 1N9', '(604) 733-7211', NULL, '(604) 733-7215', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (536, 536, 'PURE INTEGRATIVE PHARMACY # 5', '2685 Broadway W', 'Vancouver', 'BC', 'V6K 2G2', '(604) 568-8844', NULL, '(604) 568-8944', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (537, 537, 'PURE INTEGRATIVE PHARMACY # 9', '238 Robson St', 'Vancouver', 'BC', 'V6B 6A1', '(604) 681-8190', NULL, '(604) 681-8195', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (538, 538, 'PURE INTEGRATIVE PHARMACY #10', '3228 Dunbar Street', 'Vancouver', 'BC', 'V6S2B7', '(604) 732-3010', NULL, '(604) 732-3011', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (539, 539, 'PURE INTEGRATIVE PHARMACY #17', 'Hollyburn Plaza #117 - 1760 Marine Dr West', 'Vancouver', 'BC', 'V7V 1J4', '(604) 281-3393', NULL, '(604) 281-3392', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (540, 540, 'PURE INTEGRATIVE PHARMACY #18', '3750 Oak St', 'Vancouver', 'BC', 'V6H 2M3', '(604) 731-8535', NULL, '(604) 731-8534', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (541, 541, 'PURE INTEGRATIVE PHARMACY #23', '210 - 2425 Hemlock St', 'Vancouver', 'BC', 'V6H 4E1', '(604) 559-9200', NULL, '(604) 559-9201', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (542, 542, 'PURE INTEGRATIVE PHARMACY #24', '4444 10th Ave W', 'Vancouver', 'BC', 'V6R 2H9', '(604) 563-4888', NULL, '(604) 563-4810', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (543, 543, 'PURE INTEGRATIVE PHARMACY #27', '1405 Bellevue Ave West', 'Vancouver', 'BC', 'V7T 1C3', '(604) 281-3784', NULL, '(604) 281-3785', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (544, 544, 'QUEENS APOTHECARY', '2235 Kingsway', 'Vancouver', 'BC', 'V5N 2T6', '(778) 379-9933', NULL, '(778) 379-9936', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (545, 545, 'R.E.A.C.H. CENTRE PHARMACY', '1145 Commercial Drive', 'Vancouver', 'BC', 'V5L 3X3', '(604) 254-1354', NULL, '(604) 258-9190', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (546, 546, 'REGENCY #6 MEDICINE CENTRE', '100 - 1144 Burrard St.', 'Vancouver', 'BC', 'V6Z 2A5', '(604) 688-4644', NULL, '(604) 648-8028', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (547, 547, 'REMEDY\'S RX NOVARA WELLNESS PHARMACY', '3482 Main St', 'Vancouver', 'BC', 'V5V 3N2', '(604) 875-6625', NULL, NULL, NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (548, 548, 'REMEDY\'SRX #261', '790 East Hastings St.', 'Vancouver', 'BC', 'V6A 1R5', '(604) 254-4633', NULL, '(604) 254-6453', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (549, 549, 'REXALL #7137', '#107 - 575 16th St West', 'Vancouver', 'BC', 'V7V 4Y1', '(604) 922-4174', NULL, '(604) 913-3159', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (550, 550, 'REXALL #7149', '#122 - 1055 Georgia St W', 'Vancouver', 'BC', 'V6E 3P3', '(604) 684-8204', NULL, '(604) 684-7329', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (551, 551, 'REXALL #7159', '6580 Fraser St', 'Vancouver', 'BC', 'V5X 3T3', '(604) 235-2115', NULL, '(604) 235-2118', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (552, 552, 'REXALL #7174', '499 Granville St', 'Vancouver', 'BC', 'V6C 1T1', '(604) 801-6991', NULL, '(604) 801-6997', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (553, 553, 'REXALL DRUG STORE #7182', '#1173 - 88 Pender St W', 'Vancouver', 'BC', 'V6B 6N9', '(604) 683-4244', NULL, '(604) 683-4248', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (554, 554, 'ROBIN\'S PHARMACY', '908 Commercial Dr', 'Vancouver', 'BC', 'V5L 3W7', '(604) 876-3784', NULL, '(604) 876-3766', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (555, 555, 'ROSE PHARMACY', '1483 Marine Dr West', 'Vancouver', 'BC', 'V7T 1B8', '(604) 281-4199', NULL, '(604) 281-4198', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (556, 556, 'SAFEWAY PHARMACY #4901', '2733 West Broadway', 'Vancouver', 'BC', 'V6K 2G5', '(604) 732-5030', NULL, '(604) 732-5722', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (557, 557, 'SAFEWAY PHARMACY #4908', '1766 Robson St', 'Vancouver', 'BC', 'V6G 1E2', '(604) 683-0202', NULL, '(604) 683-5057', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (558, 558, 'SAFEWAY PHARMACY #4909', '5385 Headland Drive West', 'Vancouver', 'BC', 'V7W 3E7', '(604) 926-2034', NULL, '(604) 926-2539', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (559, 559, 'SAFEWAY PHARMACY #4931', '3410 Kingsway', 'Vancouver', 'BC', 'V5R 5L4', '(604) 439-1050', NULL, '(604) 439-9611', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (560, 560, 'SAFEWAY PHARMACY #4934', '1682 Davie St', 'Vancouver', 'BC', 'V6G 1V9', '(604) 669-8131', NULL, '(604) 669-0779', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (561, 561, 'SAFEWAY PHARMACY #4940', '#507 - 650 West 41st Ave', 'Vancouver', 'BC', 'V5Z 2M9', '(604) 263-5502', NULL, '(604) 263-1547', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (562, 562, 'SAFEWAY PHARMACY #4941', '990 West 25th Ave.', 'Vancouver', 'BC', 'V5Z 2E2', '(604) 733-9342', NULL, '(604) 733-7551', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (563, 563, 'SAFEWAY PHARMACY #4942', '2315 West 4th Ave.', 'Vancouver', 'BC', 'V6K 1P2', '(604) 737-7463', NULL, '(604) 737-4919', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (564, 564, 'SAFEWAY PHARMACY #4947', '4189 Yew St', 'Vancouver', 'BC', 'V6L 0B4', '(604) 731-9611', NULL, '(604) 731-6730', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (565, 565, 'SAFEWAY PHARMACY #4966', '1780 East Broadway', 'Vancouver', 'BC', 'V5N 1W3', '(604) 879-0505', NULL, '(604) 873-6144', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (566, 566, 'SAFEWAY PHARMACY #4976', '8475 Granville St', 'Vancouver', 'BC', 'V6P 4Z9', '(604) 263-7267', NULL, '(604) 263-5075', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (567, 567, 'SAIGON PHARMACY', '1080 Kingsway', 'Vancouver', 'BC', 'V5V 3C6', '(604) 872-6708', NULL, '(604) 874-6708', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (568, 568, 'SAM\'S PHARMACY LTD.', '465 Main St.', 'Vancouver', 'BC', 'V6A 2T7', '(604) 688-6323', NULL, '(604) 688-6323', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (569, 569, 'SAVE-ON-FOODS PHARMACY # 937 - 7TH & CAMBIE', '2308 Cambie St', 'Vancouver', 'BC', 'V5Z 2T8', '(604) 876-7085', NULL, '(604) 876-7086', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (570, 570, 'SAVE-ON-FOODS PHARMACY # 940 - KING EDWARD', '1403 King Edward Ave E', 'Vancouver', 'BC', 'V5N 5Z4', '(604) 874-9331', NULL, '(604) 874-9332', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (571, 571, 'SAVE-ON-FOODS PHARMACY # 993 - UBC', '5945 Berton Ave', 'Vancouver', 'BC', 'V6S 0B3', '(604) 221-5152', NULL, '(604) 221-5643', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (572, 572, 'SAVE-ON-FOODS PHARMACY #2244', '8550 River District Crossing', 'Vancouver', 'BC', 'V5S 0E3', '604-438-3231', NULL, '604-432-1527', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (573, 573, 'SAVE-ON-FOODS PHARMACY #2246', '6455 West Boulevard', 'Vancouver', 'BC', 'V6M 3X6', '(604) 264-0980', NULL, '(604) 264-1646', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (574, 574, 'SEYMOUR PHARMACY', '1290 Hornby St', 'Vancouver', 'BC', 'V6Z 1W2', '604-416-0990', NULL, '236-521-3630', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (575, 575, 'SHAUGHNESSY PHARMACY', '1265 W Broadway', 'Vancouver', 'BC', 'V6H 1G7', '(604) 423-4246', NULL, '(604) 423-4376', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (576, 576, 'SHOPPERS DRUG MART # 201', '1020 Denman St.', 'Vancouver', 'BC', 'V6G 2M5', '(604) 681-0034', NULL, '(604) 681-3280', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (577, 577, 'SHOPPERS DRUG MART # 202', '2888 Granville St.', 'Vancouver', 'BC', 'V6H 3J5', '(604) 738-3107', NULL, '(604) 738-3162', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (578, 578, 'SHOPPERS DRUG MART # 204', '370 East Broadway', 'Vancouver', 'BC', 'V5T 4G5', '(604) 873-3558', NULL, '(604) 873-3432', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (579, 579, 'SHOPPERS DRUG MART # 212', '1583 Marine Drive West', 'Vancouver', 'BC', 'V7V 1H9', '(604) 922-1271', NULL, '(604) 922-3424', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (580, 580, 'SHOPPERS DRUG MART # 222', '6305 Fraser St.', 'Vancouver', 'BC', 'V5W 3A3', '(604) 324-7909', NULL, '(604) 324-2405', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (581, 581, 'SHOPPERS DRUG MART # 232', '2303 West 41st Ave.', 'Vancouver', 'BC', 'V6M 2A3', '(604) 266-5344', NULL, '(604) 266-5337', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (582, 582, 'SHOPPERS DRUG MART # 234', '2302 West 4th Ave', 'Vancouver', 'BC', 'V6K 1P1', '(604) 738-3138', NULL, '(604) 738-8693', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (583, 583, 'SHOPPERS DRUG MART # 238', '3020 Broadway W', 'Vancouver', 'BC', 'V6K 2H1', '(604) 733-9128', NULL, '(604) 733-7964', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (584, 584, 'SHOPPERS DRUG MART # 243', 'Park Royal Shopping Ctr. 545 Park Royal S West', 'Vancouver', 'BC', 'V7T 2Y5', '(604) 926-1114', NULL, '(604) 926-5717', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (585, 585, 'SHOPPERS DRUG MART # 263', '885 West Broadway', 'Vancouver', 'BC', 'V5Z 1J9', '(604) 708-1135', NULL, '(604) 708-3304', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (586, 586, 'SHOPPERS DRUG MART # 272', '1125 Davie St', 'Vancouver', 'BC', 'V6E 1N2', '(604) 669-2424', NULL, '(604) 681-2328', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (587, 587, 'SHOPPERS DRUG MART # 280', 'The Hub 1755 East Broadway', 'Vancouver', 'BC', 'V5N 1W2', '(604) 872-8451', NULL, '(604) 872-8470', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (588, 588, 'SHOPPERS DRUG MART # 288', '4326 Dunbar St.', 'Vancouver', 'BC', 'V6S 2G3', '(604) 732-8855', NULL, '(604) 732-8870', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (589, 589, 'SHOPPERS DRUG MART #2221', '1780 Broadway W', 'Vancouver', 'BC', 'V6J 1Y1', '(604) 736-6006', NULL, '(604) 736-6042', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (590, 590, 'SHOPPERS DRUG MART #2227', '432 Marine Dr SW', 'Vancouver', 'BC', 'V5X 0C4', '(604) 235-7095', NULL, '(604) 235-7099', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (591, 591, 'SHOPPERS DRUG MART #2228', 'Champlain Square 7160 Kerr Street', 'Vancouver', 'BC', 'V5S 4W2', '(604) 434-2656', NULL, '(604) 434-3326', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (592, 592, 'SHOPPERS DRUG MART #2234', '3277 Cambie St', 'Vancouver', 'BC', 'V5Z 2W3', '(604) 708-9090', NULL, '(604) 708-2442', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (593, 593, 'SHOPPERS DRUG MART #2245', '748 Burrard St', 'Vancouver', 'BC', 'V6Z 2V6', '(778) 330-4711', NULL, '(778) 330-4718', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (594, 594, 'SHOPPERS DRUG MART #2246', '1006 Homer St', 'Vancouver', 'BC', 'V6B 2W9', '(604) 669-0330', NULL, '(604) 669-0322', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (595, 595, 'SHOPPERS DRUG MART #2247', '5968 Webber Lane', 'Vancouver', 'BC', 'V6S 0J9', '(604) 224-3086', NULL, '(604) 224-1409', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (596, 596, 'SHOPPERS DRUG MART #2252', '3303 Main St', 'Vancouver', 'BC', 'V5V 0B7', '(778) 328-9580', NULL, '(778) 328-9584', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (597, 597, 'SHOPPERS DRUG MART #2273', '5940 University Blvd', 'Vancouver', 'BC', 'V6T 1Z3', '(604) 228-1533', NULL, '(604) 228-1532', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (598, 598, 'SHOPPERS DRUG MART #2274', '#102 - 2607 East 49th Ave', 'Vancouver', 'BC', 'V5S 1J9', '(604) 431-5538', NULL, '(604) 431-5488', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (599, 599, 'SHOPPERS DRUG MART #2275', '1202 Pender St W', 'Vancouver', 'BC', 'V6E 2S8', '(604) 605-1200', NULL, '(604) 899-1454', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (600, 600, 'SHOPPERS DRUG MART #2276', '4590 Fraser St', 'Vancouver', 'BC', 'V5V 4G7', '(604) 873-2681', NULL, '(604) 873-2650', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (601, 601, 'SHOPPERS DRUG MART #2277', '586 Granville St', 'Vancouver', 'BC', 'V6C 1X5', '(604) 683-4063', NULL, '(604) 683-6931', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (602, 602, 'SHOPPERS DRUG MART #2279', '2730 Oak St', 'Vancouver', 'BC', 'V6H 0A5', '(604) 714-1199', NULL, '(604) 714-1127', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (603, 603, 'SHOPPERS DRUG MART #2289', '2330 Kingsway', 'Vancouver', 'BC', 'V5R 5G9', '(604) 484-1470', NULL, '(604) 484-1476', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (604, 604, 'SHOPPERS DRUG MART #2292', '1295 Seymour St', 'Vancouver', 'BC', 'V6B 3N6', '(604) 801-5708', NULL, '(604) 801-5730', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (605, 605, 'SHOPPERS DRUG MART #2294', '2748 East Hastings St', 'Vancouver', 'BC', 'V5K 1Z9', '(604) 251-5358', NULL, '(604) 251-6612', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (606, 606, 'SHOPPERS DRUG MART #2295', '2490 Marine Dr West', 'Vancouver', 'BC', 'V7V 1L1', '(604) 913-3900', NULL, '(604) 913-6615', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (607, 607, 'SHOPPERS DRUG MART #3005', '1750 East 10th Ave.', 'Vancouver', 'BC', 'V5N 5K4', '(604) 873-1677', NULL, '(604) 874-5668', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (608, 608, 'SHOPPERS SIMPLY PHARMACY #2249', '1517 Commercial Drive', 'Vancouver', 'BC', 'V5L 3Y1', '(604) 255-0434', NULL, '(604) 253-3420', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (609, 609, 'SINA PHARMACY', '505 Smithe St', 'Vancouver', 'BC', 'V6B 6H1', '(604) 336-7462', NULL, '(604) 336-7461', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (610, 610, 'SOUTHLAND PHARMACY', '3554 West 41st Ave', 'Vancouver', 'BC', 'V6N 3E6', '(604) 266-2882', NULL, '(604) 263-9850', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (611, 611, 'SRX PHARMACY (#1)', '3025 Cambie St', 'Vancouver', 'BC', 'V5Z 4N2', '(604) 428-3025', NULL, '(604) 428-3026', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (612, 612, 'STRATHCONA PHARMACY', '1979 East Hastings Street', 'Vancouver', 'BC', 'V5L 1T5', '(604) 215-9455', NULL, '(604) 215-9787', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (613, 613, 'SUPERSAVE PHARMACY', '3443 Kingsway', 'Vancouver', 'BC', 'V5R 5L3', '(604) 438-5773', NULL, '(604) 438-5767', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (614, 614, 'TEST PHARMACY 123 - March 2020', '206 - 238 Broadway W', 'Vancouver', 'BC', 'V5Y 0L2', NULL, NULL, NULL, NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (615, 615, 'THE DRIVE PHARMACY', '1684 Commercial Dr', 'Vancouver', 'BC', 'V5L 3Y4', '(604) 254-0133', NULL, '(604) 254-0134', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (616, 616, 'THE MEDICINE SHOPPE PHARMACY #285', '3039 Kingsway', 'Vancouver', 'BC', 'V5R 5J6', '(604) 437-5442', NULL, '(604) 638-0194', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (617, 617, 'THE PHARMACY KITSILANO (PHARMACHOICE)', '2957 Broadway W', 'Vancouver', 'BC', 'V6K 2G9', '(604) 564-3331', NULL, '(604) 564-3332', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (618, 618, 'THE PHARMACY MAIN STREET (PHARMACHOICE)', '16 - 2949 Main St', 'Vancouver', 'BC', 'V5T 3G4', '(604) 879-1885', NULL, '(604) 879-1887', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (619, 619, 'THE PHARMACY WEST END (PHARMACHOICE)', '1747 Robson St', 'Vancouver', 'BC', 'V6G 1C9', '(604) 669-6927', NULL, '(604) 669-6928', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (620, 620, 'THE PHARMACY YALETOWN (PHARMACHOICE)', '1251 Pacific Blvd', 'Vancouver', 'BC', 'V6Z 2R6', '(604) 684-8488', NULL, '(604) 684-8499', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (621, 621, 'TOTAL CARE PHARMACY', '6604 Main St', 'Vancouver', 'BC', 'V5X 3H2', '(778) 379-3292', NULL, '(778) 379-3291', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (622, 622, 'UNICARE PHARMACY', '102 - 3325 Kingsway', 'Vancouver', 'BC', 'V5R 5K6', '(604) 438-5155', NULL, '(604) 438-5155', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (623, 623, 'UNIVERSITY PHARMACY (1987) LTD.', '5754 University Blvd.', 'Vancouver', 'BC', 'V6T 1K6', '(604) 224-3202', NULL, '(604) 224-3203', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (624, 624, 'URBAN FARE PHARMACY #7614 - YALETOWN', '177 Davie St', 'Vancouver', 'BC', 'V6Z 2Y1', '(604) 975-7544', NULL, '(604) 975-7551', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (625, 625, 'VANCOUVER PHARMACY', 'The Lux 67 Hastings St E', 'Vancouver', 'BC', 'V6A 0A7', '(604) 669-5990', NULL, '(604) 669-5981', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (626, 626, 'VICON PHARMACY NO. 2', '#108 - 5990 Fraser St.', 'Vancouver', 'BC', 'V5W 2Z7', '(604) 323-1268', NULL, '(604) 323-1226', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (627, 627, 'VINA PHARMACY', '#118 - 888 Kingsway', 'Vancouver', 'BC', 'V5V 3C3', '(604) 669-1623', NULL, '(604) 669-1623', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (628, 628, 'VITA VIE PHARMACY INC.', '2215 West Broadway', 'Vancouver', 'BC', 'V6K 2E4', '(604) 733-5150', NULL, '(604) 733-5159', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (629, 629, 'WAL-MART PHARMACY #1104', '3585 Grandview Hwy', 'Vancouver', 'BC', 'V5M 2G7', '(604) 435-6150', NULL, '(604) 435-6437', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (630, 630, 'WELLNESS PHARMACY', '#109 - 805 West Broadway', 'Vancouver', 'BC', 'V5Z 1K1', '(604) 709-3131', NULL, '(604) 709-3121', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (631, 631, 'WELLNESS PHARMACY NO. 5', '5150 Joyce St', 'Vancouver', 'BC', 'V5R 4H1', '(604) 638-0353', NULL, '(604) 638-0354', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (632, 632, 'WELLNESS PHARMACY NO. 8', '420 Abbott St', 'Vancouver', 'BC', 'V6B 2L1', '(604) 681-2272', NULL, '(604) 681-3372', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (633, 633, 'WESCANA PHARMACY # 1', '6686 Fraser St.', 'Vancouver', 'BC', 'V5X 3T5', '(604) 324-6734', NULL, '(604) 324-1114', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (634, 634, 'WEST 10TH MEDICAL PHARMACY LTD.', '4307 West 10th Ave.', 'Vancouver', 'BC', 'V6R 2H6', '(604) 222-2028', NULL, '(604) 222-2086', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (635, 635, 'WESTIN PHARMACY LTD.', '33 Broadway W', 'Vancouver', 'BC', 'V5Y 1P1', '(604) 569-3030', NULL, '(604) 569-3101', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (636, 636, 'YALE PHARMACY', '1284 Granville St', 'Vancouver', 'BC', 'V6Z 1M4', '(604) 692-0211', NULL, '(604) 683-0211', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (637, 637, 'YNP DUNBAR PHARMACY - YOUR NEIGHBORHOOD PHARMACY', '4198 Dunbar St', 'Vancouver', 'BC', 'V6S 2E7', '(604) 730-1788', NULL, '(604) 730-1789', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (638, 638, 'YPS DENMAN PHARMACY', '683 Denman St', 'Vancouver', 'BC', 'V6G 2L3', '(604) 683-6933', NULL, '(604) 683-6968', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (639, 639, 'YYOUNG MEDICINE MART', '5570 Cambie St', 'Vancouver', 'BC', 'V5Z 3A2', '(604) 324-3848', NULL, '(604) 324-1727', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
-INSERT INTO `pharmacyInfo`(`recordID`, `ID`, `name`, `address`, `city`, `province`, `postalCode`, `phone1`, `phone2`, `fax`, `email`, `notes`, `addDate`, `status`, `serviceLocationIdentifier`) VALUES (640, 640, 'YYOUNG MEDICINE MART MAIN', '1721 Main St', 'Vancouver', 'BC', 'V5T 3B5', '(604) 658-8881', NULL, '(604) 630-1001', NULL, NULL, '2020-04-11 19:57:07', '1', NULL);
+-- ----------------------------
+-- Records of pharmacyInfo
+-- ----------------------------
+
+INSERT INTO `pharmacyInfo` VALUES (5, 5, 'B.C. CANCER AGENCY PHARMACY', '600 West 10th Ave.', 'Vancouver', 'BC', 'V5Z4E6', '(604) 707-5989', '',
+        '(604) 877-6132', '@METRO_VAN', NULL, 'Manager: Dr. Lynne Nakashima', '2012-02-25 16:47:35', '1'),
+(6, 6, 'B.C.\'S CHILDREN\'S HOSP. AMBULATORY CARE PHARMACY', '4500 Oak St.', 'Vancouver', 'BC', 'V6H3N1',
+        '(604) 875-2205', '', '(604) 875-3735', '@METRO_VAN', NULL, 'Manager: Ms. Susan Rudolph', '2012-02-25 16:47:35',
+        '1'),
+(7, 7, 'B.C.\'S CHILDREN\'S HOSPITAL PHARMACY', '4480 Oak St.', 'Vancouver', 'BC', 'V6H3V4', '(604) 875-2059',
+        '', '(604) 875-3545', '@METRO_VAN', NULL, 'Manager: Mrs. Linda Morris', '2012-02-25 16:47:35', '1'),
+(8, 8, 'BC CANCER AGENCY - FRASER VALLEY PHARMACY', '13750 - 96th Avenue', 'Surrey', 'BC', 'V3V1Z2',
+        '(604) 930-4052', '', '(604) 930-4044', '@METRO_VAN', NULL, 'Manager: Mr. Paul Koke', '2012-02-25 16:47:35',
+        '1'),
+(13, 13, 'BURNABY HOSPITAL PHARMACY', '3935 Kincaid St.', 'Burnaby', 'BC', 'V5G2X6', '(604) 412-6324', '',
+        '(604) 412-6187', '@METRO_VAN', NULL, 'Manager: Dr. Adil Virani', '2012-02-25 16:47:35', '1'),
+(20, 20, 'DELTA HOSPITAL PHARMACY', '5800 Mountain View Blvd.', 'Delta', 'BC', 'V4K3V6', '(604) 946-1121 x 350',
+        '', '(604) 952-7321', '@METRO_VAN', NULL, 'Manager: Mr. Bruce Millin', '2012-02-25 16:47:35', '1'),
+(21, 21, 'EAGLE RIDGE HOSPITAL PHARMACY', '475 Guildford Way', 'Port Moody', 'BC', 'V3H3W9', '(604) 469-3164',
+        '', '(604) 469-3208', '@METRO_VAN', NULL, 'Manager: Mr. Bruce Millin', '2012-02-25 16:47:35', '1'),
+(24, 24, 'G.F. STRONG REHABILITATION CTR. PHCY.', '4255 Laurel St.', 'Vancouver', 'BC', 'V5Z2G9',
+        '(604) 734-1313 x 231', '', '(604) 714-4171', '@METRO_VAN', NULL, 'Manager: Mrs. Linda Morris',
+        '2012-02-25 16:47:35', '1'),
+(26, 26, 'HOLY FAMILY HOSPITAL PHARMACY', '7801 Argyle St.', 'Vancouver', 'BC', 'V5P3L6', '(604) 322-2640', '',
+        '(604) 322-2652', '@METRO_VAN', NULL, 'Manager: Mr. Keith McDonald', '2012-02-25 16:47:35', '1'),
+(27, 27, 'JIM PATTISON OUTPATIENT CARE AND SURGERY CENTRE', '9750 140 St.', 'Surrey', 'BC', 'V3T0G9',
+        '(604) 582-4550', '', '', '@METRO_VAN', NULL, 'Manager: Mr. Mits Miyata', '2012-02-25 16:47:35', '1'),
+(32, 32, 'LANGLEY MEMORIAL HOSPITAL PHARMACY', '22051 Fraser Hwy.', 'Langley', 'BC', 'V3A4H4', '(604) 533-6497',
+        '', '(604) 533-6452', '@METRO_VAN', NULL, 'Manager: Mr. Keith McDonald', '2012-02-25 16:47:35', '1'),
+(33, 33, 'LIONS GATE HOSPITAL PHARMACY', '231 East 15th St.', 'North Vancouver', 'BC', 'V7L2L7',
+        '(604) 984-5701', '', '(604) 984-5826', '@METRO_VAN', NULL, 'Manager: Mr. Mark Collins', '2012-02-25 16:47:35',
+        '1'),
+(35, 35, 'MOUNT ST. JOSEPH\'S HOSPITAL PHARMACY', '3080 Prince Edward St.', 'Vancouver', 'BC', 'V5T3N4',
+        '(604) 877-8553', '', '(604) 877-8113', '@METRO_VAN', NULL, 'Manager: Ms. Luciana Frighetto',
+        '2012-02-25 16:47:35', '1'),
+(38, 38, 'PEACE ARCH HOSPITAL PHARMACY', '15521 Russell Ave.', 'White Rock', 'BC', 'V4B2R4',
+        '(604) 535-4500 x 757', '', '(604) 535-4532', '@METRO_VAN', NULL, 'Manager: Mr. Bruce Millin',
+        '2012-02-25 16:47:35', '1'),
+(40, 40, 'PHARMACY DRUG DISTRIBUTION CENTRE', 'Unit B 8521 198A St.', 'Langley', 'BC', 'V2Y0A1',
+        '(604) 455-1317', '', '(604) 455-1316', '@METRO_VAN', NULL, 'Manager: Miss Anne Vojt', '2012-02-25 16:47:35',
+        '1'),
+(43, 43, 'QUEEN\'S PARK CARE CENTRE', 'Pharmacy 315 McBride Blvd.', 'New Westminster', 'BC', 'V3L5E8',
+        '(604) 412-6324', '', '(604) 412-6187', '@METRO_VAN', NULL, 'Manager: Mr. Keith McDonald',
+        '2012-02-25 16:47:35', '1'),
+(45, 45, 'RICHMOND HOSPITAL PHARMACY', '7000 Westminster Hwy.', 'Richmond', 'BC', 'V6X1A2', '(604) 244-5102', '',
+        '(604) 244-5195', '@METRO_VAN', NULL, 'Manager: Mrs. Fruzsina Pataky', '2012-02-25 16:47:35', '1'),
+(46, 46, 'RIDGE MEADOWS HOSPITAL & HEALTH CARE CENTRE PHCY.', '11666 Laity St. Box 5000', 'Maple Ridge', 'BC',
+        'V2X7G5', '(604) 466-7930', '', '(604) 463-1860', '@METRO_VAN', NULL, 'Manager: Mrs. Fruzsina Pataky',
+        '2012-02-25 16:47:35', '1'),
+(47, 47, 'RIVERVIEW HOSPITAL PHARMACY', 'Industrial Building 2601 Lougheed Hwy.', 'Coquitlam', 'BC', 'V3C4J2',
+        '(604) 524-7253', '', '(604) 524-7806', '@METRO_VAN', NULL, 'Manager: Mr. Keith McDonald',
+        '2012-02-25 16:47:35', '1'),
+(48, 48, 'ROYAL COLUMBIAN HOSPITAL PHARMACY', '330 East Columbia St.', 'New Westminster', 'BC', 'V3L3W7',
+        '(604) 520-4621', '', '(604) 520-4802', '@METRO_VAN', NULL, 'Manager: Mr. Bruce Millin', '2012-02-25 16:47:35',
+        '1'),
+(58, 58, 'ST. PAUL\'S HOSP. - AMBULATORY PHCY. SERV.', 'Room 163 Burrard Bldg 1081 Burrard St.', 'Vancouver',
+        'BC', 'V6Z1Y6', '(604) 806-8074', '', '(604) 806-8675', '@METRO_VAN', NULL, 'Manager: Ms. Luciana Frighetto',
+        '2012-02-25 16:47:35', '1'),
+(59, 59, 'ST. PAUL\'S HOSPITAL PHARMACY', '1081 Burrard St.', 'Vancouver', 'BC', 'V6Z1Y6', '(604) 806-8153', '',
+        '(604) 806-8154', '@METRO_VAN', NULL, 'Manager: Ms. Luciana Frighetto', '2012-02-25 16:47:35', '1'),
+(60, 60, 'SURREY MEMORIAL HOSPITAL PHARMACY', '13750 - 96th Ave.', 'Surrey', 'BC', 'V3V1Z2', '(604) 585-5576',
+        '', '(604) 588-3388', '@METRO_VAN', NULL, 'Manager: Mr. Mits Miyata', '2012-02-25 16:47:35', '1'),
+(61, 61, 'UBC HOSPITAL - PHARMACEUTICAL SCIENCES', 'IN-PATIENT PHARMACY 2211 Wesbrook Mall', 'Vancouver', 'BC',
+        'V6T2B5', '(604) 822-7726', '', '(604) 822-9794', '@METRO_VAN', NULL, 'Manager: Mrs. Linda Morris',
+        '2012-02-25 16:47:35', '1'),
+(63, 63, 'VACCINE AND PHARMACY SERVICES', 'B.C. Centre for Disease Control Suite 1100 - 655 12th Ave. W',
+        'Vancouver', 'BC', 'V5Z4R4', '(604) 707-2580', '', '(604) 707-2583', '@METRO_VAN', NULL,
+        'Manager: Ms. Joyce Seto', '2012-02-25 16:47:35', '1'),
+(64, 64, 'VANCOUVER GENERAL HOSPITAL - PHARMACEUTICAL SCIENCES', 'Pharmacy Department 855 West 12th Ave.',
+        'Vancouver', 'BC', 'V5Z1M9', '(604) 875-4077 x 4', '', '(604) 875-5267', '@METRO_VAN', NULL,
+        'Manager: Mrs. Linda Morris', '2012-02-25 16:47:35', '1'),
+(65, 65, 'VANCOUVER RESIDENTIAL CARE PHARMACY', 'Koerner M390 2211 Wesbrook Mall', 'Vancouver', 'BC', 'V6T2B5',
+        '(604) 822-7659', '', '(604) 822-7188', '@METRO_VAN', NULL, 'Manager: Mr. Keith McDonald',
+        '2012-02-25 16:47:35', '1'),
+(71, 71, 'ABBOTT (RENUKA) PHARMACY LTD.', '420 Abbott St.', 'Vancouver', 'BC', 'V6B2L1', '(604) 681-2272', '',
+        '(604) 681-3372', '@METRO_VAN', NULL, 'Manager: Mr. Seyed Jahromi', '2012-02-25 16:47:35', '1'),
+(73, 73, 'ACKROYD PHARMACY', '160 - 8100 Ackroyd Rd.', 'Richmond', 'BC', 'V6X3K2', '(604) 207-9972', '',
+        '(604) 207-9080', '@METRO_VAN', NULL, 'Manager: Mr. Wilson Li', '2012-02-25 16:47:35', '1'),
+(75, 75, 'ALBERTO PHARMACY # 1', '2516 Commercial Drive', 'Vancouver', 'BC', 'V5N4C2', '(604) 873-4111', '',
+        '(604) 873-6734', '@METRO_VAN', NULL, 'Manager: Mr. Kenneth Wan', '2012-02-25 16:47:35', '1'),
+(76, 76, 'ALBERTO PHARMACY NO. 2', '#101-2620 Commercial Dr.', 'Vancouver', 'BC', 'V5N4C4', '(604) 879-8481', '',
+        '(604) 879-8482', '@METRO_VAN', NULL, 'Manager: Mr. Albert Wei', '2012-02-25 16:47:35', '1'),
+(79, 79, 'ALL CARE PHARMACY', '101 - 12827 76 Ave.', 'Surrey', 'BC', 'V3W2V3', '(604) 599-9252', '',
+        '(604) 599-9256', '@METRO_VAN', NULL, 'Manager: Miss Pooja Singh', '2012-02-25 16:47:35', '1'),
+(80, 80, 'ALOUETTE PHARMACY', '8 - 11937 227 St.', 'Maple Ridge', 'BC', 'V2X6J4', '(604) 467-3784', '',
+        '(604) 467-3714', '@METRO_VAN', NULL, 'Manager: Mr. Benton Lee', '2012-02-25 16:47:35', '1'),
+(81, 81, 'ANDERSON\'S PHARMACY NO. 1', '111 3rd St. W North', 'Vancouver', 'BC', 'V7M1E7', '(604) 988-5271', '',
+        '(604) 998-1271', '@METRO_VAN', NULL, 'Manager: Miss Maria Kwong', '2012-02-25 16:47:35', '1'),
+(83, 83, 'ANITA\'S PHARMACY', '4343 Hastings St. E', 'Burnaby', 'BC', 'V5C2J7', '(604) 294-4341', '',
+        '(604) 294-4373', '@METRO_VAN', NULL, 'Manager: Mrs. Anita Jalzabetic-Maravic', '2012-02-25 16:47:35', '1'),
+(84, 84, 'APPLE PHARMACY', '#3 - 3260 Edgemont Blvd.', 'North Vancouver', 'BC', 'V7R2P2', '(604) 984-2245', '',
+        '(604) 984-2246', '@METRO_VAN', NULL, 'Manager: Mr. Michael Travis', '2012-02-25 16:47:35', '1'),
+(85, 85, 'APPLE PRESCRIPTION CENTRE', '5624 177B St.', 'Surrey', 'BC', 'V3S4J1', '(604) 576-1373', '',
+        '(604) 576-1578', '@METRO_VAN', NULL, 'Manager: Mr. William Weng', '2012-02-25 16:47:35', '1'),
+(88, 88, 'BAINS PHARMACY LTD.', '8681 120 St.', 'Delta', 'BC', 'V4C6R4', '(604) 543-0911', '', '(604) 507-0988',
+        '@METRO_VAN', NULL, 'Manager: Mr. Gursaran Bains', '2012-02-25 16:47:35', '1'),
+(92, 92, 'BAY PHARMACY (THE) - VANCOUVER', '674 Granville St.', 'Vancouver', 'BC', 'V6C1Z6', '(604) 689-2242',
+        '', '(604) 682-2262', '@METRO_VAN', NULL, 'Manager: Mr. Hani Al-Tabbaa', '2012-02-25 16:47:35', '1'),
+(94, 94, 'BIOSCRIPT PHARMACY LTD.', '4050 - 8171 Ackroyd Rd.', 'Richmond', 'BC', 'V6X3K1', '(604) 214-3784', '',
+        '(604) 244-3784', '@METRO_VAN', NULL, 'Manager: Mr. Lennard Lucas', '2012-02-25 16:47:35', '1'),
+(95, 95, 'BIOSENSE COMPOUNDING PHARMACY', '235 - 13500 Maycrest Way', 'Richmond', 'BC', 'V6V2J7',
+        '(604) 278-7955', '', '(604) 278-7960', '@METRO_VAN', NULL, 'Manager: Mr. David Fung', '2012-02-25 16:47:35',
+        '1'),
+(98, 98, 'BOND STREET PHARMACY', '605 East Broadway', 'Vancouver', 'BC', 'V5T1X7', '(604) 874-4755', '',
+        '(604) 874-4788', '@METRO_VAN', NULL, 'Manager: Mr. Diamond Tejani', '2012-02-25 16:47:35', '1'),
+(99, 99, 'BONSOR PHARMACY', '#107 - 6411 Nelson Avenue', 'Burnaby', 'BC', 'V5H4H3', '(604) 431-8877', '',
+        '(604) 430-4700', '@METRO_VAN', NULL, 'Manager: Mrs. Azmina Jiwa', '2012-02-25 16:47:35', '1'),
+(100, 100, 'BOOMER DRUGS', '8574 Granville St.', 'Vancouver', 'BC', 'V6P4Z7', '(604) 266-9010', '',
+        '(604) 568-9838', '@METRO_VAN', NULL, 'Manager: Mr. Barry Jay', '2012-02-25 16:47:35', '1'),
+(103, 103, 'BROADWAY PHARMACY LTD.', '3033 Main St.', 'Vancouver', 'BC', 'V5T3G6', '(604) 879-6382', '',
+        '(604) 879-6382', '@METRO_VAN', NULL, 'Manager: Mr. Joe Tang', '2012-02-25 16:47:36', '1'),
+(104, 104, 'BUCKSHON\'S PHARMACY LTD.', '790 East Hastings St.', 'Vancouver', 'BC', 'V6A1R5', '(604) 254-4633',
+        '', '(604) 254-6453', '@METRO_VAN', NULL, 'Manager: Mr. Stanley Lin', '2012-02-25 16:47:36', '1'),
+(106, 106, 'BURKE MOUNTAIN PHARMACY', '110 - 1465 Salisbury Ave.', 'Port Coquitlam', 'BC', 'V3B6J3',
+        '(604) 941-5575', '', '(604) 941-5576', '@METRO_VAN', NULL, 'Manager: Mr. Emad Habib', '2012-02-25 16:47:36',
+        '1'),
+(107, 107, 'BURNABY SQUARE PRESCRIPTIONS', '#107 - 7885 6th St.', 'Burnaby', 'BC', 'V3N3N4', '(604) 523-1400',
+        '', '(604) 523-1404', '@METRO_VAN', NULL, 'Manager: Mr. Parmendra Narayan', '2012-02-25 16:47:36', '1'),
+(110, 110, 'CALEA PHARMACY', '#130 - 8061 Lougheed Hwy', 'Burnaby', 'BC', 'V5A1W9', '(604) 294-1500', '',
+        '(604) 299-3940', '@METRO_VAN', NULL, 'Manager: Miss Julie Chan', '2012-02-25 16:47:36', '1'),
+(111, 111, 'CAMBIE PHARMASAVE', '4054 Cambie St.', 'Vancouver', 'BC', 'V5Z2X8', '(604) 873-9277', '',
+        '(604) 873-9270', '@METRO_VAN', NULL, 'Manager: Ms. Nelli Jakac', '2012-02-25 16:47:36', '1'),
+(113, 113, 'CANDRUG', '#202 - 8322 130 St.', 'Surrey', 'BC', 'V3W8J9', '(604) 543-8711', '', '(604) 507-8706',
+        '@METRO_VAN', NULL, 'Manager: Mr. Amarjit Mann', '2012-02-25 16:47:36', '1'),
+(114, 114, 'CANPHARM DRUGS', '5853 Victoria Drive', 'Vancouver', 'BC', 'V5P3W5', '(604) 321-5133', '',
+        '(604) 324-4510', '@METRO_VAN', NULL, 'Manager: Mr. Stephen Pang', '2012-02-25 16:47:36', '1'),
+(115, 115, 'CAPITAL CARE PHARMACY', '13444 108 Ave.', 'Surrey', 'BC', 'V3T2K1', '(604) 957-0711', '',
+        '(604) 953-1701', '@METRO_VAN', NULL, 'Manager: Mr. Mahyar Etminan', '2012-02-25 16:47:36', '1'),
+(116, 116, 'CARE IN MOTION PHARMACY', '#207 - 20628 Mufford Cres', 'Langley', 'BC', 'V2Y1N8', '(604) 514-3312',
+        '', '(604) 514-3345', '@METRO_VAN', NULL, 'Manager: Mr. Moshtagh Fadaie', '2012-02-25 16:47:36', '1'),
+(117, 117, 'CARE POINT PHARMACY', '13640 - 105A Avenue', 'Surrey', 'BC', 'V3T2B3', '(604) 581-8700', '',
+        '(604) 581-8442', '@METRO_VAN', NULL, 'Manager: Mrs. Amarjit Singh', '2012-02-25 16:47:36', '1'),
+(118, 118, 'CATES MEDICINE CENTRE', 'Snug Cove Box 177', 'Bowen Island', 'BC', 'V0N1G0', '(604) 947-0766', '',
+        '(604) 947-0736', '@METRO_VAN', NULL, 'Manager: Mrs. Shahzad Mirsaeidi', '2012-02-25 16:47:36', '1'),
+(125, 125, 'CENTRAL PARK PHARMACY', '3963 Kingsway', 'Burnaby', 'BC', 'V5H1Y7', '(604) 433-0110', '',
+        '(604) 433-0110', '@METRO_VAN', NULL, 'Manager: Mr. Geoffrey Wong', '2012-02-25 16:47:36', '1'),
+(129, 129, 'CHESTER PHARMACY', '640 Chester Rd.', 'Delta', 'BC', 'V3M5V8', '(604) 777-5601', '',
+        '(604) 777-5602', '@METRO_VAN', NULL, 'Manager: Mr. Sukhbir Mann', '2012-02-25 16:47:36', '1'),
+(130, 130, 'CITY CENTRE PHARMACY', 'PO Box 315 10688 King George Blvd', 'Surrey', 'BC', 'V3T5B6',
+        '(604) 585-3355', '', '(604) 585-3350', '@METRO_VAN', NULL, 'Manager: Mr. Iraj Seyed Zehtab',
+        '2012-02-25 16:47:36', '1'),
+(133, 133, 'COLUMBIA PRESCRIPTION X-PRESS', '317 Columbia St. E', 'New Westminster', 'BC', 'V3L3W8',
+        '(604) 525-3784', '', '(604) 525-3734', '@METRO_VAN', NULL, 'Manager: Mr. Rajeev Chauhan',
+        '2012-02-25 16:47:36', '1'),
+(135, 135, 'COMMUNITY CARE PHARMACY AND OSTOMY SUPPLIES', '#102 - 9648 - 128th St.', 'Surrey', 'BC', 'V3T2X9',
+        '(604) 583-5312', '', '(604) 583-5346', '@METRO_VAN', NULL, 'Manager: Mr. Jason Keller', '2012-02-25 16:47:36',
+        '1'),
+(137, 137, 'CONSUMERS DRUG MART', '4127 Fraser St.', 'Vancouver', 'BC', 'V5V4E9', '(604) 873-8338', '',
+        '(604) 873-5389', '@METRO_VAN', NULL, 'Manager: Mr. Kenneth Poon', '2012-02-25 16:47:36', '1'),
+(138, 138, 'CONTINENTAL PHARMACY', '1196 - 3779 Sexsmith Rd.', 'Richmond', 'BC', 'V6X3Z9', '(604) 276-8938', '',
+        '(604) 276-8940', '@METRO_VAN', NULL, 'Manager: Mr. Joseph Leung', '2012-02-25 16:47:36', '1'),
+(140, 140, 'COOPER\'S FOODS PHARMACY #160 - PORT COQUITLAM', '1430 Prairie Ave.', 'Port Coquitlam', 'BC',
+        'V3B5M8', '(604) 464-5089', '', '(604) 464-5174', '@METRO_VAN', NULL, 'Manager: Miss Maria Denice Bucsit',
+        '2012-02-25 16:47:36', '1'),
+(141, 141, 'CORNING DRUGS #2', '236 East Georgia St.', 'Vancouver', 'BC', 'V6A1Z7', '(604) 685-7609', '',
+        '(604) 685-7672', '@METRO_VAN', NULL, 'Manager: Mr. Edwin Li', '2012-02-25 16:47:36', '1'),
+(142, 142, 'CORNING DRUGS LTD.', '515 Main St.', 'Vancouver', 'BC', 'V6A2V1', '(604) 685-9056', '',
+        '(604) 685-8681', '@METRO_VAN', NULL, 'Manager: Mr. Derick Cheng', '2012-02-25 16:47:36', '1'),
+(143, 143, 'COSTCO PHARMACY #55', '7423 King George Blvd', 'Surrey', 'BC', 'V3W5A8', '(604) 596-0757', '',
+        '(604) 596-2216', '@METRO_VAN', NULL, 'Manager: Mr. Muhammad Iqbal', '2012-02-25 16:47:36', '1'),
+(144, 144, 'COSTCO PHARMACY #51', '3550 Brighton Ave.', 'Burnaby', 'BC', 'V5A4W3', '(604) 420-9811', '',
+        '(604) 420-2771', '@METRO_VAN', NULL, 'Manager: Ms. Helen Wong', '2012-02-25 16:47:36', '1'),
+(145, 145, 'COSTCO PHARMACY #54', '9151 Bridgeport Rd.', 'Richmond', 'BC', 'V6X3L9', '(604) 270-1163', '',
+        '(604) 270-2245', '@METRO_VAN', NULL, 'Manager: Mrs. Lorraine Yee', '2012-02-25 16:47:36', '1'),
+(151, 151, 'COSTCO PHARMACY #255', '2370 Ottawa St.', 'Port Coquitlam', 'BC', 'V3B7Z1', '(604) 552-2298', '',
+        '(604) 552-5488', '@METRO_VAN', NULL, 'Manager: Ms. Yvonne Ho', '2012-02-25 16:47:36', '1'),
+(153, 153, 'COSTCO PHARMACY #259', '20499 64th Ave.', 'Langley', 'BC', 'V2Y1N5', '(604) 539-8928', '',
+        '(604) 539-8925', '@METRO_VAN', NULL, 'Manager: Mr. Ayaz Jaffer', '2012-02-25 16:47:36', '1'),
+(154, 154, 'COSTCO PHARMACY #548', '4500 Still Creek Dr', 'Burnaby', 'BC', 'V5C0E5', '(604) 296-5109', '',
+        '(604) 296-4556', '@METRO_VAN', NULL, 'Manager: Mr. Robert Chan', '2012-02-25 16:47:36', '1'),
+(155, 155, 'COSTCO PHARMACY #552', '605 Expo Blvd', 'Vancouver', 'BC', 'V6B1V4', '(604) 622-5059', '',
+        '(604) 622-5056', '@METRO_VAN', NULL, 'Manager: Mr. Paul Chan', '2012-02-25 16:47:36', '1'),
+(158, 158, 'CRYSTAL PHARMACY & MEDICAL SUPPLIES', '1611 - 4500 Kingsway', 'Burnaby', 'BC', 'V5H2A9',
+        '(604) 433-2821', '', '(604) 433-2830', '@METRO_VAN', NULL, 'Manager: Mr. Andre Lo', '2012-02-25 16:47:36',
+        '1'),
+(160, 160, 'DAVIES PRESCRIPTIONS - ST. GEORGES', '1401 St. Georges Ave. North', 'Vancouver', 'BC', 'V7L3J3',
+        '(604) 985-8771', '', '(604) 985-8262', '@METRO_VAN', NULL, 'Manager: Mr. Daryl Wing', '2012-02-25 16:47:36',
+        '1'),
+(161, 161, 'DEEP COVE PHARMACY', '4322 Gallant Ave. North', 'Vancouver', 'BC', 'V7G1K8', '(604) 985-3539', '',
+        '(604) 985-3540', '@METRO_VAN', NULL, 'Manager: Miss Fehmina Lalani', '2012-02-25 16:47:36', '1'),
+(162, 162, 'DELTA NATURAL HEALTH CENTRE AND PHARMACY', '9377 120 St.', 'Delta', 'BC', 'V4C6R9', '(604) 588-7900',
+        '', '(604) 588-7997', '@METRO_VAN', NULL, 'Manager: Mr. Alaa Amara', '2012-02-25 16:47:36', '1'),
+(163, 163, 'DELTA PRESCRIPTION CLINIC', '#101 - 8425 120th St.', 'Delta', 'BC', 'V4C6R2', '(604) 594-4499', '',
+        '(604) 594-4155', '@METRO_VAN', NULL, 'Manager: Mr. Michael Millman', '2012-02-25 16:47:36', '1'),
+(165, 165, 'DOWNTOWN CLINIC PHARMACY', '569 Powell St.', 'Vancouver', 'BC', 'V6A1G8', '(604) 216-4257', '',
+        '(604) 216-4270', '@METRO_VAN', NULL, 'Manager: Ms. Amy Huang', '2012-02-25 16:47:36', '1'),
+(166, 166, 'DOWNTOWN PHARMACY', '348 Powell St.', 'Vancouver', 'BC', 'V6A1G4', '(604) 669-0446', '',
+        '(604) 669-5799', '@METRO_VAN', NULL, 'Manager: Mr. John Wong', '2012-02-25 16:47:36', '1'),
+(167, 167, 'DRUGSTORE PHARMACY #1518', '1105 Eaton Centre 4700 Kingsway', 'Burnaby', 'BC', 'V5H4M1',
+        '(604) 439-4404', '', '(604) 439-4466', '@METRO_VAN', NULL, 'Manager: Mr. Anwer Kamal', '2012-02-25 16:47:36',
+        '1'),
+(168, 168, 'DRUGSTORE PHARMACY #1519', '1301 Lougheed Highway', 'Coquitlam', 'BC', 'V3K6P9', '(604) 520-8304',
+        '', '(604) 520-8348', '@METRO_VAN', NULL, 'Manager: Mr. Ngai Li', '2012-02-25 16:47:36', '1'),
+(169, 169, 'DRUGSTORE PHARMACY #1521', '7550 King George Blvd', 'Surrey', 'BC', 'V3W2T2', '(604) 599-3704', '',
+        '(604) 599-3705', '@METRO_VAN', NULL, 'Manager: Miss Coralee Chiu', '2012-02-25 16:47:36', '1'),
+(175, 175, 'DRUGSTORE PHARMACY #1554', '8195 120 St.', 'Delta', 'BC', 'V4C6P7', '(604) 592-5235', '',
+        '(604) 592-5232', '@METRO_VAN', NULL, 'Manager: Miss Wendy Lee', '2012-02-25 16:47:36', '1'),
+(176, 176, 'DRUGSTORE PHARMACY #1555', '201 - 19800 Lougheed Hwy', 'Pitt Meadows', 'BC', 'V3Y2W1',
+        '(604) 460-4335', '', '(604) 460-4333', '@METRO_VAN', NULL, 'Manager: Mrs. Jung Geum Kim',
+        '2012-02-25 16:47:36', '1'),
+(177, 177, 'DRUGSTORE PHARMACY #1556', '14650 - 104 Ave.', 'Surrey', 'BC', 'V3R1M3', '(604) 587-8535', '',
+        '(604) 587-8532', '@METRO_VAN', NULL, 'Manager: Mr. Zain Moosvi', '2012-02-25 16:47:36', '1'),
+(178, 178, 'DRUGSTORE PHARMACY #1557', '4651 No. 3 Rd.', 'Richmond', 'BC', 'V6X2C4', '(604) 233-2430', '',
+        '(604) 233-2432', '@METRO_VAN', NULL, 'Manager: Mr. David Lo', '2012-02-25 16:47:36', '1'),
+(181, 181, 'DRUGSTORE PHARMACY #1560', '333 Seymour Blvd. North', 'Vancouver', 'BC', 'V7J2J4', '(604) 904-5535',
+        '', '(604) 904-5533', '@METRO_VAN', NULL, 'Manager: Mr. Ben Yeung', '2012-02-25 16:47:36', '1'),
+(191, 191, 'DRUGSTORE PHARMACY #8552', '455 North Rd.', 'Coquitlam', 'BC', 'V3K3V9', '(604) 937-1205', '',
+        '(604) 937-1209', '@METRO_VAN', NULL, 'Manager: Mr. Kenneth D\'Silva', '2012-02-25 16:47:36', '1'),
+(192, 192, 'DRUGSTORE PHARMACY #8563', 'Champlain Mall 7190 Kerr St.', 'Vancouver', 'BC', 'V5S4W2',
+        '(604) 430-3381', '', '(604) 433-5347', '@METRO_VAN', NULL, 'Manager: Miss Elaina Lo', '2012-02-25 16:47:36',
+        '1'),
+(193, 193, 'DRUGSTORE PHARMACY #8565', '1020 Park Royal South West', 'Vancouver', 'BC', 'V7T1A2',
+        '(604) 926-8931', '', '(604) 926-4612', '@METRO_VAN', NULL, 'Manager: Ms. Barbara Khoe', '2012-02-25 16:47:36',
+        '1'),
+(205, 205, 'DRUGSTORE PHARMACY #8585', '18765 Fraser Hwy RR 10', 'Surrey', 'BC', 'V3S8E7', '(604) 576-3126', '',
+        '(604) 576-6844', '@METRO_VAN', NULL, 'Manager: Ms. Ling Wong', '2012-02-25 16:47:36', '1'),
+(211, 211, 'EAGLE RIDGE DRUGS', '#201B - 1194 Lansdowne Dr', 'Coquitlam', 'BC', 'V3E1J7', '(604) 941-0454', '',
+        '(604) 941-0421', '@METRO_VAN', NULL, 'Manager: Ms. Hye Won Ahn', '2012-02-25 16:47:36', '1'),
+(213, 213, 'EAST END PHARMACY', '2021 Commercial Drive', 'Vancouver', 'BC', 'V5N4B1', '(604) 255-9890', '',
+        '(604) 255-9815', '@METRO_VAN', NULL, 'Manager: Mrs. Helena Hwang', '2012-02-25 16:47:36', '1'),
+(214, 214, 'EASTSIDE PHARMACY LTD.', '439 Hastings St. E', 'Vancouver', 'BC', 'V6A1P5', '(604) 255-1714', '',
+        '(604) 255-1753', '@METRO_VAN', NULL, 'Manager: Mr. Alexander Tam', '2012-02-25 16:47:36', '1'),
+(215, 215, 'EDMONDS PHARMADRUGS', '105 - 7315 Edmonds St.', 'Burnaby', 'BC', 'V3N1A7', '(604) 526-1110', '',
+        '(604) 526-1926', '@METRO_VAN', NULL, 'Manager: Mr. Azim Datoo', '2012-02-25 16:47:36', '1'),
+(220, 220, 'FAIRWAY DRUG MART', '7595 - 6th St.', 'Burnaby', 'BC', 'V3N3M6', '(604) 521-9133', '',
+        '(604) 521-9133', '@METRO_VAN', NULL, 'Manager: Mr. Amar Unadkat', '2012-02-25 16:47:36', '1'),
+(221, 221, 'FAMILY CARE PHARMACY', '12815B 96 Ave.', 'Surrey', 'BC', 'V3V6V9', '(604) 581-1900', '',
+        '(604) 581-1902', '@METRO_VAN', NULL, 'Manager: Mr. Geoffrey Cridge', '2012-02-25 16:47:36', '1'),
+(223, 223, 'FINLANDIA NATURAL PHARMACY', '1111 West Broadway', 'Vancouver', 'BC', 'V6H1G1', '(604) 733-5323', '',
+        '(604) 733-5340', '@METRO_VAN', NULL, 'Manager: Mr. Harlan Lahti', '2012-02-25 16:47:36', '1'),
+(229, 229, 'FRASER HEIGHTS PHARMACY LTD.', '#102 - 16033 - 108th Ave.', 'Surrey', 'BC', 'V4N1P2',
+        '(604) 930-9544', '', '(604) 930-9785', '@METRO_VAN', NULL, 'Manager: Mr. Howard Bahr-Hosseini',
+        '2012-02-25 16:47:36', '1'),
+(232, 232, 'FRASER PHARMACY', '6448 Fraser St.', 'Vancouver', 'BC', 'V5W3A4', '(604) 325-8288', '',
+        '(604) 558-0578', '@METRO_VAN', NULL, 'Manager: Miss Emmie Siu', '2012-02-25 16:47:36', '1'),
+(238, 238, 'GAIN PHARMACY', '10677 King George Blvd', 'Surrey', 'BC', 'V3T2X6', '(604) 582-4246', '',
+        '(604) 582-4276', '@METRO_VAN', NULL, 'Manager: Mr. Javad Ghane', '2012-02-25 16:47:36', '1'),
+(239, 239, 'GANT\'S PHARMACY NO. 2', '1398 Kingsway', 'Vancouver', 'BC', 'V5V3E4', '(604) 874-9331', '',
+        '(604) 874-9332', '@METRO_VAN', NULL, 'Manager: Mr. William Chin', '2012-02-25 16:47:37', '1'),
+(241, 241, 'GARLANE PHARMACY #1', '232 E. Hastings St.', 'Vancouver', 'BC', 'V6A1P1', '(604) 684-6720', '',
+        '(604) 684-6720', '@METRO_VAN', NULL, 'Manager: Mr. Gary Siu', '2012-02-25 16:47:37', '1'),
+(242, 242, 'GARLANE PHARMACY #2', '#104 - 3380 Maquinna Dr.', 'Vancouver', 'BC', 'V5S4C6', '(604) 430-5434', '',
+        '(604) 430-5434', '@METRO_VAN', NULL, 'Manager: Mr. William Sam', '2012-02-25 16:47:37', '1'),
+(243, 243, 'GARLANE PRESCRIPTIONS', '#102 - 409 W. Broadway', 'Vancouver', 'BC', 'V5Y1R4', '(604) 879-1933', '',
+        '(604) 879-1923', '@METRO_VAN', NULL, 'Manager: Mr. Henry Wu', '2012-02-25 16:47:37', '1'),
+(244, 244, 'GATEWAY PHARMACY', '101-10751 King George Blvd', 'Surrey', 'BC', 'V3T2X6', '(604) 930-8608', '',
+        '(604) 930-2732', '@METRO_VAN', NULL, 'Manager: Mr. Tom Chang', '2012-02-25 16:47:37', '1'),
+(246, 246, 'GLEN PHARMACY', '208 - 1175 Johnson St.', 'Coquitlam', 'BC', 'V3B7K1', '(604) 944-5500', '',
+        '(604) 944-3301', '@METRO_VAN', NULL, 'Manager: Mr. Hamid Jalali', '2012-02-25 16:47:37', '1'),
+(247, 247, 'GLOVER PHARMACY LANGLEY', '102 - 5796 Glover Rd.', 'Langley', 'BC', 'V3A4H9', '(604) 534-8686', '',
+        '(604) 534-8383', '@METRO_VAN', NULL, 'Manager: Mr. Brad Davie', '2012-02-25 16:47:37', '1'),
+(252, 252, 'GOOD MORNING PHARMACY INC', '1979 East Hastings St.', 'Vancouver', 'BC', 'V5L1T5', '(604) 215-9455',
+        '', '(604) 215-9787', '@METRO_VAN', NULL, 'Manager: Mr. Ron Kan', '2012-02-25 16:47:37', '1'),
+(254, 254, 'GRANDVIEW PRESCRIPTIONS', '3026 Commercial Drive', 'Vancouver', 'BC', 'V5N4E2', '(604) 879-2581', '',
+        '(604) 879-9679', '@METRO_VAN', NULL, 'Manager: Mr. Stephen Juba', '2012-02-25 16:47:37', '1'),
+(255, 255, 'GUARDIAN HANIN PHARMACY', '210 - 329 North Rd.', 'Coquitlam', 'BC', 'V3K3V8', '(604) 939-7880', '',
+        '(604) 939-7875', '@METRO_VAN', NULL, 'Manager: Mr. Jae Kwag', '2012-02-25 16:47:37', '1'),
+(256, 256, 'HANEY PHARMACY', 'Suite D 22195 Dewdney Trunk Rd.', 'Maple Ridge', 'BC', 'V2X3H7', '(604) 467-9100',
+        '', '(604) 467-9100', '@METRO_VAN', NULL, 'Manager: Mr. Anthony Lee', '2012-02-25 16:47:37', '1'),
+(258, 258, 'HARVARD PHARMACY', '492 Kingsway', 'Vancouver', 'BC', 'V5T3J9', '(604) 875-0200', '',
+        '(604) 639-0020', '@METRO_VAN', NULL, 'Manager: Mr. Peter Dang', '2012-02-25 16:47:37', '1'),
+(259, 259, 'HARVEST DRIVE PHARMACY', '#100 - 4515 Harvest Dr.', 'Delta', 'BC', 'V4K4L1', '(604) 946-5220', '',
+        '(604) 946-3902', '@METRO_VAN', NULL, 'Manager: Mr. Paul Sarvari', '2012-02-25 16:47:37', '1'),
+(260, 260, 'HASTINGS PHARMACY', '2724 E. Hastings St.', 'Vancouver', 'BC', 'V5K1Z9', '(604) 253-7022', '',
+        '(604) 253-7767', '@METRO_VAN', NULL, 'Manager: Mr. Liakatali Jiwa', '2012-02-25 16:47:37', '1'),
+(261, 261, 'HEALTH ONE PHARMACY', '2nd Floor 1133 - 11871 Horseshoe Way', 'Richmond', 'BC', 'V7A5H5',
+        '(604) 275-1085', '', '(604) 275-1088', '@METRO_VAN', NULL, 'Manager: Mr. Wilfred Mak', '2012-02-25 16:47:37',
+        '1'),
+(262, 262, 'HEALTHPLUS PHARMACY', '4115 No. 5 Rd.', 'Richmond', 'BC', 'V6X2T9', '(604) 304-1294', '',
+        '(604) 304-1295', '@METRO_VAN', NULL, 'Manager: Mr. Dave Aulakh', '2012-02-25 16:47:37', '1'),
+(263, 263, 'HEALTHSIDE PHARMACY', '5448 Victoria Drive', 'Vancouver', 'BC', 'V5P3V8', '(604) 327-6768', '',
+        '(604) 327-6761', '@METRO_VAN', NULL, 'Manager: Mr. Henry Cheung', '2012-02-25 16:47:37', '1'),
+(264, 264, 'HIGH GATE PHARMACY LTD.', '#102 - 7188 Kingsway', 'Burnaby', 'BC', 'V5E1G3', '(604) 777-4267', '',
+        '(604) 777-4268', '@METRO_VAN', NULL, 'Manager: Mr. Rahim Kanji', '2012-02-25 16:47:37', '1'),
+(266, 266, 'HOLLYBURN MEDICINE CENTRE PHARMACY', '#107 - 575 16th St. West', 'Vancouver', 'BC', 'V7V4Y1',
+        '(604) 922-4174', '', '(604) 922-1490', '@METRO_VAN', NULL, 'Manager: Mr. Mike Holyk', '2012-02-25 16:47:37',
+        '1'),
+(268, 268, 'HOWE STREET PHARMACY', '1070 Howe St.', 'Vancouver', 'BC', 'V6Z1P5', '(604) 899-0930', '',
+        '(604) 899-0934', '@METRO_VAN', NULL, 'Manager: Miss Mona Kwong', '2012-02-25 16:47:37', '1'),
+(271, 271, 'IMPERIAL PHARMACY #2', '981 Carnarvon St.', 'New Westminster', 'BC', 'V3M1G2', '(604) 523-6767', '',
+        '(604) 523-6768', '@METRO_VAN', NULL, 'Manager: Mr. Rida Bazzi', '2012-02-25 16:47:37', '1'),
+(281, 281, 'JAY\'S PHARMACY LTD.', '#100 - 1940 Lonsdale Ave.', 'North Vancouver', 'BC', 'V7M2K2',
+        '(604) 988-7128', '', '(604) 988-9638', '@METRO_VAN', NULL, 'Manager: Miss Jo-Anne Jay', '2012-02-25 16:47:37',
+        '1'),
+(282, 282, 'JEFF\'S PHARMACY', '410 East Hastings St.', 'Vancouver', 'BC', 'V6A1P7', '(604) 215-1229', '',
+        '(604) 215-1290', '@METRO_VAN', NULL, 'Manager: Mrs. Svetlana Smirnova', '2012-02-25 16:47:37', '1'),
+(283, 283, 'JERICHO PHARMACY & HEALTH FOOD STORE', 'Unit 290 - 2083 Alma St.', 'Vancouver', 'BC', 'V6R4N6',
+        '(604) 228-8978', '', '(604) 228-0798', '@METRO_VAN', NULL, 'Manager: Miss Josephine Lai',
+        '2012-02-25 16:47:37', '1'),
+(286, 286, 'KERRISDALE MEDICINE CENTRE PHARMACY', '5591 West Boulevard', 'Vancouver', 'BC', 'V6M3W6',
+        '(604) 261-0333', '', '(604) 261-0311', '@METRO_VAN', NULL, 'Manager: Mr. Colin Holyk', '2012-02-25 16:47:37',
+        '1'),
+(287, 287, 'KING GEORGE MEDIC PHARMACY', '103 - 9808 King George Blvd', 'Surrey', 'BC', 'V3T2V6',
+        '(604) 585-8866', '', '(778) 395-6716', '@METRO_VAN', NULL, 'Manager: Mrs. Grace Kim', '2012-02-25 16:47:37',
+        '1'),
+(288, 288, 'KINGSTONS PHARMACY', '10051 Whalley Blvd', 'Surrey', 'BC', 'V3T4G1', '(604) 585-0525', '',
+        '(604) 585-0522', '@METRO_VAN', NULL, 'Manager: Mr. John Ho', '2012-02-25 16:47:37', '1'),
+(291, 291, 'KNOWLTON\'S DRUG STORE', '15 E. Hastings St.', 'Vancouver', 'BC', 'V6A1M9', '(604) 681-6371', '',
+        '(604) 608-6371', '@METRO_VAN', NULL, 'Manager: Mr. Alvin Ragosin', '2012-02-25 16:47:37', '1'),
+(293, 293, 'KOSCAN PHARMACY', '3615 Kingsway', 'Vancouver', 'BC', 'V5R5M1', '(604) 453-0211', '',
+        '(604) 453-0212', '@METRO_VAN', NULL, 'Manager: Ms. Oxana Blajkevitch', '2012-02-25 16:47:37', '1'),
+(294, 294, 'KRIPPS HEALTHCARE RX', '5413 West Blvd', 'Vancouver', 'BC', 'V6M3W5', '(604) 687-2564', '',
+        '(604) 685-9721', '@METRO_VAN', NULL, 'Manager: Dr. Edward Thorpe', '2012-02-25 16:47:37', '1'),
+(295, 295, 'KROLL\'S SURREY PHARMACY LTD.', 'North Surrey Medical Building #100 - 9656 King George Blvd',
+        'Surrey', 'BC', 'V3T2V5', '(604) 581-3636', '', '(604) 581-3637', '@METRO_VAN', NULL,
+        'Manager: Miss Lorna Kroll', '2012-02-25 16:47:37', '1'),
+(296, 296, 'KWANTLEN PHARMACY', '3 - 12818 72 Ave.', 'Surrey', 'BC', 'V3W2M9', '(604) 543-6677', '',
+        '(604) 543-4433', '@METRO_VAN', NULL, 'Manager: Mr. Rauvan Sidhu', '2012-02-25 16:47:37', '1'),
+(297, 297, 'LA VIE REMEDYS RX', '3373 Fraser St.', 'Vancouver', 'BC', 'V5V4C2', '(604) 669-4364', '',
+        '(604) 669-4308', '@METRO_VAN', NULL, 'Manager: Mr. Michael Kingston', '2012-02-25 16:47:37', '1'),
+(304, 304, 'LANCASTER MEDICAL SUPPL. & PRESC. #1', 'Unit 1 601 West Broadway', 'Vancouver', 'BC', 'V5Z4C2',
+        '(604) 873-8585', '', '(604) 873-2381', '@METRO_VAN', NULL, 'Manager: Mrs. Linda Levelton',
+        '2012-02-25 16:47:37', '1'),
+(305, 305, 'LANCASTER MEDICAL SUPPL. & PRESC. #4', '#101 - 13710 94A Ave.', 'Surrey', 'BC', 'V3V1N1',
+        '(604) 582-9181', '', '(604) 582-9167', '@METRO_VAN', NULL, 'Manager: Mrs. Dragana Kosoric',
+        '2012-02-25 16:47:37', '1'),
+(306, 306, 'LANCASTER PRESCRIPTIONS #2', '7487 Edmonds St.', 'Burnaby', 'BC', 'V3N1B3', '(604) 526-3331', '',
+        '(604) 526-1660', '@METRO_VAN', NULL, 'Manager: Mr. Howard Sham', '2012-02-25 16:47:37', '1'),
+(307, 307, 'LANGLEY PHARMACY', '101 - 20644 Fraser Hwy', 'Langley', 'BC', 'V3A4G5', '(604) 539-9799', '',
+        '(604) 539-9798', '@METRO_VAN', NULL, 'Manager: Mr. Kiran Vithlani', '2012-02-25 16:47:37', '1'),
+(308, 308, 'LAUREL PRESCRIPTIONS', '#102 - 888 West 8th Ave.', 'Vancouver', 'BC', 'V5Z3Y1', '(604) 873-5511', '',
+        '(604) 873-5581', '@METRO_VAN', NULL, 'Manager: Mr. John Fockler', '2012-02-25 16:47:37', '1'),
+(309, 309, 'LIFE GARDENS DRUG STORE', '1519 Robson St.', 'Vancouver', 'BC', 'V6G1C3', '(604) 558-2006', '',
+        '(604) 558-7057', '@METRO_VAN', NULL, 'Manager: Miss Leanne Bao', '2012-02-25 16:47:37', '1'),
+(311, 311, 'LINDA PHARMACY', '100 - 1688 152 St.', 'Surrey', 'BC', 'V4A4N2', '(604) 538-6334', '',
+        '(604) 538-6389', '@METRO_VAN', NULL, 'Manager: Miss Linda Bryan', '2012-02-25 16:47:37', '1'),
+(312, 312, 'LIONS GATE PHARMACY', '1309 St. Georges Ave. North', 'Vancouver', 'BC', 'V7L3J2', '(604) 929-1121',
+        '', '(604) 929-1125', '@METRO_VAN', NULL, 'Manager: Mr. Davood Nekoi Panah', '2012-02-25 16:47:37', '1'),
+(314, 314, 'LOBLAW PHARMACY #1517', '350 Marine Dr SE', 'Vancouver', 'BC', 'V5X2S5', '(604) 322-3706', '',
+        '(604) 322-7321', '@METRO_VAN', NULL, 'Manager: Mr. Rajinder Brar', '2012-02-25 16:47:37', '1'),
+(315, 315, 'LOBLAW PHARMACY #1520', '3185 Grandview Hwy.', 'Vancouver', 'BC', 'V5M2E9', '(604) 436-6406', '',
+        '(604) 436-6446', '@METRO_VAN', NULL, 'Manager: Mr. Rajdeep Pooni', '2012-02-25 16:47:37', '1'),
+(318, 318, 'LOBLAW PHARMACY #1526', '3000 Lougheed Hwy.', 'Coquitlam', 'BC', 'V3B1C5', '(604) 468-6735', '',
+        '(604) 468-6732', '@METRO_VAN', NULL, 'Manager: Mrs. Doreen Mak', '2012-02-25 16:47:37', '1'),
+(321, 321, 'LOBLAW PHARMACY #1561', '19851 Willowbrook Drive', 'Langley', 'BC', 'V2Y1A7', '(604) 532-5430', '',
+        '(604) 532-5424', '@METRO_VAN', NULL, 'Manager: Mr. Shingara Kang', '2012-02-25 16:47:37', '1'),
+(326, 326, 'LOBLAW PHARMACY #4979', '310 Broadway St. W', 'Vancouver', 'BC', 'V5Y1R2', '(604) 708-8084', '',
+        '(604) 708-8663', '@METRO_VAN', NULL, 'Manager: Mr. Tommy Fong', '2012-02-25 16:47:37', '1'),
+(329, 329, 'LONDON DRUGS #2', '710 Granville St.', 'Vancouver', 'BC', 'V6Z1E4', '(604) 685-5292', '',
+        '(604) 685-5819', '@METRO_VAN', NULL, 'Manager: Miss Anita Fong', '2012-02-25 16:47:37', '1'),
+(330, 330, 'LONDON DRUGS #3 - NEW WESTMINSTER', 'Westminster Centre #100 - 555 Sixth St.', 'New Westminster',
+        'BC', 'V3L5H1', '(604) 524-1121', '', '(604) 520-5417', '@METRO_VAN', NULL, 'Manager: Mr. Faisel Dean',
+        '2012-02-25 16:47:37', '1'),
+(331, 331, 'LONDON DRUGS #4 - BROADWAY', '525 Broadway W', 'Vancouver', 'BC', 'V5Z1E6', '(604) 872-5177', '',
+        '(604) 872-5207', '@METRO_VAN', NULL, 'Manager: Mr. Anil Kanji', '2012-02-25 16:47:37', '1'),
+(332, 332, 'LONDON DRUGS #5 - NORTH VANCOUVER', '2032 Lonsdale Ave. North', 'Vancouver', 'BC', 'V7M2K5',
+        '(604) 980-3661', '', '(604) 980-6791', '@METRO_VAN', NULL, 'Manager: Ms. Suzanne Han', '2012-02-25 16:47:37',
+        '1'),
+(333, 333, 'LONDON DRUGS #6 - BURNABY', '4970 Kingsway', 'Burnaby', 'BC', 'V5H2E2', '(604) 437-9621', '',
+        '(604) 435-0996', '@METRO_VAN', NULL, 'Manager: Ms. Gertie Wong', '2012-02-25 16:47:37', '1'),
+(334, 334, 'LONDON DRUGS #7 - HASTINGS', '2585 E. Hastings St.', 'Vancouver', 'BC', 'V5K1Z1', '(604) 253-4484',
+        '', '(604) 251-5401', '@METRO_VAN', NULL, 'Manager: Mr. Wally Lew', '2012-02-25 16:47:37', '1'),
+(335, 335, 'LONDON DRUGS #8 - SURREY', '10348 King George Blvd', 'Surrey', 'BC', 'V3T2W5', '(604) 584-7300', '',
+        '(604) 581-6771', '@METRO_VAN', NULL, 'Manager: Miss Becky Young', '2012-02-25 16:47:37', '1'),
+(336, 336, 'LONDON DRUGS #9 - GUILDFORD', '2340 Guildford Town Ctr.', 'Surrey', 'BC', 'V3R1B9', '(604) 588-7881',
+        '', '(604) 588-7347', '@METRO_VAN', NULL, 'Manager: Mr. Shiraz Thobani', '2012-02-25 16:47:37', '1'),
+(337, 337, 'LONDON DRUGS #10', '2091 West 42nd Avenue', 'Vancouver', 'BC', 'V6M2B4', '(604) 263-1811', '',
+        '(604) 261-0297', '@METRO_VAN', NULL, 'Manager: Mr. Nelson Costa', '2012-02-25 16:47:37', '1'),
+(338, 338, 'LONDON DRUGS #11 - RICHMOND', 'London Plaza 5971 No. 3 Rd.', 'Richmond', 'BC', 'V6X2E3',
+        '(604) 278-4521', '', '(604) 278-4898', '@METRO_VAN', NULL, 'Manager: Mrs. Jody Croft', '2012-02-25 16:47:37',
+        '1'),
+(341, 341, 'LONDON DRUGS #15', 'Unit 1030 Coquitlam Centre 2929 Barnet Hwy.', 'Coquitlam', 'BC', 'V3B5R5',
+        '(604) 464-3322', '', '(604) 464-4376', '@METRO_VAN', NULL, 'Manager: Mr. David Dong', '2012-02-25 16:47:37',
+        '1'),
+(343, 343, 'LONDON DRUGS #17', '7303 - 120th St.', 'Delta', 'BC', 'V4C6P5', '(604) 591-9544', '',
+        '(604) 591-6852', '@METRO_VAN', NULL, 'Manager: Miss Kiran Johal', '2012-02-25 16:47:37', '1'),
+(344, 344, 'LONDON DRUGS #18 - LANGLEY', 'Unit B1 - 20202 66 Ave.', 'Langley', 'BC', 'V2Y1P3', '(604) 533-4631',
+        '', '(604) 533-2039', '@METRO_VAN', NULL, 'Manager: Mr. Michael Yee', '2012-02-25 16:47:37', '1'),
+(345, 345, 'LONDON DRUGS #19', '1187 Robson St.', 'Vancouver', 'BC', 'V6E1B5', '(604) 669-7374', '',
+        '(604) 669-7341', '@METRO_VAN', NULL, 'Manager: Mr. David Seto', '2012-02-25 16:47:37', '1'),
+(346, 346, 'LONDON DRUGS #25', 'Lougheed Mall 9855 Austin Rd.', 'Burnaby', 'BC', 'V3J1N4', '(604) 444-2222', '',
+        '(604) 444-9988', '@METRO_VAN', NULL, 'Manager: Mrs. Maria Finamore', '2012-02-25 16:47:37', '1'),
+(347, 347, 'LONDON DRUGS #28', '3328 Kingsway', 'Vancouver', 'BC', 'V5R5L1', '(604) 433-4700', '',
+        '(604) 433-5606', '@METRO_VAN', NULL, 'Manager: Mr. Gordon Luk', '2012-02-25 16:47:37', '1'),
+(351, 351, 'LONDON DRUGS #37', 'Trenant Park Mall (48th) 5237 Ladner Trunk Rd.', 'Delta', 'BC', 'V4K1W4',
+        '(604) 946-5642', '', '(604) 946-8723', '@METRO_VAN', NULL, 'Manager: Mr. Edmund Fong', '2012-02-25 16:47:37',
+        '1'),
+(354, 354, 'LONDON DRUGS #42 - PENINSULA VILLAGE', '#100 - 15355 - 24 Ave.', 'Surrey', 'BC', 'V4A2H9',
+        '(604) 535-3281', '', '(604) 535-5402', '@METRO_VAN', NULL, 'Manager: Mr. Gurjit Johal', '2012-02-25 16:47:37',
+        '1'),
+(355, 355, 'LONDON DRUGS #44 - PARK ROYAL', '875 Park Royal North', 'West Vancouver', 'BC', 'V7T1H9',
+        '(604) 926-9616', '', '(604) 926-4519', '@METRO_VAN', NULL, 'Manager: Mr. Markle Louie', '2012-02-25 16:47:37',
+        '1'),
+(357, 357, 'LONDON DRUGS #47 - MAPLE RIDGE', '#101 - 22709 Lougheed Highway', 'Maple Ridge', 'BC', 'V2X2V5',
+        '(604) 463-0991', '', '(604) 463-1522', '@METRO_VAN', NULL, 'Manager: Mr. Easton Lee', '2012-02-25 16:47:37',
+        '1'),
+(358, 358, 'LONDON DRUGS #50 - DAVIE ST.', '1650 Davie St.', 'Vancouver', 'BC', 'V6G1V9', '(604) 669-2884', '',
+        '(604) 669-2244', '@METRO_VAN', NULL, 'Manager: Mr. Dennis Yen', '2012-02-25 16:47:37', '1'),
+(360, 360, 'LONDON DRUGS #52 - IRONWOOD PLAZA', '#3200 - 11666 Steveston Hwy.', 'Richmond', 'BC', 'V7A5J3',
+        '(604) 448-5468', '', '(604) 448-9547', '@METRO_VAN', NULL, 'Manager: Mr. Jason Dong', '2012-02-25 16:47:37',
+        '1'),
+(361, 361, 'LONDON DRUGS #53 - VICTORIA DRIVE', '5639 Victoria Drive', 'Vancouver', 'BC', 'V5P3W2',
+        '(604) 322-6050', '', '(604) 322-6549', '@METRO_VAN', NULL, 'Manager: Mrs. Doreen Phone', '2012-02-25 16:47:37',
+        '1'),
+(364, 364, 'LONDON DRUGS #56', 'Brentwood Mall #400 - 4567 Lougheed Hwy.', 'Burnaby', 'BC', 'V5C3Z6',
+        '(604) 570-0252', '', '(604) 570-0061', '@METRO_VAN', NULL, 'Manager: Mr. Josh Kim', '2012-02-25 16:47:38',
+        '1'),
+(368, 368, 'LONDON DRUGS #71 - MARINE & BYRNE', '7280 Market Crossing', 'Burnaby', 'BC', 'V5J0A2',
+        '(604) 412-4171', '', '(604) 412-4181', '@METRO_VAN', NULL, 'Manager: Mr. Edward Liew', '2012-02-25 16:47:38',
+        '1'),
+(371, 371, 'LONDON DRUGS #74', '2230 Broadway W', 'Vancouver', 'BC', 'V6K2E3', '(604) 742-6000', '',
+        '(604) 742-1843', '@METRO_VAN', NULL, 'Manager: Mr. Gianni DelNegro', '2012-02-25 16:47:38', '1'),
+(372, 372, 'LONDON DRUGS #75', '821 - 17685 64 Ave.', 'Surrey', 'BC', 'V3S1Z2', '(604) 575-5880', '',
+        '(604) 575-4630', '@METRO_VAN', NULL, 'Manager: Mr. Jerry Dhaliwal', '2012-02-25 16:47:38', '1'),
+(375, 375, 'LONDON DRUGS #78', '150 - 351 Abbott St.', 'Vancouver', 'BC', 'V6B0G6', '(604) 622-7030', '',
+        '(604) 688-8730', '@METRO_VAN', NULL, 'Manager: Mr. Fred Lee', '2012-02-25 16:47:38', '1'),
+(377, 377, 'LONDON DRUGS #81', '#130 - 15850 26 Ave.', 'Surrey', 'BC', 'V3S2N6', '(778) 545-5380', '',
+        '(604) 531-7022', '@METRO_VAN', NULL, 'Manager: Mr. Alan Huang', '2012-02-25 16:47:38', '1'),
+(378, 378, 'LOW COST WESTERN PHARMACY', '535 Main St.', 'Vancouver', 'BC', 'V6A2V1', '(604) 689-5555', '',
+        '(604) 689-5268', '@METRO_VAN', NULL, 'Manager: Mr. Victor Law', '2012-02-25 16:47:38', '1'),
+(379, 379, 'LOW COST WESTERN PHARMACY #2', '#7 - 5579 Victoria Dr', 'Vancouver', 'BC', 'V5P3W2',
+        '(604) 322-6588', '', '(604) 322-6501', '@METRO_VAN', NULL, 'Manager: Mr. Darwin Law', '2012-02-25 16:47:38',
+        '1'),
+(381, 381, 'LYNN VALLEY PHARMACY', '104 - 1200 Lynn Valley Rd. North', 'Vancouver', 'BC', 'V7J2A2',
+        '(604) 960-1187', '', '(604) 909-1786', '@METRO_VAN', NULL, 'Manager: Ms. Diana Smedstad',
+        '2012-02-25 16:47:38', '1'),
+(382, 382, 'MACDONALD\'S PRESCRIPTIONS #3', '2188 W. Broadway', 'Vancouver', 'BC', 'V6K2C8', '(604) 738-0733',
+        '', '(604) 738-5400', '@METRO_VAN', NULL, 'Manager: Mr. Gary Wong', '2012-02-25 16:47:38', '1'),
+(383, 383, 'MACDONALD\'S PRESCRIPTIONS #4', '#130 - 943 W. Broadway', 'Vancouver', 'BC', 'V5Z1K3',
+        '(604) 734-4311', '', '(604) 734-4366', '@METRO_VAN', NULL, 'Manager: Mr. Allan Baker', '2012-02-25 16:47:38',
+        '1'),
+(384, 384, 'MACDONALD\'S PRESCRIPTIONS #5', '2B - 138 West 6th Avenue', 'Vancouver', 'BC', 'V5Y1K6',
+        '(604) 872-4200', '', '(604) 872-4255', '@METRO_VAN', NULL, 'Manager: Mr. Ben Lee', '2012-02-25 16:47:38', '1'),
+(385, 385, 'MACDONALD\'S PRESCRIPTIONS LTD.', 'Fairmont Medical Bldg. 746 W. Broadway', 'Vancouver', 'BC',
+        'V5Z1G8', '(604) 872-2662', '', '(604) 876-0242', '@METRO_VAN', NULL, 'Manager: Mr. Jeffrey Curtis',
+        '2012-02-25 16:47:38', '1'),
+(386, 386, 'MAGGIE\'S PHARMACY', '2591 Commercial Dr', 'Vancouver', 'BC', 'V5N4C1', '(778) 371-8721', '',
+        '(778) 371-8722', '@METRO_VAN', NULL, 'Manager: Ms. Magdolna Kabok', '2012-02-25 16:47:38', '1'),
+(387, 387, 'MAILARDVILLE REXALL DRUG STORE', 'Rm.108 - 1015 Austin Ave.', 'Coquitlam', 'BC', 'V3K3N9',
+        '(604) 937-3122', '', '(604) 937-3143', '@METRO_VAN', NULL, 'Manager: Mrs. Elham Rahmani Neishaboor',
+        '2012-02-25 16:47:38', '1'),
+(388, 388, 'MAIN PRESCRIPTIONS', '506 Main St.', 'Vancouver', 'BC', 'V6A2T9', '(604) 683-6381', '',
+        '(604) 683-8623', '@METRO_VAN', NULL, 'Manager: Miss Mary Lam', '2012-02-25 16:47:38', '1'),
+(389, 389, 'MAIN STATION PHARMACY', '1149 Main St.', 'Vancouver', 'BC', 'V6A4B6', '(604) 662-3883', '',
+        '(604) 662-3887', '@METRO_VAN', NULL, 'Manager: Ms. Youn Kim', '2012-02-25 16:47:38', '1'),
+(390, 390, 'MAIN STREET REMEDY\'S RX', '4484 Main St.', 'Vancouver', 'BC', 'V5V3R3', '(604) 876-6410', '',
+        '(604) 875-6808', '@METRO_VAN', NULL, 'Manager: Mr. Stephen Lau', '2012-02-25 16:47:38', '1'),
+(393, 393, 'MAPLE PHARMACY', '#106 - 11743 - 224th St.', 'Maple Ridge', 'BC', 'V2X6A4', '(604) 467-1116', '',
+        '(604) 467-1116', '@METRO_VAN', NULL, 'Manager: Mr. Ronald Kwok', '2012-02-25 16:47:38', '1'),
+(396, 396, 'MARK\'S MARINE PHARMACY', '239 Marine Dr S.E.', 'Vancouver', 'BC', 'V5X2S4', '(604) 325-9265', '',
+        '(604) 325-9805', '@METRO_VAN', NULL, 'Manager: Mr. Robert Rosenblatt', '2012-02-25 16:47:38', '1'),
+(397, 397, 'MARKS PHARMACY', '#101 - 8035 - 120th St.', 'Delta', 'BC', 'V4C6P8', '(604) 596-1774', '',
+        '(604) 596-8334', '@METRO_VAN', NULL, 'Manager: Mr. Alan Glasser', '2012-02-25 16:47:38', '1'),
+(398, 398, 'MARKS PHARMACY #4', '260 4th Ave. E', 'Vancouver', 'BC', 'V5T1G5', '(604) 872-6762', '',
+        '(604) 872-6764', '@METRO_VAN', NULL, 'Manager: Miss Taryn Proulx', '2012-02-25 16:47:38', '1'),
+(399, 399, 'MARKS PHARMACY #5', '3750 Oak St.', 'Vancouver', 'BC', 'V6H2M3', '(604) 731-8535', '',
+        '(604) 731-8534', '@METRO_VAN', NULL, 'Manager: Miss Adeline Sin', '2012-02-25 16:47:38', '1'),
+(400, 400, 'MARMAR PHARMACY', '#212 - 1200 Burrard St.', 'Vancouver', 'BC', 'V6Z2C7', '(604) 605-0211', '',
+        '(604) 602-0210', '@METRO_VAN', NULL, 'Manager: Miss Ivana Vojvodic', '2012-02-25 16:47:38', '1'),
+(403, 403, 'MCCUE DRUGS', '#100 - 8120 Cook Rd.', 'Richmond', 'BC', 'V6Y1T9', '(604) 278-9601', '',
+        '(604) 273-5321', '@METRO_VAN', NULL, 'Manager: Mr. Peter Cheng', '2012-02-25 16:47:38', '1'),
+(405, 405, 'MEADOWS PHARMACY', '12161 Harris Rd.', 'Pitt Meadows', 'BC', 'V3Y2E9', '(604) 460-0541', '',
+        '(604) 460-0542', '@METRO_VAN', NULL, 'Manager: Mr. Sam Budhwani', '2012-02-25 16:47:38', '1'),
+(406, 406, 'MEDESIS PHARMACY', '7505 Victoria Dr', 'Vancouver', 'BC', 'V5P3Z6', '(604) 323-2937', '',
+        '(604) 323-8440', '@METRO_VAN', NULL, 'Manager: Mr. Hooman Tabarsi', '2012-02-25 16:47:38', '1'),
+(407, 407, 'MEDICAL CENTRE PHARMACY', '1175 Denman St.', 'Vancouver', 'BC', 'V6G2N1', '(604) 682-4321', '',
+        '(604) 682-4321', '@METRO_VAN', NULL, 'Manager: Mr. Stephen Wall', '2012-02-25 16:47:38', '1'),
+(408, 408, 'MEDICAL CENTRE PRESCRIPTIONS', '10225 King George Blvd', 'Surrey', 'BC', 'V3T2W6', '(604) 581-2411',
+        '', '(604) 589-2020', '@METRO_VAN', NULL, 'Manager: Mr. Mohamed Dewji', '2012-02-25 16:47:38', '1'),
+(409, 409, 'MEDICAL PHARMACY', '#102 - 15451 Russell Ave.', 'White Rock', 'BC', 'V4B2R5', '(604) 536-8225', '',
+        '(604) 536-8405', '@METRO_VAN', NULL, 'Manager: Mr. John Colasurdo', '2012-02-25 16:47:38', '1'),
+(411, 411, 'MEDICARE PHARMACY', 'Unit 190 - 7031 Westminster Hwy', 'Richmond', 'BC', 'V6X1A3', '(604) 278-7133',
+        '', '(604) 278-7135', '@METRO_VAN', NULL, 'Manager: Mr. Wayne Wong', '2012-02-25 16:47:38', '1'),
+(412, 412, 'MEDICINE CENTRE #4 - LANGLEY', '#107 - 5501 - 204th St.', 'Langley', 'BC', 'V3A5N8',
+        '(604) 532-1996', '', '(604) 532-1996', '@METRO_VAN', NULL, 'Manager: Mr. Pinder Mann', '2012-02-25 16:47:38',
+        '1'),
+(413, 413, 'MEDICINE GURU', '9180 120 St.', 'Surrey', 'BC', 'V3V4B5', '(604) 585-4878', '', '(604) 585-4876',
+        '@METRO_VAN', NULL, 'Manager: Ms. Gurpreet Malhi', '2012-02-25 16:47:38', '1'),
+(414, 414, 'MEDICINE SHOPPE #142 (THE)', '#101 - 301 East Columbia St.', 'New Westminster', 'BC', 'V3L3W5',
+        '(604) 521-9313', '', '(604) 521-9614', '@METRO_VAN', NULL, 'Manager: Mr. Dennis Taruc', '2012-02-25 16:47:38',
+        '1'),
+(416, 416, 'MEDICINE SHOPPE #149', '6495 Victoria Dr.', 'Vancouver', 'BC', 'V5P3X5', '(604) 327-5567', '',
+        '(604) 327-1426', '@METRO_VAN', NULL, 'Manager: Mr. Ken Berg', '2012-02-25 16:47:38', '1'),
+(417, 417, 'MEDICINE SHOPPE #156', 'Fleetwood Professional Centre #104 - 16088 - 84th Avenue', 'Surrey', 'BC',
+        'V4N0V9', '(604) 507-0190', '', '(604) 507-0192', '@METRO_VAN', NULL, 'Manager: Miss Nimisha Virani',
+        '2012-02-25 16:47:38', '1'),
+(421, 421, 'MEDICINE SHOPPE #221', '#101 - 777 West Broadway', 'Vancouver', 'BC', 'V5Z4J7', '(604) 675-6300', '',
+        '(604) 675-6320', '@METRO_VAN', NULL, 'Manager: Mr. Don Gulak', '2012-02-25 16:47:38', '1'),
+(422, 422, 'MEDICINE SHOPPE #231 (THE)', '6180 Fraser St.', 'Vancouver', 'BC', 'V5W3A1', '(604) 327-3898', '',
+        '(604) 327-3803', '@METRO_VAN', NULL, 'Manager: Mr. Santosh Meher', '2012-02-25 16:47:38', '1'),
+(423, 423, 'MEDICINE SHOPPE #239', '2030 Kingsway', 'Vancouver', 'BC', 'V5N2T3', '(604) 876-2511', '',
+        '(604) 876-2519', '@METRO_VAN', NULL, 'Manager: Mr. Bob Rai', '2012-02-25 16:47:38', '1'),
+(427, 427, 'MEDICINE SHOPPE #292', 'Unit M41 - 4277 Kingsway', 'Burnaby', 'BC', 'V5H3Z2', '(604) 435-5353', '',
+        '(604) 435-5358', '@METRO_VAN', NULL, 'Manager: Ms. Patty Wang', '2012-02-25 16:47:38', '1'),
+(429, 429, 'MEDICINE SHOPPE #310', '11 - 3993 Chatham St.', 'Richmond', 'BC', 'V7E2Z6', '(778) 297-5777', '',
+        '(778) 297-5778', '@METRO_VAN', NULL, 'Manager: Mr. Steven Chang', '2012-02-25 16:47:38', '1'),
+(430, 430, 'MEDICINE SHOPPE #312', '130 - 8171 Cook Rd.', 'Richmond', 'BC', 'V6Y3T8', '(604) 278-3828', '',
+        '(604) 278-3839', '@METRO_VAN', NULL, 'Manager: Mr. Simon Cheng', '2012-02-25 16:47:38', '1'),
+(432, 432, 'MEDICINE SHOPPE (THE)', '#6 - 3195 Granville St.', 'Vancouver', 'BC', 'V6H3K2', '(604) 732-0777', '',
+        '(604) 732-1199', '@METRO_VAN', NULL, 'Manager: Mr. Nicholas Dash', '2012-02-25 16:47:38', '1'),
+(434, 434, 'MEDICINE SHOPPE PHARMACY #240', '#303 - 15988 Fraser Highway', 'Surrey', 'BC', 'V4N0X8',
+        '(604) 507-0970', '', '(604) 507-0971', '@METRO_VAN', NULL, 'Manager: Mr. Manjot Sekhon', '2012-02-25 16:47:38',
+        '1'),
+(435, 435, 'MEDICINE SHOPPE PHARMACY #254', 'Pinetree Village 53 - 2991 Lougheed Hwy', 'Coquitlam', 'BC',
+        'V3B6J6', '(604) 468-4711', '', '(604) 468-4707', '@METRO_VAN', NULL, 'Manager: Mr. David Tang',
+        '2012-02-25 16:47:38', '1'),
+(439, 439, 'MEDIGLEN PHARMACY & COMPOUNDING', '102 - 1173 The High St.', 'Coquitlam', 'BC', 'V3B0B1',
+        '(778) 285-8811', '', '(778) 285-8812', '@METRO_VAN', NULL, 'Manager: Mr. Jasmine Patel', '2012-02-25 16:47:38',
+        '1'),
+(440, 440, 'MEDISAVE PHARMACY #01', '#102 - 15129 100 Ave.', 'Surrey', 'BC', 'V3R9P4', '(604) 581-4000', '',
+        '(604) 581-4187', '@METRO_VAN', NULL, 'Manager: Mr. Yasir Mohamed', '2012-02-25 16:47:38', '1'),
+(441, 441, 'MEDISAVE PHARMACY #07', '#104 - 8056 King George Blvd', 'Surrey', 'BC', 'V3W5B5', '(604) 599-5403',
+        '', '(604) 599-5404', '@METRO_VAN', NULL, 'Manager: Mr. Navtej Bains', '2012-02-25 16:47:38', '1'),
+(442, 442, 'MEDISAVE PHARMACY #2', '13717 - 72 Ave.', 'Surrey', 'BC', 'V3W2P2', '(604) 597-4495', '',
+        '(604) 597-4492', '@METRO_VAN', NULL, 'Manager: Mr. Sanjeev Saraf', '2012-02-25 16:47:38', '1'),
+(443, 443, 'MEDISAVE PHARMACY #3', '#2 - 8181 - 120A St.', 'Surrey', 'BC', 'V3W3P2', '(604) 501-1114', '',
+        '(604) 501-1914', '@METRO_VAN', NULL, 'Manager: Mr. Prabhdeep Sidhu', '2012-02-25 16:47:38', '1'),
+(444, 444, 'MEDISAVE PHARMACY #4', 'Unit 2B - 6828 128 St.', 'Surrey', 'BC', 'V3W4C9', '(604) 501-7719', '',
+        '(604) 501-7759', '@METRO_VAN', NULL, 'Manager: Mr. Anant Singh', '2012-02-25 16:47:38', '1'),
+(445, 445, 'MEDISAVE PHARMACY #6', '#125 - 8291 Ackroyd Rd.', 'Richmond', 'BC', 'V6X3K5', '(604) 232-0811', '',
+        '(604) 232-0851', '@METRO_VAN', NULL, 'Manager: Mr. Shivinder Badyal', '2012-02-25 16:47:38', '1'),
+(447, 447, 'METROCARE PHARMACY', '4649 Kingsway', 'Burnaby', 'BC', 'V5H2B3', '(604) 568-1222', '',
+        '(604) 566-9213', '@METRO_VAN', NULL, 'Manager: Mr. Andy Nguyen', '2012-02-25 16:47:38', '1'),
+(448, 448, 'MINORU PHARMACY', '#102-7380 Westminster Hwy', 'Richmond', 'BC', 'V6X1A1', '(604) 270-2320', '',
+        '(604) 273-3342', '@METRO_VAN', NULL, 'Manager: Mrs. Elizabeth Mohomed', '2012-02-25 16:47:38', '1'),
+(449, 449, 'MJ\'S NATURAL PHARMACY', '6255 Victoria Dr', 'Vancouver', 'BC', 'V5P3X5', '(604) 323-1293', '',
+        '(604) 323-1294', '@METRO_VAN', NULL, 'Manager: Mr. Frankie Cheung', '2012-02-25 16:47:38', '1'),
+(450, 450, 'MJ\'S NATURAL PHARMACY #3', 'Richmond Public Market 1130 - 8260 Westminster Hwy', 'Richmond', 'BC',
+        'V6X3Y2', '(604) 232-1293', '', '(604) 232-1296', '@METRO_VAN', NULL, 'Manager: Mr. Kenny Chan',
+        '2012-02-25 16:47:38', '1'),
+(451, 451, 'MJ\'S NATURAL PHARMACY NO. 2', '6689 Victoria Dr', 'Vancouver', 'BC', 'V5P3Y2', '(604) 324-1293', '',
+        '(604) 324-1273', '@METRO_VAN', NULL, 'Manager: Miss Grace Leung', '2012-02-25 16:47:38', '1'),
+(452, 452, 'MORGAN CREEK MEDICINE CENTRE', '104 - 15252 32 Ave.', 'Surrey', 'BC', 'V3S0R7', '(604) 538-6333', '',
+        '(604) 538-6387', '@METRO_VAN', NULL, 'Manager: Ms. Wendy Mays', '2012-02-25 16:47:38', '1'),
+(454, 454, 'MOUNT PLEASANT PHARMACY', '93 Kingsway', 'Vancouver', 'BC', 'V5T3J1', '(604) 872-2039', '',
+        '(604) 872-2049', '@METRO_VAN', NULL, 'Manager: Mr. Francis Dong', '2012-02-25 16:47:38', '1'),
+(456, 456, 'MURRAYVILLE HEALTHCENTRE PHARMACY', '#102 - 22112 - 52nd Avenue', 'Langley', 'BC', 'V2Y2M6',
+        '(604) 534-6600', '', '(604) 534-6076', '@METRO_VAN', NULL, 'Manager: Dr. Shakeel Bhatti',
+        '2012-02-25 16:47:38', '1'),
+(457, 457, 'MURRAYVILLE PHARMACY #2', '105 - 22112 52 Ave.', 'Langley', 'BC', 'V2Y2M6', '(604) 533-7576', '',
+        '(604) 534-6076', '@METRO_VAN', NULL, 'Manager: Mrs. Sandra Klose', '2012-02-25 16:47:38', '1'),
+(458, 458, 'NANAIMO PHARMACY', '1299 Nanaimo St.', 'Vancouver', 'BC', 'V5L4T5', '(604) 251-1299', '',
+        '(604) 251-1280', '@METRO_VAN', NULL, 'Manager: Miss Ann Lee', '2012-02-25 16:47:38', '1'),
+(460, 460, 'NAOMI PHARMACY', '84 West Hastings St.', 'Vancouver', 'BC', 'V6B1G6', '(604) 689-8803 x 234', '',
+        '(604) 689-3996', '@METRO_VAN', NULL, 'Manager: Ms. Pamela Fu', '2012-02-25 16:47:38', '1'),
+(461, 461, 'NAZ\'S PHARMACY #2', '113 - 12578 72nd Ave.', 'Surrey', 'BC', 'V3W2M6', '(604) 596-3241', '',
+        '(604) 597-3267', '@METRO_VAN', NULL, 'Manager: Mrs. Manju Koruthu', '2012-02-25 16:47:38', '1'),
+(462, 462, 'NAZ\'S PRESCRIPTION PLUS PHARMACY', '6410 Main St.', 'Vancouver', 'BC', 'V5W2V4', '(604) 325-3241',
+        '', '(604) 325-3276', '@METRO_VAN', NULL, 'Manager: Ms. Nafisha Merali', '2012-02-25 16:47:38', '1'),
+(464, 464, 'NESTER\'S PHARMACY SFU', '9000 University High St.', 'Burnaby', 'BC', 'V5A0C1', '(604) 298-1566', '',
+        '(604) 298-1535', '@METRO_VAN', NULL, 'Manager: Mr. Zvonimir Petrusa', '2012-02-25 16:47:38', '1'),
+(465, 465, 'NEW LIFE PHARMACY', '463 Hastings St. E', 'Vancouver', 'BC', 'V6A1P5', '(604) 255-4900', '',
+        '(604) 255-4839', '@METRO_VAN', NULL, 'Manager: Mr. Mehdi Mirzaei', '2012-02-25 16:47:38', '1'),
+(466, 466, 'NEW WEST DRUGS', '408 Columbia St.', 'New Westminster', 'BC', 'V3L1B1', '(604) 525-7453', '',
+        '(604) 525-4755', '@METRO_VAN', NULL, 'Manager: Mr. Aldwin De Guia', '2012-02-25 16:47:38', '1'),
+(467, 467, 'NEWTON PHARMACY', '110 - 2626 Croydon Dr', 'Surrey', 'BC', 'V3W1J8', '(604) 501-6925', '',
+        '(604) 543-1674', '@METRO_VAN', NULL, 'Manager: Mr. Robert Lee', '2012-02-25 16:47:38', '1'),
+(470, 470, 'NORTH FRASER DRUGS', '4207 Fraser St.', 'Vancouver', 'BC', 'V5V4G1', '(604) 872-1151', '',
+        '(604) 872-1187', '@METRO_VAN', NULL, 'Manager: Mr. Ian Sands', '2012-02-25 16:47:38', '1'),
+(473, 473, 'NORTH WEST PHARMACY', '1877 Marine Dr North', 'Vancouver', 'BC', 'V7P1V5', '(604) 982-0981', '',
+        '(604) 982-0903', '@METRO_VAN', NULL, 'Manager: Mr. Mostafa Shareei', '2012-02-25 16:47:38', '1'),
+(474, 474, 'NORTHBURN PRESCRIPTIONS', '326 Gilmore Ave.', 'Burnaby', 'BC', 'V5C4R1', '(604) 568-8383', '',
+        '(604) 568-8332', '@METRO_VAN', NULL, 'Manager: Mr. Thomas Salimes', '2012-02-25 16:47:38', '1'),
+(475, 475, 'NORTHMOUNT PHARMACY LTD.', '#101 - 145 East 13th St. North', 'Vancouver', 'BC', 'V7L2L4',
+        '(604) 985-8241', '', '(604) 985-1240', '@METRO_VAN', NULL, 'Manager: Mr. Dan Klingspon', '2012-02-25 16:47:38',
+        '1'),
+(476, 476, 'NUCARE PHARMACY', '155 - 21900 Westminster Hwy', 'Richmond', 'BC', 'V6V0A8', '(604) 544-5166', '',
+        '(604) 200-0158', '@METRO_VAN', NULL, 'Manager: Mr. Maher Samman', '2012-02-25 16:47:38', '1'),
+(478, 478, 'OAKRIDGE SOUTH TOWER PHARMACY', '#205 - 650 West 41st Ave.', 'Vancouver', 'BC', 'V5Z2M9',
+        '(604) 266-8455', '', '(604) 266-8975', '@METRO_VAN', NULL, 'Manager: Mr. Stephen Yee', '2012-02-25 16:47:39',
+        '1'),
+(479, 479, 'OCEAN PHARMACY', '1880 Marine Drive West', 'Vancouver', 'BC', 'V7V1J6', '(604) 922-1238', '',
+        '(604) 926-3908', '@METRO_VAN', NULL, 'Manager: Mr. Alphonso Wong', '2012-02-25 16:47:39', '1'),
+(480, 480, 'OH PHARMACY', '#100 - 504 Cottonwood Ave.', 'Coquitlam', 'BC', 'V3J2R5', '(604) 800-2250', '',
+        '(604) 931-0912', '@METRO_VAN', NULL, 'Manager: Mrs. Eunice Oh', '2012-02-25 16:47:39', '1'),
+(483, 483, 'OMNICARE PHARMACY LTD.', '#130 - 1 East Cordova St.', 'Vancouver', 'BC', 'V6A4H3', '(604) 633-1289',
+        '', '(604) 633-1298', '@METRO_VAN', NULL, 'Manager: Mr. Harvey Chan', '2012-02-25 16:47:39', '1'),
+(492, 492, 'OWL DRUGS', '199 East Hastings St.', 'Vancouver', 'BC', 'V6A1N5', '(604) 681-3024', '',
+        '(604) 681-3048', '@METRO_VAN', NULL, 'Manager: Mr. Ken Leung', '2012-02-25 16:47:39', '1'),
+(493, 493, 'P & A PHARMACY LTD.', '4336 Fraser St.', 'Vancouver', 'BC', 'V5V4G3', '(604) 876-4424', '',
+        '(604) 876-4424', '@METRO_VAN', NULL, 'Manager: Mr. Andrew Chan', '2012-02-25 16:47:39', '1'),
+(494, 494, 'P.D.C. PHARMACY', '2370 United Blvd', 'Coquitlam', 'BC', 'V3K6A3', '(604) 927-2652', '',
+        '(604) 941-0532', '@METRO_VAN', NULL, 'Manager: Mr. Edwin Ho', '2012-02-25 16:47:39', '1'),
+(495, 495, 'PACIFIC CARE PHARMACY', '2536 Kingsway', 'Vancouver', 'BC', 'V5R5H2', '(604) 438-6200', '',
+        '(604) 438-6201', '@METRO_VAN', NULL, 'Manager: Mr. Jeevan Tamana', '2012-02-25 16:47:39', '1'),
+(497, 497, 'PACIFIC PRESCRIPTIONS & MEDICAL SUPPLIES', '#102 - 2607 East 49th Ave.', 'Vancouver', 'BC', 'V5S1J9',
+        '(604) 431-5538', '', '(604) 431-5488', '@METRO_VAN', NULL, 'Manager: Mr. Hanif Rayani', '2012-02-25 16:47:39',
+        '1'),
+(498, 498, 'PACIFIC PRESCRIPTIONS & MEDICAL SUPPLIES NO. 2', '#110 - 3001 Gordon Ave.', 'Coquitlam', 'BC',
+        'V5E2A5', '(604) 552-6941', '', '(604) 552-6942', '@METRO_VAN', NULL, 'Manager: Miss Shelina Rayani',
+        '2012-02-25 16:47:39', '1'),
+(503, 503, 'PARAGON CRESTVIEW PHARMACY', '3138 Main St.', 'Vancouver', 'BC', 'V5T3G7', '(604) 879-8808', '',
+        '(604) 879-8809', '@METRO_VAN', NULL, 'Manager: Miss Jencinne Chan', '2012-02-25 16:47:39', '1'),
+(509, 509, 'PARK PACIFIC PHARMACY', 'Yaohan Centre #2260 - 3700 No. 3 Rd.', 'Richmond', 'BC', 'V6X3X2',
+        '(604) 273-9812', '', '(604) 270-2228', '@METRO_VAN', NULL, 'Manager: Mr. William Lui', '2012-02-25 16:47:39',
+        '1'),
+(513, 513, 'PEOPLES DRUG MART #29', '2529 Shaughnessy St.', 'Port Coquitlam', 'BC', 'V3C3G1', '(604) 941-2413',
+        '', '(604) 941-6754', '@METRO_VAN', NULL, 'Manager: Mrs. Elaine Ko', '2012-02-25 16:47:39', '1'),
+(521, 521, 'PEOPLES DRUG MART #119', '1463 Johnston Rd.', 'White Rock', 'BC', 'V4B3Z4', '(604) 531-4636', '',
+        '(604) 531-9299', '@METRO_VAN', NULL, 'Manager: Mr. Chris Formosa', '2012-02-25 16:47:39', '1'),
+(524, 524, 'PEOPLES DRUG MART #128', '#1 - 825 McBride Blvd', 'New Westminster', 'BC', 'V3L5B5',
+        '(604) 525-2474', '', '(604) 525-6286', '@METRO_VAN', NULL, 'Manager: Mr. Tom Lee', '2012-02-25 16:47:39', '1'),
+(530, 530, 'PEOPLES DRUG MART #168', 'Champlain Square 7160 Kerr St.', 'Vancouver', 'BC', 'V5S4W2',
+        '(604) 434-2656', '', '(604) 434-3326', '@METRO_VAN', NULL, 'Manager: Mr. Frank Lucarelli',
+        '2012-02-25 16:47:39', '1'),
+(533, 533, 'PEOPLES DRUG MART #188', '571 West 57th Ave.', 'Vancouver', 'BC', 'V6P1R8', '(604) 324-2258', '',
+        '(604) 324-2259', '@METRO_VAN', NULL, 'Manager: Mr. Jerome Cheng', '2012-02-25 16:47:39', '1'),
+(539, 539, 'PEOPLES PHARMACY #315', '177 - 8138 128 St.', 'Surrey', 'BC', 'V3W1R1', '(604) 598-3233', '',
+        '(604) 598-3234', '@METRO_VAN', NULL, 'Manager: Ms. Shamim Akhtar', '2012-02-25 16:47:39', '1'),
+(540, 540, 'PEOPLES PHARMACY #316', 'G - 1001 Austin Ave.', 'Coquitlam', 'BC', 'V3K3N9', '(604) 936-0024', '',
+        '(604) 936-0034', '@METRO_VAN', NULL, 'Manager: Mr. Davie Chow', '2012-02-25 16:47:39', '1'),
+(543, 543, 'PEOPLES PHARMACY #356', '113 - 10212 152 St.', 'Surrey', 'BC', 'V3R6N7', '(604) 580-7457', '',
+        '(604) 580-4798', '@METRO_VAN', NULL, 'Manager: Mr. David Young', '2012-02-25 16:47:39', '1'),
+(544, 544, 'PEOPLES PHARMACY #357', '137 - 3030 Lincoln Ave.', 'Coquitlam', 'BC', 'V3B6B4', '(604) 464-1033', '',
+        '(604) 464-1035', '@METRO_VAN', NULL, 'Manager: Ms. Nancy Seow', '2012-02-25 16:47:39', '1'),
+(545, 545, 'PEOPLES PHARMACY #358', '101 - 12005 238B St.', 'Maple Ridge', 'BC', 'V4R4X4', '(604) 476-1420', '',
+        '(604) 476-1410', '@METRO_VAN', NULL, 'Manager: Ms. Arcyditha Uy', '2012-02-25 16:47:39', '1'),
+(547, 547, 'PEOPLES PHARMACY #365', '4218 Dawson St.', 'Burnaby', 'BC', 'V5C0B8', '(604) 299-6677', '',
+        '(604) 299-7200', '@METRO_VAN', NULL, 'Manager: Mr. Alnazir Asaria', '2012-02-25 16:47:39', '1'),
+(553, 553, 'PHARMACITY DRUGSTORE', '101 - 8386 120th St.', 'Surrey', 'BC', 'V3W3N4', '(604) 595-2873', '',
+        '(604) 595-2840', '@METRO_VAN', NULL, 'Manager: Mr. Harj Samra', '2012-02-25 16:47:39', '1'),
+(555, 555, 'PHARMALIFE PHARMACY', 'Capilano Mall 60 - 935 Marine Dr North', 'Vancouver', 'BC', 'V7P1S3',
+        '(778) 340-1800', '', '(778) 340-1888', '@METRO_VAN', NULL, 'Manager: Ms. Goli Naghibi', '2012-02-25 16:47:39',
+        '1'),
+(556, 556, 'PHARMASAVE #31', '113 16th St. W North', 'Vancouver', 'BC', 'V7M1T3', '(604) 988-5015', '',
+        '(604) 988-5016', '@METRO_VAN', NULL, 'Manager: Mr. Alvin Singh', '2012-02-25 16:47:39', '1'),
+(563, 563, 'PHARMASAVE #71', '110 - 6350 120 St.', 'Surrey', 'BC', 'V3X3K1', '(604) 507-3999', '',
+        '(604) 507-3939', '@METRO_VAN', NULL, 'Manager: Miss Natasha Patel', '2012-02-25 16:47:39', '1'),
+(566, 566, 'PHARMASAVE #028', 'Unit 1020 - 4151 Hazelbridge Way', 'Richmond', 'BC', 'V6X4J7', '(604) 273-8020',
+        '', '(604) 273-8999', '@METRO_VAN', NULL, 'Manager: Miss Annie Sun', '2012-02-25 16:47:39', '1'),
+(568, 568, 'PHARMASAVE #040', '3533 4th St. W', 'Vancouver', 'BC', 'V6R1N9', '(604) 733-7211', '',
+        '(604) 733-7215', '@METRO_VAN', NULL, 'Manager: Ms. Dorothy Cram', '2012-02-25 16:47:39', '1'),
+(569, 569, 'PHARMASAVE #060', '16 - 2949 Main St.', 'Vancouver', 'BC', 'V5T3G4', '(604) 879-1885', '',
+        '(604) 879-1887', '@METRO_VAN', NULL, 'Manager: Miss Jamie Wessel', '2012-02-25 16:47:39', '1'),
+(570, 570, 'PHARMASAVE #065', '1308 Commercial Dr', 'Vancouver', 'BC', 'V5L3X6', '(604) 215-5500', '',
+        '(604) 215-5504', '@METRO_VAN', NULL, 'Manager: Mr. Kunakar Pou', '2012-02-25 16:47:39', '1'),
+(571, 571, 'PHARMASAVE #066', '103 - 2609 Westview Dr North', 'Vancouver', 'BC', 'V7N4M2', '(604) 986-2292', '',
+        '(604) 986-2293', '@METRO_VAN', NULL, 'Manager: Mr. Nelson Kuhlen', '2012-02-25 16:47:39', '1'),
+(572, 572, 'PHARMASAVE #068 NORQUAY VILLAGE', '2235 Kingsway', 'Vancouver', 'BC', 'V5N2T6', '(604) 569-0681', '',
+        '(604) 569-0640', '@METRO_VAN', NULL, 'Manager: Mr. Wen Wong', '2012-02-25 16:47:39', '1'),
+(573, 573, 'PHARMASAVE #102', '1109 Austin Ave.', 'Coquitlam', 'BC', 'V3K3P4', '(604) 936-1488', '',
+        '(604) 936-1409', '@METRO_VAN', NULL, 'Manager: Mr. Stephen Wrightman', '2012-02-25 16:47:39', '1'),
+(582, 582, 'PHARMASAVE #151', '11198 - 84th Ave.', 'Delta', 'BC', 'V4C2L7', '(604) 596-9551', '',
+        '(604) 596-9527', '@METRO_VAN', NULL, 'Manager: Mr. Hanif Esmail', '2012-02-25 16:47:39', '1'),
+(583, 583, 'PHARMASAVE #158', 'Ocean Park Shopping Ctr. 12851 - 16th Ave.', 'Surrey', 'BC', 'V4A1N5',
+        '(604) 536-7611', '', '(604) 536-4261', '@METRO_VAN', NULL, 'Manager: Mr. Craig Plain', '2012-02-25 16:47:39',
+        '1'),
+(585, 585, 'PHARMASAVE #179', 'Dell Shopping Centre 10654 King George Blvd', 'Surrey', 'BC', 'V3T2X3',
+        '(604) 581-4431', '', '(604) 581-4130', '@METRO_VAN', NULL, 'Manager: Mr. Allen Wiens', '2012-02-25 16:47:39',
+        '1'),
+(589, 589, 'PHARMASAVE #190', '3295 Coast Meridian Rd. Port', 'Coquitlam', 'BC', 'V3B3N3', '(604) 942-9813', '',
+        '(604) 942-1561', '@METRO_VAN', NULL, 'Manager: Mr. Leslie Fenton', '2012-02-25 16:47:39', '1'),
+(592, 592, 'PHARMASAVE #203', '8697 - 10th Avenue', 'Burnaby', 'BC', 'V3N2S9', '(604) 522-8050', '',
+        '(604) 522-8779', '@METRO_VAN', NULL, 'Manager: Mr. Jamie Yuen', '2012-02-25 16:47:39', '1'),
+(594, 594, 'PHARMASAVE #206', '#119 - 15280 - 101st Ave.', 'Surrey', 'BC', 'V3R8X7', '(604) 584-3331', '',
+        '(604) 584-3321', '@METRO_VAN', NULL, 'Manager: Mr. James Chow', '2012-02-25 16:47:40', '1'),
+(595, 595, 'PHARMASAVE #211', '#101-8850 Walnut Grove Dr', 'Langley', 'BC', 'V1M2C9', '(604) 888-5602', '',
+        '(604) 888-6518', '@METRO_VAN', NULL, 'Manager: Mr. Jaspreet Sidhu', '2012-02-25 16:47:40', '1'),
+(597, 597, 'PHARMASAVE #214', '5331 Headland Drive West', 'Vancouver', 'BC', 'V7W3C6', '(604) 926-5331', '',
+        '(604) 926-4819', '@METRO_VAN', NULL, 'Manager: Mr. Alan Williamson', '2012-02-25 16:47:40', '1'),
+(604, 604, 'PHARMASAVE #246', '4857 Elliott St.', 'Delta', 'BC', 'V4K2X7', '(604) 946-7685', '',
+        '(604) 940-6816', '@METRO_VAN', NULL, 'Manager: Mr. Emil Petrusa', '2012-02-25 16:47:40', '1'),
+(605, 605, 'PHARMASAVE #248', '#409 - 15940 Fraser Highway', 'Surrey', 'BC', 'V4N0X8', '(604) 501-2711', '',
+        '(604) 501-2710', '@METRO_VAN', NULL, 'Manager: Mr. Yeh-Lap Wu', '2012-02-25 16:47:40', '1'),
+(608, 608, 'PHARMASAVE #252', '499 Granville St.', 'Vancouver', 'BC', 'V6C1T1', '(604) 801-6991', '',
+        '(604) 801-6993', '@METRO_VAN', NULL, 'Manager: Miss Tran Cam', '2012-02-25 16:47:40', '1'),
+(611, 611, 'PHARMASAVE #256', '400 - 1055 Dunsmuir St. PO Box 49326 - Van Stn Bentall Centre', 'Vancouver', 'BC',
+        'V7X1L4', '(604) 682-7785', '', '(604) 682-7744', '@METRO_VAN', NULL, 'Manager: Mr. Sina Salehi Pirooz',
+        '2012-02-25 16:47:40', '1'),
+(613, 613, 'PHARMASAVE #259', '#1 - 18710 Fraser Hwy', 'Surrey', 'BC', 'V3S7Y4', '(604) 576-6169', '',
+        '(604) 576-6170', '@METRO_VAN', NULL, 'Manager: Mr. Ahmad Wali', '2012-02-25 16:47:40', '1'),
+(615, 615, 'PHARMASAVE #263', '424 Columbia St.', 'New Westminster', 'BC', 'V3L1B1', '(604) 522-3400', '',
+        '(604) 522-3402', '@METRO_VAN', NULL, 'Manager: Mr. Ashkan Tahmasebi Boldaji', '2012-02-25 16:47:40', '1'),
+(621, 621, 'PHARMASAVE #275', '130 - 1005 Columbia St.', 'New Westminster', 'BC', 'V3M6H5', '(604) 525-5607', '',
+        '(604) 525-5608', '@METRO_VAN', NULL, 'Manager: Miss Christine Pothier', '2012-02-25 16:47:40', '1'),
+(623, 623, 'PHARMASAVE #278', '4367 Hastings St.', 'Burnaby', 'BC', 'V5C2J7', '(604) 298-5910', '',
+        '(604) 298-5930', '@METRO_VAN', NULL, 'Manager: Miss Bernice Lam', '2012-02-25 16:47:40', '1'),
+(626, 626, 'PHARMASAVE #286', '1244 56 St.', 'Delta', 'BC', 'V4L2A4', '(604) 943-8966', '', '(604) 943-5068',
+        '@METRO_VAN', NULL, 'Manager: Mr. Henry Tsang', '2012-02-25 16:47:40', '1'),
+(628, 628, 'PHARMASAVE #290', '#120 - 2627 Shaughnessy St. Port', 'Coquitlam', 'BC', 'V3C0E1', '(604) 942-7979',
+        '', '(604) 942-7970', '@METRO_VAN', NULL, 'Manager: Mrs. Lindsey Moncey', '2012-02-25 16:47:40', '1'),
+(630, 630, 'PHARMASAVE #299', '238 Robson St.', 'Vancouver', 'BC', 'V6B6A1', '(604) 681-8190', '',
+        '(604) 681-8195', '@METRO_VAN', NULL, 'Manager: Mr. Douglas Ma', '2012-02-25 16:47:40', '1'),
+(634, 634, 'PHARMASAVE EDGEMONT #107', '3233 Connaught Cres North', 'Vancouver', 'BC', 'V7R2V7',
+        '(604) 988-6396', '', '(604) 988-3403', '@METRO_VAN', NULL, 'Manager: Ms. Hanan Thorne', '2012-02-25 16:47:40',
+        '1'),
+(636, 636, 'PHARMASAVE HEALTH CENTRE #001', '#100 - 2255 Elgin Ave.', 'Port Coquitlam', 'BC', 'V3C2B4',
+        '(604) 942-7117', '', '(604) 942-1651', '@METRO_VAN', NULL, 'Manager: Mrs. Susan Behm', '2012-02-25 16:47:40',
+        '1'),
+(637, 637, 'PHARMASAVE HEALTH CENTRE #002', '#100 - 2800 East 1st Avenue', 'Vancouver', 'BC', 'V5M4N8',
+        '(604) 215-8284', '', '(604) 215-8443', '@METRO_VAN', NULL, 'Manager: Mr. Charles Fong', '2012-02-25 16:47:40',
+        '1'),
+(638, 638, 'PHARMASAVE HEALTH CENTRE #003', '7 - 8948 202 St.', 'Langley', 'BC', 'V1M4A7', '(604) 513-1414', '',
+        '(604) 513-1420', '@METRO_VAN', NULL, 'Manager: Mrs. Carol-Lynne Evens', '2012-02-25 16:47:40', '1'),
+(639, 639, 'PHARMASAVE HEALTH CENTRE #007', 'P.O. Box 940 Stn Fort Langley #3 - 9124 Glover Rd.', 'Fort Langley',
+        'BC', 'V1M2S3', '(604) 882-0611', '', '(604) 882-0610', '@METRO_VAN', NULL, 'Manager: Mr. Sukh Sidhu',
+        '2012-02-25 16:47:40', '1'),
+(640, 640, 'PHARMASAVE HEALTH CENTRE #009', '(Reid\'s Peace Arch Pharmacy) #110 - 15321 - 16th Ave.', 'Surrey',
+        'BC', 'V4A1R6', '(604) 536-4211', '', '(604) 536-6864', '@METRO_VAN', NULL, 'Manager: Mr. Philip Rantucci',
+        '2012-02-25 16:47:40', '1'),
+(641, 641, 'PHARMASAVE HEALTH CENTRE #010', '#101 - 1160 Burrard St.', 'Vancouver', 'BC', 'V6Z2E8',
+        '(604) 669-7700', '', '(604) 669-7282', '@METRO_VAN', NULL, 'Manager: Mr. Leon Jung', '2012-02-25 16:47:40',
+        '1'),
+(643, 643, 'PHARMASAVE HEALTH CENTRE #015', '5778 - 176A St.', 'Surrey', 'BC', 'V3S4H3', '(604) 576-2888', '',
+        '(604) 576-2882', '@METRO_VAN', NULL, 'Manager: Mr. Lyle Sunada', '2012-02-25 16:47:40', '1'),
+(645, 645, 'PHARMASAVE HEALTH CENTRE #020', '#103 - 625 - 5th Avenue', 'New Westminster', 'BC', 'V3M1X4',
+        '(604) 526-2233', '', '(604) 526-2205', '@METRO_VAN', NULL, 'Manager: Mrs. Agnes Fridl Poljak',
+        '2012-02-25 16:47:40', '1'),
+(646, 646, 'PHARMASAVE HEALTH CENTRE #021', '#109 - 805 West Broadway', 'Vancouver', 'BC', 'V5Z1K1',
+        '(604) 709-3131', '', '(604) 709-3121', '@METRO_VAN', NULL, 'Manager: Ms. Mona Heppner', '2012-02-25 16:47:40',
+        '1'),
+(647, 647, 'PHARMASAVE HEALTH CENTRE #022',
+        'Suite 1103.8 - 3880 Grant McConachie Way Vanc. Int\'l Airport Domestic Terminal', 'Richmond', 'BC', 'V7B0A5',
+        '(604) 303-7033', '', '(604) 303-0739', '@METRO_VAN', NULL, 'Manager: Mr. Stephen Mar', '2012-02-25 16:47:40',
+        '1'),
+(649, 649, 'PHARMASAVE HEALTH CENTRE #027', 'Unit J3 - 925 Main St. West', 'Vancouver', 'BC', 'V7T2Z3',
+        '(604) 925-3304', '', '(604) 925-3312', '@METRO_VAN', NULL, 'Manager: Mr. Roberto Conte', '2012-02-25 16:47:40',
+        '1'),
+(650, 650, 'PHARMASAVE HEALTH CENTRE #029', '1251 Pacific Blvd', 'Vancouver', 'BC', 'V6Z2R6', '(604) 684-8488',
+        '', '(604) 684-8499', '@METRO_VAN', NULL, 'Manager: Miss Anissa Penneway', '2012-02-25 16:47:40', '1'),
+(651, 651, 'PHARMASAVE HEALTH CENTRE #030', 'Summitview Medical Centre 100A - 3300 Boundary Rd.', 'Burnaby',
+        'BC', 'V5M4A4', '(604) 453-0136', '', '(604) 453-0137', '@METRO_VAN', NULL, 'Manager: Mrs. Shirin Jiwan',
+        '2012-02-25 16:47:40', '1'),
+(652, 652, 'PHARMASAVE HEALTH CENTRE #033', '4198 Dunbar St.', 'Vancouver', 'BC', 'V6S2E7', '(604) 732-3010', '',
+        '(604) 732-3011', '@METRO_VAN', NULL, 'Manager: Mrs. Kristine Horner', '2012-02-25 16:47:40', '1'),
+(653, 653, 'PHARMASAVE HEALTH CENTRE #038', 'Richlea Shopping Centre 116 - 10151 No. 3 Rd.', 'Richmond', 'BC',
+        'V7A4R6', '(604) 241-2898', '', '(604) 241-2810', '@METRO_VAN', NULL, 'Manager: Miss Lina Yee',
+        '2012-02-25 16:47:40', '1'),
+(654, 654, 'PHARMASAVE HEALTH CENTRE #041', '1847 4th Ave. W', 'Vancouver', 'BC', 'V6J1M4', '(604) 738-0081', '',
+        '(604) 738-0091', '@METRO_VAN', NULL, 'Manager: Mr. Brent Nixon', '2012-02-25 16:47:40', '1'),
+(655, 655, 'PHARMASAVE HEALTH CENTRE #045', '103 - 205 Newport Dr', 'Port Moody', 'BC', 'V3H5C9',
+        '(604) 461-0136', '', '(604) 461-0137', '@METRO_VAN', NULL, 'Manager: Miss Magdalena Kowalska',
+        '2012-02-25 16:47:40', '1'),
+(656, 656, 'PHARMASAVE HEALTH CENTRE #050', '15168 Fraser Hwy', 'Surrey', 'BC', 'V3R3P1', '(604) 580-1456', '',
+        '(604) 580-1455', '@METRO_VAN', NULL, 'Manager: Mr. Omer Ismail', '2012-02-25 16:47:40', '1'),
+(657, 657, 'PHARMASAVE HEALTH CENTRE #051', '2525 St. John\'s St.', 'Port Moody', 'BC', 'V3H2B3',
+        '(604) 936-2273', '', '(604) 936-2278', '@METRO_VAN', NULL, 'Manager: Miss Effie Tsalkitzis',
+        '2012-02-25 16:47:40', '1'),
+(660, 660, 'PHARMASAVE HEALTH CENTRE #058', '102 - 2048 41st Ave. W', 'Vancouver', 'BC', 'V6M1Y8',
+        '(604) 261-3335', '', '(604) 261-3336', '@METRO_VAN', NULL, 'Manager: Mr. Nash Moosa', '2012-02-25 16:47:40',
+        '1'),
+(662, 662, 'PHARMASAVE HEALTH CENTRE #061', '3835 Sunset St.', 'Burnaby', 'BC', 'V5G1T4', '(604) 434-1722', '',
+        '(604) 909-1722', '@METRO_VAN', NULL, 'Manager: Miss Elaine Wong', '2012-02-25 16:47:40', '1'),
+(665, 665, 'PHARMASAVE HEALTH CENTRE #070', '2685 Broadway W', 'Vancouver', 'BC', 'V6K2G2', '(604) 568-8844', '',
+        '(604) 568-8944', '@METRO_VAN', NULL, 'Manager: Mr. Milosz Makarewicz', '2012-02-25 16:47:40', '1'),
+(666, 666, 'PHARMASAVE HEALTH CENTRE #072', '105 - 12420 No. 1 Rd.', 'Richmond', 'BC', 'V7E6N2',
+        '(604) 232-0159', '', '(604) 232-0523', '@METRO_VAN', NULL, 'Manager: Mr. Peter Tong', '2012-02-25 16:47:40',
+        '1'),
+(667, 667, 'PHARMASAVE HEALTH CENTRE #077', '1671 Broadway E', 'Vancouver', 'BC', 'V5N1V9', '(604) 251-1293', '',
+        '(604) 251-1248', '@METRO_VAN', NULL, 'Manager: Mrs. Zaitoon Karim', '2012-02-25 16:47:40', '1'),
+(668, 668, 'PHARMASAVE HEALTH CENTRE #078', 'Unit 1 - 4655 Central Blvd', 'Burnaby', 'BC', 'V5H4J5',
+        '(604) 568-8713', '', '(604) 568-8723', '@METRO_VAN', NULL, 'Manager: Mrs. Saira Mithani',
+        '2012-02-25 16:47:40', '1'),
+(669, 669, 'PHARMASAVE HEALTH CENTRE #080', '5791 Oak St.', 'Vancouver', 'BC', 'V6M2V7', '(604) 269-3617', '',
+        '(604) 269-3761', '@METRO_VAN', NULL, 'Manager: Mr. Rudy Chin', '2012-02-25 16:47:40', '1'),
+(670, 670, 'PHARMASAVE HEALTH CENTRE #099', '#10 - 2448 160 St.', 'Surrey', 'BC', 'V3S0C8', '(604) 531-2690', '',
+        '(604) 531-2691', '@METRO_VAN', NULL, 'Manager: Mrs. Cathy Jacob', '2012-02-25 16:47:40', '1'),
+(673, 673, 'PHARMASAVE NO. 008', '#110 - 13798 - 94A Ave.', 'Surrey', 'BC', 'V3V1N1', '(604) 585-8555', '',
+        '(604) 583-5402', '@METRO_VAN', NULL, 'Manager: Mr. Amin Nanji', '2012-02-25 16:47:40', '1'),
+(676, 676, 'PHARMASAVE SCOTT TOWN #167', '9558 - 120th St.', 'Surrey', 'BC', 'V3V4C1', '(604) 581-4671', '',
+        '(604) 581-4673', '@METRO_VAN', NULL, 'Manager: Miss Halina Zielinska', '2012-02-25 16:47:40', '1'),
+(677, 677, 'PHARMATRUST PHARMACY', '3496 Main St.', 'Vancouver', 'BC', 'V5V3N2', '(604) 709-0988', '',
+        '(604) 709-0933', '@METRO_VAN', NULL, 'Manager: Mr. Miguel Lam', '2012-02-25 16:47:40', '1'),
+(678, 678, 'PHARMATRUST PHARMACY #2', '523 Main St.', 'Vancouver', 'BC', 'V6A2V1', '(604) 694-0988', '',
+        '(604) 694-0933', '@METRO_VAN', NULL, 'Manager: Mr. Henry Tung', '2012-02-25 16:47:40', '1'),
+(679, 679, 'PHARMAWEST PHARMACY', '#101 - 20560 56 Ave.', 'Langley', 'BC', 'V3A3Y8', '(604) 530-0745', '',
+        '(604) 530-0735', '@METRO_VAN', NULL, 'Manager: Mr. Aman Bhangu', '2012-02-25 16:47:40', '1'),
+(680, 680, 'PHARMAX HEALTH', '108 - 930 1st St. W North', 'Vancouver', 'BC', 'V7P3N4', '(604) 985-8844', '',
+        '(604) 985-8842', '@METRO_VAN', NULL, 'Manager: Mr. Amin Janmohamed', '2012-02-25 16:47:40', '1'),
+(682, 682, 'PHS DISPENSARY', '1060 Howe St.', 'Vancouver', 'BC', 'V6Z1P5', '(604) 566-9122', '',
+        '(604) 566-9124', '@METRO_VAN', NULL, 'Manager: Mr. Bennedick Koh', '2012-02-25 16:47:40', '1'),
+(684, 684, 'POINT GREY PHARMACY', '4520 West 10th Ave.', 'Vancouver', 'BC', 'V6R2J1', '(604) 224-1377', '',
+        '(604) 225-0019', '@METRO_VAN', NULL, 'Manager: Mr. Safouh El Rayes', '2012-02-25 16:47:40', '1'),
+(687, 687, 'PRESCRIPTIONS PLUS PHARMACY', '1215 - 4871 Shell Rd.', 'Richmond', 'BC', 'V6X3Z6', '(604) 270-2061',
+        '', '(604) 270-2067', '@METRO_VAN', NULL, 'Manager: Mr. Billy Lee', '2012-02-25 16:47:40', '1'),
+(688, 688, 'PRICESMART FOODS PHARMACY #2207 - KING GEORGE', '10312 King George Blvd', 'Surrey', 'BC', 'V3T2W5',
+        '(604) 588-6292', '', '(604) 930-4883', '@METRO_VAN', NULL, 'Manager: Mr. Lloyd Khaodhiar',
+        '2012-02-25 16:47:40', '1'),
+(691, 691, 'PRICESMART FOODS PHARMACY #2215 - CLOVERDALE', '17745 64 Ave.', 'Cloverdale', 'BC', 'V3X1Z2',
+        '(604) 575-7162', '', '(604) 575-7165', '@METRO_VAN', NULL, 'Manager: Miss Jennifer Chan',
+        '2012-02-25 16:47:40', '1'),
+(692, 692, 'PRICESMART FOODS PHARMACY #2221 - CAMERON', '#102 - 3433 North Rd.', 'Burnaby', 'BC', 'V3J0A9',
+        '(604) 415-9992', '', '(604) 415-0288', '@METRO_VAN', NULL, 'Manager: Miss Christine Lo', '2012-02-25 16:47:40',
+        '1'),
+(693, 693, 'PRICESMART FOODS PHARMACY #2228 - MARINE WAY', '7501 Market Crossing', 'Burnaby', 'BC', 'V5J0A3',
+        '(604) 433-6314', '', '(604) 433-6814', '@METRO_VAN', NULL, 'Manager: Miss Doris Lee', '2012-02-25 16:47:40',
+        '1'),
+(694, 694, 'PRICESMART FOODS PHARMACY #2235 - WHITE ROCK', '1641 - 152nd St.', 'White Rock', 'BC', 'V4A4N3',
+        '(604) 536-6530', '', '(604) 536-9838', '@METRO_VAN', NULL, 'Manager: Mr. Michael Gallimore',
+        '2012-02-25 16:47:40', '1'),
+(695, 695, 'PRICESMART FOODS PHARMACY #2242 - LANGLEY', '20151 Fraser Highway', 'Langley', 'BC', 'V3A4E4',
+        '(604) 533-0400', '', '(604) 533-0362', '@METRO_VAN', NULL, 'Manager: Miss Satbir Saini', '2012-02-25 16:47:40',
+        '1'),
+(696, 696, 'PRICESMART FOODS PHARMACY #2249 - CAPILANO', '140 - 879 Marine Dr', 'North Vancouver', 'BC',
+        'V7P1R7', '(604) 983-2299', '', '(604) 983-2279', '@METRO_VAN', NULL, 'Manager: Ms. Janice Nueva Espana',
+        '2012-02-25 16:47:40', '1'),
+(697, 697, 'PRICESMART FOODS PHARMACY #2256 - GRANDVIEW HWY', '2880 Bentall St.', 'Vancouver', 'BC', 'V5M4H4',
+        '(604) 434-4937', '', '(604) 434-5403', '@METRO_VAN', NULL, 'Manager: Miss Livia Chan', '2012-02-25 16:47:40',
+        '1'),
+(698, 698, 'PRICESMART FOODS PHARMACY #2263 - CLAYTON', '18710 Fraser Hwy', 'Surrey', 'BC', 'V3S7Y4',
+        '(604) 574-1231', '', '(604) 574-1264', '@METRO_VAN', NULL, 'Manager: Mr. Mark Sheppard', '2012-02-25 16:47:40',
+        '1'),
+(699, 699, 'PRICESMART FOODS PHARMACY #2274 - RICHMOND', '8200 Ackroyd Rd.', 'Richmond', 'BC', 'V6X1B5',
+        '(604) 278-8408', '', '(604) 278-7227', '@METRO_VAN', NULL, 'Manager: Mr. Raymond Jay', '2012-02-25 16:47:40',
+        '1'),
+(703, 703, 'PURE PHARMACY HEALTH CENTRE', '111 - 15388 24 Ave.', 'Surrey', 'BC', 'V4A2J2', '(604) 542-7780', '',
+        '(604) 542-3263', '@METRO_VAN', NULL, 'Manager: Miss Ada Poon', '2012-02-25 16:47:41', '1'),
+(708, 708, 'QUEENSBOROUGH COMMUNITY PHARMACY', '1028 Ewen Ave.', 'New Westminster', 'BC', 'V3M5E1',
+        '(778) 397-1132', '', '(778) 397-1129', '@METRO_VAN', NULL, 'Manager: Mr. Rawinder Dhasi',
+        '2012-02-25 16:47:41', '1'),
+(709, 709, 'R.E.A.C.H. CENTRE', '1145 Commercial Drive', 'Vancouver', 'BC', 'V5L3X3', '(604) 254-1354', '',
+        '(604) 254-8789', '@METRO_VAN', NULL, 'Manager: Mr. Afshin Jaberi', '2012-02-25 16:47:41', '1'),
+(710, 710, 'REGENCY #6 MEDICINE CENTRE', '100 - 1144 Burrard St.', 'Vancouver', 'BC', 'V6Z2A5', '(604) 688-4644',
+        '', '(604) 648-8028', '@METRO_VAN', NULL, 'Manager: Mr. Peter Cook', '2012-02-25 16:47:41', '1'),
+(711, 711, 'REGENCY MEDICINE CENTRE', '#100 - 6091 Gilbert Rd.', 'Richmond', 'BC', 'V7C5L9', '(604) 273-5544',
+        '', '(604) 273-5037', '@METRO_VAN', NULL, 'Manager: Mr. Ronald Gracan', '2012-02-25 16:47:41', '1'),
+(712, 712, 'REGENCY PRESCRIPTIONS #1', '#1 - 1530 West 7th Avenue', 'Vancouver', 'BC', 'V6J1S2',
+        '(604) 738-7181', '', '(604) 738-7127', '@METRO_VAN', NULL, 'Manager: Miss Audrey Fung', '2012-02-25 16:47:41',
+        '1'),
+(713, 713, 'REGENCY PRESCRIPTIONS #3', '#130 - 809 West 41st Ave.', 'Vancouver', 'BC', 'V5Z2N6',
+        '(604) 266-5355', '', '(604) 261-1063', '@METRO_VAN', NULL, 'Manager: Ms. J.D. Sharp', '2012-02-25 16:47:41',
+        '1'),
+(718, 718, 'RESIDENT PLUS PHARMACY INC.', '#100 - 5465 192 St. RR 2', 'Surrey', 'BC', 'V3S8E5', '(778) 574-5455',
+        '', '(778) 574-5450', '@METRO_VAN', NULL, 'Manager: Miss Nicole Collier', '2012-02-25 16:47:41', '1'),
+(723, 723, 'REXALL #7158', '4898 Main St.', 'Vancouver', 'BC', 'V5V3R8', '(604) 873-3527', '', '(604) 873-0448',
+        '@METRO_VAN', NULL, 'Manager: Miss Fiona Huang', '2012-02-25 16:47:41', '1'),
+(728, 728, 'REXALL BURNABY LTC', 'Unit 208A - 3430 Brighton Ave.', 'Burnaby', 'BC', 'V5A3H4', '(604) 215-2727',
+        '', '(604) 215-2725', '@METRO_VAN', NULL, 'Manager: Miss Yuet Choi', '2012-02-25 16:47:41', '1'),
+(734, 734, 'REXALL DRUG STORE #7152', '#107 - 15966 108 Ave.', 'Surrey', 'BC', 'V4N1J6', '(604) 588-8330', '',
+        '(604) 588-8342', '@METRO_VAN', NULL, 'Manager: Mr. Peyman Haghighat', '2012-02-25 16:47:41', '1'),
+(735, 735, 'REXALL DRUG STORE #7182', '#1173 - 88 Pender St. W', 'Vancouver', 'BC', 'V6B6N9', '(604) 683-4244',
+        '', '(604) 683-4248', '@METRO_VAN', NULL, 'Manager: Mr. Aaron Wong', '2012-02-25 16:47:41', '1'),
+(739, 739, 'RICHPORT PHARMACY', '1900 - 8171 Ackroyd Rd.', 'Richmond', 'BC', 'V6X3K1', '(604) 278-5550', '',
+        '(604) 278-5515', '@METRO_VAN', NULL, 'Manager: Mr. Tom Li', '2012-02-25 16:47:41', '1'),
+(740, 740, 'RIDGEWAY PHARMACY REMEDY\'SRX', '1057 Ridgeway Ave.', 'Coquitlam', 'BC', 'V3J1S6', '(604) 931-5252',
+        '', '(604) 931-8300', '@METRO_VAN', NULL, 'Manager: Mr. Aaron Jaeck', '2012-02-25 16:47:41', '1'),
+(741, 741, 'ROBIN\'S PHARMACY', '908 Commercial Dr', 'Vancouver', 'BC', 'V5L3W7', '(604) 876-3784', '',
+        '(604) 876-3766', '@METRO_VAN', NULL, 'Manager: Mr. Robin Manweiler', '2012-02-25 16:47:41', '1'),
+(742, 742, 'ROOTS PHARMACY', '1808 Broadway W', 'Vancouver', 'BC', 'V6J1Y9', '(604) 733-0072', '',
+        '(604) 733-0093', '@METRO_VAN', NULL, 'Manager: Mr. Ahmad-Khaled Wali', '2012-02-25 16:47:41', '1'),
+(743, 743, 'ROYAL CENTRE REXALL DRUGSTORE', '#122 - 1055 Georgia St. W', 'Vancouver', 'BC', 'V6E3P3',
+        '(604) 684-8204', '', '(604) 684-7329', '@METRO_VAN', NULL, 'Manager: Mr. Framin Mark', '2012-02-25 16:47:41',
+        '1'),
+(744, 744, 'ROYAL CITY DRUGS', '708 Sixth St.', 'New Westminster', 'BC', 'V3L3C5', '(604) 525-9607', '',
+        '(604) 520-1857', '@METRO_VAN', NULL, 'Manager: Mr. James Hodgson', '2012-02-25 16:47:41', '1'),
+(746, 746, 'ROYAL OAK DRUGS LTD.', '#105 - 6440 Royal Oak Ave.', 'Burnaby', 'BC', 'V5H3P2', '(604) 434-5121', '',
+        '(604) 677-6614', '@METRO_VAN', NULL, 'Manager: Mr. Alfan Mithani', '2012-02-25 16:47:41', '1'),
+(747, 747, 'RX R US PHARMACY', '#3 - 8790 204 St.', 'Langley', 'BC', 'V1M2Y5', '(778) 298-7785', '',
+        '(778) 298-7207', '@METRO_VAN', NULL, 'Manager: Mr. Hisham Al-Ahmad', '2012-02-25 16:47:41', '1'),
+(749, 749, 'SAFEWAY FOOD & DRUG - PHARMACY #1', '10355 King George Blvd', 'Surrey', 'BC', 'V3T2W6',
+        '(604) 584-7812', '', '(604) 584-7197', '@METRO_VAN', NULL, 'Manager: Mr. Peter Ko', '2012-02-25 16:47:41',
+        '1'),
+(750, 750, 'SAFEWAY FOOD & DRUG - PHARMACY #2', '2733 West Broadway', 'Vancouver', 'BC', 'V6K2G5',
+        '(604) 732-5030', '', '(604) 732-5722', '@METRO_VAN', NULL, 'Manager: Mr. Andrew McLachlan',
+        '2012-02-25 16:47:41', '1'),
+(752, 752, 'SAFEWAY FOOD & DRUG - PHARMACY #14', '6401 - 120th St.', 'Delta', 'BC', 'V4E3G3', '(604) 596-5634',
+        '', '(604) 590-8296', '@METRO_VAN', NULL, 'Manager: Mr. Navdip Sahota', '2012-02-25 16:47:41', '1'),
+(753, 753, 'SAFEWAY FOOD & DRUG - PHARMACY #20', '#100 - 3025 Lougheed Hwy.', 'Coquitlam', 'BC', 'V3B6S2',
+        '(604) 941-8213', '', '(604) 941-5990', '@METRO_VAN', NULL, 'Manager: Miss Maria DeSouza',
+        '2012-02-25 16:47:41', '1'),
+(754, 754, 'SAFEWAY FOOD & DRUG - PHARMACY #23', 'Westview Shopping Centre #780 - 2601 Westview Dr North',
+        'Vancouver', 'BC', 'V7N3X4', '(604) 988-4476', '', '(604) 988-5853', '@METRO_VAN', NULL,
+        'Manager: Miss Elizabeth Snowdon', '2012-02-25 16:47:41', '1'),
+(756, 756, 'SAFEWAY FOOD & DRUG - PHARMACY #33', '555 West 12th Avenue', 'Vancouver', 'BC', 'V5Z3X7',
+        '(604) 872-4322', '', '(604) 872-0592', '@METRO_VAN', NULL, 'Manager: Mr. Bashir Dossa', '2012-02-25 16:47:41',
+        '1'),
+(757, 757, 'SAFEWAY FOOD & DRUG - PHARMACY #36', '1766 Robson St.', 'Vancouver', 'BC', 'V6G1E2',
+        '(604) 683-0202', '', '(604) 683-5057', '@METRO_VAN', NULL, 'Manager: Mr. Dean Spottar', '2012-02-25 16:47:41',
+        '1'),
+(758, 758, 'SAFEWAY FOOD & DRUG - PHARMACY #38', '5385 Headland Drive West', 'Vancouver', 'BC', 'V7W3E7',
+        '(604) 926-2034', '', '(604) 926-2539', '@METRO_VAN', NULL, 'Manager: Mr. Mohamed Nathoo',
+        '2012-02-25 16:47:41', '1'),
+(760, 760, 'SAFEWAY FOOD & DRUG - PHARMACY #42', '4440 Hastings St.', 'Burnaby', 'BC', 'V5C2K2',
+        '(604) 205-7497', '', '(604) 205-5876', '@METRO_VAN', NULL, 'Manager: Mr. Brian Louie', '2012-02-25 16:47:41',
+        '1'),
+(761, 761, 'SAFEWAY FOOD & DRUG - PHARMACY #43', '20871 Fraser Hwy', 'Langley', 'BC', 'V3A4G7', '(604) 534-4245',
+        '', '(604) 534-4276', '@METRO_VAN', NULL, 'Manager: Miss Sonia Cheema', '2012-02-25 16:47:41', '1'),
+(762, 762, 'SAFEWAY FOOD & DRUG - PHARMACY #44', '6564 Hastings St.', 'Burnaby', 'BC', 'V5B1S2',
+        '(604) 291-0118', '', '(604) 291-1339', '@METRO_VAN', NULL, 'Manager: Mr. Clement Ng', '2012-02-25 16:47:41',
+        '1'),
+(763, 763, 'SAFEWAY FOOD & DRUG - PHARMACY #45', '1650 Marine Drive West', 'Vancouver', 'BC', 'V7V1J1',
+        '(604) 922-1422', '', '(604) 913-2139', '@METRO_VAN', NULL, 'Manager: Ms. Hoang Nguyen', '2012-02-25 16:47:41',
+        '1'),
+(764, 764, 'SAFEWAY FOOD & DRUG - PHARMACY #47', '#700 - 15355 - 24th Ave.', 'Surrey', 'BC', 'V4A2H9',
+        '(604) 535-8879', '', '(604) 535-2226', '@METRO_VAN', NULL, 'Manager: Mr. Zahirudin Shivji',
+        '2012-02-25 16:47:41', '1'),
+(765, 765, 'SAFEWAY FOOD & DRUG - PHARMACY #48', 'Lower Level 198 - 610 Sixth St.', 'New Westminster', 'BC',
+        'V3L3C2', '(604) 520-6087', '', '(604) 515-9409', '@METRO_VAN', NULL, 'Manager: Mr. Paul Yip',
+        '2012-02-25 16:47:41', '1'),
+(767, 767, 'SAFEWAY FOOD & DRUG - PHARMACY #58', '800 McBride Blvd', 'New Westminster', 'BC', 'V3L2B8',
+        '(604) 516-6547', '', '(604) 516-6247', '@METRO_VAN', NULL, 'Manager: Miss Nindy Badesha',
+        '2012-02-25 16:47:41', '1'),
+(768, 768, 'SAFEWAY FOOD & DRUG - PHARMACY #59', '6153 - 200th St.', 'Langley', 'BC', 'V2Y1A2', '(604) 530-6131',
+        '', '(604) 530-9117', '@METRO_VAN', NULL, 'Manager: Miss Randi Vose', '2012-02-25 16:47:41', '1'),
+(770, 770, 'SAFEWAY FOOD & DRUG - PHARMACY #62', '8870 - 152nd St.', 'Surrey', 'BC', 'V3R4E4', '(604) 589-5226',
+        '', '(604) 589-3717', '@METRO_VAN', NULL, 'Manager: Miss Rajwinder Mahli', '2012-02-25 16:47:41', '1'),
+(776, 776, 'SAFEWAY FOOD & DRUG - PHARMACY #76', '1033 Austin Rd.', 'Coquitlam', 'BC', 'V3K3P2',
+        '(604) 939-1764', '', '(604) 939-7007', '@METRO_VAN', NULL, 'Manager: Mrs. Munira Karim', '2012-02-25 16:47:41',
+        '1'),
+(779, 779, 'SAFEWAY FOOD & DRUG - PHARMACY #82', '#220 - 800 Carnarvon St.', 'New Westminster', 'BC', 'V3M0G3',
+        '(604) 522-2069', '', '(604) 522-2843', '@METRO_VAN', NULL, 'Manager: Mr. John Jeong', '2012-02-25 16:47:41',
+        '1'),
+(780, 780, 'SAFEWAY FOOD & DRUG - PHARMACY #84', '3410 Kingsway', 'Vancouver', 'BC', 'V5R5L4', '(604) 439-1050',
+        '', '(604) 439-9611', '@METRO_VAN', NULL, 'Manager: Ms. Joyce Wong', '2012-02-25 16:47:41', '1'),
+(783, 783, 'SAFEWAY FOOD & DRUG - PHARMACY #90', '1641 Davie St.', 'Vancouver', 'BC', 'V6G1W1', '(604) 669-8131',
+        '', '(604) 669-0779', '@METRO_VAN', NULL, 'Manager: Mrs. Gordana Vukicevic', '2012-02-25 16:47:41', '1'),
+(784, 784, 'SAFEWAY FOOD & DRUG - PHARMACY #92', '7450 - 120th St.', 'Surrey', 'BC', 'V3W3M9', '(604) 594-9866',
+        '', '(604) 594-1167', '@METRO_VAN', NULL, 'Manager: Miss Tiffany Gore', '2012-02-25 16:47:41', '1'),
+(785, 785, 'SAFEWAY FOOD & DRUG - PHARMACY #93', '#1100 - 2850 Shaughnessy St.', 'Port Coquitlam', 'BC',
+        'V3C6K5', '(604) 945-7018', '', '(604) 945-6242', '@METRO_VAN', NULL, 'Manager: Mr. Jordan Wang',
+        '2012-02-25 16:47:41', '1'),
+(786, 786, 'SAFEWAY FOOD & DRUG - PHARMACY #98', '1143 - 56th St.', 'Delta', 'BC', 'V4L2A6', '(604) 943-0514',
+        '', '(604) 943-5531', '@METRO_VAN', NULL, 'Manager: Mr. Glenn Hori', '2012-02-25 16:47:41', '1'),
+(788, 788, 'SAFEWAY FOOD & DRUG - PHARMACY #109', '12825 - 16th Avenue', 'Surrey', 'BC', 'V4A1N5',
+        '(604) 531-9694', '', '(604) 531-2602', '@METRO_VAN', NULL, 'Manager: Mr. Don Monkman', '2012-02-25 16:47:41',
+        '1'),
+(789, 789, 'SAFEWAY FOOD & DRUG - PHARMACY #110', '#185 - 650 West 41st Ave.', 'Vancouver', 'BC', 'V5Z2M9',
+        '(604) 263-5502', '', '(604) 263-1547', '@METRO_VAN', NULL, 'Manager: Mr. Yit-Chee Yang', '2012-02-25 16:47:41',
+        '1'),
+(790, 790, 'SAFEWAY FOOD & DRUG - PHARMACY #114', '990 West 25th Ave.', 'Vancouver', 'BC', 'V5Z2E2',
+        '(604) 733-9342', '', '(604) 733-7551', '@METRO_VAN', NULL, 'Manager: Miss Michelle Harrison',
+        '2012-02-25 16:47:41', '1'),
+(791, 791, 'SAFEWAY FOOD & DRUG - PHARMACY #115', '2315 West 4th Ave.', 'Vancouver', 'BC', 'V6K1P2',
+        '(604) 737-7463', '', '(604) 739-4919', '@METRO_VAN', NULL, 'Manager: Miss Patricia Lee', '2012-02-25 16:47:41',
+        '1'),
+(792, 792, 'SAFEWAY FOOD & DRUG - PHARMACY #118', '1300 Lonsdale Ave. North', 'Vancouver', 'BC', 'V7M2H8',
+        '(604) 985-0450', '', '(604) 985-6577', '@METRO_VAN', NULL, 'Manager: Ms. Guissou Adl Golchin',
+        '2012-02-25 16:47:41', '1'),
+(793, 793, 'SAFEWAY FOOD & DRUG - PHARMACY #121', 'Lougheed Mall 9855 Austin Rd.', 'Burnaby', 'BC', 'V3J1N4',
+        '(604) 420-8091', '', '(604) 420-5854', '@METRO_VAN', NULL, 'Manager: Mr. Albert Wong', '2012-02-25 16:47:41',
+        '1'),
+(794, 794, 'SAFEWAY FOOD & DRUG - PHARMACY #122', '8555 Granville St.', 'Vancouver', 'BC', 'V6P4Z9',
+        '(604) 263-7267', '', '(604) 263-5075', '@METRO_VAN', NULL, 'Manager: Mr. Joseph Del Rosario',
+        '2012-02-25 16:47:41', '1'),
+(795, 795, 'SAFEWAY FOOD & DRUG - PHARMACY #123', '4575 West 10th Ave.', 'Vancouver', 'BC', 'V6R2J2',
+        '(604) 228-0891', '', '(604) 228-1042', '@METRO_VAN', NULL, 'Manager: Ms. Louise Chan', '2012-02-25 16:47:41',
+        '1'),
+(797, 797, 'SAFEWAY FOOD & DRUG - PHARMACY #127', '#109 - 4255 Arbutus St.', 'Vancouver', 'BC', 'V6J4R1',
+        '(604) 731-9611', '', '(604) 731-6730', '@METRO_VAN', NULL, 'Manager: Mr. Ted Mah', '2012-02-25 16:47:41', '1'),
+(799, 799, 'SAFEWAY FOOD & DRUG - PHARMACY #138', '6140 Blundell Rd.', 'Richmond', 'BC', 'V7C1H6',
+        '(604) 274-7370', '', '(604) 274-7647', '@METRO_VAN', NULL, 'Manager: Mr. Kenneth Kim', '2012-02-25 16:47:41',
+        '1'),
+(800, 800, 'SAFEWAY FOOD & DRUG - PHARMACY #140', 'Westlynn Mall 1170 East 27th St. North', 'Vancouver', 'BC',
+        'V7J1S1', '(604) 988-7095', '', '(604) 980-8272', '@METRO_VAN', NULL, 'Manager: Mr. Edward Cheung',
+        '2012-02-25 16:47:41', '1'),
+(803, 803, 'SAFEWAY FOOD & DRUG - PHARMACY #148', '5235 Kingsway', 'Burnaby', 'BC', 'V5H2G1', '(604) 438-6508',
+        '', '(604) 438-0410', '@METRO_VAN', NULL, 'Manager: Mr. Denny Lin', '2012-02-25 16:47:41', '1'),
+(806, 806, 'SAFEWAY FOOD & DRUG - PHARMACY #161', '10151 No. 3 Rd.', 'Richmond', 'BC', 'V7A4R6',
+        '(604) 271-7734', '', '(604) 271-7713', '@METRO_VAN', NULL, 'Manager: Miss June Ho', '2012-02-25 16:47:42',
+        '1'),
+(807, 807, 'SAFEWAY FOOD & DRUG - PHARMACY #162', '1175 Mt. Seymour Rd. North', 'Vancouver', 'BC', 'V7H2Y4',
+        '(604) 924-1325', '', '(604) 929-3153', '@METRO_VAN', NULL, 'Manager: Ms. Azita Darabian',
+        '2012-02-25 16:47:42', '1'),
+(812, 812, 'SAFEWAY FOOD & DRUG - PHARMACY #184', '7165 - 138th St.', 'Surrey', 'BC', 'V3W7T9', '(604) 594-4515',
+        '', '(604) 594-4802', '@METRO_VAN', NULL, 'Manager: Mr. Thomas Chan', '2012-02-25 16:47:42', '1'),
+(814, 814, 'SAFEWAY FOOD & DRUG - PHARMACY #189', '1780 East Broadway', 'Vancouver', 'BC', 'V5N1W3',
+        '(604) 879-0505', '', '(604) 873-6144', '@METRO_VAN', NULL, 'Manager: Mrs. Anna Kubota', '2012-02-25 16:47:42',
+        '1'),
+(815, 815, 'SAFEWAY FOOD & DRUG - PHARMACY #191', '8671 No. 1 Rd.', 'Richmond', 'BC', 'V7C1V2', '(604) 241-4013',
+        '', '(604) 271-7647', '@METRO_VAN', NULL, 'Manager: Miss Florence Lau', '2012-02-25 16:47:42', '1'),
+(819, 819, 'SAFEWAY FOOD & DRUG - PHARMACY #198', '#300 - 20201 Lougheed Highway', 'Maple Ridge', 'BC', 'V2X2P6',
+        '(604) 460-7200', '', '(604) 460-7242', '@METRO_VAN', NULL, 'Manager: Mrs. Elaine Cooke', '2012-02-25 16:47:42',
+        '1'),
+(823, 823, 'SAIGON PHARMACY', '1080 Kingsway', 'Vancouver', 'BC', 'V5V3C6', '(604) 872-6708', '',
+        '(604) 874-6708', '@METRO_VAN', NULL, 'Manager: Mr. Hien Huynh', '2012-02-25 16:47:42', '1'),
+(825, 825, 'SAM\'S PHARMACY LTD.', '465 Main St.', 'Vancouver', 'BC', 'V6A2T7', '(604) 688-6323', '',
+        '(604) 688-6323', '@METRO_VAN', NULL, 'Manager: Mr. Sammy Kam', '2012-02-25 16:47:42', '1'),
+(826, 826, 'SANDELL I.D.A. PHARMACY', '10216 - 128th St.', 'Surrey', 'BC', 'V3T2Z3', '(604) 589-4300', '',
+        '(604) 589-4303', '@METRO_VAN', NULL, 'Manager: Mr. John Kam', '2012-02-25 16:47:42', '1'),
+(827, 827, 'SATNAM PHARMACY', 'Satnam Plaza #115 - 7130 120 St.', 'Surrey', 'BC', 'V3W3M8', '(604) 597-5947', '',
+        '(604) 597-5945', '@METRO_VAN', NULL, 'Manager: Mr. Manmohan Bharaj', '2012-02-25 16:47:42', '1'),
+(829, 829, 'SAVE-ON-FOODS & DRUGS #971 - RICHMOND', 'Terra Nova Village 3673 Westminster Highway', 'Richmond',
+        'BC', 'V7C5V2', '(604) 273-3939', '', '(604) 273-5247', '@METRO_VAN', NULL, 'Manager: Mr. Kenny Choi',
+        '2012-02-25 16:47:42', '1'),
+(832, 832, 'SAVE-ON-FOODS & DRUGS #984 - WALNUT GROVE', '8840 - 210th St.', 'Langley', 'BC', 'V1M2Y2',
+        '(604) 882-0883', '', '(604) 882-8521', '@METRO_VAN', NULL, 'Manager: Miss Gwen Jolicoeur',
+        '2012-02-25 16:47:42', '1'),
+(834, 834, 'SAVE-ON-FOODS PHARMACY #903 - SURREY', 'South Point Exchange 3033 - 152nd St.', 'Surrey', 'BC',
+        'V4P3K1', '(604) 538-5467', '', '(604) 538-6451', '@METRO_VAN', NULL, 'Manager: Miss Karen Chan',
+        '2012-02-25 16:47:42', '1'),
+(836, 836, 'SAVE-ON-FOODS PHARMACY #907 - HIGHGATE', '200 - 7155 Kingsway', 'Burnaby', 'BC', 'V5E2V1',
+        '(604) 540-1389', '', '(604) 540-1452', '@METRO_VAN', NULL, 'Manager: Mr. Benny Lam', '2012-02-25 16:47:42',
+        '1'),
+(837, 837, 'SAVE-ON-FOODS PHARMACY #910 - NEWTON', '100 - 7320 King George Blvd', 'Surrey', 'BC', 'V3W5A5',
+        '(604) 599-6702', '', '(604) 599-6703', '@METRO_VAN', NULL, 'Manager: Mr. Conway Wan', '2012-02-25 16:47:42',
+        '1'),
+(838, 838, 'SAVE-ON-FOODS PHARMACY #912 - BURNABY', 'Station Square-Metrotown 6100 McKay Ave.', 'Burnaby', 'BC',
+        'V5H2W7', '(604) 433-3760', '', '(604) 433-7109', '@METRO_VAN', NULL, 'Manager: Mr. Alnoor Suleman',
+        '2012-02-25 16:47:42', '1'),
+(840, 840, 'SAVE-ON-FOODS PHARMACY #918 - SURREY', '9014 - 152nd St.', 'Surrey', 'BC', 'V3R4E7',
+        '(604) 930-1120', '', '(604) 582-4852', '@METRO_VAN', NULL, 'Manager: Mr. Alistair Palad',
+        '2012-02-25 16:47:42', '1'),
+(841, 841, 'SAVE-ON-FOODS PHARMACY #920 - WESTMINSTER', '150 - 555 Sixth St.', 'New Westminster', 'BC', 'V3L5H1',
+        '(604) 517-4428', '', '(604) 517-4615', '@METRO_VAN', NULL, 'Manager: Mr. Edward Mah', '2012-02-25 16:47:42',
+        '1'),
+(842, 842, 'SAVE-ON-FOODS PHARMACY #928 - W. MAPLE RIDGE', '#300 - 20395 Lougheed Highway', 'Maple Ridge', 'BC',
+        'V2X2P9', '(604) 465-8606', '', '(604) 465-3652', '@METRO_VAN', NULL, 'Manager: Mr. Stephen Holme',
+        '2012-02-25 16:47:42', '1'),
+(846, 846, 'SAVE-ON-FOODS PHARMACY #935 - E.MAPLE RIDGE', '22703 Lougheed Hwy', 'Maple Ridge', 'BC', 'V2X2V5',
+        '(604) 463-3329', '', '(604) 466-8266', '@METRO_VAN', NULL, 'Manager: Mr. Kevin Liew', '2012-02-25 16:47:42',
+        '1'),
+(847, 847, 'SAVE-ON-FOODS PHARMACY #936 - LADNER', '5186 - 48 Ave.', 'Ladner', 'BC', 'V4K1W3', '(604) 946-4474',
+        '', '(604) 946-5944', '@METRO_VAN', NULL, 'Manager: Mr. Patway Yeung', '2012-02-25 16:47:42', '1'),
+(848, 848, 'SAVE-ON-FOODS PHARMACY #937 - 7TH & CAMBIE', '2308 Cambie St.', 'Vancouver', 'BC', 'V5Z2T8',
+        '(604) 876-7085', '', '(604) 876-7086', '@METRO_VAN', NULL, 'Manager: Miss Karen Choi', '2012-02-25 16:47:42',
+        '1'),
+(849, 849, 'SAVE-ON-FOODS PHARMACY #939 - NORDEL CROSSING', '12130 Nordel Way', 'Surrey', 'BC', 'V3W1P6',
+        '(604) 501-9354', '', '(604) 501-9364', '@METRO_VAN', NULL, 'Manager: Mr. Sandeep Sekhon',
+        '2012-02-25 16:47:42', '1'),
+(857, 857, 'SAVE-ON-FOODS PHARMACY #957 - PORT COQUITLAM', '2385 Ottawa St.', 'Port Coquitlam', 'BC', 'V3B8A4',
+        '(604) 464-5046', '', '(604) 464-3814', '@METRO_VAN', NULL, 'Manager: Ms. Sandy Patience',
+        '2012-02-25 16:47:42', '1'),
+(859, 859, 'SAVE-ON-FOODS PHARMACY #963 - NORTH DELTA', 'Scottsdale Mall 7015 - 120th St.', 'North Delta', 'BC',
+        'V4E2A9', '(604) 596-7784', '', '(604) 596-9338', '@METRO_VAN', NULL, 'Manager: Mr. Iqbal Bains',
+        '2012-02-25 16:47:42', '1'),
+(864, 864, 'SAVE-ON-FOODS PHARMACY #969 - IRONWOOD MALL', 'Ironwood Mall #3000-11666 Steveston Hwy.', 'Richmond',
+        'BC', 'V7A5J3', '(604) 448-1203', '', '(604) 448-1261', '@METRO_VAN', NULL, 'Manager: Miss Ada Ho',
+        '2012-02-25 16:47:42', '1'),
+(873, 873, 'SAVE-ON-FOODS PHARMACY #989 - LYNN VALLEY', '1221 Lynn Valley Rd. North', 'Vancouver', 'BC',
+        'V7J3H2', '(604) 980-4658', '', '(604) 980-6972', '@METRO_VAN', NULL, 'Manager: Mr. Kam Fung',
+        '2012-02-25 16:47:42', '1'),
+(874, 874, 'SAVE-ON-FOODS PHARMACY #990 - PARK & TILFORD', '333 Brooksbank Ave. North', 'Vancouver', 'BC',
+        'V7J3S8', '(604) 983-2147', '', '(604) 983-0669', '@METRO_VAN', NULL, 'Manager: Miss Grace Kwan',
+        '2012-02-25 16:47:42', '1'),
+(875, 875, 'SAVE-ON-FOODS PHARMACY #992 - WILLOUGHBY', '1 - 20255 - 64 Ave.', 'Langley', 'BC', 'V2Y1M9',
+        '(604) 532-5833', '', '(604) 532-8671', '@METRO_VAN', NULL, 'Manager: Mrs. Aleena Hildebrand',
+        '2012-02-25 16:47:42', '1'),
+(876, 876, 'SAVE-ON-FOODS PHARMACY #993 - UBC', '5945 Berton Ave.', 'Vancouver', 'BC', 'V6S0B3',
+        '(604) 221-5152', '', '(604) 221-5643', '@METRO_VAN', NULL, 'Manager: Mr. Malcolm Yan', '2012-02-25 16:47:42',
+        '1'),
+(877, 877, 'SAVE-ON-FOODS PHARMACY #996 - MADISON', '4399 Lougheed Hwy.', 'Burnaby', 'BC', 'V5C3Y7',
+        '(604) 298-5173', '', '(604) 298-4891', '@METRO_VAN', NULL, 'Manager: Ms. Linda Tam', '2012-02-25 16:47:42',
+        '1'),
+(878, 878, 'SAVE-ON-FOODS PHARMACY #998 - PINETREE', '2991 Lougheed Hwy.', 'Coquitlam', 'BC', 'V3B6J6',
+        '(604) 464-8811', '', '(604) 552-4708', '@METRO_VAN', NULL, 'Manager: Mr. Daniel Chan', '2012-02-25 16:47:42',
+        '1'),
+(879, 879, 'SAVE-ON-FOODS PHARMACY #999 - NORTH VANCOUVER', 'Pemberton Plaza 1250 Marine Drive',
+        'North Vancouver', 'BC', 'V7P1T2', '(604) 985-2150', '', '(604) 985-3779', '@METRO_VAN', NULL,
+        'Manager: Mr. Tommy Kong', '2012-02-25 16:47:42', '1'),
+(880, 880, 'SCOTT ROAD PHARMACY', '102 - 6905 120th St.', 'Delta', 'BC', 'V4E2A8', '(604) 591-5080', '',
+        '(604) 591-3855', '@METRO_VAN', NULL, 'Manager: Mr. Parmjit Rai', '2012-02-25 16:47:42', '1'),
+(881, 881, 'SCRIPT CARE PHARMACY', '114 - 6741 Cariboo Rd.', 'Burnaby', 'BC', 'V3N4A3', '(604) 415-9607', '',
+        '(604) 415-9608', '@METRO_VAN', NULL, 'Manager: Mr. Steve Lee', '2012-02-25 16:47:42', '1'),
+(882, 882, 'SERVICE PLUS #3', 'Unit 1560 4380 No. 3 Rd.', 'Richmond', 'BC', 'V6X3V7', '(604) 278-8830', '',
+        '(604) 278-8830', '@METRO_VAN', NULL, 'Manager: Mr. Sun Mah', '2012-02-25 16:47:42', '1'),
+(884, 884, 'SHIRAZ PHARMACY INC.', '#1 - 137 17th St. W North', 'Vancouver', 'BC', 'V7M1V5', '(604) 973-0175',
+        '', '(604) 973-0176', '@METRO_VAN', NULL, 'Manager: Mr. Bijan Ahrari', '2012-02-25 16:47:42', '1'),
+(885, 885, 'SHOPPERS DRUG MART #201', '1020 Denman St.', 'Vancouver', 'BC', 'V6G2M5', '(604) 681-0034', '',
+        '(604) 681-3280', '@METRO_VAN', NULL, 'Manager: Ms. Jennifer Kim', '2012-02-25 16:47:42', '1'),
+(886, 886, 'SHOPPERS DRUG MART #202', '2947 Granville St.', 'Vancouver', 'BC', 'V6H3J6', '(604) 738-3107', '',
+        '(604) 738-3162', '@METRO_VAN', NULL, 'Manager: Mr. Amandeep Khun-Khun', '2012-02-25 16:47:42', '1'),
+(888, 888, 'SHOPPERS DRUG MART #204', '370 East Broadway', 'Vancouver', 'BC', 'V5T4G5', '(604) 873-3558', '',
+        '(604) 873-3432', '@METRO_VAN', NULL, 'Manager: Mr. Zahir Jiwa', '2012-02-25 16:47:42', '1'),
+(893, 893, 'SHOPPERS DRUG MART #211', '1215C 56 St.', 'Delta', 'BC', 'V4L2A6', '(604) 943-1144', '',
+        '(604) 943-8466', '@METRO_VAN', NULL, 'Manager: Mr. Sharinder Dinza', '2012-02-25 16:47:42', '1'),
+(894, 894, 'SHOPPERS DRUG MART #212', '1583 Marine Drive West', 'Vancouver', 'BC', 'V7V1H9', '(604) 922-1271',
+        '', '(604) 922-3424', '@METRO_VAN', NULL, 'Manager: Mrs. Norma McLeod', '2012-02-25 16:47:42', '1'),
+(896, 896, 'SHOPPERS DRUG MART #214', '6508 Hastings St.', 'Burnaby', 'BC', 'V5B1S2', '(604) 291-0638', '',
+        '(604) 291-0122', '@METRO_VAN', NULL, 'Manager: Mr. Russell Yen', '2012-02-25 16:47:42', '1'),
+(899, 899, 'SHOPPERS DRUG MART #218', '4050 Hastings St.', 'Burnaby', 'BC', 'V5C2H9', '(604) 298-4101', '',
+        '(604) 298-4131', '@METRO_VAN', NULL, 'Manager: Mr. Mel D\'Sa', '2012-02-25 16:47:42', '1'),
+(902, 902, 'SHOPPERS DRUG MART #222', '6305 Fraser St.', 'Vancouver', 'BC', 'V5W3A3', '(604) 324-7909', '',
+        '(604) 324-2405', '@METRO_VAN', NULL, 'Manager: Mr. Kal Biling', '2012-02-25 16:47:42', '1'),
+(906, 906, 'SHOPPERS DRUG MART #227', '#11 - 8671 No. 1 Rd.', 'Richmond', 'BC', 'V7C1V2', '(604) 277-2611', '',
+        '(604) 277-0173', '@METRO_VAN', NULL, 'Manager: Mr. Richard Chu', '2012-02-25 16:47:42', '1'),
+(907, 907, 'SHOPPERS DRUG MART #228', '#380 - 9100 Blundell Rd.', 'Richmond', 'BC', 'V6Y3X9', '(604) 276-8757',
+        '', '(604) 278-4435', '@METRO_VAN', NULL, 'Manager: Mr. Kam Rattanpal', '2012-02-25 16:47:43', '1'),
+(909, 909, 'SHOPPERS DRUG MART #231', '1918 Como Lake Ave.', 'Coquitlam', 'BC', 'V3J3R3', '(604) 936-1433', '',
+        '(604) 936-6148', '@METRO_VAN', NULL, 'Manager: Mr. Stephen Liang', '2012-02-25 16:47:43', '1'),
+(910, 910, 'SHOPPERS DRUG MART #232', '2225 West 41st Ave.', 'Vancouver', 'BC', 'V6M2A3', '(604) 266-5344', '',
+        '(604) 266-5337', '@METRO_VAN', NULL, 'Manager: Miss Serena Lam', '2012-02-25 16:47:43', '1'),
+(912, 912, 'SHOPPERS DRUG MART #234', '2302 West 4th Ave.', 'Vancouver', 'BC', 'V6K1P1', '(604) 738-3138', '',
+        '(604) 732-1587', '@METRO_VAN', NULL, 'Manager: Mrs. Linda Mah', '2012-02-25 16:47:43', '1'),
+(913, 913, 'SHOPPERS DRUG MART #236', '#152 - 8180 No. 2 Rd.', 'Richmond', 'BC', 'V7C5K1', '(604) 274-3023', '',
+        '(604) 271-0995', '@METRO_VAN', NULL, 'Manager: Miss Karen Ong', '2012-02-25 16:47:43', '1'),
+(914, 914, 'SHOPPERS DRUG MART #237', '2286 - 6060 Minoru Blvd', 'Richmond', 'BC', 'V6Y2V7', '(604) 273-6187',
+        '', '(604) 214-3714', '@METRO_VAN', NULL, 'Manager: Mr. Rahim Janmohamed', '2012-02-25 16:47:43', '1'),
+(915, 915, 'SHOPPERS DRUG MART #238', '2979 West Broadway', 'Vancouver', 'BC', 'V6K2G9', '(604) 733-9128', '',
+        '(604) 733-7964', '@METRO_VAN', NULL, 'Manager: Mr. Robert Ho', '2012-02-25 16:47:43', '1'),
+(919, 919, 'SHOPPERS DRUG MART #243', 'Park Royal Shopping Ctr. 545 Park Royal S West', 'Vancouver', 'BC',
+        'V7T2Y5', '(604) 926-6613', '', '(604) 926-4348', '@METRO_VAN', NULL, 'Manager: Mr. Greg Hood',
+        '2012-02-25 16:47:43', '1'),
+(921, 921, 'SHOPPERS DRUG MART #246', 'Old Orchard Shopping Ctr. 4429 Kingsway', 'Burnaby', 'BC', 'V5H2A1',
+        '(604) 434-2408', '', '(604) 434-0476', '@METRO_VAN', NULL, 'Manager: Mr. Bilvinder Ahira',
+        '2012-02-25 16:47:43', '1'),
+(923, 923, 'SHOPPERS DRUG MART #251', '528B Clarke Rd.', 'Coquitlam', 'BC', 'V3J3X5', '(604) 936-8993', '',
+        '(604) 936-7294', '@METRO_VAN', NULL, 'Manager: Mr. Kirtesh Patel', '2012-02-25 16:47:43', '1'),
+(924, 924, 'SHOPPERS DRUG MART #252', '3650 Mt. Seymour Parkway', 'North Vancouver', 'BC', 'V7H2Y5',
+        '(604) 924-1788', '', '(604) 924-0488', '@METRO_VAN', NULL, 'Manager: Mrs. Leona Acaster',
+        '2012-02-25 16:47:43', '1'),
+(925, 925, 'SHOPPERS DRUG MART #253', '#250 - 7155 Kingsway', 'Burnaby', 'BC', 'V5E2V1', '(604) 526-2848', '',
+        '(604) 526-1219', '@METRO_VAN', NULL, 'Manager: Mr. Ryan Kullar', '2012-02-25 16:47:43', '1'),
+(927, 927, 'SHOPPERS DRUG MART #255', 'Langley Crossing 101 - 6339 200 St.', 'Langley', 'BC', 'V2Y1A2',
+        '(604) 533-2132', '', '(604) 533-1000', '@METRO_VAN', NULL, 'Manager: Mr. Balhar Shergill',
+        '2012-02-25 16:47:43', '1'),
+(929, 929, 'SHOPPERS DRUG MART #258', 'Murrayville Square #601 - 22259 - 48th Avenue', 'Langley', 'BC', 'V3A8T1',
+        '(604) 532-0515', '', '(604) 532-1336', '@METRO_VAN', NULL, 'Manager: Mr. Charles Beamiss',
+        '2012-02-25 16:47:43', '1'),
+(932, 932, 'SHOPPERS DRUG MART #263', '885 W Broadway', 'Vancouver', 'BC', 'V5Z1J9', '(604) 708-1135', '',
+        '(604) 708-3304', '@METRO_VAN', NULL, 'Manager: Mrs. Sandra Posnikoff', '2012-02-25 16:47:43', '1'),
+(933, 933, 'SHOPPERS DRUG MART #265', 'Clover Square Village Unit 104 - 17790 No. 10 Highway', 'Surrey', 'BC',
+        'V3S1C7', '(604) 574-7436', '', '(604) 574-0857', '@METRO_VAN', NULL, 'Manager: Mr. Mandip Bajwa',
+        '2012-02-25 16:47:43', '1'),
+(935, 935, 'SHOPPERS DRUG MART #267', 'Central City Shopping Centre #3100 - 10153 King George Blvd', 'Surrey',
+        'BC', 'V3T2W1', '(604) 588-6451', '', '(604) 588-4926', '@METRO_VAN', NULL, 'Manager: Ms. Shenaz Chahwala',
+        '2012-02-25 16:47:43', '1'),
+(939, 939, 'SHOPPERS DRUG MART #272', '1125 Davie St.', 'Vancouver', 'BC', 'V6E1N2', '(604) 669-2424', '',
+        '(604) 681-2328', '@METRO_VAN', NULL, 'Manager: Mr. Vincent Yeung', '2012-02-25 16:47:43', '1'),
+(940, 940, 'SHOPPERS DRUG MART #273', '15105 16 Ave.', 'Surrey', 'BC', 'V4A4N3', '(604) 536-8211', '',
+        '(604) 536-5047', '@METRO_VAN', NULL, 'Manager: Mr. Billy Wong', '2012-02-25 16:47:43', '1'),
+(946, 946, 'SHOPPERS DRUG MART #279', '#141 - 610 Sixth St.', 'New Westminster', 'BC', 'V3L3C2',
+        '(604) 521-0767', '', '(604) 521-8237', '@METRO_VAN', NULL, 'Manager: Mr. Siew Ting', '2012-02-25 16:47:43',
+        '1'),
+(947, 947, 'SHOPPERS DRUG MART #280', 'The Hub 1755 East Broadway', 'Vancouver', 'BC', 'V5N1W2',
+        '(604) 872-8451', '', '(604) 872-3395', '@METRO_VAN', NULL, 'Manager: Miss Caroline Lee', '2012-02-25 16:47:43',
+        '1'),
+(951, 951, 'SHOPPERS DRUG MART #287', '4030 - 200 St.', 'Langley', 'BC', 'V3A1K7', '(604) 530-5388', '',
+        '(604) 534-5009', '@METRO_VAN', NULL, 'Manager: Miss Eleanor Lee', '2012-02-25 16:47:43', '1'),
+(952, 952, 'SHOPPERS DRUG MART #288', '4326 Dunbar St.', 'Vancouver', 'BC', 'V6S2G3', '(604) 732-8855', '',
+        '(604) 732-8870', '@METRO_VAN', NULL, 'Manager: Mr. Moiz Hirji-Lalani', '2012-02-25 16:47:43', '1'),
+(954, 954, 'SHOPPERS DRUG MART #291', 'Lynn Valley Shopping Centre 1199 Lynn Valley Rd.', 'North Vancouver',
+        'BC', 'V7J3H2', '(604) 987-4468', '', '(604) 984-9187', '@METRO_VAN', NULL, 'Manager: Mrs. Mahindokht Hanifian',
+        '2012-02-25 16:47:43', '1'),
+(955, 955, 'SHOPPERS DRUG MART #2102', '#170 - 777 Hornby St.', 'Vancouver', 'BC', 'V6Z1S4', '(604) 687-1121',
+        '', '(604) 687-1282', '@METRO_VAN', NULL, 'Manager: Mr. Patrick Quon', '2012-02-25 16:47:43', '1'),
+(956, 956, 'SHOPPERS DRUG MART #2107', '#250 - 221 Ioco Rd.', 'Port Moody', 'BC', 'V3H4H2', '(604) 461-1541', '',
+        '(604) 461-1121', '@METRO_VAN', NULL, 'Manager: Mrs. Leslie Liang', '2012-02-25 16:47:43', '1'),
+(962, 962, 'SHOPPERS DRUG MART #2141', 'Surrey Outpatient Clinic Unit 0151 - 9750 140 St.', 'Surrey', 'BC',
+        'V3V5Z5', '(604) 495-0400', '', '(604) 495-0406', '@METRO_VAN', NULL, 'Manager: Mr. Allan Wong',
+        '2012-02-25 16:47:43', '1'),
+(963, 963, 'SHOPPERS DRUG MART #2200', '1500 Lonsdale Ave. North', 'Vancouver', 'BC', 'V7M2J3', '(604) 904-0505',
+        '', '(604) 904-0504', '@METRO_VAN', NULL, 'Manager: Mr. Amir Khazand', '2012-02-25 16:47:43', '1'),
+(965, 965, 'SHOPPERS DRUG MART #2203', 'Sunwood Square 810 - 3025 Lougheed Hwy', 'Coquitlam', 'BC', 'V3B6S2',
+        '(604) 468-8814', '', '(604) 468-8815', '@METRO_VAN', NULL, 'Manager: Mrs. Betty Chow', '2012-02-25 16:47:43',
+        '1'),
+(966, 966, 'SHOPPERS DRUG MART #2204', '#130 - 20395 Lougheed Hwy', 'Maple Ridge', 'BC', 'V2X2P9',
+        '(604) 465-8123', '', '(604) 465-8138', '@METRO_VAN', NULL, 'Manager: Mr. Mervyn Leong', '2012-02-25 16:47:43',
+        '1'),
+(967, 967, 'SHOPPERS DRUG MART #2205', 'Thunderbird Village 20159 88 Ave.', 'Langley', 'BC', 'V1M0A4',
+        '(604) 881-9921', '', '(604) 881-9923', '@METRO_VAN', NULL, 'Manager: Mr. Art Lam', '2012-02-25 16:47:43', '1'),
+(968, 968, 'SHOPPERS DRUG MART #2207', '#102 - 22441 Dewdney Trunk Rd.', 'Maple Ridge', 'BC', 'V2X7X7',
+        '(604) 467-5218', '', '(604) 463-0459', '@METRO_VAN', NULL, 'Manager: Miss Hilda Lo', '2012-02-25 16:47:43',
+        '1'),
+(970, 970, 'SHOPPERS DRUG MART #2209', '#110-19150 Lougheed Hwy.', 'Pitt Meadows', 'BC', 'V3Y2H6',
+        '(604) 465-8122', '', '(604) 465-1021', '@METRO_VAN', NULL, 'Manager: Mr. Kenneth Ringrose',
+        '2012-02-25 16:47:43', '1'),
+(972, 972, 'SHOPPERS DRUG MART #2212', '8962 152 St.', 'Surrey', 'BC', 'V3R4E4', '(604) 581-4544', '',
+        '(604) 583-7642', '@METRO_VAN', NULL, 'Manager: Mr. Ken Langevin', '2012-02-25 16:47:43', '1'),
+(976, 976, 'SHOPPERS DRUG MART #2216', 'Town Centre Mall 2475 Dobbin Rd.', 'Richmond', 'BC', 'V4T2E9',
+        '(250) 707-0891', '', '(250) 707-0468', '@METRO_VAN', NULL, 'Manager: Miss Amy Newport', '2012-02-25 16:47:43',
+        '1'),
+(980, 980, 'SHOPPERS DRUG MART #2221', '1780 Broadway W', 'Vancouver', 'BC', 'V6J1Y1', '(604) 736-6006', '',
+        '(604) 736-6042', '@METRO_VAN', NULL, 'Manager: Ms. Rita Chow', '2012-02-25 16:47:43', '1'),
+(981, 981, 'SHOPPERS DRUG MART #2222', '#100 - 7322 King George Blvd', 'Surrey', 'BC', 'V3W5A5',
+        '(604) 590-2271', '', '(604) 590-2241', '@METRO_VAN', NULL, 'Manager: Mr. Steven Lum', '2012-02-25 16:47:43',
+        '1'),
+(982, 982, 'SHOPPERS DRUG MART #2223', '#120 - 150 Esplanade W', 'North Vancouver', 'BC', 'V7M3N8',
+        '(604) 904-0150', '', '(604) 904-0160', '@METRO_VAN', NULL, 'Manager: Mr. Hue Haslauer', '2012-02-25 16:47:43',
+        '1'),
+(983, 983, 'SHOPPERS DRUG MART #2224', '14819 108 Ave.', 'Surrey', 'BC', 'V3R1W2', '(604) 584-8393', '',
+        '(604) 589-0118', '@METRO_VAN', NULL, 'Manager: Mr. Kanon Lo', '2012-02-25 16:47:43', '1'),
+(984, 984, 'SHOPPERS DRUG MART #2225', 'Unit 110 - 879 Marine Dr North', 'Vancouver', 'BC', 'V7P1R7',
+        '(604) 983-3631', '', '(604) 983-7037', '@METRO_VAN', NULL, 'Manager: Mr. Nayan Darji', '2012-02-25 16:47:43',
+        '1'),
+(986, 986, 'SHOPPERS DRUG MART #2231', 'Unit 6 - 12830 96 Ave.', 'Surrey', 'BC', 'V3V6A8', '(604) 588-3488', '',
+        '(604) 588-2065', '@METRO_VAN', NULL, 'Manager: Mr. Hugh Bickerton', '2012-02-25 16:47:43', '1'),
+(987, 987, 'SHOPPERS DRUG MART #2234', '3277 Cambie St.', 'Vancouver', 'BC', 'V5Z2W3', '(604) 708-9090', '',
+        '(604) 708-2442', '@METRO_VAN', NULL, 'Manager: Ms. Lindsay Dixon', '2012-02-25 16:47:43', '1'),
+(988, 988, 'SHOPPERS DRUG MART #2236', 'F8 - 1410 Parkway Blvd', 'Coquitlam', 'BC', 'V3E3J7', '(604) 468-8878',
+        '', '(604) 468-8765', '@METRO_VAN', NULL, 'Manager: Mrs. Jina Sarkis-Dina', '2012-02-25 16:47:43', '1'),
+(989, 989, 'SHOPPERS DRUG MART #2237', 'Cambie Plaza 11800 Cambie Rd.', 'Richmond', 'BC', 'V6X1L5',
+        '(604) 278-9105', '', '(604) 270-6415', '@METRO_VAN', NULL, 'Manager: Mr. Alexander Dar Santos',
+        '2012-02-25 16:47:43', '1'),
+(990, 990, 'SHOPPERS DRUG MART #2238', '101-12080 Nordel Way', 'Surrey', 'BC', 'V3W1P6', '(604) 543-8155', '',
+        '(604) 543-8165', '@METRO_VAN', NULL, 'Manager: Mr. Ken Dhami', '2012-02-25 16:47:43', '1'),
+(991, 991, 'SHOPPERS DRUG MART #2239', '18677 Fraser Hwy', 'Surrey', 'BC', 'V3S8E7', '(604) 575-4994', '',
+        '(604) 575-4995', '@METRO_VAN', NULL, 'Manager: Mr. Mohamed Kayed', '2012-02-25 16:47:43', '1'),
+(992, 992, 'SHOPPERS DRUG MART #2243', 'Unit 1 - 811 Columbia St.', 'New Westminster', 'BC', 'V3M1B9',
+        '(604) 395-5717', '', '(604) 395-5721', '@METRO_VAN', NULL, 'Manager: Miss Amandeep Duhra',
+        '2012-02-25 16:47:43', '1'),
+(993, 993, 'SHOPPERS DRUG MART #2244', '3215 St. Johns St.', 'Port Moody', 'BC', 'V3H2E1', '(604) 461-4030', '',
+        '(604) 461-3086', '@METRO_VAN', NULL, 'Manager: Mrs. Becky Jiang', '2012-02-25 16:47:43', '1'),
+(994, 994, 'SHOPPERS DRUG MART #2246', '1006 Homer St.', 'Vancouver', 'BC', 'V6B2W9', '(604) 669-0330', '',
+        '(604) 669-0322', '@METRO_VAN', NULL, 'Manager: Mrs. Cindy Ho', '2012-02-25 16:47:43', '1'),
+(996, 996, 'SHOPPERS DRUG MART #2250', 'Metrotown Centre Unit 343 - 4800 Kingsway', 'Burnaby', 'BC', 'V5H4J2',
+        '(604) 419-0524', '', '(604) 419-0230', '@METRO_VAN', NULL, 'Manager: Mr. Michael Lam', '2012-02-25 16:47:43',
+        '1'),
+(998, 998, 'SHOPPERS DRUG MART #2252', '3333 Main St.', 'Vancouver', 'BC', 'V5V3M8', '(778) 328-9580', '',
+        '(778) 328-9584', '@METRO_VAN', NULL, 'Manager: Mr. Henry Huang', '2012-02-25 16:47:43', '1'),
+(999, 999, 'SHOPPERS DRUG MART #2255', '104 - 3433 North Rd.', 'Burnaby', 'BC', 'V3J0A9', '(604) 415-0312', '',
+        '(604) 415-0314', '@METRO_VAN', NULL, 'Manager: Miss Hajera Baqi', '2012-02-25 16:47:43', '1'),
+(1005, 1005, 'SHOPPERS DRUG MART #2270', '100 - 15157 - No. 10 Hwy', 'Surrey', 'BC', 'V3S9A5', '(604) 574-1081',
+        '', '(604) 574-1053', '@METRO_VAN', NULL, 'Manager: Mr. Chung Cao', '2012-02-25 16:47:44', '1'),
+(1007, 1007, 'SHOPPERS DRUG MART #2273', '5940 University Blvd', 'Vancouver', 'BC', 'V6T1Z3', '(604) 228-1533',
+        '', '(604) 228-1532', '@METRO_VAN', NULL, 'Manager: Mr. Pavan Dhillon', '2012-02-25 16:47:44', '1'),
+(1008, 1008, 'SHOPPERS DRUG MART #2275', '1202 Pender St. W', 'Vancouver', 'BC', 'V6E2S8', '(604) 605-1200', '',
+        '(604) 899-1454', '@METRO_VAN', NULL, 'Manager: Ms. Rashin Mandegarian', '2012-02-25 16:47:44', '1'),
+(1009, 1009, 'SHOPPERS DRUG MART #2276', '4590 Fraser St.', 'Vancouver', 'BC', 'V5V4G7', '(604) 873-2681', '',
+        '(604) 873-2650', '@METRO_VAN', NULL, 'Manager: Mr. Sukhvir Seehra', '2012-02-25 16:47:44', '1'),
+(1010, 1010, 'SHOPPERS DRUG MART #2277', '586 Granville St.', 'Vancouver', 'BC', 'V6C1X5', '(604) 683-4063', '',
+        '(604) 683-6931', '@METRO_VAN', NULL, 'Manager: Mr. Nemanja Filipovic', '2012-02-25 16:47:44', '1'),
+(1011, 1011, 'SHOPPERS DRUG MART #2279', '2730 Oak St.', 'Vancouver', 'BC', 'V6H0A5', '(604) 714-1199', '',
+        '(604) 714-1127', '@METRO_VAN', NULL, 'Manager: Mrs. Sharon Clark', '2012-02-25 16:47:44', '1'),
+(1013, 1013, 'SHOPPERS DRUG MART #2283', '4827 Kingsway', 'Burnaby', 'BC', 'V5H4T6', '(604) 433-2721', '',
+        '(604) 433-2736', '@METRO_VAN', NULL, 'Manager: Miss Bojana Dzombeta', '2012-02-25 16:47:44', '1'),
+(1018, 1018, 'SHOPPERS DRUG MART #2292', '1295 Seymour St.', 'Vancouver', 'BC', 'V6B3N6', '(604) 801-5708', '',
+        '(604) 801-5730', '@METRO_VAN', NULL, 'Manager: Miss Gennette Ret', '2012-02-25 16:47:44', '1'),
+(1019, 1019, 'SHOPPERS DRUG MART #2294', '2748 East Hastings St.', 'Vancouver', 'BC', 'V5K1Z9', '(604) 251-5358',
+        '', '(604) 251-6612', '@METRO_VAN', NULL, 'Manager: Mr. Anoop Khurana', '2012-02-25 16:47:44', '1'),
+(1020, 1020, 'SHOPPERS DRUG MART #2295', '2490 Marine Dr West', 'Vancouver', 'BC', 'V7V1L1', '(604) 913-3900',
+        '', '(604) 913-6615', '@METRO_VAN', NULL, 'Manager: Mr. Reza Sayyedinezhad', '2012-02-25 16:47:44', '1'),
+(1022, 1022, 'SHOPPERS DRUG MART #3005', '1750 East 10th Ave.', 'Vancouver', 'BC', 'V5N5K4', '(604) 873-1677',
+        '', '(604) 873-1936', '@METRO_VAN', NULL, 'Manager: Mr. Dan Kooner', '2012-02-25 16:47:44', '1'),
+(1024, 1024, 'SHOPPERS SIMPLY PHARMACY #2249', '1517 Commercial Drive', 'Vancouver', 'BC', 'V5L3Y1',
+        '(604) 255-0434', '', '(604) 253-3420', '@METRO_VAN', NULL, 'Manager: Mrs. Leanna Cheung',
+        '2012-02-25 16:47:44', '1'),
+(1031, 1031, 'SINCERE\'S PHARMACY', '135 East 15th St. North', 'Vancouver', 'BC', 'V7L2P7', '(604) 984-4221', '',
+        '(604) 986-4973', '@METRO_VAN', NULL, 'Manager: Mr. Hilco Yiu', '2012-02-25 16:47:44', '1'),
+(1034, 1034, 'SOMERSET PHARMACY SERVICES', '#7 - 13791 - 72nd Avenue', 'Surrey', 'BC', 'V3W9Y9',
+        '(604) 590-5509', '', '(604) 590-5523', '@METRO_VAN', NULL, 'Manager: Mr. Davinder Purewal',
+        '2012-02-25 16:47:44', '1'),
+(1035, 1035, 'SOUTHLAND PHARMACY', '3554 West 41st Avenue', 'Vancouver', 'BC', 'V6N3E6', '(604) 266-2882', '',
+        '(604) 263-9850', '@METRO_VAN', NULL, 'Manager: Mr. Tony Tabarsi', '2012-02-25 16:47:44', '1'),
+(1036, 1036, 'SPS PRESCRIPTION SERVICES', '69 Glacier St.', 'Coquitlam', 'BC', 'V3K5Z1', '(604) 468-3395', '',
+        '(604) 942-7917', '@METRO_VAN', NULL, 'Manager: Miss Kelly Loewen', '2012-02-25 16:47:44', '1'),
+(1038, 1038, 'STEVESTON PHARMACY LTD.', '#101 - 3811 Chatham St.', 'Richmond', 'BC', 'V7E2Z4', '(604) 271-2820',
+        '', '(604) 271-2820', '@METRO_VAN', NULL, 'Manager: Mr. Samuel Tse', '2012-02-25 16:47:44', '1'),
+(1039, 1039, 'SUKH\'S PHARMACY', '7166 120 St.', 'Surrey', 'BC', 'V3W3M8', '(604) 594-0069', '',
+        '(604) 594-0804', '@METRO_VAN', NULL, 'Manager: Mr. Sukh Brar', '2012-02-25 16:47:44', '1'),
+(1040, 1040, 'SUKH\'S PHARMACY NO. 2', '109 - 7500 120 St.', 'Surrey', 'BC', 'V3W3N1', '(604) 543-0986', '',
+        '(604) 543-0957', '@METRO_VAN', NULL, 'Manager: Mrs. Ankita Puri', '2012-02-25 16:47:44', '1'),
+(1043, 1043, 'SUNNYSIDE EVERGREEN PHARMACY', '2397 King George Blvd', 'Surrey', 'BC', 'V4A5A4', '(604) 536-4404',
+        '', '(604) 536-4572', '@METRO_VAN', NULL, 'Manager: Mr. Gurmit Sidhu', '2012-02-25 16:47:44', '1'),
+(1044, 1044, 'SUNSET PHARMACY LIMITED', '3818 Sunset St.', 'Burnaby', 'BC', 'V5G1T3', '(604) 435-3830', '',
+        '(604) 435-3834', '@METRO_VAN', NULL, 'Manager: Mr. Willie Seto', '2012-02-25 16:47:44', '1'),
+(1045, 1045, 'SUPER GROCER AND PHARMACY', '12051 No. 1 Rd.', 'Richmond', 'BC', 'V7E1T5', '(604) 274-7874', '',
+        '(604) 274-7800', '@METRO_VAN', NULL, 'Manager: Ms. Cecille Chui', '2012-02-25 16:47:44', '1'),
+(1046, 1046, 'SUPER PHARMACY', '5848 Fraser St.', 'Vancouver', 'BC', 'V5W2Z5', '(604) 321-8888', '',
+        '(604) 325-7155', '@METRO_VAN', NULL, 'Manager: Mrs. Pei-Feng Tai', '2012-02-25 16:47:44', '1'),
+(1047, 1047, 'SUPERSAVE PHARMACY', '3443 Kingsway', 'Vancouver', 'BC', 'V5R5L3', '(604) 438-5773', '',
+        '(604) 438-5767', '@METRO_VAN', NULL, 'Manager: Ms. Farrah Nanji', '2012-02-25 16:47:44', '1'),
+(1048, 1048, 'SURLANG MEDICINE CENTRE PHARMACY', '105 - 19475 Fraser Hwy', 'Surrey', 'BC', 'V3S6K7',
+        '(604) 533-1041', '', '(604) 533-1051', '@METRO_VAN', NULL, 'Manager: Mr. Bob Sangha', '2012-02-25 16:47:44',
+        '1'),
+(1049, 1049, 'SURREY PHARMACY', '7141 King George Blvd', 'Surrey', 'BC', 'V3W5A4', '(604) 572-3060', '',
+        '(604) 572-3065', '@METRO_VAN', NULL, 'Manager: Mr. Pawan Grover', '2012-02-25 16:47:44', '1'),
+(1051, 1051, 'THE ANTIDOTE PHARMACY #3', '104A - 8140 120 St.', 'Surrey', 'BC', 'V3W3N3', '(778) 565-3411', '',
+        '(778) 565-3413', '@METRO_VAN', NULL, 'Manager: Mr. Dinesh Chowhan', '2012-02-25 16:47:44', '1'),
+(1052, 1052, 'THE ANTIDOTE PHARMACY & HEALTH CENTRE', '101 - 15122 72 Ave.', 'Surrey', 'BC', 'V3S2G2',
+        '(604) 590-0399', '', '(604) 590-0349', '@METRO_VAN', NULL, 'Manager: Mr. Rahul Bhagirath',
+        '2012-02-25 16:47:44', '1'),
+(1053, 1053, 'THE CHEMIST #2', 'Unit 6 - 22932 Lougheed Hwy', 'Maple Ridge', 'BC', 'V2X2W2', '(604) 463-4207',
+        '', '(604) 463-4285', '@METRO_VAN', NULL, 'Manager: Mr. Emery Ostrosky', '2012-02-25 16:47:44', '1'),
+(1054, 1054, 'THE CHEMIST #3', '107 - 8927 152 St.', 'Surrey', 'BC', 'V3R4E5', '(604) 634-1074', '',
+        '(604) 634-1075', '@METRO_VAN', NULL, 'Manager: Mr. Mansour Djavanmardi', '2012-02-25 16:47:44', '1'),
+(1055, 1055, 'THE CHEMIST #4', '115 - 6180 Blundell Rd.', 'Richmond', 'BC', 'V7C4W7', '(604) 277-3747', '',
+        '(604) 277-3748', '@METRO_VAN', NULL, 'Manager: Miss Emily Chan', '2012-02-25 16:47:44', '1'),
+(1056, 1056, 'THE CHEMIST #5', '5150 Joyce St.', 'Vancouver', 'BC', 'V5R4H1', '(604) 638-0353', '',
+        '(604) 638-0354', '@METRO_VAN', NULL, 'Manager: Ms. Vilma Rafael Mucha', '2012-02-25 16:47:44', '1'),
+(1057, 1057, 'THE CHEMIST #6', '7253 Fraser St.', 'Vancouver', 'BC', 'V5X3V8', '(604) 638-6800', '',
+        '(604) 638-6801', '@METRO_VAN', NULL, 'Manager: Miss Aziza Ladha', '2012-02-25 16:47:44', '1'),
+(1058, 1058, 'THE CHEMIST #1', 'Unit 17 - 15300 105 Ave.', 'Surrey', 'BC', 'V3R6A7', '(604) 634-0303', '',
+        '(604) 634-0304', '@METRO_VAN', NULL, 'Manager: Mrs. Anna Sung', '2012-02-25 16:47:44', '1'),
+(1059, 1059, 'THE MEDICINE SHOPPE #163 - SURREY', '#122 - 1959 - 152nd St.', 'Surrey', 'BC', 'V4A9E3',
+        '(604) 531-4400', '', '(604) 531-6560', '@METRO_VAN', NULL, 'Manager: Mr. Christopher Lewis',
+        '2012-02-25 16:47:44', '1'),
+(1060, 1060, 'THE MEDICINE SHOPPE PHARMACY #285', '3039 Kingsway', 'Vancouver', 'BC', 'V5R5J6', '(604) 437-5442',
+        '', '(604) 638-0194', '@METRO_VAN', NULL, 'Manager: Miss Connie Huen', '2012-02-25 16:47:44', '1'),
+(1066, 1066, 'THRIFTY FOODS AND PHARMACY #20', '2662 Austin Ave.', 'Coquitlam', 'BC', 'V3K6C4', '(604) 931-2616',
+        '', '(604) 937-1276', '@METRO_VAN', NULL, 'Manager: Ms. Sayeeda Nathoo', '2012-02-25 16:47:44', '1'),
+(1067, 1067, 'THRIFTY FOODS AND PHARMACY #23', '170 Brew St.', 'Port Moody', 'BC', 'V3H0E7', '(604) 949-4253',
+        '', '(604) 949-4254', '@METRO_VAN', NULL, 'Manager: Ms. Jenny Hsiao', '2012-02-25 16:47:44', '1'),
+(1068, 1068, 'THRIFTY FOODS AND PHARMACY #24', '#102 - 15745 Croydon Dr', 'Surrey', 'BC', 'V3S0C5',
+        '(604) 542-7853', '', '(604) 542-7854', '@METRO_VAN', NULL, 'Manager: Mr. Zaccheus Lim', '2012-02-25 16:47:44',
+        '1'),
+(1072, 1072, 'THRIFTY FOODS PHARMACY #28', '270 Columbia St. E', 'New Westminster', 'BC', 'V3L1A6',
+        '(604) 523-2583', '', '(604) 523-2584', '@METRO_VAN', NULL, 'Manager: Miss Lori Graham', '2012-02-25 16:47:44',
+        '1'),
+(1076, 1076, 'TSAWWASSEN PHARMACY', '#104 - 1077 - 56th St.', 'Delta', 'BC', 'V4L2A2', '(604) 943-9341', '',
+        '(604) 943-2935', '@METRO_VAN', NULL, 'Manager: Mr. Brian Pasman', '2012-02-25 16:47:44', '1'),
+(1078, 1078, 'TUX PHARMACY', '#104 - 22314 Fraser Hwy', 'Langley', 'BC', 'V3A8M6', '(604) 530-5300', '',
+        '(604) 530-7250', '@METRO_VAN', NULL, 'Manager: Mr. Jason Petker', '2012-02-25 16:47:44', '1'),
+(1079, 1079, 'UNICARE PHARMACY', '102 - 3325 Kingsway', 'Vancouver', 'BC', 'V5R5K6', '(604) 438-5155', '',
+        '(604) 438-5156', '@METRO_VAN', NULL, 'Manager: Mr. Peter Law', '2012-02-25 16:47:44', '1'),
+(1080, 1080, 'UNIVERSAL PHARMACY', '1115 - 7318 137 St.', 'Surrey', 'BC', 'V3W1A3', '(604) 594-9535', '',
+        '(604) 594-9540', '@METRO_VAN', NULL, 'Manager: Mr. Sukhvinder Sran', '2012-02-25 16:47:44', '1'),
+(1081, 1081, 'UNIVERSITY PHARMACY (1987) LTD.', '5754 University Blvd.', 'Vancouver', 'BC', 'V6T1K6',
+        '(604) 224-3202', '', '(604) 224-3203', '@METRO_VAN', NULL, 'Manager: Mr. Christopher Linaksita',
+        '2012-02-25 16:47:44', '1'),
+(1082, 1082, 'URBAN FARE PHARMACY #7614 - YALETOWN', '177 Davie St.', 'Vancouver', 'BC', 'V6Z2Y1',
+        '(604) 975-7544', '', '(604) 975-7551', '@METRO_VAN', NULL, 'Manager: Mr. Norman Cheng', '2012-02-25 16:47:44',
+        '1'),
+(1084, 1084, 'VALLEY EVERGREEN PHARMACY', '20577 Douglas Crescent', 'Langley', 'BC', 'V3A4B6', '(604) 534-1332',
+        '', '(604) 534-8678', '@METRO_VAN', NULL, 'Manager: Ms. Margaret Wiens', '2012-02-25 16:47:44', '1'),
+(1086, 1086, 'VANCOUVER PHARMACY', '50 East Hastings St.', 'Vancouver', 'BC', 'V6A1N1', '(604) 669-5990', '',
+        '(604) 669-5981', '@METRO_VAN', NULL, 'Manager: Mr. Francis Chong', '2012-02-25 16:47:44', '1'),
+(1089, 1089, 'VICON PHARMACY NO. 2', '#108 - 5990 Fraser St.', 'Vancouver', 'BC', 'V5W2Z7', '(604) 323-1268', '',
+        '(604) 323-1226', '@METRO_VAN', NULL, 'Manager: Mr. Kenny Ng', '2012-02-25 16:47:44', '1'),
+(1092, 1092, 'VILLAGE PHARMACY', '9537 Erickson Drive', 'Burnaby', 'BC', 'V3J1M9', '(604) 421-4388', '',
+        '(604) 421-4589', '@METRO_VAN', NULL, 'Manager: Mr. Hassanali Dewji', '2012-02-25 16:47:44', '1'),
+(1093, 1093, 'VINA PHARMACY', '#118 - 888 Kingsway', 'Vancouver', 'BC', 'V5V3C3', '(604) 669-1623', '',
+        '(604) 669-1623', '@METRO_VAN', NULL, 'Manager: Miss Oanh Le', '2012-02-25 16:47:44', '1'),
+(1094, 1094, 'VITA VIE PHARMACY INC.', '2215 West Broadway', 'Vancouver', 'BC', 'V6K2E4', '(604) 733-5150', '',
+        '(604) 733-5159', '@METRO_VAN', NULL, 'Manager: Mrs. Hanna Habdank-Kossowski', '2012-02-25 16:47:44', '1'),
+(1095, 1095, 'VIVA MED NEWTON INC.', '#126 - 15299 68 Ave.', 'Surrey', 'BC', 'V3S2C1', '(778) 218-4102', '',
+        '(778) 218-4101', '@METRO_VAN', NULL, 'Manager: Mr. Jaspreet Maan', '2012-02-25 16:47:44', '1'),
+(1096, 1096, 'VIVA MED PHARMACY', 'Unit 120 - 6345 120 St.', 'Delta', 'BC', 'V4E2A6', '(604) 599-9442', '',
+        '(604) 599-9380', '@METRO_VAN', NULL, 'Manager: Mr. Harwinder Dhasi', '2012-02-25 16:47:44', '1'),
+(1103, 1103, 'WAL-MART PHARMACY #1104', '3585 Grandview Hwy', 'Vancouver', 'BC', 'V5M2G7', '(604) 435-6150', '',
+        '(604) 435-6437', '@METRO_VAN', NULL, 'Manager: Miss Janet Marconato', '2012-02-25 16:47:45', '1'),
+(1105, 1105, 'WAL-MART PHARMACY #1112', '2150 Hawkins St.', 'Coquitlam', 'BC', 'V3B0G6', '(604) 472-1260', '',
+        '(604) 472-1216', '@METRO_VAN', NULL, 'Manager: Ms. Zahra Aghajani', '2012-02-25 16:47:45', '1'),
+(1106, 1106, 'WAL-MART PHARMACY #3008', '300 Lougheed Mall 9855 Austin Avenue', 'Burnaby', 'BC', 'V3J1N5',
+        '(604) 421-0353', '', '(604) 421-5941', '@METRO_VAN', NULL, 'Manager: Mr. Gurjit Parmar', '2012-02-25 16:47:45',
+        '1'),
+(1111, 1111, 'WAL-MART PHARMACY #3057', 'Capilano Mall 925 Marine Drive', 'North Vancouver', 'BC', 'V7P1S2',
+        '(604) 984-3441', '', '(604) 984-3345', '@METRO_VAN', NULL, 'Manager: Miss Jasdeep Johal',
+        '2012-02-25 16:47:45', '1'),
+(1116, 1116, 'WAL-MART PHARMACY #3098', '1000 Guildford Town Ctr.', 'Surrey', 'BC', 'V3R7C3', '(604) 585-7440',
+        '', '(604) 588-3759', '@METRO_VAN', NULL, 'Manager: Mr. August Ma', '2012-02-25 16:47:45', '1'),
+(1118, 1118, 'WAL-MART PHARMACY #3158', '20202 - 66th Avenue', 'Langley', 'BC', 'V2Y1P3', '(604) 539-5230', '',
+        '(604) 539-5290', '@METRO_VAN', NULL, 'Manager: Mr. Jasdev Johal', '2012-02-25 16:47:45', '1'),
+(1128, 1128, 'WAL-MART PHARMACY #5777', '805 Boyd St.', 'New Westminster', 'BC', 'V3M5G7', '(604) 524-1264', '',
+        '(604) 524-1329', '@METRO_VAN', NULL, 'Manager: Miss Diana Chan', '2012-02-25 16:47:45', '1'),
+(1130, 1130, 'WAL-MART PHARMACY #5838', '12451 - 88 Avenue', 'Surrey', 'BC', 'V3W1P8', '(604) 597-9169', '',
+        '(604) 597-6178', '@METRO_VAN', NULL, 'Manager: Mrs. Gurmeet Sukhija', '2012-02-25 16:47:45', '1'),
+(1131, 1131, 'WAL-MART PHARMACY #5853', '2355 160 St.', 'Surrey', 'BC', 'V3S9N6', '(604) 541-8567', '',
+        '(604) 541-6074', '@METRO_VAN', NULL, 'Manager: Mr. Steven Ma', '2012-02-25 16:47:45', '1'),
+(1132, 1132, 'WESCANA PHARMACY #1', '6686 Fraser St.', 'Vancouver', 'BC', 'V5X3T5', '(604) 324-6734', '',
+        '(604) 324-1114', '@METRO_VAN', NULL, 'Manager: Mr. Zahir Rajani', '2012-02-25 16:47:45', '1'),
+(1133, 1133, 'WESCANA PHARMACY #2', '#7 - 8388 - 128th St.', 'Surrey', 'BC', 'V3W4G2', '(604) 572-5009', '',
+        '(604) 572-6009', '@METRO_VAN', NULL, 'Manager: Ms. Eun Jung', '2012-02-25 16:47:45', '1'),
+(1134, 1134, 'WESCANA PHARMACY #3', '#103 - 6935 - 120 St.', 'Delta', 'BC', 'V4E2A8', '(604) 591-7453', '',
+        '(604) 591-7463', '@METRO_VAN', NULL, 'Manager: Mrs. Danielle Chan', '2012-02-25 16:47:45', '1'),
+(1135, 1135, 'WESCANA PHARMACY #4', '5698 Victoria Dr', 'Vancouver', 'BC', 'V5P3W4', '(604) 324-7790', '',
+        '(604) 324-7792', '@METRO_VAN', NULL, 'Manager: Ms. Duaa Hassan', '2012-02-25 16:47:45', '1'),
+(1136, 1136, 'WESCANA PHARMACY #5', '#2 - 8737 120 St.', 'Delta', 'BC', 'V4C6R4', '(778) 593-7225', '',
+        '(778) 593-7226', '@METRO_VAN', NULL, 'Manager: Miss Amanda Li', '2012-02-25 16:47:45', '1'),
+(1137, 1137, 'WESCANA PHARMACY #6', '4012 Hastings St.', 'Burnaby', 'BC', 'V5C2H9', '(604) 291-1205', '',
+        '(604) 291-1206', '@METRO_VAN', NULL, 'Manager: Ms. Melody Shirvan', '2012-02-25 16:47:45', '1'),
+(1138, 1138, 'WESCANA PHARMACY #7', '8585 160 St.', 'Surrey', 'BC', 'V4N1G4', '(778) 578-5160', '',
+        '(778) 578-5165', '@METRO_VAN', NULL, 'Manager: Mr. Sami Boraie', '2012-02-25 16:47:45', '1'),
+(1139, 1139, 'WESCANA PHARMACY #8', '#130 - 8780 Blundell Rd.', 'Richmond', 'BC', 'V6Y3Y8', '(604) 277-2705', '',
+        '(604) 277-2735', '@METRO_VAN', NULL, 'Manager: Mrs. Judy Lau', '2012-02-25 16:47:45', '1'),
+(1140, 1140, 'WESCANA PHARMACY #9', '#7 - 7445 120 St.', 'Delta', 'BC', 'V4C0B3', '(604) 572-7755', '',
+        '(604) 572-7752', '@METRO_VAN', NULL, 'Manager: Miss Hyojung Choi', '2012-02-25 16:47:45', '1'),
+(1141, 1141, 'WESCANA PHARMACY #11', '#6 - 2755 Lougheed Hwy', 'Port Coquitlam', 'BC', 'V3B5Y9',
+        '(604) 944-5544', '', '(604) 944-5548', '@METRO_VAN', NULL, 'Manager: Ms. Lydia Lai', '2012-02-25 16:47:45',
+        '1'),
+(1142, 1142, 'WEST 10TH MEDICAL PHARMACY LTD.', '4307 West 10th Ave.', 'Vancouver', 'BC', 'V6R2H6',
+        '(604) 222-2028', '', '(604) 222-2086', '@METRO_VAN', NULL, 'Manager: Miss Jui-lien Horng',
+        '2012-02-25 16:47:45', '1'),
+(1143, 1143, 'WEST COAST CENTRAL FILL', 'Unit 1110 Ground Floor 13560 Maycrest Way', 'Richmond', 'BC', 'V6V2W9',
+        '(604) 270-4590', '', '(604) 270-4594', '@METRO_VAN', NULL, 'Manager: Miss Mabel Yan', '2012-02-25 16:47:45',
+        '1'),
+(1144, 1144, 'WEST COAST PHARMACY', 'Ste. 105 - 600 Royal Ave.', 'New Westminster', 'BC', 'V3M1J3',
+        '(604) 524-1377', '', '(604) 524-0328', '@METRO_VAN', NULL, 'Manager: Mr. Stelian Iantchev',
+        '2012-02-25 16:47:45', '1'),
+(1145, 1145, 'WEST END MEDICINE CENTRE', '2004 Eighth Ave.', 'New Westminster', 'BC', 'V3M2T5', '(604) 522-5636',
+        '', '(604) 524-6488', '@METRO_VAN', NULL, 'Manager: Mr. Raymond Gaucher', '2012-02-25 16:47:45', '1'),
+(1147, 1147, 'WHALLEY PHARMACY', '#101 - 10663 King George Blvd', 'Surrey', 'BC', 'V3T2X6', '(604) 634-0134', '',
+        '(604) 634-0135', '@METRO_VAN', NULL, 'Manager: Mr. Nik Buhecha', '2012-02-25 16:47:45', '1'),
+(1149, 1149, 'WILSON PHARMACY', '#3 - 2185 Wilson Ave.', 'Port Coquitlam', 'BC', 'V3C6C1', '(604) 942-4611', '',
+        '(604) 942-1554', '@METRO_VAN', NULL, 'Manager: Mr. Jasbir Lail', '2012-02-25 16:47:45', '1'),
+(1151, 1151, 'YALE PHARMACY', '1284 Granville St.', 'Vancouver', 'BC', 'V6Z1M4', '(604) 692-0211', '',
+        '(604) 683-0211', '@METRO_VAN', NULL, 'Manager: Mr. Emin Nadjafov', '2012-02-25 16:47:45', '1'),
+(1152, 1152, 'YORK PHARMACY', '110 - 7938 128 St.', 'Surrey', 'BC', 'V3W4E8', '(604) 598-4679', '',
+        '(604) 598-4684', '@METRO_VAN', NULL, 'Manager: Mrs. Grace Kim', '2012-02-25 16:47:45', '1'),
+(1154, 1154, 'YYOUNG MEDICINE MART', '5760 Cambie St.', 'Vancouver', 'BC', 'V5Z3A6', '(604) 324-3848', '',
+        '(604) 324-1727', '@METRO_VAN', NULL, 'Manager: Mr. Sunny Chau', '2012-02-25 16:47:45', '1'),
+(1158, 1158, 'ZELLERS PHARMACY #105', 'Lansdowne Centre 8311 Lansdowne Rd.', 'Richmond', 'BC', 'V6X3A4',
+        '(604) 270-1211', '', '(604) 270-4378', '@METRO_VAN', NULL, 'Manager: Mr. Jeffrey Chan', '2012-02-25 16:47:45',
+        '1'),
+(1160, 1160, 'ZELLERS PHARMACY #145', 'Scottsdale Mall 7155 - 120th St.', 'Delta', 'BC', 'V4E2B1',
+        '(604) 596-6425', '', '(604) 501-9241', '@METRO_VAN', NULL, 'Manager: Ms. Kulvinder Sangha',
+        '2012-02-25 16:47:45', '1'),
+(1162, 1162, 'ZELLERS PHARMACY #191', 'Haney Place Mall 11850 - 224th St.', 'Maple Ridge', 'BC', 'V2X8S1',
+        '(604) 463-2064', '', '(604) 466-0163', '@METRO_VAN', NULL, 'Manager: Mr. Shailesh Panchmatia',
+        '2012-02-25 16:47:45', '1'),
+(1164, 1164, 'ZELLERS PHARMACY #246', 'Unit 3010 - Coquitlam Centre 2929 Barnet Hwy.', 'Coquitlam', 'BC',
+        'V3B5R5', '(604) 944-1872', '', '(604) 941-4682', '@METRO_VAN', NULL, 'Manager: Mr. Jeff Kim',
+        '2012-02-25 16:47:45', '1'),
+(1165, 1165, 'ZELLERS PHARMACY #248', 'Surrey Place 10151 King George Blvd', 'Surrey', 'BC', 'V3T2W3',
+        '(604) 585-0083', '', '(604) 585-0085', '@METRO_VAN', NULL, 'Manager: Mrs. May Al-Dhahir',
+        '2012-02-25 16:47:45', '1'),
+(1166, 1166, 'ZELLERS PHARMACY #264', 'Brentwood Mall #300 - 4567 Lougheed Hwy.', 'Burnaby', 'BC', 'V5C6G8',
+        '(604) 291-7194', '', '(604) 291-0472', '@METRO_VAN', NULL, 'Manager: Mr. Thomas Tse', '2012-02-25 16:47:45',
+        '1'),
+(1168, 1168, 'ZELLERS PHARMACY #360', 'Willowbrook Mall 19705 Fraser Highway', 'Langley', 'BC', 'V3A7E9',
+        '(604) 530-9243', '', '(604) 530-9268', '@METRO_VAN', NULL, 'Manager: Mrs. Ana Canak', '2012-02-25 16:47:45',
+        '1'),
+(1169, 1169, 'ZELLERS PHARMACY #361', 'Semiahmoo Shopping Centre 1715 - 152nd St.', 'Surrey', 'BC', 'V4A4N3',
+        '(604) 536-4173', '', '(604) 536-8943', '@METRO_VAN', NULL, 'Manager: Miss Soroush Rabiei',
+        '2012-02-25 16:47:45', '1'),
+(1171, 1171, 'ZELLERS PHARMACY #430', 'Oakridge Shopping Centre 650 West 41st Avenue', 'Vancouver', 'BC',
+        'V5Z2M9', '(604) 261-1949', '', '(604) 266-8594', '@METRO_VAN', NULL, 'Manager: Mr. Jorian Wong',
+        '2012-02-25 16:47:45', '1'),
+(1173, 1173, 'ZELLERS PHARMACY #440', 'Metrotown Centre 4545 Central Blvd.', 'Burnaby', 'BC', 'V5H4P2',
+        '(604) 433-7342', '', '(604) 433-1135', '@METRO_VAN', NULL, 'Manager: Mr. Tom Kin', '2012-02-25 16:47:45', '1'),
+(1182, NULL, 'Rexall #7157', 'Hwy 10 & 175th', 'Cloverdale', 'OT', 'V3S 2X6 ', '(604) 576-7823',
+        '(604) 576-7829', '', '', '', ' \r\n						\r\n					', '2016-07-11 09:02:45',
+        '1'),
+(1183, NULL, 'LONDON DRUGS ', '1622 Salt Street', 'Vancouver', 'BC', 'V5Y 0E4', '(604) 707-2030',
+        '(604) 872-8690', '', '', '', ' \r\n						\r\n					', '2016-07-11 15:11:18',
+        '1'),
+(1184, NULL, 'UBC Pharmacists Clinic', '', 'Vancouver', 'BC', '', '(604) 827-2584', '', '(604) 827-2579',
+        'pharmacists.clinic@ubc.ca', '', ' \r\n						\r\n					', '2016-07-18 13:16:06',
+        '1'),
+(1185, NULL, 'DRUGSTORE PHARMACY', ' 291 Cowichan Way ', 'Duncan', 'BC', 'V9L 4T8', '(250) 746-0529', '', '', '',
+        '', ' \r\n						\r\n					', '2016-07-26 10:43:47', '1'),
+(1186, NULL, 'SHOPPERS DRUG MART #2266', '26310 Fraser Highway, Unit 700', 'Aldergrove ', 'BC', 'V4W 2Z7',
+        '(604) 607-1445', '', '(604) 607-1354', '', '', ' \r\n						\r\n					',
+        '2016-07-27 15:27:59', '1'),
+(1187, NULL, 'SUPERSTORE 333 SEYMOUR BLVD', '333 SEYMOUR BLVD', 'North Vancouver', 'BC', 'V7J2J4',
+        '(604) 904-5535', '', '(604) 904-5533', 'phr01560@loblaw.ca', '',
+        ' \r\n						\r\n					', '2016-08-09 11:07:07', '1'),
+(1188, NULL, 'SHOPPERS DRUG MART #2127', '', 'Vancouver', 'BC', '', '(604) 298-4101', '', '(604) 298-4131', '',
+        '', ' \r\n						\r\n					', '2016-08-09 11:15:53', '1'),
+(1189, NULL, 'SAFEWAY FOOD & DRUG - PHARMACY', '990 King Edward Blvd', 'Vancouver', 'BC', '', '(604) 733-9342',
+        '', '(604) 733-7551', '', '', ' \r\n						\r\n					', '2016-08-16 10:59:22',
+        '1'),
+(1190, NULL, 'Safeway Pharmacy', '4575 West 10th Avenue', 'Vancouver', 'BC', 'V6R 2J2', '(604) 228-0891', '',
+        '(604) 228-1042', '', '', ' \r\n						\r\n					', '2016-09-08 11:07:48', '1'),
+(1191, NULL, 'Living Room Pharmacy', 'Suit 204- 1530 Cliffe Avenue', 'Courtenay', 'BC', 'V9N 2K4',
+        '(250) 338-5665', '', '(250) 338-5855', '', '', ' \r\n						\r\n					',
+        '2016-09-27 10:00:16', '1'),
+(1192, NULL, 'Save on Foods', '3033 152nd Street', 'Surrey', 'BC', 'V4P 3K1', '(604) 538-7331', '',
+        '(604) 538-6451', '', '', ' \r\n						\r\n					', '2016-09-30 14:53:13', '1'),
+(1193, NULL, 'Medicine Shoppe', '192 Island Hwy W', 'Parksville', 'BC', 'V9P2H1', '(250) 248-6695', '',
+        '(250) 248-8991', '', '', ' \r\n						\r\n					', '2016-11-23 13:57:54', '1'),
+(1194, NULL, 'Medicine Shoppe Windsor Woods', '', 'Tsawwassen', 'BC', '', '(778) 434-3300', '', '(778) 434-3303',
+        '', '', ' \r\n						\r\n					', '2016-11-28 11:58:41', '1'),
+(1195, NULL, 'Pharmasave', '1808 Kingsway', 'Burnaby', 'BC', 'V5N 2S7', '(778) 379-4470', '', '(778) 379-4472',
+        '', '', ' \r\n						\r\n					', '2016-12-06 15:55:48', '1'),
+(1196, NULL, 'Donex Pharmacy', '', '100 Mile House', 'BC', '', '(250) 395-4004', '', '', '', '',
+        ' \r\n						\r\n					', '2017-04-04 11:31:52', '1'),
+(1197, NULL, 'Medical Tower Drug ltd', '', 'Abbotsford', 'OT', '', '(604) 859-7651', '', '(604) 859-7651', '',
+        '', ' \r\n						\r\n					', '2017-04-07 16:15:35', '1'),
+(1198, NULL, 'Burrard Pharmasave', '', 'Vancouver', 'BC', '', '(604) 669-7700', '', '', '', '',
+        ' \r\n						\r\n					', '2017-04-27 14:25:19', '1'),
+(1199, NULL, 'Careville Pharmacy', '', 'Vancouver', 'BC', '', '(604) 800-0223', '', '', '', '',
+        ' \r\n						\r\n					', '2017-05-02 08:25:22', '1'),
+(1200, NULL, 'Safeway', '8475 Granville St', 'Vancouver', 'BC', ' V6P 4Z9', '(604) 263-7267', '',
+        '(604) 263-5075', '', '',
+        ' \r\n						 \r\n						\r\n					\r\n					',
+        '2017-10-24 15:24:44', '1'),
+(1201, NULL, 'Shoppers Drug Mart ', '7820 Williams Rd #100', 'Richmond ', 'BC', 'V7A 1G3', '(778) 296-4065', '',
+        '(778) 296-4069', '', '', ' \r\n						\r\n					', '2017-05-16 09:23:09', '1'),
+(1202, NULL, 'Garrison Pharmacy', '1-45555 Market Way', 'Chilliwack', 'BC', 'V2R0M5', '(604) 846-8782', '',
+        '(604) 846-8794', '', '',
+        ' \r\n						 \r\n						 \r\n						\r\n					\r\n					\r\n					',
+        '2017-07-04 15:08:55', '1'),
+(1203, NULL, 'Saanich Medicine Shoppe', '4071 Shelbourne Street', 'Victoria', 'BC', '', '(250) 477-6112', '',
+        '(250) 477-6121', '', '',
+        ' Carolyn Scarfe Owner and Pharmacist\r\n						\r\n					',
+        '2017-09-12 11:33:07', '1'),
+(1204, NULL, 'Shoppers Drug Mart', '10108 Jubilee Rd', 'Summerland', 'BC', '', '(250) 494-3155', '',
+        '(250) 494-0733', '', '', ' \r\n						\r\n					', '2017-10-20 10:12:19', '1'),
+(1205, NULL, 'Walmart Pharmacy', '', 'Courtney', 'OT', '', '(250) 898-8955', '', '', '', '',
+        ' \r\n						\r\n					', '2017-11-02 16:12:23', '1'),
+(1206, NULL, 'Pharmasave Edgemont Village ', '', 'North Vancouver', 'OT', '', '(604) 988-6396', '',
+        '(604) 988-3403', '', '',
+        ' \r\n						Pharmacist = Naz \r\n				\r\n					',
+        '2017-11-06 14:41:54', '1'),
+(1207, NULL, 'Pure Integratve Pharmacy', '3228 Dunbar St', 'Vancouver', 'BC', 'V6S2E7', '(604) 732-3010', '',
+        '(604) 732-3011', '', '',
+        ' \r\n						 \r\n						 \r\n						\r\n					\r\n					\r\n					',
+        '2017-11-08 15:29:26', '1'),
+(1208, NULL, 'Medicine Shoppe ', ' 1782 Comox Ave', 'Comox ', 'BC', 'V9M 3M8', '(250) 339-5050', '', '', '', '',
+        ' \r\n						\r\n					', '2017-12-08 14:11:13', '1'),
+(1209, NULL, 'Sidney Pharmacy', '2425 Bevan Ave', 'Sidney', 'BC', 'V8L 4R7', '(250) 656-0744', '', '', '', '',
+        ' \r\n						\r\n					', '2018-01-15 10:20:37', '1'),
+(1210, NULL, 'Shoppers Drug Mart 2113', '0678 Willoughby Town Centre Dr', 'Langley', 'BC', 'V2Y0L7',
+        '(604) 882-3566', '', '(604) 882-3557', '', '', ' \r\n						\r\n					',
+        '2018-01-18 10:56:53', '1'),
+(1211, NULL, 'Shoppers Drug mart', '110F 6640 Vedder Rd.', 'Chilliwack', 'BC', 'V2R 0J2', '(604) 847-3496', '',
+        '(604) 824-1811', '', '',
+        ' \r\n						 \r\n						\r\n					\r\n					',
+        '2018-03-02 09:49:18', '1'),
+(1212, NULL, 'Superstore Pharmacy', 'Metrotown', 'Metrotown', 'OT', '', '(604) 439-4403', '', '', '', '',
+        ' \r\n						\r\n					', '2018-02-02 15:18:21', '1'),
+(1213, NULL, 'Save On Foods ', 'Walnut Grove', 'walnut grove', 'BC', '', '(604) 882-8449', '', '', '', '',
+        ' \r\n						\r\n					', '2018-02-08 13:11:32', '1'),
+(1214, NULL, 'Pharmasave', '110-9193 Main Street', 'Chilliwack', 'BC', '', '(604) 792-1240', '', '', '', '',
+        ' \r\n						\r\n					', '2018-03-02 11:42:47', '1'),
+(1215, NULL, 'save on foods ', '2385 Ottawa Street', 'Port Coquitlam', 'OT', '', '(604) 464-9984', '', '', '',
+        '', ' \r\n						\r\n					', '2018-03-06 13:56:30', '1'),
+(1216, NULL, 'Shoppers Drug mart', '2332 Whatcom Rd.', 'Abbotsford', 'BC', 'V3G 0C1', '(604) 851-8635', '', '',
+        '', '', ' \r\n						\r\n					', '2018-03-22 10:44:21', '1'),
+(1217, NULL, 'London Drugs', 'Highstreet Shopping Centre', 'Abbotsford', 'BC', '', '64-870-3585', '', '', '', '',
+        ' \r\n						\r\n					', '2018-03-22 11:25:33', '1'),
+(1218, NULL, 'Save On Foods', '17745 64 Ave.', 'Cloverdale', 'BC', '', '(604) 575-7162', '', '', '', '',
+        ' \r\n						\r\n					', '2018-03-22 15:48:27', '1'),
+(1219, NULL, 'Shoppers Drug Mart - Promontory', '45800 Promontory Road', 'Chilliwack', 'BC', 'V2R 5Z5',
+        '(604) 824-1036', '', '(604) 824-1037', '', '', ' \r\n						\r\n					',
+        '2018-05-08 15:47:52', '1'),
+(1220, NULL, 'UBC Pharmacists Clinic', '2405 Wesbrook Mall', 'Vancouver', 'BC', 'V6T 1Z3', '(604) 827-2584', '',
+        '64-827-2579', '', '', ' \r\n						\r\n					', '2018-07-10 14:20:18', '1'),
+(1221, NULL, 'Rexall 7174', '499 Granville St', 'Vancouver', 'BC', 'V6C 1T1', '(604) 801-6991', '', '', '', '',
+        ' \r\n						\r\n					', '2018-10-23 10:29:08', '1'),
+(1222, NULL, 'Shoppers Drug Mart #226', '1644 Hillside Ave', 'Victoria', 'BC', 'V8T2C5', '(250) 595-5111', '',
+        '(250) 595-6459', '', '', ' \r\n						\r\n					', '2019-04-17 16:58:12', '1'),
+(1223, NULL, 'Save on Foods', '103-2000 Island Hwy', 'Nanaimo', 'OT', '', '(250) 753-5865', '', '', '', '',
+        ' \r\n						\r\n					', '2019-05-28 09:13:06', '1'),
+(1224, NULL, 'The Drive Pharmacy ', '1684 Commercial Drive ', 'Vancouver', 'BC', 'V5L3Y4', '(604) 254-0133', '',
+        '', '', '', ' \r\n						\r\n					', '2019-09-24 15:44:42', '1'),
+(1225, NULL, 'Pharmasave and Travel Clinic', '101-2280 E Hastings St', 'Vancouver', 'BC', '', '(604) 305-0345',
+        '', '(604) 305-0346', '', '', ' \r\n						\r\n					', '2019-10-07 10:08:15',
+        '1'),
+(1226, NULL, 'Rexall Penticton ', '3030 Skaha Lake Rd', 'Penticton ', 'BC', '', '(250) 493-8155', '',
+        '(250) 493-7577', '', '', ' \r\n						\r\n					', '2019-10-15 17:58:15', '1'),
+(1227, NULL, 'Shoppers Drug Mart', '', 'Quesnel', 'OT', '', '1 (250) 992-2214', '', '', '', '',
+        ' \r\n						\r\n					', '2019-12-11 16:06:44', '1'),
+(1228, NULL, 'Shoppers Drug Mart ', '310 8th St', 'Courtenay', 'BC', '', '(250) 334-3134', '', '', '', '',
+        ' \r\n						\r\n					', '2019-12-18 12:10:08', '1'),
+(1229, NULL, 'Total Care Pharmacy ', '', 'Vancouver ', 'BC', '', '(778) 379-3292', '', '', '', '',
+        ' \r\n						\r\n					', '2019-12-19 15:21:36', '1'),
+(1230, NULL, 'Thrifty Foods Pharmacy ', '', 'Courtenay', 'OT', '', '(250) 331-4999', '', '', '', '',
+        ' \r\n						\r\n					', '2020-01-06 11:49:46', '1'),
+(1231, NULL, 'Fraser Health Absence and Disability Management ', 'Suit 200 - 32463 Simon Avenue ', 'Abbotsford',
+        'BC', '', '(604) 870-7552', '', '(604) 528-5407', '', '',
+        ' \r\n						\r\n					', '2020-01-09 09:04:05', '1'),
+(1232, NULL, 'Aspen Remedy\'s Rx Pharmacy', '102-2099 152nd Street', 'Surrey', 'BC', 'V4A 4N7', '(604) 560-2720',
+        '', '', '', '', ' \r\n						\r\n					', '2020-01-14 09:35:24', '1'),
+(1233, NULL, 'Kitasoo Nursing Station', '', 'Klemtu', 'BC', '', '(250) 839-1221', '', '1 (250) 839-2354', '', '',
+        ' \r\n						\r\n					', '2020-01-14 09:37:09', '1'),
+(1234, NULL, 'Pacific Blue Cross', '', 'Vancouver', 'OT', '', '(604) 416-2306', '', '(604) 419-8055', '', '',
+        ' \r\n						\r\n					', '2020-01-28 17:06:51', '1'),
+(1235, NULL, 'Miracle Prescriptions', '1268 Marine Drive', 'North Vancouver', 'BC', 'V7P 1T2', '(604) 770-2030',
+        '', '(604) 770-2035', '', '', ' \r\n						\r\n					', '2020-03-19 09:09:18',
+        '1'),
+(1236, NULL, 'No Frills', '310 W Broadway', 'Vancouver', 'BC', 'V5Y 1R2', '(866) 987-6453', '', '', '', '',
+        ' \r\n						\r\n					', '2020-03-20 09:31:14', '1'),
+(1237, NULL, 'Coastal Care Pharmacy', '10183 152 St #101', 'Surrey', 'BC', '', '(604) 588-0484', '', '', '', '',
+        ' \r\n						\r\n					', '2020-03-27 10:35:53', '1'),
+(1238, NULL, 'Phoenix Pharmacy (Curt)', '2155 10th Ave #103, Prince', 'Prince George', 'OT', '',
+        '(250) 562-3383', '', '(250) 562-5113', '', '',
+        ' \r\n						 \r\n						 \r\n						\r\n					\r\n					\r\n					',
+        '2020-06-08 15:59:10', '1'),
+(1239, NULL, 'Bay Pharmacy ', '6355 Bruce St', 'West Vancouver ', 'OT', '', '(604) 305-0330', '', '', '', '',
+        ' \r\n						\r\n					', '2020-04-23 09:58:08', '1'),
+(1240, NULL, 'City Market', '', 'North Vancouver', 'BC', '', '(604) 984-2226', '', '', '', '',
+        ' \r\n						\r\n					', '2020-05-20 15:27:48', '1'),
+(1241, NULL, 'Lakeside Pharmacy ', '374B Stuart Dr. W', 'Fort St. James', 'OT', '', '(250) 996-7202', '', '', '',
+        '', ' \r\n						\r\n					', '2020-06-04 09:20:53', '1'),
+(1242, NULL, 'FreshCo Pharmacy (Attn: Pharmacist Ying)', '', 'Maple Ridge ', 'BC', '', '1 (604) 460-7200', '',
+        '1 (604) 460-7242', '', '',
+        '\r\n						 \r\n						\r\n					\r\n					',
+        '2020-09-11 15:10:23', '1'),
+(1243, NULL, 'Save-On-Foods', '1984 Kane Rd Unit 600', 'Kelowna', 'BC', 'V1V 3C4', '(250) 712-9581', '', '', '',
+        '', ' \r\n						\r\n					', '2020-08-13 09:40:59', '1'),
+(1244, NULL, 'Rexall 1463', '', 'White Rock', 'OT', '', '(604) 531-4636', '', '', '', '',
+        ' \r\n						\r\n					', '2020-10-19 07:42:12', '1'),
+(1245, NULL, 'VGH Emerg', '', 'Vancouver', 'OT', '', '(604) 875-4111', '', '(604) 875-5848', '', '',
+        ' \r\n						\r\n					', '2020-10-21 16:19:27', '1'),
+(1246, NULL, 'VGH Emerg', '', 'Vancouver', 'OT', '', '(604) 875-4111', '', '(604) 875-5848', '', '',
+        ' \r\n						\r\n					', '2020-10-21 16:20:23', '1'),
+(1247, NULL, 'Better Me Pharmacy', '1570 George St', 'White Rock', 'BC', '', '(778) 545-3700', '', '', '', '',
+        ' \r\n						\r\n					', '2021-01-05 12:09:22', '1'),
+(1248, NULL, 'Costco Pharmacy ', '6700 Island Highway N', 'Nanaimo', 'OT', '', '(250) 390-3231', '', '', '', '',
+        ' \r\n						\r\n					', '2021-01-14 15:15:47', '1'),
+(1249, NULL, 'Pure Pharmacy ', '', 'North Vancouver', 'BC', '', '(604) 770-3501', '', '(604) 770-3503', '', '',
+        ' \r\n						\r\n					', '2021-01-29 16:39:42', '1'),
+(1250, NULL, 'Save on Foods', '6455 West Blvd', 'Vancouver', 'OT', '', '(604) 264-0214', '', '', '', '',
+        ' \r\n						\r\n					', '2021-02-09 12:45:12', '1'),
+(1251, NULL, 'FRASER CANYON PHARMACY', '308 Wallace St. PO Box 340', 'Hope', 'BC', 'V0X 1L0', '(604) 869-5654',
+        '', '(604) 869-5665', '', '', '', '2021-04-19 22:02:49', '1'),
+(1252, NULL, 'HOPE PHARMACY', '224 Wallace St', 'Hope', 'BC', 'V0X 1L0', '(604) 860-2144', '', '(604) 860-2140',
+        '', '', '', '2021-04-19 22:03:53', '1'),
+(1253, NULL, 'PHARMASAVE # 198', '235 Wallace Street PO Box 1548', 'Hope', 'BC', 'V0X 1L0', '(604) 869-2486', '',
+        '(604) 869-2931', '', '', '', '2021-04-19 22:05:00', '1'),
+(1254, NULL, 'AGASSIZ PHARMACY', '7046 Pioneer Ave   PO Box 37 ', 'Agassiz', 'BC', 'V0M 1A0', '(604) 491-1070',
+        '', '(604) 491-1071', '', '', '', '2021-04-19 22:07:05', '1'),
+(1255, NULL, 'SEABIRD PHARMACY', '2895 Chowat Rd', 'Agassiz', 'BC', 'V0M 1A2 ', '(604) 491-4477', '',
+        '(604) 491-4478', '', '', '', '2021-04-19 22:07:55', '1'),
+(1256, NULL, 'SHOPPERS DRUG MART #2133', 'E. 7130 Pioneer Ave. PO Box 100', 'Agassiz', 'BC', ' V0M 1A0',
+        '(604) 796-2241', '', '(604) 796-3528', '', '', '', '2021-04-19 22:08:51', '1'),
+(2647, NULL, 'WAL-MART PHARMACY #1119', '31956 Lougheed Hwy', 'Mission', 'BC', 'V2V 0C6', '(604) 820-4248', NULL,
+        '(604) 820-8046', NULL, NULL, 'Tejinder Bhatt', '2021-04-20 22:28:29', '1'),
+(2646, NULL, 'SILVERMERE PHARMACY', '105 - 32423 Lougheed Hwy', 'Mission', 'BC', 'V2V 7B8', '(604) 820-8002',
+        NULL, '(604) 820-8040', NULL, NULL, 'Jaydeepkumar Patel', '2021-04-20 22:28:34', '1'),
+(2645, NULL, 'SHOPPERS DRUG MART #2208', '206 - 32530 Lougheed Highway', 'Mission', 'BC', 'V2V 1A5',
+        '(604) 826-1244', NULL, '(604) 820-7162', NULL, NULL, 'Simon Zhou', '2021-04-20 22:28:38', '1'),
+(2644, NULL, 'SAVE-ON-FOODS PHARMACY # 946 - MISSION', '400 - 32555 London Ave', 'Mission', 'BC', 'V2V 6M7',
+        '(604) 820-7622', NULL, '(604) 820-0117', NULL, NULL, 'Dragan Stojcic', '2021-04-20 22:28:42', '1'),
+(2643, NULL, 'REXALL #7161', '110 - 32471 Lougheed Hwy', 'Mission', 'BC', 'V2V 0C8', '(604) 820-2128', NULL,
+        '(604) 820-2146', NULL, NULL, 'Devang Patel', '2021-04-20 22:28:46', '1'),
+(2642, NULL, 'PHARMASAVE # 006', '#110 - 7343 Hurd St.', 'Mission', 'BC', 'V2V 3H7', '(604) 820-1669', NULL,
+        '(604) 820-1460', NULL, NULL, 'Darcy D\'Amours', '2021-04-20 22:28:52', '1'),
+(2641, NULL, 'LONDON DRUGS #55 - MISSION', '#200 - 32555 London Ave', 'Mission', 'BC', 'V2V 6M7',
+        '(604) 820-8059', NULL, '(604) 820-9628', NULL, NULL, 'Vaneet Gill', '2021-04-20 22:28:56', '1'),
+(2640, NULL, 'LOBLAW PHARMACY #1559', '32136 Lougheed Highway', 'Mission', 'BC', 'V2V 1A4', '(604) 820-6430',
+        NULL, '(604) 820-6433', NULL, NULL, 'Jun Mo Ku', '2021-04-20 22:29:00', '1'),
+(2639, NULL, 'HERITAGE PARK PHARMACY', 'Unit B150 - 7871 Stave Lake St', 'Mission', 'BC', 'V2V 0C5',
+        '(604) 289-2447', NULL, '(604) 289-2448', NULL, NULL, 'Jonathan Hwang', '2021-04-20 22:29:04', '1'),
+(2638, NULL, 'FRESHCO PHARMACY #4256', '32520 Lougheed Highway', 'Mission', 'BC', 'V2V 1A5', '(604) 826-5398',
+        NULL, '(604) 826-7967', NULL, NULL, 'Gopala Gaddam', '2021-04-20 22:29:08', '1'),
+(2637, NULL, 'CARE IN PHARMACY', '33083 1st Ave', 'Mission', 'BC', 'V2V 1G2', '(604) 287-2999', NULL,
+        '(604) 287-2900', NULL, NULL, 'Vishal Patel', '2021-04-20 22:29:12', '1');
+

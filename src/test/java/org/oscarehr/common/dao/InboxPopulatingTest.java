@@ -26,11 +26,18 @@ package org.oscarehr.common.dao;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.DataUtils;
+import org.oscarehr.common.dao.utils.SchemaUtils;
+import org.junit.Before;
 
 public class InboxPopulatingTest extends DaoTestFixtures {
 
+	@Before
+	public void before() throws Exception {
+		this.beforeForInnoDB();
+		SchemaUtils.restoreAllTables();
+	}
+
 	@Test
-	@Ignore
 	public void test()  {
 		DataUtils.populateDemographicsAndProviders();
 		DataUtils.populateProviders();

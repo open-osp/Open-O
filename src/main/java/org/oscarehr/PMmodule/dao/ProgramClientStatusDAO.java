@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,6 +20,8 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.PMmodule.dao;
 
@@ -31,77 +34,17 @@ import org.hibernate.Session;
 import org.oscarehr.PMmodule.model.ProgramClientStatus;
 import org.oscarehr.common.model.Admission;
 import org.oscarehr.util.MiscUtils;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.SessionFactory;
 
-public class ProgramClientStatusDAO extends HibernateDaoSupport {
+public interface ProgramClientStatusDAO{
+    public List<ProgramClientStatus> getProgramClientStatuses(Integer programId);
+    public void saveProgramClientStatus(ProgramClientStatus status);
 
-    private Logger log=MiscUtils.getLogger();
+    public ProgramClientStatus getProgramClientStatus(String id);
 
-    public List<ProgramClientStatus> getProgramClientStatuses(Integer programId) {
-        return this.getHibernateTemplate().find("from ProgramClientStatus pcs where pcs.programId=?", programId);
-    }
-
-    public void saveProgramClientStatus(ProgramClientStatus status) {
-        this.getHibernateTemplate().saveOrUpdate(status);
-    }
-
-    public ProgramClientStatus getProgramClientStatus(String id) {
-        if (id == null || Integer.valueOf(id) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        ProgramClientStatus pcs = null;
-        pcs = this.getHibernateTemplate().get(ProgramClientStatus.class, new Integer(id));
-        if (pcs != null) return pcs;
-        else return null;
-    }
-
-    public void deleteProgramClientStatus(String id) {
-        this.getHibernateTemplate().delete(getProgramClientStatus(id));
-    }
-
-    public boolean clientStatusNameExists(Integer programId, String statusName) {
-        if (programId == null || programId.intValue() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (statusName == null || statusName.length() <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        Session session = getSession();
-        List teams = new ArrayList();
-        try {
-	        Query query =session.createQuery("select pt.id from ProgramClientStatus pt where pt.programId = ? and pt.name = ?");
-	        query.setLong(0, programId.longValue());
-	        query.setString(1, statusName);
-	
-	        teams = query.list();
-	
-	        if (log.isDebugEnabled()) {
-	            log.debug("teamNameExists: programId = " + programId + ", statusName = " + statusName + ", result = " + !teams.isEmpty());
-	        }
-        }finally {
-        	releaseSession(session);
-        }
-        return !teams.isEmpty();
-    }
-
-    public List<Admission> getAllClientsInStatus(Integer programId, Integer statusId) {
-        if (programId == null || programId <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (statusId == null || statusId <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        List<Admission> results = this.getHibernateTemplate().find("from Admission a where a.ProgramId = ? and a.TeamId = ? and a.AdmissionStatus='current'", new Object[] {programId, statusId});
-
-        if (log.isDebugEnabled()) {
-            log.debug("getAdmissionsInTeam: programId= " + programId + ",statusId=" + statusId + ",# results=" + results.size());
-        }
-
-        return results;
-    }
+    public void deleteProgramClientStatus(String id);
+    public boolean clientStatusNameExists(Integer programId, String statusName);
+    public List<Admission> getAllClientsInStatus(Integer programId, Integer statusId);
 }

@@ -23,9 +23,11 @@
  */
 package oscar.util;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -163,6 +165,17 @@ public class ConversionUtils {
 	 */
 	public static String toDateString(Date date) {
 		return toDateString(date, DEFAULT_DATE_PATTERN);
+	}
+
+	/**
+	 * Java SQL Timestamp to Java util date string
+	 * @param timestamp java.sql.Timestamp
+	 * @return String given java.sql.Timestamp in string format
+	 */
+	public static String toDateString(Timestamp timestamp) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(timestamp.getTime());
+		return toDateString(calendar.getTime(), DEFAULT_DATE_PATTERN);
 	}
 
 	/**

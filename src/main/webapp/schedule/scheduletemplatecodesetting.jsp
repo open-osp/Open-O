@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%
   if (session.getAttribute("user") == null) response.sendRedirect("../logout.jsp");
 %>
@@ -37,6 +37,7 @@
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.ScheduleTemplateCode" %>
 <%@ page import="org.oscarehr.common.dao.ScheduleTemplateCodeDao" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%
 	ScheduleTemplateCodeDao scheduleTemplateCodeDao = SpringUtils.getBean(ScheduleTemplateCodeDao.class);
 %>
@@ -70,12 +71,14 @@
 	  }
   }
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message
-	key="schedule.scheduletemplatecodesetting.title" /></title>
-<link rel="stylesheet" href="../web.css" />
+<title><bean:message key="schedule.scheduletemplatecodesetting.title" /></title>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/share/javascript/picker.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
+
 <script language="JavaScript">
 <!--
 
@@ -110,108 +113,105 @@ function checkInput() {
 
 //-->
 </script>
-<script type="text/javascript" src="../share/javascript/picker.js"></script>
+
 </head>
-<body bgcolor="ivory" bgproperties="fixed" onLoad="setfocus()"
-	topmargin="0" leftmargin="0" rightmargin="0">
-<table border="0" width="100%">
-	<tr>
-		<td width="50" bgcolor="#009966">&nbsp;</td>
-		<td align="center">
-		<table width="100%" border="0" cellspacing="0" cellpadding="5">
-			<form name="deletetemplatecode" method="post"
-				action="scheduletemplatecodesetting.jsp">
-			<tr bgcolor="#CCFFCC">
-				<td>
-				<p align="right"><bean:message
-					key="schedule.scheduletemplatecodesetting.formTemplateCode" />:</p>
-				</td>
-				<td><select name="code">
-					<%
-					List<ScheduleTemplateCode> stcs = scheduleTemplateCodeDao.findAll();
-					Collections.sort(stcs,ScheduleTemplateCode.CodeComparator);
-	
-					for (ScheduleTemplateCode stc:stcs)
-	{
-%>
-					<option value="<%=stc.getCode()%>"><%=stc.getCode()+" |"+stc.getDescription()%></option>
-					<%
-	}
-%>
-				</select> <input type="hidden" name="dboperation" value=" Edit ">
-				<td><input type="submit"
-					value='<bean:message key="schedule.scheduletemplatecodesetting.btnEdit"/>'></td>
-			</tr>
-			</form>
-		</table>
-		<table border="0" cellpadding="0" CELLSPACING="0" WIDTH="95%">
-			<tr>
-				<td width="50%" align="center">&nbsp;</td>
-			</TR>
-		</table>
-		<table width="95%" border="1" cellspacing="0" cellpadding="2"
-			bgcolor="silver">
-			<form name="addtemplatecode" method="post"
-				action="scheduletemplatecodesetting.jsp">
-			<%
+<body onLoad="setfocus()">
+
+<h4><bean:message key="schedule.scheduletemplatecodesetting.msgApptTemplateCode" /></h4>
+<div class="alert">
+    <bean:message key="schedule.scheduletemplatecodesetting.msgCode" /><br>
+    <bean:message key="schedule.scheduletemplatecodesetting.msgDescription" /><br>
+    <bean:message key="schedule.scheduletemplatecodesetting.msgDuration" /><br>
+    <bean:message key="schedule.scheduletemplatecodesetting.msgColor" /><br>
+    <bean:message key="schedule.scheduletemplatecodesetting.msgBookingLimit" /><br>
+</div>
+<div style="text-align: center; background-color: #CCFFCC;">
+    <form name="deletetemplatecode" method="post" action="scheduletemplatecodesetting.jsp">
+        <bean:message key="schedule.scheduletemplatecodesetting.formTemplateCode" />:
+        <select name="code">
+    <%
+        List<ScheduleTemplateCode> stcs = scheduleTemplateCodeDao.findAll();
+	    Collections.sort(stcs,ScheduleTemplateCode.CodeComparator);
+
+	    for (ScheduleTemplateCode stc:stcs)
+	    {
+    %>
+		    <option value="<%=stc.getCode()%>"><%=stc.getCode()+" |"+ Encode.forHtmlContent(stc.getDescription())%></option>
+    <%
+	    }
+    %>
+    </select>
+        <input type="hidden" name="dboperation" value=" Edit ">
+        <input type="submit" class="btn" value='<bean:message key="schedule.scheduletemplatecodesetting.btnEdit"/>'>
+    </form>
+</div>
+
+<div class="well">
+<form name="addtemplatecode" method="post" action="scheduletemplatecodesetting.jsp" class="form-horizontal">
+<%
 	boolean bEdit = request.getParameter("dboperation")!=null&&request.getParameter("dboperation").equals(" Edit ");
 	if (bEdit)
 	{
 		ScheduleTemplateCode stc = scheduleTemplateCodeDao.findByCode(request.getParameter("code"));
      	if(stc != null) {
-		
+
 			dataBean.setProperty("code", String.valueOf(stc.getCode()) );
 			dataBean.setProperty("description", stc.getDescription() );
 			dataBean.setProperty("duration", stc.getDuration()==null?"":stc.getDuration() );
 			dataBean.setProperty("color", stc.getColor()==null?"":stc.getColor() );
 			dataBean.setProperty("confirm", stc.getConfirm()==null?"No":stc.getConfirm() );
-                        dataBean.setProperty("bookinglimit", String.valueOf(stc.getBookinglimit()));
+			dataBean.setProperty("bookinglimit", String.valueOf(stc.getBookinglimit()));
 		}
 	}
 %>
-
-			<tr bgcolor="#FOFOFO" align="center">
-				<td colspan=2><font FACE="VERDANA,ARIAL,HELVETICA" SIZE="2"
-					color="red"><bean:message
-					key="schedule.scheduletemplatecodesetting.msgApptTemplateCode" /></font></td>
-			</tr>
-			<tr bgcolor='ivory'>
-				<td><font color="red"><bean:message
-					key="schedule.scheduletemplatecodesetting.formCode" />:</font></td>
-				<td><input type="text" name="code" size="1" maxlength="1"
-					<%=bEdit?("value='"+dataBean.getProperty("code")+"'"):"value=''"%>></td>
-			</tr>
-			<tr bgcolor='ivory'>
-				<td><font color="red"><bean:message
-					key="schedule.scheduletemplatecodesetting.formDescription" />:</font></td>
-				<td><input type="text" name="description" size="25"
-					<%=bEdit?("value='"+dataBean.getProperty("description")+"'"):"value=''"%>></td>
-			</tr>
-			<tr bgcolor='ivory'>
-				<td><font color="red"><bean:message
-					key="schedule.scheduletemplatecodesetting.formDuration" />:</font></td>
-				<td><input type="text" name="duration" size="3" maxlength="3"
+    <div class="control-group">
+        <label class="control-label" for="code"><bean:message
+					key="schedule.scheduletemplatecodesetting.formCode" />:</label>
+        <div class="controls">
+            <input type="text" name="code" id="code" maxlength="1"
+					<%=bEdit?("value='"+dataBean.getProperty("code")+"'"):"value=''"%>>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="description"><bean:message
+					key="schedule.scheduletemplatecodesetting.formDescription" />:</label>
+        <div class="controls">
+            <input type="text" name="description" id="description" maxlength="40"
+					<%=bEdit?("value='"+Encode.forHtmlContent(dataBean.getProperty("description"))+"'"):"value=''"%>>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="duration"><bean:message
+					key="schedule.scheduletemplatecodesetting.formDuration" />:</label>
+        <div class="controls">
+            <input type="text" name="duration" id="duration" maxlength="3" placeholder="<bean:message key="schedule.scheduletemplatecodesetting.msgDuration" />"
 					<%=bEdit?("value='"+dataBean.getProperty("duration")+"'"):"value=''"%>>
-				mins.</td>
-			</tr>
-			<tr bgcolor='ivory'>
-				<td><font color="red"><bean:message
-					key="schedule.scheduletemplatecodesetting.formColor" />:</font></td>
-				<td><input type="text" name="color" id="color" size="10" maxlength="10"
-					<%=bEdit?("value='"+dataBean.getProperty("color")+"'"):"value=''"%>> <a href="javascript:TCP.popup(document.forms['addtemplatecode'].elements['color']);"><img width="15" height="13" border="0" src="../images/sel.gif"></a>
-				<bean:message
-					key="schedule.scheduletemplatecodesetting.msgColorExample" /></td>
-			</tr>
-                        <tr bgcolor='ivory'>
-				<td><font color="red"><bean:message
-					key="schedule.scheduletemplatecodesetting.formBookingLimit" />:</font></td>
-				<td><input type="text" id="bookinglimit" name="bookinglimit" size="10"
-					<%=bEdit?("value='"+dataBean.getProperty("bookinglimit")+"'"):"value='1'"%>></td>
-			</tr>
-			<tr bgcolor='ivory'>
-				<td><font color="red">Limit Type:</font></td>
-				<td>
-				<input type="radio" name="confirm" value="No"
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="color"><bean:message
+					key="schedule.scheduletemplatecodesetting.formColor" />:</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="text" name="color" id="color" maxlength="10" style="width: 178px; background-color:<%=bEdit?(dataBean.getProperty("color")):"white"%>;" placeholder="<bean:message
+					key="schedule.scheduletemplatecodesetting.msgColorExample" />"
+					<%=bEdit?("value='"+dataBean.getProperty("color")+"'"):"value=''"%>>
+                <span class="add-on"><a href="javascript:TCP.popup(document.forms['addtemplatecode'].elements['color']);"><img width="15" height="13" border="0" src="${pageContext.request.contextPath}/images/sel.gif" onclick="getElementById('color').style.backgroundColor='white'"></a></span>
+            </div>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="bookingLimit"><bean:message
+					key="schedule.scheduletemplatecodesetting.formBookingLimit" />:</label>
+        <div class="controls">
+            <input type="text" id="bookinglimit" name="bookinglimit"
+					<%=bEdit?("value='"+dataBean.getProperty("bookinglimit")+"'"):"value='1'"%>>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="limitType">Limit Type:</label>
+        <div class="controls">
+            <input type="radio" name="confirm" value="No"
 					<%=(bEdit? (dataBean.getProperty("confirm").startsWith("N")? "checked" : "") : "checked")%>>Off
 				<input type="radio" name="confirm" value="Yes"
 					<%=((bEdit && dataBean.getProperty("confirm").equals("Yes"))? "checked" : "")%>>Warning
@@ -221,44 +221,26 @@ function checkInput() {
 				<input type="radio" name="confirm" value="Day"
 					<%=(bEdit? (dataBean.getProperty("confirm").equals("Day")? "checked" : "") : "checked")%>>Same Day
 				<input type="radio" name="confirm" value="Wk"
-					<%=(bEdit? (dataBean.getProperty("confirm").equals("Wk")? "checked" : "") : "checked")%>>Same Week					
+					<%=(bEdit? (dataBean.getProperty("confirm").equals("Wk")? "checked" : "") : "checked")%>>Same Week
 			   <input type="radio" name="confirm" value="Onc"
 					<%=(bEdit? (dataBean.getProperty("confirm").equals("Onc")? "checked" : "") : "checked")%>>On-Call Urgent
 
-				</td>
-			</tr>
-		</table>
-		<table width="95%" border="0" cellspacing="0" cellpadding="2"
-			bgcolor="silver">
-			<tr bgcolor="#FOFOFO">
-				<input type="hidden" name="dboperation" value="" />
-				<td><input type="button"
+        </div>
+        <div style="text-align:right">
+            <br>
+            <input type="button" class="btn"
 					onclick="document.forms['addtemplatecode'].dboperation.value='Delete'; document.forms['addtemplatecode'].submit();"
-					value='<bean:message key="schedule.scheduletemplatecodesetting.btnDelete"/>'></td>
-				<td align="right"><input type="button"
+					value='<bean:message key="schedule.scheduletemplatecodesetting.btnDelete"/>'>
+            <input type="button" class="btn btn-primary"
 					onclick="if( validateNum() ) { document.forms['addtemplatecode'].dboperation.value=' Save '; document.forms['addtemplatecode'].submit();}"
 					value='<bean:message key="schedule.scheduletemplatecodesetting.btnSave"/>'>
-				<input type="button" name="Button"
+            <input type="button" name="Button" class="btn btn-link"
 					value='<bean:message key="global.btnExit"/>'
-					onClick="window.close()"></td>
-			</tr>
-			</form>
-		</table>
-		<p align='left'>&nbsp; <bean:message
-			key="schedule.scheduletemplatecodesetting.msgCode" /><br>
-		&nbsp; <bean:message
-			key="schedule.scheduletemplatecodesetting.msgDescription" /><br>
-		&nbsp; <bean:message
-			key="schedule.scheduletemplatecodesetting.msgDuration" /><br>
-		&nbsp; <bean:message
-			key="schedule.scheduletemplatecodesetting.msgColor" /><br>
-                &nbsp; <bean:message
-			key="schedule.scheduletemplatecodesetting.msgBookingLimit" /><br>
-		
-                    </p>
-		</td>
-	</tr>
-</table>
+					onClick="window.close()">
+            <input type="hidden" name="dboperation" value="" />
+        </div>
+    </div>
 </form>
+</div>
 </body>
 </html:html>

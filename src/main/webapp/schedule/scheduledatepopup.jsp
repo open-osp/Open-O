@@ -58,7 +58,7 @@
 
 <%@page import="org.oscarehr.common.dao.SiteDao"%>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@page import="org.oscarehr.common.model.Site"%><html:html locale="true">
+<%@page import="org.oscarehr.common.model.Site"%><html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="schedule.scheduledatepopup.title" /></title>
@@ -138,7 +138,7 @@ function upCaseCtrl(ctrl) {
           String [] siteList;
           if (bMultisites) {
         		//multisite starts =====================	  
-        		  SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+        		  SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
         	      List<Site> sites = siteDao.getActiveSitesByProviderNo(request.getParameter("provider_no")); 
         	      siteList = new String[sites.size()+1];
         		  bgColors = new String[sites.size()+1];

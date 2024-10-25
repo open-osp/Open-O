@@ -44,8 +44,8 @@ public class OSISReportUtil {
 	private static final Logger logger = MiscUtils.getLogger();
 
 
-	private static EFormDataDao eFormDataDao = (EFormDataDao) SpringUtils.getBean("EFormDataDao");
-	private static EFormValueDao eFormValueDao = (EFormValueDao) SpringUtils.getBean("EFormValueDao");
+	private static EFormDataDao eFormDataDao = (EFormDataDao) SpringUtils.getBean(EFormDataDao.class);
+	private static EFormValueDao eFormValueDao = (EFormValueDao) SpringUtils.getBean(EFormValueDao.class);
 
 	public static Integer getOSISReport(String moved, String age, String gender, String living, String aboriginal, String[] providerNo, String formId, String startStr, String endStr) {
 		int count = 0;

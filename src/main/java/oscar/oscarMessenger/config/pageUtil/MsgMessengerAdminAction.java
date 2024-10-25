@@ -24,12 +24,6 @@
 
 package oscar.oscarMessenger.config.pageUtil;
 
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -42,11 +36,16 @@ import org.oscarehr.managers.MessengerGroupManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.oscarMessenger.data.ContactIdentifier;
 import oscar.oscarMessenger.data.MsgAddressBookMaker;
 import oscar.oscarMessenger.data.MsgProviderData;
 import oscar.util.ConversionUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 public class MsgMessengerAdminAction extends DispatchAction {
 
@@ -93,18 +92,21 @@ public class MsgMessengerAdminAction extends DispatchAction {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);	
 		String memberId = request.getParameter("member");
 		String groupId = request.getParameter("group");
-		if(groupId == null) {
+		if(groupId == null || groupId.isEmpty()) {
 			groupId = "0";
 		}
 		
-		if(memberId != null && memberId != "") 
-		{
-			//incoming id is expected to be a composite id 
+		if(memberId != null && !memberId.isEmpty()) {
+			//incoming id is expected to be a composite id
 			ContactIdentifier contactIdentifier = new ContactIdentifier(memberId);
-			messengerGroupManager.removeMember(loggedInInfo, contactIdentifier);
-		}
-		else if(Integer.parseInt(groupId) > 0) 
-		{
+
+			if ("0".equals(groupId)) {
+				messengerGroupManager.removeMember(loggedInInfo, contactIdentifier);
+			} else {
+				contactIdentifier.setGroupId(Integer.parseInt(groupId));
+				messengerGroupManager.removeGroupMember(loggedInInfo, contactIdentifier);
+			}
+		} else if(! "0".equals(groupId)){
 			messengerGroupManager.removeGroup(loggedInInfo, Integer.parseInt(groupId));
 		}
 	}
@@ -120,7 +122,11 @@ public class MsgMessengerAdminAction extends DispatchAction {
 		messengerGroupManager.addGroup(loggedInInfo, groupName, Integer.parseInt(parentId));
 		fetch(mapping, form, request, response);
 	}
-	
+
+	/**
+	 * @deprecated
+	 * Use remove method
+	 */
 	@Deprecated
 	@SuppressWarnings("unused")
 	public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

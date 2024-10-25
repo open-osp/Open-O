@@ -23,25 +23,8 @@
  */
 package org.oscarehr.renal.web;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.struts.action.ActionForm;
@@ -56,26 +39,27 @@ import org.oscarehr.common.dao.MeasurementDao;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.Dxresearch;
 import org.oscarehr.common.model.Measurement;
-import org.oscarehr.common.model.Provider;
 import org.oscarehr.renal.CkdScreener;
 import org.oscarehr.renal.ORNCkdScreeningReportThread;
 import org.oscarehr.renal.ORNPreImplementationReportThread;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.OscarAuditLogger;
-import org.oscarehr.util.SpringUtils;
-import org.oscarehr.util.VelocityUtils;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
-
+import org.oscarehr.util.*;
 import oscar.OscarProperties;
 import oscar.form.FrmLabReq07Record;
 import oscar.form.FrmLabReq10Record;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 public class RenalAction extends DispatchAction {
 
-	private DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean("DxresearchDAO");
+	private DxresearchDAO dxResearchDao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
 	private MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
 	private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 	private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
@@ -163,18 +147,48 @@ public class RenalAction extends DispatchAction {
 		List<Measurement> egfrs = measurementDao.findByType(Integer.parseInt(demographicNo), "EGFR");
 		List<Measurement> acrs = measurementDao.findByType(Integer.parseInt(demographicNo), "ACR");
 		Date latestEgfrDate = null;
-		
-		
+
+		String datafield = null;
 		Double latestEgfr = null;
 		Double aYearAgoEgfr = null;
 		if(egfrs.size()>0) {
-			latestEgfr = Double.valueOf(egfrs.get(0).getDataField());
+			/*
+			 *  Some older datasets allowed a comparator to be
+			 *  saved with a numeric value.
+			 *  This filters out those comparators.
+			 */
+			datafield = egfrs.get(0).getDataField();
+			if(datafield != null) {
+				if (datafield.contains(">")) {
+					datafield = datafield.replaceAll(">", "");
+				}
+				if (datafield.contains("<")) {
+					datafield = datafield.replaceAll("<", "");
+				}
+				latestEgfr = Double.valueOf(datafield);
+			}
 			latestEgfrDate = egfrs.get(0).getDateObserved();
 		}
+
 		Double latestAcr = null;
 		if(acrs.size()>0) {
-			latestAcr = Double.valueOf(acrs.get(0).getDataField());
+			/*
+			 *  Some older datasets allowed a comparator to be
+			 *  saved with a numeric value.
+			 *  This filters out those comparators.
+			 */
+			datafield = acrs.get(0).getDataField();
+			if(datafield != null) {
+				if (datafield.contains(">")) {
+					datafield = datafield.replaceAll(">", "");
+				}
+				if (datafield.contains("<")) {
+					datafield = datafield.replaceAll("<", "");
+				}
+				latestAcr = Double.valueOf(datafield);
+			}
 		}
+
 		if(latestEgfrDate != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(latestEgfrDate);
@@ -286,79 +300,87 @@ public class RenalAction extends DispatchAction {
 		return null;
 	}
 	
+	/*
+	* This method is no longer supported as it directly utilizes JavaMailSender.
+	* Currently, a new email feature (EmailManager.java) is in production.
+    * 
+    * TODO: Once the new emailing feature is fully implemented, refactor and update this method to make it compatible with the latest email handling in EmailManager.java.
+    */
+	@Deprecated
 	public ActionForward sendPatientLetterAsEmail(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+		throw new UnsupportedOperationException("This method is no longer supported.");
+		// LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 
-		String demographicNo = request.getParameter("demographic_no");
-		String error = "";
-		boolean success=true;
-		JSONObject json = new JSONObject();
+		// String demographicNo = request.getParameter("demographic_no");
+		// String error = "";
+		// boolean success=true;
+		// JSONObject json = new JSONObject();
 		
-		final Demographic d = demographicDao.getDemographic(demographicNo);
+		// final Demographic d = demographicDao.getDemographic(demographicNo);
         
-		if(d == null) {
-			error = "Patient not found.";
-			success=false;
-		}
-		if(d.getEmail() == null || d.getEmail().length() == 0 || d.getEmail().indexOf("@") == -1) {
-			error = "No valid email address found for patient.";
-			success=false;
-		}
+		// if(d == null) {
+		// 	error = "Patient not found.";
+		// 	success=false;
+		// }
+		// if(d.getEmail() == null || d.getEmail().length() == 0 || d.getEmail().indexOf("@") == -1) {
+		// 	error = "No valid email address found for patient.";
+		// 	success=false;
+		// }
 		
-		if(success) {
+		// if(success) {
 		
-			try {
-				String documentDir = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR","");
-				File f = new File(documentDir,"orn_patient_letter.txt");
-		        String template=IOUtils.toString(new FileInputStream(f));
+		// 	try {
+		// 		String documentDir = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR","");
+		// 		File f = new File(documentDir,"orn_patient_letter.txt");
+		//         String template=IOUtils.toString(new FileInputStream(f));
 		        
-		        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		//         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		
-		        VelocityContext velocityContext=VelocityUtils.createVelocityContextWithTools();            
-		        velocityContext.put("patient", d);
-		        velocityContext.put("currentDate", sdf.format(new Date()));
-		        Provider mrp = null;
-		        if(d.getProviderNo() != null && d.getProviderNo().length()>0) {
-		        	mrp = providerDao.getProvider(d.getProviderNo());	
-		        } else {
-		        	mrp = providerDao.getProvider(OscarProperties.getInstance().getProperty("orn.default_mrp",""));
-		        }
-		        velocityContext.put("mrp", mrp);
+		//         VelocityContext velocityContext=VelocityUtils.createVelocityContextWithTools();            
+		//         velocityContext.put("patient", d);
+		//         velocityContext.put("currentDate", sdf.format(new Date()));
+		//         Provider mrp = null;
+		//         if(d.getProviderNo() != null && d.getProviderNo().length()>0) {
+		//         	mrp = providerDao.getProvider(d.getProviderNo());	
+		//         } else {
+		//         	mrp = providerDao.getProvider(OscarProperties.getInstance().getProperty("orn.default_mrp",""));
+		//         }
+		//         velocityContext.put("mrp", mrp);
 		       
-		        final String mrp1 = mrp.getFullName();
+		//         final String mrp1 = mrp.getFullName();
 		        
-		       final String letter=VelocityUtils.velocityEvaluate(velocityContext, template);
+		//        final String letter=VelocityUtils.velocityEvaluate(velocityContext, template);
 		       
-		       JavaMailSender mailSender = (JavaMailSender) SpringUtils.getBean("mailSender");
+		//        JavaMailSender mailSender = (JavaMailSender) SpringUtils.getBean(MailSender.class);
 		       
-		       MimeMessagePreparator preparator = new MimeMessagePreparator() {
-		           public void prepare(MimeMessage mimeMessage) throws Exception {
-		              MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-		              message.setTo(d.getEmail());
-		              message.setSubject(OscarProperties.getInstance().getProperty("orn.email.subject", "Important Message from " +  mrp1));
-		              message.setFrom(OscarProperties.getInstance().getProperty("orn.email.from","no-reply@oscarmcmaster.org"));         
-		              message.setText(letter, true);
-		           }
-		        };
-		        mailSender.send(preparator);
+		//        MimeMessagePreparator preparator = new MimeMessagePreparator() {
+		//            public void prepare(MimeMessage mimeMessage) throws Exception {
+		//               MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+		//               message.setTo(d.getEmail());
+		//               message.setSubject(OscarProperties.getInstance().getProperty("orn.email.subject", "Important Message from " +  mrp1));
+		//               message.setFrom(OscarProperties.getInstance().getProperty("orn.email.from","no-reply@oscarmcmaster.org"));         
+		//               message.setText(letter, true);
+		//            }
+		//         };
+		//         mailSender.send(preparator);
 		       
-			}catch(IOException e) {
-				MiscUtils.getLogger().error("Error",e);
-				success=false;
-				error=e.getMessage();
-			} finally {
-				OscarAuditLogger.getInstance().log(loggedInInfo, "create", "CkdPatientLetter", Integer.valueOf(demographicNo), "");
-				OscarAuditLogger.getInstance().log(loggedInInfo, "email", "CkdPatientLetter", Integer.valueOf(demographicNo), "");
-			}
-		}
-		json.put("success", String.valueOf(success));
-		json.put("error", error);
-		try {
-			json.write(response.getWriter());
-		}catch(IOException e) {
-			MiscUtils.getLogger().error("error",e);
-		}
-		return null;
+		// 	}catch(IOException e) {
+		// 		MiscUtils.getLogger().error("Error",e);
+		// 		success=false;
+		// 		error=e.getMessage();
+		// 	} finally {
+		// 		OscarAuditLogger.getInstance().log(loggedInInfo, "create", "CkdPatientLetter", Integer.valueOf(demographicNo), "");
+		// 		OscarAuditLogger.getInstance().log(loggedInInfo, "email", "CkdPatientLetter", Integer.valueOf(demographicNo), "");
+		// 	}
+		// }
+		// json.put("success", String.valueOf(success));
+		// json.put("error", error);
+		// try {
+		// 	json.write(response.getWriter());
+		// }catch(IOException e) {
+		// 	MiscUtils.getLogger().error("error",e);
+		// }
+		// return null;
 	}
 	
 	public ActionForward submitPreimplementationReport(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)  {

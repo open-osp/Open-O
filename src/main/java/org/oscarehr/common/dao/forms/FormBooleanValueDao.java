@@ -25,7 +25,7 @@
 
 package org.oscarehr.common.dao.forms;
 
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 import oscar.form.model.BooleanValueForm;
 import oscar.form.model.FormBooleanValue;
@@ -34,7 +34,7 @@ import javax.persistence.Query;
 import java.util.HashMap;
 
 @Repository
-public class FormBooleanValueDao extends AbstractDao<FormBooleanValue> {
+public class FormBooleanValueDao extends AbstractDaoImpl<FormBooleanValue> {
 
     public FormBooleanValueDao() {
         super(FormBooleanValue.class);

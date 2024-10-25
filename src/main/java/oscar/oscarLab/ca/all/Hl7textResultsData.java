@@ -70,7 +70,7 @@ import oscar.util.UtilDateUtilities;
 public class Hl7textResultsData {
 
 	private static Logger logger = MiscUtils.getLogger();
-	private static MeasurementsDeletedDao measurementsDeletedDao = (MeasurementsDeletedDao) SpringUtils.getBean("measurementsDeletedDao");
+	private static MeasurementsDeletedDao measurementsDeletedDao = (MeasurementsDeletedDao) SpringUtils.getBean(MeasurementsDeletedDao.class);
 	private static MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
 	private static MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
 	private static MeasurementMapDao measurementMapDao = SpringUtils.getBean(MeasurementMapDao.class);
@@ -107,8 +107,8 @@ public class Hl7textResultsData {
 		}
 
 		if (k != 0) {
-			List<AbstractModel<?>> measurementsDeletedList = new ArrayList<>();
-			List<AbstractModel<?>> measurementsToRemove = new ArrayList<>();
+			List<MeasurementsDeleted> measurementsDeletedList = new ArrayList<>();
+			List<Measurement> measurementsToRemove = new ArrayList<>();
 			MeasurementsDeleted measurementsDeleted;
 			for (Measurement m : measurementDao.findByValue("lab_no", matchingLabs[k - 1])) {
 				measurementsDeleted = new MeasurementsDeleted(m);
@@ -135,7 +135,7 @@ public class Hl7textResultsData {
 		 */	
 		boolean isSearchName = Boolean.parseBoolean(OscarProperties.getInstance().getProperty("MAP_BY_IDENTIFIER_AND_NAME", "false"));
 
-		List<AbstractModel<?>> measurementsExts = new ArrayList<>();
+		List<MeasurementsExt> measurementsExts = new ArrayList<>();
 		for (int i = 0; i < h.getOBRCount(); i++) {
 			for (int j = 0; j < h.getOBXCount(i); j++) {
 

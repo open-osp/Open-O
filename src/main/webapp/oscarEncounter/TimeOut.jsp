@@ -36,7 +36,7 @@
     }
 %>
 <link rel="stylesheet" type="text/css" href="encounterStyles.css">
-<html:html locale="true">
+<html:html lang="en">
 <script type="text/javascript" language=javascript>
     function loadUp(){
         window.resizeTo(900,50);

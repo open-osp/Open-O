@@ -25,14 +25,6 @@
 
 package oscar.oscarBilling.ca.bc.pageUtil;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -45,9 +37,6 @@ import org.oscarehr.common.model.Billing;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import oscar.MyDateFormat;
 import oscar.OscarProperties;
 import oscar.entities.Billingmaster;
@@ -57,11 +46,18 @@ import oscar.oscarBilling.ca.bc.data.BillingHistoryDAO;
 import oscar.oscarBilling.ca.bc.data.BillingNote;
 import oscar.oscarBilling.ca.bc.data.BillingmasterDAO;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+
 public class BillingSaveBillingAction extends Action {
 
     private static Logger log = MiscUtils.getLogger();
-    private AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
-    private OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+    private AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
+    private OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 
     private BillingmasterDAO billingmasterDAO = SpringUtils.getBean(BillingmasterDAO.class);
 
@@ -237,10 +233,10 @@ public class BillingSaveBillingAction extends Action {
 
     private char getBillingAccountStatus(oscar.oscarBilling.ca.bc.pageUtil.BillingSessionBean bean){
         char billingAccountStatus = 'O';
-        if (bean.getBillingType().equals("DONOTBILL")) {
+        if ("DONOTBILL".equals(bean.getBillingType())) {
             //bean.setBillingType("MSP"); //RESET this to MSP to get processed
             billingAccountStatus = 'N';
-        } else if (bean.getBillingType().equals("WCB")) {
+        } else if ("WCB".equals(bean.getBillingType())) {
             billingAccountStatus = 'O';
         } else if (MSPReconcile.BILLTYPE_PRI.equals(bean.getBillingType())) {
             billingAccountStatus = 'P';

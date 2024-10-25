@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
@@ -33,125 +36,21 @@ import org.oscarehr.common.model.RoomBedPK;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class RoomBedDao extends AbstractDao<RoomBed>{
+public interface RoomBedDao extends AbstractDao<RoomBed> {
 
-	private Logger log = MiscUtils.getLogger();
+    public boolean bedExists(Integer roomId);
 
-	public RoomBedDao() {
-		super(RoomBed.class);
-	}
-	
-   
-    public boolean bedExists(Integer roomId) {
-    	Query query = entityManager.createQuery("select count(*) from RoomBed rb where rb.id.roomId = ?");
-		query.setParameter(1, roomId);
-		
-		Long result = (Long)query.getSingleResult();
-		
-		return (result.intValue() == 1);
-    }
+    public boolean roomExists(Integer bedId);
 
-   
-    public boolean roomExists(Integer bedId) {
-    	Query query = entityManager.createQuery("select count(*) from RoomBed rb where rb.id.bedId = ?");
-		query.setParameter(1, bedId);
-		
-		Long result = (Long)query.getSingleResult();
-		
-		return (result.intValue() == 1);
-    }
+    public RoomBed getRoomBedByRoom(Integer roomId);
 
-   
-    public RoomBed getRoomBedByRoom(Integer roomId) {
-    	Query query = entityManager.createQuery("select bd from RoomBed bd where bd.id.roomId = ?");
-    	query.setParameter(1, roomId);
-    	
-    	@SuppressWarnings("unchecked")
-        List<RoomBed> roomBeds =query.getResultList();
+    public RoomBed getRoomBedByBed(Integer bedId);
 
-        if (roomBeds.size() > 1) {
-            throw new IllegalStateException("Room is assigned to more than one client");
-        }
+    public void saveRoomBed(RoomBed roomBed);
 
-        RoomBed roomBed = ((roomBeds.size() == 1)?roomBeds.get(0):null);
+    public void deleteRoomBed(RoomBed roomBed);
 
-        log.debug("getRoomBedByRoom: " + roomId);
+    public boolean roomBedExists(RoomBedPK id);
 
-        return roomBed;
-    }
-
-  
-    public RoomBed getRoomBedByBed(Integer bedId) {
-    	Query query = entityManager.createQuery("select bd from RoomBed bd where bd.id.bedId = ?");
-    	query.setParameter(1, bedId);
-    	
-    	@SuppressWarnings("unchecked")
-        List<RoomBed> roomBeds =query.getResultList();
-    	
-    	
-        if (roomBeds.size() > 1) {
-            throw new IllegalStateException("Client is assigned to more than one room");
-        }
-
-        RoomBed roomBed = ((roomBeds.size() == 1)?roomBeds.get(0):null);
-
-        log.debug("getRoomBedByBed: " + bedId);
-
-        return roomBed;
-    }
-
-    
-    public void saveRoomBed(RoomBed roomBed) {
-        updateHistory(roomBed);
-        
-        if(roomBed == null)
-        	return;
-        
-        if(roomBed.getId() == null || roomBed.getId().getBedId() == null || roomBed.getId().getRoomId() == null)
-        	persist(roomBed);
-        else
-        	merge(roomBed);
-
-
-        log.debug("saveRoomBed: " + roomBed);
-    }
-
-    public void deleteRoomBed(RoomBed roomBed) {
-         // delete
-    	if(roomBed != null)
-    		remove(roomBed.getId());
-    }
-
-    boolean roomBedExists(RoomBedPK id) {
-    	Query query = entityManager.createQuery("select count(*) from RoomBed rb where rb.id.roomId = ? and rb.id.bedId = ?");
-		query.setParameter(1, id.getRoomId());
-		query.setParameter(1, id.getBedId());
-		
-		Long result = (Long)query.getSingleResult();
-		
-		return (result.intValue() == 1);
-    }
-
-    void updateHistory(RoomBed roomBed) {
-        RoomBed existing = null;
-
-        RoomBedPK id = roomBed.getId();
-
-        if (!roomBedExists(id)) {
-            Integer bedId = id.getBedId();
-            Integer roomId = id.getRoomId();
-
-            if (roomExists(bedId)) {
-                existing = getRoomBedByBed(bedId);
-            }
-            else if (bedExists(roomId)) {
-                existing = getRoomBedByRoom(roomId);
-            }
-        }
-
-        if (existing != null) {
-            deleteRoomBed(existing);
-        }
-    }
+    public void updateHistory(RoomBed roomBed);
 }

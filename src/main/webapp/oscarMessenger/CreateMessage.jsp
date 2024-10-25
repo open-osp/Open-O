@@ -40,6 +40,7 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 	  boolean authed=true;
@@ -108,15 +109,14 @@ if(recall){
 }
 
 %>
-
-<html:html locale="true">
+<!DOCTYPE html>
+<html:html lang="en">
 <head>
 <title><bean:message key="oscarMessenger.CreateMessage.title" /></title>
 
 <link rel="stylesheet" type="text/css" href="encounterStyles.css">
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
 
-<style type="text/css">
+<style>
 
 	summary {
 		cursor: pointer;
@@ -273,6 +273,7 @@ if(recall){
 </script>
 </head>
 <body class="BodyStyle" vlink="#0000FF">
+<div class="container">
 <table class="MainTable" id="scrollNumber1">
 	<tr class="MainTableTopRow">
 		<td class="MainTableTopRowLeftColumn">
@@ -478,10 +479,15 @@ if(recall){
 						</div> <!-- end ChooseRecipientsBox -->
 					</td>
 					<td bgcolor="#EEEEFF" valign=top colspan="2"><!--Message and Subject Cell-->
+						<div>
+						<label for="subject">
 					<bean:message key="oscarMessenger.CreateMessage.formSubject" /> :
-					<html:text name="msgCreateMessageForm" property="subject" size="67" value="${messageSubject}"/> <br>
-					<br>
-					<html:textarea name="msgCreateMessageForm" property="message" cols="60" rows="18" value="${messageBody}"/> 
+						</label>
+					<html:text name="msgCreateMessageForm" styleId="subject" property="subject" size="67" value="${messageSubject}"/> <br>
+						</div>
+						<div >
+					<html:textarea styleClass="boxsizingBorder" name="msgCreateMessageForm" property="message" cols="60" rows="18" value="${messageBody}"/>
+						</div>
 					<%
                        String att = bean.getAttachment();
                        String pdfAtt = bean.getPDFAttachment();
@@ -499,7 +505,7 @@ if(recall){
 
 				<tr>
 					<td bgcolor="#B8B8FF"></td>
-					<td bgcolor="#B8B8FF" colspan="2"><font style="font-weight: bold"><bean:message key="oscarMessenger.CreateMessage.msgLinkThisMessage" /></font></td>
+					<td bgcolor="#B8B8FF" colspan="2"><strong><bean:message key="oscarMessenger.CreateMessage.msgLinkThisMessage" /></strong></td>
 				</tr>
                                                       
 				<tr>
@@ -513,7 +519,7 @@ if(recall){
 				</tr>
 				<tr>
 					<td bgcolor="#EEEEFF"></td>
-					<td bgcolor="#EEEEFF" colspan="2"><font style="font-weight: bold"><bean:message key="oscarMessenger.CreateMessage.msgSelectedDemographic" /></font></td>
+					<td bgcolor="#EEEEFF" colspan="2"><strong><bean:message key="oscarMessenger.CreateMessage.msgSelectedDemographic" /></strong></td>
 				</tr>
 				<tr>
 					<td bgcolor="#EEEEFF"></td>
@@ -522,15 +528,15 @@ if(recall){
 
 						<c:choose>					
 							<c:when test="${ not empty unlinkedIntegratorDemographicName }">
-								<input type="text" name="selectedDemo" value="${ unlinkedIntegratorDemographicName }" 
+								<input type="text" name="selectedDemo" value="<c:out value='${ unlinkedIntegratorDemographicName }' />"
 									size="30" style="background: #EEEEFF; border: none;" readonly />
 							</c:when>
 							<c:otherwise>
-								<input type="text" name="selectedDemo" size="30" readonly style="background: #EEEEFF; border: none" value="none" /> 
+								<input type="text" id="selectedDemo" name="selectedDemo" size="30" readonly style="background: #EEEEFF; border: none" value="none" />
 								<script type="text/javascript">
-			                          if ( "<%=demoName%>" != "null" && "<%=demoName%>" != "") {
-			                              document.forms[0].selectedDemo.value = "<%=demoName%>";
-			                              document.forms[0].demographic_no.value = "<%=demographic_no%>";
+			                          if ( '<%=Encode.forHtmlUnquotedAttribute(demoName)%>' && '<%=Encode.forHtmlUnquotedAttribute(demoName)%>' !== 'null') {
+			                              document.forms[0].selectedDemo.value = "<%=Encode.forJavaScript(demoName)%>";
+			                              document.forms[0].demographic_no.value = "<%=Encode.forJavaScript(demographic_no)%>";
 			                          }
 			                     </script>						
 							</c:otherwise>					
@@ -570,5 +576,6 @@ if(recall){
 		<td class="MainTableBottomRowRightColumn">&nbsp;</td>
 	</tr>
 </table>
+</div>
 </body>
 </html:html>

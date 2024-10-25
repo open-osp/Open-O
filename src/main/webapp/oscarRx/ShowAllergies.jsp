@@ -71,7 +71,7 @@ String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.D
 
 com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="EditAllergies.title" /></title>

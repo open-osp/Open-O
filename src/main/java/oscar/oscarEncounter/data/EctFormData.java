@@ -26,6 +26,7 @@
 package oscar.oscarEncounter.data;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -57,7 +58,7 @@ import oscar.util.SqlUtils;
 public class EctFormData {
 
 	private static Logger logger = MiscUtils.getLogger();
-	private static EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean("encounterFormDao");
+	private static EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean(EncounterFormDao.class);
 	
 	public static final String DATE_FORMAT = "dd-MM-yyyy";
 	public static final String DATETIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
@@ -113,7 +114,7 @@ public class EctFormData {
 
 	public static ArrayList<PatientForm> getGroupedPatientFormsFromAllTables(Integer demographicId) {
 		// grab all of the forms
-		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean("encounterFormDao");
+		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean(EncounterFormDao.class);
 		List<EncounterForm> encounterForms = encounterFormDao.findAll();
 		Collections.sort(encounterForms, EncounterForm.BC_FIRST_COMPARATOR);
 
@@ -172,7 +173,7 @@ public class EctFormData {
 
 	public static ArrayList<PatientForm> getAllPatientFormsFromAllTables(Integer demographicId) {
 		// grab all of the forms
-		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean("encounterFormDao");
+		EncounterFormDao encounterFormDao = (EncounterFormDao) SpringUtils.getBean(EncounterFormDao.class);
 		List<EncounterForm> encounterForms = encounterFormDao.findAll();
 		Collections.sort(encounterForms, EncounterForm.BC_FIRST_COMPARATOR);
 
@@ -355,7 +356,25 @@ public class EctFormData {
 		public String table;
 
 		// Constructor
+		public PatientForm(String table, String formName, Integer formId, Integer demographicId) {
+			this.table = table;
+			this.formName = formName;
+			this.formId = formId;
+			this.demographicId = demographicId;
+		}
+
+		// Constructor
 		public PatientForm(String formName, Integer formId, Integer demographicId, Date created, Date edited) {
+			this.formName = formName;
+			this.formId = formId;
+			this.demographicId = demographicId;
+			this.created = created;
+			this.edited = edited;
+		}
+
+		// Constructor
+		public PatientForm(String table, String formName, Integer formId, Integer demographicId, Date created, Date edited) {
+			this.table = table;
 			this.formName = formName;
 			this.formId = formId;
 			this.demographicId = demographicId;

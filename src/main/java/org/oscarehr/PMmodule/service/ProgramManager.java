@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,10 +20,10 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.PMmodule.service;
-
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,454 +53,183 @@ import org.oscarehr.PMmodule.model.ProgramSignature;
 import org.oscarehr.PMmodule.model.ProgramTeam;
 import org.oscarehr.PMmodule.model.VacancyTemplate;
 import org.oscarehr.util.LoggedInInfo;
-
 import oscar.OscarProperties;
-public class ProgramManager {
 
-    private ProgramDao programDao;
-    private ProgramProviderDAO programProviderDAO;
-    private ProgramFunctionalUserDAO programFunctionalUserDAO;
-    private ProgramTeamDAO programTeamDAO;
-    private ProgramAccessDAO programAccessDAO;
-    private AdmissionDao admissionDao;
-    private DefaultRoleAccessDAO defaultRoleAccessDAO;
-    private ProgramClientStatusDAO clientStatusDAO;
-    private ProgramSignatureDao programSignatureDao;
-    private VacancyTemplateDao vacancyTemplateDao;
+public interface ProgramManager {
+
+    boolean getEnabled();
+
+    void setEnabled(boolean enabled);
+
+    ProgramSignatureDao getProgramSignatureDao();
+
+    void setProgramSignatureDao(ProgramSignatureDao programSignatureDao);
+
+    void setProgramDao(ProgramDao dao);
+
+    void setProgramProviderDAO(ProgramProviderDAO dao);
+
+    void setProgramFunctionalUserDAO(ProgramFunctionalUserDAO dao);
+
+    void setProgramTeamDAO(ProgramTeamDAO dao);
+
+    void setProgramAccessDAO(ProgramAccessDAO dao);
+
+    void setAdmissionDao(AdmissionDao dao);
+
+    void setDefaultRoleAccessDAO(DefaultRoleAccessDAO dao);
+
+    void setProgramClientStatusDAO(ProgramClientStatusDAO dao);
+
+    Program getProgram(String programId);
+
+    Program getProgram(Integer programId);
+
+    Program getProgram(Long programId);
     
-    private boolean enabled;
+    List<Program> getActiveProgramByFacility(String providerNo, Integer facilityId);
 
-    public boolean getEnabled() {
-        return enabled;
-    }
+    String getProgramName(String programId);
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+    Integer getProgramIdByProgramName(String programName);
 
-    public ProgramSignatureDao getProgramSignatureDao() {
-        return programSignatureDao;
-    }
+    List<Program> getAllPrograms();
 
-    public void setProgramSignatureDao(ProgramSignatureDao programSignatureDao) {
-        this.programSignatureDao = programSignatureDao;
-    }
+    List<Program> getAllPrograms(String programStatus, String type, int facilityId);
 
-    public void setProgramDao(ProgramDao dao) {
-        this.programDao = dao;
-    }
+    List<Program> getCommunityPrograms(Integer facilityId);
 
-    public void setProgramProviderDAO(ProgramProviderDAO dao) {
-        this.programProviderDAO = dao;
-    }
+    List<Program> getPrograms(Integer facilityId);
 
-    public void setProgramFunctionalUserDAO(ProgramFunctionalUserDAO dao) {
-        this.programFunctionalUserDAO = dao;
-    }
+    List<Program> getPrograms();
 
-    public void setProgramTeamDAO(ProgramTeamDAO dao) {
-        this.programTeamDAO = dao;
-    }
+    Program[] getBedPrograms();
 
-    public void setProgramAccessDAO(ProgramAccessDAO dao) {
-        this.programAccessDAO = dao;
-    }
+    Program[] getBedPrograms(Integer facilityId);
 
-    public void setAdmissionDao(AdmissionDao dao) {
-        this.admissionDao = dao;
-    }
+    List<Program> getServicePrograms();
 
-    public void setDefaultRoleAccessDAO(DefaultRoleAccessDAO dao) {
-        this.defaultRoleAccessDAO = dao;
-    }
+    Program[] getExternalPrograms();
 
-    public void setProgramClientStatusDAO(ProgramClientStatusDAO dao) {
-        this.clientStatusDAO = dao;
-    }
+    boolean isBedProgram(String programId);
 
-    public Program getProgram(String programId) {
-        return programDao.getProgram(Integer.valueOf(programId));
-    }
+    boolean isServiceProgram(String programId);
 
-    public Program getProgram(Integer programId) {
-        return programDao.getProgram(programId);
-    }
+    boolean isCommunityProgram(String programId);
 
-    public Program getProgram(Long programId) {
-        return programDao.getProgram(new Integer(programId.intValue()));
-    }
+    void saveProgram(Program program);
+
+    void removeProgram(String programId);
+
+    List<ProgramProvider> getProgramProviders(String programId);
+
+    List<ProgramProvider> getProgramProvidersByProvider(String providerNo);
+
+    ProgramProvider getProgramProvider(String id);
+
+    ProgramProvider getProgramProvider(String providerNo, String programId);
+
+    void saveProgramProvider(ProgramProvider pp);
+
+    void deleteProgramProvider(String id);
+
+    void deleteProgramProviderByProgramId(Long programId);
+
+    List<FunctionalUserType> getFunctionalUserTypes();
+
+    FunctionalUserType getFunctionalUserType(String id);
+
+    void saveFunctionalUserType(FunctionalUserType fut);
+
+    void deleteFunctionalUserType(String id);
+
+    List<FunctionalUserType> getFunctionalUsers(String programId);
+
+    ProgramFunctionalUser getFunctionalUser(String id);
+
+    void saveFunctionalUser(ProgramFunctionalUser pfu);
+
+    void deleteFunctionalUser(String id);
+
+    Long getFunctionalUserByUserType(Long programId, Long userTypeId);
+
+    List<ProgramTeam> getProgramTeams(String programId);
+
+    ProgramTeam getProgramTeam(String id);
+
+    void saveProgramTeam(ProgramTeam team);
+
+    void deleteProgramTeam(String id);
+
+    boolean teamNameExists(Integer programId, String teamName);
+
+    List<ProgramAccess> getProgramAccesses(String programId);
+
+    ProgramAccess getProgramAccess(String id);
+
+    void saveProgramAccess(ProgramAccess pa);
+
+    void deleteProgramAccess(String id);
+
+    List<AccessType> getAccessTypes();
+
+    AccessType getAccessType(Long id);
+
+    List<ProgramProvider> getAllProvidersInTeam(Integer programId, Integer teamId);
+
+    List<Admission> getAllClientsInTeam(Integer programId, Integer teamId);
+
+    List<Program> search(Program criteria);
+
+    List<Program> searchByFacility(Program criteria, Integer facilityId);
+
+    Program getHoldingTankProgram();
+
+    ProgramAccess getProgramAccess(String programId, String accessTypeId);
+
+    List<Program> getProgramDomain(String providerNo);
+
+    List<Program> getActiveProgramDomain(String providerNo);
+
+    List<Program> getProgramDomainInCurrentFacilityForCurrentProvider(LoggedInInfo loggedInInfo, boolean activeOnly);
+
+    Program[] getCommunityPrograms();
+
+    List<LabelValueBean> getProgramBeans(String providerNo);
+
+    List<DefaultRoleAccess> getDefaultRoleAccesses();
+
+    DefaultRoleAccess getDefaultRoleAccess(String id);
+
+    void saveDefaultRoleAccess(DefaultRoleAccess dra);
+
+    void deleteDefaultRoleAccess(String id);
+
+    DefaultRoleAccess findDefaultRoleAccess(long roleId, long accessTypeId);
+
+    List<ProgramClientStatus> getProgramClientStatuses(Integer programId);
+
+    void saveProgramClientStatus(ProgramClientStatus status);
+
+    void deleteProgramClientStatus(String id);
+
+    boolean clientStatusNameExists(Integer programId, String statusName);
+
+    List<Admission> getAllClientsInStatus(Integer programId, Integer statusId);
+
+    ProgramClientStatus getProgramClientStatus(String statusId);
+
+    ProgramSignature getProgramFirstSignature(Integer programId);
+
+    List<ProgramSignature> getProgramSignatures(Integer programId);
+
+    void saveProgramSignature(ProgramSignature programSignature);
     
-    public List<Program> getActiveProgramByFacility(String providerNo, Integer facilityId) {
-        List<Program> programs = new ArrayList<Program>();
-        for (ProgramProvider programProvider : programProviderDAO.getProgramDomainByFacility(providerNo, facilityId)) {
-            Program program = this.getProgram(programProvider.getProgramId());
-            if (program.isActive()) {
-                programs.add(program);
-            }
-        }
-        return programs;
-    }
+    VacancyTemplate getVacancyTemplate(Integer templateId);
 
-    public String getProgramName(String programId) {
-        return programDao.getProgramName(Integer.valueOf(programId));
-    }
+    void setVacancyTemplateDao(VacancyTemplateDao vacancyTemplateDao);
 
-    public Integer getProgramIdByProgramName(String programName) {
-    	return programDao.getProgramIdByProgramName(programName);
-    }
+    boolean hasAccessBasedOnCurrentFacility(LoggedInInfo loggedInInfo, Integer programId);
 
-    public List<Program> getAllPrograms() {
-        return programDao.getAllPrograms();
-    }
-
-    public List<Program> getAllPrograms(String programStatus, String type, int facilityId) {
-        return programDao.getAllPrograms(programStatus, type, facilityId);
-    }
-
-    /**
-      * facilityId can be null, it will return all community programs optionally filtering by facility id if filtering is enabled.
-     */
-    public List<Program> getCommunityPrograms(Integer facilityId) {
-        if (OscarProperties.getInstance().getBooleanProperty("FILTER_ON_FACILITY", "true")) {
-            return programDao.getCommunityProgramsByFacilityId(facilityId);
-        }
-        else {
-            return programDao.getPrograms();
-        }
-    }
-
- 
-    public List<Program> getPrograms(Integer facilityId) {
-        if (OscarProperties.getInstance().getBooleanProperty("FILTER_ON_FACILITY", "true")) {
-            return programDao.getProgramsByFacilityId(facilityId);
-        }
-        else {
-            return programDao.getAllPrograms();
-        }
-    }
-
-    public List<Program> getPrograms() {
-        return programDao.getPrograms();
-    }
-
-    public Program[] getBedPrograms() {
-        return programDao.getProgramsByType(null, Program.BED_TYPE, null).toArray(new Program[0]);
-    }
-
-    public Program[] getBedPrograms(Integer facilityId) {
-        return programDao.getProgramsByType(facilityId, Program.BED_TYPE, null).toArray(new Program[0]);
-    }
-
-    public List<Program> getServicePrograms() {
-        return programDao.getProgramsByType(null, Program.SERVICE_TYPE, null);
-    }
-
-    public Program[] getExternalPrograms() {
-        return programDao.getProgramsByType(null, Program.EXTERNAL_TYPE, true).toArray(new Program[0]);
-    }
-
-    public boolean isBedProgram(String programId) {
-        return programDao.isBedProgram(Integer.valueOf(programId));
-    }
-
-    public boolean isServiceProgram(String programId) {
-        return programDao.isServiceProgram(Integer.valueOf(programId));
-    }
-
-    public boolean isCommunityProgram(String programId) {
-        return programDao.isCommunityProgram(Integer.valueOf(programId));
-    }
-
-    public void saveProgram(Program program) {
-        if (program.getHoldingTank()) {
-            programDao.resetHoldingTank();
-        }
-        programDao.saveProgram(program);
-    }
-
-    public void removeProgram(String programId) {
-        programDao.removeProgram(Integer.valueOf(programId));
-    }
-
-    public List<ProgramProvider> getProgramProviders(String programId) {
-        return programProviderDAO.getProgramProviders(Long.valueOf(programId));
-    }
-
-    public List<ProgramProvider> getProgramProvidersByProvider(String providerNo) {
-        return programProviderDAO.getProgramProvidersByProvider(providerNo);
-    }
-
-    public ProgramProvider getProgramProvider(String id) {
-        return programProviderDAO.getProgramProvider(Long.valueOf(id));
-    }
-
-    public ProgramProvider getProgramProvider(String providerNo, String programId) {
-        return programProviderDAO.getProgramProvider(providerNo, Long.valueOf(programId));
-    }
-
-    public void saveProgramProvider(ProgramProvider pp) {
-        programProviderDAO.saveProgramProvider(pp);
-    }
-
-    public void deleteProgramProvider(String id) {
-        programProviderDAO.deleteProgramProvider(Long.valueOf(id));
-    }
-
-    public void deleteProgramProviderByProgramId(Long programId) {
-        programProviderDAO.deleteProgramProviderByProgramId(programId);
-    }
-
-    public List<FunctionalUserType> getFunctionalUserTypes() {
-        return programFunctionalUserDAO.getFunctionalUserTypes();
-    }
-
-    public FunctionalUserType getFunctionalUserType(String id) {
-        return programFunctionalUserDAO.getFunctionalUserType(Long.valueOf(id));
-    }
-
-    public void saveFunctionalUserType(FunctionalUserType fut) {
-        programFunctionalUserDAO.saveFunctionalUserType(fut);
-    }
-
-    public void deleteFunctionalUserType(String id) {
-        programFunctionalUserDAO.deleteFunctionalUserType(Long.valueOf(id));
-    }
-
-    public List<FunctionalUserType> getFunctionalUsers(String programId) {
-        return programFunctionalUserDAO.getFunctionalUsers(Long.valueOf(programId));
-    }
-
-    public ProgramFunctionalUser getFunctionalUser(String id) {
-        return programFunctionalUserDAO.getFunctionalUser(Long.valueOf(id));
-    }
-
-    public void saveFunctionalUser(ProgramFunctionalUser pfu) {
-        programFunctionalUserDAO.saveFunctionalUser(pfu);
-    }
-
-    public void deleteFunctionalUser(String id) {
-        programFunctionalUserDAO.deleteFunctionalUser(Long.valueOf(id));
-    }
-
-    public Long getFunctionalUserByUserType(Long programId, Long userTypeId) {
-        return programFunctionalUserDAO.getFunctionalUserByUserType(programId, userTypeId);
-    }
-
-    public List<ProgramTeam> getProgramTeams(String programId) {
-        return programTeamDAO.getProgramTeams(Integer.valueOf(programId));
-    }
-
-    public ProgramTeam getProgramTeam(String id) {
-        return programTeamDAO.getProgramTeam(Integer.valueOf(id));
-    }
-
-    public void saveProgramTeam(ProgramTeam team) {
-        programTeamDAO.saveProgramTeam(team);
-    }
-
-    public void deleteProgramTeam(String id) {
-        programTeamDAO.deleteProgramTeam(Integer.valueOf(id));
-    }
-
-    public boolean teamNameExists(Integer programId, String teamName) {
-        return programTeamDAO.teamNameExists(programId, teamName);
-    }
-
-    public List<ProgramAccess> getProgramAccesses(String programId) {
-        return programAccessDAO.getAccessListByProgramId(Long.valueOf(programId));
-    }
-
-    public ProgramAccess getProgramAccess(String id) {
-        return programAccessDAO.getProgramAccess(Long.valueOf(id));
-    }
-
-    public void saveProgramAccess(ProgramAccess pa) {
-        programAccessDAO.saveProgramAccess(pa);
-    }
-
-    public void deleteProgramAccess(String id) {
-        programAccessDAO.deleteProgramAccess(Long.valueOf(id));
-    }
-
-    public List<AccessType> getAccessTypes() {
-        return programAccessDAO.getAccessTypes();
-    }
-
-    public AccessType getAccessType(Long id) {
-        return programAccessDAO.getAccessType(id);
-    }
-
-    public List<ProgramProvider> getAllProvidersInTeam(Integer programId, Integer teamId) {
-        return this.programProviderDAO.getProgramProvidersInTeam(programId, teamId);
-    }
-
-    public List<Admission> getAllClientsInTeam(Integer programId, Integer teamId) {
-        return admissionDao.getAdmissionsInTeam(programId, teamId);
-    }
-
-    public List<Program> search(Program criteria) {
-        return this.programDao.search(criteria);
-    }
-
-    public List<Program> searchByFacility(Program criteria, Integer facilityId){
-        return this.programDao.searchByFacility(criteria, facilityId);
-    }
-
-    public Program getHoldingTankProgram() {
-        return this.programDao.getHoldingTankProgram();
-    }
-
-    public ProgramAccess getProgramAccess(String programId, String accessTypeId) {
-        return this.programAccessDAO.getProgramAccess(Long.valueOf(programId), Long.valueOf(accessTypeId));
-    }
-
-    public List<Program> getProgramDomain(String providerNo) {
-        List<Program> programDomain = new ArrayList<Program>();
-
-        for (Iterator<?> i = programProviderDAO.getProgramDomain(providerNo).iterator(); i.hasNext();) {
-            ProgramProvider programProvider = (ProgramProvider) i.next();
-            Program p = getProgram(programProvider.getProgramId());
-            if(p != null)
-            	programDomain.add(p);
-        }
-
-        return programDomain;
-    }
-
-
-    public List<Program> getActiveProgramDomain(String providerNo) {
-        List<Program> programDomain = new ArrayList<Program>();
-
-        for (Iterator<?> i = programProviderDAO.getActiveProgramDomain(providerNo).iterator(); i.hasNext();) {
-            ProgramProvider programProvider = (ProgramProvider) i.next();
-            Program p = getProgram(programProvider.getProgramId());
-            if(p!=null)
-            	programDomain.add(p);
-        }
-
-        return programDomain;
-    }
-
-    public List<Program> getProgramDomainInCurrentFacilityForCurrentProvider(LoggedInInfo loggedInInfo, boolean activeOnly) {
-    	List<Program> programs = null;
-
-    	if (activeOnly) programs=getActiveProgramDomain(loggedInInfo.getLoggedInProviderNo());
-    	else programs=getProgramDomain(loggedInInfo.getLoggedInProviderNo());
-
-    	List<Program> results = new ArrayList<Program>();
-    	for(Program program : programs) {
-    		if(program.getFacilityId()==loggedInInfo.getCurrentFacility().getId().intValue()) {
-    			results.add(program);
-    		}
-    	}
-    	return results;
-    }
-
-    public Program[] getCommunityPrograms() {
-        return programDao.getProgramsByType(null, Program.COMMUNITY_TYPE, null).toArray(new Program[0]);
-    }
-
-    public List<LabelValueBean> getProgramBeans(String providerNo) {
-        if (providerNo == null || "".equalsIgnoreCase(providerNo.trim())) return new ArrayList<LabelValueBean>();
-        ArrayList<LabelValueBean> pList = new ArrayList<LabelValueBean>();
-        List<Program> programs = programDao.getProgramsByType(null, Program.COMMUNITY_TYPE, null);
-        for (Program program : programs) {
-            pList.add(new LabelValueBean(program.getName(), program.getId().toString()));
-        }
-        return pList;
-        /*
-         * Iterator iter = programProviderDAOT.getProgramProvidersByProvider(new Long(providerNo)).iterator(); ArrayList pList = new ArrayList(); while (iter.hasNext()) { ProgramProvider p = (ProgramProvider) iter.next(); if (p!=null && p.getProgramId() !=
-         * null && p.getProgramId().longValue()>0){ //logger.debug("programName="+p.getProgram().getName()+"::"+"programId="+p.getProgram().getId().toString()); Program program = programDao.getProgram(new Integer(p.getProgramId().intValue()));
-         * pList.add(new LabelValueBean(program.getName(),program.getId().toString())); } } return pList;
-         */
-    }
-
-    public List<DefaultRoleAccess> getDefaultRoleAccesses() {
-        return defaultRoleAccessDAO.getDefaultRoleAccesses();
-    }
-
-    public DefaultRoleAccess getDefaultRoleAccess(String id) {
-        return defaultRoleAccessDAO.getDefaultRoleAccess(Long.valueOf(id));
-    }
-
-    public void saveDefaultRoleAccess(DefaultRoleAccess dra) {
-        defaultRoleAccessDAO.saveDefaultRoleAccess(dra);
-    }
-
-    public void deleteDefaultRoleAccess(String id) {
-        defaultRoleAccessDAO.deleteDefaultRoleAccess(Long.valueOf(id));
-    }
-
-    public DefaultRoleAccess findDefaultRoleAccess(long roleId, long accessTypeId) {
-        return defaultRoleAccessDAO.find(new Long(roleId), new Long(accessTypeId));
-    }
-
-    public List<ProgramClientStatus> getProgramClientStatuses(Integer programId) {
-        return clientStatusDAO.getProgramClientStatuses(programId);
-    }
-
-    public void saveProgramClientStatus(ProgramClientStatus status) {
-        clientStatusDAO.saveProgramClientStatus(status);
-    }
-
-    public void deleteProgramClientStatus(String id) {
-        clientStatusDAO.deleteProgramClientStatus(id);
-    }
-
-    public boolean clientStatusNameExists(Integer programId, String statusName) {
-        return clientStatusDAO.clientStatusNameExists(programId, statusName);
-    }
-
-    public List<Admission> getAllClientsInStatus(Integer programId, Integer statusId) {
-        return clientStatusDAO.getAllClientsInStatus(programId, statusId);
-    }
-
-    public ProgramClientStatus getProgramClientStatus(String statusId) {
-        return clientStatusDAO.getProgramClientStatus(statusId);
-    }
-
-    public ProgramSignature getProgramFirstSignature(Integer programId) {
-        return programSignatureDao.getProgramFirstSignature(programId);
-    }
-
-    public List<ProgramSignature> getProgramSignatures(Integer programId) {
-        return programSignatureDao.getProgramSignatures(programId);
-    }
-
-    public void saveProgramSignature(ProgramSignature programSignature) {
-        programSignatureDao.saveProgramSignature(programSignature);
-    }
-    
-    public VacancyTemplate getVacancyTemplate(Integer templateId) {
-    	return vacancyTemplateDao.getVacancyTemplate(templateId);
-    }
-
-	public void setVacancyTemplateDao(VacancyTemplateDao vacancyTemplateDao) {
-    	this.vacancyTemplateDao = vacancyTemplateDao;
-    }
-
-	public boolean hasAccessBasedOnCurrentFacility(LoggedInInfo loggedInInfo, Integer programId) {
-    	// if no program restrictions are defined.
-        if (programId == null) return(true);
-
-        // check the providers facilities against the programs facilities
-        Program program = getProgram(programId);
-        if(program!=null) {
-        	return(program.getFacilityId() == loggedInInfo.getCurrentFacility().getId().intValue());
-        } else {
-        	return false;
-        }
-    }
-
-    public List<Program> getAllProgramsByRole(String providerNo,int roleId) {
-    	List<Program> results = new ArrayList<Program>();
-    	List<ProgramProvider> ppList = programProviderDAO.getProgramProvidersByProvider(providerNo);
-    	for(ProgramProvider pp:ppList) {
-    		if(pp.getRoleId().intValue() == roleId) {
-    			Program p = programDao.getProgram(pp.getProgramId().intValue());
-    			results.add(p);
-    		}
-    	}
-    	return results;
-    }
+    List<Program> getAllProgramsByRole(String providerNo,int roleId);
 }

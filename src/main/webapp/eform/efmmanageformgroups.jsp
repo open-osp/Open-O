@@ -56,7 +56,7 @@ else if (orderByRequest.equals("form_name")) orderBy = EFormUtil.NAME;
 else if (orderByRequest.equals("file_name")) orderBy = EFormUtil.FILE_NAME;
 %>
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 
 <title><bean:message key="admin.admin.frmGroups"/></title>

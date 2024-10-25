@@ -84,8 +84,8 @@ if(demoNo == null ) response.sendRedirect("../error.jsp");
 
 EFormAttachDocs docsUtil = new EFormAttachDocs(requestId);
 
-HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean("HRMDocumentToDemographicDao");
-HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean("HRMDocumentDao");
+HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean(HRMDocumentToDemographicDao.class);
+HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
 
 String patientName = EDocUtil.getDemographicName(loggedInInfo, demoNo);
 String[] docType = {"D","L", "H", "E"};
@@ -94,7 +94,7 @@ boolean onIPad = http_user_agent.indexOf("iPad") >= 0;
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
    "http://www.w3.org/TR/html4/strict.dtd">
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>

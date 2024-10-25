@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.PMmodule.dao;
@@ -32,76 +35,17 @@ import org.oscarehr.PMmodule.model.Vacancy;
 import org.oscarehr.common.dao.AbstractDao;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class VacancyDao extends AbstractDao<Vacancy> {
+public interface VacancyDao extends AbstractDao<Vacancy> {
 
-	public VacancyDao() {
-		super(Vacancy.class);
-	}
+	public List<Vacancy> getVacanciesByWlProgramId(Integer wlProgramId);
 
-	@SuppressWarnings("unchecked")
-    public List<Vacancy> getVacanciesByWlProgramId(Integer wlProgramId) {
-		String sqlCommand = "select x from Vacancy x where x.wlProgramId=?1 order by x.name";
+	public List<Vacancy> getVacanciesByWlProgramIdAndStatus(Integer wlProgramId, String status);
 
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, wlProgramId);
-		
-		return query.getResultList();	
-	}
-	
-	@SuppressWarnings("unchecked")
-    public List<Vacancy> getVacanciesByWlProgramIdAndStatus(Integer wlProgramId,String status) {
-		String sqlCommand = "select x from Vacancy x where x.wlProgramId=?1 and x.status=?2 order by x.name";
+	public List<Vacancy> getVacanciesByName(String vacancyName);
 
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, wlProgramId);
-		query.setParameter(2, status);
-		
-		return query.getResultList();	
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-    public List<Vacancy> getVacanciesByName(String vacancyName) {
-		String sqlCommand = "select x from Vacancy x where x.name=?1 order by x.name";
+	public List<Vacancy> findByStatusAndVacancyId(String status, int vacancyId);
 
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, vacancyName);
-		
-		return query.getResultList();	
-	}
-	
-	@SuppressWarnings("unchecked")
-    public List<Vacancy> findByStatusAndVacancyId(String status, int vacancyId) {
-		String sqlCommand = "select x from Vacancy x where x.status=?1 and x.id=?2";
+	public Vacancy getVacancyById(int vacancyId);
 
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, status);
-		query.setParameter(2, vacancyId);
-		
-		return query.getResultList();	
-	}
-
-    public Vacancy getVacancyById(int vacancyId) {
-        String sqlCommand = "select x from Vacancy x where x.id=?1";
-
-        Query query = entityManager.createQuery(sqlCommand);
-        query.setParameter(1, vacancyId);
-
-        List<Vacancy> l = query.getResultList();
-        if(l!=null&&!l.isEmpty())return l.get(0);
-        else return null;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    public List<Vacancy> findCurrent() {
-		String sqlCommand = "select x from Vacancy x where x.status=?1";
-
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, "ACTIVE");
-;
-		
-		return query.getResultList();	
-	}
+	public List<Vacancy> findCurrent();
 }

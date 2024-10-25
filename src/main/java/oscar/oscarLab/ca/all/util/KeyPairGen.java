@@ -70,7 +70,7 @@ public final class KeyPairGen {
                 // the primary key is name, therefore this statement will only
                 // be able to run once and the oscar key pair will not be overwritten
             	
-            	OscarKeyDao oscarKeyDao=(OscarKeyDao)SpringUtils.getBean("oscarKeyDao");
+            	OscarKeyDao oscarKeyDao=(OscarKeyDao)SpringUtils.getBean(OscarKeyDao.class);
             	OscarKey oscarKey=new OscarKey();
             	oscarKey.setName("oscar");
             	oscarKey.setPublicKey(new String(pubKey, MiscUtils.DEFAULT_UTF8_ENCODING));
@@ -83,7 +83,7 @@ public final class KeyPairGen {
                 return("success");
             }else{
             	
-            	PublicKeyDao publicKeyDao=(PublicKeyDao)SpringUtils.getBean("publicKeyDao");
+            	PublicKeyDao publicKeyDao=(PublicKeyDao)SpringUtils.getBean(PublicKeyDao.class);
                 PublicKey publicKeyObject=new PublicKey();
                 publicKeyObject.setService(name);
                 publicKeyObject.setType(type);
@@ -111,7 +111,7 @@ public final class KeyPairGen {
      */
     public static String getPublic(){
         try{
-        	OscarKeyDao oscarKeyDao=(OscarKeyDao)SpringUtils.getBean("oscarKeyDao");
+        	OscarKeyDao oscarKeyDao=(OscarKeyDao)SpringUtils.getBean(OscarKeyDao.class);
         	OscarKey oscarKey=oscarKeyDao.find("oscar");
 
             return(oscarKey.getPublicKey());
@@ -129,13 +129,13 @@ public final class KeyPairGen {
     public static boolean checkName(String name){
         if (name.equals("oscar"))
         {
-        	OscarKeyDao oscarKeyDao=(OscarKeyDao)SpringUtils.getBean("oscarKeyDao");
+        	OscarKeyDao oscarKeyDao=(OscarKeyDao)SpringUtils.getBean(OscarKeyDao.class);
         	OscarKey oscarKey=oscarKeyDao.find("oscar");
         	return(oscarKey!=null);
         }
         else
         {
-        	PublicKeyDao publicKeyDao=(PublicKeyDao)SpringUtils.getBean("publicKeyDao");
+        	PublicKeyDao publicKeyDao=(PublicKeyDao)SpringUtils.getBean(PublicKeyDao.class);
             PublicKey publicKeyObject=publicKeyDao.find(name);
             return(publicKeyObject!=null);
         }

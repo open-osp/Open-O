@@ -474,7 +474,7 @@ public class DSDemographicAccess {
 
 
      public boolean noteContains(DSValue searchValue) {
-        CaseManagementNoteDAO dao = (CaseManagementNoteDAO) SpringUtils.getBean("CaseManagementNoteDAO");
+        CaseManagementNoteDAO dao = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
         List<CaseManagementNote> notes = dao.searchDemographicNotes(demographicNo, "%" + searchValue.getValue() + "%");
         if (notes != null && notes.size() > 0) return true;
         else return false;
@@ -506,7 +506,7 @@ public class DSDemographicAccess {
     public boolean flowsheetUptoDateAny(String flowsheetId) {
     	boolean retval = false;
     	flowsheetId = flowsheetId.replaceAll("'", "");
-    	FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) SpringUtils.getBean("flowSheetCustomizationDao");
+    	FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) SpringUtils.getBean(FlowSheetCustomizationDao.class);
 
     	dxResearchBeanHandler dxRes = new dxResearchBeanHandler(demographicNo);
         List<String> dxCodes = dxRes.getActiveCodeListWithCodingSystem();
@@ -556,7 +556,7 @@ public class DSDemographicAccess {
 
     	boolean retval = true;  //Set this optimistically that it has not been paid in the said number of days
     	if(options.containsKey("payer") && options.get("payer").equals("MSP")){
-    		BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao)SpringUtils.getBean("billingONCHeader1Dao");
+    		BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao)SpringUtils.getBean(BillingONCHeader1Dao.class);
     		String[] codes = searchStrings.replaceAll("'","" ).split(",");
 
     		if(options.containsKey("notInDays")){
@@ -599,7 +599,7 @@ public class DSDemographicAccess {
 
 	if(options.containsKey("payer") && options.get("payer").equals("MSP")){
 
-            BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao)SpringUtils.getBean("billingONCHeader1Dao");
+            BillingONCHeader1Dao billingONCHeader1Dao = (BillingONCHeader1Dao)SpringUtils.getBean(BillingONCHeader1Dao.class);
             String[] codes = searchStrings.replaceAll("'","" ).split(",");
             numCodes = codes.length;
 
@@ -649,7 +649,7 @@ public class DSDemographicAccess {
                 bcCodeValidation = new ServiceCodeValidationLogic();
             }
             else if( billregion.equalsIgnoreCase("ON") ) {
-                billingONCHeader1Dao = (BillingONCHeader1Dao)SpringUtils.getBean("billingONCHeader1Dao");
+                billingONCHeader1Dao = (BillingONCHeader1Dao)SpringUtils.getBean(BillingONCHeader1Dao.class);
             }
             String[] codes = searchStrings.replaceAll("\'","" ).split(",");
 

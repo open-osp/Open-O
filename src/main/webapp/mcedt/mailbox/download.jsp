@@ -36,17 +36,11 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ page import="java.math.BigInteger,java.util.*,org.oscarehr.integration.mcedt.mailbox.DetailDataCustom,org.oscarehr.integration.mcedt.mailbox.ActionUtils" %>
 
-<%    
-
-	List<DetailDataCustom> resourceListDL = (ArrayList<DetailDataCustom>)session.getAttribute("resourceListDL");
-	BigInteger resultSize = (BigInteger)session.getAttribute("resultSize");
-%>
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<script src="../js/jquery-1.7.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/jquery-1.7.1.min.js" type="application/javascript"></script>
 <script language="javascript">	
 $(window).load(function(){
 	$('input[type="checkbox"]').click(function () {
@@ -105,6 +99,9 @@ $(window).load(function(){
 <title>Download</title>
 </head>
 <body>
+	<c:set var="resourceListDL" value="${sessionScope.resourceListDL}" />
+	<c:set var="resultSize" value="${sessionScope.resultSize}" />
+
 	<html:form action="/mcedt/download" method="post" styleId="formDownload">
 		<jsp:include page="../messages.jsp" />		
 		<input id="methodDownload" name="method" type="hidden" value="" />	
@@ -132,12 +129,11 @@ $(window).load(function(){
 	</div>
 	* You may select a maximum of 5 files at a time to download from MC-EDT
 	<br />** to process downloads, click <a href="<%= request.getContextPath() %>/billing/CA/ON/viewMOHFiles.jsp">here to view MOH files</a>
-	<%
-		if(resourceListDL!=null){									
-	%>
-	<table class="table scrollable whiteBox" width="100%" border="0" cellspacing="0" cellpadding="5" style="margin:5px 0 15px;">
+	<c:choose>
+		<c:when test="${not empty resourceListDL}">
+			<table class="table scrollable whiteBox" width="100%" border="0" cellspacing="0" cellpadding="5" style="margin:5px 0 15px;">
 				<thead>
-					<tr class="greenBox">							
+					<tr class="greenBox">
 						<th>Select</th>
 						<th>ID</th>
 						<th>Date</th>
@@ -145,30 +141,29 @@ $(window).load(function(){
 						<!-- <th>Result</th>
 						<th>Status</th> -->
 						<th>File Name</th>
-						<th>Status</th>												
+						<th>Status</th>
 					</tr>
 				</thead>
-				<c:forEach var="r" items="${resourceListDL}" varStatus="loopStatus">						
-					<tr bgcolor="${loopStatus.index % 2 == 0 ? '#FFF' : '#EEE'}">
-						<td><input type="checkbox" value="${r.resourceID}" name="resourceId" /></td>							
-						<td><c:out value="${r.resourceID}" /></td>
-						<td>														
-							<fmt:formatDate value="${i:toDate(r.createTimestamp)}" pattern="MM/dd/yyyy hh:mm"/>
-						</td>
-						<td><c:out value="${r.resourceType}" /></td>						
-						<td><c:out value="${r.description}" /></td>													
-						<td><c:out value="${r.status}" /></td>													
-					</tr>						
-				</c:forEach>
+				<tbody>
+					<c:forEach var="r" items="${resourceListDL}" varStatus="loopStatus">
+						<tr bgcolor="${loopStatus.index % 2 == 0 ? '#FFF' : '#EEE'}">
+							<td><input type="checkbox" value="${r.resourceID}" name="resourceId" /></td>
+							<td><c:out value="${r.resourceID}" /></td>
+							<td>
+								<fmt:formatDate value="${i:toDate(r.createTimestamp)}" pattern="MM/dd/yyyy hh:mm"/>
+							</td>
+							<td><c:out value="${r.resourceType}" /></td>
+							<td><c:out value="${r.description}" /></td>
+							<td><c:out value="${r.status}" /></td>
+						</tr>
+					</c:forEach>
+				</tbody>
 			</table>
-			<%
-				}
-				else{
-			%>		
-				<h3>No new documents to download.</h3>
-			<%
-				}
-			%>
+		</c:when>
+		<c:otherwise>
+			<h3>No new documents to download.</h3>
+		</c:otherwise>
+	</c:choose>
 	</div>
 	<div>
 		<button type="button"  id="unSelDL" class="noBorder blackBox flatLink font12 rightMargin5" disabled="true">Un-Select All</button>

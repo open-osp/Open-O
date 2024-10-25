@@ -35,7 +35,7 @@
   if(session.getValue("user") == null) response.sendRedirect("../logout.htm");
   String curUser_no = (String) session.getAttribute("user");
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
@@ -74,7 +74,7 @@
 		<td class="MainTableLeftColumn">&nbsp;</td>
 		<td class="MainTableRightColumn">
 		<%
-		UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+		UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		UserProperty prop = propertyDao.getProp(curUser_no,"faxnumber");			
 		String faxNum = "";
         if(prop!=null) {

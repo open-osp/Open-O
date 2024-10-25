@@ -28,7 +28,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <link rel="stylesheet" type="text/css" href="dxResearch.css">
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>

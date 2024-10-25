@@ -379,8 +379,12 @@ public class CreateHRMFile {
             	} else {
             		ReportContent HRMreportContent = HRMreport.addNewContent();
             		HRMreportContent.setTextContent(reportContent.getTextContent());
-            	}
-              
+            	}            
+            } else if (reportContent!=null && reportContent.getMedia()!=null) {  //handling situation where HRM has embedded PDF and is stored in media tag instead of text tag
+            	if(report.getFormat() == cdsDt.ReportFormat.BINARY) {
+            		ReportContent HRMreportContent = HRMreport.addNewContent();
+            		HRMreportContent.setMedia(reportContent.getMedia());
+            	}              
             }
 
             //FileExtensionAndVersion

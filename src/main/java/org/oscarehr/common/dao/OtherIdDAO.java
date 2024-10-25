@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,65 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
-import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.OtherId;
-import org.springframework.stereotype.Repository;
 
-/**
- *
- * @author Jason Gallagher
- */
-@Repository
-public class OtherIdDAO extends AbstractDao<OtherId> {
-
-	/** Creates a new instance of UserPropertyDAO */
-	public OtherIdDAO() {
-		super(OtherId.class);
-	}
-
-	public OtherId getOtherId(Integer tableName, Integer tableId, String otherKey){
-		return getOtherId(tableName,String.valueOf(tableId),otherKey);
-	}
-
-	public OtherId getOtherId(Integer tableName, String tableId, String otherKey){
-		Query query = entityManager.createQuery("select o from OtherId o where o.tableName=? and o.tableId=? and o.otherKey=? and o.deleted=? order by o.id desc");
-		query.setParameter(1, tableName);
-		query.setParameter(2, tableId);
-		query.setParameter(3, otherKey);
-		query.setParameter(4, false);
-
-		@SuppressWarnings("unchecked")
-        List<OtherId> otherIdList = query.getResultList();
-
-		return otherIdList.size()>0 ? otherIdList.get(0) : null;
-	}
-
-	public OtherId searchTable(Integer tableName, String otherKey, String otherValue){
-		Query query = entityManager.createQuery("select o from OtherId o where o.tableName=? and o.otherKey=? and o.otherId=? and o.deleted=? order by o.id desc");
-		query.setParameter(1, tableName);
-		query.setParameter(2, otherKey);
-		query.setParameter(3, otherValue);
-		query.setParameter(4, false);
-
-		@SuppressWarnings("unchecked")
-        List<OtherId> otherIdList = query.getResultList();
-
-		return otherIdList.size()>0 ? otherIdList.get(0) : null;
-	}
-
-	public void save(OtherId otherId) {
-		if(otherId.getId() != null && otherId.getId().intValue() > 0 ) {
-			merge(otherId);
-		} else {
-			persist(otherId);
-		}
-	}
+public interface OtherIdDAO extends AbstractDao<OtherId> {
+    OtherId getOtherId(Integer tableName, Integer tableId, String otherKey);
+    OtherId getOtherId(Integer tableName, String tableId, String otherKey);
+    OtherId searchTable(Integer tableName, String otherKey, String otherValue);
+    void save(OtherId otherId);
 }

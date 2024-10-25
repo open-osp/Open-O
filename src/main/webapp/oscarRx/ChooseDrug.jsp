@@ -55,7 +55,7 @@
     </logic:equal>
 </logic:present>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="ChooseDrug.title.DrugSearchResults"/></title>
 <html:base/>

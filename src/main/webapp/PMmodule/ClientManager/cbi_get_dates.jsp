@@ -34,7 +34,7 @@
 <%@page import="java.util.List"%>
 <%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
 
-<% AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
+<% AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
    String currentDemographicId= (String)request.getParameter("demographicId");
    String currentAdmissionId=(String)request.getParameter("admissionId");
    String programId = (String)request.getParameter("programId");
@@ -82,7 +82,7 @@
 	   		}
    
 		    //Find referral date
-			ClientReferralDAO clientReferralDao = (ClientReferralDAO) SpringUtils.getBean("clientReferralDAO");
+			ClientReferralDAO clientReferralDao = (ClientReferralDAO) SpringUtils.getBean(ClientReferralDAO.class);
 			List<ClientReferral> referrals = clientReferralDao.getActiveReferralsByClientAndProgram(Long.valueOf(currentDemographicId), Long.valueOf(ad.getProgramId()));
 			if(referrals.size() > 0 ) {
 				ClientReferral ref = referrals.get(0);

@@ -41,6 +41,7 @@ import org.oscarehr.common.dao.PropertyDao;
 import org.oscarehr.common.model.ConsultationServices;
 import org.oscarehr.common.model.Property;
 import org.oscarehr.managers.ConsultationManager;
+import org.oscarehr.managers.ConsultationManagerImpl;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
@@ -59,7 +60,7 @@ public class EctConEnableReqRespAction extends Action
     	PropertyDao propertyDao = (PropertyDao)SpringUtils.getBean(PropertyDao.class);
     	ConsultationServiceDao serviceDao = (ConsultationServiceDao)SpringUtils.getBean(ConsultationServiceDao.class);
     	
-    	ConsultationManager manager = new ConsultationManager();
+    	ConsultationManager manager = new ConsultationManagerImpl();
     	EctConEnableReqRespForm eRRForm = (EctConEnableReqRespForm)form;
     	
 		Property consultRequestEnabled = new Property(manager.CON_REQUEST_ENABLED);

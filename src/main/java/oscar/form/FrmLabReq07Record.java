@@ -62,7 +62,7 @@ import oscar.util.UtilDateUtilities;
 public class FrmLabReq07Record extends FrmRecord {
 	private static Logger logger=MiscUtils.getLogger();
 
-	private ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean("clinicDAO");
+	private ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean(ClinicDAO.class);
 
 
         @Override

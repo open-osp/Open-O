@@ -63,7 +63,7 @@ public class PHRLogoutAction extends DispatchAction {
 
 	private void clearSavedMyOscarPassword(String providerNo) {
 		try {
-			ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean("providerPreferenceDao");
+			ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
 			ProviderPreference providerPreference = providerPreferenceDao.find(providerNo);
 			if (providerPreference.getEncryptedMyOscarPassword() != null) {
 				providerPreference.setEncryptedMyOscarPassword(null);

@@ -20,7 +20,7 @@ import oscar.util.UtilDateUtilities;
 
 public class FrmBCClientChartChecklistRecord extends FrmRecord {
 
-	private ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean("clinicDAO");
+	private ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean(ClinicDAO.class);
 
 
 	public FrmBCClientChartChecklistRecord() {

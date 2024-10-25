@@ -49,7 +49,7 @@ import oscar.oscarLab.ca.all.util.Utilities;
 public class SpireHandler implements MessageHandler {
 	
     Logger logger = org.oscarehr.util.MiscUtils.getLogger();
-	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean("hl7TextInfoDao");
+	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean(Hl7TextInfoDao.class);
 	
 	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {
 

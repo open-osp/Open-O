@@ -58,7 +58,7 @@ if(!authed) {
 	EctFormData.Form[] forms = EctFormData.getForms();
 	oscar.util.UtilDateUtilities dateConvert = new oscar.util.UtilDateUtilities();
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="oscarEncounter.formlist.title" /></title>

@@ -221,7 +221,7 @@ if (request.getParameter("casetoEncounter")==null)
 
 
 
-<%@page import="org.oscarehr.util.MiscUtils"%><html:html locale="true">
+<%@page import="org.oscarehr.util.MiscUtils"%><html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="oscarEncounter.Index.title" /> - <oscar:nameage
@@ -950,13 +950,13 @@ function navBarLoader() {
      *if not, set max lines to 0
      */
     if( $("rightNavBar") != undefined ) {
-        $("rightNavBar").style.height = $("notCPP").getHeight();
+        // $("rightNavBar").style.height = $("notCPP").getHeight();
         this.maxRightNumLines = Math.floor($("rightNavBar").getHeight() / 14);
     }
     else
         this.rightNumLines = 0;
 
-    $("leftNavbar").style.height = "660px";
+    // $("leftNavbar").style.height = "660px";
     this.maxLeftNumLines = Math.floor($("leftNavbar").getHeight() / 14);
     this.arrLeftDivs = new Array();
     this.arrRightDivs = new Array();

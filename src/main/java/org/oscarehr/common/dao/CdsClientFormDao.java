@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,83 +20,18 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.CdsClientForm;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class CdsClientFormDao extends AbstractDao<CdsClientForm> {
-
-	public CdsClientFormDao() {
-		super(CdsClientForm.class);
-	}
-
-	public CdsClientForm findLatestByFacilityClient(Integer facilityId, Integer clientId) {
-
-		String sqlCommand = "select * from CdsClientForm where facilityId=?1 and clientId=?2 order by created desc";
-
-		Query query = entityManager.createNativeQuery(sqlCommand, modelClass);
-		query.setMaxResults(1);
-		query.setParameter(1, facilityId);
-		query.setParameter(2, clientId);
-		query.setMaxResults(1);
-		
-		return getSingleResultOrNull(query);
-	}
-
-	/**	
-	* will return the latest cds form or null if none match the criteria	
-	* @param signed can be null for either signed or unsigned	
-	*/
-	public CdsClientForm findLatestByFacilityAdmissionId(Integer facilityId, Integer admissionId, Boolean signed) {
-		String sqlCommand = "select x from CdsClientForm x where x.facilityId=?1 and x.admissionId=?2" + (signed != null ? " and signed=?3" : "") + " order by x.created desc";
-
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, facilityId);
-		query.setParameter(2, admissionId);
-		if (signed != null) query.setParameter(3, signed);
-
-		@SuppressWarnings("unchecked")
-		List<CdsClientForm> results = query.getResultList();
-		if (results.size() > 0) return (results.get(0));
-		else return (null);
-	}
-	
-    public List<CdsClientForm> findByFacilityClient(Integer facilityId, Integer clientId) {
-
-		String sqlCommand = "select x from CdsClientForm x where x.facilityId=?1 and x.clientId=?2 order by x.created desc";
-
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, facilityId);
-		query.setParameter(2, clientId);
-		
-		@SuppressWarnings("unchecked")
-		List<CdsClientForm> results=query.getResultList();
-		
-		return (results);
-	}
-
-    public List<CdsClientForm> findSignedCdsForms(Integer facilityId, String formVersion, Date startDate, Date endDate) {
-		
-		String sqlCommand="select x from CdsClientForm x where x.facilityId=?1 and x.signed=?2 and x.cdsFormVersion=?3 and x.created>=?4 and x.created<?5";
-
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, facilityId);
-		query.setParameter(2, true);
-		query.setParameter(3, formVersion);
-		query.setParameter(4, startDate);
-		query.setParameter(5, endDate);
-		
-		@SuppressWarnings("unchecked")
-		List<CdsClientForm> results=query.getResultList();
-		
-		return(results);
-    }
+public interface CdsClientFormDao extends AbstractDao<CdsClientForm> {
+    CdsClientForm findLatestByFacilityClient(Integer facilityId, Integer clientId);
+    CdsClientForm findLatestByFacilityAdmissionId(Integer facilityId, Integer admissionId, Boolean signed);
+    List<CdsClientForm> findByFacilityClient(Integer facilityId, Integer clientId);
+    List<CdsClientForm> findSignedCdsForms(Integer facilityId, String formVersion, Date startDate, Date endDate);
 }

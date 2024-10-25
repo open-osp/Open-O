@@ -81,11 +81,11 @@
 
     DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     DemographicExtArchiveDao demographicExtArchiveDao = SpringUtils.getBean(DemographicExtArchiveDao.class);
-	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
-	DemographicArchiveDao demographicArchiveDao = (DemographicArchiveDao)SpringUtils.getBean("demographicArchiveDao");
-	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
-	WaitingListDao waitingListDao = (WaitingListDao)SpringUtils.getBean("waitingListDao");
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
+	DemographicArchiveDao demographicArchiveDao = (DemographicArchiveDao)SpringUtils.getBean(DemographicArchiveDao.class);
+	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean(DemographicCustDao.class);
+	WaitingListDao waitingListDao = (WaitingListDao)SpringUtils.getBean(WaitingListDao.class);
+	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 
 	
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -93,7 +93,7 @@
 	
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 	<script src="${pageContext.request.contextPath}/csrfguard"></script>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script></head>
@@ -120,6 +120,7 @@
 	demographic.setFirstName(request.getParameter("first_name").trim());
 	demographic.setMiddleNames(request.getParameter("middleNames").trim());
 	demographic.setAlias(request.getParameter("nameUsed"));
+	demographic.setPrefName(request.getParameter("nameUsed"));
 	demographic.setAddress(request.getParameter("address"));
 	demographic.setCity(request.getParameter("city"));
 	demographic.setProvince(request.getParameter("province"));
@@ -522,7 +523,7 @@
 </h2>
 
 <%
-	PreventionManager prevMgr = (PreventionManager) SpringUtils.getBean("preventionMgr");
+	PreventionManager prevMgr = (PreventionManager) SpringUtils.getBean(PreventionManager.class);
 	prevMgr.removePrevention(request.getParameter("demographic_no"));
 
     String ip = request.getRemoteAddr();

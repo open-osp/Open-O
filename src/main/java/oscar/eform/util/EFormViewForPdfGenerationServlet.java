@@ -54,7 +54,7 @@ public final class EFormViewForPdfGenerationServlet extends HttpServlet {
 		String projectHome = OscarProperties.getInstance().getProperty("project_home");
 		
 		
-		EFormValueDao efvDao = (EFormValueDao) SpringUtils.getBean("EFormValueDao");
+		EFormValueDao efvDao = (EFormValueDao) SpringUtils.getBean(EFormValueDao.class);
 		List<EFormValue> eFormValues = efvDao.findByFormDataId(Integer.parseInt(id));
 		for (EFormValue value : eFormValues) {
 			if (value.getVarName().equals("Letter")) {

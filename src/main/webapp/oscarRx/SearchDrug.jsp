@@ -109,7 +109,7 @@
 <%@page import="java.util.List"%>
 <%@page import="org.oscarehr.casemgmt.web.PrescriptDrug"%>
 <%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%><html:html locale="true">
+<%@page import="org.oscarehr.util.LoggedInInfo"%><html:html lang="en">
 <head>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
@@ -363,7 +363,7 @@ function load() {
 							</tr>
 
 							<%
-								CaseManagementManager caseManagementManager=(CaseManagementManager)SpringUtils.getBean("caseManagementManager");
+								CaseManagementManager caseManagementManager=(CaseManagementManager)SpringUtils.getBean(CaseManagementManager.class);
 								List<Drug> prescriptDrugs=caseManagementManager.getPrescriptions(loggedInInfo, patient.getDemographicNo(), showall);
 
 								long now = System.currentTimeMillis();

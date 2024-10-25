@@ -80,9 +80,9 @@ public class OcanReportingAction extends DispatchAction {
 
 	Logger logger = MiscUtils.getLogger();
 
-	private OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
-	private OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao) SpringUtils.getBean("ocanStaffFormDataDao");
-	private DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+	private OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
+	private OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao) SpringUtils.getBean(OcanStaffFormDataDao.class);
+	private DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 
 	/*
 	 * return first OCAN that was done at this facility and call it either "Initial OCAN" or "Reassessment"

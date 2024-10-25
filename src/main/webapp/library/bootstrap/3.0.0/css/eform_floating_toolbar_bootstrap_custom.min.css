@@ -30,13 +30,55 @@
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 
+@media print {
+	body {
+		margin-bottom:0;
+	}
+}
+
+@media screen {
+	body {
+		margin-bottom: 55px;
+	}
+}
+
+@font-face {
+	font-family: "Glyphicons Halflings";
+	src: url("../fonts/glyphicons-halflings-regular.eot");
+	src: url("../fonts/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"),
+	url("../fonts/glyphicons-halflings-regular.woff2") format("woff2"),
+	url("../fonts/glyphicons-halflings-regular.woff") format("woff"),
+	url("../fonts/glyphicons-halflings-regular.ttf") format("truetype"),
+	url("../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular") format("svg")
+}
+
+#toolbarWrapper * {
+	all: revert;
+}
+
+#toolbarWrapper, .ui-dialog * {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+#toolbarWrapper {
+	font-size: 14px;
+	width: 100vw;
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: auto;
+	max-height: 50px;
+	z-index: 10000;
+}
+
 div#eform_floating_toolbar * {
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box
 }
 
-#eform_floating_toolbar *:before, 
+#eform_floating_toolbar *:before,
 #eform_floating_toolbar *:after {
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -44,12 +86,29 @@ div#eform_floating_toolbar * {
 }
 
 #eform_floating_toolbar {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
 	line-height: 1.42857143;
 	color: #333;
-	background-color: #fff;
-	display: block;
+	width:100%;
+}
+
+#toolbarWrapper #eform_floating_toolbar nav#eform_floating_toolbar_nav {
+	width:100%;
+	font-size:14px !important;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+#eform_floating_toolbar .glyphicon {
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	font-family: "Glyphicons Halflings";
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale
 }
 
 #eform_floating_toolbar svg:not(:root ){
@@ -98,29 +157,7 @@ div#eform_floating_toolbar * {
 	line-height: normal
 }
 
-@font-face {
-	font-family: "Glyphicons Halflings";
-	src: url("../fonts/glyphicons-halflings-regular.eot");
-	src: url("../fonts/glyphicons-halflings-regular.eot?#iefix")
-		format("embedded-opentype"),
-		url("../fonts/glyphicons-halflings-regular.woff2") format("woff2"),
-		url("../fonts/glyphicons-halflings-regular.woff") format("woff"),
-		url("../fonts/glyphicons-halflings-regular.ttf") format("truetype"),
-		url("../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular")
-		format("svg")
-}
 
-#eform_floating_toolbar .glyphicon {
-	position: relative;
-	top: 1px;
-	display: inline-block;
-	font-family: "Glyphicons Halflings";
-	font-style: normal;
-	font-weight: 400;
-	line-height: 1;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale
-}
 
 #eform_floating_toolbar .glyphicon-asterisk:before {
 	content: "\002a"
@@ -1808,17 +1845,10 @@ div#eform_floating_toolbar * {
 #eform_floating_toolbar .navbar {
 	position: relative;
 	min-height: 50px;
-	margin-bottom: 20px;
 	border: 1px solid transparent
 }
 
-@media ( min-width :768px) {
-	#eform_floating_toolbar .navbar {
-		border-radius: 4px
-	}
-}
-
-#eform_floating_toolbar .navbar-collapse {
+#eform_floating_toolbar nav.navbar-collapse {
 	padding-right: 15px;
 	padding-left: 15px;
 	overflow-x: visible;
@@ -1828,27 +1858,27 @@ div#eform_floating_toolbar * {
 	-webkit-overflow-scrolling: touch
 }
 
-#eform_floating_toolbar .navbar-collapse.in {
+#eform_floating_toolbar nav.navbar-collapse.in {
 	overflow-y: auto
 }
 
-#eform_floating_toolbar .navbar-fixed-top, 
-#eform_floating_toolbar .navbar-fixed-bottom {
+#eform_floating_toolbar nav.navbar-fixed-top,
+#eform_floating_toolbar nav.navbar-fixed-bottom {
 	position: fixed;
 	right: 0;
 	left: 0;
 	z-index: 1030
 }
 
-#eform_floating_toolbar .navbar-fixed-top .navbar-collapse, 
-#eform_floating_toolbar .navbar-fixed-bottom .navbar-collapse
+#eform_floating_toolbar nav.navbar-fixed-top nav.navbar-collapse,
+#eform_floating_toolbar nav.navbar-fixed-bottom nav.navbar-collapse
 	{
 	max-height: 340px
 }
 
 @media ( max-device-width :480px) and (orientation:landscape) {
-	#eform_floating_toolbar .navbar-fixed-top .navbar-collapse, 
-	#eform_floating_toolbar .navbar-fixed-bottom .navbar-collapse
+	#eform_floating_toolbar nav.navbar-fixed-top nav.navbar-collapse,
+	#eform_floating_toolbar nav.navbar-fixed-bottom nav.navbar-collapse
 		{
 		max-height: 200px
 	}
@@ -1918,16 +1948,11 @@ div#eform_floating_toolbar * {
 
 
 #eform_floating_toolbar .navbar-form {
-	padding: 0px 15px;
-	margin-right: -15px;
-	margin-left: -15px;
 	border-top: 1px solid transparent;
 	border-bottom: 1px solid transparent;
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
-	margin-top: 15px;
-	margin-bottom: 15px;
-	
+	margin:0;
 }
 
 @media ( min-width :768px) {
@@ -1965,8 +1990,7 @@ div#eform_floating_toolbar * {
 		width: auto;
 		padding-top: 0;
 		padding-bottom: 0;
-		margin-right: 0;
-		margin-left: 0;
+		margin: 0;
 		border: 0;
 		-webkit-box-shadow: none;
 		box-shadow: none
@@ -2018,11 +2042,6 @@ div#eform_floating_toolbar * {
 
 #eform_floating_toolbar .navbar-default .navbar-toggle .icon-bar {
 	background-color: #888
-}
-
-#eform_floating_toolbar .navbar-default .navbar-collapse, 
-#eform_floating_toolbar .navbar-default .navbar-form {
-	/*! border-color: #e7e7e7; */
 }
 
 #eform_floating_toolbar .navbar-default .navbar-link {
@@ -2532,7 +2551,7 @@ div#eform_floating_toolbar * {
 	background-image: none
 }
 
-#eform_floating_toolbar .navbar-default {
+#toolbarWrapper #eform_floating_toolbar nav.navbar-default {
 	background-image: -webkit-linear-gradient(top, #fff 0, #f8f8f8 100%);
 	background-image: -o-linear-gradient(top, #fff 0, #f8f8f8 100%);
 	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), to(#f8f8f8));
@@ -2540,9 +2559,10 @@ div#eform_floating_toolbar * {
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff8f8f8', GradientType=0);
 	background-repeat: repeat-x;
 	filter: progid:DXImageTransform.Microsoft.gradient(enabled= false);
-	border-radius: 4px;
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 5px rgba(0, 0, 0, 0.075);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 5px rgba(0, 0, 0, 0.075)
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 5px rgba(0, 0, 0, 0.075);
+	margin:0;
+	padding: 0 15px;
 }
 
 #eform_floating_toolbar .navbar-brand, 
@@ -2574,17 +2594,6 @@ div#eform_floating_toolbar * {
 }
 
 
-#eform_floating_toolbar nav #closeToolbarButton, 
-#eform_floating_toolbar #openToolbarButton {
-	position:relative;
-	right:0;
-	bottom:0;
-	border-right: none;
-	border-top:none;
-	border-bottom: none;
-	padding-right:20px;
-	height:65px;
-}
 
 #remoteTotalAttachments {
 	background-color: #b1b1b1;
@@ -2634,7 +2643,6 @@ div#eform_floating_toolbar * {
 #attachDocumentsForm li {
 	padding-bottom: 2px;
 }
-/* */
 
 /* To disable floating toolbar */
 .disabled-toolbar {
@@ -2643,7 +2651,7 @@ div#eform_floating_toolbar * {
 }
 
 /* Loading screen */
-.oscar-spinner {
+#toolbarWrapper #eform_floating_toolbar div.oscar-spinner {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -2659,12 +2667,12 @@ div#eform_floating_toolbar * {
     transition: opacity 0.3s ease;
 }
 
-#img-oscar-spinner {
+#toolbarWrapper #eform_floating_toolbar #img-oscar-spinner {
     width: 100px;
     height: 77px;
 }
 
-.oscar-spinner-screen {
+#toolbarWrapper #eform_floating_toolbar div.oscar-spinner-screen {
     position: fixed;
     top: 0;
     right: 0;
@@ -2681,6 +2689,6 @@ div#eform_floating_toolbar * {
     transition: opacity 0.3s ease;
 }
 
-.active-oscar-spinner {
+#toolbarWrapper #eform_floating_toolbar div.active-oscar-spinner {
     display: block;
 }

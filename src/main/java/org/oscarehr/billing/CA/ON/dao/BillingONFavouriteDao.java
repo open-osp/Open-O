@@ -28,11 +28,11 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.oscarehr.billing.CA.ON.model.BillingONFavourite;
-import org.oscarehr.common.dao.AbstractDao;
+import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BillingONFavouriteDao extends AbstractDao<BillingONFavourite> {
+public class BillingONFavouriteDao extends AbstractDaoImpl<BillingONFavourite> {
 
 	public BillingONFavouriteDao() {
 		super(BillingONFavourite.class);
@@ -40,7 +40,7 @@ public class BillingONFavouriteDao extends AbstractDao<BillingONFavourite> {
 	
 	public List<BillingONFavourite> findByName(String name) {
 		Query q = entityManager.createQuery("SELECT b FROM BillingONFavourite b WHERE b.name = ?");
-		q.setParameter(1, name);
+		q.setParameter(0, name);
 		
 		@SuppressWarnings("unchecked")
 		List<BillingONFavourite> results = q.getResultList();
@@ -50,8 +50,8 @@ public class BillingONFavouriteDao extends AbstractDao<BillingONFavourite> {
 	
 	public List<BillingONFavourite> findByNameAndProviderNo(String name, String providerNo) {
 		Query q = entityManager.createQuery("SELECT b FROM BillingONFavourite b WHERE b.name = ? AND b.providerNo = ?");
-		q.setParameter(1, name);
-		q.setParameter(2, providerNo);
+		q.setParameter(0, name);
+		q.setParameter(1, providerNo);
 		
 		@SuppressWarnings("unchecked")
 		List<BillingONFavourite> results = q.getResultList();

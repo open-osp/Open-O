@@ -48,8 +48,7 @@ import org.oscarehr.common.dao.utils.SchemaUtils;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
-//Ignored until we fix foreign keys with tests
-@Ignore
+
 public class DefaultNoteServiceTest extends DaoTestFixtures {
 	private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 

@@ -98,7 +98,7 @@ if( outcome !=null){
 
 <%
 	List<Demographic> demoList = null;  //demographicDao.getDemographicByProvider( "55");
-	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 
 	String dboperation = request.getParameter("dboperation");
 	String keyword=request.getParameter("keyword");
@@ -155,6 +155,13 @@ if( outcome !=null){
 		}
 	}
 
+	function confirmMerge() {
+		const message = "You are about to merge duplicate patient records. This action is permanent and cannot be undone. Do you want to proceed?";
+		const userConfirmed = confirm(message);
+		if (!userConfirmed) { return false; }
+		return checkTypeIn();
+	}
+
 	function UnMerge() {
 		document.mergeform.mergeAction.value = "unmerge";
 	}
@@ -208,7 +215,7 @@ Search:
 <i>Results based on keyword(s)</i> : <%=request.getParameter("keyword")%>
 
 <CENTER>
-<form method="post" name="mergeform" action="MergeRecords.do" onSubmit="return checkTypeIn()">
+<form method="post" name="mergeform" action="MergeRecords.do" onSubmit="return confirmMerge()">
 	<input type="hidden" name="mergeAction" value="merge" /> 
 	<input type="hidden" name="provider_no" value="<%= session.getAttribute("user") %>" />
 	

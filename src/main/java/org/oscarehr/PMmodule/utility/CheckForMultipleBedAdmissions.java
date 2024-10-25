@@ -49,8 +49,8 @@ public class CheckForMultipleBedAdmissions {
     public void run() throws Exception {
     	//get a list of providers
     	
-    	AdmissionManager admissionManager = (AdmissionManager)ctx.getBean("admissionManager");
-    	ClientManager clientManager = (ClientManager)ctx.getBean("clientManager");
+    	AdmissionManager admissionManager = (AdmissionManager)ctx.getBean(AdmissionManager.class);
+    	ClientManager clientManager = (ClientManager)ctx.getBean(ClientManager.class);
     	
     	List clients = clientManager.getClients();
     	for(Iterator iter=clients.iterator();iter.hasNext();) {

@@ -44,7 +44,7 @@ import org.oscarehr.util.SpringUtils;
  */
 public class AddReferralDocAction extends Action {
 
-	private BillingreferralDao billingReferralDao = (BillingreferralDao)SpringUtils.getBean("BillingreferralDAO");
+	private BillingreferralDao billingReferralDao = (BillingreferralDao)SpringUtils.getBean(BillingreferralDao.class);
 
   public ActionForward execute(ActionMapping mapping,ActionForm form,HttpServletRequest request,HttpServletResponse response) {
      ActionForward af = mapping.findForward("success");

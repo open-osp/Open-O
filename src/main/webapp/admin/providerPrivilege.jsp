@@ -55,6 +55,7 @@
 <%@ page import="org.oscarehr.common.dao.SecPrivilegeDao"%>
 <%@ page import="org.oscarehr.common.model.SecObjectName"%>
 <%@ page import="org.oscarehr.common.dao.SecObjectNameDao"%>
+<%@ page import="org.oscarehr.common.dao.SecObjectNameDaoImpl"%>
 <%@ page import="org.oscarehr.common.model.ProviderData"%>
 <%@ page import="org.oscarehr.common.dao.ProviderDataDao"%>
 <%@ page import="org.oscarehr.common.model.SecObjPrivilege"%>
@@ -73,7 +74,7 @@
 <%
 	SecRoleDao secRoleDao = SpringUtils.getBean(SecRoleDao.class);
 	SecPrivilegeDao secPrivilegeDao = SpringUtils.getBean(SecPrivilegeDao.class);
-	SecObjectNameDao secObjectNameDao = (SecObjectNameDao)SpringUtils.getBean("secObjectNameDaoJpa");
+	SecObjectNameDao secObjectNameDao = SpringUtils.getBean(SecObjectNameDaoImpl.class);
 	ProviderDataDao providerDataDao = SpringUtils.getBean(ProviderDataDao.class);
 	SecObjPrivilegeDao secObjPrivilegeDao = SpringUtils.getBean(SecObjPrivilegeDao.class);
 	RecycleBinDao recycleBinDao = SpringUtils.getBean(RecycleBinDao.class);

@@ -799,7 +799,7 @@
         <ViolationValue>/src/main/java/org/oscarehr/phr/dao/PHRActionDAO.java:public class PHRActionDAO extends HibernateDaoSupport {</ViolationValue>
         <ViolationValue>/src/main/java/org/oscarehr/phr/dao/hibernate/PHRDocumentDAOHibernate.java:import org.springframework.orm.hibernate3.support.HibernateDaoSupport;</ViolationValue>
         <ViolationValue>/src/main/java/org/oscarehr/phr/dao/hibernate/PHRDocumentDAOHibernate.java:public class PHRDocumentDAOHibernate extends HibernateDaoSupport</ViolationValue>
-        <ViolationValue>/src/main/java/org/oscarehr/util/DbConnectionFilter.java:Connection c = ((DataSource) SpringUtils.getBean("dataSource")).getConnection();</ViolationValue>
+        <ViolationValue>/src/main/java/org/oscarehr/util/DbConnectionFilter.java:Connection c = ((DataSource) SpringUtils.getBean(DataSource.class)).getConnection();</ViolationValue>
         <ViolationValue>/src/main/java/org/oscarehr/util/OscarTrackingBasicDataSource.java:public Connection getConnection() throws SQLException {</ViolationValue>
         <ViolationValue>/src/main/java/org/oscarehr/util/OscarTrackingBasicDataSource.java:public Connection getConnection(String username, String password) throws SQLException {</ViolationValue>
         <ViolationValue>/src/main/java/org/oscarehr/util/OscarTrackingBasicDataSource.java:return trackConnection(super.getConnection());</ViolationValue>

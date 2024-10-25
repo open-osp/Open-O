@@ -41,7 +41,7 @@ import oscar.util.UtilDateUtilities;
 
 public class FrmData {
     private static final Logger _log = MiscUtils.getLogger();
-    private static EncounterFormDao encounterFormDao=(EncounterFormDao)SpringUtils.getBean("encounterFormDao");
+    private static EncounterFormDao encounterFormDao=(EncounterFormDao)SpringUtils.getBean(EncounterFormDao.class);
 
     public class Form {
         private String formName;
@@ -154,7 +154,7 @@ public class FrmData {
         String[] ret = new String[2];
 		String table = null;
 
-		EncounterFormDao encounterFormDao=(EncounterFormDao) SpringUtils.getBean("encounterFormDao");
+		EncounterFormDao encounterFormDao=(EncounterFormDao) SpringUtils.getBean(EncounterFormDao.class);
 		List<EncounterForm> forms=encounterFormDao.findByFormName(formName);
 
 		for (EncounterForm encounterForm : forms)

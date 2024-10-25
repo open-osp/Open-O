@@ -33,7 +33,7 @@ public class RTLSettingsAction extends DispatchAction {
 		}
     	
         boolean status = "on".equals(request.getParameter("indivica_rtl_enabled"));
-        EFormDao efd = (EFormDao) SpringUtils.getBean("EFormDao");
+        EFormDao efd = (EFormDao) SpringUtils.getBean(EFormDao.class);
         efd.setIndivicaRTLEnabled(status);
         request.setAttribute("status", status ? "Enabled" : "Disabled");
         return mapping.findForward("success");

@@ -58,7 +58,7 @@ public final class WCBAction extends Action {
       MiscUtils.getLogger().debug("In WCBAction Jackson");
 
        WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-     billingmasterDAO = (BillingmasterDAO) ctx.getBean("BillingmasterDAO");
+     billingmasterDAO = (BillingmasterDAO) ctx.getBean(BillingmasterDAO.class);
 
 
     WCBForm frm = (WCBForm) form;

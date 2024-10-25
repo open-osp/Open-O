@@ -30,7 +30,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 
 <title><bean:message key="admin.admin.btnSelectForm" /></title>

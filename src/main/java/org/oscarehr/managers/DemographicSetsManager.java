@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.managers;
 
@@ -31,26 +34,10 @@ import org.oscarehr.util.LoggedInInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class DemographicSetsManager {
+public interface DemographicSetsManager {
 
-	@Autowired
-	DemographicSetsDao demographicSetsDao;
 	
-	
-	public List<DemographicSets> getAllDemographicSets(LoggedInInfo loggedInInfo, int offset, int itemsToReturn) {
-		
-		List<DemographicSets> results = demographicSetsDao.findAll(offset, itemsToReturn);
-		
-		return (results);
-	}
-	
-	public List<String> getNames(LoggedInInfo loggedInInfo) {
-		
-		return (demographicSetsDao.findSetNames());
-	}
-	
-	public List<DemographicSets> getByName(LoggedInInfo loggedInInfo, String setName) {
-		return (demographicSetsDao.findBySetName(setName));
-	}
+	public List<DemographicSets> getAllDemographicSets(LoggedInInfo loggedInInfo, int offset, int itemsToReturn);
+	public List<String> getNames(LoggedInInfo loggedInInfo);
+	public List<DemographicSets> getByName(LoggedInInfo loggedInInfo, String setName);
 }

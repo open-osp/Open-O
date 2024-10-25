@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+<!DOCTYPE html>
 <%@ page
 	import="java.util.*, java.net.*, java.sql.*, oscar.*, oscar.util.*, java.text.*, java.lang.*, org.apache.struts.util.*"
 	errorPage="../appointment/errorpage.jsp"%>
@@ -41,12 +42,14 @@
 <%@ page import="org.oscarehr.common.dao.ScheduleTemplateDao" %>
 <%
 	ScheduleDateDao scheduleDateDao = SpringUtils.getBean(ScheduleDateDao.class);
-	RScheduleDao rScheduleDao = (RScheduleDao)SpringUtils.getBean("rScheduleDao");
+	RScheduleDao rScheduleDao = (RScheduleDao)SpringUtils.getBean(RScheduleDao.class);
 	ScheduleTemplateDao scheduleTemplateDao = SpringUtils.getBean(ScheduleTemplateDao.class);
 %>
-<%@page import="org.oscarehr.common.dao.SiteDao"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@page import="org.oscarehr.common.model.Site"%><html:html locale="true">
+<%@ page import="org.oscarehr.common.dao.SiteDao"%>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@ page import="org.oscarehr.common.model.Site"%>
+<%@ page import="org.owasp.encoder.Encode" %>
+<html:html lang="en">
 
 <%
     if(session.getAttribute("user") == null ) response.sendRedirect("../logout.jsp");
@@ -82,7 +85,7 @@
 
   if (bMultisites) {
 	//multisite starts =====================
-	  SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+	  SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
       List<Site> sites = siteDao.getActiveSitesByProviderNo(request.getParameter("provider_no"));
       List<Site> managerSites;
 
@@ -121,26 +124,26 @@
   String lastYear = (Integer.parseInt(today.substring(0,today.indexOf('-'))) - 2) + today.substring(today.indexOf('-'));
 
   if(request.getParameter("delete")!= null && request.getParameter("delete").equals("1") ) { //delete rschedule
-	
+
 	String[] param =new String[2];
 	String edate = null;
     param[0]=request.getParameter("provider_no");
     param[1]=request.getParameter("sdate")!=null?request.getParameter("sdate"):today;
     RSchedule rs1 = rScheduleDao.search_rschedule_current1(request.getParameter("provider_no"), ConversionUtils.fromDateString(request.getParameter("sdate")!=null?request.getParameter("sdate"):today));
-    
-    
+
+
     if (rs1 != null) {
       param[1]= ConversionUtils.toDateString(rs1.getsDate());
       edate= ConversionUtils.toDateString(rs1.geteDate());
     }
-    
+
      List<RSchedule> rsl = rScheduleDao.findByProviderNoAndDates(request.getParameter("provider_no"),MyDateFormat.getSysDate(request.getParameter("sdate")!=null?request.getParameter("sdate"):today));
- 
+
    	for(RSchedule rs:rsl) {
    		rs.setStatus("D");
    		rScheduleDao.merge(rs);
    	}
-   	
+
     rsl = rScheduleDao.findByProviderAvailableAndDate(request.getParameter("provider_no"),"A",MyDateFormat.getSysDate(request.getParameter("sdate")!=null?request.getParameter("sdate"):today));
     for(RSchedule rs:rsl) {
         rs.setStatus("D");
@@ -169,38 +172,23 @@
 <% scheduleRscheduleBean.clear(); %>
 
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+
 <title><bean:message
 	key="schedule.scheduletemplateapplying.title" /></title>
-<link rel="stylesheet" href="../web.css" />
-<script type="text/javascript" src="../share/javascript/prototype.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>
+<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 <script language="JavaScript">
 <!--
 
-
-function displayTemplate(s) {
+async function displayTemplate(s) {
     var url = "scheduleDisplayTemplate.jsp?name=" + s[s.selectedIndex].value + "&providerid=<%=request.getParameter("provider_no")%>";
     var div = "template";
+    fetch(url)
+    .then(response => response.text())
+    .then((response) => {
+        document.getElementById(div).innerHTML = response;
+    });
 
-    var objAjax = new Ajax.Request (
-                        url,
-                        {
-                            method: 'get',
-                            onSuccess: function(request) {
-                                            while( $(div).firstChild )
-                                                $(div).removeChild($(div).firstChild);
-
-                                            if( navigator.userAgent.indexOf("AppleWebKit") > -1 )
-                                                $(div).updateSafari(request.responseText);
-                                            else
-                                                $(div).update(request.responseText);
-                                       },
-                            onFailure: function(request) {
-                                            $(div).innerHTML = "<h3>Error:</h3>" + request.status;
-                                        }
-                        }
-
-                  );
 }
 
 function selectrschedule(s) {
@@ -407,16 +395,16 @@ function addDataString1() {
   param1[0]=request.getParameter("provider_no");
   //param1[1]="1";
   param1[1]=request.getParameter("sdate")!=null?request.getParameter("sdate"):today;
-  
+
   RSchedule rs1 = rScheduleDao.search_rschedule_current1(request.getParameter("provider_no"), ConversionUtils.fromDateString(request.getParameter("sdate")!=null?request.getParameter("sdate"):today));
-  
+
   if (rs1 != null) {
     scheduleRscheduleBean.setRscheduleBean(rs1.getProviderNo(),ConversionUtils.toDateString(rs1.getsDate()),ConversionUtils.toDateString(rs1.geteDate()), rs1.getAvailable(),rs1.getDayOfWeek(),rs1.getAvailHourB(), rs1.getAvailHour(), rs1.getCreator());
     if(rs1.getAvailable().equals("A")&&request.getParameter("bFirstDisp")==null) bOrigAlt = true;
     //break;
   } else {
       rs1 = rScheduleDao.search_rschedule_current2(request.getParameter("provider_no"), ConversionUtils.fromDateString(request.getParameter("sdate")!=null?request.getParameter("sdate"):today));
-      
+
       if (rs1 != null) {
         scheduleRscheduleBean.setRscheduleBean(rs1.getProviderNo(),ConversionUtils.toDateString(rs1.getsDate()),ConversionUtils.toDateString(rs1.geteDate()), rs1.getAvailable(),rs1.getDayOfWeek(),rs1.getAvailHourB(), rs1.getAvailHour(), rs1.getCreator());
         if(rs1.getAvailable().equals("A")&&request.getParameter("bFirstDisp")==null) bOrigAlt = true;
@@ -424,48 +412,26 @@ function addDataString1() {
 	  }
   }
 %>
-<body bgcolor="ivory" bgproperties="fixed" onLoad="setfocus()"
-	topmargin="0" leftmargin="0" rightmargin="0">
+<body onLoad="setfocus()">
 <form method="post" name="schedule" action="schedulecreatedate.jsp"
 	onSubmit="<%=bAlternate||bOrigAlt?"addDataStringB();":""%>addDataString();return(addDataString1())">
 
-<table border="0" width="100%">
-	<!-- <tr>
-        <td>&nbsp;</td><td>&nbsp;</td>
-        <td style="height: 100%; vertical-align: middle;" rowspan="2"><div style="background-color: #486ebd" id="template"></div></td>
-    </tr> -->
-	<tr>
-		<td style="vertical-align: top;" width="150" bgcolor="#009966"><!--left column-->
-		<table border="0" cellspacing="0" cellpadding="0" width="100%">
-			<tr bgcolor="#486ebd">
-				<th align="CENTER" bgcolor="#009966"><br>
-				<p><font face="Helvetica" color="#FFFFFF"><bean:message
-					key="schedule.scheduletemplateapplying.msgMainLabel" /></font></p>
-				</th>
-			</tr>
-		</table>
-		<table width="98%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td>
-				<p><font size="-1"><bean:message
-					key="schedule.scheduletemplateapplying.msgStepOne" /></font></p>
-				<p><font size="-1"><bean:message
-					key="schedule.scheduletemplateapplying.msgStepTwo" /></font></p>
-				<p><font size="-1"><bean:message
-					key="schedule.scheduletemplateapplying.msgStepThree" /></font></p>
-				<p><font size="-1"><bean:message
-					key="schedule.scheduletemplateapplying.msgStepFour" /></font></p>
-				<p><font size="-1"><bean:message
-					key="schedule.scheduletemplateapplying.msgObs" /></font></p>
-				<p>&nbsp;</p>
-				</td>
-			</tr>
-		</table>
+<table style="width:100%">
+<tr>
+<td style="vertical-align:top; width:98%">
+<h4><bean:message key="schedule.scheduletemplateapplying.msgMainLabel" /></h4>
+<div class="alert">
+<bean:message key="schedule.scheduletemplateapplying.msgStepOne" />
+<br>
+<bean:message key="schedule.scheduletemplateapplying.msgStepTwo" />
+<br>
+<bean:message key="schedule.scheduletemplateapplying.msgStepThree" />
+<br>
+<bean:message key="schedule.scheduletemplateapplying.msgStepFour" />
+</div>
+<div class="well">
 
-		</td>
-		<td style="padding-top: 5px; vertical-align: top">
 
-		<center>
 		<%
 
   String syear = "",smonth="",sday="",eyear="",emonth="",eday="";
@@ -516,17 +482,17 @@ function addDataString1() {
   }
 
 %>
-		<table width="99%" border="0" cellspacing="0" cellpadding="0">
+		<table style="width:99%">
 			<tr>
-				<td bgcolor="#CCFFCC"><b><%=request.getParameter("provider_name")%></b>
+				<td style="background-color:#CCFFCC"><b><%=request.getParameter("provider_name")%></b>
 				<input type="hidden" name="provider_name"
 					value="<%=request.getParameter("provider_name")%>"></td>
-				<td bgcolor="#CCFFCC" nowrap align="right"><select
+				<td style="background-color:#CCFFCC; text-align:right; white-space:nowrap"><select
 					name="select" onChange="selectrschedule(this)">
 					<%
- 
+
   List<RSchedule> rss = rScheduleDao.search_rschedule_future1(request.getParameter("provider_no"),ConversionUtils.fromDateString(lastYear));
- 
+
  	for (RSchedule rs:rss) {
 %>
 					<option value="<%=ConversionUtils.toDateString(rs.getsDate())%>"
@@ -536,7 +502,7 @@ function addDataString1() {
  	}
         MessageResources msg = MessageResourcesFactory.createFactory().createResources("oscarResources");
 %>
-				</select> <input type="button" name="command"
+				</select> <input type="button" name="command" class="btn"
 					value="<bean:message key="schedule.scheduletemplateapplying.btnDelete"/>"
 					onClick="onBtnDelete(document.forms['schedule'].elements['select'])">
 				</td>
@@ -545,24 +511,32 @@ function addDataString1() {
 				<td style="color: red" colspan="2"><%=request.getParameter("overlap") != null?msg.getMessage("schedule.scheduletemplateapplying.msgScheduleConflict"):"&nbsp;"%></td>
 			</tr>
 			<tr>
-				<td bgcolor="#CCFFCC" colspan="2"><bean:message
+				<td style="background-color:#CCFFCC" colspan="2"><bean:message
 					key="schedule.scheduletemplateapplying.msgDate" /> <bean:message
-					key="schedule.scheduletemplateapplying.msgFrom" />: <input
-					type="text" name="syear" size="4" maxlength="4" value="<%=syear%>"
-					style="width: 40px;" /> - <input type="text" name="smonth" size="2"
-					maxlength="2" value="<%=smonth%>" style="width: 30px;" /> - <input
-					type="text" name="sday" size="2" maxlength="2" value="<%=sday%>"
-					onChange="onChangeDates()" style="width: 30px;" /> <font size="-2"><bean:message
-					key="schedule.scheduletemplateapplying.msgDateFormat" /></font> &nbsp;
-				&nbsp; <bean:message key="schedule.scheduletemplateapplying.msgTo" />:
-				<input type="text" name="eyear" size="4" maxlength="4"
-					value="<%=eyear%>" style="width: 40px;" /> <input type="hidden"
-					name="origeyear" value="<%=eyear%>"> - <input type="text"
+					key="schedule.scheduletemplateapplying.msgFrom" />:
+                    <input
+					type="text" name="syear" maxlength="4" value="<%=syear%>"
+					style="width: 40px;" > -
+                    <input type="text" name="smonth"
+					maxlength="2" value="<%=smonth%>" style="width: 30px;" > -
+                    <input
+					type="text" name="sday" maxlength="2" value="<%=sday%>"
+					onChange="onChangeDates()" style="width: 30px;" > <bean:message
+					key="schedule.scheduletemplateapplying.msgDateFormat" /> &nbsp;
+					&nbsp; <bean:message key="schedule.scheduletemplateapplying.msgTo" />:
+					<input type="text" name="eyear" maxlength="4"
+					value="<%=eyear%>" style="width: 40px;" >
+					<input type="hidden"
+					name="origeyear" value="<%=eyear%>"> -
+					<input type="text"
 					name="emonth" size="2" maxlength="2" value="<%=emonth%>"
-					style="width: 30px;" /> <input type="hidden" name="origemonth"
-					value="<%=emonth%>"> - <input type="text" name="eday"
-					size="2" maxlength="2" value="<%=eday%>" onChange="onChangeDatee()"
-					style="width: 30px;" /> <input type="hidden" name="origeday"
+					style="width: 30px;" >
+					<input type="hidden" name="origemonth"
+					value="<%=emonth%>"> -
+					<input type="text" name="eday"
+					maxlength="2" value="<%=eday%>" onChange="onChangeDatee()"
+					style="width: 30px;" >
+					<input type="hidden" name="origeday"
 					value="<%=eday%>"></td>
 			</tr>
 			<tr>
@@ -570,18 +544,18 @@ function addDataString1() {
 			</tr>
 			<tr>
 				<td colspan="2"><bean:message
-					key="schedule.scheduletemplateapplying.msgAvaiableEvery" /><font
-					size="-2"> (<bean:message
-					key="schedule.scheduletemplateapplying.msgDayOfWeek" />): </font> <input
+					key="schedule.scheduletemplateapplying.msgAvaiableEvery" /> (<bean:message
+					key="schedule.scheduletemplateapplying.msgDayOfWeek" />):
+					<input
 					type="checkbox" name="alternate" value="checked"
 					onClick="onAlternate()" <%=bOrigAlt||bAlternate?"checked":""%>><bean:message
 					key="schedule.scheduletemplateapplying.msgAlternateWeekSetting" /></td>
 			</tr>
 			<tr>
-				<td nowrap align="center" colspan="2">
-				<table border=2 width=100% cellspacing="0" cellpadding="0">
+				<td style="text-align:center; white-space:nowrap" colspan="2">
+				<table class="table table-condensed talbe-bordered" >
 					<tr>
-						<td width=70%><script language=javascript>
+						<td style="width:70%"><script>
 <!--
 function tranbutton_click(myfield) {
   var dow = document.schedule;
@@ -612,84 +586,84 @@ function tranbutton7_click() {
 }
 //-->
 </script>
-						<table border=1 width=100% cellspacing="0" cellpadding="0">
-							<tr bgcolor="#CCFFCC">
+						<table class="table table-bordered">
+							<tr style="background-color:#CCFFCC">
 								<td>
-								<p><font size="-1"> <input type="checkbox"
+								<p><input type="checkbox"
 									name="checksun" value="1" onClick="addDataString()"
 									<%=param2[0]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgSunday" /></font>
+									key="schedule.scheduletemplateapplying.msgSunday" />
 								</td>
-								<td><font size="-1"> <input type="text"
+								<td> <input type="text"
 									name="sunfrom1" size="20" value="<%=param3[0][0]%>" readonly>
-								<input type="button" name="sunto1" value="<<" onclick="javascript:tranbutton1_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("sunaddr1", addr, param4[0][0]) : ""  %>
+								<input type="button" class="btn" name="sunto1" value="<<" onclick="javascript:tranbutton1_click();" >
+								 <%=bMoreAddr? getSelectAddr("sunaddr1", addr, param4[0][0]) : ""  %>
 								</td>
 							</tr>
 							<tr>
-								<td><font size="-1"> <input type="checkbox"
+								<td> <input type="checkbox"
 									name="checkmon" value="2" onClick="addDataString()"
 									<%=param2[1]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgMonday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgMonday" /></td>
+								<td> <input type="text"
 									name="monfrom1" size="20" value="<%=param3[1][0]%>" readonly>
-								<input type="button" name="monto1" value="<<" onclick="javascript:tranbutton2_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("monaddr1", addr, param4[1][0]) : ""  %>
+								<input type="button" class="btn" name="monto1" value="<<" onclick="javascript:tranbutton2_click();" >
+								 <%=bMoreAddr? getSelectAddr("monaddr1", addr, param4[1][0]) : ""  %>
 								</td>
 							</tr>
-							<tr bgcolor="#CCFFCC">
-								<td><font size="-1"> <input type="checkbox"
+							<tr style="background-color:#CCFFCC">
+								<td> <input type="checkbox"
 									name="checktue" value="3" onClick="addDataString()"
 									<%=param2[2]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgTuesday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgTuesday" /></td>
+								<td> <input type="text"
 									name="tuefrom1" size="20" value="<%=param3[2][0]%>" readonly>
-								<input type="button" name="tueto1" value="<<" onclick="javascript:tranbutton3_click();"  >
-								</font> <%=bMoreAddr? getSelectAddr("tueaddr1", addr, param4[2][0]) : ""  %>
+								<input type="button" class="btn" name="tueto1" value="<<" onclick="javascript:tranbutton3_click();"  >
+								 <%=bMoreAddr? getSelectAddr("tueaddr1", addr, param4[2][0]) : ""  %>
 								</td>
 							</tr>
 							<tr>
-								<td><font size="-1"> <input type="checkbox"
+								<td> <input type="checkbox"
 									name="checkwed" value="4" onClick="addDataString()"
 									<%=param2[3]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgWednesday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgWednesday" /></td>
+								<td> <input type="text"
 									name="wedfrom1" size="20" value="<%=param3[3][0]%>" readonly>
-								<input type="button" name="wedto1" value="<<" onclick="javascript:tranbutton4_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("wedaddr1", addr, param4[3][0]) : ""  %>
+								<input type="button" class="btn" name="wedto1" value="<<" onclick="javascript:tranbutton4_click();" >
+								 <%=bMoreAddr? getSelectAddr("wedaddr1", addr, param4[3][0]) : ""  %>
 								</td>
 							</tr>
-							<tr bgcolor="#CCFFCC">
-								<td><font size="-1"> <input type="checkbox"
+							<tr style="background-color:#CCFFCC">
+								<td> <input type="checkbox"
 									name="checkthu" value="5" onClick="addDataString()"
 									<%=param2[4]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgThursday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgThursday" /></td>
+								<td> <input type="text"
 									name="thufrom1" size="20" value="<%=param3[4][0]%>" readonly>
-								<input type="button" name="thuto1" value="<<" onclick="javascript:tranbutton5_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("thuaddr1", addr, param4[4][0]) : ""  %>
+								<input type="button" class="btn" name="thuto1" value="<<" onclick="javascript:tranbutton5_click();" >
+								 <%=bMoreAddr? getSelectAddr("thuaddr1", addr, param4[4][0]) : ""  %>
 								</td>
 							</tr>
 							<tr>
-								<td><font size="-1"> <input type="checkbox"
+								<td> <input type="checkbox"
 									name="checkfri" value="6" onClick="addDataString()"
 									<%=param2[5]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgFriday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgFriday" /></td>
+								<td> <input type="text"
 									name="frifrom1" size="20" value="<%=param3[5][0]%>" readonly>
-								<input type="button" name="frito1" value="<<" onclick="javascript:tranbutton6_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("friaddr1", addr, param4[5][0]) : ""  %>
+								<input type="button" class="btn" name="frito1" value="<<" onclick="javascript:tranbutton6_click();" >
+								 <%=bMoreAddr? getSelectAddr("friaddr1", addr, param4[5][0]) : ""  %>
 								</td>
 							</tr>
-							<tr bgcolor="#CCFFCC">
-								<td><font size="-1"> <input type="checkbox"
+							<tr style="background-color:#CCFFCC">
+								<td> <input type="checkbox"
 									name="checksat" value="7" onClick="addDataString()"
 									<%=param2[6]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgSaturday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgSaturday" /></td>
+								<td> <input type="text"
 									name="satfrom1" size="20" value="<%=param3[6][0]%>" readonly>
-								<input type="button" name="satto1" value="<<" onclick="javascript:tranbutton7_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("sataddr1", addr, param4[6][0]) : ""  %>
+								<input type="button" class="btn" name="satto1" value="<<" onclick="javascript:tranbutton7_click();" >
+								 <%=bMoreAddr? getSelectAddr("sataddr1", addr, param4[6][0]) : ""  %>
 								</td>
 							</tr>
 							<%
@@ -758,83 +732,83 @@ function tranbuttonb7_click() {
 }
 //-->
 </script>
-							<tr bgcolor="#00C5CD">
+							<tr style="background-color:#00C5CD">
 								<td>
-								<p><font size="-1"> <input type="checkbox"
+								<p> <input type="checkbox"
 									name="checksun2" value="1" onClick="addDataString()"
 									<%=param2[0]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgSunday" /></font>
+									key="schedule.scheduletemplateapplying.msgSunday" />
 								</td>
-								<td><font size="-1"> <input type="text"
+								<td> <input type="text"
 									name="sunfrom2" size="20" value="<%=param3[0][0]%>"> <input
 									type="button" name="sunto2" value="<<" onclick="javascript:tranbuttonb1_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("sunaddr2", addr, param4[0][0]) : ""  %>
+								 <%=bMoreAddr? getSelectAddr("sunaddr2", addr, param4[0][0]) : ""  %>
 								</td>
 							</tr>
-							<tr bgcolor="#E0FFFF">
-								<td><font size="-1"> <input type="checkbox"
+							<tr style="background-color:#E0FFFF">
+								<td> <input type="checkbox"
 									name="checkmon2" value="2" onClick="addDataString()"
 									<%=param2[1]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgMonday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgMonday" /></td>
+								<td> <input type="text"
 									name="monfrom2" size="20" value="<%=param3[1][0]%>"> <input
 									type="button" name="monto2" value="<<" onclick="javascript:tranbuttonb2_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("monaddr2", addr, param4[1][0]) : ""  %>
+								 <%=bMoreAddr? getSelectAddr("monaddr2", addr, param4[1][0]) : ""  %>
 								</td>
 							</tr>
-							<tr bgcolor="#00C5CD">
-								<td><font size="-1"> <input type="checkbox"
+							<tr style="background-color:#00C5CD">
+								<td> <input type="checkbox"
 									name="checktue2" value="3" onClick="addDataString()"
 									<%=param2[2]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgTuesday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgTuesday" /></td>
+								<td> <input type="text"
 									name="tuefrom2" size="20" value="<%=param3[2][0]%>"> <input
 									type="button" name="tueto2" value="<<" onclick="javascript:tranbuttonb3_click();"  >
-								</font> <%=bMoreAddr? getSelectAddr("tueaddr2", addr, param4[2][0]) : ""  %>
+								 <%=bMoreAddr? getSelectAddr("tueaddr2", addr, param4[2][0]) : ""  %>
 								</td>
 							</tr>
-							<tr bgcolor="#E0FFFF">
-								<td><font size="-1"> <input type="checkbox"
+							<tr style="background-color:#E0FFFF">
+								<td> <input type="checkbox"
 									name="checkwed2" value="4" onClick="addDataString()"
 									<%=param2[3]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgWednesday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgWednesday" /></td>
+								<td> <input type="text"
 									name="wedfrom2" size="20" value="<%=param3[3][0]%>"> <input
 									type="button" name="wedto2" value="<<" onclick="javascript:tranbuttonb4_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("wedaddr2", addr, param4[3][0]) : ""  %>
+								 <%=bMoreAddr? getSelectAddr("wedaddr2", addr, param4[3][0]) : ""  %>
 								</td>
 							</tr>
-							<tr bgcolor="#00C5CD">
-								<td><font size="-1"> <input type="checkbox"
+							<tr style="background-color:#00C5CD">
+								<td> <input type="checkbox"
 									name="checkthu2" value="5" onClick="addDataString()"
 									<%=param2[4]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgThursday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgThursday" /></td>
+								<td> <input type="text"
 									name="thufrom2" size="20" value="<%=param3[4][0]%>"> <input
 									type="button" name="thuto2" value="<<" onclick="javascript:tranbuttonb5_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("thuaddr2", addr, param4[4][0]) : ""  %>
+								 <%=bMoreAddr? getSelectAddr("thuaddr2", addr, param4[4][0]) : ""  %>
 								</td>
 							</tr>
-							<tr bgcolor="#E0FFFF">
-								<td><font size="-1"> <input type="checkbox"
+							<tr style="background-color:#E0FFFF">
+								<td> <input type="checkbox"
 									name="checkfri2" value="6" onClick="addDataString()"
 									<%=param2[5]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgFriday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgFriday" /></td>
+								<td> <input type="text"
 									name="frifrom2" size="20" value="<%=param3[5][0]%>"> <input
 									type="button" name="frito2" value="<<" onclick="javascript:tranbuttonb6_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("friaddr2", addr, param4[5][0]) : ""  %>
+								 <%=bMoreAddr? getSelectAddr("friaddr2", addr, param4[5][0]) : ""  %>
 								</td>
 							</tr>
-							<tr bgcolor="#00C5CD">
-								<td><font size="-1"> <input type="checkbox"
+							<tr style="background-color:#00C5CD">
+								<td> <input type="checkbox"
 									name="checksat2" value="7" onClick="addDataString()"
 									<%=param2[6]%>> <bean:message
-									key="schedule.scheduletemplateapplying.msgSaturday" /></font></td>
-								<td><font size="-1"> <input type="text"
+									key="schedule.scheduletemplateapplying.msgSaturday" /></td>
+								<td> <input type="text"
 									name="satfrom2" size="20" value="<%=param3[6][0]%>"> <input
 									type="button" name="satto2" value="<<" onclick="javascript:tranbuttonb7_click();" >
-								</font> <%=bMoreAddr? getSelectAddr("sataddr2", addr, param4[6][0]) : ""  %>
+								 <%=bMoreAddr? getSelectAddr("sataddr2", addr, param4[6][0]) : ""  %>
 								</td>
 							</tr>
 							<% }
@@ -843,31 +817,34 @@ function tranbuttonb7_click() {
 						</table>
 
 						</td>
-						<td><select size=<%=bOrigAlt||bAlternate?22:11%>
+						<td><select style="width:100%;height:100%" size=<%=bOrigAlt||bAlternate?22:11%>
 							onclick="displayTemplate(this)" name="mytemplate">
 							<%
-							
+
 							for(ScheduleTemplate st: scheduleTemplateDao.findByProviderNo("Public")) {
-   
+
 	%>
-							<option value="<%=st.getId().getName()%>"><%=st.getId().getName()+" |"+st.getSummary()%></option>
+							<option value="<%=Encode.forHtmlAttribute(st.getId().getName())%>"><%=Encode.forHtmlContent(st.getId().getName())+" |"+ Encode.forHtmlContent(st.getSummary())%></option>
 							<%
    }
-							
+
 							for(ScheduleTemplate st: scheduleTemplateDao.findByProviderNo(request.getParameter("provider_no"))) {
-							
+
 	%>
-							<option value="<%=st.getId().getName()%>"><%=st.getId().getName()+" |"+st.getSummary()%></option>
+							<option value="<%=Encode.forHtmlAttribute(st.getId().getName())%>"><%=Encode.forHtmlContent(st.getId().getName())+" |"+Encode.forHtmlContent(st.getSummary())%></option>
 							<% }	%>
 						</select></td>
+
+
 					</tr>
 				</table>
 
-				</td>
 				<input type="hidden" name="day_of_week" value="">
 				<input type="hidden" name="avail_hour" value="">
 				<input type="hidden" name="day_of_weekB" value="">
 				<input type="hidden" name="avail_hourB" value="">
+
+				</td>
 			</tr>
 			<tr>
 				<td colspan="2">&nbsp;</td>
@@ -876,27 +853,26 @@ function tranbuttonb7_click() {
 				<td colspan="2">&nbsp;</td>
 			</tr>
 			<tr>
-				<td bgcolor="#CCFFCC" colspan="2">
-				<div align="right"><input type="hidden" name="provider_no"
+				<td colspan="2">
+				<div style="text-align:right"><input type="hidden" name="provider_no"
 					value="<%=request.getParameter("provider_no")%>"> <input
 					type="hidden" name="available"
 					value="<%=bAlternate||bOrigAlt?"A":"1"%>"> <input
 					type="hidden" name="Submit" value=" Next "> <input
-					type="submit"
+					type="submit" class="btn btn-primary"
 					value='<bean:message key="schedule.scheduletemplateapplying.btnNext"/>'>
 				</div>
 				</td>
 			</tr>
 		</table>
-		<p>
-		<p>&nbsp;</p>
-		</center>
-		</td>
-		<td style="height: 100%; vertical-align: middle;" rowspan="2">
-		<div style="background-color: #486ebd" id="template"></div>
-		</td>
-	</tr>
+</div>
+</td>
+<td>
+<div style="background-color: #486ebd; width:40px;" id="template"></div>
+</td>
+</tr>
 </table>
+
 
 
 </form>
@@ -928,7 +904,7 @@ function tranbuttonb7_click() {
 			}
 
 			if ((isExcludedSiteSelected) || (!excludedSites.contains(site[i]))) {
-				ret += "<option value='" + site[i] + "'" + t + (bMultisites? " style='background-color:"+bgColors[i] + "'": "") +">" + site[i] + "</option>";
+				ret += "<option value='" + Encode.forHtmlAttribute(site[i]) + "'" + t + (bMultisites? " style='background-color:"+bgColors[i] + "'": "") +">" + Encode.forHtmlContent(site[i]) + "</option>";
 			}
 		}
 		ret += "</select>";

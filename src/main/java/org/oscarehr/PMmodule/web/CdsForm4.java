@@ -52,13 +52,13 @@ import oscar.util.CBIUtil;
 
 public class CdsForm4 {
 
-	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-	private static AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
-	private static CdsFormOptionDao cdsFormOptionDao = (CdsFormOptionDao) SpringUtils.getBean("cdsFormOptionDao");
-	private static CdsClientFormDao cdsClientFormDao = (CdsClientFormDao) SpringUtils.getBean("cdsClientFormDao");
-	private static CdsClientFormDataDao cdsClientFormDataDao = (CdsClientFormDataDao) SpringUtils.getBean("cdsClientFormDataDao");
-	private static CdsHospitalisationDaysDao cdsHospitalisationDaysDao = (CdsHospitalisationDaysDao) SpringUtils.getBean("cdsHospitalisationDaysDao");
-	private static ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
+	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+	private static AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
+	private static CdsFormOptionDao cdsFormOptionDao = (CdsFormOptionDao) SpringUtils.getBean(CdsFormOptionDao.class);
+	private static CdsClientFormDao cdsClientFormDao = (CdsClientFormDao) SpringUtils.getBean(CdsClientFormDao.class);
+	private static CdsClientFormDataDao cdsClientFormDataDao = (CdsClientFormDataDao) SpringUtils.getBean(CdsClientFormDataDao.class);
+	private static CdsHospitalisationDaysDao cdsHospitalisationDaysDao = (CdsHospitalisationDaysDao) SpringUtils.getBean(CdsHospitalisationDaysDao.class);
+	private static ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
 
 	private static final int MAX_DISPLAY_NAME_LENGTH = 60;
 

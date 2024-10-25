@@ -61,8 +61,8 @@ public class ExaminationHistoryAction extends DispatchAction {
 
 	Logger logger = MiscUtils.getLogger();	
 	protected MeasurementDao measurementsDao = SpringUtils.getBean(MeasurementDao.class);
-	DemographicDao demographicDao= (DemographicDao)SpringUtils.getBean("demographicDao");
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	DemographicDao demographicDao= (DemographicDao)SpringUtils.getBean(DemographicDao.class);
+	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	
 	@Override	   

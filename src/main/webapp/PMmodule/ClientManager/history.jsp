@@ -129,7 +129,7 @@ String roleName$ = (String)session.getAttribute("userrole") + "," + (String) ses
 		AdmissionForDisplay admissionForDisplay = (AdmissionForDisplay) pageContext.getAttribute("admission");
 	%>
 	<%
-		ProgramProviderDAO ppd =(ProgramProviderDAO)SpringUtils.getBean("programProviderDAO");
+		ProgramProviderDAO ppd =(ProgramProviderDAO)SpringUtils.getBean(ProgramProviderDAO.class);
 		
 	%>
 	<% boolean bShowEncounterLink = false; 

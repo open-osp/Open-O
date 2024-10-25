@@ -66,7 +66,7 @@ if(!authed) {
             <th title="Verify Form Needed Errors">Verify FN</th>
         </tr>
         <%
-            BillingmasterDAO billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean("BillingmasterDAO");
+            BillingmasterDAO billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean(BillingmasterDAO.class);
             List<WCB> l = billingmasterDAO.getWCBForms(demographicNo);
             for (WCB wcb : l) {
             request.setAttribute("wcb",(Object) wcb);

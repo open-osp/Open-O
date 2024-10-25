@@ -62,14 +62,14 @@ public final class Cds4ReportUIBean {
 
 	private static Logger logger = MiscUtils.getLogger();
 
-	private static FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean("functionalCentreDao");
-	private static CdsFormOptionDao cdsFormOptionDao = (CdsFormOptionDao) SpringUtils.getBean("cdsFormOptionDao");
-	private static CdsClientFormDao cdsClientFormDao = (CdsClientFormDao) SpringUtils.getBean("cdsClientFormDao");
-	private static CdsClientFormDataDao cdsClientFormDataDao = (CdsClientFormDataDao) SpringUtils.getBean("cdsClientFormDataDao");
-	private static AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
-	private static ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
-	private static CdsHospitalisationDaysDao cdsHospitalisationDaysDao = (CdsHospitalisationDaysDao) SpringUtils.getBean("cdsHospitalisationDaysDao");
-	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+	private static FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean(FunctionalCentreDao.class);
+	private static CdsFormOptionDao cdsFormOptionDao = (CdsFormOptionDao) SpringUtils.getBean(CdsFormOptionDao.class);
+	private static CdsClientFormDao cdsClientFormDao = (CdsClientFormDao) SpringUtils.getBean(CdsClientFormDao.class);
+	private static CdsClientFormDataDao cdsClientFormDataDao = (CdsClientFormDataDao) SpringUtils.getBean(CdsClientFormDataDao.class);
+	private static AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
+	private static ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+	private static CdsHospitalisationDaysDao cdsHospitalisationDaysDao = (CdsHospitalisationDaysDao) SpringUtils.getBean(CdsHospitalisationDaysDao.class);
+	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 
 	public static final int NUMBER_OF_COHORT_BUCKETS = 11;
 	private static final int NUMBER_OF_DATA_ROW_COLUMNS=NUMBER_OF_COHORT_BUCKETS+1;

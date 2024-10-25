@@ -42,7 +42,7 @@
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="billing.billingDigSearch.title" /></title>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>

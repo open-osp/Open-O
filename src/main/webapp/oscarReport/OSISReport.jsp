@@ -47,7 +47,7 @@ if(!authed2) {
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 
 <%
-	ProviderManager2 providerManager = (ProviderManager2) SpringUtils.getBean("providerManager2");
+	ProviderManager2 providerManager = (ProviderManager2) SpringUtils.getBean(ProviderManager2.class);
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
 

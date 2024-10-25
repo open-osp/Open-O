@@ -27,13 +27,13 @@
  */
 package oscar.oscarBilling.ca.bc.MSP;
 
+import oscar.entities.Billingmaster;
+import oscar.util.SqlUtils;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
-
-import oscar.entities.Billingmaster;
-import oscar.util.SqlUtils;
 
 public class CheckBillingData {
 
@@ -79,7 +79,7 @@ public class CheckBillingData {
 
     public String printErrorMsg(String billingNo, String m) {
         String ret = "<tr bgcolor='red'><td colspan='11'>"
-                + "<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billing_no="
+                + "<a href='#' onClick=\"openBrWindow('adjustBill.jsp?billingmaster_no="
                 + billingNo
                 + "','','resizable=yes,scrollbars=yes,top=0,left=0,width=900,height=600'); return false;\">"
                 + m + "</a>" + "</td></tr>";

@@ -45,13 +45,13 @@
 <%@ page import="org.apache.commons.collections.iterators.*" %>
 <%@ page import="oscar.util.UtilDateUtilities,java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://jakarta.apache.org/struts/tags-html-el" prefix="html-el" %>
+<%@ taglib uri="http://struts.apache.org/tags-html-el" prefix="html-el" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" />
 <%
 	Demographic demographic= null;
 	String DemographicNo = null;
 	String myOscarUserName = null;
-	DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+	DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 	
 	MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
 	
@@ -61,7 +61,7 @@
 		request.setAttribute("subject", request.getParameter("subject")); 
 	}
 %>
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
     <html:base/>

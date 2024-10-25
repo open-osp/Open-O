@@ -48,7 +48,7 @@ public class GetProviderRoles {
 	    
 	    public void run() throws Exception {
 	    	//get a list of providers
-	    	ProviderManager providerManager = (ProviderManager)ctx.getBean("providerManager");
+	    	ProviderManager providerManager = (ProviderManager)ctx.getBean(ProviderManager.class);
 	    	List providers = providerManager.getProviders();
 	    	
 	    	for(Iterator iter=providers.iterator();iter.hasNext();) {
@@ -74,7 +74,7 @@ public class GetProviderRoles {
 	    }
 	    
 	    public Set getRoles(String providerNo) {
-	    	ProgramManager programManager = (ProgramManager) ctx.getBean("programManager");
+	    	ProgramManager programManager = (ProgramManager) ctx.getBean(ProgramManager.class);
 	    	List ppList = programManager.getProgramProvidersByProvider(providerNo);
 	    	Set roles = new HashSet();
 	    	for(Iterator iter=ppList.iterator();iter.hasNext();) {

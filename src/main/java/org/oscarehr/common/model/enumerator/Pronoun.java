@@ -35,8 +35,9 @@ public class Pronoun extends AbstractModel<String> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	
+	//@Enumerated(EnumType.STRING)
 	@Id
-	@Enumerated(EnumType.STRING)
 	private String code;
 
 	private String description;

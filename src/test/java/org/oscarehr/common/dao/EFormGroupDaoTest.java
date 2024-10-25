@@ -34,7 +34,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class EFormGroupDaoTest extends DaoTestFixtures {
 
-	protected EFormGroupDao dao = (EFormGroupDao) SpringUtils.getBean("EFormGroupDao");
+	protected EFormGroupDao dao = (EFormGroupDao) SpringUtils.getBean(EFormGroupDao.class);
 
 	@Before
 	public void initSchema() throws Exception {

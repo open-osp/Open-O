@@ -34,7 +34,7 @@ public class SchedulerJob extends TimerTask {
 		Date startTime = new Date();
 		try {
 			LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoAsCurrentClassAndMethod();
-			UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+			UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
 			UserProperty hrmInterval = userPropertyDao.getProp("hrm_interval");
 
 			Integer intervalTime = 1800000;

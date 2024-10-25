@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2015-2019. The Pharmacists Clinic, Faculty of Pharmaceutical Sciences, University of British Columbia. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,712 +21,240 @@
  * Faculty of Pharmaceutical Sciences
  * University of British Columbia
  * Vancouver, British Columbia, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.managers;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.*;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.struts.action.DynaActionForm;
-import org.oscarehr.common.dao.ClinicDAO;
-import org.oscarehr.common.dao.FaxClientLogDao;
-import org.oscarehr.common.dao.FaxConfigDao;
-import org.oscarehr.common.dao.FaxJobDao;
-import org.oscarehr.common.model.Clinic;
-import org.oscarehr.common.model.FaxClientLog;
-import org.oscarehr.common.model.FaxConfig;
-import org.oscarehr.common.model.FaxJob;
-import org.oscarehr.common.model.FaxJob.STATUS;
-import org.oscarehr.fax.core.FaxAccount;
-import org.oscarehr.fax.core.FaxRecipient;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import net.sf.json.JSONObject;
-import oscar.OscarProperties;
-import org.oscarehr.documentManager.EDocUtil;
-import oscar.form.util.FormTransportContainer;
-import oscar.log.LogAction;
-import oscar.util.ConcatPDF;
-
-@Service
-public class FaxManager {
-
-	@Autowired
-	private FaxConfigDao faxConfigDao;
-
-	@Autowired
-	private FaxClientLogDao faxClientLogDao;
-
-	@Autowired
-	private FaxJobDao faxJobDao;
-
-	@Autowired
-	private SecurityInfoManager securityInfoManager;
-
-	@Autowired
-	private FaxDocumentManager faxDocumentManager;
-
-	@Autowired
-	private NioFileManager nioFileManager;
-
-	@Autowired
-	private ClinicDAO clinicDAO;
-
-	private Logger logger = MiscUtils.getLogger();
-
-	public enum TransactionType {CONSULTATION, EFORM, FORM, RX, DOCUMENT}
-
-	public Path renderFaxDocument(LoggedInInfo loggedInInfo, TransactionType transactionType, FormTransportContainer formTransportContainer) {
-		return renderFaxDocument(loggedInInfo, transactionType, 0, 0, formTransportContainer);
-	}
-
-	public Path renderFaxDocument(LoggedInInfo loggedInInfo, TransactionType transactionType, int transactionId, int demographicNo) {
-		return renderFaxDocument(loggedInInfo, transactionType, transactionId, demographicNo, null);
-	}
-
-	/**
-	 * @Deprecated
-	 * Move these rendering methods into a more generic class like the DocumentManager
-	 *
-	 * @return
-	 */
-	@Deprecated
-	public Path renderFaxDocument(LoggedInInfo loggedInInfo, TransactionType transactionType, int transactionId, int demographicNo, FormTransportContainer formTransportContainer) {
-
-		Path renderedDocument;
-
-		switch (transactionType) {
-			case CONSULTATION:
-				renderedDocument = renderConsultationRequest(loggedInInfo, transactionId, demographicNo);
-				break;
-			case DOCUMENT:
-				renderedDocument = renderDocument(loggedInInfo, transactionId, demographicNo);
-				break;
-			case EFORM:
-				renderedDocument = renderEform(loggedInInfo, transactionId, demographicNo);
-				break;
-			case FORM:
-				renderedDocument = renderForm(loggedInInfo, formTransportContainer);
-				break;
-			case RX:
-				renderedDocument = renderPrescription(loggedInInfo, transactionId, demographicNo);
-				break;
-			default:
-				renderedDocument = null;
-				break;
-		}
-
-		return renderedDocument;
-	}
-
-	public Path renderConsultationRequest(LoggedInInfo loggedInInfo, int requestId, int demographicNo) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_con", SecurityInfoManager.WRITE, demographicNo)) {
-			throw new RuntimeException("missing required security object (_con)");
-		}
-
-		logger.info("Rendering consultation request document number " + requestId + " for fax preview.");
-
-		return null;
-	}
-
-	public Path renderDocument(LoggedInInfo loggedInInfo, int documentNo, int demographicNo) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", SecurityInfoManager.WRITE, demographicNo)) {
-			throw new RuntimeException("missing required security object (_edoc)");
-		}
-
-		logger.info("Rendering document number " + documentNo + " for fax preview.");
-		return null;
-	}
-
-	public Path renderEform(LoggedInInfo loggedInInfo, int eformId, int demographicNo) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_eform", SecurityInfoManager.WRITE, demographicNo)) {
-			throw new RuntimeException("missing required security object (_eform)");
-		}
-		logger.info("Rendering eform number " + eformId + " for fax preview.");
-		return faxDocumentManager.getEformFaxDocument(loggedInInfo, eformId);
-	}
-
-	public Path renderPrescription(LoggedInInfo loggedInInfo, int rxId, int demographicNo) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_rx", SecurityInfoManager.WRITE, demographicNo)) {
-			throw new RuntimeException("missing required security object (_rx)");
-		}
-		logger.info("Rendering prescription number " + rxId + " for fax preview.");
-
-		return null;
-	}
-
-	public Path renderForm(LoggedInInfo loggedInInfo, int formId, int demographicNo){
-			if (!securityInfoManager.hasPrivilege(loggedInInfo, "_form", SecurityInfoManager.WRITE, demographicNo)) {
-				throw new RuntimeException("missing required security object (_form)");
-			}
-
-			logger.info("Rendering form number " + formId + " for fax preview.");
-
-			return null;
-	}
-
-	public Path renderForm(LoggedInInfo loggedInInfo, FormTransportContainer formTransportContainer) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_form", SecurityInfoManager.WRITE, formTransportContainer.getDemographicNo())) {
-			throw new RuntimeException("missing required security object (_form)");
-		}
-
-		logger.info("Rendering form number " + formTransportContainer.getFormName() + " for fax preview.");
-
-		return faxDocumentManager.getFormFaxDocument(loggedInInfo, formTransportContainer);
-	}
-
-	/**
-	 * Calls the save method after the faxJob(s) are created.
-	 * The FaxJob list that is returned contains persisted FaxJob Objects
-	 * This method has a specific purpose for the FaxAction class.  Use the 
-	 * createFaxJob(LoggedInInfo loggedInInfo, Map<String, Object> faxJobMap) signature otherwise.
-	 *
-	 */
-	@SuppressWarnings("unchecked")
-	public List<FaxJob> createAndSaveFaxJob(LoggedInInfo loggedInInfo, DynaActionForm faxActionForm) {
-		return createAndSaveFaxJob(loggedInInfo, faxActionForm.getMap());
-	}
-
-	/**
-	 * 1.) Creates the faxJob
-	 * 2.) duplicates the faxJob for each recipient 
-	 * 3.) saves all the faxJobs to be sent.
-	 * Map should contain values for:
-	 * faxFilePath
-	 * recipient
-	 * recipientFaxNumber
-	 * comments (for cover page)
-	 * isCoverpage
-	 * senderFaxNumber
-	 * demographicNo
-	 * copytoRecipients (as String[])
-	 *
-	 * The FaxJob list that is returned contains persisted FaxJob Objects
-	 *
-	 */
-	public List<FaxJob> createAndSaveFaxJob(LoggedInInfo loggedInInfo, Map<String, Object> faxJobMap) {
-
-		FaxJob faxJob = createFaxJob(loggedInInfo, faxJobMap);
-		List<FaxJob> faxJobList = new ArrayList<FaxJob>();
-		boolean isCoverpage = Boolean.parseBoolean((String) faxJobMap.get("coverpage"));
-
-		/*
-		 * add the first job that contains the original recipient.
-		 */
-		faxJobList.add(faxJob);
-
-		/*
-		 * duplicate the fax job for each copy to recipient
-		 * The original receiver is already retained in the list.
-		 */
-		String[] copytoRecipients = (String[]) faxJobMap.get("copyToRecipients");
-		if (copytoRecipients != null && copytoRecipients.length > 0) {
-			List<FaxJob> faxJobRecipients = addRecipients(loggedInInfo, faxJob, copytoRecipients);
-			faxJobList.addAll(faxJobRecipients);
-		}
-
-		/*
-		 * Create a cover page for each of the fax jobs if requested by the user.
-		 */
-		if (isCoverpage) {
-			String comments = (String) faxJobMap.get("comments");
-
-			for (FaxJob faxJobObject : faxJobList) {
-				Path faxDocument = Paths.get(faxJobObject.getFile_name());
-				try {
-					faxDocument = addCoverPage(loggedInInfo, comments, faxJobObject.getFaxRecipient(), faxJobObject.getFaxAccount(), faxDocument);
-					faxJob.setNumPages(faxJobObject.getNumPages() + 1);
-				} catch (IOException e) {
-					logger.error("failed to add cover page ", e);
-					faxJobObject.setStatus(STATUS.ERROR);
-				} finally {
-					/*
-					 * set the final document retrieval path.
-					 */
-					faxJobObject.setFile_name(faxDocument.getFileName().toString());
-				}
-			}
-		}
-
-		return saveFaxJob(loggedInInfo, faxJobList);
-	}
-
-	/**
-	 * The beginning of a new Fax job from the parameters in the given Map.
-	 * Map should contain values for:
-	 * faxFilePath
-	 * recipient
-	 * recipientFaxNumber
-	 * comments (for cover page)
-	 * isCoverpage
-	 * senderFaxNumber
-	 * demographicNo
-	 * copytoRecipients (as String[])
-	 * The FaxJob returned is NEW UN-PERSISTED FaxJob Object with a single recipient
-	 *
-	 */
-	public FaxJob createFaxJob(LoggedInInfo loggedInInfo, Map<String, Object> faxJobMap) {
-
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.WRITE, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-
-		String faxFilePath = (String) faxJobMap.get("faxFilePath");
-		String recipient = (String) faxJobMap.get("recipient");
-		String recipientFaxNumber = (String) faxJobMap.get("recipientFaxNumber");
-		String senderFaxNumber = (String) faxJobMap.get("senderFaxNumber");
-		Integer demographicNo = (Integer) faxJobMap.get("demographicNo");
-
-		//Checking if a file is saved in a temporary directory, then copying it to a permanent directory (/var/lib/OscarDocument/...).
-		if (faxFilePath.contains("/temp/")) {
-			faxFilePath = nioFileManager.copyFileToOscarDocuments(faxFilePath);
-		}
-		recipientFaxNumber = recipientFaxNumber.replaceAll("\\D", "");
-
-		FaxJob faxJob = new FaxJob();
-		Path faxDocument = Paths.get(faxFilePath);
-
-		//TODO Possible that this could be multiple accounts using the same return fax line.
-		FaxConfig faxConfig = faxConfigDao.getActiveConfigByNumber(senderFaxNumber);
-		/*
-		 * Build the foundation of a faxJob
-		 */
-		faxJob.setFile_name(faxDocument.getFileName().toString());
-		faxJob.setNumPages(EDocUtil.getPDFPageCount(faxDocument.toString()));
-		faxJob.setStamp(new Date());
-		faxJob.setOscarUser(loggedInInfo.getLoggedInProviderNo());
-		faxJob.setDemographicNo(demographicNo);
-		faxJob.setRecipient(recipient);
-		faxJob.setDestination(recipientFaxNumber);
-
-		/*
-		 * This will be null if the fax number is invalid.
-		 * No valid account - No fax
-		 */
-		if (faxConfig == null) {
-			logger.error("Fax account " + faxJob.getFax_line() + " is not found, invalid, or inactive");
-			faxJob.setStatus(STATUS.ERROR);
-			faxJob.setStatusString("Fax account " + faxJob.getFax_line() + " is not found, invalid, or inactive");
-			return faxJob;
-		}
-
-		faxJob.setFax_line(faxConfig.getFaxNumber());
-		faxJob.setUser(faxConfig.getFaxUser());
-		faxJob.setStatus(FaxJob.STATUS.WAITING);
-
-		/*
-		 * Create the sender profile
-		 * This is set with the clinic address by default.
-		 */
-		FaxAccount faxAccount = new FaxAccount(faxConfig);
-		Clinic clinic = clinicDAO.getClinic();
-		faxAccount.setSubText(clinic.getClinicName());
-		faxAccount.setAddress(clinic.getClinicAddress());
-		faxAccount.setFacilityName(clinic.getClinicName());
-		faxJob.setFaxAccount(faxAccount);
-
-		/*
-		 * No document - No Fax. Return an error.
-		 */
-		if (!Files.exists(faxDocument)) {
-			faxJob.setStatus(STATUS.ERROR);
-			faxJob.setStatusString("File missing on local storage.");
-			return faxJob;
-		}
-
-		return faxJob;
-
-	}
-
-	/**
-	 * Add recipients from an indexed array of JSON formatted strings
-	 * name:<recipient>
-	 * fax:<recipient fax number>
-	 *
-	 */
-	public List<FaxJob> addRecipients(LoggedInInfo loggedInInfo, FaxJob faxJob, String[] faxRecipients) {
-
-		List<FaxRecipient> faxRecipientArray = new ArrayList<FaxRecipient>();
-		for (String copytoRecipient : faxRecipients) {
-			/*
-			 *  assumes that the recipient entry is a JSONObject
-			 */
-			copytoRecipient = "{" + copytoRecipient + "}";
-			JSONObject copytoRecipientJson = JSONObject.fromObject(copytoRecipient);
-			FaxRecipient faxRecipient = new FaxRecipient(copytoRecipientJson);
-			faxRecipientArray.add(faxRecipient);
-		}
-		return addRecipients(loggedInInfo, faxJob, faxRecipientArray);
-	}
-
-	/**
-	 * Create 1 faxJob for each fax recipient. Sets each faxJob to the 
-	 * default status of WAITNG.
-	 *
-	 */
-	public List<FaxJob> addRecipients(LoggedInInfo loggedInInfo, FaxJob faxJob, List<FaxRecipient> faxRecipients) {
-
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.WRITE, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-
-		List<FaxJob> faxJobList = new ArrayList<FaxJob>();
-
-		outer:
-		for (FaxRecipient faxRecipient : faxRecipients) {
-			/*
-			 * Avoid duplicate fax numbers.
-			 */
-			if (faxJob.getDestination() == faxRecipient.getFax()) {
-				continue;
-			}
-
-			for (FaxJob faxJobItem : faxJobList) {
-				if (faxJobItem.getDestination() == faxRecipient.getFax()) {
-					continue outer;
-				}
-			}
-
-			FaxJob faxJobCopy = new FaxJob(faxJob);
-			faxJobCopy.setDestination(faxRecipient.getFax());
-			faxJobCopy.setRecipient(faxRecipient.getName());
-
-			faxJobList.add(faxJobCopy);
-		}
-		return faxJobList;
-	}
-
-	/**
-	 * Persist to the database for transmission later if the fax account is valid.
-	 *
-	 * The given faxjob must contain a valid sender fax number and username.
-	 */
-	public List<FaxJob> saveFaxJob(LoggedInInfo loggedInInfo, List<FaxJob> faxJobList) {
-
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.WRITE, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-
-		List<FaxJob> savedFaxJobs = new ArrayList<FaxJob>();
-
-		for (FaxJob faxJob : faxJobList) {
-			saveFaxJob(loggedInInfo, faxJob);
-			savedFaxJobs.add(faxJob);
-		}
-		return savedFaxJobs;
-	}
-
-	/**
-	 * Create new or update fax job.
-	 */
-	public FaxJob saveFaxJob(LoggedInInfo loggedInInfo, FaxJob faxJob) {
-
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.WRITE, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-
-		Integer faxJobId = faxJob.getId();
-
-		if (faxJobId == null) {
-			faxJobDao.persist(faxJob);
-		} else {
-			faxJobDao.merge(faxJob);
-		}
-
-		if (faxJob.getId() == null || faxJob.getId() < 1) {
-			logger.error("Unable to save fax job. Contact support. " + faxJob);
-			return null;
-		}
-
-		return faxJob;
-	}
-
-	/**
-	 * prepend a fax cover page to the given existing PDF document. 
-	 *
-	 */
-	public Path addCoverPage(LoggedInInfo loggedInInfo, String note, Path currentDocument) throws IOException {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.WRITE, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-		int numberpages = EDocUtil.getPDFPageCount(currentDocument.getFileName().toString());
-		byte[] coverPage = faxDocumentManager.createCoverPage(loggedInInfo, note, numberpages);
-		return addCoverPage(coverPage, currentDocument);
-	}
-
-	public Path addCoverPage(LoggedInInfo loggedInInfo, String note, FaxRecipient recipient, FaxAccount sender, Path currentDocument) throws IOException {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.WRITE, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-		int numberpages = EDocUtil.getPDFPageCount(currentDocument.toString());
-		byte[] coverPage = faxDocumentManager.createCoverPage(loggedInInfo, note, recipient, sender, numberpages);
-		return addCoverPage(coverPage, currentDocument);
-	}
-
-	private Path addCoverPage(byte[] coverPage, Path currentDocument) throws IOException {
-		currentDocument = nioFileManager.getOscarDocument(currentDocument);
-		Path newCurrentDocument = Paths.get(currentDocument.getParent().toString(), "Cover_" + UUID.randomUUID() + "_" + currentDocument.getFileName());
-		Files.createFile(newCurrentDocument);
-		try (ByteArrayInputStream currentDocumentStream = new ByteArrayInputStream(Files.readAllBytes(currentDocument));
-		     OutputStream newDocumentStream = Files.newOutputStream(newCurrentDocument);
-		     ByteArrayInputStream coverPageStream = new ByteArrayInputStream(coverPage)) {
-			List<Object> documentList = new ArrayList<>();
-			documentList.add(coverPageStream);
-			documentList.add(currentDocumentStream);
-			ConcatPDF.concat(documentList, newDocumentStream);
-		}
-		return newCurrentDocument;
-	}
-
-	/**
-	 * Overload
-	 * Get preview image by specific page number.
-	 */
-	public Path getFaxPreviewImage(LoggedInInfo loggedInInfo, String filePath, int pageNumber) {
-		String file = EDocUtil.resovePath(filePath);
-		return getFaxPreviewImage(loggedInInfo, Paths.get(file), pageNumber);
-	}
-
-	/**
-	 * Overload
-	 * Get a preview image of the documents being faxed.  Default is
-	 * the first page only
-	 */
-	public Path getFaxPreviewImage(LoggedInInfo loggedInInfo, String filePath) {
-		String file = EDocUtil.resovePath(filePath);
-		return getFaxPreviewImage(loggedInInfo, Paths.get(file), 1);
-	}
-
-	/**
-	 * Get a preview image of the documents being faxed.  Default is
-	 * the first page only
-	 *
-	 */
-	public Path getFaxPreviewImage(LoggedInInfo loggedInInfo, Path filePath) {
-		return getFaxPreviewImage(loggedInInfo, filePath, 1);
-	}
-
-	/**
-	 * Get preview image by specific page number.
-	 */
-	public Path getFaxPreviewImage(LoggedInInfo loggedInInfo, Path filePath, int pageNumber) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.READ, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-
-		Path outfile = null;
-
-		if (filePath != null && Files.exists(filePath)) {
-			outfile = nioFileManager.createCacheVersion2(loggedInInfo, filePath.getParent().toString(), filePath.getFileName().toString(), pageNumber);
-		}
-		return outfile;
-	}
-
-	/**
-	 * Sets both the global user log and the fax job log. 
-	 *
-	 */
-	public void logFaxJob(LoggedInInfo loggedInInfo, FaxJob faxJob, TransactionType transactionType, int transactionId) {
-
-		FaxClientLog faxClientLog = new FaxClientLog();
-		faxClientLog.setFaxId(faxJob.getId());
-		faxClientLog.setProviderNo(loggedInInfo.getLoggedInProviderNo());
-		faxClientLog.setStartTime(new Date(System.currentTimeMillis()));
-		faxClientLog.setRequestId(transactionId);
-		faxClientLog.setTransactionType(transactionType.name());
-
-		faxClientLogDao.persist(faxClientLog);
-	}
-
-	/**
-	 * Update the transaction logs with a new status.
-	 */
-	public void updateFaxLog(LoggedInInfo loggedInInfo, FaxJob faxJob) {
-
-		FaxClientLog faxClientLog = faxClientLogDao.findClientLogbyFaxId(faxJob.getId());
-		LogAction.addLogSynchronous(loggedInInfo, faxJob.getStatus().name(), faxClientLog.getTransactionType() + ":" + faxClientLog.getRequestId());
-		faxClientLog.setResult(faxJob.getStatus().name());
-		faxClientLog.setEndTime(new Date(System.currentTimeMillis()));
-		faxClientLogDao.merge(faxClientLog);
-
-	}
-
-	/**
-	 * Returns all the active sender accounts in this system.
-	 */
-	public List<FaxConfig> getFaxGatewayAccounts(LoggedInInfo loggedInInfo) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.READ, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-
-		List<FaxConfig> accounts = faxConfigDao.findAll(0,null);
-		List<FaxConfig> sanitizedAccounts = new ArrayList<FaxConfig>();
-		for (FaxConfig account : accounts) {
-			if (account.isActive()) {
-				account.setFaxPasswd(null);
-				account.setPasswd(null);
-				sanitizedAccounts.add(account);
-			}
-		}
-
-		return sanitizedAccounts;
-	}
-
-	public List<FaxConfig> getFaxConfigurationAccounts(LoggedInInfo loggedInInfo) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.READ, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-
-		return faxConfigDao.findAll(0,null);
-	}
-
-	/**
-	 * Get all fax jobs with a waiting to be sent status by 
-	 * sender fax number.
-	 */
-	public List<FaxJob> getOutGoingFaxes(LoggedInInfo loggedInInfo, String senderFaxNumber) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.READ, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-
-		return faxJobDao.getReadyToSendFaxes(senderFaxNumber);
-	}
-
-	/**
-	 * Clear the preview cache and temp directory.
-	 *
-	 */
-	public boolean flush(LoggedInInfo loggedInInfo, String filePath) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.READ, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-
-		/*
-		 * Remove the preview cache.
-		 */
-		boolean cache = nioFileManager.removeCacheVersion(loggedInInfo, filePath);
-
-		/*
-		 * Delete the temp file
-		 */
-		boolean temp = nioFileManager.deleteTempFile(filePath);
-
-		return (cache && temp);
-	}
-	
-	/**
-	 * Check if fax services are enabled.
-	 */
-	public static boolean isEnabled() {
-
-		FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
-  		List<FaxConfig> accounts = faxConfigDao.findAll(0,null);
-  		for(FaxConfig account : accounts)
-  		{
-  			if(account.isActive())
-  			{
-  				return Boolean.TRUE;
-  			}
-  			
-  		}
-  		return Boolean.FALSE;
-	}
-
-	public FaxJob getFaxJob(LoggedInInfo loggedInInfo, int jobId) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.READ, null)) {
-			throw new RuntimeException("missing required security object (_fax)");
-		}
-
-		return faxJobDao.find(jobId);
-	}
-
-	/**
-	 * Returns the actual page count of this PDF document instead of
-	 * depending on the value that is placed in the database table.
-	 * Important for when faxes are merged or when a cover page is added.
-	 */
-	public int getPageCount(LoggedInInfo loggedInInfo, int jobId) {
-		FaxJob faxJob = getFaxJob(loggedInInfo, jobId);
-		if (faxJob != null) {
-			return EDocUtil.getPDFPageCount(faxJob.getFile_name());
-		}
-		return 0;
-	}
-
-	/**
-	 * Faxes can be resent by the user if the fax contains a status of
-	 * ERROR or COMPLETE.  The fax status of the original fax will be changed to
-	 * RESENT and cannot be resent again.
-	 */
-	public boolean resendFax(LoggedInInfo loggedInInfo, String jobId, String destination) {
-
-		boolean success = false;
-		FaxJob faxJob = null;
-
-		if(jobId != null && ! jobId.isEmpty()) {
-			faxJob = getFaxJob(loggedInInfo, Integer.parseInt(jobId));
-		}
-
-		if(faxJob != null) {
-
-			/*
-			 * make a copy
-			 */
-			FaxJob reSentFaxJob = new FaxJob(faxJob);
-
-			/*
-			 * Destination can be replaced with new user input
-			 */
-			if(destination != null && ! destination.isEmpty()) {
-				destination = destination.replaceAll("\\D", "");
-				reSentFaxJob.setDestination(destination);
-			}
-
-			reSentFaxJob.setStamp(new Date());
-			reSentFaxJob.setJobId(null);
-			reSentFaxJob.setOscarUser(loggedInInfo.getLoggedInProviderNo());
-			reSentFaxJob.setStatus(STATUS.WAITING);
-			reSentFaxJob.setStatusString("Fax RE-SENT by provider " + loggedInInfo.getLoggedInProviderNo());
-
-			/*
-			 * adapt the Fax queue and logs accordingly.
-			 */
-			FaxJob reSent = saveFaxJob(loggedInInfo, reSentFaxJob);
-
-			/*
-			 *  Update the status of the source re-sent fax job.
-			 */
-			if(reSent != null) {
-				faxJob.setStatus(STATUS.RESENT);
-				faxJob.setStatusString("Fax RE-SENT as fax id " + reSent.getId() + " by provider " + loggedInInfo.getLoggedInProviderNo());
-				saveFaxJob(loggedInInfo, faxJob);
-				success = true;
-			}
-
-			// TODO: update fax and oscar logs.
-
-			success = success && ! reSentFaxJob.getStatus().equals(STATUS.ERROR);
-
-		} else {
-			// something went horribly wrong
-			logger.error("Something went horribly wrong while attempting to resend fax id: " + jobId);
-		}
-
-		return success;
-	}
-
-
-}
+ import java.io.ByteArrayInputStream;
+ import java.io.File;
+ import java.io.IOException;
+ import java.io.OutputStream;
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.nio.file.Paths;
+ import java.nio.file.StandardCopyOption;
+ import java.util.*;
+ 
+ import org.apache.logging.log4j.Logger;
+ import org.apache.struts.action.DynaActionForm;
+ import org.oscarehr.common.dao.ClinicDAO;
+ import org.oscarehr.common.dao.FaxClientLogDao;
+ import org.oscarehr.common.dao.FaxConfigDao;
+ import org.oscarehr.common.dao.FaxJobDao;
+ import org.oscarehr.common.model.Clinic;
+ import org.oscarehr.common.model.FaxClientLog;
+ import org.oscarehr.common.model.FaxConfig;
+ import org.oscarehr.common.model.FaxJob;
+ import org.oscarehr.common.model.FaxJob.STATUS;
+ import org.oscarehr.fax.core.FaxAccount;
+ import org.oscarehr.fax.core.FaxRecipient;
+ import org.oscarehr.util.LoggedInInfo;
+ import org.oscarehr.util.MiscUtils;
+ import org.oscarehr.util.SpringUtils;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
+ import net.sf.json.JSONObject;
+ import oscar.OscarProperties;
+ import org.oscarehr.documentManager.EDocUtil;
+ import oscar.form.util.FormTransportContainer;
+ import oscar.log.LogAction;
+ import oscar.util.ConcatPDF;
+
+ public interface FaxManager{
+
+      enum TransactionType {CONSULTATION, EFORM, FORM, RX, DOCUMENT}
+
+      Path renderFaxDocument(LoggedInInfo loggedInInfo, TransactionType transactionType, FormTransportContainer formTransportContainer);
+
+      Path renderFaxDocument(LoggedInInfo loggedInInfo, TransactionType transactionType, int transactionId, int demographicNo);
+
+     /**
+      * @Deprecated
+      * Move these rendering methods into a more generic class like the DocumentManager
+      *
+      * @return
+      */
+      Path renderFaxDocument(LoggedInInfo loggedInInfo, TransactionType transactionType, int transactionId, int demographicNo, FormTransportContainer formTransportContainer);
+
+      Path renderConsultationRequest(LoggedInInfo loggedInInfo, int requestId, int demographicNo);
+
+      Path renderDocument(LoggedInInfo loggedInInfo, int documentNo, int demographicNo);
+
+      Path renderEform(LoggedInInfo loggedInInfo, int eformId, int demographicNo);
+      Path renderPrescription(LoggedInInfo loggedInInfo, int rxId, int demographicNo);
+
+      Path renderForm(LoggedInInfo loggedInInfo, int formId, int demographicNo);
+
+      Path renderForm(LoggedInInfo loggedInInfo, FormTransportContainer formTransportContainer);
+
+     /**
+      * Calls the save method after the faxJob(s) are created.
+      * The FaxJob list that is returned contains persisted FaxJob Objects
+      * This method has a specific purpose for the FaxAction class.  Use the
+      * createFaxJob(LoggedInInfo loggedInInfo, Map<String, Object> faxJobMap) signature otherwise.
+      *
+      */
+      List<FaxJob> createAndSaveFaxJob(LoggedInInfo loggedInInfo, DynaActionForm faxActionForm);
+
+     /**
+      * 1.) Creates the faxJob
+      * 2.) duplicates the faxJob for each recipient
+      * 3.) saves all the faxJobs to be sent.
+      * Map should contain values for:
+      * faxFilePath
+      * recipient
+      * recipientFaxNumber
+      * comments (for cover page)
+      * isCoverpage
+      * senderFaxNumber
+      * demographicNo
+      * copytoRecipients (as String[])
+      *
+      * The FaxJob list that is returned contains persisted FaxJob Objects
+      *
+      */
+      List<FaxJob> createAndSaveFaxJob(LoggedInInfo loggedInInfo, Map<String, Object> faxJobMap);
+
+     /**
+      * The beginning of a new Fax job from the parameters in the given Map.
+      * Map should contain values for:
+      * faxFilePath
+      * recipient
+      * recipientFaxNumber
+      * comments (for cover page)
+      * isCoverpage
+      * senderFaxNumber
+      * demographicNo
+      * copytoRecipients (as String[])
+      * The FaxJob returned is NEW UN-PERSISTED FaxJob Object with a single recipient
+      *
+      */
+      FaxJob createFaxJob(LoggedInInfo loggedInInfo, Map<String, Object> faxJobMap);
+
+     /**
+      * Add recipients from an indexed array of JSON formatted strings
+      * name:<recipient>
+      * fax:<recipient fax number>
+      *
+      */
+      List<FaxJob> addRecipients(LoggedInInfo loggedInInfo, FaxJob faxJob, String[] faxRecipients);
+
+     /**
+      * Create 1 faxJob for each fax recipient. Sets each faxJob to the
+      * default status of WAITNG.
+      *
+      */
+      List<FaxJob> addRecipients(LoggedInInfo loggedInInfo, FaxJob faxJob, List<FaxRecipient> faxRecipients);
+
+     /**
+      * Persist to the database for transmission later if the fax account is valid.
+      *
+      * The given faxjob must contain a valid sender fax number and username.
+      */
+      List<FaxJob> saveFaxJob(LoggedInInfo loggedInInfo, List<FaxJob> faxJobList);
+
+     /**
+      * Create new or update fax job.
+      */
+      FaxJob saveFaxJob(LoggedInInfo loggedInInfo, FaxJob faxJob);
+
+     /**
+      * prepend a fax cover page to the given existing PDF document.
+      *
+      */
+      Path addCoverPage(LoggedInInfo loggedInInfo, String note, Path currentDocument) throws IOException;
+
+      Path addCoverPage(LoggedInInfo loggedInInfo, String note, FaxRecipient recipient, FaxAccount sender, Path currentDocument) throws IOException;
+
+     /**
+      * Overload
+      * Get preview image by specific page number.
+      */
+      Path getFaxPreviewImage(LoggedInInfo loggedInInfo, String filePath, int pageNumber);
+
+     /**
+      * Overload
+      * Get a preview image of the documents being faxed.  Default is
+      * the first page only
+      */
+      Path getFaxPreviewImage(LoggedInInfo loggedInInfo, String filePath);
+
+     /**
+      * Get a preview image of the documents being faxed.  Default is
+      * the first page only
+      *
+      */
+      Path getFaxPreviewImage(LoggedInInfo loggedInInfo, Path filePath);
+     /**
+      * Get preview image by specific page number.
+      */
+      Path getFaxPreviewImage(LoggedInInfo loggedInInfo, Path filePath, int pageNumber);
+
+     /**
+      * Sets both the global user log and the fax job log.
+      *
+      */
+      void logFaxJob(LoggedInInfo loggedInInfo, FaxJob faxJob, TransactionType transactionType, int transactionId);
+     /**
+      * Update the transaction logs with a new status.
+      */
+      void updateFaxLog(LoggedInInfo loggedInInfo, FaxJob faxJob);
+     /**
+      * Returns all the active sender accounts in this system.
+      */
+      List<FaxConfig> getFaxGatewayAccounts(LoggedInInfo loggedInInfo);
+
+      List<FaxConfig> getFaxConfigurationAccounts(LoggedInInfo loggedInInfo);
+     /**
+      * Get all fax jobs with a waiting to be sent status by
+      * sender fax number.
+      */
+      List<FaxJob> getOutGoingFaxes(LoggedInInfo loggedInInfo, String senderFaxNumber);
+     /**
+     * Clear the preview cache and temp directory.
+      *
+      */
+      boolean flush(LoggedInInfo loggedInInfo, String filePath);
+     /**
+      * Check if fax services are enabled.
+      */
+
+      FaxJob getFaxJob(LoggedInInfo loggedInInfo, int jobId);
+     /**
+      * Returns the actual page count of this PDF document instead of
+      * depending on the value that is placed in the database table.
+      * Important for when faxes are merged or when a cover page is added.
+      */
+      int getPageCount(LoggedInInfo loggedInInfo, int jobId);
+
+     /**
+      * Faxes can be resent by the user if the fax contains a status of
+      * ERROR or COMPLETE.  The fax status of the original fax will be changed to
+      * RESENT and cannot be resent again.
+      */
+      boolean resendFax(LoggedInInfo loggedInInfo, String jobId, String destination);
+
+     public void restartFaxScheduler(LoggedInInfo loggedInInfo);
+
+     public JSONObject getFaxSchedularStatus(LoggedInInfo loggedInInfo);
+     /**
+      * Check if fax services are enabled.
+      */
+     public static boolean isEnabled() {
+
+         FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
+         List<FaxConfig> accounts = faxConfigDao.findAll(0,null);
+         for(FaxConfig account : accounts)
+         {
+             if(account.isActive())
+             {
+                 return Boolean.TRUE;
+             }
+
+         }
+         return Boolean.FALSE;
+     }
+ }

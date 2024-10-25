@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,87 +21,25 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 
 package org.oscarehr.common.dao;
-
+import org.oscarehr.common.model.LabTestResults;
 import java.util.List;
 
-import javax.persistence.Query;
-
-import org.oscarehr.common.model.LabTestResults;
-import org.springframework.stereotype.Repository;
-
-@Repository
-@SuppressWarnings("unchecked")
-public class LabTestResultsDao extends AbstractDao<LabTestResults> {
-
-	public LabTestResultsDao() {
-		super(LabTestResults.class);
-	}
-
+public interface LabTestResultsDao extends AbstractDao<LabTestResults> {
 	
-	public List<LabTestResults> findByTitleAndLabInfoId(Integer labId) {
-		Query query = createQuery("r", "r.title IS NOT EMPTY and r.labPatientPhysicianInfoId = :labId");
-		query.setParameter("labId", labId);
-		return query.getResultList();
-	}
+	List<LabTestResults> findByTitleAndLabInfoId(Integer labId);
 	
-	
-	public List<LabTestResults> findByLabInfoId(Integer labId) {
-		Query query = createQuery("r", "r.labPatientPhysicianInfoId = :labId");
-		query.setParameter("labId", labId);
-		return query.getResultList();
-	}
+	List<LabTestResults> findByLabInfoId(Integer labId);
 
-	
-    public List<LabTestResults> findByAbnAndLabInfoId(String abn, Integer labId) {
-		Query query = createQuery("r", "r.abn = :abn and r.labPatientPhysicianInfoId = :labId");
-		query.setParameter("labId", labId);
-		query.setParameter("abn", abn);
-		return query.getResultList();
-	}
+    List<LabTestResults> findByAbnAndLabInfoId(String abn, Integer labId);
 
-	/**
-	 * Finds unique test names for the specified patient and lab type
-	 * 
-	 * @param demoNo
-	 * 		Demographic id of the patient
-	 * @param labType
-	 * 		Type of the lab to find results for
-	 * @return
-	 * 		Returns a list of triples containing lab type, test title and test name.
-	 */
-    public List<Object[]> findUniqueTestNames(Integer demoNo, String labType) {
-        String jpql = "SELECT DISTINCT p.labType, ltr.title, ltr.testName " +
-                "FROM " +
-                "PatientLabRouting p, " +
-                "LabTestResults ltr, " +
-                "LabPatientPhysicianInfo lpp "+
-                "WHERE p.labType = :labType "+
-                "AND p.demographicNo = :demoNo "+
-                "AND p.labNo = ltr.labPatientPhysicianInfoId "+
-                "AND ltr.labPatientPhysicianInfoId = lpp.id " +
-                "AND ltr.testName IS NOT NULL " +
-                "AND ltr.testName IS NOT EMPTY "+
-                "ORDER BY ltr.title";
-        
-        Query query = entityManager.createQuery(jpql);
-        query.setParameter("labType", labType);
-        query.setParameter("demoNo", demoNo);
-        return query.getResultList();
-    }
+    List<Object[]> findUniqueTestNames(Integer demoNo, String labType);
 
-	public List<LabTestResults> findByAbnAndPhysicianId(String abn, Integer lppii) {
-		Query q = createQuery("ltr", "ltr.abn = :abn and ltr.labPatientPhysicianInfoId = :lppii");
-		q.setParameter("abn", abn);
-		q.setParameter("lppii", lppii);
-		return q.getResultList();
-    }
+	List<LabTestResults> findByAbnAndPhysicianId(String abn, Integer lppii);
 
-	public List<LabTestResults> findByLabPatientPhysicialInfoId(Integer labid) {
-		Query query = createQuery("r", "r.labPatientPhysicianInfoId = :labid");
-		query.setParameter("labid", labid);
-		return query.getResultList();
-    }
+	List<LabTestResults> findByLabPatientPhysicialInfoId(Integer labid);
 }

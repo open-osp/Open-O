@@ -65,20 +65,20 @@ public class OLISPoller {
 
 	    String[] dateFormat = new String[] { "yyyyMMddHHmmssZ" };
 	    
-	    ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+	    ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 	    List<Provider> allProvidersList = providerDao.getActiveProviders();
 	    
-	    OLISSystemPreferencesDao olisSystemPreferencesDao = (OLISSystemPreferencesDao) SpringUtils.getBean("OLISSystemPreferencesDao");
+	    OLISSystemPreferencesDao olisSystemPreferencesDao = (OLISSystemPreferencesDao) SpringUtils.getBean(OLISSystemPreferencesDao.class);;
 	    OLISSystemPreferences olisSystemPreferences = olisSystemPreferencesDao.getPreferences();
 	    
-	    OLISProviderPreferencesDao olisProviderPreferencesDao = (OLISProviderPreferencesDao) SpringUtils.getBean("OLISProviderPreferencesDao");
+	    OLISProviderPreferencesDao olisProviderPreferencesDao = (OLISProviderPreferencesDao) SpringUtils.getBean(OLISProviderPreferencesDao.class);
 	    OLISProviderPreferences olisProviderPreferences;
 	    
 	    String defaultStartTime = oscar.Misc.getStr(olisSystemPreferences.getStartTime(), "").trim();
 	    String defaultEndTime = oscar.Misc.getStr(olisSystemPreferences.getEndTime(), "").trim();
 	    
 	    Z04Query providerQuery;
-	    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+	    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 	    for (Provider provider : allProvidersList) {
 	    	try {
 		    	providerQuery = new Z04Query();

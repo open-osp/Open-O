@@ -34,7 +34,7 @@
    HtmlRenderer renderer = HtmlRenderer.builder().build();
    String surveyQuestion = renderer.render(document); 
 %>
-<html:html locale="true">
+<html:html lang="en">
 
 <%-- 
 

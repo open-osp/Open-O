@@ -25,32 +25,13 @@
 
 package oscar.oscarBilling.ca.bc.pageUtil;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.*;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import oscar.OscarProperties;
 import oscar.entities.PaymentType;
 import oscar.entities.WCB;
@@ -63,6 +44,12 @@ import oscar.oscarBilling.ca.bc.data.BillingmasterDAO;
 import oscar.oscarBilling.ca.bc.pageUtil.BillingBillingManager.BillingItem;
 import oscar.oscarDemographic.data.DemographicData;
 import oscar.util.SqlUtils;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 public class BillingCreateBillingAction extends Action {
   private static final Logger log=MiscUtils.getLogger();
@@ -196,7 +183,7 @@ public class BillingCreateBillingAction extends Action {
             MiscUtils.getLogger().debug("WCB id is not null "+request.getParameter("WCBid"));
             List<String> errs = null;
             WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-            BillingmasterDAO billingmasterDAO = (BillingmasterDAO) ctx.getBean("BillingmasterDAO");
+            BillingmasterDAO billingmasterDAO = (BillingmasterDAO) ctx.getBean(BillingmasterDAO.class);
             WCB wcbForm = billingmasterDAO.getWCBForm(request.getParameter("WCBid"));
 
         for (Iterator<BillingItem> iter = billItem.iterator(); iter.hasNext(); ) {
@@ -247,8 +234,6 @@ public class BillingCreateBillingAction extends Action {
 
   /**
    * validateServiceCodeTimes
-   *
-   * @param billItem ArrayList
    * @param errors ActionMessages
    */
   private void validateServiceCodeTimes(ArrayList<BillingItem> billItems,
@@ -305,8 +290,6 @@ public class BillingCreateBillingAction extends Action {
    * Validates a String array of diagnostic codes and adds an ActionMessage
    * to the ActionMessages object, for any of the codes that don't validate
    * successfully
-   * @param service String[]
-   * @param demo Demographic
    * @param errors ActionMessages
    */
 
@@ -333,7 +316,6 @@ public class BillingCreateBillingAction extends Action {
    * Validates a String array of service codes and adds and ActionMessage
    * to the ActionMessages object, for any of the codes that don't validate
    * successfully
-   * @param service String[]
    * @param demo Demographic
    * @param errors ActionMessages
    */
@@ -400,8 +382,6 @@ public class BillingCreateBillingAction extends Action {
    * The rules for the 145015  code are as follows:
    * A maximum of 6 units may be billed per calendar year
    * A maximum of 4 units may be billed on any given day
-   * @param demoNo String - The uid of the patient
-   * @param code String - The service code to be evaluated
    * @param serviceDate String - The date of service
    * @return boolean -  true if the specified service is billable
    */
@@ -491,7 +471,6 @@ public class BillingCreateBillingAction extends Action {
   /**
    * @todo Document Me
    * @param errors ActionMessages
-   * @param demo Demographic
    */
   private void validateCodeLastBilled(HttpServletRequest request,
                                       ActionMessages errors, String demoNo) {

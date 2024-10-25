@@ -547,7 +547,7 @@ public final class IncomingDocUtil {
 
     public static String getAndSetIncomingDocQueue(String user_no, String selectedQueue) {
         String queue;
-        UserPropertyDAO pref = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO pref = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
 
         UserProperty up = pref.getProp(user_no, UserProperty.INCOMING_DOCUMENT_DEFAULT_QUEUE);
         if (up == null) {
@@ -579,7 +579,7 @@ public final class IncomingDocUtil {
 
         String imageType;
 
-        UserPropertyDAO pref = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO pref = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         UserProperty up = pref.getProp(user_no, UserProperty.VIEW_DOCUMENT_AS);
 
         if (up == null) {
@@ -609,7 +609,7 @@ public final class IncomingDocUtil {
 
         String entryMode;
 
-        UserPropertyDAO pref = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO pref = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         UserProperty up = pref.getProp(user_no, UserProperty.INCOMING_DOCUMENT_ENTRY_MODE);
 
         if (up == null) {

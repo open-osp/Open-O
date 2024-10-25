@@ -134,7 +134,7 @@
 			<%
 				} else {
 			        int demographicId=Integer.parseInt((String)request.getAttribute("id"));
-					AdmissionManager admissionManager=(AdmissionManager)SpringUtils.getBean("admissionManager");
+					AdmissionManager admissionManager=(AdmissionManager)SpringUtils.getBean(AdmissionManager.class);
 					boolean activeInFacility=admissionManager.isActiveInCurrentFacility(loggedInInfo, demographicId);
 					boolean requireActiveTab="Refer".equals(ClientManagerFormBean.tabs[x]) || "Discharge".equals(ClientManagerFormBean.tabs[x]) 
 							                 || "Refer to vacancy".equals(ClientManagerFormBean.tabs[x]);

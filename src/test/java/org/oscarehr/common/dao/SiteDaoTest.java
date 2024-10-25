@@ -91,7 +91,7 @@ public class SiteDaoTest extends DaoTestFixtures {
 		p.setLastUpdateDate(new Date());
 		p.setSex("M");
 		p.setSpecialty("");
-		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 		providerDao.saveProvider(p);
 
 		ProviderSiteDao providerSiteDao = SpringUtils.getBean(ProviderSiteDao.class);

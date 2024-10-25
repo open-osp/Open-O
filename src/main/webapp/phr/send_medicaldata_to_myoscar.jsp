@@ -33,7 +33,7 @@
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	DemographicManager demographicManager=(DemographicManager)SpringUtils.getBean("demographicManager");
+	DemographicManager demographicManager=(DemographicManager)SpringUtils.getBean(DemographicManager.class);
 
 	String medicalDataType = request.getParameter("medicalDataType");
 	String parentPage = request.getParameter("parentPage");

@@ -152,7 +152,7 @@ public class LanguageUtil {
         languageMap.put("FAS","Persian");
         languageMap.put("POL","Polish");
         languageMap.put("POR","Portuguese");
-        languageMap.put("PUS","Pushto");
+        languageMap.put("PUS","Pashto");
         languageMap.put("QUE","Quechua");
         languageMap.put("RON","Romanian");
         languageMap.put("ROH","Romansh");

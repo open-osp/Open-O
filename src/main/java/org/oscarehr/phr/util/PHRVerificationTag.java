@@ -103,7 +103,7 @@ public class PHRVerificationTag extends TagSupport {
     			HttpServletRequest request=(HttpServletRequest)pageContext.getRequest();
     			LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
     			
-    			DemographicManager demographicManager = (DemographicManager)SpringUtils.getBean("demographicManager"); 
+    			DemographicManager demographicManager = (DemographicManager)SpringUtils.getBean(DemographicManager.class); 
     			if(demographicManager.getPhrVerificationLevelByDemographicId(loggedInInfo,Integer.parseInt(demoNo))) {
     				out.print(" &#x2713;");
     			}

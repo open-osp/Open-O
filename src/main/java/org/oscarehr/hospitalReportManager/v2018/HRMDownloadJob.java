@@ -44,7 +44,7 @@ public class HRMDownloadJob implements OscarRunnable {
 
 	private Logger logger=MiscUtils.getLogger();
 		
-	UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+	UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
 
 	private Provider provider;
 	private Security security;

@@ -39,6 +39,7 @@ import org.oscarehr.billing.CA.BC.model.Hl7Message;
 import org.oscarehr.billing.CA.BC.model.Hl7Obr;
 import org.oscarehr.billing.CA.BC.model.Hl7Pid;
 import org.oscarehr.common.dao.DemographicDao;
+import org.oscarehr.common.dao.DemographicDaoImpl;
 import org.oscarehr.common.dao.PatientLabRoutingDao;
 import org.oscarehr.common.dao.ProviderLabRoutingDao;
 import org.oscarehr.common.model.Demographic;
@@ -53,6 +54,7 @@ import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
 import oscar.oscarLab.ca.bc.PathNet.HL7.V2_3.MSH;
 import oscar.oscarLab.ca.bc.PathNet.HL7.V2_3.PID;
 import oscar.util.ConversionUtils;
+import org.oscarehr.common.dao.DemographicDaoImpl;
 
 public class Message {
 	Logger _logger = MiscUtils.getLogger();
@@ -71,14 +73,20 @@ public class Message {
 		this.current = null;
 	}
 
-	//Parses HL7 message. Splits at the line breaks and then checks to see what the line starts with
-	//If the line starts with MSH it create a new MSH message and calls parse on the MSH object
-	//If the line starts with PID it create a new PID Node and calls parse on it
-	//  Parse returns a in instance of itself (PID Node)
-	//If the line starts with NTE it calls parse on current Node, which is the PID node
-	//If the line starts with anything else the pid.parse is called which.  The PID object handles parsing
-	//   any other line ie( ORC,OBR, OBX ) and returns and instance of them selves to (Current)
-	//This is how NTE objects get attached to OBX and OBR... because the NTE will follow the OBR or OBX that it was intended for.
+	// Parses HL7 message. Splits at the line breaks and then checks to see what the
+	// line starts with
+	// If the line starts with MSH it create a new MSH message and calls parse on
+	// the MSH object
+	// If the line starts with PID it create a new PID Node and calls parse on it
+	// Parse returns a in instance of itself (PID Node)
+	// If the line starts with NTE it calls parse on current Node, which is the PID
+	// node
+	// If the line starts with anything else the pid.parse is called which. The PID
+	// object handles parsing
+	// any other line ie( ORC,OBR, OBX ) and returns and instance of them selves to
+	// (Current)
+	// This is how NTE objects get attached to OBX and OBR... because the NTE will
+	// follow the OBR or OBX that it was intended for.
 	public void Parse(String data) {
 		_logger.debug("Parsing HL7 message");
 		String[] lines = data.split(lineBreak);
@@ -119,7 +127,7 @@ public class Message {
 	}
 
 	public void linkToProvider(int parent, int id) {
-		//public void providerRouteReport (int segmentID) {
+		// public void providerRouteReport (int segmentID) {
 		try {
 
 			String sql;
@@ -136,11 +144,12 @@ public class Message {
 				List<Hl7Obr> obrs = dao.findByPid(id);
 				if (!obrs.isEmpty()) {
 					Hl7Obr obr = obrs.get(0);
-					//OLD CODE AT BOTTOM
+					// OLD CODE AT BOTTOM
 					ArrayList<String> listOfProviderNo = new ArrayList<String>();
 					// route lab first to admitting doctor
 					subStrings = obr.getOrderingProvider().split("\\^");
-					providerMinistryNo = subStrings[0]; //StringUtils.returnStringToFirst(subStrings[0].substring(1, subStrings[0].length())," ");
+					providerMinistryNo = subStrings[0]; // StringUtils.returnStringToFirst(subStrings[0].substring(1,
+														// subStrings[0].length())," ");
 					// check that this is a legal provider
 					MiscUtils.getLogger().debug("looking for " + providerMinistryNo);
 					providerNo = getProviderNoFromBillingNo(providerMinistryNo);
@@ -153,7 +162,8 @@ public class Message {
 						conDoctors = obr.getResultCopiesTo().split("~");
 						for (int i = 1; i <= conDoctors.length; i++) {
 							subStrings = conDoctors[i - 1].split("\\^");
-							providerMinistryNo = subStrings[0];//StringUtils.returnStringToFirst(subStrings[0].substring(1, subStrings[0].length())," ");
+							providerMinistryNo = subStrings[0];// StringUtils.returnStringToFirst(subStrings[0].substring(1,
+																// subStrings[0].length())," ");
 							// check that this is a legal provider
 							MiscUtils.getLogger().debug("looking for 2 " + providerMinistryNo);
 							providerNo = getProviderNoFromBillingNo(providerMinistryNo);
@@ -239,8 +249,10 @@ public class Message {
 					String demoNo = null;
 					String hin = pid.getExternalId();
 					boolean isHinEmpty = hin == null || hin.trim().isEmpty();
-					DemographicDao dDao = SpringUtils.getBean(DemographicDao.class);
-					List<Demographic> demos = dDao.findByCriterion(new DemographicDao.DemographicCriterion(hin, lastName.substring(0, 1), firstName.substring(0, 1), dobYear, dobMonth, dobDay, pid.getSex(), "AC"));
+					DemographicDaoImpl dDao = SpringUtils.getBean(DemographicDaoImpl.class);
+					List<Demographic> demos = dDao
+							.findByCriterion(new DemographicDaoImpl.DemographicCriterion(hin, lastName.substring(0, 1),
+									firstName.substring(0, 1), dobYear, dobMonth, dobDay, pid.getSex(), "AC"));
 
 					if (!isHinEmpty) {
 						// patient's health number is known - check initials, DOB match
@@ -272,7 +284,7 @@ public class Message {
 						patientLabRoutingDao.persist(l);
 					}
 
-					//NOT ALL DOCS WANT ALL LABS ECHO'D INTO THERE INBOX
+					// NOT ALL DOCS WANT ALL LABS ECHO'D INTO THERE INBOX
 					if (demoNo != null) {
 						patientProviderRoute("" + segmentID, demoNo);
 					}
@@ -305,7 +317,8 @@ public class Message {
 
 			if (prov_no != null && !prov_no.trim().equals("")) {
 				ProviderLabRoutingDao pDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
-				List<ProviderLabRoutingModel> routings = pDao.findByLabNoAndLabTypeAndProviderNo(ConversionUtils.fromIntString(lab_no), "BCP", prov_no);
+				List<ProviderLabRoutingModel> routings = pDao
+						.findByLabNoAndLabTypeAndProviderNo(ConversionUtils.fromIntString(lab_no), "BCP", prov_no);
 
 				if (!routings.isEmpty()) {
 					ProviderLabRouting router = new ProviderLabRouting();

@@ -66,7 +66,7 @@
 %>
 
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="admin.securitysearchresults.title" /></title>
 <c:set var="ctx" value="${pageContext.request.contextPath}"	scope="request" />

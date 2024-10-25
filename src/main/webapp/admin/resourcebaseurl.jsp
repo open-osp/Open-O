@@ -47,7 +47,7 @@
 
 
 <%
-	UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+	UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
     UserProperty upUrl = propertyDao.getProp("resource_baseurl");
     UserProperty upHtml = propertyDao.getProp("resource_helphtml");
     

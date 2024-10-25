@@ -25,6 +25,9 @@
 --%>
 
 <%@ page import="oscar.eform.data.*"%>
+<%@ page import="org.oscarehr.managers.EmailComposeManager"%>
+<%@ page import="org.oscarehr.util.SpringUtils"%>
+<%@ page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <%--
@@ -32,7 +35,7 @@
 	Fax and eDocument functions.
 --%>
 
-<c:if test="${ not empty reqestScope.page_errors }">
+<c:if test="${ not empty requestScope.page_errors }">
 	<script type='text/javascript'>
 		function hideDiv() {
 		    if (document.getElementById) { // DOM3 = IE5, NS6
@@ -54,6 +57,18 @@
 		<span style="font-size: 10px; font-color: darkred;"> <html:errors /> </span>
 	</div>
 </c:if>
+
+<%!
+    public void addHiddenEmailProperties(LoggedInInfo loggedInInfo, EForm thisEForm, String demographicNo) {
+        EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManager.class);
+        Boolean hasValidRecipient = emailComposeManager.hasValidRecipient(loggedInInfo, Integer.parseInt(demographicNo));
+        String[] emailConsent = emailComposeManager.getEmailConsentStatus(loggedInInfo, Integer.parseInt(demographicNo));
+
+        thisEForm.addHiddenInputElement("hasValidRecipient", Boolean.toString(hasValidRecipient));
+        thisEForm.addHiddenInputElement("emailConsentName", emailConsent[0]);
+        thisEForm.addHiddenInputElement("emailConsentStatus", emailConsent[1]);
+    }
+%>
 
 <%
     /**
@@ -93,15 +108,31 @@
     thisEForm.setAction();
     thisEForm.setSource(source);
 
-    // Modifying EForm by directly incorporating libraries and adding hidden fields.
-    thisEForm.addJavascript(request.getContextPath()+"/library/jquery/jquery-3.6.4.min.js");
-    thisEForm.addJavascript(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.js");
-    thisEForm.addJavascript(request.getContextPath()+"/eform/eformFloatingToolbar/eform_floating_toolbar.js");
+    /*
+     * Modifying EForm by directly incorporating libraries and adding hidden fields.
+     * Ordering is very important.
+     * For Javascript: First is last.
+     */
+    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-3.6.4.min.js");
+    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.js");
+    thisEForm.addHeadJavascript(request.getContextPath()+"/js/jquery.are-you-sure.js");
+
+    thisEForm.addCSS(request.getContextPath()+"/library/bootstrap/5.0.2/css/bootstrap.css", "all");
+    thisEForm.addHeadJavascript(request.getContextPath()+"/library/bootstrap/5.0.2/js/bootstrap.bundle.js");
+
+    thisEForm.addCSS(request.getContextPath()+"/css/oscar_alert.css", "all");
     thisEForm.addCSS(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.css", "all");
+    thisEForm.addBodyJavascript(request.getContextPath()+"/eform/eformFloatingToolbar/eform_floating_toolbar.js");
+    thisEForm.addBodyJavascript(request.getContextPath()+"/js/oscar-alert.js");
     thisEForm.addHiddenInputElement("context", request.getContextPath());
     thisEForm.addHiddenInputElement("demographicNo", demographic_no);
     thisEForm.addHiddenInputElement("fid", fid);
     thisEForm.addHiddenInputElement("fdid", request.getParameter("fdid"));
+    thisEForm.addHiddenInputElement("newForm", "true");
+
+    // Add email consent properties
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    addHiddenEmailProperties(loggedInInfo, thisEForm, demographic_no);
 
     out.print(thisEForm.getFormHtml());
 %>

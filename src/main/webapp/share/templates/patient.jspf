@@ -53,7 +53,7 @@ DemographicDao demographicDao_header = SpringUtils.getBean(DemographicDao.class)
 Demographic demographic_header=demographicDao_header.getDemographic(d);
  
 
-	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
+	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean(DemographicCustDao.class);
 	DemographicCust demographicCust = demographicCustDao.find(demographic_header.getDemographicNo());
 	String alert = new String();
 	if(demographicCust!=null) {

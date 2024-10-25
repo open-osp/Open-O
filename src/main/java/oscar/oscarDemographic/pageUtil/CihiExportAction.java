@@ -121,7 +121,7 @@ public class CihiExportAction extends DispatchAction {
 
 	private Logger log = MiscUtils.getLogger();
 
-	private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean("partialDateDao");
+	private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean(PartialDateDao.class);
 
 	public void setDemographicDao(DemographicDao demographicDao) {
 	    this.demographicDao = demographicDao;
@@ -669,7 +669,7 @@ public class CihiExportAction extends DispatchAction {
 
 	private void buildAllergies(Demographic demo, PatientRecord patientRecord) {
 		String[] severity = new String[] {"MI","MO","LT","NO"};
-		AllergyDao allergyDao=(AllergyDao)SpringUtils.getBean("allergyDao");
+		AllergyDao allergyDao=(AllergyDao)SpringUtils.getBean(AllergyDao.class);
 		List<Allergy> allergies = allergyDao.findActiveAllergies(demo.getDemographicNo());
 		int index;
 		Date date;

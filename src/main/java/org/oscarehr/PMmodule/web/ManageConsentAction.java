@@ -41,7 +41,7 @@ import org.oscarehr.util.SpringUtils;
 
 public class ManageConsentAction {
 	private static Logger logger = MiscUtils.getLogger();
-	private static IntegratorConsentDao integratorConsentDao = (IntegratorConsentDao) SpringUtils.getBean("integratorConsentDao");
+	private static IntegratorConsentDao integratorConsentDao = (IntegratorConsentDao) SpringUtils.getBean(IntegratorConsentDao.class);
 
 	private IntegratorConsent consent = new IntegratorConsent();
 	private String signatureRequestId = null;

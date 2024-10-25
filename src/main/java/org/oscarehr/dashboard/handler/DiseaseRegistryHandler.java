@@ -41,7 +41,7 @@ public class DiseaseRegistryHandler {
 	// XXX is there an API for getting this reliably? (other than `new Icd9().getCodingSystem()`)
 	private static final String ICD9_CODING_SYSTEM = "icd9";
 
-	private DxresearchDAO dao = (DxresearchDAO) SpringUtils.getBean("DxresearchDAO");
+	private DxresearchDAO dao = (DxresearchDAO) SpringUtils.getBean(DxresearchDAO.class);
 
 	public String getDescription(String icd9code) {
 		return dao.getDescription(ICD9_CODING_SYSTEM, icd9code);

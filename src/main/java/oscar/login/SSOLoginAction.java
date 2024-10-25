@@ -78,12 +78,12 @@ public final class SSOLoginAction extends DispatchAction {
 
 	private SsoAuthenticationManager ssoAuthenticationManager = SpringUtils.getBean(SsoAuthenticationManager.class);
     
-    private ProviderManager providerManager = (ProviderManager) SpringUtils.getBean("providerManager");
+    private ProviderManager providerManager = (ProviderManager) SpringUtils.getBean(ProviderManager.class);
     private AppManager appManager = SpringUtils.getBean(AppManager.class);
-    private FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean("facilityDao");
-    private ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean("providerPreferenceDao");
+    private FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean(FacilityDao.class);
+    private ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
     private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
-    private UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+    private UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
     private SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
     
     //Declares ssoKey String and actionForward String 

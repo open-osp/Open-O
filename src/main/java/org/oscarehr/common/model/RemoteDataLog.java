@@ -36,6 +36,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PreRemove;
+import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -84,6 +85,11 @@ public class RemoteDataLog extends AbstractModel<Long> {
 	 */
 	@Column(nullable = false)
 	private byte[] documentContents;
+
+	@PrePersist
+	protected void jpaPreventPrePersistModification() {
+		getActionDate().set(Calendar.MILLISECOND, 0);
+	}
 
 	@PreUpdate
 	@PreRemove

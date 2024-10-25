@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,11 +20,11 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.PMmodule.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,266 +46,69 @@ import org.oscarehr.common.model.JointAdmission;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-public class ClientManager {
+public interface ClientManager {
 
-    private DemographicDao dao;
-    private DemographicExtDao demographicExtDao;
-    private ClientReferralDAO referralDAO;
-    private JointAdmissionDao jointAdmissionDao;
-    private ProgramQueueManager queueManager;
-    private AdmissionManager admissionManager;
-    private ClientRestrictionManager clientRestrictionManager;
+    boolean isOutsideOfDomainEnabled();
 
-    private boolean outsideOfDomainEnabled;
+    Demographic getClientByDemographicNo(String demographicNo);
 
-    public boolean isOutsideOfDomainEnabled() {
-        return outsideOfDomainEnabled;
-    }
+    List<Demographic> getClients();
 
-    public Demographic getClientByDemographicNo(String demographicNo) {
-        if (demographicNo == null || demographicNo.length() == 0) {
-            return null;
-        }
-        return dao.getClientByDemographicNo(Integer.valueOf(demographicNo));
-    }
+    List<Demographic> search(ClientSearchFormBean criteria, boolean returnOptinsOnly,boolean excludeMerged);
 
-    public List<Demographic> getClients() {
-        return dao.getClients();
-    }
+    List<Demographic> search(ClientSearchFormBean criteria);
 
-    public List<Demographic> search(ClientSearchFormBean criteria, boolean returnOptinsOnly,boolean excludeMerged) {
-        return dao.search(criteria, returnOptinsOnly,excludeMerged);
-    }
-    public List<Demographic> search(ClientSearchFormBean criteria) {
-        return dao.search(criteria);
-    }
+    List<ClientReferral> getReferrals();
 
-    public List<ClientReferral> getReferrals() {
-        return referralDAO.getReferrals();
-    }
+    List<ClientReferral> getReferrals(String clientId);
 
-    public List<ClientReferral> getReferrals(String clientId) {
-        return referralDAO.getReferrals(Long.valueOf(clientId));
-    }
+    List<ClientReferral> getReferralsByFacility(Integer clientId, Integer facilityId);
 
-    public List<ClientReferral> getReferralsByFacility(Integer clientId, Integer facilityId) {
-        return referralDAO.getReferralsByFacility(clientId.longValue(), facilityId);
-    }
+    List<ClientReferral> getActiveReferrals(String clientId, String sourceFacilityId);
 
-    public List<ClientReferral> getActiveReferrals(String clientId, String sourceFacilityId) {
-        List<ClientReferral> results = referralDAO.getActiveReferrals(Long.valueOf(clientId), Integer.parseInt(sourceFacilityId));
+    ClientReferral getClientReferral(String id);
 
-        return results;
-    }
+    void saveClientReferral(ClientReferral referral);
 
-    public ClientReferral getClientReferral(String id) {
-        return referralDAO.getClientReferral(Long.valueOf(id));
-    }
+    void addClientReferralToProgramQueue(ClientReferral referral);
 
-    /*
-     * This should always be a new one. add the queue to the program.
-     */
-    public void saveClientReferral(ClientReferral referral) {
+    List<ClientReferral> searchReferrals(ClientReferral referral);
 
-        referralDAO.saveClientReferral(referral);
-        addClientReferralToProgramQueue(referral);
-    } 
+    void saveJointAdmission(JointAdmission admission);
 
-    
-    public void addClientReferralToProgramQueue(ClientReferral referral) {
-        if (referral.getStatus().equalsIgnoreCase(ClientReferral.STATUS_ACTIVE)) {
-            ProgramQueue queue = new ProgramQueue();
-            queue.setClientId(referral.getClientId());
-            queue.setNotes(referral.getNotes());
-            queue.setProgramId(referral.getProgramId());
-            queue.setProviderNo(Long.parseLong(referral.getProviderNo()));
-            queue.setReferralDate(referral.getReferralDate());
-            queue.setStatus(ProgramQueue.STATUS_ACTIVE);
-            queue.setReferralId(referral.getId());
-            queue.setTemporaryAdmission(referral.isTemporaryAdmission());
-            queue.setPresentProblems(referral.getPresentProblems());
-            queue.setVacancyName(referral.getSelectVacancy());
+    List<JointAdmission> getDependents(Integer clientId);
 
-            queueManager.saveProgramQueue(queue);
-        }
-    }
+    List<Integer> getDependentsList(Integer clientId);
 
-    public List<ClientReferral> searchReferrals(ClientReferral referral) {
-        return referralDAO.search(referral);
-    }
+    JointAdmission getJointAdmission(Integer clientId);
 
-    public void saveJointAdmission(JointAdmission admission) {
-        if (admission == null) {
-            throw new IllegalArgumentException();
-        }
+    boolean isClientDependentOfFamily(Integer clientId);
 
-        jointAdmissionDao.persist(admission);
-    }
+    boolean isClientFamilyHead(Integer clientId);
 
-    public List<JointAdmission> getDependents(Integer clientId) {
-        return jointAdmissionDao.getSpouseAndDependents(clientId);
-    }
+    void removeJointAdmission(Integer clientId, String providerNo);
 
-    public List<Integer> getDependentsList(Integer clientId) {
-        List<Integer> list = new ArrayList<Integer>();
-        List<JointAdmission> jadms = jointAdmissionDao.getSpouseAndDependents(clientId);
-        for (JointAdmission jadm : jadms) {
-            list.add(jadm.getClientId());
-        }
-        return list;
-    }
+    void removeJointAdmission(JointAdmission admission);
 
-    public JointAdmission getJointAdmission(Integer clientId) {
-        return jointAdmissionDao.getJointAdmission(clientId);
-    }
+    void processReferral(ClientReferral referral) throws AlreadyAdmittedException, AlreadyQueuedException, ServiceRestrictionException;
 
-    public boolean isClientDependentOfFamily(Integer clientId){
+    void processReferral(ClientReferral referral, boolean override) throws AlreadyAdmittedException, AlreadyQueuedException, ServiceRestrictionException;
 
-		JointAdmission clientsJadm = null;
-		if(clientId != null){
-			clientsJadm = getJointAdmission(Integer.valueOf(clientId.toString()));
-		}
-		if (clientsJadm != null  &&  clientsJadm.getHeadClientId() != null) {
-			return true;
-		}
-		return false;
-    }
+    void saveClient(Demographic client);
 
+    DemographicExt getDemographicExt(String id);
 
-    public boolean isClientFamilyHead(Integer clientId){
+    List<DemographicExt> getDemographicExtByDemographicNo(int demographicNo);
 
-		List<JointAdmission> dependentList = getDependents(Integer.valueOf(clientId.toString()));
-		if(dependentList != null  &&  dependentList.size() > 0){
-			return true;
-		}
-		return false;
-    }
+    DemographicExt getDemographicExt(int demographicNo, String key);
 
-    public void removeJointAdmission(Integer clientId, String providerNo) {
-        jointAdmissionDao.removeJointAdmission(clientId, providerNo);
-    }
+    void updateDemographicExt(DemographicExt de);
 
-    public void removeJointAdmission(JointAdmission admission) {
-        jointAdmissionDao.removeJointAdmission(admission);
-    }
+    void saveDemographicExt(int demographicNo, String key, String value);
 
-    public void processReferral(ClientReferral referral) throws AlreadyAdmittedException, AlreadyQueuedException, ServiceRestrictionException {
-        processReferral(referral, false);
-    }
+    void removeDemographicExt(String id);
 
-    public void processReferral(ClientReferral referral, boolean override) throws AlreadyAdmittedException, AlreadyQueuedException, ServiceRestrictionException {
-        if (!override) {
-            // check if there's a service restriction in place on this individual for this program
-            ProgramClientRestriction restrInPlace = clientRestrictionManager.checkClientRestriction(referral.getProgramId().intValue(), referral.getClientId().intValue(), new Date());
-            if (restrInPlace != null) {
-                throw new ServiceRestrictionException("service restriction in place", restrInPlace);
-            }
-        }
+    void removeDemographicExt(int demographicNo, String key);
 
-        Admission currentAdmission = admissionManager.getCurrentAdmission(String.valueOf(referral.getProgramId()), referral.getClientId().intValue());
-        if (currentAdmission != null) {
-            referral.setStatus(ClientReferral.STATUS_REJECTED);
-            referral.setCompletionNotes("Client currently admitted");
-            referral.setCompletionDate(new Date());
-
-            //saveClientReferral(referral); //???what's the point to save it if it's already admitted
-            throw new AlreadyAdmittedException();
-        }
-
-        ProgramQueue queue = queueManager.getActiveProgramQueue(String.valueOf(referral.getProgramId()), String.valueOf(referral.getClientId()));
-        if (queue != null) {
-            referral.setStatus(ClientReferral.STATUS_REJECTED);
-            referral.setCompletionNotes("Client already in queue");
-            referral.setCompletionDate(new Date());
-
-            //saveClientReferral(referral); //???what's the point to save it if's already in queue
-            throw new AlreadyQueuedException();
-        }
-
-        saveClientReferral(referral);
-        List<JointAdmission> dependents = getDependents(new Long(referral.getClientId()).intValue());
-        for (JointAdmission jadm : dependents) {
-            referral.setClientId(new Long(jadm.getClientId()));
-            saveClientReferral(referral);
-        }
-
-    }
-
-    public void saveClient(Demographic client) {
-        dao.saveClient(client);
-    }
-
-    public DemographicExt getDemographicExt(String id) {
-        return demographicExtDao.getDemographicExt(Integer.valueOf(id));
-    }
-
-    public List<DemographicExt> getDemographicExtByDemographicNo(int demographicNo) {
-        return demographicExtDao.getDemographicExtByDemographicNo(demographicNo);
-    }
-
-    public DemographicExt getDemographicExt(int demographicNo, String key) {
-        return demographicExtDao.getDemographicExt(demographicNo, key);
-    }
-
-    public void updateDemographicExt(DemographicExt de) {
-    	demographicExtDao.updateDemographicExt(de);
-    }
-
-    public void saveDemographicExt(int demographicNo, String key, String value) {
-    	demographicExtDao.saveDemographicExt(demographicNo, key, value);
-    }
-
-    public void removeDemographicExt(String id) {
-    	demographicExtDao.removeDemographicExt(Integer.valueOf(id));
-    }
-
-    public void removeDemographicExt(int demographicNo, String key) {
-    	demographicExtDao.removeDemographicExt(demographicNo, key);
-    }
-
-    public void setJointAdmissionDao(JointAdmissionDao jointAdmissionDao) {
-        this.jointAdmissionDao = jointAdmissionDao;
-    }
-
-    @Required
-    public void setDemographicDao(DemographicDao dao) {
-        this.dao = dao;
-    }
-
-    @Required
-    public void setDemographicExtDao(DemographicExtDao dao) {
-        this.demographicExtDao = dao;
-    }
-
-    @Required
-    public void setClientReferralDAO(ClientReferralDAO dao) {
-        this.referralDAO = dao;
-    }
-
-    @Required
-    public void setProgramQueueManager(ProgramQueueManager mgr) {
-        this.queueManager = mgr;
-    }
-
-    @Required
-    public void setAdmissionManager(AdmissionManager mgr) {
-        this.admissionManager = mgr;
-    }
-
-    @Required
-    public void setClientRestrictionManager(ClientRestrictionManager clientRestrictionManager) {
-        this.clientRestrictionManager = clientRestrictionManager;
-    }
-
-    @Required
-    public void setOutsideOfDomainEnabled(boolean outsideOfDomainEnabled) {
-        this.outsideOfDomainEnabled = outsideOfDomainEnabled;
-    }
-
-
-	public boolean checkHealthCardExists(String hin, String hcType) {
-	   List<Demographic> results = this.dao.searchByHealthCard(hin,hcType);
-	   return (results.size()>0)?true:false;
-	}
+    boolean checkHealthCardExists(String hin, String hcType);
 }

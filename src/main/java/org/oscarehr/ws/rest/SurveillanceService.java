@@ -64,6 +64,7 @@ import org.oscarehr.common.model.ResourceStorage;
 import org.oscarehr.common.model.SurveillanceData;
 import org.oscarehr.managers.AppManager;
 import org.oscarehr.managers.OscarJobManager;
+import org.oscarehr.managers.OscarJobManagerImpl;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -392,51 +393,52 @@ public class SurveillanceService extends AbstractServiceImpl {
 		JSONArray retArray = new JSONArray();
 		try {
 			LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-			String resource = getResource(loggedInInfo,"/ws/api/oscar/get/SURVEILLANCE_CONFIG/list", "/ws/api/oscar/get/SURVEILLANCE_CONFIG/list"); 
+			String resource = getResource(loggedInInfo, "/ws/api/oscar/get/SURVEILLANCE_CONFIG/list", "/ws/api/oscar/get/SURVEILLANCE_CONFIG/list"); 
 			JSONArray rulesArray = JSONArray.fromObject(resource);
-			 
-			for(int i = 0; i < rulesArray.size(); i++){
-				JSONObject jobject = new JSONObject();
-				JSONObject rule = (JSONObject) rulesArray.get(i);
-				jobject.put("id", rule.getString("id"));
-				jobject.put("name", rule.getString("name"));
-				jobject.put("xml", rule.getString("body"));
-				jobject.put("created_at", rule.getString("created_at"));
-				jobject.put("updated_at", rule.getString("updatedAt"));
-				jobject.put("author", rule.getString("author"));
-				jobject.put("uuid", rule.optString("uuid"));
-				String uuid = rule.optString("uuid",null);
-				if(uuid != null) {
-				//look if uuid is active
-					List<ResourceStorage> resList = resourceStorageDao.findByUUID(uuid);
-					if(resList.size() > 0) {
-						jobject.put("resourceId",resList.get(0).getId());
-					
-						
-						
-						Date referenceDate = getReferenceDate(rule.getString("updatedAt"));
-						java.util.Calendar referenceCal = java.util.Calendar.getInstance();
-						referenceCal.setTime(referenceDate);
-						referenceCal.set(java.util.Calendar.MILLISECOND,0);
-						if(resList.get(0).getReferenceDate() == null || referenceCal.getTime().after(resList.get(0).getReferenceDate())) {
-							jobject.put("resourceNew",true);
-						}else {
-							jobject.put("resourceNew",false);
+
+			for (int i = 0; i < rulesArray.size(); i++) {
+				Object ruleElement = rulesArray.get(i);
+
+				if (ruleElement instanceof JSONObject) {
+					JSONObject jobject = new JSONObject();
+					JSONObject rule = (JSONObject) ruleElement;
+					jobject.put("id", rule.getString("id"));
+					jobject.put("name", rule.getString("name"));
+					jobject.put("xml", rule.getString("body"));
+					jobject.put("created_at", rule.getString("created_at"));
+					jobject.put("updated_at", rule.getString("updatedAt"));
+					jobject.put("author", rule.getString("author"));
+					jobject.put("uuid", rule.optString("uuid"));
+					String uuid = rule.optString("uuid", null);
+
+					if (uuid != null) {
+						// Look if uuid is active
+						List<ResourceStorage> resList = resourceStorageDao.findByUUID(uuid);
+						if (resList.size() > 0) {
+							jobject.put("resourceId", resList.get(0).getId());
+
+							Date referenceDate = getReferenceDate(rule.getString("updatedAt"));
+							java.util.Calendar referenceCal = java.util.Calendar.getInstance();
+							referenceCal.setTime(referenceDate);
+							referenceCal.set(java.util.Calendar.MILLISECOND, 0);
+							if (resList.get(0).getReferenceDate() == null || referenceCal.getTime().after(resList.get(0).getReferenceDate())) {
+								jobject.put("resourceNew", true);
+							} else {
+								jobject.put("resourceNew", false);
+							}
 						}
-						
 					}
+					retArray.add(jobject);
+				} else {
+					logger.warn("Unexpected element type in rulesArray at index " + i + ": " + ruleElement.getClass().getName());
 				}
-				
-				retArray.add(jobject);
 			}
-			
-		} catch(Exception e) {
-			logger.error("Error retrieving prevention list",e);
+		} catch (Exception e) {
+			logger.error("Error retrieving prevention list", e);
 			return null;
 		}
-		
-		
-		return retArray;
+
+    	return retArray;
 	}
 	
 	

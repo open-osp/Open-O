@@ -24,20 +24,6 @@
 
 package org.oscarehr.common.model;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -45,6 +31,14 @@ import org.oscarehr.PMmodule.utility.DateTimeFormatUtils;
 import org.oscarehr.PMmodule.utility.Utility;
 import org.oscarehr.util.MiscUtils;
 import org.owasp.encoder.Encode;
+
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This is the object class that relates to the demographic table. Any customizations belong here.
@@ -148,6 +142,10 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 	private String patientType;
 
 	private String prefName;
+
+	private Provider mrp;
+
+	private String nextAppointment;
 
 	public enum PatientStatus {
 		AC, IN, DE, IC, ID, MO, FI
@@ -1160,20 +1158,17 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 	 * @return
 	 */
 	public DemographicExt getExtra(DemographicExt.DemographicProperty key) {
-		List<DemographicExt> demographicExtList = new ArrayList<>();
 		DemographicExt demographicExtResult = null;
 		if (this.extras != null) {
 			for (DemographicExt demographicExt : this.extras) {
 				if (key.name().equalsIgnoreCase(demographicExt.getKey())) {
-					demographicExtList.add(demographicExt);
+					/* there will be multiple key value pairs.
+					 * Only the most current value ordered by date desc is desired here.
+					 */
+					demographicExtResult = demographicExt;
+					break;
 				}
 			}
-		}
-		/*
-		 * Only return the first (hopefully the only) result for now.
-		 */
-		if (!demographicExtList.isEmpty()) {
-			demographicExtResult = demographicExtList.get(0);
 		}
 		return demographicExtResult;
 	}
@@ -1282,6 +1277,9 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 	}
 
 	public String getSexDesc() {
+		if(sexDesc == null) {
+			return "";
+		}
 		return sexDesc;
 	}
 
@@ -1526,72 +1524,142 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 
 
 	public String getStandardIdentificationHTML() {
+		//TODO move this into the DemographicManager as a property modifier and wrap each item with setting preferences
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("<div id='patient-label'>");
-		sb.append("<span>");
-		sb.append("<a href='../demographic/demographiccontrol.jsp?demographic_no=");
+		sb.append("<div id='patient-full-name'>");
+		sb.append("<h1><a href='../demographic/demographiccontrol.jsp?demographic_no=");
 		sb.append(Encode.forHtml(getDemographicNo() + ""));
 		sb.append("&displaymode=edit&dboperation=search_detail' target='_blank'>");
+
 		if(getTitle() != null && getTitle().length()>0) {
 			sb.append(getTitle() + " ");
 		}
+
 		sb.append(Encode.forHtmlContent(getFormattedName()));
-		sb.append("</a>");
-		sb.append("</span>");
+		sb.append("</a></h1>");
+		sb.append("</div>");
 
 		//--> pronouns
 		if(getPronoun() != null && ! getPronoun().isEmpty()) {
-			sb.append("<span>");
-			sb.append("<span class='label'>");
+			sb.append("<div id='patient-pronouns'>");
+			sb.append("<div class='label'>");
 			sb.append("pronouns");
-			sb.append("</span>");
+			sb.append("</div>");
 			sb.append(Encode.forHtml(getPronoun()));
-			sb.append("</span>");
+			sb.append("</div>");
 		}
 
 		//--> sex
-		sb.append("<span>");
-		sb.append("<span class='label'>");
+		sb.append("<div id='patient-sex'>");
+		sb.append("<div class='label'>");
 		sb.append("sex");
-		sb.append("</span>");
+		sb.append("</div>");
 		sb.append(getSex());
-        sb.append("</span>");
+        sb.append("</div>");
+
+		//--> gender
+		if(getGender() != null && ! getGender().isEmpty()) {
+			sb.append("<div id='patient-gender'>");
+			sb.append("<div class='label'>");
+			sb.append("gender");
+			sb.append("</div>");
+			sb.append(getGender());
+			sb.append("</div>");
+		}
 
 		//--> Birthdate
-		sb.append("<span>");
-		sb.append("<span class='label'>");
+		sb.append("<div id='patient-dob'>");
+		sb.append("<div class='label'>");
 		sb.append("dob");
-		sb.append("</span>");
+		sb.append("</div>");
 		sb.append(getBirthDayAsString());
-		sb.append("</span>");
+		sb.append("</div>");
 
 		//--> age
-		sb.append("<span>");
-		sb.append("<span class='label'>");
+		sb.append("<div id='patient-age'>");
+		sb.append("<div class='label'>");
 		sb.append("age");
-		sb.append("</span>");
-		sb.append(getAgeInYears());
-		sb.append("</span>");
+		sb.append("</div>");
+		sb.append(getAgeAsOf(new Date()));
+		sb.append("</div>");
 
 		//--> Insurance number
 		if(getHin() != null && getHin().length()>0) {
-			sb.append("<span>");
-			sb.append("<span class='label'>");
+			sb.append("<div id='patient-hin'>");
+			sb.append("<div class='label'>");
 			sb.append("hin");
-			sb.append("</span>");
-			sb.append(getHin());
-			sb.append(getHcType());
-			sb.append("</span>");
+			sb.append("</div>");
+			sb.append(Encode.forHtml(getHin()));
+			sb.append(Encode.forHtml(getHcType()));
+			sb.append("</div>");
 		}
 
+		//--> most responsible practitioner
+		sb.append("<div id='patient-mrp'>");
+		sb.append("<div class='label'>");
+		sb.append("MRP");
+		sb.append("</div>");
+		Provider mrp = getMrp();
+		if(mrp != null) {
+			sb.append(Encode.forHtmlContent(mrp.getFormattedName()));
+		} else {
+			sb.append("Unknown");
+		}
+		sb.append("</div>");
+
 		//--> phone
-		sb.append("<span>");
-		sb.append("<span class='label'>");
-		sb.append("phone");
-		sb.append("</span>");
-		sb.append(Encode.forHtmlContent(getPhone()));
-		sb.append("</span>");
+		if(getPhone() != null && ! getPhone().isEmpty()) {
+			sb.append("<div id='patient-phone' title='")
+					.append(getPhoneComment())
+					.append("' >");
+			sb.append("<div class='label'>");
+			sb.append("phone");
+			sb.append("</div>");
+			sb.append(Encode.forHtmlContent(getPhone()));
+			sb.append("</div>");
+		}
+
+		//--> cell phone
+		if(getCellPhone() != null && ! getCellPhone().isEmpty()) {
+			sb.append("<div id='patient-cell-phone' title='")
+					.append(getPhoneComment())
+					.append("' >");
+			sb.append("<div class='label'>");
+			sb.append("cell");
+			sb.append("</div>");
+			sb.append(Encode.forHtmlContent(getCellPhone()));
+			sb.append("</div>");
+		}
+
+		//--> email
+		if(getEmail() != null && ! getEmail().isEmpty()) {
+			sb.append("<div id='patient-email'>");
+			sb.append("<div class='label'>");
+			sb.append("email");
+			sb.append("</div>");
+			sb.append(Encode.forHtmlContent(getEmail()));
+			sb.append("</div>");
+		}
+
+		//--> next appointment date
+		sb.append("<div id='patient-next-appointment'>");
+		sb.append("<div class='label'>");
+		sb.append("<a href=\"../demographic/demographiccontrol.jsp?demographic_no=")
+				.append(Encode.forHtml(getDemographicNo() + ""))
+				.append("&amp;last_name=").append(Encode.forUriComponent(getLastName())).append("&amp;first_name=")
+				.append(Encode.forUriComponent(getFirstName()))
+				.append("&amp;orderby=appointment_date&amp;displaymode=appt_history&amp;dboperation=appt_history&amp;limit1=0&amp;limit2=25\" title='View Appointment History' target='_blank'>");
+		sb.append("Next Appt.");
+		sb.append("</a>");
+		sb.append("</div>");
+		if(getNextAppointment() != null && ! getNextAppointment().isEmpty()) {
+			sb.append(getNextAppointment());
+		} else {
+			sb.append("Unknown");
+		}
+		sb.append("</div>");
 
 		sb.append("</div>");
 
@@ -1689,5 +1757,21 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 			sb.append("Chart No ").append("<b>").append(getChartNo()).append("</b>");
 		}
 		return sb.toString();
+	}
+
+	public Provider getMrp() {
+		return mrp;
+	}
+
+	public void setMrp(Provider mrp) {
+		this.mrp = mrp;
+	}
+
+	public String getNextAppointment() {
+		return nextAppointment;
+	}
+
+	public void setNextAppointment(String nextAppointment) {
+		this.nextAppointment = nextAppointment;
 	}
 }

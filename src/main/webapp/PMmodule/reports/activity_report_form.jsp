@@ -41,15 +41,15 @@
 
 
 <%
-	ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
-	SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean("secRoleDao");
+	ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+	SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean(SecRoleDao.class);
 	
 	List<Program> allPrograms=programDao.getAllActivePrograms();
 	List<SecRole> allRoles=secRoleDao.findAll();
 	
-	FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean("functionalCentreDao");
-    ProviderManager2 providerManager = (ProviderManager2) SpringUtils.getBean("providerManager2");
-    ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
+	FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean(FunctionalCentreDao.class);
+    ProviderManager2 providerManager = (ProviderManager2) SpringUtils.getBean(ProviderManager2.class);
+    ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	List<FunctionalCentre> functionalCentres=functionalCentreDao.findInUseByFacility(loggedInInfo.getCurrentFacility().getId());
 %>

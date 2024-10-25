@@ -39,15 +39,6 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ page import="java.math.BigInteger,java.util.*,org.oscarehr.integration.mcedt.mailbox.DetailDataCustom,ca.ontario.health.edt.TypeListData, org.oscarehr.integration.mcedt.mailbox.ActionUtils" %>
 
-
-<%    
-
-	List<DetailDataCustom> resourceListSent = (ArrayList<DetailDataCustom>)session.getAttribute("resourceListSent");
-	//List<TypeListData> typeListData = (ArrayList<TypeListData>)session.getAttribute("typeListData");
-	BigInteger resultSize = (BigInteger)session.getAttribute("resultSize");
-	
-%>
-
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -274,6 +265,9 @@ $(document).ready(function ()
 <title>Sent</title>
 </head>
 <body>
+	<c:set var="resourceListSent" value="${sessionScope.resourceListSent}" />
+	<c:set var="resultSize" value="${sessionScope.resultSize}" />
+
 	<html:form action="/mcedt/resourceInfo" method="post" styleId="formSent">
 		<jsp:include page="../messages.jsp" />		
 		<input id="methodSent" name="method" type="hidden" value="" />	
@@ -325,10 +319,9 @@ $(document).ready(function ()
 	</div>
 	* You may select a maximum of 5 files at a time to delete from MC-EDT
 	<br />** Only files with upload status can be deleted or submitted from/to MC-EDT.
-	<%
-		if(resourceListSent!=null){									
-	%>
-	<table class="table scrollable whiteBox" width="100%" border="0" cellspacing="0" cellpadding="5" style="margin:5px 0 15px;">
+	<c:choose>
+		<c:when test="${not empty resourceListSent}">
+			<table class="table scrollable whiteBox" width="100%" border="0" cellspacing="0" cellpadding="5" style="margin:5px 0 15px;">
 				<thead>
 					<tr class="greenBox">
 						<th>Select</th>												
@@ -340,42 +333,41 @@ $(document).ready(function ()
 						<th>File Name</th>
 						<th>Status</th>
 						<th>Re Submit</th>
-						<th>File Info</th>												
+						<th>File Info</th>
 					</tr>
 				</thead>
-				<c:forEach var="r" items="${resourceListSent}" varStatus="loopStatus">						
-					<tr bgcolor="${loopStatus.index % 2 == 0 ? '#FFF' : '#EEE'}">						
-						<td>							
-							<c:if test="${r.status == 'UPLOADED'}">								
-								<input type="checkbox" value="${r.resourceID}" name="resourceId"/>								
-							</c:if>							
-						</td>																			
-						<td><c:out value="${r.resourceID}" /></td>
-						<td>														
-							<fmt:formatDate value="${i:toDate(r.createTimestamp)}" pattern="MM/dd/yyyy hh:mm"/>
-						</td>
-						<td><c:out value="${r.resourceType}" /></td>						
-						<td><c:out value="${r.description}" /></td>
-						<td><c:out value="${r.status}" /></td>
-						<td>
-							<c:if test="${r.status == 'UPLOADED'}">														
-								<button class="noBorder blackBox flatLink font12 small" onclick="ShowSpin(true);return reSubmit(${r.resourceID},this);">Submit</button>
-							</c:if>
-						</td>
-						<td>
-							<button class="noBorder blackBox flatLink font12 small" onclick="ShowSpin(true);return getInfo(${r.resourceID}, this)">Display	Info</button>
-						</td>													
-					</tr>						
-				</c:forEach>
+				<tbody>
+					<c:forEach var="r" items="${resourceListSent}" varStatus="loopStatus">
+						<tr bgcolor="${loopStatus.index % 2 == 0 ? '#FFF' : '#EEE'}">
+							<td>
+								<c:if test="${r.status == 'UPLOADED'}">
+									<input type="checkbox" value="${r.resourceID}" name="resourceId"/>
+								</c:if>
+							</td>
+							<td><c:out value="${r.resourceID}" /></td>
+							<td>
+								<fmt:formatDate value="${i:toDate(r.createTimestamp)}" pattern="MM/dd/yyyy hh:mm"/>
+							</td>
+							<td><c:out value="${r.resourceType}" /></td>
+							<td><c:out value="${r.description}" /></td>
+							<td><c:out value="${r.status}" /></td>
+							<td>
+								<c:if test="${r.status == 'UPLOADED'}">
+									<button class="noBorder blackBox flatLink font12 small" onclick="ShowSpin(true);return reSubmit(${r.resourceID}, this);">Submit</button>
+								</c:if>
+							</td>
+							<td>
+								<button class="noBorder blackBox flatLink font12 small" onclick="ShowSpin(true);return getInfo(${r.resourceID}, this)">Display Info</button>
+							</td>
+						</tr>
+					</c:forEach>
+				</tbody>
 			</table>
-			<%
-				}
-				else{
-			%>		
-				<h3>No new documents to download.</h3>
-			<%
-				}
-			%>	
+		</c:when>
+		<c:otherwise>
+			<h3>No documents found.</h3>
+		</c:otherwise>
+	</c:choose>
 	</div>
 	<div>
 		<button type="button" id="unSelSent" class="noBorder blackBox flatLink font12 rightMargin5" disabled="true">Un-Select All</button>

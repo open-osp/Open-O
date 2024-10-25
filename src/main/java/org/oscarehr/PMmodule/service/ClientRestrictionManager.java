@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,150 +20,35 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.PMmodule.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
-import org.oscarehr.PMmodule.dao.ProgramClientRestrictionDAO;
-import org.oscarehr.PMmodule.exception.ClientAlreadyRestrictedException;
 import org.oscarehr.PMmodule.model.ProgramClientRestriction;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.transaction.annotation.Transactional;
+import org.oscarehr.PMmodule.exception.ClientAlreadyRestrictedException;
 
-/**
- * Manage client restrictions
- */
-@Transactional
-public class ClientRestrictionManager {
+public interface ClientRestrictionManager {
 
-    private ProgramClientRestrictionDAO programClientRestrictionDAO;
+    List<ProgramClientRestriction> getActiveRestrictionsForProgram(int programId, Date asOfDate);
 
-    public List<ProgramClientRestriction> getActiveRestrictionsForProgram(int programId, Date asOfDate) {
-        // check dao for restriction
-        Collection<ProgramClientRestriction> pcrs = programClientRestrictionDAO.findForProgram(programId);
-        List<ProgramClientRestriction> returnPcrs = new ArrayList<ProgramClientRestriction>();
-        if (pcrs != null && !pcrs.isEmpty()) {
-            for (ProgramClientRestriction pcr : pcrs) {
-                if (pcr.getStartDate().getTime() <= asOfDate.getTime() && pcr.getEndDate().getTime() <= pcr.getEndDate().getTime()) returnPcrs.add(pcr);
-            }
-        }
-        return returnPcrs;
-    }
+    List<ProgramClientRestriction> getDisabledRestrictionsForProgram(Integer programId, Date asOfDate);
 
-    public List<ProgramClientRestriction> getDisabledRestrictionsForProgram(Integer programId, Date asOfDate) {
-        // check dao for restriction
-        Collection<ProgramClientRestriction> pcrs = programClientRestrictionDAO.findDisabledForProgram(programId);
-        List<ProgramClientRestriction> returnPcrs = new ArrayList<ProgramClientRestriction>();
-        if (pcrs != null && !pcrs.isEmpty()) {
-            for (ProgramClientRestriction pcr : pcrs) {
-                if (pcr.getStartDate().getTime() <= asOfDate.getTime() && pcr.getEndDate().getTime() <= pcr.getEndDate().getTime()) returnPcrs.add(pcr);
-            }
-        }
-        return returnPcrs;
-    }
+    List<ProgramClientRestriction> getActiveRestrictionsForClient(int demographicNo, Date asOfDate);
 
-    public List<ProgramClientRestriction> getActiveRestrictionsForClient(int demographicNo, Date asOfDate) {
-        // check dao for restriction
-        Collection<ProgramClientRestriction> pcrs = programClientRestrictionDAO.findForClient(demographicNo);
-        List<ProgramClientRestriction> returnPcrs = new ArrayList<ProgramClientRestriction>();
-        if (pcrs != null && !pcrs.isEmpty()) {
-            for (ProgramClientRestriction pcr : pcrs) {
-                if (pcr.getStartDate().getTime() <= asOfDate.getTime() && pcr.getEndDate().getTime() <= pcr.getEndDate().getTime()) returnPcrs.add(pcr);
-            }
-        }
-        return returnPcrs;
-    }
+    List<ProgramClientRestriction> getActiveRestrictionsForClient(int demographicNo, int facilityId, Date asOfDate);
 
-    public List<ProgramClientRestriction> getActiveRestrictionsForClient(int demographicNo, int facilityId, Date asOfDate) {
-        // check dao for restriction
-        Collection<ProgramClientRestriction> pcrs = programClientRestrictionDAO.findForClient(demographicNo, facilityId);
-        List<ProgramClientRestriction> returnPcrs = new ArrayList<ProgramClientRestriction>();
-        if (pcrs != null && !pcrs.isEmpty()) {
-            for (ProgramClientRestriction pcr : pcrs) {
-                if (pcr.getStartDate().getTime() <= asOfDate.getTime() && pcr.getEndDate().getTime() <= pcr.getEndDate().getTime()) returnPcrs.add(pcr);
-            }
-        }
-        return returnPcrs;
-    }
+    List<ProgramClientRestriction> getDisabledRestrictionsForClient(int demographicNo, Date asOfDate);
 
-    public List<ProgramClientRestriction> getDisabledRestrictionsForClient(int demographicNo, Date asOfDate) {
-        // check dao for restriction
-        Collection<ProgramClientRestriction> pcrs = programClientRestrictionDAO.findDisabledForClient(demographicNo);
-        List<ProgramClientRestriction> returnPcrs = new ArrayList<ProgramClientRestriction>();
-        if (pcrs != null && !pcrs.isEmpty()) {
-            for (ProgramClientRestriction pcr : pcrs) {
-                if (pcr.getStartDate().getTime() <= asOfDate.getTime() && pcr.getEndDate().getTime() <= pcr.getEndDate().getTime()) returnPcrs.add(pcr);
-            }
-        }
-        return returnPcrs;
-    }
+    ProgramClientRestriction checkClientRestriction(int programId, int demographicNo, Date asOfDate);
 
-    public ProgramClientRestriction checkClientRestriction(int programId, int demographicNo, Date asOfDate) {
-        // check dao for restriction
-        Collection<ProgramClientRestriction> pcrs = programClientRestrictionDAO.find(programId, demographicNo);
-        if (pcrs != null && !pcrs.isEmpty()) {
-            for (ProgramClientRestriction pcr : pcrs) {
-                if (pcr.getStartDate().getTime() <= asOfDate.getTime() && asOfDate.getTime() <= pcr.getEndDate().getTime()) return pcr;
-            }
-        }
-        return null;
-    }
+    void saveClientRestriction(ProgramClientRestriction restriction) throws ClientAlreadyRestrictedException;
 
-    public void saveClientRestriction(ProgramClientRestriction restriction) throws ClientAlreadyRestrictedException {
-        if (restriction.getId() == null) {
-            ProgramClientRestriction result = checkClientRestriction(restriction.getProgramId(), restriction.getDemographicNo(), new Date());
-            if (result != null) throw new ClientAlreadyRestrictedException("the client has already been service restricted in this program");
-        }
+    void terminateEarly(int programClientRestrictionId, String providerNo);
 
-        programClientRestrictionDAO.save(restriction);
-    }
+    void disableClientRestriction(int restrictionId);
 
-    public void terminateEarly(int programClientRestrictionId, String providerNo) {
-        ProgramClientRestriction x = programClientRestrictionDAO.find(programClientRestrictionId);
-
-        if (x != null) {
-            x.setEarlyTerminationProvider(providerNo);
-            x.setEndDate(new Date());
-            programClientRestrictionDAO.save(x);
-        }
-    }
-
-    public void disableClientRestriction(int restrictionId) {
-        ProgramClientRestriction pcr = programClientRestrictionDAO.find(restrictionId);
-        pcr.setEnabled(false);
-        try {
-            saveClientRestriction(pcr);
-        }
-        catch (ClientAlreadyRestrictedException e) {
-            // this exception should not happen here, so toss it up as a runtime exception to be caught higher up
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void enableClientRestriction(Integer restrictionId) {
-        ProgramClientRestriction pcr = programClientRestrictionDAO.find(restrictionId);
-        pcr.setEnabled(true);
-        try {
-            saveClientRestriction(pcr);
-        }
-        catch (ClientAlreadyRestrictedException e) {
-            // this exception should not happen here, so toss it up as a runtime exception to be caught higher up
-            throw new RuntimeException(e);
-        }
-    }
-
-    public ProgramClientRestrictionDAO getProgramClientRestrictionDAO() {
-        return programClientRestrictionDAO;
-    }
-
-    @Required
-    public void setProgramClientRestrictionDAO(ProgramClientRestrictionDAO programClientRestrictionDAO) {
-        this.programClientRestrictionDAO = programClientRestrictionDAO;
-    }
-
+    void enableClientRestriction(Integer restrictionId);
 }

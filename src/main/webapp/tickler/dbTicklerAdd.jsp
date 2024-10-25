@@ -102,7 +102,7 @@
 				tLink.setTableId(Long.parseLong(docId));
 				tLink.setTableName(docType);
 				tLink.setTicklerNo(new Long(ticklerNo).intValue());
-				TicklerLinkDao ticklerLinkDao = (TicklerLinkDao) SpringUtils.getBean("ticklerLinkDao");
+				TicklerLinkDao ticklerLinkDao = (TicklerLinkDao) SpringUtils.getBean(TicklerLinkDao.class);
 				ticklerLinkDao.save(tLink);
 			} catch (Exception e) {
 				MiscUtils.getLogger().error("No link with this tickler", e);

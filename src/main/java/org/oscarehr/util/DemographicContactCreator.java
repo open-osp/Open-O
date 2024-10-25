@@ -23,11 +23,6 @@
  */
 package org.oscarehr.util;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
@@ -35,14 +30,13 @@ import org.oscarehr.common.dao.ContactDao;
 import org.oscarehr.common.dao.ContactSpecialtyDao;
 import org.oscarehr.common.dao.CtlRelationshipsDao;
 import org.oscarehr.common.dao.ProfessionalSpecialistDao;
-import org.oscarehr.common.model.Contact;
-import org.oscarehr.common.model.ContactSpecialty;
-import org.oscarehr.common.model.CtlRelationships;
-import org.oscarehr.common.model.DemographicContact;
-import org.oscarehr.common.model.ProfessionalContact;
-import org.oscarehr.common.model.ProfessionalSpecialist;
-import org.oscarehr.common.model.Provider;
+import org.oscarehr.common.model.*;
 import org.oscarehr.managers.SecurityInfoManager;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * this class contains the utility methods for creating generic Contact objects and adds these
@@ -106,11 +100,15 @@ public class DemographicContactCreator {
 		if( roleid != null ) {
 			if( DemographicContact.CATEGORY_PROFESSIONAL.equalsIgnoreCase( demographicContact.getCategory() ) ) {				
 				specialty = contactSpecialtyDao.find( roleid );
-				demographicContactRole = specialty.getSpecialty();	
+				if(specialty != null) {
+					demographicContactRole = specialty.getSpecialty();
+				}
 				
 			} else if( DemographicContact.CATEGORY_PERSONAL.equalsIgnoreCase( demographicContact.getCategory() ) ) {
 				contactRelationship = ctlRelationshipsDao.find( roleid );
-				demographicContactRole = contactRelationship.getValue(); 				
+				if(contactRelationship != null) {
+					demographicContactRole = contactRelationship.getValue();
+				}
 			}			
 		}
 		

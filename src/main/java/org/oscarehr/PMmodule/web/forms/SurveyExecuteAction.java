@@ -48,6 +48,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.PMmodule.dao.SurveySecurityDao;
+import org.oscarehr.PMmodule.dao.SurveySecurityDaoImpl;
 import org.oscarehr.PMmodule.service.AdmissionManager;
 import org.oscarehr.PMmodule.service.ClientManager;
 import org.oscarehr.PMmodule.service.SurveyManager;
@@ -77,13 +78,12 @@ import org.oscarehr.util.SpringUtils;
 public class SurveyExecuteAction extends DispatchAction {
     private static Logger log = MiscUtils.getLogger();
 
-    private SurveyManager surveyManager = (SurveyManager)SpringUtils.getBean("surveyManager2");
-    private CaseManagementManager caseManagementManager=(CaseManagementManager)SpringUtils.getBean("caseManagementManager");
-    private ClientManager clientManager = (ClientManager)SpringUtils.getBean("clientManager");
-    private AdmissionManager admissionManager = (AdmissionManager)SpringUtils.getBean("admissionManager");
+    private SurveyManager surveyManager = (SurveyManager) SpringUtils.getBean(SurveyManager.class);
+    private CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils
+            .getBean(CaseManagementManager.class);
+    private ClientManager clientManager = (ClientManager) SpringUtils.getBean(ClientManager.class);
+    private AdmissionManager admissionManager = (AdmissionManager) SpringUtils.getBean(AdmissionManager.class);
 
-   
-    
     protected String getProviderNo(HttpServletRequest request) {
         return getProvider(request).getProviderNo();
     }
@@ -92,16 +92,18 @@ public class SurveyExecuteAction extends DispatchAction {
         return (Provider) request.getSession().getAttribute("provider");
     }
 
-    public ActionForward forwardToClientManager(HttpServletRequest request, ActionMapping mapping, ActionForm form, String clientId) {
+    public ActionForward forwardToClientManager(HttpServletRequest request, ActionMapping mapping, ActionForm form,
+            String clientId) {
         /*
-          ActionForward forward =  mapping.findForward("client_manager");
-          String path = forward.getPath();
-
-          //return forward;
-          ActionForward af =  new ActionForward(path + "&view.tab=Forms&id=" + clientId);
-          af.setRedirect(true);
-          return af;
-          */
+         * ActionForward forward = mapping.findForward("client_manager");
+         * String path = forward.getPath();
+         * 
+         * //return forward;
+         * ActionForward af = new ActionForward(path + "&view.tab=Forms&id=" +
+         * clientId);
+         * af.setRedirect(true);
+         * return af;
+         */
         request.setAttribute("demographicNo", clientId);
         request.setAttribute("clientId", clientId);
         request.setAttribute("tab.override", "Forms");
@@ -110,7 +112,8 @@ public class SurveyExecuteAction extends DispatchAction {
         return mapping.findForward("success");
     }
 
-    public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) {
         String clientId = request.getParameter("clientId");
 
         return forwardToClientManager(request, mapping, form, clientId);
@@ -138,62 +141,65 @@ public class SurveyExecuteAction extends DispatchAction {
         return provider.getFormattedName();
     }
 
-    public ActionForward survey(ActionMapping mapping, ActionForm af, HttpServletRequest request, HttpServletResponse response) {
-    	DynaActionForm form = (DynaActionForm) af;
-    	String clientId = request.getParameter("clientId");
-    	
-    	SurveyExecuteFormBean formBean = (SurveyExecuteFormBean)form.get("view");
-        SurveySecurityDao securityDao = new SurveySecurityDao();
-        boolean hasAccess = false; 
+    public ActionForward survey(ActionMapping mapping, ActionForm af, HttpServletRequest request,
+            HttpServletResponse response) {
+        DynaActionForm form = (DynaActionForm) af;
+        String clientId = request.getParameter("clientId");
+
+        SurveyExecuteFormBean formBean = (SurveyExecuteFormBean) form.get("view");
+        SurveySecurityDao securityDao = new SurveySecurityDaoImpl();
+        boolean hasAccess = false;
         try {
-        	hasAccess = securityDao.checkPrivilege(formBean.getDescription(),(String)request.getSession().getAttribute("user"));
-        }catch(Exception e) {
-        	hasAccess=false;
+            hasAccess = securityDao.checkPrivilege(formBean.getDescription(),
+                    (String) request.getSession().getAttribute("user"));
+        } catch (Exception e) {
+            hasAccess = false;
         }
-        if(!hasAccess) {
-        	String type = request.getParameter("type");
-        	if (type != null && type.equals("provider")) {
-        		return mapping.findForward("close");	
-        	} else {
-        		return forwardToClientManager(request, mapping, form, clientId);
-        	}
+        if (!hasAccess) {
+            String type = request.getParameter("type");
+            if (type != null && type.equals("provider")) {
+                return mapping.findForward("close");
+            } else {
+                return forwardToClientManager(request, mapping, form, clientId);
+            }
         }
-        
-    	String forwardString = survey_view(mapping, af, request, response);
-    	if("close".equals(forwardString))  {
-        	return mapping.findForward("close");	
-        }else if("clientManager".equals(forwardString)) {
-        	return forwardToClientManager(request, mapping, form, clientId);
+
+        String forwardString = survey_view(mapping, af, request, response);
+        if ("close".equals(forwardString)) {
+            return mapping.findForward("close");
+        } else if ("clientManager".equals(forwardString)) {
+            return forwardToClientManager(request, mapping, form, clientId);
         } else {
-        	return refresh(mapping, form, request, response);
+            return refresh(mapping, form, request, response);
         }
-        
+
     }
-    
-    private String survey_view(ActionMapping mapping, ActionForm af, HttpServletRequest request, HttpServletResponse response) {
+
+    private String survey_view(ActionMapping mapping, ActionForm af, HttpServletRequest request,
+            HttpServletResponse response) {
         DynaActionForm form = (DynaActionForm) af;
         SurveyExecuteFormBean formBean = (SurveyExecuteFormBean) form.get("view");
         SurveyExecuteDataBean data = (SurveyExecuteDataBean) form.get("data");
 
         formBean.setTab("");
         data.reset();
-        
+
         String formInstanceId = request.getParameter("formInstanceId");
         String surveyId = request.getParameter("formId");
         String clientId = request.getParameter("clientId");
         String type = request.getParameter("type");
         request.setAttribute("type", type);
-        request.getSession().setAttribute("formInstanceId",formInstanceId);
-        
+        request.getSession().setAttribute("formInstanceId", formInstanceId);
+
         if (surveyId == null) {
             surveyId = String.valueOf(formBean.getId());
             if (surveyId == null || surveyId.equals("0")) {
                 postMessage(request, "survey.missing");
                 if (type != null && type.equals("provider")) {
-                    //return mapping.findForward("close");
-                	return "close";
+                    // return mapping.findForward("close");
+                    return "close";
                 }
-                //return forwardToClientManager(request, mapping, form, clientId);
+                // return forwardToClientManager(request, mapping, form, clientId);
                 return "clientManager";
             }
         }
@@ -207,10 +213,10 @@ public class SurveyExecuteAction extends DispatchAction {
         if (surveyObj == null) {
             postMessage(request, "survey.missing");
             if (type != null && type.equals("provider")) {
-                //return mapping.findForward("close");
-            	return "close";
+                // return mapping.findForward("close");
+                return "close";
             }
-            //return forwardToClientManager(request, mapping, form, clientId);
+            // return forwardToClientManager(request, mapping, form, clientId);
             return "clientManager";
         }
 
@@ -238,57 +244,59 @@ public class SurveyExecuteAction extends DispatchAction {
             log.error("Error", e);
             postMessage(request, "");
             if (type != null && type.equals("provider")) {
-                //return mapping.findForward("close");
-            	return "close";
+                // return mapping.findForward("close");
+                return "close";
             }
-            //return forwardToClientManager(request, mapping, form, clientId);
+            // return forwardToClientManager(request, mapping, form, clientId);
             return "clientManager";
         }
 
         /* load test/tmpsave data - if exists */
         CaisiFormInstance instance = null;
         if (!clientId.equals("0")) {
-            //instance = surveyManager.getLatestForm(surveyId, clientId);
-        	List tmpInstances = surveyManager.getTmpForms(formInstanceId, surveyId, clientId, String.valueOf(getUserId(request)));
-        	if(tmpInstances.size()==0 || tmpInstances == null) {
-        		instance = surveyManager.getCurrentFormById(formInstanceId);
-        	} else {
-        		CaisiFormInstanceTmpSave tmpsave = (CaisiFormInstanceTmpSave)tmpInstances.get(0);
-            	instance = new CaisiFormInstance();
-        		instance.setClientId(tmpsave.getClientId());
+            // instance = surveyManager.getLatestForm(surveyId, clientId);
+            List tmpInstances = surveyManager.getTmpForms(formInstanceId, surveyId, clientId,
+                    String.valueOf(getUserId(request)));
+            if (tmpInstances.size() == 0 || tmpInstances == null) {
+                instance = surveyManager.getCurrentFormById(formInstanceId);
+            } else {
+                CaisiFormInstanceTmpSave tmpsave = (CaisiFormInstanceTmpSave) tmpInstances.get(0);
+                instance = new CaisiFormInstance();
+                instance.setClientId(tmpsave.getClientId());
                 instance.setDateCreated(new Date());
                 instance.setFormId(tmpsave.getFormId());
                 instance.setUserId(tmpsave.getUserId());
                 instance.setDescription(tmpsave.getDescription());
                 instance.setUsername(tmpsave.getUsername());
-                
-                //instance.setData(tmpsave.getData()); //CaisiFormDataTmpSave???
-                org.oscarehr.surveymodel.SurveyDocument.Survey surveyModel = surveyManager.getFormModel(String.valueOf(formBean.getId()));
+
+                // instance.setData(tmpsave.getData()); //CaisiFormDataTmpSave???
+                org.oscarehr.surveymodel.SurveyDocument.Survey surveyModel = surveyManager
+                        .getFormModel(String.valueOf(formBean.getId()));
                 List qids = SurveyModelManager.getAllQuestionIds(surveyModel);
-            	for (Iterator iter = qids.iterator(); iter.hasNext();) {
-            		String key = (String) iter.next();            		
-            		String[] parsed = key.split("_");
-            		String pageNumber = parsed[0];
-            		String sectionId = parsed[1];
-            		String questionId = parsed[2];              
-          
-            		CaisiFormData dataItem = new CaisiFormData();
-            		dataItem.setPageNumber(Integer.parseInt(pageNumber));
-            		dataItem.setSectionId(Integer.parseInt(sectionId));
-            		dataItem.setQuestionId(Integer.parseInt(questionId));
-            		//dataItem.setValue((String)data.getValue(key));//?????
-            		Set data_tmp = tmpsave.getData();
-            		for(Iterator it = data_tmp.iterator(); it.hasNext();) {
-            			CaisiFormDataTmpSave oneItem = (CaisiFormDataTmpSave)it.next();
-            			if(key.equals(oneItem.getDataKey())) {
-            				dataItem.setValue(oneItem.getValue());
-            			}
-            		}  		
-            		dataItem.setDataKey(key);            		
-            		instance.getData().add(dataItem);
-            	} 
-                
-        	}       	
+                for (Iterator iter = qids.iterator(); iter.hasNext();) {
+                    String key = (String) iter.next();
+                    String[] parsed = key.split("_");
+                    String pageNumber = parsed[0];
+                    String sectionId = parsed[1];
+                    String questionId = parsed[2];
+
+                    CaisiFormData dataItem = new CaisiFormData();
+                    dataItem.setPageNumber(Integer.parseInt(pageNumber));
+                    dataItem.setSectionId(Integer.parseInt(sectionId));
+                    dataItem.setQuestionId(Integer.parseInt(questionId));
+                    // dataItem.setValue((String)data.getValue(key));//?????
+                    Set data_tmp = tmpsave.getData();
+                    for (Iterator it = data_tmp.iterator(); it.hasNext();) {
+                        CaisiFormDataTmpSave oneItem = (CaisiFormDataTmpSave) it.next();
+                        if (key.equals(oneItem.getDataKey())) {
+                            dataItem.setValue(oneItem.getValue());
+                        }
+                    }
+                    dataItem.setDataKey(key);
+                    instance.getData().add(dataItem);
+                }
+
+            }
         }
         if (instance != null) {
             log.debug("loading up existing data");
@@ -307,7 +315,7 @@ public class SurveyExecuteAction extends DispatchAction {
             }
         }
 
-        //find caisi objects & data links
+        // find caisi objects & data links
         for (int x = 0; x < model.getSurvey().getBody().getPageArray().length; x++) {
             Page page = model.getSurvey().getBody().getPageArray(x);
             int sectionNum = 0;
@@ -322,17 +330,20 @@ public class SurveyExecuteAction extends DispatchAction {
                         questionNum2++;
                         if (question.getCaisiObject() != null && question.getCaisiObject().length() > 0) {
                             String caisiObject = question.getCaisiObject();
-                            log.debug("FOUND CAISI-OBJECT: " + pageNum + "_" + sectionNum + "_" + questionNum2 + " " + caisiObject);
-                            populateWithCaisiObject(request, data, pageNum + "_" + sectionNum + "_" + questionNum2, caisiObject, clientId);
+                            log.debug("FOUND CAISI-OBJECT: " + pageNum + "_" + sectionNum + "_" + questionNum2 + " "
+                                    + caisiObject);
+                            populateWithCaisiObject(request, data, pageNum + "_" + sectionNum + "_" + questionNum2,
+                                    caisiObject, clientId);
                         }
 
                         if (question.getDataLink() != null && question.getDataLink().length() > 0) {
-                            //load data
+                            // load data
                             String format = null;
                             if (question.getType().isSetDate()) {
                                 format = question.getType().getDate().toString();
                             }
-                            populateWithDataLink(data, pageNum + "_" + sectionNum + "_" + questionNum2, question.getDataLink(), clientId, format, false, 0);
+                            populateWithDataLink(data, pageNum + "_" + sectionNum + "_" + questionNum2,
+                                    question.getDataLink(), clientId, format, false, 0);
                         }
                     }
                 } else if (container.isSetQuestion()) {
@@ -341,7 +352,8 @@ public class SurveyExecuteAction extends DispatchAction {
                     if (question.getCaisiObject() != null && question.getCaisiObject().length() > 0) {
                         String caisiObject = question.getCaisiObject();
                         log.debug("FOUND CAISI-OBJECT: " + pageNum + "_" + 0 + "_" + questionNum + " " + caisiObject);
-                        populateWithCaisiObject(request, data, pageNum + "_" + 0 + "_" + questionNum, caisiObject, clientId);
+                        populateWithCaisiObject(request, data, pageNum + "_" + 0 + "_" + questionNum, caisiObject,
+                                clientId);
                     }
 
                     if (question.getDataLink() != null && question.getDataLink().length() > 0) {
@@ -350,21 +362,24 @@ public class SurveyExecuteAction extends DispatchAction {
                             format = question.getType().getDate().toString();
                         }
 
-                        populateWithDataLink(data, pageNum + "_" + 0 + "_" + questionNum, question.getDataLink(), clientId, format, false, 0);
+                        populateWithDataLink(data, pageNum + "_" + 0 + "_" + questionNum, question.getDataLink(),
+                                clientId, format, false, 0);
                     }
                 }
             }
         }
-        //return refresh(mapping, form, request, response);
+        // return refresh(mapping, form, request, response);
         return "success";
     }
-    
-    public ActionForward refresh(ActionMapping mapping, ActionForm af, HttpServletRequest request, HttpServletResponse response) {
-    	refresh_survey(mapping,  af, request, response);
-    	return mapping.findForward("execute");
+
+    public ActionForward refresh(ActionMapping mapping, ActionForm af, HttpServletRequest request,
+            HttpServletResponse response) {
+        refresh_survey(mapping, af, request, response);
+        return mapping.findForward("execute");
     }
-    
-    public void refresh_survey(ActionMapping mapping, ActionForm af, HttpServletRequest request, HttpServletResponse response) {
+
+    public void refresh_survey(ActionMapping mapping, ActionForm af, HttpServletRequest request,
+            HttpServletResponse response) {
         DynaActionForm form = (DynaActionForm) af;
         SurveyExecuteFormBean formBean = (SurveyExecuteFormBean) form.get("view");
         SurveyExecuteDataBean data = (SurveyExecuteDataBean) form.get("data");
@@ -373,7 +388,6 @@ public class SurveyExecuteAction extends DispatchAction {
 
         String type = request.getParameter("type");
         request.setAttribute("type", type);
-
 
         Survey survey = model.getSurvey();
         Page[] pages = survey.getBody().getPageArray();
@@ -396,12 +410,14 @@ public class SurveyExecuteAction extends DispatchAction {
                     for (Question question : container.getSection().getQuestionArray()) {
                         questionNum2++;
                         if (question.getDataLink() != null && question.getDataLink().length() > 0) {
-                            //load data
+                            // load data
                             String format = null;
                             if (question.getType().isSetDate()) {
                                 format = question.getType().getDate().toString();
                             }
-                            populateWithDataLink(data, pageNum + "_" + sectionNum + "_" + questionNum2, question.getDataLink(), String.valueOf(formBean.getClientId()), format, true, formBean.getAdmissionId());
+                            populateWithDataLink(data, pageNum + "_" + sectionNum + "_" + questionNum2,
+                                    question.getDataLink(), String.valueOf(formBean.getClientId()), format, true,
+                                    formBean.getAdmissionId());
                         }
                     }
                 } else if (container.isSetQuestion()) {
@@ -413,7 +429,8 @@ public class SurveyExecuteAction extends DispatchAction {
                             format = question.getType().getDate().toString();
                         }
 
-                        populateWithDataLink(data, pageNum + "_" + 0 + "_" + questionNum, question.getDataLink(), String.valueOf(formBean.getClientId()), format, true, formBean.getAdmissionId());
+                        populateWithDataLink(data, pageNum + "_" + 0 + "_" + questionNum, question.getDataLink(),
+                                String.valueOf(formBean.getClientId()), format, true, formBean.getAdmissionId());
                     }
                 }
             }
@@ -422,7 +439,7 @@ public class SurveyExecuteAction extends DispatchAction {
         if (survey.getIntroduction() != null && !survey.getIntroduction().getIncludeOnFirstPage()) {
             pageNames.add("Introduction");
             if (formBean.getTab() == null || formBean.getTab().length() == 0) {
-                //default first page
+                // default first page
                 request.setAttribute("introduction", survey.getIntroduction());
                 request.setAttribute("currentTab", "Introduction");
                 log.debug("showing page: introduction");
@@ -435,7 +452,7 @@ public class SurveyExecuteAction extends DispatchAction {
                 log.debug("showing page: introduction");
             }
         } else {
-            //default first page is page1
+            // default first page is page1
             if (formBean.getTab() == null || formBean.getTab().length() == 0) {
                 formBean.setTab(pages[0].getDescription());
                 request.setAttribute("currentTab", pages[0].getDescription());
@@ -453,7 +470,8 @@ public class SurveyExecuteAction extends DispatchAction {
                 if (survey.getIntroduction() != null && survey.getIntroduction().getIncludeOnFirstPage() && x == 0) {
                     request.setAttribute("introduction", survey.getIntroduction());
                 }
-                if (survey.getClosing() != null && survey.getClosing().getIncludeOnLastPage() && x == (pages.length - 1)) {
+                if (survey.getClosing() != null && survey.getClosing().getIncludeOnLastPage()
+                        && x == (pages.length - 1)) {
                     request.setAttribute("closing", survey.getClosing());
                 }
                 log.debug("showing page: " + tmp.getDescription());
@@ -470,7 +488,6 @@ public class SurveyExecuteAction extends DispatchAction {
             }
         }
 
-
         request.setAttribute("tabs", pageNames);
 
         if (formBean.getClientId() > 0) {
@@ -478,16 +495,17 @@ public class SurveyExecuteAction extends DispatchAction {
             request.setAttribute("admissions", admissions);
         }
 
-        //return mapping.findForward("execute");
+        // return mapping.findForward("execute");
     }
 
-    public ActionForward save_survey(ActionMapping mapping, ActionForm af, HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward save_survey(ActionMapping mapping, ActionForm af, HttpServletRequest request,
+            HttpServletResponse response) {
         DynaActionForm form = (DynaActionForm) af;
         SurveyExecuteFormBean formBean = (SurveyExecuteFormBean) form.get("view");
 
-        String type = request.getParameter("type");        
-        String formInstanceId = (String)request.getSession().getAttribute("formInstanceId");
-        
+        String type = request.getParameter("type");
+        String formInstanceId = (String) request.getSession().getAttribute("formInstanceId");
+
         if (this.isCancelled(request)) {
             if (type != null && type.equals("provider")) {
                 return mapping.findForward("close");
@@ -497,13 +515,14 @@ public class SurveyExecuteAction extends DispatchAction {
 
         log.debug("calling save() on action");
         SurveyExecuteDataBean data = (SurveyExecuteDataBean) form.get("data");
-        org.oscarehr.surveymodel.SurveyDocument.Survey surveyModel = surveyManager.getFormModel(String.valueOf(formBean.getId()));
+        org.oscarehr.surveymodel.SurveyDocument.Survey surveyModel = surveyManager
+                .getFormModel(String.valueOf(formBean.getId()));
 
         CaisiFormInstance instance = new CaisiFormInstance();
-        instance.setClientId((int)formBean.getClientId());
+        instance.setClientId((int) formBean.getClientId());
         instance.setDateCreated(new Date());
-        instance.setFormId((int)formBean.getId());
-        instance.setUserId((int)getUserId(request));
+        instance.setFormId((int) formBean.getId());
+        instance.setUserId((int) getUserId(request));
         instance.setDescription(formBean.getDescription());
         instance.setUsername(getUsername(request));
 
@@ -513,17 +532,16 @@ public class SurveyExecuteAction extends DispatchAction {
         for (Iterator iter = data.getValues().keySet().iterator(); iter.hasNext();) {
             String key = (String) iter.next();
             if (key.startsWith("checkbox_")) {
-                //found a hidden element related to a checkbox
+                // found a hidden element related to a checkbox
                 String realKey = key.substring(9);
                 String value = (String) data.getValues().get(key);
                 if (value.equals("checked")) {
 
                 } else {
                     test.put(realKey, null);
-                    //data.getValues().put(realKey,null);
+                    // data.getValues().put(realKey,null);
                 }
             }
-
 
         }
         data.getValues().putAll(test);
@@ -532,7 +550,7 @@ public class SurveyExecuteAction extends DispatchAction {
         List qids = SurveyModelManager.getAllQuestionIds(surveyModel);
         for (Iterator iter = qids.iterator(); iter.hasNext();) {
             String key = (String) iter.next();
-            //log.debug("key=" + key + ",value=" + (String)data.getValue(key));
+            // log.debug("key=" + key + ",value=" + (String)data.getValue(key));
             String[] parsed = key.split("_");
             String pageNumber = parsed[0];
             String sectionId = parsed[1];
@@ -547,9 +565,8 @@ public class SurveyExecuteAction extends DispatchAction {
             instance.getData().add(dataItem);
         }
 
-
         SurveyDocument model = (SurveyDocument) request.getSession().getAttribute("model");
-        //find caisi objects & data links
+        // find caisi objects & data links
         for (int x = 0; x < model.getSurvey().getBody().getPageArray().length; x++) {
             Page page = model.getSurvey().getBody().getPageArray(x);
             int sectionNum = 0;
@@ -563,12 +580,13 @@ public class SurveyExecuteAction extends DispatchAction {
                     for (Question question : container.getSection().getQuestionArray()) {
                         questionNum2++;
                         if (question.getDataLink() != null && question.getDataLink().length() > 0) {
-                            //load data
+                            // load data
                             String format = null;
                             if (question.getType().isSetDate()) {
                                 format = question.getType().getDate().toString();
                             }
-                            saveDataLink(data, pageNum + "_" + sectionNum + "_" + questionNum2, question.getDataLink(), instance.getClientId(), format);
+                            saveDataLink(data, pageNum + "_" + sectionNum + "_" + questionNum2, question.getDataLink(),
+                                    instance.getClientId(), format);
                         }
                     }
                 } else if (container.isSetQuestion()) {
@@ -580,7 +598,8 @@ public class SurveyExecuteAction extends DispatchAction {
                             format = question.getType().getDate().toString();
                         }
 
-                        saveDataLink(data, pageNum + "_" + 0 + "_" + questionNum, question.getDataLink(), instance.getClientId(), format);
+                        saveDataLink(data, pageNum + "_" + 0 + "_" + questionNum, question.getDataLink(),
+                                instance.getClientId(), format);
                     }
                 }
             }
@@ -588,14 +607,18 @@ public class SurveyExecuteAction extends DispatchAction {
 
         // if the form was saved in the context of a program
         String programIdStr = (String) request.getSession().getAttribute(SessionConstants.CURRENT_PROGRAM_ID);
-        if (programIdStr!=null) instance.setProgramId(Integer.valueOf(programIdStr));        
-        
+        if (programIdStr != null)
+            instance.setProgramId(Integer.valueOf(programIdStr));
+
         surveyManager.saveFormInstance(instance);
-        
-        //If saving survey succeed, then delete tmpsave record.
-        //List tmpInstanceForms = surveyManager.getTmpForms(formInstanceId, String.valueOf(formBean.getId()),String.valueOf(formBean.getClientId()), String.valueOf(getUserId(request)));
-        surveyManager.deleteTmpsave(formInstanceId, String.valueOf(formBean.getId()),String.valueOf(formBean.getClientId()), String.valueOf(getUserId(request)));
-        
+
+        // If saving survey succeed, then delete tmpsave record.
+        // List tmpInstanceForms = surveyManager.getTmpForms(formInstanceId,
+        // String.valueOf(formBean.getId()),String.valueOf(formBean.getClientId()),
+        // String.valueOf(getUserId(request)));
+        surveyManager.deleteTmpsave(formInstanceId, String.valueOf(formBean.getId()),
+                String.valueOf(formBean.getClientId()), String.valueOf(getUserId(request)));
+
         form.set("data", new SurveyExecuteDataBean());
         form.set("view", new SurveyExecuteFormBean());
 
@@ -603,9 +626,9 @@ public class SurveyExecuteAction extends DispatchAction {
             return mapping.findForward("close");
         }
         return forwardToClientManager(request, mapping, form, String.valueOf(formBean.getClientId()));
-        //request.setAttribute("survey_saved",new Boolean(true));
-        //request.setAttribute("clientId",String.valueOf(formBean.getDemographicId()));
-        //return mapping.findForward("client_manager");
+        // request.setAttribute("survey_saved",new Boolean(true));
+        // request.setAttribute("clientId",String.valueOf(formBean.getDemographicId()));
+        // return mapping.findForward("client_manager");
     }
 
     public static String getCalendarFormat(String val) {
@@ -625,7 +648,8 @@ public class SurveyExecuteAction extends DispatchAction {
         return "%Y-%m-%d";
     }
 
-    private void populateWithCaisiObject(HttpServletRequest request, SurveyExecuteDataBean data, String key, String caisiObject, String demographic_no) {
+    private void populateWithCaisiObject(HttpServletRequest request, SurveyExecuteDataBean data, String key,
+            String caisiObject, String demographic_no) {
         log.debug("CaisObject=" + caisiObject);
 
         if (caisiObject.equals("Current Medications")) {
@@ -658,8 +682,9 @@ public class SurveyExecuteAction extends DispatchAction {
         }
     }
 
-    public void populateWithDataLink(SurveyExecuteDataBean data, String key, String dataLink, String demographic_no, String format, boolean refresh, long admissionId) {
-        //will make more dynamic in the future
+    public void populateWithDataLink(SurveyExecuteDataBean data, String key, String dataLink, String demographic_no,
+            String format, boolean refresh, long admissionId) {
+        // will make more dynamic in the future
         Demographic client = this.clientManager.getClientByDemographicNo(demographic_no);
 
         if (!refresh) {
@@ -669,9 +694,9 @@ public class SurveyExecuteAction extends DispatchAction {
                 data.getValues().put(key, client.getLastName());
             } else if (dataLink.equals("Demographic/birthDate")) {
                 format = format.replaceAll("mm", "MM");
-        		SimpleDateFormat formatter = new SimpleDateFormat(format);
-        		Calendar cal = client.getBirthDay();
-        		String temp=formatter.format(cal.getTime());
+                SimpleDateFormat formatter = new SimpleDateFormat(format);
+                Calendar cal = client.getBirthDay();
+                String temp = formatter.format(cal.getTime());
                 data.getValues().put(key, temp);
             }
         } else {
@@ -691,7 +716,8 @@ public class SurveyExecuteAction extends DispatchAction {
         }
     }
 
-    public void saveDataLink(SurveyExecuteDataBean data, String key, String dataLink, long demographic_no, String format) {
+    public void saveDataLink(SurveyExecuteDataBean data, String key, String dataLink, long demographic_no,
+            String format) {
         Demographic client = this.clientManager.getClientByDemographicNo(String.valueOf(demographic_no));
 
         if (dataLink.equals("Demographic/FirstName")) {
@@ -702,29 +728,30 @@ public class SurveyExecuteAction extends DispatchAction {
             client.setLastName(value);
         } else if (dataLink.equals("Demographic/birthDate")) {
             try {
-	            format = format.replaceAll("mm", "MM");
-	            SimpleDateFormat formatter = new SimpleDateFormat(format);
+                format = format.replaceAll("mm", "MM");
+                SimpleDateFormat formatter = new SimpleDateFormat(format);
 
-	            String value = (String) data.getValues().get(key);
-	            Date d = formatter.parse(value);
-	            Calendar cal = Calendar.getInstance();
-	            cal.setTime(d);
-	            
-	            client.setBirthDay(cal);
+                String value = (String) data.getValues().get(key);
+                Date d = formatter.parse(value);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(d);
+
+                client.setBirthDay(cal);
             } catch (ParseException e) {
-	            log.error("Error", e);
+                log.error("Error", e);
             }
         }
         clientManager.saveClient(client);
     }
-    
-    public ActionForward tmpsave_survey(ActionMapping mapping, ActionForm af, HttpServletRequest request, HttpServletResponse response) {
+
+    public ActionForward tmpsave_survey(ActionMapping mapping, ActionForm af, HttpServletRequest request,
+            HttpServletResponse response) {
         DynaActionForm form = (DynaActionForm) af;
         SurveyExecuteFormBean formBean = (SurveyExecuteFormBean) form.get("view");
 
         String type = request.getParameter("type");
-        String formInstanceId = (String)request.getSession().getAttribute("formInstanceId");
-        
+        String formInstanceId = (String) request.getSession().getAttribute("formInstanceId");
+
         if (this.isCancelled(request)) {
             if (type != null && type.equals("provider")) {
                 return mapping.findForward("close");
@@ -734,26 +761,29 @@ public class SurveyExecuteAction extends DispatchAction {
 
         log.debug("calling save() on action");
         SurveyExecuteDataBean data = (SurveyExecuteDataBean) form.get("data");
-        org.oscarehr.surveymodel.SurveyDocument.Survey surveyModel = surveyManager.getFormModel(String.valueOf(formBean.getId()));
+        org.oscarehr.surveymodel.SurveyDocument.Survey surveyModel = surveyManager
+                .getFormModel(String.valueOf(formBean.getId()));
 
-        //check instanceId,formId,clientId, and userId to see if tmp form instance exists :
+        // check instanceId,formId,clientId, and userId to see if tmp form instance
+        // exists :
         CaisiFormInstanceTmpSave instance = new CaisiFormInstanceTmpSave();
         boolean newForm;
-        List tmpInstanceForms = surveyManager.getTmpForms(formInstanceId, String.valueOf(formBean.getId()),String.valueOf(formBean.getClientId()), String.valueOf(getUserId(request)));
-        if(tmpInstanceForms.size()==0 || tmpInstanceForms==null ) {
-        	newForm = true;
-        	instance.setInstanceId(Integer.valueOf(formInstanceId));
-        	instance.setClientId((int)formBean.getClientId());
+        List tmpInstanceForms = surveyManager.getTmpForms(formInstanceId, String.valueOf(formBean.getId()),
+                String.valueOf(formBean.getClientId()), String.valueOf(getUserId(request)));
+        if (tmpInstanceForms.size() == 0 || tmpInstanceForms == null) {
+            newForm = true;
+            instance.setInstanceId(Integer.valueOf(formInstanceId));
+            instance.setClientId((int) formBean.getClientId());
             instance.setDateCreated(new Date());
-            instance.setFormId((int)formBean.getId());
-            instance.setUserId((int)getUserId(request));
+            instance.setFormId((int) formBean.getId());
+            instance.setUserId((int) getUserId(request));
             instance.setDescription(formBean.getDescription());
             instance.setUsername(getUsername(request));
-        } else {        	
-        	newForm = false;
-        	instance = (CaisiFormInstanceTmpSave)tmpInstanceForms.get(0);
-              	
-        }        
+        } else {
+            newForm = false;
+            instance = (CaisiFormInstanceTmpSave) tmpInstanceForms.get(0);
+
+        }
 
         /* fix the checkboxes */
         Map test = new HashMap();
@@ -761,52 +791,51 @@ public class SurveyExecuteAction extends DispatchAction {
         for (Iterator iter = data.getValues().keySet().iterator(); iter.hasNext();) {
             String key = (String) iter.next();
             if (key.startsWith("checkbox_")) {
-                //found a hidden element related to a checkbox
+                // found a hidden element related to a checkbox
                 String realKey = key.substring(9);
                 String value = (String) data.getValues().get(key);
                 if (value.equals("checked")) {
 
                 } else {
                     test.put(realKey, null);
-                    //data.getValues().put(realKey,null);
+                    // data.getValues().put(realKey,null);
                 }
             }
 
-
         }
-        data.getValues().putAll(test);     
-        
-        if(newForm) {
-        	/* convert the data form bean */
-        	List qids = SurveyModelManager.getAllQuestionIds(surveyModel);
-        	for (Iterator iter = qids.iterator(); iter.hasNext();) {
-        		String key = (String) iter.next();
-        		//log.debug("key=" + key + ",value=" + (String)data.getValue(key));
-        		String[] parsed = key.split("_");
-        		String pageNumber = parsed[0];
-        		String sectionId = parsed[1];
-        		String questionId = parsed[2];              
-      
-        		CaisiFormDataTmpSave dataItem = new CaisiFormDataTmpSave();
-        		dataItem.setPageNumber(Integer.parseInt(pageNumber));
-        		dataItem.setSectionId(Integer.parseInt(sectionId));
-        		dataItem.setQuestionId(Integer.parseInt(questionId));
-        		dataItem.setValue((String) data.getValue(key));
-        		dataItem.setDataKey(key);
-        		instance.getData().add(dataItem);
-        	} 
+        data.getValues().putAll(test);
+
+        if (newForm) {
+            /* convert the data form bean */
+            List qids = SurveyModelManager.getAllQuestionIds(surveyModel);
+            for (Iterator iter = qids.iterator(); iter.hasNext();) {
+                String key = (String) iter.next();
+                // log.debug("key=" + key + ",value=" + (String)data.getValue(key));
+                String[] parsed = key.split("_");
+                String pageNumber = parsed[0];
+                String sectionId = parsed[1];
+                String questionId = parsed[2];
+
+                CaisiFormDataTmpSave dataItem = new CaisiFormDataTmpSave();
+                dataItem.setPageNumber(Integer.parseInt(pageNumber));
+                dataItem.setSectionId(Integer.parseInt(sectionId));
+                dataItem.setQuestionId(Integer.parseInt(questionId));
+                dataItem.setValue((String) data.getValue(key));
+                dataItem.setDataKey(key);
+                instance.getData().add(dataItem);
+            }
         } else {
-        		instance.getData().clear();
-            	List tmpFormData = surveyManager.getTmpFormData(String.valueOf(instance.getId()));
-            	for(Iterator it = tmpFormData.iterator(); it.hasNext();) {
-            		CaisiFormDataTmpSave formData = (CaisiFormDataTmpSave)it.next();
-            		formData.setValue((String)data.getValue(formData.getDataKey()));
-            		instance.getData().add(formData);
-            	}
-        }	        
+            instance.getData().clear();
+            List tmpFormData = surveyManager.getTmpFormData(String.valueOf(instance.getId()));
+            for (Iterator it = tmpFormData.iterator(); it.hasNext();) {
+                CaisiFormDataTmpSave formData = (CaisiFormDataTmpSave) it.next();
+                formData.setValue((String) data.getValue(formData.getDataKey()));
+                instance.getData().add(formData);
+            }
+        }
 
         SurveyDocument model = (SurveyDocument) request.getSession().getAttribute("model");
-        //find caisi objects & data links
+        // find caisi objects & data links
         for (int x = 0; x < model.getSurvey().getBody().getPageArray().length; x++) {
             Page page = model.getSurvey().getBody().getPageArray(x);
             int sectionNum = 0;
@@ -820,12 +849,13 @@ public class SurveyExecuteAction extends DispatchAction {
                     for (Question question : container.getSection().getQuestionArray()) {
                         questionNum2++;
                         if (question.getDataLink() != null && question.getDataLink().length() > 0) {
-                            //load data
+                            // load data
                             String format = null;
                             if (question.getType().isSetDate()) {
                                 format = question.getType().getDate().toString();
                             }
-                            saveDataLink(data, pageNum + "_" + sectionNum + "_" + questionNum2, question.getDataLink(), instance.getClientId(), format);
+                            saveDataLink(data, pageNum + "_" + sectionNum + "_" + questionNum2, question.getDataLink(),
+                                    instance.getClientId(), format);
                         }
                     }
                 } else if (container.isSetQuestion()) {
@@ -837,7 +867,8 @@ public class SurveyExecuteAction extends DispatchAction {
                             format = question.getType().getDate().toString();
                         }
 
-                        saveDataLink(data, pageNum + "_" + 0 + "_" + questionNum, question.getDataLink(), instance.getClientId(), format);
+                        saveDataLink(data, pageNum + "_" + 0 + "_" + questionNum, question.getDataLink(),
+                                instance.getClientId(), format);
                     }
                 }
             }
@@ -845,34 +876,37 @@ public class SurveyExecuteAction extends DispatchAction {
 
         // if the form was saved in the context of a program
         String programIdStr = (String) request.getSession().getAttribute(SessionConstants.CURRENT_PROGRAM_ID);
-        if (programIdStr!=null) instance.setProgramId(Integer.valueOf(programIdStr));        
+        if (programIdStr != null)
+            instance.setProgramId(Integer.valueOf(programIdStr));
 
         surveyManager.saveFormInstanceTmpsave(instance);
 
         if (type != null && type.equals("provider")) {
             return mapping.findForward("close");
         }
-        
+
         return refresh(mapping, form, request, response);
     }
 
-    public ActionForward printPreview_survey(ActionMapping mapping, ActionForm af, HttpServletRequest request, HttpServletResponse response) {
-        
-    	DynaActionForm form = (DynaActionForm) af;
-    	String clientId = request.getParameter("clientId");
-    	String forwardString = survey_view(mapping, af, request, response);
-    	if("close".equals(forwardString))  {
-        	return mapping.findForward("close");	
-        }else if("clientManager".equals(forwardString)) {
-        	return forwardToClientManager(request, mapping, form, clientId);
+    public ActionForward printPreview_survey(ActionMapping mapping, ActionForm af, HttpServletRequest request,
+            HttpServletResponse response) {
+
+        DynaActionForm form = (DynaActionForm) af;
+        String clientId = request.getParameter("clientId");
+        String forwardString = survey_view(mapping, af, request, response);
+        if ("close".equals(forwardString)) {
+            return mapping.findForward("close");
+        } else if ("clientManager".equals(forwardString)) {
+            return forwardToClientManager(request, mapping, form, clientId);
         } else {
-        	refresh_survey(mapping,  af, request, response);        	
-        	return mapping.findForward("printPreview");
+            refresh_survey(mapping, af, request, response);
+            return mapping.findForward("printPreview");
         }
     }
-    
-    public ActionForward printPreview_refresh(ActionMapping mapping, ActionForm af, HttpServletRequest request, HttpServletResponse response) {
-    	refresh_survey(mapping,  af, request, response);
-    	return mapping.findForward("printPreview");
+
+    public ActionForward printPreview_refresh(ActionMapping mapping, ActionForm af, HttpServletRequest request,
+            HttpServletResponse response) {
+        refresh_survey(mapping, af, request, response);
+        return mapping.findForward("printPreview");
     }
 }

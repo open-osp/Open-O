@@ -1,6 +1,13 @@
 
 package oscar;
 
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRCsvExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.*;
+import org.oscarehr.util.MiscUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,23 +15,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JREmptyDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JRResultSetDataSource;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRCsvExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
-
-import org.oscarehr.util.MiscUtils;
 public class OscarDocumentCreator {
   public static final String PDF = "pdf";
   public static final String CSV = "csv";
@@ -128,27 +118,31 @@ public class OscarDocumentCreator {
    * @param sos ServletOutputStream
    * @throws JRException
    */
-  private void exportReportToCSVStream(JasperPrint jasperPrint,
-                                       OutputStream sos) throws
-      JRException {
-    JRCsvExporter exp = new JRCsvExporter();
-    exp.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-    exp.setParameter(JRExporterParameter.OUTPUT_STREAM, sos);
-    exp.exportReport();
+  private void exportReportToCSVStream(JasperPrint jasperPrint, OutputStream sos) throws JRException {
+      JRCsvExporter exp = new JRCsvExporter();
+	  exp.setExporterInput(new SimpleExporterInput(jasperPrint));
+	  exp.setExporterOutput(new SimpleWriterExporterOutput(sos));
+      SimpleCsvReportConfiguration configuration = new SimpleCsvReportConfiguration();
+      exp.setConfiguration(configuration);
+      exp.exportReport();
   }
 
   private void exportReportToExcelStream(JasperPrint jasperPrint, OutputStream os)
   			throws JRException{
-  	JRXlsExporter exp = new JRXlsExporter();
-  	exp.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-	exp.setParameter(JRExporterParameter.OUTPUT_STREAM, os);
-	exp.setParameter(JRXlsExporterParameter.IGNORE_PAGE_MARGINS, Boolean.TRUE);
-	exp.setParameter(JRXlsExporterParameter.OFFSET_X, 0);
-	exp.setParameter(JRXlsExporterParameter.IS_IGNORE_CELL_BORDER, Boolean.FALSE);
-	exp.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, true);
-	exp.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, false);
-      	exp.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, false);
-      	exp.setParameter(JRXlsExporterParameter.MAXIMUM_ROWS_PER_SHEET,Integer.decode("65000"));
+  	JRXlsxExporter exp = new JRXlsxExporter();
+  	exp.setExporterInput(new SimpleExporterInput(jasperPrint));
+    exp.setExporterOutput(new SimpleOutputStreamExporterOutput(os));
+
+    SimpleXlsxReportConfiguration reportConfiguration = new SimpleXlsxReportConfiguration();
+    reportConfiguration.setIgnorePageMargins(true);
+    reportConfiguration.setOffsetX(0);
+    reportConfiguration.setIgnoreCellBorder(false);
+    reportConfiguration.setDetectCellType(true);
+    reportConfiguration.setWhitePageBackground(false);
+    reportConfiguration.setOnePagePerSheet(false);
+    reportConfiguration.setMaxRowsPerSheet(65000);
+    exp.setConfiguration(reportConfiguration);
+
   	exp.exportReport();
   }
 

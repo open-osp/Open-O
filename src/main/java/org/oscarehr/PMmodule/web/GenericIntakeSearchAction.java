@@ -125,7 +125,7 @@ public class GenericIntakeSearchAction extends DispatchAction {
 		this.clientImageDAO = clientImageDAO;
 	}
 	
-	private SurveyManager surveyManager = (SurveyManager)SpringUtils.getBean("surveyManager2");
+	private SurveyManager surveyManager = (SurveyManager)SpringUtils.getBean(SurveyManager.class);
 	
 
 	@Override
@@ -310,7 +310,7 @@ public class GenericIntakeSearchAction extends DispatchAction {
 		clientSearchBean.setLastName(intakeSearchBean.getLastName());
 		clientSearchBean.setGender(intakeSearchBean.getGender());
 		if(strictSearch.equalsIgnoreCase("true")) {
-			ProgramProviderDAO ppDao = (ProgramProviderDAO) SpringUtils.getBean("programProviderDAO");
+			ProgramProviderDAO ppDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
 			clientSearchBean.setSearchOutsideDomain(false);
 			clientSearchBean.setProgramDomain(ppDao.getProgramDomain(providerNo));
 		} else {

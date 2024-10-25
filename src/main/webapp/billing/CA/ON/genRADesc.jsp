@@ -226,7 +226,7 @@ Colposcopy Total :
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
     Integer raHeaderNo = Integer.parseInt(raNo);
     
-    BillingONPremiumDao bPremiumDao = (BillingONPremiumDao) SpringUtils.getBean("billingONPremiumDao");
+    BillingONPremiumDao bPremiumDao = (BillingONPremiumDao) SpringUtils.getBean(BillingONPremiumDao.class);
     List<BillingONPremium> bPremiumList = bPremiumDao.getRAPremiumsByRaHeaderNo(raHeaderNo);
     if (bPremiumList.isEmpty()) {
         bPremiumDao.parseAndSaveRAPremiums(loggedInInfo, raHeaderNo, request.getLocale());
@@ -252,7 +252,7 @@ Colposcopy Total :
            
             for (BillingONPremium premium : bPremiumList) {   
                 Integer premiumId = premium.getId();
-                ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+                ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
                 List<Provider> pList = providerDao.getBillableProvidersByOHIPNo(premium.getProviderOHIPNo());  
                 if ((pList != null) && !pList.isEmpty()) {
                     String isChecked = "";

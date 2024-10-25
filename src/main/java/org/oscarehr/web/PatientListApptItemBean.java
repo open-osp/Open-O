@@ -36,6 +36,9 @@ public class PatientListApptItemBean implements Serializable {
 	private String status;
 	private String startTime;
 	private String reason;
+	private String duration;
+	private String type;
+	private String notes;
 	private Date date;
 	
 	public Integer getDemographicNo() {
@@ -80,5 +83,17 @@ public class PatientListApptItemBean implements Serializable {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+
+	public String getDuration() {return duration;}
+
+	public void setDuration(String duration) {this.duration = duration;}
+
+	public String getType() {return type;}
+
+	public void setType(String type) {this.type = type;}
+
+	public String getNotes() {return notes;}
+
+	public void setNotes(String notes) {this.notes = notes;}
 	
 }

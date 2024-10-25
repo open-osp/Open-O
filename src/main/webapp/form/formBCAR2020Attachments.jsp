@@ -71,7 +71,7 @@
 
 %>
 <!DOCTYPE HTML>
-<html:html locale="true">
+<html:html lang="en">
     <head>
 
         <title>BC Antenatal Record 2020 Attachments/Additional Info</title>
@@ -175,9 +175,9 @@
                 <%
                     String value = ""; 
                     String demoNoStr = String.valueOf(demoNo);
-                    CaseManagementManager cmgmtMgr = (CaseManagementManager)SpringUtils.getBean("caseManagementManager");
+                    CaseManagementManager cmgmtMgr = (CaseManagementManager)SpringUtils.getBean(CaseManagementManager.class);
                     
-                    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+                    UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
                     UserProperty fmtProperty = userPropertyDAO.getProp(providerNo, UserProperty.CONSULTATION_REQ_PASTE_FMT);
                     String pasteFmt = fmtProperty != null?fmtProperty.getValue():null;
                 %>

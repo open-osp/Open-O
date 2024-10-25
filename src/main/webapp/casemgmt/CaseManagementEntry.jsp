@@ -52,7 +52,6 @@
 <title>Case Management</title>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 <link rel="stylesheet" href="<c:out value="${ctx}"/>/css/casemgmt.css" type="text/css">
-<script language="JavaScript" src="<c:out value="${ctx}"/>/jspspellcheck/spellcheck-caller.js"></script>
 <script type="text/javascript">
 	var flag=<%=request.getAttribute("change_flag")%>;                
  
@@ -89,8 +88,6 @@
 	function validateChange(){
 		var str="You haven't saved the change yet. Please save first.";
 		if (flag==true){
-			/*if (confirm(str)) return true;
-			else return false;*/
 			alert(str);
 			return false;
 		}
@@ -100,8 +97,6 @@
 	function validateBack(){
 		var str="You haven't saved the change yet. Please save first.";
 		if (flag==true){
-			/*if (confirm(str)) return true;
-			else return false;*/
 			alert(str);
 			return false;
 		}else{
@@ -109,8 +104,7 @@
 		}
 	}
 	function validateIssuecheck(issueSize){
-		var i=0; 
-		for (i=0;i<issueSize;i++)
+		for (let i=0;i<issueSize;i++)
 		{
 			//alert("checked="+document.caseManagementEntryForm.elements["issueCheckList["+i+"].checked"].checked);
 			if (document.caseManagementEntryForm.elements["issueCheckList["+i+"].checked"].checked) 
@@ -137,14 +131,7 @@
 		if (document.caseManagementEntryForm.sign.checked) signed=true;
 		
 		if (newNote==true && signed==true){
-			var i=0;
-			/*for (i=0;i<issueSize;i++)
-			{
-				if (document.caseManagementEntryForm.elements["issueCheckList["+i+"].issue.acute"].value=="true") return true;
-				if (document.caseManagementEntryForm.elements["issueCheckList["+i+"].issue.certain"].value=="true") return true;
-				if (document.caseManagementEntryForm.elements["issueCheckList["+i+"].issue.major"].value=="true") return true;
-				if (document.caseManagementEntryForm.elements["issueCheckList["+i+"].issue.resolved"].value=="true") return true;
-			}*/
+
 			if (issueChanged==true) return true;
 			else return false;
 		}
@@ -190,29 +177,7 @@
 			alert('show group dialog');	
 		}
 	}
-</script>
 
-<script language="JavaScript">
-
- 	function spellCheck()
-            {
-            
-                // Build an array of form elements (not there values)
-                var elements = new Array(0);
-                
-                // Your form elements that you want to have spell checked
-                
-                elements[elements.length] = document.caseManagementEntryForm.caseNote_note;
-                
-                       
-                // Start the spell checker
-                 startSpellCheck('jspspellcheck/',elements);
-                
-            }
-
-</script>
-
-<script>
 	var XMLHttpRequestObject = false;
 
 	if(window.XMLHttpRequest) {
@@ -226,15 +191,7 @@
 			var obj = document.getElementById('caseNote_note');
 			XMLHttpRequestObject.open("POST",'<html:rewrite action="/CaseManagementEntry"/>',true);
             XMLHttpRequestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-            /*
-			XMLHttpRequestObject.onreadystatechange = function()
-			{
-				if(XMLHttpRequestObject.readyState == 4 &&
-						XMLHttpRequestObject.status == 200) {
-					alert('saved');
-                }
-			}
-			*/
+
 			var demographicNo = '<c:out value="${param.demographicNo}"/>';
 			var noteId = '<%=request.getParameter("noteId") != null ? request.getParameter("noteId") : request.getAttribute("noteId") != null ? request.getAttribute("noteId") : ""%>';
 			var programId = '<c:out value="${case_program_id}"/>';
@@ -450,11 +407,9 @@ if (pId==null) pId="";
 	</logic:messagesPresent>
 	</span>
 	<%} %>
-	
-	<br>  <button type="button" onclick="javascript:spellCheck();"><bean:message key="casemanagementEntry.spellcheck" /></button>
-	
+
 	<p>
-	<table width="90%" border="1">
+	<table>
 		<tr>
 			<td class="fieldValue" colspan="1">
 				<textarea name="caseNote_note" id="caseNote_note" cols="60" rows="20" wrap="hard" onchange="setChangeFlag(true);"><nested:write property="caseNote.note"/></textarea>
@@ -467,7 +422,7 @@ if (pId==null) pId="";
 			<td class="fieldTitle"><bean:message key="casemanagementEntry.encountertype" /></td>
 			<td class="fieldValue"><html:select
 				property="caseNote.encounter_type" onchange="setChangeFlag(true);">
-				<html:option value=""></html:option>>
+				<html:option value="">&nbsp;</html:option>>
 				<html:option value="face to face encounter with client"><bean:message key="casemanagementEntry.facetofaceencounterwithclient" /></html:option>>
 				<oscarProp:oscarPropertiesCheck property="oncall" value="yes" reverse="true">
 					<html:option value="telephone encounter with client"><bean:message key="casemanagementEntry.telephoneencounterwithclient" /></html:option>
@@ -480,11 +435,6 @@ if (pId==null) pId="";
 			</html:select></td>
 		</tr>
 
-		<!-- tr>
-		<td class="fieldTitle">Billing Code:</td>
-		<td class="fieldValue"><html:text property="caseNote.billing_code" /><input type="button" value="search"/></td>
-	</tr -->
-
 		<tr>
 			<td class="fieldTitle"><bean:message key="casemanagementEntry.Sign" /></td>
 			<td class="fieldValue"><html:checkbox property="sign" onchange="setChangeFlag(true);" /></td>
@@ -494,12 +444,7 @@ if (pId==null) pId="";
 			<td class="fieldTitle"><bean:message key="casemanagementEntry.includecheckedissuesinnote" /></td>
 			<td class="fieldValue"><html:checkbox property="includeIssue" onchange="setChangeFlag(true);" /></td>
 		</tr>
-<!-- commented out on Oct 4, 2010
-		<tr>
-			<td class="fieldTitle">Group Note</td>
-			<td class="fieldValue"><html:checkbox property="groupNote" onchange="setChangeFlag(true);toggleGroupNote(this);" /></td>
-		</tr>
- -->	
+
       <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
 		<c:if test="${param.from=='casemgmt' || requestScope.from=='casemgmt'}" >
 		<c:url value="${sessionScope.billing_url}" var="url"/>

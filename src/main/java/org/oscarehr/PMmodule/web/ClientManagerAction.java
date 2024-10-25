@@ -140,7 +140,7 @@ public class ClientManagerAction extends DispatchAction {
 
 	private HealthSafetyManager healthSafetyManager;
 	private ClientRestrictionManager clientRestrictionManager;
-	private SurveyManager surveyManager = (SurveyManager)SpringUtils.getBean("surveyManager2");
+	private SurveyManager surveyManager = (SurveyManager)SpringUtils.getBean(SurveyManager.class);
 	private LookupManager lookupManager;
 	private CaseManagementManager caseManagementManager;
 	private AdmissionManager admissionManager;
@@ -153,11 +153,11 @@ public class ClientManagerAction extends DispatchAction {
 	private ProgramQueueManager programQueueManager;
 	private IntegratorConsentDao integratorConsentDao;
 	private CdsClientFormDao cdsClientFormDao;
-	private static AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean("admissionDao");
-	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
-	private static ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
-	private OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
-	private RemoteReferralDao remoteReferralDao = (RemoteReferralDao) SpringUtils.getBean("remoteReferralDao");
+	private static AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
+	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
+	private static ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+	private OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
+	private RemoteReferralDao remoteReferralDao = (RemoteReferralDao) SpringUtils.getBean(RemoteReferralDao.class);
     private VacancyDao vacancyDao = (VacancyDao) SpringUtils.getBean(VacancyDao.class);
     private VacancyTemplateDao vacancyTemplateDao = (VacancyTemplateDao) SpringUtils.getBean(VacancyTemplateDao.class);
 	private MatchingManager matchingManager = new MatchingManager();

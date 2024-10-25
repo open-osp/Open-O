@@ -156,10 +156,19 @@
 		DocumentBrowserLink = true;
 	}
 %>
-<html:html locale="true">
+<html:html lang="en">
 	<head>
 
 		<title><bean:message key="dms.documentReport.msgDocuments"/> Manager</title>
+
+		<link rel="stylesheet" type="text/css"
+		      href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css"/>
+		<link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet"
+		      type="text/css"/>
+		<link href="${pageContext.request.contextPath}/library/DataTables/DataTables-1.13.4/css/jquery.dataTables.css"
+		      rel="stylesheet" type="text/css"/>
+
+
 
 		<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"
 		        type="text/javascript"></script>
@@ -168,17 +177,11 @@
 		<script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"
 		        type="text/javascript"></script>
 		<script type="text/javascript"
-		        src="${pageContext.request.contextPath}/library/DataTables/DataTables-1.13.4/js/dataTables.bootstrap.js"></script>
+		        src="${pageContext.request.contextPath}/library/DataTables/DataTables-1.13.4/js/jquery.dataTables.js"></script>
 
-		<link rel="stylesheet" type="text/css"
-		      href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css"/>
-		<link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet"
-		      type="text/css"/>
-		<link href="${pageContext.request.contextPath}/library/DataTables/DataTables-1.13.4/css/dataTables.bootstrap.css"
-		      rel="stylesheet" type="text/css"/>
 		<script src="${pageContext.request.contextPath}/js/global.js" type="text/javascript"></script>
 		<%
-			CtlDocClassDao docClassDao = (CtlDocClassDao) SpringUtils.getBean("ctlDocClassDao");
+			CtlDocClassDao docClassDao = (CtlDocClassDao) SpringUtils.getBean(CtlDocClassDao.class);
 			List<String> reportClasses = docClassDao.findUniqueReportClasses();
 			ArrayList<String> subClasses = new ArrayList<String>();
 			ArrayList<String> consultA = new ArrayList<String>();
@@ -302,14 +305,42 @@
 				var parentId = "<%=parentAjaxId%>";
 				var Url = window.opener.URLs;
 
-				if (update === "true" && !window.opener.closed)
+				if (update === "true" && !window.opener.closed) {
 					window.opener.popLeftColumn(Url[parentId], parentId, parentId);
+				}
 			}
+
+			jQuery(document).ready(function () {
+				jQuery("table[id^='tblDocs']").DataTable({
+					ordering:true,
+					columnDefs: [{ orderable: false, targets: [0,8] }],
+					lengthMenu: [
+						[ -1, 10, 20, 50, 100, 200],
+						['All', 10, 20, 50, 100, 200]
+					],
+					order: [[6, 'dsc']],
+					"language": {
+						"url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+					}
+				});
+			});
 		</script>
+
 		<style>
-            :not(h2) {
-                line-height: 1 !important;
-                font-size: 12px !important;
+            :root *:not(h2) {
+                font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+                font-size: 12px;
+                overscroll-behavior: none;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            .panel-body {
+	            overflow: auto;
+            }
+
+            a {
+	            color:blue;
             }
 
 		</style>
@@ -321,7 +352,7 @@
 		<h2>
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 			     class="bi bi-file-earmark" viewBox="0 0 16 16">
-				<path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
+				<path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"></path>
 			</svg>
 			<bean:message key="dms.documentReport.msgDocuments"/> Manager
 		</h2>
@@ -332,6 +363,7 @@
 
 		<jsp:include page="addDocument.jsp">
 			<jsp:param name="appointmentNo" value="<%=appointmentNo%>"/>
+			<jsp:param name="addDocument" value="${param.mode}" />
 		</jsp:include>
 
 
@@ -343,13 +375,13 @@
 				ArrayList categoryKeys = new ArrayList();
 
 				MiscUtils.getLogger().debug("module=" + module + ", moduleid=" + moduleid + ", view=" + view + ", EDocUtil.PRIVATE=" + EDocUtil.PRIVATE + ", viewstatus=" + viewstatus);
-				ArrayList<EDoc> privatedocs = EDocUtil.listDocs(loggedInInfo, module, moduleid, view, EDocUtil.PRIVATE, EDocUtil.EDocSort.DATE, viewstatus);
+				ArrayList<EDoc> privatedocs = EDocUtil.listDocs(loggedInInfo, module, moduleid, view, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE, viewstatus);
 				MiscUtils.getLogger().debug("privatedocs:" + privatedocs.size());
 
 				categories.add(privatedocs);
 				categoryKeys.add(moduleName + "'s Private Documents");
 				if (module.equals("provider")) {
-					ArrayList publicdocs = EDocUtil.listDocs(loggedInInfo, module, moduleid, view, EDocUtil.PUBLIC, EDocUtil.EDocSort.DATE, viewstatus);
+					ArrayList publicdocs = EDocUtil.listDocs(loggedInInfo, module, moduleid, view, EDocUtil.PUBLIC, EDocUtil.EDocSort.OBSERVATIONDATE, viewstatus);
 					categories.add(publicdocs);
 					categoryKeys.add("Public Documents");
 				}
@@ -365,17 +397,6 @@
 					String currentkey = (String) categoryKeys.get(i);
 					ArrayList category = (ArrayList) categories.get(i);
 			    %>
-				<script>
-					jQuery(document).ready(function () {
-						jQuery('#tblDocs<%=i%>').DataTable({
-							"lengthMenu": [[15, 30, 90, -1], [15, 30, 90, "<bean:message key="oscarEncounter.LeftNavBar.AllLabs"/>"]],
-							"order": [],
-							"language": {
-								"url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
-							}
-						});
-					});
-				</script>
 				<div class="doclist panel panel-default">
 					<div class="headerline panel-heading">
 						<div class="container">
@@ -429,7 +450,7 @@
 						</div>
 					</div>
 
-					<div id="documentsInnerDiv<%=i%>" class="panel-body table-responsive ">
+					<div id="documentsInnerDiv<%=i%>" class="panel-body">
 						<table id="tblDocs<%=i%>" class="table table-condensed table-striped">
 							<thead>
 							<tr>
@@ -438,14 +459,14 @@
 									       onclick="selectAll('pdfCheck<%=i%>','privateDocsDiv', 'tightCheckbox<%=i%>');"/>
 								</th>
 								<th>
+									<bean:message key="dms.documentReport.msgContent"/>
+								</th>
+								<th>
                                     <bean:message key="dms.documentReport.msgDocDesc"/>
                                 </th>
 								<th>
-									<bean:message key="dms.documentReport.msgContent"/>
-                                </th>
-								<th>
 									<bean:message key="dms.documentReport.msgType"/>
-                                </th>
+								</th>
 								<th>
                                     <bean:message key="dms.documentReport.msgCreator"/>
                                 </th>
@@ -453,37 +474,47 @@
 									<bean:message key="dms.documentReport.msgResponsible"/>
                                 </th>
 								<th>
+									<bean:message key="dms.documentReport.observationDate"/>
+								</th>
+								<th>
 									<bean:message key="dms.documentReport.msgDate"/>
                                 </th>
-								<th>
-									<bean:message key="dms.documentReport.msgReviewer"/>
-                                </th>
-								<th></th>
+
+								<th>&nbsp;</th>
 							</tr>
 							</thead>
+							<tbody>
 							<%
 								for (int i2 = 0; i2 < category.size(); i2++) {
 									EDoc curdoc = (EDoc) category.get(i2);
 									//content type (take everything following '/')
 									int slash = 0;
 									String contentType = "";
-									if (curdoc.getContentType() == null) {
-										contentType = "N/A";
+									if (curdoc.getContentType() == null || curdoc.getContentType().isEmpty()) {
+										contentType = "ukn";
 									} else if ((slash = curdoc.getContentType().indexOf('/')) != -1) {
 										contentType = curdoc.getContentType().substring(slash + 1);
 									} else {
 										contentType = curdoc.getContentType();
 									}
+									// remove punctuation
+									contentType = contentType.replaceAll("\\p{Punct}", "");
+
+									// truncate to save space
+									if(contentType.length() > 3) {
+										contentType = contentType.substring(0, 3);
+									}
+
 									String dStatus = "";
 									if ((curdoc.getStatus() + "").compareTo("H") == 0) {
                                         dStatus = "html";
                                     }else {
                                         dStatus = "active";
                                     }
-									String reviewerName = curdoc.getReviewerName();
-									if (reviewerName.equals("")) {
-                                        reviewerName = "- - -";
-                                    }
+//									String reviewerName = curdoc.getReviewerName();
+//									if (reviewerName.equals("")) {
+//                                        reviewerName = "- - -";
+//                                    }
 							%>
 							    <tr>
 								<td>
@@ -492,41 +523,44 @@
                                            id="docNo<%=curdoc.getDocId()%>" value="<%=curdoc.getDocId()%>" style="margin: 0; padding: 0;"/>
 									<%}%>
 								</td>
+								    <td><%=curdoc.getType() == null ? "N/A" : Encode.forHtmlContent(curdoc.getType())%>
+								    </td>
+
 								<td>
 									<%
 										String url = "ManageDocument.do?method=display&doc_no=" + curdoc.getDocId() + "&providerNo=" + user_no + (curdoc.getRemoteFacilityId() != null ? "&remoteFacilityId=" + curdoc.getRemoteFacilityId() : "");
 									%>
                                     <a <%=curdoc.getStatus() == 'D' ? "style='text-decoration:line-through'" : ""%>
 										href="javascript:void(0);" title="<%=Encode.forHtmlAttribute(curdoc.getDescription())%>"
-										style="display: block;width: 150px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"
+										style="word-break: break-word;overflow-wrap: anywhere;overflow: hidden;text-overflow: ellipsis;text-decoration: none;"
 										onclick="popupFocusPage(500,700,'<%=url%>','demographic_document');">
                                         <%=Encode.forHtml(curdoc.getDescription())%>
 								    </a>
                                 </td>
-								<td>
-									<div style="overflow:hidden; text-overflow: ellipsis;"
-									     title="<%=contentType%>" >
-                                        <%=Encode.forHtmlContent(contentType)%>
-									</div>
-								</td>
-								<td><%=curdoc.getType() == null ? "N/A" : Encode.forHtmlContent(curdoc.getType())%>
-								</td>
+								    <td>
+									    <div style="overflow:hidden; text-overflow: ellipsis;"
+									         title="<%=Encode.forHtmlAttribute(contentType)%>" >
+										    <%=Encode.forHtmlContent(contentType)%>
+									    </div>
+								    </td>
+
 								<td><%=Encode.forHtml(curdoc.getCreatorName())%>
 								</td>
 								<td><%=Encode.forHtml(curdoc.getResponsibleName())%>
 								</td>
-								<td><%=Encode.forHtml(curdoc.getObservationDate())%>
+								    <td><%=Encode.forHtml(curdoc.getObservationDate())%>
+								    </td>
+								<td><%=curdoc.getContentDateTime()%>
 								</td>
-								<td><%=Encode.forHtml(reviewerName)%>
-								</td>
-								<td>
-									<div class="btn-group" role="group">
+
+								<td style="text-align: right;">
+									<div style="white-space: nowrap;">
 										<%
 											if (curdoc.getRemoteFacilityId() == null) {
 												if (curdoc.getCreatorId().equalsIgnoreCase(user_no)) {
 													if (curdoc.getStatus() == 'D') { %>
                                                         <a href="documentReport.jsp?undelDocumentNo=<%=curdoc.getDocId()%>&function=<%=module%>&functionid=<%=moduleid%>&viewstatus=<%=viewstatus%>"
-                                                           class="btn btn-link" style="padding: 3px 6px;"
+                                                           class="btn btn-link" style="padding:0;"
                                                            title="<bean:message key="dms.documentReport.btnUnDelete"/>">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                                  fill="currentColor" class="bi bi-arrow-counterclockwise"
@@ -538,7 +572,7 @@
                                                         <%
                                                         } else { // curdoc get status
                                                         %>
-                                                        <a style="color:red;padding: 3px 6px;"
+                                                        <a style="color:red; padding:0;"
                                                            href="javascript: checkDelete('documentReport.jsp?delDocumentNo=<%=curdoc.getDocId()%>&function=<%=module%>&functionid=<%=moduleid%>&viewstatus=<%=viewstatus%>','<%=StringEscapeUtils.escapeJavaScript(curdoc.getDescription())%>')"
                                                            class="btn btn-link" title="Delete">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -554,7 +588,7 @@
                                                         <% if (curdoc.getStatus() == 'D') {%>
                                                                 <a href="documentReport.jsp?undelDocumentNo=<%=curdoc.getDocId()%>&function=<%=module%>&functionid=<%=moduleid%>&viewstatus=<%=viewstatus%>"
                                                                    title="<bean:message key="dms.documentReport.btnUnDelete"/>"
-                                                                   class="btn btn-link" style="padding: 3px 6px;">
+                                                                   class="btn btn-link" style="padding:0;" >
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                                          fill="currentColor" class="bi bi-arrow-counterclockwise"
                                                                          viewBox="0 0 16 16">
@@ -564,7 +598,7 @@
                                                                     </svg>
                                                                 </a>
                                                         <% } else { // curdoc get status %>
-                                                                <a style="color:red;padding: 3px 6px;"
+                                                                <a style="color:red;padding:0;"
                                                                    href="javascript: checkDelete('documentReport.jsp?delDocumentNo=<%=curdoc.getDocId()%>&function=<%=module%>&functionid=<%=moduleid%>&viewstatus=<%=viewstatus%>','<%=StringEscapeUtils.escapeJavaScript(curdoc.getDescription())%>')"
                                                                    class="btn btn-link" title="Delete">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -583,7 +617,7 @@
                                                             <a href="javascript:void(0)"
                                                                onclick="popup1(450, 600, 'addedithtmldocument.jsp?editDocumentNo=<%=curdoc.getDocId()%>&function=<%=module%>&functionid=<%=moduleid%>', 'EditDoc')"
                                                                title="<bean:message key="dms.documentReport.btnEdit"/>"
-                                                               class="btn btn-link" style="padding: 3px 6px;">
+                                                               class="btn btn-link" style="padding:0;">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                                      fill="currentColor" class="bi bi-pencil-square"
                                                                      viewBox="0 0 16 16">
@@ -596,7 +630,7 @@
                                                             <a href="javascript:void(0)"
                                                                onclick="popup1(350, 500, 'editDocument.jsp?editDocumentNo=<%=curdoc.getDocId()%>&function=<%=module%>&functionid=<%=moduleid%>', 'EditDoc')"
                                                                title="<bean:message key="dms.documentReport.btnEdit"/>"
-                                                               class="btn btn-link" style="padding: 3px 6px;">
+                                                               class="btn btn-link" style="padding:0;">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                                          fill="currentColor" class="bi bi-pencil-square"
                                                                          viewBox="0 0 16 16">
@@ -612,7 +646,7 @@
                                                 <% if(module.equals("demographic")){%>
                                                     <a href="javascript:void(0)" title="Annotation"
                                                        onclick="window.open('${ pageContext.request.contextPath }/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=curdoc.getDocId()%>&demo=<%=moduleid%>','anwin','width=400,height=500');"
-                                                       class="btn btn-link" style="padding: 3px 6px;">
+                                                       class="btn btn-link" style="padding:0">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                              fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
                                                             <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"></path>
@@ -624,7 +658,7 @@
 
                                                     String tickler_url = request.getContextPath()+"/tickler/ForwardDemographicTickler.do?docType=DOC&docId="+curdoc.getDocId()+"&demographic_no="+moduleid;
                                                     %>
-                                                        <a href="javascript:void(0);" title="Tickler" class="btn btn-link" style="padding: 3px 6px;"
+                                                        <a href="javascript:void(0);" title="Tickler" class="btn btn-link" style="padding: 0;"
                                                                      onclick="popup1(450,600,'<%=tickler_url%>','tickler')">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                                  fill="currentColor" class="bi bi-feather" viewBox="0 0 16 16">
@@ -641,6 +675,7 @@
 
 							</tr>
                             <%}%>
+							</tbody>
 						</table>
 					</div>
 				</div>

@@ -45,7 +45,7 @@ String nowDate = String.valueOf(curYear)+"/"+String.valueOf(curMonth) + "/" + St
 
 int Count = 0;
 
-ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 Provider creator = providerDao.getProvider(request.getParameter("creator"));
 
 %>

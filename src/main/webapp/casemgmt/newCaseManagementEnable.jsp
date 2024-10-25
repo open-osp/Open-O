@@ -55,7 +55,7 @@
 	String userNo = (String) session.getAttribute("user");
     ArrayList<String> newDocArr = (ArrayList<String>)request.getSession().getServletContext().getAttribute("CaseMgmtUsers");    
     
-    ProviderPreferenceDao providerPreferenceDao=(ProviderPreferenceDao)SpringUtils.getBean("providerPreferenceDao");
+    ProviderPreferenceDao providerPreferenceDao=(ProviderPreferenceDao)SpringUtils.getBean(ProviderPreferenceDao.class);
     ProviderPreference providerPreference=providerPreferenceDao.find(userNo);
     
 	

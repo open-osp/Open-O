@@ -48,7 +48,7 @@ public class PrintDemoAddressLabelAction extends OscarAction {
         System.setProperty("jasper.reports.compile.class.path", classpath);
         LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
         String curUser_no = loggedInInfo.getLoggedInProviderNo();
-        UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         UserProperty prop;
         String defaultPrinterName = "";
         Boolean silentPrint = false;

@@ -43,7 +43,7 @@ import org.oscarehr.util.SpringUtils;
 public class GroupPreferenceAction extends DispatchAction {
     public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         
-        MyGroupDao myGroupDao = (MyGroupDao) SpringUtils.getBean("myGroupDao");
+        MyGroupDao myGroupDao = (MyGroupDao) SpringUtils.getBean(MyGroupDao.class);
         
         String billingForm = request.getParameter("chosenForm");
         

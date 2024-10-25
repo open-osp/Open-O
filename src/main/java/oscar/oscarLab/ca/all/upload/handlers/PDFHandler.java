@@ -89,17 +89,17 @@ public class PDFHandler  implements MessageHandler{
             String batchPDFProviderNo = OscarProperties.getInstance().getProperty("batch_pdf_provider_no");            
             if ((batchPDFProviderNo != null) && !batchPDFProviderNo.isEmpty()) {
                 
-                ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) SpringUtils.getBean("providerInboxRoutingDAO");
+                ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) SpringUtils.getBean(ProviderInboxRoutingDao.class);
                 providerInboxRoutingDao.addToProviderInbox(batchPDFProviderNo, Integer.parseInt(doc_no), "DOC");
                 
                 //Add to default queue for now, not sure how or if any other queues can be used anyway (MAB)                 
-                QueueDocumentLinkDao queueDocumentLinkDAO = (QueueDocumentLinkDao) SpringUtils.getBean("queueDocumentLinkDAO");          
+                QueueDocumentLinkDao queueDocumentLinkDAO = (QueueDocumentLinkDao) SpringUtils.getBean(QueueDocumentLinkDao.class);          
                 Integer did=Integer.parseInt(doc_no.trim());
                 queueDocumentLinkDAO.addToQueueDocumentLink(1,did);  
             }else if(serviceName != null && serviceName.startsWith("providerNo")) {
             		String providerStr = serviceName.substring("providerNo".length());
             		String[] providers = providerStr.trim().split(" ");
-            		ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) SpringUtils.getBean("providerInboxRoutingDAO");
+            		ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) SpringUtils.getBean(ProviderInboxRoutingDao.class);
             		for(String provider: providers) {
                      providerInboxRoutingDao.addToProviderInbox(provider, Integer.parseInt(doc_no), "DOC");   
             		}

@@ -73,22 +73,22 @@
 <%!
 	java.util.Properties oscarVariables = oscar.OscarProperties.getInstance();
 
-//	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean("admissionDao");
+//	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean(AdmissionDao.class);
 	ProgramManager pm = SpringUtils.getBean(ProgramManager.class);
 	AdmissionManager am = SpringUtils.getBean(AdmissionManager.class);
-	WaitingListDao waitingListDao = (WaitingListDao)SpringUtils.getBean("waitingListDao");
+	WaitingListDao waitingListDao = (WaitingListDao)SpringUtils.getBean(WaitingListDao.class);
 	DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
-	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
-	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean("demographicCustDao");
+	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
+	DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean(DemographicCustDao.class);
 
-//	ProgramDao programDao = (ProgramDao)SpringUtils.getBean("programDao");
+//	ProgramDao programDao = (ProgramDao)SpringUtils.getBean(ProgramDao.class);
 	
 	DemographicExtArchiveDao demographicExtArchiveDao = SpringUtils.getBean(DemographicExtArchiveDao.class);
-	DemographicArchiveDao demographicArchiveDao = (DemographicArchiveDao)SpringUtils.getBean("demographicArchiveDao");
+	DemographicArchiveDao demographicArchiveDao = (DemographicArchiveDao)SpringUtils.getBean(DemographicArchiveDao.class);
 		
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 	<script src="${pageContext.request.contextPath}/csrfguard"></script>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -140,6 +140,7 @@
 	demographic.setFirstName(request.getParameter("first_name").trim());
 	demographic.setMiddleNames(request.getParameter("middleNames").trim());
 	demographic.setAlias(request.getParameter("nameUsed"));
+	demographic.setPrefName(request.getParameter("nameUsed"));
 	demographic.setAddress(request.getParameter("address"));
 	demographic.setCity(request.getParameter("city"));
 	if(request.getParameter("province") != null) {

@@ -52,7 +52,7 @@ String demographicName = demographicData.getDemographicFirstLastName(LoggedInInf
 String documentName = "";
 
 if(request.getParameter("labId") != null){
-	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean("hl7TextInfoDao");
+	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);
 	int lab_no = Integer.parseInt(request.getParameter("labId"));
 	Hl7TextInfo hl7Lab = hl7TextInfoDao.findLabId(lab_no);
 	documentName = hl7Lab.getLabelOrDiscipline();

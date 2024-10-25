@@ -87,7 +87,7 @@ public class EctDisplayBillingAction extends EctDisplayAction {
                 Dao.setRightHeadingID(cmd);  //no menu so set div id to unique id for this action
 
                 if(appointmentNo != null && appointmentNo.length()>0) {
-                	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+                	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
                 	Demographic d = demographicManager.getDemographic(loggedInInfo, Integer.parseInt(bean.demographicNo));
                     Appointment appt = appointmentDao.find(Integer.parseInt(appointmentNo));
                     String billform = OscarProperties.getInstance().getProperty("default_view");

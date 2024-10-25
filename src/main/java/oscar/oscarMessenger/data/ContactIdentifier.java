@@ -31,12 +31,14 @@ public class ContactIdentifier implements Serializable {
 	private int facilityId;
 	private int clinicLocationNo;
 	private String contactUniqueId;
-	private String compositeId; 
+	private String compositeId;
+	private int groupId;
 	
 	public ContactIdentifier() {
 		this.contactId = "0";
 		this.facilityId = 0;
 		this.clinicLocationNo = 0;
+		this.groupId = 0;
 	}
 	
 	public ContactIdentifier(String compositeId) {
@@ -91,7 +93,7 @@ public class ContactIdentifier implements Serializable {
 	/**
 	 * A composite id is the ids in this id object separated by a dash 
 	 * in the form of a string 
-	 * contactId - facilityId - clinicLocationNo
+	 * contactId - facilityId - clinicLocationNo - messenger group identifier (groupId)
 	 * Defaults for each Id is 0
 	 * @param compositeId
 	 */
@@ -106,6 +108,9 @@ public class ContactIdentifier implements Serializable {
 	        {
 	        	this.clinicLocationNo = Integer.parseInt(theSplit[2].trim());
 	        }
+			if(theSplit.length == 4) {
+				this.groupId = Integer.parseInt(theSplit[3].trim());
+			}
 		}
 		else
 		{
@@ -113,6 +118,13 @@ public class ContactIdentifier implements Serializable {
 		}
 		
 		this.compositeId = compositeId;
-	}	
+	}
 
+	public int getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
 }

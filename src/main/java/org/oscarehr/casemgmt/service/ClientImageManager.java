@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,36 +20,18 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.casemgmt.service;
 
 import org.oscarehr.casemgmt.dao.ClientImageDAO;
 import org.oscarehr.casemgmt.model.ClientImage;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-public class ClientImageManager {
-    protected ClientImageDAO clientImageDAO;
-
-    public void setClientImageDAO(ClientImageDAO dao) {
-        this.clientImageDAO = dao;
-    }
-
-    public void saveClientImage(String id, byte[] image_data, String image_type) {
-        ClientImage clientImage = new ClientImage();
-        clientImage.setDemographic_no(Integer.parseInt(id));
-        clientImage.setImage_data(image_data);
-        clientImage.setImage_type(image_type);
-        clientImageDAO.saveClientImage(clientImage);
-    }
-
-    public ClientImage getClientImage(Integer clientId) {
-        return clientImageDAO.getClientImage(clientId);
-    }
-
-    public void saveClientImage(ClientImage img) {
-        clientImageDAO.saveClientImage(img);
-    }
-
+public interface ClientImageManager {
+    void setClientImageDAO(ClientImageDAO dao);
+    void saveClientImage(String id, byte[] image_data, String image_type);
+    ClientImage getClientImage(Integer clientId);
+    void saveClientImage(ClientImage img);
 }

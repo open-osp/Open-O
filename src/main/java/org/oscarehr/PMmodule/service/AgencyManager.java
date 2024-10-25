@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,29 +20,14 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.PMmodule.service;
 
-import org.oscarehr.PMmodule.dao.AgencyDao;
 import org.oscarehr.PMmodule.model.Agency;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-public class AgencyManager {
-	
-	private AgencyDao dao;
-
-	public void setAgencyDao(AgencyDao dao) {
-		this.dao = dao;
-	}
-
-	public Agency getLocalAgency() {
-		Agency agency = dao.getLocalAgency();
-		return agency;
-	}
-
-	public void saveAgency(Agency agency) {
-		dao.saveAgency(agency);
-	}
+public interface AgencyManager {
+    Agency getLocalAgency();
+    void saveAgency(Agency agency);
 }

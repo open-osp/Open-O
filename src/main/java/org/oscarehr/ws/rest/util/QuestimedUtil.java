@@ -37,7 +37,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.logging.log4j.Logger;
-import org.apache.ws.security.util.Base64;
+
+import java.util.Base64;
+
 import org.oscarehr.common.dao.DemographicDao;
 import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.Demographic;
@@ -235,7 +237,7 @@ public class QuestimedUtil {
             }
             byte[] encryptedData = encryptDecrypt("AES", Cipher.ENCRYPT_MODE, secretKey, b);
 
-            return Base64.encode(encryptedData);
+            return Base64.getEncoder().encodeToString(encryptedData);
         } catch (Exception e) {
             logger.error("Cannot encrypt", e);
         }
@@ -244,7 +246,7 @@ public class QuestimedUtil {
 
     private static String decryptAes(SecretKey secretKey, String encryptedDataStr) {
         try {
-            byte[] encryptedData = Base64.decode(encryptedDataStr);
+            byte[] encryptedData = Base64.getDecoder().decode(encryptedDataStr);
 
             byte[] b = encryptDecrypt("AES", Cipher.DECRYPT_MODE, secretKey, encryptedData);
             return (new String(b, MiscUtils.DEFAULT_UTF8_ENCODING));

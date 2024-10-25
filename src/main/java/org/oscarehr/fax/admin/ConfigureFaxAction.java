@@ -24,13 +24,15 @@
 package org.oscarehr.fax.admin;
 
 import net.sf.json.JSONObject;
+import oscar.form.JSONAction;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.common.dao.FaxConfigDao;
 import org.oscarehr.common.model.FaxConfig;
+import org.oscarehr.managers.FaxManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -42,9 +44,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigureFaxAction extends DispatchAction {
+public class ConfigureFaxAction extends JSONAction {
 
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+	private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
 	private static final String PASSWORD_BLANKET = "**********";
 	
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
@@ -103,14 +106,14 @@ public class ConfigureFaxAction extends DispatchAction {
 						savedFaxConfig.setUrl(faxUrl);
 						savedFaxConfig.setSiteUser(siteUser);
 						
-						if( ! PASSWORD_BLANKET.equals(sitePasswd) ) {
-							savedFaxConfig.setPasswd(sitePasswd);
+						if(sitePasswd != null && ! PASSWORD_BLANKET.equals(sitePasswd) ) {
+							savedFaxConfig.setPasswd(sitePasswd.trim());
 						}
 						
 						savedFaxConfig.setFaxUser(faxUsers[idx]);
 						
-						if( ! PASSWORD_BLANKET.equals(faxPasswds[idx]) ) {
-							savedFaxConfig.setFaxPasswd(faxPasswds[idx]);
+						if(faxPasswds[idx] != null && ! PASSWORD_BLANKET.equals(faxPasswds[idx])) {
+							savedFaxConfig.setFaxPasswd(faxPasswds[idx].trim());
 						}
 						
 						String faxNumber = faxNumbers[idx];
@@ -131,8 +134,8 @@ public class ConfigureFaxAction extends DispatchAction {
 						faxConfig.setId(null);
 						faxConfig.setSiteUser(siteUser);
 
-						if( ! PASSWORD_BLANKET.equals(sitePasswd) ) {
-							faxConfig.setPasswd(sitePasswd);
+						if(sitePasswd != null && ! PASSWORD_BLANKET.equals(sitePasswd) ) {
+							faxConfig.setPasswd(sitePasswd.trim());
 						}
 						// the password carries over from the last configuration. Usually the first entry
 						else if((masterFaxConfig = savedFaxConfigList.get(0)) != null) {
@@ -142,8 +145,8 @@ public class ConfigureFaxAction extends DispatchAction {
 						faxConfig.setUrl(faxUrl);
 						faxConfig.setFaxUser(faxUsers[idx]);
 						
-						if( ! PASSWORD_BLANKET.equals(faxPasswds[idx]) ) {
-							faxConfig.setFaxPasswd(faxPasswds[idx]);
+						if(faxPasswds[idx] != null && ! PASSWORD_BLANKET.equals(faxPasswds[idx]) ) {
+							faxConfig.setFaxPasswd(faxPasswds[idx].trim());
 						}
 						
 						faxConfig.setFaxNumber(faxNumbers[idx]);
@@ -179,8 +182,8 @@ public class ConfigureFaxAction extends DispatchAction {
 				faxConfig.setUrl(faxUrl);
 				faxConfig.setSiteUser(siteUser);
 
-				if( ! PASSWORD_BLANKET.equals(sitePasswd) ) {
-					faxConfig.setPasswd(sitePasswd);
+				if(sitePasswd != null && ! PASSWORD_BLANKET.equals(sitePasswd) ) {
+					faxConfig.setPasswd(sitePasswd.trim());
 				}
 				// the password carries over from the last configuration. Usually the first entry
 				else if((masterFaxConfig = savedFaxConfigList.get(0)) != null) {
@@ -206,5 +209,20 @@ public class ConfigureFaxAction extends DispatchAction {
 		return null;
 		
 	}
+
+	public void restartFaxScheduler(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin.fax.restart", "w", null)) {
+        	throw new SecurityException("missing required security object (_admin.fax.restart)");
+        }
+		faxManager.restartFaxScheduler(LoggedInInfo.getLoggedInInfoFromSession(request));
+	}
+
+	public void getFaxSchedularStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		if(!securityInfoManager.hasPrivilege(loggedInInfo, "_admin.fax.restart", "r", null)) {
+        	throw new SecurityException("missing required security object (_admin.fax.restart)");
+        }
+		jsonResponse(response, faxManager.getFaxSchedularStatus(loggedInInfo));
+	} 
 
 }

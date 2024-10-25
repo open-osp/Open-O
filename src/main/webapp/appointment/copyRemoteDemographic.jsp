@@ -61,7 +61,7 @@
 <%@page import="org.oscarehr.caisi_integrator.ws.GetConsentTransfer"%>
 <%@page import="org.oscarehr.common.model.UserProperty"%>
 <%
-	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean("admissionDao");
+	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean(AdmissionDao.class);
 	ProgramDao programDao = SpringUtils.getBean(ProgramDao.class);
 
    	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -71,7 +71,7 @@
 
 	//--- make new local demographic record ---
 	Demographic demographic=CaisiIntegratorManager.makeUnpersistedDemographicObjectFromRemoteEntry(loggedInInfo, loggedInInfo.getCurrentFacility(), remoteFacilityId, remoteDemographicId);
-	DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean("demographicDao");
+	DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean(DemographicDao.class);
 	demographicDao.saveClient(demographic);
 	Integer demoNoRightNow = demographic.getDemographicNo(); // temp use for debugging
 	

@@ -139,7 +139,7 @@ public class ReportReassignAction extends Action {
         	}
 
             //update favorites
-            ProviderLabRoutingFavoritesDao favDao = (ProviderLabRoutingFavoritesDao) SpringUtils.getBean("ProviderLabRoutingFavoritesDao");
+            ProviderLabRoutingFavoritesDao favDao = (ProviderLabRoutingFavoritesDao) SpringUtils.getBean(ProviderLabRoutingFavoritesDao.class);
             List<ProviderLabRoutingFavorite> currentFavorites = favDao.findFavorites(providerNo);
 
             if (arrNewFavs.length == 0) {

@@ -39,7 +39,7 @@
     String curProvider_no = (String) session.getAttribute("user");
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     ArrayList docTypes = EDocUtil.getDoctypes("demographic");
-    UserPropertyDAO userPropertyDAO = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
+    UserPropertyDAO userPropertyDAO = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
     UserProperty uProp = userPropertyDAO.getProp(curProvider_no, UserProperty.DOCUMENT_DESCRIPTION_TEMPLATE);
     Boolean clinicDefault = true;
         

@@ -67,15 +67,17 @@ if(!authed) {
 
 
 
-<%@page import="org.oscarehr.util.MiscUtils"%><html>
+<%@page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="org.owasp.encoder.Encode" %>
+<html>
 <head>
 
 <html:base/>
 <link rel="stylesheet" href="../../../billing/billing.css" >
 <title>Billing Reconcilliation</title>
+<script src="<%=request.getContextPath()%>/csrfguard" type="text/javascript"></script>
 
 <script language="JavaScript">
-<!--
     var remote=null;
     function refresh() {
         history.go(0);
@@ -103,7 +105,7 @@ if(!authed) {
             alert("You have cancel the action!");
         }
     }
-//-->
+
 </SCRIPT>
 </head>
 
@@ -154,7 +156,7 @@ if(!authed) {
 
      <tr>
         <td ><%=paymentdate%>  </td>
-        <td align="right"><%=payable%> </td>
+        <td align="right"><%=Encode.forHtmlContent(payable)%> </td>
         <td align="right"><%=moneyFormat(amtbilled)%></td>
         <td align="right"><%=moneyFormat(amtpaid)%></td>
         <td align="right"><%=moneyFormat(balancefwd)%></td>
@@ -186,6 +188,6 @@ if(!authed) {
         	MiscUtils.getLogger().error("Error", moneyException);
             moneyStr = str;
         }
-    return moneyStr;
+        return moneyStr;
     }
 %>

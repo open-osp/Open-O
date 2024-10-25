@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,82 +20,17 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.OcanConnexOption;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class OcanConnexOptionDao extends AbstractDao<OcanConnexOption> {
-
-	public OcanConnexOptionDao() {
-		super(OcanConnexOption.class);
-	}
-	
-	public List<OcanConnexOption> findByLHINCode(String LHIN_code) {
-		// build sql string
-		String sqlCommand = "select x from OcanConnexOption x where x.LHINCode=?1 order by x.orgName";
-
-		// set parameters
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, LHIN_code);		
-
-		// run query
-		@SuppressWarnings("unchecked")
-		List<OcanConnexOption> results = query.getResultList();
-
-		return (results);
-	}
-
-	public List<OcanConnexOption> findByLHINCodeOrgName(String LHIN_code, String orgName) {
-		// build sql string
-		String sqlCommand = "select x from OcanConnexOption x where x.LHINCode=?1 and x.orgName=?2 order by x.programName";
-
-		// set parameters
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, LHIN_code);
-		query.setParameter(2, orgName);
-		
-		// run query
-		@SuppressWarnings("unchecked")
-		List<OcanConnexOption> results = query.getResultList();
-
-		return (results);
-	}
-	
-	public List<OcanConnexOption> findByLHINCodeOrgNameProgramName(String LHIN_code, String orgName, String programName) {
-		// build sql string
-		String sqlCommand = "select x from OcanConnexOption x where x.LHINCode=?1 and x.orgName=?2 and x.programName=?3 order by x.programName";
-
-		// set parameters
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, LHIN_code);
-		query.setParameter(2, orgName);
-		query.setParameter(3, programName);
-		
-		// run query
-		@SuppressWarnings("unchecked")
-		List<OcanConnexOption> results = query.getResultList();
-
-		return (results);
-	}
-	
-	public OcanConnexOption findByID(Integer connexOptionId) {
-		// build sql string
-		String sqlCommand = "select x from OcanConnexOption x where x.id=?1";
-
-		// set parameters
-		Query query = entityManager.createQuery(sqlCommand);
-		query.setParameter(1, connexOptionId);
-				
-		
-		return this.getSingleResultOrNull(query);
-	}
-	
-	
+public interface OcanConnexOptionDao extends AbstractDao<OcanConnexOption> {
+    List<OcanConnexOption> findByLHINCode(String LHIN_code);
+    List<OcanConnexOption> findByLHINCodeOrgName(String LHIN_code, String orgName);
+    List<OcanConnexOption> findByLHINCodeOrgNameProgramName(String LHIN_code, String orgName, String programName);
+    OcanConnexOption findByID(Integer connexOptionId);
 }

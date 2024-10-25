@@ -29,6 +29,7 @@
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@page import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.data.*,oscar.oscarPrevention.pageUtil.*,java.net.*,oscar.eform.*"%>
 <%@page import="oscar.OscarProperties, org.oscarehr.util.SpringUtils, org.oscarehr.common.dao.BillingONCHeader1Dao" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
@@ -61,10 +62,10 @@ if(!authed) {
 
   String eformSearch = (String) request.getAttribute("eformSearch");
   //EfmData efData = new EfmData();
-  BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao)SpringUtils.getBean("billingONCHeader1Dao");
+  BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao)SpringUtils.getBean(BillingONCHeader1Dao.class);
 %>
 
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <html:base/>
@@ -560,13 +561,13 @@ table.ele thead {
 
                           <%if (type == null ){ %>
                           <td><%=demo.getAgeAsOf(asDate)%></td>
-                          <td><%=h.get("sex")%></td>
-                          <td><%=h.get("lastName")%></td>
-                          <td><%=h.get("firstName")%></td>
-                          <td><%=demo.getHin()+demo.getVer()%></td>
-                          <td><%=demo.getPhone()%> </td>
-                          <td><%=demo.getEmail() %></td>
-                          <td><%=demo.getAddress()+" "+demo.getCity()+" "+demo.getProvince()+" "+demo.getPostal()%> </td>
+                          <td><%=Encode.forHtml(h.get("sex"))%></td>
+                          <td><%=Encode.forHtml(h.get("lastName"))%></td>
+                          <td><%=Encode.forHtml(h.get("firstName"))%></td>
+                          <td><%=Encode.forHtml(demo.getHin())+Encode.forHtml(demo.getVer())%></td>
+                          <td><%=Encode.forHtml(demo.getPhone())%> </td>
+                          <td><%=Encode.forHtml(demo.getEmail()) %></td>
+                          <td><%=Encode.forHtml(demo.getAddress())+" "+Encode.forHtml(demo.getCity())+" "+Encode.forHtml(demo.getProvince())+" "+Encode.forHtml(demo.getPostal())%> </td>
                           <td><oscar:nextAppt demographicNo="<%=demo.getDemographicNo().toString()%>"/></td>
                           <td bgcolor="<%=dis.color%>"><%=dis.state%></td>                          
                           <td bgcolor="<%=dis.color%>"><%=dis.bonusStatus%></td>
@@ -577,14 +578,14 @@ table.ele thead {
                           <% }else {
                               org.oscarehr.common.model.Demographic demoSDM = demoData.getSubstituteDecisionMaker(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());%>
                           <td><%=demo.getAgeAsOf(asDate)%></td>
-                          <td><%=h.get("sex")%></td>
-                          <td><%=h.get("lastName")%></td>
-                          <td><%=h.get("firstName")%></td>
-                          <td><%=demo.getHin()+demo.getVer()%></td>
-                          <td><%=demoSDM==null?"":demoSDM.getLastName()%><%=demoSDM==null?"":","%> <%= demoSDM==null?"":demoSDM.getFirstName() %>&nbsp;</td>
-                          <td><%=demoSDM==null?"":demoSDM.getPhone()%> &nbsp;</td>
-                          <td><%=demoSDM==null?"":demoSDM.getEmail()%> &nbsp;</td>
-                          <td><%=demoSDM==null?"":demoSDM.getAddress()+" "+demoSDM==null?"":demoSDM.getCity()+" "+demoSDM==null?"":demoSDM.getProvince()+" "+demoSDM==null?"":demoSDM.getPostal()%> &nbsp;</td>
+                          <td><%=Encode.forHtml(h.get("sex"))%></td>
+                          <td><%=Encode.forHtml(h.get("lastName"))%></td>
+                          <td><%=Encode.forHtml(h.get("firstName"))%></td>
+                          <td><%=Encode.forHtml(demo.getHin())+Encode.forHtml(demo.getVer())%></td>
+                          <td><%=demoSDM==null?"":Encode.forHtml(demoSDM.getLastName())%><%=demoSDM==null?"":","%> <%= demoSDM==null?"":Encode.forHtml(demoSDM.getFirstName()) %>&nbsp;</td>
+                          <td><%=demoSDM==null?"":Encode.forHtml(demoSDM.getPhone())%> &nbsp;</td>
+                          <td><%=demoSDM==null?"":Encode.forHtml(demoSDM.getEmail())%> &nbsp;</td>
+                          <td><%=demoSDM==null?"":Encode.forHtml(demoSDM.getAddress())%> <%=demoSDM==null?"":Encode.forHtml(demoSDM.getCity())%> <%=demoSDM==null?"":Encode.forHtml(demoSDM.getProvince())%> <%=demoSDM==null?"":Encode.forHtml(demoSDM.getPostal())%> &nbsp;</td>
                           <td><oscar:nextAppt demographicNo="<%=demo.getDemographicNo().toString()%>"/></td>
                           <td bgcolor="<%=dis.color%>"><%=dis.state%></td>
                           <td bgcolor="<%=dis.color%>"><%=dis.numShots%></td>                          

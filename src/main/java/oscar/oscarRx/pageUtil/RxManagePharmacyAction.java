@@ -53,6 +53,7 @@ import org.oscarehr.util.MiscUtils;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 import oscar.oscarRx.data.RxPharmacyData;
+import oscar.util.StringUtils;
 
 /**
  *
@@ -297,6 +298,17 @@ public final class RxManagePharmacyAction extends DispatchAction {
        }
         return null;
     }
+
+	public ActionForward getTotalDemographicsPreferedToPharmacy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String pharmacyId = StringUtils.isNullOrEmpty(request.getParameter("pharmacyId")) ? "0" : request.getParameter("pharmacyId");
+		RxPharmacyData pharmacyData = new RxPharmacyData();
+		Long totalDemographics = pharmacyData.getTotalDemographicsPreferedToPharmacyByPharmacyId(pharmacyId);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("totalDemographics", totalDemographics);
+		response.getOutputStream().write(jsonObject.toString().getBytes());
+		return null;
+	}
+
    /** Creates a new instance of RxManagePharmacyAction */
    public RxManagePharmacyAction() {
    }

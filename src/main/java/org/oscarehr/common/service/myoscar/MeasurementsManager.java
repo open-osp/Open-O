@@ -61,9 +61,9 @@ public final class MeasurementsManager {
 	
 	private static final Logger logger = MiscUtils.getLogger();
 	private static final String OSCAR_MEASUREMENTS_DATA_TYPE = "MEASUREMENT";
-	private static final SentToPHRTrackingDao sentToPHRTrackingDao = (SentToPHRTrackingDao) SpringUtils.getBean("sentToPHRTrackingDao");
-	private static MeasurementDao measurementDao = (MeasurementDao) SpringUtils.getBean("measurementDao");
-	private static MeasurementTypeDao measurementTypeDao = (MeasurementTypeDao) SpringUtils.getBean("measurementTypeDao");
+	private static final SentToPHRTrackingDao sentToPHRTrackingDao = (SentToPHRTrackingDao) SpringUtils.getBean(SentToPHRTrackingDao.class);
+	private static MeasurementDao measurementDao = (MeasurementDao) SpringUtils.getBean(MeasurementDao.class);
+	private static MeasurementTypeDao measurementTypeDao = (MeasurementTypeDao) SpringUtils.getBean(MeasurementTypeDao.class);
 
 	static class HeightWeight {
 		public Measurement height;

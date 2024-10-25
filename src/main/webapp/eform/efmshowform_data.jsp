@@ -25,15 +25,15 @@
 --%>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 
-<%@ page import="java.sql.*, oscar.eform.data.*"%>
+<%@ page import="oscar.eform.data.*"%>
 <%@ page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ page import="oscar.oscarEncounter.data.EctFormData"%>
 <%@ page import="org.oscarehr.common.model.enumerator.DocumentType"%>
 <%@ page import="org.oscarehr.documentManager.DocumentAttachmentManager"%>
+<%@ page import="org.oscarehr.managers.EmailComposeManager"%>
 <%@ page import="org.oscarehr.util.SpringUtils"%>
 <%@ page import="oscar.util.StringUtils" %>
 <%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
 
 <%!
     public void addHiddenEFormAttachments(LoggedInInfo loggedInInfo, EForm eForm, String eFormId) {
@@ -48,6 +48,16 @@
         List<String> attachedLabIds = documentAttachmentManager.getEFormAttachments(loggedInInfo, fdid, DocumentType.LAB, demographicNo);
         List<EctFormData.PatientForm> attachedForms = documentAttachmentManager.getFormsAttachedToEForms(loggedInInfo, fdid, DocumentType.FORM, demographicNo);
         eForm.addHiddenAttachments(attachedDocumentIds, attachedEFormIds, attachedHRMDocumentIds, attachedLabIds, attachedForms);
+    }
+
+    public void addHiddenEmailProperties(LoggedInInfo loggedInInfo, EForm eForm, String demographicNo) {
+        EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManager.class);
+        Boolean hasValidRecipient = emailComposeManager.hasValidRecipient(loggedInInfo, Integer.parseInt(demographicNo));
+        String[] emailConsent = emailComposeManager.getEmailConsentStatus(loggedInInfo, Integer.parseInt(demographicNo));
+
+        eForm.addHiddenInputElement("hasValidRecipient", Boolean.toString(hasValidRecipient));
+        eForm.addHiddenInputElement("emailConsentName", emailConsent[0]);
+        eForm.addHiddenInputElement("emailConsentStatus", emailConsent[1]);
     }
 %>
 
@@ -68,7 +78,10 @@
         eForm = new EForm(fdid);
         eForm.setContextPath(request.getContextPath());
         eForm.setOscarOPEN(request.getRequestURI());
-        eForm.setFdid(fdid);
+
+        if (fdid != null) {
+            eForm.setFdid(fdid);
+        }
         
         if ( appointmentNo != null ) eForm.setAppointmentNo(appointmentNo);
         if ( eformLink != null ) eForm.setEformLink(eformLink);
@@ -84,11 +97,23 @@
         eForm.setFdid("");
     }
 
-    // Modifying EForm by directly incorporating libraries and adding hidden fields.
-    eForm.addJavascript(request.getContextPath()+"/library/jquery/jquery-3.6.4.min.js");
-    eForm.addJavascript(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.js");
-    eForm.addJavascript(request.getContextPath()+"/eform/eformFloatingToolbar/eform_floating_toolbar.js");
+    /*
+     * Modifying EForm by directly incorporating libraries and adding hidden fields.
+     * Ordering is very important.
+     * For Javascript: First is last.
+     */
+    eForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-3.6.4.min.js");
+    eForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.js");
+    eForm.addHeadJavascript(request.getContextPath()+"/js/jquery.are-you-sure.js");
+
+    eForm.addCSS(request.getContextPath()+"/library/bootstrap/5.0.2/css/bootstrap.css", "all");
+    eForm.addHeadJavascript(request.getContextPath()+"/library/bootstrap/5.0.2/js/bootstrap.bundle.js");
+
+    eForm.addCSS(request.getContextPath()+"/css/oscar_alert.css", "all");
+    eForm.addBodyJavascript(request.getContextPath()+"/js/oscar-alert.js");
+
     eForm.addCSS(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.css", "all");
+    eForm.addBodyJavascript(request.getContextPath()+"/eform/eformFloatingToolbar/eform_floating_toolbar.js");
     eForm.addFontLibrary(request.getContextPath()+"/share/javascript/eforms/dejavufonts/ttf/DejaVuSans.ttf");
     eForm.addHiddenInputElement("context", request.getContextPath());
     eForm.addHiddenInputElement("demographicNo", eForm.getDemographicNo());
@@ -103,10 +128,14 @@
     eForm.addHiddenInputElement("eFormPDFName", (String) request.getAttribute("eFormPDFName"));
     eForm.addHiddenInputElement("eFormPDF", (String) request.getAttribute("eFormPDF"));
     eForm.addHiddenInputElement("isDownloadEForm", (String) request.getAttribute("isDownload"));
-
+    eForm.addHiddenInputElement("newForm", "false");
+    eForm.addHiddenInputElement("isSuccess_Autoclose", (String) request.getAttribute("isSuccess_Autoclose"));
     // Add EForm attachments
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     addHiddenEFormAttachments(loggedInInfo, eForm, fdid);
 
+    // Add email consent properties
+    addHiddenEmailProperties(loggedInInfo, eForm, eForm.getDemographicNo());
+
     out.print(eForm.getFormHtml());
-%>
+%><script type="text/javascript" src="${oscar_javascript_path}/moment.js" ></script>

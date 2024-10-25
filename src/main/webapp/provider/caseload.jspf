@@ -128,7 +128,7 @@ clH = ["<bean:message key="caseload.msgDemographic" />", "", "<bean:message key=
 						<option value='FS'><bean:message key='demographic.demographiceditdemographic.optFeeService'/></option>
 		<%
 
-		DemographicDao caseloadDemographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+		DemographicDao caseloadDemographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 		List<String> rosterStatusList = caseloadDemographicDao.getRosterStatuses();
 		for (String rosterStatus : rosterStatusList) {
 			if (rosterStatus != null && rosterStatus.trim().length() > 0) {

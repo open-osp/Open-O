@@ -47,14 +47,14 @@ public final class DBHandler {
 
 	public static ResultSet GetSQL(String SQLStatement, boolean updatable) throws SQLException {
 		Statement stmt;
-		ResultSet rs = null;
+		
 		if (updatable) {
 			stmt = DbConnectionFilter.getThreadLocalDbConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 		} else {
 			stmt = DbConnectionFilter.getThreadLocalDbConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		}
 
-		rs = stmt.executeQuery(SQLStatement);
+		ResultSet rs = stmt.executeQuery(SQLStatement);
 		return rs;
 	}
 	

@@ -41,14 +41,11 @@
 <%@ page import="oscar.oscarLab.ca.all.web.LabDisplayHelper"%>
 
 <%@ page import="java.util.*,
-		 java.sql.*,
-		 oscar.oscarDB.*, oscar.oscarLab.FileUploadCheck, oscar.util.UtilDateUtilities,
+	oscar.util.UtilDateUtilities,
 		 oscar.oscarLab.ca.all.*,
-		 oscar.oscarLab.ca.all.util.*,
 		 oscar.oscarLab.ca.all.parsers.*,
 		 oscar.oscarLab.LabRequestReportLink,
 		 oscar.oscarMDS.data.ReportStatus,oscar.log.*,
-		 org.apache.commons.codec.binary.Base64,
          oscar.OscarProperties" %>
 <%@ page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink"%>
 <%@ page import="org.oscarehr.casemgmt.model.CaseManagementNote"%>
@@ -70,6 +67,7 @@
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProperties"%>
 <%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 	  boolean authed=true;
@@ -104,7 +102,7 @@ if(providerNo == null) {
 }
 
 
-UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 UserProperty uProp = userPropertyDAO.getProp(providerNo, UserProperty.LAB_ACK_COMMENT);
 boolean skipComment = false;
 if( uProp != null && uProp.getValue().equalsIgnoreCase("yes")) {
@@ -130,8 +128,8 @@ if(getRecallTicklerAssignee.getValue().equals("yes")){
 
 
 //Need date lab was received by OSCAR
-Hl7TextMessageDao hl7TxtMsgDao = (Hl7TextMessageDao)SpringUtils.getBean("hl7TextMessageDao");
-MeasurementMapDao measurementMapDao = (MeasurementMapDao) SpringUtils.getBean("measurementMapDao");
+Hl7TextMessageDao hl7TxtMsgDao = (Hl7TextMessageDao)SpringUtils.getBean(Hl7TextMessageDao.class);
+MeasurementMapDao measurementMapDao = (MeasurementMapDao) SpringUtils.getBean(MeasurementMapDao.class);
 Hl7TextMessage hl7TextMessage = hl7TxtMsgDao.find(Integer.parseInt(segmentID));
 
 String dateLabReceived = "n/a";
@@ -251,7 +249,7 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
 
 
 	String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_LABTEST;
-	CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
+	CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 
 %>
 
@@ -465,7 +463,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 </style>
 
         <script language="JavaScript">
-        var labNo = '<%=segmentID%>';
+        var labNo = '<%=Encode.forJavaScript(segmentID)%>';
         var providerNo = '<%=providerNo%>';
         var demographicNo = '<%=isLinkedToDemographic ? demographicID : ""%>';
         function popupStart(vheight,vwidth,varpage,windowname) {
@@ -530,7 +528,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
         function matchMe() {
             <% if ( !isLinkedToDemographic) { %>
-               	popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow');
+               	popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= Encode.forJavaScript(segmentID) %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow');
             <% } %>
 	}
 
@@ -693,7 +691,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
         		    }
         		}
         		
-        		Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean("hl7TextInfoDao");
+        		Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);
         		int lab_no = Integer.parseInt(segmentID);
         		Hl7TextInfo hl7Lab = hl7TextInfoDao.findLabId(lab_no);
         		String label = "";
@@ -711,15 +709,15 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
         <script type="text/javascript">
 
         jQuery(function() {
-      	  jQuery("#createLabel_<%=segmentID%>").click(function() {
+      	  jQuery("#createLabel_<%=Encode.forJavaScript(segmentID)%>").click(function() {
       	    jQuery.ajax( {
       	      type: "POST",
       	      url: '<%=request.getContextPath()%>'+"/lab/CA/ALL/createLabelTDIS.do",
       	      dataType: "json",
-      	      data: { lab_no: jQuery("#labNum_<%=segmentID%>").val(), accessionNum: jQuery("#accNum").val(), label: jQuery("#label_<%=segmentID%>").val(), ajaxcall: true }
+      	      data: { lab_no: jQuery("#labNum_<%=Encode.forJavaScript(segmentID)%>").val(), accessionNum: jQuery("#accNum").val(), label: jQuery("#label_<%=Encode.forJavaScript(segmentID)%>").val(), ajaxcall: true }
       	    })
-              jQuery("#labelspan_<%=segmentID%> i").html(jQuery("#label_<%=segmentID%>").val());
-              document.forms['acknowledgeForm_<%=segmentID%>'].label.value = "";
+              jQuery("#labelspan_<%=Encode.forJavaScript(segmentID)%> i").html(jQuery("#label_<%=Encode.forJavaScript(segmentID)%>").val());
+              document.forms['acknowledgeForm_<%=Encode.forJavaScript(segmentID)%>'].label.value = "";
           });
       });
 
@@ -732,7 +730,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 			//first check to see if lab is linked, if it is, we can send the demographicNo to the macro
 			function runMacro(name,formid, closeOnSuccess) {
 	          		 var url='../../../documentManager/inboxManage.do';
-	                 var data='method=isLabLinkedToDemographic&labid=<%= segmentID %>';
+	                 var data='method=isLabLinkedToDemographic&labid=<%= Encode.forJavaScript(segmentID) %>';
 	                 new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
 	                 var json=transport.responseText.evalJSON();
 	                 if(json!=null){
@@ -758,22 +756,22 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 			}
 		</script>
 
-		<div id="lab_<%=segmentID%>">
-        <form name="reassignForm_<%=segmentID%>" method="post" action="Forward.do">
-            <input type="hidden" name="flaggedLabs" value="<%=segmentID%>" />
+		<div id="lab_<%= Encode.forHtmlAttribute(segmentID) %>">
+        <form name="reassignForm_<%= Encode.forHtmlAttribute(segmentID) %>" method="post" action="Forward.do">
+            <input type="hidden" name="flaggedLabs" value="<%= Encode.forHtmlAttribute(segmentID) %>" />
             <input type="hidden" name="selectedProviders" value="" />
             <input type="hidden" name="favorites" value="" />
             <input type="hidden" name="labType" value="HL7" />
-            <input type="hidden" name="labType<%= segmentID %>HL7" value="imNotNull" />
-            <input type="hidden" id="providerNo_<%=segmentID %>" name="providerNo" value="<%= providerNo %>" />
+            <input type="hidden" name="labType<%= Encode.forHtmlAttribute(segmentID) %>HL7" value="imNotNull" />
+            <input type="hidden" id="providerNo_<%= Encode.forHtmlAttribute(segmentID) %>" name="providerNo" value="<%= providerNo %>" />
         </form>
 
-        <form name="TDISLabelForm_<%=segmentID%>"  method='POST' action="../../../lab/CA/ALL/createLabelTDIS.do">
-					<input type="hidden" id="labNum_<%=segmentID %>" name="lab_no" value="<%=lab_no%>">
-					<input type="hidden" id="label_<%=segmentID %>" name="label" value="<%=label%>">
+        <form name="TDISLabelForm_<%= Encode.forHtmlAttribute(segmentID) %>"  method='POST' action="../../../lab/CA/ALL/createLabelTDIS.do">
+					<input type="hidden" id="labNum_<%= Encode.forHtmlAttribute(segmentID) %>" name="lab_no" value="<%=lab_no%>">
+					<input type="hidden" id="label_<%= Encode.forHtmlAttribute(segmentID) %>" name="label" value="<%=label%>">
 		</form>
 
-        <form name="acknowledgeForm_<%=segmentID%>" id="acknowledgeForm_<%=segmentID%>" method="post" onsubmit="javascript:void(0);" method="post" action="javascript:void(0);" >
+        <form name="acknowledgeForm_<%= Encode.forHtmlAttribute(segmentID) %>" id="acknowledgeForm_<%= Encode.forHtmlAttribute(segmentID) %>" method="post" onsubmit="javascript:void(0);" method="post" action="javascript:void(0);" >
 
             <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
@@ -781,10 +779,10 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                         <table class="MainTableTopRowRightColumn" width="100%" border="0" cellspacing="0" cellpadding="3">
                             <tr>
                                 <td>
-                                    <input type="hidden" name="segmentID" value="<%= segmentID %>"/>
-                                    <input type="hidden" name="multiID" value="<%= multiLabId %>" />
-                                    <input type="hidden" name="providerNo" id="providerNo" value="<%= providerNo %>"/>
-                                    <input type="hidden" name="status" value="<%=labStatus%>" id="labStatus_<%=segmentID%>"/>
+                                    <input type="hidden" name="segmentID" value="<%= Encode.forHtmlAttribute(segmentID) %>"/>
+                                    <input type="hidden" name="multiID" value="<%= Encode.forHtmlAttribute(multiLabId) %>" />
+                                    <input type="hidden" name="providerNo" id="providerNo" value="<%= Encode.forHtmlAttribute(providerNo) %>"/>
+                                    <input type="hidden" name="status" value="<%=Encode.forHtmlAttribute(labStatus)%>" id="labStatus_<%=Encode.forHtmlAttribute(segmentID)%>"/>
                                     <input type="hidden" name="comment" value=""/>
                                     <input type="hidden" name="labType" value="HL7"/>
                                     <%
@@ -808,7 +806,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 													  		String name = macro.getString("name");
 													  		boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
 													  		
-													  		%><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=segmentID%>',<%=closeOnSuccess%>)"><%=name %></a><%
+													  		%><a href="javascript:void(0);" onClick="runMacro('<%=name%>','acknowledgeForm_<%=Encode.forJavaScript(segmentID)%>',<%=closeOnSuccess%>)"><%=name %></a><%
 													  	}
 												  	}
 											    }catch(JSONException e ) {
@@ -822,19 +820,19 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
                                     <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>" >
                                     <% } %>
-                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
-                                    <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="ForwardSelectedRows(<%=segmentID%> + ':HL7', '', '')" >
+                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=Encode.forJavaScript(segmentID)%>);">
+                                    <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="ForwardSelectedRows(<%=Encode.forJavaScript(segmentID)%> + ':HL7', '', '')" >
                                     <input type="button" value=" <bean:message key="global.btnClose"/> " onClick="window.close()">
-                                    <input type="button" value=" <bean:message key="global.btnPrint"/> " onClick="printPDF('<%=segmentID%>')">
+                                    <input type="button" value=" <bean:message key="global.btnPrint"/> " onClick="printPDF('<%=Encode.forJavaScript(segmentID)%>')">
 
-                                    <input type="button" value="Msg" onclick="handleLab('','<%=segmentID%>','msgLab');"/>
-                                    <input type="button" value="Tickler" onclick="handleLab('','<%=segmentID%>','ticklerLab');"/>
-                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/>" onclick="unlinkDemographic(<%=segmentID%>)"/>
+                                    <input type="button" value="Msg" onclick="handleLab('','<%=Encode.forJavaScript(segmentID)%>','msgLab');"/>
+                                    <input type="button" value="Tickler" onclick="handleLab('','<%=Encode.forJavaScript(segmentID)%>','ticklerLab');"/>
+                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnUnlinkDemo"/>" onclick="unlinkDemographic(<%=Encode.forJavaScript(segmentID)%>)"/>
 
                                     <% if ( searchProviderNo != null ) { // null if we were called from e-chart%>
-                                    <input type="button" value=" <bean:message key="oscarMDS.segmentDisplay.btnEChart"/>" onClick="popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'encounter')">
+                                    <input type="button" value=" <bean:message key="oscarMDS.segmentDisplay.btnEChart"/>" onClick="popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= Encode.forJavaScript(segmentID) %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'encounter')">
                                     <% } %>
-				    <input type="button" value="Req# <%=reqTableID%>" title="Link to Requisition" onclick="linkreq('<%=segmentID%>','<%=reqID%>');" />
+				    <input type="button" value="Req# <%=reqTableID%>" title="Link to Requisition" onclick="linkreq('<%=Encode.forJavaScript(segmentID)%>','<%=reqID%>');" />
 
 
                                    	<% if (bShortcutForm) { %>
@@ -845,7 +843,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 									<% } %>
 
 <% if(recall){%>
-<input type="button" value="Recall" onclick="handleLab('','<%=segmentID%>','msgLabRecall');">
+<input type="button" value="Recall" onclick="handleLab('','<%=Encode.forJavaScript(segmentID)%>','msgLabRecall');">
 <%}%>
 									<%
 										if(remoteLabKey == null || "".equals(remoteLabKey.length())) {
@@ -858,12 +856,12 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                             <tr>
                                 <td>
                                     <% if (!label.equals(null) && !label.equals("")) { %>
-                                    <button type="button" id="createLabel_<%=segmentID%>" value="Label" onclick="submitLabel(this, '<%=segmentID%>');">Label</button>
+                                    <button type="button" id="createLabel_<%= Encode.forHtmlAttribute(segmentID) %>" value="Label" onclick="submitLabel(this, '<%=Encode.forJavaScript(segmentID)%>');">Label</button>
                                     <%} else { %>
-                                    <button type="button" id="createLabel_<%=segmentID%>" style="background-color:#6699FF" value="Label" onclick="submitLabel(this, '<%=segmentID%>');">Label</button>
+                                    <button type="button" id="createLabel_<%= Encode.forHtmlAttribute(segmentID) %>" style="background-color:#6699FF" value="Label" onclick="submitLabel(this, '<%=Encode.forJavaScript(segmentID)%>');">Label</button>
                                     <%} %>
-                                    <input type="hidden" id="labNum_<%=segmentID %>" name="lab_no" value="<%=lab_no%>">
-                                    <input type="text" id="acklabel_<%=segmentID %>" name="label" value=""/>
+                                    <input type="hidden" id="labNum_<%=Encode.forHtmlAttribute(segmentID) %>" name="lab_no" value="<%=lab_no%>">
+                                    <input type="text" id="acklabel_<%= Encode.forHtmlAttribute(segmentID) %>" name="label" value=""/>
 
                                     <% String labelval="";
                                         if (label!="" && label!=null) {
@@ -872,7 +870,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                             labelval = "(not set)";
 
                                         } %>
-                                    <span id="labelspan_<%=segmentID%>" class="Field2"><i><%= Encode.forHtml(labelval) %> </i></span>
+                                    <span id="labelspan_<%= Encode.forHtmlAttribute(segmentID) %>" class="Field2"><i><%= Encode.forHtml(labelval) %> </i></span>
 
                                     <% } %>
                                 </td>
@@ -903,9 +901,9 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                                 }
 //                                                if( multiID.length > 1 ) {
                                                     if ( searchProviderNo != null ) { // null if we were called from e-chart
-                                                        %><a href="labDisplay.jsp?segmentID=<%=segmentID%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&searchProviderNo=<%= searchProviderNo %>&all=true">All</a>&#160;<%
+                                                        %><a href="labDisplay.jsp?segmentID=<%= Encode.forHtmlAttribute(segmentID) %>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&searchProviderNo=<%= searchProviderNo %>&all=true">All</a>&#160;<%
                                                     }else{
-                                                        %><a href="labDisplay.jsp?segmentID=<%=segmentID%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&all=true">All</a>&#160;<%
+                                                        %><a href="labDisplay.jsp?segmentID=<%= Encode.forHtmlAttribute(segmentID) %>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&all=true">All</a>&#160;<%
                                                     }
 //                                                }
                                                 %>
@@ -933,7 +931,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                     <table valign="top" border="0" cellpadding="2" cellspacing="0" width="100%">
                                         <tr valign="top">
                                             <td valign="top" width="33%" align="left">
-                                                <table width="100%" border="0" cellpadding="2" cellspacing="0" valign="top"  <% if ( !isLinkedToDemographic){ %> bgcolor="orange" <% } %> id="DemoTable<%=segmentID%>" >                                                    <tr>
+                                                <table width="100%" border="0" cellpadding="2" cellspacing="0" valign="top"  <% if ( !isLinkedToDemographic){ %> bgcolor="orange" <% } %> id="DemoTable<%= Encode.forHtmlAttribute(segmentID) %>" >                                                    <tr>
                                                         <td valign="top" align="left">
                                                             <table valign="top" border="0" cellpadding="3" cellspacing="0" width="100%">
                                                                 <tr>
@@ -947,7 +945,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                                                             <% if ( searchProviderNo == null ) { // we were called from e-chart%>
                                                                             <a href="javascript:window.close()">
                                                                             <% } else { // we were called from lab module%>
-                                                                            <a href="javascript:popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow')">
+                                                                            <a href="javascript:popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= Encode.forJavaScript(segmentID) %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow')">
                                                                                 <% } %>
                                                                                 <%=handler.getPatientName()%>
                                                                             </a>
@@ -1078,6 +1076,21 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                                 </div>
                                             </td>
                                         </tr> 
+
+                                        <% if ("ExcellerisON".equals(handler.getMsgType())) { %>
+                                            <tr>
+                                                <td>
+                                                    <div class="FieldData">
+                                                        <strong>Reported on:</strong>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="FieldData" nowrap="nowrap">
+                                                        <%= ((ExcellerisOntarioHandler) handler).getReportStatusChangeDate() %>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% } %>
                                         
                                          <tr>
                                             <td>
@@ -1389,7 +1402,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 		                       	<td valign="top" align="left" colspan="8"><pre  style="margin:0px 0px 0px 100px;"><b><%=handler.getOBXComment(1, 1, 1)%></b></pre></td>
 		                       	</td>
 		                       	<td align="center" valign="top">
-                                    <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=segmentID%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(1) + "-" + String.valueOf(1) %>','anwin','width=400,height=500');">
+                                    <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(1) + "-" + String.valueOf(1) %>','anwin','width=400,height=500');">
                                     	<img src="../../../images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"/>
                                     </a>
                                 </td>
@@ -1508,6 +1521,23 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                         	   String lastObxSetId = "0";
                                boolean obrFlag = false;
                                int obxCount = handler.getOBXCount(j);
+
+                               if (handler.getMsgType().equals("ExcellerisON") && handler.getObservationHeader(j, 0).equals(headers.get(i))) {
+                                    String orderRequestStatus = ((ExcellerisOntarioHandler) handler).getOrderStatus(j);
+                                    int obrCommentCount = handler.getOBRCommentCount(j);
+                                    if (orderRequestStatus.equals(ExcellerisOntarioHandler.OrderStatus.DELETED.getDescription())) { continue; }
+                                    
+                                    if (obxCount > 0 || !orderRequestStatus.isEmpty() || obrCommentCount > 0) {
+                                        obrFlag = true;
+                                        %>
+                                            <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" >
+                                                <td valign="top" align="left"><span style="font-size:16px;font-weight: bold;"><%=handler.getOBRName(j)%></span></td>
+                                                <td colspan="1"><%=orderRequestStatus%></td>
+                                            </tr>
+                                        <%
+                                    }                               
+                               }
+
                                for (k=0; k < obxCount; k++){
 
                                	String obxName = handler.getOBXName(j, k);
@@ -1553,7 +1583,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                    	b1 = !obrFlag && !obrName.equals("");
                                    	b2 = !(obxName.contains(obrName));
                                    	b3 = !(obxCount < 2 && !isUnstructuredDoc);
-                                       if( b1 && b2 && b3){
+                                       if( b1 && b2 && b3 && !handler.getMsgType().equals("ExcellerisON")){
                                        %>
                                            <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" >
                                                <td valign="top" align="left"><span style="font-size:16px;font-weight: bold;"><%=obrName%></span></td>
@@ -1609,7 +1639,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 		                                            <td align="center"><%= handler.getTimeStamp(j, k) %></td>
 		                                            <td align="center"><%= handler.getOBXResultStatus( j, k) %></td>
 		                                            <td align="center" valign="top">
-	                                                <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=segmentID%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
+	                                                <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
 	                                                	<%if(!isPrevAnnotation){ %><img src="../../../images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"/><%}else{ %><img src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13" border="0"/> <%} %>
 	                                                </a>
                                                 </td>
@@ -1644,7 +1674,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 		                                            <td align="center"><%= handler.getTimeStamp(j, k) %></td>
 		                                            <td align="center"><%= handler.getOBXResultStatus( j, k) %></td>
 		                                            <td align="center" valign="top">
-	                                                <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=segmentID%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
+	                                                <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
 	                                                	<%if(!isPrevAnnotation){ %><img src="../../../images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"/><%}else{ %><img src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13" border="0"/> <%} %>
 	                                                </a>
                                                 </td>
@@ -1720,7 +1750,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                            <td align="center"><%= handler.getOBXResultStatus(j, k) %></td>
 
                                       		<td align="center" valign="top">
-	                                                <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=segmentID%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
+	                                                <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
 	                                                	<%if(!isPrevAnnotation){ %><img src="../../../images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"/><%}else{ %><img src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13" border="0"/> <%} %>
 	                                                </a>
                                                 </td>
@@ -1858,12 +1888,16 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 													}
 												
 												%>	
-													 <td align="<%=align%>"><a href="<%=request.getContextPath() %>/lab/DownloadEmbeddedDocumentFromLab.do?labNo=<%=segmentID%>&segment=<%=j%>&group=<%=k%><%=legacy%>">PDF Report</a></td>
+													 <td align="<%=align%>"><a href="<%=request.getContextPath() %>/lab/DownloadEmbeddedDocumentFromLab.do?labNo=<%= Encode.forHtmlAttribute(segmentID) %>&segment=<%=j%>&group=<%=k%><%=legacy%>">PDF Report</a></td>
 													 <%
 												} else {
 											%>
                                            <td align="<%=align%>">
-                                           		<%= handler.getOBXResult( j, k) %>
+                                                <% if (handler.getMsgType().equals("ExcellerisON") && !((ExcellerisOntarioHandler) handler).getOBXSubId(j, k).isEmpty()) { %>
+                                                <em><%= ((ExcellerisOntarioHandler) handler).getOBXSubIdWithObservationValue( j, k) %></em>
+                                                <% } else { %>
+                                                <%= handler.getOBXResult( j, k) %>
+                                                <% } %>
                                            		<%= handler.isTestResultBlocked(j, k) ? "<a href='#' title='Do Not Disclose Without Explicit Patient Consent'>(BLOCKED)</a>" : ""%>
                                            </td>
                                           
@@ -1890,7 +1924,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                            	<%=status %>
                                            	
                                            	</td>
-                                      		<td align="center" valign="top">                                           <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=segmentID%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
+                                      		<td align="center" valign="top">                                           <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
 	                                                	<%if(!isPrevAnnotation){ %><img src="../../../images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"/><%}else{ %><img src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13" border="0"/> <%} %>
 	                                                </a>
                                                 </td>
@@ -1923,7 +1957,7 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                             <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="TDISRes">
                                                <td valign="top" align="left" colspan="8"><pre  style="margin:0px 0px 0px 100px;"><%=handler.getOBXComment(j, k, l)%></pre></td>
                                             	<td align="center" valign="top">
-	                                                <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=segmentID%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(1) + "-" + String.valueOf(1) %>','anwin','width=400,height=500');">
+	                                                <a href="javascript:void(0);" title="Annotation" onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(1) + "-" + String.valueOf(1) %>','anwin','width=400,height=500');">
 	                                                	<%if(!isPrevAnnotation){ %><img src="../../../images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"/><%}else{ %><img src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13" border="0"/> <%} %>
 	                                                </a>
                                              </td>
@@ -2019,15 +2053,15 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                     <% if ( !ackFlag ) { %>
                                     <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge" />" onclick="<%=ackLabFunc%>" >
                                     <% } %>
-                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=segmentID%>);">
-                                    <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="ForwardSelectedRows(<%=segmentID%> + ':HL7', '', '')" >
+                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=Encode.forJavaScript(segmentID)%>);">
+                                    <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="ForwardSelectedRows(<%=Encode.forJavaScript(segmentID)%> + ':HL7', '', '')" >
                                     <input type="button" value=" <bean:message key="global.btnClose"/> " onClick="window.close()">
-                                    <input type="button" value=" <bean:message key="global.btnPrint"/> " onClick="printPDF('<%=segmentID%>')">
+                                    <input type="button" value=" <bean:message key="global.btnPrint"/> " onClick="printPDF('<%=Encode.forJavaScript(segmentID)%>')">
                                         <indivo:indivoRegistered demographic="<%=demographicID%>" provider="<%=providerNo%>">
-                                        <input type="button" value="<bean:message key="global.btnSendToPHR"/>" onClick="sendToPHR('<%=segmentID%>', '<%=demographicID%>')">
+                                        <input type="button" value="<bean:message key="global.btnSendToPHR"/>" onClick="sendToPHR('<%=Encode.forJavaScript(segmentID)%>', '<%=demographicID%>')">
                                         </indivo:indivoRegistered>
                                     <% if ( searchProviderNo != null ) { // we were called from e-chart %>
-                                    <input type="button" value=" <bean:message key="oscarMDS.segmentDisplay.btnEChart"/> " onClick="popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'encounter')">
+                                    <input type="button" value=" <bean:message key="oscarMDS.segmentDisplay.btnEChart"/> " onClick="popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= Encode.forJavaScript(segmentID) %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'encounter')">
 
                                     <% } %>
                                 </td>

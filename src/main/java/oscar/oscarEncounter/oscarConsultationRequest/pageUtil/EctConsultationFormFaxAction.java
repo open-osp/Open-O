@@ -9,17 +9,7 @@
 
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.itextpdf.text.DocumentException;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -31,23 +21,30 @@ import org.oscarehr.common.dao.FaxJobDao;
 import org.oscarehr.common.model.Clinic;
 import org.oscarehr.common.model.FaxConfig;
 import org.oscarehr.common.model.FaxJob;
+import org.oscarehr.documentManager.DocumentAttachmentManager;
+import org.oscarehr.documentManager.EDocUtil;
 import org.oscarehr.fax.core.FaxAccount;
 import org.oscarehr.fax.core.FaxRecipient;
-
 import org.oscarehr.managers.FaxManager;
+import org.oscarehr.managers.FaxManager.TransactionType;
 import org.oscarehr.managers.NioFileManager;
 import org.oscarehr.managers.SecurityInfoManager;
-import org.oscarehr.managers.FaxManager.TransactionType;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.PDFGenerationException;
 import org.oscarehr.util.SpringUtils;
-
-import org.oscarehr.documentManager.DocumentAttachmentManager;
-import org.oscarehr.documentManager.EDocUtil;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
-import com.itextpdf.text.DocumentException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 public class EctConsultationFormFaxAction extends Action {
 
@@ -83,7 +80,7 @@ public class EctConsultationFormFaxAction extends Action {
     	ectConsultationFaxForm.setRequest(request);
 	   	String reqId = ectConsultationFaxForm.getRequestId();
 		String demoNo = ectConsultationFaxForm.getDemographicNo();
-		String faxNumber = ectConsultationFaxForm.getSendersFax();
+		String faxNumber = ectConsultationFaxForm.getSenderFaxNumber();
 		String consultResponsePage = request.getParameter("consultResponsePage");
 		boolean doCoverPage = ectConsultationFaxForm.isCoverpage();
 		String note = "";

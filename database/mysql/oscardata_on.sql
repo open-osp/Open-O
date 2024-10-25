@@ -11566,6 +11566,522 @@ INSERT INTO `billingservice` (`service_code`, `description`, `value`, `percentag
 -- Dumping data for table 'consultationServices'
 --
 
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (1, 'Adolescent Medicine, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (2, 'Anatomical Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (3, 'Anatomical Pathology, Forensic Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (4, 'Anatomical Pathology, General Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (5, 'Anatomical Pathology, General Pathology, Dermatology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (6, 'Anatomical Pathology, Hematological Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (7, 'Anatomical Pathology, Neuropathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (8, 'Anesthesiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (9, 'Anesthesiology, Critical Care Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (10, 'Anesthesiology, Critical Care Medicine, Palliative Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (11, 'Anesthesiology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (12, 'Anesthesiology, Pain Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (13, 'Cardiac Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (14, 'Cardiac Surgery, General Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (15, 'Cardiac Surgery, Thoracic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (16, 'Cardiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (17, 'Cardiology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (18, 'Cardiology, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (19, 'Cardiothoracic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (20, 'Cardiovascular and Thoracic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (21, 'Cardiovascular and Thoracic Surgery, General Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (22, 'Child and Adolescent Psychiatry, Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (23, 'Clinical Immunology and Allergy, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (24, 'Clinician Investigator Program, Internal Medicine, Critical Care Medicine, Infectious Diseases', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (25, 'Clinician Investigator Program, Medical Biochemistry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (26, 'Clinician Investigator Program, Pediatrics, Pediatric Hematology/Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (27, 'Clinician Investigator Program, Plastic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (28, 'Clinician Investigator Program, Radiation Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (29, 'Colorectal Surgery, General Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (30, 'Community Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (31, 'Community Medicine, Public Health and Preventive Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (32, 'Critical Care Medicine, Anesthesiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (33, 'Critical Care Medicine, Cardiac Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (34, 'Critical Care Medicine, Emergency Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (35, 'Critical Care Medicine, General Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (36, 'Critical Care Medicine, Infectious Diseases, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (37, 'Critical Care Medicine, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (38, 'Critical Care Medicine, Internal Medicine, Cardiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (39, 'Critical Care Medicine, Internal Medicine, Respirology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (40, 'Critical Care Medicine, Nephrology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (41, 'Critical Care Medicine, Pediatric Emergency Medicine, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (42, 'Critical Care Medicine, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (43, 'Critical Care Medicine, Respirology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (44, 'Dermatology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (45, 'Dermatology, Internal Medicine, Rheumatology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (46, 'Dermatology, Pediatrics, Clinical Immunology and Allergy', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (47, 'Developmental Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (48, 'Developmental Pediatrics, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (49, 'Diagnostic Radiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (50, 'Diagnostic Radiology, Diagnostic Radiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (51, 'Diagnostic Radiology, Neuroradiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (52, 'Diagnostic Radiology, Nuclear Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (53, 'Diagnostic Radiology, Pediatric Radiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (54, 'Diagnostic Radiology, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (55, 'Emergency Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (56, 'Emergency Medicine, Anesthesiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (57, 'Emergency Medicine, Critical Care Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (58, 'Emergency Medicine, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (59, 'Emergency Medicine, Pediatric Emergency Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (60, 'Endocrinology and Metabolism', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (61, 'Endocrinology and Metabolism, Critical Care Medicine, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (62, 'Endocrinology and Metabolism, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (63, 'Endocrinology and Metabolism, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (64, 'Family Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (65, 'Forensic Pathology, Anatomical Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (66, 'Forensic Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (67, 'Forensic Psychiatry, Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (68, 'Gastroenterology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (69, 'Gastroenterology, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (70, 'General Internal Medicine, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (71, 'General Internal Medicine, Internal Medicine, Critical Care Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (72, 'General Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (73, 'General Pathology, Anatomical Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (74, 'General Pathology, Forensic Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (75, 'General Pathology, Hematological Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (76, 'General Pathology, Medical Biochemistry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (77, 'General Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (78, 'General Surgery, Cardiac Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (79, 'General Surgery, Cardiothoracic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (80, 'General Surgery, Cardiovascular and Thoracic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (81, 'General Surgery, Cardiovascular and Thoracic Surgery, Thoracic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (82, 'General Surgery, Colorectal Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (83, 'General Surgery, Critical Care Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (84, 'General Surgery, General Surgical Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (85, 'General Surgery, Pediatric Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (86, 'General Surgery, Thoracic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (87, 'General Surgery, Vascular Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (88, 'General Surgical Oncology, General Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (89, 'Geriatric Medicine, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (90, 'Geriatric Psychiatry, Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (91, 'Geriatric Psychiatry, Psychiatry, Forensic Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (92, 'Gynecologic Oncology, Obstetrics and Gynecology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (93, 'Gynecologic Reproductive Endocrinology and Infertility, Obstetrics and Gynecology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (94, 'Hematological Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (95, 'Hematological Pathology, Anatomical Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (96, 'Hematological Pathology, Hematology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (97, 'Hematological Pathology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (98, 'Hematology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (99, 'Hematology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (100, 'Hematology, Internal Medicine, Medical Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (101, 'Hematology, Medical Oncology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (102, 'Hematology, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (103, 'Infectious Diseases, Critical Care Medicine, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (104, 'Infectious Diseases, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (105, 'Infectious Diseases, Internal Medicine, Medical Microbiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (106, 'Infectious Diseases, Medical Microbiology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (107, 'Infectious Diseases, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (108, 'Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (109, 'Internal Medicine, Cardiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (110, 'Internal Medicine, Clinical Immunology and Allergy', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (111, 'Internal Medicine, Critical Care Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (112, 'Internal Medicine, Critical Care Medicine, Clinical Pharmacology and Toxicology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (113, 'Internal Medicine, Critical Care Medicine, Respirology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (114, 'Internal Medicine, Dermatology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (115, 'Internal Medicine, Diagnostic Radiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (116, 'Internal Medicine, Emergency Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (117, 'Internal Medicine, Endocrinology and Metabolism', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (118, 'Internal Medicine, Gastroenterology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (119, 'Internal Medicine, General Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (120, 'Internal Medicine, Geriatric Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (121, 'Internal Medicine, Hematology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (122, 'Internal Medicine, Hematology, Medical Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (123, 'Internal Medicine, Infectious Diseases', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (124, 'Internal Medicine, Infectious Diseases, Critical Care Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (125, 'Internal Medicine, Medical Biochemistry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (126, 'Internal Medicine, Medical Genetics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (127, 'Internal Medicine, Medical Microbiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (128, 'Internal Medicine, Medical Microbiology, Infectious Diseases', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (129, 'Internal Medicine, Medical Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (130, 'Internal Medicine, Medical Oncology, Hematology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (131, 'Internal Medicine, Nephrology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (132, 'Internal Medicine, Nephrology, Critical Care Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (133, 'Internal Medicine, Neurology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (134, 'Internal Medicine, Nuclear Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (135, 'Internal Medicine, Occupational Medicine, Respirology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (136, 'Internal Medicine, Ophthalmology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (137, 'Internal Medicine, Pain Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (138, 'Internal Medicine, Palliative Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (139, 'Internal Medicine, Palliative Medicine, Nephrology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (140, 'Internal Medicine, Public Health and Preventive Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (141, 'Internal Medicine, Radiation Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (142, 'Internal Medicine, Respirology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (143, 'Internal Medicine, Respirology, Critical Care Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (144, 'Internal Medicine, Rheumatology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (145, 'Internal Medicine, Rheumatology, Clinical Immunology and Allergy', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (146, 'Interventional Radiology, Diagnostic Radiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (147, 'Maternal', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (148, 'Medical Biochemistry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (149, 'Medical Biochemistry, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (150, 'Medical Genetics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (151, 'Medical Genetics and Genomics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (152, 'Medical Genetics, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (153, 'Medical Microbiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (154, 'Medical Microbiology, Internal Medicine, Infectious Diseases', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (155, 'Medical Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (156, 'Medical Oncology, Hematology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (157, 'Medical Oncology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (158, 'Medical Oncology, Internal Medicine, Hematology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (159, 'Neonatal', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (160, 'Nephrology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (161, 'Nephrology, Critical Care Medicine, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (162, 'Nephrology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (163, 'Nephrology, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (164, 'Neurology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (165, 'Neurology, Clinician Investigator Program', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (166, 'Neurology, Critical Care Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (167, 'Neurology, Emergency Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (168, 'Neurology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (169, 'Neurology, Neuropathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (170, 'Neurology, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (171, 'Neurology, Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (172, 'Neuropathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (173, 'Neuropathology, Anatomical Pathology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (174, 'Neuroradiology, Diagnostic Radiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (175, 'Neurosurgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (176, 'Nuclear Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (177, 'Nuclear Medicine, Diagnostic Radiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (178, 'Nuclear Medicine, Radiation Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (179, 'Obstetrics and Gynecology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (180, 'Obstetrics and Gynecology, Gynecologic Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (181, 'Obstetrics and Gynecology, Gynecologic Reproductive Endocrinology and Infertility', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (182, 'Obstetrics and Gynecology, Maternal', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (183, 'Occupational Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (184, 'Occupational Medicine, Community Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (185, 'Ophthalmology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (186, 'Orthopedic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (187, 'Orthopedic Surgery, Pain Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (188, 'Otolaryngology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (189, 'Pain Medicine, Anesthesiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (190, 'Pain Medicine, Physical Medicine and Rehabilitation', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (191, 'Palliative Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (192, 'Palliative Medicine, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (193, 'Palliative Medicine, Radiation Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (194, 'Pediatric Cardiology, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (195, 'Pediatric Emergency Medicine, Emergency Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (196, 'Pediatric Emergency Medicine, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (197, 'Pediatric Hematology/Oncology, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (198, 'Pediatric Surgery, General Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (199, 'Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (200, 'Pediatrics, Adolescent Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (201, 'Pediatrics, Cardiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (202, 'Pediatrics, Clinical Immunology and Allergy', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (203, 'Pediatrics, Community Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (204, 'Pediatrics, Critical Care Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (205, 'Pediatrics, Critical Care Medicine, Anesthesiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (206, 'Pediatrics, Critical Care Medicine, Infectious Diseases', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (207, 'Pediatrics, Dermatology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (208, 'Pediatrics, Developmental Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (209, 'Pediatrics, Endocrinology and Metabolism', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (210, 'Pediatrics, Gastroenterology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (211, 'Pediatrics, Hematology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (212, 'Pediatrics, Infectious Diseases', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (213, 'Pediatrics, Infectious Diseases, Medical Microbiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (214, 'Pediatrics, Medical Genetics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (215, 'Pediatrics, Medical Microbiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (216, 'Pediatrics, Medical Oncology, Hematology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (217, 'Pediatrics, Neonatal', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (218, 'Pediatrics, Nephrology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (219, 'Pediatrics, Neurology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (220, 'Pediatrics, Orthopedic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (221, 'Pediatrics, Otolaryngology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (222, 'Pediatrics, Pediatric Cardiology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (223, 'Pediatrics, Pediatric Emergency Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (224, 'Pediatrics, Pediatric Hematology/Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (225, 'Pediatrics, Respirology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (226, 'Pediatrics, Rheumatology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (227, 'Physical Medicine and Rehabilitation', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (228, 'Physical Medicine and Rehabilitation, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (229, 'Physical Medicine and Rehabilitation, Pain Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (230, 'Plastic Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (231, 'Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (232, 'Psychiatry, Child and Adolescent Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (233, 'Psychiatry, Community Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (234, 'Psychiatry, Forensic Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (235, 'Psychiatry, Forensic Psychiatry, Child and Adolescent Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (236, 'Psychiatry, Geriatric Psychiatry', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (237, 'Psychiatry, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (238, 'Psychiatry, Neurology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (239, 'Psychiatry, Nuclear Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (240, 'Psychiatry, Pain Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (241, 'Public Health and Preventive Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (242, 'Public Health and Preventive Medicine, Community Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (243, 'Radiation Oncology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (244, 'Respirology, Critical Care Medicine, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (245, 'Respirology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (246, 'Respirology, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (247, 'Rheumatology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (248, 'Rheumatology, Clinician Investigator Program, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (249, 'Rheumatology, Internal Medicine', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (250, 'Rheumatology, Pediatrics', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (251, 'Thoracic Surgery, Cardiac Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (252, 'Thoracic Surgery, Critical Care Medicine, General Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (253, 'Thoracic Surgery, General Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (254, 'Thoracic Surgery, General Surgery, Cardiac Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (255, 'Urology', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (256, 'Vascular Surgery', '02');
+INSERT INTO
+    `consultationServices`(`serviceId`, `serviceDesc`, `active`) VALUES (257, 'Vascular Surgery, General Surgery', '02');
+    
+    
 --
 -- Dumping data for table 'ctl_billingservice'
 --
@@ -15263,3 +15779,1034 @@ insert into LookupListItem values (\N,@lid,'58','Windsor-Essex County Health Uni
 
 INSERT INTO `OscarJobType` VALUES (\N,'CanadianVaccineCatalogueUpdater','Updates the local copy of the data','org.oscarehr.integration.born.CanadianVaccineCatalogueJob',1,now()),(\N,'BORN FHIR','','org.oscarehr.integration.born.BORNFhirJob',1,now());
 INSERT INTO `OscarJob` VALUES (\N,'CanadianVaccineCatalogueUpdater','Updates the CVC data',(select id from OscarJobType where name='CanadianVaccineCatalogueUpdater'),'0 * 0 * * *','999998',0,now(),null),(\N,'BORN FHIR','',(select id from OscarJobType where name='BORN FHIR'),'0 * * * * *','999998',0,now(),null);
+
+
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (1, 'Adolescent Medicine, Pediatrics', 'Adolescent Medicine, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (2, 'Anatomical Pathology', 'Anatomical Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (3, 'Anatomical Pathology, Forensic Pathology', 'Anatomical Pathology, Forensic Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (4, 'Anatomical Pathology, General Pathology', 'Anatomical Pathology, General Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (5, 'Anatomical Pathology, General Pathology, Dermatolo', 'Anatomical Pathology, General Pathology, Dermatology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (6, 'Anatomical Pathology, Hematological Pathology', 'Anatomical Pathology, Hematological Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (7, 'Anatomical Pathology, Neuropathology', 'Anatomical Pathology, Neuropathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (8, 'Anesthesiology', 'Anesthesiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (9, 'Anesthesiology, Critical Care Medicine', 'Anesthesiology, Critical Care Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (10, 'Anesthesiology, Critical Care Medicine, Palliative', 'Anesthesiology, Critical Care Medicine, Palliative Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (11, 'Anesthesiology, Internal Medicine', 'Anesthesiology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (12, 'Anesthesiology, Pain Medicine', 'Anesthesiology, Pain Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (13, 'Cardiac Surgery', 'Cardiac Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (14, 'Cardiac Surgery, General Surgery', 'Cardiac Surgery, General Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (15, 'Cardiac Surgery, Thoracic Surgery', 'Cardiac Surgery, Thoracic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (16, 'Cardiology', 'Cardiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (17, 'Cardiology, Internal Medicine', 'Cardiology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (18, 'Cardiology, Pediatrics', 'Cardiology, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (19, 'Cardiothoracic Surgery', 'Cardiothoracic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (20, 'Cardiovascular and Thoracic Surgery', 'Cardiovascular and Thoracic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (21, 'Cardiovascular and Thoracic Surgery, General Surge', 'Cardiovascular and Thoracic Surgery, General Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (22, 'Child and Adolescent Psychiatry, Psychiatry', 'Child and Adolescent Psychiatry, Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (23, 'Clinical Immunology and Allergy, Internal Medicine', 'Clinical Immunology and Allergy, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (24, 'Clinician Investigator Program, Internal Medicine,', 'Clinician Investigator Program, Internal Medicine, Critical Care Medicine, Infectious Diseases');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (25, 'Clinician Investigator Program, Medical Biochemist', 'Clinician Investigator Program, Medical Biochemistry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (26, 'Clinician Investigator Program, Pediatrics, Pediat', 'Clinician Investigator Program, Pediatrics, Pediatric Hematology/Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (27, 'Clinician Investigator Program, Plastic Surgery', 'Clinician Investigator Program, Plastic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (28, 'Clinician Investigator Program, Radiation Oncology', 'Clinician Investigator Program, Radiation Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (29, 'Colorectal Surgery, General Surgery', 'Colorectal Surgery, General Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (30, 'Community Medicine', 'Community Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (31, 'Community Medicine, Public Health and Preventive M', 'Community Medicine, Public Health and Preventive Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (32, 'Critical Care Medicine, Anesthesiology', 'Critical Care Medicine, Anesthesiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (33, 'Critical Care Medicine, Cardiac Surgery', 'Critical Care Medicine, Cardiac Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (34, 'Critical Care Medicine, Emergency Medicine', 'Critical Care Medicine, Emergency Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (35, 'Critical Care Medicine, General Surgery', 'Critical Care Medicine, General Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (36, 'Critical Care Medicine, Infectious Diseases, Inter', 'Critical Care Medicine, Infectious Diseases, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (37, 'Critical Care Medicine, Internal Medicine', 'Critical Care Medicine, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (38, 'Critical Care Medicine, Internal Medicine, Cardiol', 'Critical Care Medicine, Internal Medicine, Cardiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (39, 'Critical Care Medicine, Internal Medicine, Respiro', 'Critical Care Medicine, Internal Medicine, Respirology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (40, 'Critical Care Medicine, Nephrology, Internal Medic', 'Critical Care Medicine, Nephrology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (41, 'Critical Care Medicine, Pediatric Emergency Medici', 'Critical Care Medicine, Pediatric Emergency Medicine, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (42, 'Critical Care Medicine, Pediatrics', 'Critical Care Medicine, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (43, 'Critical Care Medicine, Respirology, Internal Medi', 'Critical Care Medicine, Respirology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (44, 'Dermatology', 'Dermatology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (45, 'Dermatology, Internal Medicine, Rheumatology', 'Dermatology, Internal Medicine, Rheumatology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (46, 'Dermatology, Pediatrics, Clinical Immunology and A', 'Dermatology, Pediatrics, Clinical Immunology and Allergy');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (47, 'Developmental Pediatrics', 'Developmental Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (48, 'Developmental Pediatrics, Pediatrics', 'Developmental Pediatrics, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (49, 'Diagnostic Radiology', 'Diagnostic Radiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (50, 'Diagnostic Radiology, Diagnostic Radiology', 'Diagnostic Radiology, Diagnostic Radiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (51, 'Diagnostic Radiology, Neuroradiology', 'Diagnostic Radiology, Neuroradiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (52, 'Diagnostic Radiology, Nuclear Medicine', 'Diagnostic Radiology, Nuclear Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (53, 'Diagnostic Radiology, Pediatric Radiology', 'Diagnostic Radiology, Pediatric Radiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (54, 'Diagnostic Radiology, Pediatrics', 'Diagnostic Radiology, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (55, 'Emergency Medicine', 'Emergency Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (56, 'Emergency Medicine, Anesthesiology', 'Emergency Medicine, Anesthesiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (57, 'Emergency Medicine, Critical Care Medicine', 'Emergency Medicine, Critical Care Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (58, 'Emergency Medicine, Internal Medicine', 'Emergency Medicine, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (59, 'Emergency Medicine, Pediatric Emergency Medicine', 'Emergency Medicine, Pediatric Emergency Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (60, 'Endocrinology and Metabolism', 'Endocrinology and Metabolism');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (61, 'Endocrinology and Metabolism, Critical Care Medici', 'Endocrinology and Metabolism, Critical Care Medicine, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (62, 'Endocrinology and Metabolism, Internal Medicine', 'Endocrinology and Metabolism, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (63, 'Endocrinology and Metabolism, Pediatrics', 'Endocrinology and Metabolism, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (64, 'Family Medicine', 'Family Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (65, 'Forensic Pathology, Anatomical Pathology', 'Forensic Pathology, Anatomical Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (66, 'Forensic Psychiatry', 'Forensic Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (67, 'Forensic Psychiatry, Psychiatry', 'Forensic Psychiatry, Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (68, 'Gastroenterology, Internal Medicine', 'Gastroenterology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (69, 'Gastroenterology, Pediatrics', 'Gastroenterology, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (70, 'General Internal Medicine, Internal Medicine', 'General Internal Medicine, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (71, 'General Internal Medicine, Internal Medicine, Crit', 'General Internal Medicine, Internal Medicine, Critical Care Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (72, 'General Pathology', 'General Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (73, 'General Pathology, Anatomical Pathology', 'General Pathology, Anatomical Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (74, 'General Pathology, Forensic Pathology', 'General Pathology, Forensic Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (75, 'General Pathology, Hematological Pathology', 'General Pathology, Hematological Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (76, 'General Pathology, Medical Biochemistry', 'General Pathology, Medical Biochemistry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (77, 'General Surgery', 'General Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (78, 'General Surgery, Cardiac Surgery', 'General Surgery, Cardiac Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (79, 'General Surgery, Cardiothoracic Surgery', 'General Surgery, Cardiothoracic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (80, 'General Surgery, Cardiovascular and Thoracic Surge', 'General Surgery, Cardiovascular and Thoracic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (81, 'General Surgery, Cardiovascular and Thoracic Surge', 'General Surgery, Cardiovascular and Thoracic Surgery, Thoracic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (82, 'General Surgery, Colorectal Surgery', 'General Surgery, Colorectal Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (83, 'General Surgery, Critical Care Medicine', 'General Surgery, Critical Care Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (84, 'General Surgery, General Surgical Oncology', 'General Surgery, General Surgical Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (85, 'General Surgery, Pediatric Surgery', 'General Surgery, Pediatric Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (86, 'General Surgery, Thoracic Surgery', 'General Surgery, Thoracic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (87, 'General Surgery, Vascular Surgery', 'General Surgery, Vascular Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (88, 'General Surgical Oncology, General Surgery', 'General Surgical Oncology, General Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (89, 'Geriatric Medicine, Internal Medicine', 'Geriatric Medicine, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (90, 'Geriatric Psychiatry, Psychiatry', 'Geriatric Psychiatry, Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (91, 'Geriatric Psychiatry, Psychiatry, Forensic Psychia', 'Geriatric Psychiatry, Psychiatry, Forensic Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (92, 'Gynecologic Oncology, Obstetrics and Gynecology', 'Gynecologic Oncology, Obstetrics and Gynecology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (93, 'Gynecologic Reproductive Endocrinology and Inferti', 'Gynecologic Reproductive Endocrinology and Infertility, Obstetrics and Gynecology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (94, 'Hematological Pathology', 'Hematological Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (95, 'Hematological Pathology, Anatomical Pathology', 'Hematological Pathology, Anatomical Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (96, 'Hematological Pathology, Hematology, Internal Medi', 'Hematological Pathology, Hematology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (97, 'Hematological Pathology, Internal Medicine', 'Hematological Pathology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (98, 'Hematology', 'Hematology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (99, 'Hematology, Internal Medicine', 'Hematology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (100, 'Hematology, Internal Medicine, Medical Oncology', 'Hematology, Internal Medicine, Medical Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (101, 'Hematology, Medical Oncology, Internal Medicine', 'Hematology, Medical Oncology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (102, 'Hematology, Pediatrics', 'Hematology, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (103, 'Infectious Diseases, Critical Care Medicine, Inter', 'Infectious Diseases, Critical Care Medicine, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (104, 'Infectious Diseases, Internal Medicine', 'Infectious Diseases, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (105, 'Infectious Diseases, Internal Medicine, Medical Mi', 'Infectious Diseases, Internal Medicine, Medical Microbiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (106, 'Infectious Diseases, Medical Microbiology, Interna', 'Infectious Diseases, Medical Microbiology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (107, 'Infectious Diseases, Pediatrics', 'Infectious Diseases, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (108, 'Internal Medicine', 'Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (109, 'Internal Medicine, Cardiology', 'Internal Medicine, Cardiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (110, 'Internal Medicine, Clinical Immunology and Allergy', 'Internal Medicine, Clinical Immunology and Allergy');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (111, 'Internal Medicine, Critical Care Medicine', 'Internal Medicine, Critical Care Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (112, 'Internal Medicine, Critical Care Medicine, Clinica', 'Internal Medicine, Critical Care Medicine, Clinical Pharmacology and Toxicology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (113, 'Internal Medicine, Critical Care Medicine, Respiro', 'Internal Medicine, Critical Care Medicine, Respirology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (114, 'Internal Medicine, Dermatology', 'Internal Medicine, Dermatology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (115, 'Internal Medicine, Diagnostic Radiology', 'Internal Medicine, Diagnostic Radiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (116, 'Internal Medicine, Emergency Medicine', 'Internal Medicine, Emergency Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (117, 'Internal Medicine, Endocrinology and Metabolism', 'Internal Medicine, Endocrinology and Metabolism');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (118, 'Internal Medicine, Gastroenterology', 'Internal Medicine, Gastroenterology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (119, 'Internal Medicine, General Internal Medicine', 'Internal Medicine, General Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (120, 'Internal Medicine, Geriatric Medicine', 'Internal Medicine, Geriatric Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (121, 'Internal Medicine, Hematology', 'Internal Medicine, Hematology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (122, 'Internal Medicine, Hematology, Medical Oncology', 'Internal Medicine, Hematology, Medical Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (123, 'Internal Medicine, Infectious Diseases', 'Internal Medicine, Infectious Diseases');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (124, 'Internal Medicine, Infectious Diseases, Critical C', 'Internal Medicine, Infectious Diseases, Critical Care Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (125, 'Internal Medicine, Medical Biochemistry', 'Internal Medicine, Medical Biochemistry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (126, 'Internal Medicine, Medical Genetics', 'Internal Medicine, Medical Genetics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (127, 'Internal Medicine, Medical Microbiology', 'Internal Medicine, Medical Microbiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (128, 'Internal Medicine, Medical Microbiology, Infectiou', 'Internal Medicine, Medical Microbiology, Infectious Diseases');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (129, 'Internal Medicine, Medical Oncology', 'Internal Medicine, Medical Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (130, 'Internal Medicine, Medical Oncology, Hematology', 'Internal Medicine, Medical Oncology, Hematology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (131, 'Internal Medicine, Nephrology', 'Internal Medicine, Nephrology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (132, 'Internal Medicine, Nephrology, Critical Care Medic', 'Internal Medicine, Nephrology, Critical Care Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (133, 'Internal Medicine, Neurology', 'Internal Medicine, Neurology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (134, 'Internal Medicine, Nuclear Medicine', 'Internal Medicine, Nuclear Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (135, 'Internal Medicine, Occupational Medicine, Respirol', 'Internal Medicine, Occupational Medicine, Respirology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (136, 'Internal Medicine, Ophthalmology', 'Internal Medicine, Ophthalmology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (137, 'Internal Medicine, Pain Medicine', 'Internal Medicine, Pain Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (138, 'Internal Medicine, Palliative Medicine', 'Internal Medicine, Palliative Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (139, 'Internal Medicine, Palliative Medicine, Nephrology', 'Internal Medicine, Palliative Medicine, Nephrology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (140, 'Internal Medicine, Public Health and Preventive Me', 'Internal Medicine, Public Health and Preventive Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (141, 'Internal Medicine, Radiation Oncology', 'Internal Medicine, Radiation Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (142, 'Internal Medicine, Respirology', 'Internal Medicine, Respirology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (143, 'Internal Medicine, Respirology, Critical Care Medi', 'Internal Medicine, Respirology, Critical Care Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (144, 'Internal Medicine, Rheumatology', 'Internal Medicine, Rheumatology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (145, 'Internal Medicine, Rheumatology, Clinical Immunolo', 'Internal Medicine, Rheumatology, Clinical Immunology and Allergy');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (146, 'Interventional Radiology, Diagnostic Radiology', 'Interventional Radiology, Diagnostic Radiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (147, 'Maternal', 'Maternal');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (148, 'Medical Biochemistry', 'Medical Biochemistry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (149, 'Medical Biochemistry, Internal Medicine', 'Medical Biochemistry, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (150, 'Medical Genetics', 'Medical Genetics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (151, 'Medical Genetics and Genomics', 'Medical Genetics and Genomics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (152, 'Medical Genetics, Pediatrics', 'Medical Genetics, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (153, 'Medical Microbiology', 'Medical Microbiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (154, 'Medical Microbiology, Internal Medicine, Infectiou', 'Medical Microbiology, Internal Medicine, Infectious Diseases');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (155, 'Medical Oncology', 'Medical Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (156, 'Medical Oncology, Hematology, Internal Medicine', 'Medical Oncology, Hematology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (157, 'Medical Oncology, Internal Medicine', 'Medical Oncology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (158, 'Medical Oncology, Internal Medicine, Hematology', 'Medical Oncology, Internal Medicine, Hematology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (159, 'Neonatal', 'Neonatal');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (160, 'Nephrology', 'Nephrology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (161, 'Nephrology, Critical Care Medicine, Internal Medic', 'Nephrology, Critical Care Medicine, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (162, 'Nephrology, Internal Medicine', 'Nephrology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (163, 'Nephrology, Pediatrics', 'Nephrology, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (164, 'Neurology', 'Neurology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (165, 'Neurology, Clinician Investigator Program', 'Neurology, Clinician Investigator Program');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (166, 'Neurology, Critical Care Medicine', 'Neurology, Critical Care Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (167, 'Neurology, Emergency Medicine', 'Neurology, Emergency Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (168, 'Neurology, Internal Medicine', 'Neurology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (169, 'Neurology, Neuropathology', 'Neurology, Neuropathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (170, 'Neurology, Pediatrics', 'Neurology, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (171, 'Neurology, Psychiatry', 'Neurology, Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (172, 'Neuropathology', 'Neuropathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (173, 'Neuropathology, Anatomical Pathology', 'Neuropathology, Anatomical Pathology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (174, 'Neuroradiology, Diagnostic Radiology', 'Neuroradiology, Diagnostic Radiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (175, 'Neurosurgery', 'Neurosurgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (176, 'Nuclear Medicine', 'Nuclear Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (177, 'Nuclear Medicine, Diagnostic Radiology', 'Nuclear Medicine, Diagnostic Radiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (178, 'Nuclear Medicine, Radiation Oncology', 'Nuclear Medicine, Radiation Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (179, 'Obstetrics and Gynecology', 'Obstetrics and Gynecology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (180, 'Obstetrics and Gynecology, Gynecologic Oncology', 'Obstetrics and Gynecology, Gynecologic Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (181, 'Obstetrics and Gynecology, Gynecologic Reproductiv', 'Obstetrics and Gynecology, Gynecologic Reproductive Endocrinology and Infertility');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (182, 'Obstetrics and Gynecology, Maternal', 'Obstetrics and Gynecology, Maternal');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (183, 'Occupational Medicine', 'Occupational Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (184, 'Occupational Medicine, Community Medicine', 'Occupational Medicine, Community Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (185, 'Ophthalmology', 'Ophthalmology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (186, 'Orthopedic Surgery', 'Orthopedic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (187, 'Orthopedic Surgery, Pain Medicine', 'Orthopedic Surgery, Pain Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (188, 'Otolaryngology', 'Otolaryngology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (189, 'Pain Medicine, Anesthesiology', 'Pain Medicine, Anesthesiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (190, 'Pain Medicine, Physical Medicine and Rehabilitatio', 'Pain Medicine, Physical Medicine and Rehabilitation');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (191, 'Palliative Medicine', 'Palliative Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (192, 'Palliative Medicine, Pediatrics', 'Palliative Medicine, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (193, 'Palliative Medicine, Radiation Oncology', 'Palliative Medicine, Radiation Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (194, 'Pediatric Cardiology, Pediatrics', 'Pediatric Cardiology, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (195, 'Pediatric Emergency Medicine, Emergency Medicine', 'Pediatric Emergency Medicine, Emergency Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (196, 'Pediatric Emergency Medicine, Pediatrics', 'Pediatric Emergency Medicine, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (197, 'Pediatric Hematology/Oncology, Pediatrics', 'Pediatric Hematology/Oncology, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (198, 'Pediatric Surgery, General Surgery', 'Pediatric Surgery, General Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (199, 'Pediatrics', 'Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (200, 'Pediatrics, Adolescent Medicine', 'Pediatrics, Adolescent Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (201, 'Pediatrics, Cardiology', 'Pediatrics, Cardiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (202, 'Pediatrics, Clinical Immunology and Allergy', 'Pediatrics, Clinical Immunology and Allergy');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (203, 'Pediatrics, Community Medicine', 'Pediatrics, Community Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (204, 'Pediatrics, Critical Care Medicine', 'Pediatrics, Critical Care Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (205, 'Pediatrics, Critical Care Medicine, Anesthesiology', 'Pediatrics, Critical Care Medicine, Anesthesiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (206, 'Pediatrics, Critical Care Medicine, Infectious Dis', 'Pediatrics, Critical Care Medicine, Infectious Diseases');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (207, 'Pediatrics, Dermatology', 'Pediatrics, Dermatology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (208, 'Pediatrics, Developmental Pediatrics', 'Pediatrics, Developmental Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (209, 'Pediatrics, Endocrinology and Metabolism', 'Pediatrics, Endocrinology and Metabolism');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (210, 'Pediatrics, Gastroenterology', 'Pediatrics, Gastroenterology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (211, 'Pediatrics, Hematology', 'Pediatrics, Hematology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (212, 'Pediatrics, Infectious Diseases', 'Pediatrics, Infectious Diseases');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (213, 'Pediatrics, Infectious Diseases, Medical Microbiol', 'Pediatrics, Infectious Diseases, Medical Microbiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (214, 'Pediatrics, Medical Genetics', 'Pediatrics, Medical Genetics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (215, 'Pediatrics, Medical Microbiology', 'Pediatrics, Medical Microbiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (216, 'Pediatrics, Medical Oncology, Hematology', 'Pediatrics, Medical Oncology, Hematology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (217, 'Pediatrics, Neonatal', 'Pediatrics, Neonatal');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (218, 'Pediatrics, Nephrology', 'Pediatrics, Nephrology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (219, 'Pediatrics, Neurology', 'Pediatrics, Neurology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (220, 'Pediatrics, Orthopedic Surgery', 'Pediatrics, Orthopedic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (221, 'Pediatrics, Otolaryngology', 'Pediatrics, Otolaryngology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (222, 'Pediatrics, Pediatric Cardiology', 'Pediatrics, Pediatric Cardiology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (223, 'Pediatrics, Pediatric Emergency Medicine', 'Pediatrics, Pediatric Emergency Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (224, 'Pediatrics, Pediatric Hematology/Oncology', 'Pediatrics, Pediatric Hematology/Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (225, 'Pediatrics, Respirology', 'Pediatrics, Respirology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (226, 'Pediatrics, Rheumatology', 'Pediatrics, Rheumatology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (227, 'Physical Medicine and Rehabilitation', 'Physical Medicine and Rehabilitation');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (228, 'Physical Medicine and Rehabilitation, Internal Med', 'Physical Medicine and Rehabilitation, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (229, 'Physical Medicine and Rehabilitation, Pain Medicin', 'Physical Medicine and Rehabilitation, Pain Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (230, 'Plastic Surgery', 'Plastic Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (231, 'Psychiatry', 'Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (232, 'Psychiatry, Child and Adolescent Psychiatry', 'Psychiatry, Child and Adolescent Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (233, 'Psychiatry, Community Medicine', 'Psychiatry, Community Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (234, 'Psychiatry, Forensic Psychiatry', 'Psychiatry, Forensic Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (235, 'Psychiatry, Forensic Psychiatry, Child and Adolesc', 'Psychiatry, Forensic Psychiatry, Child and Adolescent Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (236, 'Psychiatry, Geriatric Psychiatry', 'Psychiatry, Geriatric Psychiatry');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (237, 'Psychiatry, Internal Medicine', 'Psychiatry, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (238, 'Psychiatry, Neurology', 'Psychiatry, Neurology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (239, 'Psychiatry, Nuclear Medicine', 'Psychiatry, Nuclear Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (240, 'Psychiatry, Pain Medicine', 'Psychiatry, Pain Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (241, 'Public Health and Preventive Medicine', 'Public Health and Preventive Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (242, 'Public Health and Preventive Medicine, Community M', 'Public Health and Preventive Medicine, Community Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (243, 'Radiation Oncology', 'Radiation Oncology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (244, 'Respirology, Critical Care Medicine, Internal Medi', 'Respirology, Critical Care Medicine, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (245, 'Respirology, Internal Medicine', 'Respirology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (246, 'Respirology, Pediatrics', 'Respirology, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (247, 'Rheumatology', 'Rheumatology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (248, 'Rheumatology, Clinician Investigator Program, Inte', 'Rheumatology, Clinician Investigator Program, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (249, 'Rheumatology, Internal Medicine', 'Rheumatology, Internal Medicine');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (250, 'Rheumatology, Pediatrics', 'Rheumatology, Pediatrics');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (251, 'Thoracic Surgery, Cardiac Surgery', 'Thoracic Surgery, Cardiac Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (252, 'Thoracic Surgery, Critical Care Medicine, General ', 'Thoracic Surgery, Critical Care Medicine, General Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (253, 'Thoracic Surgery, General Surgery', 'Thoracic Surgery, General Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (254, 'Thoracic Surgery, General Surgery, Cardiac Surgery', 'Thoracic Surgery, General Surgery, Cardiac Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (255, 'Urology', 'Urology');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (256, 'Vascular Surgery', 'Vascular Surgery');
+INSERT INTO
+    `ContactSpecialty`(`id`, `specialty`, `description`) VALUES (257, 'Vascular Surgery, General Surgery', 'Vascular Surgery, General Surgery');
+
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '1', 'Adolescent Medicine, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '2', 'Anatomical Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '3', 'Anatomical Pathology, Forensic Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '4', 'Anatomical Pathology, General Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '5', 'Anatomical Pathology, General Pathology, Dermatology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '6', 'Anatomical Pathology, Hematological Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '7', 'Anatomical Pathology, Neuropathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '8', 'Anesthesiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '9', 'Anesthesiology, Critical Care Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Anesthesiology, Critical Care Medicine, Palliative Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Anesthesiology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Anesthesiology, Pain Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Cardiac Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Cardiac Surgery, General Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Cardiac Surgery, Thoracic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Cardiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Cardiology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Cardiology, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Cardiothoracic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Cardiovascular and Thoracic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Cardiovascular and Thoracic Surgery, General Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Child and Adolescent Psychiatry, Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Clinical Immunology and Allergy, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Clinician Investigator Program, Internal Medicine, Critical Care Medicine, Infectious Diseases');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '25', 'Clinician Investigator Program, Medical Biochemistry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '26', 'Clinician Investigator Program, Pediatrics, Pediatric Hematology/Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '27', 'Clinician Investigator Program, Plastic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '28', 'Clinician Investigator Program, Radiation Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '29', 'Colorectal Surgery, General Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '30', 'Community Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '31', 'Community Medicine, Public Health and Preventive Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '32', 'Critical Care Medicine, Anesthesiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '33', 'Critical Care Medicine, Cardiac Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '34', 'Critical Care Medicine, Emergency Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '35', 'Critical Care Medicine, General Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '36', 'Critical Care Medicine, Infectious Diseases, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '37', 'Critical Care Medicine, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '38', 'Critical Care Medicine, Internal Medicine, Cardiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '39', 'Critical Care Medicine, Internal Medicine, Respirology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '40', 'Critical Care Medicine, Nephrology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '41', 'Critical Care Medicine, Pediatric Emergency Medicine, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '42', 'Critical Care Medicine, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '43', 'Critical Care Medicine, Respirology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '44', 'Dermatology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '45', 'Dermatology, Internal Medicine, Rheumatology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '46', 'Dermatology, Pediatrics, Clinical Immunology and Allergy');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '47', 'Developmental Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '48', 'Developmental Pediatrics, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '49', 'Diagnostic Radiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '50', 'Diagnostic Radiology, Diagnostic Radiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '51', 'Diagnostic Radiology, Neuroradiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '52', 'Diagnostic Radiology, Nuclear Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '53', 'Diagnostic Radiology, Pediatric Radiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '54', 'Diagnostic Radiology, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '55', 'Emergency Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '56', 'Emergency Medicine, Anesthesiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '57', 'Emergency Medicine, Critical Care Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '58', 'Emergency Medicine, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '59', 'Emergency Medicine, Pediatric Emergency Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '60', 'Endocrinology and Metabolism');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '61', 'Endocrinology and Metabolism, Critical Care Medicine, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '62', 'Endocrinology and Metabolism, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '63', 'Endocrinology and Metabolism, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '64', 'Family Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '65', 'Forensic Pathology, Anatomical Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '66', 'Forensic Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '67', 'Forensic Psychiatry, Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '68', 'Gastroenterology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '69', 'Gastroenterology, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '70', 'General Internal Medicine, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '71', 'General Internal Medicine, Internal Medicine, Critical Care Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '72', 'General Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '73', 'General Pathology, Anatomical Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '74', 'General Pathology, Forensic Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '75', 'General Pathology, Hematological Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '76', 'General Pathology, Medical Biochemistry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '77', 'General Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '78', 'General Surgery, Cardiac Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '79', 'General Surgery, Cardiothoracic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '80', 'General Surgery, Cardiovascular and Thoracic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '81', 'General Surgery, Cardiovascular and Thoracic Surgery, Thoracic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '82', 'General Surgery, Colorectal Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '83', 'General Surgery, Critical Care Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '84', 'General Surgery, General Surgical Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '85', 'General Surgery, Pediatric Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '86', 'General Surgery, Thoracic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '87', 'General Surgery, Vascular Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '88', 'General Surgical Oncology, General Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '89', 'Geriatric Medicine, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '90', 'Geriatric Psychiatry, Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '91', 'Geriatric Psychiatry, Psychiatry, Forensic Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '92', 'Gynecologic Oncology, Obstetrics and Gynecology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '93', 'Gynecologic Reproductive Endocrinology and Infertility, Obstetrics and Gynecology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '94', 'Hematological Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '95', 'Hematological Pathology, Anatomical Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '96', 'Hematological Pathology, Hematology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '97', 'Hematological Pathology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '98', 'Hematology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '99', 'Hematology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Hematology, Internal Medicine, Medical Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Hematology, Medical Oncology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Hematology, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Infectious Diseases, Critical Care Medicine, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Infectious Diseases, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Infectious Diseases, Internal Medicine, Medical Microbiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Infectious Diseases, Medical Microbiology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Infectious Diseases, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '10', 'Internal Medicine, Cardiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Internal Medicine, Clinical Immunology and Allergy');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Internal Medicine, Critical Care Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Internal Medicine, Critical Care Medicine, Clinical Pharmacology and Toxicology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Internal Medicine, Critical Care Medicine, Respirology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Internal Medicine, Dermatology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Internal Medicine, Diagnostic Radiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Internal Medicine, Emergency Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Internal Medicine, Endocrinology and Metabolism');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Internal Medicine, Gastroenterology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '11', 'Internal Medicine, General Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Internal Medicine, Geriatric Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Internal Medicine, Hematology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Internal Medicine, Hematology, Medical Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Internal Medicine, Infectious Diseases');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Internal Medicine, Infectious Diseases, Critical Care Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Internal Medicine, Medical Biochemistry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Internal Medicine, Medical Genetics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Internal Medicine, Medical Microbiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Internal Medicine, Medical Microbiology, Infectious Diseases');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '12', 'Internal Medicine, Medical Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Internal Medicine, Medical Oncology, Hematology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Internal Medicine, Nephrology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Internal Medicine, Nephrology, Critical Care Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Internal Medicine, Neurology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Internal Medicine, Nuclear Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Internal Medicine, Occupational Medicine, Respirology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Internal Medicine, Ophthalmology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Internal Medicine, Pain Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Internal Medicine, Palliative Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '13', 'Internal Medicine, Palliative Medicine, Nephrology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Internal Medicine, Public Health and Preventive Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Internal Medicine, Radiation Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Internal Medicine, Respirology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Internal Medicine, Respirology, Critical Care Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Internal Medicine, Rheumatology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Internal Medicine, Rheumatology, Clinical Immunology and Allergy');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Interventional Radiology, Diagnostic Radiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Maternal');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Medical Biochemistry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '14', 'Medical Biochemistry, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Medical Genetics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Medical Genetics and Genomics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Medical Genetics, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Medical Microbiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Medical Microbiology, Internal Medicine, Infectious Diseases');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Medical Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Medical Oncology, Hematology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Medical Oncology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Medical Oncology, Internal Medicine, Hematology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '15', 'Neonatal');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Nephrology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Nephrology, Critical Care Medicine, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Nephrology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Nephrology, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Neurology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Neurology, Clinician Investigator Program');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Neurology, Critical Care Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Neurology, Emergency Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Neurology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '16', 'Neurology, Neuropathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Neurology, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Neurology, Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Neuropathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Neuropathology, Anatomical Pathology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Neuroradiology, Diagnostic Radiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Neurosurgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Nuclear Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Nuclear Medicine, Diagnostic Radiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Nuclear Medicine, Radiation Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '17', 'Obstetrics and Gynecology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Obstetrics and Gynecology, Gynecologic Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Obstetrics and Gynecology, Gynecologic Reproductive Endocrinology and Infertility');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Obstetrics and Gynecology, Maternal');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Occupational Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Occupational Medicine, Community Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Ophthalmology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Orthopedic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Orthopedic Surgery, Pain Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Otolaryngology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '18', 'Pain Medicine, Anesthesiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Pain Medicine, Physical Medicine and Rehabilitation');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Palliative Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Palliative Medicine, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Palliative Medicine, Radiation Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Pediatric Cardiology, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Pediatric Emergency Medicine, Emergency Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Pediatric Emergency Medicine, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Pediatric Hematology/Oncology, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Pediatric Surgery, General Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '19', 'Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Pediatrics, Adolescent Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Pediatrics, Cardiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Pediatrics, Clinical Immunology and Allergy');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Pediatrics, Community Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Pediatrics, Critical Care Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Pediatrics, Critical Care Medicine, Anesthesiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Pediatrics, Critical Care Medicine, Infectious Diseases');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Pediatrics, Dermatology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Pediatrics, Developmental Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '20', 'Pediatrics, Endocrinology and Metabolism');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Pediatrics, Gastroenterology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Pediatrics, Hematology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Pediatrics, Infectious Diseases');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Pediatrics, Infectious Diseases, Medical Microbiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Pediatrics, Medical Genetics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Pediatrics, Medical Microbiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Pediatrics, Medical Oncology, Hematology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Pediatrics, Neonatal');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Pediatrics, Nephrology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '21', 'Pediatrics, Neurology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Pediatrics, Orthopedic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Pediatrics, Otolaryngology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Pediatrics, Pediatric Cardiology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Pediatrics, Pediatric Emergency Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Pediatrics, Pediatric Hematology/Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Pediatrics, Respirology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Pediatrics, Rheumatology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Physical Medicine and Rehabilitation');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Physical Medicine and Rehabilitation, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '22', 'Physical Medicine and Rehabilitation, Pain Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Plastic Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Psychiatry, Child and Adolescent Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Psychiatry, Community Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Psychiatry, Forensic Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Psychiatry, Forensic Psychiatry, Child and Adolescent Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Psychiatry, Geriatric Psychiatry');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Psychiatry, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Psychiatry, Neurology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '23', 'Psychiatry, Nuclear Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Psychiatry, Pain Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Public Health and Preventive Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Public Health and Preventive Medicine, Community Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Radiation Oncology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Respirology, Critical Care Medicine, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Respirology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Respirology, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Rheumatology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Rheumatology, Clinician Investigator Program, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '24', 'Rheumatology, Internal Medicine');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '25', 'Rheumatology, Pediatrics');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '25', 'Thoracic Surgery, Cardiac Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '25', 'Thoracic Surgery, Critical Care Medicine, General Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '25', 'Thoracic Surgery, General Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '25', 'Thoracic Surgery, General Surgery, Cardiac Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '25', 'Urology');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '25', 'Vascular Surgery');
+INSERT INTO
+    `specialty`(`region`, `specialty`, `specialtydesc`) VALUES ('ON', '25', 'Vascular Surgery, General Surgery');

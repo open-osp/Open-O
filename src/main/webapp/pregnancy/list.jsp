@@ -52,7 +52,7 @@ if(!authed) {
 <%
 
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title>Pregnancy History</title>
 <link rel="stylesheet" href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" >

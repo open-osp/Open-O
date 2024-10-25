@@ -50,7 +50,7 @@ if(!authed) {
 <%
 
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
 

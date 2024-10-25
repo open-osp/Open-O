@@ -130,7 +130,7 @@ if(!authed) {
      extraData = PreventionData.getPreventionKeyValues(id);
      lot = (String) extraData.get("lot");
      expiryDate = (String) extraData.get("expiryDate");
-	CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
+	CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 	List<CaseManagementNoteLink> cml = cmm.getLinkByTableId(CaseManagementNoteLink.PREVENTIONS, Long.valueOf(id));
 	hasImportExtra = (cml.size()>0);
 	 snomedId = (String) existingPrevention.get("snomedId");
@@ -252,7 +252,8 @@ if(!authed) {
   //calc age at time of prevention
   Date dob = PreventionData.getDemographicDateOfBirth(LoggedInInfo.getLoggedInInfoFromSession(request), Integer.valueOf(demographic_no));
   Date dateOfPrev = parseDate(prevDate);
-  String age = UtilDateUtilities.calcAgeAtDate(dob, dateOfPrev);
+  String age = "";
+  if (dateOfPrev != null) { age = UtilDateUtilities.calcAgeAtDate(dob, dateOfPrev); }
   DemographicData demoData = new DemographicData();
   String[] demoInfo = demoData.getNameAgeSexArray(LoggedInInfo.getLoggedInInfoFromSession(request), Integer.valueOf(demographic_no));
   String nameage = demoInfo[0] + ", " + demoInfo[1] + " " + demoInfo[2] + " " + age;
@@ -264,7 +265,7 @@ if(!authed) {
 %>
 
 
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <title>
@@ -598,6 +599,50 @@ function updateCvcLot() {
 }
 
 
+function handleFormSubmission() {
+   const isValidDate = validatePreventionDate();
+   if (isValidDate) {
+      copyLot();
+      cancelCloseWarning();
+   }
+
+   return isValidDate;
+}
+
+function validatePreventionDate() {
+   const prevDateInput = document.getElementById('prevDate').value;
+   const errorMessage = document.getElementById('errorPrevDateMessage');
+   const validationResult = checkDateFormat(prevDateInput);
+   let isValidDate = false;
+   if (validationResult === true) {
+      errorMessage.textContent = '';
+      isValidDate = true;
+   } else if (validationResult === "Required") {
+      errorMessage.textContent = 'Date is required!';
+   } else {
+      errorMessage.textContent = 'Invalid date format! Expected formats are YYYY, YYYY-MM, YYYY-MM-DD, or YYYY-MM-DD hh:mm.';
+   }
+
+   return isValidDate;
+}
+
+function checkDateFormat(input) {
+   const dateFormats = [
+        /^\d{4}$/,
+        /^\d{4}-(0[1-9]|1[0-2])$/,
+        /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/,
+        /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/
+   ];
+
+   if (!input.trim()) { return "Required"; }
+
+   for (let i = 0; i < dateFormats.length; i++) {
+      if (dateFormats[i].test(input)) { return true; }
+   }
+
+   return false;
+}
+
 <%
 	if(foundByLotNumber) {
 %>
@@ -703,7 +748,7 @@ function changeSite(el) {
             <% if(prevHash == null) { %>
             	<h3 style="color:red">Prevention not found!</h3>
             <%} else { %>
-               <html:form action="/oscarPrevention/AddPrevention" onsubmit="copyLot();return cancelCloseWarning()">
+               <html:form action="/oscarPrevention/AddPrevention" onsubmit="return handleFormSubmission()">
                <input type="hidden" name="prevention" value="<%=prevention%>"/>
                <input type="hidden" name="demographic_no" value="<%=demographic_no%>"/>
                <%if(snomedId != null) {%>
@@ -736,7 +781,8 @@ function changeSite(el) {
                          </div>
                          <div>&nbsp;</div>
                          <div style="margin-left:30px;">
-                            <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="15" > <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
+                            <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="15" required> <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
+                            <div id="errorPrevDateMessage" style="color: red;margin-left: 80px;font-weight: normal;"></div>
                             <label for="provider" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName" value="<%=providerName%>"/>
                                   <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
                                       <%for (int i=0; i < providers.size(); i++) {
@@ -936,7 +982,8 @@ function changeSite(el) {
                          </div>
                          <div>&nbsp;</div>
                          <div style="margin-left:30px;">
-                            <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="9" > <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
+                            <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="15" required> <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
+                            <div id="errorPrevDateMessage" style="color: red;margin-left: 80px;font-weight: normal;"></div>
                             <label for="provider" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName" value="<%=providerName%>"/>
                                   <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
                                       <%for (int i=0; i < providers.size(); i++) {
@@ -1034,7 +1081,8 @@ function changeSite(el) {
                          </div>
                          <div>&nbsp;</div>
                          <div style="margin-left:30px;">
-                            <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="9" > <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
+                            <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="15" required> <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
+                            <div id="errorPrevDateMessage" style="color: red;margin-left: 80px;font-weight: normal;"></div>
                             <label for="provider" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName" value="<%=providerName%>"/>
                                   <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
                                       <%for (int i=0; i < providers.size(); i++) {
@@ -1074,7 +1122,8 @@ function changeSite(el) {
                             <input name="given" type="radio" value="previous" <%=checked(completed,"2")%>>Previous</input>
                          </div>
                          <div style="float:left;margin-left:30px;">
-                            <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="9" > <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
+                            <label for="prevDate" class="fields" >Date:</label>    <input type="text" name="prevDate" id="prevDate" value="<%=prevDate%>" size="15" required> <a id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0" /></a> <br>
+                            <div id="errorPrevDateMessage" style="color: red;margin-left: 80px;font-weight: normal;"></div>
                             <label for="provider" class="fields">Provider:</label> <input type="hidden" name="providerName" id="providerName" value="<%=providerName%>"/>
                                   <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
                                       <%for (int i=0; i < providers.size(); i++) {

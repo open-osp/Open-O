@@ -123,7 +123,7 @@ public class PHRService {
 		BeanUtils.copyProperties(phrdoc, m);
 		phrDocumentDAO.save(phrdoc);// save to phr document table!
 		// Drug d=m.getDrug();
-		// DrugDao drugDao = (DrugDao) SpringUtils.getBean("drugDao");
+		// DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
 		// drugDao.addNewDrug(d);
 	}
 

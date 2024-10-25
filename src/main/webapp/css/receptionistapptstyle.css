@@ -21,6 +21,30 @@
  * Hamilton 
  * Ontario, Canada 
  */
+
+table#firstTable tr {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+tr#ivoryBar, table#monthScheduleNavigation tr td {
+	background-color: whitesmoke;
+	display: flex;
+	justify-content: space-between;
+	gap: 5px;
+}
+
+#dateAndCalendar a {
+	padding-right:5px;
+}
+
+#caseloadTable {
+	margin-top:25px;
+	left:0;
+	right:0;
+}
+
 .hideReason {
 	display:none;
 }
@@ -53,37 +77,28 @@ table {
 }
 
 
- table#firstTable {
-    width:100%;
-    position: fixed;
-    top: 0;
-    left:0;
-    right:0;
-    background-color:white;
-    z-index:1000;
-    border-bottom: 1px solid #c0c0c0;
+table#firstTable {
+	width:100%;
+	position: fixed;
+	top: 0;
+	left:0;
+	right:0;
+	background-color:white;
+	z-index:1000;
+	border-bottom: 1px solid #c0c0c0;
 	height:25px;
- }
+}
 table#firstTable tr td.icon-container {
 	padding-left: 10px;
 }
 
- table#caseloadTable tr.caseloadRow td:first-of-type {
+table#caseloadTable tr.caseloadRow td:first-of-type {
 	background-color: whitesmoke !important;
- }
+}
 
- table#firstTable td#oscarLogo a {
-    display:block;
-    padding:5px 10px;
- }
-
- table#firstTable td#oscarLogo {
-    width:40px;
- }
-
-  table#firstTable td#oscarLogo a img {
-    width:22px;
-  }
+table#firstTable td#oscarLogo a img {
+	width:22px;
+}
 
 table#firstTable td#firstMenu ul#navlist:not(.dashboardDropdown),
 table#firstTable td#userSettings ul#userSettingsMenu:not(.dashboardDropdown){
@@ -93,40 +108,49 @@ table#firstTable td#userSettings ul#userSettingsMenu:not(.dashboardDropdown){
 	list-style-type: none;
 }
 
-table#firstTable td#userSettings {
-	text-align: right;
-	padding-right:10px;
-	min-width:250px;
+#firstMenu, #ivoryBar #dateAndCalendar {
+	margin-left:10px;
 }
 
+#userSettings, #ivoryBar #group {
+	margin-right:15px;
+}
+
+#ivoryBar #group {
+	display: flex;
+	gap: 5px;
+	align-content: center;
+	align-items: center;
+}
+
+table#firstTable td {
+	display:flex;
+	align-items: center;
+	gap:5px;
+}
 table#firstTable #logoutButton span {
-    font-size:18px;
-	padding-right:10px;
+	font-size:18px;
 }
 
 table#firstTable td#userSettings ul#userSettingsMenu li {
-  display:inline-block;
+	display:inline-block;
 }
 
-tr#ivoryBar td, table#monthScheduleNavigation tr td {
-    background-color: whitesmoke;
-	padding:0 10px;
+table#scheduleNavigation tr td.title {
+	white-space: nowrap;
 }
 
 tr td.infirmaryView {
-    position: sticky;
-    top:50px;
-	left:0;
-	margin-left: unset;
-    height:25px;
+	position: sticky;
+	top: 50px;
+	left: 0;
+	height: 25px;
 	padding: 0 5px;
+	right: 0;
 }
 
-td#dateAndCalendar {
-    padding-left: 10px;
-}
 td#group {
-    padding-right: 10px;
+	padding-right: 15px;
 }
 
 table#scheduleNavigation, table#monthScheduleNavigation {
@@ -136,14 +160,12 @@ table#scheduleNavigation, table#monthScheduleNavigation {
 	left:0;
 	height:25px;
 	width:100%;
+	/*! border-bottom: 1px solid #c0c0c0; */
 }
 
-table#scheduleNavigation tr td#dateAndCalendar {
-	min-width: 405px;
-}
-
-table#scheduleNavigation tr td#group {
-	min-width: 695px;
+table#scheduleNavigation tr td {
+	white-space: nowrap;
+	padding:3px 0;
 }
 
 .providerSchedule {
@@ -173,7 +195,7 @@ td.appt .appt-container {
 	display: flex;
 	overflow: hidden;
 	flex-direction: row;
-  	flex-wrap: nowrap;
+	flex-wrap: nowrap;
 	align-items: stretch;
 	justify-content: flex-start;
 }
@@ -191,7 +213,7 @@ div.navigation-tag a:hover,  div.patient-tag a:hover {
 }
 
 div.apt-tag:empty {
-   display: none;
+	display: none;
 }
 
 div.apt-tag a img {
@@ -201,7 +223,7 @@ div.apt-tag a img {
 }
 
 div.appt-container div.navigation-tag {
-  white-space:nowrap;
+	white-space:nowrap;
 }
 
 .hourmin {
@@ -213,17 +235,17 @@ div.appt-container div.navigation-tag {
 .scheduleTimeNot00, .scheduleTime00 {
 	border-top: #486ebd 2px solid;
 	border-right: #486ebd 2px solid;
-    width: 5%;
+	width: 5%;
 	min-width:5%;
 }
 
 table#scheduleTable {
-	margin-top: 49px;
+	margin-top: 51px;
 }
 
 .scheduleTimeNot00 a, .scheduleTime00 a {
-    width: 5%;
-    min-width:5%;
+	width: 5%;
+	min-width:5%;
 }
 
 a.orange {
@@ -251,7 +273,19 @@ a.black:Hover {
 a {
 	text-decoration: none;
 	font-weight: bold;
-	color: black;
+	color:#00283c;
+}
+
+a:visited {
+	text-decoration: none;
+	font-weight: bold;
+	color:#00283c;
+}
+
+a:active {
+	text-decoration: none;
+	font-weight: bold;
+	color:#00283c;
 }
 
 a:Hover {
@@ -265,7 +299,7 @@ input,select,textarea {
 }
 
 td {
-	font-family: "Arial", sans-serif;
+	/*font-family: "Arial", sans-serif;*/
 	font-size: 12px;
 }
 
@@ -280,7 +314,7 @@ p {
 }
 
 .adhour {
-	font-family: "Arial", sans-serif;
+	/*font-family: "Arial", sans-serif;*/
 	font-size: 12px;
 	color: white;
 	display: block;
@@ -291,13 +325,13 @@ p {
 	margin-top: 15px;
 	margin-left: 100px;
 	margin-right: 140px;
-	font-family: "Arial Black", sans-serif;
+	/*font-family: "Arial Black", sans-serif;*/
 	font-size: 9px;
 	color: #00408f;
 }
 
 .Monthappt {
-	font-family: "Arial Black", sans-serif;
+	/*font-family: "Arial Black", sans-serif;*/
 	font-size: 8px;
 	color: black;
 }
@@ -322,8 +356,9 @@ p {
 }
 
 .dateAppointment {
-        font-weight:bold;
-        font-size: 14px;
+	font-weight:bold;
+	font-size: inherit;
+	color: #00283c;
 }
 
 .datephour {
@@ -345,8 +380,8 @@ p {
 }
 
 table#firstTable td#firstMenu ul#navlist li:not(.dashboardDropdown) {
-    line-height:1;
-    display: inline-block;
+	line-height:1;
+	display: inline-block;
 }
 
 table#firstTable td#firstMenu ul#navlist li a:not(.dashboardDropdown){
@@ -364,23 +399,19 @@ table#firstTable td#firstMenu #navlist #logoutMobile { display:none; }
 
 div.reason-tag a {
 	font-weight: normal !important;
-    font-style: italic;
+	font-style: italic;
 }
 
 #providerSchedule, #providerSchedule td {
-    border-collapse: collapse;
+	border-collapse: collapse;
 }
 #providerSchedule td.noGrid { border:none; }
 
 .scheduleTime00, .scheduleTimeNot00{
-    width:5%;
+	width:5%;
 }
 .scheduleTime00 { background-color: #3EA4E1; }
 .scheduleTimeNot00 { background-color: #00A488; }
-
-#ivoryBar td {
-    border-top: 1px solid #c0c0c0;
-}
 
 .dropdown {
 	display: inline-block !important;
@@ -417,7 +448,7 @@ div.reason-tag a {
 	margin:0;
 }
 .dropdown:hover .dashboardDropdown {
-    display: block;
+	display: block;
 }
 
 #oscar_new_msg .tabalert sup {
@@ -434,5 +465,5 @@ div.reason-tag a {
 }
 
 @media print {
- .noprint {display:none !important;}
+	.noprint {display:none !important;}
 }

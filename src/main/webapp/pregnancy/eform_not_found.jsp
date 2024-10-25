@@ -38,7 +38,7 @@
 <%
 
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title>Oops. Not Found</title>
 

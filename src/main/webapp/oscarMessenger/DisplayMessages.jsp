@@ -106,7 +106,7 @@ bean.nullAttachment();
 <jsp:useBean id="ViewMessageForm" scope="session" class="oscar.oscarMessenger.pageUtil.MsgViewMessageForm"/>
 
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <html:base />
 <link rel="stylesheet" type="text/css" href="encounterStyles.css">

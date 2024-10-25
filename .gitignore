@@ -26,3 +26,6 @@ src/main/resources/uiResources_*.properties
 .settings/
 .vscode/
 tmp/
+.aider*
+/hs_err_pid*.log
+/release

@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,32 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.SpecialistsJavascript;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class SpecialistsJavascriptDao extends AbstractDao<SpecialistsJavascript>{
-
-	public SpecialistsJavascriptDao() {
-		super(SpecialistsJavascript.class);
-	}
-	
-	public List<SpecialistsJavascript> findBySetId(String setId) {
-		Query q = entityManager.createQuery("select x from SpecialistsJavascript x where x.setId=?");
-		q.setParameter(1, setId);
-		
-		@SuppressWarnings("unchecked")
-		List<SpecialistsJavascript> results = q.getResultList();
-		
-		return results;
-	}
+public interface SpecialistsJavascriptDao extends AbstractDao<SpecialistsJavascript> {
+    List<SpecialistsJavascript> findBySetId(String setId);
 }

@@ -58,7 +58,7 @@ if(!authed) {
     DepartmentDao departmentDao = SpringUtils.getBean(DepartmentDao.class);
     InstitutitionDepartmentDao institutionDepartmentDao = SpringUtils.getBean(InstitutitionDepartmentDao.class);
 %>
-<html:html locale="true">
+<html:html lang="en">
 
 <%
 String id = (String) request.getAttribute("id");

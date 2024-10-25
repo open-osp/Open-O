@@ -86,25 +86,30 @@ public class WaitListEmailThread extends TimerTask
 		logger.debug("WaitListEmailThread end");
     }
 
+	/*
+	* This method is no longer supported as it relies on WaitListManager's checkAndSendAdmissionIntervalNotification method.
+	* For more details, please refer to the checkAndSendAdmissionIntervalNotification method.
+	*/
 	private void notifyProgramAdmissions() {
-		String programIdsString=StringUtils.trimToNull(OscarProperties.getInstance().getProperty("wait_list_email_notification_program_ids"));
+		throw new UnsupportedOperationException("This method is no longer supported.");
+		// String programIdsString=StringUtils.trimToNull(OscarProperties.getInstance().getProperty("wait_list_email_notification_program_ids"));
 		
-		if (programIdsString==null) return;
+		// if (programIdsString==null) return;
 		
-		String[] programIdsStringSplit=programIdsString.split(",");
+		// String[] programIdsStringSplit=programIdsString.split(",");
 	    
-		ProgramDao programDao=(ProgramDao) SpringUtils.getBean("programDao");
-		WaitListManager waitListManager=(WaitListManager) SpringUtils.getBean("waitListManager");
+		// ProgramDao programDao=(ProgramDao) SpringUtils.getBean(ProgramDao.class);
+		// WaitListManager waitListManager=(WaitListManager) SpringUtils.getBean(WaitListManager.class);
 		
-		for (String programIdString : programIdsStringSplit)
-		{
-			try {
-	            Integer programId=new Integer(programIdString);
-	            Program program=programDao.getProgram(programId);
-	            waitListManager.checkAndSendAdmissionIntervalNotification(program);
-            } catch (Exception e) {
-	         logger.error("Unexpected error processing programId="+programIdString, e);
-            }
-		}
+		// for (String programIdString : programIdsStringSplit)
+		// {
+		// 	try {
+	    //         Integer programId=new Integer(programIdString);
+	    //         Program program=programDao.getProgram(programId);
+	    //         waitListManager.checkAndSendAdmissionIntervalNotification(program);
+        //     } catch (Exception e) {
+	    //      logger.error("Unexpected error processing programId="+programIdString, e);
+        //     }
+		// }
     }	
 }

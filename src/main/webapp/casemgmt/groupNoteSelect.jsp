@@ -50,10 +50,10 @@
 <%@page import="org.oscarehr.casemgmt.web.formbeans.CaseManagementEntryFormBean" %>
 
 <%
-	ProgramManager programManager = (ProgramManager)SpringUtils.getBean("programManager");
-	AdmissionManager admissionManager = (AdmissionManager)SpringUtils.getBean("admissionManager");
-	GroupNoteDao groupNoteLinkDao = (GroupNoteDao)SpringUtils.getBean("groupNoteDao"); 
-	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+	ProgramManager programManager = (ProgramManager)SpringUtils.getBean(ProgramManager.class);
+	AdmissionManager admissionManager = (AdmissionManager)SpringUtils.getBean(AdmissionManager.class);
+	GroupNoteDao groupNoteLinkDao = (GroupNoteDao)SpringUtils.getBean(GroupNoteDao.class); 
+	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
 	List<Admission> admissions = admissionManager.getCurrentAdmissionsByProgramId(request.getParameter("programId"));
 	
 	String demographicNo = request.getParameter("demographicNo");

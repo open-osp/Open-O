@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,6 +21,8 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.managers;
 
@@ -45,18 +48,8 @@ import org.oscarehr.util.MiscUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class MessengerDemographicManager {
+public interface MessengerDemographicManager {
 
-	@Autowired
-	private SecurityInfoManager securityInfoManager;
-	@Autowired
-	private DemographicManager demographicManager;
-	@Autowired
-	private MsgDemoMapDao msgDemoMapDao;
-	@Autowired
-	private MsgIntegratorDemoMapDao msgIntegratorDemoMapDao;
-	
 	/**
 	 * Get all the demographic details that are attached to this message.  
 	 * In most cases there is only 1 demographic, but, it is possible for 0 to many to be attached. 
@@ -64,30 +57,7 @@ public class MessengerDemographicManager {
 	 * @param messageId
 	 * @return
 	 */
-	public List<Demographic> getAttachedDemographics(LoggedInInfo loggedInInfo, int messageId) {
-    	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.READ, null)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-    	
-		List<MsgDemoMap> msgDemoMap = getAttachedDemographicList(loggedInInfo, messageId);
-		Set<Demographic> demographicList = new HashSet<Demographic>();
-		if(msgDemoMap != null) 
-		{	
-			for(MsgDemoMap msgDemo : msgDemoMap)
-			{
-				Demographic demographic = getAttachedDemographic(loggedInInfo, msgDemo.getDemographic_no());
-				demographicList.add(demographic);
-			}
-		}
-		return new ArrayList<Demographic>(demographicList); 
-	}
-	
-	private Demographic getAttachedDemographic(LoggedInInfo loggedInInfo, int demographicNo) {
-    	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_demographic", SecurityInfoManager.READ, demographicNo)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-    	return demographicManager.getDemographic(loggedInInfo, demographicNo);
-	}
+	public List<Demographic> getAttachedDemographics(LoggedInInfo loggedInInfo, int messageId);
 	
 	/**
 	 * Use this method if full demographic details are not required. 
@@ -95,13 +65,7 @@ public class MessengerDemographicManager {
 	 * @param messageId
 	 * @return
 	 */
-	public List<MsgDemoMap> getAttachedDemographicList(LoggedInInfo loggedInInfo, int messageId) {
-    	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.READ, null)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-		return msgDemoMapDao.findByMessageId(messageId);
-	}
-	
+	public List<MsgDemoMap> getAttachedDemographicList(LoggedInInfo loggedInInfo, int messageId);
 	/**
 	 * Retreive demographics from a remote Integrated facility that have not been linked with a local demographic.
 	 * The demographic number exists only in the remote facility until the user chooses to import it. 
@@ -110,46 +74,11 @@ public class MessengerDemographicManager {
 	 * @param messageId
 	 * @return
 	 */
-	public List<MsgIntegratorDemoMap> getUnlinkedIntegratedDemographicList(LoggedInInfo loggedInInfo, int messageId) {
-    	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.READ, null)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-    	
-    	return msgIntegratorDemoMapDao.findByMessageIdandMsgDemoMapId(messageId, 0L);
-	}
+	public List<MsgIntegratorDemoMap> getUnlinkedIntegratedDemographicList(LoggedInInfo loggedInInfo, int messageId);
 	
-	public List<DemographicTransfer> getUnlinkedIntegratedDemographics(LoggedInInfo loggedInInfo, int messageId) {
-    	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.READ, null)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-    	
-    	List<MsgIntegratorDemoMap> unlinkedList = getUnlinkedIntegratedDemographicList(loggedInInfo, messageId);
-    	List<DemographicTransfer> demographicTransferList = new ArrayList<DemographicTransfer>();
-    	for(MsgIntegratorDemoMap msgIntegratorDemoMap : unlinkedList)
-    	{
-    		DemographicTransfer demographicTransfer = getIntegratedDemographic(loggedInInfo, msgIntegratorDemoMap.getSourceDemographicNo(), msgIntegratorDemoMap.getSourceFacilityId());
-    		if(demographicTransfer != null)
-    		{
-    			demographicTransferList.add(demographicTransfer);
-    		}
-    	}
-    	return demographicTransferList;
-	}
+	public List<DemographicTransfer> getUnlinkedIntegratedDemographics(LoggedInInfo loggedInInfo, int messageId);
 	
-	public DemographicTransfer getIntegratedDemographic(LoggedInInfo loggedInInfo, int demographicNo, int facilityId) {
-    	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.READ, null)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-    	
-    	DemographicTransfer demographicTransfer = null;
-    	try {
-			DemographicWs demographicWs = CaisiIntegratorManager.getDemographicWs(loggedInInfo, loggedInInfo.getCurrentFacility());
-			demographicTransfer = demographicWs.getDemographicByFacilityIdAndDemographicId(facilityId, demographicNo);
-		} catch (MalformedURLException e) {
-			MiscUtils.getLogger().error("error", e);
-		}
-    	return demographicTransfer;
-	}
+	public DemographicTransfer getIntegratedDemographic(LoggedInInfo loggedInInfo, int demographicNo, int facilityId);
 	
 	/**
 	 * This will extract a string of names and ages for each demographic attached to the given message id. 
@@ -157,20 +86,7 @@ public class MessengerDemographicManager {
 	 * @param messageId
 	 * @return
 	 */
-	public String getAttachedDemographicNamesAndAges(LoggedInInfo loggedInInfo, int messageId) {
-		List<Demographic> demographicList = getAttachedDemographics(loggedInInfo, messageId);
-		StringBuilder stringBuilder = new StringBuilder("");
-		String separator = "";
-		for(Demographic demographic : demographicList)
-		{
-			stringBuilder.append(demographic.getLastName() + ", ");
-			stringBuilder.append(demographic.getFirstName() + " ");
-			stringBuilder.append(demographic.getAge() + " years");
-			stringBuilder.append(separator);
-			separator = "; ";
-		}
-		return stringBuilder.toString();
-	}
+	public String getAttachedDemographicNamesAndAges(LoggedInInfo loggedInInfo, int messageId);
 	
 	/**
 	 * Returns a Map of a Key: demographic number and Value: demographic name
@@ -179,16 +95,7 @@ public class MessengerDemographicManager {
 	 * @param messageId
 	 * @return 
 	 */
-	public Map<Integer, String> getAttachedDemographicNameMap(LoggedInInfo loggedInInfo, int messageId) {
-		List<Demographic> demographicList = getAttachedDemographics(loggedInInfo, messageId);
-		Map<Integer, String> demographicMap = new HashMap<Integer, String>();
-
-		for(Demographic demographic : demographicList)
-		{	
-			demographicMap.put(demographic.getDemographicNo(), demographic.getFormattedName());
-		}
-		return demographicMap;
-	}
+	public Map<Integer, String> getAttachedDemographicNameMap(LoggedInInfo loggedInInfo, int messageId);
 
 	/**
 	 * ONLY FOR USE WITH DEMOGRAPHICS THAT ARE REMOTELY ATTACHED TO A MESSAGE - INTEGRATOR ONLY. 
@@ -197,15 +104,7 @@ public class MessengerDemographicManager {
 	 * @param demographicNoArray
 	 * @return
 	 */
-	public Integer[] attachIntegratedDemographicToMessage(LoggedInInfo loggedInInfo, int messageId, Integer[] demographicNoArray, int sourceFacilityId) {
-    	List<Integer> demoMapIdList = new ArrayList<Integer>();
-    	for(int demographicNo : demographicNoArray)
-    	{
-    		Integer id = attachIntegratedDemographicToMessage(loggedInInfo, messageId, demographicNo, sourceFacilityId);
-    		demoMapIdList.add(id);
-    	}
-    	return demoMapIdList.toArray(new Integer[demoMapIdList.size()]);
-	}
+	public Integer[] attachIntegratedDemographicToMessage(LoggedInInfo loggedInInfo, int messageId, Integer[] demographicNoArray, int sourceFacilityId);
 
 	/**
 	 * ONLY FOR USE WITH DEMOGRAPHICS THAT ARE REMOTELY ATTACHED TO A MESSAGE - INTEGRATOR ONLY.
@@ -215,22 +114,7 @@ public class MessengerDemographicManager {
 	 * @param facilityId
 	 * @return
 	 */
-	public Integer attachIntegratedDemographicToMessage(LoggedInInfo loggedInInfo, int messageId, int demographicNo, int sourceFacilityId) {
-		if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.WRITE, null)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-		int msgDemoMapId = 0;
-		
-		
-		MsgIntegratorDemoMap msgIntegratorDemoMap = new MsgIntegratorDemoMap();
-		msgIntegratorDemoMap.setMessageId(messageId);
-		msgIntegratorDemoMap.setSourceDemographicNo(demographicNo);
-		msgIntegratorDemoMap.setSourceFacilityId(sourceFacilityId);
-		msgIntegratorDemoMap.setMsgDemoMapId(msgDemoMapId);
-
-		msgIntegratorDemoMapDao.persist(msgIntegratorDemoMap);
-		return msgIntegratorDemoMap.getId();
-	}
+	public Integer attachIntegratedDemographicToMessage(LoggedInInfo loggedInInfo, int messageId, int demographicNo, int sourceFacilityId);
 	
 	
 	/**
@@ -242,13 +126,7 @@ public class MessengerDemographicManager {
 	 * @param sourceFacilityId
 	 * @return List<Integer> 
 	 */
-	public List<Integer> getLinkedDemographicIdsFromSourceFacility(LoggedInInfo loggedInInfo, final int demographicNo, int sourceFacilityId) {
-		if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.READ, null)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-		
-		return demographicManager.getLinkedDemographicIds(loggedInInfo, demographicNo, sourceFacilityId);	
-	}
+	public List<Integer> getLinkedDemographicIdsFromSourceFacility(LoggedInInfo loggedInInfo, final int demographicNo, int sourceFacilityId);
 	
 	/**
 	 * Search for the Integrated demographic entry and then update the associated msgDemoMapId. This helps indicate that the demographic 
@@ -259,42 +137,7 @@ public class MessengerDemographicManager {
 	 * @param facilityId
 	 * @return long
 	 */
-	public long updateAttachedIntegratedDemographic(LoggedInInfo loggedInInfo, int messageId, int demographicNo, int facilityId) {
-		if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.WRITE, null)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-		
-		// first check the list to avoid duplicates.
-		List<MsgDemoMap> attachedDemographics = getAttachedDemographicList(loggedInInfo, messageId);
-		if(attachedDemographics != null)
-		{
-			for(MsgDemoMap msgDemoMap : attachedDemographics)
-			{
-				if(msgDemoMap.getDemographic_no() == demographicNo)
-				{
-					return msgDemoMap.getId();
-				}
-			}
-		}
-		
-		long msgDemoMapId = attachDemographicToMessage(loggedInInfo, messageId, demographicNo);
-		
-		// this is a one to one relationship. One message to One integrated demographic
-		List<MsgIntegratorDemoMap> msgIntegratorDemoMapList = getUnlinkedIntegratedDemographicList(loggedInInfo, messageId);
-		if(msgIntegratorDemoMapList != null)
-		{
-			for(MsgIntegratorDemoMap msgIntegratorDemoMap : msgIntegratorDemoMapList)
-			{
-				if(msgIntegratorDemoMap.getSourceFacilityId() == facilityId) 
-				{
-					msgIntegratorDemoMap.setMsgDemoMapId(msgDemoMapId);
-					msgIntegratorDemoMapDao.merge(msgIntegratorDemoMap);
-				}
-			}
-		}
-		
-		return msgDemoMapId;
-	}
+	public long updateAttachedIntegratedDemographic(LoggedInInfo loggedInInfo, int messageId, int demographicNo, int facilityId);
 
 	 /**
      * Attach an array of local Demographic numbers to the given message id 
@@ -304,16 +147,7 @@ public class MessengerDemographicManager {
      * @param demographicNoArray
      * @return
      */
-    public Long[] attachDemographicToMessage(LoggedInInfo loggedInInfo, int messageId, Integer[] demographicNoArray) {
-    	List<Long> demoMapIdList = new ArrayList<Long>();
-    	for(int demographicNo : demographicNoArray)
-    	{
-    		Long id = attachDemographicToMessage(loggedInInfo, messageId, demographicNo);
-    		demoMapIdList.add(id);
-    	}
-    	return demoMapIdList.toArray(new Long[demoMapIdList.size()]);
-    }
-    
+    public Long[] attachDemographicToMessage(LoggedInInfo loggedInInfo, int messageId, Integer[] demographicNoArray);
     /**
      * Attach a demographic number to the give message id. 
      * @param loggedInInfo
@@ -322,17 +156,7 @@ public class MessengerDemographicManager {
      * @param sourceFacilityId
      * @return
      */
-    public Long attachDemographicToMessage(LoggedInInfo loggedInInfo, int messageId, int demographicNo) {
-    	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.WRITE, demographicNo)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-
-    	MsgDemoMap msgDemoMap = new MsgDemoMap();
-    	msgDemoMap.setDemographic_no(demographicNo);
-    	msgDemoMap.setMessageID(messageId);
-    	msgDemoMapDao.persist(msgDemoMap);
-    	return msgDemoMap.getId();
-    }
+    public Long attachDemographicToMessage(LoggedInInfo loggedInInfo, int messageId, int demographicNo);
     
     /**
      * This method is hard-coded to the most common Integrator patient consent types. 
@@ -343,18 +167,7 @@ public class MessengerDemographicManager {
      * @param demographicNo
      * @return
      */
-    public boolean isPatientConsentedForIntegrator(LoggedInInfo loggedInInfo, int demographicNo) {
-    	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.READ, demographicNo)) {
-			throw new SecurityException("missing required security object (_msg)");
-		}
-    	/*
-    	 * it is acceptable to remove the hard-coded consent types in the futre
-    	 * Or any additional Integrator consent types can be added.  Dealers choice.
-    	 * For now, this intention for this method is to check the most commonly used Integrator consent types. 
-    	 */
-    	return demographicManager.isPatientConsented(loggedInInfo, demographicNo, UserProperty.INTEGRATOR_PATIENT_CONSENT)
-    		|| demographicManager.isPatientConsented(loggedInInfo, demographicNo, UserProperty.INTEGRATOR_DEMOGRAPHIC_CONSENT);
-    }
+    public boolean isPatientConsentedForIntegrator(LoggedInInfo loggedInInfo, int demographicNo);
     
     /**
      * Gets a list of messages attached to the given demographic number
@@ -362,64 +175,15 @@ public class MessengerDemographicManager {
      * @param demographicNo
      * @return
      */
-	public List<MsgDemoMap> getMessageMapByDemographicNo(LoggedInInfo loggedInInfo, int demographicNo) {
-	   	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.READ, demographicNo)) {
-				throw new SecurityException("missing required security object (_msg)");
-		}
-
-	   	return msgDemoMapDao.findByDemographicNo(demographicNo);
-	}
-	
+	public List<MsgDemoMap> getMessageMapByDemographicNo(LoggedInInfo loggedInInfo, int demographicNo);
 	/**
 	 * Import a demographic file and/or linking it to another file on the Integrator.
 	 * Returns null after a successful import or returns a list of Demographic objects if a user selection is required.
 	 * 
 	 * @return
 	 */
-	public List<Demographic> importDemographic(LoggedInInfo loggedInInfo, int remoteFacilityId, int remoteDemographicNo, int messageId) {
-	   	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.WRITE, null)) {
-				throw new SecurityException("missing required security object (_msg)");
-		}
-	   	
-	   	Demographic remoteDemographic = demographicManager.getRemoteDemographic(loggedInInfo, remoteFacilityId, remoteDemographicNo);
-	   	Demographic exactMatch = demographicManager.findExactMatchToDemographic(loggedInInfo, remoteDemographic);
-	   	
-	   	// first try an exact match, and hopefully save the user some time.
-	   	if(exactMatch != null)
-	   	{
-	   		// link the local demographic with the integrator and return null if an exact match is found.
-	   		linkDemographicWithRemote(loggedInInfo, exactMatch.getDemographicNo(), remoteFacilityId, remoteDemographicNo, messageId);
-		   	return null;
-	   	}
-
-	   	// try a fuzzy match next
-	   	List<Demographic> fuzzyMatches = demographicManager.findFuzzyMatchToDemographic(loggedInInfo, remoteDemographic);
-	   	if(fuzzyMatches != null && fuzzyMatches.size() > 0)
-	   	{
-	   		// return the fuzzy matches for the user to select from
-	   		return fuzzyMatches;
-	   	}
-	   	
-	   	// there are no matches at this point, so just import the remote demographic as new.
-	   	else
-	   	{
-	   		Demographic newDemographic = demographicManager.copyRemoteDemographic(loggedInInfo, remoteDemographic, remoteFacilityId, remoteDemographicNo);
-	   		updateAttachedIntegratedDemographic(loggedInInfo, messageId, newDemographic.getDemographicNo(), remoteFacilityId);
-	   	}
-	   	
-	   	return null;
-	}
+	public List<Demographic> importDemographic(LoggedInInfo loggedInInfo, int remoteFacilityId, int remoteDemographicNo, int messageId);
 	
-	public boolean linkDemographicWithRemote(LoggedInInfo loggedInInfo, int demographicNo, int remoteFacilityId, int remoteDemographicNo, int messageId) {
-	   	if(!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.WRITE, null)) {
-				throw new SecurityException("missing required security object (_msg)");
-		}
-	   	boolean success = demographicManager.linkDemographicToRemoteDemographic(loggedInInfo, demographicNo, remoteFacilityId, remoteDemographicNo);
-	   	if(success)
-	   	{
-	   		updateAttachedIntegratedDemographic(loggedInInfo, messageId, demographicNo, remoteFacilityId);
-	   	}
-	   	return success;
-	}
+	public boolean linkDemographicWithRemote(LoggedInInfo loggedInInfo, int demographicNo, int remoteFacilityId, int remoteDemographicNo, int messageId);
 	
 }

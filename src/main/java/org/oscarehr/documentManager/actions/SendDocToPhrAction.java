@@ -60,7 +60,7 @@ import oscar.oscarProvider.data.ProviderData;
 public class SendDocToPhrAction extends Action {
 
 	private static final Logger logger = MiscUtils.getLogger();
-	private static RemoteDataLogDao remoteDataLogDao=(RemoteDataLogDao) SpringUtils.getBean("remoteDataLogDao");
+	private static RemoteDataLogDao remoteDataLogDao=(RemoteDataLogDao) SpringUtils.getBean(RemoteDataLogDao.class);
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 

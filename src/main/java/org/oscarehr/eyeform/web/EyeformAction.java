@@ -121,14 +121,14 @@ public class EyeformAction extends DispatchAction {
 	static String[] cppIssues = {"CurrentHistory","PastOcularHistory","MedHistory","OMeds","OcularMedication","DiagnosticNotes","FamHistory"};
 
 	CaseManagementManager cmm = null;
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
-	DemographicDao demographicDao= (DemographicDao)SpringUtils.getBean("demographicDao");
-	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-	CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO)SpringUtils.getBean("CaseManagementNoteDAO");
+	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
+	DemographicDao demographicDao= (DemographicDao)SpringUtils.getBean(DemographicDao.class);
+	ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
+	CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO)SpringUtils.getBean(CaseManagementNoteDAO.class);
 	EyeformOcularProcedureDao ocularProcDao = SpringUtils.getBean(EyeformOcularProcedureDao.class);
 	private EyeformSpecsHistoryDao specsHistoryDao = (EyeformSpecsHistoryDao)SpringUtils.getBean(EyeformSpecsHistoryDao.class);
 	
-	AllergyDao allergyDao = (AllergyDao)SpringUtils.getBean("allergyDao");
+	AllergyDao allergyDao = (AllergyDao)SpringUtils.getBean(AllergyDao.class);
 	EyeformFollowUpDao followUpDao = SpringUtils.getBean(EyeformFollowUpDao.class);
 	protected EyeformProcedureBookDao procedureBookDao = SpringUtils.getBean(EyeformProcedureBookDao.class);
 	
@@ -136,17 +136,17 @@ public class EyeformAction extends DispatchAction {
 	EyeFormDao eyeFormDao = SpringUtils.getBean(EyeFormDao.class);
 	
 	MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
-	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
-	BillingreferralDao billingreferralDao = (BillingreferralDao) SpringUtils.getBean("billingreferralDao");
-	ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean("clinicDAO");
-	SiteDao siteDao = (SiteDao)SpringUtils.getBean("siteDao");
-	CaseManagementIssueNotesDao caseManagementIssueNotesDao=(CaseManagementIssueNotesDao)SpringUtils.getBean("caseManagementIssueNotesDao");
+	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
+	BillingreferralDao billingreferralDao = (BillingreferralDao) SpringUtils.getBean(BillingreferralDao.class);
+	ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean(ClinicDAO.class);
+	SiteDao siteDao = (SiteDao)SpringUtils.getBean(SiteDao.class);
+	CaseManagementIssueNotesDao caseManagementIssueNotesDao=(CaseManagementIssueNotesDao)SpringUtils.getBean(CaseManagementIssueNotesDao.class);
 	DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
 	TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 	
 	   public ActionForward getConReqCC(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		   String requestId = request.getParameter("requestId");
-		   ConsultationRequestExtDao dao = (ConsultationRequestExtDao)SpringUtils.getBean("consultationRequestExtDao");
+		   ConsultationRequestExtDao dao = (ConsultationRequestExtDao)SpringUtils.getBean(ConsultationRequestExtDao.class);
 		   String cc = "";
 		   if(requestId != null) {
 			   try {
@@ -159,7 +159,7 @@ public class EyeformAction extends DispatchAction {
 			   }
 		   }
 		   request.setAttribute("requestCc", cc);
-		   ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao)SpringUtils.getBean("professionalSpecialistDao");
+		   ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao)SpringUtils.getBean(ProfessionalSpecialistDao.class);
 		   List<ProfessionalSpecialist> psList = professionalSpecialistDao.findAll();
 		   request.setAttribute("professionalSpecialists",psList);
 	       return mapping.findForward("conreqcc");
@@ -167,7 +167,7 @@ public class EyeformAction extends DispatchAction {
 
 
 	   public ActionForward specialConRequestHTML(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-		   ConsultationRequestExtDao consultationRequestExtDao=(ConsultationRequestExtDao)SpringUtils.getBean("consultationRequestExtDao");
+		   ConsultationRequestExtDao consultationRequestExtDao=(ConsultationRequestExtDao)SpringUtils.getBean(ConsultationRequestExtDao.class);
 
 		   String reqId = request.getParameter("requestId");
 		   int requestId;
@@ -197,8 +197,8 @@ public class EyeformAction extends DispatchAction {
 			   cppFromMeasurements=true;
 		   }
 
-		   ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
-		   ConsultationRequestExtDao consultationRequestExtDao=(ConsultationRequestExtDao)SpringUtils.getBean("consultationRequestExtDao");
+		   ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
+		   ConsultationRequestExtDao consultationRequestExtDao=(ConsultationRequestExtDao)SpringUtils.getBean(ConsultationRequestExtDao.class);
 		 
 		  
 		   int appNo;
@@ -237,7 +237,7 @@ public class EyeformAction extends DispatchAction {
 			   request.setAttribute("familyHistory",StringEscapeUtils.escapeJavaScript(getFormattedCppItem("Family History:", "FamHistory", Integer.parseInt(demo), appNo, true)));
 			   request.setAttribute("ocularMedication",StringEscapeUtils.escapeJavaScript(getFormattedCppItem("Ocular Medications:", "OcularMedication", Integer.parseInt(demo), appNo, true)));
 
-			   IssueDAO issueDao = (IssueDAO)SpringUtils.getBean("IssueDAO");
+			   IssueDAO issueDao = (IssueDAO)SpringUtils.getBean(IssueDAO.class);
 
 			   String customCppIssues[] = OscarProperties.getInstance().getProperty("encounter.custom_cpp_issues", "").split(",");
 			   for(String customCppIssue:customCppIssues) {
@@ -432,7 +432,7 @@ public class EyeformAction extends DispatchAction {
 /*
 	   private String getCppItemAsString(String demo, String issueCode, String text) {
 		   if(cmm==null)
-			   cmm=(CaseManagementManager) SpringUtils.getBean("caseManagementManager");
+			   cmm=(CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 
 		   Issue issue = cmm.getIssueInfoByCode(issueCode);
 		   if(issue ==null) {logger.warn("no issue for current history");return "";}
@@ -526,7 +526,7 @@ public class EyeformAction extends DispatchAction {
 
 				} else {
 */
-				IssueDAO issueDao = (IssueDAO)SpringUtils.getBean("IssueDAO");
+				IssueDAO issueDao = (IssueDAO)SpringUtils.getBean(IssueDAO.class);
 
 					printCppItem(printer,"Current History","CurrentHistory",demographic.getDemographicNo(), appointmentNo, false);
 					printCppItem(printer,"Past Ocular History","PastOcularHistory",demographic.getDemographicNo(), appointmentNo, true);
@@ -605,7 +605,7 @@ public class EyeformAction extends DispatchAction {
 				
 
 		        //photos
-		        DocumentResultsDao documentDao = (DocumentResultsDao)SpringUtils.getBean("documentResultsDao");
+		        DocumentResultsDao documentDao = (DocumentResultsDao)SpringUtils.getBean(DocumentResultsDao.class);
 		        List<Document> documents = documentDao.getPhotosByAppointmentNo(appointmentNo);
 		        if(documents.size()>0) {
 		        	String servletUrl  = request.getRequestURL().toString();
@@ -614,8 +614,8 @@ public class EyeformAction extends DispatchAction {
 		        }
 
 		        //diagrams
-		        EFormValueDao eFormValueDao = (EFormValueDao) SpringUtils.getBean("EFormValueDao");
-		        EFormGroupDao eFormGroupDao = (EFormGroupDao) SpringUtils.getBean("EFormGroupDao");
+		        EFormValueDao eFormValueDao = (EFormValueDao) SpringUtils.getBean(EFormValueDao.class);
+		        EFormGroupDao eFormGroupDao = (EFormGroupDao) SpringUtils.getBean(EFormGroupDao.class);
 		        List<EFormGroup> groupForms = eFormGroupDao.getByGroupName("Eye form");
 		        List<EFormValue> values = eFormValueDao.findByApptNo(appointmentNo);
 		        List<EFormValue> diagrams = new ArrayList<EFormValue>();
@@ -795,7 +795,7 @@ public class EyeformAction extends DispatchAction {
 				cp.setReferralNo(refNo);
 			}
 
-			DemographicContactDao demographicContactDao = (DemographicContactDao)SpringUtils.getBean("demographicContactDao");
+			DemographicContactDao demographicContactDao = (DemographicContactDao)SpringUtils.getBean(DemographicContactDao.class);
 			List<DemographicContact> contacts = demographicContactDao.findByDemographicNoAndCategory(demographicNo, "professional");
 			contacts = ContactAction.fillContactNames(contacts);
 			request.setAttribute("contacts", contacts);
@@ -879,7 +879,7 @@ public class EyeformAction extends DispatchAction {
 
 			request.setAttribute("otherMeds",StringEscapeUtils.escapeJavaScript(getFormattedCppItem("Other Medications:", "OMeds", demographic.getDemographicNo(), appNo, true)));
 
-			IssueDAO issueDao = (IssueDAO)SpringUtils.getBean("IssueDAO");
+			IssueDAO issueDao = (IssueDAO)SpringUtils.getBean(IssueDAO.class);
 			String customCppIssues[] = OscarProperties.getInstance().getProperty("encounter.custom_cpp_issues", "").split(",");
 			for(String customCppIssue:customCppIssues) {
 				Issue i = issueDao.findIssueByCode(customCppIssue);
@@ -1563,7 +1563,7 @@ public class EyeformAction extends DispatchAction {
 		}
 
 		public static List<Provider> getActiveProviders() {
-			ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+			ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 			return providerDao.getActiveProviders();
 		}
 

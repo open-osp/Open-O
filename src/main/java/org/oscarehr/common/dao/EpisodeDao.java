@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,57 +21,18 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.Collection;
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.Episode;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class EpisodeDao extends AbstractDao<Episode>{
-
-	public EpisodeDao() {
-		super(Episode.class);
-	}
-
-	public List<Episode> findAll(Integer demographicNo) {
-		Query query = entityManager.createQuery("SELECT e FROM Episode e WHERE e.demographicNo=? ORDER BY e.startDate DESC");
-		query.setParameter(1,demographicNo);
-		@SuppressWarnings("unchecked")
-        List<Episode> results = query.getResultList();
-		return results;
-	}
-	
-	public List<Episode> findAllCurrent(Integer demographicNo) {
-		Query query = entityManager.createQuery("SELECT e FROM Episode e WHERE e.status='Current' AND e.demographicNo=? ORDER BY e.startDate DESC");
-		query.setParameter(1,demographicNo);
-		@SuppressWarnings("unchecked")
-        List<Episode> results = query.getResultList();
-		return results;
-	}
-	
-	public List<Episode> findCurrentByCodeTypeAndCodes(Integer demographicNo, String codeType, Collection<String> codes) {
-		Query query = entityManager.createQuery("SELECT e FROM Episode e WHERE e.status='Current' AND e.demographicNo=:demographicNo AND e.codingSystem=:codingSystem AND e.code IN (:codes) ORDER BY e.startDate DESC");
-		query.setParameter("demographicNo",demographicNo);
-		query.setParameter("codingSystem", codeType);
-		query.setParameter("codes",codes);
-		@SuppressWarnings("unchecked")
-        List<Episode> results = query.getResultList();
-		return results;
-	}
-	
-	public List<Episode> findCompletedByCodeTypeAndCodes(Integer demographicNo, String codeType, Collection<String> codes) {
-		Query query = entityManager.createQuery("SELECT e FROM Episode e WHERE e.status='Complete' AND e.demographicNo=:demographicNo AND e.codingSystem=:codingSystem AND e.code IN (:codes) ORDER BY e.startDate DESC");
-		query.setParameter("demographicNo",demographicNo);
-		query.setParameter("codingSystem", codeType);
-		query.setParameter("codes",codes);
-		@SuppressWarnings("unchecked")
-        List<Episode> results = query.getResultList();
-		return results;
-	}
+public interface EpisodeDao extends AbstractDao<Episode> {
+    List<Episode> findAll(Integer demographicNo);
+    List<Episode> findAllCurrent(Integer demographicNo);
+    List<Episode> findCurrentByCodeTypeAndCodes(Integer demographicNo, String codeType, Collection<String> codes);
+    List<Episode> findCompletedByCodeTypeAndCodes(Integer demographicNo, String codeType, Collection<String> codes);
 }

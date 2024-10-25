@@ -56,7 +56,9 @@ lab.populateLab(request.getParameter("segmentID"));
 String AbnFlag = "";
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<%@page import="org.oscarehr.util.MiscUtils"%><html>
+<%@page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="org.owasp.encoder.Encode" %>
+<html>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <html:base />
@@ -398,9 +400,9 @@ function popupStart(vheight,vwidth,varpage,windowname) {
 						<% } %>
 						<div class="FieldData"><!--center--> <% for (int i=0; i < statusArray.size(); i++) { 
                                                                     ReportStatus rs = (ReportStatus) statusArray.get(i); %>
-						<%= rs.getProviderName() %> : <font color="red"><%= rs.getStatus() %></font>
+						<%= Encode.forHtml(rs.getProviderName()) %> : <font color="red"><%= rs.getStatus() %></font>
 						<% if ( rs.getStatus().equals("Acknowledged") ) { %> <%= rs.getTimestamp() %>,
-						<%= ( rs.getComment().equals("") ? "no comment" : "comment : "+rs.getComment() ) %>
+						<%= ( rs.getComment().equals("") ? "no comment" : "comment : "+ Encode.forHtml(rs.getComment()) ) %>
 						<% } %> <br>
 						<% } %> <!--/center--></div>
 						</td>

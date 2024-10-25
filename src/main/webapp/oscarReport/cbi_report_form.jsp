@@ -61,9 +61,9 @@ LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 List<Date> submissionDateList = cbiUtil.getSubmissionDateList();
 StringBuffer treeDataStr = cbiUtil.generateTree(submissionDateList);
 
-FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean("functionalCentreDao");
-ProviderManager2 providerManager = (ProviderManager2) SpringUtils.getBean("providerManager2");
-ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
+FunctionalCentreDao functionalCentreDao = (FunctionalCentreDao) SpringUtils.getBean(FunctionalCentreDao.class);
+ProviderManager2 providerManager = (ProviderManager2) SpringUtils.getBean(ProviderManager2.class);
+ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
 
 List<FunctionalCentre> functionalCentres=functionalCentreDao.findInUseByFacility(loggedInInfo.getCurrentFacility().getId());
 %>

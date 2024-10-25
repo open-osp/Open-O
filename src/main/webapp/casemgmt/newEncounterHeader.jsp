@@ -28,21 +28,13 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="oscar.oscarEncounter.data.*, oscar.oscarProvider.data.*, oscar.util.UtilDateUtilities" %>
 <%@ page import="org.oscarehr.util.MiscUtils"%>
-<%@ page import="java.net.URLEncoder"%>
 <%@ page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager, org.oscarehr.util.LoggedInInfo, org.oscarehr.common.model.Facility" %>
-<%@ page import="org.oscarehr.common.dao.DemographicExtDao" %>
-<%@ page import="org.oscarehr.common.model.DemographicExt" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.apache.commons.lang.StringUtils"%>
 <%@ page import="oscar.OscarProperties" %>
 <%@ page import="org.oscarehr.managers.DemographicManager" %>
 <%@ page import="org.oscarehr.common.model.Demographic" %>
-<%@ page import="org.owasp.encoder.Encode" %>
 
-
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -54,146 +46,108 @@
     }
     
     Facility facility = loggedInInfo.getCurrentFacility();
-
     String demoNo = bean.demographicNo;
 	DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
-	Demographic demographic = demographicManager.getDemographic(loggedInInfo, demoNo);
-    EctPatientData.Patient pd = new EctPatientData().getPatient(loggedInInfo, demoNo);
-    String famDocName, famDocSurname, famDocColour, inverseUserColour, userColour;
-    String user = (String) session.getAttribute("user");
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    ProviderColourUpdater colourUpdater = new ProviderColourUpdater(user);
-    userColour = colourUpdater.getColour();
-    
+	Demographic demographic = demographicManager.getDemographicWithExt(loggedInInfo, Integer.parseInt(demoNo));
+
+	// this is accessed in the newEncounterLayout after this header is included.
 	String privateConsentEnabledProperty = OscarProperties.getInstance().getProperty("privateConsentEnabled");
 	boolean privateConsentEnabled = privateConsentEnabledProperty != null && privateConsentEnabledProperty.equals("true");
-	DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
-    DemographicExt infoExt = demographicExtDao.getDemographicExt(Integer.parseInt(demoNo), "informedConsent");
-    boolean showPopup = infoExt == null || StringUtils.isBlank(infoExt.getValue());
- 
 
-    //we calculate inverse of provider colour for text
-    int base = 16;
-    if( userColour == null || userColour.length() == 0 )
-        userColour = "#CCCCFF";   //default blue if no preference set
-
-    int num = Integer.parseInt(userColour.substring(1), base);      //strip leading # sign and convert
-    int inv = ~num;                                                 //get inverse
-    inverseUserColour = Integer.toHexString(inv).substring(2);    //strip 2 leading digits as html colour codes are 24bits
-
-    if(bean.familyDoctorNo == null || bean.familyDoctorNo.equals("")) {
-        famDocName = "";
-        famDocSurname = "";
-        famDocColour = "";
-    }
-    else {
-        EctProviderData.Provider prov = new EctProviderData().getProvider(bean.familyDoctorNo);
-        famDocName =  prov == null || prov.getFirstName() == null ? "" : prov.getFirstName();
-        famDocSurname = prov == null || prov.getSurname() == null ? "" : prov.getSurname();
-        colourUpdater = new ProviderColourUpdater(bean.familyDoctorNo);
-        famDocColour = colourUpdater.getColour();
-        if( famDocColour.length() == 0 )
-            famDocColour = "#CCCCFF";
-    }
-
-    String patientName = pd.getFirstName()+" "+pd.getSurname();
-    String patientAge = pd.getAge();
-    String patientSex = pd.getSex();
-    String pAge = Integer.toString(UtilDateUtilities.calcAge(bean.yearOfBirth,bean.monthOfBirth,bean.dateOfBirth));
-
-    java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.struts.Globals.LOCALE_KEY);
     %>
 
     <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
-    
-<table id="encounterHeader" style="color:<%=inverseUserColour%>; background-color:<%=userColour%>" >
-<tr>
-<td id="encounterHeaderLeftColumn"><h1>Encounter</h1></td>
 
-<td id="encounterHeaderCenterColumn">
+	<div id="header-top-row">
+		<div id="left-column">
+			<div id="branding-logo">
+				<img alt="OSCAR EMR" src="<%=request.getContextPath()%>/images/oscar_logo_small.png" width="19px" >
+			</div>
+			<%= demographic.getStandardIdentificationHTML() %>
+		</div>
+		<div id="right-column">
+			<div id="userSettings" style="align-self: center; margin-right:15px;">
+				<ul id="userSettingsMenu" style="display: flex; gap:5px;">
+					<li>
+						<a title="Scratch Pad" href="javascript:void(0)"
+						   onClick="window.open('${ctx}/scratch/index.jsp','scratch','height=700px, width=1024px')">
+							<div class="glyphicon">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
+									<path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"></path>
+									<path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8m0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0M4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"></path>
+								</svg>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)" style="display: flex; align-items: flex-end;"
+						   onClick="window.open('${ctx}/provider/providerpreference.jsp?provider_no=<%=loggedInInfo.getLoggedInProviderNo()%>', 'height=680px,width=715px')"
+						   title='<bean:message key="provider.appointmentProviderAdminDay.msgSettings"/>'>
+							<div class="glyphicon">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+								  <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"></path>
+								</svg>
+							</div>
+							<div>
+	                                <c:out value='<%= loggedInInfo.getLoggedInProvider().getFirstName() + " " + loggedInInfo.getLoggedInProvider().getLastName() %>' />
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
 
-        <%
-            String appointmentNo = request.getParameter("appointmentNo");
-            String winName = "Master" + demoNo;
-            String url = "/demographic/demographiccontrol.jsp?demographic_no=" + demoNo + "&amp;displaymode=edit&amp;dboperation=search_detail&appointment="+appointmentNo;
-        %>
-        <%= demographic.getStandardIdentificationHTML() %>
+	<div id="header-bottom-row">
+	        <% if(oscar.OscarProperties.getInstance().hasProperty("ONTARIO_MD_INCOMINGREQUESTOR")){%>
+			<div>
+	            <a href="javascript:void(0);" onClick="popupPage(600,175,'Calculators','<c:out value="${ctx}"/>/common/omdDiseaseList.jsp?sex=<%=bean.patientSex%>&age=<%=demographic.getAge()%>'); return false;" ><bean:message key="oscarEncounter.Header.OntMD"/></a>
+			</div>
+	        <%}%>
 
-		<security:oscarSec roleName="<%=roleName$%>" objectName="_newCasemgmt.doctorName" rights="r">
+			<div>
+		        <%=getEChartLinks() %>
+			</div>
 
-		        <span class="label">
-		              <bean:message key="oscarEncounter.Index.msgMRP"/>
-			    </span>
-			    <span>
-			        <c:out value="${ not empty pageScope.mostResponsibleProvider ? pageScope.mostResponsibleProvider : 'Unknown' }" />
-			    </span>
+			<%
+			if (facility.isIntegratorEnabled()){ %>
+				<div>
+			<%	int secondsTillConsideredStale = -1;
+				try{
+					secondsTillConsideredStale = Integer.parseInt(oscar.OscarProperties.getInstance().getProperty("seconds_till_considered_stale"));
+				}catch(Exception e){
+					MiscUtils.getLogger().error("OSCAR Property: seconds_till_considered_stale did not parse to an int",e);
+					secondsTillConsideredStale = -1;
+				}
 
-		</security:oscarSec>
+				boolean allSynced = true;
 
-		<span id="encounterHeaderExt"></span>
-		<security:oscarSec roleName="<%=roleName$%>" objectName="_newCasemgmt.apptHistory" rights="r">
-		<a href="javascript:popupPage(400,850,'ApptHist','<c:out value="${ctx}"/>/demographic/demographiccontrol.jsp?demographic_no=<%=demoNo%>&amp;last_name=<%=Encode.forUriComponent(demographic.getLastName())%>&amp;first_name=<%=Encode.forUriComponent(demographic.getFirstName())%>&amp;orderby=appointment_date&amp;displaymode=appt_history&amp;dboperation=appt_history&amp;limit1=0&amp;limit2=25')" title="<bean:message key="oscarEncounter.Header.nextApptMsg"/>">
-		<span class="label">
-		<bean:message key="oscarEncounter.Header.nextAppt"/>:
-		</span>
-		</a>
-			<span>
-				<oscar:nextAppt demographicNo="<%=demoNo%>"/>
-			</span>
-		</security:oscarSec>
+				try{
+					allSynced  = CaisiIntegratorManager.haveAllRemoteFacilitiesSyncedIn(loggedInInfo, loggedInInfo.getCurrentFacility(), secondsTillConsideredStale,false);
+					CaisiIntegratorManager.setIntegratorOffline(session, false);
+				}catch(Exception remoteFacilityException){
+					MiscUtils.getLogger().error("Error checking Remote Facilities Sync status",remoteFacilityException);
+					CaisiIntegratorManager.checkForConnectionError(session, remoteFacilityException);
+				}
+				if(secondsTillConsideredStale == -1){
+					allSynced = true;
+				}
+			%>
+				<%if (CaisiIntegratorManager.isIntegratorOffline(session)) {%>
+	                <div style="background: none repeat scroll 0 0 red; color: white; font-weight: bold; padding-left: 10px; margin-bottom: 2px;"><bean:message key="oscarEncounter.integrator.NA"/></div>
+	            <%}else if(!allSynced) {%>
+	                <div style="background: none repeat scroll 0% 0% orange; color: white; font-weight: bold; padding-left: 10px; margin-bottom: 2px;"><bean:message key="oscarEncounter.integrator.outOfSync"/>
 
-        <% if(oscar.OscarProperties.getInstance().hasProperty("ONTARIO_MD_INCOMINGREQUESTOR")){%>
-           <a href="javascript:void(0)" onClick="popupPage(600,175,'Calculators','<c:out value="${ctx}"/>/common/omdDiseaseList.jsp?sex=<%=bean.patientSex%>&age=<%=pAge%>'); return false;" ><bean:message key="oscarEncounter.Header.OntMD"/></a>
-        <%}%>
-        <%=getEChartLinks() %>
-
-
-		<%
-		if (facility.isIntegratorEnabled()){
-			int secondsTillConsideredStale = -1;
-			try{
-				secondsTillConsideredStale = Integer.parseInt(oscar.OscarProperties.getInstance().getProperty("seconds_till_considered_stale"));
-			}catch(Exception e){
-				MiscUtils.getLogger().error("OSCAR Property: seconds_till_considered_stale did not parse to an int",e);
-				secondsTillConsideredStale = -1;
-			}
-			
-			boolean allSynced = true;
-			
-			try{
-				allSynced  = CaisiIntegratorManager.haveAllRemoteFacilitiesSyncedIn(loggedInInfo, loggedInInfo.getCurrentFacility(), secondsTillConsideredStale,false); 
-				CaisiIntegratorManager.setIntegratorOffline(session, false);	
-			}catch(Exception remoteFacilityException){
-				MiscUtils.getLogger().error("Error checking Remote Facilities Sync status",remoteFacilityException);
-				CaisiIntegratorManager.checkForConnectionError(session, remoteFacilityException);
-			}
-			if(secondsTillConsideredStale == -1){  
-				allSynced = true; 
-			}
-		%>
-			<%if (CaisiIntegratorManager.isIntegratorOffline(session)) {%>
-    			<div style="background: none repeat scroll 0% 0% red; color: white; font-weight: bold; padding-left: 10px; margin-bottom: 2px;"><bean:message key="oscarEncounter.integrator.NA"/></div>
-    		<%}else if(!allSynced) {%>
-    			<div style="background: none repeat scroll 0% 0% orange; color: white; font-weight: bold; padding-left: 10px; margin-bottom: 2px;"><bean:message key="oscarEncounter.integrator.outOfSync"/>
-
-				<a href="javascript:void(0)" onClick="popupPage(233,600,'ViewICommun','<c:out value="${ctx}"/>/admin/viewIntegratedCommunity.jsp'); return false;" >Integrator</a>
-    			</div>
-	    	<%}else{%>
-	    		<a href="javascript:void(0)" onClick="popupPage(233,600,'ViewICommun','<c:out value="${ctx}"/>/admin/viewIntegratedCommunity.jsp'); return false;" >I</a>
-	    	<%}%>
-	  <%}%>
-</td>
-<td id="encounterHeaderRightColumn" align=right>
-	<span class="HelpAboutLogout">
-	<oscar:help keywords="&Title=Chart+Interface&portal_type%3Alist=Document" key="app.top1" style="font-size:10px;font-style:normal;"/>&nbsp;|
-	<a style="font-size:10px;font-style:normal;" href="<%=request.getContextPath()%>/oscarEncounter/About.jsp" target="_new"><bean:message key="global.about" /></a>
-	</span>
-</td>
-</tr>
-</table>
+					<a href="javascript:void(0)" onClick="popupPage(233,600,'ViewICommun','<c:out value="${ctx}"/>/admin/viewIntegratedCommunity.jsp'); return false;" >Integrator</a>
+	                </div>
+		        <%}else{%>
+		            <a href="javascript:void(0)" onClick="popupPage(233,600,'ViewICommun','<c:out value="${ctx}"/>/admin/viewIntegratedCommunity.jsp'); return false;" >I</a>
+		        <%}%>
+				</div>
+		  <%}%>
+	</div>
 
 <%!
-
 String getEChartLinks(){
 	String str = oscar.OscarProperties.getInstance().getProperty("ECHART_LINK");
 		if (str == null){

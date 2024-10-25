@@ -57,7 +57,7 @@ public class ResourceAction extends DispatchAction {
 			HttpServletResponse response) throws Exception {
 		ResourceForm resourceForm = (ResourceForm) form; 
 		
-		EDTDelegate delegate = DelegateFactory.newDelegate();
+		EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 		resourceForm.setTypeListResult(getTypeList(request, delegate));
 		resourceForm.setDetail(getResourceList(request, resourceForm, delegate));
 
@@ -114,7 +114,7 @@ public class ResourceAction extends DispatchAction {
 		
 		ResourceResult result = null;
 		try {
-			EDTDelegate delegate = DelegateFactory.newDelegate();
+			EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 			result = delegate.delete(ids);
 		} catch (Exception e) {
 			logger.error("Unable to delete", e);
@@ -138,7 +138,7 @@ public class ResourceAction extends DispatchAction {
 		List<BigInteger> ids = getResourceIds(request);
 		
 		try {
-			EDTDelegate delegate = DelegateFactory.newDelegate();
+			EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 			ResourceResult result = delegate.submit(ids);
 			
 			reset(mapping, form, request, response);
@@ -156,7 +156,7 @@ public class ResourceAction extends DispatchAction {
 		List<BigInteger> ids = getResourceIds(request);		
 		DownloadResult downloadResult = null;
 		try {
-			EDTDelegate delegate = DelegateFactory.newDelegate();
+			EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
 			downloadResult = delegate.download(ids);
 		} catch (Exception e) {
 			saveErrors(request, ActionUtils.addMessage("resourceAction.download.fault", McedtMessageCreator.exceptionToString(e)));

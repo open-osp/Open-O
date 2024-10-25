@@ -121,13 +121,19 @@ function displayEaapsWindow(url, notificationId, message) {
         var myVar = setInterval(setTime, 1000);
 	var toggle = true;
 
-	function toggleATimer(){
+	function toggleATimer(e) {
+		const pause = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pause-fill" viewBox="0 0 16 16">' +
+						'<path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5m5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5"></path>' +
+						'</svg>';
+		const play = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">' +
+						'<path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"></path>' +
+					'</svg>';
  	    if (toggle) {
-			document.getElementById("toggleTimer").innerHTML="&gt;";
+			e.innerHTML=play;
 			clearInterval(myVar);
 			toggle=false;
 		} else {
-			document.getElementById("toggleTimer").innerHTML="&#8741;";
+			e.innerHTML=pause;
 			myVar = setInterval(setTime, 1000);
 			toggle=true;
 		}
@@ -135,15 +141,30 @@ function displayEaapsWindow(url, notificationId, message) {
 	
 	function pasteTimer(){
             var ed = new Date();
-            $(caseNote).value +="\n"+document.getElementById("startTag").value+": "+d.getHours()+":"+pad(d.getMinutes())+"\n"+document.getElementById("endTag").value+": "+ed.getHours()+":"+pad(ed.getMinutes())+"\n"+pad(parseInt(totalSeconds/3600))+":"+pad(parseInt((totalSeconds/60)%60))+":"+ pad(totalSeconds%60);
+			const timerNote = document.getElementById("timer-note");
+			let note = "";
+			if(timerNote.value) {
+				note = "\n" + timerNote.value;
+			}
+            $(caseNote).value += "\n"
+	            + note
+	            + "\n" + document.getElementById("startTag").value+": "
+	            +d.getHours()+":"+pad(d.getMinutes())+"\n"
+	            +document.getElementById("endTag").value+": "
+	            +ed.getHours()+":"+pad(ed.getMinutes())+"\n"
+	            +pad(parseInt(totalSeconds/3600))+":"
+	            +pad(parseInt((totalSeconds/60)%60))+":"
+	            + pad(totalSeconds%60);
             adjustCaseNote();
+			timerNote.value = '';
 	}
 
         function setTime(){
             ++totalSeconds;
-            if (totalSeconds > 5) {document.getElementById("aTimer").innerHTML =pad(parseInt(totalSeconds/60))+":"+ pad(totalSeconds%60);}
-            if (totalSeconds == 1200) {document.getElementById("aTimer").style.backgroundColor= "#DFF0D8";} //1200 sec = 20 min light green
-            if (totalSeconds == 3000) {document.getElementById("aTimer").style.backgroundColor= "#FDFEC7";} //3600 sec = 50 min light yellow
+			const aTimerButton = document.getElementById("aTimer");
+            if (totalSeconds > 5) {aTimerButton.innerHTML =pad(parseInt(totalSeconds/60))+":"+ pad(totalSeconds%60);}
+            if (totalSeconds === 1200) {aTimerButton.style.background= "#DFF0D8";} //1200 sec = 20 min light green
+            if (totalSeconds === 3000) {aTimerButton.style.background= "#FDFEC7";} //3600 sec = 50 min light yellow
         }
 
         function pad(val){
@@ -155,5 +176,3 @@ function displayEaapsWindow(url, notificationId, message) {
                 return valString;
             }
         }
-	
-	

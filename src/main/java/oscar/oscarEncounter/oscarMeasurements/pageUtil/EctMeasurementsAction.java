@@ -50,7 +50,7 @@ import org.oscarehr.casemgmt.model.CaseManagementNote;
 import org.oscarehr.casemgmt.service.CaseManagementManager;
 import org.oscarehr.common.dao.FlowSheetCustomizationDao;
 import org.oscarehr.common.dao.MeasurementDao;
-import org.oscarehr.common.dao.MeasurementDao.SearchCriteria;
+import org.oscarehr.common.dao.MeasurementDaoImpl.SearchCriteria;
 import org.oscarehr.common.dao.SecRoleDao;
 import org.oscarehr.common.model.FlowSheetCustomization;
 import org.oscarehr.common.model.Measurement;
@@ -73,19 +73,22 @@ public class EctMeasurementsAction extends Action {
 
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_measurement", "w", null)) {
+	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_measurement", "w",
+				null)) {
 			throw new SecurityException("missing required security object (_measurement)");
 		}
 
 		boolean ajax = (request.getParameter("ajax") != null) ? Boolean.valueOf(request.getParameter("ajax")) : false;
-		boolean skipCreateNote = (request.getParameter("skipCreateNote") != null) ? Boolean.valueOf(request.getParameter("skipCreateNote")) : false;
+		boolean skipCreateNote = (request.getParameter("skipCreateNote") != null)
+				? Boolean.valueOf(request.getParameter("skipCreateNote"))
+				: false;
 
 		EctMeasurementsForm frm = (EctMeasurementsForm) form;
 
 		HttpSession session = request.getSession();
 
-		
 		String demographicNo = request.getParameter("demographic_no");
 		String providerNo = (String) session.getAttribute("user");
 		String prog_no = new EctProgram(session).getProgram(providerNo);
@@ -93,21 +96,24 @@ public class EctMeasurementsAction extends Action {
 		String template = request.getParameter("template");
 		MeasurementFlowSheet mFlowsheet = null;
 		if (template != null) {
-			WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(session.getServletContext());
-			FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx.getBean("flowSheetCustomizationDao");
+			WebApplicationContext ctx = WebApplicationContextUtils
+					.getRequiredWebApplicationContext(session.getServletContext());
+			FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx
+					.getBean(FlowSheetCustomizationDao.class);
 			MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
 
-			List<FlowSheetCustomization> custList = flowSheetCustomizationDao.getFlowSheetCustomizations(template, (String) session.getAttribute("user"), Integer.parseInt(demographicNo));
+			List<FlowSheetCustomization> custList = flowSheetCustomizationDao.getFlowSheetCustomizations(template,
+					(String) session.getAttribute("user"), Integer.parseInt(demographicNo));
 			mFlowsheet = templateConfig.getFlowSheet(template, custList);
 		}
 
 		String numType = (String) frm.getValue("numType");
 		int iType = Integer.parseInt(numType);
 
-		String textOnEncounter = ""; //"**"+StringUtils.rightPad(by,80,"*")+"\\n";
+		String textOnEncounter = ""; // "**"+StringUtils.rightPad(by,80,"*")+"\\n";
 
-		//if parent window content has changed then we need to propagate change so
-		//we do not write to parent
+		// if parent window content has changed then we need to propagate change so
+		// we do not write to parent
 		String parentChanged = (String) frm.getValue("parentChanged");
 		request.setAttribute("parentChanged", parentChanged);
 
@@ -126,10 +132,10 @@ public class EctMeasurementsAction extends Action {
 		Integer iMax = 0;
 		Integer iMin = 0;
 		Boolean numeric = null;
-		
+
 		List<Validations> vs = null;
 		String regCharExp;
-		//goes through each type to check if the input value is valid
+		// goes through each type to check if the input value is valid
 		for (int i = 0; i < iType; i++) {
 			inputValueName = "inputValue-" + i;
 			inputTypeName = "inputType-" + i;
@@ -144,10 +150,10 @@ public class EctMeasurementsAction extends Action {
 			comments = (String) frm.getValue(commentsName);
 			dateObserved = (String) frm.getValue(dateName);
 
-			if(StringUtils.isEmpty(inputValue)) {
+			if (StringUtils.isEmpty(inputValue)) {
 				continue;
 			}
-			
+
 			regExp = null;
 			dMax = new Double(0);
 			dMin = new Double(0);
@@ -180,17 +186,20 @@ public class EctMeasurementsAction extends Action {
 				iMin = 0;
 			}
 			if (!ectValidation.isInRange(dMax, dMin, inputValue)) {
-				errors.add(inputValueName, new ActionMessage("errors.range", inputTypeDisplay, Double.toString(dMin), Double.toString(dMax)));
+				errors.add(inputValueName, new ActionMessage("errors.range", inputTypeDisplay, Double.toString(dMin),
+						Double.toString(dMax)));
 				saveErrors(request, errors);
 				valid = false;
 			}
 			if (!ectValidation.maxLength(iMax, inputValue)) {
-				errors.add(inputValueName, new ActionMessage("errors.maxlength", inputTypeDisplay, Integer.toString(iMax)));
+				errors.add(inputValueName,
+						new ActionMessage("errors.maxlength", inputTypeDisplay, Integer.toString(iMax)));
 				saveErrors(request, errors);
 				valid = false;
 			}
 			if (!ectValidation.minLength(iMin, inputValue)) {
-				errors.add(inputValueName, new ActionMessage("errors.minlength", inputTypeDisplay, Integer.toString(iMin)));
+				errors.add(inputValueName,
+						new ActionMessage("errors.minlength", inputTypeDisplay, Integer.toString(iMin)));
 				saveErrors(request, errors);
 				valid = false;
 			}
@@ -217,7 +226,7 @@ public class EctMeasurementsAction extends Action {
 			}
 		}
 
-		//Write to database and to encounter form if all the input values are valid
+		// Write to database and to encounter form if all the input values are valid
 		if (valid) {
 			for (int i = 0; i < iType; i++) {
 
@@ -239,7 +248,7 @@ public class EctMeasurementsAction extends Action {
 				org.apache.commons.validator.GenericValidator gValidator = new org.apache.commons.validator.GenericValidator();
 				if (!GenericValidator.isBlankOrNull(inputValue)) {
 
-					//Find if the same data has already been entered into the system
+					// Find if the same data has already been entered into the system
 					MeasurementDao dao = SpringUtils.getBean(MeasurementDao.class);
 					SearchCriteria sc = new SearchCriteria();
 					sc.setDemographicNo(demographicNo);
@@ -251,7 +260,7 @@ public class EctMeasurementsAction extends Action {
 					List<Measurement> ms = dao.find(sc);
 
 					if (ms.isEmpty()) {
-						//Write to the Dababase if all input values are valid
+						// Write to the Dababase if all input values are valid
 						Measurement m = new Measurement();
 						m.setType(inputType);
 						m.setDemographicId(Integer.parseInt(demographicNo));
@@ -263,17 +272,20 @@ public class EctMeasurementsAction extends Action {
 						m.setAppointmentNo(0);
 						dao.persist(m);
 
-						//prepare input values for writing to the encounter form
+						// prepare input values for writing to the encounter form
 						if (mFlowsheet == null) {
-							textOnEncounter = textOnEncounter + inputType + "    " + inputValue + " " + mInstrc + " " + comments + "\n";
+							textOnEncounter = textOnEncounter + inputType + "    " + inputValue + " " + mInstrc + " "
+									+ comments + "\n";
 						} else {
-							textOnEncounter += mFlowsheet.getFlowSheetItem(inputType).getDisplayName() + "    " + inputValue + " " + comments + "\n";
+							textOnEncounter += mFlowsheet.getFlowSheetItem(inputType).getDisplayName() + "    "
+									+ inputValue + " " + comments + "\n";
 						}
 					}
 				}
 
 			}
-			// textOnEncounter = textOnEncounter + "**********************************************************************************\\n";
+			// textOnEncounter = textOnEncounter +
+			// "**********************************************************************************\\n";
 
 		} else {
 			String groupName = (String) frm.getValue("groupName");
@@ -281,30 +293,30 @@ public class EctMeasurementsAction extends Action {
 			request.setAttribute("groupName", groupName);
 			request.setAttribute("css", css);
 			request.setAttribute("demographicNo", demographicNo);
-			
-			if(ajax) {
+
+			if (ajax) {
 				JSONObject obj = new JSONObject();
 				JSONArray errorObj = new JSONArray();
 				MessageResources resources = this.getResources(request);
 				Locale locale = getLocale(request);
-				for (Iterator iter = errors.get(); iter.hasNext();)  {
-				    ActionMessage msg = (ActionMessage) iter.next();
-				    String text = resources.getMessage(locale, msg.getKey(), msg.getValues());
-				    errorObj.add(text);
+				for (Iterator iter = errors.get(); iter.hasNext();) {
+					ActionMessage msg = (ActionMessage) iter.next();
+					String text = resources.getMessage(locale, msg.getKey(), msg.getValues());
+					errorObj.add(text);
 				}
 				obj.put("errors", errorObj);
 				obj.write(response.getWriter());
 				return null;
 			}
-			
+
 			return (new ActionForward(mapping.getInput()));
 		}
 
 		if (valid && !skipCreateNote) {
-			//create note
-			CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean("caseManagementManager");
+			// create note
+			CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 
-			SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean("secRoleDao");
+			SecRoleDao secRoleDao = (SecRoleDao) SpringUtils.getBean(SecRoleDao.class);
 			SecRole doctorRole = secRoleDao.findByName("doctor");
 			String reporter_caisi_role = doctorRole.getId().toString();
 
@@ -333,9 +345,9 @@ public class EctMeasurementsAction extends Action {
 
 			cmm.saveNoteSimple(cmn);
 
-		} //create note
+		} // create note
 
-		if(ajax) {
+		if (ajax) {
 			JSONObject json = new JSONObject();
 			json.put("encounterText", textOnEncounter);
 			json.write(response.getWriter());

@@ -93,7 +93,7 @@
 		}
 		
 		if (temp.getProgramId()!=null) {
-	ProgramDao programDao=(ProgramDao)SpringUtils.getBean("programDao");
+	ProgramDao programDao=(ProgramDao)SpringUtils.getBean(ProgramDao.class);
 	Program program=programDao.getProgram(temp.getProgramId());
 	program_name=program.getName();
 		}

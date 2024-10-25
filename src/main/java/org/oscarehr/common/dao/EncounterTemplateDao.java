@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  *
  * Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
@@ -19,54 +20,20 @@
  * This software was written for
  * Centre for Research on Inner City Health, St. Michael's Hospital,
  * Toronto, Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
 
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.EncounterTemplate;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class EncounterTemplateDao extends AbstractDao<EncounterTemplate> {
+public interface EncounterTemplateDao extends AbstractDao<EncounterTemplate> {
 
-	public EncounterTemplateDao() {
-		super(EncounterTemplate.class);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<EncounterTemplate> findAll() {
-		Query query = entityManager.createQuery("SELECT x FROM " + modelClass.getSimpleName() + " x");
-		List<EncounterTemplate> results = query.getResultList();
-		return results;
-	}
-	
-	public List<EncounterTemplate> findByName(String name)
-	{
-		Query query = entityManager.createQuery("select x from EncounterTemplate x where x.encounterTemplateName like ?");
-		query.setParameter(1, name);
-		
-		@SuppressWarnings("unchecked")
-		List<EncounterTemplate> results=query.getResultList();
-		
-		return(results);
-	}
-	
+    List<EncounterTemplate> findAll();
 
-	   public List<EncounterTemplate> findByName(String name, Integer startIndex, Integer itemsToReturn)
-		{
-			Query query = entityManager.createQuery("select x from EncounterTemplate x where x.encounterTemplateName like ?");
-			query.setParameter(1, name);
-			
-			query.setFirstResult(startIndex);
-			query.setMaxResults(itemsToReturn);
-			
-			@SuppressWarnings("unchecked")
-			List<EncounterTemplate> results=query.getResultList();
-			
-			return(results);
-		}
+    List<EncounterTemplate> findByName(String name);
+
+    List<EncounterTemplate> findByName(String name, Integer startIndex, Integer itemsToReturn);
 }

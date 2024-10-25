@@ -54,8 +54,8 @@ if(!authed) {
 <%@page import="oscar.entities.Billingmaster" %>
 
 <%
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean("appointmentArchiveDao");
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean("oscarAppointmentDao");
+	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
+	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
 	BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
 	BillingmasterDAO billingMasterDao =  SpringUtils.getBean(BillingmasterDAO.class);
 %>

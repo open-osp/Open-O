@@ -29,11 +29,11 @@
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao, org.oscarehr.common.model.Provider" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%
-ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 ArrayList<Provider> providers = new ArrayList<Provider>(providerDao.getActiveProviders());
 String provider = CommonLabResultData.NOT_ASSIGNED_PROVIDER_NO;
 
-QueueDao queueDao = (QueueDao) SpringUtils.getBean("queueDao");
+QueueDao queueDao = (QueueDao) SpringUtils.getBean(QueueDao.class);
 HashMap queues = queueDao.getHashMapOfQueues();
 
 String queueIdStr = (String) request.getSession().getAttribute("preferredQueue");

@@ -1716,7 +1716,7 @@ public class OLISHL7Handler implements MessageHandler {
 		String obxName = getOBXField(i, j, 3, 0, 1);
 
 		try {
-			OLISResultNomenclatureDao resultDao = (OLISResultNomenclatureDao) SpringUtils.getBean("OLISResultNomenclatureDao");
+			OLISResultNomenclatureDao resultDao = (OLISResultNomenclatureDao) SpringUtils.getBean(OLISResultNomenclatureDao.class);
 			OLISResultNomenclature resultNomenclature = resultDao.findByNameId(obxName);
 			return StringUtils.trimToEmpty(resultNomenclature.getName());
 		} catch (Exception e) {

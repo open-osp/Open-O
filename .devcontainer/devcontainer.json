@@ -1,0 +1,26 @@
+{
+  "name": "Open-OSP EMR Dev",
+  "workspaceFolder": "/workspace",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "oscar",
+  "shutdownAction": "stopCompose",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "waderyan.gitblame",
+        "redhat.vscode-community-server-connector@0.25.7",
+        "redhat.fabric8-analytics",
+        "vscjava.vscode-java-pack"
+      ],
+      settings: {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      }
+    }
+  },
+  "forwardPorts": [
+    8080,
+    3306
+  ],
+  "containerUser": "root",
+  "remoteUser": "root"
+}

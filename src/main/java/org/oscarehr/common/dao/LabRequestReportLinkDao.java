@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,45 +21,15 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.LabRequestReportLink;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class LabRequestReportLinkDao extends AbstractDao<LabRequestReportLink>{
-
-	public LabRequestReportLinkDao() {
-		super(LabRequestReportLink.class);
-	}
-	
-	public List<LabRequestReportLink> findByReportTableAndReportId(String reportTable, int reportId) {
-		Query q = entityManager.createQuery("select l from LabRequestReportLink l WHERE l.reportTable = ?1 AND l.reportId=?2");
-		q.setParameter(1, reportTable);
-		q.setParameter(2, reportId);
-		
-		@SuppressWarnings("unchecked")
-		List<LabRequestReportLink> results = q.getResultList();
-		
-		return results;
-	}
-	
-	public List<LabRequestReportLink> findByRequestTableAndRequestId(String requestTable, int requestId) {
-		Query q = entityManager.createQuery("select l from LabRequestReportLink l WHERE l.requestTable = ?1 AND l.requestId=?2");
-		q.setParameter(1, requestTable);
-		q.setParameter(2, requestId);
-		
-		@SuppressWarnings("unchecked")
-		List<LabRequestReportLink> results = q.getResultList();
-		
-		return results;
-	}
-
+public interface LabRequestReportLinkDao extends AbstractDao<LabRequestReportLink> {
+    List<LabRequestReportLink> findByReportTableAndReportId(String reportTable, int reportId);
+    List<LabRequestReportLink> findByRequestTableAndRequestId(String requestTable, int requestId);
 }

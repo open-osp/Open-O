@@ -87,7 +87,7 @@ if(!authed) {
 
 					   <ol>
                        <%
-                        QueueDao queueDao = (QueueDao) SpringUtils.getBean("queueDao");
+                        QueueDao queueDao = (QueueDao) SpringUtils.getBean(QueueDao.class);
                         List<Hashtable> queues=queueDao.getQueues();
                         for(Hashtable qht:queues){
                         %>                            

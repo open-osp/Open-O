@@ -24,35 +24,19 @@
 
 package oscar.oscarBilling.ca.bc.data;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.velocity.tools.ConversionUtils;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.billing.CA.BC.dao.BillingStatusTypesDao;
 import org.oscarehr.billing.CA.BC.model.BillingStatusTypes;
-import org.oscarehr.common.dao.BillingBCDao;
-import org.oscarehr.common.dao.BillingPaymentTypeDao;
-import org.oscarehr.common.dao.BillingServiceDao;
-import org.oscarehr.common.dao.CtlBillingServiceDao;
-import org.oscarehr.common.dao.CtlDiagCodeDao;
-import org.oscarehr.common.dao.DiagnosticCodeDao;
-import org.oscarehr.common.model.Billing;
-import org.oscarehr.common.model.BillingPaymentType;
-import org.oscarehr.common.model.CtlBillingService;
-import org.oscarehr.common.model.DiagnosticCode;
-import org.oscarehr.common.model.Provider;
+import org.oscarehr.common.dao.*;
+import org.oscarehr.common.model.*;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 import oscar.entities.BillingStatusType;
 import oscar.entities.PaymentType;
 import oscar.util.UtilDateUtilities;
+
+import java.util.*;
 
 public class BillingFormData {
 	
@@ -314,7 +298,7 @@ public class BillingFormData {
 		}
 
 		public String getDisplayName() {
-			return visitType.equalsIgnoreCase("clinicdefault") ? description : visitType + "|" + description;
+			return visitType.equalsIgnoreCase(Property.PROPERTY_VALUE.clinicdefault.name()) ? description : visitType + "|" + description;
 		}
 
 	}

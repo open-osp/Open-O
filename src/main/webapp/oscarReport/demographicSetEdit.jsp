@@ -62,7 +62,7 @@ if(!authed) {
 
 %>
 <!DOCTYPE html>
-<html:html locale="true">
+<html:html lang="en">
 
 <head>
 <html:base />

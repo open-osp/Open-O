@@ -102,7 +102,7 @@ public class FrmLabReq10Record extends FrmRecord {
             }
 
             //get local clinic information
-        	ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean("clinicDAO");
+        	ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean(ClinicDAO.class);
         	Clinic clinic = clinicDao.getClinic();
 
             	props.setProperty("clinicName",clinic.getClinicName()==null?"":clinic.getClinicName());
@@ -136,7 +136,7 @@ public class FrmLabReq10Record extends FrmRecord {
 
     public Properties getFormCustRecord(Properties props, String provNo) {
         
-        ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");                
+        ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);                
         Provider mrp = null;
         String demoProvider = props.getProperty("demoProvider","");   
         
@@ -188,7 +188,7 @@ public class FrmLabReq10Record extends FrmRecord {
         }
                                                  	    	    	    	
         //get local clinic information
-        ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean("clinicDAO");
+        ClinicDAO clinicDao = (ClinicDAO)SpringUtils.getBean(ClinicDAO.class);
     	Clinic clinic = clinicDao.getClinic();
 
     	props.setProperty("clinicName",clinic.getClinicName()==null?"":clinic.getClinicName());

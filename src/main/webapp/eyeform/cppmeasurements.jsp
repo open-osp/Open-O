@@ -48,7 +48,7 @@ if(!authed) {
 <%@ page import="org.oscarehr.casemgmt.web.CaseManagementViewAction" %>
 <%
 	//we need the issue ids
-	IssueDAO issueDao = (IssueDAO)SpringUtils.getBean("IssueDAO");
+	IssueDAO issueDao = (IssueDAO)SpringUtils.getBean(IssueDAO.class);
 	Issue currentHistory = issueDao.findIssueByCode("CurrentHistory");
 	Issue familyHistory = issueDao.findIssueByCode("FamHistory");
 	Issue diagnosticNotes = issueDao.findIssueByCode("DiagnosticNotes");

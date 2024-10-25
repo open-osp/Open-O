@@ -46,7 +46,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 
 <%
-	ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
+	ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
 	List<Program> programs = programDao.getAllPrograms();
 	List<Program> courses = new ArrayList<Program>();
 	for(Program p:programs) {
@@ -56,22 +56,12 @@
 	}
 
 %>
-<html:html locale="true">
+<html:html lang="en">
 	<script src="${pageContext.request.contextPath}/csrfguard"></script>
 <head>
 <!--I18n-->
 <title><bean:message key="admin.admin.DemoImport"/></title>
 <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
-
-
-<SCRIPT LANGUAGE="JavaScript">
-function displayAndDisable(){
-    forms.Submit.disabled = true;
-    showHideItem('waitingMessage');
-    return true;
-}
-</SCRIPT>
-
 
 <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
 
@@ -81,15 +71,110 @@ function displayAndDisable(){
 
 
 <script>
+$(document).ready(function () {
+	$("form[name='ImportDemographicDataForm']").submit(function (event) {
+		event.preventDefault();
+		
+		const files = $("#importFile")[0].files;
+
+		if (files.length === 0) {
+			alert("Please select at least one file.");
+			return;
+		}
+
+		$('#result').empty();
+		uploadFiles(files, this).then(() => {            
+            $('#importFile').val('');
+        }).catch(error => {            
+            console.error("Error in file upload:", error);
+        });
+
+	});
+});
+
+async function uploadFiles(files, form) {
+	// Loop through each selected file
+	for (let i = 0; i < files.length; i++) {
+		ShowSpin(true);
+		const cloneForm = $(form).clone();
+		const file = files[i];
+		let newImportFile = $("<input type='file' name='importFile'>");
+		let newFileList = new DataTransfer();
+		newFileList.items.add(file);
+		newImportFile[0].files = newFileList.files;
+		cloneForm.find("#importFile").replaceWith(newImportFile);
+
+		try {
+			await uploadFile(file, cloneForm);
+		} catch (error) {
+			//console.error("Error in AJAX call:", error);
+		}
+	}
+}
+
+function uploadFile(file, formData) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: formData.attr('action'),
+            type: "POST",
+            data: new FormData(formData[0]),
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                HideSpin();
+				const jsondata = JSON.parse(response.substring(response.indexOf('{'), response.indexOf('}') + 1));
+				showResponse(file.name, jsondata.warnings, jsondata.importLog);
+                resolve(jsondata);
+            },
+            error: function (error) {
+				HideSpin();
+				showError(file.name, error.responseText);
+                reject(error);
+            }
+        });
+    });
+}
+
+function showResponse(fileName, warnings, importLog) {
+    const resultDiv = $('<div>');
+
+    resultDiv.append($('<h4>').text('File Name: ' + fileName));
+
+	resultDiv.append($('<h5>').text('Imported Successfully').css('color', 'green'));
+
+    if (warnings && warnings.length > 0) {
+        resultDiv.append($('<h5>').text('Warnings:'));
+        const warningsList = $('<ul>');
+        warnings.forEach(warning => {
+            warningsList.append($('<li>').text(warning));
+        });
+        resultDiv.append(warningsList);
+    }
+
+	resultDiv.append($('<a>').attr('href', '<%=request.getContextPath() %>/form/importLogDownload.do?importlog=' + encodeURIComponent(importLog)).attr('target', '_blank').text('Download Import Event Log'));
+	resultDiv.append($('<hr>'));
+
+    $('#result').append(resultDiv);
+}
+
+function showError(fileName, responseText) {
+    const errorDiv = $('<div>');
+
+    errorDiv.append($('<h4>').text('File Name: ' + fileName));
+
+    errorDiv.append($('<h5>').text('500 Server Error: Invalid file').css('color', 'red'));
+	errorDiv.append($('<hr>'));
+
+    $('#result').append(errorDiv);
+}
+
 $(document).ready(function(){
 	$("#uploadWarn").tooltip();
 });
-
-
 </script>
 
 </head>
-
+<jsp:include page="../images/spinner.jsp" flush="true"/>
 <body vlink="#0000FF">
 
 <%
@@ -107,8 +192,8 @@ if (!Util.checkDir(op.getProperty("TMP_DIR"))) { %>
 	<h3><bean:message key="admin.admin.DemoImport"/></h3>
 		
 		<html:form action="/form/importUpload.do" method="POST"
-			enctype="multipart/form-data" onsubmit="displayAndDisable()">
-                        <p><html:file property="importFile" value=""/>
+			enctype="multipart/form-data">
+                        <p><input type="file" name="importFile" id="importFile" multiple="multiple"/>
                         <span id="uploadWarn" title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img border="0" src="../images/icon_alertsml.gif"/></span></span>
         
                         </p>
@@ -132,30 +217,7 @@ if (!Util.checkDir(op.getProperty("TMP_DIR"))) { %>
                         <p><input class="btn btn-primary" type="submit" name="Submit" value="Import (EMR DM 5.0)"></p>
 		</html:form>
 
-		<div id="waitingMessage" style="display: none;">
-		<h2>This may take several minutes</h2>
-		</div>
-
-		<% ArrayList list = (ArrayList)  request.getAttribute("warnings");
-	       String importLog = (String) request.getAttribute("importlog");
-               if ( list != null ) {
-	          if (list.size()>0) {
-            %>
-		<div style="font-weight:bold;">
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Warnings
-                </div>
-		<ul>
-			<% for (int i = 0; i < list.size(); i++){
-			  String warn = (String) list.get(i); %>
-			<li><%=warn%></li>
-			<%}%>
-		</ul>
-		<%}%><html:form action="/form/importLogDownload.do" method="POST">
-			<input type="hidden" name="importlog" value="<%=importLog%>">
-			<input type="submit" name="Submit" value="Download Import Event Log">
-                     </html:form>
-		<% } %>
-</div>
+		<div id="result"></div>
                 
 <% } %>
 <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>

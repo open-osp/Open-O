@@ -71,7 +71,7 @@
 	}
 
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Manage API Clients</title>
@@ -144,10 +144,18 @@
 			<%if(requestTokens.size()>0) { %>
 					<%for(ServiceRequestToken srt: requestTokens) { %>
 					<tr>
-						<td><%=clientMap.get(srt.getClientId()).getName() %></td>
+						<%
+                        	ServiceClient client = clientMap.get(srt.getClientId());
+                        	if (client != null) {
+                    	%>
+						<td><%= client.getName() %></td>
 						<td><%=dateFormatter.format(srt.getDateCreated()) %></td>
 						<td><%=srt.getVerifier()%></td>
 						<td><a href="javascript:void(0);" onclick="deleteRequestToken('<%=srt.getId()%>');"><img border="0" title="delete" src="<%=request.getContextPath() %>/images/Delete16.gif"/></a></td>
+						
+						<% } else { %>
+							<td colspan="4">Client not found</td>
+						<% } %>
 					</tr>
 					<% } %>
 			<% } else {%>

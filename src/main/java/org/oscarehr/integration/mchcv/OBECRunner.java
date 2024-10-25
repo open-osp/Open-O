@@ -84,7 +84,7 @@ public class OBECRunner {
         List<UploadData> uploads = new ArrayList<UploadData>();
         uploads.add(uploadData);
         try {
-            EDTDelegate delegate = DelegateFactory.newDelegate();
+            EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
             delegate.upload(uploads);
         } catch (Exception e) {
             logger.error("Unable to upload to MCEDT", e);

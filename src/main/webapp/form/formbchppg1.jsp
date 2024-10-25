@@ -137,7 +137,7 @@ if (props == null || props.getProperty("c_lastVisited", "").equals("")){
 props.setProperty("c_lastVisited", "pg1");
 
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>B.C. Health Passport</title>

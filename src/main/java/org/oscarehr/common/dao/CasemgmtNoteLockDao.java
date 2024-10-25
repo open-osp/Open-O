@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,53 +21,17 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
+import org.oscarehr.common.model.CasemgmtNoteLock;
+
 import java.util.List;
 
-import javax.persistence.Query;
-
-import org.oscarehr.common.model.CasemgmtNoteLock;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public class CasemgmtNoteLockDao extends AbstractDao<CasemgmtNoteLock> {
-	public CasemgmtNoteLockDao() {
-		super(CasemgmtNoteLock.class);
-	}
-	
-	public CasemgmtNoteLock findByNoteDemo(Integer demographicNo, Long note_id) {
-		Query query = entityManager.createQuery("select lock from CasemgmtNoteLock lock where lock.demographicNo = :demo and lock.noteId = :noteId");
-		
-		query.setParameter("demo", demographicNo);		
-		query.setParameter("noteId", note_id);
-		
-		return getSingleResultOrNull(query);
-	}
-	
-	public void remove(String providerNo, Integer demographicNo, Long note_id) {
-		Query query = entityManager.createQuery("select lock from CasemgmtNoteLock lock where lock.demographicNo = :demo and lock.providerNo = :providerNo" +
-				" and lock.noteId = :note_id");
-		
-		query.setParameter("demo", demographicNo);
-		query.setParameter("providerNo", providerNo);
-		query.setParameter("note_id", note_id);
-		
-		CasemgmtNoteLock casemgmtNoteLock = getSingleResultOrNull(query);
-		
-		if( casemgmtNoteLock != null ) {
-			remove(casemgmtNoteLock);
-		}
-	}
-	
-	public List<CasemgmtNoteLock> findBySession(String sessionId) {
-		Query query = entityManager.createQuery("select lock from CasemgmtNoteLock lock where lock.sessionId = :sessionId");
-		
-		query.setParameter("sessionId", sessionId);
-		
-		List<CasemgmtNoteLock> results = query.getResultList();
-		
-		return results;
-	}
+public interface CasemgmtNoteLockDao extends AbstractDao<CasemgmtNoteLock> {
+    CasemgmtNoteLock findByNoteDemo(Integer demographicNo, Long note_id);
+    void remove(String providerNo, Integer demographicNo, Long note_id);
+    List<CasemgmtNoteLock> findBySession(String sessionId);
 }

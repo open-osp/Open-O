@@ -49,7 +49,7 @@ public class EctConAddSpecialistAction extends Action {
 
 	private static final Logger logger=MiscUtils.getLogger();
 
-	private ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
+	private ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
 	private static SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
 	@Override

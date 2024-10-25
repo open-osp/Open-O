@@ -31,8 +31,8 @@ import java.util.Map;
 
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.wss4j.common.WSS4JConstants;
+import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.oscarehr.util.MiscUtils;
 
 import com.medseek.clinical.service.*;
@@ -67,7 +67,7 @@ public class ClinicalConnectSSO {
 				outProps.put(WSHandlerConstants.USER, serviceUserName);
 				
 				// Password type : plain text
-				outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
+				outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSS4JConstants.PW_TEXT);
 				
 				// set our password callback class this is used to lookup the password for a user.
 				outProps.put(WSHandlerConstants.PW_CALLBACK_REF, new PasswordCallbackHandler(servicePassword));

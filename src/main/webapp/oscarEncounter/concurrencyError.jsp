@@ -45,7 +45,7 @@ if(!authed) {
 oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
 bean=(oscar.oscarEncounter.pageUtil.EctSessionBean)request.getSession().getAttribute("EctSessionBean");
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="oscarEncounter.concurrencyError.title" /></title>

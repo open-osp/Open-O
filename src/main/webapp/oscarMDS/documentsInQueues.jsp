@@ -697,6 +697,7 @@ function reportWindow(page,height,width) {
 
 
 function submitFile(){
+	console.log("File from: documentsInQueues.jsp");
    aBoxIsChecked = false;
    submitLabs = true;
     if (document.reassignForm.flaggedLabs.length == undefined) {
@@ -2286,7 +2287,7 @@ height:0px;
                 <td class="MainTableTopRowRightColumn" colspan="2" align="left">
                  <table width="100%">
                      <tr >
-                         <td align="center" colspan="2" class="Nav" valign="center"><span class="white"><bean:message key="inboxmanager.documentsInQueues"/></span></td>
+                         <td align="center" class="Nav" valign="center"><span class="white"><bean:message key="inboxmanager.documentsInQueues"/></span></td>
                      </tr>
                         <tr>
                             <td align="left" valign="center" >
@@ -2302,10 +2303,10 @@ height:0px;
 
                             </td>
                             
-                            <td align="right" valign="center" width="30%">
-                                <oscar:help keywords="inbox queue" key="app.top1"/>
-                                | <a href="javascript:popupStart(300,400,'../oscarEncounter/About.jsp')" style="color: #FFFFFF;" ><bean:message key="global.about"/></a>
-                            </td>
+<%--                            <td align="right" valign="center" width="30%">--%>
+<%--                                <oscar:help keywords="inbox queue" key="app.top1"/>--%>
+<%--                                | <a href="javascript:popupStart(300,400,'../oscarEncounter/About.jsp')" style="color: #FFFFFF;" ><bean:message key="global.about"/></a>--%>
+<%--                            </td>--%>
                         </tr>
                     </table>
                 </td>

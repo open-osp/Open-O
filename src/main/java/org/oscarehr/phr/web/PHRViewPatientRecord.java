@@ -113,7 +113,7 @@ public class PHRViewPatientRecord extends DispatchAction {
                 return null;
             }
             
-    		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+    		DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
     		Demographic demographic = demographicDao.getDemographicById(Integer.parseInt(demographicNo));
             Long myOscarUserId = AccountManager.getUserId(myOscarLoggedInInfo, demographic.getMyOscarUserName());
 
@@ -132,7 +132,7 @@ public class PHRViewPatientRecord extends DispatchAction {
     
     public ActionForward saveNewVerification(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String demographicNo = request.getParameter("demographic_no");
-        PHRVerificationDao phrVerificationDao = (PHRVerificationDao)SpringUtils.getBean("PHRVerificationDao");
+        PHRVerificationDao phrVerificationDao = (PHRVerificationDao)SpringUtils.getBean(PHRVerificationDao.class);
         
         org.oscarehr.common.model.PHRVerification phrA = new org.oscarehr.common.model.PHRVerification();
         

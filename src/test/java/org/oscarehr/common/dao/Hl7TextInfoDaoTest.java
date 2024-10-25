@@ -39,7 +39,7 @@ public class Hl7TextInfoDaoTest extends DaoTestFixtures {
 
 	@Before
 	public void before() throws Exception {
-		SchemaUtils.restoreTable("hl7TextInfo", "patientLabRouting", "hl7TextInfo", "providerLabRouting", "ctl_document", "demographic", "hl7TextMessage");
+		SchemaUtils.restoreTable("hl7TextInfo", "patientLabRouting", "hl7TextInfo", "providerLabRouting", "ctl_document", "demographic", "hl7TextMessage","SystemPreferences");
 	}
 
 	@Test

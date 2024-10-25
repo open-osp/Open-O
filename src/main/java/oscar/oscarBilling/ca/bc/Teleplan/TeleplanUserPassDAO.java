@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.PropertyDao;
 import org.oscarehr.common.model.Property;
+import org.oscarehr.util.EncryptionUtils;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
@@ -105,10 +106,18 @@ public class TeleplanUserPassDAO {
             setUsername(username);
         }  
     }
-    
-     public void saveUpdatePasssword(String password){
-        if(hasPassword()){
-            log.debug("has password"+password);
+
+    public void saveUpdatePasssword(String password) {
+
+        try {
+            password = EncryptionUtils.encrypt(password);
+        } catch (Exception e) {
+            log.error("Error while securely saving the password.");
+
+        }
+
+        if(hasPassword()) {
+            log.debug("has password" + password);
             updatePassword(password);
         }else{
             log.debug("not password"+password);
@@ -124,7 +133,19 @@ public class TeleplanUserPassDAO {
         }
         ps = propertyDao.findByName("teleplan_password");
         for(Property p:ps) {
-        	str[1] = p.getValue();
+            try {
+                if (EncryptionUtils.isEncrypted(p.getValue())) {
+                    str[1] = EncryptionUtils.decrypt(p.getValue());
+                } else {
+                    // the password is not encrypted, encrypt and save it for future use
+                    this.saveUpdatePasssword(p.getValue());
+                    // Recursively calling this method to retrieve the newly encrypted password
+                    return this.getUsernamePassword();
+                }
+            } catch (Exception e) {
+                log.error("Error while securely fetching the password.");
+                str[1] =  p.getValue();
+            }
         }
         return str;
     }

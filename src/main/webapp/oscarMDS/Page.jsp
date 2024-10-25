@@ -64,7 +64,7 @@ String selectedCategoryPatient = request.getParameter("selectedCategoryPatient")
 String selectedCategoryType = request.getParameter("selectedCategoryType");
 boolean isListView = Boolean.valueOf(request.getParameter("isListView"));
 
-OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean("oscarLogDao");
+OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
 String curUser_no = (String) session.getAttribute("user");
 
 %>
@@ -288,14 +288,16 @@ String curUser_no = (String) session.getAttribute("user");
                                 <tr id="labdoc_<%=segmentID%>" bgcolor="<%=bgcolor%>" <%if(result.isDocument()){%> name="scannedDoc" <%} else{%> name="HL7lab" <%}%> class="<%= (result.isAbnormal() ? "AbnormalRes" : "NormalRes" ) + " " + (result.isMatchedToPatient() ? "AssignedRes" : "UnassignedRes") %>">
                                 <td>
                                     <input type="hidden" id="totalNumberRow" value="<%=total_row_index+1%>">
-                                    <%
+                                    <%--
+	                                    // used to disable the checkboxes for any reason an action should be blocked for
+	                                    // unmatched labs
                                         String disabled = "";
                                         if(! result.isMatchedToPatient() && result.labType != "DOC")
                                         {
                                             disabled = "disabled";
                                         };
-                                    %>
-                                    <input type="checkbox" name="flaggedLabs" value="<%=segmentID + ":" + result.labType%>" <%= disabled %>>
+                                    --%>
+                                    <input type="checkbox" name="flaggedLabs" value="<%=segmentID + ":" + result.labType%>" >
                                     <input type="hidden" name="labType<%=segmentID+result.labType%>" value="<%=result.labType%>"/>
                                     <input type="hidden" name="ackStatus" value="<%= result.isMatchedToPatient() %>" />
                                     <input type="hidden" name="patientName" value="<%=StringEscapeUtils.escapeHtml(result.patientName) %>"/>

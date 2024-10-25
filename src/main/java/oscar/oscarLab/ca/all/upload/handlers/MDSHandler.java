@@ -51,8 +51,13 @@ import oscar.oscarLab.ca.all.util.Utilities;
 public class MDSHandler implements MessageHandler {
 
 	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
-	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean("hl7TextInfoDao");
+	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao)SpringUtils.getBean(Hl7TextInfoDao.class);
+
+	private Integer labNo = null;
 	
+	public Integer getLastLabNo() {
+		return labNo;
+	}
 
 	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {
 
@@ -77,14 +82,16 @@ public class MDSHandler implements MessageHandler {
 					return null;
 				}
 				
+				labNo = routeResults.segmentId;
+				
 				audit.append(auditLine);
 
 			}
 			logger.info("Parsed OK");
 
-                        if( audit.length() == 0 ) {
-                            return ("success");
-                        }
+			if( audit.length() == 0 ) {
+				return ("success");
+			}
 			return (audit.toString());
 
 		} catch (Exception e) {
@@ -105,14 +112,12 @@ public class MDSHandler implements MessageHandler {
 			//do we have this?
 			List<Hl7TextInfo> dupResults = hl7TextInfoDao.searchByAccessionNumber(fullAcc);
 			
-                        if(!dupResults.isEmpty()) {
-                                //if(h.getHealthNum().equals(dupResult.getHealthNumber())) {
-                                OscarAuditLogger.getInstance().log(loggedInInfo, "Lab", "Skip", "Duplicate lab skipped - accession " + fullAcc + "\n" + msg);
-                                        return true;
-                                //}
-                        }
-				
-			
+			if(!dupResults.isEmpty()) {
+					//if(h.getHealthNum().equals(dupResult.getHealthNumber())) {
+					OscarAuditLogger.getInstance().log(loggedInInfo, "Lab", "Skip", "Duplicate lab skipped - accession " + fullAcc + "\n" + msg);
+							return true;
+					//}
+			}
 		}
 		return false;	
 	}

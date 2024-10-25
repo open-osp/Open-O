@@ -85,7 +85,7 @@ AffinityDomainDao affDao = SpringUtils.getBean(AffinityDomainDao.class);
 List<AffinityDomainDataObject> affinityDomains = affDao.getAllAffinityDomains();
 %>
 
-<html:html locale="true">
+<html:html lang="en">
     <script src="${pageContext.request.contextPath}/csrfguard"></script>
 <head>
 <title><bean:message key="demographic.demographicexport.title" /></title>

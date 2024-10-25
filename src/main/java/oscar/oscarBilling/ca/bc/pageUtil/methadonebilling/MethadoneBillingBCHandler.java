@@ -108,12 +108,12 @@ public class MethadoneBillingBCHandler {
 	public MethadoneBillingBCHandler(){
 
 		this.today = new Date();
-    	demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-    	providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+    	demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+    	providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
     	oscarProperties = OscarProperties.getInstance();
     	bmanager = new BillingBillingManager();
     	billing = new Billing();
-		billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean("BillingmasterDAO");
+		billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean(BillingmasterDAO.class);
 		billingHistoryDAO = new BillingHistoryDAO();
 		diagnosticCodeDao = (DiagnosticCodeDao) SpringUtils.getBean(DiagnosticCodeDao.class);
 
@@ -127,12 +127,12 @@ public class MethadoneBillingBCHandler {
 		this.methadoneBillingBCFormBean = methadoneBillingBCFormBean;
 
 		this.today = new Date();
-    	demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-    	providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+    	demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+    	providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
     	oscarProperties = OscarProperties.getInstance();
     	bmanager = new BillingBillingManager();
     	billing = new Billing();
-		billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean("BillingmasterDAO");
+		billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean(BillingmasterDAO.class);
 		billingHistoryDAO = new BillingHistoryDAO();
 
 		diagnosticCodeDao = (DiagnosticCodeDao) SpringUtils.getBean(DiagnosticCodeDao.class);

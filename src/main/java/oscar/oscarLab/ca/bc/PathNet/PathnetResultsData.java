@@ -24,24 +24,9 @@
 
 package oscar.oscarLab.ca.bc.PathNet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.logging.log4j.Logger;
-import org.oscarehr.billing.CA.BC.dao.Hl7MessageDao;
-import org.oscarehr.billing.CA.BC.dao.Hl7MshDao;
-import org.oscarehr.billing.CA.BC.dao.Hl7ObrDao;
-import org.oscarehr.billing.CA.BC.dao.Hl7ObxDao;
-import org.oscarehr.billing.CA.BC.dao.Hl7OrcDao;
-import org.oscarehr.billing.CA.BC.dao.Hl7PidDao;
-import org.oscarehr.billing.CA.BC.model.Hl7Message;
-import org.oscarehr.billing.CA.BC.model.Hl7Msh;
-import org.oscarehr.billing.CA.BC.model.Hl7Obr;
-import org.oscarehr.billing.CA.BC.model.Hl7Orc;
-import org.oscarehr.billing.CA.BC.model.Hl7Pid;
+import org.oscarehr.billing.CA.BC.dao.*;
+import org.oscarehr.billing.CA.BC.model.*;
 import org.oscarehr.common.dao.ConsultDocsDao;
 import org.oscarehr.common.dao.ConsultResponseDocDao;
 import org.oscarehr.common.dao.EFormDocsDao;
@@ -51,10 +36,12 @@ import org.oscarehr.common.model.EFormDocs;
 import org.oscarehr.common.model.PatientLabRouting;
 import org.oscarehr.common.model.ProviderLabRoutingModel;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.oscarLab.ca.on.LabResultData;
 import oscar.util.ConversionUtils;
 import oscar.util.UtilDateUtilities;
+
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  *
@@ -226,7 +213,7 @@ public class PathnetResultsData {
 	}
 
 	public String findPathnetObservationDate(String labId) {
-		Date date = hl7PidDao.findObservationDateByMessageId(ConversionUtils.fromIntString(labId));
+		Timestamp date = hl7PidDao.findObservationDateByMessageId(ConversionUtils.fromIntString(labId));
 		if (date != null) {
 			return ConversionUtils.toDateString(date);
 		}

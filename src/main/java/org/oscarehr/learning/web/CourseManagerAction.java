@@ -67,10 +67,10 @@ import org.oscarehr.util.SpringUtils;
 public class CourseManagerAction extends DispatchAction {
 
 	private static Logger logger = MiscUtils.getLogger();
-	private static ProgramDao programDao = (ProgramDao) SpringUtils.getBean("programDao");
-	private static ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
-	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
-	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+	private static ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+	private static ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
+	private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+	private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 	private static DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
 
 	public ActionForward createCourse(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
@@ -116,7 +116,7 @@ public class CourseManagerAction extends DispatchAction {
 	}
 
 	public static List<Program> getCoursesByModerator(String providerNo) {
-		SecRoleDao roleDao = (SecRoleDao)SpringUtils.getBean("secRoleDao");
+		SecRoleDao roleDao = (SecRoleDao)SpringUtils.getBean(SecRoleDao.class);
 		SecRole role = roleDao.findByName("moderator");
 
 		return programManager.getAllProgramsByRole(providerNo, role.getId());
@@ -159,7 +159,7 @@ public class CourseManagerAction extends DispatchAction {
 		}
 
 		//p.get
-		ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
+		ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
 		@SuppressWarnings("unchecked")
 		List<ProgramProvider> programProviders = programManager.getProgramProviders(String.valueOf(id));
 		Map<String,CourseDetailBean> results = new HashMap<String,CourseDetailBean>();
@@ -174,7 +174,7 @@ public class CourseManagerAction extends DispatchAction {
 			results.put(pp.getProviderNo(),result);
 		}
 
-		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean("providerDao");
+		ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
 		List<Provider> providerList = providerDao.getActiveProviders();
 		List<CourseDetailBean> r = new ArrayList<CourseDetailBean>();
 
@@ -244,7 +244,7 @@ public class CourseManagerAction extends DispatchAction {
 	}
 
 	//p.get
-	ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
+	ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
 	@SuppressWarnings("unchecked")
 	List<ProgramProvider> programProviders = programManager.getProgramProviders(String.valueOf(id));
 	List<CourseDetailBean> r = new ArrayList<CourseDetailBean>();
@@ -267,7 +267,7 @@ public class CourseManagerAction extends DispatchAction {
 
 
 	public static List<SecRole> getRoles()  {
-		SecRoleDao roleDao = (SecRoleDao)SpringUtils.getBean("secRoleDao");
+		SecRoleDao roleDao = (SecRoleDao)SpringUtils.getBean(SecRoleDao.class);
 		List<SecRole> roles = roleDao.findAll();
 		return roles;
 	}
@@ -305,7 +305,7 @@ public class CourseManagerAction extends DispatchAction {
 		}
 
 		//clear the current assignments
-		ProgramManager programManager = (ProgramManager) SpringUtils.getBean("programManager");
+		ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
 		@SuppressWarnings("unchecked")
 		List<ProgramProvider> programProviders = programManager.getProgramProviders(String.valueOf(courseId));
 		for(ProgramProvider pp:programProviders) {

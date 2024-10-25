@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2006-. OSCARservice, OpenSoft System. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -14,107 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * Modifications made by Magenta Health in 2024.
  */
-
 package org.oscarehr.common.dao;
 
 import java.util.List;
 
-import javax.persistence.Query;
-
-import org.oscarehr.common.NativeSql;
-import org.springframework.stereotype.Repository;
-
-/**
- * Billing DAO containing BC-specific extensions.
- *
- */
-@Repository
-public class BillingBCDao extends BillingDao {
-
-	/**
-	 * Selects service code, description, value and percentage from ctl_bilingservice and billingservice tables.
-	 */
-	@NativeSql({"ctl_billingservice", "billingservice"})
-	@SuppressWarnings("unchecked")
-	public List<Object[]> findBillingServices(String billRegion, String serviceGroup, String serviceType) {
-		 Query query = entityManager.createNativeQuery("SELECT DISTINCT b.service_code, b.description, b.value, b.percentage "
-	          + "FROM ctl_billingservice c left outer join billingservice b on b.service_code="
-	          + "c.service_code where b.region = ? and c.service_group= ? and c.servicetype = ? order by c.service_order");
-	          
-	     query.setParameter(1, billRegion);
-	     query.setParameter(2, serviceGroup);
-	     query.setParameter(3, serviceType);
-	     
-	     return query.getResultList();
-    }
-
-	/**
-	 * Selects service code, type, group, status and order from the ctl_bilingservice table.
-	 */
-	@NativeSql({"ctl_billingservice"})
-	@SuppressWarnings("unchecked")
-	public List<Object[]> findBillingServicesByType(String serviceType) {
-		Query query = entityManager.createNativeQuery("SELECT DISTINCT service_code, servicetype, service_group, status, service_order "
-				+ "FROM ctl_billingservice where servicetype = ? order by service_order");
-
-		query.setParameter(1, serviceType);
-
-		return query.getResultList();
-	}
-
-	/**
-	 * Selects service code, description, value and percentage from ctl_bilingservice and billingservice tables.
-	 */
-	@NativeSql({"ctl_billingservice", "billingservice"})
-	@SuppressWarnings("unchecked")
-	public List<Object[]> findBillingServices(String billRegion, String serviceGroup, String serviceType, String billReferenceDate) {
-	      Query query = entityManager.createNativeQuery(
-	              "SELECT DISTINCT b.service_code, b.description , b.value, b.percentage " +
-	              "FROM ctl_billingservice c left outer join billingservice b on b.service_code="
-	              + "c.service_code where b.region = ? and c.service_group = ? and c.servicetype = ?" +
-	              " and b.billingservice_date in (select max(b2.billingservice_date) from billingservice b2 where b2.billingservice_date <= ? and b2.service_code = b.service_code) order by c.service_order");
-		
-	    query.setParameter(1, billRegion);
-		query.setParameter(2, serviceGroup);
-		query.setParameter(3, serviceType);
-		query.setParameter(4, billReferenceDate);
-
-	    return query.getResultList();
-    }
-
-	/**
-	 * Selects billing location and description from the billinglocation table where region matches the one provided
-	 */
-	@SuppressWarnings("unchecked")
-    @NativeSql("billinglocation")
-	public List<Object[]> findBillingLocations(String billRegion) {
-	      Query query = entityManager.createNativeQuery("SELECT billinglocation,billinglocation_desc FROM billinglocation WHERE region = ?");
-	      query.setParameter(1, billRegion);
-	      return query.getResultList();
-	    
-    }
-
-
-	/**
-	 * Selects visit type and description from billingvisit table for the specified region
-	 */
-	@SuppressWarnings("unchecked")
-    @NativeSql("billingvisit")
-	public List<Object[]> findBillingVisits(String billRegion) {
-	    Query query = entityManager.createNativeQuery("SELECT visittype, visit_desc FROM billingvisit WHERE region = ? ORDER BY visittype ASC");
-	    query.setParameter(1, billRegion);
-	    return query.getResultList();
-    }
-
-	/**
-	 * Gets all side types and descriptions from wcb_side table. 
-	 */
-	@SuppressWarnings("unchecked")
-    @NativeSql("wcb_side")
-	public List<Object[]> findInjuryLocations() {
-	    Query query = entityManager.createNativeQuery("SELECT sidetype, sidedesc FROM wcb_side");
-	    return query.getResultList();
-	}
-	
+public interface BillingBCDao extends BillingDao{
+    List<Object[]> findBillingServices(String billRegion, String serviceGroup, String serviceType);
+    List<Object[]> findBillingServicesByType(String serviceType);
+    List<Object[]> findBillingServices(String billRegion, String serviceGroup, String serviceType, String billReferenceDate);
+    List<Object[]> findBillingLocations(String billRegion);
+    List<Object[]> findBillingVisits(String billRegion);
+    List<Object[]> findInjuryLocations();
 }

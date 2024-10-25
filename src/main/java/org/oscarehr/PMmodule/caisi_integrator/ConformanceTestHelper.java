@@ -104,7 +104,7 @@ public final class ConformanceTestHelper {
 				
 				logger.debug("remoteDemographic:"+ReflectionToStringBuilder.toString(demographicTransfer));
 				
-				DemographicDao demographicDao=(DemographicDao) SpringUtils.getBean("demographicDao");
+				DemographicDao demographicDao=(DemographicDao) SpringUtils.getBean(DemographicDao.class);
 				Demographic demographic=demographicDao.getDemographicById(localDemographicId);
 				
 				CaisiIntegratorManager.copyDemographicFieldsIfNotNull(demographicTransfer, demographic);
@@ -132,7 +132,7 @@ public final class ConformanceTestHelper {
 				
 				logger.debug("remoteDemographic:"+ReflectionToStringBuilder.toString(demographicTransfer));
 				
-				DemographicDao demographicDao=(DemographicDao) SpringUtils.getBean("demographicDao");
+				DemographicDao demographicDao=(DemographicDao) SpringUtils.getBean(DemographicDao.class);
 				Demographic demographic=demographicDao.getDemographicById(localDemographicId);
 				
 				if (demographicTransfer.getBirthDate()!=null &&  !(DateUtils.getNumberOfDaysBetweenTwoDates(demographicTransfer.getBirthDate(),demographic.getBirthDay()) == 0)) ret = true;

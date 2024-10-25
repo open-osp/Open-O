@@ -118,18 +118,25 @@ if(!authed) {
 			    if( FaxJob.STATUS.ERROR.equals(faxJob.getStatus()) || FaxJob.STATUS.COMPLETE.equals(faxJob.getStatus())) {
 					if(FaxManager.isEnabled()) {
 %>			    
-						<button class="btn btn-link btn-resend" title="Re-send this fax to the fax gateway service for delivery" id="resend_<%=faxJob.getId()%>" onclick="resend(<%=faxJob.getId()%>,'<%=faxJob.getDestination()%>','status<%=count%>')">resend</button>
+						<security:oscarSec roleName="<%=roleName2$%>" objectName="_admin" rights="r" reverse="<%=false%>">
+							<button class="btn btn-link btn-resend" title="Re-send this fax to the fax gateway service for delivery" id="resend_<%=faxJob.getId()%>" onclick="resend(<%=faxJob.getId()%>,'<%=faxJob.getDestination()%>','status<%=count%>')">resend</button>
+						</security:oscarSec>						
 <%
 					}
 					if( faxJob.getStatus().equals(FaxJob.STATUS.ERROR) ) {
 %>
-						<button class="btn btn-link btn-complete" title="Clear the error status of this fax" id="complete_<%=faxJob.getId()%>" onclick="complete(<%=faxJob.getId()%>,'status<%=count%>')">resolve</button>
+							<security:oscarSec roleName="<%=roleName2$%>" objectName="_admin" rights="r" reverse="<%=false%>">
+								<button class="btn btn-link btn-complete" title="Clear the error status of this fax" id="complete_<%=faxJob.getId()%>" onclick="complete(<%=faxJob.getId()%>,'status<%=count%>')">resolve</button>
+							</security:oscarSec>						
 <%					    
 					}
 				}
 				else if( FaxJob.STATUS.SENT.equals(faxJob.getStatus())  || FaxJob.STATUS.WAITING.equals(faxJob.getStatus())) {
 %>
-				<button class="btn btn-link btn-cancel" title="Cancel this fax before it is sent to the destination by the fax gateway service" id="cancel_<%=faxJob.getId()%>" onclick="cancel(<%=faxJob.getId()%>,'status<%=count%>')">cancel</button>
+				<security:oscarSec roleName="<%=roleName2$%>" objectName="_admin" rights="r" reverse="<%=false%>">
+					<button class="btn btn-link btn-cancel" title="Cancel this fax before it is sent to the destination by the fax gateway service" id="cancel_<%=faxJob.getId()%>" onclick="cancel(<%=faxJob.getId()%>,'status<%=count%>')">cancel</button>
+				</security:oscarSec>						
+
 <%
 				}
 			}

@@ -42,9 +42,9 @@
 	TreeSet<Integer> fieldNoteEforms = FieldNoteManager.getFieldNoteEforms();
 	TreeSet<Integer> fieldNoteNameEforms = FieldNoteManager.getFieldNoteNameEforms(customName);
 	
-	EFormDao eformDao = (EFormDao)SpringUtils.getBean("EFormDao");
+	EFormDao eformDao = (EFormDao)SpringUtils.getBean(EFormDao.class);
 %>
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <title><bean:message key="admin.fieldNote.selectEforms" /></title>
 <link rel="stylesheet" href="../../share/css/OscarStandardLayout.css">

@@ -46,7 +46,7 @@
 <head>
 <jsp:include page="head-includes.jsp" />
 	<link href="mailbox/css/mcedt.css" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,900" rel="stylesheet" type="text/css">
+
 <style type="text/css">
 /* limits table height */
 .scrollable {
@@ -185,7 +185,7 @@ select,button {
 			<div>
 				<% if(resourceID == "0"){ %>
 					<button id="backedthome" class="noBorder blackBox flatLink font12 rightMargin5" onclick="return gobacktoedthome();">Return</button>
-					<button class="noBorder blackBox flatLink font12" onclick="window.close()">Close</button>
+					<%-- <button class="noBorder blackBox flatLink font12" onclick="window.close()">Close</button> --%>
 				<%} %>		
 				<% if(resourceList!=null && resourceID != "0"){ %>
 					<!-- <button class="btn" onclick="return gobacktoedthome(this)">Cancel</button> -->

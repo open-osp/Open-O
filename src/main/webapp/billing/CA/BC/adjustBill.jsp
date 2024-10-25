@@ -125,7 +125,7 @@ if(!authed) {
   String serviceLocation = allFields.getProperty("serviceLocation");
 
 
-  BillingmasterDAO billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean("BillingmasterDAO");
+  BillingmasterDAO billingmasterDAO = (BillingmasterDAO) SpringUtils.getBean(BillingmasterDAO.class);
   Billingmaster billingmaster = billingmasterDAO.getBillingMasterByBillingMasterNo(billingmasterNo);
   Billing bill = billingmasterDAO.getBilling(billingmaster.getBillingNo());
   BillingCodeData bcd =  new BillingCodeData();

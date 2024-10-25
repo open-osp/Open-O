@@ -29,5 +29,5 @@
 <%
 	WebApplicationContext webApplicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
 			request.getSession().getServletContext());
-	OscarSuperManager oscarSuperManager = (OscarSuperManager)webApplicationContext.getBean("oscarSuperManager");
+	OscarSuperManager oscarSuperManager = (OscarSuperManager)webApplicationContext.getBean(OscarSuperManager.class);
 %>

@@ -23,19 +23,10 @@
 
 package org.oscarehr.common.model;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PreRemove;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "eform")
@@ -86,6 +77,10 @@ public class EForm extends AbstractModel<Integer> implements Serializable {
 	private boolean patientIndependent;
 
 	private String roleType;
+
+	private boolean stable;
+
+	private String errorLog;
 
 	@Override
 	public Integer getId() {
@@ -178,6 +173,22 @@ public class EForm extends AbstractModel<Integer> implements Serializable {
 
 	public void setRoleType(String roleType) {
 		this.roleType = roleType;
+	}
+
+	public boolean isStable() {
+		return stable;
+	}
+
+	public void setStable(boolean stable) {
+		this.stable = stable;
+	}
+
+	public String getErrorLog() {
+		return errorLog;
+	}
+
+	public void setErrorLog(String errorLog) {
+		this.errorLog = errorLog;
 	}
 
 	@PreRemove

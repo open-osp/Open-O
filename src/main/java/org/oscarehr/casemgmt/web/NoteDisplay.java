@@ -122,6 +122,9 @@ public interface NoteDisplay {
 
 	public boolean isExternalNote();
 	
+
+	public boolean isEmailNote();
+	
 	public CaseManagementNoteLink getNoteLink();
 
 	public RxPrescriptionData.Prescription getRxFromAnnotation(CaseManagementNoteLink cmnl);

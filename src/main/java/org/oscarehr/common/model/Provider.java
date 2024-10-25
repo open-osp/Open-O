@@ -24,11 +24,11 @@
 
 package org.oscarehr.common.model;
 
+import org.oscarehr.util.MiscUtils;
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
-
-import org.oscarehr.util.MiscUtils;
 
 /**
  * This is the object class that relates to the provider table. Any customizations belong here.
@@ -214,6 +214,11 @@ public class Provider extends AbstractModel<String> implements Comparable<Provid
 	}
 
 	public String getLastName() {
+		// sanitize extra white space.  There are lots of areas in the
+		// code that concat and delimit full names by a single space.
+		if(lastName != null) {
+			lastName = lastName.trim();
+		}
 		return lastName;
 	}
 
@@ -281,6 +286,11 @@ public class Provider extends AbstractModel<String> implements Comparable<Provid
 	}
 
 	public String getFirstName() {
+		// sanitize extra white space.  There are lots of areas in the
+		// code that concat and delimit full names by a single space.
+		if(firstName != null) {
+			firstName = firstName.trim();
+		}
 		return firstName;
 	}
 

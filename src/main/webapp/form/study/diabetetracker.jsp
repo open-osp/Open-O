@@ -138,7 +138,7 @@
 
     //take data from allergies
 	int k = 0;
-    AllergyDao allergyDao = (AllergyDao)SpringUtils.getBean("allergyDao");
+    AllergyDao allergyDao = (AllergyDao)SpringUtils.getBean(AllergyDao.class);
     List<Allergy> allergies = allergyDao.findActiveAllergies(Integer.parseInt(demoNo));
     for(k=0;k<allergies.size();k++) {
     	allergy.setProperty("encounter.adverse_reactions.adverse_reactions_offending_drug^" + k, allergies.get(k).getDescription());

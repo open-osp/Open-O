@@ -93,7 +93,7 @@ public class DbConnectionFilter implements javax.servlet.Filter {
 	 */
 	private static Connection getDbConnection() throws SQLException {
 
-		Connection c = ((DataSource) SpringUtils.getBean("dataSource")).getConnection();
+		Connection c = ((DataSource) SpringUtils.getBean(DataSource.class)).getConnection();
 		c.setAutoCommit(true);
 		return (c);
 	}

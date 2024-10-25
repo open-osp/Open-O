@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -34,92 +34,63 @@
 
 %>
 
-<link rel="stylesheet" type="text/css"
-	href="../../oscarMDS/encounterStyles.css">
-
-<html>
+<html:html locale="true">
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Measurement Mapping Configuration</title>
+<html:base />
+    <title>Measurement Mapping Configuration</title>
+<!-- css -->
+    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
+<script>
 
-<script type="text/javascript" language=javascript>
-            
-            function newWindow(varpage, windowname){
-                var page = varpage;
-                windowprops = "fullscreen=yes,toolbar=yes,directories=no,resizable=yes,dependent=yes,scrollbars=yes,location=yes,status=yes,menubar=yes";
-                var popup=window.open(varpage, windowname, windowprops);
-            }
-            
-            function addLoinc(){
-                var loinc_code = document.LOINC.loinc_code.value;
-                var name = document.LOINC.name.value;
-                
-                if (loinc_code.length > 0 && name.length > 0){
-                    if (modCheck(loinc_code)){
-                        document.LOINC.identifier.value=loinc_code+',PATHL7,'+name;
-                        return true;
-                    }
-                }else{
-                    alert("Please specify both a loinc code and a name before adding.");
-                }
-                
-                return false;
-            }
-            
-            function modCheck(code){
-                if (code.charAt(0) == 'x' || code.charAt(0) == 'X'){
-                    return true;
-                }else{
+function newWindow(varpage, windowname){
+    var page = varpage;
+    windowprops = "fullscreen=yes,toolbar=yes,directories=no,resizable=yes,dependent=yes,scrollbars=yes,location=yes,status=yes,menubar=yes";
+    var popup=window.open(varpage, windowname, windowprops);
+}
 
-                    var codeArray = new Array();
-                    codeArray = code.split('-');                    
-                    var length = codeArray[0].length;
-                    
-                    var even = false;
-                    if ( (length % 2) == 0 ) even = true;
-                    
-                    
-                    var oddNums = '';
-                    var evenNums = '';
-                    
-                    length--;
-                    for (length; length >= 0; length--){
-                        if (even){
-                            even = false;
-                            evenNums = evenNums+codeArray[0].charAt(length);
-                        }else{
-                            even = true;
-                            oddNums = oddNums+codeArray[0].charAt(length);
-                        }
-                    }
-                    
-                    oddNums = oddNums*2;
-                    var newNum = evenNums+oddNums;
-                    var sum = 0;
-                    
-                    
-                    for (var i=0; i < newNum.length; i++){
-                        sum = sum + parseInt(newNum.charAt(i));
-                    }
-                    
-                    var newSum = sum;
+function addLoinc(){
+    var loinc_code = document.LOINC.loinc_code.value;
+    var name = document.LOINC.name.value;
 
-                    while((newSum % 10) != 0){
-                        newSum++;
-                    }
+    if (loinc_code.length > 0 && name.length > 0){
+        if (modCheck(loinc_code)){
+            document.LOINC.identifier.value=loinc_code+',PATHL7,'+name;
+            return true;
+        }
+    }else{
+        alert("Please specify both a loinc code and a name before adding.");
+    }
 
-                    var checkDigit = newSum - sum;
-                    if (checkDigit == codeArray[1]){
-                        return true;
-                    }else{
-                        alert("The loinc code specified is not a valid loinc code, please start the code with an 'X' if you would like to make your own.");
-                        return false;
-                    }
-                    
-                }
-            
-            }
-            
+    return false;
+}
+
+function modCheck(code){
+    if (code.charAt(0) == 'x' || code.charAt(0) == 'X'){
+        return true;
+    }
+	code = code.replace(/\D/g, "");
+
+	// The Luhn Algorithm. It's so pretty.
+	let nCheck = 0, bEven = false;
+
+	for (var n = code.length - 1; n >= 0; n--) {
+		var cDigit = code.charAt(n),
+			  nDigit = parseInt(cDigit, 10);
+
+		if (bEven && (nDigit *= 2) > 9) nDigit -= 9;
+
+		nCheck += nDigit;
+		bEven = !bEven;
+	}
+
+    if ((nCheck % 10) == 0){
+            return true;
+        }else{
+            alert("The loinc code specified is not a valid loinc code, please start the code with an 'X' if you would like to make your own.");
+            return false;
+        }
+}
+
             <%String outcome = request.getParameter("outcome");
             if (outcome != null){
                 if (outcome.equals("success")){
@@ -132,29 +103,28 @@
                     %>
                       alert("Unable to add code: The specified code already exists in the database");
                     <%
-                }else{    
+                }else{
                     %>
                       alert("Failed to add the new code");
                     <%
-                }   
+                }
             }%>
 
         </script>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-</head>
 
+</head>
 <body>
 <form method="post" name="LOINC" action="NewMeasurementMap.do"><input
 	type="hidden" name="identifier" value="">
-<table width="100%" height="100%" border="0">
+<table style="width:100%">
 	<tr class="MainTableTopRow">
 		<td class="MainTableTopRow" colspan="9" align="left">
-		<table width="100%">
+		<table style="width:100%">
 			<tr>
-				<td align="left"><input type="button"
+				<td><input type="button" class="btn"
 					value=" <bean:message key="global.btnClose"/> "
 					onClick="window.close()"></td>
-				<td align="right"><oscar:help keywords="measurement" key="app.top1"/> | <a
+				<td style="text-align:right"><oscar:help keywords="measurement" key="app.top1"/> | <a
 					href="javascript:popupStart(300,400,'../About.jsp')"><bean:message
 					key="global.about" /></a> | <a
 					href="javascript:popupStart(300,400,'../License.jsp')"><bean:message
@@ -163,39 +133,35 @@
 		</table>
 		</td>
 	</tr>
-	<tr>
-		<td valign="middle">
-		<center>
-		<table width="80%">
+</table>
+    <div class="well">
+		<table>
 			<tr>
-				<td colspan="2" valign="bottom" class="Header">Add New Loinc
-				Code</td>
+				<th colspan="2" class="Header">Add New Loinc
+				Code</th>
 			</tr>
 			<tr>
-				<td class="Cell" width="20%">Loinc Code:</td>
-				<td class="Cell" width="80%"><input type="text"
+				<td>Loinc Code:</td>
+				<td><input type="text"
 					name="loinc_code"></td>
 			</tr>
 			<tr>
-				<td class="Cell" width="20%">Name:</td>
-				<td class="Cell" width="80%"><input type="text" name="name"></td>
+				<td>Name:</td>
+				<td><input type="text" name="name"></td>
 			</tr>
 			<tr>
-				<td colspan="2" class="Cell" align="center"><input
-					type="submit" value=" Add Loinc Code " onclick="return addLoinc()">
+				<td><input
+					type="submit" class="btn" value=" Add Loinc Code " onclick="return addLoinc()">
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2" class="Cell" align="center">NOTE: <a
-					href="javascript:newWindow('http://www.regenstrief.org/medinformatics/loinc/relma','RELMA')">It
+				<td colspan="2">NOTE: <a
+					href="javascript:newWindow('https://loinc.org','RELMA')">It
 				is suggested that you use the RELMA application to help determine
 				correct loinc codes.</a></td>
 			</tr>
 		</table>
-		</center>
-		</td>
-	</tr>
-</table>
+	</div>
 </form>
 </body>
-</html>
+</html:html>

@@ -72,7 +72,7 @@
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
 <%@page import="org.oscarehr.common.model.Site"%>
 <%@page import="oscar.login.*,org.apache.commons.lang.StringUtils"%>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%><html:html locale="true">
+<%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%><html:html lang="en">
 <%@page import="org.oscarehr.common.model.ProviderSite"%>
 <%@page import="org.oscarehr.common.model.ProviderSitePK"%>
 <%@page import="org.oscarehr.common.dao.ProviderSiteDao"%>
@@ -154,7 +154,7 @@ function onsub() {
 <%
 	isSiteAccessPrivacy = true;
 
-	ProviderSiteDao providerSiteDao = (ProviderSiteDao) SpringUtils.getBean("providerSiteDao");
+	ProviderSiteDao providerSiteDao = (ProviderSiteDao) SpringUtils.getBean(ProviderSiteDao.class);
 	
 	List<ProviderSite> psList = providerSiteDao.findByProviderNo(curProvider_no);
 	for (ProviderSite pSite : psList) {
@@ -179,7 +179,7 @@ function onsub() {
 	String keyword = request.getParameter("keyword");
 	ProviderData provider = providerDao.findByProviderNo(keyword);
 	
-	SecurityDao securityDao = (SecurityDao) SpringUtils.getBean("securityDao");
+	SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
 	List<Security>  results = securityDao.findByProviderNo(provider.getId());
 	Security security = null;
 	if (results.size() > 0) security = results.get(0);
@@ -229,7 +229,7 @@ function onsub() {
 		</td>
 		<td>
 <%
-SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean("siteDao");
+SiteDao siteDao = (SiteDao)WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
 List<Site> psites = siteDao.getActiveSitesByProviderNo(provider_no);
 List<Site> sites = siteDao.getAllActiveSites();
 for (int i=0; i<sites.size(); i++) {
@@ -476,7 +476,7 @@ for (int i=0; i<sites.size(); i++) {
 				maxlength="10"></td>
 		</tr>
 		<%
-		UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+		UserPropertyDAO userPropertyDAO = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
 		%>
 		<tr>
 			<td align="right"><bean:message key="admin.provider.formClinicalConnectId" />:</td>
@@ -540,7 +540,7 @@ for (int i=0; i<sites.size(); i++) {
 				<td colspan="3">
 				<select name="xml_p_nbr">
 				<%
-				ClinicNbrDao clinicNbrDAO = (ClinicNbrDao)SpringUtils.getBean("clinicNbrDao");
+				ClinicNbrDao clinicNbrDAO = (ClinicNbrDao)SpringUtils.getBean(ClinicNbrDao.class);
 				List<ClinicNbr> nbrList = clinicNbrDAO.findAll();
 				Iterator<ClinicNbr> nbrIter = nbrList.iterator();
 				while (nbrIter.hasNext()) {

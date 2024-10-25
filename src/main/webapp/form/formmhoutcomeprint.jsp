@@ -46,7 +46,7 @@
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
 
-<html:html locale="true">
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title>Print Mental Health Outcome</title>

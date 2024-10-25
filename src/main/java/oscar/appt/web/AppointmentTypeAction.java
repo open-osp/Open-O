@@ -80,7 +80,7 @@ public class AppointmentTypeAction extends OscarAction  {
 			    	}
 /* wrong for non-multisite configuration
 		    		if(formBean.getLocation()!=null) {
-						SiteDao siteDao = (SiteDao) SpringUtils.getBean("siteDao");
+						SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
 						if(siteDao.getByLocation(formBean.getLocation())==null) {
 			    			errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("appointment.type.location.error"));
 			    			saveErrors(request,errors);
@@ -90,7 +90,7 @@ public class AppointmentTypeAction extends OscarAction  {
 */		    					    
 		    	}	
 
-		    	AppointmentTypeDao appDao = (AppointmentTypeDao) SpringUtils.getBean("appointmentTypeDao");
+		    	AppointmentTypeDao appDao = (AppointmentTypeDao) SpringUtils.getBean(AppointmentTypeDao.class);
 
 		    	if (sOper.equals("edit")) {
 		    		AppointmentType dbBean = appDao.find(Integer.valueOf(typeNo));
@@ -144,7 +144,7 @@ public class AppointmentTypeAction extends OscarAction  {
 		  	
 		    if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
 		    	List<LabelValueBean> locations = new ArrayList<LabelValueBean>();
-				SiteDao siteDao = (SiteDao) SpringUtils.getBean("siteDao");
+				SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
 				List<Site> sites = siteDao.getAllActiveSites();
 				for(Site site : sites) {
 					locations.add(new LabelValueBean(site.getName(), Integer.toString(site.getSiteId())));

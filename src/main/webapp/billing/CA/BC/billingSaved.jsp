@@ -29,15 +29,16 @@
 %>
 <html>
 <head>
+  <title></title>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <script LANGUAGE="JavaScript">
-<!--
+
 function start(){
     this.focus();
 }
 function closeit() {
 }   
-//-->
+
 </script>
 </head>
 

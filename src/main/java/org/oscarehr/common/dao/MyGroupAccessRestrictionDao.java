@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2024. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -20,55 +21,16 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ *
+ * Modifications made by Magenta Health in 2024.
  */
 package org.oscarehr.common.dao;
 
 import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.common.model.MyGroupAccessRestriction;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class MyGroupAccessRestrictionDao extends AbstractDao<MyGroupAccessRestriction>{
-
-	public MyGroupAccessRestrictionDao() {
-		super(MyGroupAccessRestriction.class);		
-	}
-	
-	public List<MyGroupAccessRestriction> findByGroupId(String myGroupNo) {
-		Query query = entityManager.createQuery("select x from MyGroupAccessRestriction x where x.myGroupNo=?");
-		query.setParameter(1,myGroupNo);
-		
-		@SuppressWarnings("unchecked")
-        List<MyGroupAccessRestriction> results = query.getResultList();
-		
-		return results;
-	}
-	
-	public List<MyGroupAccessRestriction> findByProviderNo(String providerNo) {
-		Query query = entityManager.createQuery("select x from MyGroupAccessRestriction x where x.providerNo=?");
-		query.setParameter(1,providerNo);
-		
-		@SuppressWarnings("unchecked")
-        List<MyGroupAccessRestriction> results = query.getResultList();
-		
-		return results;
-	}
-	
-	public MyGroupAccessRestriction findByGroupNoAndProvider(String myGroupNo, String providerNo) {
-		Query query = entityManager.createQuery("select x from MyGroupAccessRestriction x where x.myGroupNo=? and x.providerNo=?");
-		query.setParameter(1,myGroupNo);
-		query.setParameter(2, providerNo);
-		
-		@SuppressWarnings("unchecked")
-        List<MyGroupAccessRestriction> results = query.getResultList();
-		
-		if(results.size()>0) {
-			return results.get(0);
-		}
-		
-		return null;
-	}
+public interface MyGroupAccessRestrictionDao extends AbstractDao<MyGroupAccessRestriction> {
+    List<MyGroupAccessRestriction> findByGroupId(String myGroupNo);
+    List<MyGroupAccessRestriction> findByProviderNo(String providerNo);
+    MyGroupAccessRestriction findByGroupNoAndProvider(String myGroupNo, String providerNo);
 }

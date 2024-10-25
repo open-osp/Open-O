@@ -175,15 +175,17 @@ public class MeasurementGraphAction2 extends Action {
         TaskSeriesCollection datasetDrug = new TaskSeriesCollection();
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
 
-        for(String din:dins){
-            if (din != null ) {
-                oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographicId,din);
-                if(arr != null && arr.length>0) {
-                    TaskSeries ts  = new TaskSeries(arr[0].getBrandName());
-                    for(oscar.oscarRx.data.RxPrescriptionData.Prescription pres:arr){
-                        ts.add(new Task(pres.getBrandName(),pres.getRxDate(),pres.getEndDate()));
+        if (dins != null) {
+            for(String din:dins){
+                if (din != null ) {
+                    oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographicId,din);
+                    if(arr != null && arr.length>0) {
+                        TaskSeries ts  = new TaskSeries(arr[0].getBrandName());
+                        for(oscar.oscarRx.data.RxPrescriptionData.Prescription pres:arr){
+                            ts.add(new Task(pres.getBrandName(),pres.getRxDate(),pres.getEndDate()));
+                        }
+                        datasetDrug.add(ts);
                     }
-                    datasetDrug.add(ts);
                 }
             }
         }
@@ -195,6 +197,10 @@ public class MeasurementGraphAction2 extends Action {
     }
 
     private static String[] getDrugSymbol(Integer demographic,String[] dins){
+        if (dins == null) {
+            return new String[0];
+        }
+        
         String[] ret = new String[dins.length];
         ArrayList<String> list = new ArrayList<String>();
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
@@ -214,11 +220,6 @@ public class MeasurementGraphAction2 extends Action {
         ret = list.toArray( new String[list.size()] );
         return ret;
     }
-
-
-
-
-
 
     private JFreeChart referenceRangeChart(Integer demographicNo, String typeIdName, String typeIdName2, String patientName, String chartTitle) {
              org.jfree.data.time.TimeSeriesCollection dataset = new org.jfree.data.time.TimeSeriesCollection();

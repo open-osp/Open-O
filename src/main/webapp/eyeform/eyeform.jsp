@@ -40,7 +40,7 @@ request.getSession().setAttribute("case_program_id", "10016");
 String appointmentNo = "";
 String appointmentReason = "";
 
-OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean("oscarAppointmentDao");
+OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 try {
 	Appointment appointment = null;
 	if (request.getParameter("appointment_no") != null) {
@@ -58,16 +58,16 @@ try {
 }
 
 
-DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean("demographicDao");
+DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 Demographic d = demographicDao.getDemographicById(Integer.parseInt(request.getParameter("demographic_no")));
 
-ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
 
 String rdOhip = null;
 String rdName = null;
 
 try {
-	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean("professionalSpecialistDao");
+	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
 
 	rdOhip = SxmlMisc.getXmlContent(d.getFamilyDoctor(),"rdohip").trim();
 	rdName = professionalSpecialistDao.getByReferralNo(rdOhip).getFormattedName();

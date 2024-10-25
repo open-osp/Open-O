@@ -131,11 +131,11 @@ public class CihiExportPHC_VRSAction extends DispatchAction {
 	private PreventionDao preventionDao;
 	private DxresearchDAO dxresearchDAO;
 	private Icd9Dao icd9Dao;
-	private PreventionExtDao preventionExtDao = (PreventionExtDao)SpringUtils.getBean("preventionExtDao");
+	private PreventionExtDao preventionExtDao = (PreventionExtDao)SpringUtils.getBean(PreventionExtDao.class);
 
 	private Logger log = MiscUtils.getLogger();
 
-	private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean("partialDateDao");
+	private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean(PartialDateDao.class);
 
 	public void setDemographicDao(DemographicDao demographicDao) {
 	    this.demographicDao = demographicDao;

@@ -108,8 +108,8 @@ public class FrmBCAR2020Action extends DispatchAction {
         Map<String, String> currentValues = getMappedRecords(currentRecords);
         currentValues.putAll(getMappedTextRecords(currentTextRecords));
 
-        List<AbstractModel<?>> persistRecords = new ArrayList<>();
-        List<AbstractModel<?>> persistTextRecords = new ArrayList<>();
+		List<FormBCAR2020Data> persistRecords = new ArrayList<>();
+        List<FormBCAR2020Text> persistTextRecords = new ArrayList<>();
         Set<String> keys = request.getParameterMap().keySet();
         
         FormBCAR2020 formBCAR2020 = new FormBCAR2020();
