@@ -162,9 +162,17 @@ function displayEaapsWindow(url, notificationId, message) {
         function setTime(){
             ++totalSeconds;
 			const aTimerButton = document.getElementById("aTimer");
-            if (totalSeconds > 5) {aTimerButton.innerHTML =pad(parseInt(totalSeconds/60))+":"+ pad(totalSeconds%60);}
-            if (totalSeconds === 1200) {aTimerButton.style.background= "#DFF0D8";} //1200 sec = 20 min light green
-            if (totalSeconds === 3000) {aTimerButton.style.background= "#FDFEC7";} //3600 sec = 50 min light yellow
+			if(aTimerButton) {
+				if (totalSeconds > 5) {
+					aTimerButton.innerHTML = pad(parseInt(totalSeconds / 60)) + ":" + pad(totalSeconds % 60);
+				}
+				if (totalSeconds === 1200) {
+					aTimerButton.style.background = "#DFF0D8";
+				} //1200 sec = 20 min light green
+				if (totalSeconds === 3000) {
+					aTimerButton.style.background = "#FDFEC7";
+				} //3600 sec = 50 min light yellow
+			}
         }
 
         function pad(val){

@@ -191,6 +191,7 @@ try
 </script>
 <div id="topContent">
 	<html:form action="/CaseManagementView" method="post">
+		<input type="hidden" name="<csrf:tokenname/>" value="<csrf:tokenvalue/>"/>
 		<html:hidden property="demographicNo" value="<%=demographicNo%>" />
 	<html:hidden property="providerNo" value="<%=provNo%>" />
 	<html:hidden property="tab" value="Current Issues" />
@@ -488,6 +489,7 @@ try
             String OscarMsgTypeLink = (String)request.getParameter("OscarMsgTypeLink");
          %>
 <nested:form action="/CaseManagementEntry" >
+	<input type="hidden" name="<csrf:tokenname/>" value="<csrf:tokenvalue/>"/>
 	<html:hidden property="demographicNo" value="<%=demographicNo%>" />
 	<html:hidden property="includeIssue" value="off" />
         <input type="hidden" name="OscarMsgType" value="<%=oscarMsgType%>"/>        

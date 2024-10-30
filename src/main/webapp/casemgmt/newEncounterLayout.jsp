@@ -115,6 +115,8 @@
 <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/select.js"/>"></script>
 
 <script type="text/javascript">
+let csrfToken = { 'name': '<csrf:tokenname/>', 'value': '<csrf:tokenvalue/>' };
+let csrfTokenObject = { '<csrf:tokenname/>': '<csrf:tokenvalue/>' };
 var Colour = {
 	prevention: '<%=Colour.getInstance().prevention%>',
 	tickler: '<%=Colour.getInstance().tickler%>',

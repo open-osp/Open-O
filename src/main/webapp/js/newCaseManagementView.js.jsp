@@ -335,6 +335,7 @@ function viewFullChart(displayFullChart) {
                                 method: 'post',
                                 postBody: params,
                                 evalScripts: true,
+                                requestHeaders: csrfTokenObject,
                                 onSuccess: function(request) {
                                                 $("notCPP").update(request.responseText);
 												<%--$("notCPP").style.height = "auto";--%>
@@ -460,6 +461,7 @@ function notesLoader(offset, numToReturn, demoNo) {
 			{
 				method: 'post',
 				postBody: params,
+                requestHeaders: csrfTokenObject,
 				evalScripts: true,
 				insertion: Insertion.Top,
 				onSuccess: function(data) {
@@ -569,6 +571,7 @@ function navBarLoader() {
                                 method: 'post',
                                 postBody: params,
                                 evalScripts: true,
+                                requestHeaders: csrfTokenObject,
                                 /*onLoading: function() {
                                                 $(div).update("<p>Loading ...<\/p>");
                                             }, */
@@ -962,12 +965,13 @@ function updateCPPNote() {
                                 method: 'post',
                                 evalScripts: true,
                                 postBody: params,
+                                requestHeaders: csrfTokenObject,
                                 onSuccess: function(request) {
                                                 if( request.responseText.length > 0 ) {
                                                     $(div).update(request.responseText);
 												}
                                                  if( $("issueChange").value == "true" ) {
-                                                 	ajaxUpdateIssues("edit",sigId);
+                                                 	  ajaxUpdateIssues("edit",sigId, csrfTokenObject);
                                                       $("issueChange").value = false;
                                                  }
 
@@ -997,6 +1001,7 @@ function loadDiv(div,url,limit) {
                             {
                                 method: 'post',
                                 evalScripts: true,
+	                            requestHeaders: csrfTokenObject,
                                 /*onLoading: function() {
                                                 $(div).update("<p>Loading ...<\/p>");
                                             },*/
@@ -1270,6 +1275,7 @@ function loadDiv(div,url,limit) {
           new Ajax.Request( page, {
                                     method: 'post',
                                     postBody: params,
+                                    requestHeaders: csrfTokenObject,
                                     evalScripts: true,
                                     onSuccess:writeToEncounterNote,
                                     onFailure: function() {
@@ -1335,7 +1341,7 @@ function removeLock(id) {
 	var regEx = /\d+/;
     var nId = regEx.exec(id);
 	var url = ctx + "/CaseManagementEntry.do";
-	params = "method=releaseNoteLock&providerNo=" + providerNo + "&demographicNo=" + demographicNo + "&noteId=" + nId + "&force=true";
+	params = "method=releaseNoteLock&providerNo=" + providerNo + "&demographicNo=" + demographicNo + "&noteId=" + nId + "&force=true" + csrfToken['name'] + '=' + csrfToken['value'];
 	
 	new Ajax.Request(
 		url,
@@ -1670,6 +1676,7 @@ function fetchNote(nId) {
                     {
                         method: 'post',
                         postBody: params,
+                        requestHeaders: csrfTokenObject,
                         evalScripts: true,
                         onSuccess: function(response) {
                             $(noteTxtArea).update(response.responseText);
@@ -1731,6 +1738,7 @@ function fullViewById(id) {
                     {
                         method: 'post',
                         postBody: params,
+                        requestHeaders: csrfTokenObject,
                         evalScripts: true,
                         onSuccess: function(response) {
                         	$(noteTxtId).update(response.responseText.trim());
@@ -1808,6 +1816,7 @@ function unlock_ajax(id) {
                     {
                         method: 'post',
                         postBody: params,
+                        requestHeaders: csrfTokenObject,
                         evalScripts: true,
                         onSuccess: function(request) {
                                     var html = request.responseText;
@@ -1871,6 +1880,7 @@ function NoteisLocked(nId) {
 		{
 			method: 'post',
 			postBody: params,
+            requestHeaders: csrfTokenObject,
 			evalScripts: true,
 			asynchronous: false,
 			onSuccess: function(request) {										
@@ -2034,7 +2044,7 @@ function editNote(e) {
 	$(divId).className += " note-edit";
     //cache existing signature so we can recreate it if ajax call aborted
     sigCache = $(divId).innerHTML;
-    ajaxUpdateIssues('edit', divId);
+    ajaxUpdateIssues('edit', divId, csrfTokenObject);
     addIssueFunc = updateIssues.bindAsEventListener(obj, makeIssue, divId);
     Element.observe('asgnIssues', 'click', addIssueFunc);
 
@@ -2202,6 +2212,7 @@ function filter(reset) {
                         method: 'post',
                         postBody: params,
                         evalScripts: true,
+	                    requestHeaders: csrfTokenObject,
                         onSuccess: function(request) {
                                                 $("notCPP").update(request.responseText);
 												<%--$("notCPP").style.height = "50%";--%>
@@ -2454,6 +2465,7 @@ function saveNoteAjax(method, chain) {
                             {
                                 method: 'post',
                                 postBody: params,
+	                            requestHeaders: csrfTokenObject,
                                 evalScripts: true,
                                 onSuccess: function(request) {
                                                 $("notCPP").update(request.responseText);
@@ -2788,7 +2800,7 @@ function updateIssues(e) {
     if( $("newIssueId").value.length === 0 || $("issueAutocomplete").value !== $("newIssueName").value )
         alert(pickIssueMsg);
     else
-        ajaxUpdateIssues(args[0], args[1]);
+        ajaxUpdateIssues(args[0], args[1], csrfTokenObject);
 
     if( $F("asgnIssues") !== assignIssueMsg ) {
         $("asgnIssues").value= assignIssueMsg;
@@ -2801,8 +2813,8 @@ function updateIssues(e) {
 }
 var ajaxRequest;
 var updateIssueError;
-function ajaxUpdateIssues(method, div) {
-	var frm = document.forms["caseManagementEntryForm"];
+function ajaxUpdateIssues(method, div, csrfToken) {
+    var frm = document.forms["caseManagementEntryForm"];
     frm.method.value = method;
     frm.ajax.value = true;
 
@@ -2811,6 +2823,7 @@ function ajaxUpdateIssues(method, div) {
 	p.note_edit = '';
     ajaxRequest = new Ajax.Updater( {success:div}, url, {
                                         evalScripts: true, parameters: p, onSuccess: onIssueUpdate,
+	    requestHeaders: csrfToken,
                                         onFailure: function(response) {
                                                         alert( response.status + " " + updateIssueError);
                                                     }
@@ -2930,7 +2943,7 @@ function newNote(e) {
         Element.observe(caseNote, 'click', getActiveText);
 
         origCaseNote = $F(caseNote);
-        ajaxUpdateIssues("edit", sigId);
+	    ajaxUpdateIssues("edit", sigId, csrfTokenObject);
         addIssueFunc = updateIssues.bindAsEventListener(obj, makeIssue, sigId);
         Element.observe('asgnIssues', 'click', addIssueFunc);
 
@@ -2963,6 +2976,7 @@ function deleteAutoSave() {
 
     new Ajax.Request( url, {
                                 method: 'post',
+		    requestHeaders: csrfTokenObject,
                                 postBody: Form.serialize(frm)
                            }
                     );
@@ -2982,6 +2996,7 @@ function autoSave(async) {
     new Ajax.Request( url, {
                                 method: 'post',
                                 postBody: params,
+                                requestHeaders: csrfTokenObject,
                                 asynchronous: async,
                                 onComplete: function(req) {
                                     if( async == false )
@@ -3800,6 +3815,7 @@ function assignNoteAjax(method, chain,programId,demographicNo) {
                             {
                                 method: 'post',
                                 postBody: params,
+	                            requestHeaders: csrfTokenObject,
                                 evalScripts: true,
                                 onSuccess: function(request) {
                                                 $("notCPP").update(request.responseText);
