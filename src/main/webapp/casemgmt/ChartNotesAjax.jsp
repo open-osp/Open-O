@@ -212,7 +212,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 
 			if (cmNote.isEmailNote())
 			{
-				fullTxtFormat.add(Boolean.FALSE);
+				fullTxtFormat.add(Boolean.TRUE);
 				continue;
 			}
 
@@ -383,8 +383,11 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			String noteClassAttribute = new StringBuilder("note").append(isMagicNote ? "" : " noteRounded encounter-note").toString();
 		%>
 		
+		<%
+			String cursorStyle = (note.isCpp() || note.isEmailNote()) ? "cursor: pointer;" : "";
+		%>
 		<div id="<%=noteIdAttribute%>" 
-			 style="display:<%=noteDisplay%>" 
+			 style="display: <%= noteDisplay %>; <%= cursorStyle %>" 
 			 class="<%=noteClassAttribute%>">
 			 
 			<input type="hidden" id="signed<%=globalNoteId%>" value="<%=note.isSigned()%>" />
@@ -687,6 +690,11 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 																	N/A
 																<%
 															}
+														}
+														else if (note.isEmailNote() && fulltxt) {
+															%>
+																<img title='Minimize Display' id='quitImg<%=globalNoteId%>' alt='Minimize Display' onclick='minNonEditableNoteView(<%=globalNoteId%>)' src='<%=ctx %>/oscarEncounter/graphics/triangle_up.gif'>
+															<%
 														}
 													%>
 											</div> <!-- end of observation<%=globalNoteId%> -->
