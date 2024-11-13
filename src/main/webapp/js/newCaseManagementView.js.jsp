@@ -1691,6 +1691,9 @@ function toggleFullViewForAll() {
 	jQuery('[name="expandViewTrigger"]').each(function(){
 		$(this).click();
 	});
+	jQuery('[name="expandableReadonlyNoteText"]').each(function() {
+		jQuery(this).click();
+	});
 }
 
 function toggleCollapseViewForAll() {

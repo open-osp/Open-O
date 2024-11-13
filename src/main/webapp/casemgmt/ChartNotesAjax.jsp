@@ -653,7 +653,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 
 							<div id="wrapper<%=globalNoteId%>" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice()||note.isEmailNote())?(bgColour):""%>">
 							<%-- render the note contents here --%>
-			  				<div id="txt<%=globalNoteId%>" >
+			  				<div id="txt<%=globalNoteId%>" name="<%=(note.isCpp()||note.isEmailNote())?"expandableReadonlyNoteText":""%>">
 
 		  						<%=noteStr%>
 							</div> <!-- end of txt<%=globalNoteId%> -->
