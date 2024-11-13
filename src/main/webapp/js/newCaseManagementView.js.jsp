@@ -1685,15 +1685,9 @@ function fetchNote(nId) {
 }
 
 function toggleFullViewForAll() {
-	jQuery('[name="fullViewTrigger"]').each(function(){
-		$(this).click();
-	});
-	jQuery('[name="expandViewTrigger"]').each(function(){
-		$(this).click();
-	});
-	jQuery('[name="expandableReadonlyNoteText"]').each(function() {
-		jQuery(this).click();
-	});
+    jQuery('[name="fullViewTrigger"], [name="expandViewTrigger"], [name="expandableReadonlyNoteText"]').each(function(){
+        $(this).click();
+    });
 }
 
 function toggleCollapseViewForAll() {
