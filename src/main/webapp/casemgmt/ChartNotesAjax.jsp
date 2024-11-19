@@ -420,7 +420,13 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 						</div>
 
 						<c:if test="${sessionScope.passwordEnabled=='true'}">
-							<p style='background-color: #CCCCFF; display: none; margin: 0;' id='notePasswd'>Password:&nbsp;<input type="password" name="caseNote.password" value="" autocomplete="off" />&nbsp;Confirmation:&nbsp;<input type='password' name='caseNote.passwordConfirm' value="" autocomplete="off" /></p>
+							<div style='background-color: #CCCCFF; display: none; margin: 0' id='notePasswd'>
+
+								<label for="caseNote.password">Password:</label><input type="password" id="caseNote.password" name="caseNote.password" value="" autocomplete="off" />&nbsp;
+
+								<label for="caseNote.passwordConfirm">Confirm:</label><input type='password' id="caseNote.passwordConfirm" name='caseNote.passwordConfirm' value="" autocomplete="off" />
+
+							</div>
 						</c:if>
 					<%
 		 		}
@@ -429,8 +435,19 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 					if (note.isLocked())
 					{
 					%>
-						<div id="txt<%=globalNoteId%>">
-							<bean:message key="oscarEncounter.Index.msgLocked" /> <%=DateUtils.getDate(note.getUpdateDate(), dateFormat, request.getLocale()) + " " + note.getProviderName()%>
+						<div class="locked-note" id="txt<%=globalNoteId%>">
+							<div>
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-lock2" viewBox="0 0 16 16">
+									<path d="M8 5a1 1 0 0 1 1 1v1H7V6a1 1 0 0 1 1-1m2 2.076V6a2 2 0 1 0-4 0v1.076c-.54.166-1 .597-1 1.224v2.4c0 .816.781 1.3 1.5 1.3h3c.719 0 1.5-.484 1.5-1.3V8.3c0-.627-.46-1.058-1-1.224"></path>
+									<path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+								</svg>
+							</div>
+
+							<div>
+								<bean:message key="oscarEncounter.Index.msgLocked" />
+								<%=DateUtils.getDate(note.getUpdateDate(), dateFormat, request.getLocale()) + " " + note.getProviderName()%>
+							</div>
+
 						</div>
 					<%
 					}
@@ -872,10 +889,15 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			</div> <!-- end of div sig<%=savedId%> -->
 
 			<c:if test="${sessionScope.passwordEnabled=='true'}">
-				<p style='background-color: #CCCCFF; display: none; margin: 0;' id='notePasswd'>Password:&nbsp;
-				<input type="password" name="caseNote.password" value="" autocomplete="off" />&nbsp;Confirmation:&nbsp;
-				<input type='password' name='caseNote.passwordConfirm' value="" autocomplete="off" />
-				</p>
+				<div style='background-color: #CCCCFF; display: none; margin: 0' id='notePasswd'>
+
+						<label for="caseNote.password.back">Password:</label>
+						<input type="password" id="caseNote.password.back" name="caseNote.password" value="" autocomplete="off" />
+
+						<label for="caseNote.passwordConfirm.back">Confirm:</label>
+						<input type='password' id="caseNote.passwordConfirm.back" name='caseNote.passwordConfirm' value="" autocomplete="off" />
+
+				</div>
 			</c:if>
 		</div> <!-- end of div n<%=savedId%>  -->
 	</div> <!-- end of div nc<%=offset%><%=savedId%> -->

@@ -1852,7 +1852,7 @@ function unlockNote(e) {
     var nId = txt.substr(1);
     var img = "<img id='quitImg" + nId + "' onclick='resetView(true, false, event)' style='float:right; margin-right:5px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
     new Insertion.Top(txt,img);
-    var lockForm = "<p id='passwdPara' class='passwd'>" + msgPasswd + ":&nbsp;<input onkeypress=\"return grabEnter('btnUnlock', event);\" type='password' id='" + passwd + "' size='16'>&nbsp;<input id='btnUnlock' type='button' onclick=\"return unlock_ajax('" + txt + "');\" value='" + btnMsgUnlock + "'><\/p>";
+    var lockForm = "<div id='passwdPara' class='passwd'>" + msgPasswd + ":&nbsp;<input onkeypress=\"return grabEnter('btnUnlock', event);\" type='password' id='" + passwd + "' size='16'>&nbsp;<input id='btnUnlock' type='button' onclick=\"return unlock_ajax('" + txt + "');\" value='" + btnMsgUnlock + "'><\/div>";
     new Insertion.Bottom(txt, lockForm);
 
     $(txt).style.height = "auto";

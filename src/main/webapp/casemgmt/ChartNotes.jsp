@@ -616,7 +616,7 @@ try
 					%>
 
 				<c:if test="${sessionScope.passwordEnabled=='true'}">
-					<input tabindex="22" type='image' src="<c:out value="${ctx}/oscarEncounter/graphics/lock-note.png"/>" onclick="return toggleNotePasswd();" title='<bean:message key="oscarEncounter.Index.btnLock"/>'>&nbsp;
+					<input tabindex="22" type='image' src="<c:out value="${ctx}/oscarEncounter/graphics/lock-note.png"/>" onclick="return toggleNotePasswd();" title='<bean:message key="oscarEncounter.Index.btnLock"/>'>
 				</c:if>
 
 

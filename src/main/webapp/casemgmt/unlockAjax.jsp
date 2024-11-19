@@ -65,9 +65,12 @@
 		onclick="togglePrint(<c:out value="${Note.id}"/>, event)"
 		style='float: right; margin-right: 5px; margin-top: 2px;'
 		src='<c:out value="${ctx}"/>/oscarEncounter/graphics/printer.png' />
-        <a title="Edit" id="edit<c:out value="${Note.id}"/>" href="#" onclick="editNote(event); return false;" style='float: right; margin-right: 5px; font-size:8px;'>Edit</a>
-	<span id="txt<c:out value="${Note.id}"/>"><c:out
-		escapeXml="false" value="${fmtTxt}" /></span>
+        <a title="Edit" id="edit<c:out value="${Note.id}"/>" href="#" onclick="editNote(event); return false;" style='float: right; margin-right: 5px;'>Edit</a>
+	<div id="wrapper<c:out value="${Note.id}"/>">
+		<div id="txt<c:out value="${Note.id}"/>">
+			<c:out escapeXml="false" value="${fmtTxt}" />
+		</div>
+	</div>
 	<div id="sig<c:out value="${Note.id}"/>">
 	<div class="sig" id="sumary<c:out value="${Note.id}"/>">
 	<div id="observation<c:out value="${Note.id}"/>"
@@ -76,7 +79,7 @@
 		href="#"
 		onclick="return showHistory('<c:out value="${Note.id}"/>', event);"><%=note.getRevision()%></a></i></div>
 	<div><span style="float: left;">Editors:</span>
-	<ul style="list-style: none inside none; margin: 0px;">
+	<ul style="list-style: none inside none; margin: 0;">
 		<%  
                           List editors = note.getEditors();
                           Iterator<Provider> it = editors.iterator(); 
@@ -138,14 +141,14 @@
 	<span id="txt<c:out value="${Note.id}"/>"><bean:message
 		key="oscarEncounter.Index.msgLocked" /> <%=DateUtils.getDate(note.getUpdate_date(),dateFormat)%>
 	<c:out value="${provName}" /></span>
-	<p id="passwdError" style="color: red;">Incorrect password</p>
-	<p id='passwdPara' class="passwd">Password:&nbsp;<input
+	<div id="passwdError" style="color: red;">Incorrect password</div>
+	<div id='passwdPara' class="passwd"><label for="passwd">Password:</label>><input
 		onkeypress="return grabEnter('btnUnlock', event);" type='password'
 		id='passwd' size='16'>&nbsp; <input id='btnUnlock'
 		type='button'
 		onclick="return unlock_ajax('<c:out value="n${Note.id}"/>');"
 		value='<bean:message key="oscarEncounter.Index.btnUnLock"/>'>
-	</p>
+	</div>
 	<script type="text/javascript">      
             $('passwd').focus();
         </script>
