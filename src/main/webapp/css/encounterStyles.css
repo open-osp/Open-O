@@ -1031,11 +1031,11 @@ div#issueNoteAssign {
 	padding: 0;
 }
 
-p.passwd,p.passwdErr {
-	margin: 0px 3px;
+div.passwd,div.passwdErr {
+	margin: 0 3px 3px 3px;
 }
 
-p.passwdErr {
+div.passwdErr {
 	color: red;
 }
 
@@ -1495,4 +1495,18 @@ div.encounter-note div.note-contents input[type*='image']
 	margin:3px 3px 0 0 !important;
 	padding:0 !important;
 	line-height: 1 !important;
+}
+
+div#save-sign-bill-buttons input {
+	display: inline-block;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	border:transparent thin solid;
+}
+
+div.locked-note {
+	display:flex;
+	padding:3px;
+	justify-content: space-between;
 }
