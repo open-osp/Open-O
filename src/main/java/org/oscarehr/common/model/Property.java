@@ -34,7 +34,8 @@ import java.io.Serializable;
 @Table(name = "property")
 public class Property extends AbstractModel<Integer> implements Serializable {
 
-	public enum PROPERTY_KEY {invoice_payee_display_clinic, invoice_payee_info, default_billing_provider, default_billing_form,
+	public enum PROPERTY_KEY {invoice_payee_display_clinic, invoice_payee_info,
+		default_billing_provider, default_billing_form,
 		bc_default_service_location, auto_populate_refer}
 
 	public enum PROPERTY_VALUE {clinicdefault}

@@ -181,8 +181,9 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     public static final String EMAIL_COMMUNICATION = "email_communication";
 
     public static final String SCHEDULE_WEEK_VIEW_WEEKENDS = "schedule.week_view_weekends";
+    public static final String CASEMGMT_NOTE_PASSWORD_ENABLED = "casemgmt.note.password.enabled";
+    public static final String CASEMGMT_NOTE_PASSWORD = "casemgmt.note.password";
 
-	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

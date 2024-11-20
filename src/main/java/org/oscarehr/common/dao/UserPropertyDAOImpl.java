@@ -27,14 +27,14 @@
 
 package org.oscarehr.common.dao;
 
+import org.oscarehr.common.model.UserProperty;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.Query;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.Query;
-
-import org.oscarehr.common.model.UserProperty;
-import org.springframework.stereotype.Repository;
 
 /**
  *
@@ -119,6 +119,9 @@ public class UserPropertyDAOImpl extends AbstractDaoImpl<UserProperty> implement
         List<UserProperty> list = query.getResultList();
         if( list != null && list.size() > 0 ) {
             UserProperty prop = list.get(0);
+			// make efficient use of the isChecked Transient property.
+	        String[] conditional = {"yes", "on", "1"};
+	        prop.setChecked(Arrays.asList(conditional).contains(prop.getValue()));
             return prop;
         }
         else

@@ -445,7 +445,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 
 							<div>
 								<bean:message key="oscarEncounter.Index.msgLocked" />
-								<%=DateUtils.getDate(note.getUpdateDate(), dateFormat, request.getLocale()) + " " + note.getProviderName()%>
+								<%= note.getProviderName() + " " + DateUtils.getDate(note.getUpdateDate(), dateFormat, request.getLocale())%>
 							</div>
 
 						</div>

@@ -99,6 +99,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 	private CasemgmtNoteLockDao casemgmtNoteLockDao = SpringUtils.getBean(CasemgmtNoteLockDao.class);
 	private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 	private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+	private UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
 
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -405,7 +406,17 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		if (!note.isIncludeissue()) cform.setIncludeIssue("off");
 		else cform.setIncludeIssue("on");
 
-		boolean passwd = caseManagementMgr.getEnabled();
+		/*
+		 * Check if user has enabled ability to password protect
+		 * encounter notes.
+		 */
+		// boolean passwd = caseManagementMgr.getEnabled();
+		UserProperty userProperty = userPropertyDAO.getProp(loggedInInfo.getLoggedInProviderNo(), UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED);
+		boolean passwd = Boolean.FALSE;
+		if (userProperty != null) {
+			passwd = userProperty.isChecked();
+		}
+
 		String chain = request.getParameter("chain");
 
 		current = System.currentTimeMillis();
