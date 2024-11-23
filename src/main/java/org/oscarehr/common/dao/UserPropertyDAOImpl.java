@@ -120,7 +120,7 @@ public class UserPropertyDAOImpl extends AbstractDaoImpl<UserProperty> implement
         if( list != null && list.size() > 0 ) {
             UserProperty prop = list.get(0);
 			// make efficient use of the isChecked Transient property.
-	        String[] conditional = {"yes", "on", "1"};
+	        String[] conditional = {"yes", "on", "1", "true"};
 	        prop.setChecked(Arrays.asList(conditional).contains(prop.getValue()));
             return prop;
         }

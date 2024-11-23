@@ -52,7 +52,6 @@
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="org.oscarehr.common.model.EncounterForm"%>
 <%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
-<%@page import="org.oscarehr.common.model.CtlBillingService" %>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
 <%@page import="java.util.List" %>
 <%@page import="java.util.ArrayList" %>
@@ -71,7 +70,8 @@
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="provider.providerpreference.title" /></title>
 <script src="<%=request.getContextPath()%>/csrfguard" type="text/javascript"></script>
-<script type="text/javascript" src="../share/javascript/prototype.js"></script>
+<%--<script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>--%>
+	<script type="text/javascript" src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
 <script language="JavaScript">
 
 function setfocus() {
@@ -171,14 +171,30 @@ function isNumeric(strString) {
 }
 
 function showHideBillPref() {
-    $("billingONpref").toggle();
+    $("#billingONpref").toggle();
 }
 
 function showHideERxPref() {
     //$("eRxPref").toggle();
 }
+
+/*
+ * enable disable password field when Enable encounter note password lock
+ * is checked or unchecked
+ */
+
+	$("#casemgmt-note-password-enabled").click( function() {
+		alert(this.checked);
+		if(this.checked) {
+			$("#casemgmt-note-password").prop("disabled", false);
+		} else {
+			$("#casemgmt-note-password").prop("disabled", true);
+		}
+	})
+
+
 </script>
-<style type="text/css">
+<style>
 	.preferenceTable td
 	{
 		border: solid white 2px;
@@ -235,7 +251,7 @@ function showHideERxPref() {
     // String defaultBillingLocation = providerPreference.getDefaultBillingLocation()!=null?providerPreference.getDefaultBillingLocation():"no";
 %>
 
-<body bgproperties="fixed"  onLoad="setfocus();showHideBillPref();showHideERxPref();" topmargin="0"leftmargin="0" rightmargin="0" style="font-family:sans-serif">
+<body onLoad="setfocus();showHideBillPref();showHideERxPref();">
 	<FORM NAME = "UPDATEPRE" METHOD="post" ACTION="providerupdatepreference.jsp" onSubmit="return(checkTypeInAll())">
 
 		<div style="background-color:<%=deepcolor%>;text-align:center;font-weight:bold">
@@ -525,14 +541,14 @@ function showHideERxPref() {
 			</tr>
 			<tr>
 				<td class="preferenceLabel">
-					Show Weekends in Week View:
+					<label for="schedule.week_view_weekends">Show Weekends in Week View:</label>
 				</td>
 				<td class="preferenceValue">
 					<%
 						UserProperty showWeekendsProp = propertyDao.getProp(providerNo, UserProperty.SCHEDULE_WEEK_VIEW_WEEKENDS);
 						boolean weekendsEnabled = showWeekendsProp == null || Boolean.parseBoolean(showWeekendsProp.getValue());
 					%>
-					<input type="checkbox" name="schedule.week_view_weekends" value="true" <%=weekendsEnabled ? "checked=\"checked\"" : ""%> />
+					<input type="checkbox" id="schedule.week_view_weekends" name="schedule.week_view_weekends" value="true" <%=weekendsEnabled ? "checked=\"checked\"" : ""%> />
 				</td>
 			</tr>
 			<tr>
@@ -557,14 +573,11 @@ function showHideERxPref() {
 					</select>
 	            </td>
         <script>
-Event.observe('rxInteractionWarningLevel', 'change', function(event) {
-	var value = $('rxInteractionWarningLevel').getValue();
-
-	new Ajax.Request('<c:out value="${ctx}"/>/provider/rxInteractionWarningLevel.do?method=update&value='+value, {
-		  method: 'get',
-		  onSuccess: function(transport) {
-		  }
-		});
+$('#rxInteractionWarningLevel').change( function(event) {
+	var value = this.value();
+alert(value);
+	$.post('${ctx}/provider/rxInteractionWarningLevel.do', {method: "update", value: value}, function(data) {
+	})
 
 });
 
@@ -601,17 +614,32 @@ Event.observe('rxInteractionWarningLevel', 'change', function(event) {
          </td>
         </tr>
         <script>
-        Event.observe('reviewMsg', 'change', function(event) {
-	var value = $('reviewMsg').getValue();
+        $('#reviewMsg').change( function(event) {
+			let value = this.value();
+			$.post('${ctx}/setProviderStaleDate.do', {method: "OscarMsgRecvd", value: value, provider_no: <%=providerNo%>}, function(data) {
+		    })
+		})
 
-	new Ajax.Request('<c:out value="${ctx}"/>/setProviderStaleDate.do?method=OscarMsgRecvd&value='+value+'&provider_no=<%=providerNo%>', {
-		  method: 'get',
-		  onSuccess: function(transport) {
-		  }
-		});
-
-});
         </script>
+			<tr>
+				<%
+				UserProperty passwordEnabled = propertyDao.getProp(providerNo, UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED);
+				%>
+				<td class="preferenceLabel">
+					<label for="casemgmt-note-password-enabled">
+						Enable encounter note password lock:
+					</label>
+				</td>
+				<td class="preferenceValue">
+					<div>
+						<input type="checkbox" id="casemgmt-note-password-enabled" name="casemgmt.note.password.enabled" value="true" <%=passwordEnabled.isChecked() ? "checked" : ""%> />
+						<input type="text" placeholder="password" name="casemgmt.note.password" id="casemgmt-note-password" <%= ! passwordEnabled.isChecked() ? "disabled" : "" %> />
+						<label for="casemgmt-note-password">
+							(alphanumeric only)
+						</label>
+					</div>
+				</td>
+			</tr>
 		</table>
 
 		<div style="background-color:<%=deepcolor%>;text-align:center;font-weight:bold">

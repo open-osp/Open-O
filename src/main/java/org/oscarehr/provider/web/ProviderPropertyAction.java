@@ -150,6 +150,7 @@ public class ProviderPropertyAction extends DispatchAction {
 
     /**
      * typically set from inside the JSP class providerupdatepreference.jsp
+     * These properties are written to the Property table.
      * @param request
      */
     public static void updateOrCreateProviderProperties(HttpServletRequest request) {
@@ -157,10 +158,36 @@ public class ProviderPropertyAction extends DispatchAction {
         UserPropertyDAO propertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
+        //TODO for sake of maintainable and efficient code the following refactor
+        // should be considered once Lambdas are enabled.
+
+//        // get all parameters
+//        Map<String, String[]> parameterMap = request.getParameterMap();
+//        List<Field> constants = Arrays.asList(UserProperty.class.getDeclaredFields());
+//
+//        // scan UserPropery constants for active values
+//        for(String parameter : parameterMap.keySet()) {
+//            Optional<Field> fieldValue = constants
+//                    .stream()
+//                    .filter(field -> field.getName().equals(parameter))
+//                    .findFirst();
+//
+//            // update or create values as needed
+//            UserProperty property = propertyDAO.getProp(providerNo, fieldValue.get().getName());
+//            if( property == null ) {
+//                property = new UserProperty();
+//                property.setProviderNo(providerNo);
+//                property.setName(fieldValue.get().getName());
+//            }
+//            property.setValue(parameterMap.getOrDefault(fieldValue.get().getName(), new String[]{""})[0]);
+//            propertyDAO.saveProp(property);
+//        }
+
         List<UserProperty> userProperties = new ArrayList<>();
         String propertyValue;
         UserProperty property;
 
+        // schedule view settings
         propertyValue = StringUtils.trimToNull(request.getParameter(UserProperty.SCHEDULE_WEEK_VIEW_WEEKENDS));
         property = propertyDAO.getProp(providerNo, UserProperty.SCHEDULE_WEEK_VIEW_WEEKENDS);
         if (property == null) {
@@ -170,6 +197,42 @@ public class ProviderPropertyAction extends DispatchAction {
         }
         property.setValue(String.valueOf(Boolean.parseBoolean(propertyValue)));
         propertyDAO.saveProp(property);
+
+        // enable/disable chart note password locking
+        propertyValue = StringUtils.trimToNull(request.getParameter(UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED));
+        property = propertyDAO.getProp(providerNo, UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED);
+        if (property == null) {
+            property = new UserProperty();
+            property.setProviderNo(providerNo);
+            property.setName(UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED);
+        }
+        property.setValue(String.valueOf(Boolean.parseBoolean(propertyValue)));
+        propertyDAO.saveProp(property);
+
+        /* set and encrypt the password to be used for chart note locking
+         * note that the property variable is still set with the CASEMGMT_NOTE_PASSWORD_ENABLED
+         * object.
+         */
+        if(Boolean.parseBoolean(property.getValue())) {
+            // proceed only if CASEMGMT_NOTE_PASSWORD_ENABLED is enabled
+
+            propertyValue = StringUtils.trimToNull(request.getParameter(UserProperty.CASEMGMT_NOTE_PASSWORD));
+
+            if(propertyValue != null && ! propertyValue.isEmpty()) {
+                // proceed only if an actual password has been set.
+
+                property = propertyDAO.getProp(providerNo, UserProperty.CASEMGMT_NOTE_PASSWORD);
+
+                if (property == null) {
+                    property = new UserProperty();
+                    property.setProviderNo(providerNo);
+                    property.setName(UserProperty.CASEMGMT_NOTE_PASSWORD);
+                }
+
+                property.setValue(propertyValue.trim());
+                propertyDAO.saveProp(property);
+            }
+        }
 
     }
     public ActionForward viewDefaultSex(ActionMapping actionmapping,
