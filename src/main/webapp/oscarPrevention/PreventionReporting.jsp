@@ -561,9 +561,9 @@ table.ele thead {
 
                           <%if (type == null ){ %>
                           <td><%=demo.getAgeAsOf(asDate)%></td>
-                          <td><%=Encode.forHtml(h.get("sex"))%></td>
-                          <td><%=Encode.forHtml(h.get("lastName"))%></td>
-                          <td><%=Encode.forHtml(h.get("firstName"))%></td>
+                          <td><%=Encode.forHtml(h.get("sex").toString())%></td>
+                          <td><%=Encode.forHtml(h.get("lastName").toString())%></td>
+                          <td><%=Encode.forHtml(h.get("firstName").toString())%></td>
                           <td><%=Encode.forHtml(demo.getHin())+Encode.forHtml(demo.getVer())%></td>
                           <td><%=Encode.forHtml(demo.getPhone())%> </td>
                           <td><%=Encode.forHtml(demo.getEmail()) %></td>
@@ -578,9 +578,9 @@ table.ele thead {
                           <% }else {
                               org.oscarehr.common.model.Demographic demoSDM = demoData.getSubstituteDecisionMaker(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());%>
                           <td><%=demo.getAgeAsOf(asDate)%></td>
-                          <td><%=Encode.forHtml(h.get("sex"))%></td>
-                          <td><%=Encode.forHtml(h.get("lastName"))%></td>
-                          <td><%=Encode.forHtml(h.get("firstName"))%></td>
+                          <td><%=Encode.forHtml(h.get("sex").toString())%></td>
+                          <td><%=Encode.forHtml(h.get("lastName").toString())%></td>
+                          <td><%=Encode.forHtml(h.get("firstName").toString())%></td>
                           <td><%=Encode.forHtml(demo.getHin())+Encode.forHtml(demo.getVer())%></td>
                           <td><%=demoSDM==null?"":Encode.forHtml(demoSDM.getLastName())%><%=demoSDM==null?"":","%> <%= demoSDM==null?"":Encode.forHtml(demoSDM.getFirstName()) %>&nbsp;</td>
                           <td><%=demoSDM==null?"":Encode.forHtml(demoSDM.getPhone())%> &nbsp;</td>
