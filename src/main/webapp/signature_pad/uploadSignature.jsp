@@ -94,7 +94,8 @@
 					MiscUtils.getLogger().error("Error uploading signature: {}", filename, e);
 				}
 			}
-
+			saveToDB = true;
+			demographic = "1";
 			if (saveToDB) {
 
 				int demographicNo = -1;

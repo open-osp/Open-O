@@ -22,12 +22,16 @@
  */
 package org.oscarehr.common.model;
 
-import java.util.Date;
+import org.oscarehr.common.dao.DigitalSignatureDao;
+import org.oscarehr.util.EncryptionUtils;
+import org.oscarehr.util.SpringUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
+import java.util.Objects;
 
 @Entity
 public class DigitalSignature extends AbstractModel<Integer>{
@@ -89,11 +93,33 @@ public class DigitalSignature extends AbstractModel<Integer>{
 	}
 
 	public byte[] getSignatureImage() {
-		return signatureImage;
+		if (Objects.isNull(this.signatureImage)) {
+			return null;
+		}
+		try {
+			return EncryptionUtils.decrypt(this.signatureImage);
+		} catch (Exception e) {
+
+			// the data is not encrypted, encrypt and save it for future use
+			try {
+				setSignatureImage(this.signatureImage);
+
+				DigitalSignatureDao dao = SpringUtils.getBean(DigitalSignatureDao.class);
+				dao.merge(this);
+
+				return this.signatureImage;
+			} catch (Exception ex) {
+				return this.signatureImage;
+			}
+		}
 	}
 
 	public void setSignatureImage(byte[] signatureImage) {
-		this.signatureImage = signatureImage;
+		try {
+			this.signatureImage = EncryptionUtils.encrypt(signatureImage);
+		} catch (Exception e) {
+			throw new RuntimeException("Error while securely saving Digital Signature.");
+		}
 	}
 
 }
