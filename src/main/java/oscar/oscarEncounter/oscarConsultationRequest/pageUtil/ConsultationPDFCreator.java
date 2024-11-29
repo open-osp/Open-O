@@ -14,7 +14,6 @@ import com.itextpdf.text.pdf.*;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProviderDao;
-import org.oscarehr.common.dao.DigitalSignatureDao;
 import org.oscarehr.common.dao.DocumentDao;
 import org.oscarehr.common.dao.SiteDao;
 import org.oscarehr.common.model.Demographic;
@@ -23,6 +22,7 @@ import org.oscarehr.common.model.ProfessionalSpecialist;
 import org.oscarehr.common.model.Site;
 import org.oscarehr.fax.core.FaxRecipient;
 import org.oscarehr.managers.DemographicManager;
+import org.oscarehr.managers.DigitalSignatureManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -653,8 +653,8 @@ public class ConsultationPDFCreator extends PdfPageEventHelper {
 			 *  odd patches in order to save valuable time on a full refactor.
 			 */
 			try {
-				DigitalSignatureDao digitalSignatureDao = SpringUtils.getBean(DigitalSignatureDao.class);
-				digitalSignature = digitalSignatureDao.find(Integer.parseInt(signatureImageId));
+				DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
+				digitalSignature = digitalSignatureManager.getDigitalSignature(Integer.parseInt(signatureImageId));
 			} catch (Exception e) {
 				// do nothing
 				logger.warn("Consultation digital signature {} was not found or the identifier was incorrect", signatureImageId);

@@ -30,9 +30,9 @@ import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.caisi_integrator.ws.DemographicTransfer;
 import org.oscarehr.caisi_integrator.ws.DemographicWs;
 import org.oscarehr.casemgmt.dao.ClientImageDAO;
-import org.oscarehr.common.dao.DigitalSignatureDao;
 import org.oscarehr.common.model.DigitalSignature;
 import org.oscarehr.common.model.Provider;
+import org.oscarehr.managers.DigitalSignatureManager;
 import org.oscarehr.util.*;
 import oscar.OscarProperties;
 
@@ -56,8 +56,8 @@ import java.net.SocketException;
  */
 public final class ImageRenderingServlet extends HttpServlet {
 	private static Logger logger = MiscUtils.getLogger();
-	private static ClientImageDAO clientImageDAO = (ClientImageDAO) SpringUtils.getBean("clientImageDAO");
-	private static DigitalSignatureDao digitalSignatureDao = (DigitalSignatureDao) SpringUtils.getBean("digitalSignatureDao");
+
+	private static ClientImageDAO clientImageDAO = (ClientImageDAO) SpringUtils.getBean(ClientImageDAO.class);
 
 	public static enum Source {
 		local_client, hnr_client, integrator_client, signature_preview, signature_stored,clinic_logo
@@ -277,7 +277,8 @@ public final class ImageRenderingServlet extends HttpServlet {
 		if(digitalSignatureId != null && !digitalSignatureId.isEmpty()) {
 			try {
 				// get image
-				DigitalSignature digitalSignature = digitalSignatureDao.find(Integer.parseInt(digitalSignatureId));
+				DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
+				DigitalSignature digitalSignature = digitalSignatureManager.getDigitalSignature(Integer.parseInt(digitalSignatureId));
 				if (digitalSignature != null) {
 					renderImage(response, digitalSignature.getSignatureImage(), "jpeg");
 					return;

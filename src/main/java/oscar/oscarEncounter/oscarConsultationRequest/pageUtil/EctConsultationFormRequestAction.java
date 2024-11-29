@@ -47,11 +47,8 @@ import org.oscarehr.documentManager.DocumentAttachmentManager;
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
 import org.oscarehr.fax.core.FaxRecipient;
-import org.oscarehr.managers.ConsultationManager;
-import org.oscarehr.managers.DemographicManager;
-import org.oscarehr.managers.FaxManager;
+import org.oscarehr.managers.*;
 import org.oscarehr.managers.FaxManager.TransactionType;
-import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.*;
 import oscar.OscarProperties;
 import oscar.oscarEncounter.data.EctFormData;
@@ -83,6 +80,8 @@ public class EctConsultationFormRequestAction extends Action {
 	private ConsultationManager consultationManager = SpringUtils.getBean(ConsultationManager.class);
 	private final DocumentAttachmentManager documentAttachmentManager = SpringUtils.getBean(DocumentAttachmentManager.class);
 	private FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
+
+	private final DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -139,7 +138,8 @@ public class EctConsultationFormRequestAction extends Action {
 
 			try {				
 								if (newSignature) {
-									DigitalSignature signature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(loggedInInfo, signatureImg, Integer.parseInt(demographicNo));
+//									DigitalSignature signature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(loggedInInfo, signatureImg, Integer.parseInt(demographicNo));
+									DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo, signatureImg, Integer.parseInt(demographicNo));
 									if (signature != null) { signatureId = "" + signature.getId(); }
 								}
 				

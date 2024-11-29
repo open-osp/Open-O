@@ -42,7 +42,9 @@
 	<%@page import="org.oscarehr.util.LoggedInInfo"%>
 	<%@page import="org.apache.commons.codec.binary.Base64" %>
 	<%@ page import="org.oscarehr.common.model.DigitalSignature" %>
-	<%
+    <%@ page import="org.oscarehr.managers.DigitalSignatureManager" %>
+    <%@ page import="org.oscarehr.util.SpringUtils" %>
+    <%
 
 		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 
@@ -94,8 +96,7 @@
 					MiscUtils.getLogger().error("Error uploading signature: {}", filename, e);
 				}
 			}
-			saveToDB = true;
-			demographic = "1";
+
 			if (saveToDB) {
 
 				int demographicNo = -1;
@@ -104,8 +105,13 @@
 					demographicNo = Integer.parseInt(demographic);
 				}
 
-				DigitalSignature signature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(
-						loggedInInfo,
+//				DigitalSignature signature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(
+//						loggedInInfo,
+//						request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY),
+//						demographicNo);
+
+                DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignature.class);
+                DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo,
 						request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY),
 						demographicNo);
 				if (signature != null) {
