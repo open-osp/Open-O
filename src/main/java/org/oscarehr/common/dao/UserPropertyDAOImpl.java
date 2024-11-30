@@ -109,7 +109,12 @@ public class UserPropertyDAOImpl extends AbstractDaoImpl<UserProperty> implement
         
         return query.getResultList();
     }
-    
+
+	public UserProperty getProp(String prov, org.oscarehr.common.model.enumerator.UserPropertyKey property){
+		return getProp(prov, property.getName());
+	}
+
+	@Deprecated
     public UserProperty getProp(String prov, String name) {
     	Query query = entityManager.createQuery("select p from UserProperty p where p.providerNo = ? and p.name = ?");
     	query.setParameter(0, prov);
@@ -128,6 +133,8 @@ public class UserPropertyDAOImpl extends AbstractDaoImpl<UserProperty> implement
             return null;
     }
 
+
+	@Deprecated
     public UserProperty getProp(String name) {
     	Query query = entityManager.createQuery("select p from UserProperty p where p.name = ?");
     	query.setParameter(0, name);

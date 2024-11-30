@@ -31,6 +31,10 @@ import java.io.Serializable;
 @Table(name="property")
 public class UserProperty extends AbstractModel<Integer> implements Serializable {
 
+    /*
+     * These constants are DEPRECATED.
+     * See model/enumerator/UserPropertyKey for proper constants.
+     */
     public static final String MYOSCAR_ID="MyOscarId";
     public static final String STALE_NOTEDATE = "cme_note_date";
     public static final String STALE_FORMAT = "cme_note_format";
@@ -56,7 +60,7 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     public static final String EFORM_FAVOURITE_GROUP = "favourite_eform_group";
     public static final String RX_SHOW_PATIENT_DOB="rx_show_patient_dob";
     public static final String PATIENT_NAME_LENGTH="patient_name_length";
-    
+
     public static final String OFFICIAL_FIRST_NAME="official_first_name";
     public static final String OFFICIAL_SECOND_NAME="official_second_name";
     public static final String OFFICIAL_LAST_NAME="official_last_name";
@@ -65,7 +69,7 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     public static final String CLINICALCONNECT_DISABLE_CLOSE_WINDOW = "clinicalConnectDisableCloseWindow";
     public static final String CLINICALCONNECT_DISABLE_LOGOUT_WARNING = "clinicalConnectDisableLogoutWarning";
     public static final String LAB_MACRO_JSON = "labMacroJSON";
-    
+
     //added to user properties with new interface
     public static final String FAX = "fax";
     public static final String SIGNATURE = "signature";
@@ -90,7 +94,7 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     public static final String DEFAULT_DX_CODE = "default_dx_code";
     public static final String CPP_SINGLE_LINE="cpp_single_line";
     public static final String LAB_ACK_COMMENT="lab_ack_comment";
-    
+
     public static final String LAB_RECALL_DELEGATE="lab_recall_delegate";
     public static final String LAB_RECALL_MSG_SUBJECT="lab_recall_msg_subject";
     public static final String LAB_RECALL_TICKLER_ASSIGNEE="lab_recall_tickler_assignee";
@@ -115,7 +119,7 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     public static final String HIDE_OLD_ECHART_LINK_IN_APPT="hide_old_echart_link_in_appointment";
     public static final String DISABLE_BORN_PROMPTS = "disable_born_prompts";
 
-    
+
     public static final String DEFAULT_PRINTER_PDF_LABEL="default_printer_pdf_label";
     public static final String DEFAULT_PRINTER_PDF_ENVELOPE="default_printer_pdf_envelope";
     public static final String DEFAULT_PRINTER_APPOINTMENT_RECEIPT="default_printer_appointment_receipt";
@@ -151,8 +155,8 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     public static final String INTEGRATOR_LAST_PUSH = "integrator_last_push";
     public static final String INTEGRATOR_LAST_UPDATED = "integrator_last_updated";
 	public static final String INTEGRATOR_LAST_PULL_PRIMARY_EMR = "integrator_last_pull";
-	public static final String INTEGRATOR_PATIENT_CONSENT = "integrator_patient_consent";	
-	public static final String STUDENT_PARTICIPATION_CONSENT = "student_participation_consent";	
+	public static final String INTEGRATOR_PATIENT_CONSENT = "integrator_patient_consent";
+	public static final String STUDENT_PARTICIPATION_CONSENT = "student_participation_consent";
 	public static final String PROVIDER_FOR_TICKLER_WARNING = "provider_for_tickler_warning";
 
 	public static final String MCEDT_ACCOUNT_PASSWORD = "mcedt_account_password";
@@ -168,14 +172,14 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
 	public static final String QUESTIMED_SERVICE_PASSWORD = "questimed_service_password";
 	public static final String QUESTIMED_SERVICE_LOCATION = "questimed_service_location";
 	public static final String DASHBOARD_SHARE = "dashboard_share";
-	
+
 	public static final String CODE_TO_ADD_PATIENTDX = "code_to_add_patientDx";
 	public static final String CODE_TO_MATCH_PATIENTDX = "code_to_match_patientDx";
-	
+
 	public static final String PREVENTION_SSO_WARNING = "prevention_sso_warning";
 	public static final String PREVENTION_ISPA_WARNING = "prevention_ispa_warning";
 	public static final String PREVENTION_NON_ISPA_WARNING = "prevention_non_ispa_warning";
-	
+
 	public static final String TICKLER_TASK_ASSIGNEE = "tickler_task_assignee";
 
     public static final String EMAIL_COMMUNICATION = "email_communication";
@@ -183,6 +187,13 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     public static final String SCHEDULE_WEEK_VIEW_WEEKENDS = "schedule.week_view_weekends";
     public static final String CASEMGMT_NOTE_PASSWORD_ENABLED = "casemgmt.note.password.enabled";
     public static final String CASEMGMT_NOTE_PASSWORD = "casemgmt.note.password";
+
+    /*
+     * Constants are DEPRECATED.
+     * DO NOT ADD NEW CONSTANTS
+     *
+     * Use mode/enumerator/UserPropertyKey
+     */
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
