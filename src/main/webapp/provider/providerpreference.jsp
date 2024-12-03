@@ -277,11 +277,11 @@ function showHideERxPref() {
 <div class="container">
 	<FORM NAME = "UPDATEPRE" METHOD="post" ACTION="providerupdatepreference.jsp" onSubmit="return(checkTypeInAll())">
 
-		<div style="background-color:<%=deepcolor%>;text-align:center;font-weight:bold">
+		<h2>
 			<bean:message key="provider.providerpreference.description"/>
-		</div>
+		</h2>
 
-		<table class="preferenceTable" style="width:100%;border-collapse:collapse;background-color:<%=weakcolor%>;">
+		<table class="preferenceTable" style="width:100%;border-collapse:collapse;">
 			<tr>
 				<td class="preferenceLabel">
 					<bean:message key="provider.preference.formStartHour" />
@@ -356,15 +356,15 @@ function showHideERxPref() {
 						}
 						</script>
 			            
-			            <input type="radio" name="new_tickler_warning_window" value="enabled" <%= myCheck1 %> onchange="ticklerwarningchange()"> Enabled </input>
-			            <br>
-						<input type="radio" name="new_tickler_warning_window" value="disabled" <%= myCheck2 %> onchange="ticklerwarningchange()"> Disabled </input>
+			            <input type="radio" id="new_tickler_warning_window_enabled" name="new_tickler_warning_window" value="enabled" <%= myCheck1 %> onchange="ticklerwarningchange()"> <label for="new_tickler_warning_window_enabled">Enabled</label>
+			            
+						<input type="radio" id="new_tickler_warning_window_disabled" name="new_tickler_warning_window" value="disabled" <%= myCheck2 %> onchange="ticklerwarningchange()"> <label for="new_tickler_warning_window_disabled">Disabled</label>
 					</td>
 				</tr>
 				
 				<tr id="ticklerProvider" style=<%=myCheck1=="checked"?"display:table-row;":"display:none" %>>
 					<td class="preferenceLabel">
-						Tickler Warning Window for which provider?
+						<label for="ticklerforprovider">Tickler Warning Window for which provider?</label>
 					</td>
 					<td class="preferenceValue">
 						<select id="ticklerforprovider" name="ticklerforproviderno">
@@ -411,7 +411,7 @@ function showHideERxPref() {
 							}
 						%>
 			            <input type="radio" name="default_pmm" value="enabled" <%= myCheck3 %>> Enabled
-			            <br>
+			            
 						<input type="radio" name="default_pmm" value="disabled" <%= myCheck4 %>> Disabled
 					</td>
 				</tr>
@@ -435,7 +435,7 @@ function showHideERxPref() {
 		               %>
 
 		                                <input type="radio" name="caisiBillingPreferenceNotDelete" value="1" <%= myCheck5 %> > Enabled
-		                                <br>
+		                                
 		                                <input type="radio" name="caisiBillingPreferenceNotDelete" value="0" <%= myCheck6 %> > Disabled
 
 		            </td>
@@ -641,7 +641,7 @@ function showHideERxPref() {
 			</tr>
 		</table>
 
-		<div style="background-color:<%=deepcolor%>;text-align:center;font-weight:bold">
+		<div style="text-align:left;font-weight:bold">
 			<INPUT TYPE="submit" VALUE='<bean:message key="provider.providerpreference.btnSubmit"/>' SIZE="7">
 			<INPUT TYPE = "RESET" VALUE ='<bean:message key="global.btnClose"/>' onClick="window.close();">
   		</div>
@@ -655,7 +655,7 @@ function showHideERxPref() {
   <oscar:oscarPropertiesCheck property="TORONTO_RFQ" value="no">
 	<tr>
     <td>
-	    <a href=# onClick ="popupPage(230,600,'../casemgmt/newCaseManagementEnable.jsp');return false;">Enable OSCAR CME UI</a>
+	    <a href=# onClick ="popupPage(230,600,'../casemgmt/newCaseManagementEnable.jsp');return false;">CME UI</a>
     </td>
     </tr>
   </oscar:oscarPropertiesCheck>
@@ -690,8 +690,8 @@ function showHideERxPref() {
   <tr>
       <td>
 	  <div id="billingONpref">
-          <bean:message key="provider.labelDefaultBillForm"/>:
-	  <select name="default_servicetype">
+         <label for="default_servicetype"> <bean:message key="provider.labelDefaultBillForm"/>:</label>
+	  <select id="default_servicetype" name="default_servicetype">
 	      <option value="no">-- no --</option>
 <%
 	if (providerPreference!=null) {
@@ -726,18 +726,18 @@ function showHideERxPref() {
       <tr>
           <td><a href=# onClick ="popupPage(400,860,'providerFax.jsp');return false;"><bean:message key="provider.btnEditFaxNumber"/></a></td>
       </tr>
-      <tr>
-          <td><a href=# onClick ="popupPage(230,860,'providerColourPicker.jsp');return false;"><bean:message key="provider.btnEditColour"/></a></td>
-      </tr>
+<%--      <tr>--%>
+<%--          <td><a href=# onClick ="popupPage(230,860,'providerColourPicker.jsp');return false;"><bean:message key="provider.btnEditColour"/></a></td>--%>
+<%--      </tr>--%>
       <tr>
           <td><a href=# onClick ="popupPage(500,860,'providerPrinter.jsp');return false;"><bean:message key="provider.btnSetDefaultPrinter"/></a></td>
       </tr>
       <tr>
           <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewRxPageSize');return false;"><bean:message key="provider.btnSetRxPageSize"/></a></td>
       </tr>
-      <tr>
-          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewUseRx3');return false;"><bean:message key="provider.btnSetRx3"/></a></td>
-      </tr>
+<%--      <tr>--%>
+<%--          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewUseRx3');return false;"><bean:message key="provider.btnSetRx3"/></a></td>--%>
+<%--      </tr>--%>
       <tr>
           <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewCppSingleLine');return false;"><bean:message key="provider.btnSetCppSingleLine"/></a></td>
       </tr>
@@ -751,9 +751,9 @@ function showHideERxPref() {
           <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=view&provider_no=<%=providerNo%>');return false;"><bean:message key="provider.btnEditStaleDate"/></a></td>
       </tr>
 
-      <tr>
-          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewMyDrugrefId');return false;"><bean:message key="provider.btnSetmyDrugrefID"/></a></td>
-      </tr>
+<%--      <tr>--%>
+<%--          <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewMyDrugrefId');return false;"><bean:message key="provider.btnSetmyDrugrefID"/></a></td>--%>
+<%--      </tr>--%>
 
       <tr>
           <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewConsultationRequestCuffOffDate');return false;"><bean:message key="provider.btnSetConsultationCutoffTimePeriod"/></a></td>
@@ -779,12 +779,12 @@ function showHideERxPref() {
       </tr>
       <%}%>
   </oscar:oscarPropertiesCheck>
-        <tr>
-            <td><a href=# onClick ="popupPage(230,860,'providerIndivoIdSetter.jsp');return false;"><bean:message key="provider.btnSetIndivoId"/></a></td>
-        </tr>
-        <tr>
-            <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewUseMyMeds');return false;"><bean:message key="provider.btnSetUseMyMeds"/></a></td>
-        </tr>
+<%--        <tr>--%>
+<%--            <td><a href=# onClick ="popupPage(230,860,'providerIndivoIdSetter.jsp');return false;"><bean:message key="provider.btnSetIndivoId"/></a></td>--%>
+<%--        </tr>--%>
+<%--        <tr>--%>
+<%--            <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewUseMyMeds');return false;"><bean:message key="provider.btnSetUseMyMeds"/></a></td>--%>
+<%--        </tr>--%>
   
   		<tr>
           <td><a href=# onClick ="popupPage(400,860,'../provider/CppPreferences.do');return false;"><bean:message key="provider.cppPrefs" /></a></td>
@@ -823,17 +823,15 @@ function showHideERxPref() {
     <tr>
         <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewDisplayDocumentAs');return false;"><bean:message key="provider.btnSetDisplayDocumentAs"/></a></td>
     </tr>
-     <tr>
-        <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewCobalt');return false;"><bean:message key="provider.btnSetCobalt"/></a></td>
-    </tr>
+<%--     <tr>--%>
+<%--        <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewCobalt');return false;"><bean:message key="provider.btnSetCobalt"/></a></td>--%>
+<%--    </tr>--%>
     <% if(OscarProperties.getInstance().isPropertyActive("SINGLE_PAGE_CHART")){%>
     <tr>
     	<td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewHideOldEchartLinkInAppt');return false;"><bean:message key="provider.btnHideOldEchartLinkInAppt"/></a></td>
     </tr>
     <% } %>
-    <tr>
-    	<td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewBornPrefs');return false;"><bean:message key="provider.btnViewBornPrefs"/></a></td>
-    </tr>
+
 	<tr>
           <td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewAppointmentCardPrefs');return false;"><bean:message key="provider.btnEditSetAppointmentCardPrefs"/></a></td>
       </tr>
@@ -892,7 +890,7 @@ function showHideERxPref() {
                         </tr>
                         <tr>
                           	<td><bean:message key="provider.eRx.labelFacility"/>:</td>
-                          	<td><input name="erx_facility" type="text" value="<%=eRxFacility%>" title="The Facility ID assigned to you by the External Prescriber" /><br></td>
+                          	<td><input name="erx_facility" type="text" value="<%=eRxFacility%>" title="The Facility ID assigned to you by the External Prescriber" /></td>
                         </tr>
                         <tr>
                           	<td><bean:message key="provider.eRx.labelTrainingMode"/>:</td>
@@ -909,6 +907,10 @@ function showHideERxPref() {
           </tr>
         </security:oscarSec>
   </oscar:oscarPropertiesCheck>
+	<oscar:oscarPropertiesCheck property="billregion" value="ON" defaultVal="BC">
+	<tr>
+		<td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewBornPrefs');return false;"><bean:message key="provider.btnViewBornPrefs"/></a></td>
+	</tr>
  	<tr>
     	<td><a href=# onClick ="popupPage(230,860,'../setProviderStaleDate.do?method=viewDashboardPrefs');return false;"><bean:message key="provider.btnViewDashboardPrefs"/></a></td>
     </tr>
@@ -923,6 +925,7 @@ function showHideERxPref() {
     <tr>
     	<td><a href=# onClick ="popupPage(700,860,'../setProviderStaleDate.do?method=viewLabMacroPrefs');return false;"><bean:message key="provider.btnViewLabMacroPrefs"/></a></td>
     </tr>
+	</oscar:oscarPropertiesCheck>
    <tr>
     	<td><a href=# onClick ="popupPage(280,730,'../setTicklerPreferences.do?method=viewTicklerTaskAssignee');return false;"><bean:message key="provider.btnViewTicklerPreferences"/></a></td>
     </tr>
