@@ -48,16 +48,13 @@
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="org.oscarehr.web.PrescriptionQrCodeUIBean"%>
 <%@page import="org.oscarehr.common.model.EForm"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="org.oscarehr.common.model.EncounterForm"%>
 <%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+
 <%@page import="java.util.List" %>
-<%@page import="java.util.ArrayList" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
 <%@ page import="org.oscarehr.managers.UserPropertyManager" %>
 <%@ page import="org.oscarehr.common.model.enumerator.UserPropertyKey" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%!
 	CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
@@ -78,12 +75,16 @@
 <html:html lang="en">
 
 <head>
+	<title><bean:message key="provider.providerpreference.title" /></title>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
+
+	<link rel="stylesheet" href="<%=request.getContextPath()%>/library/bootstrap/3.0.0/css/bootstrap.css" />
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="provider.providerpreference.title" /></title>
+
 <script src="<%=request.getContextPath()%>/csrfguard" type="text/javascript"></script>
 
 	<script type="text/javascript" src="<%=request.getContextPath()%>/library/jquery/jquery-3.6.4.min.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath()%>/library/bootstrap/3.0.0/js/bootstrap.js"></script>
 <script language="JavaScript">
 
 	$(document).ready(function() {
@@ -217,31 +218,30 @@ function showHideERxPref() {
 		
 </script>
 <style>
-	.preferenceTable td
-	{
-		border: solid white 2px;
+	:root *:not(h2) {
+		font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+		font-size: 12px;
+		overscroll-behavior: none;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+	:root a {
+		color:blue;
 	}
 
 	.preferenceLabel
 	{
 		text-align:right;
 		width:25%;
-		padding-right:8px;
-		font-size:13px;
 		font-weight:bold;
 		vertical-align:top;
 	}
 
 	.preferenceUnits
 	{
-		font-size:9px;
 		font-weight:normal;
 	}
 
-	.preferenceValue
-	{
-		font-size:12px;
-	}
 	
 	table.eRxTableCenter
 	{
@@ -275,20 +275,20 @@ function showHideERxPref() {
 
 <body onLoad="setfocus();showHideBillPref();showHideERxPref();">
 <div class="container">
-	<FORM NAME = "UPDATEPRE" METHOD="post" ACTION="providerupdatepreference.jsp" onSubmit="return(checkTypeInAll())">
+	<FORM class="form-horizontal" NAME = "UPDATEPRE" METHOD="post" ACTION="providerupdatepreference.jsp" onSubmit="return(checkTypeInAll())">
 
-		<h2>
+		<h2 style="margin:auto 15px;">
 			<bean:message key="provider.providerpreference.description"/>
 		</h2>
 
-		<table class="preferenceTable" style="width:100%;border-collapse:collapse;">
+		<table class="table table-striped preferenceTable" >
 			<tr>
 				<td class="preferenceLabel">
 					<bean:message key="provider.preference.formStartHour" />
 					<span class="preferenceUnits">(0-23)</span>
 				</td>
 				<td class="preferenceValue">
-					<INPUT TYPE="TEXT" NAME="start_hour" VALUE='<%=startHour%>' size="2" maxlength="2">
+					<input class="form-control" TYPE="TEXT" NAME="start_hour" VALUE='<%=startHour%>' size="2" maxlength="2">
 				</td>
 			</tr>
 			<tr>
@@ -297,7 +297,7 @@ function showHideERxPref() {
 					<span class="preferenceUnits">(0-23)</span>
 				</td>
 				<td class="preferenceValue">
-					<INPUT TYPE="TEXT" NAME="end_hour" VALUE='<%=endHour%>' size="2" maxlength="2">
+					<INPUT class="form-control" TYPE="TEXT" NAME="end_hour" VALUE='<%=endHour%>' size="2" maxlength="2">
 				</td>
 			</tr>
 			<tr>
@@ -306,7 +306,7 @@ function showHideERxPref() {
 					<span class="preferenceUnits"><bean:message key="provider.preference.min" /></span>
 				</td>
 				<td class="preferenceValue">
-					<INPUT TYPE="TEXT" NAME="every_min" VALUE='<%=everyMin%>' size="2" maxlength="2">
+					<INPUT class="form-control" TYPE="TEXT" NAME="every_min" VALUE='<%=everyMin%>' size="2" maxlength="2">
 				</td>
 			</tr>
 			<tr>
@@ -314,145 +314,149 @@ function showHideERxPref() {
 					<bean:message key="provider.preference.formGroupNo" />
 				</td>
 				<td class="preferenceValue">
-					<INPUT TYPE="TEXT" NAME="mygroup_no" VALUE='<%=myGroupNo%>' size="12" maxlength="10">
-					<input type="button" value="<bean:message key="provider.providerpreference.viewedit" />" onClick="popupPage(360,680,'providerdisplaymygroup.jsp' );return false;" />
+					<div class="input-group">
+					    <INPUT class="form-control" TYPE="TEXT" NAME="mygroup_no" VALUE='<%=Encode.forHtmlAttribute(myGroupNo)%>' size="12" maxlength="10">
+						<div class="input-group-btn">
+					        <input type="button" class="btn btn-default" value="<bean:message key="provider.providerpreference.viewedit" />" onClick="popupPage(360,680,'providerdisplaymygroup.jsp' );return false;" />
+						</div>
+					</div>
 				</td>
 			</tr>
-			<caisi:isModuleLoad moduleName="ticklerplus">
-				<tr id="ticklerPlus">
-					<!-- check box of new-tickler-warnning-windows -->
-					<td class="preferenceLabel">
-						New Tickler Warning Window
-					</td>
-					<td class="preferenceValue">
-						<%
-							String myCheck1 = "";
-							String myCheck2 = "";
-							String myValue ="";
-							if("enabled".equals(newTicklerWarningWindow)) {
-								myCheck1 = "checked";
-								myCheck2 = "unchecked";
-							}
-							else {
-								myCheck1 = "unchecked";
-								myCheck2 = "checked";
-							}
-						%>
-						
-						<script type="text/javascript">
-						function ticklerwarningchange(){
-							var tickRadios = document.getElementsByName("new_tickler_warning_window");
-							for (var i=0;i<tickRadios.length;i++) {
-								if (tickRadios[i].checked==true) {
-									if (tickRadios[i].value=="enabled") {
-										// hidden ticklerforprovider row 
-										document.getElementById("ticklerProvider").style.display="table-row";
-									} else {
-										// show ticklerforprovider row
-										document.getElementById("ticklerProvider").style.display="none";
-									}
-								}									
-							}
-						}
-						</script>
-			            
-			            <input type="radio" id="new_tickler_warning_window_enabled" name="new_tickler_warning_window" value="enabled" <%= myCheck1 %> onchange="ticklerwarningchange()"> <label for="new_tickler_warning_window_enabled">Enabled</label>
-			            
-						<input type="radio" id="new_tickler_warning_window_disabled" name="new_tickler_warning_window" value="disabled" <%= myCheck2 %> onchange="ticklerwarningchange()"> <label for="new_tickler_warning_window_disabled">Disabled</label>
-					</td>
-				</tr>
-				
-				<tr id="ticklerProvider" style=<%=myCheck1=="checked"?"display:table-row;":"display:none" %>>
-					<td class="preferenceLabel">
-						<label for="ticklerforprovider">Tickler Warning Window for which provider?</label>
-					</td>
-					<td class="preferenceValue">
-						<select id="ticklerforprovider" name="ticklerforproviderno">
-						<%
-								String ticklerforproviderNo = ticklerProviderNo;
-								if (ticklerforproviderNo == null) {
-									ticklerforproviderNo = loggedInInfo.getLoggedInProviderNo();
-								}
-								ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
-								List<Provider> listProvider = new ArrayList<Provider>();
-								if (providerDao != null) {
-									listProvider = providerDao.getProviders();
-								}							
-								for (Provider provider : listProvider) {
-									String selected = "";
-									if (ticklerforproviderNo.equals(provider.getProviderNo())) {
-										selected ="selected";
-									}
-									String strOption = String.format("<option value=\"%s\" %s>%s</option>"
-											, provider.getProviderNo(), selected, provider.getFormattedName());
-									out.print(strOption);
-								}
-						%>
-						</select>
-					</td>
-				</tr>
+<%--			<caisi:isModuleLoad moduleName="ticklerplus">--%>
+<%--				<tr id="ticklerPlus">--%>
+<%--					<!-- check box of new-tickler-warnning-windows -->--%>
+<%--					<td class="preferenceLabel">--%>
+<%--						New Tickler Warning Window--%>
+<%--					</td>--%>
+<%--					<td class="preferenceValue">--%>
+<%--						<%--%>
+<%--							String myCheck1 = "";--%>
+<%--							String myCheck2 = "";--%>
+<%--							String myValue ="";--%>
+<%--							if("enabled".equals(newTicklerWarningWindow)) {--%>
+<%--								myCheck1 = "checked";--%>
+<%--								myCheck2 = "unchecked";--%>
+<%--							}--%>
+<%--							else {--%>
+<%--								myCheck1 = "unchecked";--%>
+<%--								myCheck2 = "checked";--%>
+<%--							}--%>
+<%--						%>--%>
+<%--						--%>
+<%--						<script type="text/javascript">--%>
+<%--						function ticklerwarningchange(){--%>
+<%--							var tickRadios = document.getElementsByName("new_tickler_warning_window");--%>
+<%--							for (var i=0;i<tickRadios.length;i++) {--%>
+<%--								if (tickRadios[i].checked==true) {--%>
+<%--									if (tickRadios[i].value=="enabled") {--%>
+<%--										// hidden ticklerforprovider row --%>
+<%--										document.getElementById("ticklerProvider").style.display="table-row";--%>
+<%--									} else {--%>
+<%--										// show ticklerforprovider row--%>
+<%--										document.getElementById("ticklerProvider").style.display="none";--%>
+<%--									}--%>
+<%--								}									--%>
+<%--							}--%>
+<%--						}--%>
+<%--						</script>--%>
+<%--			            --%>
+<%--			            <input type="radio" id="new_tickler_warning_window_enabled" name="new_tickler_warning_window" value="enabled" <%= myCheck1 %> onchange="ticklerwarningchange()"> <label for="new_tickler_warning_window_enabled">Enabled</label>--%>
+<%--			            --%>
+<%--						<input type="radio" id="new_tickler_warning_window_disabled" name="new_tickler_warning_window" value="disabled" <%= myCheck2 %> onchange="ticklerwarningchange()"> <label for="new_tickler_warning_window_disabled">Disabled</label>--%>
+<%--					</td>--%>
+<%--				</tr>--%>
+<%--				--%>
+<%--				<tr id="ticklerProvider" style=<%=myCheck1=="checked"?"display:table-row;":"display:none" %>>--%>
+<%--					<td class="preferenceLabel">--%>
+<%--						<label for="ticklerforprovider">Tickler Warning Window for which provider?</label>--%>
+<%--					</td>--%>
+<%--					<td class="preferenceValue">--%>
+<%--						<select id="ticklerforprovider" name="ticklerforproviderno">--%>
+<%--						<%--%>
+<%--								String ticklerforproviderNo = ticklerProviderNo;--%>
+<%--								if (ticklerforproviderNo == null) {--%>
+<%--									ticklerforproviderNo = loggedInInfo.getLoggedInProviderNo();--%>
+<%--								}--%>
+<%--								ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);--%>
+<%--								List<Provider> listProvider = new ArrayList<Provider>();--%>
+<%--								if (providerDao != null) {--%>
+<%--									listProvider = providerDao.getProviders();--%>
+<%--								}							--%>
+<%--								for (Provider provider : listProvider) {--%>
+<%--									String selected = "";--%>
+<%--									if (ticklerforproviderNo.equals(provider.getProviderNo())) {--%>
+<%--										selected ="selected";--%>
+<%--									}--%>
+<%--									String strOption = String.format("<option value=\"%s\" %s>%s</option>"--%>
+<%--											, provider.getProviderNo(), selected, provider.getFormattedName());--%>
+<%--									out.print(strOption);--%>
+<%--								}--%>
+<%--						%>--%>
+<%--						</select>--%>
+<%--					</td>--%>
+<%--				</tr>--%>
 
-				<!-- check box of the default PMM window -->
-				<tr>
-					<td class="preferenceLabel">
-						Default PMM
-					</td>
-					<td class="preferenceValue">
-						<%
-							String myCheck3 = "";
-							String myCheck4 = "";
-							if("enabled".equals(defaultPMM)) {
-								myCheck3 = "checked";
-								myCheck4 = "unchecked";
-							}
-							else {
-								myCheck3 = "unchecked";
-								myCheck4 = "checked";
-							}
-						%>
-			            <input type="radio" name="default_pmm" value="enabled" <%= myCheck3 %>> Enabled
-			            
-						<input type="radio" name="default_pmm" value="disabled" <%= myCheck4 %>> Disabled
-					</td>
-				</tr>
-				
-				 <tr>
-		            <td class="preferenceLabel">
-		            <bean:message key="provider.btnCaisiBillPreferenceNotDelete"/>
-		            </td>
-		            <td class="preferenceValue">
+<%--				<!-- check box of the default PMM window -->--%>
+<%--				<tr>--%>
+<%--					<td class="preferenceLabel">--%>
+<%--						Default PMM--%>
+<%--					</td>--%>
+<%--					<td class="preferenceValue">--%>
+<%--						<%--%>
+<%--							String myCheck3 = "";--%>
+<%--							String myCheck4 = "";--%>
+<%--							if("enabled".equals(defaultPMM)) {--%>
+<%--								myCheck3 = "checked";--%>
+<%--								myCheck4 = "unchecked";--%>
+<%--							}--%>
+<%--							else {--%>
+<%--								myCheck3 = "unchecked";--%>
+<%--								myCheck4 = "checked";--%>
+<%--							}--%>
+<%--						%>--%>
+<%--			            <input type="radio" name="default_pmm" value="enabled" <%= myCheck3 %>> Enabled--%>
+<%--			            --%>
+<%--						<input type="radio" name="default_pmm" value="disabled" <%= myCheck4 %>> Disabled--%>
+<%--					</td>--%>
+<%--				</tr>--%>
+<%--				--%>
+<%--				 <tr>--%>
+<%--		            <td class="preferenceLabel">--%>
+<%--		            <bean:message key="provider.btnCaisiBillPreferenceNotDelete"/>--%>
+<%--		            </td>--%>
+<%--		            <td class="preferenceValue">--%>
 
-		             <%  String myCheck5 = "";
-		                 String myCheck6 = "";
-		                 String value1 = caisiBillingNotDelete;
-		                  if(value1!=null && value1.equals("1"))
-		                  { 	myCheck5 = "checked";
-		                        myCheck6 = "unchecked";}
-		                  else
-		                  { 	myCheck5 = "unchecked";
-		                  		myCheck6 = "checked";}
+<%--		             <%  String myCheck5 = "";--%>
+<%--		                 String myCheck6 = "";--%>
+<%--		                 String value1 = caisiBillingNotDelete;--%>
+<%--		                  if(value1!=null && value1.equals("1"))--%>
+<%--		                  { 	myCheck5 = "checked";--%>
+<%--		                        myCheck6 = "unchecked";}--%>
+<%--		                  else--%>
+<%--		                  { 	myCheck5 = "unchecked";--%>
+<%--		                  		myCheck6 = "checked";}--%>
 
-		               %>
+<%--		               %>--%>
 
-		                                <input type="radio" name="caisiBillingPreferenceNotDelete" value="1" <%= myCheck5 %> > Enabled
-		                                
-		                                <input type="radio" name="caisiBillingPreferenceNotDelete" value="0" <%= myCheck6 %> > Disabled
+<%--		                                <input type="radio" name="caisiBillingPreferenceNotDelete" value="1" <%= myCheck5 %> > Enabled--%>
+<%--		                                --%>
+<%--		                                <input type="radio" name="caisiBillingPreferenceNotDelete" value="0" <%= myCheck6 %> > Disabled--%>
 
-		            </td>
-		          </tr>
+<%--		            </td>--%>
+<%--		          </tr>--%>
 
-			</caisi:isModuleLoad>
+<%--			</caisi:isModuleLoad>--%>
 
 			<!-- QR Code on prescriptions setting -->
 			<tr>
 				<td class="preferenceLabel">
-					<bean:message key="provider.providerpreference.qrCodeOnPrescriptions" />
+					<label for="prescriptionQrCodes"><bean:message key="provider.providerpreference.qrCodeOnPrescriptions" /></label>
 				</td>
 				<td class="preferenceValue">
 					<%
 	            		boolean checked=PrescriptionQrCodeUIBean.isPrescriptionQrCodeEnabledForProvider(providerNo);
 	            	%>
-	            	<input type="checkbox" name="prescriptionQrCodes" <%=checked?"checked=\"checked\"":""%> />
+	            	<input type="checkbox" class="checkbox-inline" id="prescriptionQrCodes" name="prescriptionQrCodes" <%=checked?"checked=\"checked\"":""%> />
 	            </td>
 			</tr>
 
@@ -462,7 +466,7 @@ function showHideERxPref() {
 					<bean:message key="provider.providerpreference.appointmentScreenLinkNameDisplayLength" />
 				</td>
 				<td class="preferenceValue">
-					<input type="text" name="appointmentScreenFormsNameDisplayLength" value='<%=providerPreference.getAppointmentScreenLinkNameDisplayLength()%>' size="2">
+					<input type="text" class="form-control" name="appointmentScreenFormsNameDisplayLength" value='<%=providerPreference.getAppointmentScreenLinkNameDisplayLength()%>' size="2">
 	            </td>
 			</tr>
 			<tr>
@@ -470,18 +474,20 @@ function showHideERxPref() {
 					<bean:message key="provider.providerpreference.formsToDisplayOnAppointmentScreen" />
 				</td>
 				<td class="preferenceValue">
-					<div style="height:10em;border:solid grey 1px;overflow:auto;white-space:nowrap;width:45em">
+					<div style="height:10em;overflow-y: auto;">
 					<%
 						List<EncounterForm> encounterForms=ProviderPreferencesUIBean.getAllEncounterForms();
 						Collection<String> checkedEncounterFormNames=ProviderPreferencesUIBean.getCheckedEncounterFormNames(providerNo);
 						for(EncounterForm encounterForm : encounterForms)
 						{
-							String nameEscaped=StringEscapeUtils.escapeHtml(encounterForm.getFormName());
+//							String nameEscaped=StringEscapeUtils.escapeHtml(encounterForm.getFormName());
 							String checkedString=(checkedEncounterFormNames.contains(encounterForm.getFormName())?"checked=\"checked\"":"");
 							%>
-								<input type="checkbox" name="encounterFormName" value="<%=nameEscaped%>" <%=checkedString%> /> <%=nameEscaped%>
-								<br />
-							<%
+							<div>
+								<input type="checkbox" class="checkbox-inline" id="encounterFormName<%= encounterForm.getId() %>" name="encounterFormName" value="<%=Encode.forHtmlContent(encounterForm.getFormName())%>" <%=checkedString%> />
+								<label for="encounterFormName<%= encounterForm.getId() %>"><%=Encode.forHtmlContent(encounterForm.getFormName()) %></label>
+							</div>
+						<%
 						}
 	            	%>
 					</div>
@@ -492,7 +498,7 @@ function showHideERxPref() {
 					<bean:message key="provider.providerpreference.eFormsToDisplayOnAppointmentScreen" />
 				</td>
 				<td class="preferenceValue">
-					<div style="height:10em;border:solid grey 1px;overflow:auto;white-space:nowrap;width:45em">
+					<div style="height:10em;overflow-y: auto;">
 					<%
 						List<EForm> eforms = ProviderPreferencesUIBean.getAllEForms();
 						Collection<ProviderPreference.EformLink> checkedEFormIds = ProviderPreferencesUIBean.getCheckedEFormIds(providerNo);
@@ -507,8 +513,10 @@ function showHideERxPref() {
 							}
 
 							%>
-								<input type="checkbox" name="eformId" value="<%=eform.getId()%>" <%=checkedString%> /> <%=StringEscapeUtils.escapeHtml(eform.getFormName())%>
-								<br />
+							<div>
+								<input type="checkbox" class="checkbox-inline" id="eformId<%=eform.getId()%>" name="eformId" value="<%=eform.getId()%>" <%=checkedString%> />
+								<label for="eformId<%=eform.getId()%>"><%=Encode.forHtmlContent(eform.getFormName())%></label>
+							</div>
 							<%
 						}
 	            	%>
@@ -520,29 +528,33 @@ function showHideERxPref() {
 					<bean:message key="provider.providerpreference.quickLinksToDisplayOnAppointmentScreen" />
 				</td>
 				<td class="preferenceValue">
-					<div style="height:10em;border:solid grey 1px;overflow:auto;white-space:nowrap;width:45em">
+					<div style="max-height:10em;overflow-y: auto;">
 					<%
 						Collection<ProviderPreference.QuickLink> quickLinks=ProviderPreferencesUIBean.getQuickLinks(providerNo);
 						for(ProviderPreference.QuickLink quickLink : quickLinks)
 						{
 							%>
-								<input type="button" value="<bean:message key="REMOVE"/>" onclick="document.location='providerPreferenceQuickLinksAction.jsp?action=remove&name='+escape('<%=StringEscapeUtils.escapeHtml(quickLink.getName())%>')" />
-								<%=StringEscapeUtils.escapeHtml(quickLink.getName())%> : <%=StringEscapeUtils.escapeHtml(quickLink.getUrl())%>
-								<br />
+						<div>
+								<input type="button" class="btn btn-default" value="<bean:message key="REMOVE"/>" onclick="document.location='providerPreferenceQuickLinksAction.jsp?action=remove&name='+escape('<%=Encode.forHtmlAttribute(quickLink.getName())%>')" />
+								<%=Encode.forHtmlContent(quickLink.getName())%> : <%=Encode.forHtmlContent(quickLink.getUrl())%>
+						</div>
 							<%
 						}
 	            	%>
 					</div>
-					<table style="border:none;border-collapse:collapse">
+					<table class="table" style="background-color: transparent;">
 						<tr>
-							<td style="border:none;text-align:right"><bean:message key="NAME"/></td>
-							<td style="border:none"><input type="text" name="quickLinkName" /></td>
+							<td style="border:none;text-align:right">
+								<label for="quickLinkName"><bean:message key="NAME"/></label></td>
+							<td style="border:none">
+								<input type="text" class="form-control" id="quickLinkName" name="quickLinkName" /></td>
 						</tr>
 						<tr>
-							<td style="border:none;text-align:right;vertical-align:top"><bean:message key="URL"/></td>
+							<td style="border:none;text-align:right;">
+								<label for="quickLinkUrl"><bean:message key="URL"/></label></td>
 							<td style="border:none">
-								<input type="text" name="quickLinkUrl" />
-								<div style="font-size:9px">(expanded tokens in the url are ${contextPath} and ${demographicId})</div>
+								<input type="text" class="form-control" id="quickLinkUrl" name="quickLinkUrl" />
+								<div>(expanded tokens in the url are <c:out value="${contextPath}" /> and <c:out value="${demographicId}" /> )</div>
 							</td>
 						</tr>
 						<tr>
@@ -556,7 +568,7 @@ function showHideERxPref() {
 										document.location="providerPreferenceQuickLinksAction.jsp?action=add&name="+name+"&url="+url;
 									}
 								</script>
-								<input type="button" value="<bean:message key="ADD"/>" onclick="addQuickLink()" />
+								<input type="button" class="btn btn-default" value="<bean:message key="ADD"/>" onclick="addQuickLink()" />
 							</td>
 						</tr>
 					</table>
@@ -564,10 +576,10 @@ function showHideERxPref() {
 			</tr>
 			<tr>
 				<td class="preferenceLabel">
-					<label for="schedule.week_view_weekends">Show Weekends in Week View:</label>
+					<label for="schedule.week_view_weekends">Show Weekends in Week View</label>
 				</td>
 				<td class="preferenceValue">
-					<input type="checkbox" id="schedule.week_view_weekends" name="schedule.week_view_weekends" value="true" ${ userProperty[UserPropertyKey.SCHEDULE_WEEK_VIEW_WEEKENDS.name] ? 'checked' : ''} />
+					<input type="checkbox" class="checkbox-inline" id="schedule.week_view_weekends" name="schedule.week_view_weekends" value="true" ${ userProperty[UserPropertyKey.SCHEDULE_WEEK_VIEW_WEEKENDS.name] ? 'checked' : ''} />
 				</td>
 			</tr>
 			<tr>
@@ -575,7 +587,7 @@ function showHideERxPref() {
 					<label for="rxInteractionWarningLevel"><bean:message key="provider.providerpreference.rxInteractionWarningLevel" /></label>
 				</td>
 				<td class="preferenceValue">
-					<select id="rxInteractionWarningLevel">
+					<select id="rxInteractionWarningLevel" class="form-control" >
 						<option value="0" ${userProperty[UserPropertyKey.RX_INTERACTION_WARNING_LEVEL.name] eq '0' ? 'selected' : '' }>Not Specified</option>
 						<option value="1" ${userProperty[UserPropertyKey.RX_INTERACTION_WARNING_LEVEL.name] eq '1' ? 'selected' : '' }>Low</option>
 						<option value="2" ${userProperty[UserPropertyKey.RX_INTERACTION_WARNING_LEVEL.name] eq '2' ? 'selected' : '' }>Medium</option>
@@ -624,32 +636,35 @@ function showHideERxPref() {
 				%>
 				<td class="preferenceLabel">
 					<label for="casemgmt-note-password-enabled">
-						Enable encounter note password lock:
+						Enable encounter note password lock
 					</label>
 				</td>
 				<td class="preferenceValue">
-					<div>
-						<input type="checkbox" id="casemgmt-note-password-enabled" name="casemgmt.note.password.enabled" value="true" <%=passwordEnabled.isChecked() ? "checked" : ""%> />
-						<input type="text" placeholder="password" name="casemgmt.note.password" id="casemgmt-note-password"
+					<div class="input-group">
+      <span class="input-group-addon">
+						<input type="checkbox" class="checkbox-inline" id="casemgmt-note-password-enabled" name="casemgmt.note.password.enabled" value="true" <%=passwordEnabled.isChecked() ? "checked" : ""%> />
+      </span>
+	      <input type="text" class="form-control" placeholder="password" name="casemgmt.note.password" id="casemgmt-note-password"
 						       value="<c:out value="${userProperty[UserPropertyKey.CASEMGMT_NOTE_PASSWORD.name]}" />"
 								<%= ! passwordEnabled.isChecked() ? "disabled" : "" %> />
-						<label for="casemgmt-note-password">
-							(alphanumeric only)
-						</label>
+
+					</div>
+					<div>
+						(alphanumeric password only)
 					</div>
 				</td>
 			</tr>
 		</table>
 
-		<div style="text-align:left;font-weight:bold">
-			<INPUT TYPE="submit" VALUE='<bean:message key="provider.providerpreference.btnSubmit"/>' SIZE="7">
-			<INPUT TYPE = "RESET" VALUE ='<bean:message key="global.btnClose"/>' onClick="window.close();">
+		<div style="text-align:right;font-weight:bold;padding-bottom:10px;">
+			<input type="submit" class="btn btn-primary" value='<bean:message key="provider.providerpreference.btnSubmit"/>'>
+			<input type="reset" class="btn btn-danger" VALUE ='<bean:message key="global.btnClose"/>' onClick="window.close();">
   		</div>
 
 		<INPUT TYPE="hidden" NAME="color_template" VALUE='deepblue'>
 
 
-<table>
+<table class="table table-striped table-condensed">
 
 <caisi:isModuleLoad moduleName="NEW_CME_SWITCH">
   <oscar:oscarPropertiesCheck property="TORONTO_RFQ" value="no">
@@ -687,9 +702,9 @@ function showHideERxPref() {
 <% } %>
     </td>
   </tr>
-  <tr>
+  <tr id="billingONpref">
       <td>
-	  <div id="billingONpref">
+	  <div>
          <label for="default_servicetype"> <bean:message key="provider.labelDefaultBillForm"/>:</label>
 	  <select id="default_servicetype" name="default_servicetype">
 	      <option value="no">-- no --</option>
@@ -875,30 +890,30 @@ function showHideERxPref() {
                     if(eRxFacility==null || "null".equalsIgnoreCase(eRxFacility)) eRxFacility="";
                 }
                 %>
-                	<table class="eRxTableCenter">
+                	<table class="table eRxTableCenter">
                     	<tr>
                         	<td><bean:message key="provider.eRx.labelEnable"/>:</td>
-                          	<td><input name="erx_enable" title="Enable the External Prescriber" type="checkbox" <%=eRxEnabledChecked%> /></td>
+                          	<td><input class="checkbox-inline" name="erx_enable" title="Enable the External Prescriber" type="checkbox" <%=eRxEnabledChecked%> /></td>
                         </tr>
                         <tr>
                           	<td><bean:message key="provider.eRx.labelUser"/>:</td>
-                      		<td><input name="erx_username" type="text" value="<%=eRxUsername%>" title="Username to access the External Prescriber"/></td>
+                      		<td><input name="erx_username" class="form-control" type="text" value="<%=eRxUsername%>" title="Username to access the External Prescriber"/></td>
                         </tr>
                         <tr>
                           	<td><bean:message key="provider.eRx.labelPassword"/>:</td>
-                          	<td><input name="erx_password" type="password" value="<%=eRxPassword%>" title="Password to access the External Prescriber" /></td>
+                          	<td><input name="erx_password" class="form-control" type="password" value="<%=eRxPassword%>" title="Password to access the External Prescriber" /></td>
                         </tr>
                         <tr>
                           	<td><bean:message key="provider.eRx.labelFacility"/>:</td>
-                          	<td><input name="erx_facility" type="text" value="<%=eRxFacility%>" title="The Facility ID assigned to you by the External Prescriber" /></td>
+                          	<td><input name="erx_facility" class="form-control" type="text" value="<%=eRxFacility%>" title="The Facility ID assigned to you by the External Prescriber" /></td>
                         </tr>
                         <tr>
                           	<td><bean:message key="provider.eRx.labelTrainingMode"/>:</td>
-                          	<td><input name="erx_training_mode" type="checkbox" title="Enable Training Mode" <%=eRxTrainingModeChecked%> /></td>
+                          	<td><input name="erx_training_mode" class="checkbox-inline" type="checkbox" title="Enable Training Mode" <%=eRxTrainingModeChecked%> /></td>
                         </tr>
                         <tr>
                           	<td><bean:message key="provider.eRx.labelURL"/>:</td>
-                          	<td><input name="erx_sso_url" type="text" value="<%=eRx_SSO_URL%>" title="The URL to access the Web Interface from OSCAR Rx" /></td>
+                          	<td><input name="erx_sso_url"  class="form-control" type="text" value="<%=eRx_SSO_URL%>" title="The URL to access the Web Interface from OSCAR Rx" /></td>
                         </tr>
                         
                      </table>
