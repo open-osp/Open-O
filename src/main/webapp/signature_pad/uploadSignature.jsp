@@ -44,6 +44,7 @@
 	<%@ page import="org.oscarehr.common.model.DigitalSignature" %>
     <%@ page import="org.oscarehr.managers.DigitalSignatureManager" %>
     <%@ page import="org.oscarehr.util.SpringUtils" %>
+    <%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
     <%
 
 		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -105,15 +106,10 @@
 					demographicNo = Integer.parseInt(demographic);
 				}
 
-//				DigitalSignature signature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(
-//						loggedInInfo,
-//						request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY),
-//						demographicNo);
-
                 DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignature.class);
                 DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo,
 						request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY),
-						demographicNo);
+						demographicNo, null);
 				if (signature != null) {
 					signatureId = "" + signature.getId();
 				}

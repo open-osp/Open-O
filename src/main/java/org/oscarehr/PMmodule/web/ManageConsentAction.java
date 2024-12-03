@@ -34,6 +34,8 @@ import org.oscarehr.caisi_integrator.ws.CachedFacility;
 import org.oscarehr.common.dao.IntegratorConsentDao;
 import org.oscarehr.common.model.DigitalSignature;
 import org.oscarehr.common.model.IntegratorConsent;
+import org.oscarehr.common.model.enumerator.ModuleType;
+import org.oscarehr.managers.DigitalSignatureManager;
 import org.oscarehr.util.DigitalSignatureUtils;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -82,7 +84,8 @@ public class ManageConsentAction {
 	 */
 	public void storeAllConsents() throws IOException {
 
-		DigitalSignature digitalSignature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(loggedInInfo, signatureRequestId, clientId);
+		DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
+		DigitalSignature digitalSignature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo, signatureRequestId, clientId, ModuleType.CONSULTATION);
 		if (digitalSignature != null) consent.setDigitalSignatureId(digitalSignature.getId());
 
 		integratorConsentDao.persist(consent);

@@ -22,16 +22,96 @@
 
 package org.oscarehr.managers;
 
+import org.oscarehr.common.dao.DigitalSignatureDao;
 import org.oscarehr.common.model.DigitalSignature;
+import org.oscarehr.common.model.enumerator.ModuleType;
+import org.oscarehr.util.DigitalSignatureUtils;
+import org.oscarehr.util.EncryptionUtils;
 import org.oscarehr.util.LoggedInInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface DigitalSignatureManager extends OscarManagerBase {
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Date;
+import java.util.Objects;
 
-    DigitalSignature getDigitalSignature(int id);
+@Service
+public class DigitalSignatureManager implements OscarManagerBase {
 
-    DigitalSignature saveDigitalSignature(Integer facilityId, String providerNo, Integer demographicNo, byte[] imageData);
+    @Autowired
+    private DigitalSignatureDao digitalSignatureDao;
 
-    DigitalSignature processAndSaveDigitalSignature(LoggedInInfo loggedInInfo, String signatureRequestId, Integer demographicNo);
+   
+    public DigitalSignature getDigitalSignature(int id) {
+        DigitalSignature digitalSignature = this.digitalSignatureDao.findDetached(id);
+
+        if (Objects.isNull(digitalSignature.getSignatureImage())) {
+            return null;
+        }
+
+        try {
+            digitalSignature.setSignatureImage(EncryptionUtils.decrypt(digitalSignature.getSignatureImage()));
+        } catch (Exception e) {
+
+            // the data is not encrypted, fetching attached entity, encrypt and save it for future use
+            try {
+                digitalSignature = this.digitalSignatureDao.find(id);
+                digitalSignature.setSignatureImage(EncryptionUtils.encrypt(digitalSignature.getSignatureImage()));
+                digitalSignatureDao.merge(digitalSignature);
+                return this.getDigitalSignature(id);
+            } catch (Exception ex) {
+                return digitalSignature;
+            }
+        }
+
+        return digitalSignature;
+    }
+
+   
+    public DigitalSignature saveDigitalSignature(Integer facilityId, String providerNo, Integer demographicNo, byte[] imageData, ModuleType moduleType) {
+        DigitalSignature digitalSignature = new DigitalSignature();
+        digitalSignature.setDateSigned(new Date());
+        digitalSignature.setDemographicId(demographicNo);
+        digitalSignature.setFacilityId(facilityId);
+        digitalSignature.setProviderNo(providerNo);
+        digitalSignature.setModuleType(moduleType);
+
+        try {
+            digitalSignature.setSignatureImage(EncryptionUtils.encrypt(imageData));
+        } catch (Exception e) {
+            throw new RuntimeException("Error while encrypting and saving digital signature.", e);
+        }
+
+        digitalSignatureDao.persist(digitalSignature);
+        logger.debug("Signature saved to database with ID: {}", digitalSignature.getId());
+
+        return digitalSignature;
+    }
+
+   
+    public DigitalSignature processAndSaveDigitalSignature(LoggedInInfo loggedInInfo, String signatureRequestId, Integer demographicNo, ModuleType moduleType) {
+
+        if (loggedInInfo.getCurrentFacility().isEnableDigitalSignatures()) {
+            String filename = DigitalSignatureUtils.getTempFilePath(signatureRequestId);
+            if (filename.isEmpty()) {
+                return null;
+            }
+            try (FileInputStream fileInputStream = new FileInputStream(filename)) {
+                byte[] image = new byte[1024 * 256];
+                fileInputStream.read(image);
+
+                return this.saveDigitalSignature(loggedInInfo.getCurrentFacility().getId(),
+                        loggedInInfo.getLoggedInProviderNo(), demographicNo, image, moduleType);
+            } catch (FileNotFoundException e) {
+                logger.debug("Signature file not found. User probably didn't collect a signature.", e);
+            } catch (Exception e) {
+                logger.error("UnexpectedError.", e);
+            }
+        }
+
+        return null;
+    }
 
 }
 

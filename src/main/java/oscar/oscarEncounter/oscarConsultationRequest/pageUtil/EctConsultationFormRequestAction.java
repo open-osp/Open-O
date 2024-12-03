@@ -43,6 +43,7 @@ import org.oscarehr.common.hl7.v2.oscar_to_oscar.RefI12;
 import org.oscarehr.common.hl7.v2.oscar_to_oscar.SendingUtils;
 import org.oscarehr.common.model.*;
 import org.oscarehr.common.model.enumerator.DocumentType;
+import org.oscarehr.common.model.enumerator.ModuleType;
 import org.oscarehr.documentManager.DocumentAttachmentManager;
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
@@ -138,8 +139,7 @@ public class EctConsultationFormRequestAction extends Action {
 
 			try {				
 								if (newSignature) {
-//									DigitalSignature signature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(loggedInInfo, signatureImg, Integer.parseInt(demographicNo));
-									DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo, signatureImg, Integer.parseInt(demographicNo));
+									DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo, signatureImg, Integer.parseInt(demographicNo), ModuleType.CONSULTATION);
 									if (signature != null) { signatureId = "" + signature.getId(); }
 								}
 				
@@ -282,7 +282,8 @@ public class EctConsultationFormRequestAction extends Action {
 			try {				     
 				
 				if (newSignature) {
-					DigitalSignature signature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(loggedInInfo, signatureImg, Integer.parseInt(demographicNo));
+					DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
+					DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo, signatureImg, Integer.parseInt(demographicNo), ModuleType.CONSULTATION);
 					if (signature != null) {
 						signatureId = "" + signature.getId();
 					} else {
