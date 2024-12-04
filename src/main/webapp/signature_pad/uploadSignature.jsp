@@ -106,7 +106,7 @@
 					demographicNo = Integer.parseInt(demographic);
 				}
 
-                DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignature.class);
+                DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
                 DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo,
 						request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY),
 						demographicNo, null);
