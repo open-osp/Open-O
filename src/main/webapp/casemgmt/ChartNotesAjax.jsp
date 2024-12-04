@@ -420,11 +420,11 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 						</div>
 
 						<c:if test="${sessionScope.passwordEnabled=='true'}">
-							<div style='background-color: #CCCCFF; display: none; margin: 0' id='notePasswd'>
+							<div id='notePasswd'>
 
-								<label for="caseNote.password">Password:</label><input type="password" id="caseNote.password" name="caseNote.password" value="" autocomplete="off" />&nbsp;
+								<input type="hidden" id="caseNote.password" name="caseNote.password" value="" autocomplete="off" />
 
-								<label for="caseNote.passwordConfirm">Confirm:</label><input type='password' id="caseNote.passwordConfirm" name='caseNote.passwordConfirm' value="" autocomplete="off" />
+								<input type='hidden' id="caseNote.passwordConfirm" name='caseNote.passwordConfirm' value="" autocomplete="off" />
 
 							</div>
 						</c:if>
@@ -889,15 +889,15 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			</div> <!-- end of div sig<%=savedId%> -->
 
 			<c:if test="${sessionScope.passwordEnabled=='true'}">
-				<div style='background-color: #CCCCFF; display: none; margin: 0' id='notePasswd'>
+				<div id='notePasswd'>
 
-						<label for="caseNote.password.back">Password:</label>
-						<input type="password" id="caseNote.password.back" name="caseNote.password" value="" autocomplete="off" />
+<%--						<label for="caseNote.password.back">Password:</label>--%>
+						<input type="hidden" id="caseNote.password.back" name="caseNote.password" value="" autocomplete="off" />
 
-						<label for="caseNote.passwordConfirm.back">Confirm:</label>
-						<input type='password' id="caseNote.passwordConfirm.back" name='caseNote.passwordConfirm' value="" autocomplete="off" />
+<%--						<label for="caseNote.passwordConfirm.back">Confirm:</label>--%>
+						<input type='hidden' id="caseNote.passwordConfirm.back" name='caseNote.passwordConfirm' value="" autocomplete="off" />
 
-				</div>
+			</div>
 			</c:if>
 		</div> <!-- end of div n<%=savedId%>  -->
 	</div> <!-- end of div nc<%=offset%><%=savedId%> -->

@@ -45,6 +45,7 @@ import org.oscarehr.casemgmt.web.CaseManagementViewAction.IssueDisplay;
 import org.oscarehr.casemgmt.web.formbeans.CaseManagementEntryFormBean;
 import org.oscarehr.common.dao.*;
 import org.oscarehr.common.model.*;
+import org.oscarehr.common.model.enumerator.UserPropertyKey;
 import org.oscarehr.eyeform.dao.EyeFormDao;
 import org.oscarehr.eyeform.dao.EyeformFollowUpDao;
 import org.oscarehr.eyeform.dao.EyeformTestBookDao;
@@ -58,6 +59,7 @@ import org.oscarehr.eyeform.web.ProcedureBookAction;
 import org.oscarehr.eyeform.web.TestBookAction;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.managers.TicklerManager;
+import org.oscarehr.managers.UserPropertyManager;
 import org.oscarehr.util.*;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.WebApplicationContext;
@@ -99,7 +101,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 	private CasemgmtNoteLockDao casemgmtNoteLockDao = SpringUtils.getBean(CasemgmtNoteLockDao.class);
 	private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 	private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
-	private UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
+	private UserPropertyManager userPropertyManager = SpringUtils.getBean(UserPropertyManager.class);
 
 	public ActionForward unspecified(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -411,7 +413,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		 * encounter notes.
 		 */
 		// boolean passwd = caseManagementMgr.getEnabled();
-		UserProperty userProperty = userPropertyDAO.getProp(loggedInInfo.getLoggedInProviderNo(), UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED);
+		UserProperty userProperty = userPropertyManager.getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD_ENABLED);
 		boolean passwd = Boolean.FALSE;
 		if (userProperty != null) {
 			passwd = userProperty.isChecked();
@@ -1377,12 +1379,19 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 		// update password
 		String passwd = cform.getCaseNote().getPassword();
-		if (passwd != null && passwd.trim().length() > 0) {
+
+		/* Fake passwords could be fed in through the request header.
+		 * Double check that the password being set matched the logged in provider.
+		 */
+		UserProperty userProperty = userPropertyManager.getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD);
+		if (passwd != null && passwd.trim().length() > 0 && userProperty != null && passwd.trim().equals(userProperty.getValue())) {
 			note.setPassword(passwd);
 			note.setLocked(true);
+		} else {
+			note.setLocked(false);
+			logger.warn("Potential password override attempt. Password given: {} Logged in provider: {}", passwd, loggedInInfo.getLoggedInProviderNo());
 		}
 
-                
 		Date now = new Date();
 
 		String observationDate = cform.getObservation_date();

@@ -1510,3 +1510,20 @@ div.locked-note {
 	padding:3px;
 	justify-content: space-between;
 }
+
+div.alert-success {
+	position: relative;
+	color: #3c763d;
+	background-color: #dff0d8;
+	border-color: #d6e9c6;
+	text-align: center;
+	padding: 5px;
+	border: 1px solid transparent;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
+	border-radius: 0 0 4px 4px;
+	top:-2px;
+	margin-bottom: -2px;
+}

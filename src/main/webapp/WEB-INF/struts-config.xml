@@ -637,6 +637,8 @@
 
 	<action-mappings>
 
+		<action path="/encounterNotePassword" type="org.oscarehr.ui.servlet.EncounterNotePasswordServlet" scope="request" validate="false" parameter="method" />
+
 		<action path="/logout" type="oscar.login.LogoutAction" scope="request" validate="false" parameter="method">
 			<forward name="success" path="/index.jsp" />
 			<forward name="logoutsso" path="/ssoLogin.do?method=ssoLogout" />

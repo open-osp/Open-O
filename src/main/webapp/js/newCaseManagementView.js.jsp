@@ -2011,8 +2011,8 @@ function editNote(e) {
     Element.observe(caseNote, 'click', getActiveText);
 
     if( passwordEnabled ) {
-           input = "<p style='background-color:#CCCCFF; display:none; margin:0;' id='notePasswd'>Password:&nbsp;<input type='password' name='caseNote.password' value='' autocomplete='off'/>" +
-               "Confirmation:&nbsp;<input type='password' name='caseNote.passwordConfirm' value='' autocomplete='off' /><\/p>";
+           input = "<div style='background-color:#CCCCFF; display:none; margin:0;' id='notePasswd'><input type='hidden' name='caseNote.password' value='' autocomplete='off'/>" +
+               "<input type='hidden' name='caseNote.passwordConfirm' value='' autocomplete='off' /><\/div>";
            new Insertion.Bottom(txt, input);
     }
 
@@ -2590,18 +2590,11 @@ function savePage(method, chain) {
     }
 
     if(passwordEnabled){
-       if (jQuery("#notePasswd").is( ":hidden" ) === false){
            if(jQuery("form[name='caseManagementEntryForm'] input[name='caseNote.password']").val() !== jQuery("form[name='caseManagementEntryForm'] input[name='caseNote.passwordConfirm']").val()){
                //passwords do not match
                alert("Password and Confirm Password do not match");
                return false;
            }
-       }
-       else{
-           //password field not visible, do not submit anything for password
-           jQuery("form[name='caseManagementEntryForm'] input[name='caseNote.password']").val('');
-           jQuery("form[name='caseManagementEntryForm'] input[name='caseNote.passwordConfirm']").val('');
-       }
     }
 
     if( caisiEnabled ) {
@@ -2726,15 +2719,39 @@ function changeDiagnosisUnresolved(issueId) {
 }
 			
     function toggleNotePasswd() {
-        if( passwordEnabled ) {
-            Element.toggle('notePasswd');
-            if( $('notePasswd').style.display !== "none" ){
-                document.forms['caseManagementEntryForm'].elements['caseNote.password'].value = "";
-                document.forms['caseManagementEntryForm'].elements['caseNote.password'].focus();
+
+        if(passwordEnabled) {
+			// undo previously set locked note
+            let isLocked = document.getElementById("locked-note");
+			if(! isLocked && confirm("Password lock current note?")) {
+				// otherwise set this note to be locked
+				jQuery.post(ctx + "/encounterNotePassword.do", function (data) {
+
+					document.forms['caseManagementEntryForm'].elements['caseNote.password'].value = data.password;
+					document.forms['caseManagementEntryForm'].elements['caseNote.passwordConfirm'].value = data.password;
+
+					let alert = document.createElement("div");
+					alert.className = "alert alert-success";
+					alert.id = "locked-note";
+					alert.role = "alert";
+					alert.textContent = "NOTE LOCKED";
+					document.getElementById("notePasswd").append(alert);
+				})
+			} else {
+				isLocked.remove();
+				document.forms['caseManagementEntryForm'].elements['caseNote.password'].value = "";
+				document.forms['caseManagementEntryForm'].elements['caseNote.passwordConfirm'].value = "";
             }
-            else{
-                document.forms['caseManagementEntryForm'].elements[caseNote].focus();
-            }
+
+            <%--Element.toggle('notePasswd');--%>
+            <%--if( $('notePasswd').style.display !== "none" ){--%>
+            <%--    document.forms['caseManagementEntryForm'].elements['caseNote.password'].value = "";--%>
+            <%--    document.forms['caseManagementEntryForm'].elements['caseNote.password'].focus();--%>
+            <%--}--%>
+            <%--else{--%>
+            <%--    document.forms['caseManagementEntryForm'].elements[caseNote].focus();--%>
+            <%--}--%>
+
         }
         return false;
     }
@@ -2923,8 +2940,8 @@ function newNote(e) {
     var input = "<textarea tabindex='7' cols='84' rows='1' wrap='hard' class='txtArea boxsizingBorder' style='line-height:1.0em;' name='caseNote_note' id='caseNote_note" + newNoteIdx + "'>" + reason + "<\/textarea>";
     var passwd = "";
     if( passwordEnabled ) {
-        passwd = "<p style='background-color:#CCCCFF; display:none; margin:0;' id='notePasswd'>Password:&nbsp;<input type='password' name='caseNote.password' value='' autocomplete='off' />" +
-            "Confirmation:&nbsp;<input type='password' name='caseNote.passwordConfirm' value='' autocomplete='off' /><\/p>";
+        passwd = "<p style='background-color:#CCCCFF; display:none; margin:0;' id='notePasswd'><input type='hidden' name='caseNote.password' value='' autocomplete='off' />" +
+            "<input type='hidden' name='caseNote.passwordConfirm' value='' autocomplete='off' /><\/p>";
     }
 
     // the extra BR NBSP at the ends are for IE fix for selection box is out of scrolling pane view.
