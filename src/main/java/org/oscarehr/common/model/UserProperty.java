@@ -217,6 +217,9 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     }
 
     public String[] getValueArray(){
+        if(this.valueArray==null){
+            return new String[0];
+        }
         return this.valueArray;
     }
 
@@ -224,6 +227,9 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
        this.valueArray=va;
     }
     public String getProviderNo() {
+        if(providerNo==null) {
+            return "";
+        }
         return this.providerNo;
     }
 
@@ -232,6 +238,9 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     }
 
     public String getValue() {
+        if(value == null) {
+            return "";
+        }
         return this.value;
     }
 

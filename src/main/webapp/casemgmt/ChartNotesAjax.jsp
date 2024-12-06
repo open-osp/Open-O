@@ -65,6 +65,7 @@
 <%@page import="org.oscarehr.common.model.CasemgmtNoteLock"%>
 <%@page import="org.oscarehr.common.model.EmailLog"%>
 <%@page import="org.oscarehr.managers.EmailManager"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -323,7 +324,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 				}
 			}
 
-			noteStr = StringEscapeUtils.escapeHtml(noteStr);
+			noteStr = Encode.forHtmlContent(noteStr);
 			// for remote notes, the full text is always shown.
 			fulltxt = fullTxtFormat.get(pos) || note.getRemoteFacilityId()!=null;
 			--pos;
@@ -445,7 +446,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 
 							<div>
 								<bean:message key="oscarEncounter.Index.msgLocked" />
-								<%= note.getProviderName() + " " + DateUtils.getDate(note.getUpdateDate(), dateFormat, request.getLocale())%>
+								<%=Encode.forHtmlContent(note.getProviderName()) + " " + DateUtils.getDate(note.getUpdateDate(), dateFormat, request.getLocale())%>
 							</div>
 
 						</div>

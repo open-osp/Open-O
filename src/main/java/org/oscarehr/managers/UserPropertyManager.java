@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -35,14 +36,33 @@ public class UserPropertyManager {
 		if(providerNumber != null) {
 			userProperty = userPropertyDao.getProp(providerNumber, property);
 		}
+
+		if(userProperty == null) {
+			userProperty = new UserProperty();
+			userProperty.setName(property.getName());
+		}
 		return userProperty;
 	}
 
+	/**
+	 * returns all user properties for the logged in provider as a HashMap
+	 * @param loggedInInfo logged in object from session.
+	 * @return Map<key, value>
+	 */
 	public Map<String, String> getAllUserProperties(LoggedInInfo loggedInInfo) {
 		String providerNumber = loggedInInfo.getLoggedInProviderNo();
-		Map<String, String> userProperties = Collections.emptyMap();
+		Map<String, String> userProperties = new HashMap<>(Collections.emptyMap());
+
+		/* insert ALL potential values if active or not.
+		 * This makes the code tidier without null checks everywhere.
+		 */
+		for(UserPropertyKey userPropertyKey : UserPropertyKey.values()) {
+			userProperties.put(userPropertyKey.getName(), "");
+		}
+
+		// overwrite mapped values with actual user set values.
 		if(providerNumber != null) {
-			userProperties = userPropertyDao.getProviderPropertiesAsMap(providerNumber);
+			userProperties.putAll(userPropertyDao.getProviderPropertiesAsMap(providerNumber));
 		}
 		return userProperties;
 	}

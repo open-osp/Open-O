@@ -1383,13 +1383,15 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		/* Fake passwords could be fed in through the request header.
 		 * Double check that the password being set matched the logged in provider.
 		 */
-		UserProperty userProperty = userPropertyManager.getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD);
-		if (passwd != null && passwd.trim().length() > 0 && userProperty != null && passwd.trim().equals(userProperty.getValue())) {
-			note.setPassword(passwd);
-			note.setLocked(true);
-		} else {
-			note.setLocked(false);
-			logger.warn("Potential password override attempt. Password given: {} Logged in provider: {}", passwd, loggedInInfo.getLoggedInProviderNo());
+		if (passwd != null && ! passwd.trim().isEmpty()) {
+			UserProperty userProperty = userPropertyManager.getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD);
+			if(userProperty != null && passwd.trim().equals(userProperty.getValue())) {
+				note.setPassword(passwd);
+				note.setLocked(true);
+			} else {
+				note.setLocked(false);
+				logger.warn("Potential password override attempt. Password given: {} Logged in provider: {}", passwd, loggedInInfo.getLoggedInProviderNo());
+			}
 		}
 
 		Date now = new Date();
