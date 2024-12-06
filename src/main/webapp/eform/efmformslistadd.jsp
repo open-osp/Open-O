@@ -26,67 +26,81 @@
 <!DOCTYPE html>
 <%
     //Lists forms available to add to patient
-    if(session.getValue("user") == null) response.sendRedirect("../logout.jsp");
+    if (session.getValue("user") == null) {
+        response.sendRedirect("../logout.jsp");
+    }
     String demographic_no = request.getParameter("demographic_no");
     String country = request.getLocale().getCountry();
     String parentAjaxId = request.getParameter("parentAjaxId");
     String appointment = request.getParameter("appointment");
 
-    LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
 
-<%@ page import = "java.util.*, java.sql.*, oscar.eform.*"%>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
+<%@ page import="java.util.*, oscar.eform.*" %>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
 
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page import="org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty" %>
 <%
     String user = (String) session.getAttribute("user");
-    if(session.getAttribute("userrole") == null )  response.sendRedirect("../logout.jsp");
-    String roleName$ = (String)session.getAttribute("userrole") + "," + user;
+    if (session.getAttribute("userrole") == null) {
+        response.sendRedirect("../logout.jsp");
+    }
+    String roleName$ = (String) session.getAttribute("userrole") + "," + user;
 
     String orderByRequest = request.getParameter("orderby");
     String orderBy = "";
-    if (orderByRequest == null) orderBy = EFormUtil.NAME;
-    else if (orderByRequest.equals("form_subject")) orderBy = EFormUtil.SUBJECT;
-    else if (orderByRequest.equals("form_date")) orderBy = EFormUtil.DATE;
+    if (orderByRequest == null) {
+        orderBy = EFormUtil.NAME;
+    } else if (orderByRequest.equals("form_subject")) {
+        orderBy = EFormUtil.SUBJECT;
+    } else if (orderByRequest.equals("form_date")) {
+        orderBy = EFormUtil.DATE;
+    }
 
     String groupView = request.getParameter("group_view");
     if (groupView == null) {
-        UserPropertyDAO userPropDAO = (UserPropertyDAO)SpringUtils.getBean("UserPropertyDAO");
+        UserPropertyDAO userPropDAO = (UserPropertyDAO) SpringUtils.getBean("UserPropertyDAO");
         UserProperty usrProp = userPropDAO.getProp(user, UserProperty.EFORM_FAVOURITE_GROUP);
-        if( usrProp != null ) {
+        if (usrProp != null) {
             groupView = usrProp.getValue();
-        }
-        else {
+        } else {
             groupView = "";
         }
     }
 %>
+<%!
+    DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+%>
+<%
+    pageContext.setAttribute("demographic", demographicManager.getDemographic(loggedInInfo, demographic_no));
+%>
 
-
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<html:html locale="true">
-
+<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.oscarehr.managers.DemographicManager" %>
+<html:html>
     <head>
         <title>
             <bean:message key="eform.myform.title"/>
         </title>
 
-        <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
-        <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
-        <link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+        <link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/library/DataTables/datatables.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css" rel="stylesheet">
+
 
         <script src="${pageContext.request.contextPath}/js/global.js"></script>
-        <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
         <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
-        <script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
+        <script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.js"></script>
+        <script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
-
 
         <script>
 			function popupPage(varpage, windowname) {
@@ -104,19 +118,19 @@
 
 			function updateAjax() {
 				var parentAjaxId = "<%=parentAjaxId%>";
-				if( parentAjaxId != "null" ) {
+				if (parentAjaxId != "null") {
 					window.opener.document.forms['encForm'].elements['reloadDiv'].value = parentAjaxId;
 					window.opener.updateNeeded = true;
 				}
 
 			}
 
-			$(document).ready(function() {
-				var shareDocumentsTarget = "../sharingcenter/documents/shareDocumentsAction.jsp";
+			$(document).ready(function () {
+
 				var table = jQuery('#efmTable').DataTable({
 					"pageLength": 15,
-					"lengthMenu": [ [15, 30, 60, 120, -1], [15, 30, 60, 120, '<bean:message key="demographic.search.All"/>'] ],
-					"order": [],
+					"lengthMenu": [[15, 30, 60, 120, -1], [15, 30, 60, 120, '<bean:message key="demographic.search.All"/>']],
+					"order": [[0,'asc']],
 					"language": {
 						"url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
 					}
@@ -124,94 +138,120 @@
 
 			});
         </script>
+        <style>
+            :root *:not(h2, .h2) {
+                font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+                font-size: 12px;
+                overscroll-behavior: none;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            :root a {
+                color:blue;
+            }
+
+            #heading h2 {
+                display: inline-block;
+            }
+
+            #heading span {
+                margin-left:50px;
+            }
+
+            div.menu-columns {
+                display: flex;
+                gap: 10px;
+            }
+
+            div.left-column {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                flex-basis: max-content;
+                text-wrap: nowrap;
+            }
+        </style>
     </head>
 
     <body onunload="updateAjax()">
-    <table class="MainTable" id="scrollNumber1">
-        <tr class="MainTableTopRow">
-            <td class="MainTableTopRowLeftColumn" style="width:175px;"><h4><bean:message
-                    key="eform.myform.msgEForm" /></h4></td>
-            <td class="MainTableTopRowRightColumn">
-                <table class="TopStatusBar" style="width:100%">
-                    <tr>
-                        <td >
-                            <bean:message key="eform.myform.msgFormLib"/>
-                        </td>
-                        <td>&nbsp;
 
-                        </td>
-                        <td style="text-align:right">
-                            <oscar:help keywords="eform" key="app.top1"/> | <a href="javascript:popupStart(300,400,'About.jsp')" ><bean:message key="global.about" /></a> | <a href="javascript:popupStart(300,400,'License.jsp')" ><bean:message key="global.license" /></a>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td class="MainTableLeftColumn" style="vertical-align:top;">
+    <div class="container">
+        <div id="heading">
+        <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus" viewBox="0 0 16 16">
+                <path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5"></path>
+                <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"></path>
+            </svg>
+            Add eForm
+        </h2> <span><c:out value="${demographic.displayName}" /></span>
+        </div>
+        <div class="menu-columns">
 
-                <a href="../demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><bean:message key="demographic.demographiceditdemographic.btnMasterFile" /></a>
+            <div class="left-column">
 
-                <br>
-                <a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>" class="current"> <bean:message key="eform.showmyform.btnAddEForm"/></a><br>
-                <a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.calldeletedformdata.btnGoToForm"/></a><br>
-                <a href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.showmyform.btnDeleted"/></a>
-
-                <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.eform" rights="w" reverse="<%=false%>" >
-                    <br>
-                    <a href="#" onclick="javascript: return popup(600, 1200, '../administration/?show=Forms', 'manageeforms');" style="color: #835921;"><bean:message key="eform.showmyform.msgManageEFrm"/></a>
-                </security:oscarSec>
+                <a href="../demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><bean:message
+                        key="demographic.demographiceditdemographic.btnMasterFile"/></a>
+                <a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"
+                   class="current"> <bean:message key="eform.showmyform.btnAddEForm"/></a>
                 <jsp:include page="efmviewgroups.jsp">
                     <jsp:param name="url" value="../eform/efmformslistadd.jsp"/>
                     <jsp:param name="groupView" value="<%=groupView%>"/>
                 </jsp:include>
 
-            </td>
-            <td class="MainTableRightColumn" style="width:90%; vertical-align:top">
-                <table id="efmTable" style="width:100%" class="display compact nowrap">
+                <a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message
+                        key="eform.calldeletedformdata.btnGoToForm"/></a>
+                <a href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message
+                        key="eform.showmyform.btnDeleted"/></a>
+
+                <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.eform" rights="w"
+                                   reverse="<%=false%>">
+                    <a href="#"
+                       onclick="return popup(600, 1200, '../administration/?show=Forms', 'manageeforms');"
+                       style="color: #835921;"><bean:message key="eform.showmyform.msgManageEFrm"/></a>
+                </security:oscarSec>
+
+            </div>
+            <div class="right-column">
+
+                <table id="efmTable" class="table table-striped table-compact dataTable no-footer">
                     <thead>
                     <tr>
-                        <th><a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&group_view=<%=groupView%>&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.showmyform.btnFormName"/></a></th>
-                        <th><a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&group_view=<%=groupView%>&orderby=form_subject&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.showmyform.btnSubject"/></a></th>
-                        <!--<th><a href="myform.jsp?demographic_no=<%=demographic_no%>&group_view=<%=groupView%>&orderby=file_name"><bean:message key="eform.myform.btnFile"/></a></th>-->
-                        <th><a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&group_view=<%=groupView%>&orderby=form_date&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.showmyform.formDate"/></a></th>
-                        <!--<th><a href="myform.jsp?demographic_no=<%=demographic_no%>&group_view=<%=groupView%>"><bean:message key="eform.showmyform.formTime"/></a></th> -->
+                        <th><bean:message key="eform.showmyform.btnFormName"/></th>
+                        <th><bean:message key="eform.showmyform.btnSubject"/></th>
+                        <th><bean:message key="eform.showmyform.formDate"/></th>
                     </tr>
                     </thead>
                     <tbody>
-                            <%
-  ArrayList<HashMap<String, ? extends Object>> eForms;
-  if (groupView.equals("") || groupView.equals("default")) {
-      eForms = EFormUtil.listEForms(orderBy, EFormUtil.CURRENT, roleName$);
-  } else {
-      eForms = EFormUtil.listEForms(orderBy, EFormUtil.CURRENT, groupView, roleName$);
-  }
-  if (eForms.size() > 0) {
-      for (int i=0; i<eForms.size(); i++) {
-    	  HashMap<String, ? extends Object> curForm = eForms.get(i);
-%>
+                    <%
+                        ArrayList<HashMap<String, ? extends Object>> eForms;
+                        if (groupView.equals("") || groupView.equals("default")) {
+                            eForms = EFormUtil.listEForms(orderBy, EFormUtil.CURRENT, roleName$);
+                        } else {
+                            eForms = EFormUtil.listEForms(orderBy, EFormUtil.CURRENT, groupView, roleName$);
+                        }
+                        if (eForms.size() > 0) {
+                            for (int i = 0; i < eForms.size(); i++) {
+                                HashMap<String, ? extends Object> curForm = eForms.get(i);
+                    %>
                     <tr>
-                        <td style="padding-left: 7px">
-                            <a HREF="#" ONCLICK ="javascript: popupPage('efmformadd_data.jsp?fid=<%=curForm.get("fid")%>&demographic_no=<%=demographic_no%>&appointment=<%=appointment%>','<%=curForm.get("fid") + "_" + demographic_no %>'); return true;"  TITLE='Add This eForm' OnMouseOver="window.status='Add This eForm' ; return true">
-                                <%=curForm.get("formName")%>
+                        <td>
+                            <a HREF="#"
+                               ONCLICK="popupPage('efmformadd_data.jsp?fid=<%=curForm.get("fid")%>&demographic_no=<%=demographic_no%>&appointment=<%=appointment%>','<%=curForm.get("fid") + "_" + demographic_no %>'); return true;"
+                               TITLE='Add This eForm' OnMouseOver="window.status='Add This eForm' ; return true">
+                                <%= Encode.forHtmlContent((String) curForm.get("formName")) %>
                             </a></td>
-                        <td style="padding-left: 7px"><%=curForm.get("formSubject")%></td>
-                        <td style='text-align:center'><%=curForm.get("formDate")%></td>
+                        <td><%=Encode.forHtmlContent((String) curForm.get("formSubject"))%>
+                        </td>
+                        <td><%=curForm.get("formDate")%>
+                        </td>
                     </tr>
-                            <%
-     }
- } %>
-
+                    <%
+                            }
+                        } %>
+                    </tbody>
                 </table>
-            </td>
-        </tr>
-        <tr>
-            <td class="MainTableBottomRowLeftColumn">
-            </td>
-            <td class="MainTableBottomRowRightColumn">
-
-            </td>
-        </tr>
-    </table>
+            </div>
+        </div>
+    </div>
     </body>
 </html:html>

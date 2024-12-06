@@ -34,7 +34,7 @@
 
 %>
 
-<html:html locale="true">
+<html:html>
 <head>
 <html:base />
     <title>Measurement Mapping Configuration</title>
