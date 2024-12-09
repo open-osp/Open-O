@@ -48,6 +48,7 @@
 <%@ page import="org.oscarehr.common.model.*" %>
 <%@ page import="oscar.oscarProvider.data.ProviderData" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
 
 <%
 	OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
@@ -558,9 +559,28 @@ function signatureHandler(e) {
 		if (hasFaxNumber) {
 			e.target.onbeforeunload = unloadMess;
 		}
+		<% }
+
+		if (bean.getStashSize() > 0) {
+		%>
+		try {
+			let signId = new URLSearchParams(e.storedImageUrl.split('?')[1]).get('digitalSignatureId')
+			this.setDigitalSignatureToRx(signId, <%=bean.getStashItem(0).getScript_no() %>);
+		} catch (e) {
+			console.error(e);
+		}
 		<% } %>
+
 		refreshImage();
 	}
+}
+
+function setDigitalSignatureToRx(digitalSignatureId, scriptId) {
+	new Ajax.Request('<%=request.getContextPath() %>/oscarRx/saveDigitalSignature.do?method=saveDigitalSignature'
+			+ '&digitalSignatureId=' + digitalSignatureId
+			+ "&scriptId=" + scriptId, {
+		method: 'get'
+	});
 }
 
 function toggleFaxButtons(disabled) {
@@ -678,7 +698,7 @@ function toggleView(form) {
 				<td width=420px>
 				<div class="DivContentPadding"><!-- src modified by vic, hsfo -->
 				<iframe id='preview' name='preview' width=420px height=890px
-					src="<%= dx<0?"Preview2.jsp?scriptId="+request.getParameter("scriptId")+"&rePrint="+reprint+"&pharmacyId="+request.getParameter("pharmacyId"):dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
+					src="<%= dx<0?"Preview2.jsp?scriptId="+bean.getStashItem(0).getScript_no()+"&rePrint="+reprint+"&pharmacyId="+request.getParameter("pharmacyId"):dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
 					align=center border=0 frameborder=0></iframe></div>
 				</td>
 
@@ -810,20 +830,20 @@ function toggleView(form) {
 					</tr>
 					<% if (OscarProperties.getInstance().isRxFaxEnabled()) {
 							FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
-							List<FaxConfig> faxConfigs = faxManager.getFaxGatewayAccounts(loggedInInfo);																							    
+							List<FaxConfig> faxConfigs = faxManager.getFaxGatewayAccounts(loggedInInfo);
 					    %>
 					<tr>
-						<td style="padding-bottom: 0">							
+						<td style="padding-bottom: 0">
 							<span>From Fax Number:</span>
 							<select id="faxNumber" name="faxNumber">
 							<%
 								for( FaxConfig faxConfig : faxConfigs ) {
 							%>
 									<option value="<%=faxConfig.getFaxNumber()%>" selected="<%=providerFax.equals(faxConfig.getFaxNumber())%>"><%=faxConfig.getAccountName()%></option>
-							<%	    
-								}                                 	
+							<%
+								}
 							%>
-							</select>							
+							</select>
 						</td>
 					</tr>
 					<tr>
@@ -836,10 +856,10 @@ function toggleView(form) {
                             <td style="padding-top: 0"><span><input type=button value="Fax &amp; Add to encounter note"
                                     class="ControlPushButton" id="faxPasteButton" style="width: 210px"
                                     onClick="printPaste2Parent(false, true, true);sendFax();" disabled/></span>
-                                 
+
                            </td>
                     </tr>
-					
+
                     <% } %>
 					<tr>
 						<!--td width=10px></td-->
@@ -881,16 +901,19 @@ function toggleView(form) {
 
                                         <%}%>
 					<% if (OscarProperties.getInstance().isRxSignatureEnabled() && !OscarProperties.getInstance().getBooleanProperty("signature_tablet", "yes")) { %>
-                                        
-                    <tr>
-						<td colspan=2 style="font-weight: bold"><span>Signature</span></td>
-					</tr>               
-					<tr>
-                        <td>
-                            <input type="hidden" name="<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>" value="<%=signatureRequestId%>" />
-                            <iframe style="width:500px; height:132px;"id="signatureFrame" src="<%= request.getContextPath() %>/signature_pad/tabletSignature.jsp?inWindow=true&<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>=<%=signatureRequestId%>" ></iframe>
-                        </td>
-					</tr>
+						<% if (bean.getStashSize() == 0 || Objects.isNull(bean.getStashItem(0).getDigitalSignatureId())) { %>
+							<tr>
+								<td colspan=2 style="font-weight: bold"><span>Signature</span></td>
+							</tr>
+							<tr>
+								<td>
+									<input type="hidden" name="<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>"
+										   value="<%=signatureRequestId%>"/>
+									<iframe style="width:500px; height:132px;" id="signatureFrame"
+											src="<%= request.getContextPath() %>/signature_pad/tabletSignature.jsp?inWindow=true&<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>=<%=signatureRequestId%>&saveToDB=true&demographicNo=<%=bean.getDemographicNo()%>&<%=ModuleType.class.getSimpleName()%>=<%=ModuleType.PRESCRIPTION%>"></iframe>
+								</td>
+							</tr>
+						<% } %>
 		            <%}%>
                     <tr>
 						<td colspan=2 style="font-weight: bold"><span><bean:message key="ViewScript.msgDrugInfo"/></span></td>

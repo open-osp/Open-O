@@ -75,6 +75,9 @@ public class Prescription extends AbstractModel<Integer> implements Serializable
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastUpdateDate;
 
+	@Column(name = "digital_signature_id")
+	private Integer digitalSignatureId;
+
 	@PreRemove
 	protected void jpaPreventDelete() {
 		throw (new UnsupportedOperationException("Remove is not allowed for this type of item."));
@@ -180,5 +183,13 @@ public class Prescription extends AbstractModel<Integer> implements Serializable
 	public int getReprintCount() {
 		if (!isReprinted()) return 0;
 		return getDatesReprinted().split(",").length;
+	}
+
+	public Integer getDigitalSignatureId() {
+		return digitalSignatureId;
+	}
+
+	public void setDigitalSignatureId(Integer digitalSignatureId) {
+		this.digitalSignatureId = digitalSignatureId;
 	}
 }
