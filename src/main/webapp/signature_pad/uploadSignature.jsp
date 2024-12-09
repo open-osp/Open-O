@@ -55,6 +55,7 @@
 		String demographic = request.getParameter("demographicNo");
 		boolean saveToDB = "true".equals(request.getParameter("saveToDB"));
 		String signatureKey = request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY);
+		ModuleType moduleType = ModuleType.getByName(request.getParameter(ModuleType.class.getSimpleName()));
 
 		if(signatureKey != null) {
 			String filename = DigitalSignatureUtils.getTempFilePath(signatureKey);
@@ -109,7 +110,7 @@
                 DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
                 DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo,
 						request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY),
-						demographicNo, null);
+						demographicNo, moduleType);
 				if (signature != null) {
 					signatureId = "" + signature.getId();
 				}

@@ -25,5 +25,14 @@ package org.oscarehr.common.model.enumerator;
 public enum ModuleType {
     CONSULTATION,
     E_FORM,
-    PRESCRIPTION
+    PRESCRIPTION;
+
+    public static ModuleType getByName(String name) {
+        try {
+            return valueOf(name);
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
 }
