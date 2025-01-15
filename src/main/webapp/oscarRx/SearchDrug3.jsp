@@ -2070,13 +2070,13 @@ function updateReRxDrugId(elementId){
 }
 
 
-function removeReRxDrugId(drugId){
-	 if(drugId!=null){
-	   var data="reRxDrugId="+drugId+"&action=removeFromReRxDrugIdList&rand="+Math.floor(Math.random()*10001);
-	   var url= "<c:out value="${ctx}"/>" + "/oscarRx/WriteScript.do?parameterValue=updateReRxDrug";
-	   new Ajax.Request(url, {method: 'get',parameters:data});
-	}
-	}
+function removeReRxDrugId(drugId) {
+    if (drugId != null) {
+        const data = "reRxDrugId=" + drugId + "&action=removeFromReRxDrugIdList&rand=" + Math.floor(Math.random() * 10001);
+        const url = "<c:out value="${ctx}"/>" + "/oscarRx/WriteScript.do?parameterValue=updateReRxDrug";
+        new Ajax.Request(url, {method: 'get', parameters: data});
+    }
+}
 
 //represcribe a drug
 function represcribe(element, toArchive){
@@ -2105,6 +2105,79 @@ function represcribe(element, toArchive){
             }});
 
    }
+}
+
+function updateReRxStatusForPrescribedDrug(element, drugId) {
+    const uiRefId = element.id.split('_')[1];
+    if (drugId == null || uiRefId == null) {
+        return;
+    }
+
+    if (element.checked === true) {
+        this.addDrugToReRxList(uiRefId, drugId);
+    } else {
+        this.removeDrugFromReRxList(uiRefId, drugId);
+    }
+}
+
+function addDrugToReRxList(uiRefId, drugId) {
+    skipParseInstr = true;
+
+    this.addDrugToReRxListInSession(uiRefId, drugId);
+    this.rePrescribe2(uiRefId, drugId);
+}
+
+function rePrescribe2(uiRefId, drugId) {
+    const data = "drugId=" + drugId;
+    const url = "<c:out value="${ctx}"/>" + "/oscarRx/rePrescribe2.do?method=represcribe2&rand=" + uiRefId;
+    new Ajax.Updater('rxText', url, {
+        method: 'get', parameters: data, evalScripts: true,
+        insertion: Insertion.Bottom, onSuccess: function (transport) {
+            // updateCurrentInteractions();
+        }
+    });
+}
+
+function addDrugToReRxListInSession(uiRefId, drugId) {
+    const dataUpdateId = "reRxDrugId=" + drugId + "&action=addToReRxDrugIdList&rand=" + uiRefId;
+    const urlUpdateId = "<c:out value="${ctx}"/>" + "/oscarRx/WriteScript.do?parameterValue=updateReRxDrug";
+    new Ajax.Request(urlUpdateId, {method: 'get', parameters: dataUpdateId});
+}
+
+function removeDrugFromReRxList(uiRefId, drugId) {
+    this.removeElementFromUI(this.getPrescribingDrugCardByUiRefId(uiRefId));
+    this.removeReRxDrugId(drugId);
+}
+
+function removePrescribingDrug(cardId, drugId) {
+    const uiRefId = cardId.id.split('_')[1];
+    this.deletePrescribingDrugFromUI(uiRefId, drugId);
+    this.uncheckReRxForExistingPrescribedDrug(uiRefId, drugId)
+}
+
+function deletePrescribingDrugFromUI(uiRefId, drugId) {
+    this.removeElementFromUI(this.getPrescribingDrugCardByUiRefId(uiRefId));
+    this.deletePrescribe(drugId);
+}
+
+function removeElementFromUI(element) {
+    if (element)
+        element.remove();
+}
+
+function uncheckReRxForExistingPrescribedDrug(uiRefId, drugId) {
+    const checkbox = this.getReRxCheckboxByUiRefId(uiRefId);
+    if (checkbox)
+        checkbox.checked = false;
+    this.removeReRxDrugId(drugId);
+}
+
+function getPrescribingDrugCardByUiRefId(uiRefId) {
+    return $('set_' + uiRefId);
+}
+
+function getReRxCheckboxByUiRefId(uiRefId) {
+    return $('reRxCheckBox_' + uiRefId);
 }
 
 function updateQty(element){

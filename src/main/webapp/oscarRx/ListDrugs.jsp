@@ -265,8 +265,16 @@ if (heading != null){
            	%>
             <td width="20px" align="center" valign="top">
                 <%if (prescriptDrug.getRemoteFacilityName() == null) {%>
-                <input id="reRxCheckBox_<%=prescriptIdInt%>" type=CHECKBOX onclick="updateReRxDrugId(this.id)" <%if(reRxDrugList.contains(prescriptIdInt.toString())){%>checked<%}%> name="checkBox_<%=prescriptIdInt%>">
-                <a name="rePrescribe" style="vertical-align:top" id="reRx_<%=prescriptIdInt%>" <%=styleColor%> href="javascript:void(0)" onclick="represcribe(this, <%=prescriptIdInt%>)">ReRx</a>
+                <div style="display: flex; align-items: center;">
+                    <% String cbxId = "reRxCheckBox_" + prescriptIdInt + Math.abs(new Random().nextInt(10001)); %>
+                    <input id="<%=cbxId%>" type=CHECKBOX
+                           onclick="updateReRxStatusForPrescribedDrug(this, <%=prescriptIdInt%>)"
+                           <%if(reRxDrugList.contains(prescriptIdInt.toString())){%>checked<%}%>
+                           name="checkBox_<%=prescriptIdInt%>">
+                    <label for="<%=cbxId%>">ReRx</label>
+                </div>
+<%--                <a name="rePrescribe" style="vertical-align:top" id="reRx_<%=prescriptIdInt%>" <%=styleColor%>--%>
+<%--                   href="javascript:void(0)" onclick="rePrescribeNew(this, <%=prescriptIdInt%>)">ReRx</a>--%>
                 <%} else {%>
                 <form action="<%=request.getContextPath()%>/oscarRx/searchDrug.do" method="post">
                     <input type="hidden" name="demographicNo" value="<%=patient.getDemographicNo()%>" />

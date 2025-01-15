@@ -311,7 +311,12 @@ public final class RxRePrescribeAction extends DispatchAction {
 			RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
 			// create copy of Prescription
 			RxPrescriptionData.Prescription rx = rxData.newPrescription(beanRX.getProviderNo(), beanRX.getDemographicNo(), oldRx); // set writtendate, rxdate ,enddate=null.
-			Long rand = Math.round(Math.random() * 1000000);
+			long rand;
+			try {
+				rand = Long.parseLong(request.getParameter("rand"));
+			} catch (NumberFormatException e) {
+				rand = Math.round(Math.random() * 1000000);
+			}
 			rx.setRandomId(rand);
 
 			request.setAttribute("BoxNoFillFirstLoad", "true");
