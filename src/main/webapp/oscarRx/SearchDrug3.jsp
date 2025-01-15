@@ -2107,6 +2107,12 @@ function represcribe(element, toArchive){
    }
 }
 
+/**
+ * Updates the re-prescribing status of a prescribed drug in the UI and session.
+ *
+ * @param element The checkbox element that triggered the update.
+ * @param drugId The ID of the drug being updated.
+ */
 function updateReRxStatusForPrescribedDrug(element, drugId) {
     const uiRefId = element.id.split('_')[1];
     if (drugId == null || uiRefId == null) {
@@ -2120,6 +2126,12 @@ function updateReRxStatusForPrescribedDrug(element, drugId) {
     }
 }
 
+/**
+ * Sets off instruction parsing and adds a drug to the re-prescribe list in the UI and session.
+ *
+ * @param uiRefId The unique ID used in the UI to reference this drug.
+ * @param drugId The ID of the drug to add.
+ */
 function addDrugToReRxList(uiRefId, drugId) {
     skipParseInstr = true;
 
@@ -2127,6 +2139,12 @@ function addDrugToReRxList(uiRefId, drugId) {
     this.rePrescribe2(uiRefId, drugId);
 }
 
+/**
+ * Add ReRx drug to UI by making an AJAX request to update the 'rxText' element.
+ *
+ * @param uiRefId The unique ID used in the UI to reference this drug.
+ * @param drugId The ID of the drug to re-prescribe.
+ */
 function rePrescribe2(uiRefId, drugId) {
     const data = "drugId=" + drugId;
     const url = "<c:out value="${ctx}"/>" + "/oscarRx/rePrescribe2.do?method=represcribe2&rand=" + uiRefId;
@@ -2138,33 +2156,64 @@ function rePrescribe2(uiRefId, drugId) {
     });
 }
 
+/**
+ * Adds a drug to the re-prescribe list in the session.
+ *
+ * @param uiRefId The unique ID used in the UI to reference this drug.
+ * @param drugId The ID of the drug to add.
+ */
 function addDrugToReRxListInSession(uiRefId, drugId) {
     const dataUpdateId = "reRxDrugId=" + drugId + "&action=addToReRxDrugIdList&rand=" + uiRefId;
     const urlUpdateId = "<c:out value="${ctx}"/>" + "/oscarRx/WriteScript.do?parameterValue=updateReRxDrug";
     new Ajax.Request(urlUpdateId, {method: 'get', parameters: dataUpdateId});
 }
 
+/**
+ * Removes a drug from the re-prescribe list and updates the UI.
+ *
+ * @param uiRefId The unique ID used in the UI to reference this drug.
+ * @param drugId The ID of the drug to remove.
+ */
 function removeDrugFromReRxList(uiRefId, drugId) {
     this.removeElementFromUI(this.getPrescribingDrugCardByUiRefId(uiRefId));
     this.removeReRxDrugId(drugId);
 }
 
+/**
+ * Removes a prescribing drug entry from both the UI and the backend.
+ * @param cardId The id of the card from which to delete
+ * @param drugId The id of the drug to remove
+ */
 function removePrescribingDrug(cardId, drugId) {
     const uiRefId = cardId.id.split('_')[1];
     this.deletePrescribingDrugFromUI(uiRefId, drugId);
     this.uncheckReRxForExistingPrescribedDrug(uiRefId, drugId)
 }
 
+/**
+ * Deletes a prescribing drug from UI and calls deletePrescribe.
+ * @param uiRefId The unique id for referencing the UI element.
+ * @param drugId The id of the drug to delete.
+ */
 function deletePrescribingDrugFromUI(uiRefId, drugId) {
     this.removeElementFromUI(this.getPrescribingDrugCardByUiRefId(uiRefId));
     this.deletePrescribe(drugId);
 }
 
+/**
+ * Removes a DOM element from the UI.
+ * @param {HTMLElement} element The element to remove.
+ */
 function removeElementFromUI(element) {
     if (element)
         element.remove();
 }
 
+/**
+ * Unchecks the "re-prescribe" checkbox for an existing prescribed drug and removes its ID from the re-prescribe list.
+ * @param uiRefId The UI reference ID for the drug.
+ * @param drugId The ID of the drug.
+ */
 function uncheckReRxForExistingPrescribedDrug(uiRefId, drugId) {
     const checkbox = this.getReRxCheckboxByUiRefId(uiRefId);
     if (checkbox)
@@ -2172,10 +2221,20 @@ function uncheckReRxForExistingPrescribedDrug(uiRefId, drugId) {
     this.removeReRxDrugId(drugId);
 }
 
+/**
+ * Gets the prescribing/staged drug container element by its UI reference ID.
+ * @param uiRefId The UI reference ID.
+ * @returns {HTMLElement|null} The drug container element, or null if not found.
+ */
 function getPrescribingDrugCardByUiRefId(uiRefId) {
     return $('set_' + uiRefId);
 }
 
+/**
+ * Gets the re-prescribe checkbox element by its UI reference ID.
+ * @param uiRefId The UI reference ID.
+ * @returns {HTMLElement|null} The checkbox element, or null if not found.
+ */
 function getReRxCheckboxByUiRefId(uiRefId) {
     return $('reRxCheckBox_' + uiRefId);
 }
