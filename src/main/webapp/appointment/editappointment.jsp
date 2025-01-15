@@ -271,6 +271,23 @@
         padding: 10px !important;
     }
 
+    .ui-selectmenu-button.ui-button {
+        width: 100% !important;
+    }
+
+    .ui-button {
+        padding:10px !important;
+    }
+
+    .ui-icon {
+        width: 12px !important;
+        height: 12px !important;
+    }
+
+    textarea {
+        width: 100%;
+    }
+
     body, html {
   --color: #945;
   --size: 2rem;
@@ -1006,7 +1023,8 @@ function locale(){
 		  	%>
                </select>
 	        <% } else { %>
-		        <input type="text" class="form-control" name="location" tabindex="4" value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getLocation():request.getParameter("location"))%>" >
+		        <input type="text" class="form-control" name="location" tabindex="4"
+                       value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getLocation():request.getParameter("location"))%>" >
 	        <% } %>
         <% } %>
             </td>
@@ -1103,24 +1121,23 @@ function locale(){
         <tr>
             <td>
 	            <label><bean:message key="Appointment.formType"/>:</label>
-                <!-- <input type="button" class="btn" name="typeButton" value="<bean:message key="Appointment.formType"/>" style="margin-bottom:10px;"  onClick="openTypePopup();"> -->
              </td>
              <td>
-                <!--<input type="text" name="type"
-                    value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getType():request.getParameter("type").equals("")?"":request.getParameter("type"))%>" >-->
+
                 <select name="type" class="form-control"  id="type" title="<bean:message key="billing.billingCorrection.msgSelectVisitType"/>" >
                 <option data-dur="" data-reason=""></option><!-- important leave a blank top entry  -->
 
-        <% AppointmentTypeDao appDao = (AppointmentTypeDao) SpringUtils.getBean("appointmentTypeDao");
+        <% AppointmentTypeDao appDao = SpringUtils.getBean(AppointmentTypeDao.class);
            List<AppointmentType> types = appDao.listAll();
-                for(int j = 0;j < types.size(); j++) {
+                for(AppointmentType type : types) {
 %>
-                    <option data-dur="<%= types.get(j).getDuration() %>"
-                            data-reason="<%= Encode.forHtmlAttribute(types.get(j).getReason()) %>"
-                            data-loc="<%= Encode.forHtmlAttribute(types.get(j).getLocation()) %>"
-                            data-notes="<%= Encode.forHtmlAttribute(types.get(j).getNotes()) %>"
-                            data-resources="<%= Encode.forHtmlAttribute(types.get(j).getResources()) %>" >
-                        <%=Encode.forHtml(types.get(j).getName()) %>
+                    <option data-dur="<%= type.getDuration() %>"
+                            data-reason="<%= Encode.forHtmlAttribute(type.getReason()) %>"
+                            data-loc="<%= Encode.forHtmlAttribute(type.getLocation()) %>"
+                            data-notes="<%= Encode.forHtmlAttribute(type.getNotes()) %>"
+                            data-resources="<%= Encode.forHtmlAttribute(type.getResources()) %>"
+                            <%= type.getName().equalsIgnoreCase(appt.getType()) ? "selected" : ""%>>
+                        <%=Encode.forHtml(type.getName())%>
                     </option>
                 <% } %>
                 </select>

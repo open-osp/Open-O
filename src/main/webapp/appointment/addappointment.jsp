@@ -221,6 +221,23 @@
 		padding: 10px !important;
 	}
 
+	.ui-selectmenu-button.ui-button {
+		width: 100% !important;
+	}
+
+	.ui-button {
+		padding:10px !important;
+	}
+
+	.ui-icon {
+		width: 12px !important;
+		height: 12px !important;
+	}
+
+	textarea {
+		width: 100%;
+	}
+
 	body, html {
   --color: #945;
   --size: 2rem;
