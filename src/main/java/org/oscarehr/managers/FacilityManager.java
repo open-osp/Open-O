@@ -24,15 +24,14 @@
 
 package org.oscarehr.managers;
 
-import java.util.List;
-
 import org.oscarehr.common.dao.FacilityDao;
 import org.oscarehr.common.model.Facility;
 import org.oscarehr.util.LoggedInInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import oscar.log.LogAction;
+
+import java.util.List;
 
 @Service
 public class FacilityManager {
@@ -44,10 +43,6 @@ public class FacilityManager {
 		if (results.size() == 0) {
 			return (null);
 		} else {
-
-			//--- log action ---
-			LogAction.addLogSynchronous(loggedInInfo,"FacilityManager.getDefaultFacility", null);
-
 			return (results.get(0));
 		}
 	}

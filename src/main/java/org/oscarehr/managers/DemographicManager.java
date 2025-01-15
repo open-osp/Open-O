@@ -272,10 +272,6 @@ public class DemographicManager {
 		DemographicCust result = null;
 		result = demographicCustDao.find(id);
 
-		//--- log action ---
-		if (result != null) {
-			LogAction.addLogSynchronous(loggedInInfo, "DemographicManager.getDemographicCust", "id=" + id.toString());
-		}
 		return result;
 	}
 
@@ -1204,10 +1200,6 @@ public class DemographicManager {
 					}
 				}
 			}
-			
-			LogAction.addLogSynchronous(loggedInInfo,"DemographicManager.getMostResponsibleProviderFromHealthCareTeam", 
-					"Retrieving MRP for Demographic " + demographicNo+"");
-			
 			return DemographicContactCreator.addContactDetailsToDemographicContact( mrp );
 		}
 
