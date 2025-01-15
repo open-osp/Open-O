@@ -185,32 +185,43 @@
 
 
 
-<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
-<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
-
-
-<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
-
+<link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<%--<link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">--%>
+<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css" rel="stylesheet">
 <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
-<script src="${pageContext.request.contextPath}/library/jquery/jquery-migrate-3.4.0.js"></script>
-
 <script src="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
 
 <script src="<%= request.getContextPath() %>/js/global.js"></script>
 <script src="<%= request.getContextPath() %>/js/checkDate.js"></script>
 <script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
 <style>
+
+	:root *:not(h2):not(h4):not(.input-group-btn .btn) {
+		font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+		font-size: 12px;
+		overscroll-behavior: none;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		line-height: 1 !important;
+	}
+
     .form-wrapper {
         display:flex;
     }
-    * table tr td {
-        border:none !important;
-    }
-body, html {
+
+	* table tr td, * table {
+		border:none !important;
+	}
+	.panel {
+		margin: 0 !important;
+	}
+	.panel-body {
+		padding: 10px !important;
+	}
+
+	body, html {
   --color: #945;
   --size: 2rem;
   --border: calc(var(--size) * 0.125);
@@ -230,29 +241,6 @@ body, html {
   font-size: var(--size);
   padding: var(--margin) var(--margin) var(--margin) var(--marginLeft);
   transition: backgroundImage 0.25s;
-}
-</style>
-<!-- override styles for ui select menu -->
-<style>
-.ui-selectmenu-button.ui-button {
-    background-color: white;
-    width: 190px;
-    margin-bottom: 10px;
-
-}
-.ui-icon-triangle-1-s {
-	border-style: solid;
-	border-width: 0.142em 0.142em 0 0;
-	content: '';
-	display: inline-block;
-	height: 0.33em;
-	left: 0.6em;
-	position: relative;
-	top: 0.17em;
-	transform: rotate(135deg);
-	vertical-align: top;
-	width: 0.34em;
-
 }
 
 </style>
@@ -292,12 +280,6 @@ console.log("minute="+minute+" minDeg ="+minuteDeg);
         document.getElementById("header").style.backgroundImage = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='18.5' fill='none' stroke='%23222' stroke-width='3' /><path d='M20,4 20,8 M4,20 8,20 M36,20 32,20 M20,36 20,32' stroke='%23bbb' stroke-width='1' /><circle cx='20' cy='20' r='2' fill='%23222' stroke='%23222' stroke-width='2' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,4 20.5,4 21.5,24.5 Z' fill='%23222' style='transform:rotate(`+minuteDeg+`deg); transform-origin: 50% 50%;' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,8.5 20.5,8.5 21.5,24.5 Z' style='transform:rotate(`+hourDeg+`deg); transform-origin: 50% 50%;' /></svg>")`;
       }
 }
-
-</script>
-
-
-<oscar:customInterface section="addappt"/>
-<script>
 
 function onAdd() {
     return calculateEndTime() ;
@@ -541,7 +523,7 @@ function pasteAppt(multipleSameDayGroupAppt) {
 
 
 	$(document).ready(function() {
-		$( document ).tooltip();
+		// $( document ).tooltip();
 
 		var url = "<%= request.getContextPath() %>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=true";
 
@@ -1096,18 +1078,31 @@ function locale(){
 	        </tr>
 	        <tr>
 	            <td>
-	                 <input type="submit" name="searchBtn" id="searchBtn" class="btn"
-	                    onclick="parseSearch(); document.forms['ADDAPPT'].displaymode.value='Search ';"
-	                    value="<bean:message key="appointment.addappointment.btnSearch"/>">
+		            <label for="keyword">
+			            Patient:
+			            <input type="button" value="(<bean:message key="Appointment.doNotBook" />)" class="btn btn-link" style="padding-left:0;" onclick="onNotBook()" >
+		            </label>
 	            </td>
 	            <td>
+		            <div class="input-group">
 	                <%
 	                    String name="";
 	                    name = String.valueOf((bFirstDisp && !bFromWL)?"":request.getParameter("name")==null?session.getAttribute("appointmentname")==null?"":session.getAttribute("appointmentname"):request.getParameter("name"));
 	                %>
+			            <span class="input-group-btn" id="demoNumber">
+			            <input type="text"  name="demographic_no" id="demographic_no" class="form-control" onfocus="onBlockFieldFocus(this)"
+			                   value='<%=(bFirstDisp && !bFromWL)?"":request.getParameter("demographic_no").equals("")?"":request.getParameter("demographic_no")%>' readonly="readonly">
+						</span>
 	                <input type="text" name="keyword" id="keyword" class="form-control"
 	                        value="<%=Encode.forHtmlAttribute(name)%>"
-	                        placeholder="<bean:message key="Appointment.formNamePlaceholder" />">
+	                        placeholder="<bean:message key="Appointment.formNamePlaceholder" />" aria-describedby="demoNumber">
+
+			            <span class="input-group-btn">
+				            <input type="submit" name="searchBtn" id="searchBtn" class="btn btn-default"
+				                   onclick="parseSearch(); document.forms['ADDAPPT'].displaymode.value='Search ';"
+				                   value="<bean:message key="appointment.addappointment.btnSearch"/>">
+			            </span>
+		            </div>
 	            </td>
 	        </tr>
 	        <tr>
@@ -1136,7 +1131,8 @@ function locale(){
 	            </td>
 	        </tr>
 	        <tr>
-	            <td></td><td>
+	            <td></td>
+		        <td>
 			    <textarea id="reason" name="reason" class="form-control" tabindex="2" rows="2" style="resize:none;" placeholder="<bean:message key="Appointment.formReason" />" cols="18" maxlength="80"><%=bFirstDisp?"":request.getParameter("reason").equals("")?"":Encode.forHtmlContent(request.getParameter("reason"))%></textarea>
 	            </td>
 	        </tr>
@@ -1185,7 +1181,7 @@ function locale(){
 				    %>
 	            </select>
 	            <% } else { %>
-	            <input type="TEXT" name="location" tabindex="4" value="<%=loc%>" width="25" height="20" border="0" hspace="2">
+	            <input type="TEXT" name="location" tabindex="4" value="<%=loc%>" class="form-control">
 	            <% } %>
 			<% } %>
 	            </td>
@@ -1195,23 +1191,12 @@ function locale(){
 	                <bean:message key="Appointment.formCreator" />:
 	            </td>
 	            <td>
-	                <input type="TEXT" name="user_id" readonly
+	                <input type="TEXT" name="user_id" class="form-control"
 	                    value='<%=bFirstDisp?(Encode.forHtmlAttribute(userlastname)+", "+Encode.forHtmlAttribute(userfirstname)):request.getParameter("user_id").equals("")?"Unknown":Encode.forHtmlAttribute(request.getParameter("user_id"))%>'
-	                    >
+	                   readonly="readonly" >
 	            </td>
 	        </tr>
 
-	        <% if (pros.isPropertyActive("mc_number")) { %>
-	        <tr>
-	            <td>
-	                <bean:message key="Appointment.formMC" />:
-	            </td>
-	            <td>
-	                <input type="text" name="appt_mc_number" tabindex="4" />
-	            </td>
-	        </tr>
-
-	        <% } %>
 
 	    </table>
 
@@ -1225,7 +1210,7 @@ function locale(){
 	            if (strEditable!=null&&strEditable.equalsIgnoreCase("yes")){
 	            %>
 
-	<select name="status" style="background-color:<%=(allStatus.get(0)).getColor()%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor' >
+	<select class="form-control" name="status" style="background-color:<%=(allStatus.get(0)).getColor()%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor' >
 	                    <% for (int i = 0; i < allStatus.size(); i++) { %>
 	                    <option class="<%=(allStatus.get(i)).getStatus()%>" style="background-color:<%=(allStatus.get(i)).getColor()%>"
 	                            value="<%=(allStatus.get(i)).getStatus()%>"
@@ -1234,7 +1219,7 @@ function locale(){
 	            </select> <%
 	            }
 	            if (strEditable==null || !strEditable.equalsIgnoreCase("yes")){
-	            %> <input type="text" name="status"
+	            %> <input type="text" name="status" class="form-control"
 						value='<%=bFirstDisp?"t":request.getParameter("status")==null?"":request.getParameter("status").equals("")?"":request.getParameter("status")%>'
 						> <%}%>
 	            </td>
@@ -1244,10 +1229,10 @@ function locale(){
 	                <bean:message key="Appointment.formType"/>:
 	             </td>
 	             <td>
-	                <select name="type" id="type" title="<bean:message key="billing.billingCorrection.msgSelectVisitType"/>">
+	                <select class="form-control" name="type" id="type" title="<bean:message key="billing.billingCorrection.msgSelectVisitType"/>" >
 	                <option data-dur="" data-reason=""></option><!-- important leave a blank top entry  -->
 
-	        <% AppointmentTypeDao appDao = (AppointmentTypeDao) SpringUtils.getBean("appointmentTypeDao");
+	        <% AppointmentTypeDao appDao = SpringUtils.getBean(AppointmentTypeDao.class);
 	           List<AppointmentType> types = appDao.listAll();
 	                for(int j = 0;j < types.size(); j++) {
 	%>
@@ -1265,30 +1250,20 @@ function locale(){
 	        </tr>
 	        <tr>
 	            <td>
-	                <bean:message key="Appointment.formDoctor" />:
+	               <label for="mrp"> <bean:message key="Appointment.formDoctor" />:</label>
 	            </td>
 	            <td>
-	                <input type="text" id="mrp" readonly
-	                       value="<%=bFirstDisp ? "" : StringEscapeUtils.escapeHtml(providerBean.getProperty(curDoctor_no,""))%>">
+	                <input type="text" id="mrp" class="form-control" value="<%=bFirstDisp ? "" : StringEscapeUtils.escapeHtml(providerBean.getProperty(curDoctor_no,""))%>" readonly="readonly">
 	            </td>
 	        </tr>
-	        <tr>
-	            <td><input type="button" value="<bean:message key="Appointment.doNotBook" />" class="btn btn-link" style="padding-left:0px;" onclick="onNotBook();">
 
-	            </td>
-	            <td>
 
-	                <input type="text" name="demographic_no" id="demographic_no"
-	                    ONFOCUS="onBlockFieldFocus(this)" readonly
-	                    value='<%=(bFirstDisp && !bFromWL)?"":request.getParameter("demographic_no").equals("")?"":request.getParameter("demographic_no")%>' >
-	            </td>
-	        </tr>
 	        <tr>
 	            <td>
 	                <bean:message key="Appointment.formNotes" />:
 	            </td>
 	            <td>
-	                <textarea name="notes" tabindex="3" rows="2" style="resize:none;" placeholder="<bean:message key="Appointment.formNotes" />" cols="18" maxlength="255"><%=bFirstDisp?"":request.getParameter("notes").equals("")?"":request.getParameter("notes")%></textarea>
+	                <textarea class="form-control" name="notes" tabindex="3" rows="2" style="resize:none;" placeholder="<bean:message key="Appointment.formNotes" />" cols="18" maxlength="255"><%=bFirstDisp?"":request.getParameter("notes").equals("")?"":request.getParameter("notes")%></textarea>
 	            </td>
 	        </tr>
 	        <tr>
@@ -1296,7 +1271,7 @@ function locale(){
 	                <bean:message key="Appointment.formResources" />:
 	            </td>
 	            <td>
-	                <input type="text" name="resources"
+	                <input type="text" name="resources" class="form-control"
 	                    tabindex="5"
 	                    value='<%=bFirstDisp?"":request.getParameter("resources").equals("")?"": Encode.forHtmlAttribute(request.getParameter("resources"))%>'
 	                    >
@@ -1307,6 +1282,8 @@ function locale(){
 	                <bean:message key="Appointment.formDateTime" />:
 	            </td>
 	            <td>
+		            <div class="panel panel-default">
+			            <div class="panel-body">
 	<%
 	            GregorianCalendar now=new GregorianCalendar();
 	            GregorianCalendar cal = (GregorianCalendar) now.clone();
@@ -1324,16 +1301,22 @@ function locale(){
 	                <input type="hidden" name="dboperation" value="search_titlename">
 	                <input type="hidden" name="creator" value='<%=Encode.forHtmlAttribute(userlastname)+", "+Encode.forHtmlAttribute(userfirstname)%>'>
 	                <input type="hidden" name="remarks" value="">
+			            </div>
+		            </div>
 	            </td>
 	        </tr>
 	        <tr>
 	            <td>
-		            <label for="urgency">
-	                <bean:message key="Appointment.formCritical" /> <i class="icon-warning-sign"></i>:
+		            <label for="urgency" >
+	                <bean:message key="Appointment.formCritical" />
+			            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-shield-exclamation" viewBox="0 0 16 16">
+			            <path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .101.025 1 1 0 0 0 .1-.025q.114-.034.294-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"></path>
+			            <path d="M7.001 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.553.553 0 0 1-1.1 0z"></path>
+		                </svg>:
 		            </label>
 	            </td>
 	            <td>
-	                <input type="checkbox" class="checkbox" id="urgency" name="urgency" value="critical"><span class="checkmark"></span>
+	                <input type="checkbox" class="checkbox" id="urgency" name="urgency" value="critical">
 	            </td>
 	        </tr>
 	            <% String emailReminder = pros.getProperty("emailApptReminder");
@@ -1343,7 +1326,7 @@ function locale(){
 	                <bean:message key="Appointment.formEmailReminder" />:
 	            </td>
 	            <td>
-	                <input type="checkbox" name="emailPt" value="email reminder">
+	                <input type="checkbox" name="emailPt" value="email reminder" class="form-control">
 	            </td>
 	        </tr>
 	             <%  }else { %>
@@ -1351,6 +1334,18 @@ function locale(){
 	            <td></td>
 	        </tr>
 		     <%  }%>
+
+		    <% if (pros.isPropertyActive("mc_number")) { %>
+		    <tr>
+			    <td>
+				    <bean:message key="Appointment.formMC" />:
+			    </td>
+			    <td>
+				    <input type="text" name="appt_mc_number" class="form-control"/>
+			    </td>
+		    </tr>
+
+		    <% } %>
 
 	    </table>
 	</div>
@@ -1456,7 +1451,7 @@ function locale(){
 </div>
 </div>
 
-</FORM>
+</form>
 
 <div class ="span12">
 <table style="margin-left:auto;">
