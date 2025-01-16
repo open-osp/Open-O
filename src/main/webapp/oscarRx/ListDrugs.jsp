@@ -271,10 +271,8 @@ if (heading != null){
                            onclick="updateReRxStatusForPrescribedDrug(this, <%=prescriptIdInt%>)"
                            <%if(reRxDrugList.contains(prescriptIdInt.toString())){%>checked<%}%>
                            name="checkBox_<%=prescriptIdInt%>">
-                    <label for="<%=cbxId%>">ReRx</label>
+                    <label id="reRx_<%=prescriptIdInt%>" for="<%=cbxId%>">ReRx</label>
                 </div>
-<%--                <a name="rePrescribe" style="vertical-align:top" id="reRx_<%=prescriptIdInt%>" <%=styleColor%>--%>
-<%--                   href="javascript:void(0)" onclick="rePrescribeNew(this, <%=prescriptIdInt%>)">ReRx</a>--%>
                 <%} else {%>
                 <form action="<%=request.getContextPath()%>/oscarRx/searchDrug.do" method="post">
                     <input type="hidden" name="demographicNo" value="<%=patient.getDemographicNo()%>" />
