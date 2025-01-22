@@ -198,7 +198,7 @@ pageContext.setAttribute("isMobileDevice", isMobileDevice);
 		
 		.auaContainer {
 			margin: 0 auto;
-			text-align: center;
+			text-align: left;
 			z-index: 3;
 			margin-bottom: 30px;
 			padding: 15px;
@@ -210,6 +210,7 @@ pageContext.setAttribute("isMobileDevice", isMobileDevice);
 		
 		.auaContainer .panel-heading {
 			font-size: small;
+			text-align: center;
 		}
 		
 		.auaContainer .panel-body {
