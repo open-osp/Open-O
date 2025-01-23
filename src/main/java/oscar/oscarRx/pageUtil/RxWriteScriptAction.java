@@ -42,6 +42,7 @@ import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.*;
 import org.oscarehr.managers.CodingSystemManager;
 import org.oscarehr.managers.DemographicManager;
+import org.oscarehr.managers.RxManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -75,8 +76,10 @@ public final class RxWriteScriptAction extends DispatchAction {
 	private static final String DEFAULT_QUANTITY = "30";
 	private static final PartialDateDao partialDateDao = SpringUtils.getBean(PartialDateDao.class);
 
-	DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class) ;
-    
+	private final DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class) ;
+
+	private final RxManager rxManager = SpringUtils.getBean(RxManager.class);
+
 	String removeExtraChars(String s){
 		return s.replace(""+((char) 130 ),"").replace(""+((char) 194 ),"").replace(""+((char) 195 ),"").replace(""+((char) 172 ),"");
 	}
@@ -1153,12 +1156,18 @@ public final class RxWriteScriptAction extends DispatchAction {
             response.getOutputStream().write(jo.toString().getBytes());
             return null;
         }
-        
-	public ActionForward changeToLongTerm(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException, Exception {
-		checkPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), PRIVILEGE_WRITE);
-		
+
+	public ActionForward updateLongTermStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		checkPrivilege(loggedInInfo, PRIVILEGE_WRITE);
+
+		HashMap<String, Object> hm = new HashMap<>();
 		String strId = request.getParameter("ltDrugId");
-		if (strId != null) {
+		boolean isLongTerm = Boolean.parseBoolean(request.getParameter("isLongTerm"));
+
+		if (Objects.isNull(strId)) {
+			hm.put("success", false);
+		} else {
 			int drugId = Integer.parseInt(strId);
 			RxSessionBean bean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
 			if (bean == null) {
@@ -1168,22 +1177,20 @@ public final class RxWriteScriptAction extends DispatchAction {
 
 			RxPrescriptionData rxData = new RxPrescriptionData();
 			RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
-			oldRx.setLongTerm(true);
+			oldRx.setLongTerm(isLongTerm);
 			oldRx.setShortTerm(false);
-			boolean b = oldRx.Save(oldRx.getScript_no());
-			HashMap hm = new HashMap();
-			if (b) hm.put("success", true);
-			else hm.put("success", false);
-			JSONObject jsonObject = JSONObject.fromObject(hm);
-			response.getOutputStream().write(jsonObject.toString().getBytes());
-			return null;
-		} else {
-			HashMap hm = new HashMap();
-			hm.put("success", false);
-			JSONObject jsonObject = JSONObject.fromObject(hm);
-			response.getOutputStream().write(jsonObject.toString().getBytes());
-			return null;
+			boolean saveStatus = oldRx.Save(oldRx.getScript_no());
+
+			if (saveStatus) {
+				saveStatus = this.rxManager.archiveDrug(loggedInInfo, drugId, bean.getDemographicNo(),
+						isLongTerm ? Drug.ARCHIVED_REASON_LT_ENABLED : Drug.ARCHIVED_REASON_LT_DISABLED);
+			}
+
+			hm.put("success", saveStatus);
 		}
+		JSONObject jsonObject = JSONObject.fromObject(hm);
+		response.getOutputStream().write(jsonObject.toString().getBytes());
+		return null;
 	}
 
 	public void saveDrug(final HttpServletRequest request) throws Exception {

@@ -192,6 +192,8 @@ public class Drug extends AbstractModel<Integer> implements Serializable {
 	public static final String DISCONTINUED_BY_ANOTHER_PHYSICIAN = "discontinuedByAnotherPhysician";
 	public static final String COST = "cost";
 	public static final String DRUG_INTERACTION = "drugInteraction";
+	public static final String ARCHIVED_REASON_LT_ENABLED = "Updated Long-term status: ON";
+	public static final String ARCHIVED_REASON_LT_DISABLED = "Updated Long-term status: OFF";
 	public static final String OTHER = "other";
 
 	public Drug() {

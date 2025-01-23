@@ -1282,25 +1282,36 @@ body {
                         }
 %>
 <script type="text/javascript">
-function changeLt(drugId){
-    if (confirm('<bean:message key="oscarRx.Prescription.changeDrugLongTermConfirm" />')==true) {
-           var data="ltDrugId="+drugId+"&rand="+Math.floor(Math.random()*10001);
-           var url="<c:out value='${ctx}'/>"+ "/oscarRx/WriteScript.do?parameterValue=changeToLongTerm";
-           new Ajax.Request(url,{method: 'post',parameters:data,onSuccess:function(transport){
-                   var json=transport.responseText.evalJSON();
-                   if(json!=null && (json.success=='true'||json.success==true) ){
-                        $("notLongTermDrug_"+drugId).innerHTML="*";
-                        $("notLongTermDrug_"+drugId).setStyle({
-                            textDecoration: 'none',
-                            color: 'red'
-                        });
-                        $("notLongTermDrug_"+drugId).setAttribute("onclick","");
-                        $("notLongTermDrug_"+drugId).setAttribute("href","");
-                    }else{
+    function changeLt(element, drugId) {
+        if (confirm('<bean:message key="oscarRx.Prescription.changeDrugLongTermConfirm" />') === true) {
+            const data = "ltDrugId=" + drugId + "&isLongTerm=" + element.checked + "&rand=" + Math.floor(Math.random() * 10001);
+            const url = "<c:out value='${ctx}'/>" + "/oscarRx/WriteScript.do?parameterValue=updateLongTermStatus";
+            new Ajax.Request(url, {
+                method: 'post',
+                parameters: data,
+                onSuccess: function (transport) {
+                    const json = transport.responseText.evalJSON();
+                    if (json != null && (json.success === 'true' || json.success === true)) {
+                        callReplacementWebService('ListDrugs.jsp','drugProfile');
+                    } else {
+                        checkboxRevertStatus(element);
                     }
-               }});
-       }
-}
+                },
+                onFailure: function () {
+                    checkboxRevertStatus(element);
+                }
+            });
+        } else {
+            checkboxRevertStatus(element);
+        }
+    }
+
+    function checkboxRevertStatus(checkbox) {
+        setTimeout(function () {
+            checkbox.checked = !checkbox.checked;
+        }, 500);
+    }
+
     function checkReRxLongTerm(){
         var url=window.location.href;
         var match=url.indexOf('ltm=true');
