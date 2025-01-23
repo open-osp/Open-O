@@ -77,12 +77,6 @@
 
 
 
-<%--
-<link rel="stylesheet" type="text/css" href="${ctx}/library/bootstrap/5.0.2/css/bootstrap.min.css" id="bootstrap-css">
-<script type="text/javascript" src="<c:out value="${ctx}/library/bootstrap/5.0.2/js/bootstrap.min.js"/>"></script>
---%>
-
-
 <style>
     /* Container for the drug-maintenance-switch */
     .drug-maintenance-switch {
