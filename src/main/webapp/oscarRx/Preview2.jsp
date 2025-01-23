@@ -54,6 +54,7 @@
 <%@page import="org.oscarehr.web.PrescriptionQrCodeUIBean"%>
 <%@ page import="org.oscarehr.managers.DemographicManager" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="java.util.Objects" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -512,6 +513,12 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
 								imageUrl = request.getContextPath() + "/imageRenderingServlet?source=" + ImageRenderingServlet.Source.signature_preview.name() + "&" + DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY + "=" + signatureRequestId;
 								startimageUrl = request.getContextPath() + "/images/1x1.gif";
 								statusUrl = request.getContextPath() + "/PMmodule/ClientManager/check_signature_status.jsp?" + DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY + "=" + signatureRequestId;
+
+								if (bean.getStashSize() > 0 && Objects.nonNull(bean.getStashItem(0).getDigitalSignatureId())) {
+									startimageUrl=request.getContextPath()+"/imageRenderingServlet?source="+ImageRenderingServlet.Source.signature_stored.name()+"&digitalSignatureId="+bean.getStashItem(0).getDigitalSignatureId();
+								}
+
+
 								%>
 
 								<input type="hidden" name="<%= DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY %>" value="<%=signatureRequestId%>" />
