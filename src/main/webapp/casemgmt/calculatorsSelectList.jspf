@@ -1,3 +1,8 @@
+<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="org.oscarehr.common.dao.EFormDao" %>
+<%@page import="org.oscarehr.common.model.EForm" %>
+<%@page import="java.util.List" %>
+
 <%
 	EFormDao eformDao = SpringUtils.getBean(EFormDao.class);
 	List<EForm> eforms = eformDao.findByNameSimilar("Framingham");

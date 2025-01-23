@@ -9,115 +9,124 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
+    <%authed = false; %>
+    <%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="org.oscarehr.hospitalReportManager.model.HRMCategory"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.hospitalReportManager.dao.HRMCategoryDao"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.oscarehr.hospitalReportManager.model.HRMCategory" %>
+<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="org.oscarehr.hospitalReportManager.dao.HRMCategoryDao" %>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%
-	HRMCategoryDao hrmCategoryDao = SpringUtils.getBean(HRMCategoryDao.class);
-	String id = request.getParameter("id");
-	HRMCategory existingCategory = null;
-	if(id != null) {
-		existingCategory = hrmCategoryDao.find(Integer.parseInt(id));
-	}
+    HRMCategoryDao hrmCategoryDao = SpringUtils.getBean(HRMCategoryDao.class);
+    String id = request.getParameter("id");
+    HRMCategory existingCategory = null;
+    if (id != null) {
+        existingCategory = hrmCategoryDao.find(Integer.parseInt(id));
+    }
 %>
 <!DOCTYPE html >
-<html:html locale="true" >
-<head>
-<html:base />
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>HRM Categories</title>
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" >
-	<link rel="stylesheet" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" >
+<html>
+    <head>
+        <html:base/>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HRM Categories</title>
+        <link rel="stylesheet" type="text/css"
+              href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet"
+              href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css">
 
-	<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-	<script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script> <!-- DataTables 1.13.4 -->
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+        <script src="<%=request.getContextPath() %>/library/DataTables/datatables.min.js"></script>
+        <!-- DataTables 1.13.4 -->
 
-	<script>
-	    jQuery(document).ready( function () {
-	        jQuery('#tblCategory').DataTable({
-            "order": [],
-	        "bPaginate": false,
-            "language": {
+        <script>
+            jQuery(document).ready(function () {
+                jQuery('#tblCategory').DataTable({
+                    "order": [],
+                    "bPaginate": false,
+                    "language": {
                         "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
                     }
+                });
             });
-	    });
-    </script>
+        </script>
 
-</head>
-<body>
-	<div class="table-responsive">
+    </head>
+    <body>
+    <div class="table-responsive">
 
-	<div class="col-sm-12">
-<h4>HRM Categories</h4>
+        <div class="col-sm-12">
+            <h4>HRM Categories</h4>
 
-<form method="post" action="hrm_categories_action.jsp">
-	<input type="hidden" name="action" value="add" />
-	<input type="hidden" name="id" value="<%=existingCategory != null ? existingCategory.getId() : ""%>"/>
-	<fieldset>
-		<div class="control-group">
-			<label class="control-label">Category Name:</label>
-			<div class="controls">
-				<input type="text" name="categoryName" class="form-control input-normal" value="<%=existingCategory != null ? existingCategory.getCategoryName() : ""  %>" />
-			</div>
-		</div>
- <div class="w-100"></div>
-		<div class="control-group">
-			<label class="control-label">SubClass Name Mnemonic:</label>
-			<div class="controls">
-				<input type="text" name="subClassNameMnemonic" class="form-control" value="<%=existingCategory != null ? existingCategory.getSubClassNameMnemonic() : ""  %>"/> (should be of the format &lt;subclass_name&gt;:&lt;subclass_mnemonic&gt;)
-			</div>
-		</div>
-		<div class="control-group">
-			<input type="submit" class="btn btn-primary" value="<%=existingCategory != null ? "Save" : "Add" %>" />
-		</div>
-	</fieldset>
-</form>
-<hr />
-<table id="tblCategory" class="table table-striped table-hover table-condensed">
-	<thead>
-		<tr>
-			<td></td>
-			<th>ID</th>
-			<th>Category Name</th>
-			<th>SubClass Name Mnemonic</th>
-		</tr>
-	</thead>
-	<tbody>
-	<%
-		for (HRMCategory category:  hrmCategoryDao.findAll()) {
-	%>
-		<tr>
-			<td><a href="hrm_categories_action.jsp?action=delete&id=<%=category.getId()%>"><img src="<%=request.getContextPath()%>/images/icons/101.png" alt="alert"></a></td>
-			<td><a href="hrmCategories.jsp?id=<%=category.getId()%>"><%=category.getId()%></a></td>
-			<td><%=StringEscapeUtils.escapeHtml(category.getCategoryName())%>&nbsp;</td>
-			<td><%=StringEscapeUtils.escapeHtml(category.getSubClassNameMnemonic())%>&nbsp;</td>
-		</tr>
-	<%
-		}
-	%>
-	</tbody>
-</table>
-</div>
-</div>
-</body>
-</html:html>
+            <form method="post" action="hrm_categories_action.jsp">
+                <input type="hidden" name="action" value="add"/>
+                <input type="hidden" name="id" value="<%=existingCategory != null ? existingCategory.getId() : ""%>"/>
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label">Category Name:</label>
+                        <div class="controls">
+                            <input type="text" name="categoryName" class="form-control input-normal"
+                                   value="<%=existingCategory != null ? existingCategory.getCategoryName() : ""  %>"/>
+                        </div>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="control-group">
+                        <label class="control-label">SubClass Name Mnemonic:</label>
+                        <div class="controls">
+                            <input type="text" name="subClassNameMnemonic" class="form-control"
+                                   value="<%=existingCategory != null ? existingCategory.getSubClassNameMnemonic() : ""  %>"/>
+                            (should be of the format &lt;subclass_name&gt;:&lt;subclass_mnemonic&gt;)
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <input type="submit" class="btn btn-primary"
+                               value="<%=existingCategory != null ? "Save" : "Add" %>"/>
+                    </div>
+                </fieldset>
+            </form>
+            <hr/>
+            <table id="tblCategory" class="table table-striped table-hover table-condensed">
+                <thead>
+                <tr>
+                    <td></td>
+                    <th>ID</th>
+                    <th>Category Name</th>
+                    <th>SubClass Name Mnemonic</th>
+                </tr>
+                </thead>
+                <tbody>
+                <%
+                    for (HRMCategory category : hrmCategoryDao.findAll()) {
+                %>
+                <tr>
+                    <td><a href="hrm_categories_action.jsp?action=delete&id=<%=category.getId()%>"><img
+                            src="<%=request.getContextPath()%>/images/icons/101.png" alt="alert"></a></td>
+                    <td><a href="hrmCategories.jsp?id=<%=category.getId()%>"><%=category.getId()%>
+                    </a></td>
+                    <td><%=StringEscapeUtils.escapeHtml(category.getCategoryName())%>&nbsp;</td>
+                    <td><%=StringEscapeUtils.escapeHtml(category.getSubClassNameMnemonic())%>&nbsp;</td>
+                </tr>
+                <%
+                    }
+                %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </body>
+</html>

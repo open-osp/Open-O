@@ -102,7 +102,7 @@
 
 
 			<td valign="middle" rowspan="2" ALIGN="left"><html:file
-				property="clientImage.imagefile" size="30" accept="*.gif,*.jpg" /><br>
+				property="clientImage" size="30" accept="*.gif,*.jpg" /><br>
 			<html:submit value="Upload" /></td>
 		</tr>
 	</html:form>

@@ -61,7 +61,7 @@
 <%
 	pageContext.setAttribute("demographic", demographicManager.getDemographic(loggedInInfo, demographic_no));
 %>
-<html:html>
+<html>
 	<head>
 		<title><bean:message key="eform.showmyform.title" /></title>
 
@@ -218,4 +218,4 @@
 		</div>
 	</div>
 	</body>
-</html:html>
+</html>

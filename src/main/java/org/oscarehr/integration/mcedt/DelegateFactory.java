@@ -30,11 +30,9 @@ import org.apache.cxf.transport.http.asyncclient.AsyncHTTPConduit;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.UserProperty;
-import org.oscarehr.integration.ebs.client.AttachmentCachingInterceptor;
-import org.oscarehr.integration.ebs.client.AttachmentCleanupInterceptor;
-import org.oscarehr.integration.ebs.client.DownloadInInterceptor;
-import org.oscarehr.integration.ebs.client.EdtClientBuilder;
-import org.oscarehr.integration.ebs.client.EdtClientBuilderConfig;
+import org.oscarehr.integration.ebs.client.ng.EdtClientBuilder;
+import org.oscarehr.integration.ebs.client.ng.EdtClientBuilderConfig;
+import org.oscarehr.integration.ebs.client.ng.DownloadInInterceptor;
 import org.oscarehr.integration.mcedt.mailbox.ActionUtils;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -164,5 +162,5 @@ public class DelegateFactory {
 		client.getEndpoint().getInInterceptors().clear();
 		client.getEndpoint().getInInterceptors().addAll(newInterceptors);
 	}
-	
+
 }

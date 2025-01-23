@@ -28,14 +28,38 @@ import org.junit.Test;
 import org.oscarehr.common.dao.utils.DataUtils;
 import org.oscarehr.common.dao.utils.SchemaUtils;
 import org.junit.Before;
+import org.junit.After;
+
+import java.io.File;
+import java.nio.file.*;
+import java.util.Comparator;
 
 public class InboxPopulatingTest extends DaoTestFixtures {
 
 	@Before
 	public void before() throws Exception {
+		String tempDir = System.getProperty("java.io.tmpdir") + "/OscarDocumentTest";
+        System.setProperty("DOCUMENT_DIR", tempDir);
+
+        Files.createDirectories(Paths.get(tempDir));
+
 		this.beforeForInnoDB();
 		SchemaUtils.restoreAllTables();
 	}
+
+	@After
+    public void cleanup() throws Exception {
+        String tempDir = System.getProperty("java.io.tmpdir") + "/OscarDocumentTest";
+        Files.walk(Paths.get(tempDir))
+            .sorted(Comparator.reverseOrder())
+            .map(Path::toFile)
+            .forEach(File::delete);
+        
+        File dir = new File(tempDir);
+        if (dir.exists()) {
+            System.err.println("Directory not deleted: " + tempDir);
+        }
+    }
 
 	@Test
 	public void test()  {

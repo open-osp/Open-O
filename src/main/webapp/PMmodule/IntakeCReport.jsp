@@ -23,81 +23,85 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@ include file="/taglibs.jsp"%>
-<%@ page import="java.text.SimpleDateFormat"%>
-<%@ page import="java.util.Date"%>
+<%@ include file="/taglibs.jsp" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
 
 <%
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	
-	String[][] dataList = new String[335][15];
-	if (request.getAttribute("dataList") != null) {
-		dataList = (String[][]) request.getAttribute("dataList");
-	}
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-	Date[] dateList = (Date[]) request.getAttribute("dateList");
+    String[][] dataList = new String[335][15];
+    if (request.getAttribute("dataList") != null) {
+        dataList = (String[][]) request.getAttribute("dataList");
+    }
+
+    Date[] dateList = (Date[]) request.getAttribute("dateList");
 %>
 
-<html:html xhtml="true" locale="true">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Street Health Mental Health Report</title>
-<link rel="stylesheet" type="text/css"
-	href="<html:rewrite page="/css/intakeC.css" />" />
-<script language="JavaScript"
-	src="<html:rewrite page="/js/ClientSearch.js" />"></script>
-<html:base />
-</head>
-<body>
-<script type="text/javascript">
-			function download() {
-				location.href="<html:rewrite page="/PMmodule/do_download.jsp" />";
-			}
-		</script>
-<table height="15" align="center">
-	<tr>
-		<td class="style76" align="center"><input type="button"
-			name="backToClientSearch" value="Back"
-			onclick="javascript:history.back();" /> <input type="button"
-			name="downLoadCSVFile" value="Download"
-			onclick="javascript:download();" /></td>
-	</tr>
-</table>
-<table border="1" cellpadding="1" cellspacing="1" width="95%"
-	align="center">
-	<%
-			for (int i = 0; i < dataList.length; i++) {
-			%>
-	<tr>
-		<%
-					for (int j = 0; j < dataList[i].length; j++) {
-						if (i == 0 && dataList[i][j].startsWith("Cohort")) {
-							int idx = Integer.parseInt(dataList[i][j].substring(7));
-							Date tmpDate1 = dateList[idx];
-							Date tmpDate2 = dateList[idx + 1];
-							String showDate1 = null;
-							String showDate2 = null;
-							try {
-								showDate1 = sdf.format(tmpDate1);
-								showDate2 = sdf.format(tmpDate2);
-							} catch (Exception e) {
-							}
-				%>
-		<td class="style76" align="center"><%=showDate1%> <br />
-		<%=showDate2%> <br />
-		<%=dataList[i][j]%></td>
-		<%
-						} else {
-				%>
-		<td class="style76" align="center"><%=dataList[i][j]%></td>
-		<%
-						}
-					}
-				%>
-	</tr>
-	<%
-			}
-			%>
-</table>
-</body>
-</html:html>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title>Street Health Mental Health Report</title>
+        <link rel="stylesheet" type="text/css"
+              href="<html:rewrite page="/css/intakeC.css" />"/>
+        <script language="JavaScript"
+                src="<html:rewrite page="/js/ClientSearch.js" />"></script>
+        <html:base/>
+    </head>
+    <body>
+    <script type="text/javascript">
+        function download() {
+            location.href = "<html:rewrite page="/PMmodule/do_download.jsp" />";
+        }
+    </script>
+    <table height="15" align="center">
+        <tr>
+            <td class="style76" align="center"><input type="button"
+                                                      name="backToClientSearch" value="Back"
+                                                      onclick="javascript:history.back();"/> <input type="button"
+                                                                                                    name="downLoadCSVFile"
+                                                                                                    value="Download"
+                                                                                                    onclick="javascript:download();"/>
+            </td>
+        </tr>
+    </table>
+    <table border="1" cellpadding="1" cellspacing="1" width="95%"
+           align="center">
+        <%
+            for (int i = 0; i < dataList.length; i++) {
+        %>
+        <tr>
+            <%
+                for (int j = 0; j < dataList[i].length; j++) {
+                    if (i == 0 && dataList[i][j].startsWith("Cohort")) {
+                        int idx = Integer.parseInt(dataList[i][j].substring(7));
+                        Date tmpDate1 = dateList[idx];
+                        Date tmpDate2 = dateList[idx + 1];
+                        String showDate1 = null;
+                        String showDate2 = null;
+                        try {
+                            showDate1 = sdf.format(tmpDate1);
+                            showDate2 = sdf.format(tmpDate2);
+                        } catch (Exception e) {
+                        }
+            %>
+            <td class="style76" align="center"><%=showDate1%> <br/>
+                <%=showDate2%> <br/>
+                <%=dataList[i][j]%>
+            </td>
+            <%
+            } else {
+            %>
+            <td class="style76" align="center"><%=dataList[i][j]%>
+            </td>
+            <%
+                    }
+                }
+            %>
+        </tr>
+        <%
+            }
+        %>
+    </table>
+    </body>
+</html>

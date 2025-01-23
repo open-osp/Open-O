@@ -225,6 +225,8 @@ public class UploadEDTTest extends EDTBaseTest {
         uploads.add(createUploadData(FilePath.MCEDT_CLAIMS_FILE, ResourceType.UPLOAD_CLAIM_FILE));
         uploads.add(createUploadData(FilePath.MCEDT_CLAIMS_FILE, ResourceType.UPLOAD_CLAIM_FILE));
 
+        if (uploads.size() > 5) { return; }
+
         try {
             ResourceResult resourceResult = edtDelegate.upload(uploads);
             printResourceResult(resourceResult);

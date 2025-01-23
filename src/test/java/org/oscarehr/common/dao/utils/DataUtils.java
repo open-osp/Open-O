@@ -158,12 +158,12 @@ public class DataUtils {
     }
 
 	private static String getCanonicalPath(String fileName) {
-		String docDir = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+		String docDir = System.getProperty("DOCUMENT_DIR"); 
 		if (docDir == null || docDir.trim().equals("")) {
-			// docDir = "/usr/local/OscarDocument/oscar_mcmaster/document";
-			// docDir = "d:/Work/OSCAR/documents/";
+			docDir = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
 			docDir = "/var/lib/OscarDocument";
 		}
+		
 	    String savePath = docDir  + "/" + fileName;
 	    return savePath;
     }

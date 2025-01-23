@@ -54,7 +54,7 @@ import org.apache.xml.security.utils.Constants;
 import org.apache.xml.security.utils.ElementProxy;
 import org.apache.xml.security.utils.EncryptionConstants;
 import org.apache.xml.security.utils.XMLUtils;
-import org.oscarehr.integration.ebs.client.AttachmentCachingInterceptor;
+import org.oscarehr.integration.ebs.client.ng.AttachmentCachingInterceptor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
