@@ -1589,10 +1589,12 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
 		if(getHin() != null && getHin().length()>0) {
 			sb.append("<div id='patient-hin'>");
 			sb.append("<div class='label'>");
-			sb.append("hin");
-			sb.append("</div>");
-			sb.append(Encode.forHtml(getHin()));
+			sb.append("hin (");
 			sb.append(Encode.forHtml(getHcType()));
+			sb.append(")</div>");
+			sb.append(Encode.forHtml(getHin()));
+			sb.append("&nbsp;");
+			sb.append(Encode.forHtml(getVer()));
 			sb.append("</div>");
 		}
 
