@@ -923,6 +923,23 @@ if (request.getAttribute("printError") != null && (Boolean) request.getAttribute
                                 boolean obrFlag = false;
                                 int obxCount = handler.getOBXCount(j);
 
+                               if (handler.getMsgType().equals("ExcellerisON") && handler.getObservationHeader(j, 0).equals(headers.get(i))) {
+                                    String orderRequestStatus = ((ExcellerisOntarioHandler) handler).getOrderStatus(j);
+                                    int obrCommentCount = handler.getOBRCommentCount(j);
+                                    if (orderRequestStatus.equals(ExcellerisOntarioHandler.OrderStatus.DELETED.getDescription())) { continue; }
+                                    
+                                    if (obxCount > 0 || !orderRequestStatus.isEmpty() || obrCommentCount > 0) {
+                                        obrFlag = true;
+                                    %>
+                                    <tr style="<%=(linenum % 2 == 1 ? "background-color:"+highlight : "")%>" >
+                                        <td style="text-align:left; vertical-align:top"><span style="font-size:16px;font-weight: bold;"><%=handler.getOBRName(j)%></span></td>
+                                        <td colspan="1"><%=orderRequestStatus%></td>
+                                    </tr>
+                                    <%
+                                    }
+                               }
+
+
                                 for (k=0; k < obxCount; k++){
                                     String obxName = handler.getOBXName(j, k);
 									boolean isAllowedDuplicate = false;
