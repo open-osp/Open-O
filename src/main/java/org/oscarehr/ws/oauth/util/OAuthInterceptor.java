@@ -92,7 +92,7 @@ public class OAuthInterceptor extends OAuthRequestFilter implements PhaseInterce
 
         // Throw our new loggedInInfo onto the request for future use.
 	    HttpServletRequest request = (HttpServletRequest)message.get(AbstractHTTPDestination.HTTP_REQUEST);
-        request.setAttribute(new LoggedInInfo().LOGGED_IN_INFO_KEY, loggedInInfo);
+        request.setAttribute(LoggedInInfo.LOGGED_IN_INFO_KEY, loggedInInfo);
 
 
         return;
