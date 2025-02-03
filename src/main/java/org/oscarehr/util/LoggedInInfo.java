@@ -42,9 +42,9 @@ import org.oscarehr.common.model.Security;
  * or the jsp name, or web service name and method.
  */
 public final class LoggedInInfo implements Serializable {
-	
-	
-	public final String LOGGED_IN_INFO_KEY = LoggedInInfo.class.getName() + ".LOGGED_IN_INFO_KEY";
+
+
+	public static final String LOGGED_IN_INFO_KEY = LoggedInInfo.class.getName() + ".LOGGED_IN_INFO_KEY";
 	
 	private HttpSession session = null;
 	private Facility currentFacility = null;
@@ -94,14 +94,14 @@ public final class LoggedInInfo implements Serializable {
 	 */
 	public static void setLoggedInInfoIntoSession(HttpSession session, LoggedInInfo loggedInInfo) {
 	
-		session.setAttribute(new LoggedInInfo().LOGGED_IN_INFO_KEY, loggedInInfo);
+		session.setAttribute(LOGGED_IN_INFO_KEY, loggedInInfo);
 	}
 
 	/**
 	 * This method should be used for browser requests / end user requests.
 	 */
 	public static LoggedInInfo getLoggedInInfoFromSession(HttpSession session) {
-		return ((LoggedInInfo) session.getAttribute(new LoggedInInfo().LOGGED_IN_INFO_KEY));
+		return ((LoggedInInfo) session.getAttribute(LOGGED_IN_INFO_KEY));
 	}
 
 	/**
@@ -118,7 +118,7 @@ public final class LoggedInInfo implements Serializable {
 	 * This will be stored in the requestAttributes, not the session.
 	 */
 	public static void setLoggedInInfoIntoRequest(HttpServletRequest request, LoggedInInfo loggedInInfo) {
-		request.setAttribute(new LoggedInInfo().LOGGED_IN_INFO_KEY, loggedInInfo);
+		request.setAttribute(LOGGED_IN_INFO_KEY, loggedInInfo);
 	}
 
 	/**
@@ -126,14 +126,14 @@ public final class LoggedInInfo implements Serializable {
 	 * This will be retrieved from the requestAttributes, not the session.
 	 */
 	public static LoggedInInfo getLoggedInInfoFromRequest(HttpServletRequest request) {
-		return ((LoggedInInfo) request.getAttribute(new LoggedInInfo().LOGGED_IN_INFO_KEY));
+		return ((LoggedInInfo) request.getAttribute(LOGGED_IN_INFO_KEY));
 	}
 
 	/**
 	 * This is used for logout only, should not be used at the end of a request. 
 	 */
 	public static void removeLoggedInInfoFromSession(HttpSession session) {
-		session.removeAttribute(new LoggedInInfo().LOGGED_IN_INFO_KEY);
+		session.removeAttribute(LOGGED_IN_INFO_KEY);
 	}
 
 	public Facility getCurrentFacility() {
