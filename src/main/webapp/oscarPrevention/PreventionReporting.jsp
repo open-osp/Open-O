@@ -458,15 +458,15 @@ table.ele thead {
               <table class="ele" width="90%">
                        <tr>
                        <td>&nbsp;</td>
-                       <td style="10%;">Total patients: <%=list.size()%><br/>Ineligible:<%=ineligible%></td>
-                       <td style="10%;">Up to Date: <%=done%> = <%=percentage %> %
+                       <td>Total patients: <%=list.size()%><br/>Ineligible:<%=ineligible%></td>
+                       <td>Up to Date: <%=done%> = <%=percentage %> %
                          <%if (percentageWithGrace != null){  %>
                            <%-- <br/> With Grace <%=percentageWithGrace%> %
                            --%>
                          <%}%>
                        </td>
                        
-                       <td style="40%;">&nbsp;<%=request.getAttribute("patientSet")%> </td>                       
+                       <td>&nbsp;<%=request.getAttribute("patientSet")%> </td>
                        <td>	
                        		<select onchange="setNextContactMethod(this)">
                        			<option value="----">Select Contact Method</option>
@@ -480,7 +480,7 @@ table.ele thead {
                        	  	&nbsp;&nbsp;
                        	  	<input type="button" value="Save Contacts" onclick="return saveContacts();">
                        </td>                                                                                                                   
-                       <td style="10%;"><input style="float: right" type="button" value="Bill" onclick="return batchBill();"></td>
+                       <td><input style="float: right" type="button" value="Bill" onclick="return batchBill();"></td>
                        </tr>
              </table>
              <table id="preventionTable" class="sortable ele" width="80%">
@@ -525,7 +525,7 @@ table.ele thead {
                          for (int i = 0; i < list.size(); i++){
                              setBill = false;
                             PreventionReportDisplay dis = (PreventionReportDisplay) list.get(i);
-                            Hashtable h = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());
+                            Map<String, String> h = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());
                             org.oscarehr.common.model.Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request),  dis.demographicNo.toString());
 
                             if ( dis.nextSuggestedProcedure != null ){
@@ -561,13 +561,13 @@ table.ele thead {
 
                           <%if (type == null ){ %>
                           <td><%=demo.getAgeAsOf(asDate)%></td>
-                          <td><%=Encode.forHtml(h.get("sex"))%></td>
-                          <td><%=Encode.forHtml(h.get("lastName"))%></td>
-                          <td><%=Encode.forHtml(h.get("firstName"))%></td>
-                          <td><%=Encode.forHtml(demo.getHin())+Encode.forHtml(demo.getVer())%></td>
-                          <td><%=Encode.forHtml(demo.getPhone())%> </td>
-                          <td><%=Encode.forHtml(demo.getEmail()) %></td>
-                          <td><%=Encode.forHtml(demo.getAddress())+" "+Encode.forHtml(demo.getCity())+" "+Encode.forHtml(demo.getProvince())+" "+Encode.forHtml(demo.getPostal())%> </td>
+                          <td><%=Encode.forHtmlContent(h.get("sex"))%></td>
+                          <td><%=Encode.forHtmlContent(h.get("lastName"))%></td>
+                          <td><%=Encode.forHtmlContent(h.get("firstName"))%></td>
+                          <td><%=Encode.forHtmlContent(demo.getHin())+Encode.forHtmlContent(demo.getVer())%></td>
+                          <td><%=Encode.forHtmlContent(demo.getPhone())%> </td>
+                          <td><%=Encode.forHtmlContent(demo.getEmail()) %></td>
+                          <td><%=Encode.forHtmlContent(demo.getAddress())+" "+Encode.forHtmlContent(demo.getCity())+" "+Encode.forHtmlContent(demo.getProvince())+" "+Encode.forHtmlContent(demo.getPostal())%> </td>
                           <td><oscar:nextAppt demographicNo="<%=demo.getDemographicNo().toString()%>"/></td>
                           <td bgcolor="<%=dis.color%>"><%=dis.state%></td>                          
                           <td bgcolor="<%=dis.color%>"><%=dis.bonusStatus%></td>
@@ -578,14 +578,14 @@ table.ele thead {
                           <% }else {
                               org.oscarehr.common.model.Demographic demoSDM = demoData.getSubstituteDecisionMaker(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());%>
                           <td><%=demo.getAgeAsOf(asDate)%></td>
-                          <td><%=Encode.forHtml(h.get("sex"))%></td>
-                          <td><%=Encode.forHtml(h.get("lastName"))%></td>
-                          <td><%=Encode.forHtml(h.get("firstName"))%></td>
-                          <td><%=Encode.forHtml(demo.getHin())+Encode.forHtml(demo.getVer())%></td>
-                          <td><%=demoSDM==null?"":Encode.forHtml(demoSDM.getLastName())%><%=demoSDM==null?"":","%> <%= demoSDM==null?"":Encode.forHtml(demoSDM.getFirstName()) %>&nbsp;</td>
-                          <td><%=demoSDM==null?"":Encode.forHtml(demoSDM.getPhone())%> &nbsp;</td>
-                          <td><%=demoSDM==null?"":Encode.forHtml(demoSDM.getEmail())%> &nbsp;</td>
-                          <td><%=demoSDM==null?"":Encode.forHtml(demoSDM.getAddress())%> <%=demoSDM==null?"":Encode.forHtml(demoSDM.getCity())%> <%=demoSDM==null?"":Encode.forHtml(demoSDM.getProvince())%> <%=demoSDM==null?"":Encode.forHtml(demoSDM.getPostal())%> &nbsp;</td>
+                          <td><%=Encode.forHtmlContent(h.get("sex"))%></td>
+                          <td><%=Encode.forHtmlContent(h.get("lastName"))%></td>
+                          <td><%=Encode.forHtmlContent(h.get("firstName"))%></td>
+                          <td><%=Encode.forHtmlContent(demo.getHin())+Encode.forHtmlContent(demo.getVer())%></td>
+                          <td><%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getLastName())%><%=demoSDM==null?"":","%> <%= demoSDM==null?"":Encode.forHtmlContent(demoSDM.getFirstName()) %>&nbsp;</td>
+                          <td><%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getPhone())%> &nbsp;</td>
+                          <td><%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getEmail())%> &nbsp;</td>
+                          <td><%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getAddress())%> <%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getCity())%> <%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getProvince())%> <%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getPostal())%> &nbsp;</td>
                           <td><oscar:nextAppt demographicNo="<%=demo.getDemographicNo().toString()%>"/></td>
                           <td bgcolor="<%=dis.color%>"><%=dis.state%></td>
                           <td bgcolor="<%=dis.color%>"><%=dis.numShots%></td>                          

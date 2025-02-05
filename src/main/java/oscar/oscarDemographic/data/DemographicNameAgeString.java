@@ -25,9 +25,12 @@
 
 package oscar.oscarDemographic.data;
 
-import java.util.Hashtable;
-
 import org.oscarehr.util.LoggedInInfo;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * 
@@ -36,7 +39,7 @@ import org.oscarehr.util.LoggedInInfo;
 public class DemographicNameAgeString {
    
    static DemographicNameAgeString demographicNameAgeString= new DemographicNameAgeString();
-   static Hashtable hashtable = new Hashtable();
+   static Hashtable<String, String[]> hashtable = new Hashtable<>();
    
 
    /**
@@ -62,19 +65,12 @@ public class DemographicNameAgeString {
    public String getNameAgeString(LoggedInInfo loggedInInfo,  Integer demoNo){
 
       String retval = "";      
-      if (demoNo != null){                     
-      //  if (!hashtable.containsKey(demoNo)){        
-
+      if (demoNo != null){
             DemographicData dData = new DemographicData();
             String[] dArray = dData.getNameAgeSexArray(loggedInInfo, demoNo);
             if (dArray != null){
-            	if (dArray != null){
-                    retval = nameAgeSexString(dArray);
-                 } 
-            }        
-        // }//else{MiscUtils.getLogger().debug("name age in buffer "+demoNo);}
-       //  String[] nameage =  (String[]) hashtable.get(demoNo);      
-                    
+               retval = nameAgeSexString(dArray);
+            }
       }
       return  retval;
    }   
@@ -83,9 +79,9 @@ public class DemographicNameAgeString {
     * @param demoNo Demoraphic Number
     */   
    public static void resetDemographic(String demoNo){
-      if(hashtable.containsKey(demoNo)){
+      if(demoNo != null){
          hashtable.remove(demoNo);
-      }      
+      }
    }
      
    private String nameAgeSexString(String[] s){
@@ -101,8 +97,8 @@ public class DemographicNameAgeString {
     *   "sex"
     *   "age"
     */   
-   public Hashtable getNameAgeSexHashtable(LoggedInInfo loggedInInfo, String demoNo){
-      Hashtable h = null;      
+   public Map<String, String> getNameAgeSexHashtable(LoggedInInfo loggedInInfo, String demoNo){
+      Map<String, String> h = Collections.emptyMap();
 
       if ( demoNo != null){
          if (!hashtable.containsKey(demoNo)){
@@ -112,11 +108,11 @@ public class DemographicNameAgeString {
             if (dArray != null){
                hashtable.put(demoNo,dArray);
             }                                
-         }//else{MiscUtils.getLogger().debug("name age in buffer "+demoNo);}         
-         String[] s =  (String[]) hashtable.get(demoNo);
-         if ( s != null){
+         }//else{MiscUtils.getLogger().debug("name age in buffer "+demoNo);}
 
-            h = new Hashtable();
+         String[] s = hashtable.get(demoNo);
+         if ( s != null){
+            h = new HashMap<>();
             h.put("lastName",s[0]);
             h.put("firstName",s[1]);
             h.put("sex",s[2]);

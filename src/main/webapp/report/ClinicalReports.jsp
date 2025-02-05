@@ -44,6 +44,7 @@ if(!authed) {
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="oscar.oscarReport.data.DemographicSets, oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.ClinicalReports.*,oscar.oscarEncounter.oscarMeasurements.*,oscar.oscarEncounter.oscarMeasurements.bean.*"%>
 <%@page import="com.Ostermiller.util.CSVPrinter,java.io.*"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
@@ -602,7 +603,7 @@ if(!authed) {
                     ArrayList<Hashtable> list = (ArrayList) request.getAttribute("list");
                     for (Hashtable h : list) {
 
-                        Hashtable demoHash = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), "" + h.get("_demographic_no"));
+                        Map<String, String> demoHash = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), "" + h.get("_demographic_no"));
                         org.oscarehr.common.model.Demographic demoObj = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), "" + h.get("_demographic_no"));
 
                         String colour = "";
@@ -613,9 +614,9 @@ if(!authed) {
                     <tr <%=colour%> >
 
                          <%for(String heading:headings){
-                             csvp.write(commonRow(heading,demoHash, demoObj));
+                             csvp.write(Encode.forHtmlContent(commonRow(heading,demoHash, demoObj)));
                              %>
-                           <td><%=commonRow(heading,demoHash, demoObj)%></td>
+                           <td><%=Encode.forHtmlContent(commonRow(heading,demoHash, demoObj))%></td>
                          <%}%>
 
                         <%for (String outputfield : outputfields) {
@@ -824,7 +825,7 @@ if(!authed) {
     }
 
 
-    String commonRow(String heading,Hashtable demoHash,org.oscarehr.common.model.Demographic demoObj){
+    String commonRow(String heading,Map<String, String> demoHash,org.oscarehr.common.model.Demographic demoObj){
         if (heading == null){
             return "";
         }
