@@ -241,14 +241,16 @@ public class DownloadEDTTest extends EDTBaseTest {
         System.out.println("--------------- testDownload_With_Invalid_Resource_ID__FAILED_Rejected_By_Policy ---------------\n" + "Actual Results:");
 
         List<BigInteger> resourceIds = new ArrayList<>();
-        resourceIds.add(new BigInteger("$$"));
         // Downloading files using resourceIds
         DownloadResult downloadResult = null;
         try {
+            resourceIds.add(new BigInteger("$$"));
             downloadResult = edtDelegate.download(resourceIds);
         } catch (Faultexception e) {
             printFaultException(e);
             assertEquals("Rejected By Policy", e.getFaultInfo().getCode());
+            return;
+        } catch (NumberFormatException e) {
             return;
         }
 

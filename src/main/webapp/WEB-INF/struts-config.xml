@@ -442,7 +442,7 @@
 		<form-bean name="caseManagementViewForm" type="org.oscarehr.casemgmt.web.formbeans.CaseManagementViewFormBean" />
 		<form-bean name="caseManagementEntryForm" type="org.oscarehr.casemgmt.web.formbeans.CaseManagementEntryFormBean" />
 		<form-bean name="clientImageForm" type="org.apache.struts.validator.DynaValidatorForm">
-			<form-property name="clientImage" type="org.oscarehr.casemgmt.web.formbeans.ClientImageFormBean" />
+			<form-property name="clientImage" type="org.apache.struts.upload.FormFile" />
 		</form-bean>
 		<form-bean name="onCallQuestionnaireForm" type="org.oscarehr.casemgmt.web.formbeans.OnCallQuestionnaireFormBean" />
 

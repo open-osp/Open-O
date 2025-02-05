@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,103 +24,107 @@
 --%>
 
 
- <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
- <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
- <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
- <%@ page import="oscar.oscarEncounter.data.*, oscar.oscarProvider.data.*, oscar.util.UtilDateUtilities" %>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="oscar.oscarEncounter.data.*, oscar.oscarProvider.data.*, oscar.util.UtilDateUtilities" %>
+<%@page import="org.oscarehr.common.dao.DemographicDao" %>
+<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_eChart");%>
+    <%authed = false; %>
+    <%response.sendRedirect("../securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 
 <%
     oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
-    if((bean=(oscar.oscarEncounter.pageUtil.EctSessionBean)request.getSession().getAttribute("EctSessionBean"))==null) {
+    if ((bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute("EctSessionBean")) == null) {
         response.sendRedirect("error.jsp");
         return;
     }
 
     String demoNo = bean.demographicNo;
-    EctPatientData.Patient pd = new EctPatientData().getPatient(LoggedInInfo.getLoggedInInfoFromSession(request) , demoNo);
+    EctPatientData.Patient pd = new EctPatientData().getPatient(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo);
     String famDocName, famDocSurname, famDocColour, inverseUserColour, userColour;
     String user = (String) session.getAttribute("user");
     ProviderColourUpdater colourUpdater = new ProviderColourUpdater(user);
     userColour = colourUpdater.getColour();
     //we calculate inverse of provider colour for text
     int base = 16;
-    if( userColour.length() == 0 )
+    if (userColour.length() == 0)
         userColour = "#CCCCFF";   //default blue if no preference set
 
     int num = Integer.parseInt(userColour.substring(1), base);      //strip leading # sign and convert
     int inv = ~num;                                                 //get inverse
     inverseUserColour = Integer.toHexString(inv).substring(2);    //strip 2 leading digits as html colour codes are 24bits
 
-    if(bean.familyDoctorNo.equals("")) {
+    if (bean.familyDoctorNo.equals("")) {
         famDocName = "";
         famDocSurname = "";
         famDocColour = "";
-    }
-    else {
+    } else {
         EctProviderData.Provider prov = new EctProviderData().getProvider(bean.familyDoctorNo);
         famDocName = prov.getFirstName();
         famDocSurname = prov.getSurname();
         colourUpdater = new ProviderColourUpdater(bean.familyDoctorNo);
         famDocColour = colourUpdater.getColour();
-        if( famDocColour.length() == 0 )
+        if (famDocColour.length() == 0)
             famDocColour = "#CCCCFF";
     }
 
-    String patientName = pd.getFirstName()+" "+pd.getSurname();
+    String patientName = pd.getFirstName() + " " + pd.getSurname();
     String patientAge = pd.getAge();
     String patientSex = pd.getSex();
-    String pAge = Integer.toString(UtilDateUtilities.calcAge(bean.yearOfBirth,bean.monthOfBirth,bean.dateOfBirth));
+    String pAge = Integer.toString(UtilDateUtilities.calcAge(bean.yearOfBirth, bean.monthOfBirth, bean.dateOfBirth));
 
-    java.util.Locale vLocale =(java.util.Locale)session.getAttribute(org.apache.struts.Globals.LOCALE_KEY);
-    
+    java.util.Locale vLocale = (java.util.Locale) session.getAttribute(org.apache.struts.Globals.LOCALE_KEY);
+
     //referring doctor
-    org.oscarehr.common.dao.DemographicDao dao = (org.oscarehr.common.dao.DemographicDao)org.oscarehr.util.SpringUtils.getBean(DemographicDao.class);
-	org.oscarehr.common.model.Demographic d= dao.getDemographic(demoNo);
-	String familyDoctorXml = d.getFamilyDoctor();
-	String rd = "";
-	if(familyDoctorXml != null) {
-		rd = oscar.SxmlMisc.getXmlContent(familyDoctorXml,"rd");
-	}
-	
-	//appointment reason
-	String apptNo = request.getParameter("appointmentNo");
-	String reason = new String();
-	if(apptNo != null && apptNo.length()>0) {
-		org.oscarehr.common.dao.OscarAppointmentDao appointmentDao = org.oscarehr.util.SpringUtils.getBean(org.oscarehr.common.dao.OscarAppointmentDao.class);
-		org.oscarehr.common.model.Appointment a = appointmentDao.find(Integer.parseInt(apptNo));
-		if(a != null) {
-			reason = a.getReason();
-		}
-	}
-    %>
+    org.oscarehr.common.dao.DemographicDao dao = (org.oscarehr.common.dao.DemographicDao) org.oscarehr.util.SpringUtils.getBean(DemographicDao.class);
+    org.oscarehr.common.model.Demographic d = dao.getDemographic(demoNo);
+    String familyDoctorXml = d.getFamilyDoctor();
+    String rd = "";
+    if (familyDoctorXml != null) {
+        rd = oscar.SxmlMisc.getXmlContent(familyDoctorXml, "rd");
+    }
 
-    <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
-   
-    <span class="Header" style="color:<%=inverseUserColour%>; background-color:<%=userColour%>; font-weight:normal;">
+    //appointment reason
+    String apptNo = request.getParameter("appointmentNo");
+    String reason = new String();
+    if (apptNo != null && apptNo.length() > 0) {
+        org.oscarehr.common.dao.OscarAppointmentDao appointmentDao = org.oscarehr.util.SpringUtils.getBean(org.oscarehr.common.dao.OscarAppointmentDao.class);
+        org.oscarehr.common.model.Appointment a = appointmentDao.find(Integer.parseInt(apptNo));
+        if (a != null) {
+            reason = a.getReason();
+        }
+    }
+%>
+
+<c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
+
+<span class="Header" style="color:<%=inverseUserColour%>; background-color:<%=userColour%>; font-weight:normal;">
         <%
             String winName = "Master" + bean.demographicNo;
             String url = "/demographic/demographiccontrol.jsp?demographic_no=" + bean.demographicNo + "&amp;displaymode=edit&amp;dboperation=search_detail";
         %>
         <span style="font-weight:bold;">
-        	<a href="#" onClick="popupPage(700,1000,'<%=winName%>','<c:out value="${ctx}"/><%=url%>'); return false;" title="<bean:message key="provider.appointmentProviderAdminDay.msgMasterFile"/>"><%=bean.patientLastName %>, <%=bean.patientFirstName%></a> <%=bean.patientSex%> <%=bean.patientAge%>
+        	<a href="#" onClick="popupPage(700,1000,'<%=winName%>','
+            <c:out value="${ctx}"/>
+                <%=url%>'); return false;"
+               title="<bean:message key="provider.appointmentProviderAdminDay.msgMasterFile"/>"><%=bean.patientLastName %>, <%=bean.patientFirstName%></a> <%=bean.patientSex%> <%=bean.patientAge%>
        	</span>  
-	<bean:message key="oscarEncounter.Index.msgMRP"/>:&nbsp;<span style="font-weight:bold;"><%=famDocName%> <%=famDocSurname%></span> 
+	<bean:message key="oscarEncounter.Index.msgMRP"/>:&nbsp;<span
+        style="font-weight:bold;"><%=famDocName%> <%=famDocSurname%></span>
 	REF:&nbsp;<span style="font-weight:bold;"><%=rd%></span>  
  	REASON:&nbsp;<span style="font-weight:bold;"><%=reason%></span>
  </span>

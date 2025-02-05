@@ -24,144 +24,144 @@
 
 --%>
 <!DOCTYPE html>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 <%@ page
-	import="java.util.*, oscar.oscarEncounter.oscarMeasurements.data.MeasurementMapConfig, oscar.OscarProperties, oscar.util.StringUtils"%>
+        import="java.util.*, oscar.oscarEncounter.oscarMeasurements.data.MeasurementMapConfig, oscar.OscarProperties, oscar.util.StringUtils" %>
 
 <%
 
 %>
 
-<html:html>
-<head>
-<html:base />
-    <title>Measurement Mapping Configuration</title>
-<!-- css -->
-    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" > <!-- Bootstrap 2.3.1 -->
-<script>
+<html>
+    <head>
+        <html:base/>
+        <title>Measurement Mapping Configuration</title>
+        <!-- css -->
+        <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
+        <script>
 
-function newWindow(varpage, windowname){
-    var page = varpage;
-    windowprops = "fullscreen=yes,toolbar=yes,directories=no,resizable=yes,dependent=yes,scrollbars=yes,location=yes,status=yes,menubar=yes";
-    var popup=window.open(varpage, windowname, windowprops);
-}
+            function newWindow(varpage, windowname) {
+                var page = varpage;
+                windowprops = "fullscreen=yes,toolbar=yes,directories=no,resizable=yes,dependent=yes,scrollbars=yes,location=yes,status=yes,menubar=yes";
+                var popup = window.open(varpage, windowname, windowprops);
+            }
 
-function addLoinc(){
-    var loinc_code = document.LOINC.loinc_code.value;
-    var name = document.LOINC.name.value;
+            function addLoinc() {
+                var loinc_code = document.LOINC.loinc_code.value;
+                var name = document.LOINC.name.value;
 
-    if (loinc_code.length > 0 && name.length > 0){
-        if (modCheck(loinc_code)){
-            document.LOINC.identifier.value=loinc_code+',PATHL7,'+name;
-            return true;
-        }
-    }else{
-        alert("Please specify both a loinc code and a name before adding.");
-    }
+                if (loinc_code.length > 0 && name.length > 0) {
+                    if (modCheck(loinc_code)) {
+                        document.LOINC.identifier.value = loinc_code + ',PATHL7,' + name;
+                        return true;
+                    }
+                } else {
+                    alert("Please specify both a loinc code and a name before adding.");
+                }
 
-    return false;
-}
+                return false;
+            }
 
-function modCheck(code){
-    if (code.charAt(0) == 'x' || code.charAt(0) == 'X'){
-        return true;
-    }
-	code = code.replace(/\D/g, "");
+            function modCheck(code) {
+                if (code.charAt(0) == 'x' || code.charAt(0) == 'X') {
+                    return true;
+                }
+                code = code.replace(/\D/g, "");
 
-	// The Luhn Algorithm. It's so pretty.
-	let nCheck = 0, bEven = false;
+                // The Luhn Algorithm. It's so pretty.
+                let nCheck = 0, bEven = false;
 
-	for (var n = code.length - 1; n >= 0; n--) {
-		var cDigit = code.charAt(n),
-			  nDigit = parseInt(cDigit, 10);
+                for (var n = code.length - 1; n >= 0; n--) {
+                    var cDigit = code.charAt(n),
+                        nDigit = parseInt(cDigit, 10);
 
-		if (bEven && (nDigit *= 2) > 9) nDigit -= 9;
+                    if (bEven && (nDigit *= 2) > 9) nDigit -= 9;
 
-		nCheck += nDigit;
-		bEven = !bEven;
-	}
+                    nCheck += nDigit;
+                    bEven = !bEven;
+                }
 
-    if ((nCheck % 10) == 0){
-            return true;
-        }else{
-            alert("The loinc code specified is not a valid loinc code, please start the code with an 'X' if you would like to make your own.");
-            return false;
-        }
-}
+                if ((nCheck % 10) == 0) {
+                    return true;
+                } else {
+                    alert("The loinc code specified is not a valid loinc code, please start the code with an 'X' if you would like to make your own.");
+                    return false;
+                }
+            }
 
             <%String outcome = request.getParameter("outcome");
             if (outcome != null){
                 if (outcome.equals("success")){
                     %>
-                      alert("Successfully added loinc code");
-                      window.opener.location.reload()
-                      window.close();
-                    <%
-                }else if (outcome.equals("failedcheck")){
-                    %>
-                      alert("Unable to add code: The specified code already exists in the database");
-                    <%
-                }else{
-                    %>
-                      alert("Failed to add the new code");
-                    <%
-                }
-            }%>
+            alert("Successfully added loinc code");
+            window.opener.location.reload()
+            window.close();
+            <%
+            }else if (outcome.equals("failedcheck")){
+                %>
+                alert("Unable to add code: The specified code already exists in the database");
+                <%
+            }else{
+                %>
+                alert("Failed to add the new code");
+                <%
+            }}%>
 
         </script>
 
-</head>
-<body>
-<form method="post" name="LOINC" action="NewMeasurementMap.do"><input
-	type="hidden" name="identifier" value="">
-<table style="width:100%">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRow" colspan="9" align="left">
-		<table style="width:100%">
-			<tr>
-				<td><input type="button" class="btn"
-					value=" <bean:message key="global.btnClose"/> "
-					onClick="window.close()"></td>
-				<td style="text-align:right"><oscar:help keywords="measurement" key="app.top1"/> | <a
-					href="javascript:popupStart(300,400,'../About.jsp')"><bean:message
-					key="global.about" /></a> | <a
-					href="javascript:popupStart(300,400,'../License.jsp')"><bean:message
-					key="global.license" /></a></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-</table>
-    <div class="well">
-		<table>
-			<tr>
-				<th colspan="2" class="Header">Add New Loinc
-				Code</th>
-			</tr>
-			<tr>
-				<td>Loinc Code:</td>
-				<td><input type="text"
-					name="loinc_code"></td>
-			</tr>
-			<tr>
-				<td>Name:</td>
-				<td><input type="text" name="name"></td>
-			</tr>
-			<tr>
-				<td><input
-					type="submit" class="btn" value=" Add Loinc Code " onclick="return addLoinc()">
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2">NOTE: <a
-					href="javascript:newWindow('https://loinc.org','RELMA')">It
-				is suggested that you use the RELMA application to help determine
-				correct loinc codes.</a></td>
-			</tr>
-		</table>
-	</div>
-</form>
-</body>
-</html:html>
+    </head>
+    <body>
+    <form method="post" name="LOINC" action="NewMeasurementMap.do"><input
+            type="hidden" name="identifier" value="">
+        <table style="width:100%">
+            <tr class="MainTableTopRow">
+                <td class="MainTableTopRow" colspan="9" align="left">
+                    <table style="width:100%">
+                        <tr>
+                            <td><input type="button" class="btn"
+                                       value=" <bean:message key="global.btnClose"/> "
+                                       onClick="window.close()"></td>
+                            <td style="text-align:right"><oscar:help keywords="measurement" key="app.top1"/> | <a
+                                    href="javascript:popupStart(300,400,'../About.jsp')"><bean:message
+                                    key="global.about"/></a> | <a
+                                    href="javascript:popupStart(300,400,'../License.jsp')"><bean:message
+                                    key="global.license"/></a></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div class="well">
+            <table>
+                <tr>
+                    <th colspan="2" class="Header">Add New Loinc
+                        Code
+                    </th>
+                </tr>
+                <tr>
+                    <td>Loinc Code:</td>
+                    <td><input type="text"
+                               name="loinc_code"></td>
+                </tr>
+                <tr>
+                    <td>Name:</td>
+                    <td><input type="text" name="name"></td>
+                </tr>
+                <tr>
+                    <td><input
+                            type="submit" class="btn" value=" Add Loinc Code " onclick="return addLoinc()">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">NOTE: <a
+                            href="javascript:newWindow('https://loinc.org','RELMA')">It
+                        is suggested that you use the RELMA application to help determine
+                        correct loinc codes.</a></td>
+                </tr>
+            </table>
+        </div>
+    </form>
+    </body>
+</html>

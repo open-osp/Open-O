@@ -9,100 +9,106 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
+    <%authed = false; %>
+    <%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="java.util.*, org.oscarehr.hospitalReportManager.*, org.oscarehr.hospitalReportManager.model.HRMCategory, org.oscarehr.hospitalReportManager.dao.HRMCategoryDao, org.oscarehr.util.SpringUtils"%>
+<%@page import="java.util.*, org.oscarehr.hospitalReportManager.*, org.oscarehr.hospitalReportManager.model.HRMCategory, org.oscarehr.hospitalReportManager.dao.HRMCategoryDao, org.oscarehr.util.SpringUtils" %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <!DOCTYPE html >
-<html:html locale="true" >
-<head>
-<html:base />
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Show Mappings</title>
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css">
-</head>
+<html>
+    <head>
+        <html:base/>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Show Mappings</title>
+        <link rel="stylesheet" type="text/css"
+              href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css">
+    </head>
 
-<body onunload="updateAjax()">
-	<div class="table-responsive">
+    <body onunload="updateAjax()">
+    <div class="table-responsive">
 
-	<div class="col-sm-12">
-<h4>Add Mapping</h4>
-<p class="pull-right">
-	<a href="javascript:popupStart(300,400,'Help.jsp')"><bean:message key="global.help" /></a> |
-	<a href="javascript:popupStart(300,400,'About.jsp')"><bean:message key="global.about" /></a> |
-	<a href="javascript:popupStart(300,400,'License.jsp')"><bean:message key="global.license" /></a>
-</p>
-<form method="post" action="<%=request.getContextPath() %>/hospitalReportManager/Mapping.do">
-	<fieldset>
-		<div class="control-group">
-			<label class="control-label">Report class:</label>
-			<div class="controls">
-				<select name="class"><option value="Medical Records Report">Medical Records Report</option><option value="Diagnostic Imaging Report">Diagnostic Imaging Report</option><option value="Cardio Respiratory Report">Cardio Respiratory Report</option></select>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Sub-class:</label>
-			<div class="controls">
-				<input type="text" class="form-control input-normal" name="subclass" />
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Sub-class mmenoic:</label>
-			<div class="controls">
-				<input type="text" class="form-control input-normal" name="mnemonic" />
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Sub-class description:</label>
-			<div class="controls">
-				<input type="text" class="form-control input-normal" name="description" />
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Sending Facility ID (* for all):</label>
-						<div class="controls">
-				<input type="text" class="form-control input-normal" name="sendingFacilityId" value="*" />
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label">Category:</label>
-			<div class="controls">
-				<select name="category">
-				<%
-					HRMCategoryDao categoryDao = (HRMCategoryDao) SpringUtils.getBean(HRMCategoryDao.class);
-					List<HRMCategory> categoryList = categoryDao.findAll();
-					for (HRMCategory category : categoryList) {
-				%>
-					<option value="<%=category.getId() %>"><%=category.getCategoryName() %></option>
-				<%
-					}
-				%>
-				</select>
-			</div>
-		</div>
-		<div class="control-group">
-			<input type="submit" class="btn btn-primary" name="submit" value="Save" />
-		</div>
+        <div class="col-sm-12">
+            <h4>Add Mapping</h4>
+            <p class="pull-right">
+                <a href="javascript:popupStart(300,400,'Help.jsp')"><bean:message key="global.help"/></a> |
+                <a href="javascript:popupStart(300,400,'About.jsp')"><bean:message key="global.about"/></a> |
+                <a href="javascript:popupStart(300,400,'License.jsp')"><bean:message key="global.license"/></a>
+            </p>
+            <form method="post" action="<%=request.getContextPath() %>/hospitalReportManager/Mapping.do">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label">Report class:</label>
+                        <div class="controls">
+                            <select name="class">
+                                <option value="Medical Records Report">Medical Records Report</option>
+                                <option value="Diagnostic Imaging Report">Diagnostic Imaging Report</option>
+                                <option value="Cardio Respiratory Report">Cardio Respiratory Report</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Sub-class:</label>
+                        <div class="controls">
+                            <input type="text" class="form-control input-normal" name="subclass"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Sub-class mmenoic:</label>
+                        <div class="controls">
+                            <input type="text" class="form-control input-normal" name="mnemonic"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Sub-class description:</label>
+                        <div class="controls">
+                            <input type="text" class="form-control input-normal" name="description"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Sending Facility ID (* for all):</label>
+                        <div class="controls">
+                            <input type="text" class="form-control input-normal" name="sendingFacilityId" value="*"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Category:</label>
+                        <div class="controls">
+                            <select name="category">
+                                <%
+                                    HRMCategoryDao categoryDao = (HRMCategoryDao) SpringUtils.getBean(HRMCategoryDao.class);
+                                    List<HRMCategory> categoryList = categoryDao.findAll();
+                                    for (HRMCategory category : categoryList) {
+                                %>
+                                <option value="<%=category.getId() %>"><%=category.getCategoryName() %>
+                                </option>
+                                <%
+                                    }
+                                %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <input type="submit" class="btn btn-primary" name="submit" value="Save"/>
+                    </div>
 
-	</fieldset>
-</form>
-</div>
-</div>
-</body>
-</html:html>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    </body>
+</html>

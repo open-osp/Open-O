@@ -23,6 +23,15 @@
  * Ontario, Canada 
  */
 -->
+
+<%@page import="oscar.MyDateFormat" %>
+<%@page import="oscar.SxmlMisc" %>
+<%@page import="oscar.util.ConversionUtils" %>
+<%@page import="java.math.BigDecimal" %>
+<%@page import="java.sql.ResultSet" %> 
+<%@page import="java.util.List" %>
+<%@page import="org.oscarehr.common.dao.BillingDao" %>
+
 <table width="100%" border="2" cellpadding="0" cellspacing="0">
 
 	<% 
@@ -45,11 +54,10 @@
   List<Object[]> bs = billingDao.search_billflu(request.getParameter("providerview"),ConversionUtils.fromDateString(dateBegin),ConversionUtils.fromDateString(dateEnd));
 int rCount = 0;
 int rowCount1 = 0;
-
         
      		
   boolean bodd=false;
-   nItems=0;
+  nItems=0;
   String apptDoctorNo="", apptNo="", demoNo = "", demoName="", userno="", apptDate="", apptTime="", reason="",  note="", total="";
   if(bs==null) {
     out.println("failed!!!"); 
@@ -175,6 +183,6 @@ int rowCount1 = 0;
 
 	</tr>
 	<%
-}}%>
+}%>
 
 </table>

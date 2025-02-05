@@ -36,7 +36,6 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.upload.FormFile;
 import org.oscarehr.casemgmt.model.ClientImage;
 import org.oscarehr.casemgmt.service.ClientImageManager;
-import org.oscarehr.casemgmt.web.formbeans.ClientImageFormBean;
 import org.oscarehr.util.MiscUtils;
 
 
@@ -56,13 +55,12 @@ public class ClientImageAction extends DispatchAction {
 				HttpServletResponse response) {
 				DynaActionForm imageForm = (DynaActionForm)form;
 				
-			ClientImageFormBean formBean = (ClientImageFormBean)imageForm.get("clientImage");		
 			HttpSession session = request.getSession(true);
 			String id=(String)(session.getAttribute("clientId"));    
 			
 			log.info("client image upload: id="  + id);
 
-			FormFile formFile = formBean.getImagefile();
+			FormFile formFile = (FormFile)imageForm.get("clientImage");
 			String type = formFile.getFileName().substring(formFile.getFileName().lastIndexOf(".")+1);
 			if (type!=null) type=type.toLowerCase();
 			

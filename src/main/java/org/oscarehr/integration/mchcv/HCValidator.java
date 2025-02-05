@@ -25,7 +25,7 @@ package org.oscarehr.integration.mchcv;
 
 import ca.ontario.health.hcv.*;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.oscarehr.integration.ebs.client.EdtClientBuilder;
+import org.oscarehr.integration.ebs.client.ng.EdtClientBuilder;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
