@@ -751,7 +751,7 @@ function toggleView(form) {
                                 }
                                 function expandPreview(text){
                                     parent.document.getElementById('lightwindow_container').style.width="1140px";
-									parent.document.getElementById('lightwindow_container').style.left="-600px";
+									// parent.document.getElementById('lightwindow_container').style.left="-600px"; // commented to resolve a UI alignment issue causing the print-rx window to shift off-screen to the left.
                                     parent.document.getElementById('lightwindow_contents').style.width="1120px";
                                     document.getElementById('preview').style.width="600px";
                                     frames['preview'].document.getElementById('pharmInfo').innerHTML=text;
