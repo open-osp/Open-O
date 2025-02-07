@@ -401,7 +401,7 @@
 									<label>Chart options</label>
 									<div class="form-check">
 										<div class="form-check-label">
-											<input class="form-check-input" type="radio" name="patientChartOption" id="doNotAddAsNoteOption" value="doNotAddAsNote">
+											<input class="form-check-input" type="radio" name="patientChartOption" id="doNotAddAsNoteOption" value="doNotAddAsNote" onClick="toggleInternalTextArea()">
 											<label class="form-check-label" for="doNotAddAsNoteOption">
 												Do not add to patient chart
 											</label>
@@ -409,10 +409,13 @@
 									</div>
 									<div class="form-check">
 										<div class="form-check-label">
-											<input class="form-check-input" type="radio" name="patientChartOption" id="addFullNoteOption" value="addFullNote" checked>
+											<input class="form-check-input" type="radio" name="patientChartOption" id="addFullNoteOption" value="addFullNote" checked onClick="toggleInternalTextArea()">
 											<label class="form-check-label" for="addFullNoteOption">
 												Chart as new note in patient's chart
 											</label>
+										</div>
+										<div id="internalCommentContainer" class="d-none">
+											<textarea class="form-control" id="internalComment" name="internalComment" placeholder="Internal comment to include" rows="3"><c:out value="${ not empty param.internalComment ? param.internalComment : internalComment }" /></textarea>
 										</div>
 									</div>
 								</div>
@@ -533,6 +536,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Show additional field option if API type sender is selected
 	showAdditionalParamOption();
+
+	// Toggle internal note text area
+	toggleInternalTextArea();
 });
 
 document.addEventListener("keydown", function(event) {
@@ -740,6 +746,17 @@ function showErrorAndClose() {
 	const errorMessage = document.getElementById('emailErrorMessage').value.replace(/\\n/g, '\n');
 	alert(errorMessage);
 	window.close();
+}
+
+function toggleInternalTextArea() {
+	const addFullNoteOption = document.getElementById('addFullNoteOption');
+	const internalCommentContainer = document.getElementById('internalCommentContainer');
+
+	if (addFullNoteOption.checked) {
+		internalCommentContainer.classList.remove('d-none'); // Show the textarea
+	} else {
+		internalCommentContainer.classList.add('d-none'); // Hide the textarea
+	}
 }
 
 </script>
