@@ -25,20 +25,7 @@
 package oscar.oscarRx.util;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -656,92 +643,26 @@ public class RxUtil {
 			}
 		}
 		//check if method is specified, if yes, check the number after method ,which maybe the number to take for a frequency.
-		for (String s : methods) {
-			Pattern p = Pattern.compile(s);
-			Matcher m = p.matcher(instructions);
-			if (m.find()) {
-				p("must be here");
-				method = instructions.substring(m.start(), m.end());
-
-				Pattern p2 = Pattern.compile(method + "\\s*\\d*\\.*\\d+\\s+");
-				Matcher m2 = p2.matcher(instructions);
-
-				Pattern pF1 = Pattern.compile(method + "\\s*\\d*\\/*\\d+\\s+");
-				Matcher mF1 = pF1.matcher(instructions);
-
-				Pattern p4 = Pattern.compile(method + "\\s*\\d*\\.*\\d+-\\s*\\d*\\.*\\d+\\s+");
-				Matcher m4 = p4.matcher(instructions);
-				
-				//since "\\s+[0-9]+-[0-9]+\\s+" is a case in "\\s+[0-9]+\\s+", check the latter regex first.
-				if (m4.find()) {
-					p("else if 1");
-					String str2 = instructions.substring(m4.start(), m4.end());
-					Pattern p5 = Pattern.compile("\\d*\\.*\\d+-\\s*\\d*\\.*\\d+");
-					Matcher m5 = p5.matcher(str2);
-					if (m5.find()) {
-						String str3 = str2.substring(m5.start(), m5.end());
-						//           p("str3", str3);
-						takeMinMethod = str3.split("-")[0];
-						takeMaxMethod = str3.split("-")[1];
-					}
-				} else if (m2.find()) {
-					p("if 1");
-					String str = instructions.substring(m2.start(), m2.end());
-					p("str1 ", str);
-					Pattern p3 = Pattern.compile("\\d*\\.*\\d+");
-					Matcher m3 = p3.matcher(str);
-					if (m3.find()) {
-						p("found1");
-						amountMethod = str.substring(m3.start(), m3.end());
-						//      p("amountMethod", amountMethod);
-					}
-				} else if(mF1.find()) {
-					String partInstructions = instructions.substring(mF1.start(), mF1.end());
-					Pattern pF2 = Pattern.compile("\\d*\\/*\\d+");
-					Matcher mF2 = pF2.matcher(partInstructions);
-					
-					if(mF2.find()) {
-						String fraction = partInstructions.substring(mF2.start(), mF2.end());
-						amountFrequency = "0";
-						if(fraction.equals("1/2"))
-							amountFrequency = "0.5";
-						else if(fraction.equals("1/4"))
-							amountFrequency = "0.25";
-					}
-				}
-				else {
-					p("word amount");
-					for (String word : zeroToTen) {
-						String r1 = method + "\\s+" + word + "\\s";
-						String r2 = method + "\\s+" + word + "$";
-						Pattern p5 = Pattern.compile(r1);
-						Matcher m5 = p5.matcher(instructions);
-						p("pattern word =" + r1);
-						if (m5.find()) {
-							amountMethod = instructions.substring(m5.start(), m5.end());
-							amountMethod = amountMethod.replace(method, "").trim();
-							p("amountMethod=" + amountMethod);
-							amountMethod = convertWordToNumerical(amountMethod);
-							p("num amountMethod=" + amountMethod);
-							break;
-						} else {
-							p5 = Pattern.compile(r2);
-							m5 = p5.matcher(instructions);
-							p("pattern word =" + r2);
-							if (m5.find()) {
-								amountMethod = instructions.substring(m5.start(), m5.end());
-								amountMethod = amountMethod.replace(method, "").trim();
-								p("amountMethod=" + amountMethod);
-								amountMethod = convertWordToNumerical(amountMethod);
-								p("num amountMethod=" + amountMethod);
-								break;
-							}
-						}
-					}
-				}
-				break;
+		//if no, check if a number is specified at beginning.
+		if (!instructions.isEmpty()) {
+			InstructionSegment instructionSegment = scanInstruction(instructions, methods);
+			if (instructionSegment.method != null) {
+				method = instructionSegment.method;
+			}
+			if (instructionSegment.takeMin != null) {
+				takeMinMethod = instructionSegment.takeMin;
+			}
+			if (instructionSegment.takeMax != null) {
+				takeMaxMethod = instructionSegment.takeMax;
+			}
+			if (instructionSegment.amountMethod != null) {
+				amountMethod = instructionSegment.amountMethod;
+			}
+			if (instructionSegment.amountFrequency != null) {
+				amountFrequency = instructionSegment.amountFrequency;
 			}
 		}
+
 		/*    p(takeMinMethod);
 		p(takeMaxMethod);
 		p(takeMinFrequency);
@@ -994,6 +915,131 @@ public class RxUtil {
 
 		return retBool;
 	}
+
+
+	private static InstructionSegment scanInstruction(String instructions, String[] methods) {
+		InstructionSegment segment = new InstructionSegment();
+
+		for (String s : methods) {
+			Pattern p = Pattern.compile(s);
+			Matcher m = p.matcher(instructions);
+			if (m.find()) {
+				p("must be here");
+
+				segment.method = instructions.substring(m.start(), m.end());
+				scanForFrequencyAndUpdateInstructionSegment(segment, instructions, segment.method);
+				break;
+			}
+		}
+
+		if (segment.method == null) {
+			String placeholderMethod = "<NO_METHOD>";
+			String instructionWithPlaceholderMethod = placeholderMethod + " " + instructions;
+			Pattern p = Pattern.compile("(?i)" + placeholderMethod);
+			Matcher m = p.matcher(instructionWithPlaceholderMethod);
+			if (m.find())
+				scanForFrequencyAndUpdateInstructionSegment(segment, instructionWithPlaceholderMethod, placeholderMethod);
+		}
+
+		return segment;
+	}
+
+	private static void scanForFrequencyAndUpdateInstructionSegment(InstructionSegment segment, String instructions, String method) {
+		String takeMinMethod = null;
+		String takeMaxMethod = null;
+		String amountMethod = null;
+		String amountFrequency = null;
+
+		Pattern p2 = Pattern.compile(method + "\\s*\\d*\\.*\\d+\\s+");
+		Matcher m2 = p2.matcher(instructions);
+
+		Pattern pF1 = Pattern.compile(method + "\\s*\\d*\\/*\\d+\\s+");
+		Matcher mF1 = pF1.matcher(instructions);
+
+		Pattern p4 = Pattern.compile(method + "\\s*\\d*\\.*\\d+-\\s*\\d*\\.*\\d+\\s+");
+		Matcher m4 = p4.matcher(instructions);
+
+		//since "\\s+[0-9]+-[0-9]+\\s+" is a case in "\\s+[0-9]+\\s+", check the latter regex first.
+		if (m4.find()) {
+			p("else if 1");
+			String str2 = instructions.substring(m4.start(), m4.end());
+			Pattern p5 = Pattern.compile("\\d*\\.*\\d+-\\s*\\d*\\.*\\d+");
+			Matcher m5 = p5.matcher(str2);
+			if (m5.find()) {
+				String str3 = str2.substring(m5.start(), m5.end());
+				//           p("str3", str3);
+				takeMinMethod = str3.split("-")[0];
+				takeMaxMethod = str3.split("-")[1];
+			}
+		} else if (m2.find()) {
+			p("if 1");
+			String str = instructions.substring(m2.start(), m2.end());
+			p("str1 ", str);
+			Pattern p3 = Pattern.compile("\\d*\\.*\\d+");
+			Matcher m3 = p3.matcher(str);
+			if (m3.find()) {
+				p("found1");
+				amountMethod = str.substring(m3.start(), m3.end());
+				//      p("amountMethod", amountMethod);
+			}
+		} else if (mF1.find()) {
+			String partInstructions = instructions.substring(mF1.start(), mF1.end());
+			Pattern pF2 = Pattern.compile("\\d*\\/*\\d+");
+			Matcher mF2 = pF2.matcher(partInstructions);
+
+			if (mF2.find()) {
+				String fraction = partInstructions.substring(mF2.start(), mF2.end());
+				amountFrequency = "0";
+				if (fraction.equals("1/2"))
+					amountFrequency = "0.5";
+				else if (fraction.equals("1/4"))
+					amountFrequency = "0.25";
+			}
+		} else {
+			p("word amount");
+			for (String word : zeroToTen) {
+				String r1 = method + "\\s+" + word + "\\s";
+				String r2 = method + "\\s+" + word + "$";
+				Pattern p5 = Pattern.compile(r1);
+				Matcher m5 = p5.matcher(instructions);
+				p("pattern word =" + r1);
+				if (m5.find()) {
+					amountMethod = instructions.substring(m5.start(), m5.end());
+					amountMethod = amountMethod.replace(method, "").trim();
+					p("amountMethod=" + amountMethod);
+					amountMethod = convertWordToNumerical(amountMethod);
+					p("num amountMethod=" + amountMethod);
+					break;
+				} else {
+					p5 = Pattern.compile(r2);
+					m5 = p5.matcher(instructions);
+					p("pattern word =" + r2);
+					if (m5.find()) {
+						amountMethod = instructions.substring(m5.start(), m5.end());
+						amountMethod = amountMethod.replace(method, "").trim();
+						p("amountMethod=" + amountMethod);
+						amountMethod = convertWordToNumerical(amountMethod);
+						p("num amountMethod=" + amountMethod);
+						break;
+					}
+				}
+			}
+		}
+
+		segment.takeMax = takeMaxMethod;
+		segment.takeMin = takeMinMethod;
+		segment.amountMethod = amountMethod;
+		segment.amountFrequency = amountFrequency;
+	}
+
+	private static class InstructionSegment {
+		String method;
+		String takeMin;
+		String takeMax;
+		String amountMethod;
+		String amountFrequency;
+	}
+
 
 	public static String trimSpecial(RxPrescriptionData.Prescription rx) {
 		String special = rx.getSpecial();
