@@ -28,6 +28,7 @@ package oscar.oscarRx.pageUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.casemgmt.service.CaseManagementManager;
 import org.oscarehr.common.model.Drug;
+import org.oscarehr.managers.PrescriptionManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -143,6 +145,34 @@ public final class RxRePrescribeAction extends DispatchAction {
 		request.getSession().setAttribute("rePrint", "true");
 		request.getSession().setAttribute("comment", comment);
 		LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.REPRINT, LogConst.CON_PRESCRIPTION, script_no, ip, "" + beanRX.getDemographicNo(), auditStr.toString());
+
+		return mapping.findForward(null);
+	}
+
+	public ActionForward saveDigitalSignature(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+		checkPrivilege(loggedInInfo, PRIVILEGE_READ);
+
+		oscar.oscarRx.pageUtil.RxSessionBean sessionBeanRX = (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+		if (sessionBeanRX == null) {
+			response.sendRedirect("error.html");
+			return null;
+		}
+
+		oscar.oscarRx.pageUtil.RxSessionBean beanRX = new oscar.oscarRx.pageUtil.RxSessionBean();
+		beanRX.setDemographicNo(sessionBeanRX.getDemographicNo());
+		beanRX.setProviderNo(sessionBeanRX.getProviderNo());
+
+		Integer digitalSignatureId = Objects.isNull(request.getParameter("digitalSignatureId"))
+				? null : Integer.valueOf(request.getParameter("digitalSignatureId"));
+		String scriptId = request.getParameter("scriptId");
+		String ip = request.getRemoteAddr();
+
+		PrescriptionManager prescriptionManager = SpringUtils.getBean(PrescriptionManager.class);
+		prescriptionManager.setPrescriptionSignature(loggedInInfo, Integer.parseInt(scriptId), digitalSignatureId);
+
+		LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.REPRINT, LogConst.CON_PRESCRIPTION, scriptId, ip, "" + beanRX.getDemographicNo());
 
 		return mapping.findForward(null);
 	}

@@ -1072,6 +1072,9 @@
 			<forward name="success" path="/oscarRx/ViewScript2.jsp"></forward>
 		</action>
 
+		<action path="/oscarRx/saveDigitalSignature" parameter="method" scope="request" type="oscar.oscarRx.pageUtil.RxRePrescribeAction">
+		</action>
+
 		<action path="/oscarRx/WriteToEncounter" scope="request" type="oscar.oscarRx.pageUtil.RxWriteToEncounterAction">
 			<forward name="success" path="/oscarRx/ViewScript2.jsp" />
 		</action>
