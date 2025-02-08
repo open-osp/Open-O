@@ -43,6 +43,7 @@ if(!authed) {
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page
 	import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.data.*,oscar.oscarPrevention.pageUtil.*,java.net.*,oscar.eform.*"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
@@ -236,15 +237,15 @@ function disableifchecked(ele,nextDate){
 
 				<%  DemographicNameAgeString deName = DemographicNameAgeString.getInstance();                       
                         for ( int i =0; i < demos.length;i++){     
-                            Hashtable h = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), demos[i]);
+                            Map<String, String> h = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), demos[i]);
                     %>
 				<tr>
 					<td><%=i+1%></td>
 					<td><input type="checkbox" name="demos" value="<%=demos[i]%>"
 						checked /></td>
-					<td><%=h.get("lastName")%>, <%=h.get("firstName")%></td>
-					<td><%=h.get("sex")%></td>
-					<td><%=h.get("age")%></td>
+					<td><%=Encode.forHtmlContent(h.get("lastName"))%>, <%=Encode.forHtmlContent(h.get("firstName"))%></td>
+					<td><%=Encode.forHtmlContent(h.get("sex"))%></td>
+					<td><%=Encode.forHtmlContent(h.get("age"))%></td>
 				</tr>
 				<%}%>
 			</table>
