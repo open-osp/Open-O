@@ -51,7 +51,7 @@
 <%@page import="org.oscarehr.managers.DemographicManager,org.oscarehr.billing.CA.filters.CodeFilterManager"%>
 
 <%
-	ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
+	ProfessionalSpecialistDao professionalSpecialistDao = SpringUtils.getBean(ProfessionalSpecialistDao.class);
 	DxresearchDAO dxresearchDao = SpringUtils.getBean(DxresearchDAO.class);
 	UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -141,7 +141,7 @@
                     MiscUtils.getLogger().error("Error", e);
             }
 
-            ProviderPreferenceDao preferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
+            ProviderPreferenceDao preferenceDao = SpringUtils.getBean(ProviderPreferenceDao.class);
             ProviderPreference preference = null;
             preference=ProviderPreferencesUIBean.getProviderPreferenceByProviderNo(provider_no);
 
@@ -302,7 +302,7 @@
                             //check if patient's roster status determines which billing form to display (this superceeds provider preference)
                             String rosterStatus = demo.getRosterStatus();
 
-                            CtlBillingServiceDao ctlBillingServiceDao = (CtlBillingServiceDao) SpringUtils.getBean("ctlBillingServiceDao");
+                            CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
                             List<CtlBillingService> ctlBillSrvList = ctlBillingServiceDao.findByServiceTypeId(rosterStatus);
 
                             if (!ctlBillSrvList.isEmpty() && !rosterStatus.isEmpty()) {
@@ -310,7 +310,7 @@
                             }
                             else {
                                 // check user preference to show a bill form
-                                ProviderPreferenceDao providerPreferenceDao=(ProviderPreferenceDao)SpringUtils.getBean(ProviderPreferenceDao.class);
+                                ProviderPreferenceDao providerPreferenceDao=SpringUtils.getBean(ProviderPreferenceDao.class);
                                 ProviderPreference providerPreference=null;
 
                                 //use the appointment provider's preferences first if we can
@@ -331,7 +331,7 @@
 									ctlBillForm = providerPreference.getDefaultServiceType();
                                 } else {
                                         //check if there is a group preference for default billing
-                                        MyGroupDao myGroupDao = (MyGroupDao) SpringUtils.getBean("myGroupDao");
+                                        MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
                                         List<MyGroup> myGroups = myGroupDao.getProviderGroups(provider_no);
                                         String groupBillForm = "";
                                         for (MyGroup group : myGroups) {
@@ -393,7 +393,7 @@
             String serviceCode, serviceDesc, serviceValue, servicePercentage, serviceType, displayStyle, serviceDisp = "";
             String headerTitle1 = "", headerTitle2 = "", headerTitle3 = "";
 
-            CSSStylesDAO cssStylesDao = (CSSStylesDAO) SpringUtils.getBean(CSSStylesDAO.class);
+            CSSStylesDAO cssStylesDao = SpringUtils.getBean(CSSStylesDAO.class);
 			CssStyle cssStyle;
 			String styleId;
 
@@ -1444,7 +1444,7 @@ if(checkFlag == null) checkFlag = "0";
 										<td style="width: 20%">
 											<% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable())
 { // multisite start ==========================================
-        	SiteDao siteDao = (SiteDao)SpringUtils.getBean(SiteDao.class);
+        	SiteDao siteDao = SpringUtils.getBean(SiteDao.class);
           	List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
 
       %> <script>
@@ -1555,9 +1555,9 @@ function changeSite(sel) {
 													if (OscarProperties.getInstance().getBooleanProperty("rma_enabled", "true")) {
 												%>
 												<%
-													ClinicNbrDao cnDao = (ClinicNbrDao) SpringUtils.getBean("clinicNbrDao");
+													ClinicNbrDao cnDao = SpringUtils.getBean(ClinicNbrDao.class);
 																ArrayList<ClinicNbr> nbrs = cnDao.findAll();
-													            ProviderDao providerDao = (ProviderDao) SpringUtils.getBean("providerDao");
+													            ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 													            String providerSearch = apptProvider_no.equalsIgnoreCase("none") ? user_no : apptProvider_no;
 													            Provider p = providerDao.getProvider(providerSearch);
 													            String providerNbr = SxmlMisc.getXmlContent(p.getComments(),"xml_p_nbr");
