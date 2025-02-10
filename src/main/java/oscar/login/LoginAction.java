@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.ErrorManager;
 import java.util.regex.Pattern;
 
 public final class LoginAction extends DispatchAction {
@@ -76,14 +77,17 @@ public final class LoginAction extends DispatchAction {
 	private static final Logger logger = MiscUtils.getLogger();
 	private static final String LOG_PRE = "Login!@#$: ";
 
-	private ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
-	private AppManager appManager = SpringUtils.getBean(AppManager.class);
-	private FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
-	private ProviderPreferenceDao providerPreferenceDao = SpringUtils.getBean(ProviderPreferenceDao.class);
-	private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
-	private UserPropertyDAO propDao = SpringUtils.getBean(UserPropertyDAO.class);
+	private final ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
+	private final AppManager appManager = SpringUtils.getBean(AppManager.class);
+	private final FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
+	private final ProviderPreferenceDao providerPreferenceDao = SpringUtils.getBean(ProviderPreferenceDao.class);
+	private final ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+	private final UserPropertyDAO propDao = SpringUtils.getBean(UserPropertyDAO.class);
+	private final DSService dsService = SpringUtils.getBean(DSService.class);
+	private final ServiceRequestTokenDao serviceRequestTokenDao = SpringUtils.getBean(ServiceRequestTokenDao.class);
 
 	private final SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
+	private final SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
 
 	// remove after testing is done
 	// private SsoAuthenticationManager ssoAuthenticationManager =
@@ -96,9 +100,7 @@ public final class LoginAction extends DispatchAction {
 
 		if(!"POST".equals(request.getMethod())) {
 			MiscUtils.getLogger().error("Someone is trying to login with a GET request.",new Exception());
-			String newURL = mapping.findForward("error").getPath();
-			newURL = newURL + "?errormsg=Application Error. See Log.";
-			return new ActionForward(newURL);
+			return getErrorForward(mapping, "Application Error. See Log.");
 		}
 
 		boolean ajaxResponse = request.getParameter("ajaxResponse") != null?Boolean.valueOf(request.getParameter("ajaxResponse")):false;
@@ -170,13 +172,11 @@ public final class LoginAction extends DispatchAction {
 				removeAttributesFromSession(request);
 			} catch (Exception e) {
 				logger.error("Error", e);
-				String newURL = mapping.findForward("error").getPath();
-				newURL = newURL + "?errormsg=Setting values to the session.";
 
 				// Remove the attributes from session
 				removeAttributesFromSession(request);
 
-				return (new ActionForward(newURL));
+				return getErrorForward(mapping, "Setting values to the session.");
 			}
 
 			// make sure this checking doesn't happen again
@@ -204,7 +204,7 @@ public final class LoginAction extends DispatchAction {
 			if (nextPage != null) {
 				// set current facility
 				String facilityIdString = request.getParameter(SELECTED_FACILITY_ID);
-				Facility facility = facilityDao.find(Integer.parseInt(facilityIdString));
+				Facility facility = this.facilityDao.find(Integer.parseInt(facilityIdString));
 				request.getSession().setAttribute(SessionConstants.CURRENT_FACILITY, facility);
 				String username = (String) request.getSession().getAttribute("user");
 				LogAction.addLog(username, LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIdString, ip);
@@ -219,19 +219,9 @@ public final class LoginAction extends DispatchAction {
 				logger.info(LOG_PRE + " Blocked: " + userName);
 				// return mapping.findForward(where); //go to block page
 				// change to block page
-				String newURL = mapping.findForward("error").getPath();
-				newURL = newURL + "?errormsg=Oops! Your account is now locked due to incorrect password attempts!";
+				String errMsg= "Oops! Your account is now locked due to incorrect password attempts!";
 
-				if (ajaxResponse) {
-					JSONObject json = new JSONObject();
-					json.put("success", false);
-					json.put("error", "Oops! Your account is now locked due to incorrect password attempts!");
-					response.setContentType("text/x-json");
-					json.write(response.getWriter());
-					return null;
-				}
-
-				return (new ActionForward(newURL));
+				return handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg);
 			}
 
 			logger.debug("ip was not blocked: " + ip);
@@ -253,38 +243,25 @@ public final class LoginAction extends DispatchAction {
 			}
 		} catch (Exception e) {
 			logger.error("Error", e);
-			String newURL = mapping.findForward("error").getPath();
+			String errMsg = "Database connection error:" + e.getMessage() + ".";
+
 			if (e.getMessage() != null && e.getMessage().startsWith("java.lang.ClassNotFoundException")) {
-				newURL = newURL + "?errormsg=Database driver "
-						+ e.getMessage().substring(e.getMessage().indexOf(':') + 2) + " not found.";
+				errMsg = "Database driver " + e.getMessage().substring(e.getMessage().indexOf(':') + 2) + " not found.";
+				return getErrorForward(mapping, errMsg);
 			} else {
-				newURL = newURL + "?errormsg=Database connection error: " + e.getMessage() + ".";
+				return handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg);
 			}
-
-			if (ajaxResponse) {
-				JSONObject json = new JSONObject();
-				json.put("success", false);
-				json.put("error", "Database connection error:" + e.getMessage() + ".");
-				response.setContentType("text/x-json");
-				json.write(response.getWriter());
-				return null;
-			}
-
-			return (new ActionForward(newURL));
 		}
 		logger.debug("strAuth : " + Arrays.toString(strAuth));
 		if (strAuth != null && strAuth.length != 1) { // login successfully
 
 			// is the provider record inactive?
-			ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
-			Provider p = providerDao.getProvider(strAuth[0]);
+			Provider p = this.providerDao.getProvider(strAuth[0]);
 			if (p == null || (p.getStatus() != null && p.getStatus().equals("0"))) {
 				logger.info(LOG_PRE + " Inactive: " + userName);
 				LogAction.addLog(strAuth[0], "login", "failed", "inactive");
 
-				String newURL = mapping.findForward("error").getPath();
-				newURL = newURL + "?errormsg=Your account is inactive. Please contact your administrator to activate.";
-				return (new ActionForward(newURL));
+				return getErrorForward(mapping, "Your account is inactive. Please contact your administrator to activate.");
 			}
 
 			/*
@@ -295,17 +272,14 @@ public final class LoginAction extends DispatchAction {
 					security.isForcePasswordReset() != null && security.isForcePasswordReset()
 					&& forcedpasswordchange) {
 
-				String newURL = mapping.findForward("forcepasswordreset").getPath();
-
 				try {
 					setUserInfoToSession(request, userName, password, pin, nextPage);
+					return new ActionForward(getForwardPath(mapping, "forcepasswordreset"));
 				} catch (Exception e) {
 					logger.error("Error", e);
-					newURL = mapping.findForward("error").getPath();
-					newURL = newURL + "?errormsg=Setting values to the session.";
+					return getErrorForward(mapping, "Setting values to the session.");
 				}
 
-				return new ActionForward(newURL);
 			}
 
 			// ################----------------------->
@@ -342,7 +316,7 @@ public final class LoginAction extends DispatchAction {
 			 *
 			 */
 			if (SSOUtility.isSSOEnabled()) {
-				ActionRedirect redirect = new ActionRedirect(mapping.findForward("ssoLogin"));
+				ActionRedirect redirect = new ActionRedirect(getForwardPath(mapping, "ssoLogin"));
 				redirect.addParameter("user_email", strAuth[6]);
 				return redirect;
 			}
@@ -363,13 +337,12 @@ public final class LoginAction extends DispatchAction {
 			// If the ondIdKey parameter is not null and is not an empty string
 			if (oneIdKey != null && !oneIdKey.equals("")) {
 				String providerNumber = strAuth[0];
-				SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
-				Security securityRecord = securityDao.getByProviderNo(providerNumber);
+				Security securityRecord = this.securityDao.getByProviderNo(providerNumber);
 
 				if (securityRecord.getOneIdKey() == null || securityRecord.getOneIdKey().equals("")) {
 					securityRecord.setOneIdKey(oneIdKey);
 					securityRecord.setOneIdEmail(oneIdEmail);
-					securityDao.updateOneIdKey(securityRecord);
+					this.securityDao.updateOneIdKey(securityRecord);
 					session.setAttribute("oneIdEmail", oneIdEmail);
 				} else {
 					logger.error("The account for provider number " + providerNumber
@@ -413,7 +386,7 @@ public final class LoginAction extends DispatchAction {
 
 			if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable()) {
 				String tklerProviderNo = null;
-				UserProperty prop = propDao.getProp(providerNo, UserProperty.PROVIDER_FOR_TICKLER_WARNING);
+				UserProperty prop = this.propDao.getProp(providerNo, UserProperty.PROVIDER_FOR_TICKLER_WARNING);
 				if (prop == null) {
 					tklerProviderNo = providerNo;
 				} else {
@@ -471,26 +444,25 @@ public final class LoginAction extends DispatchAction {
 			}
 
 			String username = (String) session.getAttribute("user");
-			Provider provider = providerManager.getProvider(username);
+			Provider provider = this.providerManager.getProvider(username);
 			session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER, provider);
 			session.setAttribute(SessionConstants.LOGGED_IN_SECURITY, cl.getSecurity());
 
 			LoggedInInfo loggedInInfo = LoggedInUserFilter.generateLoggedInInfoFromSession(request);
 
 			if (where.equals("provider")) {
-				UserProperty drugrefProperty = propDao.getProp(UserProperty.MYDRUGREF_ID);
-				if (drugrefProperty != null || appManager.isK2AUser(loggedInInfo)) {
-					DSService service = SpringUtils.getBean(DSService.class);
-					service.fetchGuidelinesFromServiceInBackground(loggedInInfo);
+				UserProperty drugrefProperty = this.propDao.getProp(UserProperty.MYDRUGREF_ID);
+				if (drugrefProperty != null || this.appManager.isK2AUser(loggedInInfo)) {
+					this.dsService.fetchGuidelinesFromServiceInBackground(loggedInInfo);
 				}
 			}
 
-			List<Integer> facilityIds = providerDao.getFacilityIds(provider.getProviderNo());
+			List<Integer> facilityIds = this.providerDao.getFacilityIds(provider.getProviderNo());
 			if (facilityIds.size() > 1) {
 				return (new ActionForward("/select_facility.jsp?nextPage=" + where));
 			} else if (facilityIds.size() == 1) {
 				// set current facility
-				Facility facility = facilityDao.find(facilityIds.get(0));
+				Facility facility = this.facilityDao.find(facilityIds.get(0));
 				request.getSession().setAttribute("currentFacility", facility);
 				LogAction.addLog(strAuth[0], LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIds.get(0),
 						ip);
@@ -503,12 +475,12 @@ public final class LoginAction extends DispatchAction {
 							CBIUtil.getCbiSubmissionFailureWarningMessage(facility.getId(), provider.getProviderNo()));
 				}
 			} else {
-				List<Facility> facilities = facilityDao.findAll(true);
+				List<Facility> facilities = this.facilityDao.findAll(true);
 				if (facilities != null && facilities.size() >= 1) {
 					Facility fac = facilities.get(0);
 					int first_id = fac.getId();
-					providerDao.addProviderToFacility(providerNo, first_id);
-					Facility facility = facilityDao.find(first_id);
+					this.providerDao.addProviderToFacility(providerNo, first_id);
+					Facility facility = this.facilityDao.find(first_id);
 					request.getSession().setAttribute("currentFacility", facility);
 					LogAction.addLog(strAuth[0], LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + first_id, ip);
 				}
@@ -523,31 +495,19 @@ public final class LoginAction extends DispatchAction {
 		else if (strAuth != null && strAuth.length == 1 && strAuth[0].equals("expired")) {
 			logger.warn("Expired password");
 			cl.updateLoginList(ip, userName);
-			String newURL = mapping.findForward("error").getPath();
-			newURL = newURL + "?errormsg=Your account is expired. Please contact your administrator.";
 
-			if (ajaxResponse) {
-				JSONObject json = new JSONObject();
-				json.put("success", false);
-				json.put("error", "Your account is expired. Please contact your administrator.");
-				response.setContentType("text/x-json");
-				json.write(response.getWriter());
-				return null;
-			}
+			String errMsg = "Your account is expired. Please contact your administrator.";
 
-			return (new ActionForward(newURL));
+			return handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg);
 		} else {
 			logger.debug("go to normal directory");
 
 			cl.updateLoginList(ip, userName);
 
+			String errMsg = "Invalid Credentials.";
+
 			if (ajaxResponse) {
-				JSONObject json = new JSONObject();
-				json.put("success", false);
-				response.setContentType("text/x-json");
-				json.put("error", "Invalid Credentials");
-				json.write(response.getWriter());
-				return null;
+				return handleAjaxError(response, errMsg);
 			}
 
 			ParameterActionForward forward = new ParameterActionForward(mapping.findForward(where));
@@ -562,17 +522,16 @@ public final class LoginAction extends DispatchAction {
 		if (request.getParameter("oauth_token") != null) {
 			logger.debug("checking oauth_token");
 			String proNo = (String) request.getSession().getAttribute("user");
-			ServiceRequestTokenDao serviceRequestTokenDao = SpringUtils.getBean(ServiceRequestTokenDao.class);
-			ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(request.getParameter("oauth_token"));
+			ServiceRequestToken srt = this.serviceRequestTokenDao.findByTokenId(request.getParameter("oauth_token"));
 			if (srt != null) {
 				srt.setProviderNo(proNo);
-				serviceRequestTokenDao.merge(srt);
+				this.serviceRequestTokenDao.merge(srt);
 			}
 		}
 
 		if (ajaxResponse) {
 			logger.debug("rendering ajax response");
-			Provider prov = providerDao.getProvider((String) request.getSession().getAttribute("user"));
+			Provider prov = this.providerDao.getProvider((String) request.getSession().getAttribute("user"));
 			JSONObject json = new JSONObject();
 			json.put("success", true);
 			json.put("providerName", Encode.forJavaScript(prov.getFormattedName()));
@@ -584,6 +543,32 @@ public final class LoginAction extends DispatchAction {
 
 		logger.debug("rendering standard response : " + where);
 		return mapping.findForward(where);
+	}
+
+	private static ActionForward handleAjaxErrOrForwardErr(ActionMapping mapping, HttpServletResponse response, boolean isAjaxResponse, String errMsg) throws IOException {
+		if (isAjaxResponse) {
+			return handleAjaxError(response, errMsg);
+		} else {
+			return getErrorForward(mapping, errMsg);
+		}
+	}
+
+	private static ActionForward handleAjaxError(HttpServletResponse response, String errMsg) throws IOException {
+		JSONObject json = new JSONObject();
+		json.put("success", false);
+		json.put("error", errMsg);
+		response.setContentType("text/x-json");
+		json.write(response.getWriter());
+		return null;
+	}
+
+	private static ActionForward getErrorForward(ActionMapping mapping, String errormsg) {
+		String url = getForwardPath(mapping, "error");
+		return new ActionForward(url + "?errormsg=" + errormsg);
+	}
+
+	private static String getForwardPath(ActionMapping mapping, String forwardName) {
+		return mapping.findForward(forwardName).getPath();
 	}
 
 	/**
@@ -651,8 +636,7 @@ public final class LoginAction extends DispatchAction {
 	 */
 	private Security getSecurity(String username) {
 
-		SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
-		List<Security> results = securityDao.findByUserName(username);
+		List<Security> results = this.securityDao.findByUserName(username);
 		Security security = null;
 		if (results.size() > 0)
 			security = results.get(0);
@@ -678,8 +662,7 @@ public final class LoginAction extends DispatchAction {
 		Security security = getSecurity(userName);
 		security.setPassword(this.securityManager.encodePassword(newPassword));
 		security.setForcePasswordReset(Boolean.FALSE);
-		SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
-		securityDao.saveEntity(security);
+		this.securityDao.saveEntity(security);
 
 	}
 
