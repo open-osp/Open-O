@@ -61,7 +61,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.ErrorManager;
 import java.util.regex.Pattern;
 
 public final class LoginAction extends DispatchAction {
@@ -98,12 +97,13 @@ public final class LoginAction extends DispatchAction {
 
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		if(!"POST".equals(request.getMethod())) {
-			MiscUtils.getLogger().error("Someone is trying to login with a GET request.",new Exception());
+		// >> 1. Initial Checks and Mobile Detection
+		if (!"POST".equals(request.getMethod())) {
+			MiscUtils.getLogger().error("Someone is trying to login with a GET request.", new Exception());
 			return getErrorForward(mapping, "Application Error. See Log.");
 		}
 
-		boolean ajaxResponse = request.getParameter("ajaxResponse") != null?Boolean.valueOf(request.getParameter("ajaxResponse")):false;
+		boolean ajaxResponse = request.getParameter("ajaxResponse") != null ? Boolean.valueOf(request.getParameter("ajaxResponse")) : false;
 		boolean isMobileOptimized = false;
 
 		String ip = request.getRemoteAddr();
@@ -130,6 +130,7 @@ public final class LoginAction extends DispatchAction {
 		boolean forcedpasswordchange = true;
 		String where = "failure";
 
+		// >> 2. Forced Password Change Handling
 		if (request.getParameter("forcedpasswordchange") != null
 				&& request.getParameter("forcedpasswordchange").equalsIgnoreCase("true")) {
 			// Coming back from force password change.
@@ -182,7 +183,9 @@ public final class LoginAction extends DispatchAction {
 			// make sure this checking doesn't happen again
 			forcedpasswordchange = false;
 
-		} else {
+		}
+		// >> 3. Standard Login Attempt
+		else {
 			userName = ((LoginForm) form).getUsername();
 
 			// Username is only letters and numbers
@@ -219,7 +222,7 @@ public final class LoginAction extends DispatchAction {
 				logger.info(LOG_PRE + " Blocked: " + userName);
 				// return mapping.findForward(where); //go to block page
 				// change to block page
-				String errMsg= "Oops! Your account is now locked due to incorrect password attempts!";
+				String errMsg = "Oops! Your account is now locked due to incorrect password attempts!";
 
 				return handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg);
 			}
@@ -228,6 +231,7 @@ public final class LoginAction extends DispatchAction {
 
 		}
 
+		// >> 4. Authentication
 		/*
 		 * THIS IS THE GATEWAY.
 		 */
@@ -253,6 +257,8 @@ public final class LoginAction extends DispatchAction {
 			}
 		}
 		logger.debug("strAuth : " + Arrays.toString(strAuth));
+
+		// >> 5. Successful Login Handling
 		if (strAuth != null && strAuth.length != 1) { // login successfully
 
 			// is the provider record inactive?
@@ -274,7 +280,7 @@ public final class LoginAction extends DispatchAction {
 
 				try {
 					setUserInfoToSession(request, userName, password, pin, nextPage);
-					return new ActionForward(getForwardPath(mapping, "forcepasswordreset"));
+					return new ActionForward(mapping.findForward("forcepasswordreset").getPath());
 				} catch (Exception e) {
 					logger.error("Error", e);
 					return getErrorForward(mapping, "Setting values to the session.");
@@ -316,7 +322,7 @@ public final class LoginAction extends DispatchAction {
 			 *
 			 */
 			if (SSOUtility.isSSOEnabled()) {
-				ActionRedirect redirect = new ActionRedirect(getForwardPath(mapping, "ssoLogin"));
+				ActionRedirect redirect = new ActionRedirect(mapping.findForward("ssoLogin").getPath());
 				redirect.addParameter("user_email", strAuth[6]);
 				return redirect;
 			}
@@ -377,7 +383,7 @@ public final class LoginAction extends DispatchAction {
 			String default_pmm = null;
 
 			// get preferences from preference table
-			ProviderPreference providerPreference = providerPreferenceDao.find(providerNo);
+			ProviderPreference providerPreference = this.providerPreferenceDao.find(providerNo);
 
 			if (providerPreference == null)
 				providerPreference = new ProviderPreference();
@@ -415,7 +421,7 @@ public final class LoginAction extends DispatchAction {
 
 			where = "provider";
 
-			if (where.equals("provider") && default_pmm != null && "enabled".equals(default_pmm)) {
+			if (where.equals("provider") && "enabled".equals(default_pmm)) {
 				where = "caisiPMM";
 			}
 
@@ -491,6 +497,8 @@ public final class LoginAction extends DispatchAction {
 			}
 
 		}
+
+		// >> 6. Authentication Failure Handling
 		// expired password
 		else if (strAuth != null && strAuth.length == 1 && strAuth[0].equals("expired")) {
 			logger.warn("Expired password");
@@ -519,6 +527,7 @@ public final class LoginAction extends DispatchAction {
 			return forward;
 		}
 
+		// >> 7. OAuth Token Handling
 		if (request.getParameter("oauth_token") != null) {
 			logger.debug("checking oauth_token");
 			String proNo = (String) request.getSession().getAttribute("user");
@@ -529,6 +538,7 @@ public final class LoginAction extends DispatchAction {
 			}
 		}
 
+		// >> 8. AJAX Response Handling
 		if (ajaxResponse) {
 			logger.debug("rendering ajax response");
 			Provider prov = this.providerDao.getProvider((String) request.getSession().getAttribute("user"));
@@ -541,6 +551,7 @@ public final class LoginAction extends DispatchAction {
 			return null;
 		}
 
+		// >> 9. Standard Response Handling
 		logger.debug("rendering standard response : " + where);
 		return mapping.findForward(where);
 	}
@@ -563,12 +574,8 @@ public final class LoginAction extends DispatchAction {
 	}
 
 	private static ActionForward getErrorForward(ActionMapping mapping, String errormsg) {
-		String url = getForwardPath(mapping, "error");
+		String url = mapping.findForward("error").getPath();
 		return new ActionForward(url + "?errormsg=" + errormsg);
-	}
-
-	private static String getForwardPath(ActionMapping mapping, String forwardName) {
-		return mapping.findForward(forwardName).getPath();
 	}
 
 	/**
