@@ -94,6 +94,8 @@ String remoteLabKey = request.getParameter("remoteLabKey");
 String demographicID = request.getParameter("demographicId");
 String showAllstr = request.getParameter("all");
 
+String showLatest = request.getParameter("showLatest");
+
 List<String> allLicenseNames = new ArrayList<String>();
 String lastLicenseNo = null, currentLicenseNo = null;
 
@@ -195,6 +197,11 @@ if (remoteFacilityIdString==null) // local lab
 	else {
 		multiLabId = Hl7textResultsData.getMatchingLabs(segmentID);
 		segmentIDs = multiLabId.split(",");
+
+		int totalMatchingLabs = segmentIDs.length;
+		if (showLatest != null && "true".equals(showLatest) && totalMatchingLabs > 1) {
+			segmentID = segmentIDs[totalMatchingLabs - 1];
+		}
 		
 		List<String> segmentIdList = new ArrayList<String>();
 		handler = Factory.getHandler(segmentID);
