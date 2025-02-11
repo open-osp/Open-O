@@ -121,124 +121,55 @@ public final class LoginAction extends DispatchAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         // >> 1. Initial Checks and Mobile Detection
-        if (!"POST".equals(request.getMethod())) {
-            MiscUtils.getLogger().error("Someone is trying to login with a GET request.", new Exception());
-            return getErrorForward(mapping, "Application Error. See Log.");
+        InitialChecksResult initialChecksResult = performInitialChecks(mapping, request);
+        if (initialChecksResult.errForward != null) {
+            return initialChecksResult.errForward;
         }
 
-        boolean ajaxResponse = request.getParameter("ajaxResponse") != null ? Boolean.valueOf(request.getParameter("ajaxResponse")) : false;
-        boolean isMobileOptimized = false;
-
-        String ip = request.getRemoteAddr();
-        String userAgent = request.getHeader("user-agent");
-        String accept = request.getHeader("Accept");
-
-        UAgentInfo userAgentInfo = new UAgentInfo(userAgent, accept);
-        isMobileOptimized = userAgentInfo.detectMobileQuick();
-
-        // override by the user login.
-        String submitType = request.getParameter("submit");
-
-        if ("full".equalsIgnoreCase(submitType)) {
-            isMobileOptimized = false;
-        }
+        boolean ajaxResponse = initialChecksResult.ajaxResponse;
+        boolean isMobileOptimized = initialChecksResult.isMobileOptimized;
+        String ip = initialChecksResult.ip;
+        String submitType = initialChecksResult.submitType;
 
         LoginCheckLogin cl = new LoginCheckLogin();
         String oneIdKey = request.getParameter("nameId");
         String oneIdEmail = request.getParameter("email");
-        String userName = "";
-        String password = "";
-        String pin = "";
-        String nextPage = "";
-        boolean forcedpasswordchange = true;
+        String userName;
+        String password;
+        String pin;
+        String nextPage;
+        boolean forcedpasswordchange = initialChecksResult.forcedpasswordchange;
         String where = "failure";
 
         // >> 2. Forced Password Change Handling
-        if (request.getParameter("forcedpasswordchange") != null
-                && request.getParameter("forcedpasswordchange").equalsIgnoreCase("true")) {
-            // Coming back from force password change.
-            userName = (String) request.getSession().getAttribute("userName");
+        if (forcedpasswordchange) {
 
-            // Username is only letters and numbers
-            if (!Pattern.matches("[a-zA-Z0-9]{1,10}", userName)) {
-                userName = "Invalid Username";
+            PasswordChangeResult passwordChangeResult = handleForcedPasswordChange(mapping, form, request);
+
+            if(passwordChangeResult.errForward !=null){
+                return passwordChangeResult.errForward;
             }
 
-            password = (String) request.getSession().getAttribute("password");
-
-            pin = (String) request.getSession().getAttribute("pin");
-
-            // pins are integers only
-            if (!Pattern.matches("[0-9]{4}", pin)) {
-                pin = "";
-            }
-            nextPage = (String) request.getSession().getAttribute("nextPage");
-
-            String newPassword = ((LoginForm) form).getNewPassword();
-            String confirmPassword = ((LoginForm) form).getConfirmPassword();
-            String oldPassword = ((LoginForm) form).getOldPassword();
-
-            try {
-                String errorStr = errorHandling(password, newPassword, confirmPassword, oldPassword);
-
-                // Error Handling
-                if (errorStr != null && !errorStr.isEmpty()) {
-                    String newURL = mapping.findForward("forcepasswordreset").getPath();
-                    newURL = newURL + errorStr;
-                    return (new ActionForward(newURL));
-                }
-
-                persistNewPassword(userName, newPassword);
-
-                password = newPassword;
-
-                // Remove the attributes from session
-                removeAttributesFromSession(request);
-            } catch (Exception e) {
-                logger.error("Error", e);
-
-                // Remove the attributes from session
-                removeAttributesFromSession(request);
-
-                return getErrorForward(mapping, "Setting values to the session.");
-            }
+            userName = passwordChangeResult.username;
+            password = passwordChangeResult.password;
+            pin = passwordChangeResult.pin;
+            nextPage = passwordChangeResult.nextPage;
 
             // make sure this checking doesn't happen again
             forcedpasswordchange = false;
-
         }
         // >> 3. Standard Login Attempt
         else {
-            userName = ((LoginForm) form).getUsername();
-
-            // Username is only letters and numbers
-            // Username is only letters and numbers
-            if (!Pattern.matches("[a-zA-Z0-9]{1,10}", userName)) {
-                userName = "Invalid Username";
-            }
-            password = ((LoginForm) form).getPassword();
-            pin = ((LoginForm) form).getPin();
-
-            // pins are integers only
-            // pins are integers only
-            if (!Pattern.matches("[0-9]{4}", pin)) {
-                pin = "";
-            }
-            nextPage = request.getParameter("nextPage");
+            LoginInfoResult loginInfoResult = initializePreLoginInfo(request, form);
+            userName = loginInfoResult.username;
+            password = loginInfoResult.password;
+            pin = loginInfoResult.pin;
+            nextPage = loginInfoResult.nextPage;
 
             logger.debug("nextPage: " + nextPage);
             if (nextPage != null) {
                 // set current facility
-                String facilityIdString = request.getParameter(SELECTED_FACILITY_ID);
-                Facility facility = this.facilityDao.find(Integer.parseInt(facilityIdString));
-                request.getSession().setAttribute(SessionConstants.CURRENT_FACILITY, facility);
-                String username = (String) request.getSession().getAttribute("user");
-                LogAction.addLog(username, LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIdString, ip);
-                if (facility.isEnableOcanForms()) {
-                    request.getSession().setAttribute("ocanWarningWindow",
-                            OcanForm.getOcanWarningMessage(facility.getId()));
-                }
-                return mapping.findForward(nextPage);
+                return getSelectFacilityForward(mapping, request, ip, nextPage);
             }
 
             if (cl.isBlock(ip, userName)) {
@@ -249,10 +180,9 @@ public final class LoginAction extends DispatchAction {
 
                 return handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg);
             }
-
-            logger.debug("ip was not blocked: " + ip);
-
         }
+
+        logger.debug("ip was not blocked: " + ip);
 
         // >> 4. Authentication
         /*
@@ -297,10 +227,7 @@ public final class LoginAction extends DispatchAction {
              * This section is added for forcing the initial password change.
              */
             Security security = getSecurity(userName);
-            if (!OscarProperties.getInstance().getBooleanProperty("mandatory_password_reset", "false") &&
-                    security.isForcePasswordReset() != null && security.isForcePasswordReset()
-                    && forcedpasswordchange) {
-
+            if (isForcePasswordChangeRequired(security, forcedpasswordchange)) {
                 try {
                     setUserInfoToSession(request, userName, password, pin, nextPage);
                     return new ActionForward(mapping.findForward("forcepasswordreset").getPath());
@@ -579,6 +506,128 @@ public final class LoginAction extends DispatchAction {
         return mapping.findForward(where);
     }
 
+    private static boolean isForcePasswordChangeRequired(Security security, boolean forcedpasswordchange) {
+        return !OscarProperties.getInstance().getBooleanProperty("mandatory_password_reset", "false") &&
+                security.isForcePasswordReset() != null && security.isForcePasswordReset()
+                && forcedpasswordchange;
+    }
+
+    private InitialChecksResult performInitialChecks(ActionMapping mapping, HttpServletRequest request) {
+
+        if (!"POST".equals(request.getMethod())) {
+            MiscUtils.getLogger().error("Someone is trying to login with a GET request.", new Exception());
+            return new InitialChecksResult(getErrorForward(mapping, "Application Error. See Log."));
+        }
+
+        boolean ajaxResponse = request.getParameter("ajaxResponse") != null ? Boolean.valueOf(request.getParameter("ajaxResponse")) : false;
+        boolean isMobileOptimized;
+
+        String ip = request.getRemoteAddr();
+        String userAgent = request.getHeader("user-agent");
+        String accept = request.getHeader("Accept");
+
+        UAgentInfo userAgentInfo = new UAgentInfo(userAgent, accept);
+        isMobileOptimized = userAgentInfo.detectMobileQuick();
+
+        // override by the user login.
+        String submitType = request.getParameter("submit");
+
+        if ("full".equalsIgnoreCase(submitType)) {
+            isMobileOptimized = false;
+        }
+
+        boolean forcedpasswordchange = request.getParameter("forcedpasswordchange") != null
+                && request.getParameter("forcedpasswordchange").equalsIgnoreCase("true");
+
+        return new InitialChecksResult(ajaxResponse, isMobileOptimized, ip, submitType, forcedpasswordchange);
+    }
+
+    private PasswordChangeResult handleForcedPasswordChange(ActionMapping mapping, ActionForm form, HttpServletRequest request) throws IOException {
+        // Coming back from force password change.
+        String userName = (String) request.getSession().getAttribute("userName");
+
+        // Username is only letters and numbers
+        if (!Pattern.matches("[a-zA-Z0-9]{1,10}", userName)) {
+            userName = "Invalid Username";
+        }
+
+        String password = (String) request.getSession().getAttribute("password");
+
+        String pin = (String) request.getSession().getAttribute("pin");
+
+        // pins are integers only
+        if (!Pattern.matches("[0-9]{4}", pin)) {
+            pin = "";
+        }
+        String nextPage = (String) request.getSession().getAttribute("nextPage");
+
+        String newPassword = ((LoginForm) form).getNewPassword();
+        String confirmPassword = ((LoginForm) form).getConfirmPassword();
+        String oldPassword = ((LoginForm) form).getOldPassword();
+
+        try {
+            String errorStr = errorHandling(password, newPassword, confirmPassword, oldPassword);
+
+            // Error Handling
+            if (errorStr != null && !errorStr.isEmpty()) {
+                String newURL = mapping.findForward("forcepasswordreset").getPath();
+                newURL = newURL + errorStr;
+                return new PasswordChangeResult(new ActionForward(newURL));
+            }
+
+            persistNewPassword(userName, newPassword);
+
+            password = newPassword;
+
+            // Remove the attributes from session
+            removeAttributesFromSession(request);
+        } catch (Exception e) {
+            logger.error("Error", e);
+
+            // Remove the attributes from session
+            removeAttributesFromSession(request);
+
+            return new PasswordChangeResult(getErrorForward(mapping, "Setting values to the session."));
+        }
+
+        return new PasswordChangeResult(userName, password, pin, nextPage);
+    }
+
+    private LoginInfoResult initializePreLoginInfo(HttpServletRequest request, ActionForm form) {
+
+        LoginForm loginForm = (LoginForm) form;
+        String userName = loginForm.getUsername();
+        String password = loginForm.getPassword();
+        String pin = loginForm.getPin();
+
+        String nextPage = request.getParameter("nextPage");
+
+        // Username is only letters and numbers
+        if (!Pattern.matches("[a-zA-Z0-9]{1,10}", userName)) {
+            userName = "Invalid Username";
+        }
+
+        // pins are integers only
+        if (!Pattern.matches("[0-9]{4}", pin)) {
+            pin = "";
+        }
+
+        return new LoginInfoResult(userName, password, pin, nextPage);
+    }
+
+    private ActionForward getSelectFacilityForward(ActionMapping mapping, HttpServletRequest request, String ip, String nextPage) {
+        String facilityIdString = request.getParameter(SELECTED_FACILITY_ID);
+        Facility facility = this.facilityDao.find(Integer.parseInt(facilityIdString));
+        request.getSession().setAttribute(SessionConstants.CURRENT_FACILITY, facility);
+        String username = (String) request.getSession().getAttribute("user");
+        LogAction.addLog(username, LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIdString, ip);
+        if (facility.isEnableOcanForms()) {
+            request.getSession().setAttribute("ocanWarningWindow",
+                    OcanForm.getOcanWarningMessage(facility.getId()));
+        }
+        return mapping.findForward(nextPage);
+    }
+
     /**
      * Removes attributes from session
      *
@@ -676,5 +725,63 @@ public final class LoginAction extends DispatchAction {
 
     public ApplicationContext getAppContext() {
         return WebApplicationContextUtils.getWebApplicationContext(getServlet().getServletContext());
+    }
+
+    private static class InitialChecksResult {
+        public ActionForward errForward;
+        public boolean ajaxResponse;
+        public boolean isMobileOptimized;
+        public String ip;
+        public String submitType;
+        public boolean forcedpasswordchange;
+
+        public InitialChecksResult(boolean ajaxResponse, boolean isMobileOptimized, String ip, String submitType, boolean forcedpasswordchange) {
+            this.ajaxResponse = ajaxResponse;
+            this.isMobileOptimized = isMobileOptimized;
+            this.ip = ip;
+            this.submitType = submitType;
+            this.forcedpasswordchange = forcedpasswordchange;
+        }
+
+        public InitialChecksResult(ActionForward errorForward) {
+            this.errForward = errorForward;
+        }
+    }
+
+    private static class PasswordChangeResult extends BaseResult {
+
+        public PasswordChangeResult(String username, String password, String pin, String nextPage) {
+            super(username, password, pin, nextPage);
+        }
+
+        public PasswordChangeResult(ActionForward errForward) {
+            super(errForward);
+        }
+    }
+
+    private static class LoginInfoResult extends BaseResult {
+
+        public LoginInfoResult(String username, String password, String pin, String nextPage) {
+            super(username, password, pin, nextPage);
+        }
+    }
+
+    private static class BaseResult {
+        String username;
+        String password;
+        String pin;
+        String nextPage;
+        ActionForward errForward;
+
+        public BaseResult(String username, String password, String pin, String nextPage) {
+            this.username = username;
+            this.password = password;
+            this.pin = pin;
+            this.nextPage = nextPage;
+        }
+
+        public BaseResult(ActionForward errForward) {
+            this.errForward = errForward;
+        }
     }
 }
