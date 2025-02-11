@@ -20,6 +20,7 @@ public class EmailData {
     private boolean isEncrypted;
     private boolean isAttachmentEncrypted;
     private ChartDisplayOption chartDisplayOption;
+    private String internalComment;
     private TransactionType transactionType;
     private Integer demographicNo;
     private String providerNo;
@@ -121,6 +122,14 @@ public class EmailData {
     public void setChartDisplayOption(String chartDisplayOption) {
         if (chartDisplayOption == null) { chartDisplayOption = "addFullNote"; }
         this.chartDisplayOption = "doNotAddAsNote".equalsIgnoreCase(chartDisplayOption) ? ChartDisplayOption.WITHOUT_NOTE : ChartDisplayOption.WITH_FULL_NOTE;
+    }
+
+    public String getInternalComment() {
+        return internalComment;
+    }
+
+    public void setInternalComment(String internalComment) {
+        this.internalComment = internalComment != null ? internalComment : "";
     }
 
     public TransactionType getTransactionType() {
