@@ -188,16 +188,9 @@ public final class LoginAction extends DispatchAction {
         /*
          * THIS IS THE GATEWAY.
          */
-        String[] strAuth;
+        AuthResult authResult;
         try {
-            /*
-             * the pin code is not required for SSO IDP.
-             */
-            if (SSOUtility.isSSOEnabled()) {
-                strAuth = cl.auth(userName, password, ip);
-            } else {
-                strAuth = cl.auth(userName, password, pin, ip);
-            }
+            authResult = this.authenticate(cl, userName, password, pin, ip);
         } catch (Exception e) {
             logger.error("Error", e);
             String errMsg = "Database connection error:" + e.getMessage() + ".";
@@ -209,16 +202,15 @@ public final class LoginAction extends DispatchAction {
                 return handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg);
             }
         }
-        logger.debug("strAuth : " + Arrays.toString(strAuth));
 
         // >> 5. Successful Login Handling
-        if (strAuth != null && strAuth.length != 1) { // login successfully
+        if (authResult != null && authResult.hasNoError()) { // login successfully
 
             // is the provider record inactive?
-            Provider p = this.providerDao.getProvider(strAuth[0]);
+            Provider p = this.providerDao.getProvider(authResult.getProviderNo());
             if (p == null || (p.getStatus() != null && p.getStatus().equals("0"))) {
                 logger.info(LOG_PRE + " Inactive: " + userName);
-                LogAction.addLog(strAuth[0], "login", "failed", "inactive");
+                LogAction.addLog(authResult.getProviderNo(), "login", "failed", "inactive");
 
                 return getErrorForward(mapping, "Your account is inactive. Please contact your administrator to activate.");
             }
@@ -273,7 +265,7 @@ public final class LoginAction extends DispatchAction {
              */
             if (SSOUtility.isSSOEnabled()) {
                 ActionRedirect redirect = new ActionRedirect(mapping.findForward("ssoLogin").getPath());
-                redirect.addParameter("user_email", strAuth[6]);
+                redirect.addParameter("user_email", authResult.getEmail());
                 return redirect;
             }
 
@@ -292,7 +284,7 @@ public final class LoginAction extends DispatchAction {
 
             // If the ondIdKey parameter is not null and is not an empty string
             if (oneIdKey != null && !oneIdKey.equals("")) {
-                String providerNumber = strAuth[0];
+                String providerNumber = authResult.getProviderNo();
                 Security securityRecord = this.securityDao.getByProviderNo(providerNumber);
 
                 if (securityRecord.getOneIdKey() == null || securityRecord.getOneIdKey().equals("")) {
@@ -307,19 +299,19 @@ public final class LoginAction extends DispatchAction {
                 }
             }
 
-            logger.debug("Assigned new session for: " + strAuth[0] + " : " + strAuth[3] + " : " + strAuth[4]);
-            LogAction.addLog(strAuth[0], LogConst.LOGIN, LogConst.CON_LOGIN, "", ip);
+            logger.debug("Assigned new session for: " + authResult.getProviderNo() + " : " + authResult.getLastname() + " : " + authResult.getRoleName());
+            LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "", ip);
 
             // initial db setting
             Properties pvar = OscarProperties.getInstance();
 
-            String providerNo = strAuth[0];
-            session.setAttribute("user", strAuth[0]);
-            session.setAttribute("userfirstname", strAuth[1]);
-            session.setAttribute("userlastname", strAuth[2]);
-            session.setAttribute("userrole", strAuth[4]);
+            String providerNo = authResult.getProviderNo();
+            session.setAttribute("user", authResult.getProviderNo());
+            session.setAttribute("userfirstname", authResult.getFirstname());
+            session.setAttribute("userlastname", authResult.getLastname());
+            session.setAttribute("userrole", authResult.getRoleName());
             session.setAttribute("oscar_context_path", request.getContextPath());
-            session.setAttribute("expired_days", strAuth[5]);
+            session.setAttribute("expired_days", authResult.getExpiredDays());
             // If a new session has been created, we must set the mobile attribute again
             if (isMobileOptimized) {
                 if ("Full".equalsIgnoreCase(submitType)) {
@@ -420,7 +412,7 @@ public final class LoginAction extends DispatchAction {
                 // set current facility
                 Facility facility = this.facilityDao.find(facilityIds.get(0));
                 request.getSession().setAttribute("currentFacility", facility);
-                LogAction.addLog(strAuth[0], LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIds.get(0),
+                LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIds.get(0),
                         ip);
                 if (facility.isEnableOcanForms()) {
                     request.getSession().setAttribute("ocanWarningWindow",
@@ -438,7 +430,7 @@ public final class LoginAction extends DispatchAction {
                     this.providerDao.addProviderToFacility(providerNo, first_id);
                     Facility facility = this.facilityDao.find(first_id);
                     request.getSession().setAttribute("currentFacility", facility);
-                    LogAction.addLog(strAuth[0], LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + first_id, ip);
+                    LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + first_id, ip);
                 }
             }
 
@@ -450,7 +442,7 @@ public final class LoginAction extends DispatchAction {
 
         // >> 6. Authentication Failure Handling
         // expired password
-        else if (strAuth != null && strAuth.length == 1 && strAuth[0].equals("expired")) {
+        else if (authResult != null && authResult.isAccountExpired()) {
             logger.warn("Expired password");
             cl.updateLoginList(ip, userName);
 
@@ -626,6 +618,27 @@ public final class LoginAction extends DispatchAction {
                     OcanForm.getOcanWarningMessage(facility.getId()));
         }
         return mapping.findForward(nextPage);
+    }
+
+    private AuthResult authenticate(LoginCheckLogin cl, String username, String password, String pin, String ip) throws Exception {
+        String[] strAuth;
+
+        /*
+         * the pin code is not required for SSO IDP.
+         */
+        if (SSOUtility.isSSOEnabled()) {
+            strAuth = cl.auth(username, password, ip);
+        } else {
+            strAuth = cl.auth(username, password, pin, ip);
+        }
+
+        logger.debug("strAuth : " + Arrays.toString(strAuth));
+
+        if (strAuth != null && strAuth.length != 1) {
+            return new AuthResult(strAuth);
+        }
+
+        return null;
     }
 
     /**
