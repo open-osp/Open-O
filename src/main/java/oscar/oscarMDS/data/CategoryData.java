@@ -72,6 +72,14 @@ public class CategoryData {
 		return unmatchedDocs;
 	}
 
+	public int getUnmatchedHRMCount() {
+		return unmatchedHRMCount;
+	}
+
+	public int getMatchedHRMCount() {
+		return matchedHRMCount;
+	}
+
 	public int getTotalNumDocs() {
 		return totalNumDocs;
 	}
@@ -100,6 +108,7 @@ public class CategoryData {
 	private String patientLastName;
 	private String searchProviderNo;
 	private String status;
+	private String abnormalStatus;
 	private String patientFirstName;
 	private String patientHealthNumber;
 	private boolean patientSearch;
@@ -111,6 +120,8 @@ public class CategoryData {
 	private String labAbnormalSql = "";
 	private String hrmDateSql = "";
 	private String hrmProviderSql = "";
+	private String hrmViewed = "";
+	private String hrmSignedOff = "";
 
 	public CategoryData(String patientLastName, String patientFirstName, String patientHealthNumber, boolean patientSearch,
 					    boolean providerSearch, String searchProviderNo, String status, String abnormalStatus, 
@@ -123,6 +134,7 @@ public class CategoryData {
 		this.patientHealthNumber = patientHealthNumber;
 		this.patientSearch = patientSearch;
 		this.providerSearch = providerSearch;
+		this.abnormalStatus = abnormalStatus;
 
 		SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
 		String dateSearchType = "serviceObservation";
@@ -182,6 +194,17 @@ public class CategoryData {
 			}
 		}
 
+		hrmViewed = " AND hp.viewed = 1 ";
+		hrmSignedOff = " AND hp.signedOff = 0 ";
+		if (status == null || status.equalsIgnoreCase("N")) {
+			hrmViewed = "";
+		} else if (status.equalsIgnoreCase("A") || status.equalsIgnoreCase("F")) {
+			hrmSignedOff = " AND hp.signedOff = 1 ";
+		} else if (status.isEmpty()) { // checks if status is an empty string
+			hrmViewed = "";
+			hrmSignedOff = "";
+		}
+
     	totalDocs = 0;
 		totalLabs = 0;
 		unmatchedLabs = 0;
@@ -200,7 +223,9 @@ public class CategoryData {
         totalLabs += getLabCountForPatientSearch();
 
         //Checking for HRM counts for Logged in Doctor
-        matchedHRMCount = getHRMDocumentCountForPatient();
+		if (abnormalStatus == null || !abnormalStatus.equals("abnormalOnly")) {
+			matchedHRMCount = getHRMDocumentCountForPatient();
+		}
 
         //Adding matched HRM count to total docs
         totalDocs += matchedHRMCount;
@@ -211,7 +236,9 @@ public class CategoryData {
             unmatchedLabs += getLabCountForUnmatched();
 
             //Unmatched Counts for HRM
-            unmatchedHRMCount += getHRMDocumentCountForUnmatched();
+			if (abnormalStatus == null || !abnormalStatus.equals("abnormalOnly")) {
+				unmatchedHRMCount += getHRMDocumentCountForUnmatched();
+			}
 
             //Adding Unmatched HRM to totalDocs
 			totalDocs += unmatchedHRMCount;
@@ -349,23 +376,24 @@ public class CategoryData {
 		Connection c  = DbConnectionFilter.getThreadLocalDbConnection();
 		PreparedStatement ps = c.prepareStatement(sql);
 		ResultSet rs= ps.executeQuery(sql);
-        int count = 0;
+        int totalCount = 0;
         while(rs.next()){
         	int id = rs.getInt("demographic_no");
+			int count = rs.getInt("count");
         	// Updating patient info if it already exists.
         	if (patients.containsKey(id)) {
         		info = patients.get(id);
-        		info.setLabCount(rs.getInt("count"));
+        		info.setLabCount(count);
         	}
         	// Otherwise adding a new patient record.
         	else {
         		info = new PatientInfo(id, rs.getString("first_name"), rs.getString("last_name"));
-        		info.setLabCount(rs.getInt("count"));
+        		info.setLabCount(count);
         		patients.put(info.getId(), info);
         	}
-        	count += info.getLabCount();
+        	totalCount += count;
         }
-        return count;
+        return totalCount;
 	}
 
 	public int getLabCountForDemographic(String demographicNo) throws SQLException {
@@ -426,16 +454,31 @@ public class CategoryData {
 		int count = 0;
 		PatientInfo info;
 
-		String sql = " SELECT HIGH_PRIORITY demographic_no, first_name, last_name, COUNT( distinct h.id) as count "
-						+ " FROM HRMDocument h "
-						+ " LEFT JOIN HRMDocumentToDemographic hd ON h.id = hd.hrmDocumentId"
-						+ " LEFT JOIN HRMDocumentToProvider hp ON h.id = hp.hrmDocumentId"
-						+ " LEFT JOIN demographic d ON hd.demographicNo = d.demographic_no"
-						+ " WHERE h.id IN (SELECT hrmDocumentId FROM HRMDocumentToDemographic hd)"
+		// String sql = " SELECT HIGH_PRIORITY demographic_no, first_name, last_name, COUNT( distinct h.id) as count "
+		// 				+ " FROM HRMDocument h "
+		// 				+ " LEFT JOIN HRMDocumentToDemographic hd ON h.id = hd.hrmDocumentId"
+		// 				+ " LEFT JOIN HRMDocumentToProvider hp ON h.id = hp.hrmDocumentId"
+		// 				+ " LEFT JOIN demographic d ON hd.demographicNo = d.demographic_no"
+		// 				+ " WHERE h.id IN (SELECT hrmDocumentId FROM HRMDocumentToDemographic hd)"
+		// 				+ " 	AND d.last_name " + (StringUtils.isEmpty(patientLastName) ? " IS NOT NULL " : " like '%"+patientLastName+"%' ")
+		// 				+ "		AND d.hin " + (StringUtils.isEmpty(patientHealthNumber) ? " IS NOT NULL " : " like '%"+patientHealthNumber+"%' ")
+		// 				+ "		AND d.first_name " + (StringUtils.isEmpty(patientFirstName) ? " IS NOT NULL " : " like '%"+patientFirstName+"%' ")
+		// 				+ hrmViewed
+		// 				+ hrmSignedOff
+		// 				+ hrmDateSql
+		// 				+ hrmProviderSql
+		// 				+ "GROUP BY demographic_no ";
+		String sql = "SELECT HIGH_PRIORITY demographic_no, first_name, last_name, COUNT(DISTINCT h.id) AS count "
+						+ " FROM HRMDocumentToDemographic hd "
+						+ " LEFT JOIN HRMDocumentToProvider hp ON hd.hrmDocumentId = hp.hrmDocumentId "
+						+ " LEFT JOIN HRMDocument h ON hd.hrmDocumentId = h.id "
+						+ " JOIN demographic d ON hd.demographicNo = d.demographic_no "
+						+ " WHERE 1=1 "
 						+ " 	AND d.last_name " + (StringUtils.isEmpty(patientLastName) ? " IS NOT NULL " : " like '%"+patientLastName+"%' ")
 						+ "		AND d.hin " + (StringUtils.isEmpty(patientHealthNumber) ? " IS NOT NULL " : " like '%"+patientHealthNumber+"%' ")
 						+ "		AND d.first_name " + (StringUtils.isEmpty(patientFirstName) ? " IS NOT NULL " : " like '%"+patientFirstName+"%' ")
-						+ "		AND hp.signedOff = 0 "
+						+ hrmViewed
+						+ hrmSignedOff
 						+ hrmDateSql
 						+ hrmProviderSql
 						+ "GROUP BY demographic_no ";
@@ -451,11 +494,13 @@ public class CategoryData {
 			if (patients.containsKey(id)) {
 				info = patients.get(id);
 				info.setDocCount(info.getDocCount() + hrmCount);
+				info.setHrmCount(hrmCount);
 			}
 			// Otherwise adding a new patient record.
 			else {
 				info = new PatientInfo(id, rs.getString("first_name"), rs.getString("last_name"));
 				info.setDocCount(hrmCount);
+				info.setHrmCount(hrmCount);
 				patients.put(info.getId(), info);
 			}
 
@@ -467,12 +512,23 @@ public class CategoryData {
 
 	public int getHRMDocumentCountForUnmatched() throws SQLException{
 		int count = 0;
-		String sql = " SELECT HIGH_PRIORITY COUNT( distinct h.id) as count "
-					+" FROM HRMDocument h"
-					+" LEFT JOIN HRMDocumentToProvider hp ON h.id = hp.hrmDocumentId"
-					+" WHERE h.id NOT IN (SELECT hrmDocumentId FROM HRMDocumentToDemographic) AND hp.signedOff=0 "
-					+ hrmDateSql
-					+ hrmProviderSql;
+		// String sql = " SELECT HIGH_PRIORITY COUNT( distinct h.id) as count "
+		// 			+" FROM HRMDocument h"
+		// 			+" LEFT JOIN HRMDocumentToProvider hp ON h.id = hp.hrmDocumentId"
+		// 			+" WHERE h.id NOT IN (SELECT hrmDocumentId FROM HRMDocumentToDemographic) "
+		// 			+ hrmViewed
+		// 			+ hrmSignedOff
+		// 			+ hrmDateSql
+		// 			+ hrmProviderSql;
+		String sql = "SELECT HIGH_PRIORITY COUNT(DISTINCT h.id) AS count "
+						+ " FROM HRMDocumentToProvider hp"
+						+ " LEFT JOIN HRMDocument h ON h.id = hp.hrmDocumentId "
+						+ " LEFT JOIN HRMDocumentToDemographic hd ON hd.hrmDocumentId = hp.hrmDocumentId "
+						+ " WHERE hd.hrmDocumentId IS NULL "
+						+ hrmViewed
+						+ hrmSignedOff
+						+ hrmDateSql
+						+ hrmProviderSql;
 
 		Connection c  = DbConnectionFilter.getThreadLocalDbConnection();
 		PreparedStatement ps = c.prepareStatement(sql);

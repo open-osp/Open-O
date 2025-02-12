@@ -9,6 +9,7 @@
 
 package org.oscarehr.hospitalReportManager.dao;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -49,23 +50,32 @@ public class HRMDocumentToProviderDao extends AbstractDaoImpl<HRMDocumentToProvi
 		return documentToProviders;
 	}
 
-	public List<HRMDocumentToProvider> findByProviderNoLimit(String providerNo, List<Integer> demographicNumbers, Date newestDate, Date oldestDate,
+	public List<HRMDocumentToProvider> findByProviderNoLimit(String providerNo, List<Integer> demographicNumbers, boolean patientSearch, Date newestDate, Date oldestDate,
 				Integer viewed, Integer signedOff, boolean isPaged, Integer page, Integer pageSize) {
+
+		if (patientSearch && (demographicNumbers == null || demographicNumbers.isEmpty())) {
+			return Collections.emptyList();
+		}
 		
 		String hrmToDemographicTableName = "";
 		
 		StringBuilder hrmToDemographicJoinAndSearchSql = new StringBuilder();
 		if (demographicNumbers != null && !demographicNumbers.isEmpty()) {
-			hrmToDemographicTableName = ", HRMDocumentToDemographic d";
-			hrmToDemographicJoinAndSearchSql.append(" AND x.hrmDocumentId = d.hrmDocumentId AND (");
-			for (int i = 0; i < demographicNumbers.size(); i++) { //String demographicNumber : demographicNumbers) {
-                hrmToDemographicJoinAndSearchSql.append("d.demographicNo = :demographicNumber").append(i);
-                if (i < demographicNumbers.size() - 1) {
-                    hrmToDemographicJoinAndSearchSql.append(" OR ");
-                } else {
-                    hrmToDemographicJoinAndSearchSql.append(") ");
-                }
-            }
+			// If demographicNumber is 0, then search for unmatched HRM documents (not linked to any demographic).
+			if (demographicNumbers.size() == 1 && demographicNumbers.get(0) == 0) {
+				hrmToDemographicJoinAndSearchSql.append(" AND h.id NOT IN (SELECT d.hrmDocumentId FROM HRMDocumentToDemographic d) ");
+			} else {
+				hrmToDemographicTableName = ", HRMDocumentToDemographic d";
+				hrmToDemographicJoinAndSearchSql.append(" AND x.hrmDocumentId = d.hrmDocumentId AND (");
+				for (int i = 0; i < demographicNumbers.size(); i++) { //String demographicNumber : demographicNumbers) {
+					hrmToDemographicJoinAndSearchSql.append("d.demographicNo = :demographicNumber").append(i);
+					if (i < demographicNumbers.size() - 1) {
+						hrmToDemographicJoinAndSearchSql.append(" OR ");
+					} else {
+						hrmToDemographicJoinAndSearchSql.append(") ");
+					}
+				}
+			}
 		}
 
 		SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
@@ -93,10 +103,14 @@ public class HRMDocumentToProviderDao extends AbstractDaoImpl<HRMDocumentToProvi
 		Query query = entityManager.createQuery(sql);
 		query.setParameter(0, providerNo);
 		
-        if (demographicNumbers != null && !demographicNumbers.isEmpty()) {
-            for (int i = 0; i < demographicNumbers.size(); i++) { //String demographicNumber : demographicNumbers) {
-                query.setParameter("demographicNumber" + i, demographicNumbers.get(i));
-            }
+		if (demographicNumbers != null && !demographicNumbers.isEmpty()) {
+			if (demographicNumbers.size() == 1 && demographicNumbers.get(0) == 0) {
+				// No action needed, logic remains unchanged.
+			} else {
+				for (int i = 0; i < demographicNumbers.size(); i++) { //String demographicNumber : demographicNumbers) {
+					query.setParameter("demographicNumber" + i, demographicNumbers.get(i));
+				}
+			}
         }
 		if (newestDate != null)
 			query.setParameter("newest", newestDate);
@@ -112,7 +126,7 @@ public class HRMDocumentToProviderDao extends AbstractDaoImpl<HRMDocumentToProvi
 		if (isPaged)
 		{
 			query.setFirstResult(page * pageSize);
-			query.setMaxResults((page + 1) * pageSize);
+			query.setMaxResults(pageSize);
 		}
 		
 		@SuppressWarnings("unchecked")

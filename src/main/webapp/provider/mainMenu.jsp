@@ -178,14 +178,12 @@
                                 <security:oscarSec roleName="<%=roleName$%>" objectName="_appointment.doctorLink"
                                                    rights="r">
                                     <li>
-                                        <a HREF="#"
-                                           ONCLICK="popupInboxManager('../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>', 'Lab');return false;"
+                                       <a HREF="#" id="inboxLink"
                                            TITLE='<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>
                                             <span id="oscar_new_lab"><bean:message key="global.lab"/></span>
                                         </a>
                                         <oscar:newUnclaimedLab>
                                             <a id="unclaimedLabLink" class="tabalert" HREF="javascript:void(0)"
-                                               onclick="popupInboxManager('../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=0&searchProviderNo=0&status=N&lname=&fname=&hnum=&pageNum=1&startIndex=0', 'Lab');return false;"
                                                title='<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>U</a>
                                         </oscar:newUnclaimedLab>
                                     </li>
@@ -443,6 +441,28 @@
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
 <%-- TODO: new dialog window for the user preferences --%>
 <script>
+    var originalInboxLinkClickEvent = "popupInboxManager('../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>');return false;";
+    var newInboxLinkClickEvent = "popupInboxManager('../web/inboxhub/Inboxhub.do?method=displayInboxForm', 800);return false;";
+
+    var originalUnclaimedLabLinkClickEvent = "popupInboxManager('../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=0&searchProviderNo=0&status=N&lname=&fname=&hnum=&pageNum=1&startIndex=0');return false;";
+    var newUnclaimedLabLinkClickEvent = "popupInboxManager('../web/inboxhub/Inboxhub.do?method=displayInboxForm&unclaimed=1', 800);return false;";
+
+     document.getElementById("inboxLink").addEventListener("mouseup", function(event) {
+        if(event.altKey) {
+            document.getElementById("inboxLink").setAttribute("onclick", newInboxLinkClickEvent);
+        } else {
+            document.getElementById("inboxLink").setAttribute("onclick", originalInboxLinkClickEvent);
+        }
+    });
+
+    document.getElementById("unclaimedLabLink").addEventListener("mouseup", function(event) {
+        if(event.altKey) {
+            document.getElementById("unclaimedLabLink").setAttribute("onclick", newUnclaimedLabLinkClickEvent);
+        } else {
+            document.getElementById("unclaimedLabLink").setAttribute("onclick", originalUnclaimedLabLinkClickEvent);
+        }
+    });
+
     function openPreferences(providerNumber) {
         const $div = jQuery('<div />').appendTo('body');
         const dialogContainer = $div.attr('id', 'preference-dialog');
