@@ -1,3 +1,4 @@
+;(function($){
 /*
  
 jSignature v2 "2012-11-01T22:48" "commit ID 1c15dfafecc75925c3b7d529356a558b59220edb"
@@ -75,3 +76,4 @@ c;d++)l=p[d],f.push('<path fill="none" stroke="#000000" stroke-width="2" stroke-
 c=new ("undefined"!=typeof Uint8Array?Uint8Array:Array)(d),i=0,h=d-1,m,p,b=[],j=[],s=[];for(c[i]=c[h]=1;h;){n=0;for(k=i+1;k<h;k++){m=l[k];var g=l[i],r=l[h],q=g.x,t=g.y,g=r.x-q,u=r.y-t,v=void 0;if(0!==g||0!==u)v=((m.x-q)*g+(m.y-t)*u)/(g*g+u*u),1<v?(q=r.x,t=r.y):0<v&&(q+=g*v,t+=u*v);m=(g=m.x-q,u=m.y-t,g*g+u*u);m>n&&(p=k,n=m)}n>e&&(c[p]=1,b.push(i),j.push(p),b.push(p),j.push(h));i=b.pop();h=j.pop()}for(k=0;k<d;k++)c[k]&&s.push(l[k]);return a=s,a};if("function"!==typeof x)var x=function(a){var e="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".split(""),
 d,c,h,i,k=0,m=0,n="",n=[];do d=a.charCodeAt(k++),c=a.charCodeAt(k++),h=a.charCodeAt(k++),i=d<<16|c<<8|h,d=i>>18&63,c=i>>12&63,h=i>>6&63,i&=63,n[m++]=e[d]+e[c]+e[h]+e[i];while(k<a.length);n=n.join("");a=a.length%3;return(a?n.slice(0,a-3):n)+"===".slice(a||3)};var p="image/svg+xml",h="image/svg+xml;base64";if("undefined"===typeof $)throw Error("We need jQuery for some of the functionality. jQuery is not detected. Failing to initialize...");u=$.fn.jSignature;u("addPlugin","export","svg",v);u("addPlugin",
 "export",p,v);u("addPlugin","export","svgbase64",z);u("addPlugin","export",h,z)})();
+})(jQuery);
