@@ -28,8 +28,15 @@ import org.springframework.transaction.annotation.Transactional;
 import oscar.util.ParamAppender;
 
 import javax.persistence.*;
+import java.io.*;
 import java.util.List;
 
+/**
+ * AbstractDao is an abstract base class providing default data access operations using JPA.
+ * Designed to be extended by DAO subclasses for specific entity types.
+ *
+ * @param <T> The type of the entity that this DAO will manage, extending AbstractModel.
+ */
 @Transactional
 public abstract class AbstractDao<T extends AbstractModel<?>> {
 	public static final int MAX_LIST_RETURN_SIZE = 5000;
@@ -40,6 +47,10 @@ public abstract class AbstractDao<T extends AbstractModel<?>> {
 	protected EntityManager entityManager = null;
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
+
+	protected AbstractDao(Class<T> modelClass) {
+		setModelClass(modelClass);
+	}
 
 	/**
 	 * aka update
@@ -161,11 +172,10 @@ public abstract class AbstractDao<T extends AbstractModel<?>> {
 		return (entityManager.find(modelClass, id));
 	}
 
-	
+
 	public T findDetached(Object id) {
 		T t = entityManager.find(modelClass, id);
-		entityManager.detach(t);
-		return t;
+		return deepCopy(t);
 	}
 
 	/**
@@ -253,7 +263,52 @@ public abstract class AbstractDao<T extends AbstractModel<?>> {
 					"SingleResult requested but result was not unique : " + results.size()));
 	}
 
-	
+	/**
+	 * Creates a deep copy of the provided entity. This utility ensures that a detached version
+	 * of the entity is safely returned without modifying the original.
+	 *
+	 * @param entity The entity to be copied.
+	 * @return A deep copy of the entity.
+	 */
+	private T deepCopy(T entity) {
+		ensureSerializable(entity);
+		try {
+			byte[] entityBytes = serializeToBytes(entity);
+			return deserializeFromBytes(entityBytes);
+		} catch (IOException | ClassNotFoundException e) {
+			throw new RuntimeException("Error occurred while creating a deep copy of the entity", e);
+		}
+	}
+
+	/**
+	 * Ensures that the provided entity is serializable. Throws an IllegalArgumentException
+	 * if the entity does not implement the Serializable interface.
+	 *
+	 * @param entity The entity to check for serializability.
+	 *               It must implement the {@link Serializable} interface.
+	 */
+	private void ensureSerializable(T entity) {
+		if (!(entity instanceof java.io.Serializable)) {
+			throw new IllegalArgumentException("The entity must be serializable to perform a deep copy.");
+		}
+	}
+
+	private byte[] serializeToBytes(T entity) throws IOException {
+		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		     ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+			objectOutputStream.writeObject(entity);
+			return outputStream.toByteArray();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private T deserializeFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
+		try (ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+		     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+			return (T) objectInputStream.readObject();
+		}
+	}
+
 	public int getCountAll() {
 		// new JPA way of doing it, but our hibernate is too old or doesn't support
 		// primitives yet?
