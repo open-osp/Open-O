@@ -126,20 +126,14 @@ public final class LoginAction extends DispatchAction {
             return initialChecksResult.errForward;
         }
 
-        boolean ajaxResponse = initialChecksResult.ajaxResponse;
-        boolean isMobileOptimized = initialChecksResult.isMobileOptimized;
-        String ip = initialChecksResult.ip;
-        String submitType = initialChecksResult.submitType;
-
         LoginCheckLogin cl = new LoginCheckLogin();
         String oneIdKey = request.getParameter("nameId");
         String oneIdEmail = request.getParameter("email");
-        String userName;
-        String password;
-        String pin;
-        String nextPage;
+
         boolean forcedpasswordchange = initialChecksResult.forcedpasswordchange;
         String where = "failure";
+
+        UserLoginInfo userLoginInfo;
 
         // >> 2. Forced Password Change Handling
         if (forcedpasswordchange) {
@@ -150,39 +144,28 @@ public final class LoginAction extends DispatchAction {
                 return passwordChangeResult.errForward;
             }
 
-            userName = passwordChangeResult.username;
-            password = passwordChangeResult.password;
-            pin = passwordChangeResult.pin;
-            nextPage = passwordChangeResult.nextPage;
+            userLoginInfo = passwordChangeResult;
 
             // make sure this checking doesn't happen again
             forcedpasswordchange = false;
         }
         // >> 3. Standard Login Attempt
         else {
-            LoginInfoResult loginInfoResult = initializePreLoginInfo(request, form);
-            userName = loginInfoResult.username;
-            password = loginInfoResult.password;
-            pin = loginInfoResult.pin;
-            nextPage = loginInfoResult.nextPage;
+            LoginAttemptResult loginAttemptResult = handleLoginAttempt(mapping, request, response, form, cl, initialChecksResult.ip, initialChecksResult.isAjaxResponse);
 
-            logger.debug("nextPage: " + nextPage);
-            if (nextPage != null) {
-                // set current facility
-                return getSelectFacilityForward(mapping, request, ip, nextPage);
+            if (loginAttemptResult.errForward != null) {
+                return loginAttemptResult.errForward;
             }
 
-            if (cl.isBlock(ip, userName)) {
-                logger.info(LOG_PRE + " Blocked: " + userName);
-                // return mapping.findForward(where); //go to block page
-                // change to block page
-                String errMsg = "Oops! Your account is now locked due to incorrect password attempts!";
-
-                return handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg);
+            if (loginAttemptResult.selectFacilityForward !=null) {
+                return loginAttemptResult.selectFacilityForward;
             }
+
+            userLoginInfo = loginAttemptResult;
+
         }
 
-        logger.debug("ip was not blocked: " + ip);
+        logger.debug("ip was not blocked: " + initialChecksResult.ip);
 
         // >> 4. Authentication
         /*
@@ -190,7 +173,7 @@ public final class LoginAction extends DispatchAction {
          */
         AuthResult authResult;
         try {
-            authResult = this.authenticate(cl, userName, password, pin, ip);
+            authResult = this.authenticate(cl, userLoginInfo, initialChecksResult.ip);
         } catch (Exception e) {
             logger.error("Error", e);
             String errMsg = "Database connection error:" + e.getMessage() + ".";
@@ -199,7 +182,7 @@ public final class LoginAction extends DispatchAction {
                 errMsg = "Database driver " + e.getMessage().substring(e.getMessage().indexOf(':') + 2) + " not found.";
                 return getErrorForward(mapping, errMsg);
             } else {
-                return handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg);
+                return handleAjaxErrOrForwardErr(mapping, response, initialChecksResult.isAjaxResponse, errMsg);
             }
         }
 
@@ -209,7 +192,7 @@ public final class LoginAction extends DispatchAction {
             // is the provider record inactive?
             Provider p = this.providerDao.getProvider(authResult.getProviderNo());
             if (p == null || (p.getStatus() != null && p.getStatus().equals("0"))) {
-                logger.info(LOG_PRE + " Inactive: " + userName);
+                logger.info(LOG_PRE + " Inactive: " + userLoginInfo.username);
                 LogAction.addLog(authResult.getProviderNo(), "login", "failed", "inactive");
 
                 return getErrorForward(mapping, "Your account is inactive. Please contact your administrator to activate.");
@@ -218,10 +201,10 @@ public final class LoginAction extends DispatchAction {
             /*
              * This section is added for forcing the initial password change.
              */
-            Security security = getSecurity(userName);
+            Security security = getSecurity(userLoginInfo.username);
             if (isForcePasswordChangeRequired(security, forcedpasswordchange)) {
                 try {
-                    setUserInfoToSession(request, userName, password, pin, nextPage);
+                    setUserInfoToSession(request, userLoginInfo);
                     return new ActionForward(mapping.findForward("forcepasswordreset").getPath());
                 } catch (Exception e) {
                     logger.error("Error", e);
@@ -300,7 +283,7 @@ public final class LoginAction extends DispatchAction {
             }
 
             logger.debug("Assigned new session for: " + authResult.getProviderNo() + " : " + authResult.getLastname() + " : " + authResult.getRoleName());
-            LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "", ip);
+            LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "", initialChecksResult.ip);
 
             // initial db setting
             Properties pvar = OscarProperties.getInstance();
@@ -313,8 +296,8 @@ public final class LoginAction extends DispatchAction {
             session.setAttribute("oscar_context_path", request.getContextPath());
             session.setAttribute("expired_days", authResult.getExpiredDays());
             // If a new session has been created, we must set the mobile attribute again
-            if (isMobileOptimized) {
-                if ("Full".equalsIgnoreCase(submitType)) {
+            if (initialChecksResult.isMobileOptimized) {
+                if ("Full".equalsIgnoreCase(initialChecksResult.submitType)) {
                     session.setAttribute("fullSite", "true");
                 } else {
                     session.setAttribute("mobileOptimized", "true");
@@ -413,7 +396,7 @@ public final class LoginAction extends DispatchAction {
                 Facility facility = this.facilityDao.find(facilityIds.get(0));
                 request.getSession().setAttribute("currentFacility", facility);
                 LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIds.get(0),
-                        ip);
+                        initialChecksResult.ip);
                 if (facility.isEnableOcanForms()) {
                     request.getSession().setAttribute("ocanWarningWindow",
                             OcanForm.getOcanWarningMessage(facility.getId()));
@@ -430,7 +413,7 @@ public final class LoginAction extends DispatchAction {
                     this.providerDao.addProviderToFacility(providerNo, first_id);
                     Facility facility = this.facilityDao.find(first_id);
                     request.getSession().setAttribute("currentFacility", facility);
-                    LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + first_id, ip);
+                    LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + first_id, initialChecksResult.ip);
                 }
             }
 
@@ -444,19 +427,19 @@ public final class LoginAction extends DispatchAction {
         // expired password
         else if (authResult != null && authResult.isAccountExpired()) {
             logger.warn("Expired password");
-            cl.updateLoginList(ip, userName);
+            cl.updateLoginList(initialChecksResult.ip, userLoginInfo.username);
 
             String errMsg = "Your account is expired. Please contact your administrator.";
 
-            return handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg);
+            return handleAjaxErrOrForwardErr(mapping, response, initialChecksResult.isAjaxResponse, errMsg);
         } else {
             logger.debug("go to normal directory");
 
-            cl.updateLoginList(ip, userName);
+            cl.updateLoginList(initialChecksResult.ip, userLoginInfo.username);
 
             String errMsg = "Invalid Credentials.";
 
-            if (ajaxResponse) {
+            if (initialChecksResult.isAjaxResponse) {
                 return handleAjaxError(response, errMsg);
             }
 
@@ -481,7 +464,7 @@ public final class LoginAction extends DispatchAction {
         }
 
         // >> 8. AJAX Response Handling
-        if (ajaxResponse) {
+        if (initialChecksResult.isAjaxResponse) {
             logger.debug("rendering ajax response");
             Provider prov = this.providerDao.getProvider((String) request.getSession().getAttribute("user"));
             JSONObject json = new JSONObject();
@@ -537,20 +520,15 @@ public final class LoginAction extends DispatchAction {
     private PasswordChangeResult handleForcedPasswordChange(ActionMapping mapping, ActionForm form, HttpServletRequest request) throws IOException {
         // Coming back from force password change.
         String userName = (String) request.getSession().getAttribute("userName");
-
-        // Username is only letters and numbers
-        if (!Pattern.matches("[a-zA-Z0-9]{1,10}", userName)) {
-            userName = "Invalid Username";
-        }
-
         String password = (String) request.getSession().getAttribute("password");
-
         String pin = (String) request.getSession().getAttribute("pin");
 
+        // Username is only letters and numbers
+        userName = validateUsernamePattern(userName);
+
         // pins are integers only
-        if (!Pattern.matches("[0-9]{4}", pin)) {
-            pin = "";
-        }
+        pin = validatePinPattern(pin);
+
         String nextPage = (String) request.getSession().getAttribute("nextPage");
 
         String newPassword = ((LoginForm) form).getNewPassword();
@@ -585,26 +563,37 @@ public final class LoginAction extends DispatchAction {
         return new PasswordChangeResult(userName, password, pin, nextPage);
     }
 
-    private LoginInfoResult initializePreLoginInfo(HttpServletRequest request, ActionForm form) {
-
+    private LoginAttemptResult handleLoginAttempt(ActionMapping mapping, HttpServletRequest request, HttpServletResponse response, ActionForm form, LoginCheckLogin cl, String ip, boolean ajaxResponse) throws IOException {
         LoginForm loginForm = (LoginForm) form;
+        String nextPage = request.getParameter("nextPage");
+
+        logger.debug("nextPage: " + nextPage);
+        if (nextPage != null) {
+            // set current facility
+            ActionForward selectFacilityForward = getSelectFacilityForward(mapping, request, ip, nextPage);
+            return new LoginAttemptResult(selectFacilityForward, false);
+        }
+
         String userName = loginForm.getUsername();
         String password = loginForm.getPassword();
         String pin = loginForm.getPin();
 
-        String nextPage = request.getParameter("nextPage");
-
         // Username is only letters and numbers
-        if (!Pattern.matches("[a-zA-Z0-9]{1,10}", userName)) {
-            userName = "Invalid Username";
-        }
+        userName = validateUsernamePattern(userName);
 
         // pins are integers only
-        if (!Pattern.matches("[0-9]{4}", pin)) {
-            pin = "";
+        pin = validatePinPattern(pin);
+
+        if (cl.isBlock(ip, userName)) {
+            logger.info(LOG_PRE + " Blocked: " + userName);
+            // return mapping.findForward(where); //go to block page
+            // change to block page
+            String errMsg = "Oops! Your account is now locked due to incorrect password attempts!";
+
+            return new LoginAttemptResult(handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg), true);
         }
 
-        return new LoginInfoResult(userName, password, pin, nextPage);
+        return new LoginAttemptResult(userName, password, pin, nextPage);
     }
 
     private ActionForward getSelectFacilityForward(ActionMapping mapping, HttpServletRequest request, String ip, String nextPage) {
@@ -620,16 +609,16 @@ public final class LoginAction extends DispatchAction {
         return mapping.findForward(nextPage);
     }
 
-    private AuthResult authenticate(LoginCheckLogin cl, String username, String password, String pin, String ip) throws Exception {
+    private AuthResult authenticate(LoginCheckLogin cl, UserLoginInfo userLoginInfo, String ip) throws Exception {
         String[] strAuth;
 
         /*
          * the pin code is not required for SSO IDP.
          */
         if (SSOUtility.isSSOEnabled()) {
-            strAuth = cl.auth(username, password, ip);
+            strAuth = cl.auth(userLoginInfo.username, userLoginInfo.password, ip);
         } else {
-            strAuth = cl.auth(username, password, pin, ip);
+            strAuth = cl.auth(userLoginInfo.username, userLoginInfo.password, userLoginInfo.pin, ip);
         }
 
         logger.debug("strAuth : " + Arrays.toString(strAuth));
@@ -639,6 +628,21 @@ public final class LoginAction extends DispatchAction {
         }
 
         return null;
+    }
+
+    private static String validatePinPattern(String pin) {
+        return validatePattern("[0-9]{4}", pin, "");
+    }
+
+    private static String validateUsernamePattern(String userName) {
+        return validatePattern("[a-zA-Z0-9]{1,10}", userName, "Invalid Username");
+    }
+
+    private static String validatePattern(String patternVal, String value, String defaultVal) {
+        if (!Pattern.matches(patternVal, value)) {
+            value = defaultVal;
+        }
+        return value;
     }
 
     /**
@@ -657,17 +661,13 @@ public final class LoginAction extends DispatchAction {
      * Set user info to session
      *
      * @param request
-     * @param userName
-     * @param password
-     * @param pin
-     * @param nextPage
+     * @param userLoginInfo
      */
-    private void setUserInfoToSession(HttpServletRequest request, String userName, String password, String pin,
-                                      String nextPage) throws Exception {
-        request.getSession().setAttribute("userName", userName);
-        request.getSession().setAttribute("password", this.securityManager.encodePassword(password));
-        request.getSession().setAttribute("pin", pin);
-        request.getSession().setAttribute("nextPage", nextPage);
+    private void setUserInfoToSession(HttpServletRequest request, UserLoginInfo userLoginInfo) throws Exception {
+        request.getSession().setAttribute("userName", userLoginInfo.username);
+        request.getSession().setAttribute("password", this.securityManager.encodePassword(userLoginInfo.password));
+        request.getSession().setAttribute("pin", userLoginInfo.pin);
+        request.getSession().setAttribute("nextPage", userLoginInfo.nextPage);
 
     }
 
@@ -742,14 +742,14 @@ public final class LoginAction extends DispatchAction {
 
     private static class InitialChecksResult {
         public ActionForward errForward;
-        public boolean ajaxResponse;
+        public boolean isAjaxResponse;
         public boolean isMobileOptimized;
         public String ip;
         public String submitType;
         public boolean forcedpasswordchange;
 
-        public InitialChecksResult(boolean ajaxResponse, boolean isMobileOptimized, String ip, String submitType, boolean forcedpasswordchange) {
-            this.ajaxResponse = ajaxResponse;
+        public InitialChecksResult(boolean isAjaxResponse, boolean isMobileOptimized, String ip, String submitType, boolean forcedpasswordchange) {
+            this.isAjaxResponse = isAjaxResponse;
             this.isMobileOptimized = isMobileOptimized;
             this.ip = ip;
             this.submitType = submitType;
@@ -761,7 +761,7 @@ public final class LoginAction extends DispatchAction {
         }
     }
 
-    private static class PasswordChangeResult extends BaseResult {
+    private static class PasswordChangeResult extends UserLoginInfo {
 
         public PasswordChangeResult(String username, String password, String pin, String nextPage) {
             super(username, password, pin, nextPage);
@@ -772,29 +772,41 @@ public final class LoginAction extends DispatchAction {
         }
     }
 
-    private static class LoginInfoResult extends BaseResult {
+    private static class LoginAttemptResult extends UserLoginInfo {
 
-        public LoginInfoResult(String username, String password, String pin, String nextPage) {
+        ActionForward selectFacilityForward;
+
+        public LoginAttemptResult(String username, String password, String pin, String nextPage) {
             super(username, password, pin, nextPage);
         }
+
+        public LoginAttemptResult(ActionForward forward, boolean isErr) {
+            if (isErr)
+                errForward = forward;
+            else
+                this.selectFacilityForward = forward;
+        }
+
     }
 
-    private static class BaseResult {
+    private static class UserLoginInfo {
         String username;
         String password;
         String pin;
         String nextPage;
         ActionForward errForward;
 
-        public BaseResult(String username, String password, String pin, String nextPage) {
+        public UserLoginInfo(String username, String password, String pin, String nextPage) {
             this.username = username;
             this.password = password;
             this.pin = pin;
             this.nextPage = nextPage;
         }
 
-        public BaseResult(ActionForward errForward) {
+        public UserLoginInfo(ActionForward errForward) {
             this.errForward = errForward;
         }
+
+        public UserLoginInfo() {}
     }
 }
