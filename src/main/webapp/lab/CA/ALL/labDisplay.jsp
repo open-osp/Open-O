@@ -129,7 +129,10 @@ if(getRecallTicklerAssignee.getValue().equals("yes")){
 //Need date lab was received by OSCAR
 Hl7TextMessageDao hl7TxtMsgDao = (Hl7TextMessageDao)SpringUtils.getBean("hl7TextMessageDao");
 MeasurementMapDao measurementMapDao = (MeasurementMapDao) SpringUtils.getBean("measurementMapDao");
-Hl7TextMessage hl7TextMessage = hl7TxtMsgDao.find(Integer.parseInt(segmentID));
+Hl7TextMessage hl7TextMessage = null;
+    if (StringUtils.isNotBlank(segmentID) && StringUtils.isNumeric(segmentID)) {
+        hl7TextMessage = hl7TxtMsgDao.find(Integer.parseInt(segmentID));
+    }
 
 String dateLabReceived = "n/a";
 if(hl7TextMessage != null){
