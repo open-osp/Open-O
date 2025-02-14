@@ -41,6 +41,7 @@ import org.oscarehr.common.model.*;
 import org.oscarehr.decisionSupport.service.DSService;
 import org.oscarehr.managers.AppManager;
 import org.oscarehr.managers.SecurityManager;
+import org.oscarehr.managers.UserSessionManager;
 import org.oscarehr.util.*;
 import org.owasp.encoder.Encode;
 import org.springframework.context.ApplicationContext;
@@ -57,13 +58,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public final class LoginAction extends DispatchAction {
+
+	public static Map<Integer, HttpSession> userSessionMap = new HashMap<>();
 
 	/**
 	 * This variable is only intended to be used by this class and the jsp which
@@ -84,6 +84,7 @@ public final class LoginAction extends DispatchAction {
 	private UserPropertyDAO propDao = SpringUtils.getBean(UserPropertyDAO.class);
 
 	private final SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
+	private final UserSessionManager userSessionManager = SpringUtils.getBean(UserSessionManager.class);
 
 	// remove after testing is done
 	// private SsoAuthenticationManager ssoAuthenticationManager =
@@ -359,6 +360,10 @@ public final class LoginAction extends DispatchAction {
 			}
 			session = request.getSession(); // Create a new session for this user
 			session.setMaxInactiveInterval(7200); // 2 hours
+
+			if (security != null) {
+				this.userSessionManager.registerUserSession(security.getSecurityNo(), session);
+			}
 
 			// If the ondIdKey parameter is not null and is not an empty string
 			if (oneIdKey != null && !oneIdKey.equals("")) {
