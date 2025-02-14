@@ -114,6 +114,33 @@ public final class LoginAction extends DispatchAction {
         return new ActionForward(url + "?errormsg=" + errormsg);
     }
 
+    private static void lazyLoadAlertTimer() {
+        Properties pvar = OscarProperties.getInstance();
+        if (pvar.getProperty("billregion").equals("BC")) {
+            String alertFreq = pvar.getProperty("ALERT_POLL_FREQUENCY");
+            if (alertFreq != null) {
+                Long longFreq = new Long(alertFreq);
+                String[] alertCodes = OscarProperties.getInstance().getProperty("CDM_ALERTS").split(",");
+                AlertTimer.getInstance(alertCodes, longFreq.longValue());
+            }
+        }
+    }
+
+    private static String validatePinPattern(String pin) {
+        return validatePattern("[0-9]{4}", pin, "");
+    }
+
+    private static String validateUsernamePattern(String userName) {
+        return validatePattern("[a-zA-Z0-9]{1,10}", userName, "Invalid Username");
+    }
+
+    private static String validatePattern(String patternVal, String value, String defaultVal) {
+        if (!Pattern.matches(patternVal, value)) {
+            value = defaultVal;
+        }
+        return value;
+    }
+
     /**
      * TODO: for the love of god - please help me clean-up this nightmare
      */
@@ -121,51 +148,50 @@ public final class LoginAction extends DispatchAction {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         // >> 1. Initial Checks and Mobile Detection
-        InitialChecksResult initialChecksResult = performInitialChecks(mapping, request);
+        InitialChecksResult initialChecksResult = this.performInitialChecks(mapping, request);
         if (initialChecksResult.errForward != null) {
             return initialChecksResult.errForward;
         }
 
         LoginCheckLogin cl = new LoginCheckLogin();
-        String oneIdKey = request.getParameter("nameId");
-        String oneIdEmail = request.getParameter("email");
-
-        boolean forcedpasswordchange = initialChecksResult.forcedpasswordchange;
-        String where = "failure";
 
         UserLoginInfo userLoginInfo;
 
         // >> 2. Forced Password Change Handling
-        if (forcedpasswordchange) {
+        if (initialChecksResult.forcedpasswordchange) {
 
-            PasswordChangeResult passwordChangeResult = handleForcedPasswordChange(mapping, form, request);
+            PasswordChangeResult passwordChangeResult = this.handleForcedPasswordChange(mapping, form, request);
 
-            if(passwordChangeResult.errForward !=null){
+            if (passwordChangeResult.errForward != null) {
                 return passwordChangeResult.errForward;
             }
 
             userLoginInfo = passwordChangeResult;
 
             // make sure this checking doesn't happen again
-            forcedpasswordchange = false;
+            initialChecksResult.forcedpasswordchange = false;
         }
         // >> 3. Standard Login Attempt
         else {
-            LoginAttemptResult loginAttemptResult = handleLoginAttempt(mapping, request, response, form, cl, initialChecksResult.ip, initialChecksResult.isAjaxResponse);
+            LoginAttemptResult loginAttemptResult = this.handleLoginAttempt(mapping, form, request, response, cl, initialChecksResult);
 
             if (loginAttemptResult.errForward != null) {
                 return loginAttemptResult.errForward;
             }
 
-            if (loginAttemptResult.selectFacilityForward !=null) {
+            if (loginAttemptResult.selectFacilityForward != null) {
                 return loginAttemptResult.selectFacilityForward;
             }
 
             userLoginInfo = loginAttemptResult;
-
         }
 
         logger.debug("ip was not blocked: " + initialChecksResult.ip);
+
+        String oneIdKey = request.getParameter("nameId");
+        String oneIdEmail = request.getParameter("email");
+
+        String where = "failure";
 
         // >> 4. Authentication
         /*
@@ -201,16 +227,14 @@ public final class LoginAction extends DispatchAction {
             /*
              * This section is added for forcing the initial password change.
              */
-            Security security = getSecurity(userLoginInfo.username);
-            if (isForcePasswordChangeRequired(security, forcedpasswordchange)) {
+            if (this.isForcePasswordChangeRequired(userLoginInfo.username, initialChecksResult.forcedpasswordchange)) {
                 try {
-                    setUserInfoToSession(request, userLoginInfo);
+                    this.setUserInfoToSession(request, userLoginInfo);
                     return new ActionForward(mapping.findForward("forcepasswordreset").getPath());
                 } catch (Exception e) {
                     logger.error("Error", e);
                     return getErrorForward(mapping, "Setting values to the session.");
                 }
-
             }
 
             // ################----------------------->
@@ -286,9 +310,7 @@ public final class LoginAction extends DispatchAction {
             LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "", initialChecksResult.ip);
 
             // initial db setting
-            Properties pvar = OscarProperties.getInstance();
 
-            String providerNo = authResult.getProviderNo();
             session.setAttribute("user", authResult.getProviderNo());
             session.setAttribute("userfirstname", authResult.getFirstname());
             session.setAttribute("userlastname", authResult.getLastname());
@@ -307,6 +329,7 @@ public final class LoginAction extends DispatchAction {
             // initiate security manager
             String default_pmm = null;
 
+            String providerNo = authResult.getProviderNo();
             // get preferences from preference table
             ProviderPreference providerPreference = this.providerPreferenceDao.find(providerNo);
 
@@ -365,14 +388,7 @@ public final class LoginAction extends DispatchAction {
              */
             // Lazy Loads AlertTimer instance only once, will run as daemon for duration of
             // server runtime
-            if (pvar.getProperty("billregion").equals("BC")) {
-                String alertFreq = pvar.getProperty("ALERT_POLL_FREQUENCY");
-                if (alertFreq != null) {
-                    Long longFreq = new Long(alertFreq);
-                    String[] alertCodes = OscarProperties.getInstance().getProperty("CDM_ALERTS").split(",");
-                    AlertTimer.getInstance(alertCodes, longFreq.longValue());
-                }
-            }
+            lazyLoadAlertTimer();
 
             String username = (String) session.getAttribute("user");
             Provider provider = this.providerManager.getProvider(username);
@@ -454,25 +470,12 @@ public final class LoginAction extends DispatchAction {
 
         // >> 7. OAuth Token Handling
         if (request.getParameter("oauth_token") != null) {
-            logger.debug("checking oauth_token");
-            String proNo = (String) request.getSession().getAttribute("user");
-            ServiceRequestToken srt = this.serviceRequestTokenDao.findByTokenId(request.getParameter("oauth_token"));
-            if (srt != null) {
-                srt.setProviderNo(proNo);
-                this.serviceRequestTokenDao.merge(srt);
-            }
+            this.handleOAuthToken(request);
         }
 
         // >> 8. AJAX Response Handling
         if (initialChecksResult.isAjaxResponse) {
-            logger.debug("rendering ajax response");
-            Provider prov = this.providerDao.getProvider((String) request.getSession().getAttribute("user"));
-            JSONObject json = new JSONObject();
-            json.put("success", true);
-            json.put("providerName", Encode.forJavaScript(prov.getFormattedName()));
-            json.put("providerNo", prov.getProviderNo());
-            response.setContentType("text/x-json");
-            json.write(response.getWriter());
+            this.handleSuccessAjaxResponse(request, response);
             return null;
         }
 
@@ -481,7 +484,29 @@ public final class LoginAction extends DispatchAction {
         return mapping.findForward(where);
     }
 
-    private static boolean isForcePasswordChangeRequired(Security security, boolean forcedpasswordchange) {
+    private void handleOAuthToken(HttpServletRequest request) {
+        logger.debug("checking oauth_token");
+        String proNo = (String) request.getSession().getAttribute("user");
+        ServiceRequestToken srt = this.serviceRequestTokenDao.findByTokenId(request.getParameter("oauth_token"));
+        if (srt != null) {
+            srt.setProviderNo(proNo);
+            this.serviceRequestTokenDao.merge(srt);
+        }
+    }
+
+    private void handleSuccessAjaxResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.debug("rendering ajax response");
+        Provider prov = this.providerDao.getProvider((String) request.getSession().getAttribute("user"));
+        JSONObject json = new JSONObject();
+        json.put("success", true);
+        json.put("providerName", Encode.forJavaScript(prov.getFormattedName()));
+        json.put("providerNo", prov.getProviderNo());
+        response.setContentType("text/x-json");
+        json.write(response.getWriter());
+    }
+
+    private boolean isForcePasswordChangeRequired(String username, boolean forcedpasswordchange) {
+        Security security = this.getSecurity(username);
         return !OscarProperties.getInstance().getBooleanProperty("mandatory_password_reset", "false") &&
                 security.isForcePasswordReset() != null && security.isForcePasswordReset()
                 && forcedpasswordchange;
@@ -536,7 +561,7 @@ public final class LoginAction extends DispatchAction {
         String oldPassword = ((LoginForm) form).getOldPassword();
 
         try {
-            String errorStr = errorHandling(password, newPassword, confirmPassword, oldPassword);
+            String errorStr = this.errorHandling(password, newPassword, confirmPassword, oldPassword);
 
             // Error Handling
             if (errorStr != null && !errorStr.isEmpty()) {
@@ -545,17 +570,17 @@ public final class LoginAction extends DispatchAction {
                 return new PasswordChangeResult(new ActionForward(newURL));
             }
 
-            persistNewPassword(userName, newPassword);
+            this.persistNewPassword(userName, newPassword);
 
             password = newPassword;
 
             // Remove the attributes from session
-            removeAttributesFromSession(request);
+            this.removeAttributesFromSession(request);
         } catch (Exception e) {
             logger.error("Error", e);
 
             // Remove the attributes from session
-            removeAttributesFromSession(request);
+            this.removeAttributesFromSession(request);
 
             return new PasswordChangeResult(getErrorForward(mapping, "Setting values to the session."));
         }
@@ -563,14 +588,14 @@ public final class LoginAction extends DispatchAction {
         return new PasswordChangeResult(userName, password, pin, nextPage);
     }
 
-    private LoginAttemptResult handleLoginAttempt(ActionMapping mapping, HttpServletRequest request, HttpServletResponse response, ActionForm form, LoginCheckLogin cl, String ip, boolean ajaxResponse) throws IOException {
+    private LoginAttemptResult handleLoginAttempt(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, LoginCheckLogin cl, InitialChecksResult initialChecksResult) throws IOException {
         LoginForm loginForm = (LoginForm) form;
         String nextPage = request.getParameter("nextPage");
 
         logger.debug("nextPage: " + nextPage);
         if (nextPage != null) {
             // set current facility
-            ActionForward selectFacilityForward = getSelectFacilityForward(mapping, request, ip, nextPage);
+            ActionForward selectFacilityForward = this.getSelectFacilityForward(mapping, request, initialChecksResult.ip, nextPage);
             return new LoginAttemptResult(selectFacilityForward, false);
         }
 
@@ -584,13 +609,13 @@ public final class LoginAction extends DispatchAction {
         // pins are integers only
         pin = validatePinPattern(pin);
 
-        if (cl.isBlock(ip, userName)) {
+        if (cl.isBlock(initialChecksResult.ip, userName)) {
             logger.info(LOG_PRE + " Blocked: " + userName);
             // return mapping.findForward(where); //go to block page
             // change to block page
             String errMsg = "Oops! Your account is now locked due to incorrect password attempts!";
 
-            return new LoginAttemptResult(handleAjaxErrOrForwardErr(mapping, response, ajaxResponse, errMsg), true);
+            return new LoginAttemptResult(handleAjaxErrOrForwardErr(mapping, response, initialChecksResult.isAjaxResponse, errMsg), true);
         }
 
         return new LoginAttemptResult(userName, password, pin, nextPage);
@@ -628,21 +653,6 @@ public final class LoginAction extends DispatchAction {
         }
 
         return null;
-    }
-
-    private static String validatePinPattern(String pin) {
-        return validatePattern("[0-9]{4}", pin, "");
-    }
-
-    private static String validateUsernamePattern(String userName) {
-        return validatePattern("[a-zA-Z0-9]{1,10}", userName, "Invalid Username");
-    }
-
-    private static String validatePattern(String patternVal, String value, String defaultVal) {
-        if (!Pattern.matches(patternVal, value)) {
-            value = defaultVal;
-        }
-        return value;
     }
 
     /**
@@ -729,7 +739,7 @@ public final class LoginAction extends DispatchAction {
      */
     private void persistNewPassword(String userName, String newPassword) throws Exception {
 
-        Security security = getSecurity(userName);
+        Security security = this.getSecurity(userName);
         security.setPassword(this.securityManager.encodePassword(newPassword));
         security.setForcePasswordReset(Boolean.FALSE);
         this.securityDao.saveEntity(security);
@@ -807,6 +817,7 @@ public final class LoginAction extends DispatchAction {
             this.errForward = errForward;
         }
 
-        public UserLoginInfo() {}
+        public UserLoginInfo() {
+        }
     }
 }
