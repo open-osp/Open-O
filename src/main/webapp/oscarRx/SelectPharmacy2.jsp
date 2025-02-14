@@ -52,6 +52,8 @@
 		<html:base/>
 		<jsp:include page="../images/spinner.jsp" flush="true"/>
 
+		<script src="${pageContext.request.contextPath}/csrfguard"></script>
+
 		<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"
 		        type="text/javascript"></script>
 		<script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js"
@@ -92,103 +94,104 @@
 			(function ($) {
 				$(function () {
 					var demo = $("#demographicNo").val();
-					$.get("<%=request.getContextPath() + "/oscarRx/managePharmacy.do?method=getPharmacyFromDemographic&demographicNo="%>" + demo,
-						function (data) {
-							if (data && data.length && data.length > 0) {
-								$("#preferredList").html("");
-								var json;
-								var preferredPharmacyInfo;
-								for (var idx = 1; idx <= data.length; ++idx) {  //deliberately using idx = 1 to start to match the preferredOrder in db which is 1 counting instead of 0 counting
-									preferredPharmacyInfo = data[idx - 1];
-									json = JSON.stringify(preferredPharmacyInfo);
-									var pharm = "<div prefOrder='" + idx + "' pharmId='" + preferredPharmacyInfo.id + "'><table><tr><td class='prefAction prefUp'> Move Up </td>";
-									pharm += "<td rowspan='3' style='padding-left: 5px'>" + preferredPharmacyInfo.name + "<br /> ";
-									pharm += preferredPharmacyInfo.address + ", " + preferredPharmacyInfo.city + " " + preferredPharmacyInfo.province + "<br /> ";
-									pharm += preferredPharmacyInfo.postalCode + "<br />";
-									pharm += "Main Phone: " + preferredPharmacyInfo.phone1 + "<br />";
-									pharm += "Fax: " + preferredPharmacyInfo.fax + "<br />";
-									pharm += "<a href='#'  onclick='viewPharmacy(" + preferredPharmacyInfo.id + ");'>View More</a>" + "</td>";
-									pharm += "</tr><tr><td class='prefAction prefUnlink'> Remove from List </td></tr><tr><td class='prefAction prefDown'> Move Down </td></tr></table></div>";
-									$("#preferredList").append(pharm);
-								}
+					if(demo != null && demo !== "") {
+						$.post("<%=request.getContextPath() + "/oscarRx/managePharmacy.do?method=getPharmacyFromDemographic&demographicNo="%>" + demo,
+								function (data) {
+									if (data && data.length && data.length > 0) {
+										$("#preferredList").html("");
+										var json;
+										var preferredPharmacyInfo;
+										for (var idx = 1; idx <= data.length; ++idx) {  //deliberately using idx = 1 to start to match the preferredOrder in db which is 1 counting instead of 0 counting
+											preferredPharmacyInfo = data[idx - 1];
+											json = JSON.stringify(preferredPharmacyInfo);
+											var pharm = "<div prefOrder='" + idx + "' pharmId='" + preferredPharmacyInfo.id + "'><table><tr><td class='prefAction prefUp'> Move Up </td>";
+											pharm += "<td rowspan='3' style='padding-left: 5px'>" + preferredPharmacyInfo.name + "<br /> ";
+											pharm += preferredPharmacyInfo.address + ", " + preferredPharmacyInfo.city + " " + preferredPharmacyInfo.province + "<br /> ";
+											pharm += preferredPharmacyInfo.postalCode + "<br />";
+											pharm += "Main Phone: " + preferredPharmacyInfo.phone1 + "<br />";
+											pharm += "Fax: " + preferredPharmacyInfo.fax + "<br />";
+											pharm += "<a href='#'  onclick='viewPharmacy(" + preferredPharmacyInfo.id + ");'>View More</a>" + "</td>";
+											pharm += "</tr><tr><td class='prefAction prefUnlink'> Remove from List </td></tr><tr><td class='prefAction prefDown'> Move Down </td></tr></table></div>";
+											$("#preferredList").append(pharm);
+										}
 
-								$(".prefUnlink").click(function () {
-									var data = "pharmacyId=" + $(this).closest("div").attr("pharmId") + "&demographicNo=" + demo;
-									ShowSpin(true);
-									$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=unlink",
-										data, function (data) {
-											if (data.id) {
-												window.location.reload(false);
-											} else {
-												alert("Unable to unlink pharmacy");
-												HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
+										$(".prefUnlink").click(function () {
+											var data = "pharmacyId=" + $(this).closest("div").attr("pharmId") + "&demographicNo=" + demo;
+											ShowSpin(true);
+											$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=unlink",
+													data, function (data) {
+														if (data.id) {
+															window.location.reload(false);
+														} else {
+															alert("Unable to unlink pharmacy");
+															HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
+														}
+													}, "json");
+										});
+
+										$(".prefUp").click(function () {
+											if ($(this).closest("div").prev() != null) {
+												var $curr = $(this).closest("div");
+												var $prev = $(this).closest("div").prev();
+
+												if ($curr.prev().length == 0) {
+													alert("This pharmacy is already this patient's most preferred pharmacy.");
+												} else {
+													var data = "pharmId=" + $curr.attr("pharmId") + "&demographicNo=" + demo + "&preferredOrder=" + (parseInt($curr.attr("prefOrder")) - 1);
+													ShowSpin(true);
+													$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=setPreferred",
+															data, function (data2) {
+																if (data2.id) {
+																	data = "pharmId=" + $prev.attr("pharmId") + "&demographicNo=" + demo + "&preferredOrder=" + (parseInt($prev.attr("prefOrder")) + 1);
+																	$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=setPreferred",
+																			data, function (data3) {
+																				if (data3.id) {
+																					window.location.reload(false);
+																				} else {
+																					HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
+																				}
+																			}, "json");
+																} else {
+																	HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
+																}
+															}, "json");
+												}
 											}
-										}, "json");
-								});
+										});
 
-								$(".prefUp").click(function () {
-									if ($(this).closest("div").prev() != null) {
-										var $curr = $(this).closest("div");
-										var $prev = $(this).closest("div").prev();
+										$(".prefDown").click(function () {
+											if ($(this).closest("div").next() != null) {
+												var $curr = $(this).closest("div");
+												var $next = $(this).closest("div").next();
 
-										if ($curr.prev().length == 0) {
-											alert("This pharmacy is already this patient's most preferred pharmacy.");
-										} else {
-											var data = "pharmId=" + $curr.attr("pharmId") + "&demographicNo=" + demo + "&preferredOrder=" + (parseInt($curr.attr("prefOrder")) - 1);
-											ShowSpin(true);
-											$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=setPreferred",
-												data, function (data2) {
-													if (data2.id) {
-														data = "pharmId=" + $prev.attr("pharmId") + "&demographicNo=" + demo + "&preferredOrder=" + (parseInt($prev.attr("prefOrder")) + 1);
-														$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=setPreferred",
-															data, function (data3) {
-																if (data3.id) {
-																	window.location.reload(false);
+												if ($curr.next().length == 0) {
+													alert("This pharmacy is already this patient's least preferred pharmacy.");
+												} else {
+													var data = "pharmId=" + $curr.attr("pharmId") + "&demographicNo=" + demo + "&preferredOrder=" + (parseInt($curr.attr("prefOrder")) + 1);
+													ShowSpin(true);
+													$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=setPreferred",
+															data, function (data2) {
+																if (data2.id) {
+																	data = "pharmId=" + $next.attr("pharmId") + "&demographicNo=" + demo + "&preferredOrder=" + (parseInt($next.attr("prefOrder")) - 1);
+																	$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=setPreferred",
+																			data, function (data3) {
+																				if (data3.id) {
+																					window.location.reload(false);
+																				} else {
+																					HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
+																				}
+																			}, "json");
 																} else {
 																	HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
 																}
 															}, "json");
-													} else {
-														HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
-													}
-												}, "json");
-										}
+												}
+											}
+										});
 									}
-								});
-
-								$(".prefDown").click(function () {
-									if ($(this).closest("div").next() != null) {
-										var $curr = $(this).closest("div");
-										var $next = $(this).closest("div").next();
-
-										if ($curr.next().length == 0) {
-											alert("This pharmacy is already this patient's least preferred pharmacy.");
-										} else {
-											var data = "pharmId=" + $curr.attr("pharmId") + "&demographicNo=" + demo + "&preferredOrder=" + (parseInt($curr.attr("prefOrder")) + 1);
-											ShowSpin(true);
-											$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=setPreferred",
-												data, function (data2) {
-													if (data2.id) {
-														data = "pharmId=" + $next.attr("pharmId") + "&demographicNo=" + demo + "&preferredOrder=" + (parseInt($next.attr("prefOrder")) - 1);
-														$.post("<%=request.getContextPath()%>/oscarRx/managePharmacy.do?method=setPreferred",
-															data, function (data3) {
-																if (data3.id) {
-																	window.location.reload(false);
-																} else {
-																	HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
-																}
-															}, "json");
-													} else {
-														HideSpin(true);  //hiding the spinner is deliberately only in the "else" case of the callback because reloading is slow.  It's better to leave the spinner in place while the page is reloading.
-													}
-												}, "json");
-										}
-									}
-								});
-							}
-							HideSpin(true);
-						}, "json");
-
+									HideSpin(true);
+								}, "json");
+					}
 					var pharmacyNameKey = new RegExp($("#pharmacySearch").val(), "i");
 					var pharmacyCityKey = new RegExp($("#pharmacyCitySearch").val(), "i");
 					var pharmacyPostalCodeKey = new RegExp($("#pharmacyPostalCodeSearch").val(), "i");

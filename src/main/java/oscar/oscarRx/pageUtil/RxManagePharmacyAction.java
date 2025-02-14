@@ -31,16 +31,7 @@
 
 package oscar.oscarRx.pageUtil;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.sf.json.JSONObject;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -49,11 +40,17 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.oscarehr.common.model.PharmacyInfo;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
-
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 import oscar.oscarRx.data.RxPharmacyData;
 import oscar.util.StringUtils;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -133,12 +130,15 @@ public final class RxManagePharmacyAction extends DispatchAction {
     }
     
     public ActionForward getPharmacyFromDemographic(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException {
-    	
+
     	String demographicNo = request.getParameter("demographicNo");
-    	
-    	RxPharmacyData pharmacyData = new RxPharmacyData();
-        List<PharmacyInfo> pharmacyList;
-        pharmacyList = pharmacyData.getPharmacyFromDemographic(demographicNo);
+
+	    if (demographicNo == null || demographicNo.isEmpty() || !demographicNo.matches("\\d+")) {
+		    return null;
+	    }
+
+	    RxPharmacyData pharmacyData = new RxPharmacyData();
+        List<PharmacyInfo> pharmacyList = pharmacyData.getPharmacyFromDemographic(demographicNo);
         
         response.setContentType("text/x-json");
         ObjectMapper mapper = new ObjectMapper();
