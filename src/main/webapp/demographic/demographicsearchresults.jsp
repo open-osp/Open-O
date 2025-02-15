@@ -59,7 +59,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <%
-     Boolean isMobileOptimized = session.getAttribute("mobileOptimized") != null;
+//     Boolean isMobileOptimized = session.getAttribute("mobileOptimized") != null;
 
      LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
      
@@ -276,10 +276,12 @@
 			key="demographic.demographicsearchresults.btnPhone" /></a>
                 </th>
 	</tr>
-	<%
-	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
+	<%!
+		DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean("demographicDao");
         OscarLogDao oscarLogDao = (OscarLogDao)SpringUtils.getBean("oscarLogDao");
-	CaseManagementManager caseManagementManager=(CaseManagementManager)SpringUtils.getBean("caseManagementManager");
+		CaseManagementManager caseManagementManager=(CaseManagementManager)SpringUtils.getBean("caseManagementManager");
+	%>
+<%
 	String providerNo = loggedInInfo.getLoggedInProviderNo();
 	boolean outOfDomain = true;
 	if(OscarProperties.getInstance().getProperty("ModuleNames","").indexOf("Caisi") != -1) {
@@ -531,8 +533,8 @@ List<Demographic> doSearch(DemographicDao demographicDao,String searchMode, Stri
 	String pstatus = props.getProperty("inactive_statuses", "IN, DE, IC, ID, MO, FI");
 	pstatus = pstatus.replaceAll("'","").replaceAll("\\s", "");
 	List<String> stati = Arrays.asList(pstatus.split(","));
-	
-	
+
+
 
 	if( "".equals(ptstatus) ) {
 		if(searchMode.equals("search_name")) {
@@ -613,7 +615,8 @@ List<Demographic> doSearch(DemographicDao demographicDao,String searchMode, Stri
 		}
 	}
 
-	return new ArrayList<Demographic>(new HashSet<Demographic>(demoList));
+	return new ArrayList<>(new HashSet<>(demoList != null ? demoList : Collections.emptyList()));
+
 }
 
 String getDemographicNumberWithBandNumber(String bandNumber) {
