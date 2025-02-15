@@ -1085,13 +1085,18 @@ public class CaseManagementManager {
 	public CaseManagementTmpSave restoreTmpSave(String providerNo, String demographicNo, String programId) {
 		boolean removed = false;
 
-		logger.debug("Get tmp note");
-		CaseManagementTmpSave obj = caseManagementTmpSaveDao.find(providerNo, new Integer(demographicNo), new Integer(programId));
+		logger.debug("Get tmp note. Provider: {}, demographic: {}, program: {}", providerNo, demographicNo, programId);
+		CaseManagementTmpSave obj = null;
+
+		if(demographicNo != null && ! demographicNo.isEmpty() && StringUtils.isNumeric(demographicNo)
+		&& programId != null && ! programId.isEmpty() && StringUtils.isNumeric(programId)) {
+			obj = caseManagementTmpSaveDao.find(providerNo, new Integer(demographicNo), new Integer(programId));
+		}
 
 		//There is a temporary note, but does it have any content besides the tag?
 		if (obj != null && OscarProperties.getInstance().isPropertyActive("encounter.remove_empty_tmp_notes") && !caseManagementTmpSaveDao.noteHasContent(obj.getId()))
 		{
-			logger.debug("Empty Tmp note found");
+			logger.debug("Empty Tmp note found for provider: {}, demographic: {}, program: {}", providerNo, demographicNo, programId);
 
 			//The temporary note available doesn't have any content anyway, so get rid of it.
 			removed = caseManagementTmpSaveDao.remove(obj.getId());
@@ -1099,12 +1104,12 @@ public class CaseManagementManager {
 
 		if (removed)
 		{
-			logger.debug("Removed empty tmp note");
+			logger.debug("Removed empty tmp note for provider: {}, demographic: {}, program: {}", providerNo, demographicNo, programId);
 			return null;
 		}
 		else
 		{
-			logger.debug("Could not remove empty tmp note -or- tmp note with content found");
+			logger.debug("Could not remove empty tmp note -or- tmp note with content found for provider: {}, demographic: {}, program: {}", providerNo, demographicNo, programId);
 			return obj;
 		}
 	}
