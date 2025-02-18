@@ -114,7 +114,7 @@ public final class LoginAction extends DispatchAction {
         return new ActionForward(url + "?errormsg=" + errormsg);
     }
 
-    private static void lazyLoadAlertTimer() {
+    private static void initializeAlertTimer() {
         Properties pvar = OscarProperties.getInstance();
         if (pvar.getProperty("billregion").equals("BC")) {
             String alertFreq = pvar.getProperty("ALERT_POLL_FREQUENCY");
@@ -160,10 +160,10 @@ public final class LoginAction extends DispatchAction {
         // >> 2. Forced Password Change Handling
         if (initialChecksResult.forcedpasswordchange) {
 
-            PasswordChangeResult passwordChangeResult = this.handleForcedPasswordChange(mapping, form, request);
+            PasswordChangeResult passwordChangeResult = this.processForcedPasswordChange(mapping, form, request);
 
-            if (passwordChangeResult.errForward != null) {
-                return passwordChangeResult.errForward;
+            if (passwordChangeResult.actionForward != null) {
+                return passwordChangeResult.actionForward;
             }
 
             userLoginInfo = passwordChangeResult;
@@ -175,8 +175,9 @@ public final class LoginAction extends DispatchAction {
         else {
             LoginAttemptResult loginAttemptResult = this.handleLoginAttempt(mapping, form, request, response, cl, initialChecksResult);
 
-            if (loginAttemptResult.errForward != null) {
-                return loginAttemptResult.errForward;
+            // consider actionForward as Error-ActionForward
+            if (loginAttemptResult.actionForward != null) {
+                return loginAttemptResult.actionForward;
             }
 
             if (loginAttemptResult.selectFacilityForward != null) {
@@ -197,45 +198,28 @@ public final class LoginAction extends DispatchAction {
         /*
          * THIS IS THE GATEWAY.
          */
-        AuthResult authResult;
-        try {
-            authResult = this.authenticate(cl, userLoginInfo, initialChecksResult.ip);
-        } catch (Exception e) {
-            logger.error("Error", e);
-            String errMsg = "Database connection error:" + e.getMessage() + ".";
 
-            if (e.getMessage() != null && e.getMessage().startsWith("java.lang.ClassNotFoundException")) {
-                errMsg = "Database driver " + e.getMessage().substring(e.getMessage().indexOf(':') + 2) + " not found.";
-                return getErrorForward(mapping, errMsg);
-            } else {
-                return handleAjaxErrOrForwardErr(mapping, response, initialChecksResult.isAjaxResponse, errMsg);
-            }
+        AuthResultWrapper authResultWrapper = this.authenticateUser(mapping, response, cl, userLoginInfo, initialChecksResult);
+        if (authResultWrapper.actionForward != null) {
+            return authResultWrapper.actionForward;
         }
+        AuthResult authResult = authResultWrapper.authResult;
 
         // >> 5. Successful Login Handling
         if (authResult != null && authResult.hasNoError()) { // login successfully
 
             // is the provider record inactive?
-            Provider p = this.providerDao.getProvider(authResult.getProviderNo());
-            if (p == null || (p.getStatus() != null && p.getStatus().equals("0"))) {
-                logger.info(LOG_PRE + " Inactive: " + userLoginInfo.username);
-                LogAction.addLog(authResult.getProviderNo(), "login", "failed", "inactive");
-
-                return getErrorForward(mapping, "Your account is inactive. Please contact your administrator to activate.");
-            }
+            GenericResult providerStatusResult = this.isProviderActive(mapping, authResult, userLoginInfo.username);
+            if (providerStatusResult != null && providerStatusResult.actionForward != null)
+                return providerStatusResult.actionForward;
 
             /*
              * This section is added for forcing the initial password change.
              */
-            if (this.isForcePasswordChangeRequired(userLoginInfo.username, initialChecksResult.forcedpasswordchange)) {
-                try {
-                    this.setUserInfoToSession(request, userLoginInfo);
-                    return new ActionForward(mapping.findForward("forcepasswordreset").getPath());
-                } catch (Exception e) {
-                    logger.error("Error", e);
-                    return getErrorForward(mapping, "Setting values to the session.");
-                }
-            }
+            GenericResult forcePasswordChangeRequiredResult = this.isForcePasswordChangeNeeded(mapping, request,
+                    userLoginInfo, initialChecksResult.forcedpasswordchange);
+            if (forcePasswordChangeRequiredResult != null)
+                return forcePasswordChangeRequiredResult.actionForward;
 
             // ################----------------------->
             // REMOVE AFTER TESTING IS DONE.
@@ -388,7 +372,7 @@ public final class LoginAction extends DispatchAction {
              */
             // Lazy Loads AlertTimer instance only once, will run as daemon for duration of
             // server runtime
-            lazyLoadAlertTimer();
+            initializeAlertTimer();
 
             String username = (String) session.getAttribute("user");
             Provider provider = this.providerManager.getProvider(username);
@@ -442,30 +426,9 @@ public final class LoginAction extends DispatchAction {
         // >> 6. Authentication Failure Handling
         // expired password
         else if (authResult != null && authResult.isAccountExpired()) {
-            logger.warn("Expired password");
-            cl.updateLoginList(initialChecksResult.ip, userLoginInfo.username);
-
-            String errMsg = "Your account is expired. Please contact your administrator.";
-
-            return handleAjaxErrOrForwardErr(mapping, response, initialChecksResult.isAjaxResponse, errMsg);
+            return this.getExpiredPasswordForward(mapping, response, cl, initialChecksResult, userLoginInfo);
         } else {
-            logger.debug("go to normal directory");
-
-            cl.updateLoginList(initialChecksResult.ip, userLoginInfo.username);
-
-            String errMsg = "Invalid Credentials.";
-
-            if (initialChecksResult.isAjaxResponse) {
-                return handleAjaxError(response, errMsg);
-            }
-
-            ParameterActionForward forward = new ParameterActionForward(mapping.findForward(where));
-            forward.addParameter("login", "failed");
-            if (oneIdKey != null && !oneIdKey.equals("")) {
-                forward.addParameter("nameId", oneIdKey);
-            }
-
-            return forward;
+            return this.getLoginErrorActionForward(mapping, response, cl, initialChecksResult, userLoginInfo, where, oneIdKey);
         }
 
         // >> 7. OAuth Token Handling
@@ -475,13 +438,84 @@ public final class LoginAction extends DispatchAction {
 
         // >> 8. AJAX Response Handling
         if (initialChecksResult.isAjaxResponse) {
-            this.handleSuccessAjaxResponse(request, response);
-            return null;
+            return this.handleSuccessAjaxResponse(request, response);
         }
 
         // >> 9. Standard Response Handling
         logger.debug("rendering standard response : " + where);
         return mapping.findForward(where);
+    }
+
+    private ActionForward getLoginErrorActionForward(ActionMapping mapping, HttpServletResponse response, LoginCheckLogin cl, InitialChecksResult initialChecksResult, UserLoginInfo userLoginInfo, String where, String oneIdKey) throws IOException {
+        logger.debug("go to normal directory");
+
+        cl.updateLoginList(initialChecksResult.ip, userLoginInfo.username);
+
+        String errMsg = "Invalid Credentials.";
+
+        if (initialChecksResult.isAjaxResponse) {
+            return handleAjaxError(response, errMsg);
+        }
+
+        ParameterActionForward forward = new ParameterActionForward(mapping.findForward(where));
+        forward.addParameter("login", "failed");
+        if (oneIdKey != null && !oneIdKey.equals("")) {
+            forward.addParameter("nameId", oneIdKey);
+        }
+
+        return forward;
+    }
+
+    private ActionForward getExpiredPasswordForward(ActionMapping mapping, HttpServletResponse response, LoginCheckLogin cl, InitialChecksResult initialChecksResult, UserLoginInfo userLoginInfo) throws IOException {
+        logger.warn("Expired password");
+        cl.updateLoginList(initialChecksResult.ip, userLoginInfo.username);
+
+        String errMsg = "Your account is expired. Please contact your administrator.";
+
+        return handleAjaxErrOrForwardErr(mapping, response, initialChecksResult.isAjaxResponse, errMsg);
+    }
+
+    private AuthResultWrapper authenticateUser(ActionMapping mapping, HttpServletResponse response, LoginCheckLogin cl, UserLoginInfo userLoginInfo, InitialChecksResult initialChecksResult) throws IOException {
+        AuthResultWrapper authResultWrapper = new AuthResultWrapper();
+        try {
+            authResultWrapper.authResult = this.authenticateUser(cl, userLoginInfo, initialChecksResult.ip);
+        } catch (Exception e) {
+            logger.error("Error", e);
+            String errMsg = "Database connection error:" + e.getMessage() + ".";
+
+            if (e.getMessage() != null && e.getMessage().startsWith("java.lang.ClassNotFoundException")) {
+                errMsg = "Database driver " + e.getMessage().substring(e.getMessage().indexOf(':') + 2) + " not found.";
+                authResultWrapper.actionForward = getErrorForward(mapping, errMsg);
+            } else {
+                authResultWrapper.actionForward = handleAjaxErrOrForwardErr(mapping, response, initialChecksResult.isAjaxResponse, errMsg);
+            }
+        }
+
+        return authResultWrapper;
+    }
+
+    private GenericResult isForcePasswordChangeNeeded(ActionMapping mapping, HttpServletRequest request, UserLoginInfo userLoginInfo, boolean forcedpasswordchange) {
+        if (this.isForcePasswordChangeRequired(userLoginInfo.username, forcedpasswordchange)) {
+            try {
+                this.setUserInfoToSession(request, userLoginInfo);
+                return new GenericResult(mapping.findForward("forcepasswordreset").getPath());
+            } catch (Exception e) {
+                logger.error("Error", e);
+                return new GenericResult(getErrorForward(mapping, "Setting values to the session."));
+            }
+        }
+        return null;
+    }
+
+    private GenericResult isProviderActive(ActionMapping mapping, AuthResult authResult, String username) {
+        Provider p = this.providerDao.getProvider(authResult.getProviderNo());
+        if (p == null || (p.getStatus() != null && p.getStatus().equals("0"))) {
+            logger.info(LOG_PRE + " Inactive: " + username);
+            LogAction.addLog(authResult.getProviderNo(), "login", "failed", "inactive");
+
+            return new GenericResult(getErrorForward(mapping, "Your account is inactive. Please contact your administrator to activate."));
+        }
+        return null;
     }
 
     private void handleOAuthToken(HttpServletRequest request) {
@@ -494,7 +528,7 @@ public final class LoginAction extends DispatchAction {
         }
     }
 
-    private void handleSuccessAjaxResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private ActionForward handleSuccessAjaxResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         logger.debug("rendering ajax response");
         Provider prov = this.providerDao.getProvider((String) request.getSession().getAttribute("user"));
         JSONObject json = new JSONObject();
@@ -503,6 +537,7 @@ public final class LoginAction extends DispatchAction {
         json.put("providerNo", prov.getProviderNo());
         response.setContentType("text/x-json");
         json.write(response.getWriter());
+        return null;
     }
 
     private boolean isForcePasswordChangeRequired(String username, boolean forcedpasswordchange) {
@@ -542,7 +577,7 @@ public final class LoginAction extends DispatchAction {
         return new InitialChecksResult(ajaxResponse, isMobileOptimized, ip, submitType, forcedpasswordchange);
     }
 
-    private PasswordChangeResult handleForcedPasswordChange(ActionMapping mapping, ActionForm form, HttpServletRequest request) throws IOException {
+    private PasswordChangeResult processForcedPasswordChange(ActionMapping mapping, ActionForm form, HttpServletRequest request) throws IOException {
         // Coming back from force password change.
         String userName = (String) request.getSession().getAttribute("userName");
         String password = (String) request.getSession().getAttribute("password");
@@ -634,7 +669,7 @@ public final class LoginAction extends DispatchAction {
         return mapping.findForward(nextPage);
     }
 
-    private AuthResult authenticate(LoginCheckLogin cl, UserLoginInfo userLoginInfo, String ip) throws Exception {
+    private AuthResult authenticateUser(LoginCheckLogin cl, UserLoginInfo userLoginInfo, String ip) throws Exception {
         String[] strAuth;
 
         /*
@@ -792,19 +827,18 @@ public final class LoginAction extends DispatchAction {
 
         public LoginAttemptResult(ActionForward forward, boolean isErr) {
             if (isErr)
-                errForward = forward;
+                actionForward = forward;
             else
                 this.selectFacilityForward = forward;
         }
 
     }
 
-    private static class UserLoginInfo {
+    private static class UserLoginInfo extends GenericResult {
         String username;
         String password;
         String pin;
         String nextPage;
-        ActionForward errForward;
 
         public UserLoginInfo(String username, String password, String pin, String nextPage) {
             this.username = username;
@@ -814,10 +848,37 @@ public final class LoginAction extends DispatchAction {
         }
 
         public UserLoginInfo(ActionForward errForward) {
-            this.errForward = errForward;
+            super(errForward);
         }
 
         public UserLoginInfo() {
+        }
+    }
+
+    private static class AuthResultWrapper extends GenericResult {
+        AuthResult authResult;
+
+        public AuthResultWrapper(AuthResult authResult) {
+            this.authResult = authResult;
+        }
+
+        public AuthResultWrapper() {
+
+        }
+    }
+
+    private static class GenericResult {
+        ActionForward actionForward;
+
+        public GenericResult(ActionForward actionForward) {
+            this.actionForward = actionForward;
+        }
+
+        public GenericResult(String pathToBuildForward) {
+            actionForward = new ActionForward(pathToBuildForward);
+        }
+
+        public GenericResult() {
         }
     }
 }
