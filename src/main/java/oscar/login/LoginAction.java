@@ -36,6 +36,7 @@ import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.PMmodule.service.ProviderManager;
 import org.oscarehr.PMmodule.web.OcanForm;
 import org.oscarehr.PMmodule.web.utils.UserRoleUtils;
+import org.oscarehr.common.IsPropertiesOn;
 import org.oscarehr.common.dao.*;
 import org.oscarehr.common.model.*;
 import org.oscarehr.decisionSupport.service.DSService;
@@ -275,19 +276,8 @@ public final class LoginAction extends DispatchAction {
 
             // If the ondIdKey parameter is not null and is not an empty string
             if (oneIdKey != null && !oneIdKey.equals("")) {
-                String providerNumber = authResult.getProviderNo();
-                Security securityRecord = this.securityDao.getByProviderNo(providerNumber);
-
-                if (securityRecord.getOneIdKey() == null || securityRecord.getOneIdKey().equals("")) {
-                    securityRecord.setOneIdKey(oneIdKey);
-                    securityRecord.setOneIdEmail(oneIdEmail);
-                    this.securityDao.updateOneIdKey(securityRecord);
-                    session.setAttribute("oneIdEmail", oneIdEmail);
-                } else {
-                    logger.error("The account for provider number " + providerNumber
-                            + " already has a ONE ID key associated with it");
-                    return mapping.findForward("error");
-                }
+                boolean isOneIdProcessError = this.processOneIdFlow(authResult, oneIdKey, oneIdEmail, session);
+                if (isOneIdProcessError) return mapping.findForward("error");
             }
 
             logger.debug("Assigned new session for: " + authResult.getProviderNo() + " : " + authResult.getLastname() + " : " + authResult.getRoleName());
@@ -295,12 +285,8 @@ public final class LoginAction extends DispatchAction {
 
             // initial db setting
 
-            session.setAttribute("user", authResult.getProviderNo());
-            session.setAttribute("userfirstname", authResult.getFirstname());
-            session.setAttribute("userlastname", authResult.getLastname());
-            session.setAttribute("userrole", authResult.getRoleName());
+            this.setAuthResultToSession(session, authResult);
             session.setAttribute("oscar_context_path", request.getContextPath());
-            session.setAttribute("expired_days", authResult.getExpiredDays());
             // If a new session has been created, we must set the mobile attribute again
             if (initialChecksResult.isMobileOptimized) {
                 if ("Full".equalsIgnoreCase(initialChecksResult.submitType)) {
@@ -311,61 +297,13 @@ public final class LoginAction extends DispatchAction {
             }
 
             // initiate security manager
-            String default_pmm = null;
+            String default_pmm;
 
             String providerNo = authResult.getProviderNo();
-            // get preferences from preference table
-            ProviderPreference providerPreference = this.providerPreferenceDao.find(providerNo);
 
-            if (providerPreference == null)
-                providerPreference = new ProviderPreference();
+            default_pmm = processProviderUserConfiguration(session, providerNo);
 
-            session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE, providerPreference);
-
-            if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable()) {
-                String tklerProviderNo = null;
-                UserProperty prop = this.propDao.getProp(providerNo, UserProperty.PROVIDER_FOR_TICKLER_WARNING);
-                if (prop == null) {
-                    tklerProviderNo = providerNo;
-                } else {
-                    tklerProviderNo = prop.getValue();
-                }
-                session.setAttribute("tklerProviderNo", tklerProviderNo);
-
-                session.setAttribute("newticklerwarningwindow", providerPreference.getNewTicklerWarningWindow());
-                session.setAttribute("default_pmm", providerPreference.getDefaultCaisiPmm());
-                session.setAttribute("caisiBillingPreferenceNotDelete",
-                        String.valueOf(providerPreference.getDefaultDoNotDeleteBilling()));
-
-                default_pmm = providerPreference.getDefaultCaisiPmm();
-                @SuppressWarnings("unchecked")
-                ArrayList<String> newDocArr = (ArrayList<String>) request.getSession().getServletContext()
-                        .getAttribute("CaseMgmtUsers");
-                if ("enabled".equals(providerPreference.getDefaultNewOscarCme())) {
-                    newDocArr.add(providerNo);
-                    session.setAttribute("CaseMgmtUsers", newDocArr);
-                }
-            }
-            session.setAttribute("starthour", providerPreference.getStartHour().toString());
-            session.setAttribute("endhour", providerPreference.getEndHour().toString());
-            session.setAttribute("everymin", providerPreference.getEveryMin().toString());
-            session.setAttribute("groupno", providerPreference.getMyGroupNo());
-
-            where = "provider";
-
-            if (where.equals("provider") && "enabled".equals(default_pmm)) {
-                where = "caisiPMM";
-            }
-
-            if (where.equals("provider")
-                    && OscarProperties.getInstance().getProperty("useProgramLocation", "false").equals("true")) {
-                where = "programLocation";
-            }
-
-            String quatroShelter = OscarProperties.getInstance().getProperty("QUATRO_SHELTER");
-            if (quatroShelter != null && quatroShelter.equals("on")) {
-                where = "shelterSelection";
-            }
+            where = this.getWhere(default_pmm);
 
             /*
              * if (OscarProperties.getInstance().isTorontoRFQ()) { where = "caisiPMM"; }
@@ -388,34 +326,9 @@ public final class LoginAction extends DispatchAction {
                 }
             }
 
-            List<Integer> facilityIds = this.providerDao.getFacilityIds(provider.getProviderNo());
-            if (facilityIds.size() > 1) {
-                return (new ActionForward("/select_facility.jsp?nextPage=" + where));
-            } else if (facilityIds.size() == 1) {
-                // set current facility
-                Facility facility = this.facilityDao.find(facilityIds.get(0));
-                request.getSession().setAttribute("currentFacility", facility);
-                LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIds.get(0),
-                        initialChecksResult.ip);
-                if (facility.isEnableOcanForms()) {
-                    request.getSession().setAttribute("ocanWarningWindow",
-                            OcanForm.getOcanWarningMessage(facility.getId()));
-                }
-                if (facility.isEnableCbiForm()) {
-                    request.getSession().setAttribute("cbiReminderWindow",
-                            CBIUtil.getCbiSubmissionFailureWarningMessage(facility.getId(), provider.getProviderNo()));
-                }
-            } else {
-                List<Facility> facilities = this.facilityDao.findAll(true);
-                if (facilities != null && facilities.size() >= 1) {
-                    Facility fac = facilities.get(0);
-                    int first_id = fac.getId();
-                    this.providerDao.addProviderToFacility(providerNo, first_id);
-                    Facility facility = this.facilityDao.find(first_id);
-                    request.getSession().setAttribute("currentFacility", facility);
-                    LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + first_id, initialChecksResult.ip);
-                }
-            }
+            ActionForward selectFacilityForward = this.processFacilitySelectionFlow(provider, where, session, authResult, initialChecksResult, providerNo);
+            if (selectFacilityForward != null)
+                return selectFacilityForward;
 
             if (UserRoleUtils.hasRole(request, "Patient Intake")) {
                 return mapping.findForward("patientIntake");
@@ -444,6 +357,135 @@ public final class LoginAction extends DispatchAction {
         // >> 9. Standard Response Handling
         logger.debug("rendering standard response : " + where);
         return mapping.findForward(where);
+    }
+
+    private void setAuthResultToSession(HttpSession session, AuthResult authResult) {
+        session.setAttribute("user", authResult.getProviderNo());
+        session.setAttribute("userfirstname", authResult.getFirstname());
+        session.setAttribute("userlastname", authResult.getLastname());
+        session.setAttribute("userrole", authResult.getRoleName());
+        session.setAttribute("expired_days", authResult.getExpiredDays());
+    }
+
+    private String processProviderUserConfiguration(HttpSession session, String providerNo) {
+        String default_pmm = null;
+        // get preferences from preference table
+        ProviderPreference providerPreference = this.providerPreferenceDao.find(providerNo);
+
+        if (providerPreference == null)
+            providerPreference = new ProviderPreference();
+
+        session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE, providerPreference);
+
+        if (IsPropertiesOn.isCaisiEnable()) {
+            default_pmm = this.processCaisiProperties(providerNo, session, providerPreference);
+        }
+        session.setAttribute("starthour", providerPreference.getStartHour().toString());
+        session.setAttribute("endhour", providerPreference.getEndHour().toString());
+        session.setAttribute("everymin", providerPreference.getEveryMin().toString());
+        session.setAttribute("groupno", providerPreference.getMyGroupNo());
+        return default_pmm;
+    }
+
+    private String processCaisiProperties(String providerNo, HttpSession session, ProviderPreference providerPreference) {
+        String tklerProviderNo = null;
+        UserProperty prop = this.propDao.getProp(providerNo, UserProperty.PROVIDER_FOR_TICKLER_WARNING);
+        if (prop == null) {
+            tklerProviderNo = providerNo;
+        } else {
+            tklerProviderNo = prop.getValue();
+        }
+        session.setAttribute("tklerProviderNo", tklerProviderNo);
+
+        session.setAttribute("newticklerwarningwindow", providerPreference.getNewTicklerWarningWindow());
+        session.setAttribute("default_pmm", providerPreference.getDefaultCaisiPmm());
+        session.setAttribute("caisiBillingPreferenceNotDelete",
+                String.valueOf(providerPreference.getDefaultDoNotDeleteBilling()));
+
+        @SuppressWarnings("unchecked")
+        ArrayList<String> newDocArr = (ArrayList<String>) session.getServletContext()
+                .getAttribute("CaseMgmtUsers");
+        if ("enabled".equals(providerPreference.getDefaultNewOscarCme())) {
+            newDocArr.add(providerNo);
+            session.setAttribute("CaseMgmtUsers", newDocArr);
+        }
+        return providerPreference.getDefaultCaisiPmm();
+    }
+
+    private String getWhere(String default_pmm) {
+        String where = "provider";
+
+        if (where.equals("provider") && "enabled".equals(default_pmm)) {
+            where = "caisiPMM";
+        }
+
+        if (where.equals("provider")
+                && OscarProperties.getInstance().getProperty("useProgramLocation", "false").equals("true")) {
+            where = "programLocation";
+        }
+
+        String quatroShelter = OscarProperties.getInstance().getProperty("QUATRO_SHELTER");
+        if (quatroShelter != null && quatroShelter.equals("on")) {
+            where = "shelterSelection";
+        }
+        return where;
+    }
+
+    private ActionForward processFacilitySelectionFlow(Provider provider, String where, HttpSession session, AuthResult authResult, InitialChecksResult initialChecksResult, String providerNo) {
+        List<Integer> facilityIds = this.providerDao.getFacilityIds(provider.getProviderNo());
+        if (facilityIds.size() > 1) {
+            return (new ActionForward("/select_facility.jsp?nextPage=" + where));
+        } else if (facilityIds.size() == 1) {
+            // set current facility
+            Facility facility = this.facilityDao.find(facilityIds.get(0));
+            session.setAttribute("currentFacility", facility);
+            LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIds.get(0),
+                    initialChecksResult.ip);
+            if (facility.isEnableOcanForms()) {
+                session.setAttribute("ocanWarningWindow",
+                        OcanForm.getOcanWarningMessage(facility.getId()));
+            }
+            if (facility.isEnableCbiForm()) {
+                session.setAttribute("cbiReminderWindow",
+                        CBIUtil.getCbiSubmissionFailureWarningMessage(facility.getId(), provider.getProviderNo()));
+            }
+        } else {
+            Facility facility = this.getFacilityByProviderNumber(providerNo, session, authResult, initialChecksResult);
+            if (facility != null)
+                session.setAttribute("currentFacility", facility);
+
+        }
+        return null;
+    }
+
+    private Facility getFacilityByProviderNumber(String providerNo, HttpSession session, AuthResult authResult, InitialChecksResult initialChecksResult) {
+        List<Facility> facilities = this.facilityDao.findAll(true);
+        if (facilities != null && facilities.size() >= 1) {
+            Facility fac = facilities.get(0);
+            int first_id = fac.getId();
+            this.providerDao.addProviderToFacility(providerNo, first_id);
+            Facility facility = this.facilityDao.find(first_id);
+            LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + first_id, initialChecksResult.ip);
+            return facility;
+        }
+        return null;
+    }
+
+    private boolean processOneIdFlow(AuthResult authResult, String oneIdKey, String oneIdEmail, HttpSession session) {
+        String providerNumber = authResult.getProviderNo();
+        Security securityRecord = this.securityDao.getByProviderNo(providerNumber);
+
+        if (securityRecord.getOneIdKey() == null || securityRecord.getOneIdKey().equals("")) {
+            securityRecord.setOneIdKey(oneIdKey);
+            securityRecord.setOneIdEmail(oneIdEmail);
+            this.securityDao.updateOneIdKey(securityRecord);
+            session.setAttribute("oneIdEmail", oneIdEmail);
+        } else {
+            logger.error("The account for provider number " + providerNumber
+                    + " already has a ONE ID key associated with it");
+            return true;
+        }
+        return false;
     }
 
     private ActionForward getLoginErrorActionForward(ActionMapping mapping, HttpServletResponse response, LoginCheckLogin cl, InitialChecksResult initialChecksResult, UserLoginInfo userLoginInfo, String where, String oneIdKey) throws IOException {
