@@ -80,6 +80,19 @@ public final class Factory {
 		return getHandler("", "");
 	}
 
+
+	public static MessageHandler getHandler(Hl7TextMessage hl7TextMessage) {
+		try {
+			String type = hl7TextMessage.getType();
+			String hl7Body = new String(Base64.decodeBase64(hl7TextMessage.getBase64EncodedeMessage()), MiscUtils.DEFAULT_UTF8_ENCODING);
+			return getHandler(type, hl7Body);
+		} catch (Exception e) {
+			logger.error("Could not retrieve lab for segmentID(" + hl7TextMessage.getId() + ")", e);
+		}
+
+		return getHandler("", "");
+	}
+
 	public static String getHL7Body(String segmentID) {
 		String ret = null;
 		try {
