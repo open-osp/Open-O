@@ -207,8 +207,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
              
              
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html:html locale="true">
     <head>
 
@@ -229,7 +228,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 
 
         <link rel="stylesheet" href="<c:out value="${ctx}/share/lightwindow/css/lightwindow.css"/>" type="text/css" media="screen" />
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+<%--        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />--%>
         <!--link rel="stylesheet" type="text/css" href="modaldbox.css"  /-->
 
         <script type="text/javascript" src="${ctx}/js/global.js"></script>
@@ -245,7 +244,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
         <!--script type="text/javascript" src="<%--c:out value="modaldbox.js"/--%>"></script-->
         <script type="text/javascript" src="<c:out value="${ctx}/js/checkDate.js"/>"></script>
 
-        <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/share/yui/css/fonts-min.css"/>" >
+<%--        <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/share/yui/css/fonts-min.css"/>" >--%>
         <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/share/yui/css/autocomplete.css"/>" >
         <script type="text/javascript" src="<c:out value="${ctx}/share/yui/js/yahoo-dom-event.js"/>"></script>
         <script type="text/javascript" src="<c:out value="${ctx}/share/yui/js/connection-min.js"/>"></script>
@@ -824,11 +823,11 @@ body {
 
     <body  vlink="#0000FF" onload="checkFav();iterateStash();rxPageSizeSelect();checkReRxLongTerm();load()" class="yui-skin-sam">
     	<%=WebUtils.popErrorAndInfoMessagesAsHtml(session)%>
-        <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber1" height="100%">
+        <table id="AutoNumber1">
             <%@ include file="TopLinks2.jspf" %><!-- Row One included here-->
             <tr>
-                <td width="10%" height="100%" valign="top"><%@ include file="SideLinksEditFavorites2.jsp"%></td>
-                <td style="border-left: 2px solid #A9A9A9;" height="100%" valign="top"><!--Column Two Row Two-->
+                <td height="100%" ><%@ include file="SideLinksEditFavorites2.jsp"%></td>
+                <td style="padding-right:15px;"><!--Column Two Row Two-->
 
 
                     <table cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" >
@@ -905,7 +904,7 @@ body {
 													<%if(securityManager.hasWriteAccess("_rx",roleName2$,true)) {%>
                                                     <a href="#" onclick="$('reprint').toggle();return false;"><bean:message key="SearchDrug.Reprint"/></a>
                                                     &nbsp;
-                                                    <a href="javascript:void(0);"name="cmdRePrescribe"  onclick="javascript:RePrescribeLongTerm();" style="width: 200px" ><bean:message key="SearchDrug.msgReprescribeLongTermMed"/></a>
+                                                    <a href="javascript:void(0);" id="cmdRePrescribe" onclick="RePrescribeLongTerm();" style="width: 200px" ><bean:message key="SearchDrug.msgReprescribeLongTermMed"/></a>
                                                     &nbsp;
 													<% } %>
                                                     <a href="javascript:popupWindow(720,920,'chartDrugProfile.jsp?demographic_no=<%=demoNo%>','PrintDrugProfile2')">Timeline Drug Profile</a>
@@ -940,46 +939,70 @@ body {
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>
+                                            <td style="height: 150px; overflow: auto; border: thin solid #DCDCDC; display: none;" id="reprint">
                                             
 <%-- Start List Drugs Prescribed --%>
-                                                <div style="height: 100px; overflow: auto; background-color: #DCDCDC; border: thin solid green; display: none;" id="reprint">
+<%--                                                <div style="height: 150px; overflow: auto; border: thin inset grey; display: none;" id="reprint">--%>
+
+
+
+                        <% for (int i = 0; prescribedDrugs.length > i; i++) {
+                            oscar.oscarRx.data.RxPrescriptionData.Prescription drug =  prescribedDrugs[i];
+                        %>
+
                                                     <%
-
-
-                        for (int i = 0; i < prescribedDrugs.length; i++) {
-                            oscar.oscarRx.data.RxPrescriptionData.Prescription drug = prescribedDrugs[i];
                             if (drug.getScript_no() != null && script_no.equals(drug.getScript_no())) {
                                                     %>
-                                                    <br>
-                                                    <div style="float: left; width: 24%; padding-left: 40px;">&nbsp;</div>
-                                                    <a style="float: left;" href="javascript:void(0);" onclick="reprint2('<%=drug.getScript_no()%>')"><%=drug.getRxDisplay()%></a>
+
+
+                                                    <div style="text-indent: 5px">
+                                                    <a href="javascript:void(0);" onclick="reprint2('<%=drug.getScript_no()%>')">
+                                                        <%=drug.getRxDisplay()%>
+                                                    </a>
+                                                    </div>
+
                                                     <%
                             } else {
-                                                    %>
-                                                    <%=i > 0 ? "<br style='clear:both;'><br style='clear:both;'>" : ""%><div style="float: left; width: 12%; padding-left: 20px;"><%=drug.getRxDate()%></div>
-                                                    <div style="float: left; width: 12%; padding-left: 20px;">
-                                                    <a href="#" onclick="showPreviousPrints(<%=drug.getScript_no() %>);return false;">
-                                                    <%=drug.getNumPrints()%>&nbsp;Prints</div>
-                                                    </a>
-                                                    <a style="float: left;" href="javascript:void(0);" onclick="reprint2('<%=drug.getScript_no()%>')"><%=drug.getRxDisplay()%></a>
-                                                    <%
-                            }
-                            script_no = drug.getScript_no() == null ? "" : drug.getScript_no();
-                        }
-                                                    %>
-                                                </div>
-                                                
+
+                                         if(i != 0) { %>
+                                            </div> <!-- closes the reprintRxItem wrapper -->
+                                        <%}%>
+                                                    <div class="reprintRxItem">
+                                                        <div class="reprintRxItemHeading">
+                                                            <div>
+                                                            <strong>Rx: <%=drug.getRxDate()%></strong>
+                                                            </div>
+                                                            <div>
+                                                            <a href="javascript:void(0)" onclick="showPreviousPrints(<%=drug.getScript_no() %>);return false;">
+                                                            <%=drug.getNumPrints()%>&nbsp;Print(s)
+                                                            </a>
+                                                            </div>
+                                                        </div>
+                                                        <div style="text-indent: 5px">
+                                                        <a href="javascript:void(0);" onclick="reprint2('<%=drug.getScript_no()%>')"><%=drug.getRxDisplay()%></a>
+                                                        </div>
+
+
+                            <%} %>
+
+                            <% script_no = drug.getScript_no() == null ? "" : drug.getScript_no();
+							if(prescribedDrugs.length == i+1) { %>
+                                    </div> <!-- closes the LAST reprintRxItem wrapper -->
+                            <%}}%>
+
+<%--                                                </div>--%>
+<%--                                                --%>
+
                                             </td>
                                         </tr>
                                         <tr><!--move this left-->
                                             <td>
-                                                <table border="0" style="width:100%">
+                                                <table>
                                                     <tr>
                                                         <td>
-                                                            <table width="100%" cellspacing="0" cellpadding="0" class="legend">
+                                                            <table class="legend">
                                                                     <tr>
-                                                                        <td width="100">
+                                                                        <td style="text-align: left; width:100px;">
                                                                             <a href="javascript:void(0);" title="View drug profile legend" onclick="ThemeViewer();" style="font-style:normal;color:#000000" >
                                                                             	<bean:message key="SearchDrug.msgProfileLegend"/>:
                                                                             </a>
@@ -989,7 +1012,7 @@ body {
                                                                             </a>
                                                                         </td>
 
-																	    <td align="left">
+																	    <td>
 
 																	       <table class="legend_items" align="left">
 																			<tr>
@@ -1054,7 +1077,7 @@ body {
                                                             <html:form action="/oscarRx/rePrescribe">
                                                                 <html:hidden property="drugList" />
                                                                 <input type="hidden" name="method">
-                                                            </html:form> <br>
+                                                            </html:form>
                                                             <html:form action="/oscarRx/deleteRx">
                                                                 <html:hidden property="drugList" />
                                                             </html:form></td>
@@ -1112,23 +1135,8 @@ body {
                 </td>
             </tr>
 
-            <tr><td></td><td align="center" ><a href="javascript:window.scrollTo(0,0);"><bean:message key="oscarRx.BackToTop"/></a></td></tr>
+<%--            <tr><td></td><td align="center" ><a href="javascript:window.scrollTo(0,0);"><bean:message key="oscarRx.BackToTop"/></a></td></tr>--%>
 
-<tr>
-    <td height="0%" style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;" colspan="3">
-</tr>
-
-<tr>
-    <td width="100%" height="0%" colspan="3">&nbsp;
-
-    </td>
-</tr>
-
-<tr>
-    <td width="100%" height="0%" style="padding: 5px" bgcolor="#DCDCDC" colspan="3">
-
-    </td>
-</tr>
 
 </table>
 

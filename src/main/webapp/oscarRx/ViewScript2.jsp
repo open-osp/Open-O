@@ -695,7 +695,7 @@ function toggleView(form) {
 			width="100%" height="100%">
 
 			<tr>
-				<td width=420px>
+				<td>
 				<div class="DivContentPadding"><!-- src modified by vic, hsfo -->
 					<% if (bean.getStashSize() > 0) { %>
 						<iframe id='preview' name='preview' width=420px height=890px

@@ -48,6 +48,7 @@
 <%@page import="java.util.ArrayList,oscar.util.*,java.util.*,org.oscarehr.common.model.Drug,org.oscarehr.common.dao.*"%>
 <%@page import="org.oscarehr.managers.DrugDispensingManager" %>
 <%@page import="org.oscarehr.managers.CodingSystemManager" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <bean:define id="patient" type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
 <logic:notPresent name="RxSessionBean" scope="session">
     <logic:redirect href="error.html" />
@@ -175,10 +176,10 @@
 	
 if (heading != null){
 %>
-<h4 style="margin-bottom:1px;margin-top:3px;"><%=heading%></h4>
+<h4 style="margin-bottom:1px;margin-top:3px;"><%=Encode.forHtmlContent(heading)%></h4>
 <%}%>
 <div class="drugProfileText" style="">
-    <table width="100%" cellpadding="3" border="0" class="sortable" id="Drug_table<%=heading%>">
+    <table width="100%" cellpadding="3" border="0" class="sortable" id="Drug_table<%=Encode.forHtmlContent(heading)%>">
         <tr>
         	<th align="left"><b>Entered Date</b></th>
             <th align="left"><b><bean:message key="SearchDrug.msgRxDate"/></b></th>

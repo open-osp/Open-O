@@ -13,7 +13,6 @@ When including the "inWindow" parameter as "true" it is assumed that tabletSigna
 is hosted in an IFrame and that the IFrame's parent window implements signatureHandler(e)
 --%>
 <%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
-<%@ page import="org.oscarehr.util.MiscUtils" %>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
 <%@ page import="org.oscarehr.ui.servlet.ImageRenderingServlet"%>
 <%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>

@@ -85,7 +85,11 @@
  </style>
 <style media="all">
 	* {
-		font:13px/1.231 arial,helvetica,clean,sans-serif;
+		font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+		font-size: 12px;
+		overscroll-behavior: none;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
 	}
 	#fax-success {
 		color:green;

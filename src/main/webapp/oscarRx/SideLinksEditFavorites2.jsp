@@ -65,7 +65,7 @@
 	title="<%= allergies[j].getDescription() %> - <%= allergies[j].getReaction() %>">
 <%=allergies[j].getShortDesc(13,8,"...")%> </a></p>
 <%}%>
-</p>
+
 
 </security:oscarSec>
 
@@ -97,7 +97,6 @@ for (Dxresearch dx:dxreasearchDao.getByDemographicNo(bean2.getDemographicNo())){
 	} 
 }
 %>
-</p>
 
 </security:oscarSec>
 
@@ -119,7 +118,7 @@ for (Dxresearch dx:dxreasearchDao.getByDemographicNo(bean2.getDemographicNo())){
 <%
 	} }
 %>
-</p>
+
 
 </security:oscarSec>
 
@@ -140,5 +139,5 @@ for (Dxresearch dx:dxreasearchDao.getByDemographicNo(bean2.getDemographicNo())){
 <%= favorites[j].getFavoriteName().substring(0, 10) + "..." %> <%}else{%>
 <%= favorites[j].getFavoriteName() %> <%}%> </a></p>
 <%}%>
-</p>
+
 </div>
