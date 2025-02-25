@@ -65,6 +65,8 @@
 <%@page import="org.oscarehr.common.model.CasemgmtNoteLock"%>
 <%@page import="org.oscarehr.common.model.EmailLog"%>
 <%@page import="org.oscarehr.managers.EmailManager"%>
+<%@page import="org.oscarehr.managers.EmailComposeManager"%>
+<%@page import="org.oscarehr.managers.SecurityInfoManager"%>
 
 <%
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -88,6 +90,7 @@ Facility facility = loggedInInfo.getCurrentFacility();
 ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao)SpringUtils.getBean("professionalSpecialistDao");
 
 EmailManager emailManager = SpringUtils.getBean(EmailManager.class);
+EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManager.class);
 
 String pId = (String)session.getAttribute("case_program_id");
 Program program = null;
@@ -317,6 +320,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 				} else if (note.isInvoice()) {
 					globalNoteId = "INV" + note.getNoteId();
 				} else if (note.isEmailNote()) {
+					if (!emailComposeManager.hasEmailPrivilege(loggedInInfo, SecurityInfoManager.READ)) { continue; }
 					EmailLog emailLog = emailManager.getEmailLogByCaseManagementNoteId(loggedInInfo, Long.valueOf(noteId));
 					if (emailLog == null) { continue; }
 					dispDocNo = String.valueOf(emailLog.getId());

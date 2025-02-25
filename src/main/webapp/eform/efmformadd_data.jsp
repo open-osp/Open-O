@@ -26,6 +26,7 @@
 
 <%@ page import="oscar.eform.data.*"%>
 <%@ page import="org.oscarehr.managers.EmailComposeManager"%>
+<%@ page import="org.oscarehr.managers.SecurityInfoManager"%>
 <%@ page import="org.oscarehr.util.SpringUtils"%>
 <%@ page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -61,6 +62,11 @@
 <%!
     public void addHiddenEmailProperties(LoggedInInfo loggedInInfo, EForm thisEForm, String demographicNo) {
         EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManager.class);
+        if (!emailComposeManager.hasEmailPrivilege(loggedInInfo, SecurityInfoManager.WRITE)) { 
+            thisEForm.addHiddenInputElement("hasEmailPrivilege", Boolean.FALSE.toString());
+            return; 
+        }
+
         Boolean hasValidRecipient = emailComposeManager.hasValidRecipient(loggedInInfo, Integer.parseInt(demographicNo));
         String[] emailConsent = emailComposeManager.getEmailConsentStatus(loggedInInfo, Integer.parseInt(demographicNo));
 

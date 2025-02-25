@@ -708,6 +708,9 @@ document.addEventListener("DOMContentLoaded", function(){
 
 					// After adding floating toolbar update number of attachments
 					jQuery('#remoteTotalAttachments').empty().append(jQuery('.delegateAttachment').length);
+
+					// Check email privilege and if not, hide the Email button.
+					handleEmailPrivilege();
 				}
 
 				if (this.status === 404)
@@ -836,3 +839,16 @@ document.addEventListener("DOMContentLoaded", function(){
 			})
 		}
 	})
+
+	function handleEmailPrivilege() {
+		// Get the value of the element with ID 'hasEmailPrivilege'
+		const hasEmailPrivilege = document.getElementById('hasEmailPrivilege');
+		
+		if (hasEmailPrivilege) {
+			const value = hasEmailPrivilege.value.toLowerCase();
+			if (value === 'false') {
+				// If 'hasEmailPrivilege' is false, hide the 'remoteEmailButton'
+				document.getElementById('remoteEmailButton').style.display = 'none';
+			}
+		}
+	}
