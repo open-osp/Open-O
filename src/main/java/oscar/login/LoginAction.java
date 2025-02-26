@@ -96,13 +96,14 @@ public final class LoginAction extends DispatchAction {
     /**
      * Handles an error by returning either an AJAX response or a standard error forward,
      * depending on the `isAjaxResponse` flag.
-     * @param mapping The ActionMapping used to find the error forward.
-     * @param response The HttpServletResponse to write the AJAX error message to.
+     *
+     * @param mapping        The ActionMapping used to find the error forward.
+     * @param response       The HttpServletResponse to write the AJAX error message to.
      * @param isAjaxResponse A boolean indicating whether the response should be in AJAX format.
-     * @param errMsg The error message to return.
+     * @param errMsg         The error message to return.
      * @return An ActionForward for standard requests or null for AJAX requests.
-     *         If a database connection error occurs or the specified database driver is not found,
-     *         an ActionForward will also be returned.
+     * If a database connection error occurs or the specified database driver is not found,
+     * an ActionForward will also be returned.
      * @throws IOException If an I/O error occurs while writing the AJAX response.
      */
     private static ActionForward handleAjaxErrOrForwardErr(ActionMapping mapping, HttpServletResponse response, boolean isAjaxResponse, String errMsg) throws IOException {
@@ -117,7 +118,7 @@ public final class LoginAction extends DispatchAction {
      * Handles an AJAX error by writing a JSON error message to the HttpServletResponse.
      *
      * @param response The HttpServletResponse to write the JSON error message to.
-     * @param errMsg The error message to include in the JSON response.
+     * @param errMsg   The error message to include in the JSON response.
      * @return null, as the response is handled directly within this method.
      * @throws IOException If an I/O error occurs while writing the response.
      */
@@ -134,8 +135,8 @@ public final class LoginAction extends DispatchAction {
      * Retrieves the ActionForward for the "error" path, appending the provided error message
      * as a query parameter.
      *
-     * @param mapping  The ActionMapping used to locate the "error" forward.
-     * @param errMsg The error message to append to the forward URL.
+     * @param mapping The ActionMapping used to locate the "error" forward.
+     * @param errMsg  The error message to append to the forward URL.
      * @return An ActionForward representing the "error" view with the error message attached.
      */
     private static ActionForward getErrorForward(ActionMapping mapping, String errMsg) {
@@ -178,7 +179,7 @@ public final class LoginAction extends DispatchAction {
      *
      * @param userName The username string to validate.
      * @return The validated username string if it matches the pattern,
-     *         or "Invalid Username" otherwise.
+     * or "Invalid Username" otherwise.
      */
     private static String validateUsernamePattern(String userName) {
         return validatePattern("[a-zA-Z0-9]{1,10}", userName, "Invalid Username");
@@ -353,44 +354,6 @@ public final class LoginAction extends DispatchAction {
                     session.setAttribute("mobileOptimized", "true");
                 }
             }
-
-            // initiate security manager
-
-            String providerNo = authResult.getProviderNo();
-
-            String default_pmm = this.processProviderUserConfiguration(session, providerNo);
-
-            where = this.getWhere(default_pmm);
-
-            /*
-             * if (OscarProperties.getInstance().isTorontoRFQ()) { where = "caisiPMM"; }
-             */
-            // Lazy Loads AlertTimer instance only once, will run as daemon for duration of
-            // server runtime
-            initializeAlertTimer();
-
-            String username = (String) session.getAttribute("user");
-            Provider provider = this.providerManager.getProvider(username);
-            session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER, provider);
-            session.setAttribute(SessionConstants.LOGGED_IN_SECURITY, cl.getSecurity());
-
-            LoggedInInfo loggedInInfo = LoggedInUserFilter.generateLoggedInInfoFromSession(request);
-
-            if (where.equals("provider")) {
-                UserProperty drugrefProperty = this.propDao.getProp(UserProperty.MYDRUGREF_ID);
-                if (drugrefProperty != null || this.appManager.isK2AUser(loggedInInfo)) {
-                    this.dsService.fetchGuidelinesFromServiceInBackground(loggedInInfo);
-                }
-            }
-
-            ActionForward selectFacilityForward = this.processFacilitySelectionFlow(provider, where, session, authResult, initialChecksResult, providerNo);
-            if (selectFacilityForward != null)
-                return selectFacilityForward;
-
-            if (UserRoleUtils.hasRole(request, "Patient Intake")) {
-                return mapping.findForward("patientIntake");
-            }
-
         }
 
         // >> 6. Authentication Failure Handling
@@ -400,6 +363,64 @@ public final class LoginAction extends DispatchAction {
         } else {
             return this.getLoginErrorActionForward(mapping, response, cl, initialChecksResult, userLoginInfo, where, oneIdKey);
         }
+
+        // >> Authentication Success. Continue...
+        return this.resumePostAuthenticationFlow(mapping, request, response, cl, initialChecksResult, authResult.getProviderNo());
+
+    }
+
+    /**
+     * <p>Resumes the post-authentication flow after a successful login. This method handles several tasks.
+     *
+     * @param mapping             The ActionMapping for this request.
+     * @param request             The HttpServletRequest for this request.
+     * @param response            The HttpServletResponse for this request.
+     * @param cl                  The LoginCheckLogin object for managing login attempts.
+     * @param initialChecksResult The result of initial checks performed before login.
+     * @param providerNo          The provider number of the logged-in user.
+     * @return An ActionForward to the appropriate view after login.
+     * @throws IOException If an I/O error occurs.
+     */
+    private ActionForward resumePostAuthenticationFlow(ActionMapping mapping, HttpServletRequest request, HttpServletResponse response,
+                                                       LoginCheckLogin cl, InitialChecksResult initialChecksResult, String providerNo) throws IOException {
+
+        // initiate security manager
+
+        HttpSession session = request.getSession();
+
+        String default_pmm = this.processProviderUserConfiguration(session, providerNo);
+
+        String where = this.getWhere(default_pmm);
+
+        /*
+         * if (OscarProperties.getInstance().isTorontoRFQ()) { where = "caisiPMM"; }
+         */
+        // Lazy Loads AlertTimer instance only once, will run as daemon for duration of
+        // server runtime
+        initializeAlertTimer();
+
+        String username = (String) session.getAttribute("user");
+        Provider provider = this.providerManager.getProvider(username);
+        session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER, provider);
+        session.setAttribute(SessionConstants.LOGGED_IN_SECURITY, cl.getSecurity());
+
+        LoggedInInfo loggedInInfo = LoggedInUserFilter.generateLoggedInInfoFromSession(request);
+
+        if (where.equals("provider")) {
+            UserProperty drugrefProperty = this.propDao.getProp(UserProperty.MYDRUGREF_ID);
+            if (drugrefProperty != null || this.appManager.isK2AUser(loggedInInfo)) {
+                this.dsService.fetchGuidelinesFromServiceInBackground(loggedInInfo);
+            }
+        }
+
+        ActionForward selectFacilityForward = this.processFacilitySelectionFlow(provider, where, session, initialChecksResult, providerNo);
+        if (selectFacilityForward != null)
+            return selectFacilityForward;
+
+        if (UserRoleUtils.hasRole(request, "Patient Intake")) {
+            return mapping.findForward("patientIntake");
+        }
+
 
         // >> 7. OAuth Token Handling
         if (request.getParameter("oauth_token") != null) {
@@ -419,7 +440,7 @@ public final class LoginAction extends DispatchAction {
     /**
      * Sets user information retrieved from authentication to the HTTP session.
      *
-     * @param session The HTTP session to store the user information.
+     * @param session    The HTTP session to store the user information.
      * @param authResult The AuthResult object containing the authenticated user's information.
      */
     private void setAuthResultToSession(HttpSession session, AuthResult authResult) {
@@ -435,7 +456,7 @@ public final class LoginAction extends DispatchAction {
      * This includes retrieving provider preferences, setting start/end hours, group number, and
      * handling Caisi specific properties if enabled.
      *
-     * @param session The HttpSession to store the configuration attributes.
+     * @param session    The HttpSession to store the configuration attributes.
      * @param providerNo The provider number for whom to retrieve preferences.
      * @return The default PMM setting if Caisi is enabled, otherwise null.
      */
@@ -465,8 +486,8 @@ public final class LoginAction extends DispatchAction {
      * warning window preference, default PMM setting, billing preference for deletion,
      * and handling the Case Management user list.
      *
-     * @param providerNo The provider number for whom to process Caisi properties.
-     * @param session The HttpSession to store the Caisi properties.
+     * @param providerNo         The provider number for whom to process Caisi properties.
+     * @param session            The HttpSession to store the Caisi properties.
      * @param providerPreference The provider's preferences.
      * @return The default PMM setting retrieved from provider preferences.
      */
@@ -529,15 +550,14 @@ public final class LoginAction extends DispatchAction {
      * form enablement based on the selected facility.
      *
      * @param provider            The Provider object representing the logged-in provider.
-     * @param where              The target view to redirect to after facility selection.
-     * @param session            The HttpSession to store the selected facility.
-     * @param authResult          The authentication result containing provider details.
+     * @param where               The target view to redirect to after facility selection.
+     * @param session             The HttpSession to store the selected facility.
      * @param initialChecksResult The initial checks result containing client IP information for logging.
-     * @param providerNo         The provider number.
+     * @param providerNo          The provider number.
      * @return An ActionForward to the facility selection page if multiple facilities are available, or null
      * if the facility is automatically selected and set in the session.
      */
-    private ActionForward processFacilitySelectionFlow(Provider provider, String where, HttpSession session, AuthResult authResult, InitialChecksResult initialChecksResult, String providerNo) {
+    private ActionForward processFacilitySelectionFlow(Provider provider, String where, HttpSession session, InitialChecksResult initialChecksResult, String providerNo) {
         List<Integer> facilityIds = this.providerDao.getFacilityIds(provider.getProviderNo());
         if (facilityIds.size() > 1) {
             return (new ActionForward("/select_facility.jsp?nextPage=" + where));
@@ -545,7 +565,7 @@ public final class LoginAction extends DispatchAction {
             // set current facility
             Facility facility = this.facilityDao.find(facilityIds.get(0));
             session.setAttribute("currentFacility", facility);
-            LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIds.get(0),
+            LogAction.addLog(providerNo, LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIds.get(0),
                     initialChecksResult.ip);
             if (facility.isEnableOcanForms()) {
                 session.setAttribute("ocanWarningWindow",
@@ -556,7 +576,7 @@ public final class LoginAction extends DispatchAction {
                         CBIUtil.getCbiSubmissionFailureWarningMessage(facility.getId(), provider.getProviderNo()));
             }
         } else {
-            Facility facility = this.getFacilityByProviderNumber(providerNo, authResult, initialChecksResult);
+            Facility facility = this.getFacilityByProviderNumber(providerNo, initialChecksResult);
             if (facility != null)
                 session.setAttribute("currentFacility", facility);
 
@@ -568,19 +588,18 @@ public final class LoginAction extends DispatchAction {
      * Retrieves the first available active facility and adds the provider to it
      * if the provider is not already associated with any facility.
      *
-     * @param providerNo The provider number.
-     * @param authResult The authentication result containing provider details. Used for logging purposes.
+     * @param providerNo          The provider number.
      * @param initialChecksResult The initial checks result containing client IP information for logging.
      * @return The Facility object that the provider was added to, or null if no active facilities exist.
      */
-    private Facility getFacilityByProviderNumber(String providerNo, AuthResult authResult, InitialChecksResult initialChecksResult) {
+    private Facility getFacilityByProviderNumber(String providerNo, InitialChecksResult initialChecksResult) {
         List<Facility> facilities = this.facilityDao.findAll(true);
         if (facilities != null && facilities.size() >= 1) {
             Facility fac = facilities.get(0);
             int first_id = fac.getId();
             this.providerDao.addProviderToFacility(providerNo, first_id);
             Facility facility = this.facilityDao.find(first_id);
-            LogAction.addLog(authResult.getProviderNo(), LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + first_id, initialChecksResult.ip);
+            LogAction.addLog(providerNo, LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + first_id, initialChecksResult.ip);
             return facility;
         }
         return null;
@@ -592,9 +611,9 @@ public final class LoginAction extends DispatchAction {
      * It also sets the ONE ID email in the session.
      *
      * @param authResult The authentication result containing the provider number.
-     * @param oneIdKey The ONE ID key to associate with the user.
+     * @param oneIdKey   The ONE ID key to associate with the user.
      * @param oneIdEmail The ONE ID email to associate with the user.
-     * @param session The HTTP session.
+     * @param session    The HTTP session.
      * @return `true` if an error occurs during processing (e.g., the user already has a ONE ID key), `false` otherwise.
      */
     private boolean processOneIdFlow(AuthResult authResult, String oneIdKey, String oneIdEmail, HttpSession session) {
@@ -618,13 +637,13 @@ public final class LoginAction extends DispatchAction {
      * Handles login errors by updating the login attempt list, logging the failure,
      * and returning an appropriate ActionForward or AJAX response.
      *
-     * @param mapping The ActionMapping for this request.
-     * @param response The HttpServletResponse for this request.
-     * @param cl The LoginCheckLogin object for managing login attempts.
+     * @param mapping             The ActionMapping for this request.
+     * @param response            The HttpServletResponse for this request.
+     * @param cl                  The LoginCheckLogin object for managing login attempts.
      * @param initialChecksResult The result of initial login checks.
-     * @param userLoginInfo The user's login information.
-     * @param where The target view to forward to after login.
-     * @param oneIdKey The ONE ID key provided, if any.
+     * @param userLoginInfo       The user's login information.
+     * @param where               The target view to forward to after login.
+     * @param oneIdKey            The ONE ID key provided, if any.
      * @return An ActionForward to the appropriate error page or a null for an AJAX response.
      * @throws IOException If an I/O error occurs during AJAX response writing.
      */
@@ -652,11 +671,11 @@ public final class LoginAction extends DispatchAction {
      * Handles the case where a user's password has expired.  This logs the attempt, updates the login
      * attempt list, and returns an appropriate ActionForward or AJAX response.
      *
-     * @param mapping The ActionMapping for this request.
-     * @param response The HttpServletResponse for this request.
-     * @param cl The LoginCheckLogin object for managing login attempts.
+     * @param mapping             The ActionMapping for this request.
+     * @param response            The HttpServletResponse for this request.
+     * @param cl                  The LoginCheckLogin object for managing login attempts.
      * @param initialChecksResult The result of initial checks performed before login.  Contains information about whether the request is an AJAX request.
-     * @param userLoginInfo The user's login information (username).
+     * @param userLoginInfo       The user's login information (username).
      * @return An ActionForward to the error page or a null for an AJAX response.
      * @throws IOException If an I/O error occurs during AJAX response writing.
      */
@@ -674,10 +693,10 @@ public final class LoginAction extends DispatchAction {
      * This method acts as a wrapper around the `authenticateUser` method that performs the actual authentication,
      * catching any exceptions and returning an appropriate error response or forwarding.
      *
-     * @param mapping The ActionMapping for this request, used for error forwarding.
-     * @param response The HttpServletResponse for this request, used for writing error messages.
-     * @param cl The LoginCheckLogin object used to perform the authentication.
-     * @param userLoginInfo A UserLoginInfo object containing the user's login credentials.
+     * @param mapping             The ActionMapping for this request, used for error forwarding.
+     * @param response            The HttpServletResponse for this request, used for writing error messages.
+     * @param cl                  The LoginCheckLogin object used to perform the authentication.
+     * @param userLoginInfo       A UserLoginInfo object containing the user's login credentials.
      * @param initialChecksResult The results of the initial checks, including whether this is an AJAX request and the client's IP.
      * @return An AuthResultWrapper containing the AuthResult if authentication is successful, or an ActionForward to an error page if authentication fails or an exception occurs.
      * @throws IOException If an I/O error occurs while writing the error response.
@@ -708,12 +727,12 @@ public final class LoginAction extends DispatchAction {
      * change is required, user information is stored in the session and a GenericResult containing
      * a forward to the password reset page is returned.
      *
-     * @param mapping The ActionMapping for the request, used to locate the "forcepasswordreset" forward.
-     * @param request The HttpServletRequest, used for setting session attributes.
-     * @param userLoginInfo The user's login information.
+     * @param mapping              The ActionMapping for the request, used to locate the "forcepasswordreset" forward.
+     * @param request              The HttpServletRequest, used for setting session attributes.
+     * @param userLoginInfo        The user's login information.
      * @param forcedpasswordchange A flag indicating if a forced password change is needed based on initial checks.
      * @return A GenericResult containing an ActionForward to the password reset page if a forced change
-     *         is required, or null otherwise.
+     * is required, or null otherwise.
      */
     private GenericResult isForcePasswordChangeNeeded(ActionMapping mapping, HttpServletRequest request, UserLoginInfo userLoginInfo, boolean forcedpasswordchange) {
         if (this.isForcePasswordChangeRequired(userLoginInfo.username, forcedpasswordchange)) {
@@ -734,11 +753,11 @@ public final class LoginAction extends DispatchAction {
      * containing an ActionForward to the error page.  If the provider is active or not found,
      * it implies success and returns null.
      *
-     * @param mapping The ActionMapping for the request, used to locate the "error" forward.
+     * @param mapping    The ActionMapping for the request, used to locate the "error" forward.
      * @param authResult The AuthResult containing the authenticated user's information, including provider number.
-     * @param username The username of the user attempting to login.  Used for logging.
+     * @param username   The username of the user attempting to login.  Used for logging.
      * @return A GenericResult object with an ActionForward to the error page if the provider is inactive,
-     *         or null if the provider is active or not found.
+     * or null if the provider is active or not found.
      */
     private GenericResult isProviderActive(ActionMapping mapping, AuthResult authResult, String username) {
         Provider p = this.providerDao.getProvider(authResult.getProviderNo());
@@ -771,7 +790,7 @@ public final class LoginAction extends DispatchAction {
     /**
      * Handles a successful AJAX login by returning a JSON response containing the provider's name and number.
      *
-     * @param request The HttpServletRequest containing the session information.
+     * @param request  The HttpServletRequest containing the session information.
      * @param response The HttpServletResponse used to write the JSON response.
      * @return null, as the response is handled directly within this method.
      * @throws IOException If an I/O error occurs while writing the response.
@@ -796,7 +815,7 @@ public final class LoginAction extends DispatchAction {
      *     <li>The forcedpasswordchange flag is true.</li>
      * </ul>
      *
-     * @param username The username of the user to check.
+     * @param username             The username of the user to check.
      * @param forcedpasswordchange A flag indicating whether a forced password change check is needed.
      *                             This flag is typically set based on whether the user explicitly
      *                             requested a password change or if it's a regular login attempt.
@@ -822,14 +841,14 @@ public final class LoginAction extends DispatchAction {
      * @param mapping The ActionMapping for the current request.  Used for forwarding in case of errors.
      * @param request The HttpServletRequest for the current request.  Used to access request parameters and headers.
      * @return An InitialChecksResult object containing the results of the checks, including:
-     *         <ul>
-     *              <li>`errForward`: An ActionForward to an error page if initial checks fail (e.g., wrong request method), NULL otherwise.</li>
-     *              <li>`isAjaxResponse`: True if the request is an AJAX request, False otherwise.</li>
-     *              <li>`isMobileOptimized`: True if the request is from a mobile device, False otherwise.</li>
-     *              <li>`ip`: The client's IP address.</li>
-     *              <li>`submitType`: full/null.</li>
-     *              <li>`isForcePasswordChangeNeeded`: True if a forced password change is needed, False otherwise.</li>
-     *         </ul>
+     * <ul>
+     *      <li>`errForward`: An ActionForward to an error page if initial checks fail (e.g., wrong request method), NULL otherwise.</li>
+     *      <li>`isAjaxResponse`: True if the request is an AJAX request, False otherwise.</li>
+     *      <li>`isMobileOptimized`: True if the request is from a mobile device, False otherwise.</li>
+     *      <li>`ip`: The client's IP address.</li>
+     *      <li>`submitType`: full/null.</li>
+     *      <li>`isForcePasswordChangeNeeded`: True if a forced password change is needed, False otherwise.</li>
+     * </ul>
      */
     private InitialChecksResult performInitialChecks(ActionMapping mapping, HttpServletRequest request) {
 
@@ -866,10 +885,10 @@ public final class LoginAction extends DispatchAction {
      * validates the new password and confirmation, and updates the user's security record.
      *
      * @param mapping The ActionMapping used to locate the password reset forward and error forward.
-     * @param form The ActionForm containing the new and confirm passwords.
+     * @param form    The ActionForm containing the new and confirm passwords.
      * @param request The HttpServletRequest, used to access session attributes.
      * @return A PasswordChangeResult containing the updated user credentials and next page
-     *         information, or an ActionForward to the password reset page if there are errors.
+     * information, or an ActionForward to the password reset page if there are errors.
      * @throws IOException If an I/O error occurs during processing.
      */
     private PasswordChangeResult processForcedPasswordChange(ActionMapping mapping, ActionForm form, HttpServletRequest request) throws IOException {
@@ -922,14 +941,14 @@ public final class LoginAction extends DispatchAction {
      * Handles a user's login attempt. This method retrieves user credentials from the form,
      * performs validation, checks for blocked IPs/users, and sets up session attributes.
      *
-     * @param mapping The ActionMapping for this request.
-     * @param form The ActionForm containing the user's login credentials.
-     * @param request The HttpServletRequest for this request.
-     * @param response The HttpServletResponse for this request.
-     * @param cl The LoginCheckLogin object for checking login attempts.
+     * @param mapping             The ActionMapping for this request.
+     * @param form                The ActionForm containing the user's login credentials.
+     * @param request             The HttpServletRequest for this request.
+     * @param response            The HttpServletResponse for this request.
+     * @param cl                  The LoginCheckLogin object for checking login attempts.
      * @param initialChecksResult The result of initial checks performed before login.
      * @return A LoginAttemptResult containing the validated username, password, pin, and next page
-     *         information, or an ActionForward to an error page or facility selection page if necessary.
+     * information, or an ActionForward to an error page or facility selection page if necessary.
      * @throws IOException If an I/O error occurs.
      */
     private LoginAttemptResult handleLoginAttempt(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response, LoginCheckLogin cl, InitialChecksResult initialChecksResult) throws IOException {
@@ -970,9 +989,9 @@ public final class LoginAction extends DispatchAction {
      * in the session.  This method is used when a user has multiple facilities and needs to
      * select one before proceeding.
      *
-     * @param mapping The ActionMapping for the request.
-     * @param request The HttpServletRequest containing the selected facility ID.
-     * @param ip The IP address of the client.
+     * @param mapping  The ActionMapping for the request.
+     * @param request  The HttpServletRequest containing the selected facility ID.
+     * @param ip       The IP address of the client.
      * @param nextPage The name of the forward to return after setting the facility.
      * @return An ActionForward to the specified `nextPage`.
      */
@@ -992,9 +1011,9 @@ public final class LoginAction extends DispatchAction {
     /**
      * Authenticates a user using the provided credentials and IP address.
      *
-     * @param cl The LoginCheckLogin object used to perform the authentication.
+     * @param cl            The LoginCheckLogin object used to perform the authentication.
      * @param userLoginInfo A UserLoginInfo object containing the user's username, password, and PIN.
-     * @param ip The IP address of the client attempting to log in.
+     * @param ip            The IP address of the client attempting to log in.
      * @return An AuthResult object containing the authentication results, or null if authentication fails.
      * @throws Exception If an error occurs during authentication, such as a database connection error.
      */
