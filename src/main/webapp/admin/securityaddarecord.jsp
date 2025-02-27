@@ -177,6 +177,17 @@
 		}
 		return true;
 	}
+
+function handleMfaChange(checkbox) {
+	let mfaNote = document.getElementById('mfaNote');
+
+	if (checkbox.checked) {
+		mfaNote.style.display = 'inline';
+	} else {
+		mfaNote.style.display = 'none';
+	}
+}
+
 //-->
 </script>
 </head>
@@ -316,7 +327,29 @@
 				</td>
 			</tr>
    <%} %>
-	
+
+		<%--	MFA Setting   --%>
+	<% if (!OscarProperties.getInstance().getBooleanProperty("security.record.mfa.enabled", "false")) { %>
+	<tr>
+		<td style="text-align: right">
+			<bean:message key="admin.securityAddRecord.mfa.title"/>:
+		</td>
+		<td style="">
+			<label>
+				<input type="checkbox" name="enableMfa" value="1" onchange="handleMfaChange(this)"/>
+				<bean:message key="admin.securityAddRecord.mfa.description"/>
+			</label>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td style="padding-left: 8px;">
+			<span id="mfaNote" style="font-size: x-small; color: darkslategray; vertical-align: top; display: none"><bean:message
+					key="admin.securityAddRecord.mfa.note"/></span>
+		</td>
+	</tr>
+	<% } %>
+
 	<tr>
 		<td colspan="2">
 		<div align="center">
