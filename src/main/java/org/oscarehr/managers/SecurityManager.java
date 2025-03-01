@@ -23,26 +23,26 @@
  */
 package org.oscarehr.managers;
 
-import java.security.MessageDigest;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.SecurityArchiveDao;
 import org.oscarehr.common.dao.SecurityDao;
 import org.oscarehr.common.model.Security;
+import org.oscarehr.util.EncryptionUtils;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import oscar.OscarProperties;
 import oscar.log.LogAction;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class SecurityManager {
 
-	//private static Logger logger = MiscUtils.getLogger();
+	private static final Logger logger = MiscUtils.getLogger();
 
 	@Autowired
 	private SecurityDao securityDao;
@@ -85,8 +85,8 @@ public class SecurityManager {
 		String previousPasswordPolicy = OscarProperties.getInstance().getProperty("password.pastPasswordsToNotUse", "0");
 		try {
 			Security dbSecurity = securityDao.getByProviderNo(providerNo);
-			
-			if(!"0".equals(previousPasswordPolicy) && !validatePassword(newPassword, dbSecurity.getPassword())) {
+
+			if (!"0".equals(previousPasswordPolicy) && !this.matchesPassword(newPassword, dbSecurity.getPassword())) {
 		
 				int numToGoBack = Integer.parseInt(previousPasswordPolicy);
 				List<String> archives = securityArchiveDao.findPreviousPasswordsByProviderNo(providerNo,numToGoBack);
@@ -94,7 +94,7 @@ public class SecurityManager {
 				boolean foundItInPast=false;
 				
 				for(String a:archives) {
-					if(validatePassword(newPassword, a)) {
+					if (this.matchesPassword(newPassword, a)) {
 						foundItInPast = true;
 						break;
 					}
@@ -110,34 +110,65 @@ public class SecurityManager {
 		}
 		return false;
 	}
-	
-	private boolean validatePassword(String newPassword, String existingPassword) {
-		
-		try {
-			String p1 = encodePassword(newPassword);
-			if(p1.equals(existingPassword)) {
-				return true;
-			}
-		} catch(Exception e) {
-			MiscUtils.getLogger().error("Error",e);
-		}
-		
-		return false;
-	}
-	
-    private String encodePassword(String password) throws Exception{
 
-    	MessageDigest md = MessageDigest.getInstance("SHA");
-    	
-    	StringBuilder sbTemp = new StringBuilder();
-	    byte[] btNewPasswd= md.digest(password.getBytes());
-	    for(int i=0; i<btNewPasswd.length; i++) sbTemp = sbTemp.append(btNewPasswd[i]);
-	
-	    return sbTemp.toString();
-	    
-    }
-	
-	
+	/**
+	 * Encode the given password using the configured hashing algorithm.
+	 *
+	 * @param password The password to encrypt.
+	 * @return The encrypted password.
+	 */
+	public String encodePassword(CharSequence password) {
+		return EncryptionUtils.hash(password);
+	}
+
+	/**
+	 * Validates the password against the provided security's stored password. If the password is valid and an upgrade
+	 * is needed to the existing stored password, the stored password will be upgraded.
+	 *
+	 * @param rawPassword The password to validate.
+	 * @param security    The security object containing the stored password.
+	 */
+	public boolean validatePassword(CharSequence rawPassword, Security security) {
+		boolean isValid = this.matchesPassword(rawPassword, security.getPassword());
+		if (isValid && EncryptionUtils.isPasswordHashUpgradeNeeded(security.getPassword())) {
+			boolean isHashUpgraded = this.upgradeSavePasswordHash(rawPassword, security);
+			if (isHashUpgraded)
+				logger.error("Error while upgrading password hash");
+		}
+		return isValid;
+	}
+
+	/**
+	 * Validates the password against the provided encoded password.
+	 *
+	 * @param rawPassword     The password to validate.
+	 * @param encodedPassword The encoded password to compare against.
+	 * @return True if the password is valid, false otherwise.
+	 */
+	public boolean matchesPassword(CharSequence rawPassword, String encodedPassword) {
+		return EncryptionUtils.verify(rawPassword, encodedPassword);
+	}
+
+	/**
+	 * Upgrades the password hash and saves the updated Security object.
+	 *
+	 * @param rawPassword The raw password to hash.
+	 * @param security    The Security object to update.
+	 * @return True if the password hash was successfully upgraded and saved, false otherwise.
+	 */
+	public boolean upgradeSavePasswordHash(CharSequence rawPassword, Security security) {
+		String hash = this.encodePassword(rawPassword);
+		boolean matched = this.matchesPassword(rawPassword, hash);
+
+		if (!matched) // should never happen, but if password upgrade fails.
+			return false;
+
+		security.setPassword(hash);
+		security.setPasswordUpdateDate(new Date());
+		this.securityDao.merge(security);
+		return true;
+	}
+
 	public Security findByProviderNo(LoggedInInfo loggedInInfo, String providerNo) {
 		
 		List<Security> results = securityDao.findByProviderNo(providerNo);

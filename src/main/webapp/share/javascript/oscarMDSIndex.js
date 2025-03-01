@@ -1777,7 +1777,17 @@ function updateStatus(formid){//acknowledge
 				updateDocStatusInQueue(doclabid);
 				if (typeof _in_window !== 'undefined' && _in_window) {
 					if (typeof self.opener.removeReport !== 'undefined') {
-						self.opener.removeReport(doclabid);
+						/**
+						 * When a user acknowledges any lab version, it automatically files away older versions 
+						 * as well as the acknowledged version. This function removes those versions from the 
+						 * inbox results by calling the jQuery `removeReport` function on IDs up to and including
+						 * the doclabid.
+						 */
+						const multiIds = data.multiID.split(",");
+						for (const id of multiIds) {
+							self.opener.removeReport(id);
+							if (id === doclabid) break;
+						}
 					}
 					window.close();
 				} else {

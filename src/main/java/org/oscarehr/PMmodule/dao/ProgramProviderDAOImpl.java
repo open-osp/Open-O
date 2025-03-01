@@ -26,9 +26,6 @@
 
 package org.oscarehr.PMmodule.dao;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.ProgramProvider;
@@ -37,6 +34,9 @@ import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.QueueCache;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class ProgramProviderDAOImpl extends HibernateDaoSupport implements ProgramProviderDAO {
 
@@ -142,7 +142,37 @@ public class ProgramProviderDAOImpl extends HibernateDaoSupport implements Progr
         return result;
     }
 
-    @Override
+    public ProgramProvider getProgramProvider(String providerNo, Long programId, Long roleId) {
+        if (providerNo == null) {
+            throw new IllegalArgumentException();
+        }
+        if (programId == null || programId.intValue() <= 0) {
+            throw new IllegalArgumentException();
+        }
+
+        if (roleId == null || roleId.intValue() < 0) {
+            throw new IllegalArgumentException();
+        }
+
+
+        ProgramProvider result = null;
+        List results = this.getHibernateTemplate().find(
+                "from ProgramProvider pp where pp.ProviderNo = ? and pp.ProgramId = ? and pp.RoleId = ?", new Object[] { providerNo, programId, roleId });
+
+        if (!results.isEmpty()) {
+            result = (ProgramProvider) results.get(0);
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("getProgramProvider: providerNo=" + providerNo + ",programId=" + programId + ",roleId=" + roleId + ",found="
+                    + (result != null));
+        }
+
+        return result;
+
+    }
+
+        @Override
     public ProgramProvider getProgramProvider(String providerNo, Long programId) {
         if (providerNo == null) {
             throw new IllegalArgumentException();
@@ -167,22 +197,22 @@ public class ProgramProviderDAOImpl extends HibernateDaoSupport implements Progr
         return result;
     }
 
-    @Override
-    public ProgramProvider getProgramProvider(String providerNo, long programId, long roleId) {
-
-        ProgramProvider result = null;
-
-        @SuppressWarnings("unchecked")
-        List<ProgramProvider> results = (List<ProgramProvider>) getHibernateTemplate().find(
-                "from ProgramProvider pp where pp.ProviderNo = ? and pp.ProgramId = ? and pp.RoleId=?",
-                new Object[] { providerNo, programId, roleId });
-
-        if (!results.isEmpty()) {
-            result = results.get(0);
-        }
-
-        return result;
-    }
+//    @Override
+//    public ProgramProvider getProgramProvider(String providerNo, long programId, long roleId) {
+//
+//        ProgramProvider result = null;
+//
+//        @SuppressWarnings("unchecked")
+//        List<ProgramProvider> results = (List<ProgramProvider>) getHibernateTemplate().find(
+//                "from ProgramProvider pp where pp.ProviderNo = ? and pp.ProgramId = ? and pp.RoleId=?",
+//                new Object[] { providerNo, programId, roleId });
+//
+//        if (!results.isEmpty()) {
+//            result = results.get(0);
+//        }
+//
+//        return result;
+//    }
 
     @Override
     @Transactional(readOnly = false)

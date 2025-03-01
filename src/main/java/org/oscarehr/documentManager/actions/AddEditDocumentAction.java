@@ -95,7 +95,7 @@ public class AddEditDocumentAction extends DispatchAction {
 		
 		FormFile docFile = fm.getFiledata();
 		int numberOfPages = 0;
-		String fileName = docFile.getFileName();
+		String fileName = MiscUtils.sanitizeFileName(docFile.getFileName());
 		String user = (String) request.getSession().getAttribute("user");
 		EDoc newDoc = new EDoc("", "", fileName, "", user, user, fm.getSource(), 'A', oscar.util.UtilDateUtilities.getToday("yyyy-MM-dd"), "", "", "demographic", "-1", 0);
 		newDoc.setDocPublic("0");
@@ -188,7 +188,7 @@ public class AddEditDocumentAction extends DispatchAction {
 		
 		Hashtable errors = new Hashtable();
 		FormFile docFile = fm.getDocFile();
-		String fileName = docFile.getFileName();
+		String fileName = MiscUtils.sanitizeFileName(docFile.getFileName());
 		String user = (String) request.getSession().getAttribute("user");
 		EDoc newDoc = new EDoc("", "", fileName, "", user, user, fm.getSource(), 'A', oscar.util.UtilDateUtilities.getToday("yyyy-MM-dd"), "", "", "demographic", "-1");
 		newDoc.setDocPublic("0");
@@ -289,7 +289,7 @@ public class AddEditDocumentAction extends DispatchAction {
 				throw new FileNotFoundException();
 			}
 			// original file name
-			String fileName1 = docFile.getFileName();
+			String fileName1 = MiscUtils.sanitizeFileName(docFile.getFileName());
 
 			EDoc newDoc = new EDoc(fm.getDocDesc(), fm.getDocType(), fileName1, "", fm.getDocCreator(), fm.getResponsibleId(), fm.getSource(), 'A', fm.getObservationDate(), "", "", fm.getFunction(), fm.getFunctionId());
 			newDoc.setDocPublic(fm.getDocPublic());
@@ -426,7 +426,7 @@ public class AddEditDocumentAction extends DispatchAction {
                         
                         if(oscar.OscarProperties.getInstance().getBooleanProperty("ALLOW_UPDATE_DOCUMENT_CONTENT", "true"))
                         {
-                            fileName=docFile.getFileName();
+                            fileName=MiscUtils.sanitizeFileName(docFile.getFileName());
                         }
                         
 			String reviewerId = filled(fm.getReviewerId()) ? fm.getReviewerId() : "";

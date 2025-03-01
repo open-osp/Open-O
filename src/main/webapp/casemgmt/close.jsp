@@ -27,6 +27,10 @@
 
 
 <script type="text/javascript">
-window.opener.location.reload(true);
+// Check if the parent window (window.opener) is available
+if (window.opener) {
+    // Reload the parent window to ensure it reflects the latest changes
+    window.opener.location.reload(true);
+}
 window.close();
 </script>

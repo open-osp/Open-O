@@ -187,8 +187,8 @@ public class PreventionDaoImpl extends AbstractDaoImpl<Prevention> implements Pr
 	
 	@Override
 	public List<Prevention> findUniqueByDemographicId(Integer demographicId) {
-		Query query = entityManager.createQuery("select x from "+modelClass.getSimpleName()+" x where demographicId=?1 and deleted='0' GROUP BY preventionType ORDER BY preventionDate DESC");
-		query.setParameter(1, demographicId);
+		Query query = entityManager.createNativeQuery("SELECT p1.* FROM preventions p1 left join preventions as p2 on p1.prevention_type = p2.prevention_type and p1.demographic_no = p2.demographic_no and p2.deleted='0' and (p1.prevention_date < p2.prevention_date OR (p1.prevention_date = p2.prevention_date and p1.id < p2.id)) where p1.demographic_no = :demographicId AND p1.deleted='0' AND p2.id is null ORDER BY p1.prevention_date DESC", Prevention.class);
+		query.setParameter("demographicId", demographicId);
 
 		@SuppressWarnings("unchecked")
 		List<Prevention> results = query.getResultList();

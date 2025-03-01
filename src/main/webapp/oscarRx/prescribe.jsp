@@ -174,11 +174,11 @@ if(listRxDrugs!=null){
                 drugName=drugName.replace("\"","\\\"");
                 byte[] drugNameBytes = drugName.getBytes("ISO-8859-1");
                 drugName= new String(drugNameBytes, "UTF-8");
-                
+                String fieldSetId = "set_" + rand;
 %>
 
-<fieldset style="margin-top:2px;width:640px;" id="set_<%=rand%>">
-    <a tabindex="-1" href="javascript:void(0);"  style="float:right;margin-left:5px;margin-top:0px;padding-top:0px;" onclick="$('set_<%=rand%>').remove();deletePrescribe('<%=rand%>');removeReRxDrugId('<%=DrugReferenceId%>')"><img src='<c:out value="${ctx}/images/close.png"/>' border="0"></a>
+<fieldset style="margin-top:2px;width:640px;" id="<%=fieldSetId%>">
+    <a tabindex="-1" href="javascript:void(0);"  style="float:right;margin-left:5px;margin-top:0px;padding-top:0px;" onclick="removePrescribingDrug(<%=fieldSetId%>, <%=DrugReferenceId%>);"><img src='<c:out value="${ctx}/images/close.png"/>' border="0"></a>
     <a tabindex="-1" href="javascript:void(0);"  style="float:right;;margin-left:5px;margin-top:0px;padding-top:0px;" title="Add to Favorites" onclick="addFav('<%=rand%>','<%=drugName%>')">F</a>
     <a tabindex="-1" href="javascript:void(0);" style="float:right;margin-top:0px;padding-top:0px;" onclick="$('rx_more_<%=rand%>').toggle();">  <span id="moreLessWord_<%=rand%>" onclick="updateMoreLess(id)" >more</span> </a>
 
@@ -635,7 +635,7 @@ if(listRxDrugs!=null){
                         //do nothing
                     }
                     else{
-                        $('set_<%=rand%>').remove();
+                        $('<%=fieldSetId%>').remove();
                         //call java class to delete it from stash pool.
                         var randId='<%=rand%>';
                         deletePrescribe(randId);

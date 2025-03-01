@@ -28,15 +28,20 @@
 	if(session.getAttribute("userrole") == null )  response.sendRedirect("../logout.jsp");
 	String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 
-	//int demographic_no = Integer.parseInt(request.getParameter("demographic_no"));
+
 	String demographic_no = request.getParameter("demographic_no");
 	String deepColor = "#CCCCFF" , weakColor = "#EEEEFF" ;
 %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page import="java.util.*, oscar.eform.*"%>
+<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="org.oscarehr.managers.DemographicManager" %>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%
+	LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 	String country = request.getLocale().getCountry();
 	String orderByRequest = request.getParameter("orderby");
 	String orderBy = "";
@@ -50,29 +55,35 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-
-<html:html locale="true">
+<%!
+	DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+%>
+<%
+	pageContext.setAttribute("demographic", demographicManager.getDemographic(loggedInInfo, demographic_no));
+%>
+<html:html>
 	<head>
 		<title><bean:message key="eform.showmyform.title" /></title>
 
-		<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
-		<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
-		<link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+		<link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
+		<link href="${pageContext.request.contextPath}/library/DataTables/datatables.css" rel="stylesheet">
+		<link href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css" rel="stylesheet">
+
 
 		<script src="${pageContext.request.contextPath}/js/global.js"></script>
-		<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 		<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
-		<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
+		<script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.js"></script>
+		<script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script>
 
 		<script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
 
 		<script>
 
 			function popupPage(varpage, windowname) {
-				var page = "" + varpage;
+				let page = "" + varpage;
 				windowprops = "height=700,width=800,location=no,"
 						+ "scrollbars=yes,menubars=no,status=yes,toolbars=no,resizable=yes,top=10,left=200";
-				var popup = window.open(page, windowname, windowprops);
+				let popup = window.open(page, windowname, windowprops);
 				if (popup != null) {
 					if (popup.opener == null) {
 						popup.opener = self;
@@ -82,8 +93,8 @@
 			}
 
 			function updateAjax() {
-				var parentAjaxId = "<%=parentAjaxId%>";
-				if( parentAjaxId != "null" ) {
+				let parentAjaxId = "<%=parentAjaxId%>";
+				if( parentAjaxId !== "null" ) {
 					window.opener.document.forms['encForm'].elements['reloadDiv'].value = parentAjaxId;
 					window.opener.updateNeeded = true;
 				}
@@ -91,8 +102,8 @@
 			}
 
 			$(document).ready(function() {
-				var shareDocumentsTarget = "../sharingcenter/documents/shareDocumentsAction.jsp";
-				var table = jQuery('#efmTable').DataTable({
+
+				let table = jQuery('#efmTable').DataTable({
 					"pageLength": 15,
 					"lengthMenu": [ [15, 30, 60, 120, -1], [15, 30, 60, 120, '<bean:message key="demographic.search.All"/>'] ],
 					"order": [2],
@@ -103,55 +114,80 @@
 
 			});
 		</script>
+		<style>
+			:root *:not(h2, .h2) {
+				font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+				font-size: 12px;
+				overscroll-behavior: none;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
+
+			#heading h2 {
+				display: inline-block;
+			}
+
+			#heading span {
+				margin-left:50px;
+			}
+
+
+			:root a {
+				color:blue;
+			}
+
+			div.menu-columns {
+				display: flex;
+				gap: 10px;
+			}
+
+			div.left-column {
+				display: flex;
+				flex-direction: column;
+				gap: 5px;
+				flex-basis: max-content;
+				text-wrap: nowrap;
+			}
+		</style>
 	</head>
 	<body onunload="updateAjax()" >
-
-	<table class="MainTable" id="scrollNumber1">
-		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn" style="width:175px;"><h4><bean:message
-					key="eform.showmyform.msgMyForm" /></h4></td>
-			<td class="MainTableTopRowRightColumn">
-				<table class="TopStatusBar" style="width:100%">
-					<tr>
-						<td><bean:message key="eform.independent.btnDeleted" /></td>
-						<td>&nbsp;</td>
-						<td style="text-align: right"><oscar:help keywords="eform" key="app.top1"/> | <a
-								href="javascript:popupStart(600,800,'About.jsp')"><bean:message
-								key="global.about" /></a> | <a
-								href="javascript:popupStart(600,800,'License.jsp')"><bean:message
-								key="global.license" /></a></td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableLeftColumn" style="vertical-align:top;">
+	<div class="container">
+	<div id="heading">
+		<h2>
+			<svg style="color:red;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16">
+				<path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z"></path>
+				<path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"></path>
+			</svg>
+			<bean:message key="eform.independent.btnDeleted" />
+		</h2>
+		<span><c:out value="${demographic.displayName}" /></span>
+	</div>
+		<div class="menu-columns">
+			<div class="left-column">
 
 				<a href="${ pageContext.request.contextPath }/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><bean:message key="demographic.demographiceditdemographic.btnMasterFile" /></a>
 
-				<br>
-				<a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>" class="current"> <bean:message key="eform.showmyform.btnAddEForm"/></a><br>
-				<a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.calldeletedformdata.btnGoToForm"/></a><br>
-				<a href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.showmyform.btnDeleted"/></a>
+				
+				<a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>" class="current"> <bean:message key="eform.showmyform.btnAddEForm"/></a>
+				<a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.calldeletedformdata.btnGoToForm"/></a>
+<%--				<a href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.showmyform.btnDeleted"/></a>--%>
 				<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.eform" rights="r" reverse="<%=false%>" >
-					<br>
 					<a href="#" onclick="javascript: return popup(600, 1200, '../administration/?show=Forms', 'manageeforms');" style="color: #835921;"><bean:message key="eform.showmyform.msgManageEFrm"/></a>
 				</security:oscarSec>
-			</td>
+			</div>
+			<div class="right-column">
+				
 
-			<td class="MainTableRightColumn" style="width:90%; vertical-align:top">
-				<table id="efmTable" style="width:100%" class="display compact nowrap">
+				<table id="efmTable" class="table table-striped table-compact dataTable no-footer">
 					<thead>
 					<tr>
-						<th><a
-								href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&orderby=form_name&parentAjaxId=<%=parentAjaxId%>"><bean:message
-								key="eform.showmyform.btnFormName" /></a></th>
-						<th><a
-								href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&orderby=form_subject&parentAjaxId=<%=parentAjaxId%>"><bean:message
-								key="eform.showmyform.btnSubject" /></a></th>
-						<th><a
-								href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>"><bean:message
-								key="eform.showmyform.formDate" /></a></th>
+						<th><bean:message
+								key="eform.showmyform.btnFormName" />
+						</th>
+						<th><bean:message
+								key="eform.showmyform.btnSubject" /></th>
+						<th><bean:message
+								key="eform.showmyform.formDate" /></th>
 						<th><bean:message key="eform.showmyform.msgAction" /></th>
 					</tr>
 					</thead>
@@ -165,10 +201,10 @@
 						<td><a href="#"
 						       ONCLICK="popupPage('efmshowform_data.jsp?fdid=<%= curform.get("fdid")%>', '<%="FormPD" + i%>'); return false;"
 						       TITLE="View Form"
-						       onmouseover="window.status='View This Form'; return true"><%=curform.get("formName")%></a></td>
-						<td><%=curform.get("formSubject")%></td>
-						<td style='text-align:center'><%=curform.get("formDate")%></td>
-						<td style='text-align:center'><a
+						       onmouseover="window.status='View This Form'; return true"><%=Encode.forHtmlContent((String)curform.get("formName"))%></a></td>
+						<td><%=Encode.forHtmlContent((String)curform.get("formSubject"))%></td>
+						<td ><%=curform.get("formDate")%></td>
+						<td ><a
 								href="../eform/unRemoveEForm.do?fdid=<%=curform.get("fdid")%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>" onClick="javascript: return confirm('Are you sure you want to restore this eform?');"><bean:message
 								key="global.btnRestore" /></a></td>
 					</tr>
@@ -177,12 +213,9 @@
 					%>
 					</tbody>
 				</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableBottomRowLeftColumn"></td>
-			<td class="MainTableBottomRowRightColumn"></td>
-		</tr>
-	</table>
+			</div>
+		
+		</div>
+	</div>
 	</body>
 </html:html>

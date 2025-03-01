@@ -215,7 +215,18 @@
             }
 
             table#tablefoot {
+	            position: sticky;
+	            bottom: 0;
+	            background-color: white;
+	            width:100%;
 	            margin-bottom:50px;
+            }
+
+            table#tablefoot tr td {
+	            padding: 5px;
+            }
+            .dataTables_wrapper {
+	            margin-top:20px;
             }
 		</style>
 		<script type="application/javascript">
@@ -434,7 +445,6 @@
 						Check(e);
 					}
 				}
-				//ml.toggleAll.checked = true;
 			}
 
 			function ClearAll() {
@@ -446,7 +456,6 @@
 						Clear(e);
 					}
 				}
-				//ml.toggleAll.checked = false;
 			}
 
 			function Highlight(e) {
@@ -498,55 +507,6 @@
 				ml.submit();
 			}
 
-			// function SynchMoves(which) {
-			// var ml=document.messageList;
-			// if(which==1) {
-			//     ml.destBox2.selectedIndex=ml.destBox.selectedIndex;
-			// }
-			// else {
-			//     ml.destBox.selectedIndex=ml.destBox2.selectedIndex;
-			// }
-			// }
-
-			// function SynchFlags(which)
-			// {
-			// var ml=document.messageList;
-			// if (which == 1) {
-			//     ml.flags2.selectedIndex = ml.flags.selectedIndex;
-			// }
-			// else {
-			//     ml.flags.selectedIndex = ml.flags2.selectedIndex;
-			// }
-			// }
-
-			<%--function SetFlags()--%>
-			<%--{--%>
-			<%--var ml = document.messageList;--%>
-			<%--ml.FLG.value = "1";--%>
-			<%--ml.submit();--%>
-			<%--}--%>
-
-			<%--function Move() {--%>
-			<%--var ml = document.messageList;--%>
-			<%--var dbox = ml.destBox;--%>
-			<%--if(dbox.options[dbox.selectedIndex].value == "@NEW") {--%>
-			<%--    nn = window.prompt("<bean:message key="tickler.ticklerMain.msgFolderName"/>","");--%>
-			<%--    if(nn == null || nn == "null" || nn == "") {--%>
-			<%--	dbox.selectedIndex = 0;--%>
-			<%--	ml.destBox2.selectedIndex = 0;--%>
-			<%--    }--%>
-			<%--    else {--%>
-			<%--	ml.NewFol.value = nn;--%>
-			<%--	ml.MOV.value = "1";--%>
-			<%--	ml.submit();--%>
-			<%--    }--%>
-			<%--}--%>
-			<%--else {--%>
-			<%--    ml.MOV.value = "1";--%>
-			<%--    ml.submit();--%>
-			<%--}--%>
-			<%--}--%>
-
 			function saveView() {
 				let url = ctx + "/saveWorkView.do";
 				let params = {
@@ -595,21 +555,21 @@
 		<form name="serviceform" method="get" action="ticklerMain.jsp" class="form-inline">
 			<input type="hidden" name="Submit" value="">
 			<input type="hidden" name="demoview" value="${param.demoview}">
-
-			<c:if test="${empty param.demoview}">
-			<div class="control-container">
-				<label for="dateRange"><bean:message key="tickler.ticklerMain.formDateRange"/> <a
-						href="javascript:void(0)" id="dateRange" onClick="allYear()"><bean:message
-						key="tickler.ticklerMain.btnViewAll"/></a></label>
-				<div class="form-group">
-					<label for="xml_vdate">From</label>
-					<input type="date" class="form-control" name="xml_vdate" id="xml_vdate">
-				</div>
-				<div class="form-group">
-					<label for="xml_appointment_date">To</label>
-					<input type="date" class="form-control" name="xml_appointment_date" id="xml_appointment_date"
-					       value="<%=xml_appointment_date%>">
-				</div>
+			<c:choose>
+				<c:when test="${empty param.demoview}">
+					<div class="control-container">
+						<div class="form-group">
+							<label for="xml_vdate"><bean:message key="tickler.ticklerMain.formDateRange"/> From
+								<a href="javascript:void(0)" id="dateRange" onClick="allYear()"><bean:message
+										key="tickler.ticklerMain.btnViewAll"/></a>
+							</label>
+							<input type="date" class="form-control" name="xml_vdate" id="xml_vdate">
+						</div>
+						<div class="form-group">
+							<label for="xml_appointment_date">To</label>
+							<input type="date" class="form-control" name="xml_appointment_date" id="xml_appointment_date"
+							       value="<%=xml_appointment_date%>">
+						</div>
 
 				<div class="form-group">
 					<label for="mrpview"> <bean:message key="tickler.ticklerMain.MRP"/></label>
@@ -715,30 +675,42 @@
 						}
 					%>
 				</div>
-				<div class="pull-right form-group" style="text-align: right; vertical-align: bottom; padding:20px 15px 15px 15px;">
-					<label for="formSubmitBtn"></label>
-					<input type="button" class="btn btn-primary mbttn noprint" id="formSubmitBtn"
-					       value="<bean:message key="tickler.ticklerMain.btnCreateReport"/>"
-					       onclick="document.forms['serviceform'].Submit.value='Create Report'; document.forms['serviceform'].submit();">
-					<label for="saveViewButton"> </label>
-					<input type="button" class="btn" id="saveViewButton"
-					       value="<bean:message key="tickler.ticklerMain.msgSaveView"/>" onclick="saveView();">
-				</div>
-
-			</div>
-
-			</c:if>
-			<div class="pull-left" style="margin-bottom:10px;">
+				<div class="form-group">
 					<label for="ticklerview">Filter</label>
-				<select id="ticklerview" class="form-control" name="ticklerview">
-					<option value="A" <%=ticklerview.equals("A") ? "selected" : ""%>><bean:message
-							key="tickler.ticklerMain.formActive"/></option>
-					<option value="C" <%=ticklerview.equals("C") ? "selected" : ""%>><bean:message
-							key="tickler.ticklerMain.formCompleted"/></option>
-					<option value="D" <%=ticklerview.equals("D") ? "selected" : ""%>><bean:message
-							key="tickler.ticklerMain.formDeleted"/></option>
-				</select>
-			</div>
+					<select id="ticklerview" class="form-control" name="ticklerview">
+						<option value="A" <%=ticklerview.equals("A") ? "selected" : ""%>><bean:message
+								key="tickler.ticklerMain.formActive"/></option>
+						<option value="C" <%=ticklerview.equals("C") ? "selected" : ""%>><bean:message
+								key="tickler.ticklerMain.formCompleted"/></option>
+						<option value="D" <%=ticklerview.equals("D") ? "selected" : ""%>><bean:message
+								key="tickler.ticklerMain.formDeleted"/></option>
+					</select>
+				</div>
+				<div class="form-group" style="padding-top:15px;">
+
+							<input type="button" class="btn btn-primary mbttn noprint" id="formSubmitBtn"
+							       value="<bean:message key="tickler.ticklerMain.btnCreateReport"/>"
+							       onclick="document.forms['serviceform'].Submit.value='Create Report'; document.forms['serviceform'].submit();">
+							<input type="button" class="btn" id="saveViewButton"
+							       value="<bean:message key="tickler.ticklerMain.msgSaveView"/>" onclick="saveView();">
+						</div>
+
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div class="form-group pull-right" style="top: 25px;position: relative;clear: both;z-index: 10000;">
+						<label for="ticklerview">Filter</label>
+						<select id="ticklerview" class="form-control" name="ticklerview">
+							<option value="A" <%=ticklerview.equals("A") ? "selected" : ""%>><bean:message
+									key="tickler.ticklerMain.formActive"/></option>
+							<option value="C" <%=ticklerview.equals("C") ? "selected" : ""%>><bean:message
+									key="tickler.ticklerMain.formCompleted"/></option>
+							<option value="D" <%=ticklerview.equals("D") ? "selected" : ""%>><bean:message
+									key="tickler.ticklerMain.formDeleted"/></option>
+						</select>
+					</div>
+				</c:otherwise>
+			</c:choose>
 		</form>
 
 		<form name="ticklerform" method="post" action="dbTicklerMain.jsp">

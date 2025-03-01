@@ -26,16 +26,10 @@
 
 package org.oscarehr.PMmodule.dao;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.ProgramProvider;
 import org.oscarehr.common.model.Facility;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.QueueCache;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import java.util.List;
 
 public interface ProgramProviderDAO {
 
@@ -55,7 +49,7 @@ public interface ProgramProviderDAO {
 
     public ProgramProvider getProgramProvider(String providerNo, Long programId);
 
-    public ProgramProvider getProgramProvider(String providerNo, long programId, long roleId);
+    public ProgramProvider getProgramProvider(String providerNo, Long programId, Long roleId);
 
     public void saveProgramProvider(ProgramProvider pp);
 

@@ -27,29 +27,24 @@
 
  package org.oscarehr.managers;
 
- import org.apache.logging.log4j.Logger;
- import org.oscarehr.common.dao.DrugDao;
- import org.oscarehr.common.dao.FavoriteDao;
- import org.oscarehr.common.exception.AccessDeniedException;
- import org.oscarehr.common.model.Drug;
- import org.oscarehr.common.model.Favorite;
- import org.oscarehr.common.model.Prescription;
- import org.oscarehr.util.LoggedInInfo;
- import org.oscarehr.util.MiscUtils;
- import org.oscarehr.ws.rest.to.model.RxStatus;
- import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.stereotype.Service;
- import oscar.log.LogAction;
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.common.dao.DrugDao;
+import org.oscarehr.common.dao.FavoriteDao;
+import org.oscarehr.common.exception.AccessDeniedException;
+import org.oscarehr.common.model.Drug;
+import org.oscarehr.common.model.Favorite;
+import org.oscarehr.common.model.Prescription;
+import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
+import org.oscarehr.ws.rest.to.model.RxStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import oscar.log.LogAction;
 import oscar.oscarDemographic.data.RxInformation;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
- import java.util.ArrayList;
- import java.util.Collections;
- import java.util.Date;
- import java.util.List;
- 
- /**
+import java.util.*;
+
+/**
   * Manager class to access data regarding prescriptions.
   */
  @Service
@@ -658,7 +653,38 @@ import org.apache.commons.lang.WordUtils;
          return drugDao.findLongTermDrugsByDemographic(demographicNo);
          
      }
- 
+
+    @Override
+    public boolean archiveDrug(LoggedInInfo info, int drugId, int demographicId, String reason) {
+        // Check that this user is allowed to write to the demographic's
+        // prescribing information.
+        this.writeCheck(info, demographicId);
+
+        Drug drug = this.drugDao.find(drugId);
+
+        if (Objects.isNull(drug)) {
+            logger.info("No drug with drugId: {} found, failed to archive.", drugId);
+            return false;
+        } else if (drug.getDemographicId() != demographicId) { //check to make sure demographic matches drug.
+            logger.info("Drug demographic ({}) does not match input demographic ({}), failed to archive.",
+                    drug.getDemographicId(), demographicId);
+            return false;
+        }
+
+        drug.setArchived(true);
+        drug.setArchivedReason(reason);
+        drug.setArchivedDate(new Date());
+
+        // persist the change to the database.
+        this.drugDao.merge(drug);
+
+        LogAction.addLogSynchronous(info, "RxManager.archiveDrug",
+                "providerNo=" + info.getLoggedInProviderNo()
+                        + " drug.brandName=" + drug.getBrandName()
+                        + " demographicNo=" + drug.getDemographicId());
+
+        return true;
+    }
  
      // statuses for drugs
  

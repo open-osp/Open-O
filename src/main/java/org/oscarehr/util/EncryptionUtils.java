@@ -24,6 +24,7 @@
 package org.oscarehr.util;
 
 import org.apache.logging.log4j.Logger;
+import org.oscarehr.util.password.PasswordHashHelper;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
@@ -35,7 +36,7 @@ import java.util.Base64;
 import java.util.Objects;
 
 
-public final class EncryptionUtils extends PasswordHash {
+public final class EncryptionUtils {
     private static final QueueCacheValueCloner<byte[]> byteArrayCloner = new QueueCacheValueCloner<byte[]>() {
         public byte[] cloneBean(byte[] original) {
             return (byte[])original.clone();
@@ -149,6 +150,76 @@ public final class EncryptionUtils extends PasswordHash {
         }
     }
 
+    /**
+     * Encrypts the given byte array using AES/GCM/NoPadding.
+     * <p>
+     * This method encrypts the provided `input` byte array using AES encryption in GCM mode with no padding.
+     * It generates a random 12-byte initialization vector (IV) and uses a 128-bit GCM parameter specification.
+     * The encrypted bytes are then combined with the IV and returned as a single byte array.
+     *
+     * @param input The byte array to encrypt.
+     * @return The encrypted byte array, which includes the IV prepended to the ciphertext.
+     * @throws Exception If the secret key is not initialized, or if there is an error during encryption. Specifically:
+     *                   - If the SECRET_KEY_SPEC is null, indicating the secret key has not been initialized.
+     *                   - If the "AES/GCM/NoPadding" cipher is not available.
+     *                   - If there is an issue with the encryption process itself, such as invalid key or data.
+     **/
+    public static byte[] encrypt(byte[] input) throws Exception {
+        if (Objects.isNull(SECRET_KEY_SPEC)) {
+            throw new Exception("Secret key not found in environment variables.");
+        }
+
+        byte[] iv = new byte[12];
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(iv);
+
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
+        cipher.init(Cipher.ENCRYPT_MODE, SECRET_KEY_SPEC, gcmSpec);
+
+        byte[] encryptedBytes = cipher.doFinal(input);
+
+        ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encryptedBytes.length)
+                .put(iv)
+                .put(encryptedBytes);
+
+        return byteBuffer.array();
+    }
+
+    /**
+     * Decrypts the given byte array using AES/GCM/NoPadding.
+     * <p>
+     * This method decrypts the provided `cipherBytes` byte array, which is assumed to be
+     * in the format produced by the `encrypt` method.  It extracts the 12-byte initialization
+     * vector (IV) from the beginning of the array, and then decrypts the remaining bytes
+     * using AES in GCM mode with no padding.
+     *
+     * @param cipherBytes The encrypted byte array, including the prepended IV.
+     * @return The decrypted byte array.
+     * @throws Exception If the secret key is not initialized, or if there is an error during decryption. Specifically:
+     *                   - If the SECRET_KEY_SPEC is null, indicating the secret key has not been initialized.
+     *                   - If the "AES/GCM/NoPadding" cipher is not available.
+     *                   - If the input byte array is not in the expected format (e.g., IV is missing).
+     *                   - If there is an issue with the decryption process itself, such as an authentication failure (indicating data corruption).
+     **/
+    public static byte[] decrypt(byte[] cipherBytes) throws Exception {
+        if (Objects.isNull(SECRET_KEY_SPEC)) {
+            throw new Exception("Secret key not found in environment variables.");
+        }
+
+        ByteBuffer byteBuffer = ByteBuffer.wrap(cipherBytes);
+        byte[] iv = new byte[12];
+        byteBuffer.get(iv);
+
+        byte[] encryptedBytes = new byte[byteBuffer.remaining()];
+        byteBuffer.get(encryptedBytes);
+
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
+        cipher.init(Cipher.DECRYPT_MODE, SECRET_KEY_SPEC, gcmSpec);
+
+        return cipher.doFinal(encryptedBytes);
+    }
 
     /**
      * Encrypts a plain text string.
@@ -167,26 +238,10 @@ public final class EncryptionUtils extends PasswordHash {
             return plainText;
         }
 
-        if (Objects.isNull(SECRET_KEY_SPEC)) {
-            throw new Exception("Secret key not found in environment variables.");
-        }
-
-        byte[] iv = new byte[12];
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.nextBytes(iv);
-
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
-        cipher.init(Cipher.ENCRYPT_MODE, SECRET_KEY_SPEC, gcmSpec);
-
-        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
-
-        ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encryptedBytes.length);
-        byteBuffer.put(iv);
-        byteBuffer.put(encryptedBytes);
+        byte[] cipherBytes = EncryptionUtils.encrypt(plainText.getBytes(StandardCharsets.UTF_8));
 
         // Return the encrypted string with a prefix, encoded in Base64
-        return ENCRYPTION_PREFIX + Base64.getEncoder().encodeToString(byteBuffer.array());
+        return ENCRYPTION_PREFIX + Base64.getEncoder().encodeToString(cipherBytes);
     }
 
     /**
@@ -197,10 +252,6 @@ public final class EncryptionUtils extends PasswordHash {
      * @throws Exception If the secret key is not initialized, or if there is an error during decryption.
      */
     public static String decrypt(String encryptedText) throws Exception {
-        if (Objects.isNull(SECRET_KEY_SPEC)) {
-            throw new Exception("Secret key not found in environment variables.");
-        }
-        
         /*
          * avoid nulls and empty strings.
          */
@@ -213,18 +264,7 @@ public final class EncryptionUtils extends PasswordHash {
 
             byte[] cipherBytes = Base64.getDecoder().decode(base64Encoded);
 
-            ByteBuffer byteBuffer = ByteBuffer.wrap(cipherBytes);
-            byte[] iv = new byte[12];
-            byteBuffer.get(iv);
-
-            byte[] encryptedBytes = new byte[byteBuffer.remaining()];
-            byteBuffer.get(encryptedBytes);
-
-            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-            GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
-            cipher.init(Cipher.DECRYPT_MODE, SECRET_KEY_SPEC, gcmSpec);
-
-            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            byte[] decryptedBytes = EncryptionUtils.decrypt(cipherBytes);
             return new String(decryptedBytes, StandardCharsets.UTF_8);
         }
 
@@ -283,25 +323,39 @@ public final class EncryptionUtils extends PasswordHash {
     }
 
     /**
-     * A one way PBKDF2 With Hmac SHA1 hash of given password string.
-     * The verify method, should be used to validate the hash against
-     * passwords.
+     * Generates a secure hash of the given password using the PasswordHashHelper.
+     *
+     * @see PasswordHashHelper#encodePassword(CharSequence) 
      * @param password string
      * @return hashed password
-     * @throws CannotPerformOperationException failed encrypt
+     * @throws IllegalArgumentException If the password is null or empty.
      */
-    public static String hash(String password) throws CannotPerformOperationException {
-        return createHash(password);
+    public static String hash(CharSequence password) throws IllegalArgumentException {
+        return PasswordHashHelper.encodePassword(password);
     }
 
     /**
      * Validate a given password phrase against the stored hash password.
      * This is a boolean validation. No password values are returned
      * @param password  plain password string
+     * @see PasswordHashHelper#matches(CharSequence, String)
      * @param hashedPassword hashed password string usually stored in the database.
+     * @return True if the raw password matches the encoded password, false otherwise.
+     * @throws IllegalArgumentException failure while matching
      */
-    public static boolean verify(String password, String hashedPassword) throws InvalidHashException, CannotPerformOperationException {
-        return verifyPassword(password, hashedPassword);
+    public static boolean verify(CharSequence password, String hashedPassword) throws IllegalArgumentException {
+        return PasswordHashHelper.matches(password, hashedPassword);
+    }
+
+    /**
+     * Check if a given hashed password needs to be upgraded to a more secure
+     * algorithm.
+     * @param hashedPassword hashed password string usually stored in the database.
+     * @see PasswordHashHelper#upgradeEncoding(String)
+     * @return true if upgrade is needed.
+     */
+    public static boolean isPasswordHashUpgradeNeeded(String hashedPassword) {
+        return PasswordHashHelper.upgradeEncoding(hashedPassword);
     }
 
     static {

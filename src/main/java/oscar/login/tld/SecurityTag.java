@@ -25,18 +25,18 @@
 
 package oscar.login.tld;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import oscar.OscarProperties;
+import oscar.util.OscarRoleObjectPrivilege;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.Tag;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.Tag;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import oscar.util.OscarRoleObjectPrivilege;
 
 public class SecurityTag implements Tag {
     private PageContext pageContext;
@@ -45,7 +45,6 @@ public class SecurityTag implements Tag {
     private String objectName;
     private String rights = "r";
     private boolean reverse = false;
-    //private Vector roleInObj = new Vector();
 
     public void setPageContext(PageContext arg0) {
         this.pageContext = arg0;
@@ -61,22 +60,27 @@ public class SecurityTag implements Tag {
     }
 
     public int doStartTag() throws JspException {
-        /*
-         * try { JspWriter out = pageContext.getOut(); out.print("goooooooo"); } catch (Exception e) { }
-         */
         int ret = 0;
         Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
-        // if (checkPrivilege(roleName, (Properties) getPrivilegeProp(objectName).get(0), (Vector) getPrivilegeProp(
-        ///        objectName).get(1)))
     	/*TODO: temporily allow current security work, the if statement should be removed */
         if (roleName == null) 
         {
-        	
 	            ret = SKIP_BODY;
-	       
         }
         else
         {
+            if(OscarProperties.getInstance().isPropertyActive("ENABLE_SECURITY_OBJECT_DEBUG")) {
+                try {
+                    JspWriter out = pageContext.getOut();
+                    out.println(
+                            "<div class='role-object' style='font-size:12px;color:red;z-index:100000; background-color:white; padding:5px;'>"
+                                    + objectName
+                                    + "</div>"
+                    );
+                } catch (Exception e) {
+                    // do nothing.
+                }
+            }
 	        if (OscarRoleObjectPrivilege.checkPrivilege(roleName, (Properties)v.get(0), (List<String>)v.get(1), (List<String>)v.get(2), rights)){
 	            ret = EVAL_BODY_INCLUDE;
 	        }else{

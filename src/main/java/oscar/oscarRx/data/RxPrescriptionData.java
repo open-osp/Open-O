@@ -370,6 +370,7 @@ public class RxPrescriptionData {
 
 		prescription.setPrintDate(rx.getDatePrinted());
 		prescription.setDatesReprinted(rx.getDatesReprinted());
+		prescription.setDigitalSignatureId(rx.getDigitalSignatureId());
 		return prescription;
 	}
 
@@ -685,7 +686,17 @@ public class RxPrescriptionData {
 		private String protocol;
 		private String priorRxProtocol;
 		private Integer pharmacyId;
-		
+
+		private Integer digitalSignatureId;
+
+		public Integer getDigitalSignatureId() {
+			return digitalSignatureId;
+		}
+
+		public void setDigitalSignatureId(Integer digitalSignatureId) {
+			this.digitalSignatureId = digitalSignatureId;
+		}
+
 		public String getDrugReasonCode() {
 			return drugReasonCode;
 		}

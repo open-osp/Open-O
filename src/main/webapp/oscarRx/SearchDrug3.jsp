@@ -161,8 +161,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
             }
 
             RxPharmacyData pharmacyData = new RxPharmacyData();
-            List<PharmacyInfo> pharmacyList;
-            pharmacyList = pharmacyData.getPharmacyFromDemographic(Integer.toString(demoNo));                        
+            List<PharmacyInfo> pharmacyList = pharmacyData.getPharmacyFromDemographic(Integer.toString(demoNo));
 
             String drugref_route = OscarProperties.getInstance().getProperty("drugref_route");
             if (drugref_route == null) {
@@ -208,9 +207,9 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
              
              
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
-<html:html lang="en">
+
+<!DOCTYPE html>
+    <html:html lang="en">
     <head>
 
 
@@ -230,7 +229,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 
 
         <link rel="stylesheet" href="<c:out value="${ctx}/share/lightwindow/css/lightwindow.css"/>" type="text/css" media="screen" />
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+<%--        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />--%>
         <!--link rel="stylesheet" type="text/css" href="modaldbox.css"  /-->
 
         <script type="text/javascript" src="${ctx}/js/global.js"></script>
@@ -246,7 +245,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
         <!--script type="text/javascript" src="<%--c:out value="modaldbox.js"/--%>"></script-->
         <script type="text/javascript" src="<c:out value="${ctx}/js/checkDate.js"/>"></script>
 
-        <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/share/yui/css/fonts-min.css"/>" >
+<%--        <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/share/yui/css/fonts-min.css"/>" >--%>
         <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/share/yui/css/autocomplete.css"/>" >
         <script type="text/javascript" src="<c:out value="${ctx}/share/yui/js/yahoo-dom-event.js"/>"></script>
         <script type="text/javascript" src="<c:out value="${ctx}/share/yui/js/connection-min.js"/>"></script>
@@ -825,11 +824,11 @@ body {
 
     <body  vlink="#0000FF" onload="checkFav();iterateStash();rxPageSizeSelect();checkReRxLongTerm();load()" class="yui-skin-sam">
     	<%=WebUtils.popErrorAndInfoMessagesAsHtml(session)%>
-        <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber1" height="100%">
+        <table id="AutoNumber1">
             <%@ include file="TopLinks2.jspf" %><!-- Row One included here-->
             <tr>
-                <td width="10%" height="100%" valign="top"><%@ include file="SideLinksEditFavorites2.jsp"%></td>
-                <td style="border-left: 2px solid #A9A9A9;" height="100%" valign="top"><!--Column Two Row Two-->
+                <td height="100%" ><%@ include file="SideLinksEditFavorites2.jsp"%></td>
+                <td style="padding-right:15px;"><!--Column Two Row Two-->
 
 
                     <table cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" >
@@ -906,7 +905,7 @@ body {
 													<%if(securityManager.hasWriteAccess("_rx",roleName2$,true)) {%>
                                                     <a href="#" onclick="$('reprint').toggle();return false;"><bean:message key="SearchDrug.Reprint"/></a>
                                                     &nbsp;
-                                                    <a href="javascript:void(0);"name="cmdRePrescribe"  onclick="javascript:RePrescribeLongTerm();" style="width: 200px" ><bean:message key="SearchDrug.msgReprescribeLongTermMed"/></a>
+                                                    <a href="javascript:void(0);" id="cmdRePrescribe" onclick="RePrescribeLongTerm();" style="width: 200px" ><bean:message key="SearchDrug.msgReprescribeLongTermMed"/></a>
                                                     &nbsp;
 													<% } %>
                                                     <a href="javascript:popupWindow(720,920,'chartDrugProfile.jsp?demographic_no=<%=demoNo%>','PrintDrugProfile2')">Timeline Drug Profile</a>
@@ -941,46 +940,70 @@ body {
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>
+                                            <td style="height: 150px; overflow: auto; border: thin solid #DCDCDC; display: none;" id="reprint">
                                             
 <%-- Start List Drugs Prescribed --%>
-                                                <div style="height: 100px; overflow: auto; background-color: #DCDCDC; border: thin solid green; display: none;" id="reprint">
+<%--                                                <div style="height: 150px; overflow: auto; border: thin inset grey; display: none;" id="reprint">--%>
+
+
+
+                        <% for (int i = 0; prescribedDrugs.length > i; i++) {
+                            oscar.oscarRx.data.RxPrescriptionData.Prescription drug =  prescribedDrugs[i];
+                        %>
+
                                                     <%
-
-
-                        for (int i = 0; i < prescribedDrugs.length; i++) {
-                            oscar.oscarRx.data.RxPrescriptionData.Prescription drug = prescribedDrugs[i];
                             if (drug.getScript_no() != null && script_no.equals(drug.getScript_no())) {
                                                     %>
-                                                    <br>
-                                                    <div style="float: left; width: 24%; padding-left: 40px;">&nbsp;</div>
-                                                    <a style="float: left;" href="javascript:void(0);" onclick="reprint2('<%=drug.getScript_no()%>')"><%=drug.getRxDisplay()%></a>
+
+
+                                                    <div style="text-indent: 5px">
+                                                    <a href="javascript:void(0);" onclick="reprint2('<%=drug.getScript_no()%>')">
+                                                        <%=drug.getRxDisplay()%>
+                                                    </a>
+                                                    </div>
+
                                                     <%
                             } else {
-                                                    %>
-                                                    <%=i > 0 ? "<br style='clear:both;'><br style='clear:both;'>" : ""%><div style="float: left; width: 12%; padding-left: 20px;"><%=drug.getRxDate()%></div>
-                                                    <div style="float: left; width: 12%; padding-left: 20px;">
-                                                    <a href="#" onclick="showPreviousPrints(<%=drug.getScript_no() %>);return false;">
-                                                    <%=drug.getNumPrints()%>&nbsp;Prints</div>
-                                                    </a>
-                                                    <a style="float: left;" href="javascript:void(0);" onclick="reprint2('<%=drug.getScript_no()%>')"><%=drug.getRxDisplay()%></a>
-                                                    <%
-                            }
-                            script_no = drug.getScript_no() == null ? "" : drug.getScript_no();
-                        }
-                                                    %>
-                                                </div>
-                                                
+
+                                         if(i != 0) { %>
+                                            </div> <!-- closes the reprintRxItem wrapper -->
+                                        <%}%>
+                                                    <div class="reprintRxItem">
+                                                        <div class="reprintRxItemHeading">
+                                                            <div>
+                                                            <strong>Rx: <%=drug.getRxDate()%></strong>
+                                                            </div>
+                                                            <div>
+                                                            <a href="javascript:void(0)" onclick="showPreviousPrints(<%=drug.getScript_no() %>);return false;">
+                                                            <%=drug.getNumPrints()%>&nbsp;Print(s)
+                                                            </a>
+                                                            </div>
+                                                        </div>
+                                                        <div style="text-indent: 5px">
+                                                        <a href="javascript:void(0);" onclick="reprint2('<%=drug.getScript_no()%>')"><%=drug.getRxDisplay()%></a>
+                                                        </div>
+
+
+                            <%} %>
+
+                            <% script_no = drug.getScript_no() == null ? "" : drug.getScript_no();
+							if(prescribedDrugs.length == i+1) { %>
+                                    </div> <!-- closes the LAST reprintRxItem wrapper -->
+                            <%}}%>
+
+<%--                                                </div>--%>
+<%--                                                --%>
+
                                             </td>
                                         </tr>
                                         <tr><!--move this left-->
                                             <td>
-                                                <table border="0" style="width:100%">
+                                                <table>
                                                     <tr>
                                                         <td>
-                                                            <table width="100%" cellspacing="0" cellpadding="0" class="legend">
+                                                            <table class="legend">
                                                                     <tr>
-                                                                        <td width="100">
+                                                                        <td style="text-align: left; width:100px;">
                                                                             <a href="javascript:void(0);" title="View drug profile legend" onclick="ThemeViewer();" style="font-style:normal;color:#000000" >
                                                                             	<bean:message key="SearchDrug.msgProfileLegend"/>:
                                                                             </a>
@@ -990,7 +1013,7 @@ body {
                                                                             </a>
                                                                         </td>
 
-																	    <td align="left">
+																	    <td>
 
 																	       <table class="legend_items" align="left">
 																			<tr>
@@ -1055,7 +1078,7 @@ body {
                                                             <html:form action="/oscarRx/rePrescribe">
                                                                 <html:hidden property="drugList" />
                                                                 <input type="hidden" name="method">
-                                                            </html:form> <br>
+                                                            </html:form>
                                                             <html:form action="/oscarRx/deleteRx">
                                                                 <html:hidden property="drugList" />
                                                             </html:form></td>
@@ -1113,23 +1136,8 @@ body {
                 </td>
             </tr>
 
-            <tr><td></td><td align="center" ><a href="javascript:window.scrollTo(0,0);"><bean:message key="oscarRx.BackToTop"/></a></td></tr>
+<%--            <tr><td></td><td align="center" ><a href="javascript:window.scrollTo(0,0);"><bean:message key="oscarRx.BackToTop"/></a></td></tr>--%>
 
-<tr>
-    <td height="0%" style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;" colspan="3">
-</tr>
-
-<tr>
-    <td width="100%" height="0%" colspan="3">&nbsp;
-
-    </td>
-</tr>
-
-<tr>
-    <td width="100%" height="0%" style="padding: 5px" bgcolor="#DCDCDC" colspan="3">
-
-    </td>
-</tr>
 
 </table>
 
@@ -1283,25 +1291,36 @@ body {
                         }
 %>
 <script type="text/javascript">
-function changeLt(drugId){
-    if (confirm('<bean:message key="oscarRx.Prescription.changeDrugLongTermConfirm" />')==true) {
-           var data="ltDrugId="+drugId+"&rand="+Math.floor(Math.random()*10001);
-           var url="<c:out value='${ctx}'/>"+ "/oscarRx/WriteScript.do?parameterValue=changeToLongTerm";
-           new Ajax.Request(url,{method: 'post',parameters:data,onSuccess:function(transport){
-                   var json=transport.responseText.evalJSON();
-                   if(json!=null && (json.success=='true'||json.success==true) ){
-                        $("notLongTermDrug_"+drugId).innerHTML="*";
-                        $("notLongTermDrug_"+drugId).setStyle({
-                            textDecoration: 'none',
-                            color: 'red'
-                        });
-                        $("notLongTermDrug_"+drugId).setAttribute("onclick","");
-                        $("notLongTermDrug_"+drugId).setAttribute("href","");
-                    }else{
+    function changeLt(element, drugId) {
+        if (confirm('<bean:message key="oscarRx.Prescription.changeDrugLongTermConfirm" />') === true) {
+            const data = "ltDrugId=" + drugId + "&isLongTerm=" + element.checked + "&rand=" + Math.floor(Math.random() * 10001);
+            const url = "<c:out value='${ctx}'/>" + "/oscarRx/WriteScript.do?parameterValue=updateLongTermStatus";
+            new Ajax.Request(url, {
+                method: 'post',
+                parameters: data,
+                onSuccess: function (transport) {
+                    const json = transport.responseText.evalJSON();
+                    if (json != null && (json.success === 'true' || json.success === true)) {
+                        callReplacementWebService('ListDrugs.jsp','drugProfile');
+                    } else {
+                        checkboxRevertStatus(element);
                     }
-               }});
-       }
-}
+                },
+                onFailure: function () {
+                    checkboxRevertStatus(element);
+                }
+            });
+        } else {
+            checkboxRevertStatus(element);
+        }
+    }
+
+    function checkboxRevertStatus(checkbox) {
+        setTimeout(function () {
+            checkbox.checked = !checkbox.checked;
+        }, 500);
+    }
+
     function checkReRxLongTerm(){
         var url=window.location.href;
         var match=url.indexOf('ltm=true');
@@ -2070,13 +2089,13 @@ function updateReRxDrugId(elementId){
 }
 
 
-function removeReRxDrugId(drugId){
-	 if(drugId!=null){
-	   var data="reRxDrugId="+drugId+"&action=removeFromReRxDrugIdList&rand="+Math.floor(Math.random()*10001);
-	   var url= "<c:out value="${ctx}"/>" + "/oscarRx/WriteScript.do?parameterValue=updateReRxDrug";
-	   new Ajax.Request(url, {method: 'get',parameters:data});
-	}
-	}
+function removeReRxDrugId(drugId) {
+    if (drugId != null) {
+        const data = "reRxDrugId=" + drugId + "&action=removeFromReRxDrugIdList&rand=" + Math.floor(Math.random() * 10001);
+        const url = "<c:out value="${ctx}"/>" + "/oscarRx/WriteScript.do?parameterValue=updateReRxDrug";
+        new Ajax.Request(url, {method: 'get', parameters: data});
+    }
+}
 
 //represcribe a drug
 function represcribe(element, toArchive){
@@ -2105,6 +2124,138 @@ function represcribe(element, toArchive){
             }});
 
    }
+}
+
+/**
+ * Updates the re-prescribing status of a prescribed drug in the UI and session.
+ *
+ * @param element The checkbox element that triggered the update.
+ * @param drugId The ID of the drug being updated.
+ */
+function updateReRxStatusForPrescribedDrug(element, drugId) {
+    const uiRefId = element.id.split('_')[1];
+    if (drugId == null || uiRefId == null) {
+        return;
+    }
+
+    if (element.checked === true) {
+        this.addDrugToReRxList(uiRefId, drugId);
+    } else {
+        this.removeDrugFromReRxList(uiRefId, drugId);
+    }
+}
+
+/**
+ * Sets off instruction parsing and adds a drug to the re-prescribe list in the UI and session.
+ *
+ * @param uiRefId The unique ID used in the UI to reference this drug.
+ * @param drugId The ID of the drug to add.
+ */
+function addDrugToReRxList(uiRefId, drugId) {
+    skipParseInstr = true;
+
+    this.addDrugToReRxListInSession(uiRefId, drugId);
+    this.rePrescribe2(uiRefId, drugId);
+}
+
+/**
+ * Add ReRx drug to UI by making an AJAX request to update the 'rxText' element.
+ *
+ * @param uiRefId The unique ID used in the UI to reference this drug.
+ * @param drugId The ID of the drug to re-prescribe.
+ */
+function rePrescribe2(uiRefId, drugId) {
+    const data = "drugId=" + drugId;
+    const url = "<c:out value="${ctx}"/>" + "/oscarRx/rePrescribe2.do?method=represcribe2&rand=" + uiRefId;
+    new Ajax.Updater('rxText', url, {
+        method: 'get', parameters: data, evalScripts: true,
+        insertion: Insertion.Bottom, onSuccess: function (transport) {
+            // updateCurrentInteractions();
+        }
+    });
+}
+
+/**
+ * Adds a drug to the re-prescribe list in the session.
+ *
+ * @param uiRefId The unique ID used in the UI to reference this drug.
+ * @param drugId The ID of the drug to add.
+ */
+function addDrugToReRxListInSession(uiRefId, drugId) {
+    const dataUpdateId = "reRxDrugId=" + drugId + "&action=addToReRxDrugIdList&rand=" + uiRefId;
+    const urlUpdateId = "<c:out value="${ctx}"/>" + "/oscarRx/WriteScript.do?parameterValue=updateReRxDrug";
+    new Ajax.Request(urlUpdateId, {method: 'get', parameters: dataUpdateId});
+}
+
+/**
+ * Removes a drug from the re-prescribe list and updates the UI.
+ *
+ * @param uiRefId The unique ID used in the UI to reference this drug.
+ * @param drugId The ID of the drug to remove.
+ */
+function removeDrugFromReRxList(uiRefId, drugId) {
+    this.removeElementFromUI(this.getPrescribingDrugCardByUiRefId(uiRefId));
+    this.removeReRxDrugId(drugId);
+}
+
+/**
+ * Removes a prescribing drug entry from both the UI and the backend.
+ * @param cardId The id of the card from which to delete
+ * @param drugId The id of the drug to remove
+ */
+function removePrescribingDrug(cardId, drugId) {
+    const uiRefId = cardId.id.split('_')[1];
+    this.deletePrescribingDrugFromUI(uiRefId, drugId);
+    this.uncheckReRxForExistingPrescribedDrug(uiRefId, drugId)
+}
+
+/**
+ * Deletes a prescribing drug from UI and calls deletePrescribe.
+ * @param uiRefId The unique id for referencing the UI element.
+ * @param drugId The id of the drug to delete.
+ */
+function deletePrescribingDrugFromUI(uiRefId, drugId) {
+    this.removeElementFromUI(this.getPrescribingDrugCardByUiRefId(uiRefId));
+    this.deletePrescribe(drugId);
+}
+
+/**
+ * Removes a DOM element from the UI.
+ * @param {HTMLElement} element The element to remove.
+ */
+function removeElementFromUI(element) {
+    if (element)
+        element.remove();
+}
+
+/**
+ * Unchecks the "re-prescribe" checkbox for an existing prescribed drug and removes its ID from the re-prescribe list.
+ * @param uiRefId The UI reference ID for the drug.
+ * @param drugId The ID of the drug.
+ */
+function uncheckReRxForExistingPrescribedDrug(uiRefId, drugId) {
+    const checkbox = this.getReRxCheckboxByUiRefId(uiRefId);
+    if (checkbox)
+        checkbox.checked = false;
+    this.removeReRxDrugId(drugId);
+}
+
+/**
+ * Gets the prescribing/staged drug container element by its UI reference ID.
+ * @param uiRefId The UI reference ID.
+ * @returns {HTMLElement|null} The drug container element, or null if not found.
+ */
+function getPrescribingDrugCardByUiRefId(uiRefId) {
+    return $('set_' + uiRefId);
+}
+
+/**
+ * Gets the re-prescribe checkbox element by its UI reference ID.
+ * @param uiRefId The UI reference ID.
+ * @returns {HTMLElement|null} The checkbox element, or null if not found.
+ */
+function getReRxCheckboxByUiRefId(uiRefId) {
+    return $('reRxCheckBox_' + uiRefId);
 }
 
 function updateQty(element){

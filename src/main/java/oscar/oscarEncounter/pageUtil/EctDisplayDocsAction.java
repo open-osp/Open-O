@@ -42,7 +42,7 @@ import org.apache.struts.util.MessageResources;
 import org.oscarehr.common.dao.DocumentDao.DocumentType;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
-
+import org.owasp.encoder.Encode;
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
 import org.oscarehr.documentManager.EDocUtil.EDocSort;
@@ -137,6 +137,7 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     
     			String dispDocNo = curDoc.getDocId();
     			title = StringUtils.maxLenString(curDoc.getDescription(), MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
+    			title = Encode.forHtml(title);
     
     			if (EDocUtil.getDocUrgentFlag(dispDocNo)) title = StringUtils.maxLenString("!" + curDoc.getDescription(), MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
     
@@ -158,7 +159,7 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     			
     			if (inboxflag) {
     				String path = oscar.util.plugin.IsPropertiesOn.getProperty("DOCUMENT_DIR");
-    				url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/mod/docmgmtComp/FillARForm.do?method=showInboxDocDetails&path=" + path + "&demoNo=" + bean.demographicNo + "&name=" + StringEscapeUtils.escapeHtml(dispFilename) + "'); return false;";
+    				url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/mod/docmgmtComp/FillARForm.do?method=showInboxDocDetails&path=" + path + "&demoNo=" + bean.demographicNo + "&name=" + Encode.forHtml(dispFilename) + "'); return false;";
     				isURLjavaScript = true;
     			}
     			else if( curDoc.getRemoteFacilityId()==null && curDoc.isPDF() ) {
@@ -173,6 +174,7 @@ public class EctDisplayDocsAction extends EctDisplayAction {
     			item.setTitle(title);
     			key = StringUtils.maxLenString(curDoc.getDescription(), MAX_LEN_KEY, CROP_LEN_KEY, ELLIPSES) + "(" + serviceDateStr + ")";
     			key = StringEscapeUtils.escapeJavaScript(key);
+    			key = Encode.forHtml(key);
     
     			if (inboxflag) {
     				if (!EDocUtil.getDocReviewFlag(dispDocNo)) item.setColour("FF0000");

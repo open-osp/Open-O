@@ -24,119 +24,91 @@
 
 --%>
 <!DOCTYPE html>
-<%@page import="org.oscarehr.sharingcenter.SharingCenterUtil"%>
-<%@page import="org.oscarehr.sharingcenter.dao.AffinityDomainDao"%>
-<%@page import="org.oscarehr.sharingcenter.model.AffinityDomainDataObject"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
 
-<%@page import="java.util.*,oscar.eform.*"%>
-<%@page import="org.oscarehr.web.eform.EfmPatientFormList"%>
+<%@page import="java.util.*,oscar.eform.*" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.oscarehr.managers.DemographicManager" %>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.oscarehr.util.LoggedInInfo" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
-	String demographic_no = request.getParameter("demographic_no");
-	String deepColor = "#CCCCFF", weakColor = "#EEEEFF";
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    String demographic_no = request.getParameter("demographic_no");
+    String deepColor = "#CCCCFF", weakColor = "#EEEEFF";
 
-	if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
-	String roleName$ = (String)session.getAttribute("userrole") + "," + (String)session.getAttribute("user");
-	String country = request.getLocale().getCountry();
-	String orderByRequest = request.getParameter("orderby");
-	String orderBy = "";
-	if (orderByRequest == null) orderBy = EFormUtil.DATE;
-	else if (orderByRequest.equals("form_subject")) orderBy = EFormUtil.SUBJECT;
-	else if (orderByRequest.equals("form_name")) orderBy = EFormUtil.NAME;
-
-	String groupView = request.getParameter("group_view");
-	if (groupView == null)
-	{
-		groupView = "";
+	if (session.getAttribute("userrole") == null) {
+		response.sendRedirect("../logout.jsp");
+	}
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String country = request.getLocale().getCountry();
+    String orderByRequest = request.getParameter("orderby");
+    String orderBy = "";
+	if (orderByRequest == null) {
+		orderBy = EFormUtil.DATE;
+	} else if (orderByRequest.equals("form_subject")) {
+		orderBy = EFormUtil.SUBJECT;
+	} else if (orderByRequest.equals("form_name")) {
+		orderBy = EFormUtil.NAME;
 	}
 
-	String appointment = request.getParameter("appointment");
-	String parentAjaxId = request.getParameter("parentAjaxId");
+    String groupView = request.getParameter("group_view");
+    if (groupView == null) {
+        groupView = "";
+    }
 
-	boolean isMyOscarAvailable = EfmPatientFormList.isMyOscarAvailable(Integer.parseInt(demographic_no));
-
-	// MARC-HI's Sharing Center
-	boolean isSharingCenterEnabled = SharingCenterUtil.isEnabled();
-
-	// get all installed affinity domains
-	AffinityDomainDao affDao = SpringUtils.getBean(AffinityDomainDao.class);
-	List<AffinityDomainDataObject> affinityDomains = affDao.getAllAffinityDomains();
-
+    String appointment = request.getParameter("appointment");
+    String parentAjaxId = request.getParameter("parentAjaxId");
 %>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%!
+    DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+%>
+<%
+    pageContext.setAttribute("demographic", demographicManager.getDemographic(loggedInInfo, demographic_no));
+%>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
-<html:html locale="true">
+<html:html>
 
-	<head>
-		<title><bean:message key="eform.showmyform.title" /></title>
+    <head>
+        <title><bean:message key="eform.showmyform.title"/></title>
 
 
-		<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
-		<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
-		<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
-		<link href="${pageContext.request.contextPath}/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" rel="stylesheet" >
+        <link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/library/DataTables/datatables.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css" rel="stylesheet">
 
-		<script src="${pageContext.request.contextPath}/js/global.js"></script>
-		<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
-		<script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
 
-		<script src="${ pageContext.request.contextPath }/library/jquery/jquery-ui-1.12.1.min.js"></script>
-		<script src="${ pageContext.request.contextPath }/library/DataTables/datatables.min.js"></script><!-- 1.13.4 -->
+        <script src="${pageContext.request.contextPath}/js/global.js"></script>
+        <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+        <script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.js"></script>
+        <script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script>
 
-		<script src="${ pageContext.request.contextPath }/js/jquery.fileDownload.js"></script>
-		<script src="${ pageContext.request.contextPath }/share/javascript/Oscar.js"></script>
+        <script src="${ pageContext.request.contextPath }/js/jquery.fileDownload.js"></script>
+        <script src="${ pageContext.request.contextPath }/share/javascript/Oscar.js"></script>
 
-		<script>
-			function showHtml() {
+        <script>
 
-				//		preparingMessageHtml: "Generating PDF, please wait...",
-				//		failMessageHtml: "There was a problem generating PDF, please try again.",
-				var content = document.body.innerHTML;
-				$.fileDownload(
-						"<%=request.getContextPath()%>/html2pdf",
-						{
-							httpMethod: "POST",
-							data: {"content":  content}
-						}
-				);
-				return false;
-			}
+			$(document).ready(function () {
 
-			$(document).ready(function() {
-				var shareDocumentsTarget = "../sharingcenter/documents/shareDocumentsAction.jsp";
-
-				// Share button click event
-				$("#SendToAffinityDomain").on( "click", function() {
-					// change the form's action (share page) then submit (only if forms are selected)
-					if ($("input:checkbox[name='sendToPhr']:checked").length > 0) {
-						$("#sendToPhrForm").attr('action', shareDocumentsTarget);
-						$("#sendToPhrForm").trigger( "submit" );
-					} else {
-						alert('No forms selected');
-						return false;
-					}
-				});
-				var table = jQuery('#efmTable').DataTable({
-					"pageLength": 15,
-					"lengthMenu": [ [15, 30, 60, 120, -1], [15, 30, 60, 120, '<bean:message key="demographic.search.All"/>'] ],
+				let table = jQuery('#efmTable').DataTable({
+					"lengthMenu": [[15, 30, 60, 120, -1], [15, 30, 60, 120, '<bean:message key="demographic.search.All"/>']],
 					"order": [2],
+					columnDefs: [{ orderable: false, targets: 3 }],
 					"language": {
 						"url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
 					}
 				});
 
 			});
-		</script>
 
-		<script>
 			function popupPage(varpage, windowname) {
-				var page = "" + varpage;
+				let page = "" + varpage;
 				windowprops = "height=700,width=800,location=no,"
-						+ "scrollbars=yes,menubars=no,status=yes,toolbars=no,resizable=yes,top=10,left=200";
-				var popup = window.open(page, windowname, windowprops);
+					+ "scrollbars=yes,menubars=no,status=yes,toolbars=no,resizable=yes,top=10,left=200";
+				let popup = window.open(page, windowname, windowprops);
 				if (popup != null) {
 					if (popup.opener == null) {
 						popup.opener = self;
@@ -146,168 +118,153 @@
 			}
 
 			function checkSelectBox() {
-				var selectVal = document.forms[0].group_view.value;
-				if (selectVal == "default") {
+				let selectVal = document.forms[0].group_view.value;
+				if (selectVal === "default") {
 					return false;
 				}
 			}
 
 			function updateAjax() {
-				var parentAjaxId = "<%=parentAjaxId%>";
-				if( parentAjaxId != "null" ) {
+				let parentAjaxId = "<%=parentAjaxId%>";
+				if (parentAjaxId !== "null") {
 					window.opener.document.forms['encForm'].elements['reloadDiv'].value = parentAjaxId;
 					window.opener.updateNeeded = true;
 				}
 
 			}
-		</script>
+        </script>
+        <style>
+            :root *:not(h2, .h2) {
+                font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+                font-size: 12px;
+                overscroll-behavior: none;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
 
-	</head>
+            #heading h2 {
+                display: inline-block;
+            }
 
-	<body onunload="updateAjax()" >
+            #heading span {
+                margin-left:50px;
+            }
 
-	<!--  -->
-	<table class="MainTable" id="scrollNumber1">
-		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn" style="width:175px;"><h4><bean:message
-					key="eform.showmyform.msgMyForm" /></h4></td>
-			<td class="MainTableTopRowRightColumn">
-				<table class="TopStatusBar" style="width:100%">
-					<tr>
-						<td><bean:message key="eform.showmyform.msgFormLybrary" /></td>
-						<td>&nbsp;</td>
-						<td style="text-align: right"><oscar:help keywords="eform" key="app.top1"/> | <a
-								href="javascript:popupStart(600,800,'About.jsp')"><bean:message
-								key="global.about" /></a> | <a
-								href="javascript:popupStart(600,800,'License.jsp')"><bean:message
-								key="global.license" /></a></td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableLeftColumn" style="vertical-align:top;">
 
-				<a href="${ pageContext.request.contextPath }/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><bean:message key="demographic.demographiceditdemographic.btnMasterFile" /></a>
+            :root a {
+                color:blue;
+            }
 
-				<br>
-				<a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>" class="current"> <bean:message key="eform.showmyform.btnAddEForm"/></a><br/>
-				<a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.calldeletedformdata.btnGoToForm"/></a><br/>
-				<a href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message key="eform.showmyform.btnDeleted"/></a>
+            div.menu-columns {
+                display: flex;
+                gap: 10px;
+            }
 
-				<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.eform" rights="r" reverse="<%=false%>" >
-					<br/>
-					<a href="#" onclick="javascript: return popup(600, 1200, '${ pageContext.request.contextPath }/administration/?show=Forms', 'manageeforms');" style="color: #835921;"><bean:message key="eform.showmyform.msgManageEFrm"/></a>
-				</security:oscarSec>
+            div.left-column {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                flex-basis: max-content;
+                text-wrap: nowrap;
+            }
+        </style>
 
-				<jsp:include page="efmviewgroups.jsp">
-					<jsp:param name="url" value="${ pageContext.request.contextPath }/eform/efmpatientformlist.jsp" />
-					<jsp:param name="groupView" value="<%=groupView%>" />
-					<jsp:param name="patientGroups" value="1" />
-					<jsp:param name="parentAjaxId" value="<%=parentAjaxId%>" />
-				</jsp:include>
+    </head>
 
-			</td>
-			<td class="MainTableRightColumn" style="width:90%; vertical-align:top">
+    <body onunload="updateAjax()">
+    <div class="container">
+        <div id="heading">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16">
+                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5zM3 12v-2h2v2zm0 1h2v2H4a1 1 0 0 1-1-1zm3 2v-2h7v1a1 1 0 0 1-1 1zm7-3H6v-2h7z"></path>
+                </svg>
+                <bean:message key="eform.showmyform.msgFormLybrary"/>
+            </h2>
+            <span><c:out value="${demographic.displayName}" /></span>
+        </div>
+        <div class="menu-columns">
 
-				<form id="sendToPhrForm" action="efmpatientformlistSendPhrAction.jsp">
-					<input type="hidden" name="clientId" value="<%=demographic_no%>" />
-					<table id="efmTable" style="width:100%" class="display compact nowrap">
-						<thead>
-						<tr>
-							<%
-								if (isMyOscarAvailable || isSharingCenterEnabled)
-								{
-							%>
-							<th>&nbsp;</th>
-							<%
-								}
-							%>
-							<th>
-								<a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&orderby=form_name&group_view=<%=groupView%>&parentAjaxId=<%=parentAjaxId%>">
-									<bean:message key="eform.showmyform.btnFormName" />
-								</a>
-							</th>
-							<th><a
-									href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&orderby=form_subject&group_view=<%=groupView%>&parentAjaxId=<%=parentAjaxId%>"><bean:message
-									key="eform.showmyform.btnSubject" /></a></th>
-							<th><a
-									href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&group_view=<%=groupView%>&parentAjaxId=<%=parentAjaxId%>"><bean:message
-									key="eform.showmyform.formDate" /></a></th>
-							<th><bean:message key="eform.showmyform.msgAction" /></th>
-						</tr>
-						</thead>
-						<tbody>
-						<%
-							ArrayList<HashMap<String,? extends Object>> eForms;
-							if (groupView.equals(""))
-							{
-								eForms = EFormUtil.listPatientEForms(orderBy, EFormUtil.CURRENT, demographic_no, roleName$);
-							}
-							else
-							{
-								eForms = EFormUtil.listPatientEForms(orderBy, EFormUtil.CURRENT, demographic_no, groupView, roleName$);
-							}
+            <div class="left-column">
 
-							for (int i = 0; i < eForms.size(); i++)
-							{
-								HashMap<String,? extends Object> curform = eForms.get(i);
-						%>
-						<tr>
-							<%
-								if (isMyOscarAvailable || isSharingCenterEnabled)
-								{
-							%>
-							<td>
-								<input type="checkbox" name="sendToPhr" value="<%=curform.get("fdid")%>" />
-							</td>
-							<%
-								}
-							%>
-							<td><a href="#"
-							       ONCLICK="popupPage('efmshowform_data.jsp?fdid=<%=curform.get("fdid")%>&appointment=<%=appointment%>', '<%="FormP" + i%>'); return false;"
-							       TITLE="<bean:message key="eform.showmyform.msgViewFrm"/>"
-							       onmouseover="window.status='<bean:message key="eform.showmyform.msgViewFrm"/>'; return true"><%=curform.get("formName")%></a></td>
-							<td><%=curform.get("formSubject")%></td>
-							<td style='text-align:center'><%=curform.get("formDate")%></td>
-							<td style='text-align:center'><a
-									href="${ pageContext.request.contextPath }/eform/removeEForm.do?fdid=<%=curform.get("fdid")%>&group_view=<%=groupView%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>" onClick="javascript: return confirm('Are you sure you want to delete this eform?');"><bean:message
-									key="eform.uploadimages.btnDelete" /></a></td>
-						</tr>
-						<%
-							}
-						%>
-						</tbody>
-					</table>
-					<% if (isMyOscarAvailable) { %>
-					<input type="submit" class="btn" value="<bean:message key="eform.showmyform.btnsendtophr" />"> |
-					<% } %>
-					<button onclick="showHtml(); return false;" class="btn">Save as PDF</button>
+                <a href="${ pageContext.request.contextPath }/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><bean:message
+                        key="demographic.demographiceditdemographic.btnMasterFile"/></a>
+                <a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"
+                   class="current"> <bean:message key="eform.showmyform.btnAddEForm"/></a>
+                <a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message
+                        key="eform.calldeletedformdata.btnGoToForm"/></a>
+                <jsp:include page="efmviewgroups.jsp">
+                    <jsp:param name="url" value="${ pageContext.request.contextPath }/eform/efmpatientformlist.jsp"/>
+                    <jsp:param name="groupView" value="<%=groupView%>"/>
+                    <jsp:param name="patientGroups" value="1"/>
+                    <jsp:param name="parentAjaxId" value="<%=parentAjaxId%>"/>
+                </jsp:include>
 
-					<!-- MARC-HI's Sharing Center -->
-					<% if (isSharingCenterEnabled) { %>
-					<input type="hidden" id="documentType" name="type" value="eforms" >
-					<div>
-						<span style="float: right;">
-                          <select name="affinityDomain">
+                <a href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message
+                        key="eform.showmyform.btnDeleted"/></a>
 
-                            <% for(AffinityDomainDataObject domain : affinityDomains) { %>
-                              <option value="<%=domain.getId()%>"><%=domain.getName()%></option>
-                            <% } %>
+                <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.eform" rights="r"
+                                   reverse="<%=false%>">
+                    <a href="#" onclick="javascript: return popup(600, 1200, '${ pageContext.request.contextPath }/administration/?show=Forms', 'manageeforms');"
+                       style="color: #835921;"><bean:message key="eform.showmyform.msgManageEFrm"/></a>
+                </security:oscarSec>
 
-                          </select>
-                          <input type="button" id="SendToAffinityDomain" name="SendToAffinityDomain" value="Share">
-                        </span>
-					</div>
-					<% } %>
+            </div>
+            <div class="right-column">
 
-				</form>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableBottomRowLeftColumn"></td>
-			<td class="MainTableBottomRowRightColumn"></td>
-		</tr>
-	</table>
-	</body>
+                <form id="sendToPhrForm" action="efmpatientformlistSendPhrAction.jsp">
+                    <input type="hidden" name="clientId" value="<%=demographic_no%>"/>
+                    <table id="efmTable" class="table table-striped table-compact dataTable no-footer">
+                        <thead>
+                        <tr>
+                            <th>
+                                <bean:message key="eform.showmyform.btnFormName"/>
+                            </th>
+                            <th>
+                                <bean:message key="eform.showmyform.btnSubject"/>
+                            </th>
+                            <th>
+                                <bean:message key="eform.showmyform.formDate"/>
+                            </th>
+                            <th><bean:message key="eform.showmyform.msgAction"/></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <%
+                            ArrayList<HashMap<String, ? extends Object>> eForms;
+                            if (groupView.equals("")) {
+                                eForms = EFormUtil.listPatientEForms(orderBy, EFormUtil.CURRENT, demographic_no, roleName$);
+                            } else {
+                                eForms = EFormUtil.listPatientEForms(orderBy, EFormUtil.CURRENT, demographic_no, groupView, roleName$);
+                            }
+
+                            for (int i = 0; i < eForms.size(); i++) {
+                                HashMap<String, ? extends Object> curform = eForms.get(i);
+                        %>
+                        <tr>
+
+                            <td><a href="#"
+                                   ONCLICK="popupPage('efmshowform_data.jsp?fdid=<%=curform.get("fdid")%>&appointment=<%=appointment%>', '<%="FormP" + i%>'); return false;"
+                                   TITLE="<bean:message key="eform.showmyform.msgViewFrm"/>"
+                                   onmouseover="window.status='<bean:message
+                                           key="eform.showmyform.msgViewFrm"/>'; return true"><%=Encode.forHtmlContent((String)curform.get("formName"))%>
+                            </a></td>
+                            <td><%=Encode.forHtmlContent((String)curform.get("formSubject"))%>
+                            </td>
+                            <td><%=curform.get("formDate")%>
+                            </td>
+                            <td><a style="color:red;" href="${ pageContext.request.contextPath }/eform/removeEForm.do?fdid=<%=curform.get("fdid")%>&group_view=<%=groupView%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>"
+                                    onClick="return confirm('Are you sure you want to delete this eform?');"><bean:message
+                                    key="eform.uploadimages.btnDelete"/></a></td>
+                        </tr>
+                        <%
+                            }
+                        %>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    </body>
 </html:html>

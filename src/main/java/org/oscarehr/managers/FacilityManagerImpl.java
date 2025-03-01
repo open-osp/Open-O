@@ -47,10 +47,6 @@ public class FacilityManagerImpl implements FacilityManager{
 		if (results.size() == 0) {
 			return (null);
 		} else {
-
-			//--- log action ---
-			LogAction.addLogSynchronous(loggedInInfo,"FacilityManager.getDefaultFacility", null);
-
 			return (results.get(0));
 		}
 	}

@@ -27,6 +27,7 @@ package oscar.oscarLab.ca.bc.PathNet;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.billing.CA.BC.dao.*;
 import org.oscarehr.billing.CA.BC.model.*;
+import org.oscarehr.billing.CA.BC.util.PathNetLabResults;
 import org.oscarehr.common.dao.ConsultDocsDao;
 import org.oscarehr.common.dao.ConsultResponseDocDao;
 import org.oscarehr.common.dao.EFormDocsDao;
@@ -34,7 +35,6 @@ import org.oscarehr.common.dao.PatientLabRoutingDao;
 import org.oscarehr.common.model.ConsultDocs;
 import org.oscarehr.common.model.EFormDocs;
 import org.oscarehr.common.model.PatientLabRouting;
-import org.oscarehr.common.model.ProviderLabRoutingModel;
 import org.oscarehr.util.SpringUtils;
 import oscar.oscarLab.ca.on.LabResultData;
 import oscar.util.ConversionUtils;
@@ -152,31 +152,35 @@ public class PathnetResultsData {
 
 		ArrayList<LabResultData> labResults = new ArrayList<LabResultData>();
 		try {
-			List<Object[]> pathnetResultsData = null;
+			List<PathNetLabResults> pathNetLabResultsList = null;
 
 			if(labNo != null && labNo.intValue()>0) {
-				pathnetResultsData  = hl7MshDao.findPathnetResultsByLabNo(labNo);
+				pathNetLabResultsList = hl7MshDao.findPathnetResultsByLabNo(labNo);
 			} else {
 				if (demographicNo == null) {
-					pathnetResultsData = hl7MshDao.findPathnetResultsDataByPatientNameHinStatusAndProvider(patientLastName + "%^" + patientFirstName + "%", "%" + patientHealthNumber + "%", "%" + status + "%", providerNo.equals("") ? "%" : providerNo, "BCP");
+					pathNetLabResultsList = hl7MshDao.findPathnetResultsDataByPatientNameHinStatusAndProvider(patientLastName + "%^" + patientFirstName + "%", "%" + patientHealthNumber + "%", "%" + status + "%", providerNo.equals("") ? "%" : providerNo, "BCP");
 				} else {
-					pathnetResultsData = hl7MshDao.findPathnetResultsDeomgraphicNo(ConversionUtils.fromIntString(demographicNo), "BCP");
+					pathNetLabResultsList = hl7MshDao.findPathnetResultsDeomgraphicNo(ConversionUtils.fromIntString(demographicNo), "BCP");
 				}
 			}
 
-			for (Object[] o : pathnetResultsData) {
-				Hl7Msh msh = (Hl7Msh) o[0];
-				Hl7Pid pid = (Hl7Pid) o[1];
-				Hl7Orc orc = (Hl7Orc) o[2];
-				ProviderLabRoutingModel p = (ProviderLabRoutingModel) o[4];
-				Long stat = (Long) o[5];
+			for (PathNetLabResults o : pathNetLabResultsList) {
+				Hl7Msh msh = o.getHl7Msh();
+				Hl7Pid pid = o.getHl7Pid();
+				Hl7Orc orc = o.getHl7Orc();
+				Long stat = o.getMinResultStatus();
+
+				String providerLabRoutingStatus = null;
+				if (Objects.nonNull(o.getProviderLabRouting())) {
+					providerLabRoutingStatus = o.getProviderLabRouting().getStatus();
+				}
 
 				LabResultData lbData = new LabResultData(LabResultData.EXCELLERIS);
 				lbData.labType = LabResultData.EXCELLERIS;
 				lbData.segmentID = "" + pid.getMessageId();
 
-				if (demographicNo == null && !providerNo.equals("0")) {
-					lbData.acknowledgedStatus = p.getStatus();
+				if (demographicNo == null && !providerNo.equals("0") && providerLabRoutingStatus != null) {
+					lbData.acknowledgedStatus = providerLabRoutingStatus;
 				} else {
 					lbData.acknowledgedStatus = "U";
 				}

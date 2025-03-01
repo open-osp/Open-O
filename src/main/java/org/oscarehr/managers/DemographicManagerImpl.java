@@ -27,56 +27,33 @@
 
  package org.oscarehr.managers;
 
- import java.net.MalformedURLException;
- import java.util.*;
- import java.util.regex.Matcher;
- import java.util.regex.Pattern;
- 
- import org.apache.logging.log4j.Logger;
- import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
- import org.oscarehr.PMmodule.model.ProgramProvider;
- import org.oscarehr.caisi_integrator.ws.DemographicTransfer;
- import org.oscarehr.caisi_integrator.ws.DemographicWs;
- import org.oscarehr.caisi_integrator.ws.GetConsentTransfer;
- import org.oscarehr.common.Gender;
- import org.oscarehr.common.dao.AdmissionDao;
- import org.oscarehr.common.dao.ConsentDao;
- import org.oscarehr.common.dao.ContactSpecialtyDao;
- import org.oscarehr.common.dao.DemographicArchiveDao;
- import org.oscarehr.common.dao.DemographicContactDao;
- import org.oscarehr.common.dao.DemographicCustArchiveDao;
- import org.oscarehr.common.dao.DemographicCustDao;
- import org.oscarehr.common.dao.DemographicDao;
- import org.oscarehr.common.dao.DemographicExtArchiveDao;
- import org.oscarehr.common.dao.DemographicExtDao;
- import org.oscarehr.common.dao.DemographicMergedDao;
- import org.oscarehr.common.dao.PHRVerificationDao;
- import org.oscarehr.common.exception.PatientDirectiveException;
- import org.oscarehr.common.model.Admission;
- import org.oscarehr.common.model.Consent;
- import org.oscarehr.common.model.ConsentType;
- import org.oscarehr.common.model.ContactSpecialty;
- import org.oscarehr.common.model.Demographic;
- import org.oscarehr.common.model.Demographic.PatientStatus;
- import org.oscarehr.common.model.DemographicContact;
- import org.oscarehr.common.model.DemographicCust;
- import org.oscarehr.common.model.DemographicExt;
- import org.oscarehr.common.model.DemographicMerged;
- import org.oscarehr.common.model.PHRVerification;
- import org.oscarehr.common.model.Provider;
- import org.oscarehr.common.model.UserProperty;
- import org.oscarehr.common.model.enumerator.DemographicExtKey;
- import org.oscarehr.util.DemographicContactCreator;
- import org.oscarehr.util.LoggedInInfo;
- import org.oscarehr.util.MiscUtils;
- import org.oscarehr.util.SpringUtils;
- import org.oscarehr.ws.rest.to.model.DemographicSearchRequest;
- import org.oscarehr.ws.rest.to.model.DemographicSearchResult;
- import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.stereotype.Service;
- 
- import oscar.log.LogAction;
- import oscar.util.StringUtils;
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
+import org.oscarehr.PMmodule.model.ProgramProvider;
+import org.oscarehr.caisi_integrator.ws.DemographicTransfer;
+import org.oscarehr.caisi_integrator.ws.DemographicWs;
+import org.oscarehr.caisi_integrator.ws.GetConsentTransfer;
+import org.oscarehr.common.Gender;
+import org.oscarehr.common.dao.*;
+import org.oscarehr.common.exception.PatientDirectiveException;
+import org.oscarehr.common.model.*;
+import org.oscarehr.common.model.Demographic.PatientStatus;
+import org.oscarehr.common.model.enumerator.DemographicExtKey;
+import org.oscarehr.util.DemographicContactCreator;
+import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
+import org.oscarehr.ws.rest.to.model.DemographicSearchRequest;
+import org.oscarehr.ws.rest.to.model.DemographicSearchResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import oscar.log.LogAction;
+import oscar.util.StringUtils;
+
+import java.net.MalformedURLException;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
  
  /**
   * Will provide access to demographic data, as well as closely related data such
@@ -313,11 +290,6 @@
          checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
          DemographicCust result = null;
          result = demographicCustDao.find(id);
- 
-         // --- log action ---
-         if (result != null) {
-             LogAction.addLogSynchronous(loggedInInfo, "DemographicManager.getDemographicCust", "id=" + id.toString());
-         }
          return result;
      }
  
@@ -1379,10 +1351,7 @@
                  }
              }
          }
- 
-         LogAction.addLogSynchronous(loggedInInfo, "DemographicManager.getMostResponsibleProviderFromHealthCareTeam",
-                 "Retrieving MRP for Demographic " + demographicNo + "");
- 
+
          return DemographicContactCreator.addContactDetailsToDemographicContact(mrp);
      }
  

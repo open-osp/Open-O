@@ -80,6 +80,7 @@ public class EmailSendAction extends DispatchAction {
         String isEncrypted = request.getParameter("isEmailEncrypted");
         String isAttachmentEncrypted = request.getParameter("isEmailAttachmentEncrypted");
         String chartDisplayOption = request.getParameter("patientChartOption");
+        String internalComment = request.getParameter("internalComment");
         String transactionType = request.getParameter("transactionType");
         String demographicNo = request.getParameter("demographicId");
         String additionalParams = request.getParameter("additionalURLParams");
@@ -99,6 +100,7 @@ public class EmailSendAction extends DispatchAction {
         emailData.setIsEncrypted(isEncrypted);
         emailData.setIsAttachmentEncrypted(isAttachmentEncrypted);
         emailData.setChartDisplayOption(chartDisplayOption);
+        emailData.setInternalComment(internalComment);
         emailData.setTransactionType(transactionType);
         emailData.setDemographicNo(demographicNo);
         emailData.setProviderNo(providerNo);

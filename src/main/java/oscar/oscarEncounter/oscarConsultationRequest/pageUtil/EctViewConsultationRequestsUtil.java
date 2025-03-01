@@ -25,26 +25,22 @@
 
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.ConsultationRequestDao;
 import org.oscarehr.common.dao.ConsultationRequestExtDao;
 import org.oscarehr.common.dao.ConsultationServiceDao;
-import org.oscarehr.common.model.ConsultationRequest;
-import org.oscarehr.common.model.ConsultationServices;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.ProfessionalSpecialist;
-import org.oscarehr.common.model.Provider;
+import org.oscarehr.common.model.*;
 import org.oscarehr.common.model.enumerator.ConsultationRequestExtKey;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 public class EctViewConsultationRequestsUtil {         
    
@@ -202,7 +198,7 @@ public class EctViewConsultationRequestsUtil {
 
           List <ConsultationRequest> consultList = consultReqDao.getConsults(Integer.parseInt(demoNo));
           for( ConsultationRequest consult : consultList ) {
-              String serviceDescription = "";
+              String serviceDescription = "unknown";
               // If service id is 0, check the extensions table
               if (consult.getServiceId() == 0) {
                  serviceDescription = consultationRequestExtDao.getConsultationRequestExtsByKey(consult.getId(), ConsultationRequestExtKey.EREFERRAL_SERVICE.getKey());

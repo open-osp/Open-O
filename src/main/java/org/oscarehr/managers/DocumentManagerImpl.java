@@ -153,6 +153,7 @@ public class DocumentManagerImpl implements  DocumentManager{
 		// Generates filename and path data and saves the document data to the file system
 		String documentPath = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
 		String fileName = dateTimeFormat.format(today) + "_" + document.getDocfilename();
+		fileName = MiscUtils.sanitizeFileName(fileName);
 		File file = new File(documentPath + File.separator + fileName);
 		FileUtils.writeByteArrayToFile(file, documentData);
 

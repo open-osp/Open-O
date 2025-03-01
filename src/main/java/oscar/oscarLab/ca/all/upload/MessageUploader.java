@@ -290,8 +290,8 @@ public final class MessageUploader {
 				search = "provider_no";
 			}
 			
-			if( "MEDITECH".equals(type) ) {
-				search = "practitionerNo";
+			if( "MEDITECH".equals(type) || "ExcellerisON".equals(type) ) {
+				search = "practitionerNo"; // ie the college number <oscarDB>.Provider.practitionerNo
 			}
 			
 			if( "IHAPOI".equals(type) ) {

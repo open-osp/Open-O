@@ -48,6 +48,7 @@
 <%@page import="java.util.ArrayList,oscar.util.*,java.util.*,org.oscarehr.common.model.Drug,org.oscarehr.common.dao.*"%>
 <%@page import="org.oscarehr.managers.DrugDispensingManager" %>
 <%@page import="org.oscarehr.managers.CodingSystemManager" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <bean:define id="patient" type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
 <logic:notPresent name="RxSessionBean" scope="session">
     <logic:redirect href="error.html" />
@@ -75,6 +76,85 @@
 	}
 %>
 
+
+
+<style>
+    /* Container for the drug-maintenance-switch */
+    .drug-maintenance-switch {
+        top: -2px;
+        position: relative;
+        width: 34px;
+        height: 16px;
+    }
+
+    /* Hide the default checkbox */
+    .drug-maintenance-switch-input {
+        display: none;
+    }
+
+    /* Style the switch track */
+    .drug-maintenance-switch-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #dfdfdf;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        border-radius: 5%;
+    }
+
+    /* Style the toggle knob, default label to blank if unchecked */
+    .drug-maintenance-switch-label::after {
+        text-align: center;
+        content: '';
+        font-size: xx-small;
+        font-stretch: extra-expanded;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 12px;
+        height: 12px;
+        background-color: #FFFFFFAF;
+        border-radius: 50%;
+        transition: transform 0.3s, content 0.3s, width 0.3s, height 0.3s, border-radius 0.3s;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Change Label to LT (long term) when checked */
+    .drug-maintenance-switch-input:checked + .drug-maintenance-switch-label::after {
+        content: 'LT'; /* Change label when checked */
+        transform: translateX(14px);
+        border-radius: 5%;
+        width: 16px;
+        height: 12px;
+        color: white;
+        background-color: #1e7e34AF;
+    }
+
+    /* Disabled State Styling */
+    .drug-maintenance-switch-input:disabled + .drug-maintenance-switch-label {
+        background-color: #e0e0e0;
+        cursor: not-allowed;
+    }
+
+    /* Disabled State: Handle appearance */
+    .drug-maintenance-switch-input:disabled:checked + .drug-maintenance-switch-label::after {
+        background-color: #1e7e349F;
+        transform: translateX(14px);
+        content: 'LT';
+        width: 16px;
+        height: 12px;
+        border-radius: 5%;
+    }
+
+
+</style>
+
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
@@ -96,10 +176,10 @@
 	
 if (heading != null){
 %>
-<h4 style="margin-bottom:1px;margin-top:3px;"><%=heading%></h4>
+<h4 style="margin-bottom:1px;margin-top:3px;"><%=Encode.forHtmlContent(heading)%></h4>
 <%}%>
 <div class="drugProfileText" style="">
-    <table width="100%" cellpadding="3" border="0" class="sortable" id="Drug_table<%=heading%>">
+    <table width="100%" cellpadding="3" border="0" class="sortable" id="Drug_table<%=Encode.forHtmlContent(heading)%>">
         <tr>
         	<th align="left"><b>Entered Date</b></th>
             <th align="left"><b><bean:message key="SearchDrug.msgRxDate"/></b></th>
@@ -217,38 +297,18 @@ if (heading != null){
             	<% } %>
             </td>
             <td valign="top">
-            	<%
-            		if(prescriptDrug.isLongTerm())
-            		{
-            		%>
-            			*
-            		<%
-            		}
-            		else
-            		{
-            			if (prescriptDrug.getRemoteFacilityId()==null)
-            			{
-            				%>
-							<%
-								if(securityManager.hasWriteAccess("_rx",roleName$,true)) {            		
-							%>
-		            			<a id="notLongTermDrug_<%=prescriptIdInt%>" title="<bean:message key='oscarRx.Prescription.changeDrugLongTerm'/>" onclick="changeLt('<%=prescriptIdInt%>');" href="javascript:void(0);">
-		            			L
-		            			</a>
-							<% } else { %>
-            					<span style="color:blue">L</span>
-            				<% } %>
 
-            				<%
-            			}
-            			else
-            			{
-		            		%>
-		            		L
-		            		<%
-            			}
-           			}
-           			%>
+                <div class="drug-maintenance-switch" style="display: flex; align-items: baseline;">
+                    <% String drugMaintenanceSwitch = "drugMaintenanceSwitch_" + prescriptIdInt + Math.abs(new Random().nextInt(10001)); %>
+                    <input id="<%=drugMaintenanceSwitch%>" type="checkbox" name="checkBox_<%=prescriptIdInt%>"
+                           class="drug-maintenance-switch-input"
+                           onclick="changeLt(this, '<%=prescriptIdInt%>');"
+                            <% if (!securityManager.hasWriteAccess("_rx", roleName$, true)) {%> disabled <%}%>
+                            <% if (prescriptDrug.isLongTerm()) {%> checked <%}%> />
+                    <label id="drugMaintenanceSwitchLbl_<%=prescriptIdInt%>" for="<%=drugMaintenanceSwitch%>" class="drug-maintenance-switch-label">
+
+                    </label>
+                </div>
             </td>
 			<%
 			//display comment as tooltip if not null - simply using the TITLE attr
@@ -265,8 +325,14 @@ if (heading != null){
            	%>
             <td width="20px" align="center" valign="top">
                 <%if (prescriptDrug.getRemoteFacilityName() == null) {%>
-                <input id="reRxCheckBox_<%=prescriptIdInt%>" type=CHECKBOX onclick="updateReRxDrugId(this.id)" <%if(reRxDrugList.contains(prescriptIdInt.toString())){%>checked<%}%> name="checkBox_<%=prescriptIdInt%>">
-                <a name="rePrescribe" style="vertical-align:top" id="reRx_<%=prescriptIdInt%>" <%=styleColor%> href="javascript:void(0)" onclick="represcribe(this, <%=prescriptIdInt%>)">ReRx</a>
+                <div style="display: flex; align-items: center;">
+                    <% String cbxId = "reRxCheckBox_" + prescriptIdInt + Math.abs(new Random().nextInt(10001)); %>
+                    <input id="<%=cbxId%>" type=CHECKBOX
+                           onclick="updateReRxStatusForPrescribedDrug(this, <%=prescriptIdInt%>)"
+                           <%if(reRxDrugList.contains(prescriptIdInt.toString())){%>checked<%}%>
+                           name="checkBox_<%=prescriptIdInt%>">
+                    <label id="reRx_<%=prescriptIdInt%>" for="<%=cbxId%>">ReRx</label>
+                </div>
                 <%} else {%>
                 <form action="<%=request.getContextPath()%>/oscarRx/searchDrug.do" method="post">
                     <input type="hidden" name="demographicNo" value="<%=patient.getDemographicNo()%>" />

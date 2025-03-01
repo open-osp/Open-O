@@ -35,6 +35,7 @@ import org.oscarehr.PMmodule.model.SecUserRole;
 import org.oscarehr.common.dao.SecurityDao;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.Security;
+import org.oscarehr.managers.SecurityManager;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SSOUtility;
 import org.oscarehr.util.SpringUtils;
@@ -47,6 +48,8 @@ import oscar.log.LogConst;
 public final class LoginCheckLoginBean {
 	private static final Logger logger = MiscUtils.getLogger();
 	private static final String LOG_PRE = "Login!@#$: ";
+
+	private final SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
 
 	private String username = "";
 	private String password = "";
@@ -128,8 +131,13 @@ public final class LoginCheckLoginBean {
 		userpassword = security.getPassword();
 		if (userpassword.length() < 20) {
 			auth = password.equals(userpassword);
+			if (auth) {
+				boolean isPasswordUpgraded = this.securityManager.upgradeSavePasswordHash(this.password, this.security);
+				if (!isPasswordUpgraded)
+					logger.error("Error while upgrading password hash");
+			}
 		} else {
-			auth = security.checkPassword(password);
+			auth = this.securityManager.validatePassword(this.password, this.security);
 		}
 
 		if (auth) { // login successfully

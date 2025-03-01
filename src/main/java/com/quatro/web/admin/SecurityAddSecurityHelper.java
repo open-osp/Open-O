@@ -23,8 +23,6 @@
  */
 package com.quatro.web.admin;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import javax.servlet.ServletRequest;
@@ -32,7 +30,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.oscarehr.common.dao.SecurityDao;
 import org.oscarehr.common.model.Security;
-import org.oscarehr.util.MiscUtils;
+import org.oscarehr.managers.SecurityManager;
 import org.oscarehr.util.SpringUtils;
 
 import oscar.MyDateFormat;
@@ -46,6 +44,7 @@ import oscar.log.LogConst;
 public class SecurityAddSecurityHelper {
 
 	private SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
+	private final SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
 
 	/**
 	 * Adds a security record (i.e. user login information) for the provider.
@@ -60,26 +59,10 @@ public class SecurityAddSecurityHelper {
 		pageContext.setAttribute("message", message);
 	}
 	
-	public static String digestPassword(String rawPassword) throws NoSuchAlgorithmException {
-		StringBuilder sbTemp = new StringBuilder();
-		MessageDigest md = MessageDigest.getInstance("SHA");
-		byte[] btNewPasswd = md.digest(rawPassword.getBytes());
-		for (int i = 0; i < btNewPasswd.length; i++)
-			sbTemp = sbTemp.append(btNewPasswd[i]);
-		return sbTemp.toString();
-	}
-	
 	private String process(PageContext pageContext) {
 		ServletRequest request = pageContext.getRequest();
 		
-		String digestedPassword = null;
-		
-        try {
-        	 	digestedPassword =  digestPassword(request.getParameter("password"));
-        } catch (NoSuchAlgorithmException e) {
-        		MiscUtils.getLogger().error("Unable to get SHA message digest", e);
-        		return "admin.securityaddsecurity.msgAdditionFailure";
-        }
+		String digestedPassword = this.securityManager.encodePassword(request.getParameter("password"));
 
 		boolean isUserRecordAlreadyCreatedForProvider = !securityDao.findByProviderNo(request.getParameter("provider_no")).isEmpty();
 		if (isUserRecordAlreadyCreatedForProvider) return "admin.securityaddsecurity.msgLoginAlreadyExistsForProvider";

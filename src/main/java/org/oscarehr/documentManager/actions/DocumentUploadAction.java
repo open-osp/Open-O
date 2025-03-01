@@ -110,7 +110,7 @@ public class DocumentUploadAction extends DispatchAction {
                 }
 		else {
 			int numberOfPages = 0;
-			String fileName = docFile.getFileName();
+			String fileName = MiscUtils.sanitizeFileName(docFile.getFileName());
 			String user = (String) request.getSession().getAttribute("user");
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			EDoc newDoc = new EDoc("", "", fileName, "", user, user, fm.getSource(), 'A',

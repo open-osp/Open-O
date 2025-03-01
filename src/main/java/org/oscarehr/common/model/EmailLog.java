@@ -75,6 +75,10 @@ public class EmailLog extends AbstractModel<Integer> implements Comparable<Email
     @Enumerated(EnumType.STRING)
     private ChartDisplayOption chartDisplayOption;
 
+    @Lob
+    @Column(columnDefinition = "BLOB")
+    private byte[] internalComment;
+
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
@@ -221,6 +225,14 @@ public class EmailLog extends AbstractModel<Integer> implements Comparable<Email
 
     public void setChartDisplayOption(ChartDisplayOption chartDisplayOption) {
         this.chartDisplayOption = chartDisplayOption;
+    }
+
+    public String getInternalComment() {
+        return new String(Base64.decodeBase64(internalComment), StandardCharsets.UTF_8);
+    }
+
+    public void setInternalComment(String internalComment) {
+        this.internalComment = Base64.encodeBase64(internalComment.getBytes(StandardCharsets.UTF_8));
     }
 
     public TransactionType getTransactionType() {

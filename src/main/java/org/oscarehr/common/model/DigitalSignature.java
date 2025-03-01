@@ -22,12 +22,11 @@
  */
 package org.oscarehr.common.model;
 
+import org.oscarehr.common.model.enumerator.ModuleType;
+
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class DigitalSignature extends AbstractModel<Integer>{
@@ -50,6 +49,10 @@ public class DigitalSignature extends AbstractModel<Integer>{
 
 	/** Image of the signature as a jpg */
 	private byte[] signatureImage = null;
+
+	/** The module type of the signature */
+	@Enumerated(EnumType.STRING)
+	private ModuleType moduleType = null;
 
 	@Override
     public Integer getId() {
@@ -96,4 +99,11 @@ public class DigitalSignature extends AbstractModel<Integer>{
 		this.signatureImage = signatureImage;
 	}
 
+	public ModuleType getModuleType() {
+		return moduleType;
+	}
+
+	public void setModuleType(ModuleType moduleType) {
+		this.moduleType = moduleType;
+	}
 }

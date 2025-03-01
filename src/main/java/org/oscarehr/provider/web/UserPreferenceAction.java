@@ -27,7 +27,7 @@ package org.oscarehr.provider.web;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,6 +57,7 @@ import org.oscarehr.common.model.EForm;
 import org.oscarehr.common.model.EncounterForm;
 import org.oscarehr.common.model.Security;
 import org.oscarehr.common.model.UserProperty;
+import org.oscarehr.managers.SecurityManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -82,6 +83,8 @@ public class UserPreferenceAction extends DispatchAction {
 	static Map<String,String> defaults = new HashMap<String,String>();	
 	protected Map<String,String> siteDefaults = new HashMap<String,String>();	
 	private boolean inited = false;
+
+	private final SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
 	
 	static {
 		defaults.put("pref."+UserProperty.SCHEDULE_START_HOUR, "8");
@@ -195,37 +198,16 @@ public class UserPreferenceAction extends DispatchAction {
 
 		String currentPassword = getParameter(request,"current_password");
 		String newPassword = getParameter(request,"new_password");
-		
-		MessageDigest md = MessageDigest.getInstance("SHA");
-		
-		//the current password
-		byte[] btOldPasswd= md.digest(currentPassword.getBytes());		 
-		StringBuilder sbTemp = new StringBuilder();
-		for(int i=0; i<btOldPasswd.length; i++) 
-			sbTemp = sbTemp.append(btOldPasswd[i]);	    
-		String stroldpasswd = sbTemp.toString();
-	    	    
-		//get password from db
-		Security secRecord = securityDao.getByProviderNo(providerNo);		
-		String strDBpasswd = secRecord.getPassword();
-		if (strDBpasswd.length()<20) {
-			sbTemp = new StringBuilder();		
-			byte[] btDBPasswd= md.digest(secRecord.getPassword().getBytes());	         
-			for(int i=0; i<btDBPasswd.length; i++) 
-				sbTemp = sbTemp.append(btDBPasswd[i]);	         
-			 strDBpasswd = sbTemp.toString();
-		}
-	     
-		if( stroldpasswd.equals(strDBpasswd)) {
-		       sbTemp = new StringBuilder();
-		       byte[] btNewPasswd= md.digest(newPassword.getBytes());
-		       for(int i=0; i<btNewPasswd.length; i++) 
-		    	   sbTemp = sbTemp.append(btNewPasswd[i]);
 
-		       secRecord.setPassword(sbTemp.toString());
-		       securityDao.merge(secRecord);
-		       
-		       logger.info("password changed for provider");
+		//get password from db
+		Security secRecord = securityDao.getByProviderNo(providerNo);
+
+		if (Objects.nonNull(secRecord) && this.securityManager.matchesPassword(currentPassword, secRecord.getPassword())) {
+
+			secRecord.setPassword(this.securityManager.encodePassword(newPassword));
+			securityDao.merge(secRecord);
+
+			logger.info("password changed for provider");
 		} else {					
 			throw new Exception("Current password did not match.");   
 		}

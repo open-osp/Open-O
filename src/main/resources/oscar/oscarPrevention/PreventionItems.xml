@@ -694,14 +694,26 @@ Varicella Immunoglobulin	VarIg
 
 	<item
 			resultDesc=""
-			name="RSVPreF3"
+			name="RSV"
 			desc="Recombinant PreF RSV Vaccine eg Arexvy"
-			healthCanadaType="RSVPreF3"
+			healthCanadaType="RSV"
 			link="https://ca.gsk.com/media/6988/arexvy.pdf"
 			layout="injection"
 			minAge="60"
 			maxAge="100"
             atc="J07BX05"
+   			showIfMinRecordNum="1" />
+			
+	<item
+			resultDesc=""
+			name="RSVAb"
+			desc="Monoclonal Antibody RSV Vaccine eg Beyfortus"
+			healthCanadaType="RSVAb"
+			link="https://www.ema.europa.eu/en/medicines/human/EPAR/beyfortus#product-info"
+			layout="injection"
+			minAge="0"
+			maxAge="2"
+            atc="J06BD08"
    			showIfMinRecordNum="1" />
 
 </preventions>

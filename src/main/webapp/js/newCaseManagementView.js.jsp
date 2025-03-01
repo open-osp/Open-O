@@ -1685,12 +1685,9 @@ function fetchNote(nId) {
 }
 
 function toggleFullViewForAll() {
-	jQuery('[name="fullViewTrigger"]').each(function(){
-		$(this).click();
-	});
-	jQuery('[name="expandViewTrigger"]').each(function(){
-		$(this).click();
-	});
+    jQuery('[name="fullViewTrigger"], [name="expandViewTrigger"], [name="expandableReadonlyNoteText"]').each(function(){
+        $(this).click();
+    });
 }
 
 function toggleCollapseViewForAll() {
@@ -1743,13 +1740,13 @@ function fullViewById(id) {
     var imgTag1 = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minNonEditableNoteView(" + nId + ")' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
     const imgTag2 = "<img title='Minimize Display' id='quitImg" + nId + "' alt='Minimize Display' onclick='minNonEditableNoteView(" + nId + ")' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
 
-
     document.getElementById(img)?.remove();
 
+    const isEmailNote = document.getElementById("emailNote" + nId) !== null;
 
     $(txt).style.height = 'auto';
     const observationDivId = "#observation" + nId;
-    if (jQuery(observationDivId).length > 0) {
+    if (jQuery(observationDivId).length > 0 && !isEmailNote) {
         jQuery(observationDivId).append(imgTag2);
         jQuery(observationDivId).css('font-size', '10px');
     } else {
@@ -1765,7 +1762,15 @@ function minNonEditableNoteView(id) {
     const line = $(noteTxtId).innerHTML.substr(0,50).replace(/<br>/g," ");
     $(noteTxtId).update(line);
     document.getElementById(quitImgId)?.remove();
-    Element.observe(noteTxtId, 'click', fullView);
+
+    const isEmailNote = document.getElementById("emailNote" + id) !== null;
+    const observationDivId = "#observation" + id;
+    if (isEmailNote) {
+        const maxDisplayImg = "<img title='Maximize Display' id='fullImg" + id + "' alt='Maximize Display' onclick='fullView(event)' style='float: right;' src='" + ctx + "/oscarEncounter/graphics/triangle_down.gif' />";
+        new Insertion.Top("n" + id, maxDisplayImg);
+    } else {
+        Element.observe(noteTxtId, 'click', fullView);
+    }
 }
 
 function resetEdit(e) {
