@@ -503,7 +503,9 @@ function bulkInboxAction(url, filelabs) {
 
              if(jQuery("input[name='isListView']").length) {
                   updateCategoryList();
-             } else {
+             } else if (jQuery("#btnViewMode").length) {
+				fetchInboxhubData();
+			 } else {
                 location.reload();
              }
 
@@ -1307,6 +1309,10 @@ function ForwardSelectedRows(files, searchProviderNo, status) {
                     jQuery( this ).dialog( "close" );
 		        }
 		    },
+			open: function() {
+				// Applies Bootstrap 5 card styles if Bootstrap is included; otherwise, it will render as a normal jQuery dialog box.
+				styleDialogAsCard();
+			},
             close: function() {
                 jQuery(this).find("select[multiple]#fwdProviders").val('');
                 jQuery(this).find("select[multiple]#fwdFavorites").val('');
@@ -1318,6 +1324,24 @@ function drawDialogContainer() {
     var $div = jQuery('<div />').appendTo('body');
     $div.attr('id', 'dialog');
     return $div;
+}
+
+function styleDialogAsCard() {
+	// Add Bootstrap card classes
+	jQuery(".ui-dialog").addClass("card shadow-lg border-0 rounded");
+	jQuery(".ui-dialog-titlebar").addClass("card-header bg-transparent mx-2 mt-3 border-0");
+	jQuery(".ui-dialog-title").addClass("h5 mb-0 ms-2");
+	jQuery(".ui-dialog-titlebar-close").addClass("btn-close");
+	
+	// Style the content area as card body
+	jQuery(".ui-dialog-content").addClass("card-body mx-3 mt-3");
+	
+	// Style buttons like card footer
+	jQuery(".ui-dialog-buttonpane").addClass("card-footer bg-light border-top-0 d-flex justify-content-end rounded");
+	jQuery(".ui-dialog-buttonset button").addClass("btn btn-primary btn-sm");
+	
+	// Change 'Cancel' button to a secondary button
+	jQuery(".ui-dialog-buttonset button:contains('Cancel')").removeClass("btn-primary").addClass("btn-secondary btn-sm");
 }
 
 function forwardLabs(files, providers, favorites) {
@@ -1775,7 +1799,10 @@ function updateStatus(formid){//acknowledge
 
 			jQuery.post(url,data).success(function() {
 				updateDocStatusInQueue(doclabid);
-				if (typeof _in_window !== 'undefined' && _in_window) {
+				if (window.frameElement) {
+					// Hide the parent <div> of the iframe only for new inbox previews loaded in an iframe
+					jQuery(window.frameElement).closest('.document-card.card').slideUp();
+				} else if (typeof _in_window !== 'undefined' && _in_window) {
 					if (typeof self.opener.removeReport !== 'undefined') {
 						/**
 						 * When a user acknowledges any lab version, it automatically files away older versions 
