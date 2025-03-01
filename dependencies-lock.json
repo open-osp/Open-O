@@ -3057,6 +3057,14 @@
     "optional" : false,
     "integrity" : "sha512:69vFpDGFVg9xxTjx/ClXNn6MBqRQesdAj+JSfEngno0dt3FhqkTBfmyt/T7DPTZI/iFvFqt1Mwbx9Oae6Y8lrg=="
   }, {
+    "groupId" : "org.springframework.security",
+    "artifactId" : "spring-security-crypto",
+    "version" : "5.8.16",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:uuIy7D74iKO0pCZJz+3aZLYGLhE0UyiEnvUdLlsp+V+ldIzgD93YLd0HxjfAwn9DaZNyKjoQbo1G/y0RTqFtAw=="
+  }, {
     "groupId" : "org.springframework",
     "artifactId" : "spring-aop",
     "version" : "4.3.30.RELEASE",
