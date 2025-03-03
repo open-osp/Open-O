@@ -837,9 +837,12 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
             </div>
 
             <script>
-                jQuery(document).ready(function () {
-                    jQuery("#labVersionInfoModal").dialog({ modal: true, width: 500 });
-                });
+                // Include a short delay before showing modal to improve user experience
+                setTimeout(function () {
+                    jQuery(document).ready(function () {
+                        jQuery("#labVersionInfoModal").dialog({ modal: true, width: 500 });
+                    });
+                }, 300);
             </script>
         </c:if>
 
