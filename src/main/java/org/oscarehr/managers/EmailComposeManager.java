@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +23,7 @@ import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.EmailAttachment;
 import org.oscarehr.common.model.EmailConfig;
 import org.oscarehr.common.model.EmailLog;
+import org.oscarehr.common.model.SecObjectName;
 import org.oscarehr.common.model.UserProperty;
 import org.oscarehr.common.model.enumerator.DocumentType;
 import org.oscarehr.documentManager.DocumentAttachmentManager;
@@ -229,6 +231,11 @@ public class EmailComposeManager {
     public String createEmailPDFPassword(LoggedInInfo loggedInInfo, Integer demographicId) {
         Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographicId);
         return demographic.getYearOfBirth() + demographic.getMonthOfBirth() + demographic.getDateOfBirth() + demographic.getHin();
+    }
+
+    public boolean hasEmailPrivilege(LoggedInInfo loggedInInfo, String privilege) {
+        boolean hasEmailPrivilege = securityInfoManager.hasPrivilege(loggedInInfo, "_email", privilege, null);
+        return hasEmailPrivilege;
     }
 
     private boolean isValidEmail(String email) {
