@@ -94,4 +94,10 @@ public class MfaManagerImpl implements MfaManager {
         return EncryptionUtils.decrypt(security.getMfaSecret());
     }
 
+    @Override
+    public void resetMfaSecret(LoggedInInfo loggedInInfo, Security security) {
+        security.setMfaSecret(null);
+        this.securityManager.updateSecurityRecord(loggedInInfo, security);
+    }
+
 }

@@ -48,4 +48,5 @@ public interface MfaManager {
 
     String getMfaSecret(Security security) throws Exception;
 
+    void resetMfaSecret(LoggedInInfo loggedInInfo, Security security);
 }
