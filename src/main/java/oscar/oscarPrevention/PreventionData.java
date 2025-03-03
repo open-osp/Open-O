@@ -24,18 +24,12 @@
 
 package oscar.oscarPrevention;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import org.oscarehr.PMmodule.caisi_integrator.IntegratorFallBackManager;
 import org.oscarehr.PMmodule.caisi_integrator.RemotePreventionHelper;
@@ -44,11 +38,8 @@ import org.oscarehr.caisi_integrator.ws.CachedFacility;
 import org.oscarehr.common.dao.PartialDateDao;
 import org.oscarehr.common.dao.PreventionDao;
 import org.oscarehr.common.dao.PreventionExtDao;
-import org.oscarehr.common.model.DHIRSubmissionLog;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.PartialDate;
 import org.oscarehr.common.model.Prevention;
-import org.oscarehr.common.model.PreventionExt;
+import org.oscarehr.common.model.*;
 import org.oscarehr.managers.DHIRSubmissionManager;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.LoggedInInfo;
@@ -292,6 +283,7 @@ public class PreventionData {
 		return preventionDao.findByTypeAndDemoNo(preventionType, demographicId);
 	}
 	
+	@NotNull
 	public static ArrayList<Map<String, Object>> getPreventionData(LoggedInInfo loggedInInfo, String preventionType, Integer demographicId) {
 		ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 

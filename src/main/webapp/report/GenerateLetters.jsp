@@ -41,6 +41,7 @@ if(!authed) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@page
 	import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.data.*,oscar.oscarPrevention.pageUtil.*,java.net.*,oscar.eform.*"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -236,15 +237,15 @@ function disableifchecked(ele,nextDate){
 
 				<%  DemographicNameAgeString deName = DemographicNameAgeString.getInstance();                       
                         for ( int i =0; i < demos.length;i++){     
-                            Hashtable h = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), demos[i]);
+                            Map<String, String> h = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), demos[i]);
                     %>
 				<tr>
 					<td><%=i+1%></td>
 					<td><input type="checkbox" name="demos" value="<%=demos[i]%>"
 						checked /></td>
-					<td><%=h.get("lastName")%>, <%=h.get("firstName")%></td>
-					<td><%=h.get("sex")%></td>
-					<td><%=h.get("age")%></td>
+					<td><%=Encode.forHtmlContent(h.get("lastName"))%>, <%=Encode.forHtmlContent(h.get("firstName"))%></td>
+					<td><%=Encode.forHtmlContent(h.get("sex"))%></td>
+					<td><%=Encode.forHtmlContent(h.get("age"))%></td>
 				</tr>
 				<%}%>
 			</table>
