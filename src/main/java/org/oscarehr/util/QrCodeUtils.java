@@ -25,28 +25,24 @@
 
 package org.oscarehr.util;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.google.zxing.qrcode.encoder.Encoder;
+import com.google.zxing.qrcode.encoder.QRCode;
+import org.apache.logging.log4j.Logger;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
-
-import org.apache.logging.log4j.Logger;
-
-import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.google.zxing.qrcode.encoder.Encoder;
-import com.google.zxing.qrcode.encoder.QRCode;
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class QrCodeUtils {
 	
@@ -214,6 +210,117 @@ public class QrCodeUtils {
 		{
 			throw(new IllegalStateException("Missing png Image Writer"));
 		}
+	}
+
+	/**
+	 * Adds a logo to a QR code image.
+	 * This method takes a QR code image as a byte array and a logo image as an InputStream.
+	 * It resizes the logo if it's too large, then overlays it onto the center of the QR code.
+	 * A transparent hole is created in the QR code for the logo, and a radial gradient is applied
+	 * around the hole to enhance the visual effect.
+	 *
+	 * @param qrCodeBytes     The byte array representing the QR code image.
+	 * @param logoInputStream The InputStream for the logo image.
+	 * @return A byte array representing the QR code image with the logo embedded.
+	 * @throws IOException If there is an error reading or writing the image data.
+	 * @throws IllegalArgumentException if qrCodeBytes or logoInputStream is null
+	 */
+	public static byte[] addLogoToQRCode(byte[] qrCodeBytes, InputStream logoInputStream) throws IOException {
+		BufferedImage qrImage = inputStreamToBufferedImage(new ByteArrayInputStream(qrCodeBytes));
+		BufferedImage logo = inputStreamToBufferedImage(logoInputStream);
+
+		int maxLogoSize = qrImage.getWidth() / 5;
+		if (logo.getWidth() > maxLogoSize || logo.getHeight() > maxLogoSize) {
+			logo = resizeImage(logo, maxLogoSize, maxLogoSize);
+		}
+
+		int qrWidth = qrImage.getWidth();
+		int qrHeight = qrImage.getHeight();
+		int x = (qrWidth - logo.getWidth()) / 2;
+		int y = (qrHeight - logo.getHeight()) / 2;
+
+		// Create a new BufferedImage with transparency for the logo area
+		BufferedImage logoWithTransparency = new BufferedImage(qrWidth, qrHeight, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = logoWithTransparency.createGraphics();
+		g2d.drawImage(qrImage, 0, 0, null); // Draw the original QR code
+
+		g2d.setComposite(AlphaComposite.Clear); // Set alpha composite to clear logo area
+		g2d.fillOval(x - 2, y - 2, logo.getWidth() + 4, logo.getHeight() + 4); // Make a hole in the QR code for the logo
+
+		g2d.setComposite(AlphaComposite.Src); // Reset alpha composite to overwrite the hole with white color
+
+		// Define the gradient colors
+		Paint gradientPaint = getshadowGradientPaint(x, y, logo);
+
+		// Set the gradient as the paint and fill the hole
+		g2d.setPaint(gradientPaint);
+		g2d.fillOval(x - 2, y - 2, logo.getWidth() + 4, logo.getHeight() + 4);
+
+
+		g2d.setComposite(AlphaComposite.SrcOver); // Reset alpha composite to draw logo
+		g2d.drawImage(logo, x, y, null); // Draw the logo in the center
+		g2d.dispose();
+
+		return imageToByteArray(logoWithTransparency, "png");
+	}
+
+	private static Paint getshadowGradientPaint(int x, int y, BufferedImage logo) {
+		Color color1 = new Color(213, 213, 213);
+		Color color2 = new Color(255, 255, 255);
+		Color color3 = new Color(180, 200, 220);
+
+		float[] fractions = {0.0f, 0.8f, 1.0f};
+		Point2D center = new Point2D.Float(x + (float) logo.getWidth() / 2, y + (float) logo.getHeight() / 2); // Center of the hole
+		float radius = (float) Math.max(logo.getWidth(), logo.getHeight()) / 2 + 10; // Radius of the gradient
+        return new RadialGradientPaint(center, radius, fractions, new Color[]{color3, color2, color1});
+	}
+
+	/**
+	 * Resizes a BufferedImage to the specified width and height.
+	 *
+	 * @param originalImage The original BufferedImage to resize.
+	 * @param width         The desired width of the resized image.
+	 * @param height        The desired height of the resized image.
+	 * @return A new BufferedImage that is a resized version of the original.
+	 * @throws IllegalArgumentException if originalImage is null
+	 */
+	public static BufferedImage resizeImage(BufferedImage originalImage, int width, int height) {
+		Image tmp = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = resizedImage.createGraphics();
+		g2d.drawImage(tmp, 0, 0, null);
+		g2d.dispose();
+		return resizedImage;
+	}
+
+	/**
+	 * Converts a BufferedImage to a byte array.
+	 *
+	 * @param image  The BufferedImage to convert.
+	 * @param format The format of the image (e.g., "png", "jpg").
+	 * @return A byte array representing the image.
+	 * @throws IOException If there is an error writing the image data.
+	 * @throws IllegalArgumentException if image or format is null
+	 */
+	private static byte[] imageToByteArray(BufferedImage image, String format) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(image, format, baos);
+		return baos.toByteArray();
+	}
+
+	/**
+	 * Converts an InputStream to a BufferedImage.
+	 *
+	 * @param inputStream The InputStream to read from.
+	 * @return The BufferedImage read from the InputStream.
+	 * @throws IOException If there is an error reading from the InputStream or if the InputStream is null.
+	 * @throws IllegalArgumentException if inputStream is null
+	 */
+	private static BufferedImage inputStreamToBufferedImage(InputStream inputStream) throws IOException {
+		if (inputStream == null) {
+			throw new IOException("LogoStream is null");
+		}
+		return ImageIO.read(inputStream);
 	}
 
 	public static void main(String... argv) throws Exception

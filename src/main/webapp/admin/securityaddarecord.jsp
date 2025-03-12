@@ -64,6 +64,7 @@
 <%@page import="org.oscarehr.common.model.Security" %>
 <%@page import="org.oscarehr.common.dao.SecurityDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.oscarehr.managers.MfaManager" %>
 <%
 	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 	SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
@@ -177,6 +178,23 @@
 		}
 		return true;
 	}
+
+
+	/**
+	 * Handles the change event of the MFA checkbox.
+	 * Shows or hides the MFA note based on the checkbox state.
+	 * @param {HTMLInputElement} checkbox - The MFA checkbox element.
+	 */
+	function handleMfaChange(checkbox) {
+		let mfaNote = document.getElementById('mfaNote');
+
+		if (checkbox.checked) {
+			mfaNote.style.display = 'inline';
+		} else {
+			mfaNote.style.display = 'none';
+		}
+	}
+
 //-->
 </script>
 </head>
@@ -316,7 +334,29 @@
 				</td>
 			</tr>
    <%} %>
-	
+
+		<%--	MFA Setting   --%>
+	<% if (MfaManager.isOscarMfaEnabled()) { %>
+	<tr>
+		<td style="text-align: right">
+			<bean:message key="admin.securityAddRecord.mfa.title"/>:
+		</td>
+		<td style="">
+			<label>
+				<input type="checkbox" name="enableMfa" value="1" onchange="handleMfaChange(this)"/>
+				<bean:message key="admin.securityAddRecord.mfa.description"/>
+			</label>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td style="padding-left: 8px;">
+			<span id="mfaNote" style="font-size: x-small; color: darkslategray; vertical-align: top; display: none"><bean:message
+					key="admin.securityAddRecord.mfa.note"/></span>
+		</td>
+	</tr>
+	<% } %>
+
 	<tr>
 		<td colspan="2">
 		<div align="center">

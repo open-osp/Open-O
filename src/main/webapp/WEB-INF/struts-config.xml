@@ -625,6 +625,8 @@
 
 		<form-bean name="eCaresForm" type="org.apache.struts.validator.LazyValidatorForm" />
 
+		<form-bean name="validateMFAForm" type="oscar.login.ValidateMFAForm" />
+
 	</form-beans>
 
 	<global-forwards>
@@ -825,6 +827,7 @@
 			<forward name="forcepasswordreset" path="/forcepasswordreset.jsp" />
 			<forward name="programLocation" path="/location.jsp" redirect="true"/>
 			<forward name="ssoLogin" path="/ssoLogin.do" redirect="true" />
+			<forward name="mfaHandler" path="/mfa/mfa_handler.jsp" />
 		</action>
 		
 		<action input="/login.jsp" name="loginForm" path="/ssoLogin" scope="request" type="oscar.login.SSOLoginAction" validate="true" parameter="method">
@@ -845,8 +848,22 @@
 			<forward name="error" path="/logout.jsp" />
 			<forward name="ssoLoginError" path="/index.jsp" />
 		</action>
-		
-		<action input="/login/loginTest.jsp" path="/login/recordLogin" scope="request" type="oscar.login.LoginAgreementAction"></action>
+
+		<!-- MFA -->
+		<action input="/mfa/mfa_handler.jsp" name="validateMFAForm" path="/mfa/loginMfa" scope="request" type="oscar.login.LoginAction" validate="true">
+			<forward name="provider" path="/provider/providercontrol.jsp" redirect="true" />
+			<forward name="failure" path="/logout.jsp" />
+			<forward name="error" path="/loginfailed.jsp" />
+			<forward name="caisiPMM" path="/PMmodule/ProviderInfo.do" />
+			<forward name="shelterSelection" path="/shelterSelection.do" redirect="true" />
+			<forward name="forcepasswordreset" path="/forcepasswordreset.jsp" />
+			<forward name="programLocation" path="/location.jsp" redirect="true"/>
+			<forward name="ssoLogin" path="/ssoLogin.do" redirect="true" />
+			<forward name="mfaHandler" path="/mfa/mfa_handler.jsp" />
+		</action>
+
+		<action path="/securityRecord/mfa" scope="request" type="org.oscarehr.security.MfaActions" parameter="method" validate="true" />
+
 
 		<action path="/shelterSelection" scope="request" type="oscar.login.ShelterSelectionAction" validate="true" parameter="method">
 			<forward name="shelterSelection" path="page.pmm.shelterSelection" />
