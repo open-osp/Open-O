@@ -46,9 +46,13 @@ import oscar.eform.EFormUtil;
 import oscar.log.LogAction;
 import oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -57,6 +61,8 @@ import java.util.*;
 public class ProviderPropertyAction extends DispatchAction {
 
     private UserPropertyDAO userPropertyDAO;
+    private static final String REGEX = "^[a-zA-Z0-9]*$";
+    private static final Pattern ALPHA_NUMERIC = Pattern.compile(REGEX);
 
     public void setUserPropertyDAO(UserPropertyDAO dao) {
         this.userPropertyDAO = dao;
@@ -153,7 +159,7 @@ public class ProviderPropertyAction extends DispatchAction {
      * These properties are written to the Property table.
      * @param request
      */
-    public static void updateOrCreateProviderProperties(HttpServletRequest request) {
+    public static void updateOrCreateProviderProperties(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         UserPropertyDAO propertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
@@ -198,7 +204,11 @@ public class ProviderPropertyAction extends DispatchAction {
         property.setValue(String.valueOf(Boolean.parseBoolean(propertyValue)));
         propertyDAO.saveProp(property);
 
-        // enable/disable chart note password locking
+        /*
+         * enable/disable chart note password locking
+         * unlock all notes when this is disabled
+         * do not allow locking of future notes
+         */
         propertyValue = StringUtils.trimToNull(request.getParameter(UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED));
         property = propertyDAO.getProp(providerNo, UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED);
         if (property == null) {
@@ -212,15 +222,18 @@ public class ProviderPropertyAction extends DispatchAction {
         /* set and encrypt the password to be used for chart note locking
          * note that the property variable is still set with the CASEMGMT_NOTE_PASSWORD_ENABLED
          * object.
+         * These methods were written to be backwards compatible with the old method of
+         * assigning a unique password to every note.
          */
         if(Boolean.parseBoolean(property.getValue())) {
             // proceed only if CASEMGMT_NOTE_PASSWORD_ENABLED is enabled
-
             propertyValue = StringUtils.trimToNull(request.getParameter(UserProperty.CASEMGMT_NOTE_PASSWORD));
 
-            if(propertyValue != null && ! propertyValue.isEmpty()) {
-                // proceed only if an actual password has been set.
-
+            if(propertyValue != null && ! propertyValue.isEmpty() && ALPHA_NUMERIC.matcher(propertyValue).matches()) {
+                /*
+                 * proceed only if an actual password has been set.
+                 * and only if it is alphanumeric
+                 */
                 property = propertyDAO.getProp(providerNo, UserProperty.CASEMGMT_NOTE_PASSWORD);
 
                 if (property == null) {
@@ -229,8 +242,20 @@ public class ProviderPropertyAction extends DispatchAction {
                     property.setName(UserProperty.CASEMGMT_NOTE_PASSWORD);
                 }
 
-                property.setValue(propertyValue.trim());
+                String currentProperty = property.getValue();
+
+                property.setValue(propertyValue);
                 propertyDAO.saveProp(property);
+
+                /*
+                 * update all the previously set passwords if
+                 * the password value has changed.
+                 */
+                if(!propertyValue.equals(currentProperty)) {
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/encounterNotePassword.do?method=update");
+                    dispatcher.forward(request, response);
+                }
+
             }
         }
 

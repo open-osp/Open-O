@@ -26,110 +26,26 @@
 
 package org.oscarehr.casemgmt.service;
 
-import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
+import com.quatro.model.security.Secrole;
+import com.quatro.service.security.RolesManager;
 import org.apache.struts.util.LabelValueBean;
-import org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager;
-import org.oscarehr.PMmodule.caisi_integrator.IntegratorFallBackManager;
 import org.oscarehr.PMmodule.dao.ProgramAccessDAO;
 import org.oscarehr.PMmodule.dao.ProgramProviderDAO;
 import org.oscarehr.PMmodule.dao.ProgramQueueDao;
 import org.oscarehr.PMmodule.model.AccessType;
-import org.oscarehr.PMmodule.model.DefaultRoleAccess;
 import org.oscarehr.PMmodule.model.ProgramAccess;
 import org.oscarehr.PMmodule.model.ProgramProvider;
-import org.oscarehr.PMmodule.model.ProgramQueue;
 import org.oscarehr.PMmodule.service.AdmissionManager;
 import org.oscarehr.PMmodule.service.ProgramManager;
-import org.oscarehr.PMmodule.utility.ProgramAccessCache;
-import org.oscarehr.PMmodule.utility.RoleCache;
-import org.oscarehr.caisi_integrator.ws.CachedDemographicDrug;
 import org.oscarehr.caisi_integrator.ws.CachedDemographicNote;
-import org.oscarehr.caisi_integrator.ws.CachedFacility;
 import org.oscarehr.casemgmt.common.EChartNoteEntry;
-import org.oscarehr.casemgmt.dao.CaseManagementCPPDAO;
-import org.oscarehr.casemgmt.dao.CaseManagementIssueDAO;
-import org.oscarehr.casemgmt.dao.CaseManagementNoteDAO;
-import org.oscarehr.casemgmt.dao.CaseManagementNoteExtDAO;
-import org.oscarehr.casemgmt.dao.CaseManagementNoteLinkDAO;
-import org.oscarehr.casemgmt.dao.IssueDAO;
-import org.oscarehr.casemgmt.dao.RoleProgramAccessDAO;
-import org.oscarehr.casemgmt.model.CaseManagementCPP;
-import org.oscarehr.casemgmt.model.CaseManagementIssue;
-import org.oscarehr.casemgmt.model.CaseManagementNote;
-import org.oscarehr.casemgmt.model.CaseManagementNoteExt;
-import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
-import org.oscarehr.casemgmt.model.CaseManagementSearchBean;
-import org.oscarehr.casemgmt.model.Issue;
-import org.oscarehr.casemgmt.model.ProviderExt;
-import org.oscarehr.common.dao.AbstractDao;
-import org.oscarehr.common.dao.AllergyDao;
-import org.oscarehr.common.dao.AppointmentArchiveDao;
-import org.oscarehr.common.dao.CaseManagementTmpSaveDao;
-import org.oscarehr.common.dao.DemographicDao;
-import org.oscarehr.common.dao.DrugDao;
-import org.oscarehr.common.dao.DxDao;
-import org.oscarehr.common.dao.DxresearchDAO;
-import org.oscarehr.common.dao.EChartDao;
-import org.oscarehr.common.dao.EncounterWindowDao;
-import org.oscarehr.common.dao.HashAuditDao;
-import org.oscarehr.common.dao.MessageTblDao;
-import org.oscarehr.common.dao.MsgDemoMapDao;
-import org.oscarehr.common.dao.OscarAppointmentDao;
-import org.oscarehr.common.dao.ProviderExtDao;
-import org.oscarehr.common.dao.SecRoleDao;
-import org.oscarehr.common.dao.UserPropertyDAO;
-import org.oscarehr.common.model.Admission;
-import org.oscarehr.common.model.Allergy;
-import org.oscarehr.common.model.Appointment;
-import org.oscarehr.common.model.CaseManagementTmpSave;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.Drug;
-import org.oscarehr.common.model.DxAssociation;
-import org.oscarehr.common.model.Dxresearch;
-import org.oscarehr.common.model.EncounterWindow;
-import org.oscarehr.common.model.HashAudit;
-import org.oscarehr.common.model.MessageTbl;
-import org.oscarehr.common.model.MsgDemoMap;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.SecRole;
-import org.oscarehr.common.model.UserProperty;
-import org.oscarehr.managers.SecurityInfoManager;
+import org.oscarehr.casemgmt.dao.*;
+import org.oscarehr.casemgmt.model.*;
+import org.oscarehr.common.dao.*;
+import org.oscarehr.common.model.*;
 import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-import oscar.OscarProperties;
-import org.oscarehr.documentManager.EDocUtil;
-import oscar.log.LogAction;
-import oscar.log.LogConst;
-//import oscar.oscarEncounter.pageUtil.EctSessionBean;
-import oscar.util.ConversionUtils;
-import oscar.util.DateUtils;
-
-import com.quatro.model.security.Secrole;
-import com.quatro.service.security.RolesManager;
+import java.util.*;
 
 public interface CaseManagementManager {
 
@@ -466,4 +382,5 @@ public interface CaseManagementManager {
 
     public String listNotes(String code, String providerNo, String demoNo);
 
+    void updatePasswordLockedNotes(LoggedInInfo loggedInInfo, String password);
 }

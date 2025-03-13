@@ -2685,4 +2685,27 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
         return noteStr.toString();
     }
 
+    /**
+     * Updates the password for all password-locked notes associated with the provided logged-in user information.
+     * If the note's current password does not match the provided password, the note's password will be updated.
+     *
+     * @param loggedInInfo the logged-in user information used to retrieve password-locked notes
+     * @param password the new password to set for the password-locked notes
+     */
+    public void updatePasswordLockedNotes(LoggedInInfo loggedInInfo, String password) {
+        List<CaseManagementNote> caseManagementNotes = getPasswordLockedNotes(loggedInInfo);
+        if(caseManagementNotes != null && !caseManagementNotes.isEmpty()) {
+            for (CaseManagementNote note : caseManagementNotes) {
+                if (! password.equals(note.getPassword())) {
+                    note.setPassword(password);
+                    caseManagementNoteDAO.updateNote(note);
+                }
+            }
+        }
+    }
+
+    private List<CaseManagementNote> getPasswordLockedNotes(LoggedInInfo loggedInInfo) {
+        return caseManagementNoteDAO.getPasswordLockedNotes(loggedInInfo.getLoggedInProviderNo());
+    }
+
 }

@@ -2730,7 +2730,7 @@ function changeDiagnosisUnresolved(issueId) {
             let isLocked = document.getElementById("locked-note");
 			if(! isLocked && confirm("Password lock current note?")) {
 				// otherwise set this note to be locked
-				jQuery.post(ctx + "/encounterNotePassword.do", function (data) {
+				jQuery.post(ctx + "/encounterNotePassword.do?method=get", function (data) {
 
 					document.forms['caseManagementEntryForm'].elements['caseNote.password'].value = data.password;
 					document.forms['caseManagementEntryForm'].elements['caseNote.passwordConfirm'].value = data.password;

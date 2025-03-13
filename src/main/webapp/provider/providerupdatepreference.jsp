@@ -77,7 +77,7 @@
 	propDao.saveProp(prop);
 	
 	ProviderPreference providerPreference = ProviderPreferencesUIBean.updateOrCreateProviderPreferences(request);
-	ProviderPropertyAction.updateOrCreateProviderProperties(request);
+	ProviderPropertyAction.updateOrCreateProviderProperties(request, response);
 
 	//--- 
 	session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE, providerPreference);
