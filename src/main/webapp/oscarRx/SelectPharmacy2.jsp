@@ -85,7 +85,7 @@
 			oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean");
 			%>
 
-		<bean:define id="patient" type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient"/>
+		<bean:define id="patient" type="oscar.oscarRx.data.model.Patient" name="Patient"/>
 
 <%--		<link rel="stylesheet" type="text/css" href="styles.css">--%>
 

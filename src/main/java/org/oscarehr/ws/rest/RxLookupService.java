@@ -34,7 +34,7 @@ import org.oscarehr.ws.rest.to.model.DrugSearchTo1;
 import org.oscarehr.ws.rest.to.model.DrugTo1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.oscarRx.util.RxUtil;
 
 import javax.ws.rs.*;
@@ -159,7 +159,7 @@ public class RxLookupService extends AbstractServiceImpl {
         // the provider no, demographic no, etc... for this drug do not matter.
         // all we care about are the instruction fields.
 
-        RxPrescriptionData.Prescription rx = new RxPrescriptionData.Prescription(0, getLoggedInInfo().getLoggedInProviderNo(), 0);
+        Prescription rx = new Prescription(0, getLoggedInInfo().getLoggedInProviderNo(), 0);
 
         rx.setSpecial(instructions);
 

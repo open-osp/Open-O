@@ -29,6 +29,7 @@
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProp"%>
 <%@ page import="oscar.oscarRx.data.*, org.oscarehr.common.model.PharmacyInfo"%>
 <%@page import="java.util.List"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 <logic:notPresent name="RxSessionBean" scope="session">
 	<logic:redirect href="error.html" />
 </logic:notPresent>
@@ -91,7 +92,7 @@ if (pharmacyList != null && !pharmacyList.isEmpty()) {
 %>
 
 <bean:define id="patient"
-	type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
+	type="oscar.oscarRx.data.model.Patient" name="Patient" />
 
 <body topmargin="0" leftmargin="0" vlink="#0000FF">
 <table border="0" cellpadding="0" cellspacing="0"
@@ -163,7 +164,7 @@ if (pharmacyList != null && !pharmacyList.isEmpty()) {
 							</tr>
 
 							<%
-                                oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs;
+                                Prescription[] prescribedDrugs;
 
                                 if(showall)
                                     prescribedDrugs = patient.getPrescribedDrugs();
@@ -171,7 +172,7 @@ if (pharmacyList != null && !pharmacyList.isEmpty()) {
                                     prescribedDrugs = patient.getPrescribedDrugsUnique();
 
                                 for(int i=0; i<prescribedDrugs.length; i++) {
-                                    oscar.oscarRx.data.RxPrescriptionData.Prescription drug = prescribedDrugs[i];
+                                    Prescription drug = prescribedDrugs[i];
                                     String styleColor = "";
                                     if(drug.isCurrent() == true && drug.isArchived() ){
 					                        styleColor="style=\"color:red;text-decoration: line-through;\"";

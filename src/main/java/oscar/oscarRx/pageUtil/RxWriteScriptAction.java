@@ -52,8 +52,10 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 import oscar.oscarRx.data.RxDrugData;
-import oscar.oscarRx.data.RxDrugData.DrugMonograph.DrugComponent;
+import oscar.oscarRx.data.model.DrugMonograph;
+import oscar.oscarRx.data.model.DrugMonograph.DrugComponent;
 import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.oscarRx.util.RxUtil;
 import oscar.util.StringUtils;
 
@@ -103,7 +105,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 		if (frm.getAction().startsWith("update")) {
 
 			RxDrugData drugData = new RxDrugData();
-			RxPrescriptionData.Prescription rx = bean.getStashItem(bean.getStashIndex());
+			Prescription rx = bean.getStashItem(bean.getStashIndex());
 			RxPrescriptionData prescription = new RxPrescriptionData();
 
 			if (frm.getGCN_SEQNO() != 0) { // not custom
@@ -254,7 +256,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 		try {
 			String randomId = request.getParameter("randomId");
 			String customName = request.getParameter("customName");
-			RxPrescriptionData.Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));
+			Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));
 			if (rx == null) {
 				logger.error("rx is null", new NullPointerException());
 				return null;
@@ -287,7 +289,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 		}
 	}
 
-	private RxPrescriptionData.Prescription setCustomRxDurationQuantity(RxPrescriptionData.Prescription rx) {
+	private Prescription setCustomRxDurationQuantity(Prescription rx) {
 		String quantity = rx.getQuantity();
 		if (RxUtil.isMitte(quantity)) {
 			String duration = RxUtil.getDurationFromQuantityText(quantity);
@@ -316,7 +318,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			RxPrescriptionData rxData = new RxPrescriptionData();
 
 			// create Prescription
-			RxPrescriptionData.Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo());
+			Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo());
 			String ra = request.getParameter("randomId");
 			rx.setRandomId(Integer.parseInt(ra));
 			rx.setCustomNote(true);
@@ -332,7 +334,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			RxUtil.setDefaultSpecialQuantityRepeat(rx);
 			rx = setCustomRxDurationQuantity(rx);
 			bean.addAttributeName(rx.getAtcCode() + "-" + String.valueOf(bean.getStashIndex()));
-			List<RxPrescriptionData.Prescription> listRxDrugs = new ArrayList();
+			List<Prescription> listRxDrugs = new ArrayList();
 
 			if (RxUtil.isRxUniqueInStash(bean, rx)) {
 				listRxDrugs.add(rx);
@@ -378,7 +380,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			return null;
 		}
 		// create Prescription
-		RxPrescriptionData.Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));
+		Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));
 		List<HashMap<String, String>> retList = new ArrayList();
 		retList = RxUtil.getPreviousInstructions(rx);
 
@@ -407,7 +409,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			RxPrescriptionData rxData = new RxPrescriptionData();
 
 			// create Prescription
-			RxPrescriptionData.Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo());
+			Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo());
 			String ra = request.getParameter("randomId");
 			
 			if(customDrugName != null && !customDrugName.isEmpty()) {
@@ -426,7 +428,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			RxUtil.setDefaultSpecialQuantityRepeat(rx);// 1 OD, 20, 0;
 			rx = setCustomRxDurationQuantity(rx);
 			bean.addAttributeName(rx.getAtcCode() + "-" + String.valueOf(bean.getStashIndex()));
-			List<RxPrescriptionData.Prescription> listRxDrugs = new ArrayList();
+			List<Prescription> listRxDrugs = new ArrayList();
 
 			if (RxUtil.isRxUniqueInStash(bean, rx)) {
 				listRxDrugs.add(rx);
@@ -466,11 +468,11 @@ public final class RxWriteScriptAction extends DispatchAction {
 		String customDrugName = request.getParameter("customDrugName");
 		logger.debug("radomId=" + randomId);
 		if (randomId != null && customDrugName != null) {
-			RxPrescriptionData.Prescription normalRx = bean.getStashItem2(Integer.parseInt(randomId));
+			Prescription normalRx = bean.getStashItem2(Integer.parseInt(randomId));
 			if (normalRx != null) {// set other fields same as normal drug, set some fields null like custom drug, remove normal drugfrom stash,add customdrug to stash,
 				// forward to prescribe.jsp
 				RxPrescriptionData rxData = new RxPrescriptionData();
-				RxPrescriptionData.Prescription customRx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo());
+				Prescription customRx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo());
 				customRx = normalRx;
 				customRx.setCustomName(customDrugName);
 				customRx.setRandomId(Long.parseLong(randomId));
@@ -484,7 +486,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 				customRx.setRegionalIdentifier("");
 				customRx.setAtcCode("");
 				bean.setStashItem(bean.getIndexFromRx(Integer.parseInt(randomId)), customRx);
-				List<RxPrescriptionData.Prescription> listRxDrugs = new ArrayList();
+				List<Prescription> listRxDrugs = new ArrayList();
 				if (RxUtil.isRxUniqueInStash(bean, customRx)) {
 					// p("unique");
 					listRxDrugs.add(customRx);
@@ -520,7 +522,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			RxDrugData drugData = new RxDrugData();
 
 			// create Prescription
-			RxPrescriptionData.Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo());
+			Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo());
 
 			String ra = request.getParameter("randomId");
 			int randomId = Integer.parseInt(ra);
@@ -530,7 +532,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 
 			// TODO: Is this to slow to do here? It's possible to do this in ajax, as in when this comes back launch an ajax request to fill in.
 			logger.debug("requesting drug from drugref id="+drugId);
-			RxDrugData.DrugMonograph dmono = drugData.getDrug2(drugId);
+			DrugMonograph dmono = drugData.getDrug2(drugId);
 
 			String brandName = null;
 			ArrayList<DrugComponent> drugComponents = dmono.getDrugComponentList();	
@@ -543,7 +545,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 
 				StringBuilder stringBuilder = new StringBuilder();
 				int count = 0;
-				for( RxDrugData.DrugMonograph.DrugComponent drugComponent : drugComponents ) {
+				for( DrugMonograph.DrugComponent drugComponent : drugComponents ) {
 					
 					stringBuilder.append( drugComponent.getName() );
 					stringBuilder.append(" ");
@@ -596,7 +598,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			String unit = "";
 			Vector comps = dmono.components;
 			for (int i = 0; i < comps.size(); i++) {
-				RxDrugData.DrugMonograph.DrugComponent drugComp = (RxDrugData.DrugMonograph.DrugComponent) comps.get(i);
+				DrugMonograph.DrugComponent drugComp = (DrugMonograph.DrugComponent) comps.get(i);
 				String strength = drugComp.strength;
 				unit = drugComp.unit;
 				dosage = dosage + " " + strength + " " + unit;// get drug dosage from strength and unit.
@@ -609,7 +611,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			rx.setAtcCode(atcCode);
 			RxUtil.setSpecialQuantityRepeat(rx);
 			rx = setCustomRxDurationQuantity(rx);
-			List<RxPrescriptionData.Prescription> listRxDrugs = new ArrayList();
+			List<Prescription> listRxDrugs = new ArrayList();
 			if (RxUtil.isRxUniqueInStash(bean, rx)) {
 				listRxDrugs.add(rx);
 			}
@@ -653,7 +655,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 
 			try {
 				String randomId = request.getParameter("randomId");
-				RxPrescriptionData.Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));
+				Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));
 				if (rx == null) {
 					logger.error("rx is null", new NullPointerException());
 				}
@@ -694,7 +696,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			try {
 				String quantity = request.getParameter("quantity");
 				String randomId = request.getParameter("randomId");
-				RxPrescriptionData.Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));
+				Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));
 				// get rx from randomId
 				if (quantity == null || quantity.equalsIgnoreCase("null")) {
 					quantity = "";
@@ -779,7 +781,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 
 	public ActionForward iterateStash(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)  {
 		oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
-		List<RxPrescriptionData.Prescription> listP = Arrays.asList(bean.getStash());
+		List<Prescription> listP = Arrays.asList(bean.getStash());
 		if (listP.size() == 0) {
 			return null;
 		} else {
@@ -798,7 +800,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 		String randomId = request.getParameter("randomId");
 		String specialInstruction = request.getParameter("specialInstruction");
 		oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
-		RxPrescriptionData.Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));
+		Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));
 		if (specialInstruction.trim().length() > 0 && !specialInstruction.trim().equalsIgnoreCase("Enter Special Instruction")) {
 			rx.setSpecialInstruction(specialInstruction.trim());
 		} else {
@@ -820,7 +822,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			if (strArr.length > 1) {
 				String num = strArr[1];
 				num = num.trim();
-				RxPrescriptionData.Prescription rx = bean.getStashItem2(Integer.parseInt(num));
+				Prescription rx = bean.getStashItem2(Integer.parseInt(num));
 				if (elem.equals("method_" + num)) {
 					if (!val.equals("") && !val.equalsIgnoreCase("null")) rx.setMethod(val);
 				} else if (elem.equals("route_" + num)) {
@@ -880,7 +882,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 					continue;
 				} else {
 					existingIndex.add(stashIndex);
-					RxPrescriptionData.Prescription rx = bean.getStashItem(stashIndex);
+					Prescription rx = bean.getStashItem(stashIndex);
 
 					Boolean patientCompliance = null;
 					boolean isOutsideProvider = false;
@@ -1178,7 +1180,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			}
 
 			RxPrescriptionData rxData = new RxPrescriptionData();
-			RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
+			Prescription oldRx = rxData.getPrescription(drugId);
 			oldRx.setLongTerm(isLongTerm);
 			oldRx.setShortTerm(false);
 			boolean saveStatus = oldRx.Save(oldRx.getScript_no());
@@ -1201,7 +1203,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 		
 		oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
 
-		RxPrescriptionData.Prescription rx = null;
+		Prescription rx = null;
 		RxPrescriptionData prescription = new RxPrescriptionData();
 		String scriptId = prescription.saveScript(loggedInInfo, bean);
 		StringBuilder auditStr = new StringBuilder();

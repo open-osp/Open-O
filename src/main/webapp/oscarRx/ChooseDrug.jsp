@@ -45,6 +45,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%@ page import="java.util.*,oscar.oscarRx.data.*,oscar.oscarRx.pageUtil.*, oscar.OscarProperties" %>
+<%@ page import="oscar.oscarRx.data.model.MinDrug" %>
+<%@ page import="oscar.oscarRx.data.model.DrugSearch" %>
 <logic:notPresent name="RxSessionBean" scope="session">
     <logic:redirect href="error.html" />
 </logic:notPresent>
@@ -64,7 +66,7 @@
 
 <%
 RxSessionBean bean = (RxSessionBean)pageContext.findAttribute("bean");
-RxDrugData.DrugSearch drugSearch = (RxDrugData.DrugSearch) request.getAttribute("drugSearch");//set from searchdrugaction
+DrugSearch drugSearch = (DrugSearch) request.getAttribute("drugSearch");//set from searchdrugaction
 String demoNo = (String) request.getAttribute("demoNo");//set from searchdrugaction
 ArrayList brand = drugSearch.getBrand();
 ArrayList gen = drugSearch.getGen();
@@ -265,7 +267,7 @@ for (int j=0; j<selRoute.length; j++) {
                                     String bgColor="WHITE";
                                     for(i=0; i<gen.size(); i++){                                     
                                        bgColor=getColor(grey);                                        
-                                       RxDrugData.MinDrug t = (RxDrugData.MinDrug) gen.get(i);                                     
+                                       MinDrug t = (MinDrug) gen.get(i);
                                   %>
                                   <tr>
                                     <td bgcolor="<%=bgColor%>">
@@ -287,7 +289,7 @@ for (int j=0; j<selRoute.length; j++) {
                                   <%
                                   for(i=0; i<brand.size(); i++){
                                       bgColor=getColor(grey);                                        
-                                      RxDrugData.MinDrug t = (RxDrugData.MinDrug) brand.get(i);
+                                      MinDrug t = (MinDrug) brand.get(i);
                                        String brandName =  t.name;
                                     %>
                                     <tr>                                    
@@ -345,7 +347,7 @@ for (int j=0; j<selRoute.length; j++) {
                                     String bgColor="WHITE";                                    
                                     for(i=0; i<afhcClass.size(); i++){
                                       bgColor=getColor(grey2);                                        
-                                      RxDrugData.MinDrug t = (RxDrugData.MinDrug) afhcClass.get(i);
+                                      MinDrug t = (MinDrug) afhcClass.get(i);
                                   %>
                                   <tr>
                                     <td bgcolor="<%=bgColor%>">

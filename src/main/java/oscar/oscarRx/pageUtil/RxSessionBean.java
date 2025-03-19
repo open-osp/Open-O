@@ -33,6 +33,8 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import oscar.OscarProperties;
 import oscar.oscarRx.data.*;
+import oscar.oscarRx.data.model.Interaction;
+import oscar.oscarRx.data.model.Prescription;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -44,7 +46,7 @@ public class RxSessionBean  implements java.io.Serializable {
     private int demographicNo = 0;
     private String view = "Active";
 
-    private ArrayList<RxPrescriptionData.Prescription> stash = new ArrayList();
+    private ArrayList<Prescription> stash = new ArrayList();
    // private ArrayList stash=new ArrayList();
     private HashMap<Integer, Long> favIdRandomIdMap = new HashMap<Integer, Long>();
     private int stashIndex = -1;
@@ -177,22 +179,22 @@ public class RxSessionBean  implements java.io.Serializable {
         logger.debug("in getIndexFromRx="+ret);
         return ret;
     }
-    public RxPrescriptionData.Prescription[] getStash() {
-        RxPrescriptionData.Prescription[] arr = {};
+    public Prescription[] getStash() {
+        Prescription[] arr = {};
 
         arr = stash.toArray(arr);
 
         return arr;
     }
 
-    public RxPrescriptionData.Prescription getStashItem(int index) {
+    public Prescription getStashItem(int index) {
         return stash.get(index);
     }
 
     //return rx from its random id
-    public RxPrescriptionData.Prescription getStashItem2(int randomId) {
-        RxPrescriptionData.Prescription psp=null;
-        for (RxPrescriptionData.Prescription rx:stash){
+    public Prescription getStashItem2(int randomId) {
+        Prescription psp=null;
+        for (Prescription rx:stash){
             if(rx.getRandomId()==randomId){
                 psp=rx;
             }
@@ -200,18 +202,18 @@ public class RxSessionBean  implements java.io.Serializable {
         return psp;
     }
 
-    public void setStashItem(int index, RxPrescriptionData.Prescription item) {
+    public void setStashItem(int index, Prescription item) {
         //this.clearDAM();
         //this.clearDDI();
         stash.set(index, item);
     }
 
-    public int addStashItem(LoggedInInfo loggedInInfo, RxPrescriptionData.Prescription item) {
+    public int addStashItem(LoggedInInfo loggedInInfo, Prescription item) {
 
         int ret = -1;
 
         int i;
-        RxPrescriptionData.Prescription rx;
+        Prescription rx;
 
         //check to see if the item already exists
         //by checking for duplicate brandname and gcn seq no
@@ -394,7 +396,7 @@ public class RxSessionBean  implements java.io.Serializable {
     public Vector getAtcCodes(){
        RxPrescriptionData rxData = new RxPrescriptionData();
        Vector atcCodes = rxData.getCurrentATCCodesByPatient(this.getDemographicNo());
-       RxPrescriptionData.Prescription rx;
+       Prescription rx;
        for(int i=0;i<this.getStashSize(); i++) {
           rx = this.getStashItem(i);
           atcCodes.add(rx.getAtcCode());
@@ -405,7 +407,7 @@ public class RxSessionBean  implements java.io.Serializable {
     public List getRegionalIdentifier(){
     	RxPrescriptionData rxData = new RxPrescriptionData();
         List regionalIdentifierCodes = rxData.getCurrentRegionalIdentifiersCodesByPatient(this.getDemographicNo());
-        RxPrescriptionData.Prescription rx;
+        Prescription rx;
         for(int i=0;i<this.getStashSize(); i++) {
            rx = this.getStashItem(i);
            regionalIdentifierCodes.add(rx.getRegionalIdentifier());
@@ -413,8 +415,8 @@ public class RxSessionBean  implements java.io.Serializable {
         return regionalIdentifierCodes;
     }
     
-    public RxDrugData.Interaction[] getInteractions(){
-       RxDrugData.Interaction[] interactions = null;
+    public Interaction[] getInteractions(){
+       Interaction[] interactions = null;
        long start = System.currentTimeMillis();
        long start2 = 0;
        long end2 = 0;
@@ -426,7 +428,7 @@ public class RxSessionBean  implements java.io.Serializable {
           Vector atcCodes = rxData.getCurrentATCCodesByPatient(this.getDemographicNo());
 
           logger.debug("atccode "+atcCodes);
-          RxPrescriptionData.Prescription rx;
+          Prescription rx;
           for(int i=0;i<this.getStashSize(); i++) {
              rx = this.getStashItem(i);
              if (rx.isValidAtcCode()){

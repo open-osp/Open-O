@@ -40,7 +40,7 @@ import org.oscarehr.common.service.BillingONService;
 import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarEncounter.data.EctFormData.PatientForm;
-import oscar.oscarRx.data.RxPrescriptionData.Prescription;
+import oscar.oscarRx.data.model.Prescription;
 /**
  * The echart seems to have non-note items in the note list. As a result this class will hold non-note items. A constructor can be made for each type of non-note item.
  */

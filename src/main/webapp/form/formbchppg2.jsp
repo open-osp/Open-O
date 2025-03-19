@@ -45,6 +45,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 <%
 String formClass = "BCHP";
@@ -72,7 +73,7 @@ if (props == null || (props.getProperty("pg2_medName1", "").equals("") && props.
     
     // fill the medications
     RxPrescriptionData rxData = new RxPrescriptionData();
-    RxPrescriptionData.Prescription[] medications = rxData.getPrescriptionsByPatient(demoNo);
+    Prescription[] medications = rxData.getPrescriptionsByPatient(demoNo);
     
     if (medications.length > 13){
         for (int i=14; i<medications.length && i<28; i++){

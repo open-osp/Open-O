@@ -44,6 +44,7 @@
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 
 <%@page import="java.util.ArrayList"%>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -120,7 +121,7 @@ oscar.oscarRx.pageUtil.RxSessionBean rxBean = null;
 
         ArrayList<StaticScriptBean.DrugDisplayData> drugs=StaticScriptBean.getDrugList(loggedInInfo, currentDemographicNo, regionalIdentifier, cn,bn,atc);
 
-	oscar.oscarRx.data.RxPatientData.Patient patient=oscar.oscarRx.data.RxPatientData.getPatient(loggedInInfo, currentDemographicNo);
+	Patient patient=oscar.oscarRx.data.RxPatientData.getPatient(loggedInInfo, currentDemographicNo);
 	String annotation_display=org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP;
 %>
 <script type="text/javascript" src="../share/javascript/prototype.js"/>"></script>

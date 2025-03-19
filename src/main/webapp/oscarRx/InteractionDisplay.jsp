@@ -41,13 +41,14 @@
 
 <%@ page
 	import="java.util.*,oscar.oscarRx.data.*,oscar.oscarRx.pageUtil.*"%>
+<%@ page import="oscar.oscarRx.data.model.Interaction" %>
 <%
 RxSessionBean bean = (RxSessionBean) session.getAttribute("RxSessionBean");
 if ( bean == null ){
     return;
 }
 
-     RxDrugData.Interaction[] interactions = (RxDrugData.Interaction[]) bean.getInteractions();
+     Interaction[] interactions = (Interaction[]) bean.getInteractions();
      if (interactions != null && interactions.length > 0){
         for (int i = 0 ; i < interactions.length; i++){  %>
 <div

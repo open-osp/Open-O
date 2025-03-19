@@ -41,7 +41,7 @@ import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarRx.data.RxPatientData;
-import oscar.oscarRx.data.RxPatientData.Patient;
+import oscar.oscarRx.data.model.Patient;
 import oscar.util.DateUtils;
 
 public final class AllergyHelperBean {

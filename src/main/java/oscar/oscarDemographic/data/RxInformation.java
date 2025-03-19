@@ -29,6 +29,8 @@ import org.oscarehr.common.model.Allergy;
 import org.oscarehr.util.LoggedInInfo;
 
 import oscar.oscarRx.data.RxPatientData;
+import oscar.oscarRx.data.model.Patient;
+import oscar.oscarRx.data.model.Prescription;
 
 public class RxInformation {
 	private String currentMedication;
@@ -36,7 +38,7 @@ public class RxInformation {
 
 	public String getCurrentMedication(String demographic_no) {
 		oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-		oscar.oscarRx.data.RxPrescriptionData.Prescription[] arr = {};
+		Prescription[] arr = {};
 		arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demographic_no));
 		StringBuilder stringBuffer = new StringBuilder();
 		for (int i = 0; i < arr.length; i++) {
@@ -51,7 +53,7 @@ public class RxInformation {
 	}
 
 	public String getAllergies(LoggedInInfo loggedInInfo, String demographic_no) {
-		oscar.oscarRx.data.RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(demographic_no));
+		Patient patient = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(demographic_no));
 		Allergy[] allergies = {};
 		allergies = patient.getActiveAllergies();
 		StringBuilder stringBuffer = new StringBuilder();

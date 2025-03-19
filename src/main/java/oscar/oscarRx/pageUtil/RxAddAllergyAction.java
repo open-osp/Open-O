@@ -45,7 +45,8 @@ import org.oscarehr.util.SpringUtils;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 import oscar.oscarRx.data.RxDrugData;
-import oscar.oscarRx.data.RxPatientData;
+import oscar.oscarRx.data.model.DrugMonograph;
+import oscar.oscarRx.data.model.Patient;
 
 
 public final class RxAddAllergyAction extends Action {
@@ -74,7 +75,7 @@ public final class RxAddAllergyAction extends Action {
             
             String nonDrug = request.getParameter("nonDrug");
             
-            RxPatientData.Patient patient = (RxPatientData.Patient)request.getSession().getAttribute("Patient");
+            Patient patient = (Patient)request.getSession().getAttribute("Patient");
             Allergy allergy = new Allergy();
             if (type != null && "13".equals(type)){
             	allergy.setDrugrefId(id);
@@ -112,7 +113,7 @@ public final class RxAddAllergyAction extends Action {
             if (type != null && type.equals("13")){
                 RxDrugData drugData = new RxDrugData();
                 try{
-                RxDrugData.DrugMonograph f = drugData.getDrug(""+id);
+                DrugMonograph f = drugData.getDrug(""+id);
                 allergy.setRegionalIdentifier(f.regionalIdentifier);
                 }catch(Exception e){
                     MiscUtils.getLogger().error("Error", e);

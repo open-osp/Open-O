@@ -43,6 +43,8 @@ import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Favorite;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.oscarRx.util.RxUtil;
 
 
@@ -76,11 +78,11 @@ public final class RxUseFavoriteAction extends DispatchAction {
             new RxPrescriptionData();
 
             // get favorite
-            RxPrescriptionData.Favorite fav =
+            Favorite fav =
             rxData.getFavorite(favoriteId);
 
             // create Prescription
-            RxPrescriptionData.Prescription rx =
+            Prescription rx =
             rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo(), fav);
 
             bean.addAttributeName(rx.getAtcCode() + "-" + String.valueOf(bean.getStashIndex()));
@@ -123,11 +125,11 @@ public final class RxUseFavoriteAction extends DispatchAction {
             new RxPrescriptionData();
 
             // get favorite
-            RxPrescriptionData.Favorite fav =
+            Favorite fav =
             rxData.getFavorite(favoriteId);
 
             // create Prescription
-            RxPrescriptionData.Prescription rx =
+            Prescription rx =
             rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo(), fav);
             rx.setRandomId(Long.parseLong(randomId));
 
@@ -136,7 +138,7 @@ public final class RxUseFavoriteAction extends DispatchAction {
 
             bean.addAttributeName(rx.getAtcCode() + "-" + String.valueOf(bean.getStashIndex()));
 
-            List<RxPrescriptionData.Prescription> listRxDrugs=new ArrayList();
+            List<Prescription> listRxDrugs=new ArrayList();
             if(RxUtil.isRxUniqueInStash(bean, rx)){
                 listRxDrugs.add(rx);
             }

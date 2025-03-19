@@ -43,7 +43,7 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 
 public class NoteDisplayIntegrator implements NoteDisplay {
 	private static final Logger logger=MiscUtils.getLogger();
@@ -176,7 +176,7 @@ public class NoteDisplayIntegrator implements NoteDisplay {
 		return (false);
 	}
 
-	public RxPrescriptionData.Prescription getRxFromAnnotation(CaseManagementNoteLink cmnl){
+	public Prescription getRxFromAnnotation(CaseManagementNoteLink cmnl){
 		return (null);
 	}
 

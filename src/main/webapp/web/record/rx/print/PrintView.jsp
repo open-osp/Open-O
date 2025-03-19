@@ -58,6 +58,8 @@
 
 
 <%@page import="org.oscarehr.web.PrescriptionQrCodeUIBean"%>
+<%@ page import="oscar.oscarRx.data.model.Provider" %>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -119,7 +121,7 @@ String rePrint = (String)request.getSession().getAttribute("rePrint");
 if(rePrint == null){
 	rePrint = "";
 }
-oscar.oscarRx.data.RxProviderData.Provider provider;
+Provider provider;
 String signingProvider = loggedInInfo.getLoggedInProviderNo();
 if( rePrint != null && rePrint.equalsIgnoreCase("true") ) {
     //bean = (oscar.oscarRx.pageUtil.RxSessionBean)session.getAttribute("tmpBeanRX");
@@ -133,7 +135,7 @@ if( rePrint != null && rePrint.equalsIgnoreCase("true") ) {
 provider = new oscar.oscarRx.data.RxProviderData().getProvider(signingProvider);
 
 
-oscar.oscarRx.data.RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, prescription.getDemographicId());
+Patient patient = RxPatientData.getPatient(loggedInInfo, prescription.getDemographicId());
 String patientAddress = patient.getAddress()==null ? "" : patient.getAddress();
 String patientCity = patient.getCity()==null ? "" : patient.getCity();
 String patientProvince = patient.getProvince()==null ? "" : patient.getProvince();
@@ -142,7 +144,7 @@ String patientPhone = patient.getPhone()==null ? "" : patient.getPhone();
 String patientHin = patient.getHin()==null ? "" : patient.getHin();
 
 
-oscar.oscarRx.data.RxPrescriptionData.Prescription rx = null;
+oscar.oscarRx.data.model.Prescription rx = null;
 int i;
 ProSignatureData sig = new ProSignatureData();
 boolean hasSig = sig.hasSignature(signingProvider);

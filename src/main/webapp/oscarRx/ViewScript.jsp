@@ -51,6 +51,8 @@
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.common.model.Appointment"%>
 <%@page import="org.oscarehr.common.dao.OscarAppointmentDao"%>
+<%@ page import="oscar.oscarRx.data.model.Provider" %>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 <%
 	OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
 %>
@@ -99,7 +101,7 @@ if(bMultisites) {
 		if (result!=null) location = result.getLocation();
 	}
 
-    oscar.oscarRx.data.RxProviderData.Provider provider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
+    Provider provider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
     ProSignatureData sig = new ProSignatureData();
     boolean hasSig = sig.hasSignature(bean.getProviderNo());
     String doctorName = "";
@@ -132,7 +134,7 @@ if(bMultisites) {
 
 } else
 if(props.getProperty("clinicSatelliteName") != null) {
-    oscar.oscarRx.data.RxProviderData.Provider provider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
+    Provider provider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
     ProSignatureData sig = new ProSignatureData();
     boolean hasSig = sig.hasSignature(bean.getProviderNo());
     String doctorName = "";
@@ -449,7 +451,7 @@ function toggleView(form) {
 					</tr>
 					<%
                         for(int i=0; i<bean.getStashSize(); i++){
-                            oscar.oscarRx.data.RxPrescriptionData.Prescription rx
+                            Prescription rx
                                 = bean.getStashItem(i);
 
                             if (! rx.isCustom()){

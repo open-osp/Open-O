@@ -33,6 +33,7 @@
 <%@ page import="org.oscarehr.common.dao.FlowSheetDrugDao,org.oscarehr.common.model.FlowSheetDrug"%>
 <%@ page import="oscar.util.UtilDateUtilities" %>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -735,7 +736,7 @@ view:
 }
 
     oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-    oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
+    Prescription[] arr = {};
 
     List<FlowSheetDrug> atcCodes = flowSheetDrugDAO.getFlowSheetDrugs(temp,Integer.parseInt(demographic_no));
     for(FlowSheetDrug fsd : atcCodes){
@@ -768,7 +769,7 @@ view:
  <%
         out.flush();
         int k = 0;
-        for (oscar.oscarRx.data.RxPrescriptionData.Prescription pres : arr){
+        for (Prescription pres : arr){
 
             String hider = "";
 

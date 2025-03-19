@@ -50,7 +50,7 @@ import org.oscarehr.util.SpringUtils;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 import oscar.oscarRx.data.RxPrescriptionData;
-import oscar.oscarRx.data.RxPrescriptionData.Prescription;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.oscarRx.util.RxUtil;
 
 public final class RxRePrescribeAction extends DispatchAction {
@@ -83,7 +83,7 @@ public final class RxRePrescribeAction extends DispatchAction {
 
 		RxPrescriptionData rxData = new RxPrescriptionData();
 		List<Prescription> list = rxData.getPrescriptionsByScriptNo(Integer.parseInt(script_no), sessionBeanRX.getDemographicNo());
-		RxPrescriptionData.Prescription p = null;
+		Prescription p = null;
 		StringBuilder auditStr = new StringBuilder();
 		for (int idx = 0; idx < list.size(); ++idx) {
 			p = list.get(idx);
@@ -127,7 +127,7 @@ public final class RxRePrescribeAction extends DispatchAction {
 		String ip = request.getRemoteAddr();
 		RxPrescriptionData rxData = new RxPrescriptionData();
 		List<Prescription> list = rxData.getPrescriptionsByScriptNo(Integer.parseInt(script_no), sessionBeanRX.getDemographicNo());
-		RxPrescriptionData.Prescription p = null;
+		Prescription p = null;
 		StringBuilder auditStr = new StringBuilder();
 		for (int idx = 0; idx < list.size(); ++idx) {
 			p = list.get(idx);
@@ -207,10 +207,10 @@ public final class RxRePrescribeAction extends DispatchAction {
 				}
 
 				// get original drug
-				RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
+				Prescription oldRx = rxData.getPrescription(drugId);
 
 				// create copy of Prescription
-				RxPrescriptionData.Prescription rx = rxData.newPrescription(beanRX.getProviderNo(), beanRX.getDemographicNo(), oldRx);
+				Prescription rx = rxData.newPrescription(beanRX.getProviderNo(), beanRX.getDemographicNo(), oldRx);
 
 				beanRX.setStashIndex(beanRX.addStashItem(loggedInInfo, rx));
 				auditStr.append(rx.getAuditString() + "\n");
@@ -245,9 +245,9 @@ public final class RxRePrescribeAction extends DispatchAction {
 		try {
 			int drugId = Integer.parseInt(strId);
 			// get original drug
-			RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
+			Prescription oldRx = rxData.getPrescription(drugId);
 			// create copy of Prescription
-			RxPrescriptionData.Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo(), oldRx); // set writtendate, rxdate ,enddate=null.
+			Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo(), oldRx); // set writtendate, rxdate ,enddate=null.
 			Long rand = Math.round(Math.random() * 1000000);
 			rx.setRandomId(rand);
 
@@ -264,7 +264,7 @@ public final class RxRePrescribeAction extends DispatchAction {
 			String spec = RxUtil.trimSpecial(rx);
 			rx.setSpecial(spec);
 
-			List<RxPrescriptionData.Prescription> listReRx = new ArrayList<Prescription>();
+			List<Prescription> listReRx = new ArrayList<Prescription>();
 			rx.setDiscontinuedLatest(RxUtil.checkDiscontinuedBefore(rx));
 			// add rx to rx list
 			if (RxUtil.isRxUniqueInStash(bean, rx)) {
@@ -308,9 +308,9 @@ public final class RxRePrescribeAction extends DispatchAction {
 
 			int drugId = Integer.parseInt(strId);
 			// get original drug
-			RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
+			Prescription oldRx = rxData.getPrescription(drugId);
 			// create copy of Prescription
-			RxPrescriptionData.Prescription rx = rxData.newPrescription(beanRX.getProviderNo(), beanRX.getDemographicNo(), oldRx); // set writtendate, rxdate ,enddate=null.
+			Prescription rx = rxData.newPrescription(beanRX.getProviderNo(), beanRX.getDemographicNo(), oldRx); // set writtendate, rxdate ,enddate=null.
 			long rand;
 			try {
 				rand = Long.parseLong(request.getParameter("rand"));
@@ -332,7 +332,7 @@ public final class RxRePrescribeAction extends DispatchAction {
 			String spec = RxUtil.trimSpecial(rx);
 			rx.setSpecial(spec);
 
-			List<RxPrescriptionData.Prescription> listReRx = new ArrayList<Prescription>();
+			List<Prescription> listReRx = new ArrayList<Prescription>();
 			rx.setDiscontinuedLatest(RxUtil.checkDiscontinuedBefore(rx));
 			// add rx to rx list
 			if (RxUtil.isRxUniqueInStash(beanRX, rx)) {
@@ -393,7 +393,7 @@ public final class RxRePrescribeAction extends DispatchAction {
         
         List<String> reRxDrugIdList=bean.getReRxDrugIdList();
         
-		List<RxPrescriptionData.Prescription> listLongTerm = new ArrayList<Prescription>();
+		List<Prescription> listLongTerm = new ArrayList<Prescription>();
 		for (int i = 0; i < listLongTermMed.size(); i++) {
 			Long rand = Math.round(Math.random() * 1000000);
 
@@ -405,10 +405,10 @@ public final class RxRePrescribeAction extends DispatchAction {
 			
 			// get original drug
 			RxPrescriptionData rxData = new RxPrescriptionData();
-			RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
+			Prescription oldRx = rxData.getPrescription(drugId);
 
 			// create copy of Prescription
-			RxPrescriptionData.Prescription rx = rxData.newPrescription(beanRX.getProviderNo(), beanRX.getDemographicNo(), oldRx);
+			Prescription rx = rxData.newPrescription(beanRX.getProviderNo(), beanRX.getDemographicNo(), oldRx);
 
 			request.setAttribute("BoxNoFillFirstLoad", "true");
 
@@ -453,12 +453,12 @@ public final class RxRePrescribeAction extends DispatchAction {
 		}
 		CopyOnWriteArrayList<String> reRxDrugList = bean.getReRxDrugIdList();
 		MiscUtils.getLogger().debug(reRxDrugList);
-		CopyOnWriteArrayList<RxPrescriptionData.Prescription> listReRxDrug = new CopyOnWriteArrayList<Prescription>();
+		CopyOnWriteArrayList<Prescription> listReRxDrug = new CopyOnWriteArrayList<Prescription>();
 		for (String drugId : reRxDrugList) {
 			Long rand = Math.round(Math.random() * 1000000);
 			RxPrescriptionData rxData = new RxPrescriptionData();
-			RxPrescriptionData.Prescription oldRx = rxData.getPrescription(Integer.parseInt(drugId));
-			RxPrescriptionData.Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo(), oldRx);
+			Prescription oldRx = rxData.getPrescription(Integer.parseInt(drugId));
+			Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo(), oldRx);
 			rx.setRandomId(rand);
 			String qText = rx.getQuantity();
 			MiscUtils.getLogger().debug("qText in represcribe2=" + qText);

@@ -1,4 +1,4 @@
-<%--
+<%@ page import="oscar.oscarRx.data.model.Patient" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -60,7 +60,7 @@
 
 <%
 oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean");
-RxPatientData.Patient patient = (RxPatientData.Patient)request.getSession().getAttribute("Patient");
+Patient patient = (Patient)request.getSession().getAttribute("Patient");
 String name = (String) request.getAttribute("name");
 String type = (String) request.getAttribute("type");
 String drugrefId = (String) request.getAttribute("drugrefId");

@@ -57,6 +57,7 @@ if(!authed) {
 %>
 
 <%@ page import="oscar.util.*"%>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 
 
 <%
@@ -346,7 +347,7 @@ request.getSession().setAttribute("EctSessionBean",bean);
 
                                             request.getSession().setAttribute("RxSessionBean", Rxbean);
 
-                                            RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, demographic_no);
+                                            Patient patient = RxPatientData.getPatient(loggedInInfo, demographic_no);
 
                                             if(patient!=null) {
                                                 request.getSession().setAttribute("Patient", patient);

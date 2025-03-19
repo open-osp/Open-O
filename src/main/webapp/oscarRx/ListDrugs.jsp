@@ -49,7 +49,7 @@
 <%@page import="org.oscarehr.managers.DrugDispensingManager" %>
 <%@page import="org.oscarehr.managers.CodingSystemManager" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<bean:define id="patient" type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
+<bean:define id="patient" type="oscar.oscarRx.data.model.Patient" name="Patient" />
 <logic:notPresent name="RxSessionBean" scope="session">
     <logic:redirect href="error.html" />
 </logic:notPresent>

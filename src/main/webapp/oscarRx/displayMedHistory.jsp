@@ -48,7 +48,9 @@
 <%@page import="oscar.oscarRx.util.*" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
-<%@page import="org.oscarehr.util.MiscUtils"%><html>
+<%@page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
+<html>
 <head>
     <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/dragiframe.js"/>"></script>
     <link rel="stylesheet" type="text/css" href="styles.css">
@@ -59,7 +61,7 @@ try{
     oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
     String randomId=request.getParameter("randomId");
         if(randomId!=null){
-                RxPrescriptionData.Prescription rx=bean.getStashItem2(Integer.parseInt(randomId));
+                Prescription rx=bean.getStashItem2(Integer.parseInt(randomId));
                 String drugName=rx.getBrandName();
                 if(drugName==null || drugName.equalsIgnoreCase("null") || drugName.trim().length()==0)
                     drugName=rx.getCustomName();

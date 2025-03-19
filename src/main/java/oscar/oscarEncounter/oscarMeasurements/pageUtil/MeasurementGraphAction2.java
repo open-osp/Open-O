@@ -70,7 +70,6 @@ import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.gantt.XYTaskDataset;
 import org.jfree.data.time.Day;
-import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.xy.DefaultOHLCDataset;
 import org.jfree.data.xy.OHLCDataItem;
@@ -87,6 +86,7 @@ import org.oscarehr.util.SpringUtils;
 import oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBean;
 import oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBeanHandler;
 import oscar.oscarLab.ca.on.CommonLabTestValues;
+import oscar.oscarRx.data.model.Prescription;
 
 /**
  *
@@ -178,10 +178,10 @@ public class MeasurementGraphAction2 extends Action {
         if (dins != null) {
             for(String din:dins){
                 if (din != null ) {
-                    oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographicId,din);
+                    Prescription[] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographicId,din);
                     if(arr != null && arr.length>0) {
                         TaskSeries ts  = new TaskSeries(arr[0].getBrandName());
-                        for(oscar.oscarRx.data.RxPrescriptionData.Prescription pres:arr){
+                        for(Prescription pres:arr){
                             ts.add(new Task(pres.getBrandName(),pres.getRxDate(),pres.getEndDate()));
                         }
                         datasetDrug.add(ts);
@@ -206,7 +206,7 @@ public class MeasurementGraphAction2 extends Action {
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
         for(String din:dins){
             if (din != null && ! "null".equalsIgnoreCase(din)) {
-             oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographic, din);
+             Prescription[] arr =  prescriptData.getPrescriptionScriptsByPatientRegionalIdentifier(demographic, din);
              String brandName = null;
              if (arr != null && arr.length > 0) {
                  brandName = arr[0].getBrandName();             

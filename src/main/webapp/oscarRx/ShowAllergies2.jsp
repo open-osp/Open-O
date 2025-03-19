@@ -359,7 +359,7 @@ function addCustomNKDA(){
 </script>
 
 </head>
-<bean:define id="patient" type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
+<bean:define id="patient" type="oscar.oscarRx.data.model.Patient" name="Patient" />
 
 <body>
 <%=WebUtils.popErrorAndInfoMessagesAsHtml(session)%>

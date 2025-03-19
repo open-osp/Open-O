@@ -42,7 +42,7 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.log.LogAction;
 import oscar.log.LogConst;
-import oscar.oscarRx.data.RxPatientData;
+import oscar.oscarRx.data.model.Patient;
 
 
 public final class RxDeleteAllergyAction extends Action {
@@ -66,7 +66,7 @@ public final class RxDeleteAllergyAction extends Action {
             String demographicNo = request.getParameter("demographicNo");
     		String action = request.getParameter("action");
 
-            RxPatientData.Patient patient = (RxPatientData.Patient)request.getSession().getAttribute("Patient");
+            Patient patient = (Patient)request.getSession().getAttribute("Patient");
 
             Allergy allergy = patient.getAllergy(id);
             if(action!= null && action.equals("activate")) {

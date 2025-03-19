@@ -82,6 +82,7 @@ import oscar.oscarEncounter.oscarMeasurements.data.LabMeasurements;
 import oscar.oscarEncounter.oscarMeasurements.data.Measurements;
 import oscar.oscarReport.data.DemographicSets;
 import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.util.StringUtils;
 import oscar.util.UtilDateUtilities;
 import cdsDtCihi.DateFullOrPartial;
@@ -920,7 +921,7 @@ public class CihiExportAction extends DispatchAction {
 
     private void buildMedications(Demographic demo, PatientRecord patientRecord) {
 		MedicationsAndTreatments medications;
-		RxPrescriptionData.Prescription[] pa = new RxPrescriptionData().getPrescriptionsByPatient(Integer.parseInt(demo.getDemographicNo().toString()));
+		Prescription[] pa = new RxPrescriptionData().getPrescriptionsByPatient(Integer.parseInt(demo.getDemographicNo().toString()));
 		String drugname;
 		String customname;
 		String dosage;

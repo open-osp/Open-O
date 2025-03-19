@@ -53,7 +53,7 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.OscarProperties;
 import oscar.oscarRx.data.RxProviderData;
-import oscar.oscarRx.data.RxProviderData.Provider;
+import oscar.oscarRx.data.model.Provider;
 
 /**
  *

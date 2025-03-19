@@ -33,6 +33,9 @@
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <%@ page import="oscar.*,java.lang.*,java.util.Date"%>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="oscar.oscarRx.data.model.Provider" %>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -86,7 +89,7 @@
 Date rxDate = oscar.oscarRx.util.RxUtil.Today();
 String rePrint = request.getParameter("rePrint");
 oscar.oscarRx.pageUtil.RxSessionBean bean;
-oscar.oscarRx.data.RxProviderData.Provider provider;
+Provider provider;
 String signingProvider;
 if( rePrint != null && rePrint.equalsIgnoreCase("true") ) {
     bean = (oscar.oscarRx.pageUtil.RxSessionBean)session.getAttribute("tmpBeanRX");
@@ -114,9 +117,9 @@ else {
 }
 
 
-oscar.oscarRx.data.RxPatientData.Patient patient = RxPatientData.getPatient(LoggedInInfo.getLoggedInInfoFromSession(request), bean.getDemographicNo());
+Patient patient = RxPatientData.getPatient(LoggedInInfo.getLoggedInInfoFromSession(request), bean.getDemographicNo());
 
-oscar.oscarRx.data.RxPrescriptionData.Prescription rx = null;
+Prescription rx = null;
 int i;
 ProSignatureData sig = new ProSignatureData();
 boolean hasSig = sig.hasSignature(signingProvider);

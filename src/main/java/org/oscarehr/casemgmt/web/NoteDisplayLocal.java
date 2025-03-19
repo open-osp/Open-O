@@ -37,7 +37,7 @@ import org.oscarehr.util.CppUtils;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 
 public class NoteDisplayLocal implements NoteDisplay {
 	private CaseManagementIssueNotesDao caseManagementIssueNotesDao=(CaseManagementIssueNotesDao)SpringUtils.getBean(CaseManagementIssueNotesDao.class);
@@ -185,7 +185,7 @@ public class NoteDisplayLocal implements NoteDisplay {
 		return (caseManagementNote.isRxAnnotation());
 	}
 
-	public RxPrescriptionData.Prescription getRxFromAnnotation(CaseManagementNoteLink cmnl) {
+	public Prescription getRxFromAnnotation(CaseManagementNoteLink cmnl) {
 		return (caseManagementNote.getRxFromAnnotation(cmnl));
 	}
 

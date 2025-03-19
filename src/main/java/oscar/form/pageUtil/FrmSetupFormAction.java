@@ -65,7 +65,8 @@ import oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementTypesBean;
 import oscar.oscarEncounter.oscarMeasurements.util.EctFindMeasurementTypeUtil;
 import oscar.oscarEncounter.pageUtil.EctSessionBean;
 import oscar.oscarRx.data.RxPatientData;
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Patient;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.util.UtilDateUtilities;
 
 /*
@@ -264,8 +265,8 @@ public final class FrmSetupFormAction extends Action {
 
 		if (fluShot != null) drugs.add(fluShot + "     Flu Shot");
 
-		RxPatientData.Patient p = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(demographicNo));
-		RxPrescriptionData.Prescription[] prescribedDrugs = p.getPrescribedDrugsUnique();
+		Patient p = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(demographicNo));
+		Prescription[] prescribedDrugs = p.getPrescribedDrugsUnique();
 		if (prescribedDrugs.length == 0 && fluShot == null) drugs = null;
 		for (int i = 0; i < prescribedDrugs.length; i++) {
 			drugs.add(prescribedDrugs[i].getRxDate().toString() + "    " + prescribedDrugs[i].getRxDisplay());
@@ -277,7 +278,7 @@ public final class FrmSetupFormAction extends Action {
 	private List getDrugAllegyList(LoggedInInfo loggedInInfo, String demographicNo) {
 		List allergyLst = new LinkedList();
 
-		RxPatientData.Patient p = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(demographicNo));
+		Patient p = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(demographicNo));
 		Allergy[] allergies = p.getActiveAllergies();
 		if (allergies.length == 0) allergyLst = null;
 		for (int i = 0; i < allergies.length; i++) {

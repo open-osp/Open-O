@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.oscarehr.util.MiscUtils;
+import oscar.oscarRx.data.model.Interaction;
 
 /**
  *
@@ -57,7 +58,7 @@ public class RxInteractionData {
       }            
    }
    
-   public void addToHash(Vector atccodes,RxDrugData.Interaction[] interact ){
+   public void addToHash(Vector atccodes, Interaction[] interact ){
       htable.put(new Integer(atccodes.hashCode()), interact);
    }
    
@@ -68,13 +69,13 @@ public class RxInteractionData {
       working.remove(new Integer(atccodes.hashCode()));
    }
    
-   public RxDrugData.Interaction[] getInteractions(Vector atccodes){
-      RxDrugData.Interaction[] interact = null;
+   public Interaction[] getInteractions(Vector atccodes){
+      Interaction[] interact = null;
       MiscUtils.getLogger().debug("h table size "+htable.size()+"RxInteractionData.getInteraction atc code val  "+atccodes.hashCode());
       Integer i = new Integer(atccodes.hashCode());
       if (htable.containsKey(i) ){
          MiscUtils.getLogger().debug("Already been searched!");
-         interact = (RxDrugData.Interaction[]) htable.get(i);
+         interact = (Interaction[]) htable.get(i);
       }else if(working.contains(i) ){
          MiscUtils.getLogger().debug("Already been searched but not finished !");
          RxInteractionWorker worker = (RxInteractionWorker) working.get(i);
@@ -91,7 +92,7 @@ public class RxInteractionData {
             
              
          }
-         interact = (RxDrugData.Interaction[]) htable.get(i);
+         interact = (Interaction[]) htable.get(i);
       
       }else{
          MiscUtils.getLogger().debug("NEW ATC CODES");

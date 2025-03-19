@@ -32,6 +32,7 @@
 <%@page import="org.oscarehr.util.MiscUtils"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="oscar.oscarRx.data.model.*" %>
 
 <%long start = System.currentTimeMillis();%>
 
@@ -835,7 +836,7 @@ LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 RxWriteScriptForm thisForm = (RxWriteScriptForm)request.getAttribute("RxWriteScriptForm");
 
 if(bean.getStashIndex() > -1){ //new way
-    RxPrescriptionData.Prescription rx = bean.getStashItem(bean.getStashIndex());
+    Prescription rx = bean.getStashItem(bean.getStashIndex());
     annotation_attrib = rx.getAtcCode() + "-" + String.valueOf(bean.getStashIndex());
     RxDrugData drugData = new RxDrugData();
     thisForm.setDemographicNo(bean.getDemographicNo());
@@ -931,7 +932,7 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
 	<%
 
 // set patient info
-RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, thisForm.getDemographicNo());
+Patient patient = RxPatientData.getPatient(loggedInInfo, thisForm.getDemographicNo());
 
 RxDrugData drug = new RxDrugData();
 
@@ -950,7 +951,7 @@ Vector comps = (Vector) request.getAttribute("components");
       if (comps != null){
         compString = new String();
         for (int c = 0; c < comps.size();c++){
-            RxDrugData.DrugMonograph.DrugComponent dc = (RxDrugData.DrugMonograph.DrugComponent) comps.get(c);
+            DrugMonograph.DrugComponent dc = (DrugMonograph.DrugComponent) comps.get(c);
             compString = compString + dc.name+" "+dc.strength+ " "+dc.unit+"\n";
         }
       }
@@ -958,7 +959,7 @@ Vector comps = (Vector) request.getAttribute("components");
 RxCodesData codesData = new RxCodesData();
 
 // create freq list
-RxCodesData.FrequencyCode[] freq = codesData.getFrequencyCodes();
+FrequencyCode[] freq = codesData.getFrequencyCodes();
 
 // create special instructions list
 String[] spec = codesData.getSpecialInstructions();
@@ -1445,8 +1446,8 @@ int i;
 								<logic:iterate id="rx" name="bean" property="stash"
 									length="stashSize">
 									<%
-                            RxPrescriptionData.Prescription rx2
-                                = ((RxPrescriptionData.Prescription)rx);
+                            Prescription rx2
+                                = ((Prescription)rx);
 
                             if(i==bean.getStashIndex()){
                                 %>

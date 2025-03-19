@@ -66,6 +66,7 @@ import oscar.form.pharmaForms.formBPMH.util.CaseNoteParser;
 import oscar.form.pharmaForms.formBPMH.util.JsonUtil;
 import oscar.form.pharmaForms.formBPMH.util.SortDrugList;
 import oscar.oscarRx.data.RxDrugData;
+import oscar.oscarRx.data.model.DrugMonograph;
 
 /*
  * Author: Dennis Warren 
@@ -486,9 +487,9 @@ public class BpmhFormHandler {
 					drugDIN = drug.getRegionalIdentifier();
 					BpmhDrug bpmhDrugBean;
 					BpmhDrug bpmhDrug = null;
-					RxDrugData.DrugMonograph drugData = null;
+					DrugMonograph drugData = null;
 					StringBuilder stringBuilder = null;
-					ArrayList<RxDrugData.DrugMonograph.DrugComponent> drugComponents = null;
+					ArrayList<DrugMonograph.DrugComponent> drugComponents = null;
 					String drugName = "";
 					String drugProduct = "";
 					

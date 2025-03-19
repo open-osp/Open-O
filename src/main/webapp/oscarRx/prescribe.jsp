@@ -32,6 +32,7 @@
 <%@page import="oscar.oscarRx.data.*" %>
 <%@page import="oscar.oscarRx.util.*" %>
 <%@page import="oscar.OscarProperties"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
@@ -51,13 +52,13 @@
 
     <%
 
-List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("listRxDrugs");
+List<Prescription> listRxDrugs=(List)request.getAttribute("listRxDrugs");
 oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)request.getSession().getAttribute("RxSessionBean");
 
 if(listRxDrugs!=null){
             String specStr=RxUtil.getSpecialInstructions();
 
-  for(RxPrescriptionData.Prescription rx : listRxDrugs ){
+  for(Prescription rx : listRxDrugs ){
          String rand            = Long.toString(rx.getRandomId());
          String instructions    = rx.getSpecial();
          String specialInstruction=rx.getSpecialInstruction();

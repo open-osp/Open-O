@@ -221,7 +221,9 @@ if (request.getParameter("casetoEncounter")==null)
 
 
 
-<%@page import="org.oscarehr.util.MiscUtils"%><html:html lang="en">
+<%@page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="oscarEncounter.Index.title" /> - <oscar:nameage
@@ -1471,7 +1473,7 @@ function grabEnterGetTemplate(event){
 						<div class="presBox" style="width: 100%;" id="presBox">
 						<%
                                     oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-                                    oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
+                                    Prescription[] arr = {};
                                     arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(bean.demographicNo));
                                     if (arr.length > 0){%>
 						<table>

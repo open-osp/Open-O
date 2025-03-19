@@ -74,6 +74,7 @@ import oscar.OscarProperties;
 import oscar.SxmlMisc;
 import oscar.oscarClinic.ClinicData;
 import oscar.oscarDemographic.data.DemographicRelationship;
+import oscar.oscarRx.data.model.Prescription;
 
 /**
  * This will create a PDF + assemble e-forms,documents,labs into a package
@@ -572,7 +573,7 @@ public class OscarChartPrinter {
             newPage = true;
         */
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-        oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
+        Prescription[] arr = {};
         arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demoNo));
 
         if(arr.length==0) {
@@ -593,7 +594,7 @@ public class OscarChartPrinter {
 
         Font curFont;
         for(int idx = 0; idx < arr.length; ++idx ) {
-            oscar.oscarRx.data.RxPrescriptionData.Prescription drug = arr[idx];
+            Prescription drug = arr[idx];
             p = new Paragraph();
             p.setAlignment(Paragraph.ALIGN_LEFT);
             if(drug.isCurrent() && !drug.isArchived() ){

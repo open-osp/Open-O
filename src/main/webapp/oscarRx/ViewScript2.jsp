@@ -136,7 +136,7 @@ if(bMultisites) {
 		if (result!=null) location = result.getLocation();
 	}
 
-    oscar.oscarRx.data.RxProviderData.Provider rxprovider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
+    oscar.oscarRx.data.model.Provider rxprovider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
     ProSignatureData sig = new ProSignatureData();
     boolean hasSig = sig.hasSignature(bean.getProviderNo());
     String doctorName = "";
@@ -168,7 +168,7 @@ if(bMultisites) {
 
 
 } else if(props.getProperty("clinicSatelliteName") != null) {
-    oscar.oscarRx.data.RxProviderData.Provider rxprovider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
+    oscar.oscarRx.data.model.Provider rxprovider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
     ProSignatureData sig = new ProSignatureData();
     boolean hasSig = sig.hasSignature(bean.getProviderNo());
     String doctorName = "";
@@ -922,7 +922,7 @@ function toggleView(form) {
 					</tr>
 					<%
                         for(int i=0; i<bean.getStashSize(); i++){
-                            oscar.oscarRx.data.RxPrescriptionData.Prescription rx
+                            oscar.oscarRx.data.model.Prescription rx
                                 = bean.getStashItem(i);
 
                             if (! rx.isCustom()){

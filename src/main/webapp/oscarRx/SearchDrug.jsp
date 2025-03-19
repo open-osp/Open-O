@@ -109,7 +109,9 @@
 <%@page import="java.util.List"%>
 <%@page import="org.oscarehr.casemgmt.web.PrescriptDrug"%>
 <%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%><html:html lang="en">
+<%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
+<html:html lang="en">
 <head>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
@@ -251,7 +253,7 @@ function load() {
 		if (request.getParameter("show") != null) if (request.getParameter("show").equals("all")) showall = true;
 %>
 
-<bean:define id="patient" type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
+<bean:define id="patient" type="oscar.oscarRx.data.model.Patient" name="Patient" />
 
 <body topmargin="0" leftmargin="0" vlink="#0000FF" onload="load()">
 <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber1" height="100%">
@@ -308,13 +310,13 @@ function load() {
 				<td>
 					<div style="height: 100px; overflow: auto; background-color: #DCDCDC; border: thin solid green; display: none;" id="reprint">
 					<%
-						oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs;
+						Prescription[] prescribedDrugs;
 							prescribedDrugs = patient.getPrescribedDrugScripts(); //this function only returns drugs which have an entry in prescription and drugs table
 							String script_no = "";
 
 							for (int i = 0; i < prescribedDrugs.length; i++)
 							{
-								oscar.oscarRx.data.RxPrescriptionData.Prescription drug = prescribedDrugs[i];
+								Prescription drug = prescribedDrugs[i];
 								if (drug.getScript_no() != null && script_no.equals(drug.getScript_no()))
 								{
 					%>
@@ -637,7 +639,7 @@ function load() {
 								<td><a href="javascript:submitPending(<%=i%>, 'edit');"><bean:message key="SearchDrug.msgEdit"/></a></td>
 								<td><a href="javascript:submitPending(<%=i%>, 'delete');"><bean:message key="SearchDrug.msgDelete"/></a></td>
 								<td><a href="javascript:submitPending(<%=i%>, 'edit');"> <bean:write name="rx" property="rxDisplay" /> </a></td>
-								<td><a href="javascript:ShowDrugInfo('<%=((oscar.oscarRx.data.RxPrescriptionData.Prescription)rx).getGenericName()%>');"><bean:message key="SearchDrug.msgInfo"/></a></td>
+								<td><a href="javascript:ShowDrugInfo('<%=((Prescription)rx).getGenericName()%>');"><bean:message key="SearchDrug.msgInfo"/></a></td>
 							</tr>
 							<%
 								i++;

@@ -64,7 +64,7 @@ import oscar.oscarEncounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig
 import oscar.oscarResearch.oscarDxResearch.bean.dxResearchBean;
 import oscar.oscarResearch.oscarDxResearch.bean.dxResearchBeanHandler;
 import oscar.oscarRx.data.RxPrescriptionData;
-import oscar.oscarRx.data.RxPrescriptionData.Prescription;
+import oscar.oscarRx.data.model.Prescription;
 
 /**
  *

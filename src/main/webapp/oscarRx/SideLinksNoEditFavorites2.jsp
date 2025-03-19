@@ -25,6 +25,7 @@
 --%>
 <%@page import="oscar.oscarRx.data.RxPatientData"%>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="oscar.oscarRx.data.model.Favorite" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -61,7 +62,7 @@
 <p class="PropSheetLevel1CurrentItem"><bean:message key="oscarRx.sideLinks.msgFavorites"/></p>
 <p class="PropSheetMenuItemLevel1">
 <%
-        oscar.oscarRx.data.RxPrescriptionData.Favorite[] favorites = new oscar.oscarRx.data.RxPrescriptionData().getFavorites(bean2.getProviderNo());
+        Favorite[] favorites = new oscar.oscarRx.data.RxPrescriptionData().getFavorites(bean2.getProviderNo());
         for (int j=0; j<favorites.length; j++){ %>
 
 <p class="PropSheetMenuItemLevel1"><a href="javascript:void(0);"
