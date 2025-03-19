@@ -650,7 +650,9 @@ function showHideERxPref() {
 
 					</div>
 					<div>
-						(alphanumeric password only)
+						(alphanumeric password only)<br>
+						check to lock all previously locked encounter notes and lock new encounter notes with this password<br>
+						unchecked to unlock all currently locked encounter notes or disable encounter note password lock
 					</div>
 				</td>
 			</tr>

@@ -797,4 +797,12 @@ public class CaseManagementNoteDAOImpl extends HibernateDaoSupport implements Ca
         List<CaseManagementNote> results = (List<CaseManagementNote>) getHibernateTemplate().find(query, providerNo);
         return results;
     }
+
+    @Override
+    public List<CaseManagementNote> getPreviouslyPasswordLockedNotes(String providerNo) {
+        String query = "select cmn from CaseManagementNote cmn where cmn.providerNo = ? and cmn.locked = '0' and cmn.password is not null and cmn.password not like 'NULL' ";
+        @SuppressWarnings("unchecked")
+        List<CaseManagementNote> results = (List<CaseManagementNote>) getHibernateTemplate().find(query, providerNo);
+        return results;
+    }
 }

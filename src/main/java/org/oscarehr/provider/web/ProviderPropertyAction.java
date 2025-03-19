@@ -39,6 +39,7 @@ import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.Facility;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.UserProperty;
+import org.oscarehr.managers.UserPropertyManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -46,7 +47,6 @@ import oscar.eform.EFormUtil;
 import oscar.log.LogAction;
 import oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -157,11 +157,11 @@ public class ProviderPropertyAction extends DispatchAction {
     /**
      * typically set from inside the JSP class providerupdatepreference.jsp
      * These properties are written to the Property table.
-     * @param request
      */
     public static void updateOrCreateProviderProperties(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         UserPropertyDAO propertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
+        UserPropertyManager userPropertyManager = SpringUtils.getBean(UserPropertyManager.class);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
         //TODO for sake of maintainable and efficient code the following refactor
@@ -209,6 +209,7 @@ public class ProviderPropertyAction extends DispatchAction {
          * unlock all notes when this is disabled
          * do not allow locking of future notes
          */
+        ;
         propertyValue = StringUtils.trimToNull(request.getParameter(UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED));
         property = propertyDAO.getProp(providerNo, UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED);
         if (property == null) {
@@ -216,9 +217,18 @@ public class ProviderPropertyAction extends DispatchAction {
             property.setProviderNo(providerNo);
             property.setName(UserProperty.CASEMGMT_NOTE_PASSWORD_ENABLED);
         }
-        property.setValue(String.valueOf(Boolean.parseBoolean(propertyValue)));
+        boolean currentlyEnabled = Boolean.parseBoolean(property.getValue());
+        boolean passwordEnabled = Boolean.parseBoolean(propertyValue);
+        property.setValue(String.valueOf(passwordEnabled));
         propertyDAO.saveProp(property);
 
+        /*
+         * Unlock all notes when password locking is disabled.
+         * Or re-lock all previously locked notes when re-enabled.
+         */
+        if(currentlyEnabled != passwordEnabled) {
+            request.getRequestDispatcher("/encounterNotePassword.do?method=enableDisable").forward(request, response);
+        }
         /* set and encrypt the password to be used for chart note locking
          * note that the property variable is still set with the CASEMGMT_NOTE_PASSWORD_ENABLED
          * object.
@@ -252,8 +262,7 @@ public class ProviderPropertyAction extends DispatchAction {
                  * the password value has changed.
                  */
                 if(!propertyValue.equals(currentProperty)) {
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("/encounterNotePassword.do?method=update");
-                    dispatcher.forward(request, response);
+                   request.getRequestDispatcher("/encounterNotePassword.do?method=update").forward(request, response);
                 }
 
             }

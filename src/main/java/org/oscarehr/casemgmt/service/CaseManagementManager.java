@@ -382,5 +382,7 @@ public interface CaseManagementManager {
 
     public String listNotes(String code, String providerNo, String demoNo);
 
-    void updatePasswordLockedNotes(LoggedInInfo loggedInInfo, String password);
+    void updatePasswordLockedNotes(LoggedInInfo loggedInInfo);
+
+    void enableDisablePasswordLockedNotes(LoggedInInfo loggedInInfo);
 }

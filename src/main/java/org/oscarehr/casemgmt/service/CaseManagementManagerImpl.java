@@ -49,8 +49,10 @@ import org.oscarehr.casemgmt.dao.*;
 import org.oscarehr.casemgmt.model.*;
 import org.oscarehr.common.dao.*;
 import org.oscarehr.common.model.*;
+import org.oscarehr.common.model.enumerator.UserPropertyKey;
 import org.oscarehr.documentManager.EDocUtil;
 import org.oscarehr.managers.SecurityInfoManager;
+import org.oscarehr.managers.UserPropertyManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -75,6 +77,11 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
     public final int SIGNATURE_SIGNED = 1;
     public final int SIGNATURE_VERIFY = 2;
 
+    /* Identifies a previously password locked note
+     * when inserted into the note password field.
+     */
+    public final String UNLOCKED = "unlocked";
+
     private String issueAccessType = "access";
     private CaseManagementNoteDAO caseManagementNoteDAO;
     private CaseManagementNoteExtDAO caseManagementNoteExtDAO;
@@ -83,6 +90,9 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
     private IssueDAO issueDAO;
     private CaseManagementCPPDAO caseManagementCPPDAO;
     private DemographicDao demographicDao;
+
+    @Autowired
+    private UserPropertyManager userPropertyManager;
     
     @Autowired
     private ProviderExtDao providerExtDao;
@@ -2265,7 +2275,6 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
      * caisi - filter notes
      * grab the last one, where i am provider, and it's not signed
      *
-     * @param request
      * @param demono
      * @param providerNo
      */
@@ -2690,11 +2699,13 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
      * If the note's current password does not match the provided password, the note's password will be updated.
      *
      * @param loggedInInfo the logged-in user information used to retrieve password-locked notes
-     * @param password the new password to set for the password-locked notes
      */
-    public void updatePasswordLockedNotes(LoggedInInfo loggedInInfo, String password) {
+    public void updatePasswordLockedNotes(LoggedInInfo loggedInInfo) {
+        UserProperty userProperty = userPropertyManager.getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD);
         List<CaseManagementNote> caseManagementNotes = getPasswordLockedNotes(loggedInInfo);
-        if(caseManagementNotes != null && !caseManagementNotes.isEmpty()) {
+        if(caseManagementNotes != null && !caseManagementNotes.isEmpty() &&
+                userProperty != null && userProperty.getValue() != null && !userProperty.getValue().trim().isEmpty()) {
+            String password = userProperty.getValue().trim();
             for (CaseManagementNote note : caseManagementNotes) {
                 if (! password.equals(note.getPassword())) {
                     note.setPassword(password);
@@ -2704,8 +2715,95 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
         }
     }
 
+    /**
+     * Toggles the password locking status of case management notes based on the user's settings.
+     * Updates passwords and lock status for each note that matches the user's configuration.
+     *
+     * @param loggedInInfo Information about the currently logged-in user, including authentication
+     *                     and session details required to fetch user properties and case management notes.
+     */
+    public void enableDisablePasswordLockedNotes(LoggedInInfo loggedInInfo) {
+        UserProperty passwordEnabledProperty = userPropertyManager.getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD_ENABLED);
+        // reject if the setting does not exist.
+        if (passwordEnabledProperty != null && passwordEnabledProperty.getValue() != null && !passwordEnabledProperty.getValue().trim().isEmpty()) {
+            boolean isEnabled = Boolean.parseBoolean(passwordEnabledProperty.getValue());
+            if (isEnabled) {
+                enablePasswordLockedNotes(loggedInInfo);
+            } else {
+                disablePasswordLockedNotes(loggedInInfo);
+            }
+        }
+    }
+
+    /**
+     * Enables password protection for notes previously marked as password-locked.
+     * This method retrieves the user's password property and applies the password
+     * to notes that are identified as password-locked, updating their status accordingly.
+     * If no password is set for the user, the method silently returns without making any changes.
+     *
+     * @param loggedInInfo the object containing information about the currently logged-in user.
+     */
+    public void enablePasswordLockedNotes(LoggedInInfo loggedInInfo) {
+        UserProperty notePasswordProperty = userPropertyManager.getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD);
+        // reject the setting if a password is not set.
+        if(notePasswordProperty == null
+                || notePasswordProperty.getValue() == null || notePasswordProperty.getValue().trim().isEmpty() ) {
+            return;
+        }
+        List<CaseManagementNote> caseManagementNotes = getPreviouslyPasswordLockedNotes(loggedInInfo);
+        if(caseManagementNotes != null && !caseManagementNotes.isEmpty()) {
+            for (CaseManagementNote note : caseManagementNotes) {
+                   note.setPassword(notePasswordProperty.getValue());
+                   note.setLocked(Boolean.TRUE);
+                   caseManagementNoteDAO.updateNote(note);
+            }
+        }
+    }
+
+    /**
+     * Disables password locking for all notes associated with the currently logged-in user.
+     * Sets the password field to "unlocked" and marks the note as no longer locked.
+     * Updates each modified note in the data store.
+     *
+     * @param loggedInInfo Information about the currently logged-in user, used to retrieve
+     *                     the password-locked notes for processing.
+     */
+    public void disablePasswordLockedNotes(LoggedInInfo loggedInInfo) {
+        List<CaseManagementNote> caseManagementNotes = getPasswordLockedNotes(loggedInInfo);
+        if(caseManagementNotes != null && !caseManagementNotes.isEmpty()) {
+            for (CaseManagementNote note : caseManagementNotes) {
+                /*
+                 * "unlocked" is inserted into the password field of a previously locked
+                 * note for tracking.
+                 * Then all of previously locked notes with an "unlocked"
+                 * password are re-locked with a password locking when the setting
+                 * is re-enabled by the user
+                 */
+                note.setPassword(UNLOCKED);
+                note.setLocked(Boolean.FALSE);
+                caseManagementNoteDAO.updateNote(note);
+            }
+        }
+    }
+
+    /**
+     * Retrieves a list of password-locked case management notes for the logged-in provider.
+     *
+     * @param loggedInInfo the information regarding the currently logged-in user, including provider details
+     * @return a list of password-locked case management notes associated with the logged-in provider
+     */
     private List<CaseManagementNote> getPasswordLockedNotes(LoggedInInfo loggedInInfo) {
         return caseManagementNoteDAO.getPasswordLockedNotes(loggedInInfo.getLoggedInProviderNo());
+    }
+
+    /**
+     * Retrieves a list of previously password locked case management notes for the specified logged-in provider.
+     *
+     * @param loggedInInfo Information about the currently logged-in user, including the provider number.
+     * @return A list of previously password locked case management notes associated with the logged-in provider.
+     */
+    private List<CaseManagementNote> getPreviouslyPasswordLockedNotes(LoggedInInfo loggedInInfo) {
+        return caseManagementNoteDAO.getPreviouslyPasswordLockedNotes(loggedInInfo.getLoggedInProviderNo());
     }
 
 }

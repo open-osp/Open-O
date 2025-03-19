@@ -205,4 +205,5 @@ public interface CaseManagementNoteDAO {
 	}
 
 	List<CaseManagementNote> getPasswordLockedNotes(String providerNo);
+	List<CaseManagementNote> getPreviouslyPasswordLockedNotes(String providerNo);
 }

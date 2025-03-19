@@ -67,4 +67,22 @@ public class UserPropertyManager {
 		return userProperties;
 	}
 
+	/**
+	 * Retrieves the encounter note password for the logged-in user if the feature
+	 * is enabled and a valid password exists.
+	 *
+	 * @param loggedInInfo the logged-in user's security information
+	 * @return the encounter note password if the feature is enabled and a valid password is set, otherwise null
+	 */
+	public String getEncounterNotePassword(LoggedInInfo loggedInInfo) {
+		UserProperty userProperty = getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD_ENABLED);
+		if (userProperty != null && userProperty.isChecked()) {
+			userProperty = getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD);
+			if (userProperty != null && userProperty.getValue() != null && !userProperty.getValue().trim().isEmpty()) {
+				return userProperty.getValue();
+			}
+		}
+		return null;
+	}
+
 }
