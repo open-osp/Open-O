@@ -26,3 +26,4 @@ src/main/resources/uiResources_*.properties
 .settings/
 .vscode/
 tmp/
+/.smarttomcat/
