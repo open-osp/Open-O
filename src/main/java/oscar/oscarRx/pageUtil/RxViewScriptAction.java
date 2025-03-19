@@ -40,6 +40,7 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 
 
 public final class RxViewScriptAction extends Action {
@@ -66,7 +67,7 @@ public final class RxViewScriptAction extends Action {
             return null;
         }
         
-        RxPrescriptionData.Prescription rx;
+        Prescription rx;
         RxPrescriptionData prescription = new RxPrescriptionData();
         String scriptId = prescription.saveScript(loggedInInfo, bean);
         

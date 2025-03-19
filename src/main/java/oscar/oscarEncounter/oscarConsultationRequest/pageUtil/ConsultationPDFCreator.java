@@ -29,7 +29,7 @@ import org.oscarehr.util.SpringUtils;
 import oscar.OscarProperties;
 import oscar.oscarClinic.ClinicData;
 import oscar.oscarRx.data.RxProviderData;
-import oscar.oscarRx.data.RxProviderData.Provider;
+import oscar.oscarRx.data.model.Provider;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;

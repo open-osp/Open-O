@@ -1,4 +1,5 @@
-<%--
+<%@ page import="oscar.oscarRx.data.model.Favorite" %>
+<%@ page import="oscar.oscarRx.data.model.FrequencyCode" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -58,10 +59,10 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 oscar.oscarRx.data.RxPrescriptionData rxData = new oscar.oscarRx.data.RxPrescriptionData();
 oscar.oscarRx.data.RxDrugData drugData = new oscar.oscarRx.data.RxDrugData();
 
-oscar.oscarRx.data.RxPrescriptionData.Favorite[] favorites = rxData.getFavorites(bean.getProviderNo());
-oscar.oscarRx.data.RxPrescriptionData.Favorite f;
+Favorite[] favorites = rxData.getFavorites(bean.getProviderNo());
+Favorite f;
 
-oscar.oscarRx.data.RxCodesData.FrequencyCode[] freq = new oscar.oscarRx.data.RxCodesData().getFrequencyCodes();
+FrequencyCode[] freq = new oscar.oscarRx.data.RxCodesData().getFrequencyCodes();
 
 int i, j;
 %>

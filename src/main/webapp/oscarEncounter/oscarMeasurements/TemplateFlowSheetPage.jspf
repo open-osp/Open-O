@@ -45,6 +45,7 @@
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%@page import="oscar.OscarProperties"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 <%
 	if(session.getValue("user") == null) response.sendRedirect("${ pageContext.request.contextPath }/logout.jsp");
@@ -578,7 +579,7 @@ div.recommendations ul{
 
                 <%
                     oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-                    oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
+                    Prescription[] arr = {};
                     arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demographic_no));
                     if (arr.length > 0){%>
                 <ul>
@@ -892,7 +893,7 @@ function createAddAll(d,t,h){
 
 <%
     oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-    oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
+    Prescription[] arr = {};
 
     List<FlowSheetDrug> atcCodes = flowSheetDrugDao.getFlowSheetDrugs(temp,Integer.parseInt(demographic_no));
     for(FlowSheetDrug fsd : atcCodes){
@@ -912,7 +913,7 @@ function createAddAll(d,t,h){
     </div>
     <%
         out.flush();
-        for (oscar.oscarRx.data.RxPrescriptionData.Prescription pres : arr){
+        for (Prescription pres : arr){
     %>
     <div class="preventionProcedure"  onclick="javascript:fsPopup(465,635,'','addPreventionData')" >
         <p <%=""/*r(hdata.get("refused"))*/%> title="fade=[on] header=[<%=""/*hdata.get("age")*/%> -- Date:<%=""/*hdata.get("prevention_date")*/%>] body=[<%=""/*com*/%>]" ><%=pres.getBrandName()%> <br/>

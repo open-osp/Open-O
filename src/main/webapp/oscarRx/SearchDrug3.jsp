@@ -54,10 +54,11 @@
 <%@page import="org.oscarehr.common.model.ProviderPreference"%>
 <%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean"%>
 <%@page import="org.oscarehr.study.StudyFactory, org.oscarehr.study.Study, org.oscarehr.study.types.MyMedsStudy" %>
-<bean:define id="patient" type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
+<bean:define id="patient" type="oscar.oscarRx.data.model.Patient" name="Patient" />
 <%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
 <%@page import="org.oscarehr.casemgmt.model.CaseManagementNote" %>
 <%@page import="org.oscarehr.casemgmt.model.Issue" %>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 <%
 String rx_enhance = OscarProperties.getInstance().getProperty("rx_enhance");
@@ -171,7 +172,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 
             String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP;
 
-            oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs;
+            Prescription[] prescribedDrugs;
                         prescribedDrugs = patient.getPrescribedDrugScripts(); //this function only returns drugs which have an entry in prescription and drugs table
                         String script_no = "";
                         
@@ -948,7 +949,7 @@ body {
 
 
                         <% for (int i = 0; prescribedDrugs.length > i; i++) {
-                            oscar.oscarRx.data.RxPrescriptionData.Prescription drug =  prescribedDrugs[i];
+                            Prescription drug =  prescribedDrugs[i];
                         %>
 
                                                     <%

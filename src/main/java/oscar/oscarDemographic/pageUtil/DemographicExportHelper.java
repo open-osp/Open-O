@@ -43,6 +43,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.util.StringUtils;
 import oscar.util.UtilDateUtilities;
 import cds.MedicationsAndTreatmentsDocument.MedicationsAndTreatments;
@@ -94,7 +95,7 @@ public class DemographicExportHelper {
 		
 		// MEDICATIONS & TREATMENTS
 		RxPrescriptionData prescriptData = new RxPrescriptionData();
-		RxPrescriptionData.Prescription[] arr = null;
+		Prescription[] arr = null;
 		String annotation = null;
 		arr = prescriptData.getPrescriptionsByPatient(Integer.parseInt(demoNo));
 		for (int p = 0; p < arr.length; p++) {

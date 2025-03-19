@@ -180,6 +180,7 @@ import oscar.oscarReport.data.RptDemographicQueryLoader;
 import oscar.oscarReport.pageUtil.RptDemographicReportForm;
 import oscar.oscarRx.data.RxPatientData;
 import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.util.ConversionUtils;
 import oscar.util.StringUtils;
 import oscar.util.UtilDateUtilities;
@@ -1502,7 +1503,7 @@ public class DemographicExportAction4 extends Action {
 			if (exMedicationsAndTreatments) {
 				// MEDICATIONS & TREATMENTS
 				RxPrescriptionData prescriptData = new RxPrescriptionData();
-				RxPrescriptionData.Prescription[] arr = null;
+				Prescription[] arr = null;
 				String annotation = null;
 				arr = prescriptData.getPrescriptionsByPatientForExport(Integer.parseInt(demoNo));
 				for (int p = 0; p < arr.length; p++){

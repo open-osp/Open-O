@@ -27,6 +27,7 @@
 <%@page import="oscar.OscarProperties"%>
 <%@page import="java.util.*" %>
 <%@page import="oscar.oscarRx.data.RxPrescriptionData" %>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -45,9 +46,9 @@
 
 <%
     oscar.oscarRx.pageUtil.RxSessionBean bean2 =(oscar.oscarRx.pageUtil.RxSessionBean)request.getSession().getAttribute("RxSessionBean");
-    RxPrescriptionData.Prescription [] allRxInStash=bean2.getStash();
+    Prescription[] allRxInStash=bean2.getStash();
     List allRandomIdInStash=new ArrayList() ;
-    for(RxPrescriptionData.Prescription rx:allRxInStash){
+    for(Prescription rx:allRxInStash){
         allRandomIdInStash.add(rx.getRandomId());
     }
     String interactingDrugList=bean2.getInteractingDrugList();

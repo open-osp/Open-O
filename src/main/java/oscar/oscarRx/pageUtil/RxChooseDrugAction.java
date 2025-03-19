@@ -42,7 +42,8 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarRx.data.RxDrugData;
 import oscar.oscarRx.data.RxPrescriptionData;
-
+import oscar.oscarRx.data.model.DrugMonograph;
+import oscar.oscarRx.data.model.Prescription;
 
 
 public final class RxChooseDrugAction extends Action {
@@ -76,7 +77,7 @@ public final class RxChooseDrugAction extends Action {
                 RxDrugData drugData = new RxDrugData();
 
                 // create Prescription
-                RxPrescriptionData.Prescription rx =
+                Prescription rx =
                         rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo());
 
                
@@ -88,7 +89,7 @@ public final class RxChooseDrugAction extends Action {
                     rx.setBrandName(BN);
                 try{
                     rx.setGCN_SEQNO(Integer.parseInt(drugId));
-                    RxDrugData.DrugMonograph f = drugData.getDrug(drugId);               
+                    DrugMonograph f = drugData.getDrug(drugId);
                     String genName = "";
                     genName = f.name;
                     rx.setAtcCode(f.atc);
@@ -100,7 +101,7 @@ public final class RxChooseDrugAction extends Action {
                     request.setAttribute("components", f.components);
                     String dosage = "";	
                     for (int c = 0; c < f.components.size();c++){
-                        RxDrugData.DrugMonograph.DrugComponent dc = (RxDrugData.DrugMonograph.DrugComponent) f.components.get(c);                         
+                        DrugMonograph.DrugComponent dc = (DrugMonograph.DrugComponent) f.components.get(c);
                         if(c == (f.components.size()-1)){
                            dosage += dc.strength+" "+dc.unit;
                         }else{
@@ -113,7 +114,7 @@ public final class RxChooseDrugAction extends Action {
                     if (f.components != null){
                         compString = new StringBuilder();
                         for (int c = 0; c < f.components.size();c++){
-                            RxDrugData.DrugMonograph.DrugComponent dc = (RxDrugData.DrugMonograph.DrugComponent) f.components.get(c);
+                            DrugMonograph.DrugComponent dc = (DrugMonograph.DrugComponent) f.components.get(c);
                   //          p("dc.name: "+dc.name+"dc.strength: "+dc.strength+"dc.unit: "+dc.unit);
                             compString.append(dc.name+" "+dc.strength+ " "+dc.unit+" ");              
                         }          

@@ -76,7 +76,9 @@ if(!authed) {
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<%@page import="org.oscarehr.util.MiscUtils"%><html>
+<%@page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
+<html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath()%>/js/global.js"></script>
         <html:base />
@@ -225,7 +227,7 @@ if(!authed) {
                         <ul>
                         <%
                         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-                        oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
+                        Prescription[] arr = {};
                         arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demographicNo));
 
                         if (arr != null){
@@ -235,7 +237,7 @@ if(!authed) {
                         long now = System.currentTimeMillis();
                         long month = 1000L * 60L * 60L * 24L * 30L;
                         for(int idx = 0; idx < arr.length; ++idx ) {
-                            oscar.oscarRx.data.RxPrescriptionData.Prescription drug = arr[idx];
+                            Prescription drug = arr[idx];
                             if( drug.isArchived() ){
                                 continue;
                             }

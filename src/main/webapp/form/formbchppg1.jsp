@@ -45,6 +45,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 
 <%
@@ -68,7 +69,7 @@ if (props == null || props.getProperty("c_lastVisited", "").equals("")){
 //if (true){
     // fill the medications
     RxPrescriptionData rxData = new RxPrescriptionData();
-    RxPrescriptionData.Prescription[] medications = rxData.getPrescriptionsByPatient(demoNo);
+    Prescription[] medications = rxData.getPrescriptionsByPatient(demoNo);
     String tempName;
     for (int i=0; i<medications.length && i<14; i++){
         tempName = medications[i].getBrandName();

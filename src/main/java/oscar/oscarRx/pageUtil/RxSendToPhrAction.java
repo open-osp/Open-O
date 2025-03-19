@@ -57,7 +57,8 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarEncounter.data.EctProviderData;
 import oscar.oscarRx.data.RxPatientData;
-import oscar.oscarRx.data.RxPrescriptionData.Prescription;
+import oscar.oscarRx.data.model.Prescription;
+import oscar.oscarRx.data.model.Patient;
 
 /**
  * @author apavel
@@ -93,11 +94,11 @@ public class RxSendToPhrAction extends Action {
 			Demographic demographic = demographicManager.getDemographic(loggedInInfo, bean.getDemographicNo());
 			Long myOscarUserId = AccountManager.getUserId(myOscarLoggedInInfo, demographic.getMyOscarUserName());
 
-			RxPatientData.Patient patient = null;
+			Patient patient = null;
 
 			patient = RxPatientData.getPatient(loggedInInfo, demographic.getDemographicNo());
 
-			oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs;
+			Prescription[] prescribedDrugs;
 			prescribedDrugs = patient.getPrescribedDrugs();
 
 			MiscUtils.getLogger().debug("prescribed drugs length" + prescribedDrugs.length);

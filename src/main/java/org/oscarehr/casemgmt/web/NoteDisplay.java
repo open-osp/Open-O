@@ -29,7 +29,7 @@ import java.util.Date;
 
 import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
 
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 
 public interface NoteDisplay {
 	public static Comparator<NoteDisplay> noteProviderComparator = new Comparator<NoteDisplay>() {
@@ -127,7 +127,7 @@ public interface NoteDisplay {
 	
 	public CaseManagementNoteLink getNoteLink();
 
-	public RxPrescriptionData.Prescription getRxFromAnnotation(CaseManagementNoteLink cmnl);
+	public Prescription getRxFromAnnotation(CaseManagementNoteLink cmnl);
 
 	public String getEncounterType();
 

@@ -25,6 +25,8 @@
 --%>
 
 <%@page import="oscar.oscarRx.data.RxDrugData,java.util.*,oscar.oscarRx.util.*" %>
+<%@ page import="oscar.oscarRx.data.model.MinDrug" %>
+<%@ page import="oscar.oscarRx.data.model.DrugSearch" %>
 <ul>
 <%
 String searchString = request.getParameter("searchString");
@@ -32,7 +34,7 @@ String searchString = request.getParameter("searchString");
 RxDrugData drugData = new RxDrugData();
 RxDrugRef rxref = new RxDrugRef();
 
-RxDrugData.DrugSearch drugSearch = null;
+DrugSearch drugSearch = null;
 
 if (searchString != null){
 
@@ -47,9 +49,9 @@ if (searchString != null){
     }
 
     
-    ArrayList<RxDrugData.MinDrug> genList = new ArrayList();//  drugSearch.getGen();
+    ArrayList<MinDrug> genList = new ArrayList();//  drugSearch.getGen();
     if(drugSearch != null){
-        for(RxDrugData.MinDrug drug: genList){
+        for(MinDrug drug: genList){
     %>
         <li id="g_<%=drug.pKey%>"><%=drug.name%></li>
     <%
@@ -58,9 +60,9 @@ if (searchString != null){
 
     ArrayList genWBrand = new ArrayList();
 
-    ArrayList<RxDrugData.MinDrug> brandList =  new ArrayList();//drugSearch.getBrand();
+    ArrayList<MinDrug> brandList =  new ArrayList();//drugSearch.getBrand();
     if(drugSearch != null){
-        for(RxDrugData.MinDrug drug: brandList){
+        for(MinDrug drug: brandList){
             //String genName = drugData.getGenericName(drug.pKey);
             //if (!genWBrand.contains(genName)){
              //   genWBrand.add(genName);

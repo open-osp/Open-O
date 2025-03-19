@@ -34,6 +34,7 @@
 <%@ page import="org.oscarehr.common.model.FavoritesPrivilege" %>
 <%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
 <%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="oscar.oscarRx.data.model.FrequencyCode" %>
 <%
 	FavoritesDao favoritesDao = SpringUtils.getBean(FavoritesDao.class);
     FavoritesPrivilegeDao favoritesPrivilegeDao = SpringUtils.getBean(FavoritesPrivilegeDao.class);
@@ -65,7 +66,7 @@
 
     <%
 
-        oscar.oscarRx.data.RxCodesData.FrequencyCode[] freq = new oscar.oscarRx.data.RxCodesData().getFrequencyCodes();
+        FrequencyCode[] freq = new oscar.oscarRx.data.RxCodesData().getFrequencyCodes();
 
         int i, j;
 

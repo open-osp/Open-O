@@ -32,6 +32,9 @@
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page import="oscar.*,java.lang.*"%>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="oscar.oscarRx.data.model.Provider" %>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 <html:html lang="en">
 <head>
@@ -70,9 +73,9 @@
 <%
 
 oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean");
-oscar.oscarRx.data.RxPatientData.Patient patient = RxPatientData.getPatient(LoggedInInfo.getLoggedInInfoFromSession(request), bean.getDemographicNo());
-oscar.oscarRx.data.RxProviderData.Provider provider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
-oscar.oscarRx.data.RxPrescriptionData.Prescription rx;
+Patient patient = RxPatientData.getPatient(LoggedInInfo.getLoggedInInfoFromSession(request), bean.getDemographicNo());
+Provider provider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
+Prescription rx;
 int i;
 ProSignatureData sig = new ProSignatureData();
 boolean hasSig = sig.hasSignature(bean.getProviderNo());

@@ -36,6 +36,7 @@ import org.oscarehr.common.model.UserProperty;
 import org.oscarehr.util.SpringUtils;
 
 import oscar.SxmlMisc;
+import oscar.oscarRx.data.model.Provider;
 
 public class RxProviderData {
 
@@ -130,7 +131,7 @@ public class RxProviderData {
                 clinicCity, clinicPostal, clinicPhone, clinicFax, clinicProvince, practitionerNo,practitionerNoType);
         
         if(!useFullAddress) {
-        	prov.fullAddress=false;
+        	prov.setFullAddress(false);
         }
         
         return prov;
@@ -144,100 +145,4 @@ public class RxProviderData {
         return "";
     }
 
-    public class Provider{
-    	boolean fullAddress=true;
-    	
-        String providerNo;
-        String surname;
-        String firstName;
-        String clinicName;
-        String clinicAddress;
-        String clinicCity;
-        String clinicPostal;
-        String clinicPhone;
-        String clinicFax;
-        String clinicProvince;
-        String practitionerNo;
-        String practitionerNoType;
-
-        public Provider(String providerNo, String surname, String firstName,
-        String clinicName, String clinicAddress, String clinicCity,
-        String clinicPostal, String clinicPhone, String clinicFax, String practitionerNo, String practitionerNoType){
-            this.providerNo = providerNo;
-            this.surname = surname;
-            this.firstName = firstName;
-            this.clinicName = clinicName;
-            this.clinicAddress = clinicAddress;
-            this.clinicCity = clinicCity;
-            this.clinicPostal = clinicPostal;
-            this.clinicPhone = clinicPhone;
-            this.clinicFax = clinicFax;
-            this.practitionerNo = practitionerNo;
-            this.practitionerNoType = practitionerNoType;
-        }
-
-        public Provider(String providerNo, String surname, String firstName,
-        String clinicName, String clinicAddress, String clinicCity,
-        String clinicPostal, String clinicPhone, String clinicFax,String clinicProvince, String practitionerNo, String practitionerNoType){
-        	this(providerNo,surname,firstName,clinicName,clinicAddress,clinicCity,clinicPostal,clinicPhone,clinicFax,practitionerNo,practitionerNoType);
-            this.clinicProvince = clinicProvince;
-        }
-
-
-        public String getProviderNo(){
-            return this.providerNo;
-        }
-
-        public String getSurname(){
-            return this.surname;
-        }
-
-        public String getFirstName(){
-            return this.firstName;
-        }
-
-        public String getClinicName(){
-            return this.clinicName;
-        }
-
-        public String getClinicAddress(){
-            return this.clinicAddress;
-        }
-
-        public String getClinicCity(){
-            return this.clinicCity;
-        }
-
-        public String getClinicPostal(){
-            return this.clinicPostal;
-        }
-
-        public String getClinicPhone(){
-            return this.clinicPhone;
-        }
-
-        public String getClinicFax(){
-            return this.clinicFax;
-        }
-
-        public String getClinicProvince(){
-            return this.clinicProvince;
-        }
-
-		public String getPractitionerNo() {
-		   return this.practitionerNo;
-		}
-		
-		public String getPractitionerNoType() {
-			return this.practitionerNoType;
-		}
-		
-		public String getFullAddress() {
-			if(fullAddress)
-				return (getClinicAddress() + "  " + getClinicCity() + "   " + getClinicProvince() + "  " + getClinicPostal()).trim();
-			else
-				return getClinicAddress().trim();
-		}
-
-    }
 }

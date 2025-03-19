@@ -51,6 +51,7 @@ if(!authed) {
 <%@page import="org.oscarehr.eyeform.web.EyeformAction"%>
 <%@page import="java.util.List"%>
 <%@page import="org.oscarehr.common.model.DemographicContact"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 <html:html>
 <head>
@@ -87,7 +88,7 @@ select {
 		String presc = "";
 
 		oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-		oscar.oscarRx.data.RxPrescriptionData.Prescription[] arr = {};
+		Prescription[] arr = {};
 		arr = prescriptData.getUniquePrescriptionsByPatient(Integer
 				.parseInt(demographicNo));
 		if (arr.length > 0) {

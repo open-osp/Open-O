@@ -40,6 +40,7 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Favorite;
 import oscar.oscarRx.util.RxUtil;
 
 
@@ -62,7 +63,7 @@ public final class RxUpdateFavoriteAction extends DispatchAction {
             RxUpdateFavoriteForm frm = (RxUpdateFavoriteForm)form;
             int favId = Integer.parseInt(frm.getFavoriteId());
 
-            RxPrescriptionData.Favorite fav = new RxPrescriptionData().getFavorite(favId);
+            Favorite fav = new RxPrescriptionData().getFavorite(favId);
 
             fav.setFavoriteName(frm.getFavoriteName());
             fav.setCustomName(frm.getCustomName());
@@ -95,7 +96,7 @@ public final class RxUpdateFavoriteAction extends DispatchAction {
             // Setup variables
             int favId = Integer.parseInt(request.getParameter("favoriteId"));
 
-            RxPrescriptionData.Favorite fav = new RxPrescriptionData().getFavorite(favId);
+            Favorite fav = new RxPrescriptionData().getFavorite(favId);
             String favName=request.getParameter("favoriteName");
             String customName=request.getParameter("customName");
             String takeMin=request.getParameter("takeMin");

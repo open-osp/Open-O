@@ -65,7 +65,7 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 %>
 
 <bean:define id="patient"
-	type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
+	type="oscar.oscarRx.data.model.Patient" name="Patient" />
 
 <link rel="stylesheet" type="text/css" href="styles.css">
 </head>

@@ -65,7 +65,7 @@ import org.oscarehr.util.MiscUtils;
 import org.w3c.dom.Element;
 
 import oscar.oscarEncounter.data.EctProviderData;
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.oscarRx.util.RxUtil;
 
 /**
@@ -157,7 +157,7 @@ public class PHRMedication extends PHRDocument {
 	}
 
 	// sending new meds to PHR
-	public PHRMedication(EctProviderData.Provider prov, Integer demographicNo, Long receiverMyOscarUserId, RxPrescriptionData.Prescription drug) throws JAXBException, IndivoException {
+	public PHRMedication(EctProviderData.Provider prov, Integer demographicNo, Long receiverMyOscarUserId, Prescription drug) throws JAXBException, IndivoException {
 		// super();
 		IndivoDocumentType document = getPhrMedicationDocument(prov, drug);
 		JAXBContext docContext = JAXBContext.newInstance(IndivoDocumentType.class.getPackage().getName());
@@ -176,7 +176,7 @@ public class PHRMedication extends PHRDocument {
 	}
 
 	// when adding a new medication
-	private IndivoDocumentType getPhrMedicationDocument(EctProviderData.Provider prov, RxPrescriptionData.Prescription drug) throws JAXBException, IndivoException {
+	private IndivoDocumentType getPhrMedicationDocument(EctProviderData.Provider prov, Prescription drug) throws JAXBException, IndivoException {
 		String providerFullName = prov.getFirstName() + " " + prov.getSurname();
 		MedicationType medType = createPhrMedication(prov, drug);
 		org.indivo.xml.phr.medication.ObjectFactory medFactory = new org.indivo.xml.phr.medication.ObjectFactory();
@@ -450,7 +450,7 @@ public class PHRMedication extends PHRDocument {
 		return medType;
 	}
 
-	private MedicationType createPhrMedication(EctProviderData.Provider prov, RxPrescriptionData.Prescription drug) {
+	private MedicationType createPhrMedication(EctProviderData.Provider prov, Prescription drug) {
 		Drug d = new Drug(drug);
 		return createPhrMedication2(prov, d);
 		/*

@@ -48,6 +48,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import oscar.OscarProperties;
 import oscar.oscarRx.data.RxPatientData;
+import oscar.oscarRx.data.model.Patient;
 
 public final class RxChoosePatientAction extends Action {
 
@@ -92,7 +93,7 @@ public final class RxChoosePatientAction extends Action {
 		request.getSession().setAttribute("RxSessionBean", bean);
 
 		RxPatientData rx = null;
-		RxPatientData.Patient patient = null;
+		Patient patient = null;
 
 		patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
 

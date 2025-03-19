@@ -67,6 +67,7 @@
 <%@page import="org.oscarehr.managers.EmailManager"%>
 <%@page import="org.oscarehr.managers.EmailComposeManager"%>
 <%@page import="org.oscarehr.managers.SecurityInfoManager"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 <%
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -525,7 +526,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 	                        String winName="dummie";
 	                        int hash = Math.abs(winName.hashCode());
 	                        //get drug from note id.
-	                        RxPrescriptionData.Prescription rx=note.getRxFromAnnotation(note.getNoteLink());
+	                        Prescription rx=note.getRxFromAnnotation(note.getNoteLink());
 
 	                        if (note.getRemoteFacilityId()==null) // only allow editing for local notes
 							{

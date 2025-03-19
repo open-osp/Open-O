@@ -51,6 +51,7 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.OscarProperties;
 import oscar.oscarRx.data.RxDrugData;
+import oscar.oscarRx.data.model.DrugSearch;
 import oscar.oscarRx.util.RxDrugRef;
 
 public final class RxSearchDrugAction extends DispatchAction {
@@ -84,7 +85,7 @@ public final class RxSearchDrugAction extends DispatchAction {
 
     	RxDrugData drugData = new RxDrugData();             
 
-    	RxDrugData.DrugSearch drugSearch = null;
+    	DrugSearch drugSearch = null;
 
     	try{
     		if (genericSearch != null ){                    

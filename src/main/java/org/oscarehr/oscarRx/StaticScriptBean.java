@@ -48,6 +48,7 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarRx.data.RxPrescriptionData;
 import oscar.oscarRx.data.RxProviderData;
+import oscar.oscarRx.data.model.Provider;
 import oscar.oscarRx.util.RxUtil;
 import oscar.util.DateUtils;
 
@@ -181,7 +182,7 @@ public class StaticScriptBean {
 
 		drugDisplayData.localDrugId = drug.getId();
 
-		RxProviderData.Provider prov = new RxProviderData().getProvider(drug.getProviderNo());
+		Provider prov = new RxProviderData().getProvider(drug.getProviderNo());
 		drugDisplayData.providerName = prov.getFirstName() + ' ' + prov.getSurname();
 
 		drugDisplayData.startDate = RxUtil.DateToString(drug.getRxDate());

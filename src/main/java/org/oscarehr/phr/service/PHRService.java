@@ -41,14 +41,14 @@ import org.oscarehr.util.MiscUtils;
 
 import oscar.oscarEncounter.data.EctProviderData;
 import oscar.oscarProvider.data.ProviderData;
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 
 public class PHRService {
 	private static final Logger logger = MiscUtils.getLogger();
 	protected PHRDocumentDAO phrDocumentDAO;
 	protected PHRActionDAO phrActionDAO;
 
-	public void sendAddMedication(EctProviderData.Provider prov, Integer demographicNo, Long demographicMyOscarUserId, RxPrescriptionData.Prescription drug) throws Exception {
+	public void sendAddMedication(EctProviderData.Provider prov, Integer demographicNo, Long demographicMyOscarUserId, Prescription drug) throws Exception {
 		logger.debug("sendAddMedication:" + prov + ", " + demographicNo + ", " + demographicMyOscarUserId + ", " + drug);
 
 		PHRMedication medication = new PHRMedication(prov, demographicNo, demographicMyOscarUserId, drug);
@@ -58,7 +58,7 @@ public class PHRService {
 		phrActionDAO.save(action);
 	}
 
-	public void sendUpdateMedication(EctProviderData.Provider prov, Integer demographicNo, Long demographicMyOscarUserId, RxPrescriptionData.Prescription drug, String phrDrugIndex) throws Exception {
+	public void sendUpdateMedication(EctProviderData.Provider prov, Integer demographicNo, Long demographicMyOscarUserId, Prescription drug, String phrDrugIndex) throws Exception {
 		logger.debug("sendAddMedication:" + prov + ", " + demographicNo + ", " + demographicMyOscarUserId + ", " + drug + ", " + phrDrugIndex);
 
 		PHRMedication medication = new PHRMedication(prov, demographicNo, demographicMyOscarUserId, drug);

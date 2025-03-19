@@ -45,7 +45,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.oscarRx.util.RxUtil;
 import oscar.util.UtilDateUtilities;
 
@@ -199,7 +199,7 @@ public class Drug extends AbstractModel<Integer> implements Serializable {
 	public Drug() {
 	}
 
-	public Drug(RxPrescriptionData.Prescription drug) {
+	public Drug(Prescription drug) {
 		id = drug.getDrugId();
 		this.providerNo = drug.getProviderNo();
 		this.demographicId = drug.getDemographicNo();

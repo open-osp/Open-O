@@ -59,6 +59,7 @@ import org.oscarehr.eyeform.model.EyeformTestBook;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
+import oscar.oscarRx.data.model.Prescription;
 import oscar.util.DateUtils;
 import oscar.OscarProperties;
 import oscar.eform.util.GraphicalCanvasToImage;
@@ -419,7 +420,7 @@ public class PdfRecordPrinter {
             newPage = true;
         */
         oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-        oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
+        Prescription[] arr = {};
         arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demoNo));
 
         if(arr.length==0) {
@@ -440,7 +441,7 @@ public class PdfRecordPrinter {
 
         Font curFont;
         for(int idx = 0; idx < arr.length; ++idx ) {
-            oscar.oscarRx.data.RxPrescriptionData.Prescription drug = arr[idx];
+            Prescription drug = arr[idx];
             p = new Paragraph();
             p.setAlignment(Paragraph.ALIGN_LEFT);
             if(drug.isCurrent() && !drug.isArchived() ){

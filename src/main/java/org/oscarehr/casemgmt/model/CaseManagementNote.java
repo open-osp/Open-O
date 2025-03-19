@@ -39,6 +39,7 @@ import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 
 
 public class CaseManagementNote extends BaseObject {
@@ -542,14 +543,14 @@ public class CaseManagementNote extends BaseObject {
 		return false;
 	}
 
-	public RxPrescriptionData.Prescription getRxFromAnnotation(CaseManagementNoteLink cmnl){
+	public Prescription getRxFromAnnotation(CaseManagementNoteLink cmnl){
         if(this.isRxAnnotation()){
             String drugId=cmnl.getTableId().toString();
 
             //get drug id from cmn_link table
             RxPrescriptionData rxData = new RxPrescriptionData();
             // create Prescription
-            RxPrescriptionData.Prescription rx = rxData.getLatestPrescriptionScriptByPatientDrugId(Integer.parseInt(this.getDemographic_no()), drugId);
+            Prescription rx = rxData.getLatestPrescriptionScriptByPatientDrugId(Integer.parseInt(this.getDemographic_no()), drugId);
             return rx;
         }
 

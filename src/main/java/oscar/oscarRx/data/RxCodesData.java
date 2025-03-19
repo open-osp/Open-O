@@ -33,6 +33,7 @@ import org.oscarehr.common.dao.CtlSpecialInstructionsDao;
 import org.oscarehr.common.model.CtlFrequency;
 import org.oscarehr.common.model.CtlSpecialInstructions;
 import org.oscarehr.util.SpringUtils;
+import oscar.oscarRx.data.model.FrequencyCode;
 
 public class RxCodesData {
 
@@ -65,40 +66,4 @@ public class RxCodesData {
     }
 
 
-        public class FrequencyCode {
-            int freqId;
-            String freqCode;
-            String dailyMin;
-            String dailyMax;
-
-            public FrequencyCode(int freqId, String freqCode, int dailyMin, int dailyMax) {
-                this.freqId=freqId;
-                this.freqCode=freqCode;
-                this.dailyMin= Integer.toString(dailyMin);
-                this.dailyMax= Integer.toString(dailyMax);
-            }
-
-            public FrequencyCode(int freqId, String freqCode, String dailyMin, String dailyMax) {
-                this.freqId=freqId;
-                this.freqCode=freqCode;
-                this.dailyMin= dailyMin;
-                this.dailyMax= dailyMax;
-            }
-
-            public int getFreqId() {
-                return this.freqId;
-            }
-
-            public String getFreqCode() {
-                return this.freqCode;
-            }
-
-            public String getDailyMin() {
-                return this.dailyMin;
-            }
-
-            public String getDailyMax() {
-                return this.dailyMax;
-            }
-        }
 }

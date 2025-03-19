@@ -41,7 +41,7 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.OscarProperties;
 import oscar.oscarRx.data.RxCodesData;
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.oscarRx.pageUtil.RxMyDrugrefInfoAction;
 import oscar.oscarRx.pageUtil.RxSessionBean;
 import oscar.oscarRx.util.TimingOutCallback.TimeoutException;
@@ -358,7 +358,7 @@ public class RxUtil {
 		return retStr;
 	}
 
-	public static String findDuration(RxPrescriptionData.Prescription rx) {//calculate duration based on quantity, takemax,takemin,frequency,durationUnit.
+	public static String findDuration(Prescription rx) {//calculate duration based on quantity, takemax,takemin,frequency,durationUnit.
 		//get frequency,takemax,takemin,durationUnit by parsing special.
 		instrucParser(rx);
 		MiscUtils.getLogger().debug("after  instrucParser,quantity=" + rx.getQuantity());
@@ -399,7 +399,7 @@ public class RxUtil {
 		}
 	}
 
-	private static void setEmptyValues(RxPrescriptionData.Prescription rx) {
+	private static void setEmptyValues(Prescription rx) {
 		rx.setRoute("");
 		rx.setTakeMax(Float.parseFloat("0"));
 		rx.setTakeMin(Float.parseFloat("0"));
@@ -481,7 +481,7 @@ public class RxUtil {
 		return retVal;
 	}
 
-	public static void instrucParser(RxPrescriptionData.Prescription rx) {
+	public static void instrucParser(Prescription rx) {
 		if (rx == null) {
 			return;
 		}
@@ -1041,7 +1041,7 @@ public class RxUtil {
 	}
 
 
-	public static String trimSpecial(RxPrescriptionData.Prescription rx) {
+	public static String trimSpecial(Prescription rx) {
 		String special = rx.getSpecial();
 		if (special == null || special.trim().length() == 0) return "";
 
@@ -1127,7 +1127,7 @@ public class RxUtil {
 		p("***drugs in present stash,stash size", "" + bean.getStashSize());
 		for (int j = 0; j < bean.getStashSize(); j++) {
 			try {
-				RxPrescriptionData.Prescription rxTemp = bean.getStashItem(j);
+				Prescription rxTemp = bean.getStashItem(j);
 				p("stash index", "" + j);
 				p("randomId", "" + rxTemp.getRandomId());
 				p("generic name", rxTemp.getGenericName());
@@ -1145,7 +1145,7 @@ public class RxUtil {
 
 	}
 
-	public static void setDefaultSpecialQuantityRepeat(RxPrescriptionData.Prescription rx) {
+	public static void setDefaultSpecialQuantityRepeat(Prescription rx) {
 
 		String defaultRx = OscarProperties.getInstance().getProperty("rx.default_instruction");
 		if (defaultRx != null) {
@@ -1158,7 +1158,7 @@ public class RxUtil {
 
 	}
 
-	private static void setResultSpecialQuantityRepeat(RxPrescriptionData.Prescription rx, Drug d) {
+	private static void setResultSpecialQuantityRepeat(Prescription rx, Drug d) {
 		String qStr = d.getQuantity();
 		Pattern p1 = Pattern.compile("\\d+");
 		Matcher m1 = p1.matcher(qStr);
@@ -1206,7 +1206,7 @@ public class RxUtil {
 		return drugsTableQuery("BN", bn);
 	}
 
-	public static List<HashMap<String, String>> getPreviousInstructions(RxPrescriptionData.Prescription rx) {
+	public static List<HashMap<String, String>> getPreviousInstructions(Prescription rx) {
 		List<HashMap<String, String>> retList = new ArrayList<HashMap<String, String>>();
 		if (rx.isCustom()) {
 			String cn = rx.getCustomName();
@@ -1229,7 +1229,7 @@ public class RxUtil {
 		return retList;
 	}
 
-	private static List<HashMap<String, String>> trimMedHistoryList(RxPrescriptionData.Prescription rx, List<HashMap<String, String>> l) {
+	private static List<HashMap<String, String>> trimMedHistoryList(Prescription rx, List<HashMap<String, String>> l) {
 
 		String customName = rx.getCustomName();
 		String bn = rx.getBrandName();
@@ -1324,7 +1324,7 @@ public class RxUtil {
 		return s;
 	}
 
-	public static void setSpecialQuantityRepeat(RxPrescriptionData.Prescription rx) {
+	public static void setSpecialQuantityRepeat(Prescription rx) {
 		DrugDao dao = (DrugDao) SpringUtils.getBean(DrugDao.class);
 
 		if (rx.getRegionalIdentifier() != null && rx.getRegionalIdentifier().length() > 1) {
@@ -1374,7 +1374,7 @@ public class RxUtil {
 		}
 	}
 
-	private static boolean checkLastPrescribed(RxPrescriptionData.Prescription rx, int drugId) {
+	private static boolean checkLastPrescribed(Prescription rx, int drugId) {
 		//make a another query to get the latest drug with same name but archived not equals one and arhived reason equals to deleted.
 		//check if drugId is greater than that compare id
 		//if yes, return true;
@@ -1398,7 +1398,7 @@ public class RxUtil {
 		return lastPrescribed;
 	}
 
-	public static boolean checkDiscontinuedBefore(RxPrescriptionData.Prescription rx) {
+	public static boolean checkDiscontinuedBefore(Prescription rx) {
 		
 		//check if this drug was discontinued before
 		//String sql="SELECT * FROM drugs WHERE archived=1 AND (archived_reason>'' OR archived_reason<'' ) AND ATC='" + this.atcCode + "' AND regional_identifier='" + this.regionalIdentifier + "' AND demographic_no=" + this.demographicNo+" order by written_date desc";
@@ -1438,12 +1438,12 @@ public class RxUtil {
 	}
 
 	//check to see if a represcription of a med is clicked twice.
-	public static boolean isRxUniqueInStash(final oscar.oscarRx.pageUtil.RxSessionBean beanRx, final RxPrescriptionData.Prescription rx) {
+	public static boolean isRxUniqueInStash(final oscar.oscarRx.pageUtil.RxSessionBean beanRx, final Prescription rx) {
 		boolean unique = true;
 		if (rx.isCustom()) {
 			for (int j = 0; j < beanRx.getStashSize(); j++) {
 				try {
-					RxPrescriptionData.Prescription rxTemp = beanRx.getStashItem(j);
+					Prescription rxTemp = beanRx.getStashItem(j);
 					//p(""+rxTemp.isCustom());
 					//p(rxTemp.getCustomName());
 					//p(rx.getCustomName());
@@ -1462,7 +1462,7 @@ public class RxUtil {
 		} else {
 			for (int j = 0; j < beanRx.getStashSize(); j++) {
 				try {
-					RxPrescriptionData.Prescription rxTemp = beanRx.getStashItem(j);
+					Prescription rxTemp = beanRx.getStashItem(j);
 					//p(rx.getBrandName());
 					//p(rxTemp.getBrandName());
 
@@ -1517,10 +1517,10 @@ public class RxUtil {
 			myDrugrefId = prop.getValue();
 			MiscUtils.getLogger().debug("3myDrugrefId" + myDrugrefId);
 		}
-		RxPrescriptionData.Prescription[] rxs = bean.getStash();
+		Prescription[] rxs = bean.getStash();
 		//acd contains all atccodes in stash
 		Vector<String> acd = new Vector<String>();
-		for (RxPrescriptionData.Prescription rxItem : rxs) {
+		for (Prescription rxItem : rxs) {
 			acd.add(rxItem.getAtcCode());
 		}
 		logger.debug("3acd=" + acd);
@@ -1542,7 +1542,7 @@ public class RxUtil {
 		}
 		String retStr = "";
 		HashMap rethm = new HashMap();
-		for (RxPrescriptionData.Prescription rxItem : rxs) {
+		for (Prescription rxItem : rxs) {
 			MiscUtils.getLogger().debug("rxItem=" + rxItem.getDrugName());
 			Vector uniqueDrugNameList = new Vector();
 			for (int i = 0; i < allInteractions.size(); i++) {
@@ -1567,7 +1567,7 @@ public class RxUtil {
 				}
 				if (interactingAtc != null && interactingDrugName != null && rxItem.getAtcCode().equals(interactingAtc) && effectStr != null && effectStr.length() > 0 && !effectStr.equalsIgnoreCase("N") && !effectStr.equals(" ")) {
 					MiscUtils.getLogger().debug("interactingDrugName=" + interactingDrugName);
-					RxPrescriptionData.Prescription rrx = findRxFromDrugNameOrGN(rxs, interactingDrugName);
+					Prescription rrx = findRxFromDrugNameOrGN(rxs, interactingDrugName);
 
 					if (rrx != null && !uniqueDrugNameList.contains(rrx.getDrugName())) {
 						MiscUtils.getLogger().debug("rrx.getDrugName()=" + rrx.getDrugName());
@@ -1604,9 +1604,9 @@ public class RxUtil {
 		return retStr;
 	}
 
-	private static RxPrescriptionData.Prescription findRxFromDrugNameOrGN(final RxPrescriptionData.Prescription[] rxs, String interactingDrugName) {
-		RxPrescriptionData.Prescription returnRx = null;
-		for (RxPrescriptionData.Prescription rxItem : rxs) {
+	private static Prescription findRxFromDrugNameOrGN(final Prescription[] rxs, String interactingDrugName) {
+		Prescription returnRx = null;
+		for (Prescription rxItem : rxs) {
 			if (rxItem.getDrugName().contains(interactingDrugName)) {
 				returnRx = rxItem;
 			} else if (rxItem.getGenericName().contains(interactingDrugName)) {

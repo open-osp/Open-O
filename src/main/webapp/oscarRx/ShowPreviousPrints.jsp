@@ -30,6 +30,7 @@
 <%@ page import="oscar.oscarRx.data.*"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -71,12 +72,12 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 
 </head>
 
-<bean:define id="patient" type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
+<bean:define id="patient" type="oscar.oscarRx.data.model.Patient" name="Patient" />
 <%
 	String scriptNo = request.getParameter("scriptNo");
 	//load prescription
-	oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs = patient.getPrescribedDrugScripts();
-	oscar.oscarRx.data.RxPrescriptionData.Prescription prescription = null;
+	Prescription[] prescribedDrugs = patient.getPrescribedDrugScripts();
+	Prescription prescription = null;
 	for(int x=0;x<prescribedDrugs.length;x++) {
 		if(prescribedDrugs[x].getScript_no() != null && prescribedDrugs[x].getScript_no().equals(scriptNo)) {
 			prescription = prescribedDrugs[x];

@@ -34,6 +34,7 @@
 <%@page import="org.oscarehr.casemgmt.model.CaseManagementNote"%>
 <%@page import="java.util.List" %>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="oscar.oscarRx.data.model.Favorite" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -128,7 +129,7 @@ for (Dxresearch dx:dxreasearchDao.getByDemographicNo(bean2.getDemographicNo())){
 </p>
 <p class="PropSheetMenuItemLevel1">
 <%
-        oscar.oscarRx.data.RxPrescriptionData.Favorite[] favorites
+        Favorite[] favorites
             = new oscar.oscarRx.data.RxPrescriptionData().getFavorites(bean2.getProviderNo());
 
         for (int j=0; j<favorites.length; j++){%>

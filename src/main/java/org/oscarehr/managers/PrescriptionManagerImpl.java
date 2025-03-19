@@ -44,6 +44,8 @@ import oscar.log.LogAction;
 import oscar.oscarProvider.data.ProSignatureData;
 import oscar.oscarRx.data.RxPatientData;
 import oscar.oscarRx.data.RxProviderData;
+import oscar.oscarRx.data.model.Patient;
+import oscar.oscarRx.data.model.Provider;
 import oscar.util.DateUtils;
 
 import java.util.Date;
@@ -276,8 +278,8 @@ public class PrescriptionManagerImpl implements PrescriptionManager {
         //
         // TODO: Refactor to not use code from oscar.oscarRx
 
-        RxPatientData.Patient patient = RxPatientData.getPatient(info, demo);
-        RxProviderData.Provider provider = (new RxProviderData()).getProvider(info.getLoggedInProviderNo());
+        Patient patient = RxPatientData.getPatient(info, demo);
+        Provider provider = (new RxProviderData()).getProvider(info.getLoggedInProviderNo());
 
         StringBuilder textView = new StringBuilder();
 

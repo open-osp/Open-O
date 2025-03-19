@@ -46,6 +46,7 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.OscarProperties;
 import oscar.oscarRx.data.RxPatientData;
+import oscar.oscarRx.data.model.Patient;
 
 public final class RxShowAllergyAction extends DispatchAction {
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
@@ -116,7 +117,7 @@ public final class RxShowAllergyAction extends DispatchAction {
         	reorder(request);
         }
 
-        RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
+        Patient patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
 
         String forward="success";
         if(useRx3) {

@@ -31,6 +31,7 @@
 
 <%@page import="oscar.oscarRx.data.RxPatientData"%>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="oscar.oscarRx.data.model.Favorite" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%
         oscar.oscarRx.pageUtil.RxSessionBean bean2 = (oscar.oscarRx.pageUtil.RxSessionBean)request.getSession().getAttribute("RxSessionBean");
@@ -66,7 +67,7 @@
 <p class="PropSheetLevel1CurrentItem"><bean:message key="oscarRx.sideLinks.msgFavorites"/></p>
 <p class="PropSheetMenuItemLevel1">
 <%
-        oscar.oscarRx.data.RxPrescriptionData.Favorite[] favorites
+        Favorite[] favorites
             = new oscar.oscarRx.data.RxPrescriptionData().getFavorites(bean2.getProviderNo());
 
         for (int j=0; j<favorites.length; j++){%>

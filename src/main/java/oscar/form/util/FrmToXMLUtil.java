@@ -46,7 +46,8 @@ import org.oscarehr.util.SpringUtils;
 import oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementTypesBean;
 import oscar.oscarProvider.data.ProviderData;
 import oscar.oscarRx.data.RxPatientData;
-import oscar.oscarRx.data.RxPrescriptionData;
+import oscar.oscarRx.data.model.Patient;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.util.ConversionUtils;
 import oscar.util.UtilDateUtilities;
 
@@ -223,8 +224,8 @@ public class FrmToXMLUtil{
             
             
             //get drug list             
-            RxPatientData.Patient p = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(dataProps.getProperty("demographic_no")==null?"0":dataProps.getProperty("demographic_no")));
-            RxPrescriptionData.Prescription[] prescribedDrugs = p.getPrescribedDrugsUnique();            
+            Patient p = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(dataProps.getProperty("demographic_no")==null?"0":dataProps.getProperty("demographic_no")));
+            Prescription[] prescribedDrugs = p.getPrescribedDrugsUnique();
             for(int i=0; i<prescribedDrugs.length; i++){                
                 SitePatientVisitRecordsDocument.SitePatientVisitRecords.SitePatientVisit.SitePatientVisitDrug drug = visit.addNewSitePatientVisitDrug();                
                 String atccode = prescribedDrugs[i].getAtcCode().trim();

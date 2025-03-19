@@ -55,6 +55,9 @@
 <%@ page import="org.oscarehr.managers.DemographicManager" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="java.util.Objects" %>
+<%@ page import="oscar.oscarRx.data.model.Provider" %>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
+<%@ page import="oscar.oscarRx.data.model.Prescription" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -134,7 +137,7 @@ Date rxDate = oscar.oscarRx.util.RxUtil.Today();
 String rePrint = (String)request.getSession().getAttribute("rePrint");
 //String rePrint = (String)request.getSession().getAttribute("rePrint");
 oscar.oscarRx.pageUtil.RxSessionBean bean;
-oscar.oscarRx.data.RxProviderData.Provider provider;
+Provider provider;
 String signingProvider;
 if( rePrint != null && rePrint.equalsIgnoreCase("true") ) {
     bean = (oscar.oscarRx.pageUtil.RxSessionBean)session.getAttribute("tmpBeanRX");
@@ -164,7 +167,7 @@ else {
 
 DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 
-oscar.oscarRx.data.RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
+Patient patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
 String patientAddress = patient.getAddress()==null ? "" : patient.getAddress();
 String patientCity = patient.getCity()==null ? "" : patient.getCity();
 String patientProvince = patient.getProvince()==null ? "" : patient.getProvince();
@@ -173,7 +176,7 @@ String patientPhone = patient.getPhone()==null ? "" : patient.getPhone();
 String patientHin = patient.getHin()==null ? "" : patient.getHin();
 
 
-oscar.oscarRx.data.RxPrescriptionData.Prescription rx = null;
+Prescription rx = null;
 int i;
 ProSignatureData sig = new ProSignatureData();
 boolean hasSig = sig.hasSignature(signingProvider);

@@ -29,6 +29,7 @@ import java.util.Vector;
 
 import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.MiscUtils;
+import oscar.oscarRx.data.model.Interaction;
 
 /**
  *
@@ -51,7 +52,7 @@ public class RxInteractionWorker extends Thread {
 
         long start = System.currentTimeMillis();
 
-        RxDrugData.Interaction[] interactions = null;
+        Interaction[] interactions = null;
         try {
             if (atcCodes != null && interactionData != null) {
                 RxDrugData drugData = new RxDrugData();

@@ -34,7 +34,7 @@ import org.oscarehr.provider.web.CppPreferencesUIBean;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import oscar.OscarProperties;
-import oscar.oscarRx.data.RxPrescriptionData.Prescription;
+import oscar.oscarRx.data.model.Prescription;
 import oscar.util.DateUtils;
 import oscar.util.StringUtils;
 

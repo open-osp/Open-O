@@ -109,7 +109,7 @@ if(ids != null) {
     %>
 
     <bean:define id="patient"
-                 type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
+                 type="oscar.oscarRx.data.model.Patient" name="Patient" />
 
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
         <table border="0" cellpadding="0" cellspacing="0"
