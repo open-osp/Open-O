@@ -1010,11 +1010,11 @@
   }, {
     "groupId" : "net.java.dev.jna",
     "artifactId" : "jna",
-    "version" : "5.16.0",
+    "version" : "5.17.0",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:2eGpxL6mstiqyWAdCXp3AT/TI7b1xh2D+sIZirapiLXPITkGGJM7FD3kzCVthL0qhnmPyzZ5R5zPxq7LIDQZhA=="
+    "integrity" : "sha512:M/NSUo/HCgf/yRhP+AZHsCxR6ibOsRznDupK29lBmm+BG8EXRtxz3fQP8qIdrtvqq9NJ6QHzDsXoQaH1/G8bUg=="
   }, {
     "groupId" : "net.java.dev.msv",
     "artifactId" : "msv-core",
