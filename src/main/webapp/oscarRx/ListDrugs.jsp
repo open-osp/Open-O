@@ -49,7 +49,6 @@
 <%@page import="org.oscarehr.managers.DrugDispensingManager" %>
 <%@page import="org.oscarehr.managers.CodingSystemManager" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<bean:define id="patient" type="oscar.oscarRx.data.model.Patient" name="Patient" />
 <logic:notPresent name="RxSessionBean" scope="session">
     <logic:redirect href="error.html" />
 </logic:notPresent>
@@ -74,6 +73,9 @@
 	if(!authed) {
 		return;
 	}
+
+    String demoNo = request.getParameter("demographicNo");
+    int demographicNo = Integer.parseInt(demoNo);
 %>
 
 
@@ -212,10 +214,10 @@ if (heading != null){
             CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 
             if(showall) {
-            	prescriptDrugs = caseManagementManager.getPrescriptions(loggedInInfo, patient.getDemographicNo(), showall);
+            	prescriptDrugs = caseManagementManager.getPrescriptions(loggedInInfo, demographicNo, showall);
             }
             else {
-                prescriptDrugs = caseManagementManager.getCurrentPrescriptions(patient.getDemographicNo());
+                prescriptDrugs = caseManagementManager.getCurrentPrescriptions(demographicNo);
             }
 
             DrugReasonDao drugReasonDao  = (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class);
@@ -335,7 +337,7 @@ if (heading != null){
                 </div>
                 <%} else {%>
                 <form action="<%=request.getContextPath()%>/oscarRx/searchDrug.do" method="post">
-                    <input type="hidden" name="demographicNo" value="<%=patient.getDemographicNo()%>" />
+                    <input type="hidden" name="demographicNo" value="<%=demographicNo%>" />
                     <input type="hidden" name="searchString" value="<%=getName(prescriptDrug)%>" />
                     <input type="submit" class="ControlPushButton" value="Search to Re-prescribe" />
                 </form>
@@ -375,7 +377,7 @@ if (heading != null){
             		if (prescriptDrug.getRemoteFacilityId()==null && securityManager.hasWriteAccess("_rx",roleName$,true) )
             		{
             			%>
-			           	 	<a href="javascript:void(0);"  onclick="popupRxReasonWindow(<%=patient.getDemographicNo()%>,<%=prescriptIdInt%>);"  title="<%=displayDrugReason(codingSystemManager,drugReasons,true) %>">
+			           	 	<a href="javascript:void(0);"  onclick="popupRxReasonWindow(<%=demographicNo%>,<%=prescriptIdInt%>);"  title="<%=displayDrugReason(codingSystemManager,drugReasons,true) %>">
             			<%
             		}
             	%>

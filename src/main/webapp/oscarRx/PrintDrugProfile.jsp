@@ -30,6 +30,8 @@
 <%@ page import="oscar.oscarRx.data.*, org.oscarehr.common.model.PharmacyInfo"%>
 <%@page import="java.util.List"%>
 <%@ page import="oscar.oscarRx.data.model.Prescription" %>
+<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 <logic:notPresent name="RxSessionBean" scope="session">
 	<logic:redirect href="error.html" />
 </logic:notPresent>
@@ -70,6 +72,11 @@ String prefPharmacy = "";
 if (pharmacyList != null && !pharmacyList.isEmpty()) {
     prefPharmacy = pharmacyList.get(0).getName();
 }
+
+	LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+
+	Patient patientObj = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
+	request.setAttribute("Patient", patientObj);
 %>
 <html:html lang="en">
 <head>

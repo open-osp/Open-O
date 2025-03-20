@@ -32,6 +32,7 @@
 <%@page import="oscar.oscarRx.pageUtil.AllergyDisplay"%>
 <%@page import="java.util.List"%>
 <%@page import="oscar.OscarProperties"%>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
@@ -70,6 +71,9 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_ALLERGY;
 
 com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
+
+	Patient patientObj = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
+	request.setAttribute("Patient", patientObj);
 %>
 <html:html lang="en">
 <head>

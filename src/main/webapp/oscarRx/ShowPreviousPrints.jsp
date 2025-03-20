@@ -31,6 +31,8 @@
 <%@page import="org.oscarehr.util.SpringUtils"%>
 <%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
 <%@ page import="oscar.oscarRx.data.model.Prescription" %>
+<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
@@ -59,6 +61,11 @@
 </logic:present>
 <%
 oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean");
+
+	LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+
+	Patient patientObj = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
+	request.setAttribute("Patient", patientObj);
 %>
 <html:html lang="en">
 <head>

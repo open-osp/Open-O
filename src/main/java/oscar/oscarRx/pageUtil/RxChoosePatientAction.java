@@ -144,8 +144,7 @@ public final class RxChoosePatientAction extends Action {
 				}
 				
 			} 
-			
-			request.getSession().setAttribute("Patient", patient);
+
 		} 
 		
 		return (mapping.findForward(redirect));
