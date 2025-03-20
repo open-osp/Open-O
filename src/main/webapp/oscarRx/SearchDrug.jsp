@@ -35,6 +35,7 @@
 <%@page import="java.util.Enumeration"%>
 <%@page import="org.oscarehr.common.model.ProviderPreference"%>
 <%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean"%>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 
 
 <%
@@ -101,7 +102,9 @@
 	    boolean eRxTrainingModeTemp = providerPreference.isERxTrainingMode();
 	    if(eRxTrainingModeTemp) eRxTrainingMode="1";
 	}
-	
+
+	Patient patientObj = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
+	request.setAttribute("Patient", patientObj);
 %>
 <%@page import="org.oscarehr.casemgmt.service.CaseManagementManager"%>
 <%@page import="org.oscarehr.util.SpringUtils"%>

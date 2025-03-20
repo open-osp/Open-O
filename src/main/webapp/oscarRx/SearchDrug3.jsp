@@ -54,11 +54,11 @@
 <%@page import="org.oscarehr.common.model.ProviderPreference"%>
 <%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean"%>
 <%@page import="org.oscarehr.study.StudyFactory, org.oscarehr.study.Study, org.oscarehr.study.types.MyMedsStudy" %>
-<bean:define id="patient" type="oscar.oscarRx.data.model.Patient" name="Patient" />
 <%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
 <%@page import="org.oscarehr.casemgmt.model.CaseManagementNote" %>
 <%@page import="org.oscarehr.casemgmt.model.Issue" %>
 <%@ page import="oscar.oscarRx.data.model.Prescription" %>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 
 <%
 String rx_enhance = OscarProperties.getInstance().getProperty("rx_enhance");
@@ -110,6 +110,11 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 			String usefav=request.getParameter("usefav");
             String favid=request.getParameter("favid");
             int demoNo=bean.getDemographicNo();
+
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+
+    Patient patientObj = RxPatientData.getPatient(loggedInInfo, demoNo);
+    request.setAttribute("Patient", patientObj);
 %>
 <security:oscarSec roleName="<%=roleName2$%>"
 	objectName='<%="_rx$"+demoNo%>' rights="o"
@@ -118,8 +123,9 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 <% response.sendRedirect("../acctLocked.html"); %>
 </security:oscarSec>
 
-<%         
-	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+<bean:define id="patient" type="oscar.oscarRx.data.model.Patient" name="Patient" />
+
+<%
             String providerNo=bean.getProviderNo();
             //String reRxDrugId=request.getParameter("reRxDrugId");
             HashMap hm=(HashMap)session.getAttribute("profileViewSpec");

@@ -27,6 +27,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ page import="oscar.oscarRx.data.*,java.util.*"%>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -62,6 +63,10 @@
 <%
 oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean");
 
+	LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+
+	Patient patientObj = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
+	request.setAttribute("Patient", patientObj);
 %>
 
 <bean:define id="patient"

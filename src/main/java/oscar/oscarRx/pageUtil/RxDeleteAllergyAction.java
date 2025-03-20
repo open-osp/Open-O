@@ -42,6 +42,7 @@ import org.oscarehr.util.SpringUtils;
 
 import oscar.log.LogAction;
 import oscar.log.LogConst;
+import oscar.oscarRx.data.RxPatientData;
 import oscar.oscarRx.data.model.Patient;
 
 
@@ -53,8 +54,8 @@ public final class RxDeleteAllergyAction extends Action {
 				 HttpServletRequest request,
 				 HttpServletResponse response)
 	throws IOException, ServletException {
-
-		if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_allergy", "u", null)) {
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_allergy", "u", null)) {
 			throw new RuntimeException("missing required security object (_allergy)");
 		}
 
@@ -66,7 +67,7 @@ public final class RxDeleteAllergyAction extends Action {
             String demographicNo = request.getParameter("demographicNo");
     		String action = request.getParameter("action");
 
-            Patient patient = (Patient)request.getSession().getAttribute("Patient");
+			Patient patient = RxPatientData.getPatient(loggedInInfo, demographicNo);
 
             Allergy allergy = patient.getAllergy(id);
             if(action!= null && action.equals("activate")) {
@@ -79,9 +80,6 @@ public final class RxDeleteAllergyAction extends Action {
         		LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.DELETE, LogConst.CON_ALLERGY, ""+id, ip,""+patient.getDemographicNo(), allergy.getAuditString());
         	}
 
-            if(demographicNo != null) {
-            	request.setAttribute("demographicNo",demographicNo);
-        	}
 
             return (mapping.findForward("success"));
     }

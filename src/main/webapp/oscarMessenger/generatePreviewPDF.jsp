@@ -347,11 +347,7 @@ request.getSession().setAttribute("EctSessionBean",bean);
 
                                             request.getSession().setAttribute("RxSessionBean", Rxbean);
 
-                                            Patient patient = RxPatientData.getPatient(loggedInInfo, demographic_no);
 
-                                            if(patient!=null) {
-                                                request.getSession().setAttribute("Patient", patient);
-                                            }
 
                                             Rxbean.setProviderNo((String) request.getSession().getAttribute("user"));              
                                             Rxbean.setDemographicNo(Integer.parseInt(demographic_no));

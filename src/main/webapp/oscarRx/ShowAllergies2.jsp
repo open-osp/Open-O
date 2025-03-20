@@ -42,6 +42,7 @@
 <%@page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink" %>
 <%@page import="org.oscarehr.common.dao.PartialDateDao" %>
 <%@page import="org.oscarehr.common.model.PartialDate" %>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 
 <%
 	String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -77,6 +78,22 @@ oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBea
 String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_ALLERGY;
 
 com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
+
+
+	String demoNo=request.getParameter("demographicNo");
+
+	if(demoNo==null) {
+		demoNo = (String)session.getAttribute("demographicNo");
+	}else{
+		session.setAttribute("demographicNo", demoNo);
+	}
+
+	if(demoNo == null || demoNo.equals("null")) {
+		demoNo = String.valueOf(bean.getDemographicNo());
+	}
+
+	Patient patientObj = RxPatientData.getPatient(LoggedInInfo.getLoggedInInfoFromSession(session), demoNo);
+	request.setAttribute("Patient", patientObj);
 %>
 <html:html lang="en">
 <head>
@@ -250,6 +267,7 @@ function sendSearchRequest(path, param, target) {
 	} else if (param.indexOf("ID=0")<0 && iNKDA>0) {
 		param += "&nkdaId="+iNKDA;
 	}
+	param += "&demographicNo=" + <%=demoNo%>;
 	$.ajax({
 		url: path,
 		type: 'POST',
@@ -418,18 +436,6 @@ function addCustomNKDA(){
 				<bean:message key="EditAllergies.section2Title" />
 				<span class="view_menu">View:
 <%
-
-String demoNo=request.getParameter("demographicNo");
-
-if(demoNo==null) {
-	demoNo = (String)session.getAttribute("demographicNo");
-}else{
-	session.setAttribute("demographicNo", demoNo);
-}
-
-if(demoNo == null || demoNo.equals("null")) {
-	demoNo = String.valueOf(bean.getDemographicNo());
-}
 
 String strView=request.getParameter("view");
 if (strView==null) strView = "Active";

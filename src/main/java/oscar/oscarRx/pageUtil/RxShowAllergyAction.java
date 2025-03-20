@@ -124,7 +124,6 @@ public final class RxShowAllergyAction extends DispatchAction {
         	forward="successRX3";
         }
         if(patient!=null) {
-            request.getSession().setAttribute("Patient", patient);
             return (mapping.findForward(forward));
         } else {//no records found
             response.sendRedirect("error.html");

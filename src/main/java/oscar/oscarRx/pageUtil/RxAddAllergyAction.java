@@ -45,6 +45,7 @@ import org.oscarehr.util.SpringUtils;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 import oscar.oscarRx.data.RxDrugData;
+import oscar.oscarRx.data.RxPatientData;
 import oscar.oscarRx.data.model.DrugMonograph;
 import oscar.oscarRx.data.model.Patient;
 
@@ -53,7 +54,8 @@ public final class RxAddAllergyAction extends Action {
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_allergy", "w", null)) {
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_allergy", "w", null)) {
 			throw new RuntimeException("missing required security object (_allergy)");
 		}
     	
@@ -74,8 +76,10 @@ public final class RxAddAllergyAction extends Action {
             String allergyToArchive = request.getParameter("allergyToArchive");
             
             String nonDrug = request.getParameter("nonDrug");
+
+            String demoNo = request.getParameter("demographicNo");
             
-            Patient patient = (Patient)request.getSession().getAttribute("Patient");
+            Patient patient = RxPatientData.getPatient(loggedInInfo, demoNo);
             Allergy allergy = new Allergy();
             if (type != null && "13".equals(type)){
             	allergy.setDrugrefId(id);

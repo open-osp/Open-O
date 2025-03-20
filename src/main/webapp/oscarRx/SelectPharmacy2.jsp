@@ -31,6 +31,8 @@
 <%@ page import="oscar.oscarRx.data.*,java.util.*" %>
 <%@ page import="oscar.OscarProperties" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="oscar.oscarRx.data.model.Patient" %>
 
 <%
 	String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
@@ -83,6 +85,11 @@
 
 			<%
 			oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean");
+
+			LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+
+			Patient patientObj = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
+			request.setAttribute("Patient", patientObj);
 			%>
 
 		<bean:define id="patient" type="oscar.oscarRx.data.model.Patient" name="Patient"/>

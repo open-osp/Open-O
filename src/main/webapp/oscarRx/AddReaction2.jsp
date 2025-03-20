@@ -59,8 +59,8 @@
 </logic:present>
 
 <%
-oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean");
-Patient patient = (Patient)request.getSession().getAttribute("Patient");
+String demographicNo = request.getParameter("demographicNo");
+Patient patient = RxPatientData.getPatient(LoggedInInfo.getLoggedInInfoFromSession(session), demographicNo);
 String name = (String) request.getAttribute("name");
 String type = (String) request.getAttribute("type");
 String drugrefId = (String) request.getAttribute("drugrefId");
@@ -129,7 +129,7 @@ boolean isNKDA = "No Known Drug Allergies".equals(name);
 			<tr>
 				<td id="addAllergyDialogue"><html:form action="/oscarRx/addAllergy2"
 					focus="reactionDescription">
-					
+					<input type="hidden" name="demographicNo" value="<%=demographicNo%>" />
 					<script type="text/javascript">
 						function checkStartDate() {
 							var field = document.forms.RxAddAllergyForm.startDate;
@@ -278,7 +278,7 @@ boolean isNKDA = "No Known Drug Allergies".equals(name);
 								<html:submit property="submit" value="Add Allergy" styleClass="ControlPushButton"
 									onclick="return doSubmit()" />
 								<input type=button class="ControlPushButton" id="cancelAddReactionButton"
-									onclick="window.location='ShowAllergies2.jsp?demographicNo=<%=bean.getDemographicNo() %>'"
+									onclick="window.location='ShowAllergies2.jsp?demographicNo=<%=demographicNo%>'"
 									value="Cancel" />
 							</td>
 						</tr>
