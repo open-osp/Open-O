@@ -1808,7 +1808,7 @@ public class DemographicExportAction4 extends Action {
 							
 							if (StringUtils.filled(result) || StringUtils.filled(comments)) {
 								HashMap<String,String> labMeaValues = new HashMap<String,String>();
-								
+								labMeaValues.put("labType", hl7TextMessage.getType());
 								labMeaValues.put("identifier", h.getOBXIdentifier(i, j));
 								labMeaValues.put("name", h.getOBXName(i, j));
 								labMeaValues.put("labname", h.getPatientLocation());
@@ -3246,7 +3246,7 @@ public class DemographicExportAction4 extends Action {
 		if (StringUtils.filled(labMea.get("name"))) labResults.setTestNameReportedByLab(labMea.get("name"));
 
 		//laboratory name
-		labResults.setLaboratoryName(StringUtils.noNull(labMea.get("labname")));
+		labResults.setLaboratoryName(StringUtils.noNull(labMea.get("labname")) + "^" + StringUtils.noNull(labMea.get("labType")));
 		addOneEntry(LABS);
 		if (StringUtils.empty(labResults.getLaboratoryName())) {
 			exportError.add("Error! No Laboratory Name for Lab Test "+labResults.getLabTestCode()+" for Patient "+demoNo);

@@ -9,6 +9,7 @@ import oscar.util.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -34,11 +35,23 @@ public class HL7CreateFile {
         if (labs != null && !labs.isEmpty()) {
             resultCount = labs.size();
             LaboratoryResultsDocument.LaboratoryResults firstLab = labs.get(0);
-            String labType = StringUtils.noNull(firstLab.getLaboratoryName());
+
+            String labType = "";
+            if (StringUtils.filled(firstLab.getLaboratoryName())) {
+                if (firstLab.getLaboratoryName().split("\\^").length > 1) {
+                    labType = StringUtils.noNull(firstLab.getLaboratoryName().split("\\^")[1]);
+                } else {
+                    labType = StringUtils.noNull(firstLab.getLaboratoryName());
+                }
+            }
             if (labType.equalsIgnoreCase("LifeLabs") || labType.equalsIgnoreCase("MDS")) {
                 LAB_TYPE = "MDS";
             } else if (labType.equalsIgnoreCase("Gamma") || labType.equalsIgnoreCase("GDML")) {
                 LAB_TYPE = "GDML";
+            } else if (labType.equalsIgnoreCase("PATHL7")) {
+                LAB_TYPE = "PATHL7";
+            } else if (labType.equalsIgnoreCase("ExcellerisON")) {
+                LAB_TYPE = "ExcellerisON";
             }
             
             hl7.append(generateMSH(firstLab)).append("\n");
@@ -62,12 +75,16 @@ public class HL7CreateFile {
                 hl7.append("ZCT|||||||").append("\n");
             }
 
-            if (LAB_TYPE.equals("CML")) {
+            if (LAB_TYPE.equals("CML") || LAB_TYPE.equals("PATHL7") || LAB_TYPE.equals("ExcellerisON")) {
                 hl7.append(generateORC(firstLab)).append("\n");
             }
             
             hl7.append(generateOBR(firstLab)).append("\n");
             hl7.append(generateOBX(labs));
+
+            if (LAB_TYPE.equals("PATHL7") || LAB_TYPE.equals("ExcellerisON")) {
+                addXMLWrapper(hl7);
+            }
         }
         
         return hl7.toString();
@@ -75,13 +92,25 @@ public class HL7CreateFile {
 
 
     private String generateMSH(LaboratoryResultsDocument.LaboratoryResults lab) {
-        String labNameType = LAB_TYPE + "|" + lab.getLaboratoryName();
+        String labName = "";
+        if (StringUtils.filled(lab.getLaboratoryName())) {
+            if (lab.getLaboratoryName().split("\\^").length > 1) {
+                labName = StringUtils.noNull(lab.getLaboratoryName().split("\\^")[0]);
+            } else {
+                labName = StringUtils.noNull(lab.getLaboratoryName());
+            }
+        }
+        String labNameType = LAB_TYPE + "|" + labName;
         DateTimeFullOrPartial labDateString = lab.getLabRequisitionDateTime() != null ? lab.getLabRequisitionDateTime() : lab.getCollectionDateTime();
         String requisitionDate = getDateTime(labDateString);
         String version = "2.3";
         if (LAB_TYPE.equals("MDS")) {
-            labNameType = lab.getLaboratoryName() + "|" + LAB_TYPE;
+            labNameType = labName + "|" + LAB_TYPE;
             version = version + ".0";
+        }
+        if (LAB_TYPE.equals("ExcellerisON")) {
+            labNameType = "PATHL7" + "|" + labName;
+            version = version + ".1";
         }
         
         return "MSH|^~\\&|" + labNameType + "|||" + requisitionDate + "||ORU^R01|" + StringUtils.noNull(lab.getAccessionNumber()) + "-" + resultCount + "|P|" + version + "||||";
@@ -130,9 +159,15 @@ public class HL7CreateFile {
         for (LaboratoryResultsDocument.LaboratoryResults lab : labs) {
             String result = "";
             String unit = "";
+            String valueType = "ST";
             if (lab.getResult() != null) {
                 result = StringUtils.noNull(lab.getResult().getValue());
                 result = result.replaceAll("\\n", "<br \\\\>");
+                if (isBase64Pdf(result)) {
+                    if (!LAB_TYPE.equals("ExcellerisON")) { result = "^TEXT^PDF^Base64^" + result; } 
+                    valueType = "ED";
+                }
+
                 unit = StringUtils.noNull(lab.getResult().getUnitOfMeasure());
             }
             String collectionDate = getDateTime(lab.getCollectionDateTime());
@@ -162,7 +197,7 @@ public class HL7CreateFile {
                 testResultStatus = "F";
             }
             
-            String obxSegment = "OBX|" + obxNo + "|ST|" + labTest+ "|Imported Test Results|" + result+ "|" +unit+ "|" + referenceRange + "|" + resultNormalAbnormalFlag+ "|||" + testResultStatus + "|||" + collectionDate;
+            String obxSegment = "OBX|" + obxNo + "|" + valueType + "|" + labTest+ "|Imported Test Results|" + result+ "|" +unit+ "|" + referenceRange + "|" + resultNormalAbnormalFlag+ "|||" + testResultStatus + "|||" + collectionDate;
             obx.append(obxSegment).append("\n");
             obx.append(generateNTE(lab));
         }
@@ -298,5 +333,52 @@ public class HL7CreateFile {
         testResultStatus = StringUtils.noNull(testResultStatus);
         
         return testResultStatus.equalsIgnoreCase("Final") || testResultStatus.isEmpty();
+    }
+
+    private boolean isBase64Pdf(String str) {
+        // Check if the string is null or empty
+        if (str == null || str.isEmpty()) {
+            return false; // Null or empty strings are not valid Base64
+        }
+    
+        try {
+            // Attempt to decode the string as Base64
+            byte[] decodedBytes = Base64.getDecoder().decode(str);
+    
+            // Check if the decoded bytes represent a PDF file
+            // PDF files start with the signature "%PDF-" (in ASCII)
+            String pdfSignature = "%PDF-";
+            if (decodedBytes.length < pdfSignature.length()) {
+                return false; // Not enough bytes to match the PDF signature
+            }
+    
+            // Convert the first few bytes to a string and compare with the PDF signature
+            String header = new String(decodedBytes, 0, pdfSignature.length(), "UTF-8");
+            return pdfSignature.equals(header);
+    
+        } catch (IllegalArgumentException e) {
+            // Decoding failed, so it's not valid Base64
+            return false;
+        } catch (Exception e) {
+            // Handle unexpected exceptions (e.g., character encoding issues)
+            return false;
+        }
+    }
+
+    private void addXMLWrapper(StringBuilder hl7Message) {
+        if (hl7Message == null || hl7Message.length() == 0) {
+            throw new IllegalArgumentException("HL7 message cannot be null or empty");
+        }
+    
+        StringBuilder xmlBuilder = new StringBuilder();
+        xmlBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+                  .append("<HL7Messages MessageFormat=\"ORUR01\" MessageCount=\"1\" Version=\"2.3\">")
+                  .append("<Message MsgID=\"1\"><![CDATA[")
+                  .append(hl7Message)
+                  .append("]]></Message>")
+                  .append("</HL7Messages>");
+    
+        hl7Message.setLength(0); // Clear the original content
+        hl7Message.append(xmlBuilder); // Replace it with the XML-wrapped content
     }
 }
