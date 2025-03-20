@@ -447,62 +447,83 @@ if(currentFacility.isEnableEncounterTransportationTime() || (currentProgram != n
             alert("<nested:write name="DateError"/>");
        </nested:notEmpty>
     </nested:notEmpty>
-    
-   var c = "bgColour" + "<%=noteIndex%>";          
-   var txtStyles = $F(c).split(";");
-   var txtColour = txtStyles[0].substr(txtStyles[0].indexOf("#"));
-   var background = txtStyles[1].substr(txtStyles[1].indexOf("#"));
-   var summary = "sumary" + "<%=noteIndex%>";
+	const backgroundColorId = "bgColour" + "<%=noteIndex%>";
+	const backgroundColorInput = document.getElementById(backgroundColorId);
+	let txtColour = "#000000";
+	let background = "#CCCCFF";
+	if (backgroundColorInput) {
+		const txtStyles = backgroundColorInput.value.split(";");
+		txtColour = txtStyles[0].substr(txtStyles[0].indexOf("#"));
+		background = txtStyles[1].substr(txtStyles[1].indexOf("#"));
+	}
 
-   if( $("observationDate") != null ) {
-        $("observationDate").style.color = txtColour;
-        $("observationDate").style.backgroundColor = background; 
-   }
-   $(summary).style.color = txtColour;
-   $(summary).style.backgroundColor = background; 
+	const observationDateInput = document.getElementById("observationDate");
+	if (observationDateInput) {
+		observationDateInput.style.color = txtColour;
+		observationDateInput.style.backgroundColor = background; 
+	}
+
+	const summaryId = "sumary" + "<%=noteIndex%>";
+	const summaryDiv = document.getElementById(summaryId);
+	if (summaryDiv) {
+		summaryDiv.style.color = txtColour;
+		summaryDiv.style.backgroundColor = background;
+	}
    
-   if( $("toggleIssue") != null )
-        $("toggleIssue").disabled = false;
-    
-   if( showIssue ) {
-        $("noteIssues-resolved").show();
-        $("noteIssues-unresolved").show();
-        for( var idx = 0; idx < expandedIssues.length; ++idx )            
-            displayIssue(expandedIssues[idx]);                   
-   }           
-   
+	const toggleIssueElement = document.getElementById("toggleIssue");
+	if (toggleIssueElement) {
+		toggleIssueElement.disabled = false;
+	}
+
+	if( showIssue ) {
+		const resolvedElement = document.getElementById("noteIssues-resolved");
+		if (resolvedElement) {
+			resolvedElement.style.display = "block"; // Make visible
+		}
+
+		const unresolvedElement = document.getElementById("noteIssues-unresolved");
+		if (unresolvedElement) {
+			unresolvedElement.style.display = "block"; // Make visible
+		}
+		for( var idx = 0; idx < expandedIssues.length; ++idx )            
+			displayIssue(expandedIssues[idx]);                   
+	}
+
    //do we have a custom encounter type?  if so add an option to the encounter type select
    var encounterType = '<nested:write name="caseManagementEntryForm" property="caseNote.encounter_type"/>';
    var selectEnc = "<%=encSelect%>";
-   
-   if( $(selectEnc) != null ) {        
-        
-        if( $F(selectEnc) == "" && encounterType != "" ) {
-            var select = document.getElementById(selectEnc);
-            var newOption =document.createElement('option');        
-            newOption.text = encounterType;
-            newOption.value = encounterType;
+	const selectElement = document.getElementById(selectEnc);
+	if (selectElement) {        
+		
+		if ( selectElement.value == "" && encounterType != "" ) {
+			const newOption =document.createElement('option');        
+			newOption.text = encounterType;
+			newOption.value = encounterType;
 
-            try
-            {
-                select.add(newOption,null); // standards compliant            
-            }
-            catch(ex)
-            {
-                select.add(newOption); // IE only            
-            }  
+			try
+			{
+				selectElement.add(newOption,null); // standards compliant            
+			}
+			catch(ex)
+			{
+				selectElement.add(newOption); // IE only            
+			}  
 
-            select.selectedIndex = select.options.length - 1;
-        }
-        
-        new Autocompleter.SelectBox(selectEnc);        
-        
-   }     
+			selectElement.selectedIndex = selectElement.options.length - 1;
+		}
+		
+		try {
+			new Autocompleter.SelectBox(selectEnc);
+		} catch (error) {
+			console.error("Failed to initialize Autocompleter.SelectBox:", error);
+		}      
+		
+	}
    
          
    //store observation date so we know if user changes it
-   if( $("observationDate") != null ) {
-        origObservationDate = $("observationDate").value;            
+   if (observationDateInput) {
+        origObservationDate = observationDateInput.value;            
    
         //create calendar
         Calendar.setup({ inputField : "observationDate", ifFormat : "%d-%b-%Y %H:%M ", showsTime :true, button : "observationDate_cal", singleClick : true, step : 1 });    

@@ -277,9 +277,10 @@ function grabEnter(id, event) {
 function setupNotes(){
     //need to set focus after rounded is called
     adjustCaseNote();
-    setCaretPosition($(caseNote), $(caseNote).value.length);
+    const $caseNoteElement = jQuery("#" + caseNote);
+    setCaretPosition($caseNoteElement, $caseNoteElement.val().length);
 
-    $(caseNote).focus();
+    $caseNoteElement.focus();
 }
 
 <%--var minDelta =  0.93;--%>
@@ -3114,10 +3115,13 @@ function monitorCaseNote(e) {
 //resize case note text area to contain all text
 function adjustCaseNote() {
     var MAXCHARS = 78;
-    var payload = $(caseNote).value;
+    var payload = jQuery("#" + caseNote).val();
     var numLines = 0;
-    var lHeight = $(caseNote).getStyle('line-height');
-    var lineHeight = lHeight.substr(0,lHeight.indexOf('e'));
+    
+    // Use jQuery to get the computed line-height of the element
+    var lineHeightCSS = jQuery("#" + caseNote).css('line-height'); // e.g., "20px"
+    var lineHeight = parseFloat(lineHeightCSS); // Extract numeric value (handles px, em, etc.)
+
     var arrLines = payload.split("\n");
 
     //we count each new line char and add a line for lines longer than max length
@@ -3132,11 +3136,15 @@ function adjustCaseNote() {
     }
     //add a buffer
     numLines += 2;
-    var noteHeight = Math.ceil(lineHeight * numLines);
-    noteHeight += 'em';
-    $(caseNote).style.height = noteHeight;
+    
+    // Calculate the total height in pixels
+    var noteHeight = Math.ceil(lineHeight * numLines) + 'px';
 
-    numChars = $(caseNote).value.length;
+    // Use jQuery to set the height of the element
+    jQuery("#" + caseNote).css('height', noteHeight);
+
+    // Use jQuery to calculate the total number of characters in the payload
+    numChars = jQuery("#" + caseNote).val().length;
 }
 
 function autoCompleteHideMenu(element, update){

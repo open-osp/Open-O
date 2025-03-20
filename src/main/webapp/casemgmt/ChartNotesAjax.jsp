@@ -926,7 +926,9 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 <script type="text/javascript">	
 	caseNote = "caseNote_note" + "<%=savedId%>";
 	//save initial note to determine whether save is necessary
-	origCaseNote = $F(caseNote);
+	if (document.getElementById(caseNote)) {
+		origCaseNote = document.getElementById(caseNote).value;
+	}
 <%
 
 	if( casemgmtNoteLock.isLocked() ) {
@@ -1057,7 +1059,11 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
    changeIssueFunc;  //set in changeDiagnosis function above
    addIssueFunc = updateIssues.bindAsEventListener(obj, makeIssue, defaultDiv);
    Element.observe('asgnIssues', 'click', addIssueFunc);
-   new Autocompleter.Local('enTemplate', 'enTemplate_list', autoCompList, { colours: itemColours, afterUpdateElement: menuAction }  );
+   try {
+		new Autocompleter.Local('enTemplate', 'enTemplate_list', autoCompList, { colours: itemColours, afterUpdateElement: menuAction }  );
+   } catch(error) {
+		console.error("Failed to initialize Autocompleter.Local:", error);
+   }
 
    //start timer for autosave
    setTimer();
