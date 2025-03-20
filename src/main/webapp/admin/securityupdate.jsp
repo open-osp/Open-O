@@ -101,8 +101,14 @@
     	} else {
     		s.setForcePasswordReset(Boolean.FALSE);  
         }
-    	
-    	s.setLastUpdateDate(new java.util.Date());
+
+		if (request.getParameter("enableMfa") != null && request.getParameter("enableMfa").equals("1")) {
+			s.setUsingMfa(Boolean.TRUE);
+		} else {
+			s.setUsingMfa(Boolean.FALSE);
+		}
+
+		s.setLastUpdateDate(new java.util.Date());
     	
     	securityDao.saveEntity(s);
     	rowsAffected=1;
