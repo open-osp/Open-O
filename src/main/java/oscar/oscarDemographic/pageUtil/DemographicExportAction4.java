@@ -3273,7 +3273,7 @@ public class DemographicExportAction4 extends Action {
 		String measureData = StringUtils.noNull(labMea.get("measureData"));
 		if (StringUtils.filled(measureData)) {
 			LaboratoryResults.Result result = labResults.addNewResult();
-			if (measureData.length()>120) {
+			if (measureData.length()>120 && !Base64.isBase64(measureData)) {
 				measureData = measureData.substring(0, 120);
 				exportError.add("Error! Result text length > 120 - truncated; Lab Test "+labResults.getLabTestCode()+" for Patient "+demoNo);
 			}
