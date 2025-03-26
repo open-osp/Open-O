@@ -855,7 +855,6 @@ public final class EDocUtil {
                     throw new IOException("Cannot refile document #"+documentNo+ " "+d.getDocdesc()+". Destination File " + destFile.getAbsolutePath() + " already exists");
                 } else {
                     FileUtils.copyFile(sourceFile, destFile);
-                    EDocUtil.deleteDocument(documentNo);
                 }
             } catch (IOException e) {
                 logger.error("Error", e);
@@ -1300,4 +1299,24 @@ public final class EDocUtil {
         	return pagecount;
         }
 
+	/**
+	 * Checks if a document with the given filename has already been refiled in the specified queue.
+	 *
+	 * @see #refileDocument(String, String)
+	 * @param filename The original filename of the document.
+	 * @param queueId  The ID of the queue where the document might have been refiled.
+	 * @return {@code true} if a document with the refiled name exists in the queue's refile directory,
+	 * {@code false} otherwise.
+	 */
+	public static boolean isDocumentAlreadyRefiledInQueue(String filename, int queueId) {
+		String destFileName = filename;
+		if (destFileName.length() > 18) {
+			destFileName = destFileName.substring(14, filename.length());
+		}
+
+		String destPath = IncomingDocUtil.getIncomingDocumentFilePath(String.valueOf(queueId), "Refile");
+		File destFile = new File(destPath, "R" + destFileName);
+		return destFile.exists();
 	}
+
+}

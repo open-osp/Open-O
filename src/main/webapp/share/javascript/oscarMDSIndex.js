@@ -1824,6 +1824,10 @@ function fileDoc(docId){
 	}
 }
 
+function handleQueueListChange(queueListSelectElement, refileBtnElement, docCurrentFiledQueue) {
+	refileBtnElement.disabled = queueListSelectElement.value === docCurrentFiledQueue;
+}
+
 function refileDoc(id) {
     var queueId=document.getElementById('queueList_'+id).options[document.getElementById('queueList_'+id).selectedIndex].value;
     var url=contextpath +"/documentManager/ManageDocument.do";
