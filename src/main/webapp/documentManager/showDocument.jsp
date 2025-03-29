@@ -143,7 +143,9 @@
             String cp=request.getContextPath() ;
             String url = cp+"/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + docId+"&curPage=1";
             String url2 = cp+"/documentManager/ManageDocument.do?method=display&doc_no=" + docId;
-            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());	
+            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+            Integer docCurrentFiledQueue = null;
 %>
 
 <c:if test="${param.inWindow eq 'true'}">
@@ -303,14 +305,29 @@
                                                         <input type="button" id="mainTickler_<%=docId%>" value="Tickler" onClick="popupPatientTicklerPlus(710, 1024,'${pageContext.servletContext.contextPath}/Tickler.do?', 'Tickler','<%=docId%>')" <%=btnDisabled %>>
                                                         <% } else { %>
                                                         <input type="button" id="mainTickler_<%=docId%>" value="Tickler" onClick="popupPatientTickler(710, 1024,'${pageContext.servletContext.contextPath}/tickler/ticklerAdd.jsp?', 'Tickler','<%=docId%>')" <%=btnDisabled %>>
-                                                        <% } %>
-                                                        
+                                                        <% }
+
+                                                            String refileBtnVisibility = "";
+                                                            for (Hashtable ht : queues) {
+                                                                int id = (Integer) ht.get("id");
+
+                                                                if (EDocUtil.isDocumentAlreadyRefiledInQueue(curdoc.getDescription(), id)) {
+                                                                    docCurrentFiledQueue = id;
+                                                                    if (id == queueId) {
+                                                                        refileBtnVisibility = "disabled";
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        %>
+
                                                         <input type="button" id="mainEchart_<%=docId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnEChart"/> " onClick="popupPatient(710, 1024,'${pageContext.servletContext.contextPath}/oscarEncounter/IncomingEncounter.do?reason=<bean:message key="oscarMDS.segmentDisplay.labResults"/>&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>')" <%=btnDisabled %>>
                                                         <input type="button" id="mainMaster_<%=docId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnMaster"/>" onClick="popupPatient(710,1024,'${pageContext.servletContext.contextPath}/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>')" <%=btnDisabled %>>
                                                         <input type="button" id="mainApptHistory_<%=docId%>" value=" <bean:message key="oscarMDS.segmentDisplay.btnApptHist"/>" onClick="popupPatient(710,1024,'${pageContext.servletContext.contextPath}/demographic/demographiccontrol.jsp?orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25&demographic_no=','ApptHist','<%=docId%>')" <%=btnDisabled %>>
 
-                                                        <input type="button" id="refileDoc_<%=docId%>" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="refileDoc('<%=docId%>');" >
-                                                        <select  id="queueList_<%=docId%>" name="queueList"> 
+                                                        <input type="button" id="refileDoc_<%=docId%>" value="<bean:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="refileDoc('<%=docId%>');" <%=refileBtnVisibility%> >
+                                                        <select  id="queueList_<%=docId%>" name="queueList"
+                                                                 onchange="handleQueueListChange(this, document.getElementById('refileDoc_<%=docId%>'), '<%=docCurrentFiledQueue%>')">
                                                             <%
                                                             for (Hashtable ht : queues) {
                                                                 int id = (Integer) ht.get("id");
@@ -411,7 +428,10 @@
                                     </tr>
                                     <tr>
                                         <td><bean:message key="dms.documentReport.msgDocDesc" />:</td>
-                                        <td><input id="docDesc_<%=docId%>"  type="text" name="documentDescription" value="<%=curdoc.getDescription()%>" /></td>
+                                        <td><input id="docDesc_<%=docId%>" type="text" name="documentDescription"
+                                                   value="<%=curdoc.getDescription()%>"
+                                                   onfocus="this.select(); this.setAttribute('data-original-value', this.value)"
+                                                   onblur="if (this.value.trim() === '') this.value = this.getAttribute('data-original-value')"/></td>
                                     </tr>
                                     <tr>
                                         <td><bean:message key="inboxmanager.document.ObservationDateMsg" /></td>

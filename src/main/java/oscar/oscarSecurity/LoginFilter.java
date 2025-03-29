@@ -78,7 +78,8 @@ public class LoginFilter implements Filter {
 		"/css/Roboto.css",
 		"/loginResource",
 		"/css/font/Roboto",
-		"/csrfguard"
+		"/csrfguard",
+		"/mfa/"
 	};
 	
 	private static final String[] EXEMPT_URLS_FOR_REQUEST_TIMEOUT = {

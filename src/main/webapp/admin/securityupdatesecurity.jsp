@@ -47,6 +47,8 @@
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.Security" %>
 <%@ page import="org.oscarehr.common.dao.SecurityDao" %>
+<%@ page import="org.oscarehr.security.MfaActions" %>
+<%@ page import="org.oscarehr.managers.MfaManager" %>
 
 
 <%!
@@ -58,6 +60,7 @@
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/checkPassword.js.jsp"></script>
+	<script src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
 <title><bean:message key="admin.securityupdatesecurity.title" /></title>
 <link rel="stylesheet" type="text/css" href="bcArStyle.css">
 <!-- calendar stylesheet -->
@@ -133,6 +136,56 @@
 		}
 		return true;
 	}
+
+	/**
+	 * Handles the change event of the MFA checkbox.
+	 * @param {HTMLInputElement} checkbox - The MFA checkbox element.
+	 */
+	function handleMfaChange(checkbox) {
+		updateMfaElementsVisibility(checkbox.checked, checkbox.checked);
+	}
+
+	/**
+	 * Updates the visibility of MFA-related elements based on the provided flags.
+	 *
+	 * @param {boolean} showMfaNote - Whether to show the MFA note.
+	 * @param {boolean} showResetMfaLink - Whether to show the reset MFA link.
+	 */
+	function updateMfaElementsVisibility(showMfaNote, showResetMfaLink) {
+		let mfaNote = document.getElementById('mfaNote');
+		let resetMfa = document.getElementById('resetMfaLink');
+
+		if (resetMfa !== null)
+			resetMfa.style.display = showResetMfaLink ? 'inline' : 'none';
+		if (mfaNote !== null)
+			mfaNote.style.display = showMfaNote ? 'inline' : 'none';
+	}
+
+	/**
+	 * Handles the reset MFA action for a given security ID.
+	 *
+	 * @param {number} securityId - The ID of the security record.
+	 */
+	function handleResetMfa(securityId) {
+		if (confirm("<bean:message key="admin.securityAddRecord.mfa.reset.confirm"/>")) {
+			let url = "${pageContext.request.contextPath}/securityRecord/mfa.do";
+			let data = {
+				method: '<%= MfaActions.METHOD_RESET_MFA %>',
+				securityId: securityId
+			};
+			new Ajax.Request(url, {
+				method: 'get',
+				parameters: data,
+				onSuccess: function (transport) {
+					updateMfaElementsVisibility(true, false);
+				},
+				onFailure: function () {
+					console.log("error resetting MFA");
+				}
+			});
+		}
+	}
+
 //-->
 </script>
 </head>
@@ -244,9 +297,38 @@
 			</td>
 		</tr>
    <%} %>
-	
-	
-	<tr>
+
+			<%--	MFA Setting   --%>
+		<% if (MfaManager.isOscarMfaEnabled()) { %>
+		<tr>
+			<td style="text-align: right">
+				<bean:message key="admin.securityAddRecord.mfa.title"/>:
+			</td>
+			<td style="">
+				<label>
+					<input type="checkbox" name="enableMfa" value="1" onchange="handleMfaChange(this)"
+							<%= security.isUsingMfa() ? "checked" : "" %>/>
+					<bean:message key="admin.securityAddRecord.mfa.description"/>
+				</label>
+				<% if (security.isUsingMfa() && !security.isMfaRegistrationNeeded()) { %>
+				<a id="resetMfaLink" onclick="handleResetMfa(<%=securityId%>)"
+				   style="margin-left: 4px; font-size: small; color: blue; text-decoration:
+				   underline; cursor: pointer;"><bean:message key="admin.securityAddRecord.mfa.reset.link"/></a>
+				<% } %>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td style="padding-left: 8px;">
+			<span id="mfaNote"
+				  style="font-size: x-small; color: darkslategray; vertical-align: top;
+				  display: <%= (security.isUsingMfa() && security.isMfaRegistrationNeeded()) ? "inline" : "none" %>">
+				<bean:message key="admin.securityAddRecord.mfa.note"/></span>
+			</td>
+		</tr>
+		<% } %>
+
+		<tr>
 		<td colspan="2" align="center">
 			<input type="hidden" name="security_no" value="<%= security.getSecurityNo() %>">
 			<input type="submit" name="subbutton" value='<bean:message key="admin.securityupdatesecurity.btnSubmit"/>'>

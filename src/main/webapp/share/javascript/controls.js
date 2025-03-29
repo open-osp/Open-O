@@ -43,9 +43,10 @@ var Autocompleter = {}
 Autocompleter.Base = function() {};
 Autocompleter.Base.prototype = {
   baseInitialize: function(element, update, options) {
-    element          = $(element)
-    this.element     = element; 
-    this.update      = $(update);  
+    const elementInput          = document.getElementById(element);
+
+    this.element     = document.getElementById(element); 
+    this.update      = document.getElementById(update);
     this.hasFocus    = false; 
     this.changed     = false; 
     this.active      = false; 
@@ -57,40 +58,42 @@ Autocompleter.Base.prototype = {
     else
       this.options = options || {};
 
-    this.options.paramName    = this.options.paramName || this.element.name;
+    this.options.paramName    = this.options.paramName || elementInput.name;
     this.options.tokens       = this.options.tokens || [];
     this.options.frequency    = this.options.frequency || 0.4;
     this.options.minChars     = this.options.minChars || 1;
     this.options.onShow       = this.options.onShow || 
-      function(element, update){ 
+      function(elementInput, update){ 
         if(!update.style.position || update.style.position=='absolute') {
           update.style.position = 'absolute';
-          Position.clone(element, update, {
+          Position.clone(elementInput, update, {
             setHeight: false, 
-            offsetTop: element.offsetHeight
+            offsetTop: elementInput.offsetHeight
           });
         }
         Effect.Appear(update,{duration:0.15});
       };
     this.options.onHide = this.options.onHide || 
-      function(element, update){ new Effect.Fade(update,{duration:0.15}) };
+      function(elementInput, update){ new Effect.Fade(update,{duration:0.15}) };
 
     if(typeof(this.options.tokens) == 'string') 
       this.options.tokens = new Array(this.options.tokens);
 
     this.observer = null;
     
-    this.element.setAttribute('autocomplete','off');
+    elementInput.setAttribute('autocomplete','off');
 
-    Element.hide(this.update);
+    if (this.update && this.update.style) {
+      this.update.style.display = "none";
+    }
 
-    Event.observe(this.element, 'blur', this.onBlur.bindAsEventListener(this));
-    Event.observe(this.element, 'keypress', this.onKeyPress.bindAsEventListener(this));
+    elementInput.addEventListener('blur', this.onBlur.bind(this));
+    elementInput.addEventListener('keypress', this.onKeyPress.bind(this));
 
     // Turn autocomplete back on when the user leaves the page, so that the
     // field's value will be remembered on Mozilla-based browsers.
-    Event.observe(window, 'beforeunload', function(){ 
-      element.setAttribute('autocomplete', 'on'); 
+    window.addEventListener('beforeunload', function() {
+      elementInput.setAttribute('autocomplete', 'on'); 
     });
   },
 

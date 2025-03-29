@@ -519,10 +519,17 @@
 						<xs:all>
 							<xs:element name="Value" minOccurs="1">
 								<xs:simpleType>
-									<xs:restriction base="cdsd:text">
-										<xs:maxLength value="120"/>
-									</xs:restriction>
-								</xs:simpleType>
+								<xs:union>
+									<xs:simpleType>
+										<xs:restriction base="xs:base64Binary"/>
+									</xs:simpleType>
+									<xs:simpleType>
+										<xs:restriction base="cdsd:text">
+											<xs:maxLength value="120"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:union>
+							</xs:simpleType>
 							</xs:element>
 							<xs:element name="UnitOfMeasure" minOccurs="0">
 								<xs:simpleType>

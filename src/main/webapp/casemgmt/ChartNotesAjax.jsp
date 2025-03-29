@@ -65,7 +65,10 @@
 <%@page import="org.oscarehr.common.model.CasemgmtNoteLock"%>
 <%@page import="org.oscarehr.common.model.EmailLog"%>
 <%@page import="org.oscarehr.managers.EmailManager"%>
+
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@page import="org.oscarehr.managers.EmailComposeManager"%>
+<%@page import="org.oscarehr.managers.SecurityInfoManager"%>
 
 
 <%
@@ -94,6 +97,7 @@ Facility facility = loggedInInfo.getCurrentFacility();
 ProfessionalSpecialistDao professionalSpecialistDao=(ProfessionalSpecialistDao)SpringUtils.getBean(ProfessionalSpecialistDao.class);
 
 EmailManager emailManager = SpringUtils.getBean(EmailManager.class);
+EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManager.class);
 
 String pId = (String)session.getAttribute("case_program_id");
 Program program = null;
@@ -323,6 +327,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 				} else if (note.isInvoice()) {
 					globalNoteId = "INV" + note.getNoteId();
 				} else if (note.isEmailNote()) {
+					if (!emailComposeManager.hasEmailPrivilege(loggedInInfo, SecurityInfoManager.READ)) { continue; }
 					EmailLog emailLog = emailManager.getEmailLogByCaseManagementNoteId(loggedInInfo, Long.valueOf(noteId));
 					if (emailLog == null) { continue; }
 					dispDocNo = String.valueOf(emailLog.getId());
@@ -1065,7 +1070,9 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 <script type="text/javascript">	
 	caseNote = "caseNote_note" + "<%=savedId%>";
 	//save initial note to determine whether save is necessary
-	origCaseNote = $F(caseNote);
+	if (document.getElementById(caseNote)) {
+		origCaseNote = document.getElementById(caseNote).value;
+	}
 <%
 
 	if( casemgmtNoteLock.isLocked() ) {
@@ -1197,7 +1204,11 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
    changeIssueFunc;  //set in changeDiagnosis function above
    addIssueFunc = updateIssues.bindAsEventListener(obj, makeIssue, defaultDiv);
    Element.observe('asgnIssues', 'click', addIssueFunc);
-   new Autocompleter.Local('enTemplate', 'enTemplate_list', autoCompList, { colours: itemColours, afterUpdateElement: menuAction }  );
+   try {
+		new Autocompleter.Local('enTemplate', 'enTemplate_list', autoCompList, { colours: itemColours, afterUpdateElement: menuAction }  );
+   } catch(error) {
+		console.error("Failed to initialize Autocompleter.Local:", error);
+   }
 
    //start timer for autosave
    setTimer();

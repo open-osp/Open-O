@@ -88,6 +88,12 @@ public class SecurityAddSecurityHelper {
 		
     	s.setPasswordUpdateDate(new Date());
     	s.setPinUpdateDate(new Date());
+
+		if (request.getParameter("enableMfa") != null && request.getParameter("enableMfa").equals("1")) {
+			s.setUsingMfa(Boolean.TRUE);
+		} else {
+			s.setUsingMfa(Boolean.FALSE);
+		}
     	
 		securityDao.persist(s);
 

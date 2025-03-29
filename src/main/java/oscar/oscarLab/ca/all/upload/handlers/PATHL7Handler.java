@@ -46,6 +46,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import oscar.oscarLab.ca.all.upload.MessageUploader;
+import oscar.oscarLab.ca.all.upload.RouteReportResults;
 
 /**
  * @author wrighd
@@ -53,6 +54,12 @@ import oscar.oscarLab.ca.all.upload.MessageUploader;
 public class PATHL7Handler implements MessageHandler {
 
 	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
+
+	private Integer labNo = null;
+
+	public Integer getLastLabNo() {
+		return labNo;
+	}
 
 	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {
 		Document doc = null;
@@ -64,16 +71,17 @@ public class PATHL7Handler implements MessageHandler {
 			logger.error("Could not parse PATHL7 message", e);
 		}
 
+		RouteReportResults routeResults;
 		if (doc != null) {
 			int i = 0;
 			try {
 				Node messageSpec = doc.getFirstChild();
 				NodeList messages = messageSpec.getChildNodes();
 				for (i = 0; i < messages.getLength(); i++) {
-
+					routeResults = new RouteReportResults();
 					String hl7Body = messages.item(i).getFirstChild().getTextContent();
-					MessageUploader.routeReport(loggedInInfo, serviceName, "PATHL7", hl7Body, fileId);
-
+					MessageUploader.routeReport(loggedInInfo, serviceName, "PATHL7", hl7Body, fileId, routeResults);
+					labNo = routeResults.segmentId;
 				}
 			} catch (Exception e) {
 				logger.error("Could not upload PATHL7 message", e);

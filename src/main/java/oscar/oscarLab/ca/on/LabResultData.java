@@ -31,6 +31,7 @@ import java.util.Date;
 
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.LabReportInformationDao;
+import org.oscarehr.common.dao.OscarLogDao;
 import org.oscarehr.common.model.LabReportInformation;
 import org.oscarehr.util.DateUtils;
 import org.oscarehr.util.MiscUtils;
@@ -50,6 +51,7 @@ import oscar.util.UtilDateUtilities;
 public class LabResultData implements Comparable<LabResultData> {
 
 	Logger logger = MiscUtils.getLogger();
+	OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
 
 	public static final String CML = "CML";
 	public static final String EPSILON = "Epsilon";
@@ -152,6 +154,9 @@ public class LabResultData implements Comparable<LabResultData> {
 
 	}
 
+	public String getLabType() {
+		return labType;
+	}
 
 	public boolean isFinal(){ return finalRes ;}
 
@@ -245,6 +250,18 @@ public class LabResultData implements Comparable<LabResultData> {
 		return this.sex;
 	}
 
+	public String getResultStatus(){
+		return this.resultStatus;
+	}
+
+	public String getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+	
+	public void setLastUpdateDate(String lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}	
+
 	public boolean isMatchedToPatient(){
 		//       if (EXCELLERIS.equals(this.labType)){
 			//          PathnetResultsData prd = new PathnetResultsData();
@@ -330,6 +347,11 @@ public class LabResultData implements Comparable<LabResultData> {
 
 	public String getDescription() {
 		return this.description;
+	}
+
+	public boolean hasRead(String providerNo) {
+		String type = isHRM() ? "hrm" : (isDocument() ? "document" : "lab");
+		return oscarLogDao.hasRead(providerNo, type, segmentID);
 	}
 
 	public void setDescription(String description) {

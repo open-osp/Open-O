@@ -78,12 +78,12 @@ int curDay = cal.get(Calendar.DAY_OF_MONTH);
 
 <head>
 <title><bean:message key="admin.admin.page.title" /></title>
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath() %>/css/datepicker.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-<link rel="stylesheet" href="../css/helpdetails.css" type="text/css">
+
 
 <style>
 body {
@@ -101,7 +101,7 @@ sup {
 
 div.navbar div.dropdown:hover ul.dropdown-menu {
 	display: block;
-	margin: 0px;
+	margin: 0;
 }
 
 .navbar .dropdown-menu {

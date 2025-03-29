@@ -52,7 +52,7 @@ public class ProviderInboxRoutingDaoImpl extends AbstractDaoImpl<ProviderInboxIt
 
     @Override
     public boolean removeLinkFromDocument(String docType, Integer docId, String providerNo) {
-        return CommonLabResultData.updateReportStatus(docId, providerNo, 'X', "Archived", "DOC");
+        return CommonLabResultData.updateReportStatus(docId, providerNo, 'X', null, "DOC");
     }
 
     @Override

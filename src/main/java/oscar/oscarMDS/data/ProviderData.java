@@ -130,4 +130,9 @@ public class ProviderData {
 
 		return p.getFullName();
 	}
+
+	public static Provider getProvider(String providerNo) {
+		ProviderDao dao = SpringUtils.getBean(ProviderDao.class);
+		return dao.getProvider(providerNo);
+	}
 }

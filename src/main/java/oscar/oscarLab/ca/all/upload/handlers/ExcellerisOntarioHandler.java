@@ -44,6 +44,12 @@ public class ExcellerisOntarioHandler implements MessageHandler {
 
 	Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
+	private Integer labNo = null;
+
+	public Integer getLastLabNo() {
+		return labNo;
+	}
+
 	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {
 		Document doc = null;
 		try {
@@ -63,9 +69,10 @@ public class ExcellerisOntarioHandler implements MessageHandler {
 				Node messageSpec = doc.getFirstChild();
 				NodeList messages = messageSpec.getChildNodes();
 				for (i = 0; i < messages.getLength(); i++) {
-
+					routeResults = new RouteReportResults();
 					String hl7Body = messages.item(i).getFirstChild().getTextContent();
-					MessageUploader.routeReport(loggedInInfo, serviceName, "ExcellerisON", hl7Body, fileId);
+					MessageUploader.routeReport(loggedInInfo, serviceName, "ExcellerisON", hl7Body, fileId, routeResults);
+					labNo = routeResults.segmentId;
 				}
 			} catch (Exception e) {
 				logger.error("Could not upload Excelleris Ontario message", e);

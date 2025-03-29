@@ -191,9 +191,11 @@ import oscar.oscarLab.ca.all.Hl7textResultsData;
 import oscar.oscarLab.ca.all.upload.HandlerClassFactory;
 import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
 import oscar.oscarLab.ca.all.upload.handlers.CMLHandler;
+import oscar.oscarLab.ca.all.upload.handlers.ExcellerisOntarioHandler;
 import oscar.oscarLab.ca.all.upload.handlers.GDMLHandler;
 import oscar.oscarLab.ca.all.upload.handlers.MDSHandler;
 import oscar.oscarLab.ca.all.upload.handlers.MessageHandler;
+import oscar.oscarLab.ca.all.upload.handlers.PATHL7Handler;
 import oscar.oscarLab.ca.all.util.Utilities;
 import oscar.oscarPrevention.PreventionData;
 import oscar.oscarProvider.data.ProviderData;
@@ -4334,6 +4336,14 @@ public class ImportDemographicDataAction4 extends Action {
                             addOneEntry(LABS);
                         } else if (msgHandler instanceof MDSHandler && ((MDSHandler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
                             labNo = ((MDSHandler) msgHandler).getLastLabNo();
+                            logger.info("successfully added lab");
+                            addOneEntry(LABS);
+                        } else if (msgHandler instanceof ExcellerisOntarioHandler && ((ExcellerisOntarioHandler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
+                            labNo = ((ExcellerisOntarioHandler) msgHandler).getLastLabNo();
+                            logger.info("successfully added lab");
+                            addOneEntry(LABS);
+                        } else if (msgHandler instanceof PATHL7Handler && ((PATHL7Handler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
+                            labNo = ((PATHL7Handler) msgHandler).getLastLabNo();
                             logger.info("successfully added lab");
                             addOneEntry(LABS);
                         } else {

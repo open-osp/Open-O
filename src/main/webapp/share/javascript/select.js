@@ -26,53 +26,74 @@ Autocompleter.SelectBox = Class.create();
 
 Autocompleter.SelectBox.prototype = Object.extend(new Autocompleter.Base(), {
 initialize: function(select, options) {
-	this.element = "<input type=\"text\" id=\"" + $(select).id + "_combo\" />"
-	new Insertion.Before(select, this.element)
-	var inputClasses = Element.classNames(select);
-	inputClasses.each(function(inputClass)
-		{
-			Element.addClassName($(select).id + "_combo", inputClass);
-		});
+	this.element = document.createElement('input');
+	this.element.type = 'text';
+	this.element.id = select + "_combo";
+
+	const selectElement = document.getElementById(select);
+	selectElement.parentNode.insertBefore(this.element, selectElement);
+
+	const inputClasses = selectElement.classList;
+	const comboElement = document.getElementById(select + "_combo");
+	inputClasses.forEach(function(inputClass) {
+		if (comboElement) {
+			comboElement.classList.add(inputClass);
+		}
+	});
 	
-	this.update = "<div id=\"" + $(select).id + "_options\" class=\"autocomplete\"></div>"	
-	new Insertion.Before(select, this.update)
+	this.update = document.createElement('div');
+	this.update.id = selectElement.id + "_options";
+	this.update.className = "autocomplete";
+
+	selectElement.parentNode.insertBefore(this.update, selectElement);
 		
-		
-    this.baseInitialize($(select).id + "_combo", $(select).id + "_options", options);
+    this.baseInitialize(this.element.id, this.update.id, options);
     this.select = select;
 	this.selectOptions = [];
 		
-	$(this.element.id).setAttribute('readonly','readonly');
+	this.element.setAttribute('readonly', 'readonly');
 	this.element.readOnly = true;
-	if(this.options.debug)alert('input ' + this.element.id + ' and div '+ this.update.id + ' created, Autocompleter.Base() initialized');
-	if(!this.options.debug)Element.hide(select);
+	if(this.options.debug) {
+		alert('input ' + this.element.id + ' and div ' + this.update.id + ' created, Autocompleter.Base() initialized');
+	}
+	if(!this.options.debug) {
+		selectElement.style.display = 'none';
+	}
 
-	var optionList = $(this.select).getElementsByTagName('option');
-	var nodes = $A(optionList);
+	const optionList = selectElement.getElementsByTagName('option');
+	const nodes = Array.from(optionList);
 
-	for(i=0; i<nodes.length;i++){
+	for(let i=0; i < nodes.length; i++){
 		this.selectOptions.push("<li id=\"" + nodes[i].value + "\">" + nodes[i].innerHTML + '</li>');
 		if (nodes[i].getAttribute("selected")) this.element.value = nodes[i].innerHTML;
 		
 		if(this.options.debug)alert('option ' + nodes[i].innerHTML + ' added to '+ this.update.id);
 	}
 	
-	Event.observe(this.element, "click", this.activate.bindAsEventListener(this));
+	this.element.addEventListener("click", this.activate.bind(this));
 	
-	if ($(select).selectedIndex >= 0)this.element.value = $(select).options[$(select).selectedIndex].innerHTML;
+	if (selectElement.selectedIndex >= 0) {
+		this.element.value = selectElement.options[selectElement.selectedIndex].innerHTML;
+	}
 	
-	var self = this;
+	const self = this;
 	this.options.afterUpdateElement = function(text, li) {
-		var optionList = $(select).getElementsByTagName('option');
-		var nodes = $A(optionList);
+		const optionList = selectElement.getElementsByTagName('option');
+		const nodes = Array.from(optionList);
 
-		var opt = nodes.find( function(node){
+		const opt = nodes.find( function(node){
 			return (node.value == li.id);
 		});
-		$(select).selectedIndex=opt.index;
-		if(self.options.redirect) document.location.href = opt.value;
-		if(self.options.autoSubmit) 
-			$(self.options.autoSubmit).submit;
+		selectElement.selectedIndex = nodes.indexOf(opt);
+		if (self.options.redirect) {
+			document.location.href = opt.value;
+		}
+		if(self.options.autoSubmit) {
+			const autoSubmitElement = document.getElementById(self.options.autoSubmit);
+			if (autoSubmitElement) {
+				autoSubmitElement.submit();
+			}
+		}
 	}
   },
 

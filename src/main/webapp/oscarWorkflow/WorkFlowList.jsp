@@ -28,6 +28,7 @@
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page
 	import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.ClinicalReports.*,oscar.oscarWorkflow.*"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -149,7 +150,7 @@
           
                           for (int j = 0; j < workList.size(); j++){
                           Hashtable h = (Hashtable) workList.get(j);
-                          Hashtable demoHash = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), ""+h.get("demographic_no"));
+                          Map<String, String> demoHash = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), ""+h.get("demographic_no"));
                           String colour = "";
                           
                           WorkFlowInfo wfi = flow.executeRules(wfDS,h);
@@ -167,13 +168,13 @@
 				<td><a
 					href="javascript: function myFunction() {return false; }"
 					onclick="popup(700,1000,'../demographic/demographiccontrol.jsp?demographic_no=<%=(String) h.get("demographic_no")%>&displaymode=edit&dboperation=search_detail','master')"
-					title="Master File"> <%=demoHash.get("lastName")%>, <%=demoHash.get("firstName")%>
+					title="Master File"> <%=Encode.forHtmlContent(demoHash.get("lastName"))%>, <%=Encode.forHtmlContent(demoHash.get("firstName"))%>
 				</a></td>
 				<td><%=h.get("completion_date")%></td>
 				<td><%=flow.getState(""+h.get("current_state"))%></td>
 				<td><%=gestAge%></td>
 				<td><oscar:nextAppt
-					demographicNo='<%=(String) h.get("demographic_no")%>' /></td>
+					demographicNo='<%=Encode.forHtmlContent((String) h.get("demographic_no"))%>' /></td>
 			</tr>
 			<%}%>
 		</table>
