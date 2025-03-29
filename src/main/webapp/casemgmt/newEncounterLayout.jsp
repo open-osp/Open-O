@@ -459,6 +459,24 @@ jQuery(window).on("load", function() {
 
 })
 
+
+	    /**
+	     * Adjusts the height of the content section dynamically to fit the remaining viewport height
+	     * after accounting for the header's height.
+	     *
+	     */
+	    // function adjustContentHeight() {
+		//     const headerHeight = document.getElementById('header').offsetHeight; // Get height of header
+		//     const viewportHeight = window.innerHeight;
+		//     const contentHeight = viewportHeight - headerHeight; // Calculate remaining height
+		//     console.log(document.getElementById('encMainDivWrapper'));
+		//     document.getElementById('encMainDivWrapper').style.height = contentHeight + 'px'; // Set content height
+		//     console.log("adjustContentHeight: " + contentHeight);
+	    // }
+	    //
+	    // window.addEventListener('load', adjustContentHeight); // Adjust on page load
+	    // window.addEventListener('resize', adjustContentHeight); // Adjust on window resize
+
 /*
  * Show and hide CPP categories according to user preferences, and display Social History, Medical History, Ongoing Concerns, and Reminders at user-specified positions
  */
@@ -521,8 +539,6 @@ function doscroll(){
 }
 	
 window.onbeforeunload = onClosing;
-
-
 </script>
 </head>
 <body id="body">

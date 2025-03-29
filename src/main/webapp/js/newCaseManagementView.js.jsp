@@ -30,6 +30,56 @@
 <%@page contentType="text/javascript"%>
 <%@page import="org.oscarehr.casemgmt.common.Colour"%>
 
+
+
+	const expandImg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-bar-expand" viewBox="0 0 16 16">'
+		+ '<path fill-rule="evenodd" d="M3.646 10.146a.5.5 0 0 1 .708 0L8 13.793l3.646-3.647a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708m0-4.292a.5.5 0 0 0 .708 0L8 2.207l3.646 3.647a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 0 0 0 .708M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8"></path>'
+		+ '</svg>';
+
+	const minimizeImg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-bar-contract" viewBox="0 0 16 16">'
+		+ '<path fill-rule="evenodd" d="M3.646 14.854a.5.5 0 0 0 .708 0L8 11.207l3.646 3.647a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 0 0 0 .708m0-13.708a.5.5 0 0 1 .708 0L8 4.793l3.646-3.647a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8"></path>'
+		+ '</svg>';
+
+	const editImg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">'
+		+ '<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"></path>'
+		+ '<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"></path>'
+		+ '</svg>'
+
+	function noteControlButton(globalNoteId, editWarn, messageKey) {
+		// Create the main div element
+		const div = document.createElement("div");
+		div.className = "note-control";
+		div.id = "edit" + globalNoteId;
+		div.title = messageKey; // Assuming messageKey contains the resolved message text
+
+		// Add the onclick behavior
+		div.onclick = function () {
+			if (editWarn) {
+				noPrivs(this);
+			} else {
+				editNote(this);
+			}
+			return false;
+		};
+
+		// Append the SVG to the div
+		const template = document.createElement('template');
+		template.innerHTML = editImg.trim();
+		div.append(template.content.firstChild);
+
+		return div;
+	}
+
+	/**
+     *
+	 * @param noteId
+	 * @param buttons
+	 */
+	function noteControlPanel(noteId, buttons) {
+
+	}
+
+
 	var numNotes = 0;   //How many saved notes do we have?
     var ctx;        //url context
     var providerNo;
@@ -1311,25 +1361,25 @@ function largeNote(note) {
         return isLarge;
 }
 
-//Return display of Locked Note to normal
-function resetView(frm, error, e) {
-    var parent = Event.element(e).parentNode.id;
-    var nId = parent.substr(1);
-    var img = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
+<%--//Return display of Locked Note to normal--%>
+<%--function resetView(frm, error, e) {--%>
+<%--    var parent = Event.element(e).parentNode.id;--%>
+<%--    var nId = parent.substr(1);--%>
+<%--    var img = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";--%>
 
 
-    Element.remove(Event.element(e).id);
-    Event.stop(e);
+<%--    Element.remove(Event.element(e).id);--%>
+<%--    Event.stop(e);--%>
 
-    if( error )
-        Element.remove("passwdError");
+<%--    if( error )--%>
+<%--        Element.remove("passwdError");--%>
 
-    if( frm )
-        Element.remove("passwdPara");
+<%--    if( frm )--%>
+<%--        Element.remove("passwdPara");--%>
 
-    //new Insertion.Top(parent, img);
-    Element.observe(parent, 'click', unlockNote);
-}
+<%--    //new Insertion.Top(parent, img);--%>
+<%--    Element.observe(parent, 'click', unlockNote);--%>
+<%--}--%>
 
 function removeLock(id) {
 	var regEx = /\d+/;
@@ -1353,41 +1403,42 @@ var selectBoxes = new Object();
 var unsavedNoteWarning;
 var editLabel;
 function changeToView(id) {
-    var parent = $(id).parentNode.id;
-    var nId = parent.substr(1);
-
+	console.log("incoming " + id);
+    var parent = document.getElementById(id).parentNode.id;
+    var nId = parent.substring(1);
+console.log("parent nId " + nId);
     var tmp = $(id).value;
     var saving = false;
-    var sumaryId = "sumary";
-    var sumary;
+    <%--var sumaryId = "sumary";--%>
+    <%--var sumary;--%>
 
     var sig = 'sig' + nId;
 
     // check if case note has been changed
     // if so, warn user that changes will be lost if not saved
-
-    if( origCaseNote != $F(id)  || origObservationDate != $("observationDate").value) {
+    if( origCaseNote !== $F(id)  || origObservationDate !== $("observationDate").value) {
         if( !confirm(unsavedNoteWarning))
             return false;
         else {
        	// Prevent saving of note if the current note isn't properly assigned to a program and role. (note_program_ui_enabled = true)
-            if ((typeof jQuery("form[name='caseManagementEntryForm'] input[name='_note_program_no']").val() != "undefined") &&
-        			(typeof jQuery("form[name='caseManagementEntryForm'] input[name='_note_role_id']").val() != "undefined")) {
-        		if (jQuery("form[name='caseManagementEntryForm'] input[name='_note_program_no']").val().trim().length == 0 ||
-        				jQuery("form[name='caseManagementEntryForm'] input[name='_note_role_id']").val().trim().length == 0) {
+            if ((typeof jQuery("form[name='caseManagementEntryForm'] input[name='_note_program_no']").val() !== "undefined") &&
+        			(typeof jQuery("form[name='caseManagementEntryForm'] input[name='_note_role_id']").val() !== "undefined")) {
+        		if (jQuery("form[name='caseManagementEntryForm'] input[name='_note_program_no']").val().trim().length === 0 ||
+        				jQuery("form[name='caseManagementEntryForm'] input[name='_note_role_id']").val().trim().length === 0) {
         			// For weird cases where the role id or program number is missing.
         			_missingRoleProgramIdError();
         			return false;
-        		} else if (jQuery("form[name='caseManagementEntryForm'] input[name='_note_program_no']").val() == "-2" ||
-        				jQuery("form[name='caseManagementEntryForm'] input[name='_note_role_id']").val() == "-2") {
+        		} else if (jQuery("form[name='caseManagementEntryForm'] input[name='_note_program_no']").val() === "-2" ||
+        				jQuery("form[name='caseManagementEntryForm'] input[name='_note_role_id']").val() === "-2") {
         			// For the case where you're trying to save a note with no available programs or roles
         			_noVisibleProgramsError();
         			return false;
         		}
         	}        
             saving = true;
-            if( ajaxSaveNote(sig,nId,tmp) == false)
-                return false;
+            if( ajaxSaveNote(sig,nId,tmp) === false) {
+	            return false;
+            }
         }
    }
 
@@ -1408,7 +1459,7 @@ function changeToView(id) {
     Element.remove(id);
 
     //remove observation date input text box but preserve date if there is one
-    if( !saving && $("observationDate") != null ) {
+    if( !saving && $("observationDate") !== null ) {
         var observationDate = $("observationDate").value;
 
 		new Insertion.After("observationDate", " <span id='obs" + nId + "'>" + observationDate + "</span>");
@@ -1419,7 +1470,7 @@ function changeToView(id) {
 
         var html = $(observationId).innerHTML;
 
-        html = html.substr(0,html.indexOf(":")+1) + " <span id='obs" + nId + "'>" + observationDate + "<\/span>" + html.substr(html.indexOf(":")+1);
+        html = html.substring(0,html.indexOf(":")+1) + " <span id='obs" + nId + "'>" + observationDate + "<\/span>" + html.substr(html.indexOf(":")+1);
 
         $(observationId).update(html);
 
@@ -1453,51 +1504,61 @@ function changeToView(id) {
     }
     //we can stop listening for add issue here
     Element.stopObserving('asgnIssues', 'click', addIssueFunc);
-    if( tmp.length == 0 )
-        tmp = "&nbsp;";
+    if( tmp.length === 0 ) {
+	    tmp = "&nbsp;";
+    }
 
     tmp = tmp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     tmp = tmp.replace(/\n/g,"<br>");
 
     if( !saving ) {
-        if( largeNote(tmp) ) {
-            var btmImg = "<img title='Minimize Display' id='bottomQuitImg" + nId + "' alt='Minimize Display' onclick='minView(event)' style='float:right; margin-right:5px; margin-bottom:3px; ' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
-            new Insertion.Before(sig, btmImg);
+        <%--if( largeNote(tmp) ) {--%>
+        <%--    var btmImg = "<img title='Minimize Display' id='bottomQuitImg" + nId + "' alt='Minimize Display' onclick='minView(event)' style='float:right; margin-right:5px; margin-bottom:3px; ' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";--%>
+		<%--	new Insertion.Before(sig, btmImg);--%>
+        <%--}--%>
+
+        <%--var printImg = "print" + nId;--%>
+        <%--var img = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";--%>
+        <%--var printimg = "<img title='Print' id='" + printImg + "' alt='Toggle Print Note' onclick='togglePrint(" + nId + ", event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/printer.png'>";--%>
+        <%--var input = "<div id='txt" + nId + "'>" + tmp + "<\/div>";--%>
+
+        <%--var func;--%>
+        <%--var editWarn = "editWarn" + nId;--%>
+        <%--if( $F(editWarn) === "true" ) {--%>
+        <%--    func = "noPrivs(event);";--%>
+        <%--}--%>
+        <%--else {--%>
+        <%--    func = "editNote(event);";--%>
+        <%--}--%>
+
+        <%--var editAnchor = "<a title='Edit' id='edit"+ nId + "' href='#' onclick='" + func + " return false;' style='float: right; margin-right: 5px;'>" + editLabel + "</a>";--%>
+        <%--var editId = "edit" + nId;--%>
+
+        <%--var attribName = "anno" + (new Date().getTime());--%>
+        <%--var attribAnchor = "<input id='anno" + nId + "' height='10px;' width='10px' type='image' src='" + ctx + "/oscarEncounter/graphics/annotation.png' title='" + annotationLabel + "' style='float: right; margin-right: 5px; margin-bottom: 3px;'" +--%>
+        <%--	" onclick=\"window.open('" + ctx + "/annotation/annotation.jsp?atbname=" + attribName + "&table_id=" + nId + "&display=EChartNote&demo=" + demographicNo + "','anwin','width=400,height=500');$('annotation_attribname').value='" + attribName + "'; return false;\">";--%>
+
+        <%--new Insertion.Top(parent, editAnchor);--%>
+        <%--new Insertion.After(editId, input);--%>
+
+        const noteTextWrapper = document.getElementById('n' + nId);
+         if( nId !== "0" ) {
+			 // restore note tools edit, annotation, print
+	         const noteControlPanelElement = noteTextWrapper.firstElementChild;
+	         if(noteControlPanelElement?.classList.contains("note-control-panel")) {
+		         noteControlPanelElement.style.display = 'initial';
+	         }
+			else {
+		         var editWarn = "editWarn" + nId;
+		        const editControl = noteControlButton(nId, editWarn, "");
+				const controlPanel = document.createElement('div');
+		         controlPanel.className = 'note-control-panel';
+		         controlPanel.append(editControl);
+		         noteTextWrapper.prepend(controlPanel);
+			}
         }
 
-        var printImg = "print" + nId;
-        var img = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
-        var printimg = "<img title='Print' id='" + printImg + "' alt='Toggle Print Note' onclick='togglePrint(" + nId + ", event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/printer.png'>";
-        var input = "<div id='txt" + nId + "'>" + tmp + "<\/div>";
-
-        var func;
-        var editWarn = "editWarn" + nId;
-        if( $F(editWarn) == "true" ) {
-            func = "noPrivs(event);";
-        }
-        else {
-            func = "editNote(event);";
-        }
-
-        var editAnchor = "<a title='Edit' id='edit"+ nId + "' href='#' onclick='" + func + " return false;' style='float: right; margin-right: 5px;'>" + editLabel + "</a>";
-        var editId = "edit" + nId;
-
-        var attribName = "anno" + (new Date().getTime());
-        var attribAnchor = "<input id='anno" + nId + "' height='10px;' width='10px' type='image' src='" + ctx + "/oscarEncounter/graphics/annotation.png' title='" + annotationLabel + "' style='float: right; margin-right: 5px; margin-bottom: 3px;'" +
-        	"onclick=\"window.open('" + ctx + "/annotation/annotation.jsp?atbname=" + attribName + "&table_id=" + nId + "&display=EChartNote&demo=" + demographicNo + "','anwin','width=400,height=500');$('annotation_attribname').value='" + attribName + "'; return false;\">";
-
-        new Insertion.Top(parent, editAnchor);
-        new Insertion.After(editId, input);
-        
-
-         if( nId.substr(0,1) != "0" ) {
-            Element.remove(printImg);
-            new Insertion.Before(editId, printimg);
-            new Insertion.After(editId, attribAnchor);
-            new Insertion.Top(parent, img);
-        }
-
-        new Insertion.Top(parent, img);
+        <%--new Insertion.Top(parent, img);--%>
 
         $(parent).style.height = "auto";
 
@@ -1559,63 +1620,62 @@ function completeChangeToView(note,newId) {
 
 }
 
-function minView(e) {
-    var divHeight = "1.1em";
-    var txt = Event.element(e).parentNode.id;
-   //alert(txt);
-    var nId = txt.substr(1);
-    var img = Event.element(e).id;
-    var dateId = "obs" + nId;
-    var content = "c" + nId;
-    var date = "d" + nId;
-    var editAnchor = "edit" + nId;
+function minView(id) {
 
-    Event.stop(e);
-    var imgs = $(txt).getElementsBySelector("img");
-    for( i = 0; i < imgs.length; ++i ) {
-        if( imgs[i].id.indexOf("quitImg") > -1 ) {
-            Element.remove(imgs[i]);
-            break;
+	const regEx = /\d+/;
+	let nId = regEx.exec(id);
+
+	// watch for double posts. Prototype still lurking.
+	if(nId) {
+		nId = nId.toString().replaceAll(',', '');
+		<%--let dateId = "obs" + nId;--%>
+		<%--let content = "c" + nId;--%>
+		<%--let date = "d" + nId;--%>
+		<%--let editAnchor = "edit" + nId;--%>
+		let txt = "txt" + nId;
+		const imageContainer = document.getElementById('quitImg' + nId);
+		imageContainer.dataset.state = "contracted";
+		imageContainer.innerHTML = expandImg;
+        const textContainer = document.getElementById(txt);
+		let heading = textContainer.data?.heading;
+		if(!heading) {
+			heading = textContainer.innerHTML.replaceAll('<br>', '').replaceAll('\n','');
+			heading = heading.substring(0, 50);
         }
-    }
+		textContainer.innerHTML = heading;
+	}
 
-    Element.remove(editAnchor);
 
-    $(txt).style.overflow = "hidden";
-    //shrink(txt, 14);
-    $(txt).setStyle('height','14px');
-    //$(txt).style.height = divHeight;
-
-    var txtId = "txt" + nId;
-    var line = $(txtId).innerHTML.substr(0,90);
-    line = line.replace(/<br>/g," ");
-    var dateValue = $(dateId) != null ? $(dateId).innerHTML : "";
-    dateValue = dateValue.substring(0,dateValue.indexOf(" "));
-    line = "<div id='" + date + "' style='width:10%;'><b>" + dateValue + "<\/b><\/div><div id='" + content + "' style='float:left; width:70%;'>" + line + "<\/div>";
-    $("txt"+nId).hide();
-    $("sig"+nId).hide();
-    new Insertion.Top(txt,line);
+    <%--var txtId = "txt" + nId;--%>
+    <%--var line = $(txtId).innerHTML.substr(0,90);--%>
+    <%--line = line.replace(/<br>/g," ");--%>
+    <%--var dateValue = $(dateId) != null ? $(dateId).innerHTML : "";--%>
+    <%--dateValue = dateValue.substring(0,dateValue.indexOf(" "));--%>
+    <%--line = "<div id='" + date + "' style='width:10%;'><b>" + dateValue + "<\/b><\/div><div id='" + content + "' style='float:left; width:70%;'>" + line + "<\/div>";--%>
+    <%--$("txt"+nId).hide();--%>
+    <%--$("sig"+nId).hide();--%>
+    <%--new Insertion.Top(txt,line);--%>
 
 
     //img = "<img title='Print' id='print" + nId + "' alt='Toggle Print Note' onclick='togglePrint(" + nId + ", event)' style='float:right; margin-right:5px;' src='" + ctx + "/oscarEncounter/graphics/printer.png'>";
     //new Insertion.Top(txt, img);
 
-    var print = 'print' + nId;
-    var func;
-    var editWarn = "editWarn" + nId;
-    if( $F(editWarn) === "true" ) {
-        func = "noPrivs(event);";
-    }
-    else {
-        func = "editNote(event);";
-    }
-    var anchor = "<a title='Edit' id='edit"+ nId + "' href='#' onclick='" + func + " return false;' style='float: right; margin-right: 5px;'>Edit</a>";
-    new Insertion.After(print, anchor);
+    <%--var print = 'print' + nId;--%>
+    <%--var func;--%>
+    <%--var editWarn = "editWarn" + nId;--%>
+    <%--if( $F(editWarn) === "true" ) {--%>
+    <%--    func = "noPrivs(event);";--%>
+    <%--}--%>
+    <%--else {--%>
+    <%--    func = "editNote(event);";--%>
+    <%--}--%>
+    <%--var anchor = "<a title='Edit' id='edit"+ nId + "' href='#' onclick='" + func + " return false;' style='float: right; margin-right: 5px;'>Edit</a>";--%>
+    <%--new Insertion.After(print, anchor);--%>
 
 
-    img = "<img title='Maximize Display' alt='Maximize Display' id='xpImg" + nId + "' name='expandViewTrigger' onclick='xpandView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_down.gif'>";
-    new Insertion.Top(txt, img);
-    Element.observe(txt, 'click', xpandView);
+    <%--img = "<img title='Maximize Display' alt='Maximize Display' id='xpImg" + nId + "' name='expandViewTrigger' onclick='xpandView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_down.gif'>";--%>
+    <%--new Insertion.Top(txt, img);--%>
+    <%--Element.observe(txt, 'click', xpandView);--%>
 }
 
 var idHeight;
@@ -1629,35 +1689,35 @@ function shrink(id, toScale) {
 }
 
 // this func fires only if maximize button is clicked after fullView
-function xpandView(e) {
-    var id = Event.element(e).id;
-    xpandViewById(id);
-    Event.stop(e);
-}
+<%--function xpandView(e) {--%>
+<%--    var id = Event.element(e).id;--%>
+<%--    xpandViewById(id);--%>
+<%--    Event.stop(e);--%>
+<%--}--%>
 
-function xpandViewById(id) {
-    var regEx = /\d+/;
-    var nId = regEx.exec(id);
-    var txt = "n" + nId;
-    var img = "xpImg" + nId;
-    var content = "c" + nId;
-    var date = "d" + nId;
+<%--function xpandViewById(id) {--%>
+<%--    var regEx = /\d+/;--%>
+<%--    var nId = regEx.exec(id);--%>
+<%--    var txt = "n" + nId;--%>
+<%--    var img = "xpImg" + nId;--%>
+<%--    var content = "c" + nId;--%>
+<%--    var date = "d" + nId;--%>
 
-    var imgTag = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
-
-
-    Element.remove(img);
-    Element.remove(date);
-    Element.remove(content);
+<%--    var imgTag = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minView(event)' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";--%>
 
 
-    $(txt).style.height = 'auto';
-    new Insertion.Top(txt, imgTag);
-    $("txt"+nId).show();
-    $("sig"+nId).show();
-    Element.stopObserving(txt, 'click', xpandView);
+<%--    Element.remove(img);--%>
+<%--    Element.remove(date);--%>
+<%--    Element.remove(content);--%>
 
-}
+
+<%--    $(txt).style.height = 'auto';--%>
+<%--    new Insertion.Top(txt, imgTag);--%>
+<%--    $("txt"+nId).show();--%>
+<%--    $("sig"+nId).show();--%>
+<%--    Element.stopObserving(txt, 'click', xpandView);--%>
+
+<%--}--%>
 
 function fetchNote(nId) {
     var url = ctx + "/CaseManagementView.do";
@@ -1666,34 +1726,59 @@ function fetchNote(nId) {
     var noteTxtArea = "caseNote_note" + nId;
 
     var ajax = new Ajax.Request (
-                    url,
-                    {
-                        method: 'post',
-                        postBody: params,
-                        evalScripts: true,
-                        onSuccess: function(response) {
-                            $(noteTxtArea).update(response.responseText);
-                            adjustCaseNote();
-                                $(noteTxtArea).focus();
-                            setCaretPosition($(noteTxtArea),$(noteTxtArea).value.length);
-                            origCaseNote = $F(noteTxtArea);
-                            $(fullId).value = "true";
-                        }
-                    }
-               );
+        url,
+        {
+            method: 'post',
+            postBody: params,
+            evalScripts: true,
+            onSuccess: function(response) {
+                $(noteTxtArea).update(response.responseText);
+                adjustCaseNote();
+                    $(noteTxtArea).focus();
+                setCaretPosition($(noteTxtArea),$(noteTxtArea).value.length);
+                origCaseNote = $F(noteTxtArea);
+                $(fullId).value = "true";
+            }
+        }
+   );
 
 }
 
+	/**
+     * Toggle encounter note view expand or collapse.
+     * uses new icons
+	 * @param e
+	 */
+	function toggleView(e) {
+        let noteId = e.id.replace('quitImg', '');
+        const state = e.dataset.state;
+        if(state === "contracted") {
+            //execute full view
+            fullViewById(noteId);
+        } else {
+            // execute min view
+            minView(noteId);
+        }
+    }
+
 function toggleFullViewForAll() {
-    jQuery('[name="fullViewTrigger"], [name="expandViewTrigger"], [name="expandableReadonlyNoteText"]').each(function(){
-        $(this).click();
-    });
+    jQuery('.expand-collapse').each(function(){
+	    let noteId;
+        if($(this).dataset.state === 'contracted') {
+	        noteId = this.id.replace('quitImg', '');
+            fullViewById(noteId);
+        }
+    })
 }
 
 function toggleCollapseViewForAll() {
-	jQuery('[title="Minimize Display"]').each(function(){
-		$(this).click();
-	});
+	jQuery('.expand-collapse').each(function(){
+		let noteId;
+		if($(this).dataset.state === 'expanded') {
+			noteId = this.id.replace('quitImg', '');
+			minView(noteId);
+		}
+	})
 }
 
 function viewEmailByLogId(width, height, url) {
@@ -1708,51 +1793,37 @@ function fullView(e) {
 }
 
 function fullViewById(id) {
-	var url = ctx + "/CaseManagementView.do";
+	// filter integer
+	const regEx = /\d+/;
+	let nId = regEx.exec(id);
 
-    var regEx = /\d+/;
-    var nId = regEx.exec(id);
-	
-    
-    var txt = "n" + nId;
-    var img = "fullImg" + nId;
-    var fullId = "full" + nId;
-    var params = "method=viewNote&raw=false&noteId=" + nId;
-    var noteTxtId = "txt" + nId; 
-    Element.stopObserving(txt, 'click', fullView);
-	
-	
+	// watch for double posts. Prototype still lurking.
+	if(nId) {
+		nId = nId.toString().replaceAll(',','');
+		const url = ctx + "/CaseManagementView.do";
+		const imageContainer = document.getElementById('quitImg' + nId);
+		const txt = "n" + nId;
+		const fullId = "full" + nId;
+		const noteTxtId = "txt" + nId;
+		const isEmailNote = document.getElementById("emailNote" + nId) !== null;
+		const textConatiner = document.getElementById(noteTxtId);
+		const params = {};
+		params.method = "viewNote";
+		params.raw = "false";
+		params.noteId = nId;
+		jQuery.post(url, params, function (data) {
+			// save the heading to restore for later.
+			textConatiner.dataset.heading = textConatiner.innerHTML.trim();
+			textConatiner.innerHTML = data;
+			document.getElementById(fullId).value = "true";
+			document.getElementById(txt).style.height = "auto";
 
-    var ajax = new Ajax.Request (
-                    url,
-                    {
-                        method: 'post',
-                        postBody: params,
-                        evalScripts: true,
-                        onSuccess: function(response) {
-                        	$(noteTxtId).update(response.responseText.trim());
-                            $(fullId).value = "true";
-                         
-                        }
-                    }
-               );
-
-    var imgTag1 = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minNonEditableNoteView(" + nId + ")' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
-    const imgTag2 = "<img title='Minimize Display' id='quitImg" + nId + "' alt='Minimize Display' onclick='minNonEditableNoteView(" + nId + ")' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
-
-    document.getElementById(img)?.remove();
-
-    const isEmailNote = document.getElementById("emailNote" + nId) !== null;
-
-    $(txt).style.height = 'auto';
-    const observationDivId = "#observation" + nId;
-    if (jQuery(observationDivId).length > 0 && !isEmailNote) {
-        jQuery(observationDivId).append(imgTag2);
-        jQuery(observationDivId).css('font-size', '10px');
-    } else {
-        new Insertion.Top(txt, imgTag1);
-    }
-    Element.stopObserving(noteTxtId, 'click', fullView);
+			if (!isEmailNote) {
+				imageContainer.dataset.state = 'expanded';
+				imageContainer.innerHTML = minimizeImg;
+			}
+		});
+	}
 }
 
 function minNonEditableNoteView(id) {
@@ -1834,35 +1905,58 @@ function unlock_ajax(id) {
 }
 
 //display unlock note password text field and submit button
-var msgPasswd;
-var btnMsgUnlock;
-function unlockNote(e) {
-   var txt;
-   var el;
+let msgPasswd;
+let btnMsgUnlock;
+function unlockNote(noteId, action) {
 
-    el = Event.element(e);
+	const actionElement = jQuery(action);
+	const noteElement = jQuery('#' + noteId);
+	const passwd = "passwd";
+	const panelId = 'passwdPara' + noteId;
+	const inputId = passwd + noteId;
 
-    //get id for parent div
-    if( el.id.search(/^n/) > -1 )
-        txt = el.id;
-    else {
-        var level = 0;
-        while( $(el).up('div',level).id.search(/^n/) == -1 )
-            ++level;
+	if(actionElement.data('action') === 'unlock') {
 
-        txt = $(el).up('div',level).id;
+		let lockForm = document.createElement('div');
+		lockForm.classList.add(passwd, 'alert', 'alert-danger','passwdPara');
+		lockForm.setAttribute('id', panelId);
+
+		let passwordInput = document.createElement('input');
+		passwordInput.setAttribute('type', 'password')
+		passwordInput.setAttribute('onkeypress', "grabEnter('btnUnlock', event);");
+		passwordInput.setAttribute('class', passwd);
+		passwordInput.setAttribute('id', inputId);
+
+		let passwordButton = document.createElement('input');
+		passwordButton.setAttribute('type', 'button');
+		passwordButton.setAttribute('class', 'btnUnlock');
+		passwordButton.setAttribute('id', 'btnUnlock' + noteId);
+		passwordButton.setAttribute('onclick', 'unlock_ajax(' + noteId + ')');
+		passwordButton.setAttribute('value', btnMsgUnlock);
+
+		let text = document.createElement('label');
+		text.setAttribute('for', inputId);
+		text.textContent = msgPasswd + ': ';
+
+		lockForm.appendChild(text)
+		lockForm.appendChild(passwordInput)
+		lockForm.appendChild(passwordButton);
+
+		noteElement.append(lockForm);
+		noteElement.css({'height': 'auto'});
+		jQuery('#' + passwd).focus();
+
+		// change the action to cancel.
+		actionElement.text('cancel');
+		actionElement.data('action','cancel');
+	}
+	else if (actionElement.data('action') === 'cancel') {
+		// remove password dialog
+		jQuery('#'+panelId).remove();
+		// change back to unlock
+		actionElement.text('unlock');
+		actionElement.data('action','unlock');
     }
-
-    var passwd = "passwd";
-    var nId = txt.substr(1);
-    var img = "<img id='quitImg" + nId + "' onclick='resetView(true, false, event)' style='float:right; margin-right:5px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
-    new Insertion.Top(txt,img);
-    var lockForm = "<div id='passwdPara' class='passwd'>" + msgPasswd + ":&nbsp;<input onkeypress=\"return grabEnter('btnUnlock', event);\" type='password' id='" + passwd + "' size='16'>&nbsp;<input id='btnUnlock' type='button' onclick=\"return unlock_ajax('" + txt + "');\" value='" + btnMsgUnlock + "'><\/div>";
-    new Insertion.Bottom(txt, lockForm);
-
-    $(txt).style.height = "auto";
-    $(passwd).focus();
-    Element.stopObserving(txt, 'click', unlockNote);
 }
 
 function NoteisLocked(nId) {
@@ -1891,175 +1985,186 @@ function NoteisLocked(nId) {
 var sigCache = "";
 // place Note text in textarea for editing and add save, sign etc buttons for this note
 function editNote(e) {
-    var el = Event.element(e);
-    var payload;
-    var regEx = /\d+/;
-    var nId = regEx.exec(el.id);
-    var txt = "n" + nId;
-    var xpandId = "xpImg" + nId;
 
-    var noteLockStatus = NoteisLocked(nId);
-    if(noteLockStatus == "user") {
-    	var viewEditedNote = confirm("You have started to edit this note in another window.\nDo you wish to continue?");
-    	if( viewEditedNote ) {    	
-    		var parent = $(caseNote).parentNode.id;
-    		var oldNoteId = parent.substr(1);	    		
-    		var params = "method=releaseNoteLock&demographicNo=" + demographicNo + "&providerNo=" + providerNo  + "&noteId=" + oldNoteId + "&force=true";
-    		jQuery.ajax({
-				type: "POST",
-				url:  ctx + "/CaseManagementEntry.do",
-				data: params
-			});
-    		    		
-    		params = "method=updateNoteLock&demographicNo=" + demographicNo + "&noteId=" + nId;
-			jQuery.ajax({
-				type: "POST",
-				url:  ctx + "/CaseManagementEntry.do",
-				data: params
-			});
-    	}  
-    	else {
-    		Event.stop(e);
-    		return false;
-    	}
-    }
-    else if( noteLockStatus == "other" ) {
-    	Event.stop(e);
-    	alert("This note is being edited by another user.  Try again later");
-    	return false;
-    }
+    const regEx = /\d+/;
+    let nId = regEx.exec(e.id);
 
-    if( $(xpandId) != null ) {
-        xpandView(e);
-    }
-    else {
-        Event.stop(e);
-    }
+	// watch for double posts. Prototype still lurking.
+	if(nId) {
+		// global note id (integer only)
+		nId = nId.toString().replaceAll(',', '');
 
-    // if we have an edit textarea already open, close it
-    if($(caseNote) !=null && $(caseNote).parentNode.id != $(txt).id) {
-        if( !changeToView(caseNote) ) {
-            $(caseNote).focus();
-            return;
+		// note txt id and note text element
+		const noteWrapperElement = document.getElementById("n" + nId);
+
+		// note text container
+		const noteTextElement = document.getElementById('txt' + nId);
+
+		// the expand and contract button
+		let xpandElement = document.getElementById("#quitImg" + nId);
+
+		// the caseNote that is currently open before editing another note.
+		const caseNoteElement = document.getElementById(caseNote);
+		let caseNoteParentId = caseNoteElement.parentNode.id;
+		let oldNoteId = caseNoteParentId.substring(1);
+
+        // "locked" meaning that another user is editing currently.
+		let noteLockStatus = NoteisLocked(nId);
+
+		if (noteLockStatus === "user") {
+			let viewEditedNote = true;
+			// block confirmation until the note lock process is cleaned up.
+			// confirm("You have started to edit this note in another window.\nDo you wish to continue?");
+			if (viewEditedNote) {
+
+				let params = {
+					"method": 'releaseNoteLock',
+                    "demographicNo": demographicNo,
+                    "providerNo": providerNo,
+                    "noteId": oldNoteId,
+                    "force":true
+				};
+				jQuery.ajax({
+					type: "POST",
+					url: ctx + "/CaseManagementEntry.do",
+					data: params
+				});
+
+				params = {
+					"method": 'updateNoteLock',
+					"demographicNo": demographicNo,
+					"noteId": nId
+				};
+				jQuery.ajax({
+					type: "POST",
+					url: ctx + "/CaseManagementEntry.do",
+					data: params
+				});
+			} else {
+				Event.stop(e);
+				return false;
+			}
+		} else if (noteLockStatus === "other") {
+			Event.stop(e);
+			alert("This note is being edited by another user.  Try again later");
+			return false;
+		}
+
+		/*
+		 * if we have an edit textarea already open, close it
+		 * could be another note being edited; check the txt[globalid]
+		 */
+		if (caseNoteElement && caseNoteParentId !== noteWrapperElement.id) {
+			if (!changeToView(caseNote)) {
+				caseNoteElement.focus();
+				return;
+			}
+		}
+
+		// get the full note data and expand view if view is already contracted
+		if (xpandElement && xpandElement?.data.state === "contracted") {
+			fullViewById(nId)
+		}
+
+		// Only works with "note_program_ui_enabled = true" (noteProgram.js)
+		if (typeof _setCurrentProgramAndRoleIdForNote == "function") {
+			_setCurrentProgramAndRoleIdForNote(nId);
+		}
+
+		/*
+		 * Hide minimize and print buttons
+		 * the note control buttons are the first child of the txt wrapper.
+		 */
+		const noteControlPanelElement = noteWrapperElement.firstElementChild;
+		if(noteControlPanelElement?.classList.contains("note-control-panel")) {
+			noteControlPanelElement.style.display = 'none';
         }
-    }
-    
-    // Only works with "note_program_ui_enabled = true" (noteProgram.js)
-    if (typeof _setCurrentProgramAndRoleIdForNote == "function") {
-    	_setCurrentProgramAndRoleIdForNote(nId);
-    }
 
-    //get rid of minimize and print buttons
-    var nodes = $(txt).getElementsBySelector('img');
-    for(var i = 0; i < nodes.length; ++i ) {
-        nodes[i].remove();
-    }
+		/* increment caseNote id var so that it can
+         * be closed and saved if user opens another edit
+         * or properly updated
+         */
+		caseNote = "caseNote_note" + nId;
 
+        //move the note text into a text area for editing
+        const textAreaElement = document.createElement('textarea');
+        textAreaElement.classList.add('txtArea', 'boxsizingBorder', 'edit-textarea');
+		textAreaElement.id = caseNote;
+		textAreaElement.setAttribute('name','caseNote_note');
+		textAreaElement.setAttribute('cols','84');
+		textAreaElement.setAttribute('tabindex','7');
+		textAreaElement.setAttribute('rows','10');
+		textAreaElement.setAttribute('wrap','hard');
+		textAreaElement.style['line-height'] = '1.1em';
 
-    var editAnchor = "edit" + nId;
-    var annoAnchor = "anno" + nId;
-    var date = "d" + nId;
-    var content = "c" + nId;
+		// copy the current text into the new text area
+		textAreaElement.innerHTML = noteTextElement.innerHTML
+            .replace(/^\s+|\s+$/g,"")
+            .replace(/<br>/gi,"\n")
+	        .trim() + "\n";
 
-    // remove edit anchor
-    if ($(editAnchor) != null)
-    	Element.remove(editAnchor);
+		// replaces the required div with textarea
+		jQuery(noteTextElement).replaceWith(textAreaElement);
 
-    // Remove annotation anchor
-    if ($(annoAnchor) != null)
-    	Element.remove(annoAnchor);
+		//position cursor at end of text
+		adjustCaseNote();
+		setCaretPosition(textAreaElement, textAreaElement.value.length);
+		textAreaElement.focus();
 
-    //check for line item displayed when note is minimized
-    if( $(date) != null ) {
-        Element.remove(date);
-        Element.remove(content);
-    }
+		// adjust wrapper padding
+		textAreaElement.parentElement.style['padding'] = '0';
 
-    //place text in textarea for editing
-    var isFull = "full" + nId;
-    var txtId = "txt" + nId;
+		Element.observe(caseNote, 'keyup', monitorCaseNote);
+		Element.observe(caseNote, 'click', getActiveText);
 
-    if( $F(isFull) == "true" ) {
-        payload = $(txtId).innerHTML;
-        payload = payload.replace(/^\s+|\s+$/g,"");
-        payload = payload.replace(/<br>/gi,"\n");
-        payload += "\n";
-    }
-    else
-        payload = "";
+		<%--if (passwordEnabled) {--%>
+		<%--	input = "<div style='background-color:#CCCCFF; display:none; margin:0;' id='notePasswd'><input type='hidden' name='caseNote.password' value='' autocomplete='off'/>" +--%>
+		<%--		"<input type='hidden' name='caseNote.passwordConfirm' value='' autocomplete='off' /><\/div>";--%>
+		<%--	new Insertion.Bottom(txt, input);--%>
+		<%--}--%>
 
-    Element.remove(txtId);
-    caseNote = "caseNote_note" + nId;
+		// update the note id in the forms
+		if (nId === "0") {
+			document.forms["caseManagementEntryForm"].noteId.value = "0";
+			document.forms["caseManagementEntryForm"].newNoteIdx.value = nId;
+			document.forms["caseManagementEntryForm"].note_edit.value = "new";
+		} else {
+			document.forms["caseManagementEntryForm"].noteId.value = nId;
+			document.forms["caseManagementEntryForm"].note_edit.value = "existing";
+		}
 
-    var input = "<textarea tabindex='7' cols='84' rows='10' wrap='hard' class='txtArea boxsizingBorder edit-textarea' style='line-height:1.1em;' name='caseNote_note' id='" + caseNote + "'>" + payload + "<\/textarea>";
-    new Insertion.Top(txt, input);
-    var printimg = "<div class='tool-button print-button'><img title='Print' id='print" + nId + "' alt='Toggle Print Note' onclick='togglePrint(" + nId + ", event)' style='float:right; margin-right:5px;' src='" + ctx + "/oscarEncounter/graphics/printer.png'></div>";
+		//we want to make sure update issue ajax call doesn't retrieve anything from autosave table
+		document.forms["caseManagementEntryForm"].forceNote.value = "true";
 
-    var strNid = "" + nId;
-    if( strNid.substr(0,1) != "0" )
-        new Insertion.Top(txt, printimg);
+		//cache existing signature so we can recreate it if ajax call aborted
+		const signatureId = "sig" + nId;
+        const signatureElement = document.getElementById(signatureId);
+		signatureElement.classList.add("note-edit");
+		sigCache = signatureElement.innerHTML;
+		ajaxUpdateIssues('edit', signatureId);
+		addIssueFunc = updateIssues.bindAsEventListener(obj, makeIssue, signatureId);
+		Element.observe('asgnIssues', 'click', addIssueFunc);
 
-    if( $F(isFull) == "true" ) {
-        //position cursor at end of text
-        adjustCaseNote();
-        setCaretPosition($(caseNote),$(caseNote).value.length);
-        $(caseNote).focus();
-        origCaseNote = $F(caseNote);
-        
-    }
-    else {
-        fetchNote(nId);
-        Element.stopObserving(txt, 'click', fullView);
-    }
-
-    Element.observe(caseNote, 'keyup', monitorCaseNote);
-    Element.observe(caseNote, 'click', getActiveText);
-
-    if( passwordEnabled ) {
-           input = "<div style='background-color:#CCCCFF; display:none; margin:0;' id='notePasswd'><input type='hidden' name='caseNote.password' value='' autocomplete='off'/>" +
-               "<input type='hidden' name='caseNote.passwordConfirm' value='' autocomplete='off' /><\/div>";
-           new Insertion.Bottom(txt, input);
-    }
-
-    //we check if we are dealing with a new note or not
-    if( strNid.charAt(0) === "0" ) {
-        document.forms["caseManagementEntryForm"].noteId.value = "0";
-        document.forms["caseManagementEntryForm"].newNoteIdx.value = nId;
-        document.forms["caseManagementEntryForm"].note_edit.value = "new";
-    }
-    else {
-        document.forms["caseManagementEntryForm"].noteId.value = nId;
-        document.forms["caseManagementEntryForm"].note_edit.value = "existing";
-    }
+		noteWrapperElement.style.height = "auto";
 
 
-    //we want to make sure update issue ajax call doesn't retrieve anything from autosave table
-    document.forms["caseManagementEntryForm"].forceNote.value = "true";
+		//add utoCompleter for Issues
+		<%--var issueURL = ctx + "/CaseManagementEntry.do?method=issueList&demographicNo=" + demographicNo + "&providerNo=" + providerNo;--%>
+		<%--issueAutoCompleter = new Ajax.Autocompleter("issueAutocomplete", "issueAutocompleteList", --%>
+        <%--    issueURL, {minChars: 4, indicator: 'busy', afterUpdateElement: saveIssueId, onShow: autoCompleteShowMenu, --%>
+        <%--        onHide: autoCompleteHideMenu});--%>
 
-    var divId = "sig" + nId;
-	$(divId).className += " note-edit";
-    //cache existing signature so we can recreate it if ajax call aborted
-    sigCache = $(divId).innerHTML;
-    ajaxUpdateIssues('edit', divId);
-    addIssueFunc = updateIssues.bindAsEventListener(obj, makeIssue, divId);
-    Element.observe('asgnIssues', 'click', addIssueFunc);
+		//if note is already signed, remove save button to force edits to be signed
+		var sign = "signed" + nId;
+		if ($F(sign) === "true") {
+			document.getElementById("saveImg").style.visibility = "hidden";
+		} else {
+			document.getElementById("saveImg").style.visibility = "visible";
+		}
+		//start AutoSave
+		setTimer();
+	}
 
-    $(txt).style.height = "auto";
-
-
-    //AutoCompleter for Issues
-    <%--var issueURL = ctx + "/CaseManagementEntry.do?method=issueList&demographicNo=" + demographicNo + "&providerNo=" + providerNo;--%>
-	<%--issueAutoCompleter = new Ajax.Autocompleter("issueAutocomplete", "issueAutocompleteList", issueURL, {minChars: 4, indicator: 'busy', afterUpdateElement: saveIssueId, onShow: autoCompleteShowMenu, onHide: autoCompleteHideMenu});--%>
-
-    //if note is already signed, remove save button to force edits to be signed
-    var sign = "signed" + nId;
-    if( $F(sign) == "true" )
-        $("saveImg").style.visibility = "hidden";
-    else
-        $("saveImg").style.visibility = "visible";
-
-    //start AutoSave
-    setTimer();
 }
 
 function collapseView(e) {
@@ -2730,14 +2835,13 @@ function changeDiagnosisUnresolved(issueId) {
             let isLocked = document.getElementById("locked-note");
 			if(! isLocked && confirm("Password lock current note?")) {
 				// otherwise set this note to be locked
-				jQuery.post(ctx + "/encounterNotePassword.do?method=get", function (data) {
+				jQuery.post(ctx + "/encounterNotePassword.do?method=getPassword", function (data) {
 
 					document.forms['caseManagementEntryForm'].elements['caseNote.password'].value = data.password;
 					document.forms['caseManagementEntryForm'].elements['caseNote.passwordConfirm'].value = data.password;
 
 					let alert = document.createElement("div");
-					alert.className = "alert alert-success";
-					alert.id = "locked-note";
+					alert.className = "alert alert-success";;
 					alert.role = "alert";
 					alert.textContent = "NOTE LOCKED";
 					document.getElementById("notePasswd").append(alert);
@@ -3251,54 +3355,24 @@ function autoCompleteShowMenuCPP(element, update) {
     }
 
     function togglePrint(noteId,e) {
-		e.preventDefault();
-	    var selected = ctx + "/oscarEncounter/graphics/printerGreen.png";
-	    var unselected = ctx + "/oscarEncounter/graphics/printer.png";
-	    var imgId = "print" + noteId;
-	    var idx;
-	    var idx2;
-	    var tmp = "";
+	    const notesToPrintElement = document.getElementById('notes2print');
+	    let notesToPrintArray = [];
 
-	    //see whether we're called in a click event or not
-	    if (e) {
-	        Event.stop(e);
+	    if (notesToPrintElement.value?.length > 0) {
+		    notesToPrintArray = notesToPrintElement.value?.split(",");
+	    }
+
+		// is this already selected?
+        let noteIndex = notesToPrintArray.indexOf(noteId);
+		console.log(noteIndex);
+		if(noteIndex >= 0){
+			notesToPrintArray.splice(noteIndex, 1);
+			e.classList.remove("print-highlight");
+        } else {
+			notesToPrintArray.push(noteId);
+			e.className = "print-highlight";
         }
-        //if selected note has been inserted into print queue, remove it and update image src
-        //else insert note into print queue
-        idx = noteIsQeued(noteId);
-        if( idx  >= 0 ) {
-            $(imgId).src = unselected;
-
-            //if we're slicing first note off list
-            if( idx == 0 ) {
-                idx2 = $F("notes2print").indexOf(",");
-                if( idx2 > 0 )
-                    tmp = $F("notes2print").substring(idx2+1);
-            }
-            //or we're slicing after first element
-            else {
-                idx2 = $F("notes2print").indexOf(",",idx);
-                //are we in the middle of the list?
-                if( idx2 > 0 ) {
-                    tmp = $F("notes2print").substring(0,idx);
-                    tmp += $F("notes2print").substring(idx2+1);
-                }
-                //or are we at the end of the list; don't copy comma
-                else
-                    tmp = $F("notes2print").substring(0,idx-1);
-
-           }
-
-            $("notes2print").value = tmp;
-        }
-        else {
-            $(imgId).src = selected;
-            if( $F("notes2print").length > 0 )
-                $("notes2print").value += "," + noteId;
-            else
-               $("notes2print").value = noteId;
-        }
-
+	    notesToPrintElement.value = notesToPrintArray;
         return false;
     }
 
@@ -3704,7 +3778,7 @@ function autoCompleteShowMenuCPP(element, update) {
                 }
                 //we can stop listening for add issue here
                 Element.stopObserving('asgnIssues', 'click', addIssueFunc);
-                if( tmp.length == 0 )
+                if( tmp.length === 0 )
                     tmp = "&nbsp;";
 
                 tmp = tmp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -3722,7 +3796,7 @@ function autoCompleteShowMenuCPP(element, update) {
 
                     var func;
                     var editWarn = "editWarn" + nId;
-                    if( $F(editWarn) == "true" ) {
+                    if( $F(editWarn) === "true" ) {
                         func = "noPrivs(event);";
                     }
                     else {

@@ -141,6 +141,7 @@ div#userSettings ul#userSettingsMenu li .glyphicon{
 	box-shadow: 0 2px 4px 0 rgba(38,40,42,0.3);
 	border-radius: 4px;
 	border: lightgray thin solid;
+	margin-bottom: 5px;
 }
 
 /*div.encounter-note > div > div:first-of-type:not(.tool-button), .encounter-note textarea.txtArea {*/
@@ -181,9 +182,6 @@ textarea.txtArea {
 	padding: 2px 5px;
 }
 
-textarea.unsigned-textarea, textarea.edit-textarea {
-	border-radius: unset;
-}
 
 div#patient-label div {
 	margin:auto 5px;
@@ -467,9 +465,6 @@ div#encMainDivWrapper {
 	overflow-y: scroll;
 	border: thin solid #cccccc;
 	margin: 0;
-	/*! background-color: -webkit-font-smoothing: antialiased; */
-	/*! -moz-osx-font-smoothing: grayscale; */
-	/*! -webkit-overflow-scrolling: touch; */
 	background-color: whitesmoke;
 }
 
@@ -1031,9 +1026,6 @@ div#issueNoteAssign {
 	padding: 0;
 }
 
-div.passwd,div.passwdErr {
-	margin: 0 3px 3px 3px;
-}
 
 div.passwdErr {
 	color: red;
@@ -1385,7 +1377,7 @@ div#encMainDiv div.note:not(.encounter-note) div:last-of-type:not(div#encMainDiv
 }
 
 
-.view-links a, div#encMainDiv div.note:not(.encounter-note) div[id^='observation'] a {
+.view-links a {
 	display: inline-block;
 	color:white !important;
 	padding:0 5px;
@@ -1398,16 +1390,6 @@ div#encMainDiv div.note:not(.encounter-note) div[id^='wrapper']:not(.view-links)
 
 div#encMainDiv div.note:not(.encounter-note) div.view-links {
 	order:2;
-}
-
-div.note-contents div.tool-button {
-	display:-webkit-inline-box;
-	display: inline-block;
-	float:right;
-}
-div.note-contents div.tool-button img {
-	padding:0 !important;
-	margin:0 !important;
 }
 
 div#control-panel div#timer-control,
@@ -1483,7 +1465,7 @@ div.encounter-note div.note-contents div.view-links a {
 	margin: 0 !important;
 }
 
-div.encounter-note div.note-contents img, div.encounter-note div.note-contents div.view-links,
+div.encounter-note div.note-contents div.view-links,
 div.encounter-note div.note-contents > a:not(div.encounter-note div.note-contents div.view-links a),
 div.encounter-note div.note-contents input[type*='image']
 {
@@ -1507,7 +1489,6 @@ div#save-sign-bill-buttons input {
 
 div.locked-note {
 	display:flex;
-	padding:3px;
 	justify-content: space-between;
 }
 
@@ -1526,4 +1507,114 @@ div.alert-success {
 	border-radius: 0 0 4px 4px;
 	top:-2px;
 	margin-bottom: -2px;
+}
+
+div.alert-danger {
+	position: relative;
+	color: #a94442;
+	background-color: #f2dede;
+	border-color: #ebccd1;
+	text-align: center;
+	padding: 5px;
+	border: 1px solid transparent;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
+	border-radius: 0 0 4px 4px;
+	top:-2px;
+	margin-bottom: -2px;
+}
+div.alert-status {
+	position: relative;
+	color: black;
+	background-color: whitesmoke;
+	border-color: grey;
+	padding: 5px;
+	border: 1px solid transparent;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
+	border-radius: 0 0 4px 4px;
+	top:-2px;
+	margin-bottom: -2px;
+}
+
+div[id ^= 'txt'] {
+	text-wrap: auto;
+	word-wrap: anywhere;
+	word-break: break-word;
+}
+
+div.noteRounded div.note-contents {
+	display:flex;
+	flex-direction: column;
+}
+
+div.noteRounded div.note-contents div.note-control-panel {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	padding-top: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	background-color: whitesmoke;
+	border: 1px solid transparent;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: lightgray;
+	border-left-color: transparent;
+	border-radius: 4px 4px 0 0;
+	top:-2px;
+	margin-bottom: -2px;
+}
+
+div.note-contents div.note-control-panel:has(div.locked-note-control) {
+	justify-content: space-between;
+}
+
+div.note-contents div.locked-note-control, div.note-contents div.note-controls {
+	display: flex;
+	flex-direction: row;
+	gap:3px;
+	height:100%;
+}
+
+div.noteRounded div.note-contents div.note-controls, div.note:not(.noteRounded) div.note-contents {
+	flex-direction: row-reverse !important;
+}
+
+div.note div.note-contents div[id ^= 'observation'] a {
+	display: inline-block;
+	min-width: 10px;
+	padding: 2px 5px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+	color: black !important;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	background-color: white;
+	border:lightgrey thin solid;
+	border-radius: 10px;
+	text-decoration: none !important;
+	position: relative;
+	top: -1px;
+}
+
+div.note-control {
+	cursor: pointer;
+}
+div.note-control:hover {
+	color:blue;
+}
+
+#observationDate_cal {
+	position:relative;
+	top:2px;
+}
+.print-highlight svg {
+	background-color: yellow;
 }

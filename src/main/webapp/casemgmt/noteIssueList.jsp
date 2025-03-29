@@ -90,27 +90,28 @@
 		id="observation<nested:write name="caseManagementEntryForm" property="caseNote.id" />"
 		style="float: right; margin-right: 3px;">
 </nested:notEmpty>
-</div>
 
-<div style="margin: 0 3px 0 0;"><span style="float: right;">
+
 <nested:notEmpty name="ajaxsave">
-	<bean:message key="oscarEncounter.encounterDate.title"/>:&nbsp;<span
-		id="obs<nested:write name="caseManagementEntryForm" property="caseNote.id" />">
+	<label for="obs<nested:write name="caseManagementEntryForm" property="caseNote.id" />"><bean:message key="oscarEncounter.encounterDate.title"/>:&nbsp;</label>
+	<span id="obs<nested:write name="caseManagementEntryForm" property="caseNote.id" />">
 	<nested:write name="caseManagementEntryForm"
 		property="caseNote.observation_date" format="dd-MMM-yyyy H:mm" /></span>&nbsp;
-	<bean:message key="oscarEncounter.noteRev.title"/><a href="#"
+	<label for="caseNoteRevision<nested:write name="caseManagementEntryForm" property="caseNote.id" />"><bean:message key="oscarEncounter.noteRev.title"/></label>
+	<a href="#" id="caseNoteRevision<nested:write name="caseManagementEntryForm" property="caseNote.id" />"
 		onclick="return showHistory('<nested:write name="caseManagementEntryForm" property="caseNote.id" />', event);"><nested:write
 		name="caseManagementEntryForm" property="caseNote.revision" /></a>
 </nested:notEmpty>
 <nested:empty name="ajaxsave">
-	<bean:message key="oscarEncounter.encounterDate.title"/>:&nbsp;<img src="<c:out value="${ctx}/images/cal.gif" />"
-		id="observationDate_cal" alt="calendar">&nbsp;<input type="text"
-		id="observationDate" name="observation_date"
+	<label for="observationDate"><bean:message key="oscarEncounter.encounterDate.title"/>:&nbsp;
+	<img src="<c:out value="${ctx}/images/cal.gif" />" id="observationDate_cal" alt="calendar" />&nbsp;</label>
+	<input type="text" id="observationDate" name="observation_date"
 		ondblclick="this.value='';"
-		style="border: none; width: 140px;" readonly
+		style="width: 140px;" readonly
 		value="<nested:write name="caseManagementEntryForm" property="caseNote.observation_date" format="dd-MMM-yyyy H:mm" />">
-                rev<a href="#"
-		onclick="return showHistory('<nested:write name="caseManagementEntryForm" property="caseNote.id" />', event);"><nested:write
+
+	<label>Rev</label>
+	<a href="javascript:void(0)" onclick="return showHistory('<nested:write name="caseManagementEntryForm" property="caseNote.id" />', event);"><nested:write
 		name="caseManagementEntryForm" property="caseNote.revision" /></a>
 </nested:empty>
 </div>
@@ -414,7 +415,7 @@ if(currentFacility.isEnableEncounterTransportationTime() || (currentProgram != n
 </div> <!-- end of div noteIssues-unresolved -->
 </div> <!-- end of div noteIssues -->	
 			
-<div id='autosaveTime' class='sig' style='text-align:center; margin:0px;'></div>
+<div id='autosaveTime' class='sig' style='text-align:center; margin:0;'></div>
 <script type="text/javascript">   
     
     //check to see if we need to update div containers to most recent note id
@@ -454,10 +455,10 @@ if(currentFacility.isEnableEncounterTransportationTime() || (currentProgram != n
    var background = txtStyles[1].substr(txtStyles[1].indexOf("#"));
    var summary = "sumary" + "<%=noteIndex%>";
 
-   if( $("observationDate") != null ) {
-        $("observationDate").style.color = txtColour;
-        $("observationDate").style.backgroundColor = background; 
-   }
+   // if( $("observationDate") != null ) {
+   //      $("observationDate").style.color = txtColour;
+   //      $("observationDate").style.backgroundColor = background;
+   // }
    $(summary).style.color = txtColour;
    $(summary).style.backgroundColor = background; 
    
