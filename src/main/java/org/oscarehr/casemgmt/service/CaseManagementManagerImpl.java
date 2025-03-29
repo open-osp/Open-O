@@ -2786,6 +2786,19 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
         }
     }
 
+    public boolean unlockNoteForLoggedinUser(LoggedInInfo loggedInInfo, int noteId) {
+        UserProperty notePasswordProperty = userPropertyManager.getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD);
+        if(notePasswordProperty == null
+                || notePasswordProperty.getValue() == null || notePasswordProperty.getValue().trim().isEmpty() ) {
+            return false;
+        }
+
+        CaseManagementNote note = getNote(String.valueOf(noteId));
+        return note != null && note.isLocked() && loggedInInfo.getLoggedInProviderNo().equals(note.getProviderNo())
+                && note.getPassword().equals(notePasswordProperty.getValue());
+
+    }
+
     /**
      * Retrieves a list of password-locked case management notes for the logged-in provider.
      *

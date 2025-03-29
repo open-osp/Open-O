@@ -142,10 +142,10 @@
 		key="oscarEncounter.Index.msgLocked" /> <%=DateUtils.getDate(note.getUpdate_date(),dateFormat)%>
 	<c:out value="${provName}" /></span>
 	<div id="passwdError" style="color: red;">Incorrect password</div>
-	<div id='passwdPara' class="passwd"><label for="passwd">Password:</label>><input
-		onkeypress="return grabEnter('btnUnlock', event);" type='password'
-		id='passwd' size='16'>&nbsp; <input id='btnUnlock'
-		type='button'
+	<div id='passwdPara' class="passwd alert alert-danger">
+		<label for="passwd">Password:</label>
+		<input onkeypress="return grabEnter('btnUnlock', event);" type='password' id='passwd' size='16'>
+		<input id='btnUnlock' type='button'
 		onclick="return unlock_ajax('<c:out value="n${Note.id}"/>');"
 		value='<bean:message key="oscarEncounter.Index.btnUnLock"/>'>
 	</div>

@@ -385,4 +385,6 @@ public interface CaseManagementManager {
     void updatePasswordLockedNotes(LoggedInInfo loggedInInfo);
 
     void enableDisablePasswordLockedNotes(LoggedInInfo loggedInInfo);
+
+    boolean unlockNoteForLoggedinUser(LoggedInInfo loggedInInfo, int noteId);
 }

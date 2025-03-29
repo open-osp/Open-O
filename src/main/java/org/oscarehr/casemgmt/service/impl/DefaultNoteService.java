@@ -44,11 +44,7 @@ import org.oscarehr.common.dao.CaseManagementIssueNotesDao;
 import org.oscarehr.common.dao.GroupNoteDao;
 import org.oscarehr.common.model.BillingONCHeader1;
 import org.oscarehr.common.model.GroupNoteLink;
-import org.oscarehr.common.model.UserProperty;
-import org.oscarehr.common.model.enumerator.UserPropertyKey;
-import org.oscarehr.managers.UserPropertyManager;
 import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -312,7 +308,7 @@ public class DefaultNoteService implements NoteService {
 			List<CaseManagementNote> localNotes = caseManagementNoteDao.getNotes(localNoteIds);
 
 			// local notes might be locked by the user. Try to unlock them.
-			unlockNotesForLoggedInUser(loggedInInfo, localNotes);
+//			unlockNotesForLoggedInUser(loggedInInfo, localNotes);
 
 			logger.debug("FETCHED " + localNotes.size() + " NOTES IN " + (System.currentTimeMillis() - intTime) + "ms");
 			intTime = System.currentTimeMillis();
@@ -333,7 +329,7 @@ public class DefaultNoteService implements NoteService {
 			List<CaseManagementNote> groupNotes = caseManagementNoteDao.getNotes(groupNoteIds);
 
 			// group notes might be locked by user
-			unlockNotesForLoggedInUser(loggedInInfo, groupNotes);
+//			unlockNotesForLoggedInUser(loggedInInfo, groupNotes);
 
 			logger.debug("FETCHED " + groupNotes.size() + " GROUP NOTES IN " + (System.currentTimeMillis() - intTime)
 					+ "ms");
@@ -640,40 +636,5 @@ public class DefaultNoteService implements NoteService {
 		return null;
 	}
 
-	/**
-	 * Set selected notes to unlocked only if the logged in provider is the provider that
-	 * originally signed and password protected the note.
-	 * This way the logged in provider can see their locked notes without entering a password into
-	 * every note.
-	 * @param loggedInInfo session information about the logged in provider
-	 * @param noteList list of notes to unlock
-	 */
-	private void unlockNotesForLoggedInUser(LoggedInInfo loggedInInfo, List<CaseManagementNote> noteList){
-		UserPropertyManager userPropertyManager = SpringUtils.getBean(UserPropertyManager.class);
-		UserProperty userProperty = userPropertyManager.getUserProperty(loggedInInfo, UserPropertyKey.CASEMGMT_NOTE_PASSWORD);
-
-		// if no user property set don't bother proceeding.
-		if(userProperty == null) {
-			return;
-		}
-
-		String password = userProperty.getValue();
-		String loggedinProvider = loggedInInfo.getLoggedInProviderNo();
-
-		if(password == null) {
-			password = "";
-		}
-
-		if(loggedinProvider == null) {
-			loggedinProvider = "";
-		}
-		for (CaseManagementNote note : noteList) {
-			if(note.isLocked()
-					&& loggedinProvider.equals(note.getSigning_provider_no())
-					&& password.trim().equals(note.getPassword()) ) {
-				note.setLocked(Boolean.FALSE);
-			}
-		}
-	}
 
 }

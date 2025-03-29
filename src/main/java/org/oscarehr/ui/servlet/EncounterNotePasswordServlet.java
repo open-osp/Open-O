@@ -73,4 +73,21 @@ public class EncounterNotePasswordServlet extends JSONAction implements Serializ
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		caseManagementManager.enableDisablePasswordLockedNotes(loggedInInfo);
 	}
+
+	/**
+	 * Set selected notes to unlocked only if the logged in provider is the provider that
+	 * originally signed and password protected the note.
+	 * This way the logged in provider can see their locked notes without entering a password into
+	 * every note.
+	 */
+	private void tempUnlockNote(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response){
+		String noteId = request.getParameter("noteId");
+		// Validate noteId
+		if (noteId == null || noteId.trim().isEmpty() || !noteId.matches("\\d+")) {
+			return;
+		}
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		boolean unlocked = caseManagementManager.unlockNoteForLoggedinUser(loggedInInfo, Integer.parseInt(noteId));
+		jsonResponse(response, "unlocked", String.valueOf(unlocked));
+	}
 }

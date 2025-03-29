@@ -580,6 +580,9 @@ function showHideERxPref() {
 				</td>
 				<td class="preferenceValue">
 					<input type="checkbox" class="checkbox-inline" id="schedule.week_view_weekends" name="schedule.week_view_weekends" value="true" ${ userProperty[UserPropertyKey.SCHEDULE_WEEK_VIEW_WEEKENDS.name] ? 'checked' : ''} />
+					<div>
+						weekend days still appear where an appointment is scheduled and&#47;or a schedule template is defined.
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -651,8 +654,8 @@ function showHideERxPref() {
 					</div>
 					<div>
 						(alphanumeric password only)<br>
-						check to lock all previously locked encounter notes and lock new encounter notes with this password<br>
-						unchecked to unlock all currently locked encounter notes or disable encounter note password lock
+						<strong>check: </strong> lock all previously locked encounter notes and&#47;or enable ability to lock new encounter notes with this password<br>
+						<strong>uncheck: </strong> unlock all currently locked encounter notes and&#47;or disable ability to password lock encounter notes
 					</div>
 				</td>
 			</tr>
