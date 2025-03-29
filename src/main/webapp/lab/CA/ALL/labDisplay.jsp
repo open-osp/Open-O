@@ -39,6 +39,7 @@
 <%@ page import="org.w3c.dom.Document"%>
 <%@ page import="org.oscarehr.caisi_integrator.ws.CachedDemographicLabResult"%>
 <%@ page import="oscar.oscarLab.ca.all.web.LabDisplayHelper"%>
+<%@ page import="oscar.oscarLab.ca.all.util.LabVersionComparator"%>
 
 <%@ page import="java.util.*,
 	oscar.util.UtilDateUtilities,
@@ -162,6 +163,9 @@ List<MessageHandler>handlers = new ArrayList<MessageHandler>();
 String []segmentIDs = null;
 Boolean showAll = showAllstr != null && !"null".equalsIgnoreCase(showAllstr);
 
+String duplicateOfLab = null;
+Map<String, ExcellerisOntarioHandler.OrderStatus> missingTests = new HashMap<>();
+
 if (remoteFacilityIdString==null) // local lab
 {
 
@@ -209,6 +213,13 @@ if (remoteFacilityIdString==null) // local lab
 		List<String> segmentIdList = new ArrayList<String>();
 		handler = Factory.getHandler(segmentID);
 		handlers.add(handler);
+
+        if ("ExcellerisON".equals(handler.getMsgType()) && segmentIDs.length > 1) {
+            LabVersionComparator labVersionComparator = new LabVersionComparator(Arrays.asList(segmentIDs));
+            duplicateOfLab = labVersionComparator.isLabDuplicate(segmentID);
+            missingTests = labVersionComparator.findMissingTests(segmentID, true);
+        }
+
 		segmentIdList.add(segmentID);
 		
 		//this is where it gets weird. We want to show all messages with different filler order num but same accession in a single report
@@ -245,6 +256,9 @@ else // remote lab
 		MiscUtils.getLogger().error("Error", e);
 	}
 }
+
+request.setAttribute("duplicateOfLab", duplicateOfLab);
+request.setAttribute("missingTests", missingTests);
 
 /********************** Converted to this sport *****************************/
 
@@ -470,6 +484,35 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+#labVersionInfoModal .modal-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+#labVersionInfoModal .info-section {
+    margin-bottom: 20px;
+}
+
+#labVersionInfoModal .info-section p {
+    margin: 5px 0;
+    color: #555;
+}
+
+#labVersionInfoModal .test-list {
+    margin-left: 10px;
+}
+
+#labVersionInfoModal .test-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+#labVersionInfoModal .status {
+    font-weight: bold;
+}
 </style>
 
         <script language="JavaScript">
@@ -767,6 +810,52 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 		</script>
 
 		<div id="lab_<%= Encode.forHtmlAttribute(segmentID) %>">
+
+        <c:set var="hasDuplicateInfo" value="${not empty duplicateOfLab}" />
+        <c:set var="hasMissingTests" value="${not empty missingTests}" />
+        <c:set var="showModal" value="${hasDuplicateInfo or hasMissingTests}" />
+        
+        <c:if test="${showModal}">
+            <!-- Modal -->
+            <div id="labVersionInfoModal" title="Lab Version Information" style="display:none;">
+                <div class="lab-version-modal">
+                    <c:if test="${hasDuplicateInfo}">
+                        <!-- Duplicate Information Section -->
+                        <div class="info-section">
+                            <div class="modal-title">Duplicate Lab Version Alert</div>
+                            <p>Warning: You are viewing a version of a lab result that appears to be a duplicate of previously received version <c:out value="${duplicateOfLab}" />.</p>
+                            <p style="margin-top: 5px">There is likely no new data in this version, but please double check regardless.</p>
+                        </div>
+                    </c:if>
+
+                    <c:if test="${hasMissingTests}">
+                        <!-- Missing Tests Information Section -->
+                        <div class="info-section">
+                            <div class="modal-title">Missing Test Results</div>
+                            <p>Warning: At least the following tests were not included in this version of the lab results:</p>
+                            <div class="test-list">
+                                <c:forEach var="entry" items="${missingTests}">
+                                    <div class="test-item">
+                                        <span>${entry.key}</span>
+                                        <span class="status">${entry.value.description}</span>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </c:if>
+                </div>
+            </div>
+
+            <script>
+                // Include a short delay before showing modal to improve user experience
+                setTimeout(function () {
+                    jQuery(document).ready(function () {
+                        jQuery("#labVersionInfoModal").dialog({ modal: true, width: 500 });
+                    });
+                }, 300);
+            </script>
+        </c:if>
+
         <form name="reassignForm_<%= Encode.forHtmlAttribute(segmentID) %>" method="post" action="Forward.do">
             <input type="hidden" name="flaggedLabs" value="<%= Encode.forHtmlAttribute(segmentID) %>" />
             <input type="hidden" name="selectedProviders" value="" />
