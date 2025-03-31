@@ -108,9 +108,8 @@ EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManage
     }
 
     String demographicNo = request.getParameter("demographicNo");
-    EctSessionBean bean = null;
-    String strBeanName = "casemgmt_oscar_bean" + demographicNo;
-    if ((bean = (EctSessionBean) request.getSession().getAttribute(strBeanName)) == null) {
+    EctSessionBean bean;
+    if ((bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean")) == null) {
         response.sendRedirect("error.jsp");
         return;
     }
