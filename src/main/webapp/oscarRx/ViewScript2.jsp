@@ -607,9 +607,17 @@ var requestIdKey = "<%=signatureRequestId %>";
 
 </script>
 	<style media="all">
-        * {
-	        font:13px/1.231 arial,helvetica,clean,sans-serif;
-        }
+		* {
+			font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+			font-size: 12px;
+			overscroll-behavior: none;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
+
+		table tr td {
+			vertical-align: top;
+		}
 
 		.warning-note {
 			background-color: #ffffcc;
@@ -695,7 +703,7 @@ function toggleView(form) {
 			width="100%" height="100%">
 
 			<tr>
-				<td>
+				<td width=420px>
 				<div class="DivContentPadding"><!-- src modified by vic, hsfo -->
 					<% if (bean.getStashSize() > 0) { %>
 						<iframe id='preview' name='preview' width=420px height=890px
@@ -768,7 +776,7 @@ function toggleView(form) {
                                 }
                             </script>
 
-				<table cellpadding=10 cellspacingp=0>
+				<table cellpadding=10 cellspacing=0>
 					<% //vecAddress=null;
                                         if(vecAddress != null) { %>
 					<tr>
