@@ -34,6 +34,7 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.ws.rest.to.model.RxStatus;
 
 import java.util.List;
+import java.util.Set;
 
 
 public interface RxManager {
@@ -52,6 +53,8 @@ public interface RxManager {
     public List<Drug> getHistory(Integer id, LoggedInInfo info, Integer demographicNo);
     public List<Favorite> getFavorites(String pid);
     public Boolean addFavorite(Favorite f);
+
+    Set<String> getStoredInstructionsMatching(String str);
 
     /**
      * Archives a drug. This will remove the drug from the current list. The drug can still be found under the 'All' section.

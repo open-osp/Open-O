@@ -28,8 +28,11 @@
 package org.oscarehr.common.dao;
 
 import java.util.List;
+
 import org.oscarehr.common.model.CtlSpecialInstructions;
 
 public interface CtlSpecialInstructionsDao extends AbstractDao<CtlSpecialInstructions> {
     List<CtlSpecialInstructions> findAll();
+
+    List<String> findDescriptionsMatching(String str);
 }

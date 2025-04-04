@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
 import org.oscarehr.common.NativeSql;
@@ -618,6 +619,17 @@ public class DrugDaoImpl extends AbstractDaoImpl<Drug> implements DrugDao {
         List<Drug> results = query.getResultList();
         return (results);
 
+    }
+
+    @Override
+    public List<String> findSpecialInstructionsMatching(String spInstructQuery) {
+        String query = "SELECT x.special_instruction FROM Drug x WHERE " +
+                "x.special_instruction IS NOT NULL AND x.special_instruction LIKE :searchString";
+
+        TypedQuery<String> typedQuery = super.entityManager.createQuery(query, String.class);
+        typedQuery.setParameter("searchString", "%" + spInstructQuery + "%");
+
+        return typedQuery.getResultList();
     }
 
 }

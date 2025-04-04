@@ -28,6 +28,7 @@
  package org.oscarehr.managers;
 
 import org.apache.logging.log4j.Logger;
+import org.oscarehr.common.dao.CtlSpecialInstructionsDao;
 import org.oscarehr.common.dao.DrugDao;
 import org.oscarehr.common.dao.FavoriteDao;
 import org.oscarehr.common.exception.AccessDeniedException;
@@ -38,6 +39,7 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.ws.rest.to.model.RxStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import oscar.log.LogAction;
 import oscar.oscarDemographic.data.RxInformation;
@@ -63,7 +65,10 @@ import java.util.*;
  
      @Autowired
      protected FavoriteDao favoriteDao;
- 
+
+    @Autowired
+    private CtlSpecialInstructionsDao ctlSpecialInstructionsDao;
+
      /**
       * Gets drugs for the given demographic that are marked as current.
       *
@@ -686,7 +691,23 @@ import java.util.*;
         return true;
     }
  
-     // statuses for drugs
+    @Override
+    @Cacheable(value = "OscarRxCache_specialInstructions", key = "#storedInstructQuery")
+    public Set<String> getStoredInstructionsMatching(String storedInstructQuery) {
+        if (storedInstructQuery == null || storedInstructQuery.trim().isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        List<String> specialInstructions = this.ctlSpecialInstructionsDao.findDescriptionsMatching(storedInstructQuery);
+        List<String> drugStoredInstructions = this.drugDao.findSpecialInstructionsMatching(storedInstructQuery);
+
+        Set<String> matchingResult = new HashSet<>();
+
+        matchingResult.addAll(specialInstructions);
+        matchingResult.addAll(drugStoredInstructions);
+
+        return matchingResult;
+    }
  
  }
  

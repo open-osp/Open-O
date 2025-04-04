@@ -29,6 +29,8 @@ package org.oscarehr.common.dao;
 
 import java.util.List;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import org.oscarehr.common.model.CtlSpecialInstructions;
 import org.springframework.stereotype.Repository;
 
@@ -48,4 +50,16 @@ public class CtlSpecialInstructionsDaoImpl extends AbstractDaoImpl<CtlSpecialIns
         List<CtlSpecialInstructions> results = query.getResultList();
         return results;
 	}
+
+	@Override
+	public List<String> findDescriptionsMatching(String descQuery) {
+		String query = "SELECT x.description FROM CtlSpecialInstructions x WHERE " +
+				"x.description IS NOT NULL AND x.description LIKE :searchString";
+
+		TypedQuery<String> typedQuery = super.entityManager.createQuery(query, String.class);
+		typedQuery.setParameter("searchString", "%" + descQuery + "%");
+
+		return typedQuery.getResultList();
+	}
+
 }
