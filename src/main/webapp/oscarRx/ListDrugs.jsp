@@ -326,7 +326,7 @@ if (heading != null){
             <td width="20px" align="center" valign="top">
                 <%if (prescriptDrug.getRemoteFacilityName() == null) {%>
                 <div style="display: flex; align-items: center;">
-                    <% String cbxId = "reRxCheckBox_" + prescriptIdInt + Math.abs(new Random().nextInt(10001)); %>
+                    <% String cbxId = "reRxCheckBox_" + prescriptIdInt; %>
                     <input id="<%=cbxId%>" type=CHECKBOX
                            onclick="updateReRxStatusForPrescribedDrug(this, <%=prescriptIdInt%>)"
                            <%if(reRxDrugList.contains(prescriptIdInt.toString())){%>checked<%}%>
