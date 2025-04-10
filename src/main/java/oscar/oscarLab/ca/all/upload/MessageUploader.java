@@ -34,15 +34,7 @@
 
 package oscar.oscarLab.ca.all.upload;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
@@ -56,12 +48,18 @@ import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.OscarProperties;
 import oscar.oscarDemographic.data.DemographicMerged;
 import oscar.oscarLab.ca.all.Hl7textResultsData;
 import oscar.oscarLab.ca.all.parsers.*;
 import oscar.util.UtilDateUtilities;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public final class MessageUploader {
 
@@ -268,7 +266,7 @@ public final class MessageUploader {
 			demProviderNo = patientRouteReport(loggedInInfo, type, insertID, lastName, firstName, sex, dob, hin, connection);
 		} 
 		
-		if(type.equals("OLIS_HL7") && demProviderNo.equals("0")) {
+		if("OLIS_HL7".equals(type) && "0".equals(demProviderNo)) {
 			OLISSystemPreferencesDao olisPrefDao = (OLISSystemPreferencesDao)SpringUtils.getBean("OLISSystemPreferencesDao");
 		    OLISSystemPreferences olisPreferences =  olisPrefDao.getPreferences();
 
@@ -284,7 +282,7 @@ public final class MessageUploader {
 			Integer limit = null;
 			boolean orderByLength = false;
 			String search = null;
-			if (type.equals("Spire")) {
+			if ("Spire".equals(type)) {
 				limit = new Integer(1);
 				orderByLength = true;
 				search = "provider_no";
