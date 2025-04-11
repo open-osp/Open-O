@@ -53,7 +53,7 @@
       creatorDemo = (String) request.getAttribute("demo");    
   }
   
-  
+  creatorDemo = Encode.forHtmlContent(creatorDemo);
 %>
 
 <%@page import="oscar.oscarDemographic.data.*,java.util.*"%>
@@ -61,6 +61,7 @@
 <%@page import="org.oscarehr.common.dao.CtlRelationshipsDao" %>
 <%@page import="org.oscarehr.common.model.CtlRelationships" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -69,9 +70,9 @@
 <%
 	CtlRelationshipsDao ctlRelationshipsDao = SpringUtils.getBean(CtlRelationshipsDao.class);
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html:html locale="true">
-	<script src="${pageContext.request.contextPath}/csrfguard"></script>
+	<script src="${pageContext.request.contextPath}csrfguard"></script>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <title><bean:message key="demographic.demographiceditdemographic.msgAddRelation" />  </title>
@@ -81,13 +82,13 @@
 
 
 <script type="text/javascript">
-<!--
+
 //if (document.all || document.layers)  window.resizeTo(790,580);
 function newWindow(file,window) {
   msgWindow=open(file,window,'scrollbars=yes,width=760,height=520,screenX=0,screenY=0,top=0,left=10');
   if (msgWindow.opener == null) msgWindow.opener = self;
 } 
-//-->
+
 </script>
 
 
@@ -95,7 +96,7 @@ function newWindow(file,window) {
 </head>
 
 <body class="BodyStyle">
-<!--  -->
+
 <table class="MainTable" id="scrollNumber1">
 	<tr class="MainTableTopRow">
 		<td class="MainTableTopRowLeftColumn"><bean:message key="demographic.demographiceditdemographic.msgAddRelation" /></td>
@@ -136,6 +137,7 @@ function newWindow(file,window) {
     if (searchMode == null || searchMode.isEmpty()) {
         searchMode = OscarProperties.getInstance().getProperty("default_search_mode","search_name");
     }
+	searchMode = Encode.forHtmlAttribute(searchMode);
 %>
                 <input
 			type="hidden" name="search_mode" value="<%=searchMode%>" /> <input
@@ -164,6 +166,7 @@ function newWindow(file,window) {
 		<%String demoNo = request.getParameter("demographic_no");               
                  String name = request.getParameter("name");
                  String origDemo = request.getParameter("remarks");
+				 origDemo = Encode.forHtmlAttribute(origDemo);
                if ( demoNo != null ) {%> <html:form
 			action="/demographic/AddRelation">
 			<input type="hidden" name="origDemo" value="<%=origDemo%>" />
@@ -171,58 +174,40 @@ function newWindow(file,window) {
 
 
 			<div class="prevention">
-			<fieldset><legend>Relation</legend> <label for="name">Name:<%=name%>
+			<fieldset><legend>Relation</legend>
+				<label for="name">Name:</label>
+					<span id="name"><%=Encode.forHtmlContent(name)%></>
 			<br />
 
-			<label for="relation">Relationship:</label> <select name="relation">
+			<label for="relation">Relationship:</label>
+				<select name="relation" id="relation">
 			
 			<%
 				List<CtlRelationships> results = ctlRelationshipsDao.findAllActive();
 				for(CtlRelationships t : results) {
 					%>
-						<option value="<%=t.getValue() %>"><%=t.getLabel() %></option>
+						<option value="<%=t.getValue() %>"><%=Encode.forHtmlContent(t.getLabel()) %></option>
 					<%
 				}
 			%>
-			<!-- 
-				<option value="Mother">Mother</option>
-				<option value="Father">Father</option>
-				<option value="Father">Parent</option>
-				<option value="Wife">Wife</option>
-				<option value="Husband">Husband</option>
-				<option value="Partner">Partner</option>
-				<option value="Brother">Brother</option>
-				<option value="Sister">Sister</option>
-				<option value="Son">Son</option>
-				<option value="Daughter">Daughter</option>
-				<option value="Aunt">Aunt</option>
-				<option value="Uncle">Uncle</option>
-				<option value="GrandFather">GrandFather</option>
-				<option value="GrandMother">GrandMother</option>
-				<option value="Guardian">Guardian</option>
-				<option value="Foster Parent">Foster Parent</option>
-				<option value="Next of Kin">Next of Kin</option>
-				<option value="Administrative Staff">Administrative Staff</option>
-				<option value="Care Giver">Care Giver</option>
-				<option value="Power of Attorney">Power of Attorney</option>
-				<option value="Insurance">Insurance</option>
-				<option value="Guarantor">Guarantor</option>
-				<option value="Other">Other</option>
-				-->
-			</select> <input type="checkbox" name="sdm" value="yes"> Substitute
-			Decision Maker</input> <input type="checkbox" name="emergContact" value="yes">
-			Emergency Contact</input> <br />
-			<label for="notes">Notes:</label><br>
-			<textarea cols="20" rows="3" name="notes"></textarea> <input
-				type="submit" value="Add Relationship" /></fieldset>
+			</select>
+				<input type="checkbox" name="sdm" id="sdm" value="yes">
+				<label for="sdm">Substitute Decision Maker</label>
+				<input type="checkbox" name="emergContact" id="emergContact" value="yes" />
+				<label for="emergContact">Emergency Contact</label> <br />
+
+				<label for="notes">Notes:</label><br>
+			<textarea cols="20" rows="3" name="notes" id="notes"></textarea>
+				<input type="submit" value="Add Relationship" />
+			</fieldset>
 			</div>
 		</html:form> <%}%>
 
 		<div class="tablelisting">
 		<table>
 			<% DemographicRelationship demoRelation = new DemographicRelationship(); 
-                  ArrayList list = demoRelation.getDemographicRelationships(creatorDemo);   
-                  if (list.size() > 0){
+                  ArrayList<Map<String, String>> list = demoRelation.getDemographicRelationships(creatorDemo);
+                  if (! list.isEmpty()){
                %>
 			<tr>
 				<th>Name</th>
@@ -234,17 +219,16 @@ function newWindow(file,window) {
 
 			<% }
                   for ( int i = 0; i < list.size(); i++ ){ 
-                     HashMap h = (HashMap) list.get(i);
-                     String relatedDemo = (String) h.get("demographic_no");              
+                     Map<String, String> h = list.get(i);
+                     String relatedDemo = h.get("demographic_no");
                      DemographicData dd = new DemographicData();
                      org.oscarehr.common.model.Demographic demographic = dd.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), relatedDemo);    %>
 			<tr>
-				<td><%=demographic.getLastName() +", "+demographic.getFirstName()%></td>
-				<td><%=h.get("relation")%></td>
-				<td><%=returnYesIf1(h.get("sub_decision_maker"))%></td>
-				<td><%=h.get("notes")%></td>
-				<td><a
-					href="DeleteRelation.do?id=<%=h.get("id")%>&amp;origDemo=<%=creatorDemo%>">del</a></td>
+				<td><%=Encode.forHtmlContent(demographic.getLastName() +", "+demographic.getFirstName())%></td>
+				<td><%=Encode.forHtmlContent(h.get("relation"))%></td>
+				<td><%=Encode.forHtmlContent(returnYesIf1(h.get("sub_decision_maker")))%></td>
+				<td><%=Encode.forHtmlContent(h.get("notes"))%></td>
+				<td><a href="DeleteRelation.do?id=<%=h.get("id")%>&amp;origDemo=<%=creatorDemo%>">del</a></td>
 			</tr>
 			<%}%>
 		</table>
