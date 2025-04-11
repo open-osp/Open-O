@@ -297,7 +297,7 @@ public class LabUploadWs extends AbstractWs {
         if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE){
             logger.info("filePath" + labFilePath);
             logger.info("Type :" + labType.name());
-            MessageHandler msgHandler = HandlerClassFactory.getHandler(labType.name());
+            MessageHandler msgHandler = HandlerClassFactory.getHandler(labType.getName());
             logger.info("MESSAGE HANDLER "+msgHandler.getClass().getName());
             
             // Parse and handle the lab
