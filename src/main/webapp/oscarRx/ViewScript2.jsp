@@ -565,13 +565,17 @@ function signatureHandler(e) {
 		%>
 		try {
 			let signId = new URLSearchParams(e.storedImageUrl.split('?')[1]).get('digitalSignatureId')
-			this.setDigitalSignatureToRx(signId, <%=bean.getStashItem(0).getScript_no() %>);
+			if(signId === undefined || signId === '') {
+				alert("Error while processing your signature, please try again.");
+			} else {
+				this.setDigitalSignatureToRx(signId, <%=bean.getStashItem(0).getScript_no() %>);
+				refreshImage();
+			}
 		} catch (e) {
 			console.error(e);
 		}
 		<% } %>
 
-		refreshImage();
 	}
 }
 

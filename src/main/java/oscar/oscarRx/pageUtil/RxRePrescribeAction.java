@@ -164,9 +164,15 @@ public final class RxRePrescribeAction extends DispatchAction {
 		beanRX.setDemographicNo(sessionBeanRX.getDemographicNo());
 		beanRX.setProviderNo(sessionBeanRX.getProviderNo());
 
-		Integer digitalSignatureId = Objects.isNull(request.getParameter("digitalSignatureId"))
-				? null : Integer.valueOf(request.getParameter("digitalSignatureId"));
-		String scriptId = request.getParameter("scriptId");
+		Integer digitalSignatureId;
+        try {
+            digitalSignatureId = Objects.isNull(request.getParameter("digitalSignatureId"))
+                    ? null : Integer.valueOf(request.getParameter("digitalSignatureId"));
+        } catch (NumberFormatException e) {
+			response.sendRedirect("error.html");
+			return null;
+        }
+        String scriptId = request.getParameter("scriptId");
 		String ip = request.getRemoteAddr();
 
 		PrescriptionManager prescriptionManager = SpringUtils.getBean(PrescriptionManager.class);
