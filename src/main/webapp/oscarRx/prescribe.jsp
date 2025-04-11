@@ -52,12 +52,10 @@
     <%
 
 List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("listRxDrugs");
-oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)request.getSession().getAttribute("RxSessionBean");
 
-if(listRxDrugs!=null){
-            String specStr=RxUtil.getSpecialInstructions();
+        if(listRxDrugs!=null){
 
-  for(RxPrescriptionData.Prescription rx : listRxDrugs ){
+    for(RxPrescriptionData.Prescription rx : listRxDrugs ){
          String rand            = Long.toString(rx.getRandomId());
          String instructions    = rx.getSpecial();
          String specialInstruction=rx.getSpecialInstruction();
@@ -596,29 +594,45 @@ if(listRxDrugs!=null){
               }
             }
 
-            var specArr=new Array();
-            var specStr='<%=org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(specStr)%>';
-            
-            specArr=specStr.split("*");// * is used as delimiter
-            //oscarLog("specArr="+specArr);
-            YAHOO.example.BasicLocal = function() {
-                // Use a LocalDataSource
-                var oDS = new YAHOO.util.LocalDataSource(specArr);
-                // Optional to define fields for single-dimensional array
-                oDS.responseSchema = {fields : ["state"]};
-
-                // Instantiate the AutoComplete
-                var oAC = new YAHOO.widget.AutoComplete("siInput_<%=rand%>", "siContainer_<%=rand%>", oDS);
-                oAC.prehighlightClassName = "yui-ac-prehighlight";
+            YAHOO.example.FnMultipleFields = function () {
+                let url = "<c:out value="${ctx}"/>" + "/oscarRx/search.do?method=searchSpecialInstructions";
+                let oDS = new YAHOO.util.XHRDataSource(url, {connMethodPost: true, connXhrMode: 'ignoreStaleResponse'});
+                oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;// Set the responseType
+                // Define the schema of the delimited results
+                oDS.responseSchema = {
+                    resultsList: "results"
+                };
+                // Enable caching
+                oDS.maxCacheEntries = 0;
+                // oDS.connXhrMode = "cancelStaleRequests";
+                // Instantiate AutoComplete
+                let oAC = new YAHOO.widget.AutoComplete("siInput_<%=rand%>", "siContainer_<%=rand%>", oDS);
                 oAC.useShadow = true;
+                oAC.resultTypeList = false;
+                oAC.queryMatchSubset = true;
+                oAC.minQueryLength = 1;
+                oAC.maxResultsDisplayed = 40;
 
+                oAC.doBeforeExpandContainer = function (sQuery, oResponse) {
+                    if (oAC._nDisplayedItems < oAC.maxResultsDisplayed) {
+                        oAC.setFooter("");
+                    } else {
+                        oAC.setFooter("<a href='javascript:void(0)' onClick='popupRxSearchWindow();oAC.collapseContainer();'>See more results...</a>");
+                    }
+                    return true;
+                }
+
+                oAC.containerCollapseEvent.subscribe(function () {
+                    $('autocomplete_choices').hide();
+                });
+                oAC.dataRequestEvent.subscribe(function () {
+                    $('autocomplete_choices').show();
+                });
                 return {
                     oDS: oDS,
                     oAC: oAC
                 };
             }();
-
-
 
             checkAllergy('<%=rand%>','<%=rx.getAtcCode()%>');
             checkIfInactive('<%=rand%>','<%=rx.getRegionalIdentifier()%>');

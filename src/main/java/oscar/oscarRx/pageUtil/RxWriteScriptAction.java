@@ -25,6 +25,7 @@
 
 package oscar.oscarRx.pageUtil;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -62,6 +63,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -1298,7 +1300,20 @@ public final class RxWriteScriptAction extends DispatchAction {
 		response.getOutputStream().write(jsonObject.toString().getBytes());
 		return null;
 	}
-	
+
+	public void searchSpecialInstructions(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String str = request.getParameter("query");
+		Set<String> set = this.rxManager.getStoredInstructionsMatching(str);
+
+		JSONArray jsonArray = new JSONArray();
+		jsonArray.addAll(set);
+		JSONObject json = new JSONObject();
+		json.put("results", jsonArray);
+		response.setContentType("text/x-json");
+		Writer writer = json.write(response.getWriter());
+		writer.flush();
+		writer.close();
+	}
 	
 	private void checkPrivilege(LoggedInInfo loggedInInfo, String privilege) {
 		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_rx", privilege, null)) {
