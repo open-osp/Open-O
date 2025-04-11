@@ -179,8 +179,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 
 			String province = OscarProperties.getInstance().getProperty("billregion", "").trim().toUpperCase();
 
-			String strBeanName = "casemgmt_oscar_bean" + demono;
-			EctSessionBean bean = (EctSessionBean) session.getAttribute(strBeanName);
+            EctSessionBean bean = (EctSessionBean) session.getAttribute("EctSessionBean");
 
 			if (bean.appointmentNo == null) {
 				bean.appointmentNo = "0";
@@ -259,8 +258,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 				note.setEncounter_type("");
 			}
 
-			String strBeanName = "casemgmt_oscar_bean" + demono;
-			EctSessionBean bean = (EctSessionBean) session.getAttribute(strBeanName);
+            EctSessionBean bean = (EctSessionBean) session.getAttribute("EctSessionBean");
 			String encType = request.getParameter("encType");
 
 			if (encType == null || encType.equals("")) {
@@ -467,8 +465,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			note.setNote("");
 			note.setEncounter_type("");
 		}
-		String strBeanName = "casemgmt_oscar_bean" + demographicNo;
-		EctSessionBean bean = (EctSessionBean) request.getSession().getAttribute(strBeanName);
+        EctSessionBean bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean");
 		String encType = request.getParameter("encType");
 
 		if (encType == null || encType.equals("")) {
@@ -1346,8 +1343,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		//Ongoing 
 
 		// update appointment and add verify message to note if verified
-		String strBeanName = "casemgmt_oscar_bean" + demo;
-		EctSessionBean sessionBean = (EctSessionBean) session.getAttribute(strBeanName);
+        EctSessionBean sessionBean = (EctSessionBean) session.getAttribute("EctSessionBean");
 		String verifyStr = request.getParameter("verify");
 		boolean verify = false;
 		if (verifyStr != null && verifyStr.equalsIgnoreCase("on")) {
@@ -2766,10 +2762,9 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 	public ActionForward cleanup(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		String demoNo = this.getDemographicNo(request);
 		String sessionFrmName = "caseManagementEntryForm" + demoNo;
-		String strBeanName = "casemgmt_oscar_bean" + demoNo;
 
-		request.getSession().setAttribute(sessionFrmName, null);
-		request.getSession().setAttribute(strBeanName, null);
+        request.getSession().setAttribute(sessionFrmName, null);
+		request.getSession().setAttribute("EctSessionBean", null);
 
 		return null;
 	}
