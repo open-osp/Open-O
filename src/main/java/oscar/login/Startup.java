@@ -26,14 +26,18 @@
 package oscar.login;
 
 import org.apache.logging.log4j.Logger;
+import org.oscarehr.util.EncryptionUtils;
 import org.oscarehr.util.MiscUtils;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * This ContextListener is used to Initialize classes at startup - Initialize the DBConnection Pool.
@@ -133,6 +137,23 @@ public class Startup implements ServletContextListener {
 			} catch (Exception e) {
 				String s="Property file not found at:"+propFileName;
 				logger.error(s, e);
+			}
+
+
+			// 	Ensure that a secret key for encryption is available when OSCAR starts, either by retrieving a
+			// 	previously saved key or generating a new one and storing it for future use.
+			String secretKey = p.getProperty(EncryptionUtils.SECRET_KEY_ENV_VAR);
+			if (Objects.isNull(secretKey)) {
+				try {
+					secretKey = EncryptionUtils.generateSecretKey();
+					p.saveProperty(propFileName, EncryptionUtils.SECRET_KEY_ENV_VAR, secretKey);
+					EncryptionUtils.prepareSecretKeySpec();
+					logger.info("New Secret Key generated...");
+				} catch (IOException | NoSuchAlgorithmException e) {
+					logger.error("Error generating new Secret Key - ", e);
+				}
+			} else {
+				logger.info("Using existing Secret Key...");
 			}
 
 			// CHECK FOR DEFAULT PROPERTIES

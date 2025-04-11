@@ -9,24 +9,8 @@
 
 package org.oscarehr.caseload;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -37,12 +21,20 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import org.owasp.encoder.Encode;
 import oscar.OscarProperties;
 import oscar.log.LogAction;
 import oscar.util.OscarRoleObjectPrivilege;
 import oscar.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class CaseloadContentAction extends DispatchAction {
 
@@ -622,7 +614,7 @@ public class CaseloadContentAction extends DispatchAction {
 			    List<Map<String, Object>> newTicklerResult = caseloadDao.getCaseloadDemographicData(newTicklerQuery, demographicParam);
 			    if (!newTicklerResult.isEmpty() && newTicklerResult.get(0).get("count(*)")!=null && !newTicklerResult.get(0).get("count(*)").toString().equals("") && !newTicklerResult.get(0).get("count(*)").toString().equals("0")) {
 					String clNewTickler = newTicklerResult.get(0).get("count(*)").toString();
-					entry.add("<a href='#' onclick=\"popupPage('700', '1000', '../tickler/ticklerDemoMain.jsp?demoview="+demographic_no+"'); return false;\">" + clNewTickler + "</a>");
+					entry.add("<a href='#' onclick=\"popupPage('700', '1000', '../tickler/ticklerMain.jsp?demoview="+demographic_no+"'); return false;\">" + clNewTickler + "</a>");
 				} else {
 					entry.add("&nbsp;");
 				}

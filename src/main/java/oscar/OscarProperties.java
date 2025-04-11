@@ -28,6 +28,7 @@ package oscar;
 import org.oscarehr.util.MiscUtils;
 
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
@@ -386,6 +387,25 @@ public class OscarProperties extends Properties {
 			eform_images = Paths.get(oscarProperties.getProperty("BASE_DOCUMENT_DIR"), "eform", "images").toString();
 		}
 		return eform_images;
+	}
+
+
+	/**
+	 * Saves property to the specified properties file.
+	 * This method appends the new property to the end of the file.
+	 * Updates the in-memory reference of the properties.
+	 *
+	 * @param propFilePath The path to the properties file.
+	 * @param key          The key of the property to be saved.
+	 * @param value        The value of the property to be saved.
+	 * @throws IOException If an I/O error occurs while writing to the file.
+	 */
+	public void saveProperty(String propFilePath, String key, String value) throws IOException {
+		try (FileWriter writer = new FileWriter(propFilePath, true)) {
+			// Write the new key-value pair
+			writer.write("\n" + key + "=" + value + "\n");
+			oscarProperties.setProperty(key, value);
+		}
 	}
 
 }
