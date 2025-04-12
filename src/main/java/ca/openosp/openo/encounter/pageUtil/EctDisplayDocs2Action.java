@@ -159,7 +159,7 @@ public class EctDisplayDocs2Action extends EctDisplayAction {
  		    url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/mod/docmgmtComp/FillARForm.do?method=showInboxDocDetails&path=" + path + "&demoNo=" + bean.demographicNo + "&name=" + Encode.forJavaScript(dispFilename) + "'); return false;";
                     isURLjavaScript = true;
                 } else if (curDoc.getRemoteFacilityId() == null && curDoc.isPDF()) {
-                    url = "popupPage(window.screen.width,window.screen.height,'" + hash + "','" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + user + "&searchProviderNo=" + user + "&status=A'); return false;";
+                    url = "popupPage(window.screen.width,window.screen.height,'" + hash + "','" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "'); return false;";
                     isURLjavaScript = true;
                 } else {
                     url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/documentManager/ManageDocument.do?method=display&doc_no=" + dispDocNo + "&providerNo=" + user + (curDoc.getRemoteFacilityId() != null ? "&remoteFacilityId=" + curDoc.getRemoteFacilityId() : "") + "'); return false;";
