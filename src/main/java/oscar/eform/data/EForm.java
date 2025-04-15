@@ -967,23 +967,23 @@ public class EForm extends EFormBase {
 	private void addHeadElement(Element element) {
 		Element headElement = getDocument().head();
 		Iterator<Element> iterator = headElement.children().iterator();
-//		if(iterator.hasNext()) {
-//			Element beforeElement;
-//			while (iterator.hasNext()) {
-//				beforeElement = iterator.next();
-//
-//				// always after the meta, title, and existing script tags.
-//				if (! beforeElement.nameIs("title") || ! beforeElement.nameIs("meta")
-//				|| ! beforeElement.nameIs("style") || ! beforeElement.nameIs("script")) {
-//					beforeElement.before(element);
-//					break;
-//				} else {
-//					headElement.prependChild(element);
-//				}
-//			}
-//		} else {
+		if(iterator.hasNext()) {
+			Element beforeElement;
+			while (iterator.hasNext()) {
+				beforeElement = iterator.next();
+
+				// always after the meta and title tags.
+				if (! beforeElement.nameIs("title") && ! beforeElement.nameIs("meta")
+				&& ! beforeElement.nameIs("style")) {
+					beforeElement.before(element);
+					break;
+				} else {
+					headElement.prependChild(element);
+				}
+			}
+		} else {
 			headElement.appendChild(element);
-//		}
+		}
 	}
 
 	public void addHiddenAttachments(List<String> attachedDocumentIds, List<String> attachedEFormIds, List<String> attachedHRMDocumentIds, List<String> attachedLabIds, List<EctFormData.PatientForm> attachedForms) {

@@ -31,10 +31,7 @@ document.addEventListener("DOMContentLoaded", function(){
 			})
 		}
 
-		/**
-		 *  Enable Are-you-sure dirty page detection.
-		 */
-		jQuery("form:first").areYouSure();
+
 	});
 
 	window.onerror = function uncaughtExceptionHandler(message, source, lineNumber, colno, error) {
@@ -60,18 +57,6 @@ document.addEventListener("DOMContentLoaded", function(){
 		});
 
 		moveSubject();
-
-		if(typeof releaseDirtyFlag === "function")
-		{
-			console.log("Releasing dirty window flag by releaseDirtyFlag function")
-			window["releaseDirtyFlag"]();
-		}
-
-		// don't need the dirty form notification if the form is being autosaved.
-		if(isFormDirty()) {
-			jQuery("form:first").trigger('reinitialize.areYouSure');
-		}
-
 		if (typeof saveRTL === "function")
 		{
 			console.log("Saving RTL or RTL template");
@@ -79,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function(){
 			document.RichTextLetter.submit();
 			return true;
 		} 
+
 
 		if (document.getElementsByName("SubmitButton") && document.getElementsByName("SubmitButton")[0])
 		{
@@ -94,6 +80,12 @@ document.addEventListener("DOMContentLoaded", function(){
 			}
 		}
 		
+		if(typeof releaseDirtyFlag === "function")
+		{
+			console.log("Releasing dirty window flag by releaseDirtyFlag function")
+			window["releaseDirtyFlag"]();
+		}
+
 		if(typeof submission === "function")
 		{
 			console.log("Executing submission method before submitting first form directly");
@@ -121,8 +113,8 @@ document.addEventListener("DOMContentLoaded", function(){
 		}
 
 		HideSpin();
-
 		return false;
+
 	}
 
 	/**
@@ -422,25 +414,20 @@ document.addEventListener("DOMContentLoaded", function(){
 		 * Needs to be saved if this is
 		 * a new eForm or it has been altered.
 		 */
-		if(isFormDirty()) {
+		if(typeof needToConfirm !== 'undefined' && needToConfirm) {
 			console.log("eForm needs to be saved.")
 			remoteSave();
 		}
-	}
 
-	/**
-	 *  detect if this form is dirty enough to be auto-saved.
-	 * @returns {boolean}
-	 */
-	function isFormDirty() {
-		// new forms are always dirty
-		const formElement = jQuery("#newForm");
-		if(formElement && formElement.val() === "true") {
-			return true;
+		/*
+		 * for situations when the eForm does not contain dirty form
+		 * detection; save it everytime.
+		 */
+		else if(typeof needToConfirm === 'undefined') {
+			remoteSave();
 		}
 
-		// if the form has be edited added to.
-		return jQuery('form:first').hasClass('dirty');
+
 	}
 
 	function hailMary() {
@@ -473,7 +460,6 @@ document.addEventListener("DOMContentLoaded", function(){
 			newElement.setAttribute("type", "hidden");
 			document.forms[0].appendChild(newElement);
 		}
-
 		remoteSave();
 
 	}
