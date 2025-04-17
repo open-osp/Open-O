@@ -28,6 +28,7 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<jsp:useBean id="currentDate" class="java.util.Date"/>
 <%
 	String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed=true;
@@ -49,7 +50,7 @@
 <script type="text/javascript" src="<%= request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/validateTextInputs.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/validateTextInputs.js?${currentDate.time}" ></script>
 
 <script type="text/javascript">
 <%

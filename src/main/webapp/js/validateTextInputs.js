@@ -52,12 +52,16 @@ function sanitizeAllTextAreas() {
 // General function to sanitize elements based on a provided regex pattern
 function sanitizeElementsByPattern(elements, pattern) {
     for (let i = 0; i < elements.length; i++) {
-        sanitizeElementByPattern(pattern, elements[i]);
+        sanitizeElementByPattern(elements[i], pattern);
     }
 }
 
 // Function to sanitize element based on a provided regex pattern
 function sanitizeElementByPattern(element, pattern) {
         // Replace control characters in the element's value with an empty string
-        element.value = element.value.replace(pattern, "");
+        try {
+            element.value = element.value.replace(pattern, "");
+        } catch {
+            console.log("Error sanitizing element: " + element.id);
+        }
 }
