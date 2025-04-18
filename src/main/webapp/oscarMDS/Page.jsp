@@ -239,9 +239,6 @@ String curUser_no = (String) session.getAttribute("user");
                         			<jsp:include page="../documentManager/showDocument.jsp" flush="true">
                         				<jsp:param name="segmentID" value="<%=segmentID%>"/>
                         				<jsp:param name="demoName" value="<%=demoName%>"/>
-                        				<jsp:param name="providerNo" value="<%=providerNo%>"/>
-                        				<jsp:param name="searchProviderNo" value="<%=searchProviderNo%>"/>
-                        				<jsp:param name="status" value="<%=status%>"/>
                         			</jsp:include>
 								</div>
                         		<%
@@ -337,12 +334,6 @@ String curUser_no = (String) session.getAttribute("user");
                                     	StringBuilder url = new StringBuilder(request.getContextPath());                                    	
                                     	url.append("/documentManager/showDocument.jsp?inWindow=true&segmentID=");
                                     	url.append(segmentID);
-                                    	url.append("&providerNo=");
-                                    	url.append(providerNo);
-                                    	url.append("&searchProviderNo=");
-                                    	url.append(searchProviderNo);
-                                    	url.append("&status=");
-                                    	url.append(status);
                                     	url.append("&demoName=");
                                     	
                                     	//the browser html parser does not understand javascript so we need to account for the opening
