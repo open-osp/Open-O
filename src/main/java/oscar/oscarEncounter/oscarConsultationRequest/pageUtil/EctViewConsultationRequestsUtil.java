@@ -123,6 +123,9 @@ public class EctViewConsultationRequestsUtil {
 
               if( consult.getProfessionalSpecialist() == null ) {
                   specialistName = "N/A";
+                  if (consult.getServiceId() == 0) {
+                     specialistName = consultationRequestExtDao.getConsultationRequestExtsByKey(consult.getId(), ConsultationRequestExtKey.EREFERRAL_DOCTOR.getKey());
+                  }
               }
               else {
                   specialist = consult.getProfessionalSpecialist();
