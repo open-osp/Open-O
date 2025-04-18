@@ -1215,10 +1215,14 @@ function loadDiv(div,url,limit) {
     }
 
     function pasteToEncounterNote(txt) {
-        $(caseNote).value += "\n" + txt;
-        adjustCaseNote();
-        setCaretPosition($(caseNote),$(caseNote).value.length);
-
+        let caseNoteElement = document.getElementById(caseNote);
+        if (caseNoteElement) {
+            caseNoteElement.value += "\n" + txt;
+            adjustCaseNote();
+            setCaretPosition(caseNoteElement, caseNoteElement.value.length);
+        } else {
+            console.error('Element with ID caseNote element not found.');
+        }
     }
 
     function writeToEncounterNote(request) {
