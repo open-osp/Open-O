@@ -171,6 +171,9 @@ function popupOscarConS(vheight,vwidth,varpage) { //open a new popup window
 							key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgService" />
 						</th>
 						<th align="left" class="VCRheads"><bean:message
+							key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgSpecialist" />
+						</th>
+						<th align="left" class="VCRheads"><bean:message
 							key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgRefDate" />
 						</th>
 					</tr>
@@ -181,6 +184,7 @@ function popupOscarConS(vheight,vwidth,varpage) { //open a new popup window
                                     String patient = (String) theRequests.patient.elementAt(i);
                                     String provide = (String) theRequests.provider.elementAt(i);
                                     String service = (String) theRequests.service.elementAt(i);
+									String specialist = (String) theRequests.vSpecialist.elementAt(i);
                                     String date    = (String) theRequests.date.elementAt(i);
                                     Provider cProv = (Provider) theRequests.consultProvider.elementAt(i);
                                 %>
@@ -208,6 +212,9 @@ function popupOscarConS(vheight,vwidth,varpage) { //open a new popup window
 							<a href="javascript:popupOscarRx(700,960,'../../oscarEncounter/ViewRequest.do?de=<%=demo%>&requestId=<%=id%>')">
 								<%=StringUtils.trimToEmpty(service)%> 
 							</a>
+						</td>
+						<td class="stat<%=status%>">
+							<%=StringUtils.trimToEmpty(specialist)%> 
 						</td>
 						<td class="stat<%=status%>"><%=date%></td>
 					</tr>
