@@ -1403,7 +1403,7 @@ function changeToView(id) {
         Element.remove("notePasswd");
     }
 
-    Element.stopObserving(id, 'keyup', monitorCaseNote);
+    jQuery('#' + id).off('input', monitorCaseNote);
     Element.stopObserving(id, 'click', getActiveText);
 
     Element.remove(id);
@@ -2013,7 +2013,7 @@ function editNote(e) {
         Element.stopObserving(txt, 'click', fullView);
     }
 
-    Element.observe(caseNote, 'keyup', monitorCaseNote);
+    jQuery('#' + caseNote).on('input', monitorCaseNote);
     Element.observe(caseNote, 'click', getActiveText);
 
     if( passwordEnabled ) {
@@ -2932,7 +2932,7 @@ function newNote(e) {
         if( reason.length > 0 )
             setCaretPosition($(caseNote),$(caseNote).value.length);
 
-        Element.observe(caseNote, 'keyup', monitorCaseNote);
+        jQuery('#' + caseNote).on('input', monitorCaseNote);
         Element.observe(caseNote, 'click', getActiveText);
 
         origCaseNote = $F(caseNote);
@@ -3145,6 +3145,20 @@ function adjustCaseNote() {
 
     // Use jQuery to calculate the total number of characters in the payload
     numChars = jQuery("#" + caseNote).val().length;
+
+    //automatically scroll resized textarea into view
+    const parentDiv = jQuery("#" + caseNote).parent()[0];
+    const scrollContainer = jQuery("#encMainDivWrapper")[0];
+    const parentOffsetTop = parentDiv.offsetTop;
+    const parentOffsetBottom = parentOffsetTop + parentDiv.offsetHeight;
+    const containerScrollTop = scrollContainer.scrollTop;
+    const containerHeight = scrollContainer.clientHeight;    
+    if (parentOffsetBottom > containerScrollTop + containerHeight) { // If the parent's bottom is below the visible area OR the top is above        
+        scrollContainer.scrollTop = parentOffsetBottom - containerHeight; // Scroll so the bottom of the parent is visible
+    } else if (parentOffsetTop < containerScrollTop) {        
+        scrollContainer.scrollTop = parentOffsetTop; // Scroll so the top of the parent is visible
+    }
+
 }
 
 function autoCompleteHideMenu(element, update){
@@ -3624,7 +3638,7 @@ function autoCompleteShowMenuCPP(element, update) {
                     Element.remove("notePasswd");
                 }
 
-                Element.stopObserving(caseNote, 'keyup', monitorCaseNote);
+                jQuery('#' + caseNote).off('input', monitorCaseNote);
                 Element.stopObserving(caseNote, 'click', getActiveText);
 
                 Element.remove(caseNote);
