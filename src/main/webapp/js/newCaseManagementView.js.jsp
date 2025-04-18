@@ -3145,6 +3145,20 @@ function adjustCaseNote() {
 
     // Use jQuery to calculate the total number of characters in the payload
     numChars = jQuery("#" + caseNote).val().length;
+
+    //automatically scroll resized textarea into view
+    const parentDiv = jQuery("#" + caseNote).parent()[0];
+    const scrollContainer = jQuery("#encMainDivWrapper")[0];
+    const parentOffsetTop = parentDiv.offsetTop;
+    const parentOffsetBottom = parentOffsetTop + parentDiv.offsetHeight;
+    const containerScrollTop = scrollContainer.scrollTop;
+    const containerHeight = scrollContainer.clientHeight;    
+    if (parentOffsetBottom > containerScrollTop + containerHeight) { // If the parent's bottom is below the visible area OR the top is above        
+        scrollContainer.scrollTop = parentOffsetBottom - containerHeight; // Scroll so the bottom of the parent is visible
+    } else if (parentOffsetTop < containerScrollTop) {        
+        scrollContainer.scrollTop = parentOffsetTop; // Scroll so the top of the parent is visible
+    }
+
 }
 
 function autoCompleteHideMenu(element, update){
