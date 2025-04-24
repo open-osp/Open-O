@@ -18,10 +18,10 @@
 <!--        </RollingFile>-->
     </Appenders>
     <Loggers>
-        <Logger name="org.apache.log4j.xml" level="error">
+        <Logger name="org.apache.log4j.xml" level="debug">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Root level="${env:LOG_VERBOSITY:-error}">
+        <Root level="${env:LOG_VERBOSITY:-info}">
             <AppenderRef ref="Console" />
 <!--            <AppenderRef ref="File" />-->
         </Root>

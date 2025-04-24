@@ -40,8 +40,6 @@ import org.oscarehr.managers.NioFileManager;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.PDFGenerationException;
 import org.oscarehr.util.SpringUtils;
-import org.xhtmlrenderer.layout.SharedContext;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 import oscar.OscarProperties;
 import oscar.form.util.FormTransportContainer;
 
@@ -249,6 +247,8 @@ public final class ConvertToEdoc {
 			logger.error( "Exception parsing file to PDF. File not saved. ", e1 );
 		} catch (IOException e) {
 			logger.error("Problem while writing PDF file to filesystem. " + filename, e);
+		} catch (PDFGenerationException e) {
+			logger.error("Problem while generating PDF file. " + filename, e);
 		}
 
 		return path;
@@ -311,7 +311,7 @@ public final class ConvertToEdoc {
 	 * not the case.
 	 */
 	private static void renderPDF( final String document, ByteArrayOutputStream os )
-			throws DocumentException, IOException {
+			throws DocumentException, IOException, PDFGenerationException {
 
         HashMap<String, String> htmlToPdfSettings = new HashMap<String, String>() {{
 			put("load.blockLocalFileAccess", "false");
@@ -325,7 +325,8 @@ public final class ConvertToEdoc {
 	        put("R", "8mm");			
 			put("web.enableJavascript", "false");
 		}};
-
+		logger.debug("htmlToPdfSettings: " + htmlToPdfSettings);
+		logger.debug("Rendering PDF document from document string: " + document);
 		try(InputStream inputStream = HtmlToPdf.create()
 						.object(HtmlToPdfObject.forHtml(document, htmlToPdfSettings))
 						.pageSize(PdfPageSize.Letter)
@@ -333,16 +334,17 @@ public final class ConvertToEdoc {
 		){
 			IOUtils.copy(inputStream, os);
 		} catch (Exception e) {
-			logger.error("Document conversion exception thrown, attempting with alternate conversion library.", e);
-			ITextRenderer renderer = new ITextRenderer();
-			SharedContext sharedContext = renderer.getSharedContext();
-			sharedContext.setPrint(true);
-			sharedContext.setInteractive(false);
-			sharedContext.setReplacedElementFactory(new ReplacedElementFactoryImpl());
-			sharedContext.getTextRenderer().setSmoothingThreshold(0);
-			renderer.setDocumentFromString(document,null);
-			renderer.layout();
-			renderer.createPDF( os, true );
+			throw new PDFGenerationException("Document conversion exception thrown, attempting with alternate conversion library.",e);
+//			logger.error("Document conversion exception thrown, attempting with alternate conversion library.", e);
+//			ITextRenderer renderer = new ITextRenderer();
+//			SharedContext sharedContext = renderer.getSharedContext();
+//			sharedContext.setPrint(true);
+//			sharedContext.setInteractive(false);
+//			sharedContext.setReplacedElementFactory(new ReplacedElementFactoryImpl());
+//			sharedContext.getTextRenderer().setSmoothingThreshold(0);
+//			renderer.setDocumentFromString(document,null);
+//			renderer.layout();
+//			renderer.createPDF( os, true );
 		}
 	}
 
