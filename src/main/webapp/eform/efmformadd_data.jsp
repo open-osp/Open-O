@@ -128,7 +128,6 @@
     thisEForm.addHiddenInputElement("demographicNo", demographic_no);
     thisEForm.addHiddenInputElement("fid", fid);
     thisEForm.addHiddenInputElement("fdid", request.getParameter("fdid"));
-    thisEForm.addHiddenInputElement("newForm", "true");
 
     // Add email consent properties
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
