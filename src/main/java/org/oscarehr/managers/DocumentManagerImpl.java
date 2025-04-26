@@ -171,7 +171,7 @@ public class DocumentManagerImpl implements  DocumentManager{
 		document.setNumberofpages(numberOfPages);
 		document.setDoccreator(loggedInInfo.getLoggedInProviderNo());
 		document.setDocfilename(fileName);
-		if (document.getDocdesc() == null || document.getDocClass().isEmpty()) { document.setDocdesc(fileName); }
+		if (document.getDocdesc() == null || document.getDocdesc().isEmpty()) { document.setDocdesc(fileName); }
 
 		// Creates and saves the document
 		saveDocument(document, demographicNo, providerNo);
