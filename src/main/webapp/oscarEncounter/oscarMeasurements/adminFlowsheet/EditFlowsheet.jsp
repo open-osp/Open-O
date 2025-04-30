@@ -126,12 +126,6 @@ if(!authed2) {
 
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet">
 
-
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-  <script src="<%=request.getContextPath() %>/js/html5.js"></script>
-<![endif]-->
-
 <!-- Fav and touch icons -->
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
 <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
@@ -224,7 +218,9 @@ if( request.getParameter("tracker")!=null && request.getParameter("tracker").equ
 	
 }else{
 if(request.getParameter("demographic")==null){ %>
-<div class="well well-small" id="demoHeader"></div>
+<div class="navbar" id="demoHeader"><div class="navbar-inner">
+	<a class="brand" href="javascript:void(0)">Create Flowsheet</a>
+</div></div>
 <%}else{%>
 <%@ include file="/share/templates/patient.jspf"%>
 <div style="height:60px;"></div>
@@ -233,7 +229,7 @@ if(request.getParameter("demographic")==null){ %>
 }
 %>
 
-<div class="container" id="container-main">
+<div class="container-fluid" id="container-main">
 
 <div class="row-fluid">
 
