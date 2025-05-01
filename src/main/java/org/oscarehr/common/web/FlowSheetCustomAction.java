@@ -472,7 +472,9 @@ public class FlowSheetCustomAction extends DispatchAction {
         fsuc.setCreatedDate(new Date());
         flowSheetUserCreatedDao.persist(fsuc);
 
-        return mapping.findForward("newflowsheet");
+        request.setAttribute("flowsheet", fsuc.getName());
+        request.setAttribute("displayName", fsuc.getDisplayName());
+        return mapping.findForward("success");
     }
 
 
