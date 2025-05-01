@@ -32,12 +32,12 @@
 FlowSheetUserCreatedDao flowSheetUserCreatedDao = (FlowSheetUserCreatedDao) SpringUtils.getBean("flowSheetUserCreatedDao");
 List<FlowSheetUserCreated> flowsheets = flowSheetUserCreatedDao.getAllUserCreatedFlowSheets();
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 
 <html>
     <head>
-        <title>Create a new Flowsheet</title>
+        <title>Create New Flowsheet</title>
+        <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" type="text/css">
         <script type="text/javascript">
         	function checkForm(){
         		  var displayName = document.getElementById("displayName").value;
@@ -70,23 +70,37 @@ List<FlowSheetUserCreated> flowsheets = flowSheetUserCreatedDao.getAllUserCreate
         </script>
     </head>
     <body>
-        <h2>Create a new Flowsheet</h2>        
+    <div class="navbar" id="demoHeader"><div class="navbar-inner">
+        <a class="brand" href="javascript:void(0)">New Flowsheet</a>
+    </div></div>
         <form action="FlowSheetCustomAction.do" onsubmit="return checkForm()">
             <input type="hidden" name="method" value="createNewFlowSheet"/>
         <table border="0">
-        <tr><td>Name: </td><td><input type="text" name="displayName" id="displayName"/></td></tr>
-        <tr><td>Trigger: </td><td><input type="text" name="dxcodeTriggers" id="dxcodeTriggers"/> (eg icd9:250)</td></tr>
-        <tr><td>Warning Colour: </td><td><input type="text" name="warningColour" id="warningColour"/> (eg red or #E00000)</td></tr>
-        <tr><td>Recommendation Colour: </td><td><input type="text" name="recommendationColour" id="recommendationColour"/> (eg yellow)</td></tr>
+<tr>
+    <td><label for="displayName">Name: </label></td>
+    <td><input type="text" name="displayName" id="displayName"/></td>
+</tr>
+<tr>
+    <td><label for="dxcodeTriggers">Trigger: </label></td>
+    <td><input type="text" name="dxcodeTriggers" id="dxcodeTriggers"/> (eg icd9:250)</td>
+</tr>
+<tr>
+    <td><label for="warningColour">Warning Colour: </label></td>
+    <td><input type="text" name="warningColour" id="warningColour"/> (eg red or #E00000)</td>
+</tr>
+<tr>
+    <td><label for="recommendationColour">Recommendation Colour: </label></td>
+    <td><input type="text" name="recommendationColour" id="recommendationColour"/> (eg yellow)</td>
+</tr>
         
         </table>
         <input type="submit" name="Submit" value="Create"/>
         </form>
-        <br>
-        <%
-        for(FlowSheetUserCreated flowsheet: flowsheets){%>
-        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet.getName()%>"><%=flowsheet.getDisplayName()%></a></br>
-        <%}%>
-        
+<%--        <br>--%>
+<%--        <%--%>
+<%--        for(FlowSheetUserCreated flowsheet: flowsheets){%>--%>
+<%--        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet.getName()%>"><%=flowsheet.getDisplayName()%></a></br>--%>
+<%--        <%}%>--%>
+<%--        --%>
     </body>
 </html>
