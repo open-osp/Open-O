@@ -150,21 +150,25 @@ public class Util {
     static public boolean checkDir(String dirName) throws Exception {
         dirName = fixDirName(dirName);
         try {
-            Runtime rt = Runtime.getRuntime();
-            String[] env = {""};
             File dir = new File(dirName);
-            Process proc = rt.exec("touch null.tmp", env, dir);
-            int ecode = proc.waitFor();
-            if (ecode == 0) {
-                cleanFile("null.tmp", dirName);
-                return true;
-            } else {
+            if (!dir.isDirectory()) {
+                logger.error("Error! [" + dirName + "] is not a directory");
                 return false;
             }
-        } catch (IOException ex) {logger.error("Error", ex);
+
+            File tempFile = new File(dir, "null.tmp");
+            boolean created = tempFile.createNewFile(); // Create temp file
+            if (created) {
+                tempFile.delete(); // Cleanup
+                return true;
+            } else {
+                logger.error("Error! Cannot write to directory [" + dirName + "]");
+                return false;
+            }
+        } catch (IOException ex) {
+            logger.error("Error", ex);
+            return false;
         }
-        logger.error("Error! Cannot write to directory [" + dirName + "]");
-        return false;
     }
 
     static public boolean cleanFile(String filename, String dirname) {

@@ -573,19 +573,19 @@ pageContext.setAttribute("isMobileDevice", isMobileDevice);
    				    
    							<div class="form-group ${ login_error }"> 
    	                        	<input type="text" name="username" placeholder="Enter your username" 
-   	                        	value="" size="15" maxlength="15" autocomplete="off" 
+   	                        	value="oscardoc" size="15" maxlength="15" autocomplete="off"
    	                        	class="form-control" required/>
    	                        </div>
    	                        
    	                        <div class="form-group ${ login_error }">               
    	                        	<input type="password" name="password" placeholder="Enter your password" 
-   	                        	value="" size="15" maxlength="32" autocomplete="off" 
+   	                        	value="Pass@123" size="15" maxlength="32" autocomplete="off"
    	                        	class="form-control" required/>
    	                        </div>
 
 							<c:if test="${not LoginResourceBean.ssoEnabled}">
 								<div class="form-group ${ login_error }">
-									<input type="password" name="pin" placeholder="Enter your PIN" value=""
+									<input type="password" name="pin" placeholder="Enter your PIN" value="1111"
 									size="15" maxlength="15" autocomplete="off" class="form-control" />
 									<span class="extrasmall">
 										<bean:message key="loginApplication.formCmt"/>

@@ -31,6 +31,10 @@
 				<param-name>disabled</param-name>
 				<param-value>false</param-value>
 			</init-param>
+			<init-param>
+				<param-name>monitoring-path</param-name>
+				<param-value>/javamelody</param-value>
+			</init-param>
         </filter>
         <filter-mapping>
 			<filter-name>monitoring</filter-name>

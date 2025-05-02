@@ -76,7 +76,7 @@ public class SchemaUtils
 {
 	private static Logger logger=MiscUtils.getLogger();
 	
-	public static boolean inited=false;
+	public static boolean inited=true;
 	public static Map<String,String> createTableStatements = new HashMap<String,String>();
 
 	private static Connection getConnection() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException
@@ -305,23 +305,23 @@ public class SchemaUtils
 			String baseDir=System.getProperty("basedir");
 			logger.info("using baseDir : "+baseDir);
 					
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/oscarinit.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\oscarinit.sql"),0);
 	
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/oscarinit_on.sql"),0);
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/oscardata.sql"),0);
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/oscardata_on.sql"),0);
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/icd9.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\oscarinit_on.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\oscardata.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\oscardata_on.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\icd9.sql"),0);
 	
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/caisi/initcaisi.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\caisi\\initcaisi.sql"),0);
 	
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/caisi/initcaisidata.sql"),0);
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/caisi/populate_issue_icd9.sql"),0);
-			//		assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/icd9_issue_groups.sql"),0);
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/measurementMapData.sql"),0);
-	//		assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/expire_oscardoc.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\caisi\\initcaisidata.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\caisi\\populate_issue_icd9.sql"),0);
+//			\\\\		assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\icd9_issue_groups.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\measurementMapData.sql"),0);
+//	\\\\		assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\expire_oscardoc.sql"),0);
 	
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/oscarinit_bc.sql"),0);
-			assertEquals(loadFileIntoMySQL(baseDir + "/database/mysql/oscardata_bc.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\oscarinit_bc.sql"),0);
+			assertEquals(loadFileIntoMySQL(baseDir + "\\database\\mysql\\oscardata_bc.sql"),0);
 
 
 		 

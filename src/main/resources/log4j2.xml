@@ -7,15 +7,15 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %-5p %C{2} (%F:%L) - %m%n"/>
         </Console>
-<!--        <RollingFile name="rollingFile"-->
-<!--                     fileName="logs/oscar.log" filePattern="logs/oscar-%d{yyyy-MM-dd-HH-mm}-%i.log">-->
-<!--            <PatternLayout>-->
-<!--                <Pattern>%d{yyyy-MM-dd-HH:mm:ss} %-5p %m%n</Pattern>-->
-<!--            </PatternLayout>-->
-<!--            <Policies>-->
-<!--                <SizeBasedTriggeringPolicy size="10KB" />-->
-<!--            </Policies>-->
-<!--        </RollingFile>-->
+        <RollingFile name="rollingFile"
+                     fileName="logs/oscar.log" filePattern="logs/oscar-%d{yyyy-MM-dd-HH-mm}-%i.log">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd-HH:mm:ss} %-5p %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10KB" />
+            </Policies>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Logger name="org.apache.log4j.xml" level="error">
