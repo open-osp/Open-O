@@ -415,7 +415,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 			cform.setCaseNote(note);
 		}
 
-		session.setAttribute("casemgmtNoteLock" + demono, casemgmtNoteLock);
+		session.setAttribute("casemgmtNoteLock", casemgmtNoteLock);
 
 		String frmName = "caseManagementEntryForm" + demono;
 		logger.debug("Setting session form - " + frmName + " - " + String.valueOf(cform != null));
@@ -539,7 +539,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		} else if (casemgmtNoteLock.isLockedBySameUser()) {
 			ret = "user";
 		} else {
-			request.getSession().setAttribute("casemgmtNoteLock" + demoNo, casemgmtNoteLock);
+			request.getSession().setAttribute("casemgmtNoteLock", casemgmtNoteLock);
 		}
 
 		Map<String, String> jsonMap = new HashMap<String, String>();
@@ -559,7 +559,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		if (noteId != null && !"null".equalsIgnoreCase(noteId)) {
 			casemgmtNoteLock = casemgmtNoteLockDao.findByNoteDemo(Integer.parseInt(demoNo), Long.parseLong(noteId));
 		} else {
-			casemgmtNoteLock = (CasemgmtNoteLock) session.getAttribute("casemgmtNoteLock" + demoNo);
+			casemgmtNoteLock = (CasemgmtNoteLock) session.getAttribute("casemgmtNoteLock");
 		}
 
 		casemgmtNoteLock.setIpAddress(request.getRemoteAddr());
@@ -567,7 +567,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		logger.debug("UPDATING LOCK DEMO " + demoNo + " SESSION " + casemgmtNoteLock.getSessionId() + " LOCK IP " + casemgmtNoteLock.getIpAddress());
 		casemgmtNoteLockDao.merge(casemgmtNoteLock);
 
-		session.setAttribute("casemgmtNoteLock" + demoNo, casemgmtNoteLock);
+		session.setAttribute("casemgmtNoteLock", casemgmtNoteLock);
 
 		return null;
 
@@ -1169,7 +1169,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		CaseManagementEntryFormBean sessionFrm = (CaseManagementEntryFormBean) session.getAttribute(sessionFrmName);
 
 		//compare locks and see if they are the same
-		CasemgmtNoteLock casemgmtNoteLockSession = (CasemgmtNoteLock) session.getAttribute("casemgmtNoteLock" + demo);
+		CasemgmtNoteLock casemgmtNoteLockSession = (CasemgmtNoteLock) session.getAttribute("casemgmtNoteLock");
 
 		try {
 
@@ -1414,7 +1414,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		casemgmtNoteLockSession.setNoteId(note.getId());
 		logger.debug("UPDATING NOTE ID in LOCK");
 		casemgmtNoteLockDao.merge(casemgmtNoteLockSession);
-		session.setAttribute("casemgmtNoteLock" + demo, casemgmtNoteLockSession);
+		session.setAttribute("casemgmtNoteLock", casemgmtNoteLockSession);
                 session.removeAttribute(attrib_name);		
                 
                 try {
@@ -1841,11 +1841,11 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String sessionFrmName = "caseManagementEntryForm" + demoNo;
 
 		try {
-			CasemgmtNoteLock casemgmtNoteLockSession = (CasemgmtNoteLock) session.getAttribute("casemgmtNoteLock" + demoNo);
+			CasemgmtNoteLock casemgmtNoteLockSession = (CasemgmtNoteLock) session.getAttribute("casemgmtNoteLock");
 			//If browser is exiting check to see if we should release lock.  It may be held by same user in another window so we check			
 			if (request.getRequestedSessionId().equals(casemgmtNoteLockSession.getSessionId()) && casemgmtNoteLockSession.getNoteId() == Long.parseLong(noteId)) {
 				releaseNoteLock(providerNo, Integer.parseInt(demoNo), Long.parseLong(noteId));
-				session.removeAttribute("casemgmtNoteLock" + demoNo);
+				session.removeAttribute("casemgmtNoteLock");
 			}
 			//If we clicked on a note to edit we want to release old note's lock.  Session lock has already been updated with new note id
 			//so we force removal of old note lock 
@@ -1882,7 +1882,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean) form;
                 String  priorNote = cform.getNoteId();
 		Long noteId = noteSave(cform, request);
-		session.removeAttribute("casemgmtNoteLock" + demoNo);
+		session.removeAttribute("casemgmtNoteLock");
 
 		if (noteId == -1) {
 			return mapping.findForward("windowCloseError");
@@ -2721,7 +2721,7 @@ public class CaseManagementEntryAction extends BaseCaseManagementEntryAction {
 		String noteId = request.getParameter("note_id");
 
 		//compare locks and see if they are the same
-		CasemgmtNoteLock casemgmtNoteLockSession = (CasemgmtNoteLock) request.getSession().getAttribute("casemgmtNoteLock" + demographicNo);
+		CasemgmtNoteLock casemgmtNoteLockSession = (CasemgmtNoteLock) request.getSession().getAttribute("casemgmtNoteLock");
 		try {
 			//if other window has acquired lock don't save
 			CasemgmtNoteLock casemgmtNoteLock = casemgmtNoteLockDao.find(casemgmtNoteLockSession.getId());
