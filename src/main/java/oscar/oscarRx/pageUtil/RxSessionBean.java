@@ -185,6 +185,10 @@ public class RxSessionBean  implements java.io.Serializable {
         return arr;
     }
 
+    public ArrayList<RxPrescriptionData.Prescription> getStashList() {
+        return this.stash;
+    }
+
     public RxPrescriptionData.Prescription getStashItem(int index) {
         return stash.get(index);
     }

@@ -101,21 +101,13 @@ List<Recommendation> dsR = mFlowsheet.getDSElements((String) h2.get("measurement
 FlowSheetItem fsi =mFlowsheet.getFlowSheetItem(measurement);
 //EctMeasurementTypeBeanHandler mType = new EctMeasurementTypeBeanHandler();
 %>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html:html lang="en">
 
 <head>
 <title>Update Flowsheet <%=flowsheet%>  <oscar:nameage demographicNo="<%=demographic%>"/></title><!--I18n-->
 
 <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet">
-
-
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-  <script src="<%=request.getContextPath() %>/js/html5.js"></script>
-<![endif]-->
-
 
 
 <style type="text/css">
@@ -149,7 +141,10 @@ display:inline-block;
 if(request.getParameter("htracker")==null || ( request.getParameter("htracker")!=null && !request.getParameter("htracker").equals("slim")) ){
 
 if(request.getParameter("demographic")==null){ %>
-<div class="well well-small"></div>
+<div class="navbar" id="demoHeader"><div class="navbar-inner">
+    <a class="brand" href="javascript:void(0)">Update Flowsheet Measurement</a>
+    <em>for <strong><%=flowsheet%></strong> flowsheet </em>
+</div></div>
 <%}else{ %>
 <%@ include file="/share/templates/patient.jspf"%>
 <div style="height:60px;"></div>
@@ -157,11 +152,9 @@ if(request.getParameter("demographic")==null){ %>
 }
 %>
 
-<div class="container" id="container-main">
+<div class="container-fluid" id="container-main">
 
 <div class="span8">
-<h3 style="display:inline">Update Measurement</h3> <em>for <strong><%=flowsheet%></strong> flowsheet </em>
-
 <form action="FlowSheetCustomAction.do" onsubmit="return validateRuleValue();">
 
 		    <%if(request.getParameter("htracker")!=null){ %>
