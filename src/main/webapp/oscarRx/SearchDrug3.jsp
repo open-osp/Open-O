@@ -254,6 +254,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
         <script type="text/javascript" src="<c:out value="${ctx}/js/checkDate.js"/>"></script>
 
         <script type="text/javascript">
+            let selectedReRxIDs = [];
 	        function saveLinks(randNumber) {
 	            $('method_'+randNumber).onblur();
 	            $('route_'+randNumber).onblur();
@@ -829,6 +830,18 @@ body {
                 <td height="100%" ><%@ include file="SideLinksEditFavorites2.jsp"%></td>
                 <td style="padding-right:15px;"><!--Column Two Row Two-->
 
+                    <div class="floatingWindow" id="reRxConfirmBox">
+                        <p style="margin-bottom: 12px; font-size: 11px; text-align: end">
+                            You have selected <span style="font-weight: bold" id="selectedCount">0</span> ReRx
+                            medications. Click Stage Medication to add them to your prescriptions.
+                        </p>
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <input type="button" name="cancel" class="ControlPushButton" value="Cancel"
+                                   onclick="cancelAndClearSelection()" title="Cancel">
+                            <input type="button" name="stage" class="ControlPushButton" value="Stage Medication"
+                                   onclick="stageSelectedReRxMedications()" title="Stage Medications">
+                        </div>
+                    </div>
 
                     <table cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" >
 
@@ -1228,6 +1241,30 @@ body {
 
   .wcblayerContent {
     padding-left: 20px;
+  }
+
+  .floatingWindow {
+      position: fixed;
+      top: 70%;
+      right: 2px;
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      z-index: 1050;
+      background-color: #ccf5ff;
+      max-width: 25%;
+      opacity: 0;
+      transform: translateX(50px);
+      visibility: hidden;
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+  }
+
+  /* Active state for showing */
+  .floatingWindow.show {
+      opacity: 0.95;
+      transform: translateX(0);
+      visibility: visible;
   }
 
 </style>
@@ -2139,9 +2176,36 @@ function updateReRxStatusForPrescribedDrug(element, drugId) {
 
     if (element.checked === true) {
         this.addDrugToReRxList(uiRefId, drugId);
+        selectedReRxIDs.push(drugId);
     } else {
         this.removeDrugFromReRxList(uiRefId, drugId);
+        selectedReRxIDs = selectedReRxIDs.filter(id => id !== drugId);
     }
+    this.updateReRxStageConfirmBoxVisibility();
+}
+
+    function updateReRxStageConfirmBoxVisibility() {
+        const count = selectedReRxIDs.length;
+        document.getElementById("selectedCount").innerText = count;
+
+        const confirmBox = document.getElementById("reRxConfirmBox");
+        if (count > 0) {
+            confirmBox.classList.add("show");
+        } else {
+            confirmBox.classList.remove("show");
+        }
+    }
+
+    function cancelAndClearSelection() {
+        selectedReRxIDs.forEach(drugId => uncheckReRxForExistingPrescribedDrug(drugId));
+        selectedReRxIDs = [];
+        this.updateReRxStageConfirmBoxVisibility();
+    }
+
+    function stageSelectedReRxMedications() {
+        this.rePrescribeMulti();
+        selectedReRxIDs = [];
+        this.updateReRxStageConfirmBoxVisibility();
 }
 
 /**
@@ -2154,7 +2218,6 @@ function addDrugToReRxList(uiRefId, drugId) {
     skipParseInstr = true;
 
     this.addDrugToReRxListInSession(uiRefId, drugId);
-    this.rePrescribe2(uiRefId, drugId);
 }
 
 /**
@@ -2172,6 +2235,16 @@ function rePrescribe2(uiRefId, drugId) {
             // updateCurrentInteractions();
         }
     });
+}
+
+    function rePrescribeMulti() {
+        const url = "<c:out value="${ctx}"/>" + "/oscarRx/rePrescribe2.do?method=represcribeMultiple&rand=" + Math.floor(Math.random() * 10001);
+        new Ajax.Updater('rxText', url, {
+            method: 'get', asynchronous: false, evalScripts: true,
+            insertion: Insertion.Bottom, onSuccess: function (transport) {
+                // updateCurrentInteractions();
+            }
+        });
 }
 
 /**
@@ -2205,7 +2278,7 @@ function removeDrugFromReRxList(uiRefId, drugId) {
 function removePrescribingDrug(cardId, drugId) {
     const uiRefId = cardId.id.split('_')[1];
     this.deletePrescribingDrugFromUI(uiRefId, drugId);
-    this.uncheckReRxForExistingPrescribedDrug(uiRefId, drugId)
+    this.uncheckReRxForExistingPrescribedDrug(drugId)
 }
 
 /**
@@ -2232,8 +2305,8 @@ function removeElementFromUI(element) {
  * @param uiRefId The UI reference ID for the drug.
  * @param drugId The ID of the drug.
  */
-function uncheckReRxForExistingPrescribedDrug(uiRefId, drugId) {
-    const checkbox = this.getReRxCheckboxByUiRefId(uiRefId);
+function uncheckReRxForExistingPrescribedDrug(drugId) {
+    const checkbox = this.getReRxCheckboxByUiRefId(drugId);
     if (checkbox)
         checkbox.checked = false;
     this.removeReRxDrugId(drugId);
