@@ -486,9 +486,10 @@
 	<c:if test="${ not empty isEmailSuccessful }">
 		<c:choose>
 			<c:when test="${ emailLog.status eq 'SUCCESS' }">
-				<div class="alert alert-success" role="alert">
+				<div class="alert alert-success" role="alert" id="successMessage">
 					<p>Your email to <b><c:out value="${fn:join(emailLog.toEmail, ', ')}" /></b> was successfully sent.</p>
-				</div>								
+				</div>
+				<p class="mt-1" id="windowCloseMessage">This window will close in <b>3</b> seconds...</p>								
 			</c:when>
 			<c:otherwise>
 				<div class="alert alert-danger" role="alert">
@@ -516,6 +517,13 @@ document.addEventListener("DOMContentLoaded", function () {
 	if (document.getElementById('isEmailSuccessful').value === 'true' || document.getElementById('isEmailSuccessful').value === 'false') {
 		// Open EForm again on sent
 		openEFormAfterSend();
+
+		if (document.getElementById('isEmailSuccessful').value === 'true') {
+			// Close the window after 3 seconds
+			setTimeout(() => {
+				window.close();
+			}, 3000);
+		}
 		return;
 	}
 
