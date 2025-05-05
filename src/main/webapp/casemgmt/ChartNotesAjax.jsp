@@ -129,7 +129,7 @@ SimpleDateFormat jsfmt = new SimpleDateFormat("MMM dd, yyyy");
 Date dToday = new Date();
 String strToday = jsfmt.format(dToday);
 
-String frmName = "caseManagementEntryForm" + demographicNo;
+String frmName = "caseManagementEntryForm";
 CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean)session.getAttribute(frmName);
 
 if (request.getParameter("caseManagementEntryForm") == null)
