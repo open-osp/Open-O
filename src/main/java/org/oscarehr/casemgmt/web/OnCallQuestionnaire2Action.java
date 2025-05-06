@@ -42,7 +42,10 @@ public class OnCallQuestionnaire2Action extends ActionSupport {
 
     private OnCallQuestionnaireDao dao = SpringUtils.getBean(OnCallQuestionnaireDao.class);
 
-    public String unspecified() throws Exception {
+    public String execute() throws Exception {
+        if ("save".equals(request.getParameter("method"))) {
+            return save();
+        }
         return form();
     }
 

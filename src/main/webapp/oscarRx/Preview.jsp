@@ -68,13 +68,13 @@
                 }
             %>
         </c:if>
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
         <script type="text/javascript" language="Javascript">
             function onPrint(cfgPage) {
                 //document.forms[0].submit.value="print";
                 //var ret = checkAllDates();
                 //if(ret==true) {
-                document.forms[0].action = "../form/createpdf?__title=Rx&__cfgfile=" + cfgPage + "&__template=a6blank";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=Rx&__cfgfile=" + cfgPage + "&__template=a6blank";
                 document.forms[0].target = "_blank";
                 //}
                 return true;
@@ -98,7 +98,7 @@
             String ip = request.getRemoteAddr();
             //LogAction.addLog((String) session.getAttribute("user"), LogConst.UPDATE, LogConst.CON_PRESCRIPTION, String.valueOf(bean.getDemographicNo()), ip);
         } else {
-            bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
+            bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("RxSessionBean");
 
             //set Date to latest in stash
             Date tmp;
@@ -142,7 +142,7 @@
                border=2>
             <tr>
                 <td valign=top height="100px"><input type="image"
-                                                     src="img/rx.gif" border="0" value="submit" alt="[Submit]"
+                                                     src="oscarRx/img/rx.gif" border="0" value="submit" alt="[Submit]"
                                                      name="submit" title="Print in a half letter size paper"
                                                      onclick="<%=rePrint.equalsIgnoreCase("true") ? "javascript:return onPrint('oscarRxRePrintCfgPg1');" : "javascript:return onPrint('oscarRxPrintCfgPg1');" %>">
                     <input type="hidden" name="printPageSize"

@@ -408,7 +408,7 @@
                                             <input id="client.formattedDob" name="client.formattedDob"
                                                    value="<%=intakeEditForm.getClient().getFormattedDob() %>" <%=(readOnlyDates?"readonly=\"readonly\" onfocus=\"this.blur()\"":"") %>
                                                    type="text"><img title="Calendar" id="cal_dob"
-                                                                    src="../../images/cal.gif" alt="Calendar"
+                                                                    src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar"
                                                                     border="0">
                                             <script type="text/javascript">Calendar.setup({
                                                 inputField: 'client.formattedDob',
@@ -470,7 +470,7 @@
                                                        name="client.formattedEffDate"
                                                        value="<%=effDateVal %>" <%=(readOnlyDates?"readonly=\"readonly\" onfocus=\"this.blur()\"":"") %>
                                                        type="text"><img title="Calendar" id="cal_effdate"
-                                                                        src="../../images/cal.gif" alt="Calendar"
+                                                                        src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar"
                                                                         border="0">
                                                 <script type="text/javascript">Calendar.setup({
                                                     inputField: 'client.formattedEffDate',
@@ -492,7 +492,7 @@
                                                        name="client.formattedRenewDate"
                                                        value="<%=renewDateVal%>" <%=(readOnlyDates?"readonly=\"readonly\" onfocus=\"this.blur()\"":"") %>
                                                        type="text"><img title="Calendar" id="cal_renewdate"
-                                                                        src="../../images/cal.gif" alt="Calendar"
+                                                                        src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar"
                                                                         border="0">
                                                 <script type="text/javascript">Calendar.setup({
                                                     inputField: 'client.formattedRenewDate',

@@ -49,13 +49,21 @@ public class ClientSearchAction22Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
-    private LookupManager lookupManager;
-    private ClientManager clientManager;
-    private ProgramManager programManager;
+    private LookupManager lookupManager = SpringUtils.getBean(LookupManager.class);
+    private ClientManager clientManager = SpringUtils.getBean(ClientManager.class);
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
 
-    private CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
+    private CaseManagementNoteDAO caseManagementNoteDao = SpringUtils.getBean(CaseManagementNoteDAO.class);
 
     public String execute() {
+        String method = request.getParameter("method");
+        if ("attachForm".equals(method)) {
+            return attachForm();
+        } else if ("search".equals(method)) {
+            return search();
+        } else if ("attachSearch".equals(method)) {
+            return attachSearch();
+        }
         return form();
     }
 

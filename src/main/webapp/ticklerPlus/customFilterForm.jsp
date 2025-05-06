@@ -53,7 +53,7 @@
     int day = rightNow.get(Calendar.DAY_OF_MONTH);
     String formattedDate = year + "-" + month + "-" + day;
 %>
-<script type="text/javascript" src="../js/checkDate.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/checkDate.js"></script>
 <script>
     function search_demographic() {
         var popup = window.open('<c:out value="${ctx}"/>/ticklerPlus/demographicSearch.jsp?form=customFilterForm&elementName=filter.demographic_webName&elementId=filter.demographic_no&query=' + document.customFilterForm.elements['filter.demographic_webName'].value, 'demographic_search');

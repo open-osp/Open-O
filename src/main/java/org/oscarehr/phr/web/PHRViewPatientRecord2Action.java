@@ -67,6 +67,12 @@ public class PHRViewPatientRecord2Action extends ActionSupport {
 
     @Override
     public String execute() throws Exception {
+        if ("viewMyOscarRecord".equals(request.getParameter("method"))) {
+            return viewMyOscarRecord();
+        }
+        if ("saveNewVerification".equals(request.getParameter("method"))) {
+            return saveNewVerification();
+        }
         return super.execute();
     }
 

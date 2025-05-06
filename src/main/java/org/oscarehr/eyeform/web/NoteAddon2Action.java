@@ -65,6 +65,20 @@ public class NoteAddon2Action extends ActionSupport {
     protected EyeFormDao eyeformDao = SpringUtils.getBean(EyeFormDao.class);
     protected TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("getCurrentNoteData".equals(method)) {
+            return getCurrentNoteData();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("getNoteText".equals(method)) {
+            return getNoteText();
+        } else if ("sendTickler".equals(method)) {
+            return sendTickler();
+        }
+        return getCurrentNoteData();
+    }
+
 
     public String getCurrentNoteData() {
         String demographicNo = request.getParameter("demographicNo");

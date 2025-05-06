@@ -82,10 +82,12 @@
         ResourceBundle oscarR = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
         String transactionType = new String(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.AddSpecialist.addOperation"));
+        String specId = null;
         int whichType = 1;
         if (request.getAttribute("upd") != null) {
             transactionType = new String(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.AddSpecialist.updateOperation"));
             whichType = 2;
+            specId = (String) request.getAttribute("specId");
         }
     %>
 
@@ -95,7 +97,7 @@
         <title><%=transactionType%>
         </title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
         <script>
             function updateDepartments(i) {
@@ -147,7 +149,7 @@
         }
     </script>
 
-    <link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
     <body class="BodyStyle" vlink="#0000FF">
 
     <% 
@@ -194,7 +196,7 @@
                     <tr>
                         <td style="color: red;">
                             <fmt:message  key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgSpecialistAdded">
-                                <fmt:param value="${added}" />
+                                <fmt:param value="<%=added%>" />
                             </fmt:message>
                         </td>
                     </tr>
@@ -207,31 +209,37 @@
                                     if (request.getAttribute("specId") != null) {
                                         EctConAddSpecialistForm thisForm;
                                         thisForm = (EctConAddSpecialistForm) request.getAttribute("EctConAddSpecialistForm");
-                                        thisForm.setFirstName((String) request.getAttribute("fName"));
-                                        thisForm.setLastName((String) request.getAttribute("lName"));
-                                        thisForm.setProLetters((String) request.getAttribute("proLetters"));
-                                        thisForm.setAddress((String) request.getAttribute("address"));
-                                        thisForm.setPhone((String) request.getAttribute("phone"));
-                                        thisForm.setFax((String) request.getAttribute("fax"));
-                                        thisForm.setWebsite((String) request.getAttribute("website"));
-                                        thisForm.setEmail((String) request.getAttribute("email"));
-                                        thisForm.setSpecType((String) request.getAttribute("specType"));
-                                        thisForm.setSpecId((String) request.getAttribute("specId"));
-                                        thisForm.seteDataUrl((String) request.getAttribute("eDataUrl"));
-                                        thisForm.seteDataOscarKey((String) request.getAttribute("eDataOscarKey"));
-                                        thisForm.seteDataServiceKey((String) request.getAttribute("eDataServiceKey"));
-                                        thisForm.seteDataServiceName((String) request.getAttribute("eDataServiceName"));
-                                        thisForm.setAnnotation((String) request.getAttribute("annotation"));
-                                        thisForm.setReferralNo((String) request.getAttribute("referralNo"));
-                                        thisForm.setInstitution((String) request.getAttribute("institution"));
-                                        thisForm.setDepartment((String) request.getAttribute("department"));
-                                        thisForm.setPrivatePhoneNumber((String) request.getAttribute("privatePhoneNumber"));
-                                        thisForm.setCellPhoneNumber((String) request.getAttribute("cellPhoneNumber"));
-                                        thisForm.setPagerNumber((String) request.getAttribute("pagerNumber"));
-                                        thisForm.setSalutation((String) request.getAttribute("salutation"));
-                                        thisForm.setHideFromView((Boolean) request.getAttribute("hideFromView"));
-                                        thisForm.setEformId((Integer) request.getAttribute("eformId"));
+                                        if (thisForm == null) {
+                                            thisForm = new EctConAddSpecialistForm();
+                                            request.setAttribute("EctConAddSpecialistForm", thisForm);
+                                        }
 
+                                        if (thisForm != null) {
+                                            thisForm.setFirstName((String) request.getAttribute("fName"));
+                                            thisForm.setLastName((String) request.getAttribute("lName"));
+                                            thisForm.setProLetters((String) request.getAttribute("proLetters"));
+                                            thisForm.setAddress((String) request.getAttribute("address"));
+                                            thisForm.setPhone((String) request.getAttribute("phone"));
+                                            thisForm.setFax((String) request.getAttribute("fax"));
+                                            thisForm.setWebsite((String) request.getAttribute("website"));
+                                            thisForm.setEmail((String) request.getAttribute("email"));
+                                            thisForm.setSpecType((String) request.getAttribute("specType"));
+                                            thisForm.setSpecId((String) request.getAttribute("specId"));
+                                            thisForm.seteDataUrl((String) request.getAttribute("eDataUrl"));
+                                            thisForm.seteDataOscarKey((String) request.getAttribute("eDataOscarKey"));
+                                            thisForm.seteDataServiceKey((String) request.getAttribute("eDataServiceKey"));
+                                            thisForm.seteDataServiceName((String) request.getAttribute("eDataServiceName"));
+                                            thisForm.setAnnotation((String) request.getAttribute("annotation"));
+                                            thisForm.setReferralNo((String) request.getAttribute("referralNo"));
+                                            thisForm.setInstitution((String) request.getAttribute("institution"));
+                                            thisForm.setDepartment((String) request.getAttribute("department"));
+                                            thisForm.setPrivatePhoneNumber((String) request.getAttribute("privatePhoneNumber"));
+                                            thisForm.setCellPhoneNumber((String) request.getAttribute("cellPhoneNumber"));
+                                            thisForm.setPagerNumber((String) request.getAttribute("pagerNumber"));
+                                            thisForm.setSalutation((String) request.getAttribute("salutation"));
+                                            thisForm.setHideFromView((Boolean) request.getAttribute("hideFromView"));
+                                            thisForm.setEformId((Integer) request.getAttribute("eformId"));
+                                        }
                                 %>
                                 <script>
                                     $(document).ready(function () {
@@ -245,7 +253,7 @@
                                 %>
                                 <table>
 
-                                    <input type="hidden" name="specId" id="specId"/>
+                                    <input type="hidden" name="specId" id="specId" value="<%=specId%>"/>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.firstName"/></td>
                                         <td><input type="text" name="firstName"/></td>
@@ -311,7 +319,7 @@
                                                 <option value="0" selected>&nbsp;</option>
                                                 <c:forEach items="${ specialties }" var="specialtyType">
 
-                                                    <option value="${ specialtyType.serviceId }" ${ specialtyType.serviceId eq EctConAddSpecialistForm.specType ? 'selected' : '' } >
+                                                    <option value="${ specialtyType.serviceId }" ${ specialtyType.serviceId eq specType ? 'selected' : '' } >
                                                         <c:out value="${ specialtyType.serviceDesc }"/>
                                                     </option>
 

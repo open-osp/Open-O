@@ -86,7 +86,15 @@ public class FrmBCAR20202Action extends ActionSupport {
     public FrmBCAR20202Action() {
     }
 
-    public String unspecified() {
+    public String execute() throws Exception {
+        if ("saveAndExit".equals(request.getParameter("method"))) {
+            return saveAndExit();
+        }
+        if ("save".equals(request.getParameter("method"))) {
+            return save();
+        }if ("print".equals(request.getParameter("method"))) {
+            return print();
+        }
         return "pg1";
     }
 

@@ -50,6 +50,13 @@ public class ManageEForm2Action extends ActionSupport {
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() throws Exception {
+        if ("importEForm".equals(request.getParameter("method"))) {
+            return importEForm();
+        }
+        return exportEForm();
+    }
+
     public String exportEForm() throws Exception {
 
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_eform", "r", null)) {

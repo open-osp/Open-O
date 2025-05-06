@@ -803,7 +803,7 @@
         }
 
         $scope.openLetterScreen = function (followupType, demoarr) {
-            //<a target="_blank" href="../report
+            //<a target="_blank" href="<%= request.getContextPath() %>/report
             if ("P1" === followupType) {
                 var comment = prompt('Are you sure you want to added this to patients record \n\nAdd Comment Below ', '');
                 if (comment != null) {																							//

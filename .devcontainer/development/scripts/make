@@ -19,9 +19,14 @@ build_and_deploy() {
   "$SCRIPT_DIR/server" stop
 
   # Setup the over_ride_config.properties file.
-  echo "Setting up over_ride_config_properties..."
-  CONF_PATH="/workspace/src/test/resources/"
-  cp "${CONF_PATH}over_ride_config.properties.template" "${CONF_PATH}over_ride_config.properties"
+  config_dir="/workspace/src/test/resources"
+  properties_file="${config_dir}/over_ride_config.properties"
+  template_file="${properties_file}.template"
+
+  if [ -f "$template_file" ] && [ ! -f "$properties_file" ]; then
+    echo "Setting up over_ride_config.properties..."
+    cp "$template_file" "$properties_file"
+  fi
 
   # Build the project with or without tests based on the input argument
   # - If run_tests is true, it builds the project and runs tests.

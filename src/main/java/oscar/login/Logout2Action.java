@@ -42,6 +42,10 @@ public class Logout2Action extends ActionSupport {
 
 
     public String execute() {
+        String method = request.getParameter("method");
+        if ("ssoLogout".equals(method)) {
+            return ssoLogout();
+        }
         return logout();
     }
 

@@ -44,14 +44,14 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Edit Institutions</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
     <script language="javascript">
         function BackToOscar() {
             window.close();
         }
     </script>
-    <link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
     <body class="BodyStyle" vlink="#0000FF">
 
     <% 
@@ -125,7 +125,9 @@
                                                    value="<%=i.getId()%>"></td>
                                         <td>
                                             <%
-                                                out.print("<a href=\"../../EditInstitutions.do?id=" + i.getId() + "\"/>");
+                                                String contextPath = request.getContextPath();
+                                                String url = contextPath + "/oscarEncounter/EditInstitutions.do?id=" + i.getId();
+                                                out.print("<a href=\"" + url + "\">");
                                                 out.print(i.getName());
                                                 out.print("</a>");
                                             %>

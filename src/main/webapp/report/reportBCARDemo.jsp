@@ -28,18 +28,18 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportscpbDemo.title"/></title>
-    <LINK REL="StyleSheet" HREF="../web.css" TYPE="text/css">
+    <LINK REL="StyleSheet" HREF="<%= request.getContextPath() %>/web.css" TYPE="text/css">
     <!-- calendar stylesheet -->
     <link rel="stylesheet" type="text/css" media="all"
-          href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+          href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
     <!-- main calendar program -->
-    <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <!-- language for the calendar -->
     <script type="text/javascript"
-            src="../share/calendar/lang/calendar-en.js"></script>
+            src="<%= request.getContextPath() %>/share/calendar/lang/calendar-en.js"></script>
     <!-- the following script defines the Calendar.setup helper function, which makes
            adding a calendar a matter of 1 or 2 lines of code. -->
-    <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
     <script language="JavaScript">
 
         <!--
@@ -251,9 +251,9 @@
                                                                                             name="startDate4"
                                                                                             id="startDate4" value=""
                                                                                             size="10" readonly><img
-                            src="../images/cal.gif" id="startDate4_cal"> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportscpbDemo.msgAnd"/> <input
+                            src="<%= request.getContextPath() %>/images/cal.gif" id="startDate4_cal"> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportscpbDemo.msgAnd"/> <input
                             type="text" name="endDate4" id="endDate4" value="" size="10"
-                            readonly><img src="../images/cal.gif" id="endDate4_cal">
+                            readonly><img src="<%= request.getContextPath() %>/images/cal.gif" id="endDate4_cal">
                     </td>
                     <td align="right"><input type="hidden" name="value_4"
                                              value="(concat(demographic.year_of_birth,'-',demographic.month_of_birth,'-',demographic.date_of_birth)) between '${startDate4}' and '${endDate4}'">
@@ -269,9 +269,9 @@
                                                                                                    id="startDate8"
                                                                                                    value="" size="10"
                                                                                                    readonly><img
-                            src="../images/cal.gif" id="startDate8_cal"> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportscpbDemo.msgAnd"/> <input
+                            src="<%= request.getContextPath() %>/images/cal.gif" id="startDate8_cal"> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportscpbDemo.msgAnd"/> <input
                             type="text" name="endDate8" id="endDate8" value="" size="10"
-                            readonly><img src="../images/cal.gif" id="endDate8_cal">
+                            readonly><img src="<%= request.getContextPath() %>/images/cal.gif" id="endDate8_cal">
                     </td>
                     <td align="right"><input type="hidden" name="value_8"
                                              value="formBCAR.c_EDD between '${startDate8}' and '${endDate8}'">
@@ -335,9 +335,9 @@
                                                                                                   id="startDate100"
                                                                                                   value="" size="10"
                                                                                                   readonly><img
-                            src="../images/cal.gif" id="startDate100_cal"> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportscpbDemo.msgAnd"/> <input
+                            src="<%= request.getContextPath() %>/images/cal.gif" id="startDate100_cal"> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportscpbDemo.msgAnd"/> <input
                             type="text" name="endDate100" id="endDate100" value="" size="10"
-                            readonly><img src="../images/cal.gif" id="endDate100_cal">
+                            readonly><img src="<%= request.getContextPath() %>/images/cal.gif" id="endDate100_cal">
                     </td>
                     <td align="right"><input type="hidden" name="value_100"
                                              value="demographicExt.key_val='Approximate_EDD' and demographicExt.value >= '${startDate100}' and demographicExt.value <= '${endDate100}'">

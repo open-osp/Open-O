@@ -56,14 +56,13 @@ public final class RxAddFavorite2Action extends ActionSupport {
     public String execute()
             throws IOException, ServletException {
 
+        if ("addFav2".equals(request.getParameter("parameterValue"))) {
+            return addFav2();
+        }
+        
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_rx", "w", null)) {
             throw new RuntimeException("missing required security object (_rx)");
         }
-
-        // Setup variables        
-
-
-        //String favoriteName = frm.getFavoriteName();
 
         RxSessionBean bean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
         if (bean == null) {
@@ -85,12 +84,7 @@ public final class RxAddFavorite2Action extends ActionSupport {
             bean.getStashItem(stashId).AddToFavorites(providerNo, favoriteName);
         }
 
-        String s = "/oscarRx/StaticScript.jsp" + this.getReturnParams();
-        request.setAttribute("BoxNoFillFirstLoad", "true");
-        MiscUtils.getLogger().debug("fill box no");
-
-        response.sendRedirect(s);
-        return NONE;
+        return "success";
     }
 
     //used with rx3

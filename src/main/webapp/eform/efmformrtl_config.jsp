@@ -28,7 +28,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
         <title>Rich Text Letter Settings</title>
-        <script src="../share/javascript/Oscar.js"></script>
+        <script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
 
     </head>

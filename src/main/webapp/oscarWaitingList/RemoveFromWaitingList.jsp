@@ -47,7 +47,7 @@
     </head>
 
 
-    <link rel="stylesheet" type="text/css" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles.css">
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
     <% 
     java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");

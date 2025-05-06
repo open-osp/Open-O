@@ -33,6 +33,8 @@
 <%@page import="org.oscarehr.web.DemographicSearchHelper" %>
 <%@page import="java.util.GregorianCalendar" %>
 <%@page import="org.oscarehr.caisi_integrator.ws.MatchingDemographicParameters" %>
+<%@ page import="java.io.UnsupportedEncodingException" %>
+<%@ page import="java.net.URLEncoder" %>
 
 
 <%@ page import="oscar.OscarProperties" %>
@@ -63,7 +65,24 @@
     MiscUtils.getLogger().debug("Search parameters, searchMode=" + searchMode + ", keyword=" + keyword);
 
     if (searchMode != null) {
-        if (keyword.indexOf("*") != -1 || keyword.indexOf("%") != -1) regularexp = "like";
+        
+        if (keyword == null) {
+            keyword = ""; // Default to an empty string
+        } else {
+            // Encode the keyword to ensure any special characters (like '%') are properly encoded
+            try {
+                // If keyword contains a '%' sign, encode it as %25
+                keyword = java.net.URLEncoder.encode(keyword, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace(); // Log the error or handle it
+                keyword = ""; // Default to empty string if error occurs
+            }
+        }
+       
+        if (keyword.indexOf("*") != -1 || keyword.indexOf("%") != -1) 
+        {
+            regularexp = "like";
+        }
 
         if (searchMode.equals("search_address")) fieldname = "address";
         if (searchMode.equals("search_phone")) fieldname = "phone";

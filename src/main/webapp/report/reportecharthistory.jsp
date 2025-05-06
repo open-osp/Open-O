@@ -64,7 +64,7 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>ENCOUNTER SHEET</title>
-    <link rel="stylesheet" href="../web.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
     <script language="JavaScript">
         <!--
         function setfocus() {
@@ -132,7 +132,7 @@
     %>
     <tr bgcolor="<%=bgcolor%>">
         <td align="center"><a
-                href="../oscarEncounter/echarthistoryprint.jsp?echartid=<%=eChart.getId()%>&demographic_no=<%=demographic_no%>"><%=datetime%>
+                href="<%= request.getContextPath() %>/oscarEncounter/echarthistoryprint.jsp?echartid=<%=eChart.getId()%>&demographic_no=<%=demographic_no%>"><%=datetime%>
         </a></td>
         <td><%=eChart.getSubject() != null ? eChart.getSubject() : ""%>
         </td>

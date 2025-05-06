@@ -118,6 +118,31 @@ public class CaseManagementView2Action extends ActionSupport {
         request.getSession().setAttribute("casemgmt_newFormBeans", new ArrayList<Object>());
         request.getSession().setAttribute("casemgmt_msgBeans", new ArrayList<Object>());
 
+
+        String method = request.getParameter("method");
+        if ("saveAndExit".equals(method)) {
+            return saveAndExit();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("viewNotes".equals(method)) {
+            return viewNotes();
+        } else if ("viewNote".equals(method)) {
+            return viewNote();
+        } else if ("listNotes".equals(method)) {
+            return listNotes();
+        } else if ("search".equals(method)) {
+            return search();
+        } else if ("unlock".equals(method)) {
+            return unlock();
+        } else if ("do_unlock".equals(method)) {
+            return do_unlock();
+        } else if ("run_macro_script".equals(method)) {
+            return run_macro_script();
+        } else if ("run_macro".equals(method)) {
+            return run_macro();
+        } else if ("viewNotesOpt".equals(method)) {
+            return viewNotesOpt();
+        } 
         return view();
     }
 

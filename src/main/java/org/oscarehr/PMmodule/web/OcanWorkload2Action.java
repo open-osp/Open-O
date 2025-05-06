@@ -59,6 +59,9 @@ public class OcanWorkload2Action extends ActionSupport {
     private AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
 
     public String execute() throws Exception {
+        if ("reassign".equals(request.getParameter("method"))) {
+            return reassign();
+        }
         return view();
     }
 

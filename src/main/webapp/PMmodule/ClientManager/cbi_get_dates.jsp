@@ -121,7 +121,7 @@
                 <input id="serviceInitDate" name="serviceInitDate" onfocus="this.blur()"
                        class="userInputedData mandatoryData {validate: {required:true}}" type="text"
                        value="<%=ocanStaffForm.getServiceInitDate()==null?"":DateFormatUtils.ISO_DATE_FORMAT.format(ocanStaffForm.getServiceInitDate())%>">
-                <img title="Calendar" id="cal_serviceInitDate" src="../../images/cal.gif" alt="Calendar" border="0">
+                <img title="Calendar" id="cal_serviceInitDate" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0">
                 <script type="text/javascript">Calendar.setup({
                     inputField: 'serviceInitDate',
                     ifFormat: '%Y-%m-%d',
@@ -130,7 +130,7 @@
                     singleClick: true,
                     firstDay: 1
                 });</script>
-                <img src="../../images/icon_clear.gif" border="0" onclick="clearDate('serviceInitDate');">
+                <img src="<%= request.getContextPath() %>/images/icon_clear.gif" border="0" onclick="clearDate('serviceInitDate');">
             </td>
         </tr>
         <tr>

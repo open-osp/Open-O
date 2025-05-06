@@ -50,6 +50,12 @@ public final class RxReason2Action extends ActionSupport {
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() {
+        if ("archiveReason".equals(request.getParameter("method"))) {
+            return archiveReason();
+        }
+        return addDrugReason();
+    }
 
     /*
      * Needed for a new Drug Reason
@@ -156,17 +162,3 @@ public final class RxReason2Action extends ActionSupport {
         return SUCCESS;
     }
 }
-
-
-
-/*
- public String unspecified()
-    throws IOException, ServletException {
-
-    	 MiscUtils.getLogger().debug("addDrugReasonCalled unspecified");
-
-
-
-    	return null;
-    }
-*/

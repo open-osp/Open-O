@@ -84,6 +84,10 @@ public class MeasurementHL7Uploader2Action extends ActionSupport {
         this.defaultProviderNo = defaultProviderNo;
     }
 
+    public String execute() {
+        return upload();
+    }
+
     public String upload() {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

@@ -163,15 +163,15 @@
         <td colspan="4"><input readonly type="text" id="p2_date2m"
                                ondblclick="resetDate(this)" name="p2_date2m" size="10"
                                value="<%=UtilMisc.htmlEscape(props.getProperty("p2_date2m", ""))%>"/>
-            <img src="../images/cal.gif" id="p2_date2m_cal"></td>
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p2_date2m_cal"></td>
         <td colspan="4"><input readonly type="text" id="p2_date4m"
                                ondblclick="resetDate(this)" name="p2_date4m" size="10"
                                value="<%=UtilMisc.htmlEscape(props.getProperty("p2_date4m", ""))%>"/>
-            <img src="../images/cal.gif" id="p2_date4m_cal"></td>
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p2_date4m_cal"></td>
         <td colspan="4"><input readonly type="text" id="p2_date6m"
                                ondblclick="resetDate(this)" name="p2_date6m" size="10"
                                value="<%=UtilMisc.htmlEscape(props.getProperty("p2_date6m", ""))%>"/>
-            <img src="../images/cal.gif" id="p2_date6m_cal"></td>
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p2_date6m_cal"></td>
     </tr>
     <tr align="center" id="growthAp2">
         <td>

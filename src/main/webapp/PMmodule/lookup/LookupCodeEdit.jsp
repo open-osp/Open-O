@@ -59,11 +59,11 @@
                 <input type="hidden" id="method" name="method"></input>
                 <a href="${pageContext.request.contextPath}/Lookup/LookupCodeList.do" paramId="id" paramName="lookupCodeEditForm"
                            paramProperty="tableDef.tableId">
-                    <img src="../images/close16.png" border="0"/> Close</a>
+                    <img src="<%= request.getContextPath() %>/images/close16.png" border="0"/> Close</a>
                 <c:if test="${!isReadOnly}">
                     &nbsp;|&nbsp; <a href="javascript:void1();"
                                      onclick="javascript:setNoConfirm();return deferedSubmit('');">
-                    <img src="../images/Save16.png" border="0"/> Save </a>
+                    <img src="<%= request.getContextPath() %>/images/Save16.png" border="0"/> Save </a>
                 </c:if>
 
             </td>

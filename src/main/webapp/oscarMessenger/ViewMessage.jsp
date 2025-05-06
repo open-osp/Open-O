@@ -34,7 +34,7 @@
 <%@page import="org.oscarehr.common.model.OscarMsgType" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String providerNo = (String) request.getAttribute("providerNo");
+    String providerNo = (String) session.getAttribute("providerNo");
     String curUser_no = (String) session.getAttribute("user");
     String roleName$ = (String) session.getAttribute("userrole") + "," + curUser_no;
 
@@ -131,7 +131,7 @@
                     windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
                     var page = "";
                     var win;
-                    var today = "<%=request.getAttribute("today")%>";
+                    var today = "<%=session.getAttribute("today")%>";
                     var header = "oscarMessenger";
                     var encType = "oscarMessenger";
                     var txt;
@@ -329,21 +329,21 @@
                                         <td class="Printable" bgcolor="#DDDDFF"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.ViewMessage.msgFrom"/>:
                                         </td>
                                         <td colspan="2" id="sentBy" class="Printable"
-                                            bgcolor="#CCCCFF"><%= request.getAttribute("viewMessageSentby") %>
+                                            bgcolor="#CCCCFF"><%= session.getAttribute("viewMessageSentby") %>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="Printable" bgcolor="#DDDDFF"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.ViewMessage.msgTo"/>:
                                         </td>
                                         <td colspan="2" id="sentTo" class="Printable"
-                                            bgcolor="#BFBFFF"><%= request.getAttribute("viewMessageSentto") %>
+                                            bgcolor="#BFBFFF"><%= session.getAttribute("viewMessageSentto") %>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="Printable" bgcolor="#DDDDFF"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.ViewMessage.msgSubject"/>:
                                         </td>
                                         <td colspan="2" id="msgSubject" class="Printable"
-                                            bgcolor="#BBBBFF"><%= request.getAttribute("viewMessageSubject") %>
+                                            bgcolor="#BBBBFF"><%= session.getAttribute("viewMessageSubject") %>
                                         </td>
                                     </tr>
 
@@ -354,8 +354,8 @@
                                             <c:out value="${ viewMessageDate }"/> <c:out value="${ viewMessageTime }"/>
                                         </td>
                                     </tr>
-                                    <% String attach = (String) request.getAttribute("viewMessageAttach");
-                                        String id = (String) request.getAttribute("viewMessageId");
+                                    <% String attach = (String) session.getAttribute("viewMessageAttach");
+                                        String id = (String) session.getAttribute("viewMessageId");
                                         if (attach != null && attach.equals("1")) {
                                     %>
                                     <tr>
@@ -369,7 +369,7 @@
                                         }
                                     %>
                                     <%
-                                        String pdfAttach = (String) request.getAttribute("viewMessagePDFAttach");
+                                        String pdfAttach = (String) session.getAttribute("viewMessagePDFAttach");
                                         if (pdfAttach != null && pdfAttach.equals("1")) {
                                     %>
                                     <tr>
@@ -521,7 +521,7 @@
                                                     <input type="button"
                                                            class="ControlPushButton" name="linkDemo"
                                                            value="Link to demographic"
-                                                           onclick="popup(document.forms[0].demographic_no.value,'<%=request.getAttribute("viewMessageId")%>','<%=request.getAttribute("providerNo")%>','linkToDemographic')"/>
+                                                           onclick="popup(document.forms[0].demographic_no.value,'<%=session.getAttribute("viewMessageId")%>','<%=session.getAttribute("providerNo")%>','linkToDemographic')"/>
 
                                                     <input type="button" class="ControlPushButton"
                                                            name="clearDemographic" value="Clear selected demographic"
@@ -588,12 +588,12 @@
                                                             CaseManagementNoteDAO caseManagementNoteDAO = SpringUtils.getBean(CaseManagementNoteDAO.class);
                                                             if (showOldEchartLink) {
                                                                 String params = "";
-                                                                String msgType = (String) request.getAttribute("msgType");
+                                                                String msgType = (String) session.getAttribute("msgType");
 
                                                                 if (msgType != null) {
 
                                                                     if (Integer.valueOf(msgType).equals(OscarMsgType.OSCAR_REVIEW_TYPE)) {
-                                                                        HashMap<String, List<String>> hashMap = (HashMap<String, List<String>>) request.getAttribute("msgTypeLink");
+                                                                        HashMap<String, List<String>> hashMap = (HashMap<String, List<String>>) session.getAttribute("msgTypeLink");
                                                                         if (hashMap != null) {
                                                                             List<String> demoList = hashMap.get((String) pageContext.getAttribute("demographicNumber"));
 
@@ -622,11 +622,11 @@
 
                                                         %>
                                                         <a href="javascript:void(0)"
-                                                           onclick="popupViewAttach(700,960,'../oscarEncounter/IncomingEncounter.do?demographicNo=${ demographic.key }&curProviderNo=<%=request.getAttribute("providerNo")%>
+                                                           onclick="popupViewAttach(700,960,'../oscarEncounter/IncomingEncounter.do?demographicNo=${ demographic.key }&curProviderNo=<%=session.getAttribute("providerNo")%>
                                                                    <%=params%>');return false;">E</a>
                                                         <%} %>
 
-                                                        <a href="javascript:popupViewAttach(700,960,'../oscarRx/choosePatient.do?providerNo=<%=request.getAttribute("providerNo")%>&demographicNo=${ demographic.key }')">Rx</a>
+                                                        <a href="javascript:popupViewAttach(700,960,'../oscarRx/choosePatient.do?providerNo=<%=session.getAttribute("providerNo")%>&demographicNo=${ demographic.key }')">Rx</a>
 
                                                         <phr:indivoRegistered provider="<%=providerNo%>"
                                                                               demographic="${ demographic.key }">
@@ -635,7 +635,7 @@
 
                                                                 MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(session);
                                                                 if (myOscarLoggedInInfo != null && myOscarLoggedInInfo.isLoggedIn())
-                                                                    onclickString = "msg4phr = encodeURIComponent(document.getElementById('msgBody').innerHTML); sub4phr =  encodeURIComponent(document.getElementById('msgSubject').innerHTML); popupViewAttach(600,900,'../phr/PhrMessage.do?method=createMessage&providerNo=" + request.getAttribute("providerNo") + "&demographicNo=" + (String) pageContext.getAttribute("demographicNumber") + "&message='+msg4phr+'&subject='+sub4phr)";
+                                                                    onclickString = "msg4phr = encodeURIComponent(document.getElementById('msgBody').innerHTML); sub4phr =  encodeURIComponent(document.getElementById('msgSubject').innerHTML); popupViewAttach(600,900,'../phr/PhrMessage.do?method=createMessage&providerNo=" + session.getAttribute("providerNo") + "&demographicNo=" + (String) pageContext.getAttribute("demographicNumber") + "&message='+msg4phr+'&subject='+sub4phr)";
                                                             %>
                                                             <a href="javascript: function myFunction() {return false; }"
                                                                ONCLICK="<%=onclickString%>" title="myOscar">
@@ -646,7 +646,7 @@
 
                                                         <input type="button" class="ControlPushButton"
                                                                name="writeEncounter" value="Write to encounter"
-                                                               onclick="popup( '${ demographic.key }','<%=request.getAttribute("viewMessageId")%>','<%=request.getAttribute("providerNo")%>','writeToEncounter')"/>
+                                                               onclick="popup( '${ demographic.key }','<%=session.getAttribute("viewMessageId")%>','<%=session.getAttribute("providerNo")%>','writeToEncounter')"/>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -676,7 +676,7 @@
             </tr>
         </table>
     </form>
-    <% String bodyTextAsHTML = (String) request.getAttribute("viewMessageMessage");
+    <% String bodyTextAsHTML = (String) session.getAttribute("viewMessageMessage");
         bodyTextAsHTML = bodyTextAsHTML.replaceAll("\n|\r\n?", "<br/>"); %>
     <p class="NotDisplayable Printable"><%= bodyTextAsHTML %>
     </p>

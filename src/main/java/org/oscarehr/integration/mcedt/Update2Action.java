@@ -45,11 +45,18 @@ public class Update2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private static Logger logger = MiscUtils.getLogger();
 
     @Override
     public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("addUpdateRequest".equals(method)) {
+            return addUpdateRequest();
+        } else if ("cancel".equals(method)) {
+            return cancel();
+        } else if ("sendUpdateRequest".equals(method)) {
+            return sendUpdateRequest();
+        }
         List<BigInteger> resourceIds = getResourceIds(request);
 
         Detail details = (Detail) request.getSession().getAttribute(SESSION_KEY_UPLOAD_DETAILS);

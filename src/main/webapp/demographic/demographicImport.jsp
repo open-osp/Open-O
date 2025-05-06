@@ -63,7 +63,7 @@
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DemoImport"/></title>
         <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
         <link rel="stylesheet" type="text/css"
               href="<%=request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
@@ -197,7 +197,7 @@
         <p><input type="file" name="importFile" id="importFile" multiple="multiple"/>
             <span id="uploadWarn" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
                   style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img
-                    border="0" src="../images/icon_alertsml.gif"/></span></span>
+                    border="0" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/></span></span>
 
         </p>
                 <%if(learningEnabled != null && learningEnabled.equalsIgnoreCase("yes")) { %>

@@ -34,13 +34,12 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appt.status.mgr.title"/></title>
-    <link href="../css/jquery.ui.colorPicker.css" rel="stylesheet" type="text/css"/>
-    <script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script>
-    <script src="../js/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
-    <script src="../js/jquery.ui.colorPicker.min.js" type="text/javascript"></script>
-    <oscar:customInterface section="apptStatusEdit"/>
+    <link href="<%= request.getContextPath() %>/css/jquery.ui.colorPicker.css" rel="stylesheet" type="text/css"/>
+    <script src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+    <script src="<%= request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+    <script src="<%= request.getContextPath() %>/js/jquery.ui.colorPicker.min.js" type="text/javascript"></script>
 </head>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 <body>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -63,37 +62,37 @@
 </table>
 
 
-<form action="<%=request.getContextPath() %>/appointment/apptStatusSetting.do">
+<form action="${pageContext.request.contextPath}/appointment/apptStatusSetting.do" method="post">
+    <input type="hidden" name="dispatch" value="update"/>
+    <input type="hidden" name="ID" value="${ID}"/>
     <table>
         <tr>
             <td class="tdLabel"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appt.status.mgr.label.status"/>:
             </td>
-            <td><input type="text" readonly="readonly" name="apptStatus" size="40"/></td>
+            <td><input type="text" readonly="readonly" name="apptStatus" value="${apptStatus}" size="40"/></td>
         </tr>
         <tr>
             <td class="tdLabel"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appt.status.mgr.label.desc"/>:
             </td>
-            <td><input type="checkbox" name="apptDesc" size="40" /></td>
+            <td><input type="checkbox" name="apptDesc" value="${apptDesc}" size="40" /></td>
         </tr>
         <tr>
             <td class="tdLabel"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appt.status.mgr.label.oldcolor"/>:
             </td>
-            <td><input type="text" readonly="true" id="old_color" name="apptOldColor" size="40"/>
+            <td><input type="text" readonly="true" id="old_color" name="apptOldColor" value="${apptOldColor}" size="40"/>
             </td>
         </tr>
         <tr>
             <td class="tdLabel"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appt.status.mgr.label.newcolor"/>:
             </td>
             <td>
-                <input id="apptColor" name="apptColor" value="" size="20"/>
-
+                <input id="apptColor" name="apptColor" value="${apptOldColor}" size="20"/>
             </td>
         </tr>
 
         <div id="list_entries"></div>
         <tr>
-            <td colspan="2"><input type="hidden" name="ID" id="ID"/> <input
-                    type="hidden" name="dispatch" value="update"/> <br/>
+            <td colspan="2">
                 <input type="submit"
                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscar.appt.status.mgr.label.submit"/>"/>
             </td>

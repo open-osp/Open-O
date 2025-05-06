@@ -55,14 +55,23 @@ public class ProviderProperty2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-    private UserPropertyDAO userPropertyDAO;
-
-    public void setUserPropertyDAO(UserPropertyDAO dao) {
-        this.userPropertyDAO = dao;
-    }
+    private UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
 
     public String execute() {
-
+        String method = request.getParameter("method");
+        if ("OscarMsgRecvd".equals(method)) {
+            return OscarMsgRecvd();
+        } else if ("remove".equals(method)) {
+            return remove();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("viewDefaultSex".equals(method)) {
+            return viewDefaultSex();
+        } else if ("saveDefaultSex".equals(method)) {
+            return saveDefaultSex();
+        } else if ("viewHCType".equals(method)) {
+            return viewHCType();
+        }
         return view();
     }
 

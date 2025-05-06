@@ -34,15 +34,19 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import oscar.oscarMessenger.docxfer.util.MsgCommxml;
 import oscar.oscarReport.pageUtil.RptDemographicReport2Form;
-import oscar.oscarReport.pageUtil.RptDemographicReport2Form;
-
 
 public class RptDemographicQuery2Loader {
 
     private DemographicQueryFavouritesDao demographicQueryFavouritesDao = SpringUtils.getBean(DemographicQueryFavouritesDao.class);
 
     public RptDemographicReport2Form queryLoader(RptDemographicReport2Form frm) {
+        if (frm == null) {
+            frm = new RptDemographicReport2Form(); 
+        }
         String qId = frm.getSavedQuery();
+        if (qId == null || qId.trim().isEmpty()) {
+            return new RptDemographicReport2Form();
+        }
         RptDemographicReport2Form dRF = new RptDemographicReport2Form();
 
         String mSelect = null;

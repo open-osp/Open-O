@@ -51,9 +51,9 @@ public class Infirm2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
     private static final Logger logger = MiscUtils.getLogger();
-    private static InfirmBedProgramManager bpm = (InfirmBedProgramManager) SpringUtils.getBean(InfirmBedProgramManager.class);
-    private ProgramManager pm = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
-    private AdmissionManager mgr = (AdmissionManager) SpringUtils.getBean(AdmissionManager.class);
+    private static InfirmBedProgramManager bpm = SpringUtils.getBean(InfirmBedProgramManager.class);
+    private ProgramManager pm = SpringUtils.getBean(ProgramManager.class);
+    private AdmissionManager mgr = SpringUtils.getBean(AdmissionManager.class);
 
 
     public static void updateCurrentProgram(String programId, String providerNo) {

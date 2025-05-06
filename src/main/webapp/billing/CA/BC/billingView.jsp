@@ -69,7 +69,7 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.bc.title"/></title>
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     <script language="JavaScript">
         <!--
 
@@ -200,7 +200,7 @@
 
         //-->
     </script>
-    <link rel="stylesheet" href="../billing/billing.css" type="text/css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/billing/billing.css" type="text/css">
 </head>
 
 

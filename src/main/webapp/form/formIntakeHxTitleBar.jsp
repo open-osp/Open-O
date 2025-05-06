@@ -89,7 +89,7 @@
     function onPrint() {
         document.forms[0].submit.value = "printall";
 
-        document.forms[0].action = "../form/formname.do?__title=Intake+History&__cfgfile=intakeHxPrintCfgPg1&__cfgfile=intakeHxPrintCfgPg2&__cfgfile=intakeHxPrintCfgPg3&__cfgfile=intakeHxPrintCfgPg4&__cfgfile=intakeHxPrintCfgPg5&__cfgfile=intakeHxPrintCfgPg6&__cfgfile=intakeHxPrintCfgPg7&__cfgfile=intakeHxPrintCfgPg8&__cfgfile=intakeHxPrintCfgPg9&__cfgfile=intakeHxPrintCfgPg10&__cfgfile=intakeHxPrintCfgPg11&__template=intakeHx";
+        document.forms[0].action = "<%= request.getContextPath() %>/form/formname.do?__title=Intake+History&__cfgfile=intakeHxPrintCfgPg1&__cfgfile=intakeHxPrintCfgPg2&__cfgfile=intakeHxPrintCfgPg3&__cfgfile=intakeHxPrintCfgPg4&__cfgfile=intakeHxPrintCfgPg5&__cfgfile=intakeHxPrintCfgPg6&__cfgfile=intakeHxPrintCfgPg7&__cfgfile=intakeHxPrintCfgPg8&__cfgfile=intakeHxPrintCfgPg9&__cfgfile=intakeHxPrintCfgPg10&__cfgfile=intakeHxPrintCfgPg11&__template=intakeHx";
         document.forms[0].target = "_blank";
         return true;
     }

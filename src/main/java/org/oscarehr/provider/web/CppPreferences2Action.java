@@ -46,6 +46,9 @@ public class CppPreferences2Action extends ActionSupport {
 
     @Override
     public String execute() {
+        if ("save".equals(request.getParameter("method"))) {
+            return save();
+        }
         return view();
     }
 

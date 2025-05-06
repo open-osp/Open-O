@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.PMmodule.model.Program;
@@ -43,22 +42,13 @@ import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
 public class ProviderInfo2Action extends ActionSupport {
-    HttpServletRequest request = ServletActionContext.getRequest();
-    HttpServletResponse response = ServletActionContext.getResponse();
-
-
-    private FacilityDao facilityDao = null;
-    private ProgramManager programManager;
-    private ProviderManager providerManager;
-
+    private HttpServletRequest request = ServletActionContext.getRequest();
+    private FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
+    private ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
     private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 
-
-    public void setFacilityDao(FacilityDao facilityDao) {
-        this.facilityDao = facilityDao;
-    }
-
-    public String unspecified() {
+    public String execute() {
         return view();
     }
 
@@ -105,13 +95,4 @@ public class ProviderInfo2Action extends ActionSupport {
 
         return "view";
     }
-
-    public void setProgramManager(ProgramManager mgr) {
-        this.programManager = mgr;
-    }
-
-    public void setProviderManager(ProviderManager mgr) {
-        this.providerManager = mgr;
-    }
-
 }

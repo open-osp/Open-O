@@ -453,7 +453,7 @@ dojo.html.insertCssFile = function (/* string */URI, /* HTMLDocument? */doc, /* 
     var style = dojo.html.insertCssText(cssStr, doc);
     dojo.html._insertedCssFiles.push({'doc': doc, 'cssText': cssStr, 'nodeRef': style});
 
-    // insert custom attribute ex dbgHref="../foo.css" usefull when debugging in DOM inspectors, no?
+    // insert custom attribute ex dbgHref="<%= request.getContextPath() %>/foo.css" usefull when debugging in DOM inspectors, no?
     if (style && djConfig.isDebug) {
         style.setAttribute("dbgHref", URI);
     }

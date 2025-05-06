@@ -38,7 +38,6 @@ import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.BillingONCHeader1Dao;
 import org.oscarehr.common.dao.BillingONExtDao;
 import org.oscarehr.common.dao.BillingONPaymentDao;
-import org.oscarehr.common.dao.BillingONPaymentDaoImpl;
 import org.oscarehr.common.dao.BillingONRepoDao;
 import org.oscarehr.common.dao.BillingPaymentTypeDao;
 import org.oscarehr.common.dao.BillingServiceDao;
@@ -73,6 +72,13 @@ public class BillingCorrection2Action extends ActionSupport {
     private BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
     private BillingONExtDao billExtDao = (BillingONExtDao) SpringUtils.getBean(BillingONExtDao.class);
     private final BillingPaymentTypeDao billingPaymentTypeDao = SpringUtils.getBean(BillingPaymentTypeDao.class);
+
+    public String execute() {
+        if ("add3rdPartyPayment".equals(request.getParameter("method"))) {
+            return add3rdPartyPayment();
+        }
+        return updateInvoice();
+    }
 
     public String add3rdPartyPayment() {
 

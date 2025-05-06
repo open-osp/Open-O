@@ -82,7 +82,7 @@
             }
         </style>
         <link rel="stylesheet" type="text/css"
-              href="../oscarEncounter/encounterStyles.css">
+              href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
     </head>
 
     <body class="BodyStyle" vlink="#0000FF">
@@ -118,7 +118,7 @@
 
                 </ul>
                 <input type="submit" value="Delete"/>
-                <a href="ReportDemographicReport.jsp">cancel</a>
+                <a href="<%= request.getContextPath() %>/oscarReport/ReportDemographicReport.jsp">cancel</a>
             </form></td>
         </tr>
         <tr>

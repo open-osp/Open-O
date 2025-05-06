@@ -47,6 +47,10 @@ public final class RxRxPageSizeInfo2Action extends ActionSupport {
 
     private static Logger logger = MiscUtils.getLogger();
 
+    public String execute() {
+        return view();
+    }
+
     public String view() {
         long start = System.currentTimeMillis();
         String provider = (String) request.getSession().getAttribute("user");

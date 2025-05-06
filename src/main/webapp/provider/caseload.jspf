@@ -147,7 +147,7 @@ clH = ["<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msg
 		</td></tr>
 	</table>
 </td></tr>
-<tr id='loadingHeader' class='caseloadRow'><td style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'><img src='../images/DMSLoader.gif' /><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLoading"/></td></tr>
+<tr id='loadingHeader' class='caseloadRow'><td style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'><img src="<%= request.getContextPath() %>/images/DMSLoader.gif" /><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLoading"/></td></tr>
 <tr id='totalResults2' class='caseloadRow'><td style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'> <span id="rows2"></span>/<span id="totalRows2"></span>&nbsp;<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgResults"/></td></tr>
 <tr class='caseloadRow' id='caseloadHeader'>
 
@@ -174,7 +174,7 @@ String[] objIds = new String[] {"Demographic", "_caseload.DisplayMode", "_caselo
 	</security:oscarSec>
 	<% } %>
 <% } %>
-<tr id='loadingFooter' class='caseloadRow'><td colspan='<%=clH.length%>' style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'><img src='../images/DMSLoader.gif' /><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLoading"/></td></tr>
+<tr id='loadingFooter' class='caseloadRow'><td colspan='<%=clH.length%>' style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'><img src="<%= request.getContextPath() %>/images/DMSLoader.gif" /><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLoading"/></td></tr>
 <tr id='noResults' class='caseloadRow'><td colspan='<%=clH.length%>' style='text-align: center;' bgcolor='#fffff0' ><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgTryAgain"/></td></tr>
 <tr id='totalResults1' class='caseloadRow'><td colspan='<%=clH.length%>' style='text-align: center;' bgcolor='#fffff0' ><span id="rows1"></span>/<span id="totalRows1"></span>&nbsp;<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgResults"/></td></tr>
 </table>

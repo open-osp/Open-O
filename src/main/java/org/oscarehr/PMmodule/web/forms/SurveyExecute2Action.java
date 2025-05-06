@@ -77,11 +77,10 @@ public class SurveyExecute2Action extends ActionSupport {
 
     private static Logger log = MiscUtils.getLogger();
 
-    private SurveyManager surveyManager = (SurveyManager) SpringUtils.getBean(SurveyManager.class);
-    private CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils
-            .getBean(CaseManagementManager.class);
-    private ClientManager clientManager = (ClientManager) SpringUtils.getBean(ClientManager.class);
-    private AdmissionManager admissionManager = (AdmissionManager) SpringUtils.getBean(AdmissionManager.class);
+    private SurveyManager surveyManager = SpringUtils.getBean(SurveyManager.class);
+    private CaseManagementManager caseManagementManager = SpringUtils.getBean(CaseManagementManager.class);
+    private ClientManager clientManager = SpringUtils.getBean(ClientManager.class);
+    private AdmissionManager admissionManager = SpringUtils.getBean(AdmissionManager.class);
 
     protected String getProviderNo(HttpServletRequest request) {
         return getProvider(request).getProviderNo();
@@ -111,6 +110,23 @@ public class SurveyExecute2Action extends ActionSupport {
     }
 
     public String execute() {
+        String method = request.getParameter("method");
+        if ("survey".equals(method)) {
+            return survey();
+        } else if ("survey_view".equals(method)) {
+            return survey_view();
+        } else if ("refresh".equals(method)) {
+            return refresh();
+        } else if ("save_survey".equals(method)) {
+            return save_survey();
+        } else if ("tmpsave_survey".equals(method)) {
+            return tmpsave_survey();
+        } else if ("printPreview_survey".equals(method)) {
+            return printPreview_survey();
+        } else if ("printPreview_refresh".equals(method)) {
+            return printPreview_refresh();
+        }
+
         String clientId = request.getParameter("clientId");
 
         return forwardToClientManager(clientId);
@@ -885,6 +901,7 @@ public class SurveyExecute2Action extends ActionSupport {
         refresh_survey();
         return "printPreview";
     }
+
     private boolean cancel;
     private String clientId;
     private SurveyExecuteFormBean view;

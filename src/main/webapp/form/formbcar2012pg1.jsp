@@ -289,7 +289,7 @@
                 var ret = checkAllDates();
 
                 if (ret == true) {
-                    document.forms[0].action = "../form/createpdf?__title=British+Columbia+Antenatal+Record+Part+1&__cfgfile=bcar1PrintCfgPg1_2012&__template=bcar1_2012";
+                    document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=British+Columbia+Antenatal+Record+Part+1&__cfgfile=bcar1PrintCfgPg1_2012&__template=bcar1_2012";
                     document.forms[0].target = "_blank";
                 }
                 // important to enable the save button.
@@ -300,7 +300,7 @@
             function onPrint12() {
                 document.forms[0].submit.value = "printAll";
 
-                document.forms[0].action = "../form/formname.do?__title=British+Columbia+Antenatal+Record&__cfgfile=bcar1PrintCfgPg1_2012&__cfgfile=bcar2PrintCfgPg1_2012&__cfgGraphicFile=bcar2PrintGraphCfgPg1_2012&__graphicPage=2<%= props.getProperty("pg3_date1", "") == "" ? "&__template=bcarARs2_2012" : "&__cfgfile=bcar2PrintCfgPg2_2012&__graphicPage=3&__template=bcarARs1_2012" %>";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/formname.do?__title=British+Columbia+Antenatal+Record&__cfgfile=bcar1PrintCfgPg1_2012&__cfgfile=bcar2PrintCfgPg1_2012&__cfgGraphicFile=bcar2PrintGraphCfgPg1_2012&__graphicPage=2<%= props.getProperty("pg3_date1", "") == "" ? "&__template=bcarARs2_2012" : "&__cfgfile=bcar2PrintCfgPg2_2012&__graphicPage=3&__template=bcarARs1_2012" %>";
                 document.forms[0].target = "_blank";
 
                 return true;
@@ -308,7 +308,7 @@
 
             function onPrintAll() {
                 document.forms[0].submit.value = "printAll";
-                document.forms[0].action = "../form/formname.do?__title=British+Columbia+Antenatal+Record&__cfgfile=bcar1PrintCfgPg1_2012&__cfgfile=bcar2PrintCfgPg1_2012&__cfgGraphicFile=bcar2PrintGraphCfgPg1_2012&__graphicPage=2<%= props.getProperty("pg3_date1", "") == "" ? "&__cfgfile=bcar1PrintCfgPg2_2012&__cfgfile=bcar2PrintCfgScores_2012&__template=bcarAll2_2012" : "&__cfgfile=bcar2PrintCfgPg2_2012&__graphicPage=3&__cfgfile=bcar1PrintCfgPg2_2012&__cfgfile=bcar2PrintCfgScores_2012&__template=bcarAll1_2012" %>";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/formname.do?__title=British+Columbia+Antenatal+Record&__cfgfile=bcar1PrintCfgPg1_2012&__cfgfile=bcar2PrintCfgPg1_2012&__cfgGraphicFile=bcar2PrintGraphCfgPg1_2012&__graphicPage=2<%= props.getProperty("pg3_date1", "") == "" ? "&__cfgfile=bcar1PrintCfgPg2_2012&__cfgfile=bcar2PrintCfgScores_2012&__template=bcarAll2_2012" : "&__cfgfile=bcar2PrintCfgPg2_2012&__graphicPage=3&__cfgfile=bcar1PrintCfgPg2_2012&__cfgfile=bcar2PrintCfgScores_2012&__template=bcarAll1_2012" %>";
                 document.forms[0].target = "_blank";
 
                 return true;
@@ -318,7 +318,7 @@
                 document.forms[0].submit.value = "print";
                 var ret = checkAllDates();
                 if (ret == true) {
-                    document.forms[0].action = "../form/createpdf?__title=British+Columbia+Antenatal+Record+Part+2&__cfgfile=bcar1PrintCfgPg2_2012&__template=bcarRisk_2012";
+                    document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=British+Columbia+Antenatal+Record+Part+2&__cfgfile=bcar1PrintCfgPg2_2012&__template=bcarRisk_2012";
                     document.forms[0].target = "_blank";
                 }
                 return ret;
@@ -576,18 +576,18 @@
 
         <link rel="stylesheet" type="text/css" href="<%=bView?"bcArStyleView.css" : "bcAr2007Style.css"%>">
         <!-- calendar stylesheet -->
-        <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
        adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <style type="text/css">
@@ -1431,7 +1431,7 @@
                 <td nowrap><input type="text" name="pg1_obHistDate1"
                                   id="pg1_obHistDate1" size="6" maxlength="10"
                                   value="<%= props.getProperty("pg1_obHistDate1", "") %>"
-                                  @oscar.formDB/> <img src="../images/cal.gif"
+                                  @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                        id="pg1_obHistDate1_cal"></td>
 
                 <td><input type="text" name="pg1_birthOrAbort1"
@@ -1504,7 +1504,7 @@
                 <td><input type="text" name="pg1_obHistDate2"
                            id="pg1_obHistDate2" size="6" maxlength="10"
                            value="<%= props.getProperty("pg1_obHistDate2", "") %>"
-                           @oscar.formDB/> <img src="../images/cal.gif"
+                           @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_obHistDate2_cal"></td>
                 <td><input type="text" name="pg1_birthOrAbort2"
                            style="width: 100%" size="20" maxlength="20"
@@ -1569,7 +1569,7 @@
                 <td><input type="text" name="pg1_obHistDate3"
                            id="pg1_obHistDate3" size="6" maxlength="10"
                            value="<%= props.getProperty("pg1_obHistDate3", "") %>"
-                           @oscar.formDB/> <img src="../images/cal.gif"
+                           @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_obHistDate3_cal"></td>
                 <td><input type="text" name="pg1_birthOrAbort3"
                            style="width: 100%" size="20" maxlength="20"
@@ -1632,7 +1632,7 @@
                 <td><input type="text" name="pg1_obHistDate4"
                            id="pg1_obHistDate4" size="6" maxlength="10"
                            value="<%= props.getProperty("pg1_obHistDate4", "") %>"
-                           @oscar.formDB/> <img src="../images/cal.gif"
+                           @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_obHistDate4_cal"></td>
                 <td><input type="text" name="pg1_birthOrAbort4"
                            style="width: 100%" size="20" maxlength="20"
@@ -1696,7 +1696,7 @@
                 <td><input type="text" name="pg1_obHistDate5"
                            id="pg1_obHistDate5" size="6" maxlength="10"
                            value="<%= props.getProperty("pg1_obHistDate5", "") %>"
-                           @oscar.formDB/> <img src="../images/cal.gif"
+                           @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_obHistDate5_cal"></td>
                 <td><input type="text" name="pg1_birthOrAbort5"
                            style="width: 100%" size="20" maxlength="20"
@@ -1771,7 +1771,7 @@
                     <br/>
                     <input type="text" name="pg1_lmp" id="pg1_lmp" style="margin-top:3px;" size="10" maxlength="10"
                            value="<%= props.getProperty("pg1_lmp", "") %>" @oscar.formDB
-                           dbType="date"/><img src="../images/cal.gif" id="pg1_lmp_cal">
+                           dbType="date"/><img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_lmp_cal">
 
                 </td>
 
@@ -1812,7 +1812,7 @@
                                        style="margin-top:3px;"
                                        size="10" maxlength="10"
                                        value="<%= props.getProperty("pg1_stopDate", "") %>" @oscar.formDB/>
-                                <img src="../images/cal.gif" id="pg1_stopDate_cal">
+                                <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_stopDate_cal">
                             </td>
                         </tr>
                     </table>
@@ -1846,7 +1846,7 @@
                            style="margin-top:3px;"
                            maxlength="10" value="<%= props.getProperty("pg1_eddByUs", "") %>"
                            @oscar.formDB dbType="date"
-                    /><img src="../images/cal.gif" id="pg1_eddByUs_cal"/>
+                    /><img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_eddByUs_cal"/>
 
                         <%--
             	Modified by Dennis Warren @ Treatment March 2012
@@ -1873,7 +1873,7 @@
                                style="margin-top:3px;"
                                value="<%= props.getProperty("pg1_firstUsPerf", "") %>"
                                @oscar.formDB dbType="date"/>
-                        <img src="../images/cal.gif" id="pg1_firstUsPerf_cal"/>
+                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_firstUsPerf_cal"/>
                     </div>
 
                     <div style="display:block; float:left; margin-left:20px; margin-top:10px;">
@@ -2364,7 +2364,7 @@
                                             <tr>
                                                 <td colspan="3"></td>
                                                 <td><span class="small8">dd/mm/yyyy</span><img
-                                                        src="../images/cal.gif" id="pg1_alcoQuitDate_cal"></td>
+                                                        src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_alcoQuitDate_cal"></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="pg1_alco"
@@ -2494,7 +2494,7 @@
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                             <tr>
                                                 <td colspan="3"></td>
-                                                <td><span class="small8">dd/mm/yyyy</span><img src="../images/cal.gif"
+                                                <td><span class="small8">dd/mm/yyyy</span><img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                                id="pg1_smokeQuitDate_cal">
                                                 </td>
                                             </tr>
@@ -2634,7 +2634,7 @@
                             <td colspan="3">
                                 <table width="100%" border="0" cellpadding="0" cellspacing="0">
                                     <tr>
-                                        <td>dd/mm/yyyy <img src="../images/cal.gif" id="pg1_examination_cal"></td>
+                                        <td>dd/mm/yyyy <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_examination_cal"></td>
                                         <td width="10%">BP</td>
                                         <td>Height</td>
                                         <td>Pre-pregnant weight</td>

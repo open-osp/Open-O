@@ -24,30 +24,10 @@
  */
 package org.oscarehr.integration.dhir;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.struts2.ServletActionContext;
 
 public class SubmitImmunization2Action extends ActionSupport {
-    HttpServletRequest request = ServletActionContext.getRequest();
-    HttpServletResponse response = ServletActionContext.getResponse();
-
-
-    //for testing.
-    public String unspecified() throws Exception {
-		/*
-		MiscUtils.getLogger().info("MARC3 ==============================================");
-		 if ("POST".equalsIgnoreCase(request.getMethod())) {
-		        String test = CharStreams.toString(request.getReader());
-		        
-		        MiscUtils.getLogger().info(test);
-		 }
-	
-		return null;
-		*/
+    public String execute() throws Exception {
         return SUCCESS;
     }
 

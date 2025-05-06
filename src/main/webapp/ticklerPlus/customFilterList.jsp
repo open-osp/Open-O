@@ -55,12 +55,12 @@
             <td valign="middle"><!--  <input type="checkbox" name="checkbox" value="<c:out value="${filter.name}"/>"/>
 				--> <input type="checkbox" name="checkbox"
                            value="<c:out value="${filter.id}"/>"/></td>
-            <td valign="middle"><!--  <a href="../CustomFilter.do?method=edit&name=<c:out value="${filter.name}"/>"><img border="0" src="images/edit.jpg"/></a>
+            <td valign="middle"><!--  <a href="<%= request.getContextPath() %>/CustomFilter.do?method=edit&name=<c:out value="${filter.name}"/>"><img border="0" src="images/edit.jpg"/></a>
 				--> <a
-                    href="../CustomFilter.do?method=edit&id=<c:out value="${filter.id}"/>"><img
+                    href="<%= request.getContextPath() %>/CustomFilter.do?method=edit&id=<c:out value="${filter.id}"/>"><img
                     border="0" src="images/edit.jpg"/></a></td>
             <td><c:out value="${filter.name}"/></td>
-            <td><a href="../CustomFilter.do?method=changeShortCutStatus&id=${filter.id}">
+            <td><a href="<%= request.getContextPath() %>/CustomFilter.do?method=changeShortCutStatus&id=${filter.id}">
                 <c:choose>
                     <c:when test="${filter.shortcut == true}">
                         Remove
@@ -82,7 +82,7 @@
     -->
     <tr>
         <td><input type="button" value="New"
-                   onclick="location.href='../CustomFilter.do?method=edit'"/></td>
+                   onclick="location.href="<%= request.getContextPath() %>/CustomFilter.do?method=edit""/></td>
         <td><input type="button" value="Delete"
                    onclick="this.form.method.value='delete';this.form.submit();"/></td>
     </tr>
@@ -92,7 +92,7 @@
 <br/>
 <table width="100%">
     <tr>
-        <td><a href="../Tickler.do?method=filter">Back to Ticklers</a></td>
+        <td><a href="<%= request.getContextPath() %>/Tickler.do?method=filter">Back to Ticklers</a></td>
     </tr>
 </table>
 </body>

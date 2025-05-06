@@ -26,6 +26,7 @@
 
 package org.oscarehr.documentManager.actions;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Hashtable;
@@ -64,75 +65,74 @@ public class AddEditHtml2Action extends ActionSupport {
      * Creates a new instance of AddLinkAction
      */
     public String execute() {
-
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_edoc", "w", null)) {
             throw new SecurityException("missing required security object (_edoc)");
         }
 
         Hashtable errors = new Hashtable();
         String fileName = "";
-        if (!EDocUtil.getDoctypes(form.getFunction()).contains(form.getDocType())) {
-            EDocUtil.addDocTypeSQL(form.getDocType(), form.getFunction());
+        if (!EDocUtil.getDoctypes(this.getFunction()).contains(this.getDocType())) {
+            EDocUtil.addDocTypeSQL(this.getDocType(), this.getFunction());
         }
-        if ((form.getDocDesc().length() == 0) || (form.getDocDesc().equals("Enter Title"))) {
+        if ((this.getDocDesc().length() == 0) || (this.getDocDesc().equals("Enter Title"))) {
             errors.put("descmissing", "dms.error.descriptionInvalid");
             request.setAttribute("linkhtmlerrors", errors);
-            request.setAttribute("completedForm", form);
+            request.setAttribute("completedForm", "");
             request.setAttribute("function", request.getParameter("function"));
             request.setAttribute("functionid", request.getParameter("functionid"));
-            request.setAttribute("editDocumentNo", form.getMode());
+            request.setAttribute("editDocumentNo", this.getMode());
             return "failed";
         }
-        if (form.getDocType().length() == 0) {
+        if (this.getDocType().length() == 0) {
             errors.put("typemissing", "dms.error.typeMissing");
             request.setAttribute("linkhtmlerrors", errors);
-            request.setAttribute("completedForm", form);
+            request.setAttribute("completedForm", "");
             request.setAttribute("function", request.getParameter("function"));
             request.setAttribute("functionid", request.getParameter("functionid"));
-            request.setAttribute("editDocumentNo", form.getMode());
+            request.setAttribute("editDocumentNo", this.getMode());
             return "failed";
         }
-        if (form.getHtml().length() == 0) {
+        if (this.getHtml().length() == 0) {
             errors.put("urlmissing", "dms.error.htmlMissing");
             request.setAttribute("linkhtmlerrors", errors);
-            request.setAttribute("completedForm", form);
+            request.setAttribute("completedForm", "");
             request.setAttribute("function", request.getParameter("function"));
             request.setAttribute("functionid", request.getParameter("functionid"));
 
             return "failed";
         }
-        if (form.getMode().equals("addLink")) {
+        if (this.getMode().equals("addLink")) {
             //the 'html' variable is the url
             //checks for http://
-            String html = form.getHtml();
+            String html = this.getHtml();
             if (html.indexOf("http://") == -1) {
                 html = "http://" + html;
             }
             html = "<script type=\"text/javascript\" language=\"Javascript\">\n" +
                     "window.location='" + html + "'\n" +
                     "</script>";
-            form.setDocDesc(form.getDocDesc() + " (link)");
-            form.setHtml(html);
+            this.setDocDesc(this.getDocDesc() + " (link)");
+            this.setHtml(html);
             fileName = "link";
-        } else if (form.getMode().equals("addHtml")) {
+        } else if (this.getMode().equals("addHtml")) {
             fileName = "html";
         }
 
-        String reviewerId = filled(form.getReviewerId()) ? form.getReviewerId() : "";
-        String reviewDateTime = filled(form.getReviewDateTime()) ? form.getReviewDateTime() : "";
+        String reviewerId = filled(this.getReviewerId()) ? this.getReviewerId() : "";
+        String reviewDateTime = filled(this.getReviewDateTime()) ? this.getReviewDateTime() : "";
 
-        if (!filled(reviewerId) && form.getReviewDoc()) {
+        if (!filled(reviewerId) && this.getReviewDoc()) {
             reviewerId = (String) request.getSession().getAttribute("user");
             reviewDateTime = UtilDateUtilities.DateToString(new Date(), EDocUtil.REVIEW_DATETIME_FORMAT);
         }
         EDoc currentDoc;
-        MiscUtils.getLogger().debug("mode: " + form.getMode());
-        if (form.getMode().indexOf("add") != -1) {
-            currentDoc = new EDoc(form.getDocDesc(), form.getDocType(), fileName, form.getHtml(), form.getDocCreator(), form.getResponsibleId(), form.getSource(), 'H', form.getObservationDate(), reviewerId, reviewDateTime, form.getFunction(), form.getFunctionId());
+        MiscUtils.getLogger().debug("mode: " + this.getMode());
+        if (this.getMode().indexOf("add") != -1) {
+            currentDoc = new EDoc(this.getDocDesc(), this.getDocType(), fileName, this.getHtml(), this.getDocCreator(), this.getResponsibleId(), this.getSource(), 'H', this.getObservationDate(), reviewerId, reviewDateTime, this.getFunction(), this.getFunctionId());
             currentDoc.setContentType("text/html");
-            currentDoc.setDocPublic(form.getDocPublic());
-            currentDoc.setDocClass(form.getDocClass());
-            currentDoc.setDocSubClass(form.getDocSubClass());
+            currentDoc.setDocPublic(this.getDocPublic());
+            currentDoc.setDocClass(this.getDocClass());
+            currentDoc.setDocSubClass(this.getDocSubClass());
 
             // if the document was added in the context of a program
             ProgramManager2 programManager = SpringUtils.getBean(ProgramManager2.class);
@@ -163,15 +163,16 @@ public class AddEditHtml2Action extends ActionSupport {
                 }
             }
         } else {
-            currentDoc = new EDoc(form.getDocDesc(), form.getDocType(), "", form.getHtml(), form.getDocCreator(), form.getResponsibleId(), form.getSource(), 'H', form.getObservationDate(), reviewerId, reviewDateTime, form.getFunction(), form.getFunctionId());
-            currentDoc.setDocId(form.getMode());
+            currentDoc = new EDoc(this.getDocDesc(), this.getDocType(), "", this.getHtml(), this.getDocCreator(), this.getResponsibleId(), this.getSource(), 'H', this.getObservationDate(), reviewerId, reviewDateTime, this.getFunction(), this.getFunctionId());
+            currentDoc.setDocId(this.getMode());
             currentDoc.setContentType("text/html");
-            currentDoc.setDocPublic(form.getDocPublic());
-            currentDoc.setDocClass(form.getDocClass());
-            currentDoc.setDocSubClass(form.getDocSubClass());
-            EDocUtil.editDocumentSQL(currentDoc, form.getReviewDoc());
+            currentDoc.setDocPublic(this.getDocPublic());
+            currentDoc.setDocClass(this.getDocClass());
+            currentDoc.setDocSubClass(this.getDocSubClass());
+            EDocUtil.editDocumentSQL(currentDoc, this.getReviewDoc());
         }
-        StringBuffer redirect = new StringBuffer("/documentManager/documentReport.jsp");
+        String contextPath = request.getContextPath();
+        StringBuffer redirect = new StringBuffer(contextPath + "/documentManager/documentReport.jsp");
         redirect.append("?function=").append(request.getParameter("function"));
         redirect.append("&functionid=").append(request.getParameter("functionid"));
         try {
@@ -186,13 +187,243 @@ public class AddEditHtml2Action extends ActionSupport {
         return (s != null && s.trim().length() > 0);
     }
 
-    private AddEditDocument2Form form;
+    private String function = "";
+    private String functionId = "";
+    private String docType = "";
+    private String docClass = "";
+    private String docSubClass = "";
+    private String docDesc = "";
+    private String docCreator = "";
+    private String responsibleId = "";
+    private String source = "";
+    private String sourceFacility = "";
+    private File docFile;
 
-    public AddEditDocument2Form getForm() {
-        return form;
+    private File filedata;
+
+    private String docPublic = "";
+    private String mode = "";
+    private String observationDate = "";
+    private String reviewerId = "";
+    private String reviewDateTime = "";
+    private String contentDateTime = "";
+    private boolean reviewDoc = false;
+    private String html = "";
+
+    private String appointmentNo = "0";
+
+    private boolean restrictToProgram = false;
+    private String receivedDate = "";
+    private String abnormal = "";
+
+    private String extraReviewerId = "";
+    private boolean extraReviewDoc = false;
+
+    public String getFunction() {
+        return function;
     }
 
-    public void setForm(AddEditDocument2Form form) {
-        this.form = form;
+    public void setFunction(String function) {
+        this.function = function;
+    }
+
+    public String getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(String functionId) {
+        this.functionId = functionId;
+    }
+
+    public String getDocType() {
+        return docType;
+    }
+
+    public void setDocType(String docType) {
+        this.docType = docType;
+    }
+
+    public String getDocClass() {
+        return docClass;
+    }
+
+    public void setDocClass(String docClass) {
+        this.docClass = docClass;
+    }
+
+    public String getDocSubClass() {
+        return docSubClass;
+    }
+
+    public void setDocSubClass(String docSubClass) {
+        this.docSubClass = docSubClass;
+    }
+
+    public String getDocDesc() {
+        return docDesc;
+    }
+
+    public void setDocDesc(String docDesc) {
+        this.docDesc = docDesc;
+    }
+
+    public String getDocCreator() {
+        return docCreator;
+    }
+
+    public void setDocCreator(String docCreator) {
+        this.docCreator = docCreator;
+    }
+
+    public String getResponsibleId() {
+        return responsibleId;
+    }
+
+    public void setResponsibleId(String responsibleId) {
+        this.responsibleId = responsibleId;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getSourceFacility() {
+        return sourceFacility;
+    }
+
+    public void setSourceFacility(String sourceFacility) {
+        this.sourceFacility = sourceFacility;
+    }
+
+    public File getDocFile() {
+        return docFile;
+    }
+
+    public void setDocFile(File docFile) {
+        this.docFile = docFile;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    public String getDocPublic() {
+        return docPublic;
+    }
+
+    public void setDocPublic(String docPublic) {
+        this.docPublic = docPublic;
+    }
+
+    public String getObservationDate() {
+        return observationDate;
+    }
+
+    public void setObservationDate(String observationDate) {
+        this.observationDate = observationDate;
+    }
+
+    public String getReviewerId() {
+        return reviewerId;
+    }
+
+    public void setReviewerId(String reviewerId) {
+        this.reviewerId = reviewerId;
+    }
+
+    public String getReviewDateTime() {
+        return reviewDateTime;
+    }
+
+    public void setReviewDateTime(String reviewDateTime) {
+        this.reviewDateTime = reviewDateTime;
+    }
+
+    public String getContentDateTime() {
+        return contentDateTime;
+    }
+
+    public void setContentDateTime(String contentDateTime) {
+        this.contentDateTime = contentDateTime;
+    }
+
+    public boolean getReviewDoc() {
+        return reviewDoc;
+    }
+
+    public void setReviewDoc(boolean reviewDoc) {
+        this.reviewDoc = reviewDoc;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
+    }
+
+    public File getFiledata() {
+        return filedata;
+    }
+
+    public void setFiledata(File Filedata) {
+        this.filedata = Filedata;
+    }
+
+    public String getAppointmentNo() {
+        return appointmentNo;
+    }
+
+    public void setAppointmentNo(String appointment) {
+        this.appointmentNo = appointment;
+    }
+
+    public boolean isRestrictToProgram() {
+        return restrictToProgram;
+    }
+
+    public void setRestrictToProgram(boolean restrictToProgram) {
+        this.restrictToProgram = restrictToProgram;
+    }
+
+    public String getReceivedDate() {
+        return receivedDate;
+    }
+
+    public void setReceivedDate(String receivedDate) {
+        this.receivedDate = receivedDate;
+    }
+
+    public String getAbnormal() {
+        return abnormal;
+    }
+
+    public void setAbnormal(String abnormal) {
+        this.abnormal = abnormal;
+    }
+
+    public String getExtraReviewerId() {
+        return extraReviewerId;
+    }
+
+    public void setExtraReviewerId(String extraReviewerId) {
+        this.extraReviewerId = extraReviewerId;
+    }
+
+    public boolean isExtraReviewDoc() {
+        return extraReviewDoc;
+    }
+
+    public void setExtraReviewDoc(boolean extraReviewDoc) {
+        this.extraReviewDoc = extraReviewDoc;
     }
 }

@@ -30,11 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.oscarehr.PMmodule.model.Program;
 import org.oscarehr.PMmodule.service.ProgramManager;
 import org.oscarehr.PMmodule.service.ProviderManager;
+import org.oscarehr.util.SpringUtils;
 
 /**
  * Will report some basic statistics out of the PMM
@@ -47,14 +47,12 @@ import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
 public class BasicReport2Action extends ActionSupport {
-    HttpServletRequest request = ServletActionContext.getRequest();
-    HttpServletResponse response = ServletActionContext.getResponse();
+    private HttpServletRequest request = ServletActionContext.getRequest();
 
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
+    private ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
 
-    private ProgramManager programManager;
-    private ProviderManager providerManager;
-
-    public String unspecified() {
+    public String execute() {
         return form();
     }
 
@@ -105,13 +103,5 @@ public class BasicReport2Action extends ActionSupport {
 		}
 		*/
         return map;
-    }
-
-    public void setProgramManager(ProgramManager mgr) {
-        this.programManager = mgr;
-    }
-
-    public void setProviderManager(ProviderManager mgr) {
-        this.providerManager = mgr;
     }
 }

@@ -90,23 +90,23 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.title"/></title>
-        <link rel="stylesheet" href="../web.css"/>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
 
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
-                src="../share/calendar/lang/calendar-en.js"></script>
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/calendar-en.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
 
-        <script type="text/javascript" src="../dojoAjax/dojo.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/dojoAjax/dojo.js"></script>
         <script type="text/javascript" language="JavaScript">
             dojo.require("dojo.date.format");
             dojo.require("dojo.widget.*");
             dojo.require("dojo.validate.*");
         </script>
-        <script type="text/javascript" src="../js/caisi_report_tools.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/caisi_report_tools.js"></script>
 
 
         <script language="JavaScript">
@@ -643,7 +643,7 @@
                                                                                  id="NoShowDate" <%=NoShowEDate%>> <a
                         HREF="#"
                         onClick="popupPage(310,430,'../share/CalendarPopup.jsp?urlfrom=../report/reportindex.jsp&year=<%=now.get(Calendar.YEAR)%>&month=<%=now.get(Calendar.MONTH)+1%>&param=<%=URLEncoder.encode("&formdatebox=document.getElementsByName('nsdate')[0].value")%>')"><img
-                        title=Calendar " src="../images/cal.gif" alt="Calendar" border="0"><a>
+                        title=Calendar " src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"><a>
 
 
                     <!--
@@ -669,7 +669,7 @@
                     <%j++;%>
                 </td>
                 <td width="1"></td>
-                <td width="300"><a href="../oscarReport/ConsultationReport.jsp"
+                <td width="300"><a href="<%= request.getContextPath() %>/oscarReport/ConsultationReport.jsp"
                                    target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnConsultationReport"/></a></td>
                 <td></td>
                 <td></td>
@@ -682,7 +682,7 @@
                     <%j++;%>
                 </td>
                 <td width="1"></td>
-                <td width="300"><a href="../oscarReport/LabReqReport.jsp"
+                <td width="300"><a href="<%= request.getContextPath() %>/oscarReport/LabReqReport.jsp"
                                    target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnLaboratoryRequisition"/></a></td>
                 <td></td>
                 <td></td>
@@ -695,7 +695,7 @@
                 </td>
                 <td width="1"></td>
                 <td width="300"><a
-                        href="../oscarReport/ReportDemographicReport.jsp" target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnDemographicReportTool"/></a></td>
+                        href="<%= request.getContextPath() %>/oscarReport/ReportDemographicReport.jsp" target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnDemographicReportTool"/></a></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -718,7 +718,7 @@
                     <%j++;%>
                 </td>
                 <td width="1"></td>
-                <td width="300"><a href="../oscarReport/demographicSetEdit.jsp"
+                <td width="300"><a href="<%= request.getContextPath() %>/oscarReport/demographicSetEdit.jsp"
                                    target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnDemoSetEdit"/></a></td>
                 <td></td>
                 <td></td>
@@ -733,7 +733,7 @@
                 </td>
                 <td width="1"></td>
                 <td width="300"><a
-                        href="../oscarPrevention/PreventionReporting.jsp" target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnReport18n"/></a></td>
+                        href="<%= request.getContextPath() %>/oscarPrevention/PreventionReporting.jsp" target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnReport18n"/></a></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -758,7 +758,7 @@
                 </td>
                 <td width="1"></td>
                 <td width="300"><a
-                        href='../oscarReport/oscarMeasurements/SetupSelectCDMReport.do'><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.chronicDiseaseManagement"/></a></td>
+                        href="<%= request.getContextPath() %>/oscarReport/oscarMeasurements/SetupSelectCDMReport.do"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.chronicDiseaseManagement"/></a></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -769,7 +769,7 @@
                 </td>
                 <td width="1"></td>
                 <td width="300"><a
-                        href="../oscarWaitingList/SetupDisplayWaitingList.do?waitingListId="><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnWaiting"/></a></td>
+                        href="<%= request.getContextPath() %>/oscarWaitingList/SetupDisplayWaitingList.do?waitingListId="><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnWaiting"/></a></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -813,7 +813,7 @@
             <tr>
                 <td width="2"><%=j%><%j++;%></td>
                 <td width="1"></td>
-                <td width="300"><a href="../oscarReport/InjectionReport2.jsp" target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnInjectionReport"/></a></td>
+                <td width="300"><a href="<%= request.getContextPath() %>/oscarReport/InjectionReport2.jsp" target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnInjectionReport"/></a></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -823,7 +823,7 @@
             <tr>
                 <td width="2"><%=j%><%j++;%></td>
                 <td width="1"></td>
-                <td width="300"><a href="../oscarReport/OSISReport.jsp"
+                <td width="300"><a href="<%= request.getContextPath() %>/oscarReport/OSISReport.jsp"
                                    title="Off Streets into Shelters (OSIS) is a report based off of a Hamilton Public Health eForm"
                                    target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnOSISReport"/></a></td>
                 <td></td>
@@ -836,7 +836,7 @@
                 <td width="1"></td>
                 <td width="300"><a
                         title="Report that is based off of a Hamilton Public Health eForm for One Time Consults"
-                        href="../oscarReport/CDSOneTimeConsultReport.jsp" target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnCDSOneTimeConsultReport"/></a></td>
+                        href="<%= request.getContextPath() %>/oscarReport/CDSOneTimeConsultReport.jsp" target="_blank"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnCDSOneTimeConsultReport"/></a></td>
 
             </tr>
             <tr></tr>
@@ -850,7 +850,7 @@
 
                         <div><span>CAISI Reporting Tools</span>
                             <caisi:isModuleLoad moduleName="caisi">
-                                <div><a HREF="../PMmodule/ClientManager.do?method=getGeneralFormsReport"
+                                <div><a href="<%= request.getContextPath() %>/PMmodule/ClientManager.do?method=getGeneralFormsReport"
                                         target="generalFormsReport">General Forms Reports</a></div>
                                 <div><a href="javascript:void(0);"
                                         onclick="javascript:getIntakeReport('quick');return false;">Registration Intake

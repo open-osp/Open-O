@@ -57,8 +57,14 @@ public class MsgMessengerAdmin2Action extends ActionSupport {
     private GroupMembersDao groupMembersDao = SpringUtils.getBean(GroupMembersDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    public String unspecified() {
-        return null;
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("delete".equals(method)) {
+            return delete();
+        } else if ("update".equals(method)) {
+            return update();
+        }
+        return fetch();
     }
 
     @SuppressWarnings("unused")

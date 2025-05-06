@@ -75,7 +75,7 @@
         <!--instead of using css for the border I am using an image so the look is seamless between the table and about_oscar.jpg image-->
         <td background="../images/about_layout/table_body_bkg.jpg">
 
-            <img src="../images/about_layout/about_oscar.jpg" border="0">
+            <img src="<%= request.getContextPath() %>/images/about_layout/about_oscar.jpg" border="0">
 
             <!--START about oscar body table-->
             <table width="560" align="center" cellspacing="0" cellpadding="0">
@@ -130,7 +130,7 @@
                         </td>
                     </table>
 
-                    <img src="../images/about_layout/table_bottom_green.jpg" border="0" align="ABSBOTTOM">
+                    <img src="<%= request.getContextPath() %>/images/about_layout/table_bottom_green.jpg" border="0" align="ABSBOTTOM">
 
                 </td>
             </table>

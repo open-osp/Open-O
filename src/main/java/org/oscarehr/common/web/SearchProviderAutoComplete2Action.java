@@ -50,7 +50,10 @@ public class SearchProviderAutoComplete2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-    public String unspecified() throws Exception {
+    public String execute() throws Exception {
+        if ("labSearch".equals(request.getParameter("method"))) {
+            return labSearch();
+        }
         String searchStr = request.getParameter("providerKeyword");
         if (searchStr == null) {
             searchStr = request.getParameter("query");

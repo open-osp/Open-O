@@ -87,7 +87,7 @@
             document.forms[0].submit.value = "print"; //printAR1
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "formar1print.jsp";
+                document.forms[0].action = "/<%=project_home%>/form/formar1print.jsp";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -305,7 +305,7 @@
                     if (!bView) {
                 %>
                 <td><a
-                        href="javascript: popPage('formlabreq07.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AnetNatal','LabReq');">LAB</a>
+                        href="javascript: popPage('form/formlabreq07.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AnetNatal','LabReq');">LAB</a>
                 </td>
 
                 <td align="right"><b>View:</b> <a
@@ -1493,7 +1493,7 @@
                     if (!bView) {
                 %>
                 <td><a
-                        href="javascript: popPage('formlabreq07.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AnteNatal','LabReq');">LAB</a>
+                        href="javascript: popPage('form/formlabreq07.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AnteNatal','LabReq');">LAB</a>
                 </td>
                 <td align="right"><b>View:</b> <a
                         href="javascript: popupPage('formarpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">AR2

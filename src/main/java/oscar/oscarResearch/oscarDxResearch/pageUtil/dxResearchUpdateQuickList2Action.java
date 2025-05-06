@@ -60,6 +60,7 @@ public class dxResearchUpdateQuickList2Action extends ActionSupport {
         //String forward = frm.getForward();
         String codingSystem = this.getSelectedCodingSystem();
         String curUser = (String) request.getSession().getAttribute("user");
+        String contextPath = request.getContextPath();
         boolean valid = true;
 
         if (forward.equals("add")) {
@@ -69,7 +70,7 @@ public class dxResearchUpdateQuickList2Action extends ActionSupport {
         }
 
         if (!valid) {
-            response.sendRedirect("/oscarResearch/oscarDxResearch/dxResearchEditQuickList.jsp");
+            response.sendRedirect(contextPath + "/oscarResearch/oscarDxResearch/dxResearchEditQuickList.jsp");
             return NONE;
         }
 

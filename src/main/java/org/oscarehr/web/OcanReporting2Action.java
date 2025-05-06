@@ -65,12 +65,26 @@ public class OcanReporting2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     Logger logger = MiscUtils.getLogger();
 
-    private OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
-    private OcanStaffFormDataDao ocanStaffFormDataDao = (OcanStaffFormDataDao) SpringUtils.getBean(OcanStaffFormDataDao.class);
-    private DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+    private OcanStaffFormDao ocanStaffFormDao = SpringUtils.getBean(OcanStaffFormDao.class);
+    private OcanStaffFormDataDao ocanStaffFormDataDao = SpringUtils.getBean(OcanStaffFormDataDao.class);
+    private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("getAssessments".equals(method)) {
+            return getAssessments();
+        } else if ("generateIndividualNeedRatingOverTimeReport".equals(method)) {
+            return generateIndividualNeedRatingOverTimeReport();
+        } else if ("generateNeedRatingOverTimeReport".equals(method)) {
+            return generateNeedRatingOverTimeReport();
+        } else if ("generateSummaryOfActionsAndCommentsReport".equals(method)) {
+            return generateSummaryOfActionsAndCommentsReport();
+        }
+        return getAssessments();
+    }
+
 
     /*
      * return first OCAN that was done at this facility and call it either "Initial OCAN" or "Reassessment"
@@ -251,7 +265,6 @@ public class OcanReporting2Action extends ActionSupport {
 
         return null;
     }
-
 
     private JFreeChart generateChart(String title, String needType, String clientNeedType, List<IndividualNeedsOverTimeChartBean> chartBeanList) {
 

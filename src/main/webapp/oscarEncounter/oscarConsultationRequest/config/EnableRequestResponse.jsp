@@ -69,10 +69,10 @@
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.config.EnableRequestResponse.title"/>
         </title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
-    <link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
     <body class="BodyStyle" vlink="#0000FF">
     <!--  -->
     <table class="MainTable" id="scrollNumber1" name="encounterTable">
@@ -118,11 +118,11 @@
                                     <tr>
                                         <td>
                                             <input type="checkbox"
-                                                   name="consultRequestEnabled" <%=consultRequestEnabled ? "checked" : "" %>/>
+                                                   name="consultRequestEnabled" value="true" <%=consultRequestEnabled ? "checked" : "" %>/>
                                             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.config.EnableRequestResponse.enableRequest"/>
                                             <br/>
                                             <input type="checkbox"
-                                                   name="consultResponseEnabled" <%=consultResponseEnabled ? "checked" : "" %>/>
+                                                   name="consultResponseEnabled" value="true" <%=consultResponseEnabled ? "checked" : "" %>/>
                                             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.config.EnableRequestResponse.enableResponse"/>
                                         </td>
                                     </tr>

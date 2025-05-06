@@ -61,18 +61,18 @@
               href="<%=bView?"bcArStyleView.css" : "bcArStyle.css"%>">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
        adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <style type="text/css">
             <!--
@@ -208,7 +208,7 @@
             document.forms[0].submit.value = "print";
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "../form/createpdf?__title=British+Columbia+Antenatal+Record+Part+1&__cfgfile=bcar1PrintCfgPg1&__template=bcar1";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=British+Columbia+Antenatal+Record+Part+1&__cfgfile=bcar1PrintCfgPg1&__template=bcar1";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -218,7 +218,7 @@
             document.forms[0].submit.value = "print";
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "../form/createpdf?__title=British+Columbia+Antenatal+Record+Part+2&__cfgfile=bcar1PrintCfgPg2&__template=bcar22";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=British+Columbia+Antenatal+Record+Part+2&__cfgfile=bcar1PrintCfgPg2&__template=bcar22";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -973,7 +973,7 @@
                 <td nowrap><input type="text" name="pg1_obHistDate1"
                                   id="pg1_obHistDate1" size="6" maxlength="10"
                                   value="<%= props.getProperty("pg1_obHistDate1", "") %>"
-                                  @oscar.formDB/> <img src="../images/cal.gif"
+                                  @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                        id="pg1_obHistDate1_cal"></td>
                 <td><input type="text" name="pg1_birthOrAbort1"
                            style="width: 100%" size="20" maxlength="20"
@@ -1022,7 +1022,7 @@
                 <td><input type="text" name="pg1_obHistDate2"
                            id="pg1_obHistDate2" size="6" maxlength="10"
                            value="<%= props.getProperty("pg1_obHistDate2", "") %>"
-                           @oscar.formDB/> <img src="../images/cal.gif"
+                           @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_obHistDate2_cal"></td>
                 <td><input type="text" name="pg1_birthOrAbort2"
                            style="width: 100%" size="20" maxlength="20"
@@ -1071,7 +1071,7 @@
                 <td><input type="text" name="pg1_obHistDate3"
                            id="pg1_obHistDate3" size="6" maxlength="10"
                            value="<%= props.getProperty("pg1_obHistDate3", "") %>"
-                           @oscar.formDB/> <img src="../images/cal.gif"
+                           @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_obHistDate3_cal"></td>
                 <td><input type="text" name="pg1_birthOrAbort3"
                            style="width: 100%" size="20" maxlength="20"
@@ -1118,7 +1118,7 @@
                 <td><input type="text" name="pg1_obHistDate4"
                            id="pg1_obHistDate4" size="6" maxlength="10"
                            value="<%= props.getProperty("pg1_obHistDate4", "") %>"
-                           @oscar.formDB/> <img src="../images/cal.gif"
+                           @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_obHistDate4_cal"></td>
                 <td><input type="text" name="pg1_birthOrAbort4"
                            style="width: 100%" size="20" maxlength="20"
@@ -1165,7 +1165,7 @@
                 <td><input type="text" name="pg1_obHistDate5"
                            id="pg1_obHistDate5" size="6" maxlength="10"
                            value="<%= props.getProperty("pg1_obHistDate5", "") %>"
-                           @oscar.formDB/> <img src="../images/cal.gif"
+                           @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_obHistDate5_cal"></td>
                 <td><input type="text" name="pg1_birthOrAbort5"
                            style="width: 100%" size="20" maxlength="20"
@@ -1216,7 +1216,7 @@
 
                     <table width="100%" border="1" cellspacing="0" cellpadding="0">
                         <tr>
-                            <td width="30%"><b>4.</b> LMP <img src="../images/cal.gif"
+                            <td width="30%"><b>4.</b> LMP <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                id="pg1_lmp_cal"><br>
                                 dd/mm/yyyy<br>
                                 <input type="text" name="pg1_lmp" id="pg1_lmp" style="width: 100%"
@@ -1252,7 +1252,7 @@
 								<%}%>
 							</select></td>
                                         <td width="30%"><span class="small8">WHEN STOPPED:</font><br>
-							dd/mm/yyyy <img src="../images/cal.gif" id="pg1_stopDate_cal"><br>
+							dd/mm/yyyy <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_stopDate_cal"><br>
 							<input type="text" name="pg1_stopDate" id="pg1_stopDate"
                                    style="width: 100%" size="10" maxlength="10"
                                    value="<%= props.getProperty("pg1_stopDate", "") %>"
@@ -1260,7 +1260,7 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td>EDD BY US <img src="../images/cal.gif"
+                            <td>EDD BY US <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                id="pg1_eddByUs_cal"><br>
                                 dd/mm/yyyy<br>
                                 <input type="text" name="pg1_eddByUs" id="pg1_eddByUs"
@@ -1884,7 +1884,7 @@
                            cellpadding="0">
                         <tr>
                             <td colspan="2"><b>11. EXAMINATION</b> dd/mm/yyyy <img
-                                    src="../images/cal.gif" id="pg1_examination_cal"><br>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_examination_cal"><br>
                                 <input type="text" name="pg1_examination" id="pg1_examination"
                                        style="width: 100%" size="10" maxlength="10"
                                        value="<%= props.getProperty("pg1_examination", "") %>"

@@ -40,7 +40,7 @@ import org.oscarehr.common.dao.BillingPaymentTypeDao;
 
 import org.oscarehr.common.model.BillingPaymentType;
 import org.oscarehr.util.MiscUtils;
-import org.springframework.stereotype.Component;
+import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
@@ -49,25 +49,33 @@ public class PaymentType2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-    private BillingPaymentTypeDao billingPaymentTypeDao;
-    private BillingONPaymentDao billPaymentDao;
-
-    public void setBillPaymentDao(BillingONPaymentDao billPaymentDao) {
-        this.billPaymentDao = billPaymentDao;
-    }
-
-    public void setBillingPaymentTypeDao(BillingPaymentTypeDao billingPaymentTypeDao) {
-        this.billingPaymentTypeDao = billingPaymentTypeDao;
-    }
+    private BillingPaymentTypeDao billingPaymentTypeDao = SpringUtils.getBean(BillingPaymentTypeDao.class);
+    private BillingONPaymentDao billPaymentDao = SpringUtils.getBean(BillingONPaymentDao.class);
 
     public String execute() {
-        List<BillingPaymentType> paymentTypeList = billingPaymentTypeDao.findAll();
-        request.setAttribute("paymentTypeList", paymentTypeList);
-        return SUCCESS;
+        String method = request.getParameter("method");
+        if ("listAllType".equals(method)) {
+            return listAllType();
+        } else if ("createType".equals(method)) {
+            return createType();
+        } else if ("editType".equals(method)) {
+            return editType();
+        } else if ("removeType".equals(method)) {
+            return removeType();
+        }
+
+        return listAllType();
     }
 
     public String listAllType() {
-        return execute();
+        try {
+            List<BillingPaymentType> paymentTypeList = billingPaymentTypeDao.findAll();
+            request.setAttribute("paymentTypeList", paymentTypeList);
+            return SUCCESS;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ERROR;
+        }
     }
 
     public String createType() {

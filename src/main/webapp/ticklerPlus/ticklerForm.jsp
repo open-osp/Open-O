@@ -57,7 +57,7 @@
 
     boolean curAm = (now.get(Calendar.HOUR_OF_DAY) <= 12) ? true : false;
 %>
-<script type="text/javascript" src="../js/checkDate.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/checkDate.js"></script>
 <script type="text/javascript">
     function check_tickler_service_date() {
         return check_date('tickler.serviceDateWeb');

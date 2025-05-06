@@ -271,14 +271,14 @@
         <title>
             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarprevention.index.oscarpreventiontitre"/>
         </title><!--I18n-->
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
         <style type="text/css">
             div.ImmSet {
@@ -813,7 +813,7 @@
                             <%if (hasImportExtra) { %>
                             <a href="javascript:void(0);" title="Extra data from Import"
                                onclick="window.open('../annotation/importExtra.jsp?display=<%=annotation_display %>&amp;table_id=<%=id %>&amp;demo=<%=demographic_no %>','anwin','width=400,height=250');">
-                                <img src="../images/notes.gif" align="right" alt="Extra data from Import" height="16"
+                                <img src="<%= request.getContextPath() %>/images/notes.gif" align="right" alt="Extra data from Import" height="16"
                                      width="13" border="0"> </a>
                             <%} %>
                         </fieldset>
@@ -841,7 +841,7 @@
                                                                                           id="prevDate"
                                                                                           value="<%=prevDate%>"
                                                                                           size="15" required> <a
-                                    id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0"/></a>
+                                    id="date"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                                 <br>
                                 <div id="errorPrevDateMessage"
                                      style="color: red;margin-left: 80px;font-weight: normal;"></div>
@@ -1133,7 +1133,7 @@
                                                                                           id="prevDate"
                                                                                           value="<%=prevDate%>"
                                                                                           size="15" required> <a
-                                    id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0"/></a>
+                                    id="date"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                                 <br>
                                 <div id="errorPrevDateMessage"
                                      style="color: red;margin-left: 80px;font-weight: normal;"></div>
@@ -1313,7 +1313,7 @@
                                                                                           id="prevDate"
                                                                                           value="<%=prevDate%>"
                                                                                           size="15" required> <a
-                                    id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0"/></a>
+                                    id="date"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                                 <br>
                                 <div id="errorPrevDateMessage"
                                      style="color: red;margin-left: 80px;font-weight: normal;"></div>
@@ -1382,7 +1382,7 @@
                                                                                           id="prevDate"
                                                                                           value="<%=prevDate%>"
                                                                                           size="15" required> <a
-                                    id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0"/></a>
+                                    id="date"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                                 <br>
                                 <div id="errorPrevDateMessage"
                                      style="color: red;margin-left: 80px;font-weight: normal;"></div>
@@ -1420,7 +1420,7 @@
                                     <label for="nextDate">Next Date:</label><input type="text" name="nextDate"
                                                                                    value="<%=nextDate%>" id="nextDate"
                                                                                    size="9"><a id="nextDateCal"><img
-                                        title="Calendar" src="../images/cal.gif" alt="Calendar" border="0"/></a>
+                                        title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                                 </div>
                                 <div>
                                     <label for="neverWarn" class="checkbox">Never Remind:</label><input type="checkbox"

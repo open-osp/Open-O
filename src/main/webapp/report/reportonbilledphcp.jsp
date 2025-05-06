@@ -78,18 +78,18 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>PHCP Report</title>
-        <link rel="stylesheet" href="../css/receptionistapptstyle.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/css/receptionistapptstyle.css">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <script language="JavaScript">
 
             <!--
@@ -134,10 +134,10 @@
                     </select></td>
                 <td nowrap>start <input type="text" name="startDate"
                                         id="startDate" value="<%=startDate!=null?startDate:""%>" size="10"
-                                        readonly> <img src="../images/cal.gif" id="startDate_cal">
+                                        readonly> <img src="<%= request.getContextPath() %>/images/cal.gif" id="startDate_cal">
                     end <input type="text" name="endDate" id="endDate"
                                value="<%=endDate!=null?endDate:""%>" size="10" readonly> <img
-                            src="../images/cal.gif" id="endDate_cal"></td>
+                            src="<%= request.getContextPath() %>/images/cal.gif" id="endDate_cal"></td>
                 <td>Provider: <select name="providerNoDoctor">
                     <option value="">------Doctor------</option>
                     <%

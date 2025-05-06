@@ -78,7 +78,6 @@ public class Contact2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     static Logger logger = MiscUtils.getLogger();
     static ContactDao contactDao = (ContactDao) SpringUtils.getBean(ContactDao.class);
     static ProfessionalContactDao proContactDao = (ProfessionalContactDao) SpringUtils.getBean(ProfessionalContactDao.class);
@@ -94,6 +93,46 @@ public class Contact2Action extends ActionSupport {
 
     @Override
     public String execute() {
+        String method = request.getParameter("method");
+        if ("saveManage".equals(method)) {
+            return saveManage();
+        } else if ("removeContact".equals(method)) {
+            return removeContact();
+        } else if ("addContact".equals(method)) {
+            return addContact();
+        } else if ("addProContact".equals(method)) {
+            return addProContact();
+        } else if ("editHealthCareTeam".equals(method)) {
+            return editHealthCareTeam();
+        } else if ("editContact".equals(method)) {
+            return editContact();
+        } else if ("viewContact".equals(method)) {
+            return viewContact();
+        } else if ("editProContact".equals(method)) {
+            return editProContact();
+        } else if ("saveContact".equals(method)) {
+            return saveContact();
+        } else if ("saveProContact".equals(method)) {
+            return saveProContact();
+        } else if ("setEmergencyContact".equals(method)) {
+            return setEmergencyContact();
+        } else if ("setDNC".equals(method)) {
+            return setDNC();
+        } else if ("setMRP".equals(method)) {
+            return setMRP();
+        } else if ("searchAllContacts".equals(method)) {
+            return searchAllContacts();
+        } else if ("addPharmacy".equals(method)) {
+            return addPharmacy();
+        } else if ("removePharmacy".equals(method)) {
+            return removePharmacy();
+        } else if ("addPharmacyInfo".equals(method)) {
+            return addPharmacyInfo();
+        } else if ("editPharmacyInfo".equals(method)) {
+            return editPharmacyInfo();
+        } else if ("savePharmacyInfo".equals(method)) {
+            return savePharmacyInfo();
+        } 
         return manage();
     }
 
@@ -1053,7 +1092,6 @@ public class Contact2Action extends ActionSupport {
         return demographicContact;
     }
 
-
     private static void setPersonalEmergencyContacts(final LoggedInInfo loggedInInfo, HttpServletRequest request, final int demographicNo) {
         Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographicNo);
         request.setAttribute("demographic", demographic);
@@ -1075,7 +1113,6 @@ public class Contact2Action extends ActionSupport {
         request.setAttribute("demographicNoString", demographic.getDemographicNo() + "");
     }
 
-
     /**
      * Return a list of of all the contacts in Oscar's database.
      * Contact, Professional Contact, and Professional Specialists
@@ -1094,7 +1131,6 @@ public class Contact2Action extends ActionSupport {
         return contacts;
     }
 
-
     public static List<Contact> searchContacts(String searchMode, String orderBy, String keyword) {
         List<Contact> contacts = contactDao.search(searchMode, orderBy, keyword);
         return contacts;
@@ -1109,7 +1145,6 @@ public class Contact2Action extends ActionSupport {
         List<ProfessionalSpecialist> contacts = professionalSpecialistDao.search(keyword);
         return contacts;
     }
-
 
     /**
      * #---------------------------> DEPRECATED METHODS #--------------------------->

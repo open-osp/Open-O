@@ -63,37 +63,37 @@
     <link rel="stylesheet" type="text/css" href="rourkeStyle.css">
     <!-- calendar stylesheet -->
     <link rel="stylesheet" type="text/css" media="all"
-          href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+          href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
     <!-- main calendar program -->
-    <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
     <!-- language for the calendar -->
     <script type="text/javascript"
-            src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+            src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
     <!-- the following script defines the Calendar.setup helper function, which makes
            adding a calendar a matter of 1 or 2 lines of code. -->
-    <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
     <!-- popup mouseover js code -->
-    <script type="text/javascript" src="../share/javascript/mouseover.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/mouseover.js"></script>
 
-    <script type="text/javascript" src="../share/javascript/prototype.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
 
     <!--Text Area text max limit code -->
     <script type="text/javascript"
-            src="../share/javascript/txtCounter/x_core.js"></script>
+            src="<%= request.getContextPath() %>/share/javascript/txtCounter/x_core.js"></script>
     <script type="text/javascript"
-            src="../share/javascript/txtCounter/x_dom.js"></script>
+            src="<%= request.getContextPath() %>/share/javascript/txtCounter/x_dom.js"></script>
     <script type="text/javascript"
-            src="../share/javascript/txtCounter/x_event.js"></script>
+            src="<%= request.getContextPath() %>/share/javascript/txtCounter/x_event.js"></script>
     <script type="text/javascript"
-            src="../share/javascript/txtCounter/ylib.js"></script>
+            src="<%= request.getContextPath() %>/share/javascript/txtCounter/ylib.js"></script>
     <script type="text/javascript"
-            src="../share/javascript/txtCounter/y_TextCounter.js"></script>
+            src="<%= request.getContextPath() %>/share/javascript/txtCounter/y_TextCounter.js"></script>
     <script type="text/javascript"
-            src="../share/javascript/txtCounter/y_util.js"></script>
+            src="<%= request.getContextPath() %>/share/javascript/txtCounter/y_util.js"></script>
 
     <%
         String project_home = request.getContextPath().substring(1);
@@ -258,7 +258,7 @@
 
         function onPrintAll() {
 
-            document.forms["frmP1"].action = "../form/formname.do?__title=Rourke+Baby+Report&__cfgfile=rourke2009printCfgPg1&__cfgfile=rourke2009printCfgPg2&__cfgfile=rourke2009printCfgPg3&__cfgfile=rourke2009printCfgPg4&__template=rourke2009";
+            document.forms["frmP1"].action = "<%= request.getContextPath() %>/form/formname.do?__title=Rourke+Baby+Report&__cfgfile=rourke2009printCfgPg1&__cfgfile=rourke2009printCfgPg2&__cfgfile=rourke2009printCfgPg3&__cfgfile=rourke2009printCfgPg4&__template=rourke2009";
             document.forms["frmP1"].action += "&submit=printAll";
             document.forms["frmP1"].target = "_blank";
 

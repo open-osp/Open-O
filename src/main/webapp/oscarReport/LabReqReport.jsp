@@ -44,7 +44,7 @@
 
 
 <link rel="stylesheet" type="text/css"
-      href="../oscarEncounter/encounterStyles.css">
+      href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
 <% //This could be done alot better.
     String curUser_no, userfirstname, userlastname;
     curUser_no = (String) session.getAttribute("user");
@@ -91,7 +91,7 @@
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.LabReqReport.msgLabReqReport"/> <%= mons %>
     </title>
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
     <script type="text/javascript">
         var remote = null;

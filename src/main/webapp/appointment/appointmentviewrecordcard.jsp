@@ -175,7 +175,7 @@
                     <table>
                         <tr> <!-- first row is logo | prov info -->
                             <td style="padding-right: 10px">
-                                <img src="../imageRenderingServlet?source=clinic_logo" width="200px"/>
+                                <img src="<%= request.getContextPath() %>/imageRenderingServlet?source=clinic_logo" width="200px"/>
                             </td>
                             <td>
                                 <%

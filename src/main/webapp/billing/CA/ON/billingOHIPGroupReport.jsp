@@ -250,12 +250,12 @@
                 face="Arial, Helvetica, sans-serif" size="2" color="#003366"></font></td>
         <td width="19%"><font face="Arial, Helvetica, sans-serif"
                               size="2" color="#003366"><a
-                href="../servlet/OscarDownload?homepath=ohipdownload&filename=<%=oFile%>"
+                href="<%= request.getContextPath() %>/servlet/OscarDownload?homepath=ohipdownload&filename=<%=oFile%>"
                 target="_blank"><%=oFile%>
         </a></font></td>
         <td width="24%"><font face="Arial, Helvetica, sans-serif"
                               size="2" color="#003366"><a
-                href="../servlet/OscarDownload?homepath=ohipdownload&filename=<%=hFile%>"
+                href="<%= request.getContextPath() %>/servlet/OscarDownload?homepath=ohipdownload&filename=<%=hFile%>"
                 target="_blank"><%=hFile%>
         </a></font></td>
     </tr>

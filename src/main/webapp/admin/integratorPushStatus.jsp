@@ -40,7 +40,7 @@
         <head>
             <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
             <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-            <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
+            <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
             <script type="text/JavaScript">
                 function popupPage(vheight, vwidth, varpage) { //open a new popup window
                     var page = "" + varpage;
@@ -137,7 +137,7 @@
             <title>Integrator Push Manager</title>
 
             <link rel="stylesheet" type="text/css"
-                  href="../oscarEncounter/encounterStyles.css">
+                  href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
 
         </head>
 

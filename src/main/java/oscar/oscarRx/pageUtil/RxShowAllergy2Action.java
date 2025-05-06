@@ -60,15 +60,19 @@ public final class RxShowAllergy2Action extends ActionSupport {
         reorder(request);
         //ActionForward fwd = mapping.findForward("success-redirect");
         try {
-            response.sendRedirect("/oscarRx/ShowAllergies.jsp?demographicNo=" + request.getParameter("demographicNo"));
+            response.sendRedirect(request.getContextPath() + "/oscarRx/ShowAllergies.jsp?demographicNo=" + request.getParameter("demographicNo"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return NONE;
     }
 
-    public String unspecified()
+    public String execute()
             throws IOException, ServletException {
+
+        if ("reorder".equals(request.getParameter("method"))) {
+            return reorder();
+        }
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_allergy", "r", null)) {
@@ -122,9 +126,9 @@ public final class RxShowAllergy2Action extends ActionSupport {
 
         RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
 
-        String forward = "/oscarRx/ShowAllergies.jsp";
+        String forward = request.getContextPath() + "/oscarRx/ShowAllergies.jsp";
         if (useRx3) {
-            forward = "/oscarRx/ShowAllergies2.jsp";
+            forward = request.getContextPath() + "/oscarRx/ShowAllergies2.jsp";
         }
         if (patient != null) {
             request.getSession().setAttribute("Patient", patient);

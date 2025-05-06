@@ -32,18 +32,15 @@ import com.quatro.service.LookupManager;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
+import org.oscarehr.util.SpringUtils;
 
 public class LookupCodeList2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-    private LookupManager lookupManager = null;
+    private LookupManager lookupManager = SpringUtils.getBean(LookupManager.class);
 
-    public void setLookupManager(LookupManager lookupManager) {
-        this.lookupManager = lookupManager;
-    }
-
-    public String unspecified() {
+    public String execute() {
         return list();
     }
 

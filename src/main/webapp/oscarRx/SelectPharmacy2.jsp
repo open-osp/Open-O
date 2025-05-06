@@ -35,6 +35,7 @@
     oscar.oscarRx.pageUtil.RxSessionBean bean = null;
     String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
     boolean authed = true;
+    String surname = "", firstName = "";
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
     <%authed = false; %>
@@ -80,7 +81,11 @@
                     response.sendRedirect("error.html");
                     return; // Ensure no further JSP processing
                 }
-                oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getAttribute("Patient");
+                oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getSession().getAttribute("Patient");
+                if (patient != null) {
+                    surname = patient.getSurname();
+                    firstName = patient.getFirstName();
+                }
             %>
         </c:if>
         <script type="text/javascript">
@@ -390,7 +395,7 @@
                     opener.window.refresh();
                     window.close();
                 } else {
-                    window.location.href = "SearchDrug3.jsp";
+                    window.location.href = "oscarRx/SearchDrug3.jsp";
                 }
             }
 
@@ -474,7 +479,7 @@
                         <h2><fmt:setBundle basename="oscarResources"/><fmt:message key="SelectPharmacy.title"/>
                             <span style="font-size: small;">
 						<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.nameText"/>
-                        ${patient.surname}, ${patient.firstName}
+                        <%=surname%>, <%=firstName%>
                     </span>
                             <input type=button class="btn btn-default pull-right" onclick="returnToRx();"
                                    value="Return to RX"/>

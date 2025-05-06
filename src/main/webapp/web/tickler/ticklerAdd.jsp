@@ -56,7 +56,7 @@
                 <div class="row" ng-if="tickler.demographic != null">
                     <div class="col-xs-3">
                         <img width="60px"
-                             ng-src="../imageRenderingServlet?source=local_client&clientId={{tickler.demographic.demographicNo}}"/>
+                             ng-src="<%= request.getContextPath() %>/imageRenderingServlet?source=local_client&clientId={{tickler.demographic.demographicNo}}"/>
                     </div>
                     <div class="col-xs-9">
                         <div>{{tickler.demographic.lastName}}, {{tickler.demographic.firstName}}</div>

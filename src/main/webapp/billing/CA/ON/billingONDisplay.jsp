@@ -87,16 +87,16 @@
         <link rel="stylesheet" type="text/css" href="billingON.css"/>
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../../../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
         <!-- main calendar program -->
-        <script type="text/javascript" src="../../../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../../../share/calendar/lang/calendar-en.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/calendar-en.js"></script>
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
         <script type="text/javascript"
-                src="../../../share/calendar/calendar-setup.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <script language="JavaScript">
             <!--
             function setfocus() {
@@ -394,7 +394,7 @@
             <tr class="myGreen">
                 <td><b><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.billingCorrection.msgBillingInf"/></b></td>
                 <td width="46%"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.billingCorrection.btnBillingDate"/><img
-                        src="../../../images/cal.gif" id="xml_appointment_date_cal"/>: <input
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="xml_appointment_date_cal"/>: <input
                         type="text" id="xml_appointment_date" name="xml_appointment_date"
                         value="<%=BillDate%>" size=10/></td>
             </tr>
@@ -498,7 +498,7 @@
                 </select></td>
                 <td width="46%"><b> <input type="hidden" name="xml_visitdate"
                                            value="<%=visitdate%>"/> <fmt:setBundle basename="oscarResources"/><fmt:message key="billing.billingCorrection.btnAdmissionDate"/><img
-                        src="../../../images/cal.gif" id="xml_vdate_cal"/>: <input
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="xml_vdate_cal"/>: <input
                         type="text" id="xml_vdate" name="xml_vdate" value="<%=visitdate%>"
                         size=10/></b></td>
             </tr>

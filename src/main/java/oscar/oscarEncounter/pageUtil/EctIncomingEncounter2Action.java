@@ -86,8 +86,7 @@ public class EctIncomingEncounter2Action extends ActionSupport {
 
 
     private static Logger log = MiscUtils.getLogger();
-    private CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO) SpringUtils
-            .getBean(CaseManagementNoteDAO.class);
+    private CaseManagementNoteDAO caseManagementNoteDao = SpringUtils.getBean(CaseManagementNoteDAO.class);
     private CaseManagementManager caseManagementMgr = SpringUtils.getBean(CaseManagementManager.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 

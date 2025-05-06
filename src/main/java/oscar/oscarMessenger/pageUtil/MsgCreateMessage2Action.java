@@ -157,7 +157,7 @@ public class MsgCreateMessage2Action extends ActionSupport {
         return "error";
     }
     
-    private String[] provider;
+    private String[] provider = new String[0];
     private String message;
     private String subject;
     private String demographic_no;

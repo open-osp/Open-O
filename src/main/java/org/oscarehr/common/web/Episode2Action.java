@@ -52,6 +52,12 @@ public class Episode2Action extends ActionSupport {
 
     @Override
     public String execute() {
+        if ("save".equals(request.getParameter("method"))) {
+            return save();
+        }
+        if ("edit".equals(request.getParameter("method"))) {
+            return edit();
+        }
         return this.list();
     }
 

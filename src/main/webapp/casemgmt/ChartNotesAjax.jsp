@@ -128,8 +128,15 @@
     String frmName = "caseManagementEntryForm" + demographicNo;
     CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean) session.getAttribute(frmName);
 
+    if (cform == null) {
+        cform = new CaseManagementEntryFormBean();
+        session.setAttribute(frmName, cform);
+    }
+
     if (request.getParameter("caseManagementEntryForm") == null) {
-        request.setAttribute("caseManagementEntryForm", cform);
+        if (cform != null) {
+            request.setAttribute("caseManagementEntryForm", cform);
+        } 
     }
 
     Integer offset = Integer.parseInt(request.getParameter("offset"));

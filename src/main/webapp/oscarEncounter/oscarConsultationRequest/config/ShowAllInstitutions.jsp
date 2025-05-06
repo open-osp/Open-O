@@ -56,10 +56,10 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Show All Institutions</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
-    <link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
     <body class="BodyStyle" vlink="#0000FF">
     <% 
     java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
@@ -116,8 +116,11 @@
                                                 <tr>
                                                     <td>
                                                         <%
-                                                            out.print("<a href=\"../../../oscarEncounter/ShowAllInstitutions.do?id=" + i.getId() + "&name=" + i.getName() + "\">" + i.getName() + "</a>");
-
+                                                            String contextPath = request.getContextPath();
+                                                            String url = contextPath + "/oscarEncounter/ShowAllInstitutions.do?id=" + i.getId() + "&name=" + i.getName();
+                                                            out.print("<a href=\"" + url + "\">");
+                                                            out.print(i.getName());
+                                                            out.print("</a>");
                                                         %>
                                                     </td>
                                                 </tr>

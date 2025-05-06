@@ -34,7 +34,7 @@
         <textarea style="width:100%;height:80%" ng-model="ticklerNote.note"></textarea>
         <span ng-show="ticklerNote.revision>0">
 			<fmt:message bundle="${uiBundle}" key="tickler.note.date"/>: <span>{{ticklerNote.observationDate | date: 'yyyy-MM-dd'}}</span> <fmt:setBundle basename="oscarResources"/><fmt:message key="tickler.note.revision"/> <a target="note_history"
-                                                             href="../CaseManagementEntry.do?method=notehistory&noteId={{ticklerNote.noteId}}"><span>{{ticklerNote.revision}}</span></a><br>
+                                                             href="<%= request.getContextPath() %>/CaseManagementEntry.do?method=notehistory&noteId={{ticklerNote.noteId}}"><span>{{ticklerNote.revision}}</span></a><br>
 			<fmt:message bundle="${uiBundle}" key="tickler.note.editor"/>: <span>{{ticklerNote.editor}}</span>
 			</span>
     </form>

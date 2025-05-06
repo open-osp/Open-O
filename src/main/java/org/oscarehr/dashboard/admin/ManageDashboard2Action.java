@@ -65,12 +65,25 @@ public class ManageDashboard2Action extends ActionSupport {
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     private static DashboardManager dashboardManager = SpringUtils.getBean(DashboardManager.class);
 
-    public String unspecified() {
+    public String execute() {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_dashboardManager", SecurityInfoManager.WRITE, null)) {
             return "unauthorized";
+        }
+
+        String method = request.getParameter("method");
+        if ("importTemplate".equals(method)) {
+            return importTemplate();
+        } else if ("importTemplate".equals(method)) {
+            return importTemplate();
+        } else if ("assignDashboard".equals(method)) {
+            return assignDashboard();
+        } else if ("saveDashboard".equals(method)) {
+            return saveDashboard();
+        } else if ("toggleActive".equals(method)) {
+            return toggleActive();
         }
 
         setRequest(loggedInInfo, request);

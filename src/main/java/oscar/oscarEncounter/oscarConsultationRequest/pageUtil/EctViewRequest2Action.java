@@ -94,7 +94,7 @@ public class EctViewRequest2Action extends ActionSupport {
         return SUCCESS;
     }
 
-    private static void setAppointmentDateTime(EctConsultationFormRequestForm thisForm, ConsultationRequest consult) {
+    private static void setAppointmentDateTime(EctConsultationFormRequest2Form thisForm, ConsultationRequest consult) {
         Calendar cal = Calendar.getInstance();
         Date date1 = consult.getAppointmentDate();
         Date date2 = consult.getAppointmentTime();
@@ -128,7 +128,7 @@ public class EctViewRequest2Action extends ActionSupport {
     }
 
 
-        public static void fillFormValues(LoggedInInfo loggedInInfo, EctConsultationFormRequestForm thisForm, Integer requestId) {
+        public static void fillFormValues(LoggedInInfo loggedInInfo, EctConsultationFormRequest2Form thisForm, Integer requestId) {
         	checkPrivilege(loggedInInfo);
 
             ConsultationManager consultationManager = SpringUtils.getBean(ConsultationManager.class);
@@ -201,7 +201,7 @@ public class EctViewRequest2Action extends ActionSupport {
             thisForm.setFdid(consult.getFdid());
         }
 
-    public static void fillFormValues(EctConsultationFormRequestForm thisForm, EctConsultationFormRequestUtil consultUtil) {
+    public static void fillFormValues(EctConsultationFormRequest2Form thisForm, EctConsultationFormRequestUtil consultUtil) {
         thisForm.setAllergies(consultUtil.allergies);
         thisForm.setReasonForConsultation(consultUtil.reasonForConsultation);
         thisForm.setClinicalInformation(consultUtil.clinicalInformation);
@@ -249,7 +249,7 @@ public class EctViewRequest2Action extends ActionSupport {
 
     }
 
-    public static void fillFormValues(EctConsultationFormRequestForm thisForm, String segmentId) throws HL7Exception, UnsupportedEncodingException, Base64DecodingException {
+    public static void fillFormValues(EctConsultationFormRequest2Form thisForm, String segmentId) throws HL7Exception, UnsupportedEncodingException, Base64DecodingException {
         Hl7TextMessageDao hl7TextMessageDao = (Hl7TextMessageDao) SpringUtils.getBean(Hl7TextMessageDao.class);
         Hl7TextMessage hl7TextMessage = hl7TextMessageDao.find(Integer.parseInt(segmentId));
 

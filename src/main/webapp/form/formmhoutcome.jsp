@@ -52,8 +52,8 @@
         <title>Mental Health Outcome</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <link rel="stylesheet" type="text/css" media="screen"
-              href="mhStyles.css">
-        <link rel="stylesheet" type="text/css" media="print" href="print.css">
+              href="form/mhStyles.css">
+        <link rel="stylesheet" type="text/css" media="print" href="form/print.css">
 
         <%
             String formClass = "MentalHealth";
@@ -96,7 +96,7 @@
                 //if(ret==true) {
                 //ret = confirm("Do you wish to save this form and view the print preview?");
                 popupFixedPage(650, 850, '../provider/notice.htm');
-                document.forms[0].action = "formmhoutcomeprint.jsp";
+                document.forms[0].action = "form/formmhoutcomeprint.jsp";
                 document.forms[0].target = "planner";
                 document.forms[0].submit();
                 document.forms[0].target = "apptProviderSearch";
@@ -353,7 +353,7 @@
                 return b;
             }
         </script>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
     </head>
     <body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0"
@@ -386,9 +386,9 @@
                     <input type="submit" value="Print"
                            onclick="javascript:return onPrint();"/></td>
                 <td align="right"><a
-                        href="formmhreferral.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">Referral</a>
+                        href="form/formmhreferral.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">Referral</a>
                     &nbsp;|&nbsp; <a
-                            href="formmhassessment.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">Assessment</a>
+                            href="form/formmhassessment.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">Assessment</a>
                     &nbsp;|&nbsp; Outcome
                 </td>
             </tr>
@@ -593,9 +593,9 @@
                     <input type="submit" value="Print"
                            onclick="javascript:return onPrint();"/></td>
                 <td align="right"><a
-                        href="formmhreferral.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">Referral</a>
+                        href="form/formmhreferral.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">Referral</a>
                     &nbsp;|&nbsp; <a
-                            href="formmhassessment.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">Assessment</a>
+                            href="form/formmhassessment.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">Assessment</a>
                     &nbsp;|&nbsp; Outcome
                 </td>
             </tr>

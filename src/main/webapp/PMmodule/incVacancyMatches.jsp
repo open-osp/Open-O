@@ -132,7 +132,7 @@
                 </display:column>
 
                 <display:column sortable="false" title="Intake Form">
-                    <a href="../eform/efmshowform_data.jsp?fdid=<c:out value="${client.formDataID}"/>">
+                    <a href="<%= request.getContextPath() %>/eform/efmshowform_data.jsp?fdid=<c:out value="${client.formDataID}"/>">
                         Intake</a>
                 </display:column>
 

@@ -114,7 +114,7 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.searchnext.title"/></title>
-    <link rel="stylesheet" href="../web.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
     <script>
         function popupPage2(varpage, windowname, vheight, vwidth) {
             // Provide default values for windowname, vheight, and vwidth incase popupPage2

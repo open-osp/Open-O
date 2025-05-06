@@ -175,7 +175,7 @@ trusted truejava.lang.Boolean ? i think
 <% } %>
 
 <script type="text/javascript">
-    new Ajax.Updater('showHideTotal', 'updateMyDrugrefResource.jsp', {
+    new Ajax.Updater('showHideTotal', 'oscarRx/updateMyDrugrefResource.jsp', {
         method: 'get', onSuccess: function (transport) {
             oscarLog("updated showHideTotal ");
         }

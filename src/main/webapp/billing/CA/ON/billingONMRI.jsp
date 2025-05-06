@@ -394,13 +394,13 @@
             </font></td>
 
             <td width="15%"><font size="2"> <a
-                    href="../../../servlet/OscarDownload?homepath=ohipdownload&filename=<%=oFile%>"
+                    href="<%= request.getContextPath() %>/servlet/OscarDownload?homepath=ohipdownload&filename=<%=oFile%>"
                     target="_blank"><%=oFile%>
             </a></font></td>
             <td width="3%"><input type="button" value="R" class="btn hidden-print"
                                   onclick="recreate(<%=obj.getId() %>)"/></td>
             <td><font size="2"> <a
-                    href="../../../servlet/OscarDownload?homepath=ohipdownload&filename=<%=hFile%>"
+                    href="<%= request.getContextPath() %>/servlet/OscarDownload?homepath=ohipdownload&filename=<%=hFile%>"
                     target="_blank"><%=hFile%>
             </a></font></td>
         </tr>
@@ -451,11 +451,11 @@
             </font></td>
 
             <td colspan=2><font size="2"> <a
-                    href="../../../servlet/OscarDownload?homepath=ohipdownload&filename=<%=oFile%>"
+                    href="<%= request.getContextPath() %>/servlet/OscarDownload?homepath=ohipdownload&filename=<%=oFile%>"
                     target="_blank"><%=oFile%>
             </a></font></td>
             <td><font size="2"> <a
-                    href="../../../servlet/OscarDownload?homepath=ohipdownload&filename=<%=hFile%>"
+                    href="<%= request.getContextPath() %>/servlet/OscarDownload?homepath=ohipdownload&filename=<%=hFile%>"
                     target="_blank"><%=hFile%>
             </a></font></td>
         </tr>
@@ -479,8 +479,7 @@
     });
 
     $(document).ready(function () {
-        parent.parent.resizeIframe($('html').height());
-
+        parent.resizeIframe($('html').height());
     });
 
 </script>

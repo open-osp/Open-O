@@ -23,7 +23,18 @@
     Ontario, Canada
 
 --%>
+<%@ page import="oscar.oscarProvider.data.*, oscar.OscarProperties, oscar.oscarClinic.ClinicData, java.util.*" %>
+<%@page import="org.oscarehr.common.dao.SiteDao" %>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@page import="org.oscarehr.common.model.Site" %>
+<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="org.oscarehr.common.model.Appointment" %>
+<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
+
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
@@ -37,20 +48,6 @@
         return;
     }
 %>
-
-<%@ page import="oscar.oscarProvider.data.*, oscar.OscarProperties, oscar.oscarClinic.ClinicData, java.util.*" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
-
-<%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
-
-
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.common.model.Site" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
 <%
     OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
 %>
@@ -61,18 +58,18 @@
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="ViewScript.title"/></title>
 
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <c:if test="${empty RxSessionBean}">
-            <% response.sendRedirect("error.html"); %>
+        <c:if test="${empty sessionScope.RxSessionBean}">
+            <c:redirect url="error.html"/>
         </c:if>
-        <c:if test="${not empty RxSessionBean}">
-            <c:set var="bean" value="${RxSessionBean}" scope="page"/>
+        <c:if test="${not empty sessionScope.RxSessionBean}">
+            <c:set var="bean" value="${sessionScope.RxSessionBean}" scope="page"/>
             <c:if test="${bean.valid == false}">
-                <% response.sendRedirect("error.html"); %>
+                <c:redirect url="error.html"/>
             </c:if>
         </c:if>
 
         <%
-            oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
+            oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
 
 //are we printing in the past?
             String reprint = (String) request.getAttribute("rePrint") != null ? (String) request.getAttribute("rePrint") : "false";
@@ -160,9 +157,9 @@
             }
             String comment = (String) request.getAttribute("comment");
         %>
-        <link rel="stylesheet" type="text/css" href="styles.css"/>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
-        <script type="text/javascript" src="../share/javascript/prototype.js"></script>
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
 
         <script type="text/javascript">
 
@@ -354,7 +351,7 @@
                                 <td width=440px>
                                     <div class="DivContentPadding"><!-- src modified by vic, hsfo -->
                                         <iframe id=preview name=preview width=440px height=580px
-                                                src="<%= dx<0?"Preview.jsp?rePrint="+reprint:dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
+                                                src="<%= dx<0?"oscarRx/Preview.jsp?rePrint="+reprint:dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
                                                 align=center border=0 frameborder=0></iframe>
                                     </div>
                                 </td>

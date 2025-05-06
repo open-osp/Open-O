@@ -106,7 +106,7 @@
 <html>
     <head>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" href="encounterStyles.css">
+        <link rel="stylesheet" type="text/css" href="css/encounterStyles.css">
         <title>
             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.DisplayMessages.title"/>
         </title>
@@ -358,9 +358,10 @@
                         </td>
                     </tr>
                     <%
-                        String strutsAction = "/oscarMessenger/DisplayMessages";
+                        String contextPath = request.getContextPath();
+                        String strutsAction = contextPath + "/oscarMessenger/DisplayMessages.do";
                         if (pageType == 2) {
-                            strutsAction = "/oscarMessenger/ReDisplayMessages";
+                            strutsAction = contextPath + "/oscarMessenger/ReDisplayMessages.do";
                         }
                     %>
 
@@ -505,7 +506,7 @@
                                             String atta = dm.getAttach();
                                             String pdfAtta = dm.getPdfAttach();
                                             if (atta.equals("1") || pdfAtta.equals("1")) { %>
-                                        <img src="img/clip4.jpg">
+                                        <img src="oscarMessenger/img/clip4.jpg">
                                         <% } %>
 
 

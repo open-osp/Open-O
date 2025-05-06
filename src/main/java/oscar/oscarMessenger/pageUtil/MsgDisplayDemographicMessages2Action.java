@@ -55,8 +55,6 @@ public class MsgDisplayDemographicMessages2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
-
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     public String execute()
@@ -71,25 +69,29 @@ public class MsgDisplayDemographicMessages2Action extends ActionSupport {
         MiscUtils.getLogger().debug("this is displayDemographicMessages.Action");
 
         // Setup variables
-        oscar.oscarMessenger.pageUtil.MsgSessionBean bean = null;
+        MsgSessionBean bean = (MsgSessionBean) request.getSession().getAttribute("msgSessionBean");
 
-        //Initialize forward location
-        String findForward = "success";
-
-        //if(request.getParameter("providerNo")!=null & request.getParameter("userName")!=null)
-        if (request.getSession().getAttribute("msgSessionBean") == null) {
-
-            bean = new oscar.oscarMessenger.pageUtil.MsgSessionBean();
-            bean.setProviderNo((String) request.getSession().getAttribute("user"));
-            bean.setUserName(request.getParameter("userName"));
-            bean.setDemographic_no(request.getParameter("demographic_no"));
+        if (bean == null) {
+            bean = new MsgSessionBean();
+            String providerNo = (String) request.getSession().getAttribute("user");
+            String userName = request.getParameter("userName");
+            String demographicNo = request.getParameter("demographic_no");
+            
+            if (providerNo == null || userName == null || demographicNo == null) {
+                MiscUtils.getLogger().error("Missing required parameters: " + 
+                                          "providerNo=" + providerNo + 
+                                          ", userName=" + userName + 
+                                          ", demographic_no=" + demographicNo);
+                return "error"; 
+            }
+            
+            bean.setProviderNo(providerNo);
+            bean.setUserName(userName);
+            bean.setDemographic_no(demographicNo);
 
             request.getSession().setAttribute("msgSessionBean", bean);
-
-        }//if
-        else {
-            bean = (oscar.oscarMessenger.pageUtil.MsgSessionBean) request.getSession().getAttribute("msgSessionBean");
-        }//else
+            MiscUtils.getLogger().debug("Created new MsgSessionBean for provider: " + providerNo);
+        }
 
 
         //Unlinked selected messages
@@ -98,12 +100,9 @@ public class MsgDisplayDemographicMessages2Action extends ActionSupport {
             for (int i = 0; i < messageNo.length; i++) {
                 msgDemoMap.unlinkMsg(request.getParameter("demographic_no"), messageNo[i]);
             }
-
-            //Forward to DisplayDemographiMessage.jsp
-            findForward = "demoMsg";
         }
 
-        return findForward;
+        return "demoMsg";
     }
 
 

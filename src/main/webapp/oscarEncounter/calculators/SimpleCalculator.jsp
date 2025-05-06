@@ -33,7 +33,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.calculators.SimpleCalculator.title"/></title>
-        <link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/encounterStyles.css">
         <SCRIPT LANGUAGE="JavaScript">
 
             var x = 0;
@@ -224,7 +224,7 @@
         </SCRIPT>
 
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
     <body class="BodyStyle" vlink="#0000FF">

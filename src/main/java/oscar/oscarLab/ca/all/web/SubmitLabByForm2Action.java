@@ -60,6 +60,13 @@ public class SubmitLabByForm2Action extends ActionSupport {
     Logger logger = MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() throws Exception {
+        if ("saveManage".equals(request.getParameter("method"))) {
+            return saveManage();
+        }
+        return manage();
+    }
+
     public String manage() {
         return "manage";
     }

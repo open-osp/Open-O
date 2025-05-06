@@ -64,17 +64,17 @@
         <tr>
             <td valign="center"><input type="button" class="mbttn"
                                        style="width: 180px"
-                                       onClick="popupPage(230,600,'dxResearchNewQuickList.jsp')"
+                                       onClick="popupPage(230,600,'oscarResearch/oscarDxResearch/dxResearchNewQuickList.jsp')"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.dxCustomization.addNewQuickList"/>"/>
             </td>
             <td valign="center"><input type="button" class="mbttn"
                                        style="width: 180px"
-                                       onClick="popupPage(230,600,'dxResearchLoadQuickList.do')"
+                                       onClick="popupPage(230,600,'oscarResearch/oscarDxResearch/dxResearchLoadQuickList.do')"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.dxCustomization.editQuickList"/>"/>
             </td>
             <td valign="center"><input type="button" class="mbttn"
                                        style="width: 180px"
-                                       onClick="popupPage(230,600,'dxResearchSelectAssociations.jsp')"
+                                       onClick="popupPage(230,600,'oscarResearch/oscarDxResearch/dxResearchSelectAssociations.jsp')"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.dxCustomization.editAssociations"/>"/>
             </td>
         </tr>

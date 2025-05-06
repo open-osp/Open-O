@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.oscarehr.common.dao.ClinicDAO;
 import org.oscarehr.common.model.Clinic;
+import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
@@ -40,10 +41,13 @@ public class ClinicManage2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
-    private ClinicDAO clinicDAO;
+    private ClinicDAO clinicDAO = SpringUtils.getBean(ClinicDAO.class);
 
     @Override
     public String execute() throws Exception {
+        if ("update".equals(request.getParameter("method"))) {
+            return update();
+        }
         return view();
     }
 
@@ -64,10 +68,6 @@ public class ClinicManage2Action extends ActionSupport {
         clinicDAO.save(clinic);
 
         return SUCCESS;
-    }
-
-    public void setClinicDAO(ClinicDAO clinicDAO) {
-        this.clinicDAO = clinicDAO;
     }
 
     private Clinic clinic;

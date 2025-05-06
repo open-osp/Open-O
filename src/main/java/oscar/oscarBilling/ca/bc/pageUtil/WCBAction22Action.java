@@ -62,6 +62,9 @@ public class WCBAction22Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    public String execute() throws Exception {
+        return save();
+    }
 
     public String save() throws Exception {
         if (request.getSession().getAttribute("user") == null) {

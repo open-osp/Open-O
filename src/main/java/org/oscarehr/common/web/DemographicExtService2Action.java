@@ -45,13 +45,14 @@ import org.apache.struts2.ServletActionContext;
 import oscar.util.LabelValueBean;
 
 public class DemographicExtService2Action extends ActionSupport {
-    HttpServletRequest request = ServletActionContext.getRequest();
-    HttpServletResponse response = ServletActionContext.getResponse();
-
-
-    DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
+    private HttpServletRequest request = ServletActionContext.getRequest();
+    private HttpServletResponse response = ServletActionContext.getResponse();
+    private DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() throws Exception {
+        return saveNewValue();
+    }
 
     public String saveNewValue() throws IOException {
         String demographicNo = request.getParameter("demographicNo");

@@ -97,6 +97,7 @@ public final class FrmSetupForm2Action extends ActionSupport {
 
         EctSessionBean bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean");
         EctEChartBean chartBean = new EctEChartBean();
+        String contextPath = request.getContextPath();
         String formId = request.getParameter("formId");
         this.setValue("formId", formId == null ? "0" : formId);
         String demo = request.getParameter("demographic_no");
@@ -252,7 +253,7 @@ public final class FrmSetupForm2Action extends ActionSupport {
             MiscUtils.getLogger().debug("This file must be placed at web/form");
             MiscUtils.getLogger().error("Error", e);
         }
-        response.sendRedirect("/form/form" + formName + ".jsp");
+        response.sendRedirect(contextPath + "/form/form" + formName + ".jsp");
         return NONE;
     }
 

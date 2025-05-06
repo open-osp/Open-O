@@ -1654,7 +1654,6 @@
             <!-- Skip jsp compile, run 'mvn package -Pjspc' to compile jsps -->
             <id>jspc</id>
             <activation>
-            
                 <activeByDefault>false</activeByDefault>
             </activation>
             <build>

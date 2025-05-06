@@ -90,14 +90,14 @@
 
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="../oscarMessenger/encounterStyles.css" media="screen">
-        <link rel="stylesheet" type="text/css" href="../oscarMessenger/printable.css" media="print">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarMessenger/encounterStyles.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarMessenger/printable.css" media="print">
 
         <title>
             View Message
         </title>
 
-        <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
         <script type="text/javascript">
             function BackToOscar() {
                 window.close();

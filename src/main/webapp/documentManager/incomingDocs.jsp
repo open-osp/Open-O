@@ -230,31 +230,32 @@
 <html>
 <head>
     <!-- main calendar program -->
-    <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <!-- language for the calendar -->
+    <fmt:setBundle basename="oscarResources"/>
     <script type="text/javascript"
-            src="../share/calendar/lang/<fmt:setBundle basename='oscarResources'/><fmt:message key='global.javascript.calendar'/>"></script>
+            src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:message key='global.javascript.calendar'/>"></script>
     <!-- the following script defines the Calendar.setup helper function, which makes
            adding a calendar a matter of 1 or 2 lines of code. -->
-    <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
     <!-- calendar stylesheet -->
-    <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1"/>
-    <script language="javascript" type="text/javascript" src="../share/javascript/Oscar.js"></script>
-    <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-    <script type="text/javascript" src="../share/javascript/effects.js"></script>
-    <script type="text/javascript" src="../share/javascript/controls.js"></script>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
+    <script language="javascript" type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/effects.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/controls.js"></script>
 
-    <script type="text/javascript" src="../share/yui/js/yahoo-dom-event.js"></script>
-    <script type="text/javascript" src="../share/yui/js/connection-min.js"></script>
-    <script type="text/javascript" src="../share/yui/js/animation-min.js"></script>
-    <script type="text/javascript" src="../share/yui/js/datasource-min.js"></script>
-    <script type="text/javascript" src="../share/yui/js/autocomplete-min.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/yahoo-dom-event.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/connection-min.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/animation-min.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/datasource-min.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/yui/js/autocomplete-min.js"></script>
 
-    <script type="text/javascript" src="../js/demographicProviderAutocomplete.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/demographicProviderAutocomplete.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="../share/yui/css/fonts-min.css"/>
-    <link rel="stylesheet" type="text/css" href="../share/yui/css/autocomplete.css"/>
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/demographicProviderAutocomplete.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/fonts-min.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/autocomplete.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/demographicProviderAutocomplete.css"/>
     <script type="text/javascript">
         var curPage =<%=pdfPageNumber%>;
         var totalPage =<%=numOfPage%>;

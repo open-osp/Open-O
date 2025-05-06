@@ -57,7 +57,7 @@
         <p class="PropSheetLevel1CurrentItem<%=alle%>">
             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.sideLinks.msgAllergies"/>
             <a href="javascript:void(0);" name="cmdAllergies"
-               onclick="javascript:window.location.href='ShowAllergies2.jsp?demographicNo=<%=request.getParameter("demographicNo")%>';"
+               onclick="javascript:window.location.href='oscarRx/ShowAllergies2.jsp?demographicNo=<%=request.getParameter("demographicNo")%>';"
                style="width: 200px">+</a>
         </p>
         <p class="PropSheetMenuItemLevel1">
@@ -131,8 +131,8 @@
     </security:oscarSec>
 
     <p class="PropSheetLevel1CurrentItem"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.sideLinks.msgFavorites"/>
-        <a href="EditFavorites2.jsp">edit</a>
-        <a href="CopyFavorites2.jsp">copy</a> <%-- <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.sideLinks.msgCopyFavorites"/> --%>
+        <a href="${pageContext.request.contextPath}/oscarRx/EditFavorites2.jsp">edit</a>
+        <a href="${pageContext.request.contextPath}/oscarRx/CopyFavorites2.jsp">copy</a> <%-- <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.sideLinks.msgCopyFavorites"/> --%>
     </p>
     <p class="PropSheetMenuItemLevel1">
             <%

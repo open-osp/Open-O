@@ -225,8 +225,8 @@
         %>
             <%--<link rel="stylesheet" type="text/css" href="styles.css" />--%>
 
-        <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-        <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
         <script type="text/javascript">
             function resetStash() {
@@ -688,7 +688,7 @@
                                 <td width=420px>
                                     <div class="DivContentPadding"><!-- src modified by vic, hsfo -->
                                         <iframe id='preview' name='preview' width=420px height=890px
-                                                src="<%= dx<0?"Preview2.jsp?scriptId="+request.getParameter("scriptId")+"&rePrint="+reprint+"&pharmacyId="+request.getParameter("pharmacyId"):dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
+                                                src="${pageContext.request.contextPath}/oscarRx/<%= dx<0?"Preview2.jsp?scriptId="+request.getParameter("scriptId")+"&rePrint="+reprint+"&pharmacyId="+request.getParameter("pharmacyId"):dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
                                                 align=center border=0 frameborder=0></iframe>
                                     </div>
                                 </td>

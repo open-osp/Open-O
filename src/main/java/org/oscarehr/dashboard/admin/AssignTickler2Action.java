@@ -55,12 +55,16 @@ public class AssignTickler2Action extends ActionSupport {
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
     private ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
 
-    public String unspecified() {
+    public String execute() {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_tickler", SecurityInfoManager.WRITE, null)) {
             return "unauthorized";
+        }
+
+        if ("saveTickler".equals(request.getParameter("method"))) {
+            return saveTickler();
         }
 
         String demographics = request.getParameter("demographics");

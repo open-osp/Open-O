@@ -35,11 +35,14 @@ import org.apache.xmlbeans.XmlOptions;
 import org.oscarehr.common.dao.ClinicDAO;
 import org.oscarehr.common.dao.DataExportDao;
 import org.oscarehr.common.dao.DemographicDao;
+import org.oscarehr.common.dao.OscarAppointmentDao;
 import org.oscarehr.common.dao.forms.Rourke2009DAO;
 import org.oscarehr.common.model.Clinic;
 import org.oscarehr.common.model.DataExport;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
+
 import oscar.OscarProperties;
 import oscar.form.model.FormRourke2009;
 import oscar.oscarReport.data.DemographicSets;
@@ -58,10 +61,10 @@ public class RourkeExport2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-    private ClinicDAO clinicDAO;
-    private DataExportDao dataExportDAO;
-    private DemographicDao demographicDao;
-    private Rourke2009DAO frmRourke2009DAO;
+    private ClinicDAO clinicDAO = SpringUtils.getBean(ClinicDAO.class);
+    private DataExportDao dataExportDAO = SpringUtils.getBean(DataExportDao.class);
+    private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+    private Rourke2009DAO frmRourke2009DAO = SpringUtils.getBean(Rourke2009DAO.class);
 
     private Logger log = MiscUtils.getLogger();
 

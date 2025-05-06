@@ -47,6 +47,10 @@ public class DisplayPersonalInfoAppointment2Action extends ActionSupport {
     public DisplayPersonalInfoAppointment2Action() {
     }
 
+    public String execute() {
+        return toggle();
+    }
+
     public String toggle() {
 
         Boolean showPersonal = (Boolean) request.getSession().getAttribute("showPersonal");

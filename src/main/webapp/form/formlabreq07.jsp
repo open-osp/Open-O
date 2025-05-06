@@ -24,6 +24,7 @@
 
 --%>
 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -53,11 +54,10 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Laboratory Requisition</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="screen"
-              href="labReq07Style.css">
-        <link rel="stylesheet" type="text/css" media="print" href="print.css">
-        <script src="../share/javascript/prototype.js" type="text/javascript"></script>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="screen" href="<%= request.getContextPath() %>/form/labReq07Style.css" />
+        <link rel="stylesheet" type="text/css" media="print" href="<%= request.getContextPath() %>/form/print.css" />
+        <script src="<%= request.getContextPath() %>/share/javascript/prototype.js" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
     <%
@@ -127,7 +127,12 @@
                 //ret = confirm("Do you wish to save this form and view the print preview?");
                 //popupFixedPage(650,850,'../provider/notice.htm');
                 temp = document.forms[0].action;
-                document.forms[0].action = "<rewrite:reWrite jspPage="formname.do?__title=Lab+Request&__cfgfile=labReqPrint07&__template=labReqForm07"/>";
+                <c:url var="formAction" value="form/formname.do">
+			        <c:param name="__title" value="Lab Request"/>
+			        <c:param name="__cfgfile" value="labReqPrint07"/>
+			        <c:param name="__template" value="labReqForm07"/>
+			    </c:url>
+                document.forms[0].action = "${formAction}";
                 document.forms[0].submit.value = "printall";
                 document.forms[0].target = "_self";
             }

@@ -43,6 +43,9 @@ public class PrinterList2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    public String execute() throws IOException {
+        return generatePrinterListInPDF();
+    }
 
     public String generatePrinterListInPDF() throws IOException {
         ByteArrayOutputStream baos = null;

@@ -56,6 +56,16 @@ public class FacilityManager2Action extends ActionSupport {
 
     @Override
     public String execute() {
+        String method = request.getParameter("method");
+        if ("edit".equals(method)) {
+            return edit();
+        } else if ("delete".equals(method)) {
+            return delete();
+        } else if ("add".equals(method)) {
+            return add();
+        } else if ("save".equals(method)) {
+            return save();
+        }
         return list();
     }
 

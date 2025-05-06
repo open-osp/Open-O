@@ -47,7 +47,7 @@
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setPHRLogin.title"/></title>
 
         <link rel="stylesheet" type="text/css"
-              href="../oscarEncounter/encounterStyles.css">
+              href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
 
         <script type="text/javascript">
             function validate() {

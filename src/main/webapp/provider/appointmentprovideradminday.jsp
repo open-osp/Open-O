@@ -891,7 +891,7 @@
                                             String caisiSearch = oscarVariables.getProperty("caisi.search.workflow", "true");
                                             if ("true".equalsIgnoreCase(caisiSearch)) {
                                         %>
-                                        <a HREF="../PMmodule/ClientSearch2.do"
+                                        <a href="<%= request.getContextPath() %>/PMmodule/ClientSearch2.do"
                                            TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.searchPatientRecords"/>'
                                            OnMouseOver="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.searchPatientRecords"/>' ; return true"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.search"/></a>
 
@@ -1167,7 +1167,7 @@
                     </li>
                 </ul>
                 <div>
-                    <a id="logoutButton" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnLogout"/>" href="../logout.jsp">
+                    <a id="logoutButton" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnLogout"/>" href="<%= request.getContextPath() %>/logout.jsp">
                         <span class="glyphicon glyphicon-off"></span>
                     </a>
                 </div>
@@ -1972,7 +1972,7 @@
                                                             } else {
                                                             %>
 
-                                                            <img src="../images/<%=as.getImageName()%>"
+                                                            <img src="<%= request.getContextPath() %>/images/<%=as.getImageName()%>"
                                                                  border="0" height="10"
                                                                  alt="<c:out value='<%=(as.getTitleString(request.getLocale()).length()>0)?as.getTitleString(request.getLocale()):as.getTitle()%>' /> ">
 
@@ -1987,7 +1987,7 @@
                                                         <%
                                                             if (urgency != null && urgency.equals("critical")) {
                                                         %>
-                                                        <img src="../images/warning-icon.png" border="0"
+                                                        <img src="<%= request.getContextPath() %>/images/warning-icon.png" border="0"
                                                              width="14" height="14"
                                                              alt="Critical Appointment"/>
                                                         <% } %>
@@ -2007,7 +2007,7 @@
                                                         </caisi:isModuleLoad>
                                                         <caisi:isModuleLoad
                                                                 moduleName="ticklerplus">
-                                                            <a href="../ticklerPlus/index.jsp"
+                                                            <a href="<%= request.getContextPath() %>/ticklerPlus/index.jsp"
                                                                title="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.ticklerMsg"/>: <%=Encode.forHtmlContent(tickler_note)%>">
                                                                 <span color="red">!</span></a>
                                                         </caisi:isModuleLoad>

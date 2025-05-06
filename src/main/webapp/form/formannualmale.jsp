@@ -262,7 +262,7 @@
                                                                           value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formMaleAnnual.btnPrint"/>"
                                                                           onclick="javascript:return onPrint();"/></td>
                 <td align='right'><a
-                        href="javascript: popupPage(700,950,'../decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formMaleAnnual.btnAnnualReview"/></a></td>
+                        href="javascript: popupPage(700,950,'<%= request.getContextPath() %>/decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formMaleAnnual.btnAnnualReview"/></a></td>
             </tr>
         </table>
 
@@ -629,7 +629,7 @@
                                     </tr>
                                     <tr>
                                         <td><a
-                                                href="javascript: popupPage(700,950,'../decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provN
+                                                href="javascript: popupPage(700,950,'<%= request.getContextPath() %>/decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provN
 o=<%=provNo%>');"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formMaleAnnual.btnRisk"/></a></td>
                                     </tr>
                                     <!--tr>
@@ -766,7 +766,7 @@ o=<%=provNo%>');"><fmt:setBundle basename="oscarResources"/><fmt:message key="os
                                                                           value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formMaleAnnual.btnPrint"/>"
                                                                           onclick="javascript:return onPrint();"/></td>
                 <td align='right'><a
-                        href="javascript: popupPage(700,950,'../decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formMaleAnnual.btnAnnualReview"/></a></td>
+                        href="javascript: popupPage(700,950,'<%= request.getContextPath() %>/decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formMaleAnnual.btnAnnualReview"/></a></td>
             </tr>
         </table>
 

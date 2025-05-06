@@ -44,7 +44,12 @@ public class User2Action extends ActionSupport {
 
     @Override
     public String execute() throws Exception {
-
+        if ("changePassword".equals(request.getParameter("method"))) {
+            return changePassword();
+        }
+        if ("cancel".equals(request.getParameter("method"))) {
+            return cancel();
+        }
         request.getSession().setAttribute("mcedtUsername", OscarProperties.getInstance().getProperty("mcedt.service.user"));
 
         if (request.getSession().getAttribute("isPassChange") != null) {
@@ -80,14 +85,6 @@ public class User2Action extends ActionSupport {
             request.getSession().removeAttribute("mcedtUsername");
         }
         return "cancel";
-    }
-
-    public UserPropertyDAO getUserPropertyDAO() {
-        return userPropertyDAO;
-    }
-
-    public void setUserPropertyDAO(UserPropertyDAO userPropertyDAO) {
-        this.userPropertyDAO = userPropertyDAO;
     }
 
     private String username;

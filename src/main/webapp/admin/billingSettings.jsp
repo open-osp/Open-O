@@ -31,7 +31,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_admin");%>
+    <%response.sendRedirect("/oscar/securityError.jsp?type=_admin");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -124,8 +124,8 @@
 
     for (String key : billingSettingsKeys) {
         List<Property> properties = propertyDao.findGlobalByName(key);
-        if (!properties.isEmpty() && properties.get(0).getName() != null && properties.get(0).getValue() != null) {
-            dataBean.setProperty(properties.get(0).getName(), properties.get(0).getValue());
+        if (!properties.isEmpty() && properties.getFirst().getName() != null && properties.getFirst().getValue() != null) {
+            dataBean.setProperty(properties.getFirst().getName(), properties.getFirst().getValue());
         }
     }
 
@@ -168,7 +168,7 @@
     <body vlink="#0000FF" class="BodyStyle">
 
     <h4>Manage OSCAR Billing Settings</h4>
-    <form name="billingSettingsForm" method="post" action="billingSettings.jsp">
+    <form name="billingSettingsForm" method="post" action="${pageContext.request.contextPath}/admin/billingSettings.jsp">
 
         <input type="hidden" name="dboperation" value="">
         <table id="displaySettingsTable" class="table table-bordered table-striped table-hover table-condensed">
@@ -250,6 +250,12 @@
                                   name="invoice_custom_clinic_info" maxlength="250"
                             ${empty dataBean["invoice_use_custom_clinic_info"] ? "disabled" : ""} >${"on" eq dataBean["invoice_use_custom_clinic_info"] ? dataBean["invoice_custom_clinic_info"] : clinicData.label }</textarea>
                     </td>
+                </tr>
+            </oscar:oscarPropertiesCheck>
+
+            <oscar:oscarPropertiesCheck property="billregion" value="ON">
+                <tr>
+                    <td>No billing options to display.</td>
                 </tr>
             </oscar:oscarPropertiesCheck>
             </tbody>

@@ -53,7 +53,7 @@ public final class ShelterSelection2Action extends ActionSupport {
     private ProviderManager providerManager = (ProviderManager) SpringUtils.getBean(ProviderManager.class);
     private LookupManager lookupManager = (LookupManager) SpringUtils.getBean(LookupManager.class);
 
-    public String unspecified() throws ServletException, IOException {
+    public String execute() throws ServletException, IOException {
 
         String mthd = request.getParameter("method");
         // initMenu(request);

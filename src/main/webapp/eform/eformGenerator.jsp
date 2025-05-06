@@ -872,13 +872,13 @@ and other liscences (MIT, LGPL etc) as indicated
                     textTop += "\t//stamp by user model \n";
                     textTop += "\tvar provNum = document.getElementById('doctor_no').value; \n";
                 }
-                textTop += "\tdocument.getElementById('Stamp').src = '../eform/displayImage.do?imagefile=consult_sig_'+provNum+'.png';\n";
+                textTop += "\tdocument.getElementById('Stamp').src = '<%=request.getContextPath()%>/eform/displayImage.do?imagefile=consult_sig_'+provNum+'.png';\n";
                 textTop += "}\n";
                 textTop += "function toggleMe(){\n"
                 textTop += "\tif (document.getElementById(&quot;Stamp&quot;).src.indexOf(&quot;BNK.png&quot;)>0){\n"
                 textTop += "\t\tSignForm2()\n"
                 textTop += "\t} else {\n"
-                textTop += "\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;../eform/displayImage.do?imagefile=BNK.png&quot;;\n"
+                textTop += "\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;<%=request.getContextPath()%>/eform/displayImage.do?imagefile=BNK.png&quot;;\n"
                 textTop += "\t}\n"
                 textTop += "}\n"
                 textTop += "&lt;/script&gt;\n\n";
@@ -1157,7 +1157,7 @@ and other liscences (MIT, LGPL etc) as indicated
                 textTop += "var ImgArray = [];\n"
                 textTop += "&lt;/script&gt;\n\n"
 
-                textTop += "&lt;script src='../eform/displayImage.do?imagefile=stamps.js'&gt;&lt;/script&gt;\n"
+                textTop += "&lt;script src="<%= request.getContextPath() %>/eform/displayImage.do?imagefile=stamps.js"&gt;&lt;/script&gt;\n"
                 textTop += "&lt;script type=&quot;text/javascript&quot;&gt;\n"
                 textTop += "//autoloading signature images\n"
                 textTop += "ImgArray.push(\n\t&quot;anonymous|BNK.png&quot;"
@@ -1172,7 +1172,7 @@ and other liscences (MIT, LGPL etc) as indicated
                 textTop += "\t\tvar UserName = ListItemArr[0];\n"
                 textTop += "\t\tvar FileName = ListItemArr[1];\n"
                 textTop += "\t\tif (document.getElementById(&quot;CurrentUserName&quot;).value.indexOf(UserName)>=0){\n"
-                textTop += "\t\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;../eform/displayImage.do?imagefile=&quot;+FileName;\n"
+                textTop += "\t\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;<%=request.getContextPath()%>/eform/displayImage.do?imagefile=&quot;+FileName;\n"
                 textTop += "\t\t}\n"
                 textTop += "\t}\n"
                 textTop += "\t//hmm not found so lets try the MRPs stamp\n"
@@ -1182,7 +1182,7 @@ and other liscences (MIT, LGPL etc) as indicated
                 textTop += "\t\t\tvar UserName = ListItemArr[0];\n"
                 textTop += "\t\t\tvar FileName = ListItemArr[1];\n"
                 textTop += "\t\t\tif (document.getElementById(&quot;DoctorName&quot;).value.indexOf(UserName)>=0){\n"
-                textTop += "\t\t\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;../eform/displayImage.do?imagefile=&quot;+FileName;\n"
+                textTop += "\t\t\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;<%=request.getContextPath()%>/eform/displayImage.do?imagefile=&quot;+FileName;\n"
                 textTop += "\t\t\t}\n"
                 textTop += "\t\t}\n"
                 textTop += "\t}\n"
@@ -1192,7 +1192,7 @@ and other liscences (MIT, LGPL etc) as indicated
                 textTop += "\tif (document.getElementById(&quot;Stamp&quot;).src.indexOf(&quot;BNK.png&quot;)>0){\n"
                 textTop += "\t\tSignForm()\n"
                 textTop += "\t} else {\n"
-                textTop += "\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;../eform/displayImage.do?imagefile=BNK.png&quot;;\n"
+                textTop += "\t\tdocument.getElementById(&quot;Stamp&quot;).src = &quot;<%=request.getContextPath()%>/eform/displayImage.do?imagefile=BNK.png&quot;;\n"
                 textTop += "\t}\n"
                 textTop += "}\n"
                 textTop += "&lt;/script&gt;\n\n"
@@ -1548,7 +1548,7 @@ and other liscences (MIT, LGPL etc) as indicated
                 m += "px; top:"
                 m += y0
                 m += "px;&quot;&gt;\n"
-                m += "&lt;img id=&quot;Stamp&quot; src=&quot;../eform/displayImage.do?imagefile=BNK.png&quot; width=&quot;"
+                m += "&lt;img id=&quot;Stamp&quot; src=&quot;<%=request.getContextPath()%>/eform/displayImage.do?imagefile=BNK.png&quot; width=&quot;"
                 m += width
                 m += "&quot; height=&quot;"
                 m += height
@@ -1864,7 +1864,7 @@ and other liscences (MIT, LGPL etc) as indicated
         show('classic');
     <% } %> ">
 
-<img id="BGImage" src="../images/transparent_icon.gif" alt="BGImage" style="position: absolute; left: 0px; top: 0px; "
+<img id="BGImage" src="<%= request.getContextPath() %>/images/transparent_icon.gif" alt="BGImage" style="position: absolute; left: 0px; top: 0px; "
      onmouseover="SetDrawOn();"
      onmouseout="SetDrawOff();"
      onmousedown="if (event.preventDefault) event.preventDefault(); SetMouseDown();SetStart();"

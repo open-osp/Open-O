@@ -78,33 +78,25 @@ public class PHRMessage2Action extends ActionSupport {
 
     private static Logger logger = MiscUtils.getLogger();
 
-    PHRDocumentDAO phrDocumentDAO;
-    PHRActionDAO phrActionDAO;
-    PHRService phrService;
+    PHRDocumentDAO phrDocumentDAO = SpringUtils.getBean(PHRDocumentDAO.class);
+    PHRActionDAO phrActionDAO = SpringUtils.getBean(PHRActionDAO.class);
+    PHRService phrService = SpringUtils.getBean(PHRService.class);
 
     public String execute() throws Exception {
-        return super.execute();
-    }
-
-    /**
-     * Creates a new instance of PHRMessageAction
-     */
-    public PHRMessage2Action() {
-    }
-
-    public void setPhrDocumentDAO(PHRDocumentDAO phrDocumentDAO) {
-        this.phrDocumentDAO = phrDocumentDAO;
-    }
-
-    public void setPhrActionDAO(PHRActionDAO phrActionDAO) {
-        this.phrActionDAO = phrActionDAO;
-    }
-
-    public void setPhrService(PHRService phrService) {
-        this.phrService = phrService;
-    }
-
-    public String unspecified() throws Exception {
+        String method = request.getParameter("method");
+        if ("viewSentMessages".equals(method)) {
+            return viewSentMessages();
+        } else if ("viewArchivedMessages".equals(method)) {
+            return viewArchivedMessages();
+        } else if ("read".equals(method)) {
+            return read();
+        } else if ("reply".equals(method)) {
+            return reply();
+        } else if ("createMessage".equals(method)) {
+            return createMessage();
+        } else if ("sendReply".equals(method)) {
+            return sendReply();
+        } 
         return viewMessages();
     }
 

@@ -99,14 +99,25 @@ public class PHRUserManagement2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private static Logger log = MiscUtils.getLogger();
 
-    PHRDocumentDAO phrDocumentDAO;
-    PHRActionDAO phrActionDAO;
-    PHRService phrService;
+    PHRDocumentDAO phrDocumentDAO = SpringUtils.getBean(PHRDocumentDAO.class);
+    PHRActionDAO phrActionDAO = SpringUtils.getBean(PHRActionDAO.class);
+    PHRService phrService = SpringUtils.getBean(PHRService.class);
 
     public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("setRegistrationLetterData".equals(method)) {
+            return setRegistrationLetterData();
+        } else if ("registerUser".equals(method)) {
+            return registerUser();
+        } else if ("approveAction".equals(method)) {
+            return approveAction();
+        } else if ("denyAction".equals(method)) {
+            return denyAction();
+        } else if ("addPatientRelationship".equals(method)) {
+            return addPatientRelationship();
+        } 
         return super.execute();
     }
 
@@ -123,10 +134,6 @@ public class PHRUserManagement2Action extends ActionSupport {
 
     public void setPhrService(PHRService phrService) {
         this.phrService = phrService;
-    }
-
-    public String unspecified() throws Exception {
-        return null;
     }
 
     protected Properties getCfgProp() {

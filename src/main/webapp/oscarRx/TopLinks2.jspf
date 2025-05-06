@@ -63,11 +63,11 @@ function newWindow(url) {
                         }
                     %>
                     </select>        
-                    <b><a style="color:white; "href="SelectPharmacy2.jsp"><span onclick="ShowSpin(true);">(Edit List)</span></a></b>
+                    <b><a style="color:white;" href="oscarRx/SelectPharmacy2.jsp"><span onclick="ShowSpin(true);">(Edit List)</span></a></b>
                     </td>
                     <td valign="top" align="right">
                         <span class="HelpAboutLogout" style="color:white;">
-                            <a style="color:white;" href="javascript: popupFocusPage(200,700,'./drugrefInfo.jsp','Drugref Info');" >Drugref Info</a> |
+                            <a style="color:white;" href="javascript: popupFocusPage(200,700,'oscarRx/drugrefInfo.jsp','Drugref Info');" >Drugref Info</a> |
                             <a style="color:white;" href="<%=request.getContextPath()%>/oscarEncounter/About.jsp" target="_new"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a>
                             <!-- is this needed? 
                             <a style="color:white;" href="Disclaimer.htm">Disclaimer</a> 

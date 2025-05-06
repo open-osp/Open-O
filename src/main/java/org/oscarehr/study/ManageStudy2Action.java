@@ -65,6 +65,26 @@ public class ManageStudy2Action extends ActionSupport {
     private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("saveUpdateStudy".equals(method)) {
+            return saveUpdateStudy();
+        } else if ("setStudyStatus".equals(method)) {
+            return setStudyStatus();
+        } else if ("AddToStudy".equals(method)) {
+            return AddToStudy();
+        } else if ("RemoveFromStudy".equals(method)) {
+            return RemoveFromStudy();
+        } else if ("AddProvider".equals(method)) {
+            return AddProvider();
+        } else if ("RunStudy".equals(method)) {
+            return RunStudy();
+        } else if ("saveStudyData".equals(method)) {
+            return saveStudyData();
+        }
+        return saveUpdateStudy();
+    }
+
     public String saveUpdateStudy() {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

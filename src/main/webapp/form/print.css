@@ -21,16 +21,17 @@
  * Hamilton 
  * Ontario, Canada 
  */
-{
-    font-size: 8pt
-;
 
 
-}
 BODY {
     background-color: white;
     color: black;
     width: 300pt;
+}
+
+*{
+    font-size: 8pt;
+
 }
 
 BODY A {

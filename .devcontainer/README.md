@@ -58,6 +58,23 @@ Exploded WAR".
     * Open your web browser and navigate to `http://localhost:8080`.
     * You should see the Open-OSP EMR application running.
 
+### Subsequent Compilations
+
+For developers who are not compiling for the first time in the dev container, it is recommended to clean the previous build artifacts before compiling again. This ensures a fresh build environment.
+
+   ```zsh
+   make clean
+   make install
+   ```
+
+### View Oscar error logs
+
+Currently, oscar error logs are sent to console without saving to a log file. If you need to read oscar error logs from dev container, can use this command to see real-time logs.
+
+   ```zsh
+   cat /tomcat.pid | xargs -I {} tail -f /proc/{}/fd/1
+   ```
+
 ## Additional Notes
 
 * The `.devcontainer/development/config/shared/local.env` file contains environment variables that can be customized for
@@ -83,5 +100,38 @@ Exploded WAR".
 * **Docker Desktop Guide: Getting Started:** https://docs.docker.com/desktop
 * **Docker Compose:** https://docs.docker.com/compose**
 * **Dockerfile:** https://docs.docker.com/reference/dockerfile/
+
+## Opening the Dev-Container Environment in VS Code through WSL
+
+* **Note:** Make sure you have the Prerequisites installed and configured. 
+
+### Steps
+
+1. **Go to the command line and type wsl**
+    ```bash 
+    wsl
+    ```
+2. **Create a directory**
+    ```bash
+    mkdir softsec
+    ```
+3. **Navigate to the softsec dir**
+    ```bash
+    cd softsec
+    ```
+4. **Clone the GitHub repo Open-O**
+    ```bash
+    git clone https://github.com/cc-ar-emr/Open-O.git
+    ```
+5. **Navigate to the Open-O repo dir**
+    ```bash
+    cd Open-O
+    ```
+6. **Start VS Code**
+    ```bash
+    code ./
+    ```
+
+* This should open the Open-O repo in VS Code and prompt you to reopen the folder in the dev container environment.
 
 ## Enjoy developing with Open-OSP!

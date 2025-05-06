@@ -51,6 +51,16 @@ public class Upload2Action extends ActionSupport {
 
     @Override
     public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("cancelUpload".equals(method)) {
+            return cancelUpload();
+        } else if ("addNew".equals(method)) {
+            return addNew();
+        } else if ("removeSelected".equals(method)) {
+            return removeSelected();
+        } else if ("uploadToMcedt".equals(method)) {
+            return uploadToMcedt();
+        } 
         return SUCCESS;
     }
 

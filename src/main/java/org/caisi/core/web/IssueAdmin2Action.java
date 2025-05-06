@@ -53,8 +53,21 @@ public class IssueAdmin2Action extends ActionSupport {
     private SecRoleDao secRoleDao = SpringUtils.getBean(SecRoleDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    public String cancel() {
+    public String execute() {
+        String mtd = request.getParameter("method");
+        if ("cancel".equals(mtd)) {
+            return cancel();
+        } else if ("delete".equals(mtd)) {
+            return delete();
+        } else if ("edit".equals(mtd)) {
+            return edit();
+        } else if ("save".equals(mtd)) {
+            return save();
+        }
+        return list();
+    }
 
+    public String cancel() {
         return list();
     }
 
@@ -96,10 +109,6 @@ public class IssueAdmin2Action extends ActionSupport {
 
         request.setAttribute("caisiRoles", secRoleDao.findAll());
         return "edit";
-    }
-
-    public String unspecified() {
-        return list();
     }
 
     public String list() {

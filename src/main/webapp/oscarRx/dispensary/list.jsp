@@ -57,7 +57,7 @@
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
 
         <c:set var="ctx" value="${pageContext.request.contextPath}"/>
-        <link rel="stylesheet" type="text/css" href="../styles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles.css">
 
         <%
             String curUser_no = (String) session.getAttribute("user");

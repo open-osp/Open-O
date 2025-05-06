@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.oscarehr.common.dao.ViewDao;
 import org.oscarehr.common.model.View;
+import org.oscarehr.util.SpringUtils;
 
 /**
  * @author rjonasz
@@ -43,21 +44,11 @@ public class ProviderView2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
-    private ViewDao userViewDAO;
+    private ViewDao userViewDAO = SpringUtils.getBean(ViewDao.class);
 
-    /**
-     * Creates a new instance of ProviderViewAction
-     */
-    public ProviderView2Action() {
-    }
+    public String execute() {
 
-    public void setUserViewDAO(ViewDao viewDao) {
-        this.userViewDAO = viewDao;
-    }
-
-    public String unspecified() {
-
-        return null;
+        return save();
     }
 
     public String save() {

@@ -24,7 +24,7 @@
         }
     },
 
-    "forwardPorts": [8080, 3306],
+    "forwardPorts": [8080, 8000, 3306],
     "containerUser": "root",
     "remoteUser": "root"
 }

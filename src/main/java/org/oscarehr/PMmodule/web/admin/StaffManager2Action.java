@@ -61,20 +61,34 @@ public class StaffManager2Action extends ActionSupport {
 
     private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 
-    private FacilityDao facilityDao = null;
+    private FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
 
-    private ProgramManager programManager;
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
 
-    private ProviderManager providerManager;
+    private ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
 
-    private SecRoleDao secRoleDao;
+    private SecRoleDao secRoleDao = SpringUtils.getBean(SecRoleDao.class);
 
-    public void setSecRoleDao(SecRoleDao secRoleDao) {
-        this.secRoleDao = secRoleDao;
-    }
-
-    public void setFacilityDao(FacilityDao facilityDao) {
-        this.facilityDao = facilityDao;
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("add_to_facility".equals(method)) {
+            return add_to_facility();
+        } else if ("remove_from_facility".equals(method)) {
+            return remove_from_facility();
+        } else if ("search".equals(method)) {
+            return search();
+        } else if ("edit".equals(method)) {
+            return edit();
+        } else if ("assign_team".equals(method)) {
+            return assign_team();
+        } else if ("remove_team".equals(method)) {
+            return remove_team();
+        } else if ("assign_role".equals(method)) {
+            return assign_role();
+        } else if ("remove_entry".equals(method)) {
+            return remove_entry();
+        } 
+        return list();
     }
 
     public String add_to_facility() {
@@ -145,9 +159,6 @@ public class StaffManager2Action extends ActionSupport {
         return pps;
     }
 
-    public String unspecified() {
-        return list();
-    }
 
     public String list() {
         // DynaActionForm providerForm = (DynaActionForm)form;

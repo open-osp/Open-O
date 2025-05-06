@@ -44,6 +44,7 @@ import org.oscarehr.decisionSupport.model.DSGuideline;
 import org.oscarehr.decisionSupport.model.DSGuidelineFactory;
 import org.oscarehr.decisionSupport.service.DSService;
 import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarDemographic.data.DemographicData;
 
@@ -58,19 +59,17 @@ public class DSGuideline2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
-    private DSService dsService;
-
-    public String execute() throws Exception {
-        return super.execute();
-    }
+    private DSService dsService = SpringUtils.getBean(DSService.class);
 
     public DSGuideline2Action() {
 
     }
 
 
-    public String unspecified()
-            throws Exception {
+    public String execute() throws Exception {
+        if ("detail".equals(request.getParameter("method"))) {
+            return detail();
+        }
         return list();
     }
 
@@ -130,10 +129,6 @@ public class DSGuideline2Action extends ActionSupport {
         request.setAttribute("demographicAccess", new DSDemographicAccess(loggedInInfo, demographicNo));
         return "guidelineDetail";
 
-    }
-
-    public void setDsService(DSService dsService) {
-        this.dsService = dsService;
     }
 
     //for returning stuff

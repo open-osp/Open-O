@@ -5,6 +5,10 @@
 	<constant name="struts.action.extension" value="do" />
     <constant name="struts.objectFactory" value="spring"/>
     <constant name="struts.enable.SlashesInActionNames" value="true" />
+    <constant name="struts.serve.static" value="true" />
+    <constant name="struts.serve.static.browserCache" value="true" />
+    <constant name="struts.action.excludePattern" value=".*\.(css|js|png|jpg|gif)$" />
+    <constant name="struts.custom.i18n.resources" value="oscarResources"/>
     <!-- Default package extending struts-default -->
 	<package name="default" namespace="/" extends="struts-default">
         <action name="logout" class="oscar.login.Logout2Action">
@@ -216,9 +220,6 @@
             <result name="success">/oscarRx/ChooseDrug.jsp</result>
             <result name="error">/500.jsp</result>
         </action>
-        <action name="oscarRx/WriteScript" class="oscar.oscarRx.pageUtil.RxWriteScript2Action">
-            <result name="newRx">/oscarRx/prescribe.jsp</result>
-        </action>
         <action name="oscarEncounter/IncomingEncounter" class="oscar.oscarEncounter.pageUtil.EctIncomingEncounter2Action">
             <result name="failure">/oscarEncounter/error.jsp</result>
             <result name="success">/oscarEncounter/Index.jsp</result>
@@ -234,6 +235,13 @@
             <result name="success">/oscarRx/WriteScript.jsp</result>
         </action>
         <action name="oscarRx/viewScript" class="oscar.oscarRx.pageUtil.RxViewScript2Action">
+            <result name="viewScript">/oscarRx/ViewScript.jsp</result>
+        </action>
+        
+        <action name="oscarRx/WriteScript" class="oscar.oscarRx.pageUtil.RxWriteScript2Action">
+            <result name="newRx">/oscarRx/prescribe.jsp</result>
+            <result name="refresh">/oscarRx/WriteScript.jsp</result>
+            <result name="addAnother">/oscarRx/SearchDrug.jsp</result>
             <result name="viewScript">/oscarRx/ViewScript.jsp</result>
         </action>
         <action name="oscarRx/writeScript" class="oscar.oscarRx.pageUtil.RxWriteScript2Action">
@@ -327,7 +335,9 @@
         <action name="oscarRx/managePharmacy2" class="oscar.oscarRx.pageUtil.RxManagePharmacy2Action">
             <result name="success">/oscarRx/SelectPharmacy2.jsp</result>
         </action>
-        <action name="oscarRx/managePharmacy" class="oscar.oscarRx.pageUtil.RxManagePharmacy2Action"/>
+        <action name="oscarRx/managePharmacy" class="oscar.oscarRx.pageUtil.RxManagePharmacy2Action">
+            <result name="success">/oscarRx/SelectPharmacy2.jsp</result>
+        </action>
         <action name="oscarRx/SendToPhr" class="oscar.oscarRx.pageUtil.RxSendToPhr2Action" method="execute">
             <result name="finished">/phr/response.jsp</result>
         </action>
@@ -335,12 +345,12 @@
             <result name="close">/oscarRx/close.html</result>
             <result name="success">/oscarRx/SelectReason.jsp</result>
         </action>
-        <!--action name="oscarRx/GetmyDrugrefInfo" class="oscar.oscarRx.pageUtil.RxMyDrugrefInfo2Action">
+        <action name="oscarRx/GetmyDrugrefInfo" class="oscar.oscarRx.pageUtil.RxMyDrugrefInfo2Action">
             <result name="success">/oscarRx/MyDrugrefDisplay.jsp</result>
             <result name="failure">/oscarRx/MyDrugrefError.jsp</result>
             <result name="updateInteractions">/oscarRx/InteractionDisplay2.jsp</result>
             <result name="updateResources">/oscarRx/updateMyDrugrefResource.jsp</result>
-        </action-->
+        </action>
         <action name="oscarRx/GetRxPageSizeInfo" class="oscar.oscarRx.pageUtil.RxRxPageSizeInfo2Action">
             <result name="success">/oscarRx/ViewScript2.jsp</result>
         </action>
@@ -476,40 +486,620 @@
         </action>
         <action name="form/SetupForm" class="oscar.form.pageUtil.FrmSetupForm2Action"/>
         <action name="form/SubmitForm" class="oscar.form.pageUtil.FrmForm2Action"/>
-        <action name="oscarEncounter/displayLabs" class="oscar.oscarEncounter.pageUtil.EctDisplayLabAction22Action"/>
-        <action name="oscarEncounter/displayForms" class="oscar.oscarEncounter.pageUtil.EctDisplayForm2Action"/>
-        <action name="oscarEncounter/displayEForms" class="oscar.oscarEncounter.pageUtil.EctDisplayEForm2Action"/>
-        <action name="oscarEncounter/displayMessages" class="oscar.oscarEncounter.pageUtil.EctDisplayMsg2Action"/>
-        <action name="oscarEncounter/displayBilling" class="oscar.oscarEncounter.pageUtil.EctDisplayBilling2Action"/>
-        <action name="oscarEncounter/displayDocuments" class="oscar.oscarEncounter.pageUtil.EctDisplayDocs2Action"/>
-        <action name="oscarEncounter/displayQuestimed" class="oscar.oscarEncounter.pageUtil.EctDisplayQuestimed2Action"/>
-        <action name="oscarEncounter/displayPhotos" class="oscar.oscarEncounter.pageUtil.EctDisplayPhotos2Action"/>
-        <action name="oscarEncounter/displayMeasurements" class="oscar.oscarEncounter.pageUtil.EctDisplayMeasurements2Action"/>
-        <action name="oscarEncounter/displayTickler" class="oscar.oscarEncounter.pageUtil.EctDisplayTickler2Action"/>
-        <action name="oscarEncounter/displayDisease" class="oscar.oscarEncounter.pageUtil.EctDisplayDx2Action"/>
-        <action name="oscarEncounter/displayPrevention" class="oscar.oscarEncounter.pageUtil.EctDisplayPrevention2Action"/>
-        <action name="oscarEncounter/displayOcularProcedure" class="oscar.oscarEncounter.pageUtil.EctDisplayOcularProcedure2Action"/>
-        <action name="oscarEncounter/displaySpecsHistory" class="oscar.oscarEncounter.pageUtil.EctDisplaySpecsHistory2Action"/>
-        <action name="oscarEncounter/displayMacro" class="oscar.oscarEncounter.pageUtil.EctDisplayMacro2Action"/>
-        <action name="oscarEncounter/displayAppointmentHistory" class="oscar.oscarEncounter.pageUtil.EctDisplayAppointmentHistory2Action"/>
-        <action name="oscarEncounter/displayConReport" class="oscar.oscarEncounter.pageUtil.EctDisplayConReport2Action"/>
-        <action name="oscarEncounter/displayConsultation" class="oscar.oscarEncounter.pageUtil.EctDisplayConsult2Action"/>
-        <action name="oscarEncounter/displayEconsultation" class="oscar.oscarEncounter.pageUtil.EctDisplayEconsult2Action"/>
-        <action name="oscarEncounter/displayEHR" class="oscar.oscarEncounter.pageUtil.EctDisplayEHR2Action"/>
-        <action name="oscarEncounter/displayAllergy" class="oscar.oscarEncounter.pageUtil.EctDisplayAllergy2Action"/>
-        <action name="oscarEncounter/displayRx" class="oscar.oscarEncounter.pageUtil.EctDisplayRx2Action"/>
-        <action name="oscarEncounter/displayIssues" class="oscar.oscarEncounter.pageUtil.EctDisplayIssues2Action" method="execute"/>
-        <action name="oscarEncounter/displayResolvedIssues" class="oscar.oscarEncounter.pageUtil.EctDisplayResolvedIssues2Action" method="execute"/>
-        <action name="oscarEncounter/displayDecisionSupportAlerts" class="oscar.oscarEncounter.pageUtil.EctDisplayDecisionSupportAlerts2Action"/>
+        <action name="oscarEncounter/displayLabs" class="oscar.oscarEncounter.pageUtil.EctDisplayLabAction22Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayForms" class="oscar.oscarEncounter.pageUtil.EctDisplayForm2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayEForms" class="oscar.oscarEncounter.pageUtil.EctDisplayEForm2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayMessages" class="oscar.oscarEncounter.pageUtil.EctDisplayMsg2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayBilling" class="oscar.oscarEncounter.pageUtil.EctDisplayBilling2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayDocuments" class="oscar.oscarEncounter.pageUtil.EctDisplayDocs2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayQuestimed" class="oscar.oscarEncounter.pageUtil.EctDisplayQuestimed2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayPhotos" class="oscar.oscarEncounter.pageUtil.EctDisplayPhotos2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayMeasurements" class="oscar.oscarEncounter.pageUtil.EctDisplayMeasurements2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayTickler" class="oscar.oscarEncounter.pageUtil.EctDisplayTickler2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayDisease" class="oscar.oscarEncounter.pageUtil.EctDisplayDx2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayPrevention" class="oscar.oscarEncounter.pageUtil.EctDisplayPrevention2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayOcularProcedure" class="oscar.oscarEncounter.pageUtil.EctDisplayOcularProcedure2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displaySpecsHistory" class="oscar.oscarEncounter.pageUtil.EctDisplaySpecsHistory2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayMacro" class="oscar.oscarEncounter.pageUtil.EctDisplayMacro2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayAppointmentHistory" class="oscar.oscarEncounter.pageUtil.EctDisplayAppointmentHistory2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayConReport" class="oscar.oscarEncounter.pageUtil.EctDisplayConReport2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayConsultation" class="oscar.oscarEncounter.pageUtil.EctDisplayConsult2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayEconsultation" class="oscar.oscarEncounter.pageUtil.EctDisplayEconsult2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayEHR" class="oscar.oscarEncounter.pageUtil.EctDisplayEHR2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayAllergy" class="oscar.oscarEncounter.pageUtil.EctDisplayAllergy2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayRx" class="oscar.oscarEncounter.pageUtil.EctDisplayRx2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayIssues" class="oscar.oscarEncounter.pageUtil.EctDisplayIssues2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayResolvedIssues" class="oscar.oscarEncounter.pageUtil.EctDisplayResolvedIssues2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayDecisionSupportAlerts" class="oscar.oscarEncounter.pageUtil.EctDisplayDecisionSupportAlerts2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
         <action name="report/printLabDaySheetAction" class="oscar.oscarReport.pageUtil.printLabDaySheet2Action"/>
-        <action name="oscarEncounter/displayDiagrams" class="oscar.oscarEncounter.pageUtil.EctDisplayDiagram2Action"/>
-        <action name="oscarEncounter/displayExaminationHistory" class="oscar.oscarEncounter.pageUtil.EctDisplayExaminationHistory2Action"/>
-        <action name="oscarEncounter/displayHRM" class="oscar.oscarEncounter.pageUtil.EctDisplayHRM2Action"/>
+        <action name="oscarEncounter/displayDiagrams" class="oscar.oscarEncounter.pageUtil.EctDisplayDiagram2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayExaminationHistory" class="oscar.oscarEncounter.pageUtil.EctDisplayExaminationHistory2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
+        <action name="oscarEncounter/displayHRM" class="oscar.oscarEncounter.pageUtil.EctDisplayHRM2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
         <action name="oscarEncounter/decisionSupport/guidelineAction" class="org.oscarehr.decisionSupport.web.DSGuideline2Action" method="execute">
             <result name="guidelineList">/oscarEncounter/decisionSupport/guidelineList.jsp</result>
             <result name="guidelineDetail">/oscarEncounter/decisionSupport/guidelineDetail.jsp</result>
         </action>
-        <action name="oscarEncounter/displayMyOscar" class="oscar.oscarEncounter.pageUtil.EctDisplayMyOscar2Action"/>
+        <action name="oscarEncounter/displayMyOscar" class="oscar.oscarEncounter.pageUtil.EctDisplayMyOscar2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
         <action name="oscarEncounter/SaveEncounter" class="oscar.oscarEncounter.pageUtil.EctSaveEncounter2Action">
             <result name="saveAndStay">/oscarEncounter/Index.jsp?saved=true</result>
             <result name="failure">/oscarEncounter/error.jsp</result>
@@ -545,7 +1135,6 @@
         <action name="eform/attachDoc" class="oscar.eform.EFormAttachDocs2Action">
             <result name="success">/oscarEncounter/oscarConsultationRequest/attachSuccessfull.jsp</result>
         </action>
-        <action name="eform/logEformError" class="oscar.eform.EformLogError2Action"/>
         <action name="eform/logEformError" class="oscar.eform.EformLogError2Action"/>
         <action name="oscarEncounter/ViewConsultation" class="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequests2Action">
             <result name="success">/oscarEncounter/oscarConsultationRequest/ViewConsultationRequests.jsp</result>
@@ -1772,16 +2361,16 @@
         </action>
         <action name="appointment/printAppointmentReceiptAction" class="oscar.oscarReport.pageUtil.PrintAppointmentReceipt2Action"/>
         <action name="oscarRx/updateDrugrefDB" class="oscar.oscarRx.pageUtil.RxUpdateDrugref2Action"/>
-        <!--action name="oscarRx/copyFavorite" class="oscar.oscarRx.web.CopyFavorites2Action" method="execute">
+        <action name="oscarRx/copyFavorite" class="oscar.oscarRx.web.CopyFavorites2Action" method="execute">
             <result name="success">/oscarRx/CopyFavorites.jsp</result>
             <result name="edit">/appointment/appointmentstatusedit.jsp</result>
-        </action-->
+        </action>
         <action name="oscarRx/hideCpp" class="oscar.oscarRx.web.RxHideCpp2Action"/>
         <action name="oscarRx/reorderDrug" class="oscar.oscarRx.web.RxReorder2Action"/>
-        <!--action name="oscarRx/copyFavorite2" class="oscar.oscarRx.web.CopyFavorites2Action" method="execute">
+        <action name="oscarRx/copyFavorite2" class="oscar.oscarRx.web.CopyFavorites2Action" method="execute">
             <result name="success">/oscarRx/CopyFavorites2.jsp</result>
             <result name="edit">/appointment/appointmentstatusedit.jsp</result>
-        </action-->
+        </action>
         <action name="PMmodule/Admin/SysAdmin" class="org.oscarehr.PMmodule.web.admin.AdminHome2Action" method="execute">
             <result name="admin">page.admin.home</result>
         </action>
@@ -1795,9 +2384,9 @@
         <action name="PMmodule/OcanWorkload" class="org.oscarehr.PMmodule.web.OcanWorkload2Action">
             <result name="view">/PMmodule/OcanWorkload.jsp</result>
         </action>
-        <!--action name="billing/CA/ON/moveMOHFiles" class="org.oscarehr.billing.CA.ON.web.MoveMOHFiles2Action">
+        <action name="billing/CA/ON/moveMOHFiles" class="org.oscarehr.billing.CA.ON.web.MoveMOHFiles2Action">
             <result name="success">/billing/CA/ON/viewMOHFiles.jsp</result>
-        </action-->
+        </action>
         <action name="billing/CA/ON/managePaymentType" class="oscar.oscarBilling.ca.on.pageUtil.PaymentType2Action" method="execute">
             <result name="success">/billing/CA/ON/manageBillingPaymentType.jsp</result>
         </action>
@@ -1812,6 +2401,10 @@
             <result name="edit">/appointment/appointmentTypeAction.do?oper=edit</result>
             <result name="success">/appointment/appointmentTypeList.jsp</result>
             <result name="failure">/appointment/appointmentTypeList.jsp</result>
+            <result name="redirect" type="redirectAction">
+                <param name="actionName">appointmentTypeAction</param>
+                <param name="namespace">/appointment</param>
+            </result>
         </action>
         <action name="hospitalReportManager/Display" class="org.oscarehr.hospitalReportManager.HRMDisplayReport2Action">
             <result name="display">/hospitalReportManager/displayHRMReport.jsp</result>
@@ -1850,14 +2443,54 @@
             <result name="error">/errorpage.jsp</result>
         </action>
         <action name="CodeSearch" class="org.oscarehr.common.web.CodeSearchService2Action"/>
-        <action name="oscarEncounter/displayEpisodes" class="oscar.oscarEncounter.pageUtil.EctDisplayEpisode2Action"/>
+        <action name="oscarEncounter/displayEpisodes" class="oscar.oscarEncounter.pageUtil.EctDisplayEpisode2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
         <action name="Episode" class="org.oscarehr.common.web.Episode2Action">
             <result name="list">/episode/episodeList.jsp</result>
             <result name="form">/episode/episodeForm.jsp</result>
             <result name="success">/episode/success.jsp</result>
         </action>
         <action name="indivica/HCSearch" class="org.oscarehr.common.web.HealthCardSearch2Action"/>
-        <action name="oscarEncounter/displayPregnancies" class="oscar.oscarEncounter.pageUtil.EctDisplayPregnancy2Action"/>
+        <action name="oscarEncounter/displayPregnancies" class="oscar.oscarEncounter.pageUtil.EctDisplayPregnancy2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
         <action name="Pregnancy" class="org.oscarehr.common.web.Pregnancy2Action">
             <result name="list">/pregnancy/list.jsp</result>
             <result name="success">/pregnancy/success.jsp</result>
@@ -1896,7 +2529,27 @@
             <result name="success">/billing/CA/ON/genRADesc.jsp</result>
             <result name="failure">/failure.jsp</result>
         </action>
-        <action name="oscarEncounter/displayContacts" class="oscar.oscarEncounter.pageUtil.EctDisplayContacts2Action"/>
+        <action name="oscarEncounter/displayContacts" class="oscar.oscarEncounter.pageUtil.EctDisplayContacts2Action">
+            <result name="labs">/oscarEncounter/displayLabs.do</result>
+			<result name="forms">/oscarEncounter/displayForms.do</result>
+			<result name="msgs">/oscarEncounter/displayMessages.do</result>
+			<result name="eforms">/oscarEncounter/displayEForms.do</result>
+			<result name="docs">/oscarEncounter/displayDocuments.do</result>
+			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
+			<result name="tickler">/oscarEncounter/displayTickler.do</result>
+			<result name="Dx">/oscarEncounter/displayDisease.do</result>
+			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
+			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
+			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
+			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
+			<result name="Rx">/oscarEncounter/displayRx.do</result>
+			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
+			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
+			<result name="HRM">/oscarEncounter/displayHRM.do</result>
+			<result name="myoscar">/oscarEncounter/displayMyOscar.do</result>
+			<result name="eams">/eaaps/displayEctEaaps.do</result>
+        </action>
         <action name="renal/CkdDSA" class="org.oscarehr.renal.web.CkdDSA2Action">
             <result name="detail">/renal/ckd_dsa_detail.jsp</result>
         </action>

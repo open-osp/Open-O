@@ -89,19 +89,19 @@
         <link rel="stylesheet" type="text/css" href="bcArStyle.css">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
        adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
@@ -119,7 +119,7 @@
             // var ret = checkAllDates();
             var ret = true;
             if (ret == true) {
-                document.forms[0].action = "../form/createpdf?__title=British+Columbia+Newborn+Record+2008+Part+2&__cfgfile=bcNB2008PrintCfgPg1&__template=bcNewBorn2008pg1";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=British+Columbia+Newborn+Record+2008+Part+2&__cfgfile=bcNB2008PrintCfgPg1&__template=bcNewBorn2008pg1";
 
                 document.forms[0].target = "_blank";
             }
@@ -517,7 +517,7 @@
                                 A<input size="1" name="A" value="<%= props.getProperty("A", "") %>" @oscar.formDB/>
                                 L<input size="1" name="L" value="<%= props.getProperty("L", "") %>" @oscar.formDB/></td>
                             <td>EDD <input size="8" name="EDD" id="EDD" value="<%= props.getProperty("EDD", "") %>"
-                                           @oscar.formDB/><img src="../images/cal.gif" id="EDD_cal"><br>dd/mm/yy
+                                           @oscar.formDB/><img src="<%= request.getContextPath() %>/images/cal.gif" id="EDD_cal"><br>dd/mm/yy
                             </td>
                             <td>by <input name="LMP" type="checkbox" <%= props.getProperty("LMP", "") %> @oscar.formDB
                                           dbType="tinyint(1)"/>LMP <input name="US"
@@ -606,7 +606,7 @@
                                        style="width: 100%" size="30" maxlength="80"
                                        value="<%= props.getProperty("c_hospitalName", "") %>"
                                        @oscar.formDB/></td>
-                            <td>DATE <img src="../images/cal.gif" id="pg1_formDate_cal">
+                            <td>DATE <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_formDate_cal">
                                 <%=bSync ? ("<b><a href=# onClick='syncDemo(); return false;'><font color='red'>Synchronize</font></a></b>") : "" %>
                                 <br>
                                 <input type="text" name="pg1_formDate" id="pg1_formDate" size="10"
@@ -899,7 +899,7 @@
                                 Birthdate <input size="10" maxlength="10" name="Section4Birthdate"
                                                  id="Section4Birthdate" type="text"
                                                  value="<%= props.getProperty("Section4Birthdate", "") %>"
-                                                 @oscar.formDB/><img src="../images/cal.gif" id="Section4Birthdate_cal">
+                                                 @oscar.formDB/><img src="<%= request.getContextPath() %>/images/cal.gif" id="Section4Birthdate_cal">
                             </td>
                             <td><input size="8" maxlength="8" name="Section4time" type="text"
                                        value="<%= props.getProperty("Section4time", "") %>" @oscar.formDB/>time
@@ -1491,7 +1491,7 @@
                         <tr>
                             <td><input type="text" name="Section8DATE" id="Section8DATE"
                                        value="<%= props.getProperty("Section8DATE", "") %>" @oscar.formDB/><img
-                                    src="../images/cal.gif" id="Section8DATE_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="Section8DATE_cal"></td>
                             <td><input type="text" name="Section8TIME"
                                        value="<%= props.getProperty("Section8TIME", "") %>" @oscar.formDB/></td>
                             <td><input type="text" name="Section8SIGNATURE"

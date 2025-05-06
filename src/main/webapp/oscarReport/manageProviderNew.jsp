@@ -76,7 +76,7 @@
     <title>Manage Provider</title>
     <link rel="stylesheet" href="oscarReport.css">
     <link rel="stylesheet" href="tree.css">
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     <script language="JavaScript">
         <!--
 

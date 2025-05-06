@@ -115,7 +115,7 @@
 
         //-->
     </script>
-    <link rel="stylesheet" href="../../web.css"/>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
 </head>
 
 <body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">

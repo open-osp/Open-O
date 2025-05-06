@@ -29,6 +29,16 @@ public class EmailSend2Action extends ActionSupport {
     private EmailManager emailManager = SpringUtils.getBean(EmailManager.class);
     private EformDataManager eformDataManager = SpringUtils.getBean(EformDataManager.class);
 
+    public String execute () {
+        if ("sendDirectEmail".equals(request.getParameter("method"))) {
+            return sendDirectEmail();
+        } else if ("cancel".equals(request.getParameter("method"))) {
+            return cancel();
+        }
+        return sendEFormEmail();
+    }
+
+
     public String sendEFormEmail() {
         boolean deleteEFormAfterEmail = request.getParameter("deleteEFormAfterEmail") != null && "true".equalsIgnoreCase(request.getParameter("deleteEFormAfterEmail"));
 

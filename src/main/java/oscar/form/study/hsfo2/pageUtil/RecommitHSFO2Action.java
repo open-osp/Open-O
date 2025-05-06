@@ -62,6 +62,13 @@ public class RecommitHSFO2Action extends ActionSupport {
     static Logger logger = MiscUtils.getLogger();
     private static Hsfo2RecommitScheduleDao rd = (Hsfo2RecommitScheduleDao) SpringUtils.getBean(Hsfo2RecommitScheduleDao.class);
 
+    public String execute() throws Exception {
+        if ("saveSchedule".equals(request.getParameter("method"))) {
+            return saveSchedule();
+        }
+        return showSchedule();
+    }
+    
     public String showSchedule() {
         Hsfo2RecommitSchedule rsd = rd.getLastSchedule(true);
         if (rsd != null) {

@@ -1521,13 +1521,13 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
     };
 
 
-    public String getStandardIdentificationHTML() {
+    public String getStandardIdentificationHTML(String contextPath) {
         //TODO move this into the DemographicManager as a property modifier and wrap each item with setting preferences
         StringBuilder sb = new StringBuilder();
 
         sb.append("<div id='patient-label'>");
         sb.append("<div id='patient-full-name'>");
-        sb.append("<h1><a href='../demographic/demographiccontrol.jsp?demographic_no=");
+        sb.append("<h1><a href='"+ contextPath + "/demographic/demographiccontrol.jsp?demographic_no=");
         sb.append(Encode.forHtml(getDemographicNo() + ""));
         sb.append("&displaymode=edit&dboperation=search_detail' target='_blank'>");
 
@@ -1644,8 +1644,8 @@ public class Demographic extends AbstractModel<Integer> implements Serializable 
         //--> next appointment date
         sb.append("<div id='patient-next-appointment'>");
         sb.append("<div class='label'>");
-        sb.append("<a href=\"../demographic/demographiccontrol.jsp?demographic_no=")
-                .append(Encode.forHtml(getDemographicNo() + ""))
+        sb.append("<a href=\"" + contextPath + "/demographic/demographiccontrol.jsp?demographic_no=")
+        .append(Encode.forHtml(getDemographicNo() + ""))
                 .append("&amp;last_name=").append(Encode.forUriComponent(getLastName())).append("&amp;first_name=")
                 .append(Encode.forUriComponent(getFirstName()))
                 .append("&amp;orderby=appointment_date&amp;displaymode=appt_history&amp;dboperation=appt_history&amp;limit1=0&amp;limit2=25\" title='View Appointment History' target='_blank'>");

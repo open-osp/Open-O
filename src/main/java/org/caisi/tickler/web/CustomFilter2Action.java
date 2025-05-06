@@ -50,9 +50,9 @@ public class CustomFilter2Action extends ActionSupport {
 
 
     private static Logger log = MiscUtils.getLogger();
-    private ProviderManager providerMgr = null;
-    private DemographicManagerTickler demographicMgr = null;
-    private ProgramManager programMgr = null;
+    private ProviderManager providerMgr = SpringUtils.getBean(ProviderManager.class);
+    private DemographicManagerTickler demographicMgr = SpringUtils.getBean(DemographicManagerTickler.class);
+    private ProgramManager programMgr = SpringUtils.getBean(ProgramManager.class);
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 
 
@@ -73,8 +73,19 @@ public class CustomFilter2Action extends ActionSupport {
     }
 
     /* default to 'list' */
-    public String unspecified() throws Exception {
-        log.debug("unspecified");
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("run".equals(method)) {
+            return run();
+        } else if ("changeShortCutStatus".equals(method)) {
+            return changeShortCutStatus();
+        } else if ("edit".equals(method)) {
+            return edit();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("delete".equals(method)) {
+            return delete();
+        }
         return list();
     }
 

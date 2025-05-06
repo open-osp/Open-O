@@ -61,7 +61,7 @@
                 window.close();
             }
         </script>
-        <link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
     </head>
 
     <body class="BodyStyle" vlink="#0000FF">
@@ -125,7 +125,9 @@
                                                     <tr>
                                                         <td>
                                                             <%
-                                                                out.print("<a href=\"../../../oscarEncounter/ShowAllServices.do?serviceId=" + id + "&serviceDesc=" + desc + "\">" + desc + "</a>");
+                                                                String contextPath = request.getContextPath();
+                                                                String url = contextPath + "/oscarEncounter/ShowAllServices.do?serviceId=" + id + "&serviceDesc=" + desc;
+                                                                out.print("<a href=\"" + url + "\">" + desc + "</a>");
                                                             %>
                                                         </td>
                                                     </tr>

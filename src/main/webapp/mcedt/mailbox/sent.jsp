@@ -92,7 +92,7 @@
             font-size: 15pt;
         }
     </style>
-    <script src="../js/jquery-1.7.1.min.js"></script>
+    <script src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
 
     <script language="javascript">
         $(window).load(function () {

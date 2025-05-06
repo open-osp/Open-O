@@ -267,7 +267,7 @@
                                         <input type="text" id="d_confirmedEDD" name="d_confirmedEDD"
                                                title="Section 12 - Confirmed EDD" size="10" maxlength="150"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("d_confirmedEDD", "")) %>"/>
-                                        <img src="../images/cal.gif" id="d_confirmedEDD_cal">
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_confirmedEDD_cal">
                                         by:
                                         <input type="checkbox"
                                                name="c_confirmedEDDUS" <%=Encode.forHtmlAttribute(props.getProperty("c_confirmedEDDUS", "").equals("X") ? "checked" : "") %> />
@@ -319,7 +319,7 @@
                                         <input type="text" id="d_investigationsAntibody1"
                                                name="d_investigationsAntibody1" size="10" maxlength="150"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("d_investigationsAntibody1", "")) %>"/>
-                                        <img src="../images/cal.gif" id="d_investigationsAntibody1_cal">
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_investigationsAntibody1_cal">
                                         <input type="text" name="t_investigationsAntibody1" size="8" maxlength="150"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("t_investigationsAntibody1", "")) %>"/>
                                     </td>
@@ -328,7 +328,7 @@
                                         <input type="text" id="d_investigationsRhIgDate1"
                                                name="d_investigationsRhIgDate1" size="10" maxlength="150"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("d_investigationsRhIgDate1", "")) %>"/>
-                                        <img src="../images/cal.gif" id="d_investigationsRhIgDate1_cal">
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_investigationsRhIgDate1_cal">
                                     </td>
                                     <td>
                                         T1
@@ -358,7 +358,7 @@
                                         <input type="text" id="d_investigationsAntibody2"
                                                name="d_investigationsAntibody2" size="10" maxlength="150"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("d_investigationsAntibody2", "")) %>"/>
-                                        <img src="../images/cal.gif" id="d_investigationsAntibody2_cal">
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_investigationsAntibody2_cal">
                                         <input type="text" name="t_investigationsAntibody2" size="8" maxlength="150"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("t_investigationsAntibody2", "")) %>"/>
                                     </td>
@@ -367,7 +367,7 @@
                                         <input type="text" id="d_investigationsRhIgDate2"
                                                name="d_investigationsRhIgDate2" size="10" maxlength="150"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("d_investigationsRhIgDate2", "")) %>"/>
-                                        <img src="../images/cal.gif" id="d_investigationsRhIgDate2_cal">
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_investigationsRhIgDate2_cal">
                                     </td>
                                     <td>
                                         T3
@@ -699,7 +699,7 @@
                                         <input type="text" id="d_investigationsGBSDate" name="d_investigationsGBSDate"
                                                size="8" maxlength="20"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("d_investigationsGBSDate", "")) %>"/>
-                                        <img src="../images/cal.gif" id="d_investigationsGBSDate_cal">
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_investigationsGBSDate_cal">
                                     </td>
                                     <td>
                                         <input type="checkbox"
@@ -810,7 +810,7 @@
                                         <input type="text" id="d_edinburgDate" name="d_edinburgDate"
                                                title="14. Edinburgh - Date" size="10" maxlength="150"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("d_edinburgDate", "")) %>"/>
-                                        <img src="../images/cal.gif" id="d_edinburgDate_cal">
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_edinburgDate_cal">
                                         GA
                                         <span class="sub-text">(wks/days)</span>
                                         <input type="text" name="t_edinburgGA" title="14. Edinburgh - GA"
@@ -980,7 +980,7 @@
                                             <input type="text" id="d_imagingDate1" name="d_imagingDate1"
                                                    title="US/Imaging Line 1 - Date" size="9" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_imagingDate1", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_imagingDate1_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_imagingDate1_cal">
                                         </div>
                                     </td>
                                     <td>
@@ -1001,7 +1001,7 @@
                                             <input type="text" id="d_imagingDate2" name="d_imagingDate2"
                                                    title="US/Imaging Line 2 - Date" size="9" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_imagingDate2", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_imagingDate2_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_imagingDate2_cal">
                                         </div>
                                     </td>
                                     <td>
@@ -1022,7 +1022,7 @@
                                             <input type="text" id="d_imagingDate3" name="d_imagingDate3"
                                                    title="US/Imaging Line 3 - Date" size="9" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_imagingDate3", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_imagingDate3_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_imagingDate3_cal">
                                         </div>
                                     </td>
                                     <td>
@@ -1043,7 +1043,7 @@
                                             <input type="text" id="d_imagingDate4" name="d_imagingDate4"
                                                    title="US/Imaging Line 4 - Date" size="9" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_imagingDate4", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_imagingDate4_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_imagingDate4_cal">
                                         </div>
                                     </td>
                                     <td>

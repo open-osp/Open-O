@@ -60,6 +60,10 @@ public class OutcomesDashboard2Action extends ActionSupport {
 
     Logger logger = MiscUtils.getLogger();
 
+    public String execute() throws Exception {
+        return refreshIndicators();
+    }
+
     public String refreshIndicators() throws Exception {
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_dashboardDisplay", "r", null)) {
             throw new SecurityException("missing required security object (_dashboarDisplay)");

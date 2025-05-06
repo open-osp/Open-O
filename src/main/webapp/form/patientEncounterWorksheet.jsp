@@ -82,9 +82,22 @@
 
     String providerName = providerDao.getProvider(demographic.getProviderNo()).getFormattedName();
 
-    Appointment appt = null;
-    if (request.getParameter("appointmentNo") != null)
-        appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointmentNo")));
+    Appointment appt = (Appointment)request.getAttribute("appt");
+    
+    if (appt == null && request.getParameter("appointmentNo") != null) {
+        try {
+            appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointmentNo")));
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid appointment number: " + request.getParameter("appointmentNo"));
+        }
+    }
+    
+    boolean hasAppointment = (appt != null);
+    
+    if (false) { 
+        out.println("<!-- DEBUG: appt=" + appt + " -->");
+        out.println("<!-- DEBUG: hasAppointment=" + hasAppointment + " -->");
+    }
 
     SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
@@ -113,7 +126,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Patient Encounter Worksheet</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
 
@@ -127,7 +140,7 @@
     <h4 style="font-weight:bold;font-size:15px;text-align:center">Patient Encounter Worksheet</h4>
 
     <div align="center">
-        <form action="../form/createpdf" method="POST">
+        <form action="<%= request.getContextPath() %>/form/createpdf" method="POST">
             <input type="hidden" name="demographic_no" value="<%=request.getParameter("demographic_no") %>"/>
             <input type="hidden" name="form_id" value="<%=request.getParameter("form_id") %>"/>
             <input type="hidden" name="__title" value="PatientEcounterWorksheet"/>
@@ -232,24 +245,41 @@
                     </td>
                     <td valign="top" width="50%">
                         <table border="0" cellspacing="2" cellpadding="2">
-                            <input type="hidden" name="appt_date"
-                                   value="<%=dateFormatter.format(appt.getAppointmentDate()) + " " + timeFormatter.format(appt.getStartTime()) %>"/>
-                            <input type="hidden" name="appt_type" value="<%=appt.getType() %>"/>
-                            <input type="hidden" name="appt_reason" value="<%=appt.getReason() %>"/>
-
+                            <% if (hasAppointment) { %>
+                                <input type="hidden" name="appt_date" 
+                                       value="<%=dateFormatter.format(appt.getAppointmentDate()) + " " + timeFormatter.format(appt.getStartTime()) %>"/>
+                                <input type="hidden" name="appt_type" value="<%=appt.getType() %>"/>
+                                <input type="hidden" name="appt_reason" value="<%=appt.getReason() %>"/>
+                            <% } %>
+                        
                             <tr>
                                 <td>Appt. Date:</td>
-                                <td><%=dateFormatter.format(appt.getAppointmentDate()) %>&nbsp;<%=timeFormatter.format(appt.getStartTime()) %>
+                                <td>
+                                    <% if (hasAppointment) { %>
+                                        <%=dateFormatter.format(appt.getAppointmentDate()) %>&nbsp;<%=timeFormatter.format(appt.getStartTime()) %>
+                                    <% } else { %>
+                                        N/A
+                                    <% } %>
                                 </td>
                             </tr>
                             <tr>
                                 <td>Appt. Type:</td>
-                                <td><%=appt.getType() %>
+                                <td>
+                                    <% if (hasAppointment) { %>
+                                        <%=appt.getType() %>
+                                    <% } else { %>
+                                        N/A
+                                    <% } %>
                                 </td>
                             </tr>
                             <tr>
                                 <td>Reason:</td>
-                                <td><%=appt.getReason() %>
+                                <td>
+                                    <% if (hasAppointment) { %>
+                                        <%=appt.getReason() %>
+                                    <% } else { %>
+                                        N/A
+                                    <% } %>
                                 </td>
                             </tr>
                         </table>

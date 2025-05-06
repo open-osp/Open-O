@@ -118,11 +118,11 @@
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></title>
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarRx/styles.css">
 
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
         <script type="text/javascript" src="<c:out value="${ctx}/phr/phr.js"/>"></script>
 
         <script type="text/javascript">
@@ -173,7 +173,7 @@
                     + '\n  *  Drug-Drug Interaction Information'
                     + '\n  *  Drug Information'
                     + '\n\nAre you sure you wish to use this feature?') == true) {
-                    window.location.href = 'chooseDrug.do?demographicNo=<%=response.encodeURL(Integer.toString(bean.getDemographicNo()))%>';
+                    window.location.href = '<%= request.getContextPath() %>/oscarRx/chooseDrug.do?demographicNo=<%=response.encodeURL(Integer.toString(bean.getDemographicNo()))%>';
                 }
             }
 
@@ -250,7 +250,7 @@
 
     <%
         boolean showall = false;
-        oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getAttribute("Patient");
+        oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getSession().getAttribute("Patient");
         if (request.getParameter("show") != null) if (request.getParameter("show").equals("all")) showall = true;
     %>
     <body topmargin="0" leftmargin="0" vlink="#0000FF" onload="load()">
@@ -315,7 +315,7 @@
                     <tr>
                         <td>
                             <div class="DivContentSectionHead"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.section2Title"/> (<a
-                                    href="javascript:popupWindow(720,700,'PrintDrugProfile.jsp','PrintDrugProfile')"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.Print"/></a>) &nbsp;&nbsp;(<a href="#"
+                                    href="javascript:popupWindow(720,700,'oscarRx/PrintDrugProfile.jsp','PrintDrugProfile')"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.Print"/></a>) &nbsp;&nbsp;(<a href="#"
                                                                                   onclick="$('reprint').toggle();return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.Reprint"/></a>)
                             </div>
                         </td>
@@ -411,10 +411,10 @@
                                                 %>
                                                 <tr>
                                                     <td valign="top"><a <%=styleColor%>
-                                                            href="StaticScript.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&bn=<%=response.encodeURL(prescriptDrug.getBrandName())%>"><%=prescriptDrug.getRxDate()%>
+                                                            href="oscarRx/StaticScript.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&bn=<%=response.encodeURL(prescriptDrug.getBrandName())%>"><%=prescriptDrug.getRxDate()%>
                                                     </a></td>
                                                     <td><a <%=styleColor%>
-                                                            href="StaticScript.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&bn=<%=response.encodeURL(prescriptDrug.getBrandName())%>"><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%>
+                                                            href="oscarRx/StaticScript.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&bn=<%=response.encodeURL(prescriptDrug.getBrandName())%>"><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%>
                                                     </a></td>
                                                     <td width="100px" align="center">
                                                         <%
@@ -458,8 +458,8 @@
                                                         %>
                                                     </td>
                                                     <td width="20px" align="center"><a href="#" title="Annotation"
-                                                                                       onclick="window.open('../annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=prescriptDrug.getId()%>&demo=<%=bean.getDemographicNo()%>','anwin','width=400,height=500');">
-                                                        <img src="../images/notes.gif" border="0"></a>
+                                                                                       onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=prescriptDrug.getId()%>&demo=<%=bean.getDemographicNo()%>','anwin','width=400,height=500');">
+                                                        <img src="<%= request.getContextPath() %>/images/notes.gif" border="0"></a>
                                                     </td>
                                                     <%
                                                         if (integratorEnabled) {
@@ -483,21 +483,21 @@
                                                         <%
                                                             String show = "&show=all";
                                                             if (showall) {
-                                                        %> <a href="SearchDrug.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgShowCurrent"/></a> <%
+                                                        %> <a href="oscarRx/SearchDrug.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgShowCurrent"/></a> <%
                                                     } else {
                                                         show = "";
-                                                    %> <a href="SearchDrug.jsp?show=all"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgShowAll"/></a> <%
+                                                    %> <a href="oscarRx/SearchDrug.jsp?show=all"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgShowAll"/></a> <%
                                                         }
                                                     %> &nbsp;&nbsp;&nbsp; <a
-                                                            href="SearchDrug.jsp?status=active<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgActive"/></a> - <a
-                                                            href="SearchDrug.jsp?status=inactive<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgInactive"/></a> - <a
-                                                            href="SearchDrug.jsp?status=all<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgAll"/></a></td>
+                                                            href="oscarRx/SearchDrug.jsp?status=active<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgActive"/></a> - <a
+                                                            href="oscarRx/SearchDrug.jsp?status=inactive<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgInactive"/></a> - <a
+                                                            href="oscarRx/SearchDrug.jsp?status=all<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgAll"/></a></td>
                                                     <td align="right">
                                                                     <span style="width: 350px; align: right">
                                                                        <input type="button" name="cmdAllergies"
                                                                               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgViewEditAllergies"/>"
                                                                               class="ControlPushButton"
-                                                                              onclick="javascript:window.location.href='ShowAllergies.jsp?demographicNo=<%=request.getParameter("demographicNo")%>';"
+                                                                              onclick="javascript:window.location.href='oscarRx/ShowAllergies.jsp?demographicNo=<%=request.getParameter("demographicNo")%>';"
                                                                               style="width: 100px"/>
 								       <input type="button" name="cmdRePrescribe"
                                               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgReprescribe"/>"
@@ -676,7 +676,7 @@
                                 <br>
 
                                 <input type="button" class="ControlPushButton"
-                                       onclick="javascript:window.location.href='viewScript.do';"
+                                       onclick="javascript:window.location.href='oscarRx/viewScript.do';"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgSaveAndPrint"/>"/></td>
                         </tr>
                     </c:if>

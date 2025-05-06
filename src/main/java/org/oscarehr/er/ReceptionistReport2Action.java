@@ -62,29 +62,12 @@ public class ReceptionistReport2Action extends ActionSupport {
 
     private static Logger log = MiscUtils.getLogger();
 
-    private static IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
+    private static IssueDAO issueDao = SpringUtils.getBean(IssueDAO.class);
 
-    private ProgramManager programManager;
-    private ClientManager clientManager;
-    private AdmissionManager admissionManager;
-    private CaseManagementManager caseManagementManager;
-
-
-    public void setProgramManager(ProgramManager mgr) {
-        this.programManager = mgr;
-    }
-
-    public void setClientManager(ClientManager mgr) {
-        this.clientManager = mgr;
-    }
-
-    public void setAdmissionManager(AdmissionManager mgr) {
-        this.admissionManager = mgr;
-    }
-
-    public void setCaseManagementManager(CaseManagementManager mgr) {
-        this.caseManagementManager = mgr;
-    }
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
+    private ClientManager clientManager = SpringUtils.getBean(ClientManager.class);
+    private AdmissionManager admissionManager = SpringUtils.getBean(AdmissionManager.class);
+    private CaseManagementManager caseManagementManager = SpringUtils.getBean(CaseManagementManager.class);
 
     protected void postMessage(HttpServletRequest request, String key, String val) {
         addActionMessage(getText(key, val));
@@ -98,7 +81,7 @@ public class ReceptionistReport2Action extends ActionSupport {
         return (String) request.getSession().getAttribute("user");
     }
 
-    public String unspecified() {
+    public String execute() {
         return show_report();
     }
 

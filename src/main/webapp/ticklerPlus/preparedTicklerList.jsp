@@ -49,7 +49,7 @@
             <tr bgcolor="${bgcolor}" align="center"
                 onMouseOver="this.style.cursor='hand';this.style.backgroundColor='pink';"
                 onMouseout="this.style.backgroundColor='${bgcolor}';"
-                onclick="location.href='../Tickler.do?method=prepared_tickler_edit&id=${preparedTickler.name}';">
+                onclick="location.href="<%= request.getContextPath() %>/Tickler.do?method=prepared_tickler_edit&id=${preparedTickler.name}";">
                 <td valign="middle"><input type="checkbox" name="checkbox"
                                            value="${preparedTickler.name}"/></td>
                 <td>${preparedTickler.name}</td>

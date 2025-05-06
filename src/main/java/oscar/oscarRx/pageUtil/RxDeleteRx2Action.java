@@ -66,7 +66,7 @@ public final class RxDeleteRx2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-    private DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
+    private DrugDao drugDao = SpringUtils.getBean(DrugDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     private static final String PRIVILEGE_UPDATE = "u";
@@ -74,7 +74,20 @@ public final class RxDeleteRx2Action extends ActionSupport {
     @Override
     public String execute()
             throws IOException, ServletException {
-
+        String method = request.getParameter("parameterValue");
+        if ("Delete2".equals(method)) {
+            return Delete2();
+        } else if ("DeleteRxOnCloseRxBox".equals(method)) {
+            return DeleteRxOnCloseRxBox();
+        } else if ("clearStash".equals(method)) {
+            return clearStash();
+        } else if ("clearReRxDrugList".equals(method)) {
+            return clearReRxDrugList();
+        } else if ("clearPHRMeds".equals(method)) {
+            return clearPHRMeds();
+        } else if ("Discontinue".equals(method)) {
+            return Discontinue();
+        }
         checkPrivilege(request, PRIVILEGE_UPDATE);
 
         // Setup variables

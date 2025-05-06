@@ -77,7 +77,7 @@
 
         <!--META HTTP-EQUIV="Refresh" CONTENT="20;"-->
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 
     </head>
@@ -88,7 +88,7 @@
 
     </script>
 
-    <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
     <body class="BodyStyle" vlink="#0000FF" onload="window.focus()">
     <!--  -->
     <table class="MainTable" id="scrollNumber1" name="encounterTable">

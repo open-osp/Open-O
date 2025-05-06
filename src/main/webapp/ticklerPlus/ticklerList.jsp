@@ -50,8 +50,8 @@
     int curMonth = now.get(Calendar.MONTH) + 1;
 %>
 
-<script type="text/javascript" src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" src="../js/checkDate.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/js/checkDate.js"></script>
 
 <script>
     //filter for client - will work for other dropdowns as well
@@ -438,7 +438,7 @@
                 %>
                 <td><input type="checkbox" name="checkbox"
                            value="<c:out value="${tickler.id}"/>"/></td>
-                <td><a href="../Tickler.do?method=view&id=<c:out value="${tickler.id}"/>"><img
+                <td><a href="<%= request.getContextPath() %>/Tickler.do?method=view&id=<c:out value="${tickler.id}"/>"><img
                         align="right" src="<c:out value="${ctx}"/>/ticklerPlus/images/<%=view_image %>" border="0"/>
                 </a></td>
 

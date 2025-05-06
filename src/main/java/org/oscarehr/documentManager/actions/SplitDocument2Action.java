@@ -59,9 +59,21 @@ public class SplitDocument2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private DocumentDao documentDao = SpringUtils.getBean(DocumentDao.class);
 
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("split".equals(method)) {
+            return split();
+        } else if ("rotate180".equals(method)) {
+            return rotate180();
+        } else if ("rotate90".equals(method)) {
+            return rotate90();
+        } else if ("removeFirstPage".equals(method)) {
+            return removeFirstPage();
+        } 
+        return SUCCESS;
+    }
 
     public String split() {
         String docNum = request.getParameter("document");

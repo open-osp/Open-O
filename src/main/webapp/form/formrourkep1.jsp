@@ -49,9 +49,9 @@
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.title"/></title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <link rel="stylesheet" type="text/css" media="screen"
-              href="rourkeStyle.css">
+              href="form/rourkeStyle.css">
         <link rel="stylesheet" type="text/css" media="print"
-              href="printRourke.css">
+              href="form/printRourke.css">
 
         <%
             String formClass = "Rourke";
@@ -273,14 +273,14 @@
                                                                          value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnPrint"/>"
                                                                          onclick="javascript:return onPrint();"/></td>
                 <td align="center" width="100%"><a name="length"
-                                                   href="javascript:popup('graphLengthWeight.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
+                                                   href="javascript:popup('form/graphLengthWeight.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnGraphLenghtWeight"/></a><br>
                     <a name="headCirc"
-                       href="javascript:popup('graphHeadCirc.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
+                       href="javascript:popup('form/graphHeadCirc.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnGraphHead"/></a></td>
                 <td nowrap="true"><a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.msgPage1"/></a>&nbsp;|&nbsp; <a
-                        href="formrourkep2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnPage2"/></a>&nbsp;|&nbsp; <a
-                        href="formrourkep3.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnPage3"/></a></td>
+                        href="form/formrourkep2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnPage2"/></a>&nbsp;|&nbsp; <a
+                        href="form/formrourkep3.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnPage3"/></a></td>
             </tr>
         </table>
 
@@ -1297,14 +1297,14 @@
                                                                          value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnPrint"/>"
                                                                          onclick="javascript:return onPrint();"/></td>
                 <td align="center" width="100%"><a name="length"
-                                                   href="javascript:popup('graphLengthWeight.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
+                                                   href="javascript:popup('form/graphLengthWeight.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnGraphLenghtWeight"/></a><br>
                     <a name="headCirc"
-                       href="javascript:popup('graphHeadCirc.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
+                       href="javascript:popup('form/graphHeadCirc.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnGraphHead"/></a></td>
                 <td nowrap="true"><a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.msgPage1"/></a>&nbsp;|&nbsp; <a
-                        href="formrourkep2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnPage2"/></a>&nbsp;|&nbsp; <a
-                        href="formrourkep3.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnPage3"/></a></td>
+                        href="form/formrourkep2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnPage2"/></a>&nbsp;|&nbsp; <a
+                        href="form/formrourkep3.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnPage3"/></a></td>
             </tr>
         </table>
 

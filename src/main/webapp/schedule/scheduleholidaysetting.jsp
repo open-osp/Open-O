@@ -129,7 +129,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduleholidaysetting.title"/></title>
-        <link rel="stylesheet" href="../web.css"/>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
 
         <script language="JavaScript">
             <!--
@@ -203,14 +203,14 @@
                         <tr>
                             <td width="50%" align="center"><a
                                     href="scheduleholidaysetting.jsp?year=<%=year%>&month=<%=month%>&day=<%=day%>&delta=-1&bFirstDisp=0">
-                                &nbsp;&nbsp;<img src="../images/previous.gif" WIDTH="10" HEIGHT="9"
+                                &nbsp;&nbsp;<img src="<%= request.getContextPath() %>/images/previous.gif" WIDTH="10" HEIGHT="9"
                                                  BORDER="0"
                                                  ALT='<fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduleholidaysetting.btnLastMonthTip"/>'
                                                  vspace="2"> <fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduleholidaysetting.btnLastMonth"/>&nbsp;&nbsp; </a>
                                 <b><span CLASS=title><%=year%>-<%=month%></span></b> <a
                                         href="scheduleholidaysetting.jsp?year=<%=year%>&month=<%=month%>&day=<%=day%>&delta=1&bFirstDisp=0">
                                     &nbsp;&nbsp;<fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduleholidaysetting.btnNextMonth"/> <img
-                                        src="../images/next.gif" WIDTH="10" HEIGHT="9" BORDER="0"
+                                        src="<%= request.getContextPath() %>/images/next.gif" WIDTH="10" HEIGHT="9" BORDER="0"
                                         ALT='<fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduleholidaysetting.btnNextMonthTip"/>'
                                         vspace="2">&nbsp;&nbsp;</a></td>
                         </TR>

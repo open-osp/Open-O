@@ -46,7 +46,7 @@
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setNoteStaleDate.title"/></title>
 
         <link rel="stylesheet" type="text/css"
-              href="../oscarEncounter/encounterStyles.css">
+              href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
               href="<c:out value="${ctx}"/>/share/calendar/calendar.css"

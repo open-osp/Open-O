@@ -56,7 +56,7 @@
     <head>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
     </head>
-    <link rel="stylesheet" href="../web.css"/>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
     <body topmargin="0" leftmargin="0" rightmargin="0">
     <center>
         <table border="0" cellspacing="0" cellpadding="0" width="100%">

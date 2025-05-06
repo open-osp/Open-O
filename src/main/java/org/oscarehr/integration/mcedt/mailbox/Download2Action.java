@@ -68,9 +68,21 @@ public class Download2Action extends ActionSupport {
     private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     private boolean isFileToDownload = false;
 
-
     @Override
     public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("download".equals(method)) {
+            return download();
+        } else if ("getLastDownloadedID".equals(method)) {
+            return getLastDownloadedID();
+        } else if ("cancel".equals(method)) {
+            return cancel();
+        } else if ("userDownload".equals(method)) {
+            return userDownload();
+        } else if ("changeDisplay".equals(method)) {
+            return changeDisplay();
+        }
+
         try {
             if (request.getSession().getAttribute("resourceTypeList") == null) {
                 EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
@@ -431,12 +443,10 @@ public class Download2Action extends ActionSupport {
         return resourceList;
     }
 
-
     private String resourceType;
     private String status;
     private Integer pageNo;
     private String serviceId;
-
 
     private TypeListResult typeListResult;
     private Detail detail;

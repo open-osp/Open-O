@@ -30,7 +30,7 @@
 <%@ page import="oscar.oscarMDS.data.ProviderData, java.util.ArrayList" %>
 
 <link rel="stylesheet" type="text/css" href="encounterStyles.css">
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <html>
 <head>

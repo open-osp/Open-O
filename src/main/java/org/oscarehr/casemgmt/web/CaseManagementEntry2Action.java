@@ -102,12 +102,78 @@ public class CaseManagementEntry2Action extends ActionSupport {
     private CasemgmtNoteLockDao casemgmtNoteLockDao = SpringUtils.getBean(CasemgmtNoteLockDao.class);
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 
-    public String unspecified() throws Exception {
+    public String execute() throws Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         if (loggedInInfo == null) {
             String message = "Illegal operation! Empty user session. LoggedInInfo " + loggedInInfo + " request " + request.getQueryString();
             logger.error(message);
             return null;
+        }
+        String method = request.getParameter("method");
+        if ("setUpMainEncounter".equals(method)) {
+            return setUpMainEncounter();
+        } else if ("isNoteEdited".equals(method)) {
+            return isNoteEdited();
+        } else if ("updateNoteLock".equals(method)) {
+            return updateNoteLock();
+        } else if ("issueNoteSaveJson".equals(method)) {
+            return issueNoteSaveJson();
+        } else if ("issueNoteSave".equals(method)) {
+            return issueNoteSave();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("ajaxsave".equals(method)) {
+            return ajaxsave();
+        } else if ("releaseNoteLock".equals(method)) {
+            return releaseNoteLock();
+        } else if ("saveAndExit".equals(method)) {
+            return saveAndExit();
+        } else if ("cancel".equals(method)) {
+            return cancel();
+        } else if ("exit".equals(method)) {
+            return exit();
+        } else if ("addNewIssue".equals(method)) {
+            return addNewIssue();
+        } else if ("issueList".equals(method)) {
+            return issueList();
+        } else if ("issueSearch".equals(method)) {
+            return issueSearch();
+        } else if ("makeIssue".equals(method)) {
+            return makeIssue();
+        } else if ("issueAdd".equals(method)) {
+            return issueAdd();
+        } else if ("changeDiagnosis".equals(method)) {
+            return changeDiagnosis();
+        } else if ("submitChangeDiagnosis".equals(method)) {
+            return submitChangeDiagnosis();
+        } else if ("ajaxChangeDiagnosis".equals(method)) {
+            return ajaxChangeDiagnosis();
+        } else if ("issueDelete".equals(method)) {
+            return issueDelete();
+        } else if ("issueChange".equals(method)) {
+            return issueChange();
+        } else if ("notehistory".equals(method)) {
+            return notehistory();
+        } else if ("issuehistory".equals(method)) {
+            return issuehistory();
+        } else if ("history".equals(method)) {
+            return history();
+        } else if ("autosave".equals(method)) {
+            return autosave();
+        } else if ("restore".equals(method)) {
+            return restore();
+        } else if ("cleanup".equals(method)) {
+            return cleanup();
+        } else if ("displayNotes".equals(method)) {
+            return displayNotes();
+        } else if ("print".equals(method)) {
+            return print();
+        } else if ("runMacro".equals(method)) {
+            return runMacro();
+        } else if ("ticklerSaveNote".equals(method)) {
+            return ticklerSaveNote();
+        } else if ("ticklerGetNote".equals(method)) {
+            return ticklerGetNote();
         }
         return edit();
     }
@@ -3474,22 +3540,9 @@ public class CaseManagementEntry2Action extends ActionSupport {
     protected String relateIssueString = "Issues related to this note:";
 
 
-    protected CaseManagementManager caseManagementMgr;
-    protected ClientImageManager clientImageMgr;
-    protected ProviderManager providerMgr;
-    protected DxDao dxDao = (DxDao) SpringUtils.getBean(DxDao.class);
-
-    public void setProviderManager(ProviderManager pmgr) {
-        this.providerMgr = pmgr;
-    }
-
-    public void setClientImageManager(ClientImageManager mgr) {
-        this.clientImageMgr = mgr;
-    }
-
-    public void setCaseManagementManager(CaseManagementManager caseManagementMgr) {
-        this.caseManagementMgr = caseManagementMgr;
-    }
+    protected CaseManagementManager caseManagementMgr = SpringUtils.getBean(CaseManagementManager.class);
+    protected ClientImageManager clientImageMgr = SpringUtils.getBean(ClientImageManager.class);
+    protected ProviderManager providerMgr = SpringUtils.getBean(ProviderManager.class);
 
     protected String getDemographicNo(HttpServletRequest request) {
         String demono = request.getParameter("demographicNo");
@@ -4040,14 +4093,14 @@ public class CaseManagementEntry2Action extends ActionSupport {
 
     /**
      * @return the OscarMsgType
-     */
+     *
     public Integer getOscarMsgType() {
         return OscarMsgType;
     }
 
     /**
      * @param OscarMsgType the OscarMsgType to set
-     */
+     *
     public void setOscarMsgType(Integer OscarMsgType) {
         this.OscarMsgType = OscarMsgType;
     }
@@ -4055,16 +4108,16 @@ public class CaseManagementEntry2Action extends ActionSupport {
 
     /**
      * @return the OscarMsgTypeLink
-     */
+     *
     public Integer getOscarMsgTypeLink() {
         return OscarMsgTypeLink;
     }
 
     /**
      * @param OscarMsgTypeLink the OscarMsgTypeLink to set
-     */
+     *
     public void setOscarMsgTypeLink(Integer OscarMsgTypeLink) {
         this.OscarMsgTypeLink = OscarMsgTypeLink;
-    }
+    }*/
 
 }

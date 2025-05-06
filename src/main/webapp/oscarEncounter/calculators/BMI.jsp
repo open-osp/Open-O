@@ -33,7 +33,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>BMI</title>
-        <link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/encounterStyles.css">
         <script type="text/javascript">
 
             //Body Surface Area = 0.20247 x Height(m)0.725 x Weight(kg)0.425
@@ -223,7 +223,7 @@
             }
         </script>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
     <body class="BodyStyle" vlink="#0000FF" onLoad="setValues()">

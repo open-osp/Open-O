@@ -162,27 +162,27 @@
     <tr align="center">
         <td class="column"><a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.msgDate"/></a></td>
         <td colspan="4">
-            <img src="../images/cal.gif" id="p2_date2m_cal" style="vertical-align: middle;">
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p2_date2m_cal" style="vertical-align: middle;">
             <input readonly type="text" id="p2_date2m"
                    ondblclick="resetDate(this)" name="p2_date2m" size="10"
                    value="<%=UtilMisc.htmlEscape(props.getProperty("p2_date2m", ""))%>"/>
-            <img src="../images/clear.png" id="p2_date2m_delete" style="vertical-align: middle; cursor: pointer;"
+            <img src="<%= request.getContextPath() %>/images/clear.png" id="p2_date2m_delete" style="vertical-align: middle; cursor: pointer;"
                  onClick="resetDateUsingID('p2_date2m')">
         </td>
         <td colspan="4">
-            <img src="../images/cal.gif" id="p2_date4m_cal" style="vertical-align: middle;">
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p2_date4m_cal" style="vertical-align: middle;">
             <input readonly type="text" id="p2_date4m"
                    ondblclick="resetDate(this)" name="p2_date4m" size="10"
                    value="<%=UtilMisc.htmlEscape(props.getProperty("p2_date4m", ""))%>"/>
-            <img src="../images/clear.png" id="p2_date4m_delete" style="vertical-align: middle; cursor: pointer;"
+            <img src="<%= request.getContextPath() %>/images/clear.png" id="p2_date4m_delete" style="vertical-align: middle; cursor: pointer;"
                  onClick="resetDateUsingID('p2_date4m')">
         </td>
         <td colspan="4">
-            <img src="../images/cal.gif" id="p2_date6m_cal" style="vertical-align: middle;">
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p2_date6m_cal" style="vertical-align: middle;">
             <input readonly type="text" id="p2_date6m"
                    ondblclick="resetDate(this)" name="p2_date6m" size="10"
                    value="<%=UtilMisc.htmlEscape(props.getProperty("p2_date6m", ""))%>"/>
-            <img src="../images/clear.png" id="p2_date6m_delete" style="vertical-align: middle; cursor: pointer;"
+            <img src="<%= request.getContextPath() %>/images/clear.png" id="p2_date6m_delete" style="vertical-align: middle; cursor: pointer;"
                  onClick="resetDateUsingID('p2_date6m')">
         </td>
     </tr>

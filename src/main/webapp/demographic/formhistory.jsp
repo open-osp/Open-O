@@ -107,7 +107,7 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>PATIENT'S FORM</title>
-    <link rel="stylesheet" href="../web.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
     <script language="JavaScript">
         <!--
 

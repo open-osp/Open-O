@@ -91,7 +91,7 @@
         <script src="<%=request.getContextPath()%>/library/jquery/jquery-ui-1.12.1.min.js"
                 type="text/javascript"></script>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
         <link rel="stylesheet" href="<%=request.getContextPath()%>/css/bootstrap4.1.1.min.css">
         <link rel="stylesheet" href="<%=request.getContextPath()%>/css/bootstrap-select.css"/>
         <link rel="stylesheet" href="<%=request.getContextPath()%>/library/jquery/jquery-ui.structure-1.12.1.min.css">

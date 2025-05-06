@@ -61,7 +61,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotaddrecord.title"/></title>
-        <link rel="stylesheet" href="../web.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
     </head>
 
     <body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0">

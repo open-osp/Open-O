@@ -62,6 +62,24 @@ public final class RxRePrescribe2Action extends ActionSupport {
     private static final Logger logger = MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() throws IOException {
+        String method = request.getParameter("method");
+        if ("reprint2".equals(method)) {
+            return reprint2();
+        } else if ("represcribe".equals(method)) {
+            return represcribe();
+        } else if ("saveReRxDrugIdToStash".equals(method)) {
+            return saveReRxDrugIdToStash();
+        } else if ("represcribe2".equals(method)) {
+            return represcribe2();
+        } else if ("repcbAllLongTerm".equals(method)) {
+            return repcbAllLongTerm();
+        } else if ("represcribeMultiple".equals(method)) {
+            return represcribeMultiple();
+        }
+        return reprint();
+    }
+
     public String reprint() throws IOException {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

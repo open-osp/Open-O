@@ -34,7 +34,7 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>OSCAR Providers</title>
-    <link rel="stylesheet" href="../../../../share/css/oscar.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/oscar.css">
 </head>
 <%
     String form = request.getParameter("form"), field = request.getParameter("field");

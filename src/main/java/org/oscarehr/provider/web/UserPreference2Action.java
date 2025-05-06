@@ -52,10 +52,9 @@ public class UserPreference2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private Logger logger = MiscUtils.getLogger();
-    protected SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
-    protected UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
+    protected SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
+    protected UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
     static Map<String, String> defaults = new HashMap<String, String>();
     protected Map<String, String> siteDefaults = new HashMap<String, String>();
     private boolean inited = false;
@@ -98,6 +97,9 @@ public class UserPreference2Action extends ActionSupport {
 
     @Override
     public String execute() {
+        if ("saveGeneral".equals(request.getParameter("method"))) {
+            return saveGeneral();
+        }
         return form();
     }
 
@@ -164,7 +166,6 @@ public class UserPreference2Action extends ActionSupport {
 
         return form();
     }
-
 
     private void changePassword(HttpServletRequest request) throws Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

@@ -48,6 +48,12 @@ public class ManageCSS2Action extends ActionSupport {
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("save".equals(method)) {
+            return save();
+        } else if ("delete".equals(method)) {
+            return delete();
+        }
         styles = cssStylesDao.findAll();
         return "init";
     }

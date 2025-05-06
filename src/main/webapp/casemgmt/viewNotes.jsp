@@ -68,9 +68,8 @@
                 com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
                 if (securityManager.hasWriteAccess("_" + request.getParameter("issue_code"), roleName$)) {
             %>
-            <a href="javascript:void(0)" title='Add Item' onclick="return showEdit(event,'<%=titleMsg%>','',0,'','','','<%=request.getAttribute("addUrl")%>0', '<c:out
-                    value="${param.cmd}"/>','<%=request.getAttribute("identUrl")%>','<%=request.getAttribute("cppIssue")%>','','
-            <c:out value="${param.demographicNo}"/>');">+</a>
+            <a href="javascript:void(0)" title='Add Item' onclick="return showEdit(event,'<%=titleMsg%>','',0,'','','','<%=request.getAttribute("addUrl")%>0', 
+                '<c:out value="${param.cmd}"/>','<%=request.getAttribute("identUrl")%>','<%=request.getAttribute("cppIssue")%>','','<c:out value="${param.demographicNo}"/>');">+</a>
             <% } else { %>
             &nbsp;
             <% } %>
@@ -137,10 +136,8 @@
     </c:if>
 </ul>
 
-<input type="hidden" id="<c:out value="${param.cmd}"/>num"
-       value="<nested:write name="num"/>">
-<input type="hidden" id="<c:out value="${param.cmd}"/>threshold"
-       value="0">
+<input type="hidden" id="<c:out value="${param.cmd}"/>num" value="${num}">
+<input type="hidden" id="<c:out value="${param.cmd}"/>threshold" value="0">
 <%!
     String getNoteExts(Long noteId, List<CaseManagementNoteExt> lcme) {
         StringBuffer strcme = new StringBuffer();

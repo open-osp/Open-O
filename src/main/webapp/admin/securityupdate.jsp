@@ -59,7 +59,7 @@
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityupdate.title"/></title>
     </head>
-    <link rel="stylesheet" href="../web.css"/>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
     <body topmargin="0" leftmargin="0" rightmargin="0">
     <center>
         <table border="0" cellspacing="0" cellpadding="0" width="100%">

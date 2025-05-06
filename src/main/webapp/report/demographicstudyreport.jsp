@@ -121,7 +121,7 @@
         %>
         <tr bgcolor="<%=(nItems%2 == 0)?weakcolor:"white"%>">
             <td nowrap><a
-                    href="../demographic/demographiccontrol.jsp?demographic_no=<%=d.getDemographicNo()%>&displaymode=edit&dboperation=search_detail"><%=d.getLastName()%>
+                    href="<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=d.getDemographicNo()%>&displaymode=edit&dboperation=search_detail"><%=d.getLastName()%>
             </a></td>
             <td><%=d.getFirstName()%>
             </td>

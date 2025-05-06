@@ -112,9 +112,9 @@
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.title"/></title>
         <link rel="stylesheet" type="text/css"
-              href="../share/css/OscarStandardLayout.css">
+              href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
         <link rel="stylesheet" type="text/css"
-              href="../share/css/eformStyle.css">
+              href="<%= request.getContextPath() %>/share/css/eformStyle.css">
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.fileDownload.js"></script>
         <script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
@@ -203,7 +203,7 @@
 
         </script>
         <script type="text/javascript" language="JavaScript"
-                src="../share/javascript/Oscar.js"></script>
+                src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
     </head>
 
     <body onunload="updateAjax()" class="BodyStyle" vlink="#0000FF">
@@ -227,7 +227,7 @@
         <tr>
             <td class="MainTableLeftColumn" valign="top">
 
-                <a href="../demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnMasterFile"/></a>
+                <a href="<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnMasterFile"/></a>
 
                 <br>
                 <a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"
@@ -302,7 +302,7 @@
                             <td align='center'><%=curform.get("formDate")%>
                             </td>
                             <td align='center'><a
-                                    href="../eform/removeEForm.do?fdid=<%=curform.get("fdid")%>&group_view=<%=groupView%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>"
+                                    href="<%= request.getContextPath() %>/eform/removeEForm.do?fdid=<%=curform.get("fdid")%>&group_view=<%=groupView%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>"
                                     onClick="javascript: return confirm('Are you sure you want to delete this eform?');"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.uploadimages.btnDelete"/></a></td>
                         </tr>
                         <%

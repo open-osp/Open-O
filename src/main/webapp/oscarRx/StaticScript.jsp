@@ -74,7 +74,7 @@
         %>
 
 
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
 
         <script language="javascript">
             function ShowDrugInfo(gn) {
@@ -103,7 +103,7 @@
                 if (favoriteName.length > 0) {
                     var s = escape('?regionalIdentifier=<%=regionalIdentifier%>&cn=<%=cn%>');
 
-                    window.location.href = 'addFavoriteStaticScript.do?drugId='
+                    window.location.href = '<%=request.getContextPath() %>/oscarRx/addFavoriteStaticScript.do?drugId='
                         + escape(drugId) + '&favoriteName=' + escape(favoriteName)
                         + '&returnParams=' + s;
                 }
@@ -124,7 +124,7 @@
                        width="100%" height="100%">
                     <tr>
                         <td width="0%" valign="top">
-                            <div class="DivCCBreadCrumbs"><a href="SearchDrug.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a> &gt; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="StaticScript.title"/></b>
+                            <div class="DivCCBreadCrumbs"><a href="oscarRx/SearchDrug.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a> &gt; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="StaticScript.title"/></b>
                             </div>
                         </td>
                     </tr>
@@ -178,7 +178,7 @@
                                         %>
                                         <input type="button" value="Annotation" title="Annotation" style="width: 55px"
                                                class="ControlPushButton"
-                                               onclick="window.open('../annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=drug.localDrugId%>&demo=<%=currentDemographicNo%>','anwin','width=400,height=500');">
+                                               onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=drug.localDrugId%>&demo=<%=currentDemographicNo%>','anwin','width=400,height=500');">
                                         <%
                                             }
                                         %>
@@ -227,7 +227,7 @@
                         <td><br/>
                             <br/>
                             <input type="button" value="Back To Search Drug" class="ControlPushButton"
-                                   onclick="javascript:window.location.href='SearchDrug.jsp';"/></td>
+                                   onclick="javascript:window.location.href='oscarRx/SearchDrug.jsp';"/></td>
                     </tr>
                     <!----End new rows here-->
                     <tr height="100%">

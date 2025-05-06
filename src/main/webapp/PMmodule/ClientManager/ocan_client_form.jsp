@@ -146,7 +146,7 @@
                        class="{validate: {required:true}}" type="text"
                        value="<%=ocanStaffForm.getFormattedClientStartDate()%>"> <img title="Calendar"
                                                                                       id="cal_startDate"
-                                                                                      src="../../images/cal.gif"
+                                                                                      src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                       alt="Calendar" border="0">
                 <script type="text/javascript">Calendar.setup({
                     inputField: 'clientStartDate',
@@ -728,7 +728,7 @@
                 <input id="clientCompletionDate" name="clientCompletionDate" onfocus="this.blur()" readonly="readonly"
                        type="text" value="<%=ocanStaffForm.getFormattedClientCompletionDate()%>"> <img title="Calendar"
                                                                                                        id="cal_completionDate"
-                                                                                                       src="../../images/cal.gif"
+                                                                                                       src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                                        alt="Calendar"
                                                                                                        border="0">
                 <script type="text/javascript">Calendar.setup({

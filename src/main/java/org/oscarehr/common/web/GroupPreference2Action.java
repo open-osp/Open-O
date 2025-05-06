@@ -44,6 +44,14 @@ public class GroupPreference2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+
+    public String execute() {
+        if ("save".equals(request.getParameter("method"))) {
+            return save();
+        }
+        return setDefaultBillingForm();
+    }
+
     public String save() {
 
         MyGroupDao myGroupDao = (MyGroupDao) SpringUtils.getBean(MyGroupDao.class);

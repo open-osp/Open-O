@@ -49,9 +49,9 @@
         <title>Rourke Baby Record</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <link rel="stylesheet" type="text/css" media="screen"
-              href="rourkeStyle.css">
+              href="form/rourkeStyle.css">
         <link rel="stylesheet" type="text/css" media="print"
-              href="printRourke.css">
+              href="form/printRourke.css">
     </head>
 
     <%
@@ -275,10 +275,10 @@
                     <input type="button" value="Print"
                            onclick="javascript:return onPrint();"/></td>
                 <td align="center" width="100%"><a name="length"
-                                                   href="javascript:popup('graphLengthWeight.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
+                                                   href="javascript:popup('form/graphLengthWeight.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
                     Graph Length and Weight</a><br>
                     <a name="headCirc"
-                       href="javascript:popup('graphHeadCirc.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
+                       href="javascript:popup('form/graphHeadCirc.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
                         Graph Head Circumference</a></td>
                 <td nowrap="true"><a
                         href="formrourke1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">Page
@@ -1293,10 +1293,10 @@
                            onclick="javascript:return onPrint();"/></td>
                 <td align="center" width="100%">
                     <% if (formId > 0) { %> <a name="length"
-                                               href="javascript:popup('graphLengthWeight.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
+                                               href="javascript:popup('form/graphLengthWeight.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
                     Graph Length and Weight</a><br>
                     <a name="headCirc"
-                       href="javascript:popup('graphHeadCirc.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
+                       href="javascript:popup('form/graphHeadCirc.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">
                         Graph Head Circumference</a> <% } else {
                 %>&nbsp;<%
                     }

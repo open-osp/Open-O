@@ -91,6 +91,8 @@ public class FormForward2Action extends ActionSupport {
                 formPath[0] = formPath[0].replace("../", "/");
             }
 
+            formPath[0] = request.getContextPath() + formPath[0];
+
             if (formPath[0].endsWith("?demographic_no=")) {
                 formPath[0] = formPath[0].replace("?demographic_no=", "");
             }
@@ -114,7 +116,7 @@ public class FormForward2Action extends ActionSupport {
          * Build a custom forward path to the requested form.
          */
         StringBuilder redirect = new StringBuilder(formPath[0]);
-        redirect.append("&demographic_no=").append(demographicNo);
+        redirect.append("?demographic_no=").append(demographicNo);
 
         /*
          * If the formId is requesting the latest form then change its
@@ -140,9 +142,9 @@ public class FormForward2Action extends ActionSupport {
          */
         if (formId != null) {
             requestedForm = Integer.parseInt(formId);
-            redirect.append("formId").append(formId);
+            redirect.append("&formId=").append(formId);
         } else if (latestForm > 0) {
-            redirect.append("formId").append(latestForm);
+            redirect.append("&formId=").append(latestForm);
         }
 
         /*
@@ -150,18 +152,18 @@ public class FormForward2Action extends ActionSupport {
          * of the form.
          */
         if (requestedForm > 0 && requestedForm < latestForm) {
-            redirect.append("warning").append("history");
+            redirect.append("&warning=").append("history");
         }
 
         if (remoteFacilityIdString != null && !remoteFacilityIdString.isEmpty()) {
-            redirect.append("remoteFacilityId").append(remoteFacilityIdString);
+            redirect.append("&remoteFacilityId=").append(remoteFacilityIdString);
         }
 
         if (appointmentNo != null && !appointmentNo.isEmpty()) {
-            redirect.append("appointmentNo").append(appointmentNo);
+            redirect.append("&appointmentNo=").append(appointmentNo);
         }
         if (provNo != null && !provNo.isEmpty()) {
-            redirect.append("provNo").append(provNo);
+            redirect.append("&provNo=").append(provNo);
         }
 
         response.sendRedirect(redirect.toString());

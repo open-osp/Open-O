@@ -62,7 +62,7 @@
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
     <script language="javascript">
         var browserName = navigator.appName;
@@ -306,11 +306,11 @@
                     java.util.Properties prop = UtilXML.getPropText(xmlDoc, "table", "sqlFrom", "name"); //
                     if (prop.getProperty("formAR") != null && prop.getProperty("formAR").equals("AR Form")) {
                 %> &nbsp;|&nbsp; <a
-                        href="../oscarEncounter/formCommARPg1.jsp?messageid=<%=request.getAttribute("attId")%>">AR1</a>
+                        href="<%= request.getContextPath() %>/oscarEncounter/formCommARPg1.jsp?messageid=<%=request.getAttribute("attId")%>">AR1</a>
                     &nbsp;|&nbsp; <a
-                            href="../oscarEncounter/formCommARPg2.jsp?messageid=<%=request.getAttribute("attId")%>">AR2
+                            href="<%= request.getContextPath() %>/oscarEncounter/formCommARPg2.jsp?messageid=<%=request.getAttribute("attId")%>">AR2
                         Pg1</a> &nbsp;|&nbsp; <a
-                            href="../oscarEncounter/formCommARPg3.jsp?messageid=<%=request.getAttribute("attId")%>">AR2
+                            href="<%= request.getContextPath() %>/oscarEncounter/formCommARPg3.jsp?messageid=<%=request.getAttribute("attId")%>">AR2
                         Pg2</a> <%
                         } %>
                 </div>

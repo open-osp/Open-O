@@ -64,8 +64,9 @@ public class EctAddMeasurementType2Action extends ActionSupport {
             String typeDisplayName = this.getTypeDisplayName();
             String measuringInstrc = this.getMeasuringInstrc();
             String validation = this.getValidation();
+            String contextPath = request.getContextPath();
             if (!allInputIsValid(request, type, typeDesc, typeDisplayName, measuringInstrc)) {
-                response.sendRedirect("/oscarEncounter/oscarMeasurements/AddMeasurementType.jsp");
+                response.sendRedirect(contextPath + "/oscarEncounter/oscarMeasurements/AddMeasurementType.jsp");
                 return NONE;
             }
 

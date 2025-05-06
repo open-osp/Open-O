@@ -51,7 +51,15 @@ public class OcularProc2Action extends ActionSupport {
 
     EyeformOcularProcedureDao dao = SpringUtils.getBean(EyeformOcularProcedureDao.class);
 
-    public String unspecified() {
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("cancel".equals(method)) {
+            return cancel();
+        } else if ("list".equals(method)) {
+            return list();
+        } else if ("save".equals(method)) {
+            return save();
+        } 
         return form();
     }
 

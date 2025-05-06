@@ -50,7 +50,7 @@ public class ConfigureFax2Action extends ActionSupport {
     private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
     private static final String PASSWORD_BLANKET = "**********";
 
-    public String unspecified() {
+    public String execute() {
         return configure();
     }
 

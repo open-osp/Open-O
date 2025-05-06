@@ -113,7 +113,7 @@
             <input type="file" name="file"/>
             <span title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
                   style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img
-                    alt="alert" src="../images/icon_alertsml.gif"/></span>
+                    alt="alert" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/></span>
 
             <br>
             <input class="btn btn-primary" type="submit" name="submit" value="Generate"/>

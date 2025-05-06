@@ -5,7 +5,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscar.billing.CA.BC.billingBC.dxcode_svccode_assoc.title"/></title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
         <script language="JavaScript">
             <!--
             var remote = null;
@@ -51,7 +51,7 @@
         <script language="JavaScript">
         </script>
         <link rel="stylesheet"
-              href="../../../oscarBilling/CA/billing/billing.css" type="text/css">
+              href="<%= request.getContextPath() %>/oscarBilling/CA/billing/billing.css" type="text/css">
     </head>
     <%
         String mode = request.getAttribute("mode") != null ? (String) request.getAttribute("mode") : "";
@@ -90,7 +90,7 @@
                         face="Verdana, Arial, Helvetica, sans-serif" size="1"><%
                     boolean state = mode.equals("edit") ? true : false;
                 %> <input type="text" name="xml_other1" size="40" readonly="<%=state%>"/> <a href="javascript:OtherScriptAttach()">
-                    <img src="../../../images/search_code.jpg" border="0"> </a> </font></td>
+                    <img src="<%= request.getContextPath() %>/images/search_code.jpg" border="0"> </a> </font></td>
             </tr>
             <tr bgcolor="CCCCFF">
                 <td><strong><fmt:setBundle basename="oscarResources"/><fmt:message key="oscar.billing.CA.BC.billingBC.dxcode_svccode_assoc.step2"/></strong></td>
@@ -101,7 +101,7 @@
                     <input type="text" name="xml_diagnostic_detail1" size="25"/> </font> <font
                         face="Verdana, Arial, Helvetica, sans-serif" size="1"> <a
                         href="javascript:ScriptAttach()"> <img
-                        src="../../../images/search_dx_code.jpg" border="0"> </a> </font> <font
+                        src="<%= request.getContextPath() %>/images/search_dx_code.jpg" border="0"> </a> </font> <font
                         face="Verdana, Arial, Helvetica, sans-serif" size="1">&nbsp;</font>
                 </td>
             </tr>

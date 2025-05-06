@@ -48,8 +48,8 @@ public class DisplayIndicator2Action extends ActionSupport {
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     private static DashboardManager dashboardManager = SpringUtils.getBean(DashboardManager.class);
 
-    public String unspecified() {
-        return null;
+    public String execute() {
+        return getIndicator();
     }
 
     @SuppressWarnings("unused")

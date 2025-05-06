@@ -39,6 +39,10 @@ public final class FetchUpdatedData2Action extends ActionSupport {
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() throws IOException {
+        return ajaxFetchData();
+    }
+
     public String ajaxFetchData() throws IOException {
         String demographic = request.getParameter("demographic");
         String provider = request.getParameter("provider");

@@ -53,7 +53,7 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>ANTENATAL RECORD</title>
-    <link rel="stylesheet" href="../provider/antenatalrecord.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/provider/antenatalrecord.css">
     <script language="JavaScript">
         <!--
         var saveTemp = 0;
@@ -227,7 +227,7 @@
             <%=bNew ? "" : "datasrc='#xml_list'"%>>
         <tr bgcolor="#486ebd">
             <th width="25%" nowrap><!--input type="hidden" name="xml_pageno" value="<%--=pageno--%>"-->
-                <%--=bNewList?"<a href=# onClick='onSave()'><img src='../images/buttonsave.gif' align='top' width='75' height='25' ></a> ":""--%>
+                <%--=bNewList?"<a href=# onClick='onSave()'><img src="<%= request.getContextPath() %>/images/buttonsave.gif" align='top' width='75' height='25' ></a> ":""--%>
                 <%=bNewList ? "<input type='button' name='savetemp' value=' Save ' onClick='onSave()'> " : ""%>
                 <%--=bNewList&&!(request.getParameter("patientmaster")!=null)?"<input type='submit' name='saveexit' value='Save to Enc.& Exit' onClick='onSaveExit()'> ":""--%>
                 <%=bNewList && !(request.getParameter("patientmaster") != null) ? "<input type='submit' name='saveexit' value='Save & Exit' onClick='onSaveExit()'> " : ""%>
@@ -248,7 +248,7 @@
                          onClick="popupPage(500,600,'../demographic/formhistory.jsp?demographic_no=<%=request.getParameter("demographic_no")%>')"
                          title="Previous Antenatal Record 2"> <font color='yellow'>Prev.
                     AR2</font></a> | <a
-                        href="../provider/providercontrol.jsp?appointment_no=<%=request.getParameter("appointment_no")%>&demographic_no=<%=request.getParameter("demographic_no")%>&curProvider_no=<%=request.getParameter("curProvider_no")%>&username=<%=request.getParameter("username")%>&reason=<%=request.getParameter("reason")%>&displaymode=ar2&dboperation=search_demograph&template=&bNext=1"
+                        href="<%= request.getContextPath() %>/provider/providercontrol.jsp?appointment_no=<%=request.getParameter("appointment_no")%>&demographic_no=<%=request.getParameter("demographic_no")%>&curProvider_no=<%=request.getParameter("curProvider_no")%>&username=<%=request.getParameter("username")%>&reason=<%=request.getParameter("reason")%>&displaymode=ar2&dboperation=search_demograph&template=&bNext=1"
                         title="Next AR2 Form"> <font color='yellow'> Next AR2 </font></a> <% } %>
                     <%=bNewList ? "<input type='button' name='Button' value=' Exit ' onClick='onExit();'>" : "<input type='button' name='Button' value=' Exit ' onClick='window.close();'>" %>
                     <input type="submit" name="print" value="Print Preview"

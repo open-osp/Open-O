@@ -63,7 +63,7 @@
 
     <head>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" href="../../oscarMessenger/encounterStyles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarMessenger/encounterStyles.css">
         <title>
             Create Message
         </title>
@@ -100,7 +100,7 @@
                 border-right: 2px solid #cfcfcf;
             }
         </style>
-        <script type="text/javascript" src="../../share/javascript/Oscar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
         <script type="text/javascript" src="<c:out value="${ctx}"/>/js/jquery.js"></script>
         <script language="javascript">
 

@@ -62,19 +62,19 @@
         <link rel="stylesheet" type="text/css" href="bcArStyle.css">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
-        <link rel="stylesheet" href="../web.css">
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
         <script type="text/javascript">
             <!--
             function setfocus(el) {
@@ -197,7 +197,7 @@
                             <%= security.getBExpireset()==0?"":"checked" %>> <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formDate"/>: <input
                             type="text" name="date_ExpireDate" id="date_ExpireDate"
                             value="<%=  security.getDateExpiredate() ==null?"": security.getDateExpiredate()  %>"
-                            size="10" readonly/> <img src="../images/cal.gif"
+                            size="10" readonly/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                       id="date_ExpireDate_cal"/></td>
                 </tr>
                 <tr>

@@ -59,12 +59,12 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>OLIS Preferences</title>
         <link rel="stylesheet" type="text/css"
-              href="../share/css/OscarStandardLayout.css">
+              href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
 
         <script type="text/javascript" language="JavaScript"
-                src="../share/javascript/prototype.js"></script>
+                src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
         <script type="text/javascript" language="JavaScript"
-                src="../share/javascript/Oscar.js"></script>
+                src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
         <script type="text/javascript">
             jQuery.noConflict();

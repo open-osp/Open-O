@@ -34,18 +34,18 @@ import com.quatro.util.Utility;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
+import org.oscarehr.util.SpringUtils;
 
 public class LookupList2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-    private LookupManager lookupManager = null;
-
-    public void setLookupManager(LookupManager lookupManager) {
-        this.lookupManager = lookupManager;
-    }
+    private LookupManager lookupManager = SpringUtils.getBean(LookupManager.class);
 
     public String execute() throws NoAccessException {
+        if ("search".equals(request.getParameter("method"))) {
+            return search();
+        }
         return list();
     }
 

@@ -46,11 +46,22 @@ public class Resource2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
     @Override
     public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("changeDisplay".equals(method)) {
+            return changeDisplay();
+        } else if ("reset".equals(method)) {
+            return reset();
+        } else if ("delete".equals(method)) {
+            return delete();
+        } else if ("submit".equals(method)) {
+            return submit();
+        } else if ("download".equals(method)) {
+            return download();
+        }
         EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
         this.setTypeListResult(getTypeList(request, delegate));
         this.setDetail(getResourceList(delegate));

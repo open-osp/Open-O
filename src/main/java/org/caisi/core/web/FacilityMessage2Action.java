@@ -50,19 +50,11 @@ public class FacilityMessage2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
-    private FacilityMessageManager mgr = null;
-    private FacilityDao facilityDao = null;
+    private FacilityMessageManager mgr = SpringUtils.getBean(FacilityMessageManager.class);
+    private FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
     private FacilityMessageDao facilityMessageDao = SpringUtils.getBean(FacilityMessageDao.class);
     private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
     private ProgramManager2 programManager2 = SpringUtils.getBean(ProgramManager2.class);
-
-    public void setFacilityMessageManager(FacilityMessageManager mgr) {
-        this.mgr = mgr;
-    }
-
-    public void setFacilityDao(FacilityDao facilityDao) {
-        this.facilityDao = facilityDao;
-    }
 
     public String execute() {
         String mtd = request.getParameter("method");

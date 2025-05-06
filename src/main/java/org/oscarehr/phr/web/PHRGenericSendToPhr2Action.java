@@ -74,17 +74,20 @@ public class PHRGenericSendToPhr2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
     private static final Logger logger = MiscUtils.getLogger();
-    private PHRService phrService;
+    private PHRService phrService = SpringUtils.getBean(PHRService.class);
 
     @Override
     public String execute() throws Exception {
-        if (request.getParameter("SendToPhrPreview") == null) return "inputJsp";
+        if ("documentPreview".equals(request.getParameter("method"))) {
+            return documentPreview();
+        }
+        if ("send".equals(request.getParameter("method"))) {
+            return send();
+        }
+        if (request.getParameter("SendToPhrPreview") == null) {
+            return "inputJsp";
+        }
         return super.execute();
-    }
-
-    public String unspecified()
-            throws Exception {
-        return send();
     }
 
     public String documentPreview() throws Exception {
@@ -295,19 +298,4 @@ public class PHRGenericSendToPhr2Action extends ActionSupport {
             return "loginPage";
         }
     }
-
-    /**
-     * @return the phrService
-     */
-    public PHRService getPhrService() {
-        return phrService;
-    }
-
-    /**
-     * @param phrService the phrService to set
-     */
-    public void setPhrService(PHRService phrService) {
-        this.phrService = phrService;
-    }
-
 }

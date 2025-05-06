@@ -50,7 +50,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Report List</title>
-        <LINK REL="StyleSheet" HREF="../web.css" TYPE="text/css">
+        <LINK REL="StyleSheet" HREF="<%= request.getContextPath() %>/web.css" TYPE="text/css">
         <script language="JavaScript">
 
             <!--
@@ -134,8 +134,8 @@
         <% } %>
     </table>
 
-    <script language="javascript" src="../commons/scripts/sort_table/css.js">
-    <script language="javascript" src="../commons/scripts/sort_table/common.js">
-        <script language="javascript" src="../commons/scripts/sort_table/standardista-table-sorting.js">
+    <script language="javascript" src="<%= request.getContextPath() %>/commons/scripts/sort_table/css.js">
+    <script language="javascript" src="<%= request.getContextPath() %>/commons/scripts/sort_table/common.js">
+        <script language="javascript" src="<%= request.getContextPath() %>/commons/scripts/sort_table/standardista-table-sorting.js">
         </body>
 </html>

@@ -58,7 +58,7 @@ public class EctAddShortMeasurement2Action extends ActionSupport {
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    public String unspecified() throws IOException {
+    public String execute() throws IOException {
 
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_measurement", "w", null)) {
             throw new SecurityException("missing required security object (_measurement)");

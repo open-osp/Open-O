@@ -25,33 +25,31 @@ package org.oscarehr.PMmodule.web;
 import java.sql.Timestamp;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.HealthSafety;
 import org.oscarehr.PMmodule.service.HealthSafetyManager;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
 public class HealthSafety2Action extends ActionSupport {
-    HttpServletRequest request = ServletActionContext.getRequest();
-    HttpServletResponse response = ServletActionContext.getResponse();
+    private HttpServletRequest request = ServletActionContext.getRequest();
 
     private static Logger log = MiscUtils.getLogger();
 
-    private HealthSafetyManager healthSafetyManager = null;
-
-    public void setHealthSafetyManager(HealthSafetyManager healthSafetyManager) {
-        this.healthSafetyManager = healthSafetyManager;
-    }
+    private HealthSafetyManager healthSafetyManager = SpringUtils.getBean(HealthSafetyManager.class);
 
 
-    public String unspecified() {
+    public String execute() {
 //		logManager.log("read","full provider list","",request);
 //		log.warn("Program doesn't have a name?");
+        if ("savehealthSafety".equals(request.getParameter("method"))) {
+            return savehealthSafety();
+        }
         return form();
     }
 

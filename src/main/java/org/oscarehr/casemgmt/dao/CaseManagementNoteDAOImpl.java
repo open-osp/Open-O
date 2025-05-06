@@ -152,11 +152,15 @@ public class CaseManagementNoteDAOImpl extends HibernateDaoSupport implements Ca
 
     @Override
     public CaseManagementNote getMostRecentNote(String uuid) {
-        String hql = "select distinct cmn from CaseManagementNote cmn where cmn.uuid = ?0 and cmn.id = (select max(cmn.id) from cmn where cmn.uuid = ?0)";
+        String hql = "select cmn from CaseManagementNote cmn " +
+                    "where cmn.uuid = :uuid and cmn.id = (" +
+                    "select max(cmn2.id) from CaseManagementNote cmn2 where cmn2.uuid = :uuid)";
+
         @SuppressWarnings("unchecked")
-        List<CaseManagementNote> tmp = (List<CaseManagementNote>) this.getHibernateTemplate().find(hql,
-                new Object[]{uuid, uuid});
-        if (tmp == null)
+        List<CaseManagementNote> tmp = (List<CaseManagementNote>) this.getHibernateTemplate()
+            .findByNamedParam(hql, "uuid", uuid);
+
+        if (tmp == null || tmp.isEmpty())
             return null;
 
         return tmp.get(0);

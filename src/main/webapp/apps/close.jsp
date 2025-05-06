@@ -29,7 +29,7 @@
 <head>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/></title>
 
-    <link href="../library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
 <br>

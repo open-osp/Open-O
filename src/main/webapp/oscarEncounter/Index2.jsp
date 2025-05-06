@@ -221,18 +221,18 @@
                 demographicNo="<%=demoNo%>"/></title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <script language="javascript" type="text/javascript"
-                src="../share/javascript/Oscar.js"></script>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+                src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
         <!-- This is from OscarMessenger to get the top and left borders on -->
         <link rel="stylesheet" type="text/css" href="encounterStyles.css">
 
-        <script src="../share/javascript/prototype.js" type="text/javascript"></script>
-        <script src="../share/javascript/scriptaculous.js"
+        <script src="<%= request.getContextPath() %>/share/javascript/prototype.js" type="text/javascript"></script>
+        <script src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"
                 type="text/javascript"></script>
 
             <%-- for popup menu of forms --%>
-        <script src="../share/javascript/popupmenu.js" type="text/javascript"></script>
-        <script src="../share/javascript/menutility.js" type="text/javascript"></script>
+        <script src="<%= request.getContextPath() %>/share/javascript/popupmenu.js" type="text/javascript"></script>
+        <script src="<%= request.getContextPath() %>/share/javascript/menutility.js" type="text/javascript"></script>
 
         <script type="text/javascript" language=javascript>
             var X = 10;
@@ -1177,9 +1177,9 @@
 
         </script>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
     <body onload="javascript:loader();" onunload="javascript:onClosing();"

@@ -75,15 +75,15 @@
             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.measurements"/>
         </title><!--I18n-->
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" href="../../share/css/OscarStandardLayout.css">
-        <link rel="stylesheet" type="text/css" media="all" href="../../share/calendar/calendar.css"
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css"
               title="win2k-cold-1"/>
 
-        <script type="text/javascript" src="../../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
-                src="../../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-        <script type="text/javascript" src="../../share/calendar/calendar-setup.js"></script>
-        <script type="text/javascript" src="../../share/javascript/prototype.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
 
         <style type="text/css">
             div.ImmSet {
@@ -383,7 +383,7 @@
                         <input type="text" name="value(date-<%=iDate%>)" id="prevDate<%=iDate%>" value="<%=prevDate%>"
                                size="17" onchange="javascript:masterDateFill(this.value);">
                         <% if (id == null) { %>
-                        <a id="date<%=iDate%>"><img title="Calendar" src="../../images/cal.gif" alt="Calendar"
+                        <a id="date<%=iDate%>"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar"
                                                     border="0"/></a>
                         <%}%>
                         <br/><font size="1">*Use this field to change the observation date/time for all items
@@ -464,7 +464,7 @@
                                        value="<%=prevDate%>" size="17">
 
                                 <% if (id == null) { %>
-                                <a id="date<%=ctr%>"><img title="Calendar" src="../../images/cal.gif" alt="Calendar"
+                                <a id="date<%=ctr%>"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar"
                                                           border="0"/></a>
                                 <%}%>
                                 <br/>
@@ -603,7 +603,7 @@
 
 //add auto-calc message
                 custom_html = `<div style="width:100%;padding:10px 0 10px 20px; font-size:16px;">
-<img src="../../images/Information16x16.gif"> <b>BMI</b> will auto calculate after you enter the weight and height.
+<img src="<%= request.getContextPath() %>/images/Information16x16.gif"> <b>BMI</b> will auto calculate after you enter the weight and height.
 </div>`;
 
                 jQuery(custom_html).insertBefore(jQuery('#measurementForm'));

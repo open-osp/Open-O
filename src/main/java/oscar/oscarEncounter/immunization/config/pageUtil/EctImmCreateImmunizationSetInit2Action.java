@@ -24,11 +24,16 @@
  */
 package oscar.oscarEncounter.immunization.config.pageUtil;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.ServletActionContext;
+
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @Validation
 public class EctImmCreateImmunizationSetInit2Action extends ActionSupport {
+    private HttpServletRequest request = ServletActionContext.getRequest();
     private String setName;
     private String numRows;
     private String numCols;
@@ -41,6 +46,10 @@ public class EctImmCreateImmunizationSetInit2Action extends ActionSupport {
         addActionMessage("cols: " + numCols);
         addActionMessage("rows: " + numRows);
         addActionMessage("name: " + setName);
+
+        request.setAttribute("cols", numCols);
+        request.setAttribute("rows", numRows);
+        request.setAttribute("name", setName);
 
         return SUCCESS;
     }

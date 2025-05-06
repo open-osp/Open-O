@@ -64,13 +64,13 @@ public class RScheduleDaoImpl extends AbstractDaoImpl<RSchedule> implements RSch
         query.setParameter(6, d5);
         query.setParameter(7, d6);
         query.setParameter(8, d7);
-        query.setParameter(8, d8);
-        query.setParameter(9, d9);
-        query.setParameter(10, d10);
-        query.setParameter(11, d11);
-        query.setParameter(12, d12);
-        query.setParameter(13, d13);
-        query.setParameter(14, d14);
+        query.setParameter(9, d8);
+        query.setParameter(10, d9);
+        query.setParameter(11, d10);
+        query.setParameter(12, d11);
+        query.setParameter(13, d12);
+        query.setParameter(14, d13);
+        query.setParameter(15, d14);
 
         Long results = (Long) query.getSingleResult();
         return results;

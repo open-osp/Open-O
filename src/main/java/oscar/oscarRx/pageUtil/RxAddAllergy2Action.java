@@ -130,7 +130,7 @@ public final class RxAddAllergy2Action extends ActionSupport {
         String ip = request.getRemoteAddr();
         LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ADD, LogConst.CON_ALLERGY, "" + allergy.getAllergyId(), ip, "" + patient.getDemographicNo(), allergy.getAuditString());
 
-        if (allergyToArchive != null && !allergyToArchive.isEmpty()) {
+        if (allergyToArchive != null && !allergyToArchive.isEmpty() && !"null".equals(allergyToArchive)) {
             patient.deleteAllergy(Integer.parseInt(allergyToArchive));
             LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ARCHIVE, LogConst.CON_ALLERGY, "" + allergyToArchive, ip, "" + patient.getDemographicNo(), null);
         }

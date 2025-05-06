@@ -28,7 +28,7 @@
     if (session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
@@ -172,7 +172,7 @@
                         <tr>
                             <td><a
                                     href="javascript: function myFunction() {return false; }"
-                                    onClick="popupPage(150,200,'../calculators.jsp?demo=<%=demo%>'); return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.calculators"/></a></td>
+                                    onClick="popupPage(150,200,'<%=request.getContextPath()%>/oscarEncounter/calculators.jsp?demo=<%=demo%>'); return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.calculators"/></a></td>
                         </tr>
                     </table>
                 </td>
@@ -222,7 +222,8 @@
                                                                 <span title="${measurementType.typeDesc}">${measurementType.typeDisplayName}</span>
                                                             </td>
                                                             <td>
-                                                                <c:forEach var="mInstrc" items="${pageContext.request.getAttribute('mInstrcs' + ctr.index).measuringInstructionList}">
+                                                                <c:set var="attributeName" value="mInstrcs${ctr.index}" />
+                                                                <c:forEach var="mInstrc" items="${pageContext.request.getAttribute(attributeName).measuringInstructionList}">
                                                                     <input type="radio" name="value(inputMInstrc-${ctr.index})" value="${mInstrc.measuringInstrc}" checked />
                                                                     ${mInstrc.measuringInstrc}<br>
                                                                 </c:forEach>

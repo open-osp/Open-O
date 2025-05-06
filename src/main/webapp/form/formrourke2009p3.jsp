@@ -174,15 +174,15 @@
         <td colspan="3"><input readonly type="text" id="p3_date9m"
                                name="p3_date9m" ondblclick="resetDate(this)" size="10"
                                value="<%=UtilMisc.htmlEscape(props.getProperty("p3_date9m", ""))%>"/>
-            <img src="../images/cal.gif" id="p3_date9m_cal"></td>
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p3_date9m_cal"></td>
         <td colspan="3"><input readonly type="text" id="p3_date12m"
                                name="p3_date12m" ondblclick="resetDate(this)" size="10"
                                value="<%=UtilMisc.htmlEscape(props.getProperty("p3_date12m", ""))%>"/>
-            <img src="../images/cal.gif" id="p3_date12m_cal"></td>
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p3_date12m_cal"></td>
         <td colspan="3"><input readonly type="text" id="p3_date15m"
                                name="p3_date15m" ondblclick="resetDate(this)" size="10"
                                value="<%=UtilMisc.htmlEscape(props.getProperty("p3_date15m", ""))%>"/>
-            <img src="../images/cal.gif" id="p3_date15m_cal"></td>
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p3_date15m_cal"></td>
     </tr>
     <tr id="growthAp3" align="center">
         <td class="column" rowspan="2"><a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnGrowth"/>*</a><br>

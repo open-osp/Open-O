@@ -76,7 +76,7 @@ public class SurveyTest2Action extends ActionSupport {
     }
 
 
-    public String unspecified() {
+    public String execute() {
         return test();
     }
 

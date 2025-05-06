@@ -27,7 +27,10 @@
 package oscar.eform.actions;
 
 import com.opensymphony.xwork2.ActionSupport;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.struts2.ServletActionContext;
+
 import org.oscarehr.util.MiscUtils;
 import oscar.OscarProperties;
 
@@ -35,8 +38,10 @@ import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.FileInputStream;
 import java.util.ArrayList;
-
 /**
  * eform_image
  *
@@ -46,6 +51,7 @@ import java.util.ArrayList;
 public class DisplayImage2Action extends ActionSupport {
     private HttpServletRequest request = ServletActionContext.getRequest();
     private HttpServletResponse response = ServletActionContext.getResponse();
+    private record StreamData(InputStream stream, String contentType) {}
 
     /**
      * Creates a new instance of DisplayImage2Action
@@ -54,11 +60,31 @@ public class DisplayImage2Action extends ActionSupport {
     }
 
     public String execute() throws Exception {
+        StreamData data = process();
+        String contentType = data.contentType();
+        InputStream stream = data.stream();
+
+        try {
+            response.setContentType(contentType);
+            OutputStream outputStream = response.getOutputStream();
+            IOUtils.copy(stream, outputStream);
+            return SUCCESS;
+        } catch (Exception e) {
+            return NONE;
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
+        }
+    }
+
+    public StreamData process() throws Exception {
 
         String fileName = request.getParameter("imagefile");
-        //if (fileName.indexOf('/') != -1) return null;  //prevents navigating away from the page.
+        if (fileName.contains("..") || fileName.contains("/") || fileName.contains("\\")) {
+            throw new IllegalArgumentException("Invalid filename");
+        }
         String home_dir = OscarProperties.getInstance().getProperty("eform_image");
-
 
         File file = null;
         try {
@@ -67,7 +93,6 @@ public class DisplayImage2Action extends ActionSupport {
                 throw new Exception("Directory:  " + home_dir + " does not exist");
             }
             file = new File(directory, fileName);
-            //String canonicalPath = file.getParentFile().getCanonicalPath(); //absolute path of the retrieved file
 
             if (!directory.equals(file.getParentFile())) {
                 MiscUtils.getLogger().debug("SECURITY WARNING: Illegal file path detected, client attempted to navigate away from the file directory");
@@ -77,12 +102,12 @@ public class DisplayImage2Action extends ActionSupport {
             MiscUtils.getLogger().error("Error", e);
             throw new Exception("Could not open file " + home_dir + fileName + " does " + home_dir + " exist ?", e);
         }
-        //gets content type from image extension
+        // Gets content type from image extension
         String contentType = new MimetypesFileTypeMap().getContentType(file);
+        
         /**
          * For encoding file types not included in the mimetypes file
          * You need to look at mimetypes file to check if the file type you are using is included
-         *
          */
         try {
             if (extension(file.getName()).equalsIgnoreCase("png")) { // for PNG
@@ -144,7 +169,8 @@ public class DisplayImage2Action extends ActionSupport {
         response.setContentType(contentType);
         response.setHeader("Content-disposition", "inline; filename=" + fileName);
 
-        return NONE;
+        InputStream fileStream = new FileInputStream(file);
+        return new StreamData(fileStream, contentType);
     }
 
     /**

@@ -46,7 +46,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>HSFO Registration Template</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
         <script language="JavaScript" type="text/javascript">
             function popupXmlMsg(path) {
                 window.open(path, "xmlMsg", "location=1,status=1,resizable=1,scrollbars=1,width=800,height=300");

@@ -81,7 +81,7 @@
 
         <!--META HTTP-EQUIV="Refresh" CONTENT="20;"-->
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 
     </head>
@@ -109,7 +109,7 @@
         }
     </script>
 
-    <link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
     <body class="BodyStyle" vlink="#0000FF" onload="window.focus()">
     <!--  -->
     <table class="MainTable" id="scrollNumber1" name="encounterTable">
@@ -132,7 +132,7 @@
                 <table>
                     <tr>
                         <td NOWRAP><a
-                                href="javascript:popupOscarRx(700,960,'ConsultationFormRequest.jsp?de=<%=demo%>&teamVar=<%=team%>')">
+                                href="javascript:popupOscarRx(700,960,'oscarEncounter/oscarConsultationRequest/ConsultationFormRequest.jsp?de=<%=demo%>&teamVar=<%=team%>')">
                             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultChoice.btnNewCon"/></a>
                         </td>
                     </tr>
@@ -174,14 +174,22 @@
                                 %>
                                 <tr>
                                     <td class="stat<%=status%>" width="75">
-                                        <% if (status.equals("1")) { %> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgNothingDone"/>
-                                        <% } else if (status.equals("2")) { %> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgSpecialistCall"/>
-                                        <% } else if (status.equals("3")) { %> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgPatCall"/>
-                                        <% } else if (status.equals("4")) { %> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgAppMade"/>
-                                            <%-- For ocean referrals --%>
-                                        <% } else if (status.equals("5")) { %> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgBookCon"/>
+                                        <% if ("1".equals(status)) { %>
+                                            <fmt:setBundle basename="oscarResources"/>
+                                            <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgNothingDone"/>
+                                        <% } else if ("2".equals(status)) { %>
+                                            <fmt:setBundle basename="oscarResources"/>
+                                            <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgSpecialistCall"/>
+                                        <% } else if ("3".equals(status)) { %>
+                                            <fmt:setBundle basename="oscarResources"/>
+                                            <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgPatCall"/>
+                                        <% } else if ("4".equals(status)) { %>
+                                            <fmt:setBundle basename="oscarResources"/>
+                                            <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgAppMade"/>
+                                        <% } else if ("5".equals(status)) { %>
+                                            <fmt:setBundle basename="oscarResources"/>
+                                            <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgBookCon"/>
                                         <% } %>
-                                    </td>
                                     <td class="stat<%=status%>"><a
                                             href="javascript:popupOscarRx(700,960,'../../oscarEncounter/ViewRequest.do?de=<%=demo%>&requestId=<%=id%>')">
                                         <%=patient%>

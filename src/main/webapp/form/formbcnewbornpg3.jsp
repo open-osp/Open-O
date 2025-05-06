@@ -60,18 +60,18 @@
               href="<%=bView?"bcArStyleView.css" : "bcArStyle.css"%>">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
     </head>
 
@@ -86,7 +86,7 @@
             document.forms[0].submit.value = "print"; //printAR1
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "../form/createpdf?__title=British+Columbia+Newborn+Record+Part+2&__cfgfile=bcnb2PrintCfgPg2&__template=bcnewborn2";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=British+Columbia+Newborn+Record+Part+2&__cfgfile=bcnb2PrintCfgPg2&__template=bcnewborn2";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -513,13 +513,13 @@
                             <td nowrap><input type="text" name="ar2_9Date1"
                                               id="ar2_9Date1" size="8" maxlength="10"
                                               value="<%= props.getProperty("ar2_9Date1", "") %>"/> <img
-                                    src="../images/cal.gif" id="ar2_9Date1_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_9Date1_cal"></td>
                         </tr>
                         <tr>
                             <td nowrap><input type="text" name="ar2_9Date2"
                                               id="ar2_9Date2" size="8" maxlength="10"
                                               value="<%= props.getProperty("ar2_9Date2", "") %>"/> <img
-                                    src="../images/cal.gif" id="ar2_9Date2_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_9Date2_cal"></td>
                             <td><input type="checkbox" name="ar2_9Test2"
                                     <%= props.getProperty("ar2_9Test2", "") %> /> POSITIVE MATERNAL
                                 HBsAg STATUS
@@ -529,7 +529,7 @@
                             <td nowrap><input type="text" name="ar2_9Date3"
                                               id="ar2_9Date3" size="8" maxlength="10"
                                               value="<%= props.getProperty("ar2_9Date3", "") %>"/> <img
-                                    src="../images/cal.gif" id="ar2_9Date3_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_9Date3_cal"></td>
                             <td>&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ar2_9Test3"
                                     <%= props.getProperty("ar2_9Test3", "") %> /> HBIG GIVEN
                             </td>
@@ -538,7 +538,7 @@
                             <td nowrap><input type="text" name="ar2_9Date4"
                                               id="ar2_9Date4" size="8" maxlength="10"
                                               value="<%= props.getProperty("ar2_9Date4", "") %>"/> <img
-                                    src="../images/cal.gif" id="ar2_9Date4_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_9Date4_cal"></td>
                             <td>&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ar2_9Test4"
                                     <%= props.getProperty("ar2_9Test4", "") %> /> HEPATITIS B
                                 VACCINE GIVEN
@@ -548,7 +548,7 @@
                             <td nowrap><input type="text" name="ar2_9Date5"
                                               id="ar2_9Date5" size="8" maxlength="10"
                                               value="<%= props.getProperty("ar2_9Date5", "") %>"/> <img
-                                    src="../images/cal.gif" id="ar2_9Date5_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_9Date5_cal"></td>
                             <td><input type="checkbox" name="ar2_9Test5"
                                     <%= props.getProperty("ar2_9Test5", "") %> /> POSITIVE MATERNAL
                                 HIV STATUS
@@ -558,7 +558,7 @@
                             <td nowrap><input type="text" name="ar2_9Date6"
                                               id="ar2_9Date6" size="8" maxlength="10"
                                               value="<%= props.getProperty("ar2_9Date6", "") %>"/> <img
-                                    src="../images/cal.gif" id="ar2_9Date6_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_9Date6_cal"></td>
                             <td><input type="checkbox" name="ar2_9Test6"
                                     <%= props.getProperty("ar2_9Test6", "") %> /> OTHER
                         </tr>
@@ -574,7 +574,7 @@
                                 <input type="text" name="c_hospitalName" style="width: 100%"
                                        size="30" maxlength="80"
                                        value="<%= props.getProperty("c_hospitalName", "") %>"/></td>
-                            <td>DATE <img src="../images/cal.gif" id="pg3_formDate_cal">
+                            <td>DATE <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_formDate_cal">
                                 <%=bSync ? ("<b><a href=# onClick='syncDemo(); return false;'><font color='red'>Synchronize</font></a></b>") : "" %>
                                 <br>
                                 <input type="text" name="pg3_formDate" id="pg3_formDate"
@@ -631,40 +631,40 @@
                 <td nowrap><input type="text" name="ar2_10Date1"
                                   id="ar2_10Date1" size="8" maxlength="10"
                                   value="<%= props.getProperty("ar2_10Date1", "") %>"/> <img
-                        src="../images/cal.gif" id="ar2_10Date1_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_10Date1_cal"></td>
                 <td><input type="text" name="ar2_10List1" style="width: 100%"
                            size="90" maxlength="200"
                            value="<%= props.getProperty("ar2_10List1", "") %>"/></td>
                 <td nowrap><input type="text" name="ar2_10DateRes1"
                                   id="ar2_10DateRes1" size="8" maxlength="10"
                                   value="<%= props.getProperty("ar2_10DateRes1", "") %>"/> <img
-                        src="../images/cal.gif" id="ar2_10DateRes1_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_10DateRes1_cal"></td>
             </tr>
             <tr>
                 <td nowrap><input type="text" name="ar2_10Date2"
                                   id="ar2_10Date2" size="8" maxlength="10"
                                   value="<%= props.getProperty("ar2_10Date2", "") %>"/> <img
-                        src="../images/cal.gif" id="ar2_10Date2_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_10Date2_cal"></td>
                 <td nowrap><input type="text" name="ar2_10List2"
                                   style="width: 100%" size="90" maxlength="200"
                                   value="<%= props.getProperty("ar2_10List2", "") %>"/></td>
                 <td><input type="text" name="ar2_10DateRes2" id="ar2_10DateRes2"
                            size="8" maxlength="10"
                            value="<%= props.getProperty("ar2_10DateRes2", "") %>"/> <img
-                        src="../images/cal.gif" id="ar2_10DateRes2_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_10DateRes2_cal"></td>
             </tr>
             <tr>
                 <td nowrap><input type="text" name="ar2_10Date3"
                                   id="ar2_10Date3" size="8" maxlength="10"
                                   value="<%= props.getProperty("ar2_10Date3", "") %>"/> <img
-                        src="../images/cal.gif" id="ar2_10Date3_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_10Date3_cal"></td>
                 <td><input type="text" name="ar2_10List3" style="width: 100%"
                            size="90" maxlength="200"
                            value="<%= props.getProperty("ar2_10List3", "") %>"/></td>
                 <td nowrap><input type="text" name="ar2_10DateRes3"
                                   id="ar2_10DateRes3" size="8" maxlength="10"
                                   value="<%= props.getProperty("ar2_10DateRes3", "") %>"/> <img
-                        src="../images/cal.gif" id="ar2_10DateRes3_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_10DateRes3_cal"></td>
             </tr>
         </table>
 
@@ -677,7 +677,7 @@
                 <td nowrap><input type="text" name="pg3_11Date1"
                                   id="pg3_11Date1" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date1", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date1_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date1_cal">
                 </td>
                 <td><input type="text" name="pg3_11List1" style="width: 100%"
                            size="90" maxlength="200"
@@ -688,7 +688,7 @@
                 <td nowrap><input type="text" name="pg3_11Date2"
                                   id="pg3_11Date2" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date2", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date2_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date2_cal">
                 </td>
                 <td><input type="text" name="pg3_11List2" style="width: 100%"
                            size="90" maxlength="200"
@@ -699,7 +699,7 @@
                 <td nowrap><input type="text" name="pg3_11Date3"
                                   id="pg3_11Date3" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date3", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date3_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date3_cal">
                 </td>
                 <td><input type="text" name="pg3_11List3" style="width: 100%"
                            size="90" maxlength="200"
@@ -710,7 +710,7 @@
                 <td nowrap><input type="text" name="pg3_11Date4"
                                   id="pg3_11Date4" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date4", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date4_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date4_cal">
                 </td>
                 <td><input type="text" name="pg3_11List4" style="width: 100%"
                            size="90" maxlength="200"
@@ -721,7 +721,7 @@
                 <td nowrap><input type="text" name="pg3_11Date5"
                                   id="pg3_11Date5" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date5", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date5_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date5_cal">
                 </td>
                 <td><input type="text" name="pg3_11List5" style="width: 100%"
                            size="90" maxlength="200"
@@ -732,7 +732,7 @@
                 <td nowrap><input type="text" name="pg3_11Date6"
                                   id="pg3_11Date6" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date6", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date6_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date6_cal">
                 </td>
                 <td><input type="text" name="pg3_11List6" style="width: 100%"
                            size="90" maxlength="200"
@@ -743,7 +743,7 @@
                 <td nowrap><input type="text" name="pg3_11Date7"
                                   id="pg3_11Date7" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date7", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date7_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date7_cal">
                 </td>
                 <td><input type="text" name="pg3_11List7" style="width: 100%"
                            size="90" maxlength="200"
@@ -754,7 +754,7 @@
                 <td nowrap><input type="text" name="pg3_11Date8"
                                   id="pg3_11Date8" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date8", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date8_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date8_cal">
                 </td>
                 <td><input type="text" name="pg3_11List8" style="width: 100%"
                            size="90" maxlength="200"
@@ -765,7 +765,7 @@
                 <td nowrap><input type="text" name="pg3_11Date9"
                                   id="pg3_11Date9" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date9", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date9_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date9_cal">
                 </td>
                 <td><input type="text" name="pg3_11List9" style="width: 100%"
                            size="90" maxlength="200"
@@ -776,7 +776,7 @@
                 <td nowrap><input type="text" name="pg3_11Date10"
                                   id="pg3_11Date10" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date10", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date10_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date10_cal">
                 </td>
                 <td><input type="text" name="pg3_11List10" style="width: 100%"
                            size="90" maxlength="200"
@@ -787,7 +787,7 @@
                 <td nowrap><input type="text" name="pg3_11Date11"
                                   id="pg3_11Date11" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date11", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date11_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date11_cal">
                 </td>
                 <td><input type="text" name="pg3_11List11" style="width: 100%"
                            size="90" maxlength="200"
@@ -798,7 +798,7 @@
                 <td nowrap><input type="text" name="pg3_11Date12"
                                   id="pg3_11Date12" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date12", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date12_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date12_cal">
                 </td>
                 <td><input type="text" name="pg3_11List12" style="width: 100%"
                            size="90" maxlength="200"
@@ -809,7 +809,7 @@
                 <td nowrap><input type="text" name="pg3_11Date13"
                                   id="pg3_11Date13" size="8" maxlength="10"
                                   value="<%= props.getProperty("pg3_11Date13", "") %>" @oscar.formDB
-                                  dbType="date"/> <img src="../images/cal.gif" id="pg3_11Date13_cal">
+                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg3_11Date13_cal">
                 </td>
                 <td><input type="text" name="pg3_11List13" style="width: 100%"
                            size="90" maxlength="200"
@@ -830,7 +830,7 @@
                 <td colspan="2%"><input type="text" name="ar2_12Date"
                                         id="ar2_12Date" size="8" maxlength="10"
                                         value="<%= props.getProperty("ar2_12Date", "") %>"/> <img
-                        src="../images/cal.gif" id="ar2_12Date_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_12Date_cal"></td>
                 <td width="22%" nowrap><span class="small8">METHOD</span> <input
                         type="text" name="ar2_12Method" size="20" maxlength="30"
                         value="<%= props.getProperty("ar2_12Method", "") %>"/></td>
@@ -861,7 +861,7 @@
                                             Date <input type="text" name="ar2_13ExamDate" id="ar2_13ExamDate"
                                                         size="10" maxlength="10"
                                                         value="<%= props.getProperty("ar2_13ExamDate", "") %>"/> <img
-                                                    src="../images/cal.gif" id="ar2_13ExamDate_cal"></td>
+                                                    src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_13ExamDate_cal"></td>
                                         <td width="18%" nowrap>WEIGHT<br>
                                             <input type="text" name="ar2_13Weight" size="6" maxlength="6"
                                                    value="<%= props.getProperty("ar2_13Weight", "") %>"/>g

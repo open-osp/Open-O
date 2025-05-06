@@ -62,10 +62,10 @@
             <c:out value="${title}"/>
         </c:if></title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
     <link rel="stylesheet" type="text/css"
-          href="../../oscarEncounter/encounterStyles.css">
+          href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
     <body topmargin="0" leftmargin="0" vlink="#0000FF"
           onload="window.focus();">
     <% 

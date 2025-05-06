@@ -71,16 +71,16 @@
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarprevention.index.oscarpreventiontitre"/></title><!-- i18n -->
 
-        <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1">
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1">
 
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
-        <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-        <script type="text/javascript" src="../share/javascript/sortable.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/sortable.js"></script>
         <style type="text/css">
             div.ImmSet {
                 background-color: #ffffff;
@@ -401,7 +401,7 @@
                             Prevention Reporting
                         </td>
                         <td>&nbsp;
-                            <a href="../report/ManageLetters.jsp?goto=success_manage_from_prevention" target="_blank">manage
+                            <a href="<%= request.getContextPath() %>/report/ManageLetters.jsp?goto=success_manage_from_prevention" target="_blank">manage
                                 letters</a>
                         </td>
                         <td style="text-align:right">
@@ -448,7 +448,7 @@
                     <div>
                         As of:
                         <input type="text" name="asofDate" size="9" styleId="asofDate"/> <a id="date"><img title="Calendar"
-                                                                                                       src="../images/cal.gif"
+                                                                                                       src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                                        alt="Calendar"
                                                                                                        border="0"/></a>
                         <br>
@@ -729,14 +729,14 @@
             <% if ( overDueList.size() > 0 ) {
                   String queryStr = getUrlParamList(overDueList, "demo");
                   %>
-                  <a target="_blank" href="../report/GenerateEnvelopes.do?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode(request.getAttribute("prevType")+" is due","UTF-8")%>">Add Tickler for Overdue</a>
+                  <a target="_blank" href="<%= request.getContextPath() %>/report/GenerateEnvelopes.do?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode(request.getAttribute("prevType")+" is due","UTF-8")%>">Add Tickler for Overdue</a>
             <%}%>
             --%>
 
             <%-- if ( firstLetter.size() > 0 ) {
                    String queryStr = getUrlParamList(firstLetter, "demo");
                    %>
-               <a target="_blank" href="../report/GenerateEnvelopes.do?<%=queryStr%>&message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>">Generate First Envelopes</a>
+               <a target="_blank" href="<%= request.getContextPath() %>/report/GenerateEnvelopes.do?<%=queryStr%>&message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>">Generate First Envelopes</a>
              <%}
                --%>
 
@@ -745,7 +745,7 @@
             String queryStr = getUrlParamList(firstLetter, "demo");
         %>
         <a target="_blank"
-           href="../report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>&amp;followupType=<%=followUpType%>&amp;followupValue=L1">Generate
+           href="<%= request.getContextPath() %>/report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>&amp;followupType=<%=followUpType%>&amp;followupValue=L1">Generate
             First Letter</a>
         <%}%>
 
@@ -753,7 +753,7 @@
             String queryStr = getUrlParamList(secondLetter, "demo");
         %>
         <a target="_blank"
-           href="../report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 2 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>&amp;followupType=<%=followUpType%>&amp;followupValue=L2">Generate
+           href="<%= request.getContextPath() %>/report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 2 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>&amp;followupType=<%=followUpType%>&amp;followupValue=L2">Generate
             Second Letter</a>
         <%}%>
 
@@ -761,7 +761,7 @@
             String queryStr = getUrlParamList(refusedLetter, "demo");
         %>
         <a target="_blank"
-           href="../report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>&amp;followupType=<%=followUpType%>&amp;followupValue=L1">Generate
+           href="<%= request.getContextPath() %>/report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>&amp;followupType=<%=followUpType%>&amp;followupValue=L1">Generate
             Refused Letter</a>
         <%}%>
 
@@ -770,7 +770,7 @@
             <% if ( phoneCall.size() > 0 ) {
                   String queryStr = getUrlParamList(phoneCall, "demo");
                   %>
-                  <a target="_blank" href="../report/GenerateSpreadsheet.do?<%=queryStr%>&message=<%=java.net.URLEncoder.encode("Phone call 1 made for : "+request.getAttribute("prevType"),"UTF-8")%>followupType=<%=followUpType%>&followupValue=P1">Generate Phone Call list</a>
+                  <a target="_blank" href="<%= request.getContextPath() %>/report/GenerateSpreadsheet.do?<%=queryStr%>&message=<%=java.net.URLEncoder.encode("Phone call 1 made for : "+request.getAttribute("prevType"),"UTF-8")%>followupType=<%=followUpType%>&followupValue=P1">Generate Phone Call list</a>
             <%}%>
             --%>
 

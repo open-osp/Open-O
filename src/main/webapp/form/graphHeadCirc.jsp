@@ -48,13 +48,12 @@
         <title>Head Circumference Graph</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <link rel="stylesheet" type="text/css" media="screen"
-              href="rourkeStyle.css">
+              href="form/rourkeStyle.css">
         <link rel="stylesheet" type="text/css" media="print" href="print.css">
     </head>
 
-    <% /*There will be a whole bunch of logic here to determine which graph
-    I should display, based on sex, and either hc or height
-    */
+    <% 
+        /* There will be a whole bunch of logic here to determine which graph I should display, based on sex, and either hc or height */
         String formClass = "Rourke";
         String formLink = "formrourke1.jsp";
 
@@ -63,9 +62,9 @@
         FrmRecord rec = (new FrmRecordFactory()).factory(formClass);
         java.util.Properties props = ((FrmRourkeRecord) rec).getGraph(demoNo, formId);
 
-        String red = "graphics/redMark.gif";
-        String blue = "graphics/blueMark.gif";
-        String chart = ((FrmRourkeRecord) rec).isFemale(demoNo) == true ? "graphics/girlHeadCirc36m.jpg" : "graphics/boyHeadCirc36m.jpg";
+        String red = "form/graphics/redMark.gif";
+        String blue = "form/graphics/blueMark.gif";
+        String chart = ((FrmRourkeRecord) rec).isFemale(demoNo) == true ? "form/graphics/girlHeadCirc36m.jpg" : "form/graphics/boyHeadCirc36m.jpg";
     %>
 
     <%! double age(String dob, String today) {

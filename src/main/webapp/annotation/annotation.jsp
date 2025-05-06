@@ -186,9 +186,9 @@
         <% if (isMobileOptimized) { %>
         <meta name="viewport"
               content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width"/>
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardMobileLayout.css"/>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardMobileLayout.css"/>
         <% } else { %>
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css"/>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
         <style type="text/css">
             body {
                 font-size: x-small;

@@ -52,6 +52,14 @@ public class PageMonitoring2Action extends ActionSupport {
 
     PageMonitorDao pageMonitorDao = SpringUtils.getBean(PageMonitorDao.class);
 
+    public String execute() throws Exception{
+        if ("update".equals(request.getParameter("method"))) {
+            return update();
+        }
+        return cancel();
+    }
+
+
     public String update() throws IOException {
         String pageName = request.getParameter("page");
         String pageId = request.getParameter("pageId");

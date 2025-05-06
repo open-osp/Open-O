@@ -74,7 +74,7 @@
         </c:choose>
 
         <c:set var="bean" value="${RxSessionBean}" scope="page"/>
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
     </head>
 
     <script language="javascript">
@@ -87,7 +87,7 @@
     </script>
 
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
-        <form action="/oscarRx/copyFavorite2.do">
+        <form action="<%= request.getContextPath()%>/oscarRx/copyFavorite2.do">
             <input type="hidden" name="dispatch" value="refresh"/>
             <input type="hidden" name="userProviderNo" value="<%=providerNo%>"/>
             <input type="hidden" name="copyProviderNo" value="<%=copyProviderNo%>"/>
@@ -101,7 +101,7 @@
                             <tr>
                                 <td>
                                     <div class="DivCCBreadCrumbs">
-                                        <a href="SearchDrug3.jsp"> 
+                                        <a href="oscarRx/SearchDrug3.jsp"> 
                                             <fmt:setBundle basename="oscarResources"/>
                                             <fmt:message key="SearchDrug.title"/>
                                         </a> > 
@@ -114,7 +114,7 @@
                             <tr>
                                 <td>
                                     <div class="DivContentPadding">
-                                        <input type="button" value="Back to Search For Drug" class="ControlPushButton" onClick="javascript:window.location.href='SearchDrug3.jsp';"/>
+                                        <input type="button" value="Back to Search For Drug" class="ControlPushButton" onClick="javascript:window.location.href='oscarRx/SearchDrug3.jsp';"/>
                                     </div>
                                 </td>
                             </tr>
@@ -151,13 +151,11 @@
                                                 </td>
                                             </tr>
 
-                                            <c:set var="count" value="${favoritesDao.findByProviderNo(copyProviderNo).size()}" />
-                                            <c:forEach var="i" begin="0" end="${count - 1}">
-                                                <c:set var="fav" value="${favoritesDao.findByProviderNo(copyProviderNo).get(i)}" />
+                                            <c:forEach var="fav" items="${favoritesDao.findByProviderNo(copyProviderNo)}" varStatus="status">
+                                                <c:set var="i" value="${status.index}" />
                                                 <c:set var="isCustom" value="${fav.gcnSeqNo == 0}" />
-                                                <c:set var="style" value="style='background-color:#F5F5F5'" />
                                                 
-                                                <tr class="tblRow" style="${style}" name="record${i}Line1">
+                                                <tr class="tblRow" style="background-color:#F5F5F5" name="record${i}Line1">
                                                     <td colspan="2">
                                                         <b>Favorite Name:</b>
                                                         <input type="hidden" name="fldFavoriteId${i}" value="${fav.id}"/>
@@ -165,12 +163,12 @@
                                                     </td>
                                                 </tr>
                                                 
-                                                <tr class="tblRow" style="${style}" name="record${i}Line2">
+                                                <tr class="tblRow" style="background-color:#F5F5F5" name="record${i}Line2">
                                                     <td><b>Brand Name:</b>${fav.bn}</td>
                                                     <td colspan="5"><b>Generic Name:</b>${fav.gn}</td>
                                                 </tr>
 
-                                                <tr class="tblRow" style="${style}" name="record${i}Line3">
+                                                <tr class="tblRow" style="background-color:#F5F5F5" name="record${i}Line3">
                                                     <td><b>Take:</b>
                                                         <input type="text" name="fldTakeMin${i}" class="tblRow" size="3" value="${fav.takeMin}"/>
                                                         <span>to</span>

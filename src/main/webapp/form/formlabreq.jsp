@@ -49,11 +49,10 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Laboratory Requisition</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="screen"
-              href="labReqStyle.css">
-        <link rel="stylesheet" type="text/css" media="print" href="print.css">
-        <script src="../share/javascript/prototype.js" type="text/javascript"></script>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="screen" href="<%= request.getContextPath() %>/form/labReqStyle.css">
+        <link rel="stylesheet" type="text/css" media="print" href="<%= request.getContextPath() %>/form/print.css">
+        <script src="<%= request.getContextPath() %>/share/javascript/prototype.js" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
     <%
@@ -105,11 +104,11 @@
                 temp = document.forms[0].action;
 
                 if (pdf) {
-                    document.forms[0].action = "<rewrite:reWrite jspPage="formname.do?__title=Lab+Request&__cfgfile=labReqPrint&__template=newReqLab"/>";
+                    document.forms[0].action = '<%= request.getContextPath() %>/form/formname.do?__title=Lab+Request&__cfgfile=labReqPrint&__template=newReqLab';
                     document.forms[0].submit.value = "printall";
                     document.forms[0].target = "_self";
                 } else {
-                    document.forms[0].action = "<rewrite:reWrite jspPage="formname.do"/>";
+                    document.forms[0].action = '<%= request.getContextPath() %>/form/formname.do';
                     document.forms[0].submit.value = "printLabReq";
                     document.forms[0].target = "labReqPrint";
                 }

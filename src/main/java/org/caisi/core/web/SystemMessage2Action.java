@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.oscarehr.common.dao.SystemMessageDao;
 import org.oscarehr.common.model.SystemMessage;
+import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
@@ -40,11 +41,7 @@ public class SystemMessage2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
-    private SystemMessageDao systemMessageDao = null;
-
-    public void setSystemMessageDao(SystemMessageDao systemMessageDao) {
-        this.systemMessageDao = systemMessageDao;
-    }
+    private SystemMessageDao systemMessageDao = SpringUtils.getBean(SystemMessageDao.class);
 
     public String execute() {
         String mtd = request.getParameter("method");

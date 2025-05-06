@@ -40,7 +40,6 @@ public class HRMModifyDocument2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
     HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean(HRMDocumentToDemographicDao.class);
     HRMDocumentToProviderDao hrmDocumentToProviderDao = (HRMDocumentToProviderDao) SpringUtils.getBean(HRMDocumentToProviderDao.class);
@@ -342,7 +341,6 @@ public class HRMModifyDocument2Action extends ActionSupport {
         return "ajax";
     }
 
-
     public String addComment() {
         String documentId = request.getParameter("reportId");
         String commentString = request.getParameter("comment");
@@ -442,6 +440,4 @@ public class HRMModifyDocument2Action extends ActionSupport {
 
         return "ajax";
     }
-
-
 }

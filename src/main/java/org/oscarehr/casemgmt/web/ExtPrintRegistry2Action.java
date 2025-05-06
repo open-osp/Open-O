@@ -43,6 +43,10 @@ public class ExtPrintRegistry2Action extends ActionSupport {
 
     private static Logger logger = MiscUtils.getLogger();
 
+    public String execute() {
+        return register();
+    }
+
     public String register() {
         String name = request.getParameter("name");
         String bean = request.getParameter("bean");

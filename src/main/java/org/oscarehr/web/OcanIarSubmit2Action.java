@@ -43,6 +43,10 @@ public class OcanIarSubmit2Action extends ActionSupport {
 
     Logger logger = MiscUtils.getLogger();
 
+    public String execute() {
+        return submit();
+    }
+
     public String submit() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         Facility facility = loggedInInfo.getCurrentFacility();

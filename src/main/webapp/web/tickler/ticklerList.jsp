@@ -165,7 +165,7 @@
 		 	</span>
             </td>
             <td ng-show="ticklerWriteAccess" data-title="''">
-                <a ng-click="editNote2(tickler)" class="hand-hover noprint"><img src="../images/notepad.gif" border="0"></a>
+                <a ng-click="editNote2(tickler)" class="hand-hover noprint"><img src="<%= request.getContextPath() %>/images/notepad.gif" border="0"></a>
             </td>
         </tr>
         </tbody>

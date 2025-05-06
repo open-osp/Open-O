@@ -45,8 +45,25 @@ public class DocumentDescriptionTemplate2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private DocumentDescriptionTemplateDao documentDescriptionTemplateDao = SpringUtils.getBean(DocumentDescriptionTemplateDao.class);
+
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("getDocumentDescriptionFromDocType".equals(method)) {
+            return getDocumentDescriptionFromDocType();
+        } else if ("getDocumentDescriptionFromId".equals(method)) {
+            return getDocumentDescriptionFromId();
+        } else if ("addDocumentDescription".equals(method)) {
+            return addDocumentDescription();
+        } else if ("updateDocumentDescription".equals(method)) {
+            return updateDocumentDescription();
+        } else if ("deleteDocumentDescription".equals(method)) {
+            return deleteDocumentDescription();
+        } else if ("saveDocumentDescriptionTemplatePreference".equals(method)) {
+            return saveDocumentDescriptionTemplatePreference();
+        } 
+        return SUCCESS;
+    }
 
     public String getDocumentDescriptionFromDocType() {
         String docType = request.getParameter("doctype");

@@ -30,7 +30,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
 
 <html>
     <head>
@@ -103,7 +103,7 @@
                                         <td><input type="file" name="file" id="file" size="35"/>
                                             <span title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
                                                   style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img
-                                                    border="0" src="../../images/icon_alertsml.gif"/></span></span>
+                                                    border="0" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/></span></span>
 
                                         </td>
                                     </tr>

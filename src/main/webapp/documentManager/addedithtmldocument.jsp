@@ -161,20 +161,20 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>Edit Document</title>
-    <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
-    <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-    <script type="text/javascript" src="../share/javascript/scriptaculous.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"></script>
 
     <link rel="stylesheet" type="text/css"
-          href="../share/css/niftyCorners.css"/>
+          href="<%= request.getContextPath() %>/share/css/niftyCorners.css"/>
     <link rel="stylesheet" type="text/css"
-          href="../share/css/OscarStandardLayout.css"/>
+          href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
     <link rel="stylesheet" type="text/css" href="dms.css"/>
     <link rel="stylesheet" type="text/css"
-          href="../share/css/niftyPrint.css" media="print"/>
-    <script type="text/javascript" src="../share/javascript/nifty.js"></script>
+          href="<%= request.getContextPath() %>/share/css/niftyPrint.css" media="print"/>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/nifty.js"></script>
     <link rel="stylesheet" type="text/css" media="all"
-          href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+          href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
     <style type="text/css">
         .autocomplete_style {
             background: #fff;
@@ -194,10 +194,10 @@
         }
     </style>
 
-    <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <script type="text/javascript"
-            src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-    <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+            src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
     <script type="text/javascript">
         window.onload = function () {
             if (!NiftyCheck()) return;
@@ -264,7 +264,7 @@
         }
 
     </script>
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 </head>
 <body class="mainbody" onLoad="prepare();">
 <div class="maindiv">
@@ -378,7 +378,7 @@
             <td>Observation Date <font class="comment">(yyyy/mm/dd):</font></td>
             <td><input type="text" name="observationDate"
                        id="observationDate" value="<%=formdata.getObservationDate()%>"><a
-                    id="obsdate"><img title="Calendar" src="../images/cal.gif"
+                    id="obsdate"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif"
                                       alt="Calendar" border="0"/></a></td>
         </tr>
         <% if (module.equals("provider")) {%>

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.oscarehr.PMmodule.model.DefaultRoleAccess;
 import org.oscarehr.PMmodule.service.ProgramManager;
 import org.oscarehr.PMmodule.utility.RoleCache;
+import org.oscarehr.util.SpringUtils;
 
 import com.quatro.service.security.RolesManager;
 
@@ -39,10 +40,19 @@ public class DefaultRoleAccess2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-    private ProgramManager programManager;
-    private RolesManager roleManager;
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
+    private RolesManager roleManager = SpringUtils.getBean(RolesManager.class);
 
     public String execute() {
+        if ("save".equals(request.getParameter("method"))) {
+            return save();
+        }
+        if ("edit".equals(request.getParameter("method"))) {
+            return edit();
+        }
+        if ("delete".equals(request.getParameter("method"))) {
+            return delete();
+        }
         return list();
     }
 

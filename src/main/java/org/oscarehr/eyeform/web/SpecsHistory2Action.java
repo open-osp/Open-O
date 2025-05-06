@@ -54,7 +54,17 @@ public class SpecsHistory2Action extends ActionSupport {
     private EyeformSpecsHistoryDao dao = (EyeformSpecsHistoryDao) SpringUtils.getBean(EyeformSpecsHistoryDao.class);
 
     @Override
-    public String execute() {
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("cancel".equals(method)) {
+            return cancel();
+        } else if ("list".equals(method)) {
+            return list();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("copySpecs".equals(method)) {
+            return copySpecs();
+        }
         return form();
     }
 
@@ -140,7 +150,6 @@ public class SpecsHistory2Action extends ActionSupport {
         request.setAttribute("parentAjaxId", "specshistory");
         return SUCCESS;
     }
-
 
     public String copySpecs() throws IOException {
         String demographicNo = request.getParameter("demographicNo");

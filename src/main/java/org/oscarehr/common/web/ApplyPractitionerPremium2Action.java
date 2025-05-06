@@ -52,6 +52,10 @@ public class ApplyPractitionerPremium2Action extends ActionSupport {
     private BillingONPremiumDao bPremiumDao = (BillingONPremiumDao) SpringUtils.getBean(BillingONPremiumDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() {
+        return applyPremium();
+    }
+
     public String applyPremium() {
         String raHeaderNoStr = request.getParameter("rano");
         Integer raHeaderNo = Integer.parseInt(raHeaderNoStr);

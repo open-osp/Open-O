@@ -116,8 +116,8 @@
 
     <!-- link rel="stylesheet" type="text/css" href="encounterStyles.css" -->
     <link rel="stylesheet" type="text/css"
-          href="../share/css/OscarStandardLayout.css">
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+          href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 
     <script type="text/javascript" language=javascript>
@@ -249,7 +249,7 @@
                                                                      onclick="submitFile()"/>
                             <span title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
                                   style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img
-                                    border="0" src="../images/icon_alertsml.gif"/></span></span>
+                                    border="0" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/></span></span>
 
                             <% } %>
                         </td>

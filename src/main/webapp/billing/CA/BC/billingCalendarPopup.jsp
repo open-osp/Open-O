@@ -99,12 +99,12 @@ Use returnForm and returnItem request params and this page will fill in that inp
     <tr>
         <td BGCOLOR="#FFD7C4" width="50%" align="center"><a
                 href="billingCalendarPopup.jsp?year=<%=year%>&month=<%=month%>&delta=-1&type=<%=type%>&returnForm=<%=returnForm%>&returnItem=<%=returnItem%>">
-            &nbsp;&nbsp;<img src="../../../images/previous.gif" WIDTH="10"
+            &nbsp;&nbsp;<img src="<%= request.getContextPath() %>/images/previous.gif" WIDTH="10"
                              HEIGHT="9" BORDER="0" ALT="View Last Month" vspace="2"> last
             month&nbsp;&nbsp; </a> <b><span CLASS=title><%=year%>-<%=month%></span></b>
             <a
                     href="billingCalendarPopup.jsp?year=<%=year%>&month=<%=month%>&delta=1&type=<%=type%>&returnForm=<%=returnForm%>&returnItem=<%=returnItem%>">
-                &nbsp;&nbsp;next month <img src="../../../images/next.gif" WIDTH="10"
+                &nbsp;&nbsp;next month <img src="<%= request.getContextPath() %>/images/next.gif" WIDTH="10"
                                             HEIGHT="9" BORDER="0" ALT="View Next Month" vspace="2">&nbsp;&nbsp;</a></td>
     </TR>
 </table>

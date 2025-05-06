@@ -44,8 +44,6 @@ public final class MsgDoc2PDF2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
-
     public String execute() throws IOException, ServletException {
         if (this.getIsPreview()) {
 

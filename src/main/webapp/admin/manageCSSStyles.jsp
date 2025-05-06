@@ -49,7 +49,7 @@
     <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
     <script src="<c:out value="${ctx}"/>/share/javascript/prototype.js" type="text/javascript"></script>
     <script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../share/javascript/picker.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/picker.js"></script>
     <script type="text/javascript">
 
         function enableEdit(elem) {
@@ -348,7 +348,7 @@
                 <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.manageCodeStyles.TextColour"/><br>
                 <a href="javascript:TCP.popup(document.forms[0].elements['color']);"><img width="15" height="13"
                                                                                           border="0"
-                                                                                          src="../images/sel.gif"></a>
+                                                                                          src="<%= request.getContextPath() %>/images/sel.gif"></a>
                 <input id="color" type="text" size="7" onchange="checkColours();"/>
                 <br>
 
@@ -356,7 +356,7 @@
                 <a href="javascript:TCP.popup(document.forms[0].elements['background-color'])"><img width="15"
                                                                                                     height="13"
                                                                                                     border="0"
-                                                                                                    src="../images/sel.gif"></a>
+                                                                                                    src="<%= request.getContextPath() %>/images/sel.gif"></a>
                 <input id="background-color" type="text" size="7" onchange="checkColours();"/>
                 <br>
 

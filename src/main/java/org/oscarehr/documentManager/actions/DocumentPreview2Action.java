@@ -52,6 +52,13 @@ public class DocumentPreview2Action extends ActionSupport {
     private List<AttachmentLabResultData> allLabsSortedByVersions = new ArrayList<>();
     private List<EctFormData.PatientForm> allForms = new ArrayList<>();
 
+    public String execute() {
+        if ("fetchEFormDocuments".equals(request.getParameter("method"))) {
+            return fetchEFormDocuments();
+        }
+        return fetchConsultDocuments();
+    }
+
     public void renderEDocPDF() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String eDocId = request.getParameter("eDocId");

@@ -92,18 +92,18 @@
 
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/calendar-en.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/calendar-en.js"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
 
         <%
@@ -497,10 +497,10 @@
                             type="submit" value="Exit" onclick="javascript:return onExit();"/>
                     <input type="button" value="Print"
                            onclick="javascript:return onPrint();"/></td>
-                <td><a href="javascript: popupFixedPage(700,960,'chf.html');">Tips</a>&nbsp;&nbsp;
+                <td><a href="javascript: popupFixedPage(700,960,'form/chf.html');">Tips</a>&nbsp;&nbsp;
 
                     <a
-                            href="javascript: popPage('formlabreq07.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=CHF','LabReq');">LAB</a>
+                            href="javascript: popPage('form/formlabreq07.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=CHF','LabReq');">LAB</a>
 
                 </td>
             </tr>
@@ -538,13 +538,13 @@
                                                          onchange="checkIt(this,'^20\\d{2}\/\\d{2}\/\\d{2}$','The immunisation date should be in the format 20YY/MM/DD');"
                                                          size="10" value="<%= props.getProperty("dateFlu", "") %>"/>
                         <img
-                                src="../images/cal.gif" class="hideprint" id="dateFlu_cal">
+                                src="<%= request.getContextPath() %>/images/cal.gif" class="hideprint" id="dateFlu_cal">
 
                         Pneumococcal Vaccine: <input tabindex="4" type="text"
                                                      class="CHFInput" name="datePneumo" id="datePneumo"
                                                      onchange="checkIt(this,'^\\d{4}\/\\d{2}\/\\d{2}$','The immunisation date should be in the format YYYY/MM/DD');"
                                                      size="10" value="<%= props.getProperty("datePneumo", "") %>"/> <img
-                            src="../images/cal.gif" class="hideprint" id="datePneumo_cal">
+                            src="<%= request.getContextPath() %>/images/cal.gif" class="hideprint" id="datePneumo_cal">
                         <span class="fine"> (A single re-immunization is appropriate
 			after 5 years.)</span></td>
                 </tr>
@@ -565,7 +565,7 @@
                                                              onchange="checkIt(this,'^(19|20)\\d{2}\/\\d{2}\/\\d{2}$','The echocardiography date should be in the format YYYY/MM/DD');"
                                                              size="10"
                                                              value="<%= props.getProperty("dateEcho", "") %>"/> <img
-                                            src="../images/cal.gif" class="hideprint" id="dateEcho_cal"><br>
+                                            src="<%= request.getContextPath() %>/images/cal.gif" class="hideprint" id="dateEcho_cal"><br>
                                     <span class="fine">consider echo within first yr of
 					diagnosis</span> <br>
                                     Chest radiograph: <input tabindex="6" type="text" class="CHFInput"
@@ -573,7 +573,7 @@
                                                              onchange="checkIt(this,'^(19|20)\\d{2}\/\\d{2}\/\\d{2}$','The radiography date should be in the format YYYY/MM/DD');"
                                                              size="10" value="<%= props.getProperty("dateCXR", "") %>"/>
                                     <img
-                                            src="../images/cal.gif" class="hideprint" id="dateCXR_cal">
+                                            src="<%= request.getContextPath() %>/images/cal.gif" class="hideprint" id="dateCXR_cal">
                                     <br>
                                     <input tabindex="7" type="checkbox" name="CXRedema" id="CXRedema"
                                             <%= props.getProperty("CXRedema", "") %>> <label
@@ -592,7 +592,7 @@
                                             id="dateEKG"
                                             onchange="checkIt(this,'^(19|20)\\d{2}\/\\d{2}\/\\d{2}$','The electrocardiography date should be in the format YYYY/MM/DD');"
                                             size="10" value="<%= props.getProperty("dateEKG", "") %>"/> <img
-                                            src="../images/cal.gif" class="hideprint" id="dateEKG_cal">
+                                            src="<%= request.getContextPath() %>/images/cal.gif" class="hideprint" id="dateEKG_cal">
                                 </td>
                                 <td width="6%">&nbsp;</td>
                                 <td width="47%"><u>Laboratory Testing to Identify Systemic
@@ -633,17 +633,17 @@
                                                                   type="text" class="CHFInput" name="date1" id="date1"
                                                                   size="10"
                                                                   value="<%= props.getProperty("date1", "") %>"/> <img
-                            src="../images/cal.gif" class="hideprint" id="date1_cal"></td>
+                            src="<%= request.getContextPath() %>/images/cal.gif" class="hideprint" id="date1_cal"></td>
                     <td width="24%" bgcolor="#D9D9D9">Date:<input tabindex="119"
                                                                   type="text" class="CHFInput" name="date2" id="date2"
                                                                   size="10"
                                                                   value="<%= props.getProperty("date2", "") %>"/> <img
-                            src="../images/cal.gif" class="hideprint" id="date2_cal"></td>
+                            src="<%= request.getContextPath() %>/images/cal.gif" class="hideprint" id="date2_cal"></td>
                     <td width="25%" bgcolor="#D9D9D9">Date:<input tabindex="219"
                                                                   type="text" class="CHFInput" name="date3" id="date3"
                                                                   size="10"
                                                                   value="<%= props.getProperty("date3", "") %>"/> <img
-                            src="../images/cal.gif" class="hideprint" id="date3_cal"></td>
+                            src="<%= request.getContextPath() %>/images/cal.gif" class="hideprint" id="date3_cal"></td>
                 </tr>
                 <script type="text/javascript" language="Javascript">
                     // alert(getLastDateRecordedInMonths("BP"));

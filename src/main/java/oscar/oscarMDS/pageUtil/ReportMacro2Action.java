@@ -63,7 +63,7 @@ public class ReportMacro2Action extends ActionSupport {
     private TicklerDao ticklerDao = SpringUtils.getBean(TicklerDao.class);
     private TicklerLinkDao ticklerLinkDao = SpringUtils.getBean(TicklerLinkDao.class);
 
-    public String unspecified() throws ServletException, IOException {
+    public String execute() throws ServletException, IOException {
         JSONObject result = new JSONObject();
 
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_lab", "w", null)) {

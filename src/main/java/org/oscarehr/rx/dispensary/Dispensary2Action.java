@@ -70,7 +70,19 @@ public class Dispensary2Action extends ActionSupport {
     private DrugDispensingMappingDao drugDispensingMappingDao = SpringUtils.getBean(DrugDispensingMappingDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    public String unspecified() throws Exception {
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("view".equals(method)) {
+            return view();
+        } else if ("saveEvent".equals(method)) {
+            return saveEvent();
+        } else if ("getProductsByCode".equals(method)) {
+            return getProductsByCode();
+        } else if ("findDistinctLotsAvailableByCode".equals(method)) {
+            return findDistinctLotsAvailableByCode();
+        } else if ("delete".equals(method)) {
+            return delete();
+        }
         return "list";
     }
 

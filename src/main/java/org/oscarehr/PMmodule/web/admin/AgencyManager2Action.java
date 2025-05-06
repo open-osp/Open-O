@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.oscarehr.PMmodule.model.Agency;
 import org.oscarehr.PMmodule.service.AgencyManager;
+import org.oscarehr.util.SpringUtils;
 
 import oscar.log.LogAction;
 
@@ -44,9 +45,15 @@ public class AgencyManager2Action extends ActionSupport {
 
     private static final String BEAN_AGENCY = "agency";
 
-    private AgencyManager agencyManager;
+    private AgencyManager agencyManager = SpringUtils.getBean(AgencyManager.class);
 
-    public String unspecified() {
+    public String execute() {
+        if ("edit".equals(request.getParameter("method"))) {
+            return edit();
+        }
+        if ("save".equals(request.getParameter("method"))) {
+            return save();
+        }
         return view();
     }
 

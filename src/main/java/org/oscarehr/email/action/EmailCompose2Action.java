@@ -29,6 +29,11 @@ public class EmailCompose2Action extends ActionSupport {
     private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
     private EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManager.class);
 
+
+    public String execute() {
+        return prepareComposeEFormMailer();
+    }
+
     public String prepareComposeEFormMailer() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         boolean attachEFormItSelf = (boolean) request.getAttribute("attachEFormItSelf");

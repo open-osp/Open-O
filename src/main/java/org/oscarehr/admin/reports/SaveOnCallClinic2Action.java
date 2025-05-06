@@ -47,6 +47,16 @@ public class SaveOnCallClinic2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    public String execute() {
+        if ("Save".equals(request.getParameter("method"))) {
+            return Save();
+        }
+        if ("Delete".equals(request.getParameter("method"))) {
+            return Delete();
+        }
+        return Load();
+    }
+
 
     public String Save() {
         String json = "{\"error\" : \"false\"}";

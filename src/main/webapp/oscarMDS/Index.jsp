@@ -176,7 +176,7 @@
                                                 </a> --%>
                                 <% } %>
 
-                                <a href="javascript:popupStart(700,1100,'../documentManager/inboxManage.do?method=getDocumentsInQueues')"
+                                <a href="javascript:popupStart(700,1100,'${pageContext.servletContext.contextPath}/documentManager/inboxManage.do?method=getDocumentsInQueues')"
                                    style="color: #FFFFFF;"><fmt:setBundle basename="oscarResources"/><fmt:message key="inboxmanager.document.pendingDocs"/></a>
 
                                 <a href="javascript:popupStart(800,1200,'${pageContext.servletContext.contextPath}/documentManager/incomingDocs.jsp')"
@@ -187,7 +187,7 @@
                                    style="color: #FFFFFF;"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.createLab"/></a>
                                 <a href="javascript:popupStart(800,1000, '${pageContext.servletContext.contextPath}/olis/Search.jsp')"
                                    style="color: #FFFFFF;"><fmt:setBundle basename="oscarResources"/><fmt:message key="olis.olisSearch"/></a>
-                                <a href="javascript:popupPage(400, 1050,'${request.contextPath}/hospitalReportManager/hospitalReportManager.jsp')"
+                                <a href="javascript:popupPage(400, 1050,'${pageContext.servletContext.contextPath}/hospitalReportManager/hospitalReportManager.jsp')"
                                    style="color: #FFFFFF;">HRM Status/Upload</a>
                                 <% } %>
                             </td>

@@ -41,6 +41,7 @@ import org.oscarehr.PMmodule.service.ClientManager;
 import org.oscarehr.PMmodule.service.ProgramManager;
 import org.oscarehr.PMmodule.web.formbean.ActivityReportFormBean;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
@@ -52,23 +53,14 @@ public class ActivityReport2Action extends ActionSupport {
     private static Logger log = MiscUtils.getLogger();
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-    private ProgramManager programManager;
-    private AdmissionManager admissionManager;
-    private ClientManager clientManager;
-
-    public void setProgramManager(ProgramManager mgr) {
-        this.programManager = mgr;
-    }
-
-    public void setAdmissionManager(AdmissionManager mgr) {
-        this.admissionManager = mgr;
-    }
-
-    public void setClientManager(ClientManager mgr) {
-        this.clientManager = mgr;
-    }
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
+    private AdmissionManager admissionManager = SpringUtils.getBean(AdmissionManager.class);
+    private ClientManager clientManager = SpringUtils.getBean(ClientManager.class);
 
     public String execute() {
+        if ("generate".equals(request.getParameter("method"))) {
+            return generate();
+        }
         return form();
     }
 

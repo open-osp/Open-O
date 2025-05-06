@@ -47,7 +47,7 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>PATIENT DETAIL INFO</title>
-    <link rel="stylesheet" href="../web.css"/>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
     <script LANGUAGE="JavaScript">
         <!--
 

@@ -78,7 +78,7 @@
 
 				<c:set var="bgColor" value="${k % 2 == 0 ? '#FDFEC7' : '#FFBBFF'}"/>
 				<td bgcolor="${bgColor}" rowspan="1" nowrap>
-					<img src="../images/todo.gif" border="0" height="10" title="appointment">
+					<img src="<%= request.getContextPath() %>/images/todo.gif" border="0" height="10" title="appointment">
 
 					<!-- Handling tickler logic with JSP logic embedded in JSTL -->
 					<c:if test="${demographic_no == 0}">
@@ -97,7 +97,7 @@
 					</c:if>
 
 					<!-- Display demographic link -->
-					<a href="#" onclick="location.href='../PMmodule/ClientManager.do?id=${demographic_no}'">
+					<a href="#" onclick="location.href="<%= request.getContextPath() %>/PMmodule/ClientManager.do?id=${demographic_no}"">
 						<c:out value="${de.label}"/>
 					</a>
 

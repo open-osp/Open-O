@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.oscarehr.PMmodule.service.ProviderManager;
+import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
@@ -36,11 +37,7 @@ public class ProviderSearch2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
-    private ProviderManager providerManager;
-
-    public void setProviderManager(ProviderManager mgr) {
-        this.providerManager = mgr;
-    }
+    private ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
 
     public String execute() {
         String name = request.getParameter("q");

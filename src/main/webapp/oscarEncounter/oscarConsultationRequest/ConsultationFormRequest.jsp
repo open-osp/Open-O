@@ -57,7 +57,7 @@
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@page import="org.oscarehr.common.model.Site" %>
 <%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestForm" %>
+<%@page import="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequest2Form" %>
 <%@page import="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil" %>
 <%@page import="oscar.oscarDemographic.data.DemographicData" %>
 <%@page import="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctViewRequest2Action" %>
@@ -447,7 +447,7 @@
         //<!--
         function getSpecialist(selected) {
             var specialistIndex = selected.value;
-            var form = document.EctConsultationFormRequestForm;
+            var form = document.EctConsultationFormRequest2Form;
 
             if (specialistIndex < 0) {
                 form.phone.value = ("");
@@ -869,12 +869,12 @@
             var selectedIdx = aSelectedService.selectedIndex;
             var makeNbr = (aSelectedService.options[selectedIdx]).value;
 
-            document.EctConsultationFormRequestForm.specialist.options.selectedIndex = 0;
-            document.EctConsultationFormRequestForm.specialist.options.length = 1;
+            document.EctConsultationFormRequest2Form.specialist.options.selectedIndex = 0;
+            document.EctConsultationFormRequest2Form.specialist.options.length = 1;
 
-            document.EctConsultationFormRequestForm.phone.value = ("");
-            document.EctConsultationFormRequestForm.fax.value = ("");
-            document.EctConsultationFormRequestForm.address.value = ("");
+            document.EctConsultationFormRequest2Form.phone.value = ("");
+            document.EctConsultationFormRequest2Form.fax.value = ("");
+            document.EctConsultationFormRequest2Form.address.value = ("");
 
             if (selectedIdx == 0) {
                 return;
@@ -884,7 +884,7 @@
             var specs = (services[makeNbr].specialists);
             for (var specIndex = 0; specIndex < specs.length; ++specIndex) {
                 aPit = specs[specIndex];
-                document.EctConsultationFormRequestForm.specialist.options[i++] = new Option(aPit.specName, aPit.specNbr);
+                document.EctConsultationFormRequest2Form.specialist.options[i++] = new Option(aPit.specName, aPit.specNbr);
             }
 
         }
@@ -893,7 +893,7 @@
 
         /////////////////////////////////////////////////////////////////////
         function fillSpecialistSelect1(makeNbr) {
-            //document.EctConsultationFormRequestForm.specialist.options.length = 1;
+            //document.EctConsultationFormRequest2Form.specialist.options.length = 1;
 
             var specs = (services[makeNbr].specialists);
             var i = 1;
@@ -905,10 +905,10 @@
                 if (aPit.specNbr == "<%=consultUtil.specialist%>") {
                     //look for matching specialist on spec list and make option selected
                     match = true;
-                    document.EctConsultationFormRequestForm.specialist.options[i] = new Option(aPit.specName, aPit.specNbr, false, true);
+                    document.EctConsultationFormRequest2Form.specialist.options[i] = new Option(aPit.specName, aPit.specNbr, false, true);
                 } else {
                     //add specialist on list as normal
-                    document.EctConsultationFormRequestForm.specialist.options[i] = new Option(aPit.specName, aPit.specNbr);
+                    document.EctConsultationFormRequest2Form.specialist.options[i] = new Option(aPit.specName, aPit.specNbr);
                 }
 
                 i++;
@@ -917,14 +917,14 @@
             <%if(requestId!=null){ %>
             if (!match) {
                 //if no match then most likely doctor has been removed from specialty list so just add specialist
-                document.EctConsultationFormRequestForm.specialist.options[0] = new Option("<%=consultUtil.getSpecailistsName(consultUtil.specialist)%>", "<%=consultUtil.specialist%>", false, true);
+                document.EctConsultationFormRequest2Form.specialist.options[0] = new Option("<%=consultUtil.getSpecailistsName(consultUtil.specialist)%>", "<%=consultUtil.specialist%>", false, true);
 
                 //don't display if no consultant was saved
                 <%if( ! "null".equals(consultUtil.specialist) ){%>
                 document.getElementById("consult-disclaimer").style.display = 'inline';
                 <%}else{%>
                 //display so user knows why field is empty
-                document.EctConsultationFormRequestForm.specialist.options[0] = new Option("No Consultant Saved", "-1");
+                document.EctConsultationFormRequest2Form.specialist.options[0] = new Option("No Consultant Saved", "-1");
                 <%}%>
             }
             <%}%>
@@ -946,7 +946,7 @@
                 aPit = specs[specIndex];
                 if (aPit.specNbr == specialNbr) {
 //        //    window.alert("if");
-                    document.EctConsultationFormRequestForm.specialist.options[i].selected = true;
+                    document.EctConsultationFormRequest2Form.specialist.options[i].selected = true;
                     NotSelected = false;
                 }
 
@@ -954,7 +954,7 @@
             }
 
             if (NotSelected)
-                document.EctConsultationFormRequestForm.specialist.options[0].selected = true;
+                document.EctConsultationFormRequest2Form.specialist.options[0].selected = true;
 //    window.alert("exiting");
 
         }
@@ -966,7 +966,7 @@
         function initSpec() {
             <%if(requestId==null){ %>
             var aSpecialist = services["-1"].specialists[0];
-            document.EctConsultationFormRequestForm.specialist.options[0] = new Option(aSpecialist.specNbr, aSpecialist.specId);
+            document.EctConsultationFormRequest2Form.specialist.options[0] = new Option(aSpecialist.specNbr, aSpecialist.specId);
             <%}%>
         }
 
@@ -1011,7 +1011,7 @@
         /////////////////////////////////////////////////////////////////////
         function onSelectSpecialist(SelectedSpec) {
             var selectedIdx = SelectedSpec.selectedIndex;
-            var form = document.EctConsultationFormRequestForm;
+            var form = document.EctConsultationFormRequest2Form;
 
             if (selectedIdx == null || selectedIdx === -1 || (SelectedSpec.options[selectedIdx]).value === "-1") {   		//if its the first item set everything to blank
                 form.phone.value = ("");
@@ -1029,7 +1029,7 @@
 
                 return;
             }
-            var selectedService = document.EctConsultationFormRequestForm.service.value;  				// get the service that is selected now
+            var selectedService = document.EctConsultationFormRequest2Form.service.value;  				// get the service that is selected now
             var specs = (services[selectedService].specialists); 			// get all the specs the offer this service
 
             // load the text fields with phone fax and address for past consult review even if spec has been removed from service list
@@ -1094,15 +1094,15 @@
         /////////////////////////////////////////////////////////////////////
         function FillThreeBoxes(serNbr) {
 
-            var selectedService = document.EctConsultationFormRequestForm.service.value;  				// get the service that is selected now
+            var selectedService = document.EctConsultationFormRequest2Form.service.value;  				// get the service that is selected now
             var specs = (services[selectedService].specialists);					// get all the specs the offer this service
 
             for (var idx = 0; idx < specs.length; ++idx) {
                 aSpeci = specs[idx];									// get the specialist Object for the currently selected spec
                 if (aSpeci.specNbr == serNbr) {
-                    document.EctConsultationFormRequestForm.phone.value = (aSpeci.phoneNum);
-                    document.EctConsultationFormRequestForm.fax.value = (aSpeci.specFax);					// load the text fields with phone fax and address
-                    document.EctConsultationFormRequestForm.address.value = (aSpeci.specAddress);
+                    document.EctConsultationFormRequest2Form.phone.value = (aSpeci.phoneNum);
+                    document.EctConsultationFormRequest2Form.fax.value = (aSpeci.specFax);					// load the text fields with phone fax and address
+                    document.EctConsultationFormRequest2Form.address.value = (aSpeci.specAddress);
                     <%
         		if (props.isConsultationFaxEnabled()) {//
 				%>
@@ -1192,17 +1192,17 @@
             function checkFormHCT() {
 
                 var msg = "Please select a Consultant. Or add a Consultant using edit Health Care Team.";
-                var specialistElement = document.EctConsultationFormRequestForm.specialist.options;
+                var specialistElement = document.EctConsultationFormRequest2Form.specialist.options;
                 if (!specialistElement || specialistElement.selectedIndex < 0) {
-                    document.EctConsultationFormRequestForm.specialist.focus();
+                    document.EctConsultationFormRequest2Form.specialist.focus();
                     alert(msg);
                     return false;
                 }
 
                 msg = "The selected consultant contains an invalid specialty type. Please add or correct the current specialty using edit Health Care Team";
-                var serviceElement = document.EctConsultationFormRequestForm.service;
+                var serviceElement = document.EctConsultationFormRequest2Form.service;
                 if (!serviceElement || serviceElement.value == "") {
-                    document.EctConsultationFormRequestForm.service.focus();
+                    document.EctConsultationFormRequest2Form.service.focus();
                     alert(msg);
                     return false;
                 }
@@ -1230,18 +1230,18 @@
             var msg = "<fmt:setBundle basename="oscarResources"/><fmt:message key="Errors.service.noServiceSelected"/>";
             msg = msg.replace('<li>', '');
             msg = msg.replace('</li>', '');
-            var serviceOptionsElement = document.EctConsultationFormRequestForm.service.options;
+            var serviceOptionsElement = document.EctConsultationFormRequest2Form.service.options;
             if (serviceOptionsElement && serviceOptionsElement.selectedIndex == 0) {
                 alert(msg);
-                document.EctConsultationFormRequestForm.service.focus();
+                document.EctConsultationFormRequest2Form.service.focus();
                 HideSpin();
                 return false;
             }
-            var faxNumber = document.EctConsultationFormRequestForm.fax.value;
+            var faxNumber = document.EctConsultationFormRequest2Form.fax.value;
             faxNumber = faxNumber.trim();
-            var apptDate = document.EctConsultationFormRequestForm.appointmentDate.value;
-            var hasApptTime = document.EctConsultationFormRequestForm.appointmentHour.options.selectedIndex != 0 &&
-                document.EctConsultationFormRequestForm.appointmentMinute.options.selectedIndex != 0;
+            var apptDate = document.EctConsultationFormRequest2Form.appointmentDate.value;
+            var hasApptTime = document.EctConsultationFormRequest2Form.appointmentHour.options.selectedIndex != 0 &&
+                document.EctConsultationFormRequest2Form.appointmentMinute.options.selectedIndex != 0;
 
             if (apptDate.length > 0 && !hasApptTime) {
                 alert('Please enter appointment time. You cannot choose appointment date only.');
@@ -1539,10 +1539,10 @@ if (userAgent != null) {
         }
 
         function clearAppointmentDateAndTime() {
-            document.EctConsultationFormRequestForm.appointmentDate.value = "";
-            document.EctConsultationFormRequestForm.appointmentHour.options.selectedIndex = 0;
-            document.EctConsultationFormRequestForm.appointmentMinute.options.selectedIndex = 0;
-            document.EctConsultationFormRequestForm.appointmentPm.options.selectedIndex = 0;
+            document.EctConsultationFormRequest2Form.appointmentDate.value = "";
+            document.EctConsultationFormRequest2Form.appointmentHour.options.selectedIndex = 0;
+            document.EctConsultationFormRequest2Form.appointmentMinute.options.selectedIndex = 0;
+            document.EctConsultationFormRequest2Form.appointmentPm.options.selectedIndex = 0;
         }
     </script>
 
@@ -1563,51 +1563,57 @@ if (userAgent != null) {
         </ul>
     </div>
 <% } %>
-    <form style="consultationRequestForm" action="${pageContext.request.contextPath}/oscarEncounter/RequestConsultation.do"
+    <form id="EctConsultationFormRequest2Form" name="EctConsultationFormRequest2Form" style="consultationRequestForm" action="${pageContext.request.contextPath}/oscarEncounter/RequestConsultation.do"
                 method="post" onsubmit="alert('HTHT'); return false;">
         <%
-            EctConsultationFormRequestForm thisForm = (EctConsultationFormRequestForm) request.getAttribute("EctConsultationFormRequestForm");
-
-            if (requestId != null && !"null".equals(requestId) && !requestId.isEmpty()) {
-                EctViewRequest2Action.fillFormValues(LoggedInInfo.getLoggedInInfoFromSession(request), thisForm, new Integer(requestId));
-                thisForm.setSiteName(consultUtil.siteName);
-                defaultSiteName = consultUtil.siteName;
-
-            } else if (segmentId != null) {
-                EctViewRequest2Action.fillFormValues(thisForm, segmentId);
-                thisForm.setSiteName(consultUtil.siteName);
-                defaultSiteName = consultUtil.siteName;
-            } else if (request.getAttribute("validateError") == null) {
-                //  new request
-                if (demo != null) {
-                    oscar.oscarDemographic.data.RxInformation RxInfo = new oscar.oscarDemographic.data.RxInformation();
-                    EctViewRequest2Action.fillFormValues(thisForm, consultUtil);
-
-                    if ("true".equalsIgnoreCase(props.getProperty("CONSULTATION_AUTO_INCLUDE_ALLERGIES", "true"))) {
-                        String allergies = RxInfo.getAllergies(loggedInInfo, demo);
-                        thisForm.setAllergies(allergies);
-                    }
-
-                    if ("true".equalsIgnoreCase(props.getProperty("CONSULTATION_AUTO_INCLUDE_MEDICATIONS", "true"))) {
-                        if (props.getProperty("currentMedications", "").equalsIgnoreCase("otherMedications")) {
-                            oscar.oscarDemographic.data.EctInformation EctInfo = new oscar.oscarDemographic.data.EctInformation(loggedInInfo, demo);
-                            thisForm.setCurrentMedications(EctInfo.getFamilyHistory());
-                        } else {
-                            thisForm.setCurrentMedications(RxInfo.getCurrentMedication(demo));
-                        }
-                    }
-
-                    team = consultUtil.getProviderTeam(consultUtil.mrp);
-                }
-
-                thisForm.setStatus("1");
-
-                thisForm.setSendTo(team);
-
-                if (bMultisites) {
-                    thisForm.setSiteName(defaultSiteName);
-                }
+            EctConsultationFormRequest2Form thisForm = (EctConsultationFormRequest2Form) request.getAttribute("EctConsultationFormRequest2Form");
+            if (thisForm == null) {
+                thisForm = new EctConsultationFormRequest2Form();
+                request.setAttribute("EctConsultationFormRequest2Form", thisForm);
             }
+
+            if (thisForm != null) {
+                if (requestId != null && !"null".equals(requestId) && !requestId.isEmpty()) {
+                    EctViewRequest2Action.fillFormValues(LoggedInInfo.getLoggedInInfoFromSession(request), thisForm, new Integer(requestId));
+                    thisForm.setSiteName(consultUtil.siteName);
+                    defaultSiteName = consultUtil.siteName;
+
+                } else if (segmentId != null) {
+                    EctViewRequest2Action.fillFormValues(thisForm, segmentId);
+                    thisForm.setSiteName(consultUtil.siteName);
+                    defaultSiteName = consultUtil.siteName;
+                } else if (request.getAttribute("validateError") == null) {
+                    //  new request
+                    if (demo != null) {
+                        oscar.oscarDemographic.data.RxInformation RxInfo = new oscar.oscarDemographic.data.RxInformation();
+                        EctViewRequest2Action.fillFormValues(thisForm, consultUtil);
+
+                        if ("true".equalsIgnoreCase(props.getProperty("CONSULTATION_AUTO_INCLUDE_ALLERGIES", "true"))) {
+                            String allergies = RxInfo.getAllergies(loggedInInfo, demo);
+                            thisForm.setAllergies(allergies);
+                        }
+
+                        if ("true".equalsIgnoreCase(props.getProperty("CONSULTATION_AUTO_INCLUDE_MEDICATIONS", "true"))) {
+                            if (props.getProperty("currentMedications", "").equalsIgnoreCase("otherMedications")) {
+                                oscar.oscarDemographic.data.EctInformation EctInfo = new oscar.oscarDemographic.data.EctInformation(loggedInInfo, demo);
+                                thisForm.setCurrentMedications(EctInfo.getFamilyHistory());
+                            } else {
+                                thisForm.setCurrentMedications(RxInfo.getCurrentMedication(demo));
+                            }
+                        }
+
+                        team = consultUtil.getProviderTeam(consultUtil.mrp);
+                    }
+
+                    thisForm.setStatus("1");
+
+                    thisForm.setSendTo(team);
+
+                    if (bMultisites) {
+                        thisForm.setSiteName(defaultSiteName);
+                    }
+                }
+            }   
 
             if (thisForm.iseReferral()) {
         %>
@@ -1904,46 +1910,46 @@ if (userAgent != null) {
                                 <% if (request.getAttribute("id") != null) { %>
                                 <input name="update" type="button"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnUpdate"/>"
-                                       onclick="return checkForm('Update Consultation Request','EctConsultationFormRequestForm');"/>
+                                       onclick="return checkForm('Update Consultation Request','EctConsultationFormRequest2Form');"/>
                                 <input name="updateAndPrint" type="button"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnUpdateAndPrint"/>"
-                                       onclick="return checkForm('Update Consultation Request And Print Preview','EctConsultationFormRequestForm');"/>
+                                       onclick="return checkForm('Update Consultation Request And Print Preview','EctConsultationFormRequest2Form');"/>
                                 <input name="printPreview" type="button" value="Print Preview"
-                                       onclick="return checkForm('And Print Preview','EctConsultationFormRequestForm');"/>
+                                       onclick="return checkForm('And Print Preview','EctConsultationFormRequest2Form');"/>
 
-                                <c:if test="${EctConsultationFormRequestForm.eReferral == true}">
+                                <c:if test="${EctConsultationFormRequest2Form.eReferral == true}">
                                     <input name="updateAndSendElectronicallyTop" type="button"
                                            value="<fmt:message key='oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnUpdateAndSendElectronicReferral'/>"
-                                           onclick="return checkForm('Update_esend', 'EctConsultationFormRequestForm');"/>
+                                           onclick="return checkForm('Update_esend', 'EctConsultationFormRequest2Form');"/>
                                 </c:if>
 
                                 <oscar:oscarPropertiesCheck value="yes" property="consultation_fax_enabled">
                                     <input id="fax_button" name="updateAndFax" type="button"
                                            value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnUpdateAndFax"/>"
-                                           onclick="return checkForm('Update And Fax','EctConsultationFormRequestForm');"/>
+                                           onclick="return checkForm('Update And Fax','EctConsultationFormRequest2Form');"/>
                                 </oscar:oscarPropertiesCheck>
 
                                 <% } else { %>
                                 <input name="submitSaveOnly" type="button"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnSubmit"/>"
-                                       onclick="return checkForm('Submit Consultation Request','EctConsultationFormRequestForm'); "/>
+                                       onclick="return checkForm('Submit Consultation Request','EctConsultationFormRequest2Form'); "/>
                                 <input name="submitAndPrint" type="button"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnSubmitAndPrint"/>"
-                                       onclick="return checkForm('Submit Consultation Request And Print Preview','EctConsultationFormRequestForm'); "/>
+                                       onclick="return checkForm('Submit Consultation Request And Print Preview','EctConsultationFormRequest2Form'); "/>
 
-                                <c:if test="${EctConsultationFormRequestForm.eReferral == true}">
+                                <c:if test="${EctConsultationFormRequest2Form.eReferral == true}">
                                     <input name="submitAndSendElectronicallyTop" type="button"
                                            value="<fmt:message key='oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnSubmitAndSendElectronicReferral'/>"
-                                           onclick="return checkForm('Submit_esend', 'EctConsultationFormRequestForm');"/>
+                                           onclick="return checkForm('Submit_esend', 'EctConsultationFormRequest2Form');"/>
                                 </c:if>
 
 
                                 <oscar:oscarPropertiesCheck value="yes" property="consultation_fax_enabled">
                                     <input id="fax_button" name="submitAndFax" type="button"
                                            value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnSubmitAndFax"/>"
-                                           onclick="return checkForm('Submit And Fax','EctConsultationFormRequestForm');"/>
+                                           onclick="return checkForm('Submit And Fax','EctConsultationFormRequest2Form');"/>
                                 </oscar:oscarPropertiesCheck>
-                                <c:if test="${EctConsultationFormRequestForm.eReferral == true}">
+                                <c:if test="${EctConsultationFormRequest2Form.eReferral == true}">
                                     <input type="button" value="Send eResponse"
                                            onclick="document.getElementById('saved').value='true'; document.location='${thisForm.oruR01UrlString(request)}'"/>
                                 </c:if>
@@ -1984,7 +1990,7 @@ if (userAgent != null) {
                                         <oscar:oscarPropertiesCheck value="false"
                                                                     property="CONSULTATION_LOCK_REFERRAL_DATE">
                                             <td class="tite3">
-                                                <img alt="calendar" id="referalDate_cal" src="../../images/cal.gif"/>
+                                                <img alt="calendar" id="referalDate_cal" src="<%= request.getContextPath() %>/images/cal.gif"/>
                                                 <%
                                                     if (request.getAttribute("id") != null) {
                                                 %>
@@ -2166,7 +2172,7 @@ if (userAgent != null) {
                                         <td class="tite4"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnAppointmentDate"/>
                                         </td>
                                         <td class="tite3"><img alt="calendar" id="appointmentDate_cal"
-                                                               src="../../images/cal.gif">
+                                                               src="<%= request.getContextPath() %>/images/cal.gif">
                                             <input type="text" id="appointmentDate" name="appointmentDate"
                                                        readonly="true" ondblclick="this.value='';"/>
                                         </td>
@@ -2221,7 +2227,7 @@ if (userAgent != null) {
                                             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.siteName"/>
                                         </td>
                                         <td>
-                                            <select name="siteName"
+                                            <select name="siteName" id="siteName"
                                                          onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
                                                 <% for (int i = 0; i < vecAddressName.size(); i++) {
                                                     String te = vecAddressName.get(i);
@@ -2327,7 +2333,7 @@ if (userAgent != null) {
                                         <td class="tite4"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formLastFollowup"/>
                                         </td>
                                         <td class="tite3">
-                                            <img alt="calendar" id="followUpDate_cal" src="../../images/cal.gif"/>
+                                            <img alt="calendar" id="followUpDate_cal" src="<%= request.getContextPath() %>/images/cal.gif"/>
                                             <input type="text" id="followUpDate" name="followUpDate"
                                                        ondblclick="this.value='';"/>
                                         </td>
@@ -2707,44 +2713,44 @@ if (userAgent != null) {
 
                                 <input name="update" type="button"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnUpdate"/>"
-                                       onclick="return checkForm('Update Consultation Request','EctConsultationFormRequestForm');"/>
+                                       onclick="return checkForm('Update Consultation Request','EctConsultationFormRequest2Form');"/>
                                 <input name="updateAndPrint" type="button"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnUpdateAndPrint"/>"
-                                       onclick="return checkForm('Update Consultation Request And Print Preview','EctConsultationFormRequestForm');"/>
+                                       onclick="return checkForm('Update Consultation Request And Print Preview','EctConsultationFormRequest2Form');"/>
 
-                                <c:if test="${EctConsultationFormRequestForm.eReferral == true}">
+                                <c:if test="${EctConsultationFormRequest2Form.eReferral == true}">
                                     <input name="updateAndSendElectronically" type="button"
                                            value="<fmt:message key='oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnUpdateAndSendElectronicReferral'/>"
-                                           onclick="return checkForm('Update_esend','EctConsultationFormRequestForm');"/>
+                                           onclick="return checkForm('Update_esend','EctConsultationFormRequest2Form');"/>
                                 </c:if>
 
                                 <oscar:oscarPropertiesCheck value="yes" property="consultation_fax_enabled">
                                     <input id="fax_button2" name="updateAndFax" type="button"
                                            value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnUpdateAndFax"/>"
-                                           onclick="return checkForm('Update And Fax','EctConsultationFormRequestForm');"/>
+                                           onclick="return checkForm('Update And Fax','EctConsultationFormRequest2Form');"/>
                                 </oscar:oscarPropertiesCheck>
 
                                 <%} else {%>
 
                                 <input name="submitSaveOnly" type="button"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnSubmit"/>"
-                                       onclick="return checkForm('Submit Consultation Request','EctConsultationFormRequestForm'); "/>
+                                       onclick="return checkForm('Submit Consultation Request','EctConsultationFormRequest2Form'); "/>
                                 <input name="submitAndPrint" type="button"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnSubmitAndPrint"/>"
-                                       onclick="return checkForm('Submit Consultation Request And Print Preview','EctConsultationFormRequestForm'); "/>
+                                       onclick="return checkForm('Submit Consultation Request And Print Preview','EctConsultationFormRequest2Form'); "/>
 
-                                <c:if test="${EctConsultationFormRequestForm.eReferral == true}">
+                                <c:if test="${EctConsultationFormRequest2Form.eReferral == true}">
                                     <input name="submitAndSendElectronically" type="button"
                                            value="<fmt:message key='oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnSubmitAndSendElectronicReferral'/>"
-                                           onclick="return checkForm('Submit_esend','EctConsultationFormRequestForm');"/>
+                                           onclick="return checkForm('Submit_esend','EctConsultationFormRequest2Form');"/>
                                 </c:if>
 
                                 <oscar:oscarPropertiesCheck value="yes" property="consultation_fax_enabled">
                                     <input id="fax_button2" name="submitAndFax" type="button"
                                            value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.btnSubmitAndFax"/>"
-                                           onclick="return checkForm('Submit And Fax','EctConsultationFormRequestForm');"/>
+                                           onclick="return checkForm('Submit And Fax','EctConsultationFormRequest2Form');"/>
                                 </oscar:oscarPropertiesCheck>
-                                <c:if test="${EctConsultationFormRequestForm.eReferral == true}">
+                                <c:if test="${EctConsultationFormRequest2Form.eReferral == true}">
                                     <input type="button" value="Send eResponse"
                                            onclick="document.getElementById('saved').value='true'; document.location='${thisForm.oruR01UrlString(request)}'"/>
                                 </c:if>
@@ -2760,9 +2766,9 @@ if (userAgent != null) {
                                 initService('<%=consultUtil.service%>', '<%=((consultUtil.service==null)?"":Encode.forJavaScript(consultUtil.getServiceName(consultUtil.service.toString())))%>', '<%=consultUtil.specialist%>', '<%=((consultUtil.specialist==null)?"":Encode.forJavaScript(consultUtil.getSpecailistsName(consultUtil.specialist.toString())))%>', '<%=Encode.forJavaScript(consultUtil.specPhone)%>', '<%=Encode.forJavaScript(consultUtil.specFax)%>', '<%=Encode.forJavaScript(consultUtil.specAddr)%>');
                                 initSpec();
 
-                                document.EctConsultationFormRequestForm.phone.value = ("");
-                                document.EctConsultationFormRequestForm.fax.value = ("");
-                                document.EctConsultationFormRequestForm.address.value = ("");
+                                document.EctConsultationFormRequest2Form.phone.value = ("");
+                                document.EctConsultationFormRequest2Form.fax.value = ("");
+                                document.EctConsultationFormRequest2Form.address.value = ("");
                                 <%if (request.getAttribute("id") != null)
 							{%>
                                 setSpec('<%=consultUtil.service%>', '<%=consultUtil.specialist%>');
@@ -2770,11 +2776,11 @@ if (userAgent != null) {
                                 <%}
 							else
 							{%>
-                                document.EctConsultationFormRequestForm.service.options.selectedIndex = 0;
-                                document.EctConsultationFormRequestForm.specialist.options.selectedIndex = 0;
+                                document.EctConsultationFormRequest2Form.service.options.selectedIndex = 0;
+                                document.EctConsultationFormRequest2Form.specialist.options.selectedIndex = 0;
                                 <%}%>
 
-                                onSelectSpecialist(document.EctConsultationFormRequestForm.specialist);
+                                onSelectSpecialist(document.EctConsultationFormRequest2Form.specialist);
 
                                 <%
 		            	//new with BORN referrals. Allow form to be loaded with service and
@@ -2824,14 +2830,14 @@ if (userAgent != null) {
                                 const specialist = "${ consultUtil.specialist }";
                                 const servicevalue = "${ consultUtil.service }";
 
-                                document.EctConsultationFormRequestForm.specialist.value = specialist;
-                                document.EctConsultationFormRequestForm.service.value = servicevalue;
+                                document.EctConsultationFormRequest2Form.specialist.value = specialist;
+                                document.EctConsultationFormRequest2Form.service.value = servicevalue;
 
                                 if (typeof healthCareTeam !== 'undefined' && healthCareTeam !== null) {
-                                    document.EctConsultationFormRequestForm.annotation.value = healthCareTeam[specialist].note;
-                                    document.EctConsultationFormRequestForm.phone.value = healthCareTeam[specialist].phoneNum;
-                                    document.EctConsultationFormRequestForm.fax.value = healthCareTeam[specialist].specFax;
-                                    document.EctConsultationFormRequestForm.address.value = healthCareTeam[specialist].specAddress;
+                                    document.EctConsultationFormRequest2Form.annotation.value = healthCareTeam[specialist].note;
+                                    document.EctConsultationFormRequest2Form.phone.value = healthCareTeam[specialist].phoneNum;
+                                    document.EctConsultationFormRequest2Form.fax.value = healthCareTeam[specialist].specFax;
+                                    document.EctConsultationFormRequest2Form.address.value = healthCareTeam[specialist].specAddress;
                                 }
 
                             </script>

@@ -70,7 +70,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.providerupdateprovider.title"/></title>
-        <link rel="stylesheet" href="../web.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
         <script LANGUAGE="JavaScript">
             <!--
             function setfocus() {

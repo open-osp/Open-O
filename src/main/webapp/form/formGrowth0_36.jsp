@@ -44,18 +44,18 @@
         <link rel="stylesheet" type="text/css" href="bcArStyle.css">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
     </head>
 
@@ -69,7 +69,7 @@
             //document.forms[0].submit.value="print";
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "../form/formGrowth0_36Print.jsp?print=" + num + "&__title=GrowthCharts&__cfgfile=<%=bGirl?"growthGirlLength0_36Print":"growthBoyLength0_36Print"%>&__cfgGraphicFile=<%=bGirl?"growthGirlLength0_36Graphic":"growthBoyLength0_36Graphic"%>&__cfgGraphicFile=<%=bGirl?"growthGirlLength0_36Graphic2":"growthBoyLength0_36Graphic2"%>&__template=<%=bGirl?"growthGirlLength0_36":"growthBoyLength0_36"%>";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/formGrowth0_36Print.jsp?print=" + num + "&__title=GrowthCharts&__cfgfile=<%=bGirl?"growthGirlLength0_36Print":"growthBoyLength0_36Print"%>&__cfgGraphicFile=<%=bGirl?"growthGirlLength0_36Graphic":"growthBoyLength0_36Graphic"%>&__cfgGraphicFile=<%=bGirl?"growthGirlLength0_36Graphic2":"growthBoyLength0_36Graphic2"%>&__template=<%=bGirl?"growthGirlLength0_36":"growthBoyLength0_36"%>";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -79,7 +79,7 @@
             //document.forms[0].submit.value="print";
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "../form/formGrowth0_36Print.jsp?print=" + num + "&__title=GrowthCharts&__cfgfile=<%=bGirl?"growthGirlHead0_36Print":"growthBoyHead0_36Print"%>&__cfgGraphicFile=<%=bGirl?"growthGirlHead0_36Graphic":"growthBoyHead0_36Graphic"%>&__cfgGraphicFile=<%=bGirl?"growthGirlHead0_36Graphic2":"growthBoyHead0_36Graphic2"%>&__template=<%=bGirl?"growthGirlHead0_36":"growthBoyHead0_36"%>";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/formGrowth0_36Print.jsp?print=" + num + "&__title=GrowthCharts&__cfgfile=<%=bGirl?"growthGirlHead0_36Print":"growthBoyHead0_36Print"%>&__cfgGraphicFile=<%=bGirl?"growthGirlHead0_36Graphic":"growthBoyHead0_36Graphic"%>&__cfgGraphicFile=<%=bGirl?"growthGirlHead0_36Graphic2":"growthBoyHead0_36Graphic2"%>&__template=<%=bGirl?"growthGirlHead0_36":"growthBoyHead0_36"%>";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -88,7 +88,7 @@
         function onPrintStatureWeight1() {
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "../form/formGrowthChartPrint.jsp?print=1&__title=GrowthCharts&__cfgfile=<%=bGirl?"growthChartGirlPrint":"growthChartBoyPrint"%>&__cfgGraphicFile=<%=bGirl?"growthChartGirlGraphic":"growthChartBoyGraphic"%>&__cfgGraphicFile=<%=bGirl?"growthChartGirlGraphic2":"growthChartBoyGraphic2"%>&__template=<%=bGirl?"growthChartGirlStatureWeight":"growthChartBoyStatureWeight"%>";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/formGrowthChartPrint.jsp?print=1&__title=GrowthCharts&__cfgfile=<%=bGirl?"growthChartGirlPrint":"growthChartBoyPrint"%>&__cfgGraphicFile=<%=bGirl?"growthChartGirlGraphic":"growthChartBoyGraphic"%>&__cfgGraphicFile=<%=bGirl?"growthChartGirlGraphic2":"growthChartBoyGraphic2"%>&__template=<%=bGirl?"growthChartGirlStatureWeight":"growthChartBoyStatureWeight"%>";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -97,7 +97,7 @@
         function onPrintStatureWeight2() {
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "../form/formGrowthChartPrint.jsp?print=2&__title=GrowthCharts&__cfgfile=<%=bGirl?"growthChartGirlPrint":"growthChartBoyPrint"%>&__cfgGraphicFile=<%=bGirl?"growthChartGirlGraphic":"growthChartBoyGraphic"%>&__cfgGraphicFile=<%=bGirl?"growthChartGirlGraphic2":"growthChartBoyGraphic2"%>&__template=<%=bGirl?"growthChartGirlStatureWeight":"growthChartBoyStatureWeight"%>";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/formGrowthChartPrint.jsp?print=2&__title=GrowthCharts&__cfgfile=<%=bGirl?"growthChartGirlPrint":"growthChartBoyPrint"%>&__cfgGraphicFile=<%=bGirl?"growthChartGirlGraphic":"growthChartBoyGraphic"%>&__cfgGraphicFile=<%=bGirl?"growthChartGirlGraphic2":"growthChartBoyGraphic2"%>&__template=<%=bGirl?"growthChartGirlStatureWeight":"growthChartBoyStatureWeight"%>";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -374,7 +374,7 @@
                                 <td nowrap align="right">Expected Date of Confinement:</td>
                                 <td><input type="text" name="edc" id="edc" size="10"
                                            maxlength="10" value="<%= props.getProperty("edc", "") %>"
-                                           @oscar.formDB/> <img src="../images/cal.gif" id="edc_cal">
+                                           @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="edc_cal">
                                 </td>
                             </tr>
                             <tr>
@@ -415,7 +415,7 @@
                                 <td nowrap><input type="text" name="date_<%=i%>"
                                                   id="date_<%=i%>" readonly size="8" maxlength="10"
                                                   value="<%= props.getProperty("date_"+i, "") %>" @oscar.formDB
-                                                  dbType="date"/> <img src="../images/cal.gif" id="date_<%=i%>_cal">
+                                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="date_<%=i%>_cal">
                                 </td>
                                 <td><input type="text" name="age_<%=i%>"
                                            onDblClick="calcAge(this)" size="1" maxlength="5"
@@ -478,7 +478,7 @@
                                 <td nowrap><input type="text" name="date_<%=i%>"
                                                   id="date_<%=i%>" readonly size="8" maxlength="10"
                                                   value="<%= props.getProperty("date_"+i, "") %>" @oscar.formDB
-                                                  dbType="date"/> <img src="../images/cal.gif" id="date_<%=i%>_cal">
+                                                  dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="date_<%=i%>_cal">
                                 </td>
                                 <td><input type="text" name="age_<%=i%>"
                                            onDblClick="calcAge(this)" size="1" maxlength="5"

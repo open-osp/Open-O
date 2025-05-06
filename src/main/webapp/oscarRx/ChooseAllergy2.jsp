@@ -72,7 +72,7 @@
             oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
         %>
 
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
 
 
         <script type="text/javascript">
@@ -266,7 +266,7 @@
                                                             <c:if test="${not empty allergyResults[type]}">
                                                                 <div class="DivContentSectionHead">
                                                                     <a href="javascript:void(0)" onclick="toggleSection('${type}');return false;">
-                                                                        <img border="0" id="${type}_img" src="../images/${type == 8 || type == 10 || type == 13 || type == 14 ? 'collapser' : 'expander'}.png"/>
+                                                                        <img border="0" id="${type}_img" src="<%= request.getContextPath() %>/images/${type == 8 || type == 10 || type == 13 || type == 14 ? "collapser' : 'expander'}.png"/>
                                                                     </a>
                                                                         ${type == 8 ? 'ATC Class' : type == 10 ? 'AHFS Class' : type == 13 ? 'Brand Name' : type == 11 ? 'Generic Name' : type == 12 ? 'Compound' : 'Ingredient'}
                                                                 </div>

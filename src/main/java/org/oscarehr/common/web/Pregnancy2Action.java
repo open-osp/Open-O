@@ -59,7 +59,6 @@ public class Pregnancy2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private EpisodeDao episodeDao = SpringUtils.getBean(EpisodeDao.class);
 
     static String labReqVersion;
@@ -71,6 +70,59 @@ public class Pregnancy2Action extends ActionSupport {
         }
     }
 
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("getLatestFormIdByPregnancy".equals(method)) {
+            return getLatestFormIdByPregnancy();
+        } else if ("create".equals(method)) {
+            return create();
+        } else if ("complete".equals(method)) {
+            return complete();
+        } else if ("doComplete".equals(method)) {
+            return doComplete();
+        } else if ("doDelete".equals(method)) {
+            return doDelete();
+        } else if ("list".equals(method)) {
+            return list();
+        } else if ("createGBSLabReq".equals(method)) {
+            return createGBSLabReq();
+        } else if ("createMCVLabReq".equals(method)) {
+            return createMCVLabReq();
+        } else if ("getAllergies".equals(method)) {
+            return getAllergies();
+        } else if ("getMeds".equals(method)) {
+            return getMeds();
+        } else if ("saveFormAjax".equals(method)) {
+            return saveFormAjax();
+        } else if ("getMeasurementsAjax".equals(method)) {
+            return getMeasurementsAjax();
+        } else if ("saveMeasurementAjax".equals(method)) {
+            return saveMeasurementAjax();
+        } else if ("getAR1Labs".equals(method)) {
+            return getAR1Labs();
+        } else if ("loadEformByName".equals(method)) {
+            return loadEformByName();
+        } else if ("createGCTLabReq".equals(method)) {
+            return createGCTLabReq();
+        } else if ("createGTTLabReq".equals(method)) {
+            return createGTTLabReq();
+        } else if ("getEformsByGroupAjax".equals(method)) {
+            return getEformsByGroupAjax();
+        } else if ("migrate".equals(method)) {
+            return migrate();
+        } else if ("doPreMigrate".equals(method)) {
+            return doPreMigrate();
+        } else if ("doMigrate".equals(method)) {
+            return doMigrate();
+        } else if ("getFundalImage".equals(method)) {
+            return getFundalImage();
+        } else if ("recordPrint".equals(method)) {
+            return recordPrint();
+        } else if ("getPrintData".equals(method)) {
+            return getPrintData();
+        } 
+        return getLatestFormIdByPregnancy();
+    }
 
     public String getLatestFormIdByPregnancy() throws IOException {
         String episodeId = request.getParameter("episodeId");

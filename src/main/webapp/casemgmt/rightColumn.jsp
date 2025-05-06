@@ -69,7 +69,7 @@
             <img style="cursor: pointer;" id="ci"
                  src="<c:out value="${ctx}"/><%=ClientImage.imagePresentPlaceholderUrl%>" alt="id_photo" height="100"
                  title="Click to upload new photo."
-                 OnMouseOver="document.getElementById('ci').src='../imageRenderingServlet?source=local_client&clientId=<c:out value="${clientId}"/>'"
+                 OnMouseOver="document.getElementById('ci').src="<%= request.getContextPath() %>/imageRenderingServlet?source=local_client&clientId=<c:out value="${clientId}"/>'"
                  OnMouseOut="delay(5000)" window.status='Click to upload new photo' ; return true;"
             onClick="popupUploadPage('uploadimage.jsp',<%=demo%>);return false;" />
         </c:when>

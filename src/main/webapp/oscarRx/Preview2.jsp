@@ -79,8 +79,8 @@
 <html>
     <head>
             <%--<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>--%>
-            <%--<script type="text/javascript" src="../share/javascript/prototype.js"></script>--%>
-            <%--<script type="text/javascript" src="../share/javascript/Oscar.js"></script>--%>
+            <%--<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>--%>
+            <%--<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>--%>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="RxPreview.title"/></title>
         <style media="print">
             .noprint {
@@ -149,7 +149,7 @@
             String ip = request.getRemoteAddr();
             //LogAction.addLog((String) session.getAttribute("user"), LogConst.UPDATE, LogConst.CON_PRESCRIPTION, String.valueOf(bean.getDemographicNo()), ip);
         } else {
-            bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
+            bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("RxSessionBean");
 
             //set Date to latest in stash
             Date tmp;

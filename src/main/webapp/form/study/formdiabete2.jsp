@@ -50,9 +50,9 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Type 2 Diabetes Record</title>
         <link rel="stylesheet" type="text/css"
-              href="../../oscarEncounter/styles.css"/>
+              href="<%= request.getContextPath() %>/oscarEncounter/styles.css"/>
         <link rel="stylesheet" type="text/css" media="print"
-              href="../../oscarEncounter/print.css"/>
+              href="<%= request.getContextPath() %>/oscarEncounter/print.css"/>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
     </head>
 

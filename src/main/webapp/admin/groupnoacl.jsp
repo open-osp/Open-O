@@ -192,7 +192,7 @@
                 <TD align="center">
                     <input type=button name="Submit" onClick="save_acl()"
                            value="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.adminnewgroup.btnSubmit"/>"/>
-                    <INPUT TYPE="RESET" VALUE="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/>" onClick="window.close();">
+                    <INPUT TYPE="BUTTON" VALUE="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/>" onClick="window.top.close();">
                 </TD>
             </tr>
         </TABLE>

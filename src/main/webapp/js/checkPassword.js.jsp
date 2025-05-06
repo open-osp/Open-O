@@ -25,8 +25,9 @@
     <%@ page import="oscar.OscarProperties"%>
     <%@ page import="org.springframework.web.util.JavaScriptUtils"%>
 
-
     <%@ page contentType="text/javascript"%>
+
+    <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
     <%!
         OscarProperties op = OscarProperties.getInstance();

@@ -116,18 +116,18 @@
         <link rel="stylesheet" type="text/css" href="bcArStyle.css">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
     </head>
 
@@ -141,7 +141,7 @@
             document.forms[0].submit.value = "print";
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "../form/createpdf?__title=British+Columbia+Labour+and+Birth+Summary+Record+2008&__cfgfile=bclb2008PrintCfgPg1&__template=bcbirthsummary2008";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=British+Columbia+Labour+and+Birth+Summary+Record+2008&__cfgfile=bclb2008PrintCfgPg1&__template=bcbirthsummary2008";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -657,7 +657,7 @@
                                                      @oscar.formDB/><br>
                                 <b>EDD&nbsp;</b><input type="text" name="pg1_EDD" id="pg1_EDD" size="11" maxlength="11"
                                                        value="<%= props.getProperty("pg1_EDD", "") %>" @oscar.formDB/>
-                                <img src="../images/cal.gif" id="pg1_EDD_cal">
+                                <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_EDD_cal">
                             </td>
                         </tr>
                     </table>
@@ -667,7 +667,7 @@
 
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tr>
-                            <td width="55%">DATE <img src="../images/cal.gif"
+                            <td width="55%">DATE <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                       id="pg1_formDate_cal"> <%=bSync ? ("<b><a href=# onClick='syncDemo(); return false;'><font color='red'>Synchronize</font></a></b>") : "" %>
                                 <br>
                                 <input type="text" name="pg1_formDate" id="pg1_formDate"
@@ -1111,7 +1111,7 @@
                                 Decision at
                                 <input type="text" name="delDecisionDate" id="delDecisionDate" size="10" maxlength="10"
                                        value="<%= props.getProperty("delDecisionDate", "") %>" @oscar.formDB/><img
-                                    src="../images/cal.gif" id="delDecisionDate_cal">
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="delDecisionDate_cal">
                             </td>
                             <td>
                                 <input type="text" name="delDecisionHrs" size="5" maxlength="5"
@@ -1437,7 +1437,7 @@
                                         <td><input type="text" name="birTimeDate1" id="birTimeDate1"
                                                    size="10" maxlength="10"
                                                    value="<%= props.getProperty("birTimeDate1", "") %>"
-                                                   @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                                                   @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                       id="birTimeDate1_cal"></td>
                                     </tr>
                                     <tr>
@@ -1449,7 +1449,7 @@
                                         <td><input type="text" name="birTimeDate2" id="birTimeDate2"
                                                    size="10" maxlength="10"
                                                    value="<%= props.getProperty("birTimeDate2", "") %>"
-                                                   @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                                                   @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                       id="birTimeDate2_cal"></td>
                                     </tr>
                                     <tr>
@@ -1461,7 +1461,7 @@
                                         <td><input type="text" name="birTimeDate3" id="birTimeDate3"
                                                    size="10" maxlength="10"
                                                    value="<%= props.getProperty("birTimeDate3", "") %>"
-                                                   @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                                                   @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                       id="birTimeDate3_cal"></td>
                                     </tr>
                                     <tr>
@@ -1473,7 +1473,7 @@
                                         <td><input type="text" name="birTimeDate4" id="birTimeDate4"
                                                    size="10" maxlength="10"
                                                    value="<%= props.getProperty("birTimeDate4", "") %>"
-                                                   @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                                                   @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                       id="birTimeDate4_cal"></td>
                                     </tr>
                                     <tr>
@@ -1485,7 +1485,7 @@
                                         <td><input type="text" name="birTimeDate5" id="birTimeDate5"
                                                    size="10" maxlength="10"
                                                    value="<%= props.getProperty("birTimeDate5", "") %>"
-                                                   @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                                                   @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                       id="birTimeDate5_cal"></td>
                                     </tr>
                                 </table>
@@ -1718,7 +1718,7 @@
                     &nbsp; | ADMISSION <input type="text" name="admisDateTime"
                                               id="admisDateTime" size="12" maxlength="16"
                                               value="<%= props.getProperty("admisDateTime", "") %>" @oscar.formDB/>
-                    <img src="../images/cal.gif" id="admisDateTime_cal">
+                    <img src="<%= request.getContextPath() %>/images/cal.gif" id="admisDateTime_cal">
                 <td width="20%">SIGNATURE</td>
                 <td width="20%">SIGNATURE</td>
             </tr>
@@ -1733,7 +1733,7 @@
                         type="text" name="dischargeDateTime" id="dischargeDateTime"
                         size="12" maxlength="16"
                         value="<%= props.getProperty("dischargeDateTime", "") %>"
-                        @oscar.formDB/> <img src="../images/cal.gif"
+                        @oscar.formDB/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                              id="dischargeDateTime_cal">
                     |
                     PP LOS <input type="text" name="ppLos" onDblClick="calcPPLOS();" class="spe" size="3" maxlength="3"

@@ -29,6 +29,7 @@ import org.apache.struts2.ServletActionContext;
 import org.oscarehr.casemgmt.model.ClientImage;
 import org.oscarehr.casemgmt.service.ClientImageManager;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,10 +44,10 @@ public class ClientImage2Action extends ActionSupport {
 
     private static Logger log = MiscUtils.getLogger();
 
-    private ClientImageManager clientImageManager;
+    private ClientImageManager clientImageManager = SpringUtils.getBean(ClientImageManager.class);
 
-    public void setClientImageManager(ClientImageManager mgr) {
-        this.clientImageManager = mgr;
+    public String execute() {
+        return saveImage();
     }
 
     public String saveImage() {

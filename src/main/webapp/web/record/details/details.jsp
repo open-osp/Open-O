@@ -67,7 +67,7 @@
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicprintdemographic.btnPrint"/> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="../report/GenerateEnvelopes.do?demos={{page.demo.demographicNo}}">PDF Envelope</a></li>
+                    <li><a href="<%= request.getContextPath() %>/report/GenerateEnvelopes.do?demos={{page.demo.demographicNo}}">PDF Envelope</a></li>
                     <li><a class="hand-hover" ng-click="printLabel('PDFLabel')"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnCreatePDFLabel"/></a></li>
                     <li><a class="hand-hover" ng-click="printLabel('PDFAddress')"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnCreatePDFAddressLabel"/></a></li>
                     <li><a class="hand-hover" ng-click="printLabel('PDFChart')"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnCreatePDFChartLabel"/></a></li>
@@ -697,7 +697,7 @@
     <div class="col-md-4">
         <div class="clearfix">
             <img class="pull-left" id="photo" title="Click to upload photo" ng-click="launchPhoto()"
-                 ng-src="../imageRenderingServlet?source=local_client&clientId={{page.demo.demographicNo}}"/>
+                 ng-src="<%= request.getContextPath() %>/imageRenderingServlet?source=local_client&clientId={{page.demo.demographicNo}}"/>
             <div class="pull-left" style="margin-left:5px;">
                 <address>
                     <strong>{{page.demo.lastName}}, {{page.demo.firstName}}</strong><br/>

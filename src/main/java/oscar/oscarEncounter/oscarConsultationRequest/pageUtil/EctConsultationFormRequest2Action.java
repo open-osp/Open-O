@@ -32,6 +32,7 @@ import ca.uhn.hl7v2.model.v26.message.REF_I12;
 import com.opensymphony.xwork2.ActionSupport;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -94,13 +95,13 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-        String appointmentHour = frm.getAppointmentHour();
-        String appointmentPm = frm.getAppointmentPm();
-        String[] attachedDocuments = frm.getDocNo();
-        String[] attachedLabs = frm.getLabNo();
-        String[] attachedForms = frm.getFormNo();
-        String[] attachedEForms = frm.geteFormNo();
-        String[] attachedHRMDocuments = frm.getHrmNo();
+        String appointmentHour = this.getAppointmentHour();
+        String appointmentPm = this.getAppointmentPm();
+        String[] attachedDocuments = this.getDocNo();
+        String[] attachedLabs = this.getLabNo();
+        String[] attachedForms = this.getFormNo();
+        String[] attachedEForms = this.geteFormNo();
+        String[] attachedHRMDocuments = this.getHrmNo();
         List<String> documents = new ArrayList<String>();
 
         if (appointmentPm.equals("PM") && Integer.parseInt(appointmentHour) < 12) {
@@ -109,23 +110,22 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
             appointmentHour = "0";
         }
 
-        String sendTo = frm.getSendTo();
-        String submission = frm.getSubmission();
-        String providerNo = frm.getProviderNo();
-        String demographicNo = frm.getDemographicNo();
+        String sendTo = this.getSendTo();
+        String submission = this.getSubmission();
+        String providerNo = this.getProviderNo();
+        String demographicNo = this.getDemographicNo();
 
         String requestId = "";
 
         boolean newSignature = request.getParameter("newSignature") != null && request.getParameter("newSignature").equalsIgnoreCase("true");
         String signatureId = null;
-        String signatureImg = frm.getSignatureImg();
+        String signatureImg = this.getSignatureImg();
         if (StringUtils.isBlank(signatureImg)) {
             signatureImg = request.getParameter("newSignatureImg");
             if (signatureImg == null) {
                 signatureImg = "";
             }
         }
-
 
         ConsultationRequestDao consultationRequestDao = (ConsultationRequestDao) SpringUtils.getBean(ConsultationRequestDao.class);
         ;
@@ -147,29 +147,29 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
 
 
                 ConsultationRequest consult = new ConsultationRequest();
-                String dateString = frm.getReferalDate();
+                String dateString = this.getReferalDate();
                 Date date = null;
                 if (dateString != null && !dateString.isEmpty()) {
                     date = DateUtils.parseDate(dateString, format);
                 }
                 consult.setReferralDate(date);
-                consult.setServiceId(new Integer(frm.getService()));
+                consult.setServiceId(new Integer(this.getService()));
 
                 consult.setSignatureImg(signatureId);
 
-                consult.setLetterheadName(frm.getLetterheadName());
-                consult.setLetterheadAddress(frm.getLetterheadAddress());
-                consult.setLetterheadPhone(frm.getLetterheadPhone());
-                consult.setLetterheadFax(frm.getLetterheadFax());
+                consult.setLetterheadName(this.getLetterheadName());
+                consult.setLetterheadAddress(this.getLetterheadAddress());
+                consult.setLetterheadPhone(this.getLetterheadPhone());
+                consult.setLetterheadFax(this.getLetterheadFax());
 
-                if (frm.getAppointmentDate() != null && !frm.getAppointmentDate().equals("")) {
-                    date = DateUtils.parseDate(frm.getAppointmentDate(), format);
+                if (this.getAppointmentDate() != null && !this.getAppointmentDate().equals("")) {
+                    date = DateUtils.parseDate(this.getAppointmentDate(), format);
                     consult.setAppointmentDate(date);
 
-                    if (!StringUtils.isEmpty(appointmentHour) && !StringUtils.isEmpty(frm.getAppointmentMinute())) {
+                    if (!StringUtils.isEmpty(appointmentHour) && !StringUtils.isEmpty(this.getAppointmentMinute())) {
                         try {
                             date = DateUtils.setHours(date, new Integer(appointmentHour));
-                            date = DateUtils.setMinutes(date, new Integer(frm.getAppointmentMinute()));
+                            date = DateUtils.setMinutes(date, new Integer(this.getAppointmentMinute()));
                             consult.setAppointmentTime(date);
                         } catch (NumberFormatException nfEx) {
                             MiscUtils.getLogger().error("Invalid Time", nfEx);
@@ -179,34 +179,34 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
                     consult.setAppointmentDate(null);
                     consult.setAppointmentTime(null);
                 }
-                consult.setReasonForReferral(frm.getReasonForConsultation());
-                consult.setClinicalInfo(frm.getClinicalInformation());
-                consult.setCurrentMeds(frm.getCurrentMedications());
-                consult.setAllergies(frm.getAllergies());
-                consult.setProviderNo(frm.getProviderNo());
-                consult.setDemographicId(new Integer(frm.getDemographicNo()));
-                consult.setStatus(frm.getStatus());
-                consult.setStatusText(frm.getAppointmentNotes());
-                consult.setSendTo(frm.getSendTo());
-                consult.setConcurrentProblems(frm.getConcurrentProblems());
-                consult.setUrgency(frm.getUrgency());
-                consult.setAppointmentInstructions(frm.getAppointmentInstructions());
-                consult.setSiteName(frm.getSiteName());
+                consult.setReasonForReferral(this.getReasonForConsultation());
+                consult.setClinicalInfo(this.getClinicalInformation());
+                consult.setCurrentMeds(this.getCurrentMedications());
+                consult.setAllergies(this.getAllergies());
+                consult.setProviderNo(this.getProviderNo());
+                consult.setDemographicId(new Integer(this.getDemographicNo()));
+                consult.setStatus(this.getStatus());
+                consult.setStatusText(this.getAppointmentNotes());
+                consult.setSendTo(this.getSendTo());
+                consult.setConcurrentProblems(this.getConcurrentProblems());
+                consult.setUrgency(this.getUrgency());
+                consult.setAppointmentInstructions(this.getAppointmentInstructions());
+                consult.setSiteName(this.getSiteName());
                 Boolean pWillBook = false;
-                if (frm.getPatientWillBook() != null) {
-                    pWillBook = frm.getPatientWillBook().equals("1");
+                if (this.getPatientWillBook() != null) {
+                    pWillBook = this.getPatientWillBook().equals("1");
                 }
                 consult.setPatientWillBook(pWillBook);
 
-                if (frm.getFollowUpDate() != null && !frm.getFollowUpDate().equals("")) {
-                    date = DateUtils.parseDate(frm.getFollowUpDate(), format);
+                if (this.getFollowUpDate() != null && !this.getFollowUpDate().equals("")) {
+                    date = DateUtils.parseDate(this.getFollowUpDate(), format);
                     consult.setFollowUpDate(date);
                 }
 
                 Integer specId = null;
 
-                if (!frm.getSpecialist().isEmpty()) {
-                    specId = Integer.parseInt(frm.getSpecialist());
+                if (!this.getSpecialist().isEmpty()) {
+                    specId = Integer.parseInt(this.getSpecialist());
                 }
 
                 // converting the newer Contacts Table and Health Care Team back and forth
@@ -273,7 +273,7 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
         } else if (submission.startsWith("Update")) {
 
 
-            requestId = frm.getRequestId();
+            requestId = this.getRequestId();
 
             consultationManager.archiveConsultationRequest(Integer.parseInt(requestId));
 
@@ -291,19 +291,19 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
                 }
 
                 ConsultationRequest consult = consultationRequestDao.find(new Integer(requestId));
-                Date date = DateUtils.parseDate(frm.getReferalDate(), format);
+                Date date = DateUtils.parseDate(this.getReferalDate(), format);
                 consult.setReferralDate(date);
-                consult.setServiceId(new Integer(frm.getService()));
+                consult.setServiceId(new Integer(this.getService()));
                 consult.setSignatureImg(signatureId);
-                consult.setProviderNo(frm.getProviderNo());
-                consult.setLetterheadName(frm.getLetterheadName());
-                consult.setLetterheadAddress(frm.getLetterheadAddress());
-                consult.setLetterheadPhone(frm.getLetterheadPhone());
-                consult.setLetterheadFax(frm.getLetterheadFax());
+                consult.setProviderNo(this.getProviderNo());
+                consult.setLetterheadName(this.getLetterheadName());
+                consult.setLetterheadAddress(this.getLetterheadAddress());
+                consult.setLetterheadPhone(this.getLetterheadPhone());
+                consult.setLetterheadFax(this.getLetterheadFax());
 
                 Integer specId = null;
-                if (!frm.getSpecialist().isEmpty()) {
-                    specId = new Integer(frm.getSpecialist());
+                if (!this.getSpecialist().isEmpty()) {
+                    specId = new Integer(this.getSpecialist());
                 }
 
                 // converting the newer Contacts Table and Health Care Team back and forth
@@ -333,12 +333,12 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
                 }
 
 
-                if (frm.getAppointmentDate() != null && !frm.getAppointmentDate().equals("")) {
-                    date = DateUtils.parseDate(frm.getAppointmentDate(), format);
+                if (this.getAppointmentDate() != null && !this.getAppointmentDate().equals("")) {
+                    date = DateUtils.parseDate(this.getAppointmentDate(), format);
                     consult.setAppointmentDate(date);
                     try {
                         date = DateUtils.setHours(date, new Integer(appointmentHour));
-                        date = DateUtils.setMinutes(date, new Integer(frm.getAppointmentMinute()));
+                        date = DateUtils.setMinutes(date, new Integer(this.getAppointmentMinute()));
                         consult.setAppointmentTime(date);
                     } catch (NumberFormatException nfEx) {
                         MiscUtils.getLogger().error("Invalid Time", nfEx);
@@ -347,26 +347,26 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
                     consult.setAppointmentDate(null);
                     consult.setAppointmentTime(null);
                 }
-                consult.setReasonForReferral(frm.getReasonForConsultation());
-                consult.setClinicalInfo(frm.getClinicalInformation());
-                consult.setCurrentMeds(frm.getCurrentMedications());
-                consult.setAllergies(frm.getAllergies());
-                consult.setDemographicId(new Integer(frm.getDemographicNo()));
-                consult.setStatus(frm.getStatus());
-                consult.setStatusText(frm.getAppointmentNotes());
-                consult.setSendTo(frm.getSendTo());
-                consult.setConcurrentProblems(frm.getConcurrentProblems());
-                consult.setUrgency(frm.getUrgency());
-                consult.setAppointmentInstructions(frm.getAppointmentInstructions());
-                consult.setSiteName(frm.getSiteName());
+                consult.setReasonForReferral(this.getReasonForConsultation());
+                consult.setClinicalInfo(this.getClinicalInformation());
+                consult.setCurrentMeds(this.getCurrentMedications());
+                consult.setAllergies(this.getAllergies());
+                consult.setDemographicId(new Integer(this.getDemographicNo()));
+                consult.setStatus(this.getStatus());
+                consult.setStatusText(this.getAppointmentNotes());
+                consult.setSendTo(this.getSendTo());
+                consult.setConcurrentProblems(this.getConcurrentProblems());
+                consult.setUrgency(this.getUrgency());
+                consult.setAppointmentInstructions(this.getAppointmentInstructions());
+                consult.setSiteName(this.getSiteName());
                 Boolean pWillBook = false;
-                if (frm.getPatientWillBook() != null) {
-                    pWillBook = frm.getPatientWillBook().equals("1");
+                if (this.getPatientWillBook() != null) {
+                    pWillBook = this.getPatientWillBook().equals("1");
                 }
                 consult.setPatientWillBook(pWillBook);
 
-                if (frm.getFollowUpDate() != null && !frm.getFollowUpDate().equals("")) {
-                    date = DateUtils.parseDate(frm.getFollowUpDate(), format);
+                if (this.getFollowUpDate() != null && !this.getFollowUpDate().equals("")) {
+                    date = DateUtils.parseDate(this.getFollowUpDate(), format);
                     consult.setFollowUpDate(date);
                 }
                 consultationRequestDao.merge(consult);
@@ -396,13 +396,13 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
             request.setAttribute("transType", "1");
 
         } else if (submission.equalsIgnoreCase("And Print Preview")) {
-            renderConsultationFormWithAttachments(request, response, frm.getRequestId(), demographicNo);
+            renderConsultationFormWithAttachments(request, response, this.getRequestId(), demographicNo);
             generatePDFResponse(request, response);
             return null;
         }
 
 
-        frm.setRequestId("");
+        this.setRequestId("");
 
         request.setAttribute("teamVar", sendTo);
 
@@ -474,9 +474,9 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
 			List<FaxConfig>	accounts = faxManager.getFaxGatewayAccounts(loggedInInfo);
 
 			// fax number that will display on the letterhead
-	        request.setAttribute("letterheadFax", frm.getLetterheadFax());
+	        request.setAttribute("letterheadFax", this.getLetterheadFax());
 			// fax account that will be used to send the fax
-			request.setAttribute("faxAccount", frm.getFaxAccount());
+			request.setAttribute("faxAccount", this.getFaxAccount());
 		  	request.setAttribute("documents", documents);			
 			request.setAttribute("copyToRecipients", copytoRecipients);
 			request.setAttribute("reqId", requestId);
@@ -505,8 +505,8 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
             }
         }
 
-
-        String forward = "/oscarEncounter/oscarConsultationRequest/ConfirmConsultationRequest.jsp?de=" + demographicNo;
+        String contextPath = request.getContextPath();
+        String forward = contextPath + "/oscarEncounter/oscarConsultationRequest/ConfirmConsultationRequest.jsp?de=" + demographicNo;
         response.sendRedirect(forward);
         return NONE;
     }
@@ -631,13 +631,628 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
         return formattedDate + "_" + demographicLastName + ".pdf";
     }
 
-    private EctConsultationFormRequest2Form frm;
+    String allergies;
 
-    public EctConsultationFormRequest2Form getFrm() {
-        return frm;
+    String appointmentDate;
+
+    String appointmentHour;
+
+    String appointmentMinute;
+
+    String appointmentNotes;
+
+    String appointmentPm;
+
+    String appointmentTime;
+
+    String clinicalInformation;
+
+    String concurrentProblems;
+
+    String currentMedications;
+
+    String demographicNo;
+
+    // Patient Will Book Field, can be either "1" or "0"
+    String patientWillBook;
+
+    String providerNo;
+
+    String reasonForConsultation;
+
+    String referalDate;
+
+    String requestId;
+
+    String sendTo;
+
+    String service;
+
+    String specialist;
+
+    String status;
+
+    String submission;
+
+    String urgency;
+
+    //multi-site
+    String siteName;
+
+    private String signatureImg;
+    private String patientFirstName;
+    private String patientLastName;
+    private String patientAddress;
+    private String patientPhone;
+    private String patientWPhone;
+    private String patientCellPhone;
+    private String patientEmail;
+    private String patientDOB;
+    private String patientSex;
+    private String patientHealthNum;
+    private String patientHealthCardVersionCode;
+    private String patientHealthCardType;
+    private String patientAge;
+    private String providerName;
+    private String professionalSpecialistName;
+    private String professionalSpecialistPhone;
+    private String professionalSpecialistAddress;
+    private String followUpDate;
+    private boolean eReferral = false;
+    private String eReferralService = "";
+    private String eReferralId = null;
+    private Integer hl7TextMessageId;
+
+    private String letterheadName, letterheadAddress, letterheadPhone, letterheadFax;
+
+    private Integer fdid;
+    private String source;
+
+    private String appointmentInstructions;
+    private String appointmentInstructionsLabel;
+
+    private String[] docNo;
+    private String[] labNo;
+
+	private String[] formNo;
+	private String[] eFormNo;
+	private String[] hrmNo;
+
+	private String faxAccount;
+
+
+    public String getProfessionalSpecialistName() {
+        return (StringUtils.trimToEmpty(professionalSpecialistName));
     }
 
-    public void setFrm(EctConsultationFormRequest2Form frm) {
-        this.frm = frm;
+    public void setProfessionalSpecialistName(String professionalSpecialistName) {
+        this.professionalSpecialistName = professionalSpecialistName;
     }
+
+    public String getProfessionalSpecialistPhone() {
+        return (StringUtils.trimToEmpty(professionalSpecialistPhone));
+    }
+
+    public void setProfessionalSpecialistPhone(String professionalSpecialistPhone) {
+        this.professionalSpecialistPhone = professionalSpecialistPhone;
+    }
+
+    public String getProfessionalSpecialistAddress() {
+        return (StringUtils.trimToEmpty(professionalSpecialistAddress));
+    }
+
+    public void setProfessionalSpecialistAddress(String professionalSpecialistAddress) {
+        this.professionalSpecialistAddress = professionalSpecialistAddress;
+    }
+
+    public boolean iseReferral() {
+        return eReferral;
+    }
+
+    public void seteReferral(boolean eReferral) {
+        this.eReferral = eReferral;
+    }
+
+    public String geteReferralService() {
+        return eReferralService;
+    }
+
+    public void seteReferralService(String eReferralService) {
+        this.eReferralService = eReferralService;
+    }
+
+    public String geteReferralId() {
+        return eReferralId;
+    }
+
+    public void seteReferralId(String eReferralId) {
+        this.eReferralId = eReferralId;
+    }
+
+    public String getProviderName() {
+        return (StringUtils.trimToEmpty(providerName));
+    }
+
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
+    }
+
+    public String getPatientAge() {
+        return (StringUtils.trimToEmpty(patientAge));
+    }
+
+    public void setPatientAge(String patientAge) {
+        this.patientAge = patientAge;
+    }
+
+    public String getAllergies() {
+        return (StringUtils.trimToEmpty(allergies));
+    }
+
+    public String getAppointmentDate() {
+        return (StringUtils.trimToEmpty(appointmentDate));
+    }
+
+    public String getAppointmentHour() {
+        return (StringUtils.trimToEmpty(appointmentHour));
+    }
+
+    public String getAppointmentMinute() {
+        return (StringUtils.trimToEmpty(appointmentMinute));
+    }
+
+    public String getAppointmentNotes() {
+        return (StringUtils.trimToEmpty(appointmentNotes));
+    }
+
+    public String getAppointmentPm() {
+        return (StringUtils.trimToEmpty(appointmentPm));
+    }
+
+    public String getAppointmentTime() {
+        return (StringUtils.trimToEmpty(appointmentTime));
+    }
+
+    public String getClinicalInformation() {
+        return (StringUtils.trimToEmpty(clinicalInformation));
+    }
+
+    public String getConcurrentProblems() {
+        return (StringUtils.trimToEmpty(concurrentProblems));
+    }
+
+    public String getCurrentMedications() {
+        return (StringUtils.trimToEmpty(currentMedications));
+    }
+
+    public String getDemographicNo() {
+        return (StringUtils.trimToEmpty(demographicNo));
+    }
+
+    public String getPatientWillBook() {
+        return patientWillBook;
+    }
+
+    public String getProviderNo() {
+        return (StringUtils.trimToEmpty(providerNo));
+    }
+
+    public String getReasonForConsultation() {
+        return (StringUtils.trimToEmpty(reasonForConsultation));
+    }
+
+    public String getReferalDate() {
+        return (StringUtils.trimToEmpty(referalDate));
+    }
+
+    public String getRequestId() {
+        return (StringUtils.trimToEmpty(requestId));
+    }
+
+    public String getSendTo() {
+        return (StringUtils.trimToEmpty(sendTo));
+    }
+
+    public String getService() {
+        return (StringUtils.trimToEmpty(service));
+    }
+
+    public String getSpecialist() {
+        return (StringUtils.trimToEmpty(specialist));
+    }
+
+    public String getStatus() {
+        return (StringUtils.trimToEmpty(status));
+    }
+
+    public String getSubmission() {
+        return (StringUtils.trimToEmpty(submission));
+    }
+
+    public String getUrgency() {
+        return (StringUtils.trimToEmpty(urgency));
+    }
+
+
+    public void setAllergies(String str) {
+        allergies = str;
+    }
+
+    public void setAppointmentDate(String str) {
+        appointmentDate = str;
+    }
+
+    public void setAppointmentHour(String str) {
+        appointmentHour = str;
+    }
+
+    public void setAppointmentMinute(String str) {
+        appointmentMinute = str;
+    }
+
+    public void setAppointmentNotes(String str) {
+        appointmentNotes = str;
+    }
+
+    public void setAppointmentPm(String str) {
+        appointmentPm = str;
+    }
+
+    public void setAppointmentTime(String str) {
+        appointmentTime = str;
+    }
+
+    public void setClinicalInformation(String str) {
+        clinicalInformation = str;
+    }
+
+    public void setConcurrentProblems(String str) {
+        concurrentProblems = str;
+    }
+
+    public void setCurrentMedications(String str) {
+        currentMedications = str;
+    }
+
+    public void setDemographicNo(String str) {
+        demographicNo = str;
+    }
+
+    public void setPatientWillBook(String str) {
+        this.patientWillBook = str;
+    }
+
+    public void setProviderNo(String str) {
+        providerNo = str;
+    }
+
+    public void setReasonForConsultation(String str) {
+        reasonForConsultation = str;
+    }
+
+    public void setReferalDate(String str) {
+        referalDate = str;
+    }
+
+    public void setRequestId(String str) {
+        requestId = str;
+    }
+
+    public void setSendTo(String str) {
+        sendTo = str;
+    }
+
+    public void setService(String str) {
+        service = str;
+    }
+
+    public void setSpecialist(String str) {
+        specialist = str;
+    }
+
+    public void setStatus(String str) {
+        status = str;
+    }
+
+    public void setSubmission(String str) {
+        submission = str;
+    }
+
+    public void setUrgency(String str) {
+        urgency = str;
+    }
+
+    public String getPatientName() {
+        return (StringUtils.trimToEmpty(patientLastName + ", " + patientFirstName));
+    }
+
+    public String getPatientAddress() {
+        return (StringUtils.trimToEmpty(patientAddress));
+    }
+
+    public void setPatientAddress(String patientAddress) {
+        this.patientAddress = patientAddress;
+    }
+
+    public String getPatientPhone() {
+        return (StringUtils.trimToEmpty(patientPhone));
+    }
+
+    public void setPatientPhone(String patientPhone) {
+        this.patientPhone = patientPhone;
+    }
+
+    public String getPatientWPhone() {
+        return (StringUtils.trimToEmpty(patientWPhone));
+    }
+
+    public void setPatientWPhone(String patientWPhone) {
+        this.patientWPhone = patientWPhone;
+    }
+
+    public String getPatientCellPhone() {
+        return StringUtils.trimToEmpty(patientCellPhone);
+    }
+
+    public void setPatientCellPhone(String patientCellPhone) {
+        this.patientCellPhone = patientCellPhone;
+    }
+
+    public void setPatientEmail(String patientEmail) {
+        this.patientEmail = patientEmail;
+    }
+
+    public String getPatientEmail() {
+        return (StringUtils.trimToEmpty(patientEmail));
+    }
+
+    public String getPatientDOB() {
+        return (StringUtils.trimToEmpty(patientDOB));
+    }
+
+    public void setPatientDOB(String patientDOB) {
+        this.patientDOB = patientDOB;
+    }
+
+    public String getPatientSex() {
+        return (StringUtils.trimToEmpty(patientSex));
+    }
+
+    public void setPatientSex(String patientSex) {
+        this.patientSex = patientSex;
+    }
+
+    public String getPatientHealthNum() {
+        return (StringUtils.trimToEmpty(patientHealthNum));
+    }
+
+    public void setPatientHealthNum(String patientHealthNum) {
+        this.patientHealthNum = patientHealthNum;
+    }
+
+    public String getPatientHealthCardVersionCode() {
+        return (StringUtils.trimToEmpty(patientHealthCardVersionCode));
+    }
+
+    public void setPatientHealthCardVersionCode(String patientHealthCardVersionCode) {
+        this.patientHealthCardVersionCode = patientHealthCardVersionCode;
+    }
+
+    public String getPatientHealthCardType() {
+        return (StringUtils.trimToEmpty(patientHealthCardType));
+    }
+
+    public void setPatientHealthCardType(String patientHealthCardType) {
+        this.patientHealthCardType = patientHealthCardType;
+    }
+
+    public Integer getHl7TextMessageId() {
+        return hl7TextMessageId;
+    }
+
+    public void setHl7TextMessageId(Integer hl7TextMessageId) {
+        this.hl7TextMessageId = hl7TextMessageId;
+    }
+
+    public String getPatientFirstName() {
+        return patientFirstName;
+    }
+
+    public void setPatientFirstName(String patientFirstName) {
+        this.patientFirstName = patientFirstName;
+    }
+
+    public String getPatientLastName() {
+        return patientLastName;
+    }
+
+    public void setPatientLastName(String patientLastName) {
+        this.patientLastName = patientLastName;
+    }
+
+    /**
+     * This url will include the context path.
+     */
+    public String getOruR01UrlString(HttpServletRequest request) {
+        // /lab/CA/ALL/sendOruR01.jsp
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(request.getContextPath());
+        sb.append("/lab/CA/ALL/sendOruR01.jsp");
+
+        HashMap<String, Object> queryParameters = new HashMap<String, Object>();
+
+        // buildQueryString will take null into account
+        queryParameters.put("hl7TextMessageId", hl7TextMessageId);
+        queryParameters.put("clientFirstName", patientFirstName);
+        queryParameters.put("clientLastName", patientLastName);
+        queryParameters.put("clientHin", patientHealthNum);
+        queryParameters.put("clientBirthDate", patientDOB);
+        queryParameters.put("clientGender", patientSex);
+
+        sb.append(WebUtils.buildQueryString(queryParameters));
+
+        return (StringEscapeUtils.escapeHtml(sb.toString()));
+    }
+
+    /**
+     * @return the followUpDate
+     */
+    public String getFollowUpDate() {
+        return followUpDate;
+    }
+
+    /**
+     * @param followUpDate the followUpDate to set
+     */
+    public void setFollowUpDate(String followUpDate) {
+        this.followUpDate = followUpDate;
+    }
+
+    public String getSiteName() {
+        if (siteName == null) {
+            siteName = new String();
+        }
+        return siteName;
+    }
+
+    public void setSiteName(String str) {
+        this.siteName = str;
+    }
+
+    public String getSignatureImg() {
+        return signatureImg;
+    }
+
+    public void setSignatureImg(String signatureImg) {
+        this.signatureImg = signatureImg;
+    }
+
+    public String getLetterheadName() {
+        return letterheadName;
+    }
+
+    public void setLetterheadName(String letterheadName) {
+        this.letterheadName = letterheadName;
+    }
+
+    public String getLetterheadAddress() {
+        return letterheadAddress;
+    }
+
+    public void setLetterheadAddress(String letterheadAddress) {
+        this.letterheadAddress = letterheadAddress;
+    }
+
+    public String getLetterheadPhone() {
+        return letterheadPhone;
+    }
+
+    public void setLetterheadPhone(String letterheadPhone) {
+        this.letterheadPhone = letterheadPhone;
+    }
+
+    public String getLetterheadFax() {
+        return letterheadFax;
+    }
+
+    public void setLetterheadFax(String letterheadFax) {
+        this.letterheadFax = letterheadFax;
+    }
+
+    public Integer getFdid() {
+        return fdid;
+    }
+
+    public void setFdid(Integer fdid) {
+        this.fdid = fdid;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getAppointmentInstructions() {
+        return appointmentInstructions;
+    }
+
+    public void setAppointmentInstructions(String appointmentInstructions) {
+        this.appointmentInstructions = appointmentInstructions;
+    }
+
+    public String getAppointmentInstructionsLabel() {
+        return appointmentInstructionsLabel;
+    }
+
+    public void setAppointmentInstructionsLabel(String appointmentInstructionsLabel) {
+        this.appointmentInstructionsLabel = appointmentInstructionsLabel;
+    }
+
+    public String[] getDocNo() {
+        if (docNo == null) {
+            return new String[]{};
+        }
+        return docNo;
+    }
+
+    public void setDocNo(String[] docNo) {
+        this.docNo = docNo;
+    }
+
+    public String[] getLabNo() {
+        if (labNo == null) {
+            return new String[]{};
+        }
+        return labNo;
+    }
+
+    public void setLabNo(String[] labNo) {
+        this.labNo = labNo;
+    }
+
+    public String[] getFormNo() {
+        if (formNo == null) {
+            return new String[]{};
+        }
+        return formNo;
+    }
+
+    public void setFormNo(String[] formNo) {
+        this.formNo = formNo;
+    }
+
+    public String[] geteFormNo() {
+        if (eFormNo == null) {
+            return new String[]{};
+        }
+        return eFormNo;
+    }
+
+    public void seteFormNo(String[] eFormNo) {
+        this.eFormNo = eFormNo;
+    }
+
+	public String[] getHrmNo() {
+		if(hrmNo == null) {
+			return new String[]{};
+		}
+		return hrmNo;
+	}
+	
+	public void setHrmNo(String[] hrmNo) {
+		this.hrmNo = hrmNo;
+	}
+
+	public String getFaxAccount() {
+		return faxAccount;
+	}
+
+	public void setFaxAccount(String faxAccount) {
+		this.faxAccount = faxAccount;
+	}
 }

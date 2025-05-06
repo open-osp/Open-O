@@ -146,18 +146,18 @@
               href="<%=bView?"bcHpStyleView.css" : "bcHpStyle.css"%>">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
         <script type="text/javascript">
             <!--
@@ -190,7 +190,7 @@
                 var ret = checkAllDates();
 
                 if (ret == true) {
-                    document.forms[0].action = "../form/formname.do?__title=British+Columbia+Health+Passport&__cfgfile=bchpPrintCfgPg1&__cfgfile=bchpPrintCfgPg2&__template=bchp";
+                    document.forms[0].action = "<%= request.getContextPath() %>/form/formname.do?__title=British+Columbia+Health+Passport&__cfgfile=bchpPrintCfgPg1&__cfgfile=bchpPrintCfgPg2&__template=bchp";
                     document.forms[0].target = "_blank";
                 }
                 return ret;
@@ -503,7 +503,7 @@
                 %>
 
                 <td align="right"><b>Edit:</b>HP <font size=-2>(pg.1)</font> | <a
-                        href="formbchppg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">HP
+                        href="form/formbchppg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">HP
                     <font size=-2>(pg.2)</font></a></td>
                 <%
                     }
@@ -716,7 +716,7 @@
                 <td><input type="text" name="pg1_date1" id="pg1_date1"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date1", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date1_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date1_cal">
                 </td>
                 <td><input type="text" name="pg1_medName1" id="pg1_medName1"
                            style="width: 100%" size="30" maxlength="30"
@@ -739,7 +739,7 @@
                 <td><input type="text" name="pg1_date2" id="pg1_date2"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date2", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date2_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date2_cal">
                 </td>
                 <td><input type="text" name="pg1_medName2" id="pg1_medName2"
                            style="width: 100%" size="30" maxlength="30"
@@ -762,7 +762,7 @@
                 <td><input type="text" name="pg1_date3" id="pg1_date3"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date3", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date3_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date3_cal">
                 </td>
                 <td><input type="text" name="pg1_medName3" id="pg1_medName3"
                            style="width: 100%" size="30" maxlength="30"
@@ -785,7 +785,7 @@
                 <td><input type="text" name="pg1_date4" id="pg1_date4"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date4", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date4_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date4_cal">
                 </td>
                 <td><input type="text" name="pg1_medName4" id="pg1_medName4"
                            style="width: 100%" size="30" maxlength="30"
@@ -808,7 +808,7 @@
                 <td><input type="text" name="pg1_date5" id="pg1_date5"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date5", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date5_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date5_cal">
                 </td>
                 <td><input type="text" name="pg1_medName5" id="pg1_medName5"
                            style="width: 100%" size="30" maxlength="30"
@@ -831,7 +831,7 @@
                 <td><input type="text" name="pg1_date6" id="pg1_date6"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date6", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date6_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date6_cal">
                 </td>
                 <td><input type="text" name="pg1_medName6" id="pg1_medName6"
                            style="width: 100%" size="30" maxlength="30"
@@ -854,7 +854,7 @@
                 <td><input type="text" name="pg1_date7" id="pg1_date7"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date7", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date7_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date7_cal">
                 </td>
                 <td><input type="text" name="pg1_medName7" id="pg1_medName7"
                            style="width: 100%" size="30" maxlength="30"
@@ -877,7 +877,7 @@
                 <td><input type="text" name="pg1_date8" id="pg1_date8"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date8", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date8_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date8_cal">
                 </td>
                 <td><input type="text" name="pg1_medName8" id="pg1_medName8"
                            style="width: 100%" size="30" maxlength="30"
@@ -900,7 +900,7 @@
                 <td><input type="text" name="pg1_date9" id="pg1_date9"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date9", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date9_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date9_cal">
                 </td>
                 <td><input type="text" name="pg1_medName9" id="pg1_medName9"
                            style="width: 100%" size="30" maxlength="30"
@@ -923,7 +923,7 @@
                 <td><input type="text" name="pg1_date10" id="pg1_date10"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date10", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date10_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date10_cal">
                 </td>
                 <td><input type="text" name="pg1_medName10" id="pg1_medName10"
                            style="width: 100%" size="30" maxlength="30"
@@ -946,7 +946,7 @@
                 <td><input type="text" name="pg1_date11" id="pg1_date11"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date11", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date11_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date11_cal">
                 </td>
                 <td><input type="text" name="pg1_medName11" id="pg1_medName11"
                            style="width: 100%" size="30" maxlength="30"
@@ -969,7 +969,7 @@
                 <td><input type="text" name="pg1_date12" id="pg1_date12"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date12", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date12_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date12_cal">
                 </td>
                 <td><input type="text" name="pg1_medName12" id="pg1_medName12"
                            style="width: 100%" size="30" maxlength="30"
@@ -992,7 +992,7 @@
                 <td><input type="text" name="pg1_date13" id="pg1_date13"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date13", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date13_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date13_cal">
                 </td>
                 <td><input type="text" name="pg1_medName13" id="pg1_medName13"
                            style="width: 100%" size="30" maxlength="30"
@@ -1015,7 +1015,7 @@
                 <td><input type="text" name="pg1_date14" id="pg1_date14"
                            style="width: 80%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_date14", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_date14_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_date14_cal">
                 </td>
                 <td><input type="text" name="pg1_medName14" id="pg1_medName14"
                            style="width: 100%" size="30" maxlength="30"
@@ -1062,37 +1062,37 @@
                 <td><input type="text" name="pg1_fluDate1" id="pg1_fluDate1"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_fluDate1", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif"
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_fluDate1_cal"></td>
                 <td><input type="text" name="pg1_fluDate2" id="pg1_fluDate2"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_fluDate2", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif"
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_fluDate2_cal"></td>
                 <td><input type="text" name="pg1_fluDate3" id="pg1_fluDate3"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_fluDate3", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif"
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_fluDate3_cal"></td>
                 <td><input type="text" name="pg1_fluDate4" id="pg1_fluDate4"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_fluDate4", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif"
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_fluDate4_cal"></td>
                 <td><input type="text" name="pg1_fluDate5" id="pg1_fluDate5"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_fluDate5", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif"
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_fluDate5_cal"></td>
                 <td><input type="text" name="pg1_fluDate6" id="pg1_fluDate6"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_fluDate6", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif"
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_fluDate6_cal"></td>
                 <td><input type="text" name="pg1_fluDate7" id="pg1_fluDate7"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_fluDate7", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif"
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                 id="pg1_fluDate7_cal"></td>
             </tr>
             <tr onmouseover="showHideBox('comment1Div',1)"
@@ -1102,43 +1102,43 @@
                            id="pg1_pneumoVaccDate1" style="width: 75%" size="10"
                            maxlength="15"
                            value="<%= props.getProperty("pg1_pneumoVaccDate1", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_pneumoVaccDate1_cal"></td>
                 <td><input type="text" name="pg1_pneumoVaccDate2"
                            id="pg1_pneumoVaccDate2" style="width: 75%" size="10"
                            maxlength="15"
                            value="<%= props.getProperty("pg1_pneumoVaccDate2", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_pneumoVaccDate2_cal"></td>
                 <td><input type="text" name="pg1_pneumoVaccDate3"
                            id="pg1_pneumoVaccDate3" style="width: 75%" size="10"
                            maxlength="15"
                            value="<%= props.getProperty("pg1_pneumoVaccDate3", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_pneumoVaccDate3_cal"></td>
                 <td><input type="text" name="pg1_pneumoVaccDate4"
                            id="pg1_pneumoVaccDate4" style="width: 75%" size="10"
                            maxlength="15"
                            value="<%= props.getProperty("pg1_pneumoVaccDate4", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_pneumoVaccDate4_cal"></td>
                 <td><input type="text" name="pg1_pneumoVaccDate5"
                            id="pg1_pneumoVaccDate5" style="width: 75%" size="10"
                            maxlength="15"
                            value="<%= props.getProperty("pg1_pneumoVaccDate5", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_pneumoVaccDate5_cal"></td>
                 <td><input type="text" name="pg1_pneumoVaccDate6"
                            id="pg1_pneumoVaccDate6" style="width: 75%" size="10"
                            maxlength="15"
                            value="<%= props.getProperty("pg1_pneumoVaccDate6", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_pneumoVaccDate6_cal"></td>
                 <td><input type="text" name="pg1_pneumoVaccDate7"
                            id="pg1_pneumoVaccDate7" style="width: 75%" size="10"
                            maxlength="15"
                            value="<%= props.getProperty("pg1_pneumoVaccDate7", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_pneumoVaccDate7_cal"></td>
             </tr>
             <tr onmouseover="showHideBox('comment2Div',1)"
@@ -1147,37 +1147,37 @@
                 <td><input type="text" name="pg1_tdDate1" id="pg1_tdDate1"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_tdDate1", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_tdDate1_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_tdDate1_cal">
                 </td>
                 <td><input type="text" name="pg1_tdDate2" id="pg1_tdDate2"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_tdDate2", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_tdDate2_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_tdDate2_cal">
                 </td>
                 <td><input type="text" name="pg1_tdDate3" id="pg1_tdDate3"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_tdDate3", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_tdDate3_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_tdDate3_cal">
                 </td>
                 <td><input type="text" name="pg1_tdDate4" id="pg1_tdDate4"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_tdDate4", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_tdDate4_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_tdDate4_cal">
                 </td>
                 <td><input type="text" name="pg1_tdDate5" id="pg1_tdDate5"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_tdDate5", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_tdDate5_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_tdDate5_cal">
                 </td>
                 <td><input type="text" name="pg1_tdDate6" id="pg1_tdDate6"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_tdDate6", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_tdDate6_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_tdDate6_cal">
                 </td>
                 <td><input type="text" name="pg1_tdDate7" id="pg1_tdDate7"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_tdDate7", "") %>" @oscar.formDB
-                           dbType="date"/> <img src="../images/cal.gif" id="pg1_tdDate7_cal">
+                           dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_tdDate7_cal">
                 </td>
             </tr>
             <tr onmouseover="showHideBox('comment3Div',1)"
@@ -1186,37 +1186,37 @@
                 <td><input type="text" name="pg1_hepaDate1" id="pg1_hepaDate1"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepaDate1", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepaDate1_cal"></td>
                 <td><input type="text" name="pg1_hepaDate2" id="pg1_hepaDate2"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepaDate2", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepaDate2_cal"></td>
                 <td><input type="text" name="pg1_hepaDate3" id="pg1_hepaDate3"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepaDate3", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepaDate3_cal"></td>
                 <td><input type="text" name="pg1_hepaDate4" id="pg1_hepaDate4"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepaDate4", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepaDate4_cal"></td>
                 <td><input type="text" name="pg1_hepaDate5" id="pg1_hepaDate5"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepaDate5", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepaDate5_cal"></td>
                 <td><input type="text" name="pg1_hepaDate6" id="pg1_hepaDate6"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepaDate6", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepaDate6_cal"></td>
                 <td><input type="text" name="pg1_hepaDate7" id="pg1_hepaDate7"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepaDate7", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepaDate7_cal"></td>
             </tr>
             <tr onmouseover="showHideBox('comment4Div',1)"
@@ -1225,37 +1225,37 @@
                 <td><input type="text" name="pg1_hepbDate1" id="pg1_hepbDate1"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepbDate1", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepbDate1_cal"></td>
                 <td><input type="text" name="pg1_hepbDate2" id="pg1_hepbDate2"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepbDate2", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepbDate2_cal"></td>
                 <td><input type="text" name="pg1_hepbDate3" id="pg1_hepbDate3"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepbDate3", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepbDate3_cal"></td>
                 <td><input type="text" name="pg1_hepbDate4" id="pg1_hepbDate4"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepbDate4", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepbDate4_cal"></td>
                 <td><input type="text" name="pg1_hepbDate5" id="pg1_hepbDate5"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepbDate5", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepbDate5_cal"></td>
                 <td><input type="text" name="pg1_hepbDate6" id="pg1_hepbDate6"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepbDate6", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepbDate6_cal"></td>
                 <td><input type="text" name="pg1_hepbDate7" id="pg1_hepbDate7"
                            style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_hepbDate7", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_hepbDate7_cal"></td>
             </tr>
             <tr>
@@ -1265,37 +1265,37 @@
                 <td><input type="text" name="pg1_otherDate1"
                            id="pg1_otherDate1" style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_otherDate1", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_otherDate1_cal"></td>
                 <td><input type="text" name="pg1_otherDate2"
                            id="pg1_otherDate2" style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_otherDate2", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_otherDate2_cal"></td>
                 <td><input type="text" name="pg1_otherDate3"
                            id="pg1_otherDate3" style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_otherDate3", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_otherDate3_cal"></td>
                 <td><input type="text" name="pg1_otherDate4"
                            id="pg1_otherDate4" style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_otherDate4", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_otherDate4_cal"></td>
                 <td><input type="text" name="pg1_otherDate5"
                            id="pg1_otherDate5" style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_otherDate5", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_otherDate5_cal"></td>
                 <td><input type="text" name="pg1_otherDate6"
                            id="pg1_otherDate6" style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_otherDate6", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_otherDate6_cal"></td>
                 <td><input type="text" name="pg1_otherDate7"
                            id="pg1_otherDate7" style="width: 75%" size="10" maxlength="15"
                            value="<%= props.getProperty("pg1_otherDate7", "") %>"
-                           @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                           @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                               id="pg1_otherDate7_cal"></td>
             </tr>
         </table>
@@ -1332,7 +1332,7 @@
                     <!--a href="javascript: popPage('formlabreq.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AR','LabReq');">LAB</a-->
                 </td>
                 <td align="right"><b>Edit:</b>HP <font size=-2>(pg.1)</font> | <a
-                        href="formbchppg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">HP
+                        href="form/formbchppg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">HP
                     <font size=-2>(pg.2)</font></a></td>
                 <%
                     }

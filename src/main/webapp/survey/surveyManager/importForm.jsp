@@ -26,7 +26,7 @@
 
 <%@ include file="/survey/taglibs.jsp" %>
 
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 
 <form action="${pageContext.request.contextPath}/SurveyManager.do" method="POST"

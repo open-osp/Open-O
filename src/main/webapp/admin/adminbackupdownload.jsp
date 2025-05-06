@@ -99,7 +99,7 @@
                 bodd = bodd ? false : true;
                 if (contents[i].isDirectory() || contents[i].getName().equals("BackupClient.class") || contents[i].getName().startsWith("."))
                     continue;
-                out.println("<tr><td><a HREF='../servlet/BackupDownload?filename=" + URLEncoder.encode(contents[i].getName()) + "'>" + contents[i].getName() + "</a></td>");
+                out.println("<tr><td><a href="<%= request.getContextPath() %>/servlet/BackupDownload?filename=" + URLEncoder.encode(contents[i].getName()) + "'>" + contents[i].getName() + "</a></td>");
                 long bytes = contents[i].length();
                 String display = FileUtils.byteCountToDisplaySize(bytes);
 

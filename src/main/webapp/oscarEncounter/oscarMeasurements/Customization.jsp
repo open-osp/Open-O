@@ -38,7 +38,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Measurements.msgCustomization"/></title>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <script type="text/javascript">
             function popupOscarConS(vheight, vwidth, varpage) { //open a new popup window
@@ -49,7 +49,7 @@
         </script>
     </head>
 
-    <link rel="stylesheet" type="text/css" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarMessenger/styles.css">
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
     <% 
     java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
@@ -72,7 +72,7 @@
                 <table class=messButtonsA cellspacing=0 cellpadding=3>
                     <tr>
                         <td class="messengerButtonsA" width="200"><a href=#
-                                                                     onClick="popupOscarConS(300,1000,'SetupStyleSheetList.do')"
+                                                                     onClick="popupOscarConS(300,1000,'oscarEncounter/oscarMeasurements/SetupStyleSheetList.do')"
                                                                      class="messengerButtons"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.measurements.addMeasurementGroup"/></a></td>
                     </tr>
                 </table>
@@ -81,7 +81,7 @@
                 <table class=messButtonsA cellspacing=0 cellpadding=3>
                     <tr>
                         <td class="messengerButtonsA" width="200"><a href=#
-                                                                     onClick="popupOscarConS(300,1000,'SetupGroupList.do')"
+                                                                     onClick="popupOscarConS(300,1000,'oscarEncounter/oscarMeasurements/SetupGroupList.do')"
                                                                      class="messengerButtons"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.measurements.editMeasurementGroup"/></a></td>
                     </tr>
                 </table>
@@ -95,7 +95,7 @@
                 <table class=messButtonsA cellspacing=0 cellpadding=3>
                     <tr>
                         <td class="messengerButtonsA" width="200"><a href=#
-                                                                     onClick="popupOscarConS(700,1000,'SetupDisplayMeasurementTypes.do')"
+                                                                     onClick="popupOscarConS(700,1000,'oscarEncounter/oscarMeasurements/SetupDisplayMeasurementTypes.do')"
                                                                      class="messengerButtons"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.measurements.viewMeasurementType"/></a></td>
                     </tr>
                 </table>
@@ -104,7 +104,7 @@
                 <table class=messButtonsA cellspacing=0 cellpadding=3>
                     <tr>
                         <td class="messengerButtonsA" width="200"><a href=#
-                                                                     onClick="popupOscarConS(300,1000,'SetupAddMeasurementType.do')"
+                                                                     onClick="popupOscarConS(300,1000,'oscarEncounter/oscarMeasurements/SetupAddMeasurementType.do')"
                                                                      class="messengerButtons"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.measurements.addMeasurementType"/></a></td>
                     </tr>
                 </table>
@@ -112,7 +112,7 @@
         </tr>
         <tr>
             <td class=Title colspan="2">Mappings --
-                <a href=# onClick="popupOscarConS(300,1000,'viewMeasurementMap.jsp')" class="messengerButtons">View
+                <a href=# onClick="popupOscarConS(300,1000,'oscarEncounter/oscarMeasurements/viewMeasurementMap.jsp')" class="messengerButtons">View
                     Mapping</a></td>
         </tr>
         <tr>
@@ -120,7 +120,7 @@
                 <table class=messButtonsA cellspacing=0 cellpadding=3>
                     <tr>
                         <td class="messengerButtonsA" width="200"><a href=#
-                                                                     onClick="popupOscarConS(700,1000,'AddMeasurementMap.do')"
+                                                                     onClick="popupOscarConS(700,1000,'oscarEncounter/oscarMeasurements/AddMeasurementMap.do')"
                                                                      class="messengerButtons">Add Measurement
                             Mapping</a></td>
                     </tr>
@@ -130,7 +130,7 @@
                 <table class=messButtonsA cellspacing=0 cellpadding=3>
                     <tr>
                         <td class="messengerButtonsA" width="200"><a href=#
-                                                                     onClick="popupOscarConS(600,700,'RemoveMeasurementMap.do')"
+                                                                     onClick="popupOscarConS(600,700,'oscarEncounter/oscarMeasurements/RemoveMeasurementMap.do')"
                                                                      class="messengerButtons">Remove/Remap Measurement
                             Mapping</a></td>
                     </tr>
@@ -145,7 +145,7 @@
                 <table class=messButtonsA cellspacing=0 cellpadding=3>
                     <tr>
                         <td class="messengerButtonsA" width="200"><a href=#
-                                                                     onClick="popupOscarConS(300,1000,'SetupAddMeasuringInstruction.do')"
+                                                                     onClick="popupOscarConS(300,1000,'oscarEncounter/oscarMeasurements/SetupAddMeasuringInstruction.do')"
                                                                      class="messengerButtons"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.measurements.addMeasuringInstruction"/></a>
                         </td>
                     </tr>
@@ -160,7 +160,7 @@
                 <table class=messButtonsA cellspacing=0 cellpadding=3>
                     <tr>
                         <td class="messengerButtonsA" width="200"><a href=#
-                                                                     onClick="popupOscarConS(300,1000,'SetupDisplayMeasurementStyleSheet.do')"
+                                                                     onClick="popupOscarConS(300,1000,'oscarEncounter/oscarMeasurements/SetupDisplayMeasurementStyleSheet.do')"
                                                                      class="messengerButtons"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.measurements.viewMeasurementStyleSheet"/></a>
                         </td>
                     </tr>
@@ -170,7 +170,7 @@
                 <table class=messButtonsA cellspacing=0 cellpadding=3>
                     <tr>
                         <td class="messengerButtonsA" width="200"><a href=#
-                                                                     onClick="popupOscarConS(300,1000,'AddMeasurementStyleSheet.jsp')"
+                                                                     onClick="popupOscarConS(300,1000,'oscarEncounter/oscarMeasurements/AddMeasurementStyleSheet.jsp')"
                                                                      class="messengerButtons"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.measurements.addMeasurementStyleSheet"/></a>
                         </td>
                     </tr>

@@ -48,7 +48,7 @@
 <html>
 <head>
     <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-    <link rel="stylesheet" type="text/css" href="../../oscarMessenger/encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarMessenger/encounterStyles.css">
     <title>
         myOSCAR
     </title>
@@ -311,7 +311,7 @@
         </td>
     </tr>
     <tr>
-        <script type="text/javascript" src="../../share/javascript/boxover.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/boxover.js"></script>
         <td class="MainTableBottomRowLeftColumn">
         </td>
         <td class="MainTableBottomRowRightColumn">

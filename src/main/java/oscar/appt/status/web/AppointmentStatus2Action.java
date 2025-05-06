@@ -39,8 +39,23 @@ public class AppointmentStatus2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private static final Logger logger = MiscUtils.getLogger();
+
+    public String execute() {
+        String method = request.getParameter("dispatch");
+        if ("view".equals(method)) {
+            return view();
+        } else if ("reset".equals(method)) {
+            return reset();
+        } else if ("changestatus".equals(method)) {
+            return changestatus();
+        } else if ("modify".equals(method)) {
+            return modify();
+        } else if ("update".equals(method)) {
+            return update();
+        }
+        return view();
+    }
 
     public String view() {
         logger.warn("view");
@@ -86,7 +101,7 @@ public class AppointmentStatus2Action extends ActionSupport {
 
         int ID = this.getID();
         String strDesc = this.getApptDesc();
-        String strColor = this.getApptStatus();
+        String strColor = this.getApptColor();
         if (null == strColor || strColor.equals(""))
             strColor = this.getApptOldColor();
         apptStatusMgr.modifyStatus(ID, strDesc, strColor);
@@ -116,6 +131,7 @@ public class AppointmentStatus2Action extends ActionSupport {
     private String apptStatus;
     private String apptDesc;
     private String apptOldColor;
+    private String apptColor;
 
     public int getID() {
         return ID;
@@ -147,5 +163,13 @@ public class AppointmentStatus2Action extends ActionSupport {
 
     public void setApptOldColor(String apptOldColor) {
         this.apptOldColor = apptOldColor;
+    }
+
+    public String getApptColor() {
+        return apptColor;
+    }
+
+    public void setApptColor(String apptColor) {
+        this.apptColor = apptColor;
     }
 }

@@ -124,28 +124,28 @@ public class ClientManager2Action extends ActionSupport {
 
     private static final Logger logger = MiscUtils.getLogger();
 
-    private HealthSafetyManager healthSafetyManager;
-    private ClientRestrictionManager clientRestrictionManager;
-    private SurveyManager surveyManager = (SurveyManager) SpringUtils.getBean(SurveyManager.class);
-    private LookupManager lookupManager;
-    private CaseManagementManager caseManagementManager;
-    private AdmissionManager admissionManager;
-    private GenericIntakeManager genericIntakeManager;
+    private HealthSafetyManager healthSafetyManager = SpringUtils.getBean(HealthSafetyManager.class);
+    private ClientRestrictionManager clientRestrictionManager = SpringUtils.getBean(ClientRestrictionManager.class);
+    private SurveyManager surveyManager = SpringUtils.getBean(SurveyManager.class);
+    private LookupManager lookupManager = SpringUtils.getBean(LookupManager.class);
+    private CaseManagementManager caseManagementManager = SpringUtils.getBean(CaseManagementManager.class);
+    private AdmissionManager admissionManager = SpringUtils.getBean(AdmissionManager.class);
+    private GenericIntakeManager genericIntakeManager = SpringUtils.getBean(GenericIntakeManager.class);
     private BedDemographicManager bedDemographicManager = SpringUtils.getBean(BedDemographicManager.class);
     private BedManager bedManager = SpringUtils.getBean(BedManager.class);
-    private ClientManager clientManager;
-    private ProgramManager programManager;
-    private ProviderManager providerManager;
-    private ProgramQueueManager programQueueManager;
-    private IntegratorConsentDao integratorConsentDao;
-    private CdsClientFormDao cdsClientFormDao;
-    private static AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
-    private static ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
-    private static ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
-    private OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean(OcanStaffFormDao.class);
-    private RemoteReferralDao remoteReferralDao = (RemoteReferralDao) SpringUtils.getBean(RemoteReferralDao.class);
-    private VacancyDao vacancyDao = (VacancyDao) SpringUtils.getBean(VacancyDao.class);
-    private VacancyTemplateDao vacancyTemplateDao = (VacancyTemplateDao) SpringUtils.getBean(VacancyTemplateDao.class);
+    private ClientManager clientManager = SpringUtils.getBean(ClientManager.class);
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
+    private ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
+    private ProgramQueueManager programQueueManager = SpringUtils.getBean(ProgramQueueManager.class);
+    private IntegratorConsentDao integratorConsentDao = SpringUtils.getBean(IntegratorConsentDao.class);
+    private CdsClientFormDao cdsClientFormDao = SpringUtils.getBean(CdsClientFormDao.class);
+    private static AdmissionDao admissionDao = SpringUtils.getBean(AdmissionDao.class);
+    private static ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+    private static ProgramDao programDao = SpringUtils.getBean(ProgramDao.class);
+    private OcanStaffFormDao ocanStaffFormDao = SpringUtils.getBean(OcanStaffFormDao.class);
+    private RemoteReferralDao remoteReferralDao = SpringUtils.getBean(RemoteReferralDao.class);
+    private VacancyDao vacancyDao = SpringUtils.getBean(VacancyDao.class);
+    private VacancyTemplateDao vacancyTemplateDao = SpringUtils.getBean(VacancyTemplateDao.class);
     private MatchingManager matchingManager = new MatchingManager();
 
     private RoomDemographicManager roomDemographicManager = SpringUtils.getBean(RoomDemographicManager.class);
@@ -162,7 +162,70 @@ public class ClientManager2Action extends ActionSupport {
     }
 
     public String execute() {
-
+        String method = request.getParameter("method");
+        if ("admit".equals(method)) {
+            return admit();
+        } else if ("admit_select_program".equals(method)) {
+            return admit_select_program();
+        } else if ("cancel".equals(method)) {
+            return cancel();
+        } else if ("discharge".equals(method)) {
+            return discharge();
+        } else if ("discharge_community".equals(method)) {
+            return discharge_community();
+        } else if ("discharge_community_select_program".equals(method)) {
+            return discharge_community_select_program();
+        } else if ("nested_discharge_community_select_program".equals(method)) {
+            return nested_discharge_community_select_program();
+        } else if ("discharge_select_program".equals(method)) {
+            return discharge_select_program();
+        } else if ("nested_discharge_select_program".equals(method)) {
+            return nested_discharge_select_program();
+        } else if ("getGeneralFormsReport".equals(method)) {
+            return getGeneralFormsReport();
+        } else if ("edit".equals(method)) {
+            return edit();
+        } else if ("getLinks".equals(method)) {
+            return getLinks();
+        } else if ("refer".equals(method)) {
+            return refer();
+        } else if ("refer_select_program".equals(method)) {
+            return refer_select_program();
+        } else if ("vacancy_refer_select_program".equals(method)) {
+            return vacancy_refer_select_program();
+        } else if ("service_restrict".equals(method)) {
+            return service_restrict();
+        } else if ("restrict_select_program".equals(method)) {
+            return restrict_select_program();
+        } else if ("terminate_early".equals(method)) {
+            return terminate_early();
+        } else if ("override_restriction".equals(method)) {
+            return override_restriction();
+        } else if ("refreshBedDropDownForReservation".equals(method)) {
+            return refreshBedDropDownForReservation();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("saveBedReservation".equals(method)) {
+            return saveBedReservation();
+        }  else if ("save_survey".equals(method)) {
+            return save_survey();
+        } else if ("save_joint_admission".equals(method)) {
+            return save_joint_admission();
+        } else if ("remove_joint_admission".equals(method)) {
+            return remove_joint_admission();
+        } else if ("search_programs".equals(method)) {
+            return search_programs();
+        } else if ("submit_erconsent".equals(method)) {
+            return submit_erconsent();
+        } else if ("survey".equals(method)) {
+            return survey();
+        } else if ("update".equals(method)) {
+            return update();
+        }  else if ("view_referral".equals(method)) {
+            return view_referral();
+        } else if ("view_admission".equals(method)) {
+            return view_admission();
+        }
         this.setView(new ClientManagerFormBean());
 
         return edit();

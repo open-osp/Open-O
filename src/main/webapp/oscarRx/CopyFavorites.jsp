@@ -53,7 +53,7 @@
                 }
             %>
         </c:if>
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
     </head>
 
 
@@ -90,7 +90,7 @@
 
 
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
-    <form action="/oscarRx/copyFavorite.do">
+    <form action="<%= request.getContextPath() %>/oscarRx/copyFavorite.do">
         <input type="hidden" name="dispatch" value="refresh"/>
         <input type="hidden" name="userProviderNo" value=<%=providerNo%>/>
         <input type="hidden" name="copyProviderNo" value=""/>
@@ -106,7 +106,7 @@
                            width="100%" height="100%">
                         <tr>
                             <td width="0%" valign="top">
-                                <div class="DivCCBreadCrumbs"><a href="CopyFavorites.jsp"> Copy Favorites</a> > <b>Select
+                                <div class="DivCCBreadCrumbs"><a href="oscarRx/CopyFavorites.jsp"> Copy Favorites</a> > <b>Select
                                     Provider Copy From</b></div>
                             </td>
                         </tr>
@@ -116,7 +116,7 @@
                                 <div class=DivContentPadding><input type=button
                                                                     value="Back to Search For Drug"
                                                                     class="ControlPushButton"
-                                                                    onClick="javascript:window.location.href='SearchDrug.jsp';"/>
+                                                                    onClick="javascript:window.location.href='oscarRx/SearchDrug.jsp';"/>
                                 </div>
                             </td>
                         </tr>

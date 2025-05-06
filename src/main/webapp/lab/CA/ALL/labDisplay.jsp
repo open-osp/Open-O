@@ -813,12 +813,12 @@
 
         function printPDF(labid) {
             var frm = "acknowledgeForm_" + labid;
-            document.forms[frm].action = "PrintPDF.do";
+            document.forms[frm].action = "lab/CA/ALL/PrintPDF.do";
             document.forms[frm].submit();
         }
 
         function linkreq(rptId, reqId) {
-            var link = "../../LinkReq.jsp?table=hl7TextMessage&rptid=" + rptId + "&reqid=" + reqId + "<%=demographicID != null ? "&demographicNo=" + demographicID : ""%>";
+            var link = "<%= request.getContextPath() %>/lab/LinkReq.jsp?table=hl7TextMessage&rptid=" + rptId + "&reqid=" + reqId + "<%=demographicID != null ? "&demographicNo=" + demographicID : ""%>";
             window.open(link, "linkwin", "width=500, height=200");
         }
 
@@ -849,7 +849,7 @@
 
 
         function handleLab(formid, labid, action) {
-            var url = '../../../documentManager/inboxManage.do';
+            var url = '<%= request.getContextPath() %>/documentManager/inboxManage.do';
             var data = 'method=isLabLinkedToDemographic&labid=' + labid;
             new Ajax.Request(url, {
                 method: 'post', parameters: data, onSuccess: function (transport) {
@@ -1177,7 +1177,7 @@
 
                                 <% if (searchProviderNo != null) { // null if we were called from e-chart%>
                                 <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnEChart"/>"
-                                       onClick="popupStart(360, 680, '../../../oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= Encode.forJavaScript(segmentID) %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'encounter')">
+                                       onClick="popupStart(360, 680, '<%= request.getContextPath() %>/oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= Encode.forJavaScript(segmentID) %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'encounter')">
                                 <% } %>
                                 <input type="button" value="Req# <%=reqTableID%>" title="Link to Requisition"
                                        onclick="linkreq('<%=Encode.forJavaScript(segmentID)%>','<%=reqID%>');"/>
@@ -1781,7 +1781,7 @@
                 <td align="center" valign="top">
                     <a href="javascript:void(0);" title="Annotation"
                        onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(1) + "-" + String.valueOf(1) %>','anwin','width=400,height=500');">
-                        <img src="../../../images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"/>
+                        <img src="<%= request.getContextPath() %>/images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"/>
                     </a>
                 </td>
             </tr>
@@ -2030,9 +2030,9 @@
                 <td align="center" valign="top">
                     <a href="javascript:void(0);" title="Annotation"
                        onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
-                        <%if (!isPrevAnnotation) { %><img src="../../../images/notes.gif" alt="rxAnnotation" height="16"
+                        <%if (!isPrevAnnotation) { %><img src="<%= request.getContextPath() %>/images/notes.gif" alt="rxAnnotation" height="16"
                                                           width="13" border="0"/><%} else { %><img
-                            src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13"
+                            src="<%= request.getContextPath() %>/images/filledNotes.gif" alt="rxAnnotation" height="16" width="13"
                             border="0"/> <%} %>
                     </a>
                 </td>
@@ -2076,9 +2076,9 @@
                 <td align="center" valign="top">
                     <a href="javascript:void(0);" title="Annotation"
                        onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
-                        <%if (!isPrevAnnotation) { %><img src="../../../images/notes.gif" alt="rxAnnotation" height="16"
+                        <%if (!isPrevAnnotation) { %><img src="<%= request.getContextPath() %>/images/notes.gif" alt="rxAnnotation" height="16"
                                                           width="13" border="0"/><%} else { %><img
-                            src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13"
+                            src="<%= request.getContextPath() %>/images/filledNotes.gif" alt="rxAnnotation" height="16" width="13"
                             border="0"/> <%} %>
                     </a>
                 </td>
@@ -2174,9 +2174,9 @@
                 <td align="center" valign="top">
                     <a href="javascript:void(0);" title="Annotation"
                        onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
-                        <%if (!isPrevAnnotation) { %><img src="../../../images/notes.gif" alt="rxAnnotation" height="16"
+                        <%if (!isPrevAnnotation) { %><img src="<%= request.getContextPath() %>/images/notes.gif" alt="rxAnnotation" height="16"
                                                           width="13" border="0"/><%} else { %><img
-                            src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13"
+                            src="<%= request.getContextPath() %>/images/filledNotes.gif" alt="rxAnnotation" height="16" width="13"
                             border="0"/> <%} %>
                     </a>
                 </td>
@@ -2368,9 +2368,9 @@
             </td>
             <td align="center" valign="top"><a href="javascript:void(0);" title="Annotation"
                                                onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(j) + "-" + String.valueOf(k) %>','anwin','width=400,height=500');">
-                <%if (!isPrevAnnotation) { %><img src="../../../images/notes.gif" alt="rxAnnotation" height="16"
+                <%if (!isPrevAnnotation) { %><img src="<%= request.getContextPath() %>/images/notes.gif" alt="rxAnnotation" height="16"
                                                   width="13" border="0"/><%} else { %><img
-                    src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13" border="0"/> <%} %>
+                    src="<%= request.getContextPath() %>/images/filledNotes.gif" alt="rxAnnotation" height="16" width="13" border="0"/> <%} %>
             </a>
             </td>
 
@@ -2414,9 +2414,9 @@
                 <td align="center" valign="top">
                     <a href="javascript:void(0);" title="Annotation"
                        onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=Encode.forJavaScript(segmentID)%>&amp;demo=<%=demographicID%>&amp;other_id=<%=String.valueOf(1) + "-" + String.valueOf(1) %>','anwin','width=400,height=500');">
-                        <%if (!isPrevAnnotation) { %><img src="../../../images/notes.gif" alt="rxAnnotation" height="16"
+                        <%if (!isPrevAnnotation) { %><img src="<%= request.getContextPath() %>/images/notes.gif" alt="rxAnnotation" height="16"
                                                           width="13" border="0"/><%} else { %><img
-                            src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13"
+                            src="<%= request.getContextPath() %>/images/filledNotes.gif" alt="rxAnnotation" height="16" width="13"
                             border="0"/> <%} %>
                     </a>
                 </td>

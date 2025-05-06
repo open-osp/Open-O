@@ -54,7 +54,17 @@ public class DefaultEncounterIssue2Action extends ActionSupport {
 
 
 
-    public String unspecified() {
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("edit".equals(method)) {
+            return edit();
+        } else if ("editRemove".equals(method)) {
+            return editRemove();
+        }  else if ("save".equals(method)) {
+            return save();
+        }  else if ("remove".equals(method)) {
+            return remove();
+        } 
         return list();
     }
 

@@ -72,13 +72,29 @@ public class BillingONPayments2Action extends ActionSupport {
 
     private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
-    private BillingONItemDao billingONItemDao;
-    private BillingONPaymentDao billingONPaymentDao;
-    private BillingPaymentTypeDao billingPaymentTypeDao;
-    private BillingONCHeader1Dao billingClaimDAO;
-    private BillingONExtDao billingONExtDao;
-    private BillingOnItemPaymentDao billingOnItemPaymentDao;
-    private BillingOnTransactionDao billingOnTransactionDao;
+    private BillingONItemDao billingONItemDao = SpringUtils.getBean(BillingONItemDao.class);
+    private BillingONPaymentDao billingONPaymentDao = SpringUtils.getBean(BillingONPaymentDao.class);
+    private BillingPaymentTypeDao billingPaymentTypeDao = SpringUtils.getBean(BillingPaymentTypeDao.class);
+    private BillingONCHeader1Dao billingClaimDAO = SpringUtils.getBean(BillingONCHeader1Dao.class);
+    private BillingONExtDao billingONExtDao = SpringUtils.getBean(BillingONExtDao.class);
+    private BillingOnItemPaymentDao billingOnItemPaymentDao = SpringUtils.getBean(BillingOnItemPaymentDao.class);
+    private BillingOnTransactionDao billingOnTransactionDao = SpringUtils.getBean(BillingOnTransactionDao.class);
+
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("listPayments".equals(method)) {
+            return listPayments();
+        } else if ("savePayment".equals(method)) {
+            return savePayment();
+        } else if ("deletePayment".equals(method)) {
+            return deletePayment();
+        } else if ("viewPayment".equals(method)) {
+            return viewPayment();
+        } else if ("viewPayment_ext".equals(method)) {
+            return viewPayment_ext();
+        }
+        return listPayments();
+    }
 
     public String listPayments() {
         Integer billingNo = Integer.parseInt(request.getParameter("billingNo"));

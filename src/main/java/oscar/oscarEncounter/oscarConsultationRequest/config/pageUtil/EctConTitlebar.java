@@ -47,27 +47,27 @@ public class EctConTitlebar {
     private void init(ResourceBundle oscarR) {
         jspVect = new ArrayList<String>();
         displayNameVect = new ArrayList<String>();
-        jspVect.add("EnableRequestResponse.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/EnableRequestResponse.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnEnableRequestResponse"));
-        jspVect.add("AddSpecialist.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/AddSpecialist.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnAddSpecialist"));
-        jspVect.add("AddService.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/AddService.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnAddService"));
-        jspVect.add("EditSpecialists.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/EditSpecialists.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnEditSpecialists"));
-        jspVect.add("ShowAllServices.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/ShowAllServices.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnShowAllServices"));
-        jspVect.add("DeleteServices.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/DeleteServices.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnDeleteServices"));
-        jspVect.add("AddInstitution.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/AddInstitution.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnAddInstitution"));
-        jspVect.add("EditInstitutions.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/EditInstitutions.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnEditInstitutions"));
-        jspVect.add("AddDepartment.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/AddDepartment.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnAddDepartment"));
-        jspVect.add("EditDepartments.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/EditDepartments.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnEditDepartments"));
-        jspVect.add("ShowAllInstitutions.jsp");
+        jspVect.add("oscarEncounter/oscarConsultationRequest/config/ShowAllInstitutions.jsp");
         displayNameVect.add(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.btnShowAllInstitutions"));
     }
 

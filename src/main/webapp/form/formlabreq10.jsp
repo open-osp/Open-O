@@ -58,11 +58,11 @@
         <title>Laboratory Requisition</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <link rel="stylesheet" type="text/css" media="screen"
-              href="labReq07Style.css">
-        <link rel="stylesheet" type="text/css" media="print" href="print.css">
-        <script src="../share/javascript/prototype.js" type="text/javascript"></script>
+              href="<%= request.getContextPath() %>/form/labReq07Style.css">
+        <link rel="stylesheet" type="text/css" media="print" href="<%= request.getContextPath() %>/form/print.css">
+        <script src="<%= request.getContextPath() %>/share/javascript/prototype.js" type="text/javascript"></script>
         <script src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js"></script>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
     <%
@@ -140,7 +140,7 @@
                 //ret = confirm("Do you wish to save this form and view the print preview?");
                 //popupFixedPage(650,850,'../provider/notice.htm');
                 temp = document.forms[0].action;
-                document.forms[0].action = "<rewrite:reWrite jspPage="formname.do?__title=Lab+Request&__cfgfile=labReqPrintEncounterForm2010&__template=labReqForm2010"/>";
+                document.forms[0].action = "form/formname.do?__title=Lab+Request&__cfgfile=labReqPrintEncounterForm2010&__template=labReqForm2010";
                 document.forms[0].submit.value = "printall";
                 document.forms[0].target = "_self";
             }

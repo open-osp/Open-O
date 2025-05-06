@@ -89,12 +89,14 @@ public class QuickListDaoImpl extends AbstractDaoImpl<QuickList> implements Quic
     public List<Object[]> findResearchCodeAndCodingSystemDescriptionByCodingSystem(String codingSystem, String quickListName) {
         try {
             // Cannot set parameter to table column name ("c."+ codingSystem).
-            String sql = "Select q.dxResearchCode, c.description FROM quickList q, ?1 c where codingSystem = ?2 and quickListName=?3 AND c." + codingSystem
-                    + " = q.dxResearchCode order by c.description";
+            String sql = "Select q.dxResearchCode, c.description FROM quickList q, " + codingSystem 
+                       + " c where q.codingSystem = '" + codingSystem 
+                       + "' and q.quickListName= '" + quickListName + "' AND c." + codingSystem
+                       + " = q.dxResearchCode order by c.description";
             Query query = entityManager.createNativeQuery(sql);
-            query.setParameter(1, codingSystem);
-            query.setParameter(2, codingSystem);
-            query.setParameter(3, quickListName);
+            //query.setParameter(1, codingSystem);
+            //query.setParameter(2, codingSystem);
+            //query.setParameter(3, quickListName);
             return query.getResultList();
         } catch (Exception e) {
             // TODO replace when test ignores are merged

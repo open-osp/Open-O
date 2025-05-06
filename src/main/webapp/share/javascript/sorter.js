@@ -111,12 +111,9 @@ $(document).ready(function () {
 
     $("#picker div").append(function (index, html) {
         return "<span class='num'>" + ++index + "</span>" +
-            "<span class='jog-control'><img style='-box-shadow: none; " +
-            "-webkit-box-shadow: none; -moz-box-shadow: none' src='../images/icons/132.png' />" +
-            "<img style=' -box-shadow: none; -webkit-box-shadow: none; " +
-            "-moz-box-shadow: none' src='../images/icons/131.png' />" +
-            "<img style=' -box-shadow: none; -webkit-box-shadow: none; " +
-            "-moz-box-shadow: none' src='../images/icons/114.png' /></span>";
+            "<span class='jog-control'><img style='box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none' src='" + ctx + "/images/icons/132.png' />" +
+            "<img style='box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none' src='" + ctx + "/images/icons/131.png' />" +
+            "<img style='box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none' src='" + ctx + "/images/icons/114.png' /></span>";
     });
 
     $(document).bind("contextmenu", function (e) {

@@ -70,6 +70,9 @@ public class RptDemographicQuery2Builder {
     public ArrayList<ArrayList<String>> buildQuery(LoggedInInfo loggedInInfo, RptDemographicReport2Form frm, String asofRosterDate) {
         MiscUtils.getLogger().debug("in buildQuery");
 
+        if (frm == null) {
+            frm = new RptDemographicReport2Form(); 
+        }
         String[] select = frm.getSelect();
         if (select == null || select.length == 0) {
             MiscUtils.getLogger().debug("No columns selected. Returning empty result.");

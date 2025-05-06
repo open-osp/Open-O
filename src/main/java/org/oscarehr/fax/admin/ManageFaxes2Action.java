@@ -78,6 +78,20 @@ public class ManageFaxes2Action extends ActionSupport {
 
     private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
 
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("CancelFax".equals(method)) {
+            return CancelFax();
+        } else if ("ResendFax".equals(method)) {
+            return ResendFax();
+        } else if ("fetchFaxStatus".equals(method)) {
+            return fetchFaxStatus();
+        }
+        return fetchFaxStatus();
+        
+    }
+
+
     @SuppressWarnings("unused")
     public String CancelFax() {
 
@@ -166,7 +180,6 @@ public class ManageFaxes2Action extends ActionSupport {
 
         return null;
     }
-
 
     @SuppressWarnings("unused")
     public void viewFax() {

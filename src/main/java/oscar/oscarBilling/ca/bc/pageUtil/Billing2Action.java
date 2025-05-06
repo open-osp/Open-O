@@ -58,7 +58,7 @@ public final class Billing2Action extends ActionSupport {
         String region = request.getParameter("billRegion") != null ? request.getParameter("billRegion") : OscarProperties.getProperties().getProperty("billregion");
 
         if ("ON".equals(region)) {
-            String newURL = "/billing/CA/ON/billingOB.jsp";
+            String newURL = request.getContextPath() + "/billing/CA/ON/billingOB.jsp";
             newURL = newURL + "?" + request.getQueryString();
             response.sendRedirect(newURL);
             return NONE;

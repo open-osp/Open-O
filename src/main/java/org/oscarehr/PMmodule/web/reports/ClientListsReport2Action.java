@@ -32,6 +32,7 @@ import org.oscarehr.PMmodule.model.Program;
 import org.oscarehr.PMmodule.service.ProgramManager;
 import org.oscarehr.PMmodule.service.ProviderManager;
 import org.oscarehr.common.model.Provider;
+import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
@@ -41,27 +42,14 @@ public class ClientListsReport2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
-    private DemographicDao demographicDao;
+    private ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
 
-    public void setDemographicDao(DemographicDao demographicDao) {
-        this.demographicDao = demographicDao;
-    }
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
 
-    private ProviderManager providerManager;
-
-    public void setProviderManager(ProviderManager providerManager) {
-
-        this.providerManager = providerManager;
-    }
-
-    private ProgramManager programManager;
-
-    public void setProgramManager(ProgramManager programManager) {
-
-        this.programManager = programManager;
-    }
-
-    public String unspecified() {
+    public String execute() {
+        if ("report".equals(request.getParameter("method"))) {
+            return report();
+        }
         // need to get the reporting options here, i.e.
         // - provider list
         // - program list

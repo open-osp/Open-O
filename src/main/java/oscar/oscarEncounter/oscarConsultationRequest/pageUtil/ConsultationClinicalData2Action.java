@@ -63,6 +63,20 @@ public class ConsultationClinicalData2Action extends ActionSupport {
         // Default
     }
 
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("fetchLongTermMedications".equals(method)) {
+            return fetchLongTermMedications();
+        } else if ("fetchAllergies".equals(method)) {
+            return fetchAllergies();
+        } else if ("fetchRiskFactors".equals(method)) {
+            return fetchRiskFactors();
+        } else if ("fetchIssueNote".equals(method)) {
+            return fetchIssueNote();
+        }
+        return fetchMedications();
+    }
+
     @SuppressWarnings("unused")
     public String fetchMedications() {
 

@@ -54,10 +54,34 @@ public class EyeformUtil2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("getProviders".equals(method)) {
+            return getProviders();
+        } else if ("getTickler".equals(method)) {
+            return getTickler();
+        } else if ("getBillingAutocompleteList".equals(method)) {
+            return getBillingAutocompleteList();
+        } else if ("getBillingDxAutocompleteList".equals(method)) {
+            return getBillingDxAutocompleteList();
+        } else if ("getMacroList".equals(method)) {
+            return getMacroList();
+        } else if ("saveMacro".equals(method)) {
+            return saveMacro();
+        } else if ("sendPlan".equals(method)) {
+            return sendPlan();
+        } else if ("getBillingArgs".equals(method)) {
+            return getBillingArgs();
+        } else if ("sendTickler".equals(method)) {
+            return sendTickler();
+        } else if ("updateAppointmentReason".equals(method)) {
+            return updateAppointmentReason();
+        }
+        return getProviders();
+    }
 
     public String getProviders() throws Exception {
         ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
@@ -74,7 +98,6 @@ public class EyeformUtil2Action extends ActionSupport {
 
         return null;
     }
-
 
     public String getTickler() throws Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -145,7 +168,6 @@ public class EyeformUtil2Action extends ActionSupport {
 
         return null;
     }
-
 
     public String getMacroList() throws Exception {
         EyeformMacroDao eyeformMacroDao = (EyeformMacroDao) SpringUtils.getBean(EyeformMacroDao.class);

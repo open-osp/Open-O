@@ -48,10 +48,16 @@ public class EditTickler2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private static final Logger logger = MiscUtils.getLogger();
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+
+    public String execute() {
+        if ("editTickler".equals(request.getParameter("method"))) {
+            return editTickler();
+        }
+        return updateTextSuggest();
+    }
 
     public String editTickler() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

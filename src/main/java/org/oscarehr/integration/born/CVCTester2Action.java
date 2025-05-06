@@ -64,10 +64,17 @@ public class CVCTester2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     Logger logger = MiscUtils.getLogger();
 
     CanadianVaccineCatalogueManager cvcManager = SpringUtils.getBean(CanadianVaccineCatalogueManager.class);
+
+		public String execute() throws Exception {
+			if ("getLotNumberAndExpiryDates".equals(request.getParameter("method"))) {
+				return getLotNumberAndExpiryDates();
+			}
+			return query();
+		}
+
 
     public String getLotNumberAndExpiryDates() throws IOException {
         String snomedConceptId = request.getParameter("snomedConceptId");
@@ -84,7 +91,6 @@ public class CVCTester2Action extends ActionSupport {
         }
         return null;
     }
-
 
     public String query() throws IOException {
         String query = request.getParameter("query");
@@ -136,7 +142,6 @@ public class CVCTester2Action extends ActionSupport {
 
         return null;
     }
-	
 	
 	
 	/* USED FOR TESTING WHILE DEVELOPING

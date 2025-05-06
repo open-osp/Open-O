@@ -72,7 +72,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportnewdblist.title"/></title>
-        <link rel="stylesheet" href="../css/receptionistapptstyle.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/css/receptionistapptstyle.css">
         <script language="JavaScript">
             <!--
 

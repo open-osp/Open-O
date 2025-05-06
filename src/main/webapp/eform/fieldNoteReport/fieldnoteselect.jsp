@@ -47,8 +47,8 @@
 <html>
     <head>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.fieldNote.selectEforms"/></title>
-        <link rel="stylesheet" href="../../share/css/OscarStandardLayout.css">
-        <link rel="stylesheet" href="../../share/css/eformStyle.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/eformStyle.css">
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <script language="javascript">
             function remove_select(fid) {
@@ -99,7 +99,7 @@
             %>
             <tr>
                 <td width="25%" style="padding-left: 4px;">
-                    <a href="../efmshowform_data.jsp?fid=<%=fieldNoteEform.getId()%>"
+                    <a href="<%= request.getContextPath() %>/efmshowform_data.jsp?fid=<%=fieldNoteEform.getId()%>"
                        target="_blank"><%=fieldNoteEform.getFormName()%>
                     </a>
                 </td>
@@ -132,7 +132,7 @@
             %>
             <tr style="background-color: #F2F2F2;">
                 <td width="25%" style="padding-left: 4px;">
-                    <a href="../efmshowform_data.jsp?fid=<%=fieldNoteEform.getId()%>"
+                    <a href="<%= request.getContextPath() %>/efmshowform_data.jsp?fid=<%=fieldNoteEform.getId()%>"
                        target="_blank"><%=fieldNoteEform.getFormName()%>
                     </a>
                 </td>

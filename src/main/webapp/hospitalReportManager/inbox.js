@@ -70,7 +70,7 @@ $(document).ready(function () {
         "columns": [
             {
                 render: function (data, type, full, meta) {
-                    var r = "<a href='javascript:void(0)' onClick=\"openReport(" + full.id + ");return false;\" ><img src='../images/details2.gif' border='0'/></a>";
+                    var r = "<a href='javascript:void(0)' onClick=\"openReport(" + full.id + ");return false;\" ><img src='" + ctx + "/images/details2.gif' border='0'/></a>";
                     return r;
                 }
             },

@@ -95,18 +95,28 @@
 %>
 <jsp:useBean id="DisplayMessagesBeanId" scope="session"
              class="oscar.oscarMessenger.pageUtil.MsgDisplayMessagesBean"/>
-<% DisplayMessagesBeanId.setProviderNo(bean.getProviderNo());
-    bean.nullAttachment();%>
+<% 
+    if (bean == null) {
+        bean = (oscar.oscarMessenger.pageUtil.MsgSessionBean) request.getSession().getAttribute("msgSessionBean");
+        if (bean == null) {
+            response.sendRedirect("errorpage.jsp?message=Session expired");
+            return;
+        }
+    }
+
+    DisplayMessagesBeanId.setProviderNo(bean.getProviderNo());
+    bean.nullAttachment();
+%>
 <jsp:setProperty name="DisplayMessagesBeanId" property="*"/>
 
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" href="encounterStyles.css">
+        <link rel="stylesheet" type="text/css" href="css/encounterStyles.css">
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.DisplayMessages.title"/>
         </title>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
         <style>
             .TopStatusBar {
@@ -178,7 +188,10 @@
 
                     <tr>
                         <td>
-                            <%String strutsAction = "/oscarMessenger/DisplayDemographicMessages.do?demographic_no=" + demographic_no; %>
+                            <%
+                                String contextPath = request.getContextPath();
+                                String strutsAction = contextPath + "/oscarMessenger/DisplayDemographicMessages.do?demographic_no=" + demographic_no; 
+                            %>
 
                             <form action="<%=strutsAction%>" method="post">
 

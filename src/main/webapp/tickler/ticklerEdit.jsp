@@ -251,18 +251,10 @@
                 return dat;
             }
 
-
-            function validate(form) {
-                validate(form, false);
-            }
-
             function validate(form, writeToEncounter) {
-
                 if (validateDate(form) <%=caisiEnabled?"&& validateSelectedProgram()":""%>) {
                     if (writeToEncounter) {
-                        var windowFeatures = "height=700,width=960";
-                        // Open encounter window
-                        window.open('../oscarEncounter/IncomingEncounter.do?demographicNo=<%=d.getDemographicNo()%>&providerNo=<%=loggedInInfo.getLoggedInProviderNo()%>&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>&encType=&status=', '', windowFeatures);
+                        window.open('../oscarEncounter/IncomingEncounter.do?demographicNo=<%=d.getDemographicNo()%>&providerNo=<%=loggedInInfo.getLoggedInProviderNo()%>&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>&encType=&status=', '', 'height=700,width=960');
                     }
                     form.submit();
                     return true;
@@ -275,8 +267,8 @@
                 return !isNaN(dateWrapper.getDate());
             }
 
-            function validateDate() {
-                if (document.serviceform.xml_appointment_date.value === "" || !IsDate(document.serviceform.xml_appointment_date.value)) {
+            function validateDate(form) {
+                if (form.xml_appointment_date.value === "" || !IsDate(form.xml_appointment_date.value)) {
                     document.getElementById("error").insertAdjacentText("beforeend", "<fmt:setBundle basename="oscarResources"/><fmt:message key="tickler.ticklerAdd.msgMissingDate"/>");
                     document.getElementById("error").style.display = 'block';
                     return false;
@@ -292,7 +284,7 @@
 
     <body onLoad="addQuickPick()">
     <div class="container">
-        <form action="${pageContext.request.contextPath}/tickler/EditTickler.do" method="post">
+        <form name="serviceform" action="${pageContext.request.contextPath}/tickler/EditTickler.do" method="post">
             <input type="hidden" name="method" value="editTickler"/>
             <input type="hidden" name="ticklerNo" value="<%=ticklerNo%>"/>
             <h2><fmt:setBundle basename="oscarResources"/><fmt:message key="tickler.ticklerEdit.title"/></h2>
@@ -502,7 +494,7 @@
                         </oscar:oscarPropertiesCheck>
 
                         <input type="button" class="btn btn-primary" name="updateTickler"
-                               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="tickler.ticklerEdit.update"/>" onClick="validate(this.form)"/>
+                               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="tickler.ticklerEdit.update"/>" onClick="validate(this.form, false)"/>
                         <input type="button" class="btn" name="cancelChangeTickler"
                                value="<fmt:setBundle basename="oscarResources"/><fmt:message key="tickler.ticklerEdit.cancel"/>" onClick="window.close()"/>
 

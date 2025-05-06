@@ -51,12 +51,18 @@ public class Resource2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
     @Override
     public String execute() throws Exception {
-
+        String method = request.getParameter("method");
+        if ("loadDownloadList".equals(method)) {
+            return loadDownloadList();
+        } else if ("loadSentList".equals(method)) {
+            return loadSentList();
+        } else if ("changeDisplay".equals(method)) {
+            return changeDisplay();
+        } 
         //functions needed for the upload page
         ActionUtils.removeSuccessfulUploads(request);
         ActionUtils.removeUploadResponseResults(request);

@@ -84,17 +84,17 @@ public class ProgramManagerView2Action extends ActionSupport {
 
 
     private static Logger logger = MiscUtils.getLogger();
-    private ClientRestrictionManager clientRestrictionManager;
-    private FacilityDao facilityDao = null;
-    private CaseManagementManager caseManagementManager;
-    private AdmissionManager admissionManager;
-    private RoomDemographicManager roomDemographicManager;
-    private BedDemographicManager bedDemographicManager;
-    private BedManager bedManager;
-    private ClientManager clientManager;
-    private ProgramManager programManager;
-    private ProgramManagerAction programManagerAction;
-    private ProgramQueueManager programQueueManager;
+    private ClientRestrictionManager clientRestrictionManager = SpringUtils.getBean(ClientRestrictionManager.class);
+    private FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
+    private CaseManagementManager caseManagementManager = SpringUtils.getBean(CaseManagementManager.class);
+    private AdmissionManager admissionManager = SpringUtils.getBean(AdmissionManager.class);
+    private RoomDemographicManager roomDemographicManager = SpringUtils.getBean(RoomDemographicManager.class);
+    private BedDemographicManager bedDemographicManager = SpringUtils.getBean(BedDemographicManager.class);
+    private BedManager bedManager = SpringUtils.getBean(BedManager.class);
+    private ClientManager clientManager = SpringUtils.getBean(ClientManager.class);
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
+    private ProgramManagerAction programManagerAction = SpringUtils.getBean(ProgramManagerAction.class);
+    private ProgramQueueManager programQueueManager = SpringUtils.getBean(ProgramQueueManager.class);
     private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 
@@ -107,6 +107,34 @@ public class ProgramManagerView2Action extends ActionSupport {
     }
 
     public String execute() {
+        String method = request.getParameter("method");
+        if ("remove_remote_queue".equals(method)) {
+            return remove_remote_queue();
+        } else if ("viewBedReservationChangeReport".equals(method)) {
+            return viewBedReservationChangeReport();
+        } else if ("viewBedCheckReport".equals(method)) {
+            return viewBedCheckReport();
+        } else if ("admit".equals(method)) {
+            return admit();
+        } else if ("override_restriction".equals(method)) {
+            return override_restriction();
+        } else if ("assign_team_client".equals(method)) {
+            return assign_team_client();
+        } else if ("assign_status_client".equals(method)) {
+            return assign_status_client();
+        } else if ("batch_discharge".equals(method)) {
+            return batch_discharge();
+        } else if ("reject_from_queue".equals(method)) {
+            return reject_from_queue();
+        } else if ("select_client_for_admit".equals(method)) {
+            return select_client_for_admit();
+        } else if ("select_client_for_reject".equals(method)) {
+            return select_client_for_reject();
+        } else if ("saveReservedBeds".equals(method)) {
+            return saveReservedBeds();
+        } else if ("switch_beds".equals(method)) {
+            return switch_beds();
+        }
         return view();
     }
 

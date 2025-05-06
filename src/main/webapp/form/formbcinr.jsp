@@ -57,18 +57,18 @@
         <link rel="stylesheet" type="text/css" href="bcArStyle.css">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
     </head>
 
@@ -82,7 +82,7 @@
             document.forms[0].submit.value = "print";
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "../form/createpdf?__title=British+Columbia+Labour+and+Birth+Summary+Record&__cfgfile=bclbPrintCfgPg1&__template=bcbirthsummary";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=British+Columbia+Labour+and+Birth+Summary+Record&__cfgfile=bclbPrintCfgPg1&__template=bcbirthsummary";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -497,7 +497,7 @@
                                 Date Started: <input type="text" name="dateStart" id="dateStart"
                                                      size="10" maxlength="10"
                                                      value="<%= props.getProperty("dateStart", "") %>" @oscar.formDB
-                                                     dbType="date"/> <img src="../images/cal.gif" id="dateStart_cal">
+                                                     dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="dateStart_cal">
                                 <br/>
                                 Coumadin Strength on Hand: <input type="text" name="coumadin"
                                                                   size="20" maxlength="20"
@@ -627,7 +627,7 @@
                     <td><input type="text" name="date<%=i %>" id="date<%=i %>"
                                class="spe" onDblClick="calToday(this)" size="10" maxlength="10"
                                value="<%= props.getProperty("date"+i, "") %>"
-                               readonly @oscar.formDB dbType="date"/> <img src="../images/cal.gif"
+                               readonly @oscar.formDB dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                            id="date<%=i %>_cal"></td>
                     <td><input type="text" name="inr<%=i %>" style="width: 100%"
                                size="6" maxlength="6" value="<%= props.getProperty("inr"+i, "") %>"
@@ -642,7 +642,7 @@
                     <td><input type="text" name="repeat<%=i %>" id="repeat<%=i %>"
                                size="10" maxlength="10"
                                value="<%= props.getProperty("repeat"+i, "") %>" @oscar.formDB
-                               dbType="date"/> <img src="../images/cal.gif" id="repeat<%=i %>_cal">
+                               dbType="date"/> <img src="<%= request.getContextPath() %>/images/cal.gif" id="repeat<%=i %>_cal">
                     </td>
                     <td><input type="checkbox" name="notified<%=i %>"
                             <%= props.getProperty("notified" + i, "") %> @oscar.formDB

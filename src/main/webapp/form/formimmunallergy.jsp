@@ -122,6 +122,7 @@
             var ret = checkAllDates();
             if (ret == true) {
                 reset();
+                document.forms[0].target = "_self";
                 ret = confirm("Are you sure you want to save this form?");
             }
             return ret;
@@ -132,6 +133,7 @@
             var ret = checkAllDates();
             if (ret == true) {
                 reset();
+                document.forms[0].target = "_self";
                 ret = confirm("Are you sure you wish to save and close this window?");
             }
             return ret;

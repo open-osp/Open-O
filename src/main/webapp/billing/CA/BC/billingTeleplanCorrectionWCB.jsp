@@ -79,17 +79,17 @@
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <title>OSCAR oscarBilling - Correction</title>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-        <link rel="stylesheet" href="../../../share/css/oscar.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/oscar.css">
         <link rel="stylesheet" type="text/css" media="all"
-              href="../../../share/calendar/calendar.css" title="win2k-cold-1"/>
-        <script src="../../../share/javascript/Oscar.js"></script>
-        <script src="../../../share/calendar/calendar.js"></script>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
+        <script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+        <script src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script
-                src="../../../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"
                 type="text/javascript"></script>
-        <script src="../../../share/calendar/calendar-setup.js"
+        <script src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"
                 type="text/javascript"></script>
 
         <script type="text/javascript">

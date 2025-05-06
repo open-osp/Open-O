@@ -58,9 +58,9 @@
     <font class="warning">Error: <fmt:setBundle basename="oscarResources"/><fmt:message key="<%=doctypeerrors.get(iter.next())%>"/></font><br/>
     <% } %>
 
-    <link rel="stylesheet" type="text/css" href="../share/yui/css/fonts-min.css"/>
-    <link rel="stylesheet" type="text/css" href="../share/yui/css/autocomplete.css"/>
-    <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/fonts-min.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/autocomplete.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
     <title>Status Update Page</title>
 </head>
 <body>

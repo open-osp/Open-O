@@ -57,17 +57,18 @@ public class EctDefineNewMeasurementGroup2Action extends ActionSupport {
         if (securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin", "w", null) || securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin.measurements", "w", null)) {
             EctValidation validate = new EctValidation();
             String regExp = validate.getRegCharacterExp();
+            String contextPath = request.getContextPath();
 
             if (!validate.matchRegExp(regExp, groupName)) {
                 addActionError(getText("errors.invalid", new String[]{groupName}));
-                response.sendRedirect("/oscarEncounter/oscarMeasurements/DefineNewMeasurementGroup.jsp");
+                response.sendRedirect(contextPath + "/oscarEncounter/oscarMeasurements/DefineNewMeasurementGroup.jsp");
                 return NONE;
             }
 
             //Write the new groupName to the database if there's no duplication
             if (!write2Database(groupName, styleSheet)) {
                 addActionError(getText("error.oscarEncounter.addNewMeasurementGroup.duplicateGroupName", new String[]{groupName}));
-                response.sendRedirect("/oscarEncounter/oscarMeasurements/DefineNewMeasurementGroup.jsp");
+                response.sendRedirect(contextPath + "/oscarEncounter/oscarMeasurements/DefineNewMeasurementGroup.jsp");
             }
 
             HttpSession session = request.getSession();

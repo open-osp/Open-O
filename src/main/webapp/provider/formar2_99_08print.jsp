@@ -58,7 +58,7 @@
 </head>
 <body onLoad="setfocus()" topmargin="0" leftmargin="1" rightmargin="1"
       bgcolor="navy">
-<img src="../images/formar2_99_08.gif">
+<img src="<%= request.getContextPath() %>/images/formar2_99_08.gif">
 <div ID="bdiv1"
      STYLE="position:absolute; visibility:visible; z-index:2; left:<%=50+oox%>px; top:<%=76+ooy%>px; width:400px; height:20px;">
     <%=Misc.JSEscape(request.getParameter("xml_name"))%>
@@ -690,7 +690,7 @@
 <div ID="graphic"
      STYLE="position:absolute; visibility:visible; z-index:2; left:<%=3+oox%>px; top:<%=653+ooy%>px; width:501px; height:280px;">
     <embed type="image/svg+xml"
-           src="../form/formar2svg.jsp?bgimage=<%=URLEncoder.encode("../images/formar2_99_08gra.gif")%>&bgimagewidth=222&bgimageheight=276<%=urlparam%>"
+           src="<%= request.getContextPath() %>/form/formar2svg.jsp?bgimage=<%=URLEncoder.encode("../images/formar2_99_08gra.gif")%>&bgimagewidth=222&bgimageheight=276<%=urlparam%>"
            width="221" height="276" wmode="transparent"/>
 </div>
 <%

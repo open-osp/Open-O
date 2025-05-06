@@ -59,7 +59,7 @@
     String retCode = (String) loginCreds.get("returnCode");
     if ("-1".equals(retCode)) {  //Invalid Username/Password
 %>
-Username or Password incorrect. <a href="../setProviderStaleDate.do?method=viewOntarioMDId">Click here to enter you
+Username or Password incorrect. <a href="<%= request.getContextPath() %>/setProviderStaleDate.do?method=viewOntarioMDId">Click here to enter you
     username and password</a>
 <%
     return;

@@ -58,18 +58,18 @@
               href="<%=bView?"arStyleView.css" : "arStyle.css"%>">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
     </head>
 
     <script type="text/javascript" language="Javascript">
@@ -97,7 +97,7 @@
                 if (document.forms[0].c_finalEDB.value == "" && !confirm("<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formOnar.msgNoEDB"/>")) {
                     ret = false;
                 } else {
-                    document.forms[0].action = "../form/createpdf?__title=Antenatal+Record+Part+2&__cfgfile=onar2PrintCfgPg2&__cfgGraphicFile=onar2PrintGraphCfgPg2&__template=onar2";
+                    document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=Antenatal+Record+Part+2&__cfgfile=onar2PrintCfgPg2&__cfgGraphicFile=onar2PrintGraphCfgPg2&__template=onar2";
                     document.forms[0].target = "_blank";
                 }
             }
@@ -604,7 +604,7 @@
                     if (!bView) {
                 %>
                 <td><a
-                        href="javascript: popPage('formlabreq07.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AnteNatal','LabReq');">LAB</a>
+                        href="javascript: popPage('form/formlabreq07.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AnteNatal','LabReq');">LAB</a>
                 </td>
 
                 <td align="right"><b>View:</b> <a
@@ -1465,7 +1465,7 @@
                             <td nowrap><input type="text" name="ar2_uDate1"
                                               id="ar2_uDate1" class="spe" onDblClick="calToday(this)" size="10"
                                               maxlength="10" value="<%= props.getProperty("ar2_uDate1", "") %>">
-                                <img src="../images/cal.gif" id="ar2_uDate1_cal"></td>
+                                <img src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_uDate1_cal"></td>
                             <td><input type="text" name="ar2_uGA1" class="spe"
                                        onDblClick="calcWeek(this)" size="5" maxlength="10"
                                        value="<%= UtilMisc.htmlEscape(props.getProperty("ar2_uGA1", "")) %>"></td>
@@ -1480,7 +1480,7 @@
                             <td><input type="text" name="ar2_uDate2" id="ar2_uDate2"
                                        class="spe" onDblClick="calToday(this)" size="10" maxlength="10"
                                        value="<%= props.getProperty("ar2_uDate2", "") %>"> <img
-                                    src="../images/cal.gif" id="ar2_uDate2_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_uDate2_cal"></td>
                             <td><input type="text" name="ar2_uGA2" class="spe"
                                        onDblClick="calcWeek(this)" size="5" maxlength="10"
                                        value="<%= UtilMisc.htmlEscape(props.getProperty("ar2_uGA2", "")) %>"></td>
@@ -1512,7 +1512,7 @@
                             <td><input type="text" name="ar2_uDate3" id="ar2_uDate3"
                                        class="spe" onDblClick="calToday(this)" size="10" maxlength="10"
                                        value="<%= props.getProperty("ar2_uDate3", "") %>"> <img
-                                    src="../images/cal.gif" id="ar2_uDate3_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_uDate3_cal"></td>
                             <td><input type="text" name="ar2_uGA3" class="spe"
                                        onDblClick="calcWeek(this)" size="5" maxlength="10"
                                        value="<%= UtilMisc.htmlEscape(props.getProperty("ar2_uGA3", "")) %>"></td>
@@ -1528,7 +1528,7 @@
                             <td><input type="text" name="ar2_uDate4" id="ar2_uDate4"
                                        class="spe" onDblClick="calToday(this)" size="10" maxlength="10"
                                        value="<%= props.getProperty("ar2_uDate4", "") %>"> <img
-                                    src="../images/cal.gif" id="ar2_uDate4_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_uDate4_cal"></td>
                             <td><input type="text" name="ar2_uGA4" class="spe"
                                        onDblClick="calcWeek(this)" size="5" maxlength="10"
                                        value="<%= UtilMisc.htmlEscape(props.getProperty("ar2_uGA4", "")) %>"></td>
@@ -1680,7 +1680,7 @@
                     if (!bView) {
                 %>
                 <td><a
-                        href="javascript: popPage('formlabreq07.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AnteNatal','LabReq');">LAB</a>
+                        href="javascript: popPage('form/formlabreq07.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AnteNatal','LabReq');">LAB</a>
                 </td>
 
                 <td align="right"><font size="-1"><b>View:</b> <a

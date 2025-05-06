@@ -58,18 +58,18 @@
         <link rel="stylesheet" type="text/css" href="bcArStyle.css">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <link rel="stylesheet" type="text/css" media="print" href="print.css">
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
     </head>
@@ -428,7 +428,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <!--r>
       <td width="55%" >DATE
-		<img src="../images/cal.gif" id="pg1_formDate_cal">
+		<img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_formDate_cal">
           <%=bSync? ("<b><a href=# onClick='syncDemo(); return false;'><font color='red'>Synchronize</font></a></b>") :"" %>
       <br>
       <input type="text" name="pg1_formDate" style="width:100%" size="10" maxlength="10" value="<%= props.getProperty("pg1_formDate", "") %>" @oscar.formDB dbType="date" />
@@ -509,7 +509,7 @@
                                   name="dateCon<%=i %>" size="10" maxlength="10"
                                   value="<%= props.getProperty("dateCon"+i, "") %>"
                                   onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="dateCon<%=i %>_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="dateCon<%=i %>_cal"></td>
                 <td nowrap><%=descCon[i] %>
                 </td>
                 <td><input type="text" id="cCon<%=i %>" name="cCon<%=i %>"
@@ -549,7 +549,7 @@
                                   name="dateConA<%=i %>" size="10" maxlength="10"
                                   value="<%= props.getProperty("dateConA"+i, "") %>"
                                   onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="dateConA<%=i %>_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="dateConA<%=i %>_cal"></td>
                 <% if (!descConA[i].startsWith("<input")) { %>
                 <td nowrap><%=descConA[i] %>
                 </td>
@@ -606,7 +606,7 @@
                                               name="date1st<%=i %>" size="10" maxlength="10"
                                               value="<%= props.getProperty("date1st"+i, "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date1st<%=i %>_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date1st<%=i %>_cal"></td>
                 <% if (!desc1st[i].startsWith("<input")) { %>
                 <td nowrap><%=desc1st[i] %>
                 </td>
@@ -659,7 +659,7 @@
                                               name="date2nd<%=i %>" size="10" maxlength="10"
                                               value="<%= props.getProperty("date2nd"+i, "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date2nd<%=i %>_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date2nd<%=i %>_cal"></td>
                 <% if (!desc2nd[i].startsWith("<input")) { %>
                 <td nowrap><%=desc2nd[i] %>
                 </td>
@@ -713,7 +713,7 @@
                                               name="date3rd1<%=i %>" size="10" maxlength="10"
                                               value="<%= props.getProperty("date3rd1"+i, "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date3rd1<%=i %>_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date3rd1<%=i %>_cal"></td>
                 <% if (!desc3rd1[i].startsWith("<input")) { %>
                 <td nowrap><%=desc3rd1[i] %>
                 </td>
@@ -771,7 +771,7 @@
                                               name="date3rd2<%=i %>" size="10" maxlength="10"
                                               value="<%= props.getProperty("date3rd2"+i, "")%>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date3rd2<%=i %>_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date3rd2<%=i %>_cal"></td>
                 <% if (!desc3rd2[i].startsWith("<input")) { %>
                 <td nowrap><%=desc3rd2[i] %>
                 </td>
@@ -810,7 +810,7 @@
                                               name="date3rd2a0" size="10" maxlength="10"
                                               value="<%= props.getProperty("date3rd2a0", "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date3rd2a0_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date3rd2a0_cal"></td>
                 <td>&nbsp;&nbsp;Vit K</td>
                 <td><input type="text" id="c3rd2a0" name="c3rd2a0" size="40"
                            maxlength="40" value="<%= props.getProperty("c3rd2a0", "") %>"/></td>
@@ -839,7 +839,7 @@
                                               name="date3rd2a1" size="10" maxlength="10"
                                               value="<%= props.getProperty("date3rd2a1", "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date3rd2a1_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date3rd2a1_cal"></td>
                 <td>&nbsp;&nbsp;Eye prophylaxis</td>
                 <td><input type="text" id="c3rd2a1" name="c3rd2a1" size="40"
                            maxlength="40" value="<%= props.getProperty("c3rd2a1", "") %>"/></td>
@@ -864,7 +864,7 @@
                                               name="date3rd2a2" size="10" maxlength="10"
                                               value="<%= props.getProperty("date3rd2a2", "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date3rd2a2_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date3rd2a2_cal"></td>
                 <td>&nbsp;&nbsp;NB Screen</td>
                 <td><input type="text" id="c3rd2a2" name="c3rd2a2" size="40"
                            maxlength="40" value="<%= props.getProperty("c3rd2a2", "") %>"/></td>
@@ -889,7 +889,7 @@
                                               name="date3rd2a3" size="10" maxlength="10"
                                               value="<%= props.getProperty("date3rd2a3", "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date3rd2a3_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date3rd2a3_cal"></td>
                 <td>&nbsp;&nbsp;Circumcision</td>
                 <td><input type="text" id="c3rd2a3" name="c3rd2a3" size="40"
                            maxlength="40" value="<%= props.getProperty("c3rd2a3", "") %>"/></td>
@@ -945,7 +945,7 @@
                                               name="date3rd3<%=i %>" size="10" maxlength="10"
                                               value="<%= props.getProperty("date3rd3"+i, "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date3rd3<%=i %>_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date3rd3<%=i %>_cal"></td>
                 <% if (!desc3rd3[i].startsWith("<input")) { %>
                 <td nowrap><%=desc3rd3[i] %>
                 </td>
@@ -986,7 +986,7 @@
                                               name="date3rd4<%=i %>" size="10" maxlength="10"
                                               value="<%= props.getProperty("date3rd4"+i, "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date3rd4<%=i %>_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date3rd4<%=i %>_cal"></td>
                 <% if (!desc3rd4[i].startsWith("<input")) { %>
                 <td nowrap><%=desc3rd4[i] %>
                 </td>
@@ -1030,7 +1030,7 @@
                                               name="date3rd5<%=i %>" size="10" maxlength="10"
                                               value="<%= props.getProperty("date3rd5"+i, "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="date3rd5<%=i %>_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="date3rd5<%=i %>_cal"></td>
                 <% if (!desc3rd5[i].startsWith("<input")) { %>
                 <td nowrap><%=desc3rd5[i] %>
                 </td>
@@ -1074,7 +1074,7 @@
                                               name="dateOther<%=i %>" size="10" maxlength="10"
                                               value="<%= props.getProperty("dateOther"+i, "") %>"
                                               onDblClick="calToday(this)" @oscar.formDB dbType="date"/> <img
-                        src="../images/cal.gif" id="dateOther<%=i %>_cal"></td>
+                        src="<%= request.getContextPath() %>/images/cal.gif" id="dateOther<%=i %>_cal"></td>
                 <td><input type="text" name="descOther<%=i %>" size="50"
                            maxlength="70" value="<%= props.getProperty("descOther"+i, "") %>"/>
                 </td>

@@ -85,19 +85,20 @@ public class CihiExportPHC_VRS2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-    private ClinicDAO clinicDAO;
-    private DataExportDao dataExportDAO;
-    private DemographicDao demographicDao;
-    private OscarAppointmentDao oscarAppointmentDao;
-    private IssueDAO issueDAO;
-    private CaseManagementNoteDAO caseManagementNoteDAO;
-    private CaseManagementNoteExtDAO caseManagementNoteExtDAO;
-    private AllergyDao allergyDAO;
-    private Hl7TextInfoDao hl7TextInfoDAO;
-    private PreventionDao preventionDao;
-    private DxresearchDAO dxresearchDAO;
-    private Icd9Dao icd9Dao;
-    private PreventionExtDao preventionExtDao = (PreventionExtDao) SpringUtils.getBean(PreventionExtDao.class);
+    private ClinicDAO clinicDAO = SpringUtils.getBean(ClinicDAO.class);
+    private DataExportDao dataExportDAO = SpringUtils.getBean(DataExportDao.class);
+    private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+    private OscarAppointmentDao oscarAppointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
+    private IssueDAO issueDAO = SpringUtils.getBean(IssueDAO.class);
+    private CaseManagementNoteDAO caseManagementNoteDAO = SpringUtils.getBean(CaseManagementNoteDAO.class);
+    private CaseManagementNoteExtDAO caseManagementNoteExtDAO = SpringUtils.getBean(CaseManagementNoteExtDAO.class);
+    private Hl7TextInfoDao hl7TextInfoDAO = SpringUtils.getBean(Hl7TextInfoDao.class);
+    private PreventionDao preventionDao = SpringUtils.getBean(PreventionDao.class);
+    private PreventionExtDao preventionExtDao = SpringUtils.getBean(PreventionExtDao.class);
+
+    private AllergyDao allergyDAO = SpringUtils.getBean(AllergyDao.class);
+    private DxresearchDAO dxresearchDAO = SpringUtils.getBean(DxresearchDAO.class);
+    private Icd9Dao icd9Dao = SpringUtils.getBean(Icd9Dao.class);
 
     private Logger log = MiscUtils.getLogger();
 

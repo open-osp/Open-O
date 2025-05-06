@@ -39,6 +39,7 @@ import org.oscarehr.caisi_integrator.ws.*;
 import org.oscarehr.casemgmt.dao.ClientImageDAO;
 import org.oscarehr.casemgmt.model.ClientImage;
 import org.oscarehr.casemgmt.service.CaseManagementManager;
+import org.oscarehr.common.dao.OscarAppointmentDao;
 import org.oscarehr.common.model.Admission;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.common.model.Demographic.PatientStatus;
@@ -73,7 +74,7 @@ public class GenericIntakeEdit2Action extends ActionSupport {
     private static final String APPT = "appointment";
     protected static final String CLIENT_EDIT_ID = "id";
 
-    private ClientImageDAO clientImageDAO = null;
+    private ClientImageDAO clientImageDAO = SpringUtils.getBean(ClientImageDAO.class);
     private SurveyManager surveyManager = (SurveyManager) SpringUtils.getBean("surveyManager2");
     //private IMatchManager matchManager = new MatchManager();
 
@@ -87,11 +88,11 @@ public class GenericIntakeEdit2Action extends ActionSupport {
     protected static final String INTAKE_ID = "intakeId";
 
 
-    private GenericIntakeManager genericIntakeManager;
-    protected ClientManager clientManager;
-    protected ProgramManager programManager;
-    protected AdmissionManager admissionManager;
-    protected CaseManagementManager caseManagementManager;
+    private GenericIntakeManager genericIntakeManager = SpringUtils.getBean(GenericIntakeManager.class);
+    protected ClientManager clientManager = SpringUtils.getBean(ClientManager.class);
+    protected ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
+    protected AdmissionManager admissionManager = SpringUtils.getBean(AdmissionManager.class);
+    protected CaseManagementManager caseManagementManager = SpringUtils.getBean(CaseManagementManager.class);
 
 
     public void setGenericIntakeManager(GenericIntakeManager genericIntakeManager) {
@@ -114,12 +115,32 @@ public class GenericIntakeEdit2Action extends ActionSupport {
         return programId;
     }
 
-    public void setOscarSurveyManager(SurveyManager mgr) {
-        this.surveyManager = mgr;
-    }
-
-    public void setClientImageDAO(ClientImageDAO clientImageDAO) {
-        this.clientImageDAO = clientImageDAO;
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("create".equals(method)) {
+            return create();
+        } else if ("blank".equals(method)) {
+            return blank();
+        } else if ("update".equals(method)) {
+            return update();
+        } else if ("print".equals(method)) {
+            return print();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("save_draft".equals(method)) {
+            return save_draft();
+        } else if ("save_temp".equals(method)) {
+            return save_temp();
+        } else if ("save_admit".equals(method)) {
+            return save_admit();
+        } else if ("save_notAdmit".equals(method)) {
+            return save_notAdmit();
+        } else if ("clientEdit".equals(method)) {
+            return clientEdit();
+        } else if ("save_proxy".equals(method)) {
+            return save_proxy();
+        } 
+        return SUCCESS;
     }
 
     public String create() {
@@ -725,7 +746,6 @@ public class GenericIntakeEdit2Action extends ActionSupport {
 
         return createRedirectForward(forward, parameters);
     }
-
 
     public String save_proxy() {
         try {

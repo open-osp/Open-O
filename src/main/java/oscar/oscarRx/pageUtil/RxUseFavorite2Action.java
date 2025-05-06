@@ -52,9 +52,12 @@ public final class RxUseFavorite2Action extends ActionSupport {
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    public String unspecified()
+    public String execute()
             throws IOException, ServletException {
 
+        if ("useFav2".equals(request.getParameter("parameterValue"))) {
+            return useFav2();
+        }
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_rx", "r", null)) {

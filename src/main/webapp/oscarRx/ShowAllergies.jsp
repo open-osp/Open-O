@@ -40,6 +40,7 @@
     oscar.oscarRx.pageUtil.RxSessionBean bean = null;
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
+    String surname = "", firstName = "", age = "";
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_allergy" rights="r" reverse="<%=true%>">
     <%authed = false; %>
@@ -67,7 +68,12 @@
             response.sendRedirect("error.html");
             return; // Ensure no further JSP processing
         }
-        patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getAttribute("Patient");
+        patient = (oscar.oscarRx.data.RxPatientData.Patient) session.getAttribute("Patient");
+        if (patient != null) {
+            surname = patient.getSurname();
+            firstName = patient.getFirstName();
+            age = patient.getAge() + "";
+        }
     %>
 </c:if>
 <%
@@ -211,11 +217,11 @@
                             <table>
                                 <tr>
                                     <td><b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.nameText"/></b>
-                                        ${patient.surname}, ${patient.firstName}<br/>
+                                        <%=surname%>, <%=firstName%><br/>
                                     </td>
                                     <td>&nbsp;</td>
                                     <td><b>Age:</b>
-                                        ${patient.age}
+                                        <%=age%>
                                     </td>
                                 </tr>
                             </table>
@@ -311,7 +317,7 @@
                                                 <td><b>Onset of Reaction</b></td>
                                                 <td><b>Reaction</b></td>
                                                 <td><b>Start Date</b></td>
-                                                <td><img src="../images/notes.gif" border="0" width="10" height="12"
+                                                <td><img src="<%= request.getContextPath() %>/images/notes.gif" border="0" width="10" height="12"
                                                          alt="Annotation"></td>
                                                 <td><b>Action</b></td>
                                                 <td><b>&nbsp;</b></td>
@@ -405,7 +411,7 @@
                                                         %>
                                                         <a href="#" title="Annotation"
                                                            onclick="window.open('../annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=displayAllergy.getId()%>&demo=${patient.demographicNo}','anwin','width=400,height=500');"><img
-                                                                src="../images/notes.gif" border="0"></a>
+                                                                src="<%= request.getContextPath() %>/images/notes.gif" border="0"></a>
                                                         <%
                                                             }
                                                         %>
@@ -439,7 +445,7 @@
                     </tr>
                     <tr>
                         <td><form action="${pageContext.request.contextPath}/oscarRx/searchAllergy.do" method="post"
-                                       focus="searchString" onsubmit="return isEmpty()">
+                                       focus="searchString" onsubmit="return isEmpty()" id="RxSearchAllergyForm" name="RxSearchAllergyForm">
                             <table>
                                 <tr valign="center">
                                     <td>Search:</td>

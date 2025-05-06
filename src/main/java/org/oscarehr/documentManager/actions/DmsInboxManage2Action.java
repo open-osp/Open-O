@@ -70,23 +70,11 @@ public class DmsInboxManage2Action extends ActionSupport {
 
     private static final Logger logger = MiscUtils.getLogger();
 
-    private ProviderInboxRoutingDao providerInboxRoutingDAO = null;
-    private QueueDocumentLinkDao queueDocumentLinkDAO = null;
-    private SecObjectNameDao secObjectNameDao = null;
-    private SecUserRoleDao secUserRoleDao = (SecUserRoleDao) SpringUtils.getBean(SecUserRoleDao.class);
-    private QueueDao queueDAO = (QueueDao) SpringUtils.getBean(QueueDao.class);
-
-    public void setProviderInboxRoutingDAO(ProviderInboxRoutingDao providerInboxRoutingDAO) {
-        this.providerInboxRoutingDAO = providerInboxRoutingDAO;
-    }
-
-    public void setQueueDocumentLinkDAO(QueueDocumentLinkDao queueDocumentLinkDAO) {
-        this.queueDocumentLinkDAO = queueDocumentLinkDAO;
-    }
-
-    public void setSecObjectNameDao(SecObjectNameDao secObjectNameDao) {
-        this.secObjectNameDao = secObjectNameDao;
-    }
+    private ProviderInboxRoutingDao providerInboxRoutingDAO = SpringUtils.getBean(ProviderInboxRoutingDao.class);
+    private QueueDocumentLinkDao queueDocumentLinkDAO = SpringUtils.getBean(QueueDocumentLinkDao.class);
+    private SecObjectNameDao secObjectNameDao = SpringUtils.getBean(SecObjectNameDao.class);
+    private SecUserRoleDao secUserRoleDao = SpringUtils.getBean(SecUserRoleDao.class);
+    private QueueDao queueDAO = SpringUtils.getBean(QueueDao.class);
 
     public String execute() {
         String mtd = request.getParameter("method");

@@ -57,7 +57,19 @@ public class NotePermissions2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("getNoteScope".equals(method)) {
+            return getNoteScope();
+        } else if ("setNotePermissions".equals(method)) {
+            return setNotePermissions();
+        } else if ("getDefaultProgramAndRole".equals(method)) {
+            return getDefaultProgramAndRole();
+        } else if ("visibleProgramsAndRoles".equals(method)) {
+            return visibleProgramsAndRoles();
+        }
+        return getNoteScope();
+    }
 
     public String getNoteScope() throws Exception {
         ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);

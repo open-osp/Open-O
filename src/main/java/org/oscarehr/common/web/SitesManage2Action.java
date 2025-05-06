@@ -24,10 +24,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.lang.StringUtils;
 import org.oscarehr.common.dao.SiteDao;
 import org.oscarehr.common.model.Site;
+import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
@@ -37,10 +37,19 @@ public class SitesManage2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
-    private SiteDao siteDao;
+    private SiteDao siteDao = SpringUtils.getBean(SiteDao.class);
 
     @Override
     public String execute() throws Exception {
+        if ("add".equals(request.getParameter("method"))) {
+            return add();
+        }
+        if ("save".equals(request.getParameter("method"))) {
+            return save();
+        }
+        if ("update".equals(request.getParameter("method"))) {
+            return update();
+        }
         return view();
     }
 
@@ -82,10 +91,6 @@ public class SitesManage2Action extends ActionSupport {
 
         this.setS(s);
         return "details";
-    }
-
-    public void setSiteDao(SiteDao siteDao) {
-        this.siteDao = siteDao;
     }
 
     private Site s;

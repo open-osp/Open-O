@@ -102,32 +102,32 @@ public class MsgViewMessage2Action extends ActionSupport {
                 }
 
                 if (remoteFacility != null) {
-                    request.setAttribute("demographicLocation", remoteFacility.getName());
-                    request.setAttribute("unlinkedDemographics", unlinkedDemographics);
+                    request.getSession().setAttribute("demographicLocation", remoteFacility.getName());
+                    request.getSession().setAttribute("unlinkedDemographics", unlinkedDemographics);
                 }
 
             }
 
-            request.setAttribute("attachedDemographics", attachedDemographics);
-            request.setAttribute("viewMessageMessage", msgDisplayMessage.getMessageBody());
-            request.setAttribute("viewMessageSubject", msgDisplayMessage.getThesubject());
-            request.setAttribute("viewMessageSentby", msgDisplayMessage.getSentby());
-            request.setAttribute("viewMessageSentto", msgDisplayMessage.getSentto());
-            request.setAttribute("viewMessageTime", msgDisplayMessage.getThetime());
-            request.setAttribute("viewMessageDate", msgDisplayMessage.getThedate());
-            request.setAttribute("viewMessageAttach", msgDisplayMessage.getAttach());
-            request.setAttribute("viewMessagePDFAttach", msgDisplayMessage.getPdfAttach());
-            request.setAttribute("viewMessageId", messageNo);
-            request.setAttribute("viewMessageNo", messageNo);
-            request.setAttribute("viewMessagePosition", messagePosition);
-            request.setAttribute("from", from);
-            request.setAttribute("providerNo", providerNo);
+            request.getSession().setAttribute("attachedDemographics", attachedDemographics);
+            request.getSession().setAttribute("viewMessageMessage", msgDisplayMessage.getMessageBody());
+            request.getSession().setAttribute("viewMessageSubject", msgDisplayMessage.getThesubject());
+            request.getSession().setAttribute("viewMessageSentby", msgDisplayMessage.getSentby());
+            request.getSession().setAttribute("viewMessageSentto", msgDisplayMessage.getSentto());
+            request.getSession().setAttribute("viewMessageTime", msgDisplayMessage.getThetime());
+            request.getSession().setAttribute("viewMessageDate", msgDisplayMessage.getThedate());
+            request.getSession().setAttribute("viewMessageAttach", msgDisplayMessage.getAttach());
+            request.getSession().setAttribute("viewMessagePDFAttach", msgDisplayMessage.getPdfAttach());
+            request.getSession().setAttribute("viewMessageId", messageNo);
+            request.getSession().setAttribute("viewMessageNo", messageNo);
+            request.getSession().setAttribute("viewMessagePosition", messagePosition);
+            request.getSession().setAttribute("from", from);
+            request.getSession().setAttribute("providerNo", providerNo);
             if (orderBy != null) {
-                request.setAttribute("orderBy", orderBy);
+                request.getSession().setAttribute("orderBy", orderBy);
             }
 
             if (messageType > 0) {
-                request.setAttribute("msgType", messageType + "");
+                request.getSession().setAttribute("msgType", messageType + "");
             }
 
             if (messageType == OscarMsgType.OSCAR_REVIEW_TYPE && msgType_link != null) {
@@ -148,7 +148,7 @@ public class MsgViewMessage2Action extends ActionSupport {
                     }
                 }
 
-                request.setAttribute("msgTypeLink", hashMap);
+                request.getSession().setAttribute("msgTypeLink", hashMap);
             }
 
             MiscUtils.getLogger().debug("viewMessagePosition: " + messagePosition + "IsLastMsg: " + request.getAttribute("viewMessageIsLastMsg"));
@@ -166,10 +166,10 @@ public class MsgViewMessage2Action extends ActionSupport {
         }
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-        request.setAttribute("today", simpleDateFormat.format(new Date(System.currentTimeMillis())));
+        request.getSession().setAttribute("today", simpleDateFormat.format(new Date(System.currentTimeMillis())));
 
 
-        String actionforward = "/oscarMessenger/ViewMessage.jsp?boxType=" + boxType + "&linkMsgDemo=" + linkMsgDemo;
+        String actionforward = request.getContextPath() + "/oscarMessenger/ViewMessage.jsp?boxType=" + boxType + "&linkMsgDemo=" + linkMsgDemo;
 
         response.sendRedirect(actionforward);
         return NONE;

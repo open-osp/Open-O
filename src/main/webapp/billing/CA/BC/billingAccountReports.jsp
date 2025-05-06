@@ -58,13 +58,13 @@
     <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
     <title>Billing Report</title>
     <link rel="stylesheet" type="text/css" media="all"
-          href="../../../share/calendar/calendar.css" title="win2k-cold-1"/>
-    <script type="text/javascript" src="../../../share/calendar/calendar.js"></script>
+          href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <script type="text/javascript"
-            src="../../../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+            src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
     <script type="text/javascript"
-            src="../../../share/calendar/calendar-setup.js"></script>
-    <link rel="stylesheet" type="text/css" media="all" href="../../../share/css/extractedFromPages.css"/>
+            src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     <script language="JavaScript">
         <!--
         function popupPage(vheight, vwidth, varpage) { //open a new popup window

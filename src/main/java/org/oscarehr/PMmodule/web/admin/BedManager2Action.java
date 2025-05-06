@@ -60,11 +60,11 @@ public class BedManager2Action extends ActionSupport {
 
     private BedManager bedManager = SpringUtils.getBean(BedManager.class);
 
-    private ProgramManager programManager;
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
 
     private RoomManager roomManager = SpringUtils.getBean(RoomManager.class);
 
-    private FacilityDao facilityDao;
+    private FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
 
     private BedDemographicManager bedDemographicManager = SpringUtils.getBean(BedDemographicManager.class);
     private RoomDemographicManager roomDemographicManager = SpringUtils.getBean(RoomDemographicManager.class);
@@ -73,7 +73,7 @@ public class BedManager2Action extends ActionSupport {
         this.facilityDao = facilityDao;
     }
 
-    public String unspecified() {
+    public String execute() {
         // dispatch to correct method based on which button was selected
         // Please don't make changes that causes addRoom and addBed button not working any more!
         if ("".equals(request.getParameter("submit.saveRoom")) == false)

@@ -52,12 +52,24 @@ public class Demographic2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
     private DemographicArchiveDao demographicArchiveDao = SpringUtils.getBean(DemographicArchiveDao.class);
     private DemographicExtArchiveDao demographicExtArchiveDao = SpringUtils.getBean(DemographicExtArchiveDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("getSubdivisionCodes".equals(method)) {
+            return getSubdivisionCodes();
+        } else if ("getCountryAndProvinceCodes".equals(method)) {
+            return getCountryAndProvinceCodes();
+        } else if ("getAddressAndPhoneHistoryAsJson".equals(method)) {
+            return getAddressAndPhoneHistoryAsJson();
+        } else if ("checkForDuplicates".equals(method)) {
+            return checkForDuplicates();
+        }
+        return getSubdivisionCodes();
+    }
 
     public String getSubdivisionCodes()
             throws Exception {
@@ -240,7 +252,6 @@ public class Demographic2Action extends ActionSupport {
 
         return null;
     }
-
 
     public String checkForDuplicates() {
         String firstName = request.getParameter("firstName");

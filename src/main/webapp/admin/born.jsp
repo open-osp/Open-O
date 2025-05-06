@@ -103,7 +103,7 @@
                             var bornPathway = data[x].bornPathway;
                             var serviceId = data[x].serviceName;
 
-                            $('#mappingTable > tbody:last').append('<tr><td>' + bornPathway + '</td><td>' + serviceId + '</td><td><a href="javascript:void(0);" onclick="deleteMapping(' + id + ');"><img border="0" title="delete" src="../images/Delete16.gif"/></a></td></tr>');
+                            $('#mappingTable > tbody:last').append('<tr><td>' + bornPathway + '</td><td>' + serviceId + '</td><td><a href="javascript:void(0);" onclick="deleteMapping(' + id + ');"><img border="0" title="delete" src="<%= request.getContextPath() %>/images/Delete16.gif"/></a></td></tr>');
                         }
                     });
             }

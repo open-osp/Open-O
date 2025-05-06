@@ -64,10 +64,11 @@ public class EctAddMeasurementStyleSheet2Action extends ActionSupport {
 
 
             ArrayList<String> messages = new ArrayList<String>();
+            String contextPath = request.getContextPath();
 
             if (!saveFile(file, fileName)) {
                 addActionError(getText("errors.fileNotAdded"));
-                response.sendRedirect("/oscarEncounter/oscarMeasurements/AddMeasurementStyleSheet.jsp");
+                response.sendRedirect(contextPath + "/oscarEncounter/oscarMeasurements/AddMeasurementStyleSheet.jsp");
                 return NONE;
             } else {
                 write2Database(fileName);

@@ -118,12 +118,12 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" media="all"
-          href="../../../share/calendar/calendar.css" title="win2k-cold-1"/>
+          href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
-    <script type="text/javascript" src="../../../share/calendar/calendar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <script type="text/javascript"
-            src="../../../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-    <script type="text/javascript" src="../../../share/calendar/calendar-setup.js"></script>
+            src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript">
 
@@ -363,7 +363,7 @@
                 <td nowrap align="center">
                     <input type="text" name="paymentDate" id="paymentDate" onDblClick="calToday(this)" size="10"
                            value="<%=datetime%>">
-                    <a id="btn_date"><img title="Calendar" src="../../../images/cal.gif" alt="Calendar" border="0"/></a>
+                    <a id="btn_date"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                     <input type="button" id="saveBtn" name="submitBtn" value="    Save  "
                            onClick="checkInput(); return false;"/>
                     <input type="button" id="saveAndSettleBtn" value="Save & settle"

@@ -71,6 +71,18 @@ public class BulkPatientDashboard2Action extends ActionSupport {
 
     private MessageHandler messageHandler = new MessageHandler();
 
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("addToDiseaseRegistry".equals(method)) {
+            return addToDiseaseRegistry();
+        } else if ("getICD9Description".equals(method)) {
+            return getICD9Description();
+        } else if ("setPatientsInactive".equals(method)) {
+            return setPatientsInactive();
+        }
+        return excludePatients();
+    }
+
     public String excludePatients() {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

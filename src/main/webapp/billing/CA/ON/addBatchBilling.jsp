@@ -240,7 +240,7 @@
                                     face="Verdana, Arial, Helvetica, sans-serif" size="1"> <input
                                     type="text" name="xml_other1" size="20" value=""> <a
                                     href="javascript:OtherScriptAttach()"><img
-                                    src="../../../images/search_code.jpg" border="0"></a> </font></td>
+                                    src="<%= request.getContextPath() %>/images/search_code.jpg" border="0"></a> </font></td>
                         </tr>
                         <tr>
                             <td width="29%"><font size="1"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.batchbilling.DxCode"/></font></td>
@@ -248,7 +248,7 @@
                                                    size="20" value=""><input type="hidden"
                                                                              name="xml_dig_search1"> <a
                                     href="javascript:ScriptAttach()"><img
-                                    src="../../../images/search_dx_code.jpg" border="0"></a></td>
+                                    src="<%= request.getContextPath() %>/images/search_dx_code.jpg" border="0"></a></td>
                         </tr>
                         <tr>
                             <td width="29%"><font

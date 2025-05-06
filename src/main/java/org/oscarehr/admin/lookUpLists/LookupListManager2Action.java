@@ -50,6 +50,20 @@ public class LookupListManager2Action extends ActionSupport {
         super();
     }
 
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("manage".equals(method)) {
+            return manage();
+        } else if ("order".equals(method)) {
+            return order();
+        } else if ("add".equals(method)) {
+            return add();
+        } else if ("remove".equals(method)) {
+            return remove();
+        }
+        return manageSingle();
+    }
+
     @SuppressWarnings("unused")
     public String manageSingle() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

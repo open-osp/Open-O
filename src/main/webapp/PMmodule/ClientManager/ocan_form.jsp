@@ -631,7 +631,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
                 <input id="startDate" name="startDate" onfocus="this.blur()" readonly="readonly"
                        class="{validate: {required:true}}" type="text"
                        value="<%=ocanStaffForm.getFormattedStartDate()%>"> <img title="Calendar" id="cal_startDate"
-                                                                                src="../../images/cal.gif"
+                                                                                src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                 alt="Calendar" border="0">
                 <script type="text/javascript">Calendar.setup({
                     inputField: 'startDate',
@@ -651,7 +651,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
                        class="{validate: {required:true}}" type="text"
                        value="<%=ocanStaffForm.getFormattedCompletionDate()%>"> <img title="Calendar"
                                                                                      id="cal_completionDate"
-                                                                                     src="../../images/cal.gif"
+                                                                                     src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                      alt="Calendar" border="0">
                 <script type="text/javascript">Calendar.setup({
                     inputField: 'completionDate',

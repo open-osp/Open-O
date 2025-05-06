@@ -480,6 +480,10 @@ public class SaveRegistration2Action extends ActionSupport {
 //        return SUCCESS;
 //    }
 //
+    public String execute() {
+        return flowsheet();
+    }
+
     public String flowsheet() {
 
         MiscUtils.getLogger().debug("in submitfollowupservlet");

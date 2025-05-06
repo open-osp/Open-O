@@ -43,11 +43,20 @@ public class TestBook2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
     static EyeformTestBookDao dao = SpringUtils.getBean(EyeformTestBookDao.class);
 
-    public String unspecified() {
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("cancel".equals(method)) {
+            return cancel();
+        } else if ("getNoteText".equals(method)) {
+            return getNoteText();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("getTicklerText".equals(method)) {
+            return getTicklerText();
+        }
         return form();
     }
 

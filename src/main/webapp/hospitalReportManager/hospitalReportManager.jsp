@@ -206,7 +206,15 @@
         </div>
 
         <% if (request.getParameter("fetch") != null && request.getParameter("fetch").equalsIgnoreCase("true"))
-            new SFTPConnector(loggedInInfo).startAutoFetch(loggedInInfo);
+            if (loggedInInfo == null) {
+                System.err.println("loggedInInfo is null"); 
+            } else {
+                try {
+                    new SFTPConnector(loggedInInfo).startAutoFetch(loggedInInfo);
+                } catch (Exception e) {
+                    System.err.println("Error in startAutoFetch: " + e.getMessage()); 
+                }
+            }
         %>
         <p>
             HRM Status: <%=SFTPConnector.isFetchRunning() ? "Fetching data from HRM" : "Idle" %><br>
@@ -222,7 +230,7 @@
                                                           onChange="getFileList(event)"/>
             <span title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
                   style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img
-                    alt="alert" src="../images/icon_alertsml.gif"></span>
+                    alt="alert" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"></span>
 
             <input type="submit" id="file-upload-btn" class="btn" name="submit" value="Upload">
             <div id="file-list">
@@ -256,7 +264,7 @@
         </form>
         <input type="button" class="btn"
                value="I don't want to receive any more HRM outage messages for this outage instance"
-               onclick="window.location='disable_msg_action.jsp'">
+               onclick="window.location='hospitalReportManager/disable_msg_action.jsp'">
     </div>
     </body>
 </html>

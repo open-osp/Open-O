@@ -50,6 +50,11 @@ public class StudentImport2Action extends ActionSupport {
 
     private static Logger logger = MiscUtils.getLogger();
 
+
+    public String execute() throws IOException {
+        return uploadFile();
+    }
+
     /*
      * Import
      *

@@ -74,6 +74,21 @@ public final class RxSearchDrug2Action extends ActionSupport {
             throw new RuntimeException("missing required security object (_rx)");
         }
 
+        String method = request.getParameter("method");
+        if ("searchAllCategories".equals(method)) {
+            return searchAllCategories();
+        } else if ("searchBrandName".equals(method)) {
+            return searchBrandName();
+        } else if ("searchGenericName".equals(method)) {
+            return searchGenericName();
+        } else if ("searchActiveIngredient".equals(method)) {
+            return searchActiveIngredient();
+        } else if ("searchNaturalRemedy".equals(method)) {
+            return searchNaturalRemedy();
+        } else if ("jsonSearch".equals(method)) {
+            return jsonSearch();
+        }
+
 
         // Setup variables
         String genericSearch = this.getGenericSearch();

@@ -61,8 +61,7 @@ public class Renal2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
-    private DxresearchDAO dxResearchDao = (DxresearchDAO) SpringUtils.getBean(DxresearchDAO.class);
+    private DxresearchDAO dxResearchDao = SpringUtils.getBean(DxresearchDAO.class);
     private MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
     private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
     private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
@@ -75,6 +74,29 @@ public class Renal2Action extends ActionSupport {
             labReqVersion = "10";
         }
     }
+
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("checkForDx".equals(method)) {
+            return checkForDx();
+        } else if ("addtoDx".equals(method)) {
+            return addtoDx();
+        } else if ("getNextSteps".equals(method)) {
+            return getNextSteps();
+        } else if ("generatePatientLetter".equals(method)) {
+            return generatePatientLetter();
+        } else if ("createLabReq".equals(method)) {
+            return createLabReq();
+        } else if ("sendPatientLetterAsEmail".equals(method)) {
+            return sendPatientLetterAsEmail();
+        } else if ("submitPreimplementationReport".equals(method)) {
+            return submitPreimplementationReport();
+        } else if ("submitCkdScreeningReport".equals(method)) {
+            return submitCkdScreeningReport();
+        } 
+        return checkForDx();
+    }
+
 
     public String checkForDx() {
         String demographicNo = request.getParameter("demographicNo");

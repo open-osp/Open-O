@@ -63,8 +63,8 @@ public class EChartPrint2Action extends ActionSupport {
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
 
-    public String unspecified() throws Exception {
-        return this.print();
+    public String execute() throws Exception {
+        return print();
     }
 
     public String print() throws Exception {

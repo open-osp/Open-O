@@ -74,6 +74,7 @@ public class EctAddMeasuringInstruction2Action extends ActionSupport {
             EctValidation validate = new EctValidation();
             String regExp = validate.getRegCharacterExp();
             String errorField = "The measuring instruction " + measuringInstrc;
+            String contextPath = request.getContextPath();
             if (!validate.matchRegExp(regExp, measuringInstrc)) {
                 addActionError(getText("errors.invalid", new String[]{errorField}));
                 isValid = false;
@@ -83,14 +84,14 @@ public class EctAddMeasuringInstruction2Action extends ActionSupport {
                 isValid = false;
             }
             if (!isValid) {
-                response.sendRedirect("/oscarEncounter/oscarMeasurements/AddMeasuringInstruction.jsp");
+                response.sendRedirect(contextPath + "/oscarEncounter/oscarMeasurements/AddMeasuringInstruction.jsp");
                 return NONE;
             }
 
             List<MeasurementType> mts = dao.findByMeasuringInstructionAndTypeDisplayName(measuringInstrc, typeDisplayName);
             if (mts.size() > 0) {
                 addActionError(getText("error.oscarEncounter.Measurements.duplicateTypeName"));
-                response.sendRedirect("/oscarEncounter/oscarMeasurements/AddMeasuringInstruction.jsp");
+                response.sendRedirect(contextPath + "/oscarEncounter/oscarMeasurements/AddMeasuringInstruction.jsp");
                 return NONE;
             }
 

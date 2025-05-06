@@ -536,7 +536,7 @@
 
 
                 <div id="docinfo"></div>
-                <div id="printnotesbutton"><input type='image' src="../oscarEncounter/graphics/document-print.png"
+                <div id="printnotesbutton"><input type='image' src="<%= request.getContextPath() %>/oscarEncounter/graphics/document-print.png"
                                                   onclick="PrintEncounter();"
                                                   title='<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.btnPrint"/>'
                                                   id="imgPrintEncounter"></div>

@@ -59,13 +59,13 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript">
             function changeBillingForm() {
-                document.forms["groupPreference"].method.value = "setDefaultBillingForm";
-                document.forms["groupPreference"].submit();
+                document.getElementById('method').value = "setDefaultBillingForm";
+                document.getElementById('groupPreference').submit();
             }
 
             function savePreference() {
-                document.forms["groupPreference"].method.value = "save";
-                document.forms["groupPreference"].submit();
+                document.getElementById('method').value = "save";
+                document.getElementById('groupPreference').submit();
             }
         </script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.grouppref.title"/></title>
@@ -74,7 +74,7 @@
 
     <body topmargin="0" leftmargin="0" rightmargin="0">
 
-    <form method="post" action="${pageContext.request.contextPath}/admin/GroupPreference.do">
+    <form id="groupPreference" method="post" action="${pageContext.request.contextPath}/admin/GroupPreference.do">
 
         <input type="hidden" id="method" name="method"/>
 

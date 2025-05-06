@@ -43,6 +43,9 @@ public class RegisterCppCode2Action extends ActionSupport {
 
     static Logger logger = MiscUtils.getLogger();
 
+    public String execute() {
+        return register();
+    }
 
     public String register() {
         String code = request.getParameter("code");

@@ -63,7 +63,7 @@
         <div id="branding-logo">
             <img alt="OSCAR EMR" src="<%=request.getContextPath()%>/images/oscar_logo_small.png" width="19px">
         </div>
-        <%= demographic.getStandardIdentificationHTML() %>
+        <%= demographic.getStandardIdentificationHTML(request.getContextPath()) %>
     </div>
     <div id="right-column">
         <div id="userSettings" style="align-self: center; margin-right:15px;">

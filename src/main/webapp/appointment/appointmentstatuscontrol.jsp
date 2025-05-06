@@ -18,4 +18,7 @@
 
 --%>
 
-<% response.sendRedirect("/appointment/apptStatusSetting.do?dispatch=view"); %>
+<% 
+    String contextPath = request.getContextPath();
+    response.sendRedirect(contextPath + "/appointment/apptStatusSetting.do?dispatch=view"); 
+%>

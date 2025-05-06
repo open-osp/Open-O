@@ -57,7 +57,7 @@
     </head>
 
 
-    <link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
     <style type="text/css" media="print">
         .noprint {
             display: none;

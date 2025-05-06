@@ -63,14 +63,14 @@
 %>
 
 
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/encounterStyles.css">
 
 <%@page import="org.oscarehr.util.MiscUtils" %>
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
     <script language="javascript">
         var browserName = navigator.appName;

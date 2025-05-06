@@ -71,7 +71,7 @@
             oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
         %>
 
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
 
 
         <script type="text/javascript">
@@ -121,8 +121,8 @@
                        height="100%">
                     <tr>
                         <td width="0%" valign="top">
-                            <div class="DivCCBreadCrumbs"><a href="SearchDrug.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a>&nbsp;&gt;&nbsp; <a
-                                    href="ShowAllergies.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="EditAllergies.title"/></a>&nbsp;&gt;&nbsp; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="ChooseAllergy.title"/></b></div>
+                            <div class="DivCCBreadCrumbs"><a href="oscarRx/SearchDrug.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a>&nbsp;&gt;&nbsp; <a
+                                    href="oscarRx/ShowAllergies.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="EditAllergies.title"/></a>&nbsp;&gt;&nbsp; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="ChooseAllergy.title"/></b></div>
                         </td>
                     </tr>
                     <!----Start new rows here-->
@@ -147,7 +147,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="submit" name="submit" value=Search" class="ControlPushButton"/>
+                                        <input type="submit" name="submit" value="Search" class="ControlPushButton"/>
                                     </td>
                                     <td><input type=button class="ControlPushButton"
                                                onclick="javascript:document.forms.RxSearchAllergyForm.searchString.value='';document.forms.RxSearchAllergyForm.searchString.focus();"
@@ -239,7 +239,7 @@
                                             <c:if test="${not empty allergyResults[8]}">
                                                 <div class="DivContentSectionHead">
                                                     <a href="javascript:void(0)" onclick="toggleSection('8');return false;">
-                                                        <img border="0" id="8_img" src="../images/collapser.png"/> ATC Class
+                                                        <img border="0" id="8_img" src="<%= request.getContextPath() %>/images/collapser.png"/> ATC Class
                                                     </a>
                                                 </div>
                                                 <div id="8_content">
@@ -260,7 +260,7 @@
                             <br>
                             <br>
                             <%
-                                String sBack = "ShowAllergies.jsp";
+                                String sBack = "oscarRx/ShowAllergies.jsp";
                             %> <input type=button class="ControlPushButton"
                                       onclick="javascript:window.location.href='<%=sBack%>';"
                                       value="Back to View Allergies"/></td>

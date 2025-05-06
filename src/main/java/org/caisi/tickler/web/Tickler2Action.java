@@ -64,11 +64,11 @@ public class Tickler2Action extends ActionSupport {
 
     private static Logger log = MiscUtils.getLogger();
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
-    private ProviderManager providerMgr = null;
-    private PreparedTicklerManager preparedTicklerMgr = null;
-    private DemographicManagerTickler demographicMgr = null;
-    private EChartDao echartDao = null;
-    private ProgramManager programMgr = null;
+    private ProviderManager providerMgr = SpringUtils.getBean(ProviderManager.class);
+    private PreparedTicklerManager preparedTicklerMgr = SpringUtils.getBean(PreparedTicklerManager.class);
+    private DemographicManagerTickler demographicMgr = SpringUtils.getBean(DemographicManagerTickler.class);
+    private EChartDao echartDao = SpringUtils.getBean(EChartDao.class);
+    private ProgramManager programMgr = SpringUtils.getBean(ProgramManager.class);
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
@@ -93,8 +93,36 @@ public class Tickler2Action extends ActionSupport {
     }
 
     /* default to 'list' */
-    public String unspecified() throws Exception {
-        log.debug("unspecified");
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("view".equals(method)) {
+            return view();
+        } else if ("my_tickler_filter".equals(method)) {
+            return my_tickler_filter();
+        } else if ("run_custom_filter".equals(method)) {
+            return run_custom_filter();
+        } else if ("reassign".equals(method)) {
+            return reassign();
+        } else if ("delete".equals(method)) {
+            return delete();
+        } else if ("add_comment".equals(method)) {
+            return add_comment();
+        } else if ("complete".equals(method)) {
+            return complete();
+        } else if ("edit".equals(method)) {
+            return edit();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("prepared_tickler_list".equals(method)) {
+            return prepared_tickler_list();
+        } else if ("prepared_tickler_edit".equals(method)) {
+            return prepared_tickler_edit();
+        } else if ("update_status".equals(method)) {
+            return update_status();
+        } else if ("print".equals(method)) {
+            return print();
+        } 
+
         return filter();
     }
 

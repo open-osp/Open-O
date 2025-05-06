@@ -93,7 +93,7 @@
             boolean isNKDA = "No Known Drug Allergies".equals(name);
         %>
 
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
 
     </head>
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
@@ -124,7 +124,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td id="addAllergyDialogue"><form action="/oscarRx/addAllergy2.do"
+                        <td id="addAllergyDialogue"><form action="<%=request.getContextPath()%>/oscarRx/addAllergy2.do"
                                                                focus="reactionDescription">
 
                             <script type="text/javascript">
@@ -226,7 +226,7 @@
                                         <span class="label">Start Date:</span>
                                         <input type="text" name="startDate" id="startDate" size="10" maxlength="10"
                                                value="<%=startDate%>" onblur="checkStartDate();"/>
-                                        <img src="../images/cal.gif" id="startDateCal">(yyyy-mm-dd OR yyyy-mm OR yyyy)
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="startDateCal">(yyyy-mm-dd OR yyyy-mm OR yyyy)
                                     </td>
                                 </tr>
 

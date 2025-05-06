@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.oscarehr.PMmodule.service.ProgramManager;
+import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
@@ -35,13 +36,12 @@ public class ArchiveView2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-    protected ProgramManager programManager;
+    protected ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
 
-    public void setProgramManager(ProgramManager mgr) {
-        this.programManager = mgr;
-    }
-
-    public String unspecified() throws Exception {
+    public String execute() throws Exception {
+        if ("cmm".equals(request.getParameter("method"))) {
+            return cmm();
+        }
         request.getSession(true).setAttribute("archiveView", "true");
         return "view";
     }

@@ -42,7 +42,7 @@
 <html>
 <head>
     <title>Indivo Registration Result</title>
-    <link rel="stylesheet" type="text/css" href="../phr.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/phr.css">
     <style type="text/css">
         div.messageDiv {
             position: absolute;
@@ -82,7 +82,7 @@
     The user and corresponding permissions have been added.
     <br/>
     <input type="button" onclick="closeWindow()" name="closeButton" value="Close Window">
-    <a href="../../documentManager/ManageDocument.do?method=display&doc_no=<%=dispDocNo%>&providerNo=<%=user%>">Registration
+    <a href="<%= request.getContextPath() %>/documentManager/ManageDocument.do?method=display&doc_no=<%=dispDocNo%>&providerNo=<%=user%>">Registration
         Letter</a>
 </div>
 <%}%>

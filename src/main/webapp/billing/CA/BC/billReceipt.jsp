@@ -243,7 +243,7 @@
             }
 
         </script>
-        <link rel="stylesheet" href="../billing/billing.css" type="text/css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/billing/billing.css" type="text/css">
         <style type="text/css">
             <!--
             .style1 {

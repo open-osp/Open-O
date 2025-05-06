@@ -100,7 +100,7 @@
         %>
 
 
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
 
         <script language="javascript">
             function ShowDrugInfo(gn) {
@@ -124,9 +124,9 @@
             oscar.oscarRx.data.RxPatientData.Patient patient = oscar.oscarRx.data.RxPatientData.getPatient(loggedInInfo, currentDemographicNo);
             String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP;
         %>
-        <script type="text/javascript" src="../share/javascript/prototype.js"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"/>
         "></script>
-        <script type="text/javascript" src="../share/javascript/scriptaculous.js"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"/>
         "></script>
         <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/Oscar.js"/>"></script>
 
@@ -142,7 +142,7 @@
                     var data = "drugId=" + drugId + "&favoriteName=" + favoriteName;
                     new Ajax.Request(url, {
                         method: 'get', parameters: data, onSuccess: function (transport) {
-                            window.location.href = "StaticScript2.jsp?regionalIdentifier=" + '<%=regionalIdentifier%>' + "&cn=" + '<%=cn%>';
+                            window.location.href = "<c:out value="${ctx}"/>" + "oscarRx/StaticScript2.jsp?regionalIdentifier=" + '<%=regionalIdentifier%>' + "&cn=" + '<%=cn%>';
                         }
                     });
                 }
@@ -158,7 +158,7 @@
                 var url = "<c:out value="${ctx}"/>" + "/oscarRx/rePrescribe2.do?method=saveReRxDrugIdToStash";
                 new Ajax.Request(url, {
                     method: 'post', parameters: data, asynchronous: false, onSuccess: function (transport) {
-                        location.href = "SearchDrug3.jsp?";
+                        location.href = "<c:out value="${ctx}"/>" + "/oscarRx/SearchDrug3.jsp?";
                     }
                 });
             }
@@ -179,7 +179,7 @@
                        width="100%" height="100%">
                     <tr>
                         <td width="0%" valign="top">
-                            <div class="DivCCBreadCrumbs"><a href="SearchDrug3.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a> &gt; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="StaticScript.title"/></b>
+                            <div class="DivCCBreadCrumbs"><a href="oscarRx/SearchDrug3.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a> &gt; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="StaticScript.title"/></b>
                             </div>
                         </td>
                     </tr>
@@ -299,7 +299,7 @@
                                 if (drug.isLocal) {
                             %>
                             <input type="button" value="Annotation" title="Annotation" class="ControlPushButton"
-                                   onclick="window.open('../annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=drug.localDrugId%>&demo=<%=currentDemographicNo%>','anwin','width=400,height=500');">
+                                   onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=drug.localDrugId%>&demo=<%=currentDemographicNo%>','anwin','width=400,height=500');">
                             <%
                                 }
                             %>
@@ -351,7 +351,7 @@
             <td><br/>
                 <br/>
                 <input type="button" value="Back To Search Drug" class="ControlPushButton"
-                       onclick="javascript:window.location.href='SearchDrug3.jsp';"/></td>
+                       onclick="javascript:window.location.href='<%= request.getContextPath() %>/oscarRx/SearchDrug3.jsp';"/></td>
         </tr>
         <!----End new rows here-->
         <tr height="100%">

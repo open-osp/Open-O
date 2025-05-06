@@ -53,9 +53,21 @@ public class BillingInvoice2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("getPrintPDF".equals(method)) {
+            return getPrintPDF();
+        } else if ("getListPrintPDF".equals(method)) {
+            return getListPrintPDF();
+        } else if ("sendEmail".equals(method)) {
+            return sendEmail();
+        } else if ("sendEmail".equals(method)) {
+            return sendEmail();
+        }
+        return getPrintPDF();
+    }
 
     public String getPrintPDF() throws IOException {
         String invoiceNo = request.getParameter("invoiceNo");

@@ -69,8 +69,8 @@
             : <%=oscar.OscarProperties.getInstance().getStartTime()%>
         </title>
         <link rel="stylesheet" type="text/css"
-              href="../share/css/OscarStandardLayout.css"/>
-        <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
+              href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
         <script>
             jQuery.noConflict();
@@ -262,7 +262,7 @@
                         if (oscarVariables.getProperty("billregion", "").equals("CLINICAID")) {
                     %>
                     <li>
-                        <a href="../billing.do?billRegion=CLINICAID&action=invoice_reports" target="_blank">
+                        <a href="<%= request.getContextPath() %>/billing.do?billRegion=CLINICAID&action=invoice_reports" target="_blank">
                             <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.invoiceRpts"/>
                         </a>
                     </li>
@@ -646,12 +646,12 @@
                         <oscar:oscarPropertiesCheck property="ENABLE_EDIT_APPT_STATUS"
                                                     value="yes">
                             <li><a href="#"
-                                   onclick="popupPage(500,600,'../appointment/appointmentstatuscontrol.jsp');return false;"
+                                   onclick="popupPage(500,600,'${pageContext.request.contextPath}/appointment/apptStatusSetting.do');return false;"
                                    title="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.scheduleSettingTitle"/>"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.appointmentStatusSetting"/></a></li>
                         </oscar:oscarPropertiesCheck>
 
                         <li><a href="#"
-                               onclick="popupPage(500,screen.width,'../appointment/appointmentTypeAction.do'); return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.appointmentTypeList"/></a></li>
+                               onclick="popupPage(500,screen.width,'${pageContext.request.contextPath}/appointment/appointmentTypeAction.do'); return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.appointmentTypeList"/></a></li>
 
                         <li><a href="#"
                                onclick='popupPage(360,600, "${pageContext.request.contextPath}/admin/adminnewgroup.jsp"/>?submit=blank &quot;)'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnAddGroupNoRecord"/></a></li>

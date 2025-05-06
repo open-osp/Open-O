@@ -45,7 +45,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Late Life FDI: Disability component</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
     <body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0"
@@ -93,19 +93,19 @@
                                             </tr>
                                             <tr bgcolor="white" height="150px">
                                                 <td width="11%" align="center" align="center"><img
-                                                        src="graphics/disabilityVisualAid/notAtAll.jpg" align="center"
+                                                        src="form/graphics/disabilityVisualAid/notatall.jpg" align="center"
                                                         border='0'/></td>
                                                 <td width="20%" align="center"><img
-                                                        src="graphics/disabilityVisualAid/little.jpg" align="center"
+                                                        src="form/graphics/disabilityVisualAid/little.jpg" align="center"
                                                         border='0'/></td>
                                                 <td width="25%" align="center"><img
-                                                        src="graphics/disabilityVisualAid/somewhat.jpg" align="center"
+                                                        src="form/graphics/disabilityVisualAid/somewhat.jpg" align="center"
                                                         border='0'/></td>
                                                 <td width="30%" align="center"><img
-                                                        src="graphics/disabilityVisualAid/aLot.jpg" align="center"
+                                                        src="form/graphics/disabilityVisualAid/alot.jpg" align="center"
                                                         border='0'/></td>
                                                 <td width="34%" align="center"><img
-                                                        src="graphics/disabilityVisualAid/completely.jpg"
+                                                        src="form/graphics/disabilityVisualAid/completely.jpg"
                                                         align="center" border='0'/></td>
                                             </tr>
                                             <tr bgcolor="white" height="80px">

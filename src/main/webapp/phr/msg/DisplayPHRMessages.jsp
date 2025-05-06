@@ -97,13 +97,13 @@
 <html>
 <head>
     <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-    <link rel="stylesheet" type="text/css" href="../../oscarMessenger/encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarMessenger/encounterStyles.css">
     <title>
         myOSCAR
     </title>
-    <script type="text/javascript" src="../../share/javascript/prototype.js"></script>
-    <script type="text/javascript" src="../../share/javascript/Oscar.js"></script>
-    <script type="text/javascript" src="../../phr/phr.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/phr/phr.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
     <style type="text/css">
         td.messengerButtonsA {
@@ -460,8 +460,8 @@
                             style="font-weight: bold; color: #339a8a;"><%= senderProvider.getFirst_name()%> <%=senderProvider.getLast_name()%></span>)
                     </span>
                 <span style="float: right;"><a
-                        href="../../phr/UserManagement.do?method=approveAction&actionId=<%=actionPendingApproval.getId()%>"><b>Approve</b></a> <a
-                        href="../../phr/UserManagement.do?method=denyAction&actionId=<%=actionPendingApproval.getId()%>"><b>Deny</b></a></span>
+                        href="<%= request.getContextPath() %>/phr/UserManagement.do?method=approveAction&actionId=<%=actionPendingApproval.getId()%>"><b>Approve</b></a> <a
+                        href="<%= request.getContextPath() %>/phr/UserManagement.do?method=denyAction&actionId=<%=actionPendingApproval.getId()%>"><b>Deny</b></a></span>
             </div>
 
             <%
@@ -476,7 +476,7 @@
                         &nbsp;
                     </th>
                     <th align="left" bgcolor="#DDDDFF">
-                        <a href="../phr/PhrMessage.do?orderby=0&method=${pageMethod}">
+                        <a href="<%= request.getContextPath() %>/phr/PhrMessage.do?orderby=0&method=${pageMethod}">
                             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.DisplayMessages.msgStatus"/>
                         </a>
                     </th>
@@ -644,7 +644,7 @@
         </td>
     </tr>
     <tr>
-        <script type="text/javascript" src="../../share/javascript/boxover.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/boxover.js"></script>
         <td class="MainTableBottomRowLeftColumn">
         </td>
         <td class="MainTableBottomRowRightColumn">

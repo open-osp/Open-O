@@ -53,8 +53,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setDocumentDescriptionTemplate.title"/></title>
-    <script language="javascript" type="text/javascript" src="../share/javascript/Oscar.js"></script>
-    <script type="text/javascript" src="../share/javascript/prototype.js"></script>
+    <script language="javascript" type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
 
     <script type="text/javascript">
         var useDocumentDescriptionTemplateType;

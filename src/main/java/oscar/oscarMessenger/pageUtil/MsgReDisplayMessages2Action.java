@@ -45,12 +45,10 @@ public class MsgReDisplayMessages2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private MessageListDao dao = SpringUtils.getBean(MessageListDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    public String execute()
-            throws IOException, ServletException {
+    public String execute() throws IOException, ServletException {
 
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_msg", "r", null)) {
             throw new SecurityException("missing required security object (_msg)");
@@ -67,6 +65,10 @@ public class MsgReDisplayMessages2Action extends ActionSupport {
         String providerNo = bean.getProviderNo();
         //This will go through the array of message Numbers and set them
         //to del.which stands for deleted. but you prolly could have figured that out
+        if (messageNo == null || messageNo.length == 0) {
+            return SUCCESS;
+        }
+
         for (int i = 0; i < messageNo.length; i++) {
             for (MessageList ml : dao.findByProviderNoAndMessageNo(providerNo, Long.valueOf(messageNo[i]))) {
                 ml.setStatus("read");

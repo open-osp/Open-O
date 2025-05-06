@@ -65,7 +65,7 @@
             String allergyId = (String) request.getAttribute("allergyId");
         %>
 
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
     </head>
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
 
@@ -94,8 +94,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><form action="/oscarRx/addAllergy.do"
-                                       focus="reactionDescription">
+                        <td><form action="oscarRx/addAllergy.do" focus="reactionDescription" name="RxAddAllergyForm" id="RxAddAllergyForm">
                             <table>
                                 <tr valign="center">
 
@@ -164,7 +163,7 @@
                             <%
                                 String sBack = "ShowAllergies.jsp";
                             %> <input type=button class="ControlPushButton"
-                                      onclick="javascript:window.location.href='<%=sBack%>';"
+                                      onclick="javascript:window.location.href='oscarRx/<%=sBack%>';"
                                       value="Back to View Allergies"/></td>
                     </tr>
                     <!----End new rows here-->

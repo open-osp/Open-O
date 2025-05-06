@@ -43,7 +43,7 @@
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.cppPrefs"/></title>
 
-        <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
         <link rel="stylesheet" type="text/css" media="all" href="<c:out value="${ctx}"/>/share/calendar/calendar.css"
               title="win2k-cold-1">
         <script src="<c:out value="${ctx}"/>/share/javascript/prototype.js" type="text/javascript"></script>

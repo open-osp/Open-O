@@ -30,6 +30,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.Spring;
 
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.FlowSheetDrugDao;
@@ -48,19 +49,19 @@ public class FlowSheetDrug2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private static final Logger log2 = MiscUtils.getLogger();
-    private FlowSheetDrugDao flowSheetDrugDao;
-
+    private FlowSheetDrugDao flowSheetDrugDao = SpringUtils.getBean(FlowSheetDrugDao.class);
     private FlowSheetDxDao flowSheetDxDao = SpringUtils.getBean(FlowSheetDxDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    public void setFlowSheetDrugDao(FlowSheetDrugDao flowSheetDrugDao) {
-        this.flowSheetDrugDao = flowSheetDrugDao;
-    }
-
     @Override
     public String execute() throws Exception {
+        if ("save".equals(request.getParameter("method"))) {
+            return save();
+        }
+        if ("dxSave".equals(request.getParameter("method"))) {
+            return dxSave();
+        }
         log2.debug("AnnotationAction-unspec");
         //return setup();
         return null;

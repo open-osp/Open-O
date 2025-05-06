@@ -98,7 +98,6 @@ public class EctDisplayAction extends ActionSupport {
     }
 
     public String execute() throws IOException, ServletException {
-
         EctSessionBean bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean");
         String forward = "error";
         String cmd = getCmd();

@@ -52,10 +52,12 @@
         ResourceBundle oscarR = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
         String transactionType = new String(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.AddInstitution.addOperation"));
+        String id = null;
         int whichType = 1;
         if (request.getAttribute("upd") != null) {
             transactionType = new String(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.AddInstitution.updateOperation"));
             whichType = 2;
+            id = (String) request.getAttribute("id");
         }
     %>
 
@@ -64,7 +66,7 @@
         <title><%=transactionType%>
         </title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
     <script language="javascript">
         function BackToOscar() {
@@ -72,7 +74,7 @@
         }
     </script>
 
-    <link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
     <body class="BodyStyle" vlink="#0000FF">
 
     <% 
@@ -120,7 +122,7 @@
                         <td style="color: red;">
                             <fmt:setBundle basename="oscarResources"/>
                             <fmt:message  key="oscarEncounter.oscarConsultationRequest.config.AddInstitution.msgInstitutionAdded">
-                                <fmt:param value="${added}" />
+                                <fmt:param value="<%=added%>" />
                             </fmt:message>
                         </td>
                     </tr>
@@ -134,20 +136,27 @@
                                         if (request.getAttribute("id") != null) {
                                             EctConAddInstitutionForm thisForm;
                                             thisForm = (EctConAddInstitutionForm) request.getAttribute("EctConAddInstitutionForm");
-                                            thisForm.setId((String) request.getAttribute("id"));
-                                            thisForm.setName((String) request.getAttribute("name"));
-                                            thisForm.setCity((String) request.getAttribute("city"));
-                                            thisForm.setProvince((String) request.getAttribute("province"));
-                                            thisForm.setPostal((String) request.getAttribute("postal"));
-                                            thisForm.setAddress((String) request.getAttribute("address"));
-                                            thisForm.setPhone((String) request.getAttribute("phone"));
-                                            thisForm.setFax((String) request.getAttribute("fax"));
-                                            thisForm.setWebsite((String) request.getAttribute("website"));
-                                            thisForm.setEmail((String) request.getAttribute("email"));
-                                            thisForm.setAnnotation((String) request.getAttribute("annotation"));
+                                            if (thisForm == null) {
+                                                thisForm = new EctConAddInstitutionForm();
+                                                request.setAttribute("EctConAddInstitutionForm", thisForm);
+                                            }
+
+                                            if (thisForm != null) {
+                                                thisForm.setId((String) request.getAttribute("id"));
+                                                thisForm.setName((String) request.getAttribute("name"));
+                                                thisForm.setCity((String) request.getAttribute("city"));
+                                                thisForm.setProvince((String) request.getAttribute("province"));
+                                                thisForm.setPostal((String) request.getAttribute("postal"));
+                                                thisForm.setAddress((String) request.getAttribute("address"));
+                                                thisForm.setPhone((String) request.getAttribute("phone"));
+                                                thisForm.setFax((String) request.getAttribute("fax"));
+                                                thisForm.setWebsite((String) request.getAttribute("website"));
+                                                thisForm.setEmail((String) request.getAttribute("email"));
+                                                thisForm.setAnnotation((String) request.getAttribute("annotation"));
+                                            }
                                         }
                                     %>
-                                    <input type="hidden" name="id" id="id"/>
+                                    <input type="hidden" name="id" id="id" value="<%=id%>"/>
                                     <tr>
                                         <td>Name</td>
                                         <td><input type="text" name="name"/></td>

@@ -61,18 +61,18 @@
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <link rel="stylesheet" type="text/css" href="<%=bView?"bcArStyleView.css" : "bcArStyle.css"%>">
         <!-- calendar stylesheet -->
-        <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
        adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <style type="text/css">
             <!--
             .demo {
@@ -303,7 +303,7 @@
             document.forms[0].submit.value = "print";
             var ret = checkAllDates();
             if (ret == true) {
-                document.forms[0].action = "../form/createpdf?__title=British+Columbia+Antenatal+Record+Part+2&__cfgfile=bcar2PrintCfgPg2&__cfgfile=bcar1PrintCfgPg2&__cfgGraphicFile=bcar2PrintGraphCfgPg2&__template=bcar2";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=British+Columbia+Antenatal+Record+Part+2&__cfgfile=bcar2PrintCfgPg2&__cfgfile=bcar1PrintCfgPg2&__cfgGraphicFile=bcar2PrintGraphCfgPg2&__template=bcar2";
                 document.forms[0].target = "_blank";
             }
             return ret;
@@ -1081,7 +1081,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                                             <input type="text" name="ar2_labRATDate1" id="ar2_labRATDate1" size="8"
                                                    maxlength="10"
                                                    value="<%= props.getProperty("ar2_labRATDate1", "") %>"/>
-                                            <img src="../images/cal.gif" id="ar2_labRATDate1_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_labRATDate1_cal">
                                         </td>
                                         <td>
                                             <input type="text" name="ar2_labRATRes1" style="width:100%" size="10"
@@ -1094,7 +1094,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                                             <input type="text" name="ar2_labRATDate2" id="ar2_labRATDate2" size="8"
                                                    maxlength="10"
                                                    value="<%= props.getProperty("ar2_labRATDate2", "") %>"/>
-                                            <img src="../images/cal.gif" id="ar2_labRATDate2_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_labRATDate2_cal">
                                         </td>
                                         <td>
                                             <input type="text" name="ar2_labRATRes2" style="width:100%" size="10"
@@ -1107,7 +1107,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                                             <input type="text" name="ar2_labRATDate3" id="ar2_labRATDate3" size="8"
                                                    maxlength="10"
                                                    value="<%= props.getProperty("ar2_labRATDate3", "") %>"/>
-                                            <img src="../images/cal.gif" id="ar2_labRATDate3_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_labRATDate3_cal">
                                         </td>
                                         <td>
                                             <input type="text" name="ar2_labRATRes3" style="width:100%" size="10"
@@ -1124,13 +1124,13 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                                             <input type="text" name="ar2_labRhIgG" id="ar2_labRhIgG" style="width:100%"
                                                    size="10" maxlength="10"
                                                    value="<%= props.getProperty("ar2_labRhIgG", "") %>"/>
-                                            <img src="../images/cal.gif" id="ar2_labRhIgG_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_labRhIgG_cal">
                                         </td>
                                         <td>
                                             <input type="text" name="ar2_labRhIgG2" id="ar2_labRhIgG2"
                                                    style="width:100%" size="10" maxlength="10"
                                                    value="<%= props.getProperty("ar2_labRhIgG2", "") %>"/>
-                                            <img src="../images/cal.gif" id="ar2_labRhIgG2_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_labRhIgG2_cal">
                                         </td>
                                     </tr>
                                 </table>
@@ -1268,7 +1268,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             <td nowrap>
                                 <input type="text" name="ar2_labDiabDate" size="8" maxlength="10"
                                        value="<%= props.getProperty("ar2_labDiabDate", "") %>"/>
-                                <img src="../images/cal.gif" id="ar2_labDiabDate_cal">
+                                <img src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_labDiabDate_cal">
                             </td>
                             <td>
                                 <input type="text" name="ar2_labDiabRes" style="width:100%" size="10" maxlength="10"
@@ -1377,7 +1377,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             <td>EDD <span class="small8">DD/MM/YYYY</span><br>
                                 <input type="text" name="c_EDD" id="c_EDD" size="10" maxlength="10"
                                        value="<%= props.getProperty("c_EDD", "") %>"/>
-                                <img src="../images/cal.gif" id="c_EDD_cal">
+                                <img src="<%= request.getContextPath() %>/images/cal.gif" id="c_EDD_cal">
                             </td>
                         </tr>
                     </table>
@@ -2268,7 +2268,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             <td width="20%"><span class="small9">1ST ULTRASOUND DATE</span><br>
                                 <input type="text" name="ar2_1USoundDate" id="ar2_1USoundDate" size="10" maxlength="10"
                                        value="<%= props.getProperty("ar2_1USoundDate", "") %>"/>
-                                <img src="../images/cal.gif" id="ar2_1USoundDate_cal">
+                                <img src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_1USoundDate_cal">
                             </td>
                             <td width="15%" nowrap><span class="small9">GEST. AGE BY US </span><br>
                                 <input type="text" name="ar2_gestAgeUs" style="width:100%" size="10" maxlength="10"

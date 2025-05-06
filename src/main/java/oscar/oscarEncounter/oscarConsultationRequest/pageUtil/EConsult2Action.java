@@ -55,8 +55,13 @@ public class EConsult2Action extends ActionSupport {
     private final String frontendEconsultUrl = oscarProperties.getProperty("frontendEconsultUrl");
     private final String backendEconsultUrl = oscarProperties.getProperty("backendEconsultUrl");
 
-    public String unspecified() {
-        return null;
+    public String execute() {
+        if ("backend".equals(request.getParameter("method"))) {
+            return backend();
+        } else if ("login".equals(request.getParameter("method"))) {
+            return login();
+        }
+        return frontend();
     }
 
     /**

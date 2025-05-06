@@ -55,6 +55,25 @@ public class Upload2Action extends ActionSupport {
 
     @Override
     public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("cancelUpload".equals(method)) {
+            return cancelUpload();
+        } else if ("addNew".equals(method)) {
+            return addNew();
+        } else if ("removeSelected".equals(method)) {
+            return removeSelected();
+        } else if ("uploadToMcedt".equals(method)) {
+            return uploadToMcedt();
+        } else if ("submitToMcedt".equals(method)) {
+            return submitToMcedt();
+        } else if ("uploadSubmitToMcedt".equals(method)) {
+            return uploadSubmitToMcedt();
+        } else if ("deleteUpload".equals(method)) {
+            return deleteUpload();
+        } else if ("addUpload".equals(method)) {
+            return addUpload();
+        }
+
         ActionUtils.removeSuccessfulUploads(request);
         ActionUtils.removeUploadResponseResults(request);
         ActionUtils.removeSubmitResponseResults(request);

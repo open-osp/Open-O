@@ -61,7 +61,10 @@ public class RptDemographicQuery2Saver {
     }
 
     public void saveQuery(RptDemographicReport2Form frm) {
-
+        if (frm == null) {
+            frm = new RptDemographicReport2Form(); 
+        }
+        
         String[] select = frm.getSelect();
         String yearStyle = frm.getAge();
         String startYear = frm.getStartYear();

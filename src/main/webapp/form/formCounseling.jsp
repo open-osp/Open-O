@@ -256,7 +256,7 @@
             function onPrintPDF() {
                 temp = document.forms[0].action;
                 document.forms[0].submit.value = "printall";
-                document.forms[0].action = "../form/formname.do?__title=form+Counseling&__cfgfile=CounselingNotePrint&__template=CounselingNoteForm";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/formname.do?__title=form+Counseling&__cfgfile=CounselingNotePrint&__template=CounselingNoteForm";
                 document.forms[0].target = "_blank";
                 return true;
             }

@@ -729,8 +729,8 @@
 
             -->
         </style>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
-        <link rel="stylesheet" type="text/css" media="all" href="../css/print.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/css/print.css"/>
 
     </head>
     <oscar:customInterface section="ticklerMain"/>

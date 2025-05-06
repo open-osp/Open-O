@@ -64,6 +64,29 @@ public final class RxManagePharmacy2Action extends ActionSupport {
 
 
     public String execute() throws IOException, ServletException {
+        String method = request.getParameter("method");
+        if ("delete".equals(method)) {
+            return delete();
+        } else if ("unlink".equals(method)) {
+            return unlink();
+        } else if ("getPharmacyFromDemographic".equals(method)) {
+            return getPharmacyFromDemographic();
+        } else if ("setPreferred".equals(method)) {
+            return setPreferred();
+        } else if ("add".equals(method)) {
+            return add();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("search".equals(method)) {
+            return search();
+        } else if ("searchCity".equals(method)) {
+            return searchCity();
+        } else if ("getPharmacyInfo".equals(method)) {
+            return getPharmacyInfo();
+        } else if ("getTotalDemographicsPreferedToPharmacy".equals(method)) {
+            return getTotalDemographicsPreferedToPharmacy();
+        }
+
         String actionType = this.getPharmacyAction();
         RxPharmacyData pharmacy = new RxPharmacyData();
 

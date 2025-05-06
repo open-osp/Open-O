@@ -154,7 +154,7 @@ public class SaveRegistration2Action extends ActionSupport {
         return parsedDate;
     }
 
-    public String unspecified() {
+    public String execute() {
         return registrationOrFlowSheet();
     }
 

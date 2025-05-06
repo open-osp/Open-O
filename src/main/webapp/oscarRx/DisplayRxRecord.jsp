@@ -126,8 +126,8 @@
     <script type="text/javascript" src="<%= request.getContextPath()%>/js/global.js"></script>
     <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.DisplayRxRecord.title"/></title>
-    <link rel="stylesheet" type="text/css" href="../../../share/css/OscarStandardLayout.css">
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     <style>
         .label {
             font-weight: bold;

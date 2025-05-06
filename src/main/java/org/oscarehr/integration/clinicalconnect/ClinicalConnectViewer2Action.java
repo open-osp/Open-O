@@ -70,7 +70,6 @@ public class ClinicalConnectViewer2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
     Logger logger = MiscUtils.getLogger();
 
@@ -82,6 +81,13 @@ public class ClinicalConnectViewer2Action extends ActionSupport {
             prefix = "";
         }
         LogAction.addLog(LoggedInInfo.getLoggedInInfoFromSession(request), "Launch CMS EHR Viewer", "launch", "error", demographicNo, prefix + ":" + errorMessage);
+    }
+
+    public String execute() throws Exception {
+        if ("launchNonPatientContext".equals(request.getParameter("method"))) {
+            return launchNonPatientContext();
+        }
+        return launch();
     }
 
     public String launchNonPatientContext() throws IOException {

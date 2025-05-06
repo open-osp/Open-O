@@ -69,17 +69,17 @@
 <html>
 <head>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.uploadEntryTxt"/></title>
-    <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
-    <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
     <!-- main calendar program -->
-    <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
     <!-- language for the calendar -->
-    <script type="text/javascript" src="../share/calendar/lang/calendar-en.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/lang/calendar-en.js"></script>
 
     <!-- the following script defines the Calendar.setup helper function, which makes adding a calendar a matter of 1 or 2 lines of code. -->
-    <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
     <link rel="stylesheet" type="text/css"
           href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
@@ -145,7 +145,7 @@
                 <br>OR<br>
                 <input type="checkbox" name="validForever" value="forever" <%=checked%>> Forever with an agreement past
                 <input name="foreverFrom" type="text" id="foreverFrom" value="<%=fromDate%>"/>
-                <img src="../images/cal.gif" id="foreverFrom_cal">
+                <img src="<%= request.getContextPath() %>/images/cal.gif" id="foreverFrom_cal">
 
 
                 <br>
@@ -153,7 +153,7 @@
                 Agreement file (txt file)<input type="file" name="importFile">
                 <span title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
                       style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img
-                        border="0" src="../images/icon_alertsml.gif"/></span></span>
+                        border="0" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/></span></span>
 
                 <br>
                 <input type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.uploadEntryTxt"/>">

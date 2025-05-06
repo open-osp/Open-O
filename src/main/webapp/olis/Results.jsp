@@ -747,14 +747,14 @@
                             <tr>
                                 <th class="unsortable" style="white-space: nowrap;" title="Add to inbox"><a
                                         href="javascript:void(0)" onClick="checkAllAddToInbox()"><img
-                                        src="../images/icons/103.png" border="0"/></a></th>
+                                        src="<%= request.getContextPath() %>/images/icons/103.png" border="0"/></a></th>
                                 <th class="unsortable" style="white-space: nowrap;"
                                     title="Add to Inbox and Acknowledge"><a href="javascript:void(0)"
                                                                             onClick="checkAllAcknowledge()"><img
-                                        src="../images/icons/114.png" border="0"/></a></th>
+                                        src="<%= request.getContextPath() %>/images/icons/114.png" border="0"/></a></th>
                                 <th class="unsortable" style="white-space: nowrap;" title="Remove/Reject"><a
                                         href="javascript:void(0)" onClick="checkAllRemoved()"><img
-                                        src="../images/icons/104.png" border="0"/></a></th>
+                                        src="<%= request.getContextPath() %>/images/icons/104.png" border="0"/></a></th>
 
                                 <th class="unsortable" style="white-space: nowrap;"></th>
 
@@ -808,16 +808,16 @@
                                 <td>
                                     <div id="<%=resultUuid %>_result"></div>
                                     <a href="javascript:void(0)" onClick="preview('<%=resultUuid %>'); return false;"
-                                       title="Preview full report"><img src="../images/icons/172.png" border="0"/></a>
+                                       title="Preview full report"><img src="<%= request.getContextPath() %>/images/icons/172.png" border="0"/></a>
                                 </td>
 
                                 <!--
 						<td>	
-							<a href="javascript:void(0)" onClick="remove('<%=resultUuid %>');return false;" title="Remove from results"><img src="../images/icons/101.png" border="0"/></a>	
+							<a href="javascript:void(0)" onClick="remove('<%=resultUuid %>');return false;" title="Remove from results"><img src="<%= request.getContextPath() %>/images/icons/101.png" border="0"/></a>	
 						</td>
 						
 						<td>
-							<a href="javascript:void(0)" onClick="save('<%=resultUuid %>'); return false;" title="Save"><img src="../images/Save16.png" border="0"/></a>
+							<a href="javascript:void(0)" onClick="save('<%=resultUuid %>'); return false;" title="Save"><img src="<%= request.getContextPath() %>/images/Save16.png" border="0"/></a>
 						</td>
 						
 						-->
@@ -834,7 +834,7 @@
                                     <%} else {%>
                                     <%=result.getPatientName() %><a href="javascript:void(0)"
                                                                     onClick="showMatch('<%=result.getLastName() + "," + result.getFirstName() %>','<%=resultUuid%>')"><img
-                                        src="../images/here.gif" border="0"/></a>
+                                        src="<%= request.getContextPath() %>/images/here.gif" border="0"/></a>
                                     <% } %>
                                 </td>
                                 <td><%=result.getHealthNum() %>

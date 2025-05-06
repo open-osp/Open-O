@@ -145,8 +145,8 @@
     <title><%=handler.getPatientName() + " Lab Results"%>
     </title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script language="javascript" type="text/javascript" src="../../../share/javascript/Oscar.js"></script>
-    <link rel="stylesheet" type="text/css" href="../../../share/css/OscarStandardLayout.css">
+    <script language="javascript" type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
     <style type="text/css">
         <!--
         * {

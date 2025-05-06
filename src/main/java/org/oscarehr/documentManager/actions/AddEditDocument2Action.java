@@ -58,7 +58,6 @@ import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.SecRole;
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
-import org.oscarehr.documentManager.data.AddEditDocument2Form;
 import org.oscarehr.managers.ProgramManager2;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
@@ -94,11 +93,11 @@ public class AddEditDocument2Action extends ActionSupport {
         }
 
         int numberOfPages = 0;
-        String fileName = form.getDocFile().getName();
+        String fileName = this.getDocFile().getName();
         String user = (String) request.getSession().getAttribute("user");
-        EDoc newDoc = new EDoc("", "", fileName, "", user, user, form.getSource(), 'A', oscar.util.UtilDateUtilities.getToday("yyyy-MM-dd"), "", "", "demographic", "-1", 0);
+        EDoc newDoc = new EDoc("", "", fileName, "", user, user, this.getSource(), 'A', oscar.util.UtilDateUtilities.getToday("yyyy-MM-dd"), "", "", "demographic", "-1", 0);
         newDoc.setDocPublic("0");
-        newDoc.setAppointmentNo(Integer.parseInt(form.getAppointmentNo()));
+        newDoc.setAppointmentNo(Integer.parseInt(this.getAppointmentNo()));
 
         // if the document was added in the context of a program
         ProgramManager2 programManager = SpringUtils.getBean(ProgramManager2.class);
@@ -110,22 +109,22 @@ public class AddEditDocument2Action extends ActionSupport {
 
         fileName = newDoc.getFileName();
         // save local file;
-        if (form.getDocFile().length() == 0) {
+        if (this.getDocFile().length() == 0) {
             //errors.put("uploaderror", "documentManager.error.uploadError");
             response.setHeader("oscar_error", props.getString("dms.addDocument.errorZeroSize"));
             response.sendError(500, props.getString("dms.addDocument.errorZeroSize"));
             return null;
             //throw new FileNotFoundException();
         }
-        File file = writeLocalFile(Files.newInputStream(form.getDocFile().toPath()), fileName);// write file to local dir
+        File file = writeLocalFile(Files.newInputStream(this.getDocFile().toPath()), fileName);// write file to local dir
 
-        if (!file.exists() || file.length() < form.getDocFile().length()) {
+        if (!file.exists() || file.length() < this.getDocFile().length()) {
             response.setHeader("oscar_error", props.getString("dms.addDocument.errorNoWrite"));
             response.sendError(500, props.getString("dms.addDocument.errorNoWrite"));
             return null;
         }
 
-        //newDoc.setContentType(form.getDocFile().getContentType());
+        //newDoc.setContentType(this.getDocFile().getContentType());
         if (fileName.endsWith(".PDF") || fileName.endsWith(".pdf")) {
             newDoc.setContentType("application/pdf");
             // get number of pages when document is pdf;
@@ -177,7 +176,10 @@ public class AddEditDocument2Action extends ActionSupport {
         return numOfPage;
     }
 
-    public String unspecified() {
+    public String execute() throws Exception {
+        if ("html5MultiUpload".equals(request.getParameter("method"))) {
+            return html5MultiUpload();
+        }
         return execute2();
     }
 
@@ -186,21 +188,21 @@ public class AddEditDocument2Action extends ActionSupport {
             throw new SecurityException("missing required security object (_edoc)");
         }
 
-        if (form.getMode().equals("") && form.getFunction().equals("") && form.getFunctionId().equals("")) {
+        if (this.getMode().equals("") && this.getFunction().equals("") && this.getFunctionId().equals("")) {
             // file size exceeds the upload limit
             Hashtable errors = new Hashtable();
             errors.put("uploaderror", "dms.error.uploadError");
             request.setAttribute("docerrors", errors);
-            request.setAttribute("completedForm", form);
             request.setAttribute("editDocumentNo", "");
             return "failEdit";
-        } else if (form.getMode().equals("add")) {
+        } else if (this.getMode().equals("add")) {
             // if add/edit success then send redirect, if failed send a forward (need the formdata and errors hashtables while trying to avoid POSTDATA messages)
-            if (addDocument(form, request)) { // if success
-                StringBuffer redirect = new StringBuffer("/documentManager/documentReport.jsp");
+            if (addDocument(request)) { // if success
+                String contextPath = request.getContextPath();
+                StringBuffer redirect = new StringBuffer(contextPath + "/documentManager/documentReport.jsp");
                 redirect.append("?docerrors=docerrors"); // Allows the JSP to check if the document was just submitted
                 redirect.append("&function=").append(request.getParameter("function"));
-                redirect.append("&functionid").append(request.getParameter("functionid"));
+                redirect.append("&functionid=").append(request.getParameter("functionid"));
                 redirect.append("&curUser").append(request.getParameter("curUser"));
                 redirect.append("&appointmentNo").append(request.getParameter("appointmentNo"));
                 String parentAjaxId = request.getParameter("parentAjaxId");
@@ -224,39 +226,39 @@ public class AddEditDocument2Action extends ActionSupport {
                 return "failAdd";
             }
         } else {
-            return editDocument(form, request);
+            return editDocument(request);
         }
     }
 
     // returns true if successful
-    private boolean addDocument(AddEditDocument2Form fm, HttpServletRequest request) {
+    private boolean addDocument(HttpServletRequest request) {
 
         Hashtable errors = new Hashtable();
         try {
-            if ((fm.getDocDesc().length() == 0) || (fm.getDocDesc().equals("Enter Title"))) {
+            if ((this.getDocDesc().length() == 0) || (this.getDocDesc().equals("Enter Title"))) {
                 errors.put("descmissing", "dms.error.descriptionInvalid");
                 throw new Exception();
             }
-            if (fm.getDocType().length() == 0) {
+            if (this.getDocType().length() == 0) {
                 errors.put("typemissing", "dms.error.typeMissing");
                 throw new Exception();
             }
-            File docFile = fm.getDocFile();
+            File docFile = this.getDocFile();
             if (docFile.length() == 0) {
                 errors.put("uploaderror", "dms.error.uploadError");
                 throw new FileNotFoundException();
             }
             // original file name
-            String fileName1 = docFile.getName();
+            String fileName1 = this.docFileFileName;
+            EDoc newDoc = new EDoc(this.getDocDesc(), this.getDocType(), fileName1, "", this.getDocCreator(), this.getResponsibleId(), this.getSource(), 'A', this.getObservationDate(), "", "", this.getFunction(), this.getFunctionId());
+            newDoc.setDocPublic(this.getDocPublic());
 
-            EDoc newDoc = new EDoc(fm.getDocDesc(), fm.getDocType(), fileName1, "", fm.getDocCreator(), fm.getResponsibleId(), fm.getSource(), 'A', fm.getObservationDate(), "", "", fm.getFunction(), fm.getFunctionId());
-            newDoc.setDocPublic(fm.getDocPublic());
-
-            newDoc.setAppointmentNo(Integer.parseInt(fm.getAppointmentNo()));
-            newDoc.setDocClass(fm.getDocClass());
-            newDoc.setDocSubClass(fm.getDocSubClass());
+            newDoc.setAppointmentNo(Integer.parseInt(this.getAppointmentNo()));
+            newDoc.setDocClass(this.getDocClass());
+            newDoc.setDocSubClass(this.getDocSubClass());
             // new file name with date attached
             String fileName2 = newDoc.getFileName();
+
             // save local file
             File file = writeLocalFile(Files.newInputStream(docFile.toPath()), fileName2);
             //newDoc.setContentType(docFile.getContentType());
@@ -279,13 +281,13 @@ public class AddEditDocument2Action extends ActionSupport {
             newDoc.setRestrictToProgram("on".equals(restrictToProgramStr));
 
             // if the document was added in the context of an appointment
-            if (fm.getAppointmentNo() != null && fm.getAppointmentNo().length() > 0) {
-                newDoc.setAppointmentNo(Integer.parseInt(fm.getAppointmentNo()));
+            if (this.getAppointmentNo() != null && this.getAppointmentNo().length() > 0) {
+                newDoc.setAppointmentNo(Integer.parseInt(this.getAppointmentNo()));
             }
 
             // If a new document type is added, include it in the database to create filters
-            if (!EDocUtil.getDoctypes(fm.getFunction()).contains(fm.getDocType())) {
-                EDocUtil.addDocTypeSQL(fm.getDocType(), fm.getFunction());
+            if (!EDocUtil.getDoctypes(this.getFunction()).contains(this.getDocType())) {
+                EDocUtil.addDocTypeSQL(this.getDocType(), this.getFunction());
             }
 
 
@@ -296,8 +298,8 @@ public class AddEditDocument2Action extends ActionSupport {
             }
             LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ADD, LogConst.CON_DOCUMENT, doc_no, request.getRemoteAddr());
             // add note if document is added under a patient
-            String module = fm.getFunction().trim();
-            String moduleId = fm.getFunctionId().trim();
+            String module = this.getFunction().trim();
+            String moduleId = this.getFunctionId().trim();
             if (module.equals("demographic")) {// doc is uploaded under a patient,moduleId become demo no.
 
                 Date now = EDocUtil.getDmsDateTimeAsDate();
@@ -316,7 +318,7 @@ public class AddEditDocument2Action extends ActionSupport {
                 CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
                 cmn.setProviderNo("-1");// set the provider no to be -1 so the editor appear as 'System'.
 
-                Provider provider = EDocUtil.getProvider(fm.getDocCreator());
+                Provider provider = EDocUtil.getProvider(this.getDocCreator());
                 String provFirstName = "";
                 String provLastName = "";
                 if (provider != null) {
@@ -356,14 +358,13 @@ public class AddEditDocument2Action extends ActionSupport {
             MiscUtils.getLogger().error("Error", e);
             // ActionRedirect redirect = new ActionRedirect(mapping.findForward("failAdd"));
             request.setAttribute("docerrors", errors);
-            request.setAttribute("completedForm", fm);
             return false;
         }
 
         return true;
     }
 
-    private String editDocument(AddEditDocument2Form fm, HttpServletRequest request) {
+    private String editDocument(HttpServletRequest request) {
         Hashtable errors = new Hashtable();
 
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_edoc", "w", null)) {
@@ -371,93 +372,96 @@ public class AddEditDocument2Action extends ActionSupport {
         }
 
         try {
-            if (fm.getDocDesc().length() == 0) {
+            if (this.getDocDesc().length() == 0) {
                 errors.put("descmissing", "dms.error.descriptionInvalid");
                 throw new Exception();
             }
-            if (fm.getDocType().length() == 0) {
+            if (this.getDocType().length() == 0) {
                 errors.put("typemissing", "dms.error.typeMissing");
                 throw new Exception();
             }
-            File docFile = fm.getDocFile();
             String fileName = "";
+            boolean updateFileContent = false;
 
-            if (oscar.OscarProperties.getInstance().getBooleanProperty("ALLOW_UPDATE_DOCUMENT_CONTENT", "true")) {
-                fileName = docFile.getName();
-            }
-
-            String reviewerId = filled(fm.getReviewerId()) ? fm.getReviewerId() : "";
-            String reviewDateTime = filled(fm.getReviewDateTime()) ? fm.getReviewDateTime() : "";
-
-            if (!filled(reviewerId) && fm.getReviewDoc()) {
-                reviewerId = (String) request.getSession().getAttribute("user");
-                reviewDateTime = UtilDateUtilities.DateToString(new Date(), EDocUtil.REVIEW_DATETIME_FORMAT);
-                if (fm.getFunction() != null && fm.getFunction().equals("demographic")) {
-                    LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.REVIEWED, LogConst.CON_DOCUMENT, fm.getMode(), request.getRemoteAddr(), fm.getFunctionId());
-                } else {
-                    LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.REVIEWED, LogConst.CON_DOCUMENT, fm.getMode(), request.getRemoteAddr());
-
+            if (oscar.OscarProperties.getInstance().getBooleanProperty("ALLOW_UPDATE_DOCUMENT_CONTENT", "true"))
+            {
+                File docFile = this.getDocFile();
+                if (docFile != null && docFile.exists()) {
+                    fileName = this.docFileFileName;
+                    updateFileContent = true; // set update to true
                 }
             }
-            EDoc newDoc = new EDoc(fm.getDocDesc(), fm.getDocType(), fileName, "", fm.getDocCreator(), fm.getResponsibleId(), fm.getSource(), 'A', fm.getObservationDate(), reviewerId, reviewDateTime, fm.getFunction(), fm.getFunctionId());
-            newDoc.setSourceFacility(fm.getSourceFacility());
-            newDoc.setDocId(fm.getMode());
-            newDoc.setDocPublic(fm.getDocPublic());
-            newDoc.setAppointmentNo(Integer.parseInt(fm.getAppointmentNo()));
-            newDoc.setDocClass(fm.getDocClass());
-            newDoc.setDocSubClass(fm.getDocSubClass());
-            newDoc.setAbnormal(fm.getAbnormal());
-            newDoc.setReceivedDate(fm.getReceivedDate());
+
+            String reviewerId = filled(this.getReviewerId()) ? this.getReviewerId() : "";
+            String reviewDateTime = filled(this.getReviewDateTime()) ? this.getReviewDateTime() : "";
+
+            if (!filled(reviewerId) && this.getReviewDoc()) {
+                reviewerId = (String) request.getSession().getAttribute("user");
+                reviewDateTime = UtilDateUtilities.DateToString(new Date(), EDocUtil.REVIEW_DATETIME_FORMAT);
+                if (this.getFunction() != null && this.getFunction().equals("demographic")) {
+                    LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.REVIEWED, LogConst.CON_DOCUMENT, this.getMode(),
+request.getRemoteAddr(), this.getFunctionId());
+                } else {
+                    LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.REVIEWED, LogConst.CON_DOCUMENT, this.getMode(),
+request.getRemoteAddr());
+                }
+            }
+
+            EDoc newDoc = new EDoc(this.getDocDesc(), this.getDocType(), fileName, "", this.getDocCreator(), this.getResponsibleId(),
+this.getSource(), 'A', this.getObservationDate(), reviewerId, reviewDateTime, this.getFunction(), this.getFunctionId());
+            newDoc.setSourceFacility(this.getSourceFacility());
+            newDoc.setDocId(this.getMode());
+            newDoc.setDocPublic(this.getDocPublic());
+            newDoc.setAppointmentNo(Integer.parseInt(this.getAppointmentNo()));
+            newDoc.setDocClass(this.getDocClass());
+            newDoc.setDocSubClass(this.getDocSubClass());
+            newDoc.setAbnormal(this.getAbnormal());
+            newDoc.setReceivedDate(this.getReceivedDate());
             String programIdStr = (String) request.getSession().getAttribute(SessionConstants.CURRENT_PROGRAM_ID);
             if (programIdStr != null) newDoc.setProgramId(Integer.valueOf(programIdStr));
 
-
-            fileName = newDoc.getFileName();
-            if (docFile.length() != 0 && fileName.length() != 0) {
+            // if the update behavior is true, get the file name
+            if (updateFileContent) {
+                fileName = newDoc.getFileName();
                 // save local file
-                writeLocalFile(Files.newInputStream(docFile.toPath()), fileName);
-                //newDoc.setContentType(docFile.getContentType());
+                writeLocalFile(Files.newInputStream(this.getDocFile().toPath()), fileName);
                 if (fileName.toLowerCase().endsWith(".pdf")) {
                     newDoc.setContentType("application/pdf");
                     int numberOfPages = countNumOfPages(fileName);
                     newDoc.setNumberOfPages(numberOfPages);
                 }
-                // ---
-            } else if (!docFile.getName().isEmpty()) {
-                errors.put("uploaderror", "dms.error.uploadError");
-                throw new FileNotFoundException();
             }
-            if (fm.getReviewDoc()) {
+            if (this.getReviewDoc()) {
                 newDoc.setReviewDateTime(UtilDateUtilities.DateToString(new Date(), EDocUtil.REVIEW_DATETIME_FORMAT));
             }
 
-            if (fm.isExtraReviewDoc()) {
+            if (this.isExtraReviewDoc()) {
                 DocumentExtraReviewer der = new DocumentExtraReviewer();
                 der.setDocumentNo(Integer.parseInt(newDoc.getDocId()));
                 der.setReviewDateTime(new Date());
-                der.setReviewerProviderNo(fm.getExtraReviewerId());
+                der.setReviewerProviderNo(this.getExtraReviewerId());
 
                 DocumentExtraReviewerDao derDao = SpringUtils.getBean(DocumentExtraReviewerDao.class);
                 derDao.persist(der);
 
                 //don't lose the initial review
-                fm.setReviewDoc(true);
-                newDoc.setReviewDateTime(fm.getReviewDateTime());
+                this.setReviewDoc(true);
+                newDoc.setReviewDateTime(this.getReviewDateTime());
             }
 
-            EDocUtil.editDocumentSQL(newDoc, fm.getReviewDoc());
+            EDocUtil.editDocumentSQL(newDoc, this.getReviewDoc());
 
-            if (fm.getFunction() != null && fm.getFunction().equals("demographic")) {
-                LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.UPDATE, LogConst.CON_DOCUMENT, fm.getMode(), request.getRemoteAddr(), fm.getFunctionId());
+            if (this.getFunction() != null && this.getFunction().equals("demographic")) {
+                LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.UPDATE, LogConst.CON_DOCUMENT, this.getMode(), request.getRemoteAddr(), this.getFunctionId());
             } else {
-                LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.UPDATE, LogConst.CON_DOCUMENT, fm.getMode(), request.getRemoteAddr());
+                LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.UPDATE, LogConst.CON_DOCUMENT, this.getMode(), request.getRemoteAddr());
 
             }
 
         } catch (Exception e) {
             request.setAttribute("docerrors", errors);
-            request.setAttribute("completedForm", fm);
-            request.setAttribute("editDocumentNo", fm.getMode());
+            request.setAttribute("editDocumentNo", this.getMode());
+            e.printStackTrace();
             return "failEdit";
         }
         return "successEdit";
@@ -520,13 +524,254 @@ public class AddEditDocument2Action extends ActionSupport {
         return (s != null && s.trim().length() > 0);
     }
 
-    private AddEditDocument2Form form;
+    private String function = "";
+    private String functionId = "";
+    private String docType = "";
+    private String docClass = "";
+    private String docSubClass = "";
+    private String docDesc = "";
+    private String docCreator = "";
+    private String responsibleId = "";
+    private String source = "";
+    private String sourceFacility = "";
+    private File docFile;
 
-    public AddEditDocument2Form getForm() {
-        return form;
+    private File filedata;
+
+    private String docPublic = "";
+    private String mode = "";
+    private String observationDate = "";
+    private String reviewerId = "";
+    private String reviewDateTime = "";
+    private String contentDateTime = "";
+    private boolean reviewDoc = false;
+    private String html = "";
+
+    private String appointmentNo = "0";
+
+    private boolean restrictToProgram = false;
+    private String receivedDate = "";
+    private String abnormal = "";
+
+    private String extraReviewerId = "";
+    private boolean extraReviewDoc = false;
+
+    public String getFunction() {
+        return function;
     }
 
-    public void setForm(AddEditDocument2Form form) {
-        this.form = form;
+    public void setFunction(String function) {
+        this.function = function;
+    }
+
+    public String getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(String functionId) {
+        this.functionId = functionId;
+    }
+
+    public String getDocType() {
+        return docType;
+    }
+
+    public void setDocType(String docType) {
+        this.docType = docType;
+    }
+
+    public String getDocClass() {
+        return docClass;
+    }
+
+    public void setDocClass(String docClass) {
+        this.docClass = docClass;
+    }
+
+    public String getDocSubClass() {
+        return docSubClass;
+    }
+
+    public void setDocSubClass(String docSubClass) {
+        this.docSubClass = docSubClass;
+    }
+
+    public String getDocDesc() {
+        return docDesc;
+    }
+
+    public void setDocDesc(String docDesc) {
+        this.docDesc = docDesc;
+    }
+
+    public String getDocCreator() {
+        return docCreator;
+    }
+
+    public void setDocCreator(String docCreator) {
+        this.docCreator = docCreator;
+    }
+
+    public String getResponsibleId() {
+        return responsibleId;
+    }
+
+    public void setResponsibleId(String responsibleId) {
+        this.responsibleId = responsibleId;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getSourceFacility() {
+        return sourceFacility;
+    }
+
+    public void setSourceFacility(String sourceFacility) {
+        this.sourceFacility = sourceFacility;
+    }
+
+    public File getDocFile() {
+        return docFile;
+    }
+
+    public void setDocFile(File docFile) {
+        this.docFile = docFile;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    public String getDocPublic() {
+        return docPublic;
+    }
+
+    public void setDocPublic(String docPublic) {
+        this.docPublic = docPublic;
+    }
+
+    public String getObservationDate() {
+        return observationDate;
+    }
+
+    public void setObservationDate(String observationDate) {
+        this.observationDate = observationDate;
+    }
+
+    public String getReviewerId() {
+        return reviewerId;
+    }
+
+    public void setReviewerId(String reviewerId) {
+        this.reviewerId = reviewerId;
+    }
+
+    public String getReviewDateTime() {
+        return reviewDateTime;
+    }
+
+    public void setReviewDateTime(String reviewDateTime) {
+        this.reviewDateTime = reviewDateTime;
+    }
+
+    public String getContentDateTime() {
+        return contentDateTime;
+    }
+
+    public void setContentDateTime(String contentDateTime) {
+        this.contentDateTime = contentDateTime;
+    }
+
+    public boolean getReviewDoc() {
+        return reviewDoc;
+    }
+
+    public void setReviewDoc(boolean reviewDoc) {
+        this.reviewDoc = reviewDoc;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
+    }
+
+    public File getFiledata() {
+        return filedata;
+    }
+
+    public void setFiledata(File Filedata) {
+        this.filedata = Filedata;
+    }
+
+    public String getAppointmentNo() {
+        return appointmentNo;
+    }
+
+    public void setAppointmentNo(String appointment) {
+        this.appointmentNo = appointment;
+    }
+
+    public boolean isRestrictToProgram() {
+        return restrictToProgram;
+    }
+
+    public void setRestrictToProgram(boolean restrictToProgram) {
+        this.restrictToProgram = restrictToProgram;
+    }
+
+    public String getReceivedDate() {
+        return receivedDate;
+    }
+
+    public void setReceivedDate(String receivedDate) {
+        this.receivedDate = receivedDate;
+    }
+
+    public String getAbnormal() {
+        return abnormal;
+    }
+
+    public void setAbnormal(String abnormal) {
+        this.abnormal = abnormal;
+    }
+
+    public String getExtraReviewerId() {
+        return extraReviewerId;
+    }
+
+    public void setExtraReviewerId(String extraReviewerId) {
+        this.extraReviewerId = extraReviewerId;
+    }
+
+    public boolean isExtraReviewDoc() {
+        return extraReviewDoc;
+    }
+
+    public void setExtraReviewDoc(boolean extraReviewDoc) {
+        this.extraReviewDoc = extraReviewDoc;
+    }
+
+    private String docFileFileName;    
+    private String docFileContentType; 
+
+    public void setDocFileFileName(String docFileFileName) {
+        this.docFileFileName = docFileFileName;
+    }
+
+    public void setDocFileContentType(String docFileContentType) {
+        this.docFileContentType = docFileContentType;
     }
 }

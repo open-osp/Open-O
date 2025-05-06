@@ -89,11 +89,11 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Antenatal Record 1</title>
         <link rel="stylesheet" type="text/css" href="<%=bView?"arStyleView.css" : "arStyle.css"%>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1"/>
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
         <script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
         <script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
@@ -1105,14 +1105,14 @@
                 if (ret == true) {
                     <%if(Integer.parseInt(props.getProperty("obxhx_num", "0")) > 6) {
 				%>
-                    document.forms[0].action = "../form/createpdf?__title=Antenatal+Record+Part+1&__cfgfile=onar1enhancedPrintCfgPg1&__template=onar1&__numPages=1&postProcessor=ONAR1EnhancedPostProcessor&multiple=2&__title1=Antenatal+Record+Part+1&__cfgfile1=onar1enhancedPrintCfgPg2&__template1=onar1enhancedpg2&__numPages1=1&postProcessor1=ONAR1EnhancedPostProcessor";
+                    document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=Antenatal+Record+Part+1&__cfgfile=onar1enhancedPrintCfgPg1&__template=onar1&__numPages=1&postProcessor=ONAR1EnhancedPostProcessor&multiple=2&__title1=Antenatal+Record+Part+1&__cfgfile1=onar1enhancedPrintCfgPg2&__template1=onar1enhancedpg2&__numPages1=1&postProcessor1=ONAR1EnhancedPostProcessor";
                     <%
 			} else {
 				%>
                     if ($("textarea[name='pg1_comments2AR1']").val().length > 0)
-                        document.forms[0].action = "../form/createpdf?__title=Antenatal+Record+Part+1&__cfgfile=onar1enhancedPrintCfgPg1&__template=onar1&__numPages=1&postProcessor=ONAR1EnhancedPostProcessor&multiple=2&__title1=Antenatal+Record+Part+1&__cfgfile1=onar1enhancedPrintCfgPg2&__template1=onar1enhancedpg2&__numPages1=1&postProcessor1=ONAR1EnhancedPostProcessor";
+                        document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=Antenatal+Record+Part+1&__cfgfile=onar1enhancedPrintCfgPg1&__template=onar1&__numPages=1&postProcessor=ONAR1EnhancedPostProcessor&multiple=2&__title1=Antenatal+Record+Part+1&__cfgfile1=onar1enhancedPrintCfgPg2&__template1=onar1enhancedpg2&__numPages1=1&postProcessor1=ONAR1EnhancedPostProcessor";
                     else
-                        document.forms[0].action = "../form/createpdf?__title=Antenatal+Record+Part+1&__cfgfile=onar1enhancedPrintCfgPg1&__template=onar1&__numPages=1&postProcessor=ONAR1EnhancedPostProcessor";
+                        document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=Antenatal+Record+Part+1&__cfgfile=onar1enhancedPrintCfgPg1&__template=onar1&__numPages=1&postProcessor=ONAR1EnhancedPostProcessor";
                     <%
 			} %>
                     document.forms[0].target = "_blank";
@@ -1888,7 +1888,7 @@
                             if (ret == true) {
                                 document.forms[0].submit.value = "print";
                                 document.forms[0].target = "_blank";
-                                var url = "../form/createpdf?";
+                                var url = "<%= request.getContextPath() %>/form/createpdf?";
                                 var multiple = 0;
                                 if (!(typeof printAr1 == "undefined")) {
                                     url += "__title=Antenatal+Record+Part+1&__cfgfile=onar1enhancedPrintCfgPg1&__template=onar1&__numPages=1&postProcessor=ONAR1EnhancedPostProcessor";
@@ -2072,12 +2072,12 @@
                     </tr>
                     <tr id="first_visit">
                         <td>First Visit<span style="float:right"><img id="1st_visit_menu"
-                                                                      src="../images/right-circle-arrow-Icon.png"
+                                                                      src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
                                                                       border="0"></span></td>
                     </tr>
                     <tr id="16wk_visit">
                         <td>16 week Visit<span style="float:right"><img id="16wk_visit_menu"
-                                                                        src="../images/right-circle-arrow-Icon.png"
+                                                                        src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
                                                                         border="0"></span></td>
                     </tr>
                 </table>
@@ -2106,7 +2106,7 @@
                         <td>
                             Printing Log
                             <span style="float:right"><img id="print_log_menu"
-                                                           src="../images/right-circle-arrow-Icon.png"
+                                                           src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
                                                            border="0"></span>
                         </td>
                     </tr>
@@ -2157,13 +2157,13 @@
                     </tr>
                     <tr id="genetic_prompt" style="display:none">
                         <td>Genetics Referral<span style="float:right"><img id="genetics_menu"
-                                                                            src="../images/right-circle-arrow-Icon.png"
+                                                                            src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
                                                                             border="0"></span></td>
                     </tr>
 
                     <tr id="mcv_abn_prompt" style="display:none">
                         <td>Low MCV<span style="float:right"><img id="mcv_menu"
-                                                                  src="../images/right-circle-arrow-Icon.png"
+                                                                  src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
                                                                   border="0"></span></td>
                     </tr>
                 </table>
@@ -2176,24 +2176,24 @@
                     </tr>
 
                     <tr id="lab_prompt">
-                        <td>Labs<span style="float:right"><img id="lab_menu" src="../images/right-circle-arrow-Icon.png"
+                        <td>Labs<span style="float:right"><img id="lab_menu" src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
                                                                border="0"></span></td>
                     </tr>
                     <tr id="forms_prompt">
                         <td>Forms<span style="float:right"><img id="forms_menu"
-                                                                src="../images/right-circle-arrow-Icon.png" border="0"></span>
+                                                                src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png" border="0"></span>
                         </td>
                     </tr>
 
                     <tr id="pull_vitals_prompt">
                         <td>Vitals Integration<span style="float:right"><img id="vitals_pull_menu"
-                                                                             src="../images/right-circle-arrow-Icon.png"
+                                                                             src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
                                                                              border="0"></span></td>
                     </tr>
 
                     <tr id="pull_labs_prompt">
                         <td>Labs Integration<span style="float:right"><img id="lab_pull_menu"
-                                                                           src="../images/right-circle-arrow-Icon.png"
+                                                                           src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
                                                                            border="0"></span></td>
                     </tr>
 
@@ -2246,13 +2246,13 @@
                             %>
                             &nbsp;&nbsp;&nbsp;
                             <b>View:</b> <a href="javascript:void(0)"
-                                            onclick="popupPage(960,700,'formonarenhancedpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">AR2</a>
+                                            onclick="popupPage(960,700,'form/formonarenhancedpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">AR2</a>
                             &nbsp;&nbsp;&nbsp;
                             <b>Edit:</b> <a href="javascript:void(0)"
-                                            onclick="onPageChange('formonarenhancedpg2.jsp?demographic_no=<%=demoNo%>&formId=#id&provNo=<%=provNo%>');">AR2</a>
+                                            onclick="onPageChange('form/formonarenhancedpg2.jsp?demographic_no=<%=demoNo%>&formId=#id&provNo=<%=provNo%>');">AR2</a>
                             &nbsp;&nbsp;&nbsp;
                             <b>Download:</b> <a
-                                href="formonarenhancedxml.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&episodeId=<%=props.getProperty("episodeId","0")%>">XML</a>
+                                href="form/formonarenhancedxml.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&episodeId=<%=props.getProperty("episodeId","0")%>">XML</a>
                         </td>
 
 
@@ -2768,7 +2768,7 @@
                                                                        name="pg1_menLMP" id="pg1_menLMP" size="10"
                                                                        maxlength="10"
                                                                        value="<%= UtilMisc.htmlEscape(props.getProperty("pg1_menLMP", "")) %>"/>
-                                        <img src="../images/cal.gif" id="pg1_menLMP_cal"></td>
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_menLMP_cal"></td>
                                     <td>Certain</td>
                                     <td>Yes <input type="checkbox" name="pg1_psCertY"
                                             <%= props.getProperty("pg1_psCertY", "") %> /> No <input
@@ -2795,7 +2795,7 @@
                                     <td nowrap="nowrap"><input type="text" name="pg1_lastUsed" id="pg1_lastUsed"
                                                                size="10" maxlength="10"
                                                                value="<%= UtilMisc.htmlEscape(props.getProperty("pg1_lastUsed", "")) %>"/>
-                                        <img src="../images/cal.gif" id="pg1_lastUsed_cal"></td>
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_lastUsed_cal"></td>
                                 </tr>
                             </table>
 
@@ -2804,7 +2804,7 @@
                             <input type="text" name="pg1_menEDB" id="pg1_menEDB" class="spe"
                                    onDblClick="calByLMP(this);" size="10" maxlength="10"
                                    value="<%= UtilMisc.htmlEscape(props.getProperty("pg1_menEDB", "")) %>"/> <img
-                                    src="../images/cal.gif" id="pg1_menEDB_cal"></td>
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_menEDB_cal"></td>
 
 
                         <td valign="top" width="35%" rowspan="2">
@@ -2816,7 +2816,7 @@
                                         <input type="text" name="c_finalEDB" id="c_finalEDB" size="10"
                                                maxlength="10"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("c_finalEDB", "")) %>"/>
-                                        <img src="../images/cal.gif" id="c_finalEDB_cal"></td>
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="c_finalEDB_cal"></td>
                                     <td width="40%"><u>Dating Method</u></br>
                                         <input type="checkbox" name="pg1_edbByDate"
                                                 <%= props.getProperty("pg1_edbByDate", "") %> />Dates<br>
@@ -3540,7 +3540,7 @@
                                                id="pg1_labLastPapDate" size="10" maxlength="10"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("pg1_labLastPapDate", "")) %>">
                                         <img
-                                                src="../images/cal.gif" id="pg1_labLastPapDate_cal">
+                                                src="<%= request.getContextPath() %>/images/cal.gif" id="pg1_labLastPapDate_cal">
                                     </td>
                                     <td valign="top" rowspan="2"><input type="text"
                                                                         name="pg1_labLastPap" size="10" maxlength="20"
@@ -3852,13 +3852,13 @@
                             %>
                             &nbsp;&nbsp;&nbsp;
                             <b>View:</b> <a href="javascript:void(0)"
-                                            onclick="popupPage(960,700,'formonarenhancedpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">AR2</a>
+                                            onclick="popupPage(960,700,'form/formonarenhancedpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">AR2</a>
                             &nbsp;&nbsp;&nbsp;
                             <b>Edit:</b> <a href="javascript:void(0)"
-                                            onclick="onPageChange('formonarenhancedpg2.jsp?demographic_no=<%=demoNo%>&formId=#id&provNo=<%=provNo%>');">AR2</a>
+                                            onclick="onPageChange('form/formonarenhancedpg2.jsp?demographic_no=<%=demoNo%>&formId=#id&provNo=<%=provNo%>');">AR2</a>
                             &nbsp;&nbsp;&nbsp;
                             <b>Download:</b> <a
-                                href="formonarenhancedxml.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&episodeId=<%=props.getProperty("episodeId","0")%>">XML</a>
+                                href="form/formonarenhancedxml.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&episodeId=<%=props.getProperty("episodeId","0")%>">XML</a>
                         </td>
                         <%
                             }
@@ -3980,7 +3980,7 @@
                 <input type="checkbox" name="ferritin" id="ferritin" class="text ui-widget-content ui-corner-all"/>
                 <label for="ferritin">Ferritin</label>
                 <a href="javascript:void(0);" onclick="return false;" title="Consider to rule out iron deficiency"><img
-                        border="0" src="../images/icon_help_sml.gif"/></a>
+                        border="0" src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
 
                 <br/>
                 <input type="checkbox" name="hbElectrophoresis" id="hbElectrophoresis" value=""
@@ -3988,7 +3988,7 @@
                 <label for="hbElectrophoresis">Hb electrophoresis</label>
                 <a href="javascript:void(0);" onclick="return false;"
                    title="Consider to rule out Thalassemia in at-risk populations"><img border="0"
-                                                                                        src="../images/icon_help_sml.gif"/></a>
+                                                                                        src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
             </fieldset>
         </form>
     </div>
@@ -4019,10 +4019,10 @@
     <div id="lab_menu_div" class="hidden">
         <ul>
             <li><a href="javascript:void(0)"
-                   onclick="popPage('formlabreq<%=labReqVer%>.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=eFTS','LabReq')">MOH&amp;LTC
+                   onclick="popPage('form/formlabreq<%=labReqVer%>.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=eFTS','LabReq')">MOH&amp;LTC
                 eFTS</a></li>
             <li><a href="javascript:void(0)"
-                   onclick="popPage('formlabreq<%=labReqVer %>.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AnteNatal','LabReq')">Routine
+                   onclick="popPage('form/formlabreq<%=labReqVer %>.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=<%=provNo%>&labType=AnteNatal','LabReq')">Routine
                 Prenatal</a></li>
             <li><a href="javascript:void(0)" onclick="loadCytologyForms();">Cytology</a></li>
         </ul>
@@ -4087,10 +4087,10 @@
                                    class="text ui-widget-content ui-corner-all"/></td>
                         <td>
                             <a id="moveToForm_height" href="javascript:void(0)" title="Copy from Chart to Form"><img
-                                    src="../images/icons/132.png"/></a>
+                                    src="<%= request.getContextPath() %>/images/icons/132.png"/></a>
                             &nbsp;
                             <a id="moveToChart_height" href="javascript:void(0)" onClick="moveToChart('height','HT');"
-                               title="Copy from Form to Chart"><img src="../images/icons/131.png"/></a>
+                               title="Copy from Form to Chart"><img src="<%= request.getContextPath() %>/images/icons/131.png"/></a>
                         </td>
                         <td><input readonly="readonly" type="text" size="5" id="height_chart" name="height_chart"
                                    class="text ui-widget-content ui-corner-all"/></td>
@@ -4106,10 +4106,10 @@
                                    class="text ui-widget-content ui-corner-all"/></td>
                         <td>
                             <a id="moveToForm_weight" href="javascript:void(0)" title="Copy from Chart to Form"><img
-                                    src="../images/icons/132.png"/></a>
+                                    src="<%= request.getContextPath() %>/images/icons/132.png"/></a>
                             &nbsp;
                             <a id="moveToChart_weight" href="javascript:void(0)" onClick="moveToChart('weight','WT');"
-                               title="Copy from Form to Chart"><img src="../images/icons/131.png"/></a>
+                               title="Copy from Form to Chart"><img src="<%= request.getContextPath() %>/images/icons/131.png"/></a>
                         </td>
                         <td><input readonly="readonly" type="text" size="5" id="weight_chart" name="weight_chart"
                                    class="text ui-widget-content ui-corner-all"/></td>
@@ -4125,10 +4125,10 @@
                                    class="text ui-widget-content ui-corner-all"/></td>
                         <td>
                             <a id="moveToForm_bp" href="javascript:void(0)" title="Copy from Chart to Form"><img
-                                    src="../images/icons/132.png"/></a>
+                                    src="<%= request.getContextPath() %>/images/icons/132.png"/></a>
                             &nbsp;
                             <a id="moveToChart_bp" href="javascript:void(0)" onClick="moveToChart('bp','BP');"
-                               title="Copy from Form to Chart"><img src="../images/icons/131.png"/></a>
+                               title="Copy from Form to Chart"><img src="<%= request.getContextPath() %>/images/icons/131.png"/></a>
                         </td>
                         <td><input readonly="readonly" type="text" size="5" id="bp_chart" name="bp_chart"
                                    class="text ui-widget-content ui-corner-all"/></td>
@@ -4177,7 +4177,7 @@
                             Enter Height, Weight, and BMI
                             <a href="javascript:void(0);" onclick="return false;"
                                title="Enter values in form under Physical Examination"><img border="0"
-                                                                                            src="../images/icon_help_sml.gif"/></a>
+                                                                                            src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
                         </td>
                     </tr>
                     <tr>
@@ -4185,7 +4185,7 @@
                             Order routine Prenatal Labs
                             <a href="javascript:void(0);" onclick="return false;"
                                title="Click on 'Labs' menu item under Prompts, and choose Routine Prenatal"><img
-                                    border="0" src="../images/icon_help_sml.gif"/></a>
+                                    border="0" src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
                         </td>
                     </tr>
                     <tr>
@@ -4193,7 +4193,7 @@
                             Order <%=prenatalScreenName%> (<%=prenatalScreen%>)
                             <a href="javascript:void(0);" onclick="return false;"
                                title="Click on 'Forms' menu item under Prompts, and choose <%=customEformGroup%>"><img
-                                    border="0" src="../images/icon_help_sml.gif"/></a>
+                                    border="0" src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
                         </td>
                     </tr>
                     <tr>
@@ -4201,7 +4201,7 @@
                             Order Ultrasound (Dating,IPS, or 18wk)
                             <a href="javascript:void(0);" onclick="return false;"
                                title="Click on 'Forms' menu item under Prompts, and choose Ultrasound"><img border="0"
-                                                                                                            src="../images/icon_help_sml.gif"/></a>
+                                                                                                            src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
                         </td>
                     </tr>
                     <tr>
@@ -4209,7 +4209,7 @@
                             Order Pap Smear
                             <a href="javascript:void(0);" onclick="return false;"
                                title="Click on 'Labs' menu item under Prompts, and choose Cytology"><img border="0"
-                                                                                                         src="../images/icon_help_sml.gif"/></a>
+                                                                                                         src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
                         </td>
                     </tr>
                     </tbody>
@@ -4229,7 +4229,7 @@
                             Order 18 week morphology ultrasound
                             <a href="javascript:void(0);" onclick="return false;"
                                title="Click on 'Forms' menu item under Prompts, and choose Ultrasound"><img border="0"
-                                                                                                            src="../images/icon_help_sml.gif"/></a>
+                                                                                                            src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
                         </td>
                     </tr>
                     </tbody>

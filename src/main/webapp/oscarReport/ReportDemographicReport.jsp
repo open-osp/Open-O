@@ -46,7 +46,7 @@
 
 
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
-<link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
 <script src="<%=request.getContextPath()%>/js/jquery-1.9.1.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -88,12 +88,12 @@
             Demographic Report tool
         </title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
         <script language="JavaScript">
             function checkQuery() {
@@ -196,7 +196,7 @@
                                 <%}%>
                             </select>
                             <input type="submit" value="Load Query" name="query"/>
-                            <a href="ManageDemographicQueryFavourites.jsp">manage</a>
+                            <a href="oscarReport/ManageDemographicQueryFavourites.jsp">manage</a>
                         </td>
                         <td style="text-align:right">
                             <a
@@ -215,17 +215,26 @@
             <td class="MainTableRightColumn">
 
                 <%
+                    oscar.oscarReport.pageUtil.RptDemographicReport2Form thisForm = null;
+
+                    // Get the form bean from the request
                     if (request.getAttribute("formBean") != null) {
-                        oscar.oscarReport.pageUtil.RptDemographicReport2Form thisForm;
-                        thisForm = (oscar.oscarReport.pageUtil.RptDemographicReport2Form) request.getAttribute("RptDemographicReport2Form");
-                        thisForm.copyConstructor((oscar.oscarReport.pageUtil.RptDemographicReport2Form) request.getAttribute("formBean"));
-
+                        thisForm = (oscar.oscarReport.pageUtil.RptDemographicReport2Form) request.getAttribute("formBean");
                     }
-                    oscar.oscarReport.pageUtil.RptDemographicReport2Form thisForm;
-                    thisForm = (oscar.oscarReport.pageUtil.RptDemographicReport2Form) request.getAttribute("RptDemographicReport2Form");
 
+                    // Initialize the form bean if it is null
+                    if (thisForm == null) {
+                        thisForm = new oscar.oscarReport.pageUtil.RptDemographicReport2Form();
+                        request.setAttribute("formBean", thisForm); // Ensure the form bean is set in the request
+                    }
 
-                    if (thisForm != null || thisForm.getAgeStyle() == null || thisForm.getAgeStyle().equals("2")) {
+                    // Call the copy constructor if the form is already in the request
+                    if (request.getAttribute("RptDemographicReport2Form") != null) {
+                        thisForm.copyConstructor((oscar.oscarReport.pageUtil.RptDemographicReport2Form) request.getAttribute("RptDemographicReport2Form"));
+                    }
+
+                    // Set the default values for the form bean
+                    if (thisForm.getAgeStyle() == null || "2".equals(thisForm.getAgeStyle())) {
                         thisForm.setAgeStyle("1");
                     }
                 %>
@@ -517,7 +526,7 @@
                                         In the year
                                         <input type="radio" name="ageStyle" value="2"/>
                                         As of : <input type="text" name="asofDate" size="9" id="asofDate"/> <a
-                                            id="date"><img title="Calendar" src="../images/cal.gif" alt="Calendar"
+                                            id="date"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar"
                                                            border="0"/></a> <br>
                                     </td>
                                 </tr>

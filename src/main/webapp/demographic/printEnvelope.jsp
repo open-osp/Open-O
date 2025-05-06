@@ -66,7 +66,7 @@
             height="80%" width="100%" standby="Loading pdf...">
 
         Sorry the pdf failed to load...<a
-            href="../report/GenerateEnvelopes.do?demos=<%=request.getParameter("demos")%>">click here to download the
+            href="<%= request.getContextPath() %>/report/GenerateEnvelopes.do?demos=<%=request.getParameter("demos")%>">click here to download the
         PDF</a>.
 
     </object>

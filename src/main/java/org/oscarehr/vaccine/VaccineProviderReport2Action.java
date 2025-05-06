@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.Spring;
 
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.model.Intake;
@@ -35,6 +36,7 @@ import org.oscarehr.PMmodule.service.GenericIntakeManager;
 import org.oscarehr.common.model.Demographic;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
@@ -45,12 +47,8 @@ public class VaccineProviderReport2Action extends ActionSupport {
 
     private static Logger log = MiscUtils.getLogger();
 
-    private ClientManager clientManager;
-    private GenericIntakeManager genericIntakeManager;
-
-    public void setGenericIntakeManager(GenericIntakeManager mgr) {
-        this.genericIntakeManager = mgr;
-    }
+    private ClientManager clientManager = SpringUtils.getBean(ClientManager.class);
+    private GenericIntakeManager genericIntakeManager= SpringUtils.getBean(GenericIntakeManager.class);
 
     protected void postMessage(HttpServletRequest request, String key, String val) {
         addActionMessage(getText(key, val));
@@ -64,7 +62,7 @@ public class VaccineProviderReport2Action extends ActionSupport {
         return (String) request.getSession().getAttribute("user");
     }
 
-    public String unspecified() {
+    public String execute() {
         return show_report();
     }
 
@@ -112,9 +110,4 @@ public class VaccineProviderReport2Action extends ActionSupport {
 
         return "report";
     }
-
-    public void setClientManager(ClientManager mgr) {
-        this.clientManager = mgr;
-    }
-
 }

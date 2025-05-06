@@ -2002,7 +2002,7 @@
                         var patientName = json.demoName;//get name from id
                         addPatientId(patientId);
                         addPatientIdName(patientId, patientName);
-                        var e = '<dt><img id="plus' + patientId + '" alt="plus" src="../images/plus.png" onclick="showhideSubCat(\'plus\',\'' + patientId + '\');"/><img id="minus' + patientId + '" alt="minus" style="display:none;" src="../images/minus.png" onclick="showhideSubCat(\'minus\',\'' + patientId + '\');"/>' +
+                        var e = '<dt><img id="plus' + patientId + '" alt="plus" src="<%= request.getContextPath() %>/images/plus.png" onclick="showhideSubCat(\'plus\',\'' + patientId + '\');"/><img id="minus' + patientId + '" alt="minus" style="display:none;" src="<%= request.getContextPath() %>/images/minus.png" onclick="showhideSubCat(\'minus\',\'' + patientId + '\');"/>' +
                             '<a id="patient' + patientId + 'all" href="javascript:void(0);"  onclick="resetCurrentFirstDocLab();showThisPatientDocs(\'' + patientId + '\');un_bold(this);" title="' + patientName + '">' + patientName + ' (<span id="patientNumDocs' + patientId + '">1</span>)</a>' +
                             '<dl id="labdoc' + patientId + 'showSublist" style="display:none" >';
                         var type = checkType(doclabid);

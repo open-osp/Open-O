@@ -68,7 +68,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Late Life FDI: Function component</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
 
@@ -99,7 +99,7 @@
         function goToVisualAid1() {
             var vheight = 768;
             var vwidth = 640;
-            var page = "formlatelifefunctionvisualAid1.jsp";
+            var page = "form/formlatelifefunctionvisualAid1.jsp";
             windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
             window.open(page, "", windowprops);
         }
@@ -108,7 +108,7 @@
             var vheight = 768;
             var vwidth = 640;
             var windowprops = "height=768,width=600,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=600,screenY=200,top=0,left=0";
-            window.open("formlatelifefunctionvisualAid2.jsp", "", windowprops);
+            window.open("form/formlatelifefunctionvisualAid2.jsp", "", windowprops);
         }
 
         function goToPage1() {
@@ -321,7 +321,7 @@
             goToScorePage();
         }
     </script>
-    <script type="text/javascript" src="formScripts.js">
+    <script type="text/javascript" src="form/formScripts.js">
     </script>
 
 

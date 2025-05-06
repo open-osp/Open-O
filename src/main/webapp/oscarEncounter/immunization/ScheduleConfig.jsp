@@ -46,7 +46,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -137,7 +137,7 @@
                 <table width="80%">
                     <tr>
                         <td>
-                            <<input type="submit" name="submit"
+                            <input type="submit" name="submit"
                                     value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.ScheduleConfig.addTemplate"/>" />
                             <input type="button" value='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnCancel"/>'
                                    onclick="javascript:location.href='loadSchedule.do?demographic_no=<%=demoNo%>';"/>

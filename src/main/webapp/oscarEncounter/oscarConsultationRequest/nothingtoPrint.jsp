@@ -50,7 +50,7 @@
     </script>
 
 
-    <link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/encounterStyles.css">
     <body topmargin="0" leftmargin="0" vlink="#0000FF"
           onload="finishPage(15);">
     <!--  -->

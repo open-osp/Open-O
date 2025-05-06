@@ -93,8 +93,8 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.Schedule.title"/></title>
-    <link rel="stylesheet" type="text/css" href="../encounterStyles.css">
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/encounterStyles.css">
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
     <script language="javascript">
         function onClose() {

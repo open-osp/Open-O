@@ -48,7 +48,7 @@
             }
 
         </script>
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     <body>
     <form action="${pageContext.request.contextPath}/PMmodule/ClientManager.do" method="post">`
         <%

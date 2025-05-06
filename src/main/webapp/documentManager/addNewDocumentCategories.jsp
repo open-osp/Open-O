@@ -39,7 +39,7 @@
 
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
     <script>
 
         function submitUpload(object) {
@@ -72,7 +72,7 @@
             </table>
         </td>
     </tr>
-    <form action="${pageContext.request.contextPath}/documentManager/addDocumentType" method="POST"
+    <form action="${pageContext.request.contextPath}/documentManager/addDocumentType.do" method="POST"
                enctype="multipart/form-data" class="forms"
                onsubmit="return submitUpload(this)">
         <table>

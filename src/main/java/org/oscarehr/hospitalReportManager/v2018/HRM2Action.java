@@ -85,7 +85,6 @@ public class HRM2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     static int draw = 0;
 
     Logger logger = MiscUtils.getLogger();
@@ -97,7 +96,6 @@ public class HRM2Action extends ActionSupport {
     private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     private HRMDocumentToDemographicDao hrmDocumentToDemographicDao = SpringUtils.getBean(HRMDocumentToDemographicDao.class);
-
 
     public String uploadReport() throws Exception {
 
@@ -694,10 +692,38 @@ public class HRM2Action extends ActionSupport {
         return null;
     }
 
-
     @Override
     public String execute() throws Exception {
-
+        String method = request.getParameter("method");
+        if ("uploadReport".equals(method)) {
+            return uploadReport();
+        } else if ("uploadPrivateKey".equals(method)) {
+            return uploadPrivateKey();
+        } else if ("fetch".equals(method)) {
+            return fetch();
+        } else if ("saveConfigurationDetails".equals(method)) {
+            return saveConfigurationDetails();
+        } else if ("getConfigurationDetails".equals(method)) {
+            return getConfigurationDetails();
+        } else if ("getPollingInterval".equals(method)) {
+            return getPollingInterval();
+        } else if ("getConfidentialityStatement".equals(method)) {
+            return getConfidentialityStatement();
+        } else if ("saveConfidentialityStatement".equals(method)) {
+            return saveConfidentialityStatement();
+        } else if ("addToOutageList".equals(method)) {
+            return addToOutageList();
+        } else if ("getHrmStatus".equals(method)) {
+            return getHrmStatus();
+        } else if ("getDetailedLog".equals(method)) {
+            return getDetailedLog();
+        } else if ("viewLog".equals(method)) {
+            return viewLog();
+        } else if ("searchCategory".equals(method)) {
+            return searchCategory();
+        } else if ("saveCategory".equals(method)) {
+            return saveCategory();
+        } 
         boolean isHrmAdmin = securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_hrm.administrator", "r", null);
         boolean isHrm = securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_hrm", "r", null);
         boolean isAdmin = securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin.hrm", "r", null);

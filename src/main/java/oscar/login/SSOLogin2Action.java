@@ -97,7 +97,16 @@ public final class SSOLogin2Action extends ActionSupport {
     String[] providerInformation;
     String providerNumber = "";
 
-    public String unspecified() {
+    public String execute() throws IOException {
+
+        String method = request.getParameter("econsultLogin");
+        if ("econsultLogin".equals(method)) {
+            return econsultLogin();
+        } else if ("ssoLogout".equals(method)) {
+            return ssoLogout();
+        } else if ("ssoLogin".equals(method)) {
+            return ssoLogin();
+        } 
 
         String relayState = request.getParameter("RelayState");
         if (relayState != null) {

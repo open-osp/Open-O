@@ -221,26 +221,26 @@
 
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
        adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
         <script type="text/javascript" src="<%=request.getContextPath() %>/js/check_hin.js"></script>
 
         <!-- Stylesheet for zdemographicfulltitlesearch.jsp -->
-        <link rel="stylesheet" type="text/css" href="../share/css/searchBox.css"/>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/searchBox.css"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/css/Demographic.css"/>
 
-        <!--link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  /-->
+        <!--link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"  /-->
         <script language="JavaScript">
             function upCaseCtrl(ctrl) {
                 ctrl.value = ctrl.value.toUpperCase();
@@ -2082,7 +2082,7 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
                                 <input type="text" placeholder="yyyy-mm-dd"
                                        name="patient_status_date" id="patient_status_date"
                                        value="<%=today %>" size="12"> <img
-                                    src="../images/cal.gif" id="patient_status_date_cal">
+                                    src="<%= request.getContextPath() %>/images/cal.gif" id="patient_status_date_cal">
                             </td>
                         </tr>
 
@@ -2289,7 +2289,7 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
                                                                 name="waiting_list_referral_date"
                                                                 id="waiting_list_referral_date"
                                                                 value="" size="12" <%=wLReadonly%>> <img
-                                                src="../images/cal.gif" id="referral_date_cal">
+                                                src="<%= request.getContextPath() %>/images/cal.gif" id="referral_date_cal">
                                         </td>
                                         <td><!-- placeholder --></td>
                                         <td><!-- placeholder --></td>
@@ -2460,7 +2460,7 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
                                         if (fid != null && fid >= 0) {
                                     %>
                                     <iframe scrolling="no" id="eform_iframe" name="eform_iframe" frameborder="0"
-                                            src="../eform/efmshowform_data.jsp?fid=<%=fid%>"
+                                            src="<%= request.getContextPath() %>/eform/efmshowform_data.jsp?fid=<%=fid%>"
                                             onload="this.height=0;var fdh=(this.Document?this.Document.body.scrollHeight:this.contentDocument.body.offsetHeight);this.height=(fdh>800?fdh:800)"
                                             width="100%"></iframe>
                                     <%}%>
@@ -2534,7 +2534,7 @@ if (privateConsentEnabled) {
 }
 %>
     </script>
-    <!--<iframe src="../eform/efmshowform_data.jsp?fid=<%=fid%>" width="100%" height="100%"></iframe>-->
+    <!--<iframe src="<%= request.getContextPath() %>/eform/efmshowform_data.jsp?fid=<%=fid%>" width="100%" height="100%"></iframe>-->
     <%//}%>
     </body>
 </html>

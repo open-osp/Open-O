@@ -28,7 +28,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ include file="/survey/taglibs.jsp" %>
 
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 <form action="<%=request.getContextPath() %>/SurveyManager.do" method="POST" id="surveyForm">
     <input type="hidden" name="method" value="create_survey"/>

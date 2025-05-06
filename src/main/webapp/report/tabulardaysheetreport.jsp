@@ -47,9 +47,9 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>OSCAR - <fmt:setBundle basename="oscarResources"/><fmt:message key="report.tabulardaysheetreport.title"/>=</title>
-    <link rel="stylesheet" href="../share/css/oscar.css">
-    <link rel="stylesheet" href="../share/css/reporting.css">
-    <link rel="stylesheet" href="../web.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/oscar.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/reporting.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
     <script language="JavaScript">
         <!--
         function setfocus() {

@@ -209,7 +209,7 @@
                                                value="<%=curdoc.getObservationDate()%>">
                                         <a id="obsdate<%=currentDocId%>"
                                            onmouseover="renderCalendar(this.id,'observationDate<%=currentDocId%>' );"
-                                           href="javascript:void(0);"><img title="Calendar" src="../images/cal.gif"
+                                           href="javascript:void(0);"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif"
                                                                            alt="Calendar" border="0"/></a>
                                     </td>
                                 </tr>

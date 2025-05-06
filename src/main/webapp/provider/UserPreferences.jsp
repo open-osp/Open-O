@@ -41,7 +41,7 @@
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.title"/></title>
     <script src="<c:out value="${ctx}/js/checkPassword.js.jsp"/>"></script>
-    <script type="text/javascript" src="../share/javascript/prototype.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
     <script src="<c:out value="${ctx}/js/jquery.js"/>"></script>
     <script>
         jQuery.noConflict();
@@ -75,7 +75,7 @@
             setTimeout('colourUpdate()', 1000);
         }
     </script>
-    <script type="text/javascript" src="../share/javascript/picker.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/picker.js"></script>
 
     <script type="text/javascript">
         var remote = null;
@@ -239,7 +239,7 @@
                             <input type="hidden" <%=UserPreference2Action.getTextData(prefs, "pref." + UserProperty.COLOUR)%> />
                             <span id='cdisp' style='width: 100%'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                             <a href="javascript:TCP.popup(document.forms[0].elements['pref.colour'])"><img
-                                    width="15" height="13" border="0" src="../images/sel.gif"></a>
+                                    width="15" height="13" border="0" src="<%= request.getContextPath() %>/images/sel.gif"></a>
                         </td>
                     </tr>
                     <tr>

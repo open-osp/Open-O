@@ -298,7 +298,6 @@
 
             }
 
-
             function setup() {
                 var update = "<%=updateParent%>";
                 var parentId = "<%=parentAjaxId%>";
@@ -306,6 +305,18 @@
 
                 if (update === "true" && !window.opener.closed) {
                     window.opener.popLeftColumn(Url[parentId], parentId, parentId);
+                }
+            }
+
+            window.closeWindow = function() {
+                if (window.opener) {
+                    window.close();
+                } else {
+                    try {
+                        open(location, '_self').close();
+                    } catch(e) {
+                        history.back();
+                    }
                 }
             }
 
@@ -686,8 +697,8 @@
             </div>
             <div>
                 <input type="button" name="Button" class="btn btn-primary"
-                       value="<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentReport.btnDoneClose"/>"
-                       onclick=self.close();/>
+                        value="<fmt:message key='dms.documentReport.btnDoneClose'/>"
+                        onclick="window.closeWindow()"/>
                 <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentReport.btnCombinePDF"/>" class="btn"
                        onclick="return submitForm('<rewrite:reWrite jspPage="combinePDFs.do"/>');"/>
             </div>

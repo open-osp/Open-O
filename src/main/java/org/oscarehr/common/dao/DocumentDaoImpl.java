@@ -308,6 +308,25 @@ public class DocumentDaoImpl extends AbstractDaoImpl<Document> implements Docume
                                         boolean includeDeleted, boolean includeActive, EDocSort sort, Date since) {
         Map<String, Object> params = new HashMap<String, Object>();
 
+        Integer moduleIdInt = null;
+        try {
+            if (moduleid == null) {
+                throw new IllegalArgumentException("moduleid cannot be null");
+            }
+            
+            String cleanedModuleId = moduleid.trim();
+            if (cleanedModuleId.isEmpty()) {
+                throw new IllegalArgumentException("moduleid cannot be empty");
+            }
+
+            moduleIdInt = Integer.valueOf(cleanedModuleId);
+            if (moduleIdInt <= 0) {
+                throw new IllegalArgumentException("moduleid must be positive");
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("moduleid must be a valid integer, but got:" + moduleid, e);
+        }
+
         StringBuilder buf = new StringBuilder("SELECT DISTINCT c, d " +
                 "FROM Document d, CtlDocument c " +
                 "WHERE c.id.documentNo = d.id AND c.id.module = :module");
@@ -325,11 +344,11 @@ public class DocumentDaoImpl extends AbstractDaoImpl<Document> implements Docume
         } else {
             if (isShowingAllDocuments) {
                 buf.append(" AND c.id.moduleId = :moduleId AND d.public1 = 0");
-                params.put("moduleId", ConversionUtils.fromIntString(moduleid));
+                params.put("moduleId", moduleIdInt);
             } else {
                 buf.append(" AND c.id.moduleId = :moduleId AND d.public1 = 0 AND d.doctype = :doctype");
                 params.put("doctype", docType);
-                params.put("moduleId",moduleid);
+                params.put("moduleId",moduleIdInt);
             }
         }
 

@@ -57,6 +57,12 @@ public class BillingONReview2Action extends ActionSupport {
     private DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() throws Exception {
+        if ("getClinic".equals(request.getParameter("method"))) {
+            return getClinic();
+        }
+        return getDemographic();
+    }
 
     public String getDemographic() throws IOException {
         String demographicNo = request.getParameter("demographicNo");

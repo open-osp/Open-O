@@ -59,17 +59,17 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentReport.title"/></title>
         <link rel="stylesheet" type="text/css"
-              href="../share/css/OscarStandardLayout.css"/>
-        <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
-        <script type="text/javascript" src="../share/javascript/prototype.js"></script>
+              href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
 
         <link rel="stylesheet" type="text/css"
-              href="../share/css/niftyCorners.css"/>
+              href="<%= request.getContextPath() %>/share/css/niftyCorners.css"/>
         <link rel="stylesheet" type="text/css" href="dms.css"/>
         <link rel="stylesheet" type="text/css"
-              href="../share/css/niftyPrint.css" media="print"/>
-        <script type="text/javascript" src="../share/javascript/nifty.js"></script>
-        <script type="text/javascript" src="../phr/phr.js"></script>
+              href="<%= request.getContextPath() %>/share/css/niftyPrint.css" media="print"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/nifty.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/phr/phr.js"></script>
         <script type="text/javascript">
             function popup1(height, width, url, windowName) {
                 var page = url;
@@ -85,9 +85,9 @@
             }
         </script>
 
-        <script src="../share/javascript/prototype.js" type="text/javascript"></script>
+        <script src="<%= request.getContextPath() %>/share/javascript/prototype.js" type="text/javascript"></script>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 
         <script type="text/javascript" language=javascript>

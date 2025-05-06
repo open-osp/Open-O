@@ -252,7 +252,7 @@
 
                 <span class="span3">
 					            	<a class="btn btn-primary btn-small"
-                                       href="../../documentManager/ManageDocument.do?method=display&doc_no=<%=dispDocNo%>&providerNo=<%=user%>">Download Registration Letter</a></div>
+                                       href="<%= request.getContextPath() %>/documentManager/ManageDocument.do?method=display&doc_no=<%=dispDocNo%>&providerNo=<%=user%>">Download Registration Letter</a></div>
 					            </span>
             </td>
         </tr>
@@ -311,7 +311,7 @@
         <div class="span4 text-center">
             <div class="control-group">
                 <a class="btn btn-link"
-                   href="../../demographic/demographiccontrol.jsp?demographic_no=<%=demographicId%>&displaymode=edit&dboperation=search_detail">Edit</a>
+                   href="<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographicId%>&displaymode=edit&dboperation=search_detail">Edit</a>
                 <address>
                     <strong>${demographic.firstName}&nbsp;${demographic.lastName}</strong><br/>
                         ${demographic.address}<br/>

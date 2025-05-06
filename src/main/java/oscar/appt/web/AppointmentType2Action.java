@@ -110,7 +110,13 @@ public class AppointmentType2Action extends ActionSupport {
                     }
                 }
             } else if (sOper.equals("del")) {
-                appDao.remove(typeNo);
+                try {
+                    appDao.remove(typeNo);
+                    return "redirect"; 
+                } catch (Exception e) {
+                    addActionError("Delete failed: " + e.getMessage());
+                    return "failure";
+                }
             }
 
         }

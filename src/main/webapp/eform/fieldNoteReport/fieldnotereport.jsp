@@ -87,9 +87,9 @@
     <head>
 
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.fieldNote.report"/></title>
-        <link rel="stylesheet" href="../../share/css/OscarStandardLayout.css">
-        <link rel="stylesheet" href="../../share/css/eformStyle.css">
-        <link rel="stylesheet" type="text/css" media="all" href="../../share/calendar/calendar.css"
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/eformStyle.css">
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css"
               title="win2k-cold-1"/>
         <style>
             td {
@@ -105,9 +105,9 @@
         </style>
 
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-        <script type="text/javascript" src="../../share/calendar/calendar.js"></script>
-        <script type="text/javascript" src="../../share/calendar/lang/calendar-en.js"></script>
-        <script type="text/javascript" src="../../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/lang/calendar-en.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <script type="text/javascript">
             function send(residentId, residentName, method) {
                 document.fieldNoteReportForm.residentId.value = residentId;
@@ -177,11 +177,11 @@
                 <td>
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.fieldNote.startDate"/>:<input type="text" name="date_start" size="8"
                                                                            value="<%=dateStart%>" id="startDate"><a
-                        id="SCal"><img title="Calendar" src="../../images/cal.gif" alt="Calendar" border="0"/></a>
+                        id="SCal"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                     &nbsp;
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.fieldNote.endDate"/>:<input type="text" name="date_end" size="8"
                                                                          value="<%=dateEnd%>" id="endDate"><a id="ECal"><img
-                        title="Calendar" src="../../images/cal.gif" alt="Calendar" border="0"/></a>
+                        title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                     &nbsp;
                     <input type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.fieldNote.getFieldNotes"/>"
                            style="font-weight:bold; font-size:large" onclick="getFieldNotes();"/>

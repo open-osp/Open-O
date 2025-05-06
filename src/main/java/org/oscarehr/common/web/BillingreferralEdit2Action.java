@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 
-import org.apache.commons.beanutils.DynaBean;
 import org.apache.commons.lang.StringUtils;
 import org.oscarehr.common.dao.ProfessionalSpecialistDao;
 import org.oscarehr.common.model.ProfessionalSpecialist;
@@ -53,9 +52,20 @@ public class BillingreferralEdit2Action extends ActionSupport {
 
     private ProfessionalSpecialistDao psDao = SpringUtils.getBean(ProfessionalSpecialistDao.class);
 
-
     @Override
     public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("searchByNo".equals(method)) {
+            return searchByNo();
+        } else if ("searchBySpecialty".equals(method)) {
+            return searchBySpecialty();
+        } else if ("searchByName".equals(method)) {
+            return searchByName();
+        } else if ("modifyBatch".equals(method)) {
+            return modifyBatch();
+        } else if ("advancedSearch".equals(method)) {
+            return advancedSearch();
+        }
         return list();
     }
 
@@ -89,7 +99,6 @@ public class BillingreferralEdit2Action extends ActionSupport {
         return "list";
     }
 
-
     public String searchByName() {
         //DynaBean lazyForm = (DynaBean) form;
         String name = search;
@@ -110,7 +119,6 @@ public class BillingreferralEdit2Action extends ActionSupport {
 
         return "list";
     }
-
 
     public String modifyBatch() throws IOException {
         String referralId = request.getParameter("id");

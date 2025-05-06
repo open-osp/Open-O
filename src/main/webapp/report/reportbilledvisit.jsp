@@ -28,7 +28,7 @@
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>PATIENT NO SHOW LIST</title>
     <meta http-equiv=Expires content=-1>
-    <!--link rel="stylesheet" href="../web.css" -->
+    <!--link rel="stylesheet" href="<%= request.getContextPath() %>/web.css" -->
     <script language="JavaScript">
         <!--
         function setfocus() {

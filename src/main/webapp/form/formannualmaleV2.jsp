@@ -269,11 +269,11 @@
                 <input type="button" value="Print"
                        onclick="javascript:return onPrint();"/> <input type="button"
                                                                        value="Consult"
-                                                                       onclick="javascript:popupOscarCon(700,960,'../oscarEncounter/oscarConsultationRequest/ConsultationFormRequest.jsp?de=<%=demoNo%>');"/>
+                                                                       onclick="javascript:popupOscarCon(700,960,'<%= request.getContextPath() %>/oscarEncounter/oscarConsultationRequest/ConsultationFormRequest.jsp?de=<%=demoNo%>');"/>
 
             </td>
             <td align='right'><a
-                    href="javascript: popupPage(700,950,'../decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">Annual
+                    href="javascript: popupPage(700,950,'<%= request.getContextPath() %>/decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">Annual
                 Review Planner</a></td>
         </tr>
     </table>
@@ -1461,7 +1461,7 @@
                                                                                   onclick="javascript:return onPrint();"/>
                         </td>
                         <td align='right'><a
-                                href="javascript: popupPage(700,950,'../decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">Annual
+                                href="javascript: popupPage(700,950,'<%= request.getContextPath() %>/decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">Annual
                             Review Planner</a></td>
                     </tr>
                 </table>

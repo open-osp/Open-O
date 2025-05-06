@@ -130,7 +130,7 @@ public class MsgAttachPDF2Action extends ActionSupport {
         return isPreview;
     }
 
-    public void setPreview(boolean preview) {
+    public void setIsPreview(boolean preview) {
         isPreview = preview;
     }
 
@@ -138,7 +138,7 @@ public class MsgAttachPDF2Action extends ActionSupport {
         return isAttaching;
     }
 
-    public void setAttaching(boolean attaching) {
+    public void setIsAttaching(boolean attaching) {
         isAttaching = attaching;
     }
 
@@ -146,7 +146,7 @@ public class MsgAttachPDF2Action extends ActionSupport {
         return isNew;
     }
 
-    public void setNew(boolean aNew) {
+    public void setIsNew(boolean aNew) {
         isNew = aNew;
     }
 

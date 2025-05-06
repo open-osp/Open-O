@@ -200,73 +200,68 @@
         <input type="hidden" id="serverDate" value="<%=strToday%>">
         <input type="hidden" id="resetFilter" name="resetFilter" value="false">
         <div id="filteredresults">
-            <nested:notEmpty name="caseManagementViewForm" property="filter_providers">
+            <c:if test="${not empty caseManagementViewForm.filter_providers}">
                 <fieldset class="filterresult">
                     <legend><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.providers.title"/></legend>
-                    <nested:iterate type="String" id="filter_provider" property="filter_providers">
+                    <c:forEach var="filter_provider" items="${caseManagementViewForm.filter_providers}" varStatus="status">
                         <c:choose>
                             <c:when test="${filter_provider == 'a'}">All</c:when>
                             <c:otherwise>
-                                <nested:iterate id="provider" name="providers">
-                                    <c:if test="${filter_provider==provider.providerNo}">
-                                        <nested:write name="provider" property="formattedName"/>
-                                        <br>
+                                <c:forEach var="provider" items="${providers}">
+                                    <c:if test="${filter_provider == provider.providerNo}">
+                                        ${provider.formattedName}<br>
                                     </c:if>
-                                </nested:iterate>
+                                </c:forEach>
                             </c:otherwise>
                         </c:choose>
-                    </nested:iterate>
+                    </c:forEach>
                 </fieldset>
-            </nested:notEmpty>
-
-            <nested:notEmpty name="caseManagementViewForm" property="filter_roles">
+            </c:if>
+        
+            <c:if test="${not empty caseManagementViewForm.filter_roles}">
                 <fieldset class="filterresult">
                     <legend><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.roles.title"/></legend>
-                    <nested:iterate type="String" id="filter_role" property="filter_roles">
+                    <c:forEach var="filter_role" items="${caseManagementViewForm.filter_roles}" varStatus="status">
                         <c:choose>
                             <c:when test="${filter_role == 'a'}">All</c:when>
                             <c:otherwise>
-                                <nested:iterate id="role" name="roles">
-                                    <c:if test="${filter_role==role.id}">
-                                        <nested:write name="role" property="name"/>
-                                        <br>
+                                <c:forEach var="role" items="${roles}">
+                                    <c:if test="${filter_role == role.id}">
+                                        ${role.name}<br>
                                     </c:if>
-                                </nested:iterate>
+                                </c:forEach>
                             </c:otherwise>
                         </c:choose>
-                    </nested:iterate>
+                    </c:forEach>
                 </fieldset>
-            </nested:notEmpty>
-
-            <nested:notEmpty name="caseManagementViewForm" property="note_sort">
+            </c:if>
+        
+            <c:if test="${not empty caseManagementViewForm.note_sort}">
                 <fieldset class="filterresult">
                     <legend><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.sort.title"/></legend>
-                    <nested:write property="note_sort"/><br>
+                    ${caseManagementViewForm.note_sort}<br>
                 </fieldset>
-            </nested:notEmpty>
-
-            <nested:notEmpty name="caseManagementViewForm" property="issues">
+            </c:if>
+        
+            <c:if test="${not empty caseManagementViewForm.issues}">
                 <fieldset class="filterresult">
-                    <legend>
-                        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.issues.title"/>
-                    </legend>
-                    <nested:iterate type="String" id="filter_issue" property="issues">
+                    <legend><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.issues.title"/></legend>
+                    <c:forEach var="filter_issue" items="${caseManagementViewForm.issues}" varStatus="status">
                         <c:choose>
                             <c:when test="${filter_issue == 'a'}">All</c:when>
                             <c:when test="${filter_issue == 'n'}">None</c:when>
                             <c:otherwise>
-                                <nested:iterate id="issue" name="cme_issues">
-                                    <c:if test="${filter_issue==issue.issue.id}">
-                                        <nested:write name="issue" property="issueDisplay.description"/>
-                                        <br>
+                                <c:forEach var="issue" items="${cme_issues}">
+                                    <c:if test="${filter_issue == issue.issue.id}">
+                                        ${issue.issueDisplay.description}<br>
                                     </c:if>
-                                </nested:iterate>
+                                </c:forEach>
                             </c:otherwise>
                         </c:choose>
-                    </nested:iterate>
+                    </c:forEach>
                 </fieldset>
-            </nested:notEmpty>
-        </div>
+            </c:if>
+        </div>        
         <div id="filter" style="display:none;margin-top: 5px; margin-left: 5px;margin-right: 5px;">
             <input type="button" value="Hide" onclick="return filter(false);"/>
             <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.resetFilter.title"/>"
@@ -519,7 +514,7 @@
     String oscarMsgType = (String) request.getParameter("msgType");
     String OscarMsgTypeLink = (String) request.getParameter("OscarMsgTypeLink");
 %>
-<nested:form action="/CaseManagementEntry">
+<form action="<%=request.getContextPath()%>/CaseManagementEntry.do" method="post">
     <input type="hidden" name="demographicNo" value="<%=demographicNo%>"/>
     <input type="hidden" name="includeIssue" value="off"/>
     <input type="hidden" name="OscarMsgType" value="<%=oscarMsgType%>"/>
@@ -706,13 +701,13 @@
                 <button type="button" onclick="toggleFullViewForAll();"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.btneExpandLoadedNotes"/></button>
                 <button type="button" onclick="toggleCollapseViewForAll();"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.btnCollapseLoadedNotes"/></button>
                 <button type="button"
-                        onclick="popupPage(500,200,'noteBrowser<%=bean.demographicNo%>','noteBrowser.jsp?demographic_no=<%=bean.demographicNo%>&FirstTime=1');">
+                        onclick="popupPage(500,200,'noteBrowser<%=bean.demographicNo%>','casemgmt/noteBrowser.jsp?demographic_no=<%=bean.demographicNo%>&FirstTime=1');">
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.BrowseNotes"/></button>
             </div>
         </div>
     </div>
 
-</nested:form>
+</form>
 
 <script type="text/javascript">
 

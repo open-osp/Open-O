@@ -56,7 +56,7 @@
                 //var ret = checkAllDates();
                 //if(ret==true) {
                 // params are set in session at the page bottom
-                document.forms[0].action = "../form/createpdf?__title=<%= oscar.form.pdfservlet.FrmPDFServlet.HSFO_RX_DATA_KEY %>";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=<%= oscar.form.pdfservlet.FrmPDFServlet.HSFO_RX_DATA_KEY %>";
                 document.forms[0].target = "_blank";
                 //}
                 return ret;

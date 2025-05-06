@@ -64,12 +64,26 @@ public class FlowSheetCustom2Action extends ActionSupport {
 
     private static final Logger logger = MiscUtils.getLogger();
 
-    private FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) SpringUtils.getBean(FlowSheetCustomizationDao.class);
-    private FlowSheetUserCreatedDao flowSheetUserCreatedDao = (FlowSheetUserCreatedDao) SpringUtils.getBean(FlowSheetUserCreatedDao.class);
+    private FlowSheetCustomizationDao flowSheetCustomizationDao = SpringUtils.getBean(FlowSheetCustomizationDao.class);
+    private FlowSheetUserCreatedDao flowSheetUserCreatedDao = SpringUtils.getBean(FlowSheetUserCreatedDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    public void setFlowSheetCustomizationDao(FlowSheetCustomizationDao flowSheetCustomizationDao) {
-        this.flowSheetCustomizationDao = flowSheetCustomizationDao;
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("save".equals(method)) {
+            return save();
+        } else if ("update".equals(method)) {
+            return update();
+        } else if ("delete".equals(method)) {
+            return delete();
+        } else if ("restore".equals(method)) {
+            return restore();
+        } else if ("archiveMod".equals(method)) {
+            return archiveMod();
+        } else if ("createNewFlowSheet".equals(method)) {
+            return createNewFlowSheet();
+        } 
+        return SUCCESS;
     }
 
     public String save() throws Exception {
@@ -393,7 +407,6 @@ public class FlowSheetCustom2Action extends ActionSupport {
         return SUCCESS;
     }
 
-
     public String archiveMod() {
         logger.debug("IN MOD");
         String id = request.getParameter("id");
@@ -417,7 +430,6 @@ public class FlowSheetCustom2Action extends ActionSupport {
         request.setAttribute("flowsheet", flowsheet);
         return SUCCESS;
     }
-
 
     /*first add it as a flowsheet into the current system.  The save it to the database so that it will be there on reboot */
     public String createNewFlowSheet() {
@@ -464,6 +476,4 @@ public class FlowSheetCustom2Action extends ActionSupport {
 
         return "newflowsheet";
     }
-
-
 }

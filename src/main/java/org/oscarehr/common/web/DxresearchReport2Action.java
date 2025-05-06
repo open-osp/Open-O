@@ -34,15 +34,12 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.beanutils.DynaBean;
 import org.oscarehr.common.dao.DxresearchDAO;
 import org.oscarehr.common.dao.MyGroupDao;
 import org.oscarehr.common.model.DxRegistedPTInfo;
 import org.oscarehr.managers.CodingSystemManager;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import oscar.OscarDocumentCreator;
 import oscar.oscarResearch.oscarDxResearch.bean.dxCodeSearchBean;
@@ -63,17 +60,35 @@ public class DxresearchReport2Action extends ActionSupport {
 
     private final static String SUCCESS = "success";
     private final static String EDIT_DESC = "editdesc";
-    private DxresearchDAO dxresearchdao;
-    private MyGroupDao mygroupdao = (MyGroupDao) SpringUtils.getBean(MyGroupDao.class);
+    private DxresearchDAO dxresearchdao = SpringUtils.getBean(DxresearchDAO.class);
+    private MyGroupDao mygroupdao = SpringUtils.getBean(MyGroupDao.class);
     private static final String REPORTS_PATH = "org/oscarehr/common/web/DxResearchReport.jrxml";
-
-    public void setDxresearchdao(DxresearchDAO dxresearchdao) {
-        this.dxresearchdao = dxresearchdao;
-    }
-
 
     @Override
     public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("patientRegistedAll".equals(method)) {
+            return patientRegistedAll();
+        } else if ("patientExcelReport".equals(method)) {
+            return patientExcelReport();
+        } else if ("patientRegistedDistincted".equals(method)) {
+            return patientRegistedDistincted();
+        } else if ("patientRegistedDeleted".equals(method)) {
+            return patientRegistedDeleted();
+        } else if ("patientRegistedActive".equals(method)) {
+            return patientRegistedActive();
+        } else if ("patientRegistedResolve".equals(method)) {
+            return patientRegistedResolve();
+        } else if ("editDesc".equals(method)) {
+            return editDesc();
+        } else if ("addSearchCode".equals(method)) {
+            return addSearchCode();
+        } else if ("clearSearchCode".equals(method)) {
+            return clearSearchCode();
+        } else if ("getQuickListName".equals(method)) {
+            return getQuickListName();
+        }
+
         request.getSession().setAttribute("listview", new DxRegistedPTInfo());
         dxQuickListBeanHandler quicklistHd = new dxQuickListBeanHandler();
         request.getSession().setAttribute("allQuickLists", quicklistHd);

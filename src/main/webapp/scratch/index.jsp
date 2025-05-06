@@ -66,7 +66,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="ScratchPad.title"/></title>
 
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
 
         <%if (userColour != null) {%>
         <style>
@@ -76,8 +76,8 @@
         </style>
         <%}%>
 
-        <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
-        <script type="text/javascript" src="../share/javascript/prototype.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
 
         <script type="text/javascript">
             var dirty = 0;

@@ -46,12 +46,16 @@ public class RptDemographicReport2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
-
     public String execute() throws IOException, ServletException {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         MiscUtils.getLogger().debug("RptDemographicReport2Action Jackson");
         MiscUtils.getLogger().debug("query " + query);
+
+        if (query == null) {
+            MiscUtils.getLogger().error("Query is null");
+            return ERROR; 
+        }
+
         if (query.equals("Run Query")) {
             MiscUtils.getLogger().debug("run query");
             RptDemographicQuery2Builder demoQ = new RptDemographicQuery2Builder();

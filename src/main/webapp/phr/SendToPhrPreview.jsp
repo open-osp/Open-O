@@ -65,7 +65,7 @@
 <html>
 <head>
     <title>Preview</title>
-    <link href="../library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
     <script type="text/javascript" language="JavaScript" src="phr.js"></script>
     <script type="text/javascript" language="JavaScript">
         function send(obj) {

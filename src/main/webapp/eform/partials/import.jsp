@@ -63,8 +63,7 @@
     </script>
 
 </c:if>
-<form action="<%=request.getContextPath()%>/eform/manageEForm.do" method="POST" enctype="multipart/form-data"
-      id="eformImportForm">
+<form action="<%=request.getContextPath()%>/eform/manageEForm.do" method="POST" enctype="multipart/form-data" id="eformImportForm">
 
     <input type="hidden" name="method" value="importEForm">
 
@@ -104,6 +103,7 @@
             <input type="submit" name="subm" value="Import" class="btn btn-primary upload" disabled>
         </div>
     </div>
+
     <div class="row-fluid">
         <span class="label label-info">Info: </span>
         <span>Zip file format only</span>

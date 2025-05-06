@@ -50,6 +50,13 @@ public class RxUpdateDrugref2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    public String execute() throws Exception {
+        if ("updateDB".equals(request.getParameter("method"))) {
+            return updateDB();
+        }
+        return getLastUpdate();
+    }
+
     public String updateDB() throws Exception, ServletException {
         RxDrugRef drugref = new RxDrugRef();
         String s = drugref.updateDB();

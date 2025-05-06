@@ -63,7 +63,10 @@ public class ReportStatusUpdate2Action extends ActionSupport {
     public ReportStatusUpdate2Action() {
     }
 
-    public String unspecified() throws ServletException, IOException {
+    public String execute() throws ServletException, IOException {
+        if ("addComment".equals(request.getParameter("method"))) {
+            return addComment();
+        }
         return executemain();
     }
 

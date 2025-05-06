@@ -325,9 +325,9 @@
 
         <link rel="stylesheet" href="<%=request.getContextPath()%>/library/bootstrap/3.0.0/css/bootstrap.min.css"
               type="text/css">
-        <link rel="stylesheet" href="../css/receptionistapptstyle.css" type="text/css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/css/receptionistapptstyle.css" type="text/css">
 
-        <link rel="stylesheet" href="../css/helpdetails.css" type="text/css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/css/helpdetails.css" type="text/css">
         <style type="text/css">
 
             table {
@@ -355,8 +355,8 @@
 
         </style>
 
-        <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-        <script language="javascript" type="text/javascript" src="../share/javascript/Oscar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+        <script language="javascript" type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
         <script language="JavaScript">
             //<!--
             function setfocus() {

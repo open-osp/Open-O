@@ -50,6 +50,10 @@ public class ProviderRxInteractionWarningLevel2Action extends ActionSupport {
 
     private UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
 
+    public String execute() {
+        return update();
+    }
+
     public String update() {
         String value = request.getParameter("value");
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

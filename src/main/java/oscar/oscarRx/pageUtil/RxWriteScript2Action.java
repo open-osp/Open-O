@@ -72,7 +72,7 @@ public final class RxWriteScript2Action extends ActionSupport {
     private static final String PRIVILEGE_WRITE = "w";
 
     private static final Logger logger = MiscUtils.getLogger();
-    private static UserPropertyDAO userPropertyDAO;
+    private static UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
     private static final String DEFAULT_QUANTITY = "30";
     private static final PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean(PartialDateDao.class);
 
@@ -83,7 +83,41 @@ public final class RxWriteScript2Action extends ActionSupport {
     }
 
 
-    public String unspecified() throws IOException, ServletException, Exception {
+    public String execute() throws IOException, ServletException, Exception {
+        String method = request.getParameter("parameterValue");
+        
+        if ("updateReRxDrug".equals(method)) {
+            return updateReRxDrug();
+        } else if ("saveCustomName".equals(method)) {
+            return saveCustomName();
+        } else if ("newCustomNote".equals(method)) {
+            return newCustomNote();
+        } else if ("listPreviousInstructions".equals(method)) {
+            return listPreviousInstructions();
+        } else if ("newCustomDrug".equals(method)) {
+            return newCustomDrug();
+        } else if ("normalDrugSetCustom".equals(method)) {
+            return normalDrugSetCustom();
+        } else if ("createNewRx".equals(method)) {
+            return createNewRx();
+        } else if ("updateDrug".equals(method)) {
+            return updateDrug();
+        } else if ("iterateStash".equals(method)) {
+            return iterateStash();
+        } else if ("updateSpecialInstruction".equals(method)) {
+            return updateSpecialInstruction();
+        } else if ("updateProperty".equals(method)) {
+            return updateProperty();
+        } else if ("updateSaveAllDrugs".equals(method)) {
+            return updateSaveAllDrugs();
+        } else if ("getDemoNameAndHIN".equals(method)) {
+            return getDemoNameAndHIN();
+        } else if ("changeToLongTerm".equals(method)) {
+            return changeToLongTerm();
+        } else if ("checkNoStashItem".equals(method)) {
+            return checkNoStashItem();
+        }
+
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         checkPrivilege(loggedInInfo, PRIVILEGE_WRITE);
 

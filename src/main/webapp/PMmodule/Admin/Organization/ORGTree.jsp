@@ -28,7 +28,7 @@
 
 <script type="text/javascript"
         src='<c:out value="${ctx}"/>/js/menuExpandable.js'></script>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"

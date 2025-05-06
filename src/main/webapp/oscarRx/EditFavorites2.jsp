@@ -49,7 +49,7 @@
         <%
             oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
         %>
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
 
 
         <%
@@ -170,7 +170,7 @@
         <input type="hidden" name="customInstr" id="customInstr"/>
     </form>
 
-    <form action="${pageContext.request.contextPath}/oscarRx/deleteFavorite2.do" method="post">
+    <form name="RxDeleteFavoriteForm" action="${pageContext.request.contextPath}/oscarRx/deleteFavorite2.do" method="post">
         <input type="hidden" name="favoriteId" id="favoriteId"/>
     </form>
 
@@ -188,7 +188,7 @@
                 <table style="width:100%; height:100%">
                     <tr>
                         <td style="width:10%; vertical-align:top">
-                            <div class="DivCCBreadCrumbs"><a href="SearchDrug3.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a> > <b><fmt:setBundle basename="oscarResources"/><fmt:message key="StaticScript.title.EditFavorites"/></b></div>
+                            <div class="DivCCBreadCrumbs"><a href="oscarRx/SearchDrug3.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a> > <b><fmt:setBundle basename="oscarResources"/><fmt:message key="StaticScript.title.EditFavorites"/></b></div>
                         </td>
                     </tr>
 
@@ -200,7 +200,7 @@
                             <div class=DivContentPadding><input type=button
                                                                 value="Back to Search For Drug"
                                                                 class="ControlPushButton"
-                                                                onClick="javascript:window.location.href='SearchDrug3.jsp';"/>
+                                                                onClick="javascript:window.location.href='oscarRx/SearchDrug3.jsp';"/>
                             </div>
                         </td>
                     </tr>
@@ -384,7 +384,7 @@
                             <div class=DivContentPadding><input type=button
                                                                 value="Back to Search For Drug"
                                                                 class="ControlPushButton"
-                                                                onClick="javascript:window.location.href='SearchDrug3.jsp';"/>
+                                                                onClick="javascript:window.location.href='oscarRx/SearchDrug3.jsp';"/>
                             </div>
                         </td>
                     </tr>

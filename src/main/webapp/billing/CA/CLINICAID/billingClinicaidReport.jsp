@@ -182,20 +182,20 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>Clincaid Billed Appointment Report</title>
-    <link rel="stylesheet" href="../../../web.css">
-    <link rel="stylesheet" type="text/css" media="all" href="../../../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     <!-- calendar stylesheet -->
     <link rel="stylesheet" type="text/css" media="all"
-          href="../../../share/calendar/calendar.css" title="win2k-cold-1"/>
+          href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
     <!-- main calendar program -->
-    <script type="text/javascript" src="../../../share/calendar/calendar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <!-- language for the calendar -->
     <script type="text/javascript"
-            src="../../../share/calendar/lang/calendar-en.js"></script>
+            src="<%= request.getContextPath() %>/share/calendar/lang/calendar-en.js"></script>
     <!-- the following script defines the Calendar.setup helper function, which makes
            adding a calendar a matter of 1 or 2 lines of code. -->
     <script type="text/javascript"
-            src="../../../share/calendar/calendar-setup.js"></script>
+            src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
     <script type="text/javascript">
         <!--
 
@@ -290,11 +290,11 @@
             <td align="center" nowrap><font size="1"> From:</font> <input
                     type="text" name="xml_vdate" id="xml_vdate" size="10"
                     value="<%=xml_vdate%>"> <font size="1"> <img
-                    src="../../../images/cal.gif" id="xml_vdate_cal"> To:</font> <input
+                    src="<%= request.getContextPath() %>/images/cal.gif" id="xml_vdate_cal"> To:</font> <input
                     type="text" name="xml_appointment_date" id="xml_appointment_date"
                     onDblClick="calToday(this)" size="10"
                     value="<%=xml_appointment_date%>"> <img
-                    src="../../../images/cal.gif" id="xml_appointment_date_cal"></td>
+                    src="<%= request.getContextPath() %>/images/cal.gif" id="xml_appointment_date_cal"></td>
             <td align="right"><input type="submit" name="Submit"
                                      value="Create Report"> </font></td>
         </tr>
@@ -336,10 +336,10 @@
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
     <tr>
         <td><a href=# onClick="javascript:history.go(-1);return false;">
-            <img src="../../../images/leftarrow.gif" border="0" width="25" height="20"
+            <img src="<%= request.getContextPath() %>/images/leftarrow.gif" border="0" width="25" height="20"
                  align="absmiddle"> Back </a></td>
         <td align="right"><a href="" onClick="self.close();">Close
-            the Window<img src="../../../images/rightarrow.gif" border="0" width="25"
+            the Window<img src="<%= request.getContextPath() %>/images/rightarrow.gif" border="0" width="25"
                            height="20" align="absmiddle"></a></td>
     </tr>
 </table>

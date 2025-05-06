@@ -197,7 +197,7 @@
                     </td>
 
                     <td><a href="#"
-                           onclick="newWindow('efmshowform_data.jsp?fid=<%=curForm.get("fid")%>', '<%="FormG" + i%>'); return false;"><%=curForm.get("formName")%>
+                           onclick="newWindow('<%= request.getContextPath() %>/eform/efmshowform_data.jsp?fid=<%=curForm.get("fid")%>', '<%="FormG" + i%>'); return false;"><%=curForm.get("formName")%>
                     </a></td>
 
                     <td align='center'><%=curForm.get("formDate")%>

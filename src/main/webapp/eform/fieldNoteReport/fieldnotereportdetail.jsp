@@ -89,8 +89,8 @@
 <html>
     <head>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.fieldNote.report"/></title>
-        <link rel="stylesheet" href="../../share/css/OscarStandardLayout.css">
-        <link rel="stylesheet" href="../../share/css/eformStyle.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/eformStyle.css">
         <style>
             td {
                 font-size: small;

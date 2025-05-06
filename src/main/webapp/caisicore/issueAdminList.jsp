@@ -36,7 +36,7 @@
     }
 %>
 <title>MyIssues ~ Issue List</title>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 <button onclick="location.href='issueAdmin.do?method=edit'">Add
     Issue

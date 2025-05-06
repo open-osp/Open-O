@@ -55,8 +55,21 @@ public class dxCodeSearchJSON2Action extends ActionSupport {
 
     private static Logger logger = MiscUtils.getLogger();
 
-    public String unspecified() {
-        return null;
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("searchICD9".equals(method)) {
+            return searchICD9();
+        } else if ("searchICD10".equals(method)) {
+            return searchICD10();
+        } else if ("searchMSP".equals(method)) {
+            return searchMSP();
+        } else if ("validateCode".equals(method)) {
+            return validateCode();
+        } else if ("getDescription".equals(method)) {
+            return getDescription();
+        } 
+        return getDescription();
+        
     }
 
     @SuppressWarnings("unused")

@@ -38,7 +38,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
-        <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
         <script type="text/JavaScript">
             function popupPage(vheight, vwidth, varpage) { //open a new popup window
                 var page = "" + varpage;
@@ -62,7 +62,7 @@
         <meta http-equiv="Content-Type" content="text/html;">
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.oscarStatus.oscarStatus"/></title>
 
-        <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
         <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
 
     </head>

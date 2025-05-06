@@ -102,9 +102,9 @@
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.CreateMessage.title"/>
         </title>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 
         <script type="text/javascript">
@@ -389,10 +389,10 @@
                                 <tr>
                                     <td colspan="3"><input type="hidden" name="srcText" id="srcText" value=''/>
 
-                                        <input type="hidden" name="attachmentCount" id="attachmentCount" value='<%=request.getParameter("attachmentCount")%>'/>
+                                        <input type="hidden" name="attachmentCount" id="attachmentCount" value='<%=request.getParameter("attachmentCount")==null?"0":request.getParameter("attachmentCount")%>'/>
                                         <input type="hidden" name="demographic_no" id="demographic_no" value='<%=demographic_no%>'/>
-                                        <input type="hidden" name="isPreview" id="isPreview" value='<%=request.getParameter("isPreview")%>'/>
-                                        <input type="hidden" name="isAttaching" id="isAttaching" value='<%=request.getParameter("isAttaching")%>'/>
+                                        <input type="hidden" name="isPreview" id="isPreview" value='<%=request.getParameter("isPreview")==null?"false":request.getParameter("isPreview")%>'/>
+                                        <input type="hidden" name="isAttaching" id="isAttaching" value='<%=request.getParameter("isAttaching")==null?"false":request.getParameter("isAttaching")%>'/>
                                         <input type="hidden" name="isNew" id="isNew" value='true'/>
                                         <input type="hidden" name="attachmentTitle" id="attachmentTitle" value=''/></td>
                                 </tr>

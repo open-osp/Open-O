@@ -103,7 +103,7 @@
 
         </script>
 
-            <%-- <link rel="stylesheet" type="text/css" media="all" href="../demographic/searchdemographicstyle.css"  />--%>
+            <%-- <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/demographic/searchdemographicstyle.css"  />--%>
         <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"
                 type="text/javascript"></script>
         <script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js"

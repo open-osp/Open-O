@@ -59,7 +59,7 @@
 
 
 <link rel="stylesheet" type="text/css"
-      href="../oscarEncounter/encounterStyles.css">
+      href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
 <% //This could be done alot better.
     String curUser_no, userfirstname, userlastname;
     curUser_no = (String) session.getAttribute("user");
@@ -114,13 +114,13 @@
         }
     </style>
 
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
-    <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
-    <script title="text/javascript" src="../share/calendar/calendar.js"></script>
+    <script title="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <script title="text/javascript"
-            src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-    <script title="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+            src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+    <script title="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
 </head>
 
@@ -145,11 +145,11 @@
                     <legend>OSIS Report</legend>
                     <label>Start Date:</label>
                     <input type="text" size="9" id="startDate" name="startDate" value="<%=startStr%>"/>
-                    <a id="startdate"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0"/></a>
+                    <a id="startdate"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
 
                     <label style="margin-left:20px;">End Date:</label>
                     <input type="text" size="9" id="endDate" name="endDate" value="<%=endStr%>"/>
-                    <a id="enddate"><img title="Calendar" src="../images/cal.gif" alt="Calendar" border="0"/></a>
+                    <a id="enddate"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
 
                     <label style="margin-left:20px;">Form Id:</label><input type="text" size="3" name="formId"
                                                                             value="<%=formId%>"/>

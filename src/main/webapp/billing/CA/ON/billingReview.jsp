@@ -48,12 +48,12 @@
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>Billing Summary</title>
     <script type="text/javascript"
-            src="../../../share/javascript/prototype.js"></script>
-    <script type="text/javascript" src="../../../share/javascript/nifty.js"></script>
+            src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/nifty.js"></script>
     <link rel="stylesheet" type="text/css"
-          href="../../../share/css/niftyCorners.css"/>
+          href="<%= request.getContextPath() %>/share/css/niftyCorners.css"/>
     <link rel="stylesheet" type="text/css"
-          href="../../../share/css/niftyPrint.css" media="print"/>
+          href="<%= request.getContextPath() %>/share/css/niftyPrint.css" media="print"/>
 
     <script type="text/javascript">
         window.onload = function () {
@@ -64,9 +64,9 @@
         }
     </script>
 
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
     <script language="JavaScript">
         <!--

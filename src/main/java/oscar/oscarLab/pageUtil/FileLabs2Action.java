@@ -56,7 +56,10 @@ public class FileLabs2Action extends ActionSupport {
     public FileLabs2Action() {
     }
 
-    public String unspecified() {
+    public String execute() {
+        if ("fileLabAjax".equals(request.getParameter("method"))) {
+            return fileLabAjax();
+        }
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 

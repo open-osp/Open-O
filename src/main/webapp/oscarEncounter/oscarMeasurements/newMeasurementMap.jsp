@@ -114,7 +114,7 @@
 
     </head>
     <body>
-    <form method="post" name="LOINC" action="NewMeasurementMap.do"><input
+    <form method="post" name="LOINC" action="oscarEncounter/oscarMeasurements/NewMeasurementMap.do"><input
             type="hidden" name="identifier" value="">
         <table style="width:100%">
             <tr class="MainTableTopRow">

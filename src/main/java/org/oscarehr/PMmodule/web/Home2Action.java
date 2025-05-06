@@ -40,9 +40,7 @@ public class Home2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
-
-    public String unspecified() {
+    public String execute() {
         try {
             setMenu(request, KeyConstants.MENU_HOME);
             return "home";

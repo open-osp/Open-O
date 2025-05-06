@@ -60,8 +60,15 @@ public class BatchBill2Action extends ActionSupport {
 
 
     @Override
-    public String execute() {
-
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("doBatchBill".equals(method)) {
+            return doBatchBill();
+        } else if ("remove".equals(method)) {
+            return remove();
+        } else if ("add".equals(method)) {
+            return add();
+        }
 
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_billing", "w", null)) {
             throw new SecurityException("missing required security object (_billing)");

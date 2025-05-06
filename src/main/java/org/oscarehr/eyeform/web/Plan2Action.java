@@ -62,6 +62,16 @@ public class Plan2Action extends ActionSupport {
 
     @Override
     public String execute() {
+        String method = request.getParameter("method");
+        if ("cancel".equals(method)) {
+            return cancel();
+        } else if ("edit".equals(method)) {
+            return edit();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("save_edit".equals(method)) {
+            return save_edit();
+        }
         return form();
     }
 

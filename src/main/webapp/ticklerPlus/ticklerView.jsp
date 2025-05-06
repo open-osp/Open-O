@@ -140,7 +140,7 @@
         <tr>
             <td class="fieldTitle">Demographic:</td>
             <td class="fieldValue"><a
-                    href="../demographic/demographiccontrol.jsp?demographic_no=<c:out value="${tickler.demographicNo}"/>&displaymode=edit&dboperation=search_detail"
+                    href="<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<c:out value="${tickler.demographicNo}"/>&displaymode=edit&dboperation=search_detail"
                     target="demographic"><%=demographic_name%>
             </a></td>
         </tr>

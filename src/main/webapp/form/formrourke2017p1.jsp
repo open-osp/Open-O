@@ -185,7 +185,7 @@
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.msgStartOfPregnancy"/>:
                     <input type="text" id="c_startOfGestation" name="c_startOfGestation" size="6" maxlength="7"
                            value="<%= props.getProperty("c_startOfGestation", "") %>">
-                    <img src="../images/cal.gif" id="c_startOfGestation_cal">
+                    <img src="<%= request.getContextPath() %>/images/cal.gif" id="c_startOfGestation_cal">
                     &nbsp;&nbsp; <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.msgLenght"/>:
                     <input type="text" ondblclick="htEnglish2Metric(this);" name="c_length" size="6" maxlength="6"
                            value="<%= props.getProperty("c_length", "") %>"/>
@@ -283,17 +283,17 @@
         <td colspan="3">
             <input readonly type="text" id="p1_date1w" name="p1_date1w" size="10" ondblclick="resetDate(this)"
                    value="<%=UtilMisc.htmlEscape(props.getProperty("p1_date1w", ""))%>"/>
-            <img src="../images/cal.gif" id="p1_date1w_cal">
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p1_date1w_cal">
         </td>
         <td colspan="3">
             <input readonly type="text" id="p1_date2w" name="p1_date2w" size="10" ondblclick="resetDate(this)"
                    value="<%=UtilMisc.htmlEscape(props.getProperty("p1_date2w", ""))%>"/>
-            <img src="../images/cal.gif" id="p1_date2w_cal">
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p1_date2w_cal">
         </td>
         <td colspan="3">
             <input readonly type="text" id="p1_date1m" name="p1_date1m" size="10" ondblclick="resetDate(this)"
                    value="<%=UtilMisc.htmlEscape(props.getProperty("p1_date1m", ""))%>"/>
-            <img src="../images/cal.gif" id="p1_date1m_cal">
+            <img src="<%= request.getContextPath() %>/images/cal.gif" id="p1_date1m_cal">
         </td>
     </tr>
     <tr align="center" id="growthAp1">

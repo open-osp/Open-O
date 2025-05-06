@@ -46,8 +46,8 @@
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setColour.title"/></title>
 
         <link rel="stylesheet" type="text/css"
-              href="../oscarEncounter/encounterStyles.css">
-        <script type="text/javascript" src="../share/javascript/picker.js"></script>
+              href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/picker.js"></script>
         <script type="text/javascript">
             function update() {
                 var elem = document.getElementById('cdisp');
@@ -80,7 +80,7 @@
                 <input type="hidden" name="colour" id="colour" value="<%=colour%>"/>
                 <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setColour.msgEdit"/>
                 <a href="javascript:TCP.popup(document.forms[0].elements['colour'])"><img
-                        width="15" height="13" border="0" src="../images/sel.gif"></a>
+                        width="15" height="13" border="0" src="<%= request.getContextPath() %>/images/sel.gif"></a>
                 <p><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setColour.msgSatus"/>
                 <div id='cdisp' style='width: 33%'>&nbsp;</div>
                 </p>

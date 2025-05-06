@@ -54,7 +54,7 @@
 
     </script>
 
-    <link rel="stylesheet" type="text/css" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles.css">
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
     <% 
     java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
@@ -69,7 +69,7 @@
     </div>
 <% } %>
     <table>
-        <form action="SetupAddMeasurementGroup.do">
+        <form action="oscarEncounter/oscarMeasurements/SetupAddMeasurementGroup.do">
             <tr>
                 <input type="hidden" name="value(groupName)"
                        value="<c:out value="${groupName}"/>"/>

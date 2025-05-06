@@ -24,8 +24,8 @@
 
 --%>
 <!-- <div style="position:fixed;right:20px;">
-<a href="../oscarEncounter/oscarMeasurements/TemplateFlowSheetPrint.jsp?demographic_no=1&template=tracker&htracker" target="trackerSlim" class="btn btn-default"><span class="glyphicon glyphicon-print"></span> Print</a>
-<a href="../oscarEncounter/oscarMeasurements/adminFlowsheet/EditFlowsheet.jsp?flowsheet=tracker&demographic=2&htracker" target="trackerSlim" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+<a href="<%= request.getContextPath() %>/oscarEncounter/oscarMeasurements/TemplateFlowSheetPrint.jsp?demographic_no=1&template=tracker&htracker" target="trackerSlim" class="btn btn-default"><span class="glyphicon glyphicon-print"></span> Print</a>
+<a href="<%= request.getContextPath() %>/oscarEncounter/oscarMeasurements/adminFlowsheet/EditFlowsheet.jsp?flowsheet=tracker&demographic=2&htracker" target="trackerSlim" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 <button class="btn btn-default" id="save-all">Save All</button>
 </div>
 -->

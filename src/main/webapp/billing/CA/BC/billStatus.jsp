@@ -674,9 +674,9 @@
             format: "yyyy-mm-dd"
         });
     </script>
-    <script type="text/javascript" src="../../../commons/scripts/sort_table/css.js"></script>
-    <script type="text/javascript" src="../../../commons/scripts/sort_table/common.js"></script>
-    <script type="text/javascript" src="../../../commons/scripts/sort_table/standardista-table-sorting.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/commons/scripts/sort_table/css.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/commons/scripts/sort_table/common.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/commons/scripts/sort_table/standardista-table-sorting.js"></script>
 </div><!--container-->
 </body>
 </html>

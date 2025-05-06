@@ -43,7 +43,6 @@ public class Info2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     @Override
     public String execute() throws Exception {
         List<BigInteger> resourceIds = getResourceIds(request);

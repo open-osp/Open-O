@@ -279,7 +279,7 @@
         </div>
         <span title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
               style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img
-                alt="alert" src="../../../images/icon_alertsml.gif"/></span>
+                alt="alert" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/></span>
 
         <br><br>
         <label for="type"><fmt:setBundle basename="oscarResources"/><fmt:message key="lab.ca.all.testUploader.labType"/></label><br>

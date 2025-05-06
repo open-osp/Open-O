@@ -62,8 +62,14 @@ public class Fax2Action extends ActionSupport {
     private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
     private final DocumentAttachmentManager documentAttachmentManager = SpringUtils.getBean(DocumentAttachmentManager.class);
 
-    public String unspecified() {
-        return null;
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("queue".equals(method)) {
+            return queue();
+        } else if ("prepareFax".equals(method)) {
+            return prepareFax();
+        }
+        return cancel();
     }
 
     @SuppressWarnings("unused")

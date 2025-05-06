@@ -9,22 +9,19 @@
     and "gnu.org/licenses/gpl-2.0.html".
     
 --%>
+<%@ page import="java.util.*,oscar.*,java.io.*,java.net.*,oscar.util.*,org.apache.commons.io.FileUtils,java.text.SimpleDateFormat,org.oscarehr.billing.CA.ON.util.EDTFolder,org.oscarehr.util.MiscUtils"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
-    if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
+    if (session.getAttribute("userrole") == null) response.sendRedirect("/oscar/logout.jsp");
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean bodd = false;
     EDTFolder folder = EDTFolder.getFolder(request.getParameter("folder"));
     String folderPath = folder.getPath();
 %>
-<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.backup,_admin.billing" rights="r"
-                   reverse="<%=true%>">
-    <%response.sendRedirect("/oscar/logout.jsp");%>
+<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.backup,_admin.billing" rights="r" reverse="<%=true%>">
+    <% response.sendRedirect("/oscar/logout.jsp"); %>
 </security:oscarSec>
-<%@ page
-        import="java.util.*,oscar.*,java.io.*,java.net.*,oscar.util.*,org.apache.commons.io.FileUtils,java.text.SimpleDateFormat,org.oscarehr.billing.CA.ON.util.EDTFolder,org.oscarehr.util.MiscUtils"
-        errorPage="/errorpage.jsp" %>
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="session"/>
 <html>
 <head>
@@ -35,19 +32,18 @@
     <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
 
     <script LANGUAGE="JavaScript">
-        <!--
         function viewMOHFile(filename) {
             var form = document.getElementById("form");
             document.getElementById("filename").value = filename;
             var fileType = filename.substring(0, 1).toUpperCase();
             if (filename.substring(filename.length - 4).toLowerCase() == ".zip") {
                 var r = alert("Please unzip " + filename + " before processing.");
-                location.href = "viewMOHFiles.jsp";
+                location.href = "<%= request.getContextPath() %>/billing/CA/ON/viewMOHFiles.jsp";
                 return;
             } else if (fileType == "P" || fileType == "S") {
                 form.action = "/<%= OscarProperties.getInstance().getProperty("project_home") %>/servlet/oscar.DocumentUploadServlet";
             } else if (fileType == "L") {
-                form.action = "billingLreport.jsp";
+                form.action = "<%= request.getContextPath() %>/billing/CA/ON/billingLreport.jsp";
             } else {
                 form.action = "/<%= OscarProperties.getInstance().getProperty("project_home") %>/oscarBilling/DocumentErrorReportUpload.do";
             }
@@ -65,8 +61,6 @@
             alert("Please select a file first.");
             return false;
         }
-
-        //-->
     </script>
 </head>
 
@@ -79,20 +73,16 @@
         <input type="hidden" id="filename" name="filename" value="">
     </form>
 
-    <%
-        if (folder == EDTFolder.INBOX) {
-    %>
-    <form method="POST" action="<%=request.getContextPath()%>/billing/CA/ON/moveMOHFiles.do"
-          onsubmit="return checkForm();" class="form-inline">
-        <% } %>
+    <% if (folder == EDTFolder.INBOX) { %>
+    <form method="POST" action="<%=request.getContextPath()%>/billing/CA/ON/moveMOHFiles.do" onsubmit="return checkForm();" class="form-inline">
+    <% } %>
 
         <% if (folder == EDTFolder.INBOX) {%>
-
         <input type="submit" value="Archive" class="btn">
-        <%}%>
+        <% } %>
 
         View:
-        <select name="folder" onchange="location.href='viewMOHFiles.jsp?folder='+this.options[selectedIndex].value">
+        <select name="folder" onchange="location.href='<%= request.getContextPath() %>/billing/CA/ON/viewMOHFiles.jsp?folder='+this.options[selectedIndex].value">
             <option value="inbox" <% if (folder == EDTFolder.INBOX) {%>selected<%}%>>Inbox</option>
             <option value="outbox" <% if (folder == EDTFolder.OUTBOX) {%>selected<%}%>>Outbox</option>
             <option value="sent" <% if (folder == EDTFolder.SENT) {%>selected<%}%>>Sent</option>
@@ -157,7 +147,7 @@
                     String archiveElement = "<td ><input type='checkbox' name='mohFile' value='" + URLEncoder.encode(contents[i].getName()) + "' title='select to archive'/></td>";
                     if (folder == EDTFolder.INBOX || folder == EDTFolder.ARCHIVE) {
                         out.println("<tr>" + (folder == EDTFolder.INBOX ? archiveElement : "") + "<td><a HREF='#' onclick='viewMOHFile(\"" + URLEncoder.encode(contents[i].getName()) + "\")'>" + contents[i].getName() + unzipMSG + "</a></td>");
-                        out.println("<td><a HREF='../../../servlet/BackupDownload?filename=" + URLEncoder.encode(contents[i].getName()) + "'>Download</a></td>");
+                        out.println("<td><a href=\"" + request.getContextPath() + "/servlet/BackupDownload?filename=" + URLEncoder.encode(contents[i].getName()) + "\">Download</a></td>");
                     } else {
                         out.println("<tr><td>" + contents[i].getName() + "</td>");
                     }
@@ -172,11 +162,10 @@
         <% if (contents.length > 20) { %>
 
         <% if (folder == EDTFolder.INBOX) {%>
-
         <input type="submit" value="Archive" class="btn">
-        <%}%>
+        <% } %>
 
-        <select name="folder" onchange="location.href='viewMOHFiles.jsp?folder='+this.options[selectedIndex].value">
+        <select name="folder" onchange="location.href='<%= request.getContextPath() %>/billing/CA/ON/viewMOHFiles.jsp?folder='+this.options[selectedIndex].value">
             <option value="inbox" <% if (folder == EDTFolder.INBOX) {%>selected<%}%>>Inbox</option>
             <option value="outbox" <% if (folder == EDTFolder.OUTBOX) {%>selected<%}%>>Outbox</option>
             <option value="sent" <% if (folder == EDTFolder.SENT) {%>selected<%}%>>Sent</option>
@@ -185,8 +174,7 @@
 
 
         <% } %>
-        <% if (folder == EDTFolder.INBOX) {%></form>
-    <% } %>
+        <% if (folder == EDTFolder.INBOX) { %></form> <% } %>
 </div><!--container-->
 </body>
 </html>

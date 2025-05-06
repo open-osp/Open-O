@@ -51,8 +51,8 @@
 
         <title>HMP Registration</title>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
-        <link rel="stylesheet" href="../form/hsfo2/hsfo2.css">
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/form/hsfo2/hsfo2.css">
     </head>
     <%
         Hsfo2Patient patientData = (Hsfo2Patient) request.getAttribute("Hsfo2Patient");
@@ -69,7 +69,7 @@
                 <!-- head table -->
                 <TABLE cellpadding=0 cellspacing=0 class="t0">
                     <TR class="tr0">
-                        <TD class="td0"><img src="../images/HSF_HMP_LogoENG.jpg" width="150" height="50" border="0"
+                        <TD class="td0"><img src="<%= request.getContextPath() %>/images/HSF_HMP_LogoENG.jpg" width="150" height="50" border="0"
                                              style="border:none;" alt="HSF HMP Logo"></img></TD>
 
                         <TD class="td1">

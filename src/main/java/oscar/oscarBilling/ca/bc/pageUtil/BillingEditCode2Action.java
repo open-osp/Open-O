@@ -91,9 +91,13 @@ public final class BillingEditCode2Action extends ActionSupport {
     }
 
 
-    public String unspecified()
-            throws IOException, ServletException {
-
+    public String execute() throws IOException, ServletException {
+        String method = request.getParameter("method");
+        if ("ajaxCodeUpdate".equals(method)) {
+            return ajaxCodeUpdate();
+        } else if ("returnToSearch".equals(method)) {
+            return returnToSearch();
+        }
 
         if (request.getSession().getAttribute("user") == null) {
             return "Logout";
@@ -115,6 +119,7 @@ public final class BillingEditCode2Action extends ActionSupport {
 
         return retval;
     }
+
     String codeId;
     String code;
     String desc;

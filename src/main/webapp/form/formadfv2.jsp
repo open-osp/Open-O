@@ -108,7 +108,7 @@
             if (ret == true) {
                 //ret = confirm("Do you wish to save this form and view the print preview?");
                 popupFixedPage(650, 850, '../provider/notice.htm');
-                document.forms[0].action = "../form/createpdf?__title=&__cfgfile=&__cfgfile=&__template=";
+                document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=&__cfgfile=&__cfgfile=&__template=";
                 document.forms[0].target = "planner";
                 document.forms[0].submit();
                 document.forms[0].target = "apptProviderSearch";
@@ -333,7 +333,7 @@
                     if (!bView) {
                 %>
                 <td align="right"><a
-                        href="javascript: popupFixedPage(700,950,'../decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>');">Planner</a>
+                        href="javascript: popupFixedPage(700,950,'<%= request.getContextPath() %>/decision/annualreview/annualreviewplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>');">Planner</a>
                 </td>
                 <%
                     }

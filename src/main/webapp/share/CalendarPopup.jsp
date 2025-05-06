@@ -66,7 +66,7 @@
     <meta name="viewport"
           content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width"/>
     <% } %>
-    <LINK REL="StyleSheet" HREF="../web.css" TYPE="text/css">
+    <LINK REL="StyleSheet" HREF="<%= request.getContextPath() %>/web.css" TYPE="text/css">
     <style type="text/css">
         td, th {
             font-size: 14px;
@@ -121,27 +121,27 @@
     <tr BGCOLOR="#CCCCFF">
         <td width="5%" align="center" nowrap><a
                 href="CalendarPopup.jsp?urlfrom=<%=urlfrom%>&year=<%=year%>&month=<%=month%>&param=<%=URLEncoder.encode(param)%>&delta=-12">
-            <img src="../images/previous.gif" WIDTH="10" HEIGHT="9" BORDER="0"
+            <img src="<%= request.getContextPath() %>/images/previous.gif" WIDTH="10" HEIGHT="9" BORDER="0"
                  ALT="<fmt:setBundle basename="oscarResources"/><fmt:message key="share.CalendarPopUp.msgNextYear"/>"
-                 vspace="2"> <img src="../images/previous.gif" WIDTH="10"
+                 vspace="2"> <img src="<%= request.getContextPath() %>/images/previous.gif" WIDTH="10"
                                   HEIGHT="9" BORDER="0"
                                   ALT="<fmt:setBundle basename="oscarResources"/><fmt:message key="share.CalendarPopUp.msgLastYear"/>"
                                   vspace="2"> </a></td>
         <td align="center" nowrap><a
                 href="CalendarPopup.jsp?urlfrom=<%=urlfrom%>&year=<%=year%>&month=<%=month%>&param=<%=URLEncoder.encode(param)%>&delta=-1">
-            <img src="../images/previous.gif" WIDTH="10" HEIGHT="9" BORDER="0"
+            <img src="<%= request.getContextPath() %>/images/previous.gif" WIDTH="10" HEIGHT="9" BORDER="0"
                  ALT="<fmt:setBundle basename="oscarResources"/><fmt:message key="share.CalendarPopUp.msgViewLastMonth"/>"
                  vspace="2"> <fmt:setBundle basename="oscarResources"/><fmt:message key="share.CalendarPopUp.msgLastMonth"/> </a> <b><span CLASS=title><%=year%>-<%=month%></span></b>
             <a
                     href="CalendarPopup.jsp?urlfrom=<%=urlfrom%>&year=<%=year%>&month=<%=month%>&param=<%=URLEncoder.encode(param)%>&delta=1">
                 <fmt:setBundle basename="oscarResources"/><fmt:message key="share.CalendarPopUp.msgNextMonth"/> <img
-                    src="../images/next.gif" WIDTH="10" HEIGHT="9" BORDER="0"
+                    src="<%= request.getContextPath() %>/images/next.gif" WIDTH="10" HEIGHT="9" BORDER="0"
                     ALT="<fmt:setBundle basename="oscarResources"/><fmt:message key="share.CalendarPopUp.msgNextMonth"/>"
                     vspace="2"></a></td>
         <td align='right'><a
                 href="CalendarPopup.jsp?urlfrom=<%=urlfrom%>&year=<%=year%>&month=<%=month%>&param=<%=URLEncoder.encode(param)%>&delta=12">
-            <img src="../images/next.gif" WIDTH="10" HEIGHT="9" BORDER="0"
-                 ALT="Next Year" vspace="2"> <img src="../images/next.gif"
+            <img src="<%= request.getContextPath() %>/images/next.gif" WIDTH="10" HEIGHT="9" BORDER="0"
+                 ALT="Next Year" vspace="2"> <img src="<%= request.getContextPath() %>/images/next.gif"
                                                   WIDTH="10" HEIGHT="9" BORDER="0" ALT="Next Year" vspace="2"></a></td>
     </tr>
 </table>

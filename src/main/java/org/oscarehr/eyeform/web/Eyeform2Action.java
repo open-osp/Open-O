@@ -121,15 +121,15 @@ public class Eyeform2Action extends ActionSupport {
     static Logger log = MiscUtils.getLogger();
     static String[] cppIssues = {"CurrentHistory", "PastOcularHistory", "MedHistory", "OMeds", "OcularMedication", "DiagnosticNotes", "FamHistory"};
 
-    CaseManagementManager cmm = null;
-    OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
-    DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
-    ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
-    CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);
+    CaseManagementManager cmm = SpringUtils.getBean(CaseManagementManager.class);;
+    OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
+    DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+    ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+    CaseManagementNoteDAO caseManagementNoteDao = SpringUtils.getBean(CaseManagementNoteDAO.class);
     EyeformOcularProcedureDao ocularProcDao = SpringUtils.getBean(EyeformOcularProcedureDao.class);
-    private EyeformSpecsHistoryDao specsHistoryDao = (EyeformSpecsHistoryDao) SpringUtils.getBean(EyeformSpecsHistoryDao.class);
+    private EyeformSpecsHistoryDao specsHistoryDao = SpringUtils.getBean(EyeformSpecsHistoryDao.class);
 
-    AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean(AllergyDao.class);
+    AllergyDao allergyDao = SpringUtils.getBean(AllergyDao.class);
     EyeformFollowUpDao followUpDao = SpringUtils.getBean(EyeformFollowUpDao.class);
     protected EyeformProcedureBookDao procedureBookDao = SpringUtils.getBean(EyeformProcedureBookDao.class);
 
@@ -137,13 +137,39 @@ public class Eyeform2Action extends ActionSupport {
     EyeFormDao eyeFormDao = SpringUtils.getBean(EyeFormDao.class);
 
     MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
-    ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
-    BillingreferralDao billingreferralDao = (BillingreferralDao) SpringUtils.getBean(BillingreferralDao.class);
-    ClinicDAO clinicDao = (ClinicDAO) SpringUtils.getBean(ClinicDAO.class);
-    SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
-    CaseManagementIssueNotesDao caseManagementIssueNotesDao = (CaseManagementIssueNotesDao) SpringUtils.getBean(CaseManagementIssueNotesDao.class);
+    ProfessionalSpecialistDao professionalSpecialistDao = SpringUtils.getBean(ProfessionalSpecialistDao.class);
+    BillingreferralDao billingreferralDao = SpringUtils.getBean(BillingreferralDao.class);
+    ClinicDAO clinicDao = SpringUtils.getBean(ClinicDAO.class);
+    SiteDao siteDao = SpringUtils.getBean(SiteDao.class);
+    CaseManagementIssueNotesDao caseManagementIssueNotesDao = SpringUtils.getBean(CaseManagementIssueNotesDao.class);
     DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
+
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("getConReqCC".equals(method)) {
+            return getConReqCC();
+        } else if ("specialConRequestHTML".equals(method)) {
+            return specialConRequestHTML();
+        } else if ("specialConRequest".equals(method)) {
+            return specialConRequest();
+        } else if ("print".equals(method)) {
+            return print();
+        } else if ("prepareConReport".equals(method)) {
+            return prepareConReport();
+        } else if ("saveConRequest".equals(method)) {
+            return saveConRequest();
+        } else if ("printConRequest".equals(method)) {
+            return printConRequest();
+        } else if ("specialRepTickler".equals(method)) {
+            return specialRepTickler();
+        } else if ("getMeasurementText".equals(method)) {
+            return getMeasurementText();
+        } else if ("specialReqTickler".equals(method)) {
+            return specialReqTickler();
+        }
+        return getConReqCC();
+    }
 
     public String getConReqCC() {
         String requestId = request.getParameter("requestId");
@@ -165,7 +191,6 @@ public class Eyeform2Action extends ActionSupport {
         request.setAttribute("professionalSpecialists", psList);
         return "conreqcc";
     }
-
 
     public String specialConRequestHTML() {
         ConsultationRequestExtDao consultationRequestExtDao = (ConsultationRequestExtDao) SpringUtils.getBean(ConsultationRequestExtDao.class);
@@ -467,7 +492,6 @@ public class Eyeform2Action extends ActionSupport {
         return null;
     }
 
-
     public void doPrint(HttpServletRequest request, OutputStream os) throws IOException, DocumentException {
         String ids[] = request.getParameter("apptNos").split(",");
 
@@ -649,7 +673,6 @@ public class Eyeform2Action extends ActionSupport {
         }
         return false;
     }
-
 
     public int getNumMeasurementsWithoutCpp(List<Measurement> measurements) {
         List<Measurement> filtered = new ArrayList<Measurement>();
@@ -1082,7 +1105,6 @@ public class Eyeform2Action extends ActionSupport {
         }
         return val;
     }
-
 
     public String printConRequest() throws Exception {
         log.debug("printConreport");

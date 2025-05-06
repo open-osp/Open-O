@@ -93,7 +93,7 @@
     <script src="${pageContext.request.contextPath}/csrfguard"></script>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-        <link rel="stylesheet" href="../web.css"/>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
         <script LANGUAGE="JavaScript">
             function start() {
                 this.focus();
@@ -439,7 +439,7 @@
 
         <caisi:isModuleLoad moduleName="caisi">
             <br/>
-            <a href="../PMmodule/ClientManager.do?id=<%=dem%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddarecord.goToCaisiRecord"/> (<a href="#"
+            <a href="<%= request.getContextPath() %>/PMmodule/ClientManager.do?id=<%=dem%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddarecord.goToCaisiRecord"/> (<a href="#"
                                                                                   onclick="popup(700,1027,'demographiccontrol.jsp?demographic_no=<%=dem%>&displaymode=edit&dboperation=search_detail')">New
                 Window</a>)</a>
         </caisi:isModuleLoad>
@@ -447,7 +447,7 @@
 
         <caisi:isModuleLoad moduleName="caisi">
             <br/>
-            <a href="../PMmodule/ClientManager.do?id=<%=dem%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddarecord.goToCaisiRecord"/></a>
+            <a href="<%= request.getContextPath() %>/PMmodule/ClientManager.do?id=<%=dem%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddarecord.goToCaisiRecord"/></a>
         </caisi:isModuleLoad>
 
 

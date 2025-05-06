@@ -36,7 +36,6 @@ import org.oscarehr.common.model.UserProperty;
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
 import org.oscarehr.documentManager.IncomingDocUtil;
-import org.oscarehr.documentManager.data.DocumentUpload2Form;
 import org.oscarehr.managers.ProgramManager2;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
@@ -55,9 +54,12 @@ public class DocumentUpload2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private static Logger logger = MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+
+    public String execute() throws Exception {
+        return executeUpload();
+    }
 
     public String executeUpload() throws Exception {
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_edoc", "w", null)) {
@@ -65,7 +67,7 @@ public class DocumentUpload2Action extends ActionSupport {
         }
 
         HashMap<String, Object> map = new HashMap<String, Object>();
-        File docFile = form.getDocFile();
+        File docFile = this.getFiledata();
         String destination = request.getParameter("destination");
         ResourceBundle props = ResourceBundle.getBundle("oscarResources");
         if (docFile == null) {
@@ -108,7 +110,7 @@ public class DocumentUpload2Action extends ActionSupport {
             String fileName = docFile.getName();
             String user = (String) request.getSession().getAttribute("user");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            EDoc newDoc = new EDoc("", "", fileName, "", user, user, form.getSource(), 'A',
+            EDoc newDoc = new EDoc("", "", fileName, "", user, user, this.getSource(), 'A',
                     simpleDateFormat.format(Calendar.getInstance().getTime()),
                     "", "", "demographic", "-1", 0);
             newDoc.setDocPublic("0");
@@ -271,13 +273,151 @@ public class DocumentUpload2Action extends ActionSupport {
         return null;
     }
 
-    private DocumentUpload2Form form;
+    private String function = "";
+    private String functionId = "";
+    private String docType = "";
+    private String docDesc = "";
+    private String docCreator = "";
+    private String responsibleId = "";
+    private String source = "";
+    private File docFile;
 
-    public DocumentUpload2Form getForm() {
-        return form;
+    private File filedata;
+
+    private String docPublic = "";
+    private String mode = "";
+    private String observationDate = "";
+    private String reviewerId = "";
+    private String reviewDateTime = "";
+    private boolean reviewDoc = false;
+    private String html = "";
+
+    public String getFunction() {
+        return function;
     }
 
-    public void setForm(DocumentUpload2Form form) {
-        this.form = form;
+    public void setFunction(String function) {
+        this.function = function;
+    }
+
+    public String getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(String functionId) {
+        this.functionId = functionId;
+    }
+
+    public String getDocType() {
+        return docType;
+    }
+
+    public void setDocType(String docType) {
+        this.docType = docType;
+    }
+
+    public String getDocDesc() {
+        return docDesc;
+    }
+
+    public void setDocDesc(String docDesc) {
+        this.docDesc = docDesc;
+    }
+
+
+    public String getDocCreator() {
+        return docCreator;
+    }
+
+    public void setDocCreator(String docCreator) {
+        this.docCreator = docCreator;
+    }
+
+    public String getResponsibleId() {
+        return responsibleId;
+    }
+
+    public void setResponsibleId(String responsibleId) {
+        this.responsibleId = responsibleId;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public File getDocFile() {
+        return docFile;
+    }
+
+    public void setDocFile(File docFile) {
+        this.docFile = docFile;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    public String getDocPublic() {
+        return docPublic;
+    }
+
+    public void setDocPublic(String docPublic) {
+        this.docPublic = docPublic;
+    }
+
+    public String getObservationDate() {
+        return observationDate;
+    }
+
+    public void setObservationDate(String observationDate) {
+        this.observationDate = observationDate;
+    }
+
+    public String getReviewerId() {
+        return reviewerId;
+    }
+
+    public void setReviewerId(String reviewerId) {
+        this.reviewerId = reviewerId;
+    }
+
+    public String getReviewDateTime() {
+        return reviewDateTime;
+    }
+
+    public void setReviewDateTime(String reviewDateTime) {
+        this.reviewDateTime = reviewDateTime;
+    }
+
+    public boolean getReviewDoc() {
+        return reviewDoc;
+    }
+
+    public void setReviewDoc(boolean reviewDoc) {
+        this.reviewDoc = reviewDoc;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
+    }
+
+    public File getFiledata() {
+        return filedata;
+    }
+
+    public void setFiledata(File Filedata) {
+        this.filedata = Filedata;
     }
 }

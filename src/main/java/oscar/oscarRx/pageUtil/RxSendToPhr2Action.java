@@ -68,7 +68,7 @@ public class RxSendToPhr2Action extends ActionSupport {
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    PHRService phrService = null;
+    private PHRService phrService = SpringUtils.getBean(PHRService.class);
 
     /**
      * Creates a new instance of RxSendToPhr
@@ -138,10 +138,6 @@ public class RxSendToPhr2Action extends ActionSupport {
 
         request.setAttribute("error_msg", errorMsg);
         return "finished";
-    }
-
-    public void setPhrService(PHRService pServ) {
-        this.phrService = pServ;
     }
 
 }

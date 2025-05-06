@@ -111,8 +111,11 @@ public class ManageDocument2Action extends ActionSupport {
     private static final String DOCUMENT_DIR = OscarProperties.getInstance().getDocumentDirectory();
     private static final String DOCUMENT_CACHE_DIR = OscarProperties.getInstance().getDocumentCacheDirectory();
 
-    public String unspecified() {
-        return null;
+    public String execute() {
+        if ("refileDocumentAjax".equals(request.getParameter("method"))) {
+            return refileDocumentAjax();
+        }
+        return documentUpdate();
     }
 
     public void documentUpdateAjax() {

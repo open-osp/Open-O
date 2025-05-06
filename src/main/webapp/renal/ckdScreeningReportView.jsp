@@ -155,7 +155,7 @@
 
         </script>
         <title>CKD Report</title>
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
 
 
         <style title="currentStyle" type="text/css">
@@ -245,7 +245,7 @@
             %>
             <tr class="gradeB">
                 <td style="text-align:left">
-                    <%=ckd.getDemographic().getStandardIdentificationHTML() %>
+                    <%=ckd.getDemographic().getStandardIdentificationHTML(request.getContextPath()) %>
                 </td>
                 <td style="text-align:left">
                     Home: <%=ckd.getDemographic().getPhone() %><br/>
@@ -289,16 +289,16 @@
                     <a title="Generate Patient Letter <%=ckd.getLastPatientLetter()==null?"":" | " + ckd.getLastPatientLetter() %>"
                        href="javascript:void(0);"
                        onclick="generateLetter(<%=ckd.getDemographic().getDemographicNo()%>);return false;"><img
-                            src="../images/notepad_blank.gif" border="0"/></a>
-                        <%-- <a title="Email Patient Letter <%=ckd.getLastPatientLetter()==null?"":" | " + ckd.getLastPatientLetter() %>" href="javascript:void(0);" onclick="generateLetterAndEmail(<%=ckd.getDemographic().getDemographicNo()%>);return false;"><img src="../images/email.jpg" border="0"/></a> --%>
+                            src="<%= request.getContextPath() %>/images/notepad_blank.gif" border="0"/></a>
+                        <%-- <a title="Email Patient Letter <%=ckd.getLastPatientLetter()==null?"":" | " + ckd.getLastPatientLetter() %>" href="javascript:void(0);" onclick="generateLetterAndEmail(<%=ckd.getDemographic().getDemographicNo()%>);return false;"><img src="<%= request.getContextPath() %>/images/email.jpg" border="0"/></a> --%>
                     <a title="Create Lab Requisition  <%=ckd.getLastLabReq()==null?"":" | " + ckd.getLastLabReq() %>"
                        href="javascript:void(0);"
                        onclick="generateLabReq(<%=ckd.getDemographic().getDemographicNo()%>);return false;"><img
-                            src="../images/lab_icon.png" height="16" border="0"/></a>
+                            src="<%= request.getContextPath() %>/images/lab_icon.png" height="16" border="0"/></a>
                     <a title="Add Chronic Renal Failure to Disease Registry, and disable further notifications"
                        href="javascript.void(0);"
                        onclick="popupPage(580,900,'../oscarResearch/oscarDxResearch/dxResearch.do?selectedCodingSystem=icd9&xml_research1=585&xml_research2=&xml_research3=&xml_research4=&xml_research5=&demographicNo=<%=ckd.getDemographic().getDemographicNo()%>&quickList=default&forward=');return false;"><img
-                            src="../images/kidney.jpg" height="16" border="0"/></a>
+                            src="<%= request.getContextPath() %>/images/kidney.jpg" height="16" border="0"/></a>
                 </td>
             </tr>
             <%

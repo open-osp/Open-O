@@ -55,6 +55,7 @@
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
+    String surname = "", firstName = "", address = "", city = "", province = "", postal = "";
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
     <%authed = false; %>
@@ -98,7 +99,7 @@
 
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
     </head>
 
@@ -110,7 +111,15 @@
                 showall = true;
             }
         }
-        oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getAttribute("Patient");
+        oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getSession().getAttribute("Patient");
+        if (patient != null) {
+            surname = patient.getSurname();
+            firstName = patient.getFirstName();
+            address = patient.getAddress();
+            city = patient.getCity();
+            province = patient.getProvince();
+            postal = patient.getPostal();
+        }
     %>
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
     <table border="0" cellpadding="0" cellspacing="0"
@@ -132,11 +141,9 @@
                     </tr>
                     <tr>
                         <td><!-- <b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.nameText"/></b>-->
-                            ${patient.surname}, ${patient.firstName}<br/>
-                            ${patient.address}<br/>
-                            ${patient.city}, ${patient.province} ${patient.postal}
-                            <br/>
-                            <br/>
+                            <%=surname%>, <%=firstName%><br/>
+                            <%=address%><br/>
+                            <%=city%>, <%=province%> <%=postal%><br/><br/>
                         </td>
                     </tr>
                     <tr>
@@ -158,9 +165,9 @@
                                     <td align="right" class="noPrint">
                                         <div class="DivContentSectionHead">
                                             <% if (showall) { %>
-                                            <a href="PrintDrugProfile.jsp">Show Current</a>
+                                            <a href="oscarRx/PrintDrugProfile.jsp">Show Current</a>
                                             <% } else { %>
-                                            <a href="PrintDrugProfile.jsp?show=all">Show All</a>
+                                            <a href="oscarRx/PrintDrugProfile.jsp?show=all">Show All</a>
                                             <% } %>
                                             | <a href="javascript:void(0);window.print();">Print</a>
                                         </div>
@@ -196,12 +203,12 @@
                                             <tr>
                                                 <td width=20% valign="top">
                                                     <a <%= styleColor%>
-                                                            href="StaticScript2.jsp?regionalIdentifier=<%=drug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(drug.getCustomName())%>&bn=<%=response.encodeURL(drug.getBrandName())%>"><%=drug.getRxDate()%>
+                                                            href="oscarRx/StaticScript2.jsp?regionalIdentifier=<%=drug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(drug.getCustomName())%>&bn=<%=response.encodeURL(drug.getBrandName())%>"><%=drug.getRxDate()%>
                                                     </a>
                                                 </td>
                                                 <td width=100%>
                                                     <a <%= styleColor%>
-                                                            href="StaticScript2.jsp?regionalIdentifier=<%= drug.getRegionalIdentifier()%>&cn=<%= response.encodeURL(drug.getCustomName())%>&bn=<%=response.encodeURL(drug.getBrandName())%>"><%= drug.getFullOutLine().replaceAll(";", " ")%>
+                                                            href="oscarRx/StaticScript2.jsp?regionalIdentifier=<%= drug.getRegionalIdentifier()%>&cn=<%= response.encodeURL(drug.getCustomName())%>&bn=<%=response.encodeURL(drug.getBrandName())%>"><%= drug.getFullOutLine().replaceAll(";", " ")%>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -223,9 +230,9 @@
                             <div class="DivContentSectionHead">
 
                                 <% if (showall) { %>
-                                <a href="PrintDrugProfile.jsp">Show Current</a>
+                                <a href="oscarRx/PrintDrugProfile.jsp">Show Current</a>
                                 <% } else { %>
-                                <a href="PrintDrugProfile.jsp?show=all">Show All</a>
+                                <a href="oscarRx/PrintDrugProfile.jsp?show=all">Show All</a>
                                 <% } %>
                                 | <a href="javascript:void(0);window.print();">Print</a>
                             </div>

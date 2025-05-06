@@ -42,20 +42,11 @@
         useNewCaseMgmt = (String) session.getAttribute("newCaseManagement");
     }
 
-    if (useNewCaseMgmt != null && useNewCaseMgmt.equals("true")) {
-%>
-<jsp:forward page="/CaseManagementEntry.do">
-    <jsp:param name="method" value="setUpMainEncounter"/>
-    <jsp:param name="from" value="casemgmt"/>
-    <jsp:param name="chain" value="list"/>
-    <jsp:param name="demographicNo" value='<%=request.getParameter("demographicNo")%>'/>
-    <jsp:param name="OscarMsgTypeLink" value='<%=request.getParameter("OscarMsgTypeLink")%>'/>
-    <jsp:param name="msgType" value='<%=request.getParameter("msgType")%>'/>
-</jsp:forward>
-<%
-} else {
-%>
-<jsp:forward page="/CaseManagementView.do"/>
-<%
+    String redirectURL;
+    if ("true".equals(useNewCaseMgmt)) {
+        redirectURL = request.getContextPath() + "/CaseManagementEntry.do?method=setUpMainEncounter&from=casemgmt&chain=list&demographicNo=" + request.getParameter("demographicNo") + "&OscarMsgTypeLink=" + request.getParameter("OscarMsgTypeLink") + "&msgType=" + request.getParameter("msgType");
+    } else {
+        redirectURL = request.getContextPath() + "/CaseManagementView.do";
     }
+    response.sendRedirect(redirectURL);
 %>

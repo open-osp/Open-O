@@ -99,10 +99,10 @@
     <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
     <title><%=lab.pLastName%>, <%=lab.pFirstName%> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.title"/></title>
     <script language="javascript" type="text/javascript"
-            src="../../../share/javascript/Oscar.js"></script>
+            src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
     <link rel="stylesheet" type="text/css"
-          href="../../../share/css/OscarStandardLayout.css">
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+          href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 </head>
 
 <script language="JavaScript">
@@ -575,9 +575,9 @@
                         <td align="center" valign="top">
                             <a href="javascript:void(0);" title="Annotation"
                                onclick="window.open('<%=request.getContextPath()%>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=segmentID%>&amp;demo=<%=lab.getDemographicNo()%>&amp;other_id=<%=String.valueOf(i) + "-" + String.valueOf(l) %>','anwin','width=400,height=500');">
-                                <%if (!isPrevAnnotation) { %><img src="../../../images/notes.gif" alt="rxAnnotation"
+                                <%if (!isPrevAnnotation) { %><img src="<%= request.getContextPath() %>/images/notes.gif" alt="rxAnnotation"
                                                                   height="16" width="13" border="0"/><%} else { %><img
-                                    src="../../../images/filledNotes.gif" alt="rxAnnotation" height="16" width="13"
+                                    src="<%= request.getContextPath() %>/images/filledNotes.gif" alt="rxAnnotation" height="16" width="13"
                                     border="0"/> <%} %>
                             </a>
                         </td>

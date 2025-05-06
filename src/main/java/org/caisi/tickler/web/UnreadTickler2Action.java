@@ -50,7 +50,13 @@ public class UnreadTickler2Action extends ActionSupport {
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    public String unspecified() throws Exception {
+    public String execute() throws Exception {
+        if ("login".equals(request.getParameter("method"))) {
+            return login();
+        }
+        if ("logout".equals(request.getParameter("method"))) {
+            return logout();
+        }
         String providerNo = (String) request.getSession().getAttribute("user");
         if (providerNo == null) {
             return "login";

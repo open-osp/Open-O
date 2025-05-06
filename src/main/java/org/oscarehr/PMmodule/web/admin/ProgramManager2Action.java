@@ -107,18 +107,18 @@ public class ProgramManager2Action extends ActionSupport {
 
     private static final Logger logger = MiscUtils.getLogger();
 
-    private ClientRestrictionManager clientRestrictionManager;
-    private FacilityDao facilityDao = null;
-    private AdmissionManager admissionManager;
-    private BedCheckTimeManager bedCheckTimeManager;
-    private ProgramManager programManager;
-    private ProviderManager providerManager;
-    private ProgramQueueManager programQueueManager;
-    private VacancyTemplateManager vacancyTemplateManager;
+    private ClientRestrictionManager clientRestrictionManager = SpringUtils.getBean(ClientRestrictionManager.class);
+    private FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
+    private AdmissionManager admissionManager = SpringUtils.getBean(AdmissionManager.class);
+    private BedCheckTimeManager bedCheckTimeManager = SpringUtils.getBean(BedCheckTimeManager.class);
+    private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
+    private ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
+    private ProgramQueueManager programQueueManager = SpringUtils.getBean(ProgramQueueManager.class);
+    private VacancyTemplateManager vacancyTemplateManager = SpringUtils.getBean(VacancyTemplateManager.class);
     //private RoleManager roleManager;
-    private RolesManager roleManager;
-    private FunctionalCentreDao functionalCentreDao;
-    private static VacancyTemplateDao vacancyTemplateDAO = (VacancyTemplateDao) SpringUtils.getBean(VacancyTemplateDao.class);
+    private RolesManager roleManager = SpringUtils.getBean(RolesManager.class);
+    private FunctionalCentreDao functionalCentreDao = SpringUtils.getBean(FunctionalCentreDao.class);
+    private static VacancyTemplateDao vacancyTemplateDAO = SpringUtils.getBean(VacancyTemplateDao.class);
     private static CriteriaDao criteriaDAO = SpringUtils.getBean(CriteriaDao.class);
     //private static CriteriaTypeDao criteriaTypeDAO = SpringUtils.getBean(CriteriaTypeDao.class);
     private static CriteriaTypeOptionDao criteriaTypeOptionDAO = SpringUtils.getBean(CriteriaTypeOptionDao.class);
@@ -134,46 +134,6 @@ public class ProgramManager2Action extends ActionSupport {
 
     public void setFunctionalCentreDao(FunctionalCentreDao functionalCentreDao) {
         this.functionalCentreDao = functionalCentreDao;
-    }
-
-    public String execute() {
-        return list();
-    }
-
-    public String list() {
-        String searchStatus = this.getSearchStatus();
-        String searchType = this.getSearchType();
-        String searchFacilityId = this.getSearchFacilityId();
-
-        String providerNo = (String) request.getSession().getAttribute("user");
-        String userrole = (String) request.getSession().getAttribute("userrole");
-
-        List<Program> list = null;
-        if ("".equals(searchStatus)) {
-            // what is 'any' used for? Temporarily commented them out.
-            // when click 'program list' on PMM, it will not display community programs, only display bed and service programs.
-            // searchStatus = "Any";
-            // searchType = "Any";
-            // searchFacilityId = "0";
-
-            if (userrole.indexOf("admin") != -1) {
-                list = programManager.getAllPrograms();
-            } else {
-                list = programManager.getProgramDomain(providerNo);
-            }
-        } else {
-            list = programManager.getAllPrograms(searchStatus, searchType, Integer.parseInt(searchFacilityId));
-        }
-        request.setAttribute("programs", list);
-        request.setAttribute("facilities", facilityDao.findAll(true));
-
-        this.setSearchStatus(searchStatus);
-        this.setSearchType(searchType);
-        this.setSearchFacilityId(searchFacilityId);
-
-        LogAction.log("read", "full program list", "", request);
-
-        return "list";
     }
 
     private Program program;
@@ -266,6 +226,126 @@ public class ProgramManager2Action extends ActionSupport {
 
     public void setBedCheckTimes(BedCheckTime[] bedCheckTimes) {
         this.bedCheckTimes = bedCheckTimes;
+    }
+
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("edit".equals(method)) {
+            return edit();
+        } else if ("programSignatures".equals(method)) {
+            return programSignatures();
+        } else if ("add".equals(method)) {
+            return add();
+        } else if ("addBedCheckTime".equals(method)) {
+            return addBedCheckTime();
+        } else if ("assign_role".equals(method)) {
+            return assign_role();
+        } else if ("assign_team".equals(method)) {
+            return assign_team();
+        } else if ("assign_team_client".equals(method)) {
+            return assign_team_client();
+        } else if ("delete".equals(method)) {
+            return delete();
+        } else if ("delete_access".equals(method)) {
+            return delete_access();
+        } else if ("delete_function".equals(method)) {
+            return delete_function();
+        } else if ("delete_provider".equals(method)) {
+            return delete_provider();
+        } else if ("delete_team".equals(method)) {
+            return delete_team();
+        } else if ("edit_access".equals(method)) {
+            return edit_access();
+        } else if ("edit_function".equals(method)) {
+            return edit_function();
+        } else if ("edit_provider".equals(method)) {
+            return edit_provider();
+        } else if ("edit_team".equals(method)) {
+            return edit_team();
+        } else if ("removeBedCheckTime".equals(method)) {
+            return removeBedCheckTime();
+        } else if ("remove_queue".equals(method)) {
+            return remove_queue();
+        } else if ("remove_remote_queue".equals(method)) {
+            return remove_remote_queue();
+        } else if ("remove_team".equals(method)) {
+            return remove_team();
+        } else if ("save_restriction_settings".equals(method)) {
+            return save_restriction_settings();
+        } else if ("save".equals(method)) {
+            return save();
+        } else if ("viewVacancyTemplate".equals(method)) {
+            return viewVacancyTemplate();
+        } else if ("chooseTemplate".equals(method)) {
+            return chooseTemplate();
+        } else if ("save_vacancy".equals(method)) {
+            return save_vacancy();
+        } else if ("save_vacancy_template".equals(method)) {
+            return save_vacancy_template();
+        } else if ("save_access".equals(method)) {
+            return save_access();
+        } else if ("save_function".equals(method)) {
+            return save_function();
+        } else if ("save_provider".equals(method)) {
+            return save_provider();
+        } else if ("save_team".equals(method)) {
+            return save_team();
+        } else if ("delete_status".equals(method)) {
+            return delete_status();
+        } else if ("edit_status".equals(method)) {
+            return edit_status();
+        } else if ("save_status".equals(method)) {
+            return save_status();
+        } else if ("assign_status_client".equals(method)) {
+            return assign_status_client();
+        } else if ("disable_restriction".equals(method)) {
+            return disable_restriction();
+        } else if ("enable_restriction".equals(method)) {
+            return enable_restriction();
+        } else if ("activeTmplStatus".equals(method)) {
+            return activeTmplStatus();
+        } else if ("inactiveTmplStatus".equals(method)) {
+            return inactiveTmplStatus();
+        } else if ("saveVacancyStatus".equals(method)) {
+            return saveVacancyStatus();
+        } 
+        return list();
+    }
+
+    public String list() {
+        String searchStatus = this.getSearchStatus();
+        String searchType = this.getSearchType();
+        String searchFacilityId = this.getSearchFacilityId();
+
+        String providerNo = (String) request.getSession().getAttribute("user");
+        String userrole = (String) request.getSession().getAttribute("userrole");
+
+        List<Program> list = null;
+        if ("".equals(searchStatus)) {
+            // what is 'any' used for? Temporarily commented them out.
+            // when click 'program list' on PMM, it will not display community programs, only display bed and service programs.
+            // searchStatus = "Any";
+            // searchType = "Any";
+            // searchFacilityId = "0";
+
+            if (userrole.indexOf("admin") != -1) {
+                list = programManager.getAllPrograms();
+            } else {
+                list = programManager.getProgramDomain(providerNo);
+            }
+        } else {
+            list = programManager.getAllPrograms(searchStatus, searchType, Integer.parseInt(searchFacilityId));
+        }
+        request.setAttribute("programs", list);
+        request.setAttribute("facilities", facilityDao.findAll(true));
+
+        this.setSearchStatus(searchStatus);
+        this.setSearchType(searchType);
+        this.setSearchFacilityId(searchFacilityId);
+
+        LogAction.log("read", "full program list", "", request);
+
+        return "list";
     }
 
     public String edit() {
@@ -973,7 +1053,6 @@ public class ProgramManager2Action extends ActionSupport {
         ticklerManager.addTickler(loggedInInfo, t);
     }
 
-
     private void createWaitlistNotificationTickler(LoggedInInfo loggedInInfo, Facility facility, Vacancy vacancy, String creatorProviderNo) {
         Tickler t = new Tickler();
         t.setCreator(creatorProviderNo);
@@ -1454,7 +1533,6 @@ public class ProgramManager2Action extends ActionSupport {
 
         return edit();
     }
-
 
     public String saveVacancyStatus() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

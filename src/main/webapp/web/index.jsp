@@ -44,14 +44,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="../images/Oscar.ico">
+    <link rel="shortcut icon" href="<%= request.getContextPath() %>/images/Oscar.ico">
     <fmt:setBundle basename="uiResources" var="uiBundle"/>
 
     <title><fmt:message key="global.title" bundle="${uiBundle}"/></title>
 
-    <link href="../library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
-    <link href="../css/font-awesome.css" rel="stylesheet">
-    <link href="../css/loading-bar.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/css/font-awesome.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/css/loading-bar.css" rel="stylesheet">
 
 
     <!-- we'll combine/minify later -->
@@ -59,13 +59,13 @@
     <link href="css/navbar-demo-search.css" rel="stylesheet">
     <link href="css/patient-list.css" rel="stylesheet">
 
-    <link href="../library/ng-table/ng-table.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/library/ng-table/ng-table.css" rel="stylesheet">
 
-    <link href="../library/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/library/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet">
 
-    <link href="../css/bootstrap-timepicker.min.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/css/bootstrap-timepicker.min.css" rel="stylesheet">
 
-    <link href="../library/bootstrap/3.0.0/assets/css/bootstrap3_badge_colours.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/library/bootstrap/3.0.0/assets/css/bootstrap3_badge_colours.css" rel="stylesheet">
 
 
     <style>
@@ -292,7 +292,7 @@
             </button>
 
             <!-- link back to 'classic' view -->
-            <a href="../provider/providercontrol.jsp"><img class="navbarlogo" src="../images/Logo2.png"
+            <a href="<%= request.getContextPath() %>/provider/providercontrol.jsp"><img class="navbarlogo" src="<%= request.getContextPath() %>/images/Logo2.png"
                                                            title="<fmt:message bundle="${uiBundle}" key="global.goToClassic"/>"
                                                            border="0"/></a>
         </div>
@@ -418,7 +418,7 @@
                     </li>
                 </ul>
 
-                <a href="../logout.jsp" title="<fmt:message bundle="${uiBundle}" key="navbar.logout"/>"
+                <a href="<%= request.getContextPath() %>/logout.jsp" title="<fmt:message bundle="${uiBundle}" key="navbar.logout"/>"
                    style="padding-left:10px;">
                     <span class="glyphicon glyphicon-off"></span>
                 </a>
@@ -498,26 +498,26 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="../js/jquery-1.9.1.js"></script>
+    <script src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
 
-    <script src="../library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="<%= request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     <!-- script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script -->
 
-    <script src="../library/hogan-2.0.0.js"></script>
-    <script src="../library/typeahead.js/typeahead.min.js"></script>
-    <script src="../library/angular.min.js"></script>
-    <!-- script src="../library/angular-route.min.js"></script  -->
+    <script src="<%= request.getContextPath() %>/library/hogan-2.0.0.js"></script>
+    <script src="<%= request.getContextPath() %>/library/typeahead.js/typeahead.min.js"></script>
+    <script src="<%= request.getContextPath() %>/library/angular.min.js"></script>
+    <!-- script src="<%= request.getContextPath() %>/library/angular-route.min.js"></script  -->
 
-    <script src="../library/angular-sanitize.min.js"></script>
-    <script src="../library/angular-ui-router.js"></script>
-    <script src="../library/angular-resource.min.js"></script>
+    <script src="<%= request.getContextPath() %>/library/angular-sanitize.min.js"></script>
+    <script src="<%= request.getContextPath() %>/library/angular-ui-router.js"></script>
+    <script src="<%= request.getContextPath() %>/library/angular-resource.min.js"></script>
 
-    <script src="../library/ui-bootstrap-tpls-2.5.0.js"></script>
+    <script src="<%= request.getContextPath() %>/library/ui-bootstrap-tpls-2.5.0.js"></script>
 
-    <script src="../library/ng-infinite-scroll.min.js"></script>
+    <script src="<%= request.getContextPath() %>/library/ng-infinite-scroll.min.js"></script>
 
-    <script src="../library/ng-table/ng-table.js"></script>
-    <script src="../js/loading-bar.js"></script>
+    <script src="<%= request.getContextPath() %>/library/ng-table/ng-table.js"></script>
+    <script src="<%= request.getContextPath() %>/js/loading-bar.js"></script>
 
 
     <!-- we'll combine/minify later -->
@@ -544,65 +544,65 @@
     <script src="common/consentServices.js"></script>
     <script src="filters.js"></script>
 
-    <script src="../web/common/rxServices.js"></script>
-    <script src="../web/record/rx/rx.component.js"></script>
-    <script src="../web/record/rx/rxModel.js"></script>
-    <script src="../web/record/rx/search/medsearch.component.js"></script>
-    <script src="../web/record/rx/profile/profile.component.js"></script>
-    <script src="../web/record/rx/print/print.component.js"></script>
-    <script src="../web/record/rx/dsview/dsview.component.js"></script>
-    <script src="../web/record/rx/discontinue/discontinue.component.js"></script>
-    <script src="../web/record/rx/history/history.component.js"></script>
-    <script src="../web/record/rx/reprint/reprint.component.js"></script>
-    <script src="../web/record/rx/fullsearch/fullsearch.component.js"></script>
-    <script src="../web/common/components/provider/provider.component.js"></script>
+    <script src="<%= request.getContextPath() %>/web/common/rxServices.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/rx/rx.component.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/rx/rxModel.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/rx/search/medsearch.component.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/rx/profile/profile.component.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/rx/print/print.component.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/rx/dsview/dsview.component.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/rx/discontinue/discontinue.component.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/rx/history/history.component.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/rx/reprint/reprint.component.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/rx/fullsearch/fullsearch.component.js"></script>
+    <script src="<%= request.getContextPath() %>/web/common/components/provider/provider.component.js"></script>
 
     <script src="app.js"></script>
 
 
-    <script src="../web/oscarController.js"></script>
-    <script src="../web/dashboard/dashboardController.js"></script>
-    <script src="../web/common/navBarController.js"></script>
-    <script src="../web/patientlist/patientListController.js"></script>
-    <script src="../web/record/recordController.js"></script>
-    <script src="../web/record/summary/summaryController.js"></script>
-    <script src="../web/record/forms/formsController.js"></script>
-    <script src="../web/record/details/detailsController.js"></script>
-    <script src="../web/record/phr/phrController.js"></script>
-    <script src="../web/record/tracker/trackerController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/oscarController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/dashboard/dashboardController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/common/navBarController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/patientlist/patientListController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/recordController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/summary/summaryController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/forms/formsController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/details/detailsController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/phr/phrController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/record/tracker/trackerController.js"></script>
 
-    <script src="../web/tickler/ticklerController.js"></script>
-    <script src="../web/tickler/ticklerViewController.js"></script>
-    <script src="../web/tickler/ticklerAddController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/tickler/ticklerController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/tickler/ticklerViewController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/tickler/ticklerAddController.js"></script>
 
-    <script src="../web/schedule/scheduleController.js"></script>
-    <script src="../web/admin/adminController.js"></script>
-    <script src="../web/billing/billingController.js"></script>
-    <script src="../web/consults/consultRequestListController.js"></script>
-    <script src="../web/consults/consultRequestController.js"></script>
-    <script src="../web/consults/consultResponseListController.js"></script>
-    <script src="../web/consults/consultResponseController.js"></script>
-    <script src="../web/inbox/inboxController.js"></script>
-    <script src="../web/patientsearch/patientSearchController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/schedule/scheduleController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/admin/adminController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/billing/billingController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/consults/consultRequestListController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/consults/consultRequestController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/consults/consultResponseListController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/consults/consultResponseController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/inbox/inboxController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/patientsearch/patientSearchController.js"></script>
 
-    <script src="../web/report/reportsController.js"></script>
-    <script src="../web/document/documentsController.js"></script>
-    <script src="../web/settings/settingsController.js"></script>
-    <script src="../web/help/supportController.js"></script>
-    <script src="../web/help/helpController.js"></script>
-    <script src="../web/clinicalconnect/ccController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/report/reportsController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/document/documentsController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/settings/settingsController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/help/supportController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/help/helpController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/clinicalconnect/ccController.js"></script>
 
-    <script src="../web/schedule/appointmentAddController.js"></script>
-    <script src="../web/schedule/appointmentViewController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/schedule/appointmentAddController.js"></script>
+    <script src="<%= request.getContextPath() %>/web/schedule/appointmentViewController.js"></script>
 
     <!--
 
     <script src="js/providerViewController.js"></script>
     <script src="js/messengerController.js"></script  -->
 
-    <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
-    <script type="text/javascript" src="../js/bootstrap-timepicker.min.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/bootstrap-timepicker.min.js"></script>
 
     <script>
 

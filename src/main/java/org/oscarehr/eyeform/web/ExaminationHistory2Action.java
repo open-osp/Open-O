@@ -70,6 +70,10 @@ public class ExaminationHistory2Action extends ActionSupport {
 
     @Override
     public String execute() {
+        if ("query".equals(request.getParameter("method"))) {
+            return query();
+        }
+
         return display();
     }
 

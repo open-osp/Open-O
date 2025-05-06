@@ -52,8 +52,8 @@ public class DisplayDashboard2Action extends ActionSupport {
     private ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
     private static Logger logger = MiscUtils.getLogger();
 
-    public String unspecified() {
-        return null;
+    public String execute() {
+        return getDashboard();
     }
 
     @SuppressWarnings("unused")

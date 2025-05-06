@@ -85,35 +85,35 @@
         <link rel="stylesheet" type="text/css" href="rourkeStyle.css">
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
         <!-- main calendar program -->
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 
         <!-- language for the calendar -->
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
 
         <!-- the following script defines the Calendar.setup helper function, which makes
                adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
         <!-- popup mouseover js code -->
-        <script type="text/javascript" src="../share/javascript/mouseover.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/mouseover.js"></script>
 
         <!--Text Area text max limit code -->
         <script type="text/javascript"
-                src="../share/javascript/txtCounter/x_core.js"></script>
+                src="<%= request.getContextPath() %>/share/javascript/txtCounter/x_core.js"></script>
         <script type="text/javascript"
-                src="../share/javascript/txtCounter/x_dom.js"></script>
+                src="<%= request.getContextPath() %>/share/javascript/txtCounter/x_dom.js"></script>
         <script type="text/javascript"
-                src="../share/javascript/txtCounter/x_event.js"></script>
+                src="<%= request.getContextPath() %>/share/javascript/txtCounter/x_event.js"></script>
         <script type="text/javascript"
-                src="../share/javascript/txtCounter/ylib.js"></script>
+                src="<%= request.getContextPath() %>/share/javascript/txtCounter/ylib.js"></script>
         <script type="text/javascript"
-                src="../share/javascript/txtCounter/y_TextCounter.js"></script>
+                src="<%= request.getContextPath() %>/share/javascript/txtCounter/y_TextCounter.js"></script>
         <script type="text/javascript"
-                src="../share/javascript/txtCounter/y_util.js"></script>
+                src="<%= request.getContextPath() %>/share/javascript/txtCounter/y_util.js"></script>
 
 
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
@@ -216,7 +216,7 @@
         function onPrint() {
             document.forms[0].submit.value = "print";
 
-            document.forms[0].action = "../form/createpdf?__title=Rourke+Baby+Report+Pg2&__cfgfile=rourke2006printCfgPg2&__template=rourke2006p2";
+            document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=Rourke+Baby+Report+Pg2&__cfgfile=rourke2006printCfgPg2&__template=rourke2006p2";
             document.forms[0].target = "_blank";
 
             return true;
@@ -225,7 +225,7 @@
         function onPrintAll() {
             document.forms[0].submit.value = "printAll";
 
-            document.forms[0].action = "../form/formname.do?__title=Rourke+Baby+Report&__cfgfile=rourke2006printCfgPg1&__cfgfile=rourke2006printCfgPg2&__cfgfile=rourke2006printCfgPg3&__cfgfile=rourke2006printCfgPg4&__template=rourke2006";
+            document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=Rourke+Baby+Report&__cfgfile=rourke2006printCfgPg1&__cfgfile=rourke2006printCfgPg2&__cfgfile=rourke2006printCfgPg3&__cfgfile=rourke2006printCfgPg4&__template=rourke2006";
             document.forms[0].target = "_blank";
 
             return true;
@@ -367,7 +367,7 @@
                             value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.btnPrintAll"/>"
                             onclick="javascript:return onPrintAll();"/> <input type="button"
                                                                                value="About"
-                                                                               onclick="javascript:return popPage('formRourke2006intro.html','About Rourke');"/>
+                                                                               onclick="javascript:return popPage('form/formRourke2006intro.html','About Rourke');"/>
                 </td>
                 <td align="center" width="100%">
                     <% if (formId > 0) { %> <a name="length" href="#"
@@ -379,9 +379,9 @@
                     &nbsp; <% } %>
                 </td>
                 <td nowrap="true"><a
-                        href="formrourke2006p1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg1"/></a>&nbsp;|&nbsp; <a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg2"/></a>&nbsp;|&nbsp; <a
-                        href="formrourke2006p3.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg3"/></a>&nbsp;|&nbsp; <a
-                        href="formrourke2006p4.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg4"/></a></td>
+                        href="form/formrourke2006p1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg1"/></a>&nbsp;|&nbsp; <a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg2"/></a>&nbsp;|&nbsp; <a
+                        href="form/formrourke2006p3.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg3"/></a>&nbsp;|&nbsp; <a
+                        href="form/formrourke2006p4.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg4"/></a></td>
             </tr>
         </table>
 
@@ -433,15 +433,15 @@
                 <td colspan="3"><input readonly type="text" id="p2_date2m"
                                        ondblclick="resetDate(this)" name="p2_date2m" size="10"
                                        value="<%=UtilMisc.htmlEscape(props.getProperty("p2_date2m", ""))%>"/>
-                    <img src="../images/cal.gif" id="p2_date2m_cal"></td>
+                    <img src="<%= request.getContextPath() %>/images/cal.gif" id="p2_date2m_cal"></td>
                 <td colspan="3"><input readonly type="text" id="p2_date4m"
                                        ondblclick="resetDate(this)" name="p2_date4m" size="10"
                                        value="<%=UtilMisc.htmlEscape(props.getProperty("p2_date4m", ""))%>"/>
-                    <img src="../images/cal.gif" id="p2_date4m_cal"></td>
+                    <img src="<%= request.getContextPath() %>/images/cal.gif" id="p2_date4m_cal"></td>
                 <td colspan="3"><input readonly type="text" id="p2_date6m"
                                        ondblclick="resetDate(this)" name="p2_date6m" size="10"
                                        value="<%=UtilMisc.htmlEscape(props.getProperty("p2_date6m", ""))%>"/>
-                    <img src="../images/cal.gif" id="p2_date6m_cal"></td>
+                    <img src="<%= request.getContextPath() %>/images/cal.gif" id="p2_date6m_cal"></td>
             </tr>
             <tr align="center">
                 <td class="column" rowspan="2"><a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.btnGrowth"/>*</td>
@@ -617,7 +617,7 @@
             <tr>
                 <td class="column"><a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.msgEducational"/></a><br/>
                     <br/>
-                    <img height="15" width="20" src="graphics/Checkmark_Lwhite.gif"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.msgEducationalLegend"/></td>
+                    <img height="15" width="20" src="form/graphics/Checkmark_Lwhite.gif"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.msgEducationalLegend"/></td>
                 <td colspan="9" valign="top">
                     <table style="font-size: 8pt;" cellpadding="0" cellspacing="0"
                            width="100%">
@@ -629,22 +629,22 @@
                         </tr>
                         <tr>
                             <td style="padding-right: 5pt" valign="top"><img height="15"
-                                                                             width="20" src="graphics/Checkmark_L.gif">
+                                                                             width="20" src="form/graphics/Checkmark_L.gif">
                             </td>
                             <td class="edcol" valign="top">X</td>
                             <td>&nbsp;</td>
                             <td style="padding-right: 5pt" valign="top"><img height="15"
-                                                                             width="20" src="graphics/Checkmark_L.gif">
+                                                                             width="20" src="form/graphics/Checkmark_L.gif">
                             </td>
                             <td class="edcol" valign="top">X</td>
                             <td>&nbsp;</td>
                             <td style="padding-right: 5pt" valign="top"><img height="15"
-                                                                             width="20" src="graphics/Checkmark_L.gif">
+                                                                             width="20" src="form/graphics/Checkmark_L.gif">
                             </td>
                             <td class="edcol" valign="top">X</td>
                             <td>&nbsp;</td>
                             <td style="padding-right: 5pt" valign="top"><img height="15"
-                                                                             width="20" src="graphics/Checkmark_L.gif">
+                                                                             width="20" src="form/graphics/Checkmark_L.gif">
                             </td>
                             <td class="edcol" valign="top">X</td>
                             <td colspan="4">&nbsp;</td>
@@ -966,7 +966,7 @@
             <tr>
                 <td class="column"><a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke1.msgDevelopment"/>**</a><br>
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006_1.msgDevelopmentDesc"/><br/>
-                    <img height="15" width="20" src="graphics/Checkmark_Lwhite.gif"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006_1.msgDevelopmentLegend"/></td>
+                    <img height="15" width="20" src="form/graphics/Checkmark_Lwhite.gif"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006_1.msgDevelopmentLegend"/></td>
                 <td colspan="3" valign="top" align="center">
                     <table cellpadding="0" cellspacing="0" width="100%">
                         <tr align="center">
@@ -977,7 +977,7 @@
                         </tr>
                         <tr>
                             <td style="padding-right: 5pt" valign="top"><img height="15"
-                                                                             width="20" src="graphics/Checkmark_L.gif">
+                                                                             width="20" src="form/graphics/Checkmark_L.gif">
                             </td>
                             <td class="edcol" valign="top">X</td>
                             <td>&nbsp;</td>
@@ -1086,7 +1086,7 @@
                         </tr>
                         <tr>
                             <td style="padding-right: 5pt" valign="top"><img height="15"
-                                                                             width="20" src="graphics/Checkmark_L.gif">
+                                                                             width="20" src="form/graphics/Checkmark_L.gif">
                             </td>
                             <td class="edcol" valign="top">X</td>
                             <td>&nbsp;</td>
@@ -1180,7 +1180,7 @@
                         </tr>
                         <tr>
                             <td style="padding-right: 5pt" valign="top"><img height="15"
-                                                                             width="20" src="graphics/Checkmark_L.gif">
+                                                                             width="20" src="form/graphics/Checkmark_L.gif">
                             </td>
                             <td class="edcol" valign="top">X</td>
                             <td>&nbsp;</td>
@@ -1519,7 +1519,7 @@
                             value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.btnPrintAll"/>"
                             onclick="javascript:return onPrintAll();"/> <input type="button"
                                                                                value="About"
-                                                                               onclick="javascript:return popPage('formRourke2006intro.html','About Rourke');"/>
+                                                                               onclick="javascript:return popPage('form/formRourke2006intro.html','About Rourke');"/>
                 </td>
                 <td align="center" width="100%">
                     <% if (formId > 0) { %> <a name="length" href="#"
@@ -1531,9 +1531,9 @@
                     &nbsp; <% } %>
                 </td>
                 <td nowrap="true"><a
-                        href="formrourke2006p1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg1"/></a>&nbsp;|&nbsp; <a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg2"/></a>&nbsp;|&nbsp; <a
-                        href="formrourke2006p3.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg3"/></a>&nbsp;|&nbsp; <a
-                        href="formrourke2006p4.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg4"/></a></td>
+                        href="form/formrourke2006p1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg1"/></a>&nbsp;|&nbsp; <a><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg2"/></a>&nbsp;|&nbsp; <a
+                        href="form/formrourke2006p3.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg3"/></a>&nbsp;|&nbsp; <a
+                        href="form/formrourke2006p4.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.Pg4"/></a></td>
             </tr>
         </table>
         <p style="font-size: 8pt;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formRourke2006.footer"/><br/>

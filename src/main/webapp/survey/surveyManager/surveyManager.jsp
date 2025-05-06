@@ -31,7 +31,7 @@
 <c:if test="${not empty mfhExport and mfhExport.equalsIgnoreCase('true')}">
     <c:set var="showMfhExport" value="true"/>
 </c:if>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 <table width="100%">
     <c:if test="${not empty messages}">
         <c:forEach var="message" items="${messages}">

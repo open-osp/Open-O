@@ -21,6 +21,7 @@
         import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*, oscar.appt.*, org.oscarehr.common.dao.AppointmentTypeDao, org.oscarehr.common.model.AppointmentType, org.oscarehr.util.SpringUtils" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ include file="../admin/dbconnection.jsp" %>
@@ -160,7 +161,7 @@
                             <form action="${pageContext.request.contextPath}/appointment/appointmentTypeAction.do" method="post">
                                 <input TYPE="hidden" NAME="oper" VALUE="save"/>
                                 <input TYPE="hidden" NAME="id"
-                                       VALUE="<c:out value="${AppointmentTypeForm.id}"/>"/>
+                                       VALUE="<c:out value="${id}"/>"/>
                                 <table border=0 cellspacing=0 cellpadding=0 width="100%">
                                     <tr bgcolor="#CCCCFF">
                                         <th><font face="Helvetica">EDIT APPOINTMENT TYPE</font></th>
@@ -176,7 +177,7 @@
                                                         <div align="right"><font face="arial">Name:</font></div>
                                                     </td>
                                                     <td width="25%"><INPUT TYPE="TEXT" NAME="name"
-                                                                           VALUE="<c:out value="${AppointmentTypeForm.name}"/>"
+                                                                           VALUE="<c:out value="${name}"/>"
                                                                            WIDTH="10" HEIGHT="20" border="0" hspace="2"
                                                                            maxlength="50"
                                                                            onChange="checkTimeTypeIn(this)">
@@ -184,7 +185,7 @@
                                                         <div align="right"><font face="arial">Duration:</font></div>
                                                     </td>
                                                     <td width="25%"><INPUT TYPE="TEXT" NAME="duration"
-                                                                           VALUE="<c:out value="${AppointmentTypeForm.duration}"/>"
+                                                                           VALUE="<c:out value="${duration}"/>"
                                                                            WIDTH="5" HEIGHT="20" border="0"
                                                                            onChange="checkTimeTypeIn(this)"></td>
                                                 </tr>
@@ -194,13 +195,13 @@
                                                                 face="arial">Reason:</font></font></div>
                                                     </td>
                                                     <td><TEXTAREA NAME="reason" COLS="40" ROWS="2" border="0" hspace="2">
-                                                        <c:out value="${AppointmentTypeForm.reason}"/></TEXTAREA>
+                                                        <c:out value="${reason}"/></TEXTAREA>
                                                     </td>
                                                     <td>
                                                         <div align="right"><font face="arial">Notes:</font></div>
                                                     </td>
                                                     <td><TEXTAREA NAME="notes" COLS="40" ROWS="2" border="0" hspace="2">
-                                                        <c:out value="${AppointmentTypeForm.notes}"/>
+                                                        <c:out value="${notes}"/>
                                                     </TEXTAREA>
                                                     </td>
                                                 </tr>
@@ -221,7 +222,7 @@
 
                                                         <c:if test="${empty locationsList}">
                                                             <input type="text" name="location"
-                                                                   value="${AppointmentTypeForm.location}"
+                                                                   value="${location}"
                                                                    width="30" height="20" border="0" hspace="2" maxlength="30"/>
                                                         </c:if>
                                                     </td>
@@ -229,7 +230,7 @@
                                                         <div align="right"><font face="arial">Resources:</font></div>
                                                     </td>
                                                     <td><INPUT TYPE="TEXT" NAME="resources"
-                                                               VALUE="<c:out value="${AppointmentTypeForm.resources}"/>"
+                                                               VALUE="<c:out value="${resources}"/>"
                                                                WIDTH="10" HEIGHT="20" maxlength="10" border="0"
                                                                hspace="2"></td>
                                                 </tr>
@@ -302,9 +303,9 @@
                         <%= type.getResources() %>
                     </th>
                     <th nowrap>
-                        <a href="appointmentTypeAction.do?oper=edit&no=<%= type.getId() %>">edit</a>
-                        &nbsp;&nbsp;<a
-                            href="javascript:delType('appointmentTypeAction.do?oper=del&no=<%= type.getId() %>')">delete</a>
+                        <a href="${pageContext.request.contextPath}/appointment/appointmentTypeAction.do?oper=edit&no=<%= type.getId() %>">edit</a>
+                        &nbsp;&nbsp;
+                        <a href="javascript:delType('<%= type.getId() %>')">delete</a>
                     </th>
                 </tr>
                 <%
@@ -317,10 +318,10 @@
 </table>
 </body>
 <script type="text/javascript">
-    function delType(url) {
+    function delType(id) {
         var answer = confirm("Type will be deleted! Are you sure?")
         if (answer) {
-            window.location = url;
+            window.location = "${pageContext.request.contextPath}/appointment/appointmentTypeAction.do?oper=del&no=" + id;
         }
     }
 </script>

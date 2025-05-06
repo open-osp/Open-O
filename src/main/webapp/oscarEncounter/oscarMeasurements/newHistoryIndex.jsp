@@ -45,7 +45,7 @@
     </head>
 
 
-    <link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
     <script type="text/javascript" language=javascript>
         function popupPage(vheight, vwidth, varpage) { //open a new popup window
             var page = "" + varpage;

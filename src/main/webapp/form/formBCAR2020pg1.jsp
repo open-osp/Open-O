@@ -876,7 +876,7 @@
                                                    title="3. Contraceptives - Last Used - Date" size="11"
                                                    maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_contraceptiveLastUsed", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_contraceptiveLastUsed_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_contraceptiveLastUsed_cal">
                                         </div>
                                     </td>
                                     <td width="12%">
@@ -894,7 +894,7 @@
                                             <input type="text" name="d_LMP" id="d_LMP" title="LMP" size="10"
                                                    maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_LMP", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_LMP_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_LMP_cal">
                                         </div>
                                     </td>
                                     <td width="14%">
@@ -904,7 +904,7 @@
                                                    class="calcField" onDblClick="calculateByLMP(this);" size="10"
                                                    maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_EDDByLMP", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_EDDByLMP_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_EDDByLMP_cal">
                                         </div>
                                     </td>
                                     <td width="12%">
@@ -913,7 +913,7 @@
                                             <input type="text" name="d_datingUS" id="d_datingUS" title="Dating US"
                                                    size="10" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_datingUS", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_datingUS_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_datingUS_cal">
                                         </div>
                                     </td>
                                     <td width="12%">
@@ -931,7 +931,7 @@
                                             <input type="text" name="d_EDDByUS" id="d_EDDByUS" title="EDD by US"
                                                    size="10" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_EDDByUS", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_EDDByUS_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_EDDByUS_cal">
                                         </div>
                                     </td>
                                 </tr>
@@ -993,7 +993,7 @@
                                             <input type="text" name="d_obHistoryDate1" id="d_obHistoryDate1"
                                                    title="Obstetrical History Line 1 - Date" size="10" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_obHistoryDate1", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_obHistoryDate1_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_obHistoryDate1_cal">
                                         </div>
                                     </td>
                                     <td>
@@ -1072,7 +1072,7 @@
                                             <input type="text" name="d_obHistoryDate2" id="d_obHistoryDate2"
                                                    title="Obstetrical History Line 2 - Date" size="10" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_obHistoryDate2", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_obHistoryDate2_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_obHistoryDate2_cal">
                                         </div>
                                     </td>
                                     <td>
@@ -1153,7 +1153,7 @@
                                             <input type="text" name="d_obHistoryDate3" id="d_obHistoryDate3"
                                                    title="Obstetrical History Line 3 - Date" size="10" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_obHistoryDate3", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_obHistoryDate3_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_obHistoryDate3_cal">
                                         </div>
                                     </td>
                                     <td>
@@ -1234,7 +1234,7 @@
                                             <input type="text" name="d_obHistoryDate4" id="d_obHistoryDate4"
                                                    title="Obstetrical History Line 4 - Date" size="10" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_obHistoryDate4", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_obHistoryDate4_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_obHistoryDate4_cal">
                                         </div>
                                     </td>
                                     <td>
@@ -1315,7 +1315,7 @@
                                             <input type="text" name="d_obHistoryDate5" id="d_obHistoryDate5"
                                                    title="Obstetrical History Line 5 - Date" size="10" maxlength="150"
                                                    value="<%= UtilMisc.htmlEscape(props.getProperty("d_obHistoryDate5", "")) %>"/>
-                                            <img src="../images/cal.gif" id="d_obHistoryDate5_cal">
+                                            <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_obHistoryDate5_cal">
                                         </div>
                                     </td>
                                     <td>
@@ -1818,7 +1818,7 @@
                                                                        title="Medical History - Immunizations Flu - Date"
                                                                        size="10" maxlength="150"
                                                                        value="<%= UtilMisc.htmlEscape(props.getProperty("d_medicalHistoryImmunizationsFluDate", "")) %>"/>
-                                                                <img src="../images/cal.gif"
+                                                                <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                      id="d_medicalHistoryImmunizationsFluDate_cal">
                                                             </div>
                                                         </div>
@@ -1836,7 +1836,7 @@
                                                                        title="Medical History - Immunizations TDAP - Date"
                                                                        size="8" maxlength="150"
                                                                        value="<%= UtilMisc.htmlEscape(props.getProperty("d_medicalHistoryImmunizationsFluDate", "")) %>"/>
-                                                                <img src="../images/cal.gif"
+                                                                <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                      id="d_medicalHistoryImmunizationsTDAPDate_cal">
                                                             </div>
                                                         </div>
@@ -2008,7 +2008,7 @@
                                                                        title="Substance Use - Quit Alchohol - Date"
                                                                        size="10" maxlength="150"
                                                                        value="<%= UtilMisc.htmlEscape(props.getProperty("d_substanceQuitAlcoholDate", "")) %>"/>
-                                                                <img src="../images/cal.gif"
+                                                                <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                      id="d_substanceQuitAlcoholDate_cal">
                                                             </td>
                                                         </tr>
@@ -2092,7 +2092,7 @@
                                                                        title="Substance Use - Quit Tobacco - Date"
                                                                        size="9" maxlength="150"
                                                                        value="<%= UtilMisc.htmlEscape(props.getProperty("d_substanceQuitTobaccoDate", "")) %>"/>
-                                                                <img src="../images/cal.gif"
+                                                                <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                      id="d_substanceQuitTobaccoDate_cal">
                                                             </td>
                                                         </tr>
@@ -2215,7 +2215,7 @@
                                                                        title="Substance Use - Quit Cannabis - Date"
                                                                        size="8" maxlength="150"
                                                                        value="<%= UtilMisc.htmlEscape(props.getProperty("d_substanceQuitCannabisDate", "")) %>"/>
-                                                                <img src="../images/cal.gif"
+                                                                <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                      id="d_substanceQuitCannabisDate_cal">
                                                             </td>
                                                         </tr>
@@ -2355,7 +2355,7 @@
                                         <input type="text" id="d_initialExamDate" name="d_initialExamDate"
                                                title="Initial Physical Examination - Date" size="10" maxlength="150"
                                                value="<%= UtilMisc.htmlEscape(props.getProperty("d_initialExamDate", "")) %>"/>
-                                        <img src="../images/cal.gif" id="d_initialExamDate_cal">
+                                        <img src="<%= request.getContextPath() %>/images/cal.gif" id="d_initialExamDate_cal">
                                         Completed by
                                         <span class="sub-text">(name)</span>
                                         <input type="text" name="t_initialExamCompletedBy" size="18" maxlength="150"
@@ -2605,7 +2605,7 @@
                                                                        title="Initial Physical Examination - Pelvic STI test - Date"
                                                                        size="11" maxlength="150"
                                                                        value="<%= UtilMisc.htmlEscape(props.getProperty("d_initialExamPelvicSTITest", "")) %>"/>
-                                                                <img src="../images/cal.gif"
+                                                                <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                      id="d_initialExamPelvicSTITest_cal">
                                                             </td>
                                                         </tr>
@@ -2622,7 +2622,7 @@
                                                                        title="Initial Physical Examination - Pelvic PAP test - Date"
                                                                        size="11" maxlength="150"
                                                                        value="<%= UtilMisc.htmlEscape(props.getProperty("d_initialExamPelvicPapTest", "")) %>"/>
-                                                                <img src="../images/cal.gif"
+                                                                <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                                      id="d_initialExamPelvicPapTest_cal">
                                                             </td>
                                                         </tr>

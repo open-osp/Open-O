@@ -146,7 +146,7 @@
         <oscar:customInterface section="appthistory"/>
 
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicappthistory.title"/></title>
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
         <script type="text/javascript">
 
             function popupPageNew(vheight, vwidth, varpage) {
@@ -221,7 +221,7 @@
             }
         </script>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
     <body class="BodyStyle" demographic.demographicappthistory.msgTitle=vlink="#0000FF">

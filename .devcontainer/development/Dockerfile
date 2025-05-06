@@ -3,7 +3,7 @@ FROM tomcat:9.0.97-jdk21-temurin
 # Set environment variables for Tomcat
 ENV CATALINA_HOME /usr/local/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
-ENV CATALINA_OPTS="--add-opens java.base/java.net=ALL-UNNAMED"
+ENV CATALINA_OPTS="--add-opens java.base/java.net=ALL-UNNAMED -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
 
 # Copy Tomcat installation from the official Tomcat image
 COPY --from=tomcat:9.0.97 /usr/local/tomcat $CATALINA_HOME

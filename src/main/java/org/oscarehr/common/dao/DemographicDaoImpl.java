@@ -26,6 +26,7 @@
  */
 package org.oscarehr.common.dao;
 
+import java.util.Objects;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -512,7 +513,8 @@ public class DemographicDaoImpl extends HibernateDaoSupport implements Applicati
         List<Demographic> list = new ArrayList<Demographic>();
         String queryString = "From Demographic d where d.LastName like :lastName ";
 
-        String[] name = searchStr.split(",");
+        String[] name = Objects.requireNonNullElse(searchStr, "").split(",");
+
         if (name.length == 2) {
             queryString += " and first_name like :firstName ";
         }
@@ -563,7 +565,7 @@ public class DemographicDaoImpl extends HibernateDaoSupport implements Applicati
         List<Demographic> list = new ArrayList<Demographic>();
         String queryString = "From Demographic d where d.LastName like :lastName and d.HeadRecord is not null ";
 
-        String[] name = searchStr.split(",");
+        String[] name = searchStr.split(",");        
         if (name.length == 2) {
             queryString += " and first_name like :firstName ";
         }

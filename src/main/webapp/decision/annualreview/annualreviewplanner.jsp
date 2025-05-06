@@ -25,8 +25,6 @@
 --%>
 
 <%
-
-
     String demographic_no = request.getParameter("demographic_no") != null
             ? request.getParameter("demographic_no")
             : ("null");

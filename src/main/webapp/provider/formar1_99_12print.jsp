@@ -57,7 +57,7 @@
 </head>
 <body onLoad="setfocus()" topmargin="0" leftmargin="1" rightmargin="1"
       bgcolor="navy">
-<img src="../images/formar1_99_12.gif">
+<img src="<%= request.getContextPath() %>/images/formar1_99_12.gif">
 
 <div ID="bdiv1"
      STYLE="position:absolute; visibility:visible; z-index:2; left:<%=50+oox%>px; top:<%=74+ooy%>px; width:400px; height:20px;">

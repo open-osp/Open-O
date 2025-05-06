@@ -74,7 +74,7 @@
 <head>
 
     <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-    <link rel="stylesheet" href="../../../billing/billing.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/billing/billing.css">
     <title>Billing Reconcilliation</title>
     <script src="<%=request.getContextPath()%>/csrfguard" type="text/javascript"></script>
 

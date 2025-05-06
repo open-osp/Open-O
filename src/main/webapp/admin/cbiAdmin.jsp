@@ -49,13 +49,13 @@
 <head>
     <title>CBI Upload Administration Panel</title>
 
-    <!-- <script type="text/javascript" src="../js/jquery-1.9.1.js"></script> -->
-    <script type="text/javascript" language="JavaScript" src="../js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="../js/jquery.treeview.js"></script>
-    <script type="text/javascript" language="JavaScript" src="../js/jquery-ui-1.8.18.custom.min.js"></script>
+    <!-- <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script> -->
+    <script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.treeview.js"></script>
+    <script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/js/jquery-ui-1.8.18.custom.min.js"></script>
 
-    <link rel="stylesheet" href="../css/cupertino/jquery-ui-1.8.18.custom.css">
-    <link rel="stylesheet" href="../css/jqtreeview/jquery.treeview.css"/>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/cupertino/jquery-ui-1.8.18.custom.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/jqtreeview/jquery.treeview.css"/>
 
     <style type="text/css">
         body {

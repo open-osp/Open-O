@@ -92,9 +92,59 @@ public class Flowsheet2Action extends ActionSupport {
     private MeasurementTypeDao measurementTypeDao = SpringUtils.getBean(MeasurementTypeDao.class);
     private ValidationsDao validationsDao = SpringUtils.getBean(ValidationsDao.class);
 
-
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
+    public String execute() throws Exception {
+        String method = request.getParameter("method");
+        if ("getTemplateDetails".equals(method)) {
+            return getTemplateDetails();
+        } else if ("addMeasurement".equals(method)) {
+            return addMeasurement();
+        } else if ("addPrevention".equals(method)) {
+            return addPrevention();
+        } else if ("getValidations".equals(method)) {
+            return getValidations();
+        } else if ("getMeasurementTypes".equals(method)) {
+            return getMeasurementTypes();
+        } else if ("getPreventionTypes".equals(method)) {
+            return getPreventionTypes();
+        } else if ("addNewFlowsheet".equals(method)) {
+            return addNewFlowsheet();
+        } else if ("deleteFlowsheet".equals(method)) {
+            return deleteFlowsheet();
+        } else if ("removeItem".equals(method)) {
+            return removeItem();
+        } else if ("getWarnings".equals(method)) {
+            return getWarnings();
+        } else if ("removeWarning".equals(method)) {
+            return removeWarning();
+        } else if ("removeTarget".equals(method)) {
+            return removeTarget();
+        } else if ("getIndicators".equals(method)) {
+            return getIndicators();
+        } else if ("getTargets".equals(method)) {
+            return getTargets();
+        } else if ("saveFlowsheetItemWarning".equals(method)) {
+            return saveFlowsheetItemWarning();
+        } else if ("saveFlowsheetItemTarget".equals(method)) {
+            return saveFlowsheetItemTarget();
+        } else if ("saveFlowsheetItem".equals(method)) {
+            return saveFlowsheetItem();
+        } else if ("getFlowsheetItem".equals(method)) {
+            return getFlowsheetItem();
+        } else if ("getFlowsheet".equals(method)) {
+            return getFlowsheet();
+        } else if ("getTemplateNames".equals(method)) {
+            return getTemplateNames();
+        } else if ("listSystem".equals(method)) {
+            return listSystem();
+        } else if ("list".equals(method)) {
+            return list();
+        } else if ("reload".equals(method)) {
+            return reload();
+        } 
+        return list();
+    }
 
     private FlowSheetUserCreated create(FlowSheetUserCreated fsuc) {
 
@@ -682,7 +732,6 @@ public class Flowsheet2Action extends ActionSupport {
         obj.write(response.getWriter());
         return null;
     }
-
 
     public String getWarnings() throws IOException, JSONException {
 

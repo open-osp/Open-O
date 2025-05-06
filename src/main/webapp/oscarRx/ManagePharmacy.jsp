@@ -63,6 +63,7 @@
             }
         %>
         <%
+            String ID = null;
             if (request.getParameter("ID") != null && request.getParameter("type") != null && request.getParameter("type").equals("Delete")) {
                 RxPharmacyData rxp = new RxPharmacyData();
                 rxp.deletePharmacy(request.getParameter("ID"));
@@ -70,9 +71,10 @@
                 response.sendRedirect(request.getContextPath() + "/oscarRx/SelectPharmacy2.jsp");
                 return;
             }
+            ID = (String) request.getParameter("ID");
         %>
 
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
     </head>
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
 
@@ -88,7 +90,7 @@
                        height="100%">
                     <tr>
                         <td width="0%" valign="top">
-                            <div class="DivCCBreadCrumbs"><a href="SearchDrug.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a></div>
+                            <div class="DivCCBreadCrumbs"><a href="oscarRx/SearchDrug.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a></div>
                         </td>
                     </tr>
                     <!----Start new rows here-->
@@ -111,7 +113,7 @@
                                     <td>
                                         <%String type = request.getParameter("type"); %>
                                         <input type="hidden" name="pharmacyAction" id="pharmacyAction" value="<%=type%>"/>
-                                        <input type="hidden" name="ID" id="ID"/> <fmt:setBundle basename="oscarResources"/><fmt:message key="ManagePharmacy.txtfld.label.pharmacyName"/> :
+                                        <input type="hidden" name="ID" id="ID" value="<%=ID%>"/> <fmt:setBundle basename="oscarResources"/><fmt:message key="ManagePharmacy.txtfld.label.pharmacyName"/> :
                                     </td>
                                     <td><input type="text" name="name" id="name" /></td>
                                 </tr>
@@ -182,7 +184,7 @@
                     <tr>
                         <td>
                             <%
-                                String sBack = "SearchDrug.jsp";
+                                String sBack = "oscarRx/SearchDrug.jsp";
                             %> <input type=button class="ControlPushButton"
                                       onclick="javascript:window.location.href='<%=sBack%>';"
                                       value="Back to Search Drug"/></td>

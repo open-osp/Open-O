@@ -36,7 +36,6 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.Logger;
@@ -46,6 +45,7 @@ import org.oscarehr.phr.model.PHRMeasurement;
 import org.oscarehr.phr.service.PHRService;
 import org.oscarehr.phr.util.MyOscarUtils;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
 
 import oscar.oscarEncounter.data.EctProviderData;
 import oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBean;
@@ -58,12 +58,9 @@ import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
 public class EctSendMeasurementToPhr2Action extends ActionSupport {
-    HttpServletRequest request = ServletActionContext.getRequest();
-    HttpServletResponse response = ServletActionContext.getResponse();
-
+    private HttpServletRequest request = ServletActionContext.getRequest();
     private Logger logger = MiscUtils.getLogger();
-
-    PHRService phrService = null;
+    private PHRService phrService = SpringUtils.getBean(PHRService.class);
 
     public String execute() throws IOException, ServletException, JAXBException, IndivoException {
 
@@ -97,9 +94,5 @@ public class EctSendMeasurementToPhr2Action extends ActionSupport {
 
         request.setAttribute("error_msg", errorMsg);
         return "finished";
-    }
-
-    public void setPhrService(PHRService pServ) {
-        this.phrService = pServ;
     }
 }

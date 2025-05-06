@@ -57,7 +57,14 @@ public class Scratch2Action extends ActionSupport {
         return "scratchPadVersion";
     }
 
-    public String unspecified() throws Exception {
+    public String execute() throws Exception {
+
+        if ("showVersion".equals(request.getParameter("method"))) {
+            return showVersion();
+        }
+        if ("delete".equals(request.getParameter("method"))) {
+            return delete();
+        }
 
         String providerNo = (String) request.getSession().getAttribute("user");
         String pNo = request.getParameter("providerNo");

@@ -64,6 +64,24 @@ public class MeasurementData2Action extends ActionSupport {
     OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() throws Exception {
+        String method = request.getParameter("action");
+        if ("getLatestValues".equals(method)) {
+            return getLatestValues();
+        } else if ("saveMeasurement".equals(method)) {
+            return saveMeasurement();
+        } else if ("saveValues".equals(method)) {
+            return saveValues();
+        } else if ("getDataByType".equals(method)) {
+            return getDataByType();
+        } else if ("getMeasurementsByType".equals(method)) {
+            return getMeasurementsByType();
+        }
+        return getLatestValues();
+    }
+
+
+
     public String getLatestValues() throws IOException {
         String demographicNo = request.getParameter("demographicNo");
         String typeStr = request.getParameter("types");

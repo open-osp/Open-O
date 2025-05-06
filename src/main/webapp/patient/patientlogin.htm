@@ -28,7 +28,7 @@
 <html>
 <head>
     <title>Please Login</title>
-    <LINK REL="StyleSheet" HREF="../web.css" TYPE="text/css">
+    <LINK REL="StyleSheet" HREF="<%= request.getContextPath() %>/web.css" TYPE="text/css">
 </head>
 
 <BODY>
@@ -74,8 +74,8 @@
         <hr width="90%">
         <table border="0" cellspacing="0" cellpadding="0" width="90%">
             <tr>
-                <td valign="middle"><a href="../index.html"><img
-                        src="../images/leftarrow.gif" width="25" height="20" border="0">
+                <td valign="middle"><a href="<%= request.getContextPath() %>/index.html"><img
+                        src="<%= request.getContextPath() %>/images/leftarrow.gif" width="25" height="20" border="0">
                     Back to the Home Page</a></td>
                 <td align="right">&nbsp;</td>
             </tr>

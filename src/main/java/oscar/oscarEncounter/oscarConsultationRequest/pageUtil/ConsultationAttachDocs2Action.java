@@ -72,6 +72,10 @@ public class ConsultationAttachDocs2Action extends ActionSupport {
     private final Logger logger = MiscUtils.getLogger();
     FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
 
+    public String execute() {
+        return fetchAll();
+    }
+
     @SuppressWarnings("unused")
     public String fetchAll() {
 

@@ -46,7 +46,17 @@ public class BpmhFormRetrieve2Action extends ActionSupport {
     private static final String BPMH_PDF_TEMPLATE = "/WEB-INF/classes/oscar/form/prop/bpmh_template_marked.pdf";
     private BpmhForm2Handler bpmhFormHandler;
 
-    public String unspecified() {
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("save".equals(method)) {
+            return save();
+        } else if ("print".equals(method)) {
+            try {
+                return print();
+            } catch(Exception ex) {
+                //
+            }
+        }
         return fetch();
     }
 

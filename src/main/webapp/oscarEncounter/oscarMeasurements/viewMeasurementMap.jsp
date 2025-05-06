@@ -35,7 +35,7 @@
 %>
 
 <link rel="stylesheet" type="text/css"
-      href="../../oscarMDS/encounterStyles.css">
+      href="<%= request.getContextPath() %>/oscarMDS/encounterStyles.css">
 
 <html>
 <head>
@@ -143,7 +143,7 @@
         window.onload = stripe;
 
     </script>
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     <style type="text/css">
 
 
@@ -154,7 +154,7 @@
 </head>
 
 <body>
-<form method="post" name="LOINC" action="NewMeasurementMap.do"><input
+<form method="post" name="LOINC" action="oscarEncounter/oscarMeasurements/NewMeasurementMap.do"><input
         type="hidden" name="identifier" value="">
     <table width="100%" height="100%" border="0">
         <tr class="MainTableTopRow">

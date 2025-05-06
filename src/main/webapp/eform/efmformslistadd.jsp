@@ -84,9 +84,9 @@ LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         <title>
             <fmt:setBundle basename="oscarResources"/><fmt:message key="eform.myform.title"/>
         </title>
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
-        <link rel="stylesheet" type="text/css" href="../share/css/eformStyle.css">
-        <script type="text/javascript" language="JavaScript" src="../share/javascript/Oscar.js"></script>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/eformStyle.css">
+        <script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
         <script type="text/javascript" language="JavaScript">
             function popupPage(varpage, windowname) {
                 var page = "" + varpage;
@@ -173,7 +173,7 @@ LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         <tr>
             <td class="MainTableLeftColumn" valign="top">
 
-                <a href="../demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnMasterFile"/></a>
+                <a href="<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnMasterFile"/></a>
 
                 <br>
                 <a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"

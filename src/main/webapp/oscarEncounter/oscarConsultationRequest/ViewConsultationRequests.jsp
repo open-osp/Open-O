@@ -177,12 +177,12 @@
 
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
 
-        <link rel="stylesheet" type="text/css" media="all" href="../../share/calendar/calendar.css"
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css"
               title="win2k-cold-1"/>
-        <script type="text/javascript" src="../../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
-                src="../../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-        <script type="text/javascript" src="../../share/calendar/calendar-setup.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
         <!--META HTTP-EQUIV="Refresh" CONTENT="20;"-->
 
         <style type="text/css">
@@ -271,7 +271,7 @@
     </script>
 
 
-    <link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
     <body class="BodyStyle" vlink="#0000FF">
     <!--  -->
     <table class="MainTable" id="scrollNumber1" name="encounterTable">
@@ -318,7 +318,7 @@
                 <table width="100%">
                     <tr>
                         <td style="margin: 0; padding: 0;">
-                            <form action="${pageContext.request.contextPath}/oscarEncounter/ViewConsultation" method="get">
+                            <form action="${pageContext.request.contextPath}/oscarEncounter/ViewConsultation.do" method="get">
                                 <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.formSelectTeam"/>:
                                 <select name="sendTo">
                                     <option value=""><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.formViewAll"/></option>
@@ -348,10 +348,10 @@
                                 <div style="margin: 0; padding: 0; ">
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgStart"/>:
                                     <input type="text" name="startDate" size="8" id="startDate"/><a id="SCal"><img
-                                        title="Calendar" src="../../images/cal.gif" alt="Calendar" border="0"/></a>
+                                        title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgEnd"/>:
                                     <input type="text" name="endDate" size="8" id="endDate"/><a id="ECal"><img
-                                        title="Calendar" src="../../images/cal.gif" alt="Calendar" border="0"/></a>
+                                        title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgIncludeCompleted"/>:
                                     <input type="checkbox" name="includeCompleted" value="include"/>
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgSearchon"/>
@@ -605,7 +605,7 @@
                         }
                     }%>
                 <a target="_blank"
-                   href="../../tickler/AddTickler.do?<%=queryStr%>&message=<%=java.net.URLEncoder.encode("Patient has Consultation Letter with a status of 'Nothing Done' for over one week","UTF-8")%>">Add
+                   href="<%= request.getContextPath() %>/tickler/AddTickler.do?<%=queryStr%>&message=<%=java.net.URLEncoder.encode("Patient has Consultation Letter with a status of 'Nothing Done' for over one week","UTF-8")%>">Add
                     Tickler for Consults with ND for more than one week</a>
                 <%}%>
             </td>

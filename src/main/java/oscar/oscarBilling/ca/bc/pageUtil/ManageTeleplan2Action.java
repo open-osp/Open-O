@@ -79,9 +79,34 @@ public class ManageTeleplan2Action extends ActionSupport {
     public ManageTeleplan2Action() {
     }
 
-    public String unspecified()
-            throws Exception {
-        log.debug("UNSPECIFIED ACTION!");
+    public String execute() throws Exception {
+        //log.debug("UNSPECIFIED ACTION!");
+        String method = request.getParameter("method");
+        if ("setUserName".equals(method)) {
+            return setUserName();
+        } else if ("updateBillingCodes".equals(method)) {
+            return updateBillingCodes();
+        } else if ("updateteleplanICDCodesList".equals(method)) {
+            return updateteleplanICDCodesList();
+        } else if ("updateExplanatoryCodesList".equals(method)) {
+            return updateExplanatoryCodesList();
+        } else if ("commitUpdateBillingCodes".equals(method)) {
+            return commitUpdateBillingCodes();
+        } else if ("getSequenceNumber".equals(method)) {
+            return getSequenceNumber();
+        } else if ("setSequenceNumber".equals(method)) {
+            return setSequenceNumber();
+        } else if ("sendFile".equals(method)) {
+            return sendFile();
+        } else if ("remit".equals(method)) {
+            return remit();
+        } else if ("setPass".equals(method)) {
+            return setPass();
+        } else if ("changePass".equals(method)) {
+            return changePass();
+        } else if ("checkElig".equals(method)) {
+            return checkElig();
+        } 
         return SUCCESS;
     }
 
@@ -118,7 +143,6 @@ public class ManageTeleplan2Action extends ActionSupport {
         request.setAttribute("codes", list);
         return "codelist";
     }
-
 
     public String updateteleplanICDCodesList()
             throws Exception {
@@ -254,7 +278,6 @@ public class ManageTeleplan2Action extends ActionSupport {
         return SUCCESS;
     }
 
-
     public String commitUpdateBillingCodes() {
         String[] codes = request.getParameterValues("codes");
         if (codes != null) {
@@ -324,7 +347,6 @@ public class ManageTeleplan2Action extends ActionSupport {
         seq.saveUpdateSequence(sequenceNumber);
         return SUCCESS;
     }
-
 
     public String sendFile()
             throws Exception {
@@ -405,7 +427,6 @@ public class ManageTeleplan2Action extends ActionSupport {
         return SUCCESS;
     }
 
-
     public String changePass() {
 
         String newpass = request.getParameter("newpass");
@@ -444,7 +465,6 @@ public class ManageTeleplan2Action extends ActionSupport {
         }
         return SUCCESS;
     }
-
 
     public String checkElig()
             throws Exception {
@@ -517,6 +537,5 @@ public class ManageTeleplan2Action extends ActionSupport {
         //request.setAttribute("message",tr.toString());
         return "checkElig";
     }
-
 
 }

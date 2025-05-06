@@ -63,7 +63,7 @@
         <title>Demographic Contact Manager</title>
         <!--I18n-->
         <link rel="stylesheet" type="text/css"
-              href="../share/css/OscarStandardLayout.css"/>
+              href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
 
         <script src="<c:out value="../js/jquery.js"/>"></script>
         <script>
@@ -324,7 +324,7 @@
 
         </script>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
     <body class="BodyStyle">

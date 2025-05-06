@@ -404,16 +404,16 @@
 
     <!-- calendar stylesheet -->
     <link rel="stylesheet" type="text/css" media="all"
-          href="../../../share/calendar/calendar.css" title="win2k-cold-1"/>
+          href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
     <!-- main calendar program -->
-    <script type="text/javascript" src="../../../share/calendar/calendar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <!-- language for the calendar -->
     <script type="text/javascript"
             src="<c:out value="${ctx}"/>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
     <!-- the following script defines the Calendar.setup helper function, which makes
            adding a calendar a matter of 1 or 2 lines of code. -->
     <script type="text/javascript"
-            src="../../../share/calendar/calendar-setup.js"></script>
+            src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.js"></script>
     <script type="text/javascript" language="JavaScript">
 
@@ -1073,7 +1073,7 @@
                                         <input type="text" name="xml_vdate" id="xml_vdate"
                                                value="<%=request.getParameter("xml_vdate")!=null? request.getParameter("xml_vdate"):admDate%>"
                                                size='10' maxlength='10'> <img
-                                            src="../../../images/cal.gif" id="xml_vdate_cal"></td>
+                                            src="<%= request.getContextPath() %>/images/cal.gif" id="xml_vdate_cal"></td>
                                     <td colspan="2"><a href="#"
                                                        onClick="showHideLayers('Layer1','','show');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.billingform"/>
                                     </a>:</font></b> <%=currentFormName.length() < 30 ? currentFormName : currentFormName.substring(0, 30)%>

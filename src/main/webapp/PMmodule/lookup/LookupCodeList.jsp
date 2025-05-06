@@ -41,10 +41,10 @@
                 <c:if test="${sessionScope.userrole == 'admin' && sessionScope.user == 'admin'}">
                     <a href="${pageContext.request.contextPath}/Lookup/LookupCodeEdit.do" paramName="lookupCodeListForm"
                                paramProperty="tableDef.tableId" paramId="id">
-                        <img src="../images/New16.png" border="0"/> Add</a>&nbsp;|&nbsp;
+                        <img src="<%= request.getContextPath() %>/images/New16.png" border="0"/> Add</a>&nbsp;|&nbsp;
                 </c:if>
             </c:if>
-            <a href="${pageContext.request.contextPath}/Lookup/LookupTableList.do"> <img src="../images/Back16.png"
+            <a href="${pageContext.request.contextPath}/Lookup/LookupTableList.do"> <img src="<%= request.getContextPath() %>/images/Back16.png"
                                                                  border="0"/> Back to Lookup Fields</a>
         </td>
 

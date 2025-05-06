@@ -65,11 +65,11 @@
 
 
 <html>
-    <link rel="stylesheet" type="text/css" media="all" href="../share/calendar/calendar.css" title="win2k-cold-1"/>
-    <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <script type="text/javascript"
-            src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-    <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+            src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
     <head>
         <title>Letterhead</title>
     </head>
@@ -316,11 +316,19 @@
                 setVisibility('textDiv', 'visible');
                 setVisibility('searching', 'hidden');
                 setVisibility('dating', 'hidden');
-                str1 = document.getElementById("comments").value;
-                str2 = str1.replace(/\n/g, "<br>");
 
+                const textDiv = document.getElementById("textDiv");
+                const commentText = document.getElementById("comments").value;
+                textDiv.innerHTML = "";
 
-                document.getElementById("textDiv").innerHTML = str2;
+                // Replace newlines valid <br> tags
+                commentText.split("\n").forEach((line, index, array) => {
+                    textDiv.appendChild(document.createTextNode(line));
+                    if (index < array.length - 1) {
+                        textDiv.appendChild(document.createElement("br"));
+                    }
+                });
+
                 setStyle('textDiv', 'position', 'absolute');
                 setStyle('textareaDiv', 'position', 'relative');
                 window.print();

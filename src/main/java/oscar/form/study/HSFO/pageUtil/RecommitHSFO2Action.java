@@ -56,6 +56,13 @@ public class RecommitHSFO2Action extends ActionSupport {
     private HttpServletRequest request = ServletActionContext.getRequest();
     protected static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
 
+    public String execute() throws Exception {
+        if ("saveSchedule".equals(request.getParameter("method"))) {
+            return saveSchedule();
+        }
+        return showSchedule();
+    }
+
     public String showSchedule() {
         RecommitDAO rd = new RecommitDAO();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

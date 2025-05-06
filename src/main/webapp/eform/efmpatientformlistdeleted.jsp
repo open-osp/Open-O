@@ -57,10 +57,10 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.title"/></title>
         <link rel="stylesheet" type="text/css"
-              href="../share/css/OscarStandardLayout.css">
-        <link rel="stylesheet" type="text/css" href="../share/css/eforms.css">
+              href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/eforms.css">
         <script type="text/javascript" language="JavaScript"
-                src="../share/javascript/Oscar.js"></script>
+                src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
         <script type="text/javascript" language="javascript">
             function popupPage(varpage, windowname) {
                 var page = "" + varpage;
@@ -106,7 +106,7 @@
         </tr>
         <tr>
             <td class="MainTableLeftColumn" valign="top">
-                <a href="../demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnMasterFile"/></a>
+                <a href="<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnMasterFile"/></a>
 
                 <br>
                 <a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"
@@ -149,7 +149,7 @@
                         <td align='center'><%=curform.get("formDate")%>
                         </td>
                         <td align='center'><a
-                                href="../eform/unRemoveEForm.do?fdid=<%=curform.get("fdid")%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>"
+                                href="<%= request.getContextPath() %>/eform/unRemoveEForm.do?fdid=<%=curform.get("fdid")%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>"
                                 onClick="javascript: return confirm('Are you sure you want to restore this eform?');"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnRestore"/></a></td>
                     </tr>
                     <%

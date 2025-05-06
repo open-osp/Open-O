@@ -83,7 +83,7 @@
                             var secret = data[x].secret;
                             var uri = data[x].uri;
                             var lifetime = data[x].lifetime;
-                            $('#clientTable > tbody:last').append('<tr><td>' + name + '</td><td>' + key + '</td><td>' + secret + '</td><td>' + uri + '</td><td>' + lifetime + '</td><td><a href="javascript:void(0);" onclick="deleteClient(' + id + ');"><img border="0" title="delete" src="../../images/Delete16.gif"/></a></td></tr>');
+                            $('#clientTable > tbody:last').append('<tr><td>' + name + '</td><td>' + key + '</td><td>' + secret + '</td><td>' + uri + '</td><td>' + lifetime + '</td><td><a href="javascript:void(0);" onclick="deleteClient(' + id + ');"><img border="0" title="delete" src="<%= request.getContextPath() %>/images/Delete16.gif"/></a></td></tr>');
                         }
                     });
             }

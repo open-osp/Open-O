@@ -131,16 +131,16 @@
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
 
         <link rel="stylesheet" type="text/css" media="all"
-              href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+              href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 
-        <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
-                src="../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-        <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
-        <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-        <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
-        <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     </head>
 
 
@@ -290,14 +290,14 @@
                 of Referral:</label> <input type="text" name="dateOfReferral"
                                             id="dateOfReferral" size="9"
                                             value="<%=props.getProperty("dateOfReferral","")%>"/> <a
-                id="dateOfRefButton"><img title="Calendar" src="../images/cal.gif"
+                id="dateOfRefButton"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif"
                                           alt="Calendar" border="0"/></a> <label>EDD:</label> <input type="text"
                                                                                                      name="edd"
                                                                                                      id="end_date"
                                                                                                      size="9"
                                                                                                      value="<%=props.getProperty("edd","")%>">
             <a id="date"><img
-                    title="Calendar" src="../images/cal.gif" alt="Calendar" border="0"/></a>
+                    title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
             <br/>
 
             <label>Last Name:</label> <input type="text" name="motherSurname"
@@ -306,7 +306,7 @@
                                  value="<%=props.getProperty("motherFirstname","")%>"/> <br/>
             <label>Date of Birth:</label> <input type="text" name="dob" size="9"
                                                  id="dob" value="<%=props.getProperty("dob","")%>"/> <a id="dateOB"><img
-                title="Calendar" src="../images/cal.gif" alt="Calendar" border="0"/></a>
+                title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
             <br/>
 
             <label>Health Card #:</label> <input type="text" name="motherHIN"

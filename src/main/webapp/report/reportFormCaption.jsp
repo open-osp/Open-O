@@ -57,7 +57,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Report List</title>
-        <LINK REL="StyleSheet" HREF="../web.css" TYPE="text/css">
+        <LINK REL="StyleSheet" HREF="<%= request.getContextPath() %>/web.css" TYPE="text/css">
         <script language="JavaScript">
 
             <!--

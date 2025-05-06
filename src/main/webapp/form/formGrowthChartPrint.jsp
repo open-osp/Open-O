@@ -49,7 +49,7 @@
         cfgGraphic = request.getParameterValues("__cfgGraphicFile");
     }
 
-    //response.sendRedirect("../form/createpdf");
+    //response.sendRedirect("<%= request.getContextPath() %>/form/createpdf");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
@@ -60,26 +60,26 @@
         function go() {
             if (document.all) {
                 <% if(cfgGraphic.length>1) {%>
-                document.all.growth.action = "../form/createpdf?__cfgGraphicFile=<%=cfgGraphic[0]%>&__cfgGraphicFile=<%=cfgGraphic[1]%>";
+                document.all.growth.action = "<%= request.getContextPath() %>/form/createpdf?__cfgGraphicFile=<%=cfgGraphic[0]%>&__cfgGraphicFile=<%=cfgGraphic[1]%>";
                 <% }else{%>
-                document.all.growth.action = "../form/createpdf?__cfgGraphicFile=<%=request.getParameter("__cfgGraphicFile")%>";
+                document.all.growth.action = "<%= request.getContextPath() %>/form/createpdf?__cfgGraphicFile=<%=request.getParameter("__cfgGraphicFile")%>";
                 <% }%>
                 document.all.growth.submit();
             } else {
                 <% if(cfgGraphic.length>1) {%>
-                document.getElementById('growth').action = "../form/createpdf?__cfgGraphicFile=<%=cfgGraphic[0]%>&__cfgGraphicFile=<%=cfgGraphic[1]%>";
+                document.getElementById('growth').action = "<%= request.getContextPath() %>/form/createpdf?__cfgGraphicFile=<%=cfgGraphic[0]%>&__cfgGraphicFile=<%=cfgGraphic[1]%>";
                 <% }else{%>
-                document.getElementById('growth').action = "../form/createpdf?__cfgGraphicFile=<%=request.getParameter("__cfgGraphicFile")%>";
+                document.getElementById('growth').action = "<%= request.getContextPath() %>/form/createpdf?__cfgGraphicFile=<%=request.getParameter("__cfgGraphicFile")%>";
                 <% }%>
                 document.getElementById('growth').submit();
             }
-//	        document.growth.action="../form/createpdf";
+//	        document.growth.action="<%= request.getContextPath() %>/form/createpdf";
 //	        document.growth.submit();
         }
     </script>
 </head>
 <body onload='window.setTimeout("go()",1000);'>
-<form id="growth" name="growth" action="../form/createpdf" method="post">
+<form id="growth" name="growth" action="<%= request.getContextPath() %>/form/createpdf" method="post">
     <%
         Properties prop = new Properties();
         for (Enumeration e = request.getParameterNames(); e.hasMoreElements(); ) {

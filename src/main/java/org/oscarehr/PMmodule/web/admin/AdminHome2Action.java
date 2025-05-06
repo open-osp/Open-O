@@ -41,7 +41,7 @@ public class AdminHome2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
-    public String unspecified() {
+    public String execute() {
         try {
             setMenu(request, KeyConstants.MENU_ADMIN);
             return "admin";

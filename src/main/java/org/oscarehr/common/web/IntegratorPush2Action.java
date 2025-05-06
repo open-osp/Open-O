@@ -54,6 +54,16 @@ public class IntegratorPush2Action extends ActionSupport {
     private UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
     private IntegratorPushManager integratorPushManager = SpringUtils.getBean(IntegratorPushManager.class);
 
+    public String execute() {
+        if ("getPushData".equals(request.getParameter("method"))) {
+            return getPushData();
+        }
+        if ("disableNextAndFuturePushes".equals(request.getParameter("method"))) {
+            return disableNextAndFuturePushes();
+        }
+        return togglePause();
+    }
+
     public String getPushData() {
 
         JSONObject json = null;

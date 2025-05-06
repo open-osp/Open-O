@@ -47,6 +47,10 @@ public class CkdDSA2Action extends ActionSupport {
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    public String execute() {
+        return detail();
+    }
+
     public String detail() {
         String demographicNo = request.getParameter("demographic_no");
 

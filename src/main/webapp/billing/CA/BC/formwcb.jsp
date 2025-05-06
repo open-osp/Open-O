@@ -86,15 +86,15 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <title>OSCAR BC Billing - WCB</title>
-        <link rel="stylesheet" href="../../../share/css/oscar.css">
-        <link rel="stylesheet" href="../../../share/css/reporting.css">
-        <link rel="stylesheet" href="../../../share/calendar/calendar.css">
-        <script src="../../../share/javascript/Oscar.js"></script>
-        <script src="../../../share/calendar/calendar.js"></script>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/oscar.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/reporting.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/calendar/calendar.css">
+        <script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+        <script src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script
-                src="../../../share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"
                 type="text/javascript"></script>
-        <script src="../../../share/calendar/calendar-setup.js"
+        <script src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"
                 type="text/javascript"></script>
 
         <script language="JavaScript">
@@ -614,11 +614,11 @@
             <td><b>Date of Service</b> <input type="text" name="w_servicedate"
                                                   id="w_servicedate" size="10" readonly="true"/> <a
                     id="hlSDate"><img
-                    title="Calendar" src="../../../images/cal.gif" alt="Calendar"
+                    title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar"
                     border="0"/></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Date of Injury:</b>
                 <input type="text" id="w_doi" name="w_doi" readonly="true" size="12"/>
                 <a id="hlDDate"><img title="Calendar"
-                                     src="../../../images/cal.gif" alt="Calendar" border="0"/></a></td>
+                                     src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a></td>
         </tr>
         <tr id="thirdSection1">
             <td>Diagnosis:</td>
@@ -685,7 +685,7 @@
                                                      id="w_workdate" name="w_workdate"
                                                      onclick="window.WCBForm.w_workdate.value = '';"/> <a
                     id="hlWDate"><img
-                    title="Calendar" src="../../../images/cal.gif" alt="Calendar"
+                    title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar"
                     border="0"/></a></td>
         </tr>
         <tr id="thirdSection10">
@@ -764,7 +764,7 @@
                            name="w_estimatedate"
                            onclick="window.WCBForm.w_estimatedate.value = '';"/><a
                     id="hlEDate"> <img title="Calendar"
-                                       src="../../../images/cal.gif" alt="Calendar" border="0"/></a></td>
+                                       src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a></td>
         </tr>
         <tr id="forthSection8">
             <td>Further Correspondence to Follow: (2nd electronic form or
@@ -843,7 +843,7 @@
     </form>
 
 
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
     <div id="Layer1"
          style="position: absolute; left: 1px; top: 1px; width: 400px; height: 311px; visibility: hidden; z-index: 1">
