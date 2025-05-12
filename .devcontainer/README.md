@@ -11,11 +11,34 @@ and VS-Code.
       search for "Dev Containers" by Microsoft and click "Install".
 * **Git:** Installed
 
+## Optional: If you are developing on windows it's recommended that you work within WSL (Windows Subsystem for Linux)
+
+### Steps to get started within WSL 
+
+1. **Go to the command line and type wsl**
+    ```bash 
+    wsl
+    ```
+2. **Navigate to the home directory** 
+    ```bash
+    cd $HOME
+    ```
+3. **Create a directory**
+    ```bash
+    mkdir softsec
+    ```
+4. **Navigate to the softsec dir**
+    ```bash
+    cd softsec
+    ```
+
+5. **Continue normally from here**
+
 ## Steps
 
-1. **Clone the repository if not already done:**
+1. **Clone the repository:**
    ```bash
-   git clone https://github.com/MagentaHealth/open-osp.git
+   git clone https://github.com/cc-ar-emr/Open-O.git
    cd open-osp
    ```
 
@@ -25,6 +48,9 @@ and VS-Code.
 
 3. **Open the project in VS Code:**
     * Open VS Code and navigate to the project directory.
+    ```bash
+    code ./
+    ```
     * VS Code should automatically detect the `.devcontainer` folder and prompt you to "Reopen in Container".
     * Click "Reopen in Container" to start the development environment.
     * *Note - In case "Reopen in Container" option does not work then:*
@@ -53,10 +79,14 @@ minutes on Windows, as we'll have managed to cache a bunch of Maven compilation 
 Once the compilation is successful, a `target/oscar` directory full of artifacts will be created. This is a so-called "
 Exploded WAR".
 
-## Access the application:
+## Access the application
 
-    * Open your web browser and navigate to `http://localhost:8080`.
-    * You should see the Open-OSP EMR application running.
+* Open your web browser and navigate to `http://localhost:8080`.
+* You should see the Open-OSP EMR application running.
+* Login credentials for local development are: 
+    * Username: oscardoc
+    * Password: mac2002
+    * PIN     : 1117
 
 ### Subsequent Compilations
 
@@ -82,6 +112,24 @@ Currently, oscar error logs are sent to console without saving to a log file. If
 * You can find more information about the Open-OSP EMR project and its development environment in the project's
   documentation.
 
+## Switching Branches 
+
+* If you're having issues with the containers after changing branches, it may be due to the container configuration being different
+  on the new branch from the one you were on. 
+* Fix: 
+    1. Close Visual Studio Code.
+    2. Remove the containers, images, and volumes from docker so that the new containers can be loaded.
+    3. Relaunch Visual Studio Code. This will allow the new containers to be built. 
+  
+## Build Issues 
+
+* Ensure prior to a build with changes or switching branches you run
+
+    ```zsh 
+    make clean
+    ```
+* If the issue still persists remove the .m2 cache and then run the make clean command. 
+  
 ## Files Included in the Dev-Container Environment
 
 * **`.devcontainer/devcontainer.json`:** Defines the configuration for the development environment, including Docker
@@ -111,27 +159,39 @@ Currently, oscar error logs are sent to console without saving to a log file. If
     ```bash 
     wsl
     ```
-2. **Create a directory**
+2. **Navigate to the home directory** 
+    ```bash
+    cd $HOME
+    ```
+3. **Create a directory**
     ```bash
     mkdir softsec
     ```
-3. **Navigate to the softsec dir**
+4. **Navigate to the softsec dir**
     ```bash
     cd softsec
     ```
-4. **Clone the GitHub repo Open-O**
+5. **Clone the GitHub repo Open-O**
     ```bash
     git clone https://github.com/cc-ar-emr/Open-O.git
     ```
-5. **Navigate to the Open-O repo dir**
+6. **Navigate to the Open-O repo dir**
     ```bash
     cd Open-O
     ```
-6. **Start VS Code**
+7. **Start VS Code.**
     ```bash
     code ./
     ```
 
 * This should open the Open-O repo in VS Code and prompt you to reopen the folder in the dev container environment.
+
+### Checksum locks
+
+Whenever you update, add, or remove a library ensure that the changes are reflected in the dependencies-lock.json. 
+
+When updating a library, the integrity value needs to be updated to correspond with the change. 
+
+Keeping these locks in sync ensures reproducible builds and guards against tampered artifacts.
 
 ## Enjoy developing with Open-OSP!

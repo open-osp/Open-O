@@ -95,16 +95,33 @@
             fieldname = "year_of_birth " + regularexp + " ?" + " and month_of_birth " + regularexp + " ?" + " and date_of_birth ";
 
             try {
-                String year = keyword.substring(0, 4);
-                String month = keyword.substring(4, 6);
-                String day = keyword.substring(6);
-
-                GregorianCalendar cal = new GregorianCalendar(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(day));
-                matchingDemographicParameters = new MatchingDemographicParameters();
-                matchingDemographicParameters.setBirthDate(cal);
+                // Remove any hyphens from the keyword to handle formatted input
+                String cleanKeyword = keyword.replace("-", "");
+                
+                // Check if we have enough digits for a valid date (YYYYMMDD = 8 digits)
+                if (cleanKeyword.length() >= 8) {
+                    String year = cleanKeyword.substring(0, 4);
+                    String month = cleanKeyword.substring(4, 6);
+                    String day = cleanKeyword.substring(6, 8);
+                    
+                    // Parse date components
+                    int yearInt = Integer.parseInt(year);
+                    int monthInt = Integer.parseInt(month) - 1; // Calendar months are 0-based
+                    int dayInt = Integer.parseInt(day);
+                    
+                    GregorianCalendar cal = new GregorianCalendar(yearInt, monthInt, dayInt);
+                    matchingDemographicParameters = new MatchingDemographicParameters();
+                    matchingDemographicParameters.setBirthDate(cal);
+                } else {
+                    // Not enough digits, set to empty search that will return no results
+                    fieldname = "demographic_no";
+                    keyword = "-1"; // This will match no patients
+                }
             } catch (Exception e) {
-                // this is okay, person imputed a bad date, we'll ignore for now
-                matchingDemographicParameters = null;
+                // Handle the exception gracefully - set search to find no results
+                fieldname = "demographic_no";
+                keyword = "-1"; // This will match no patients
+                MiscUtils.getLogger().error("Error parsing date: " + e.getMessage());
             }
         }
         if (searchMode.equals("search_chart_no")) fieldname = "chart_no";

@@ -427,6 +427,11 @@ public class Util {
                 File f = files.get(x);
                 if (f == null) continue;
 
+                // Validate the file path
+                if (!isPathWithinDirectory(f, dirName)) {
+                    logger.error("Error! File path is outside the allowed directory: " + f.getAbsolutePath());
+                    return false;
+                }
 
                 FileInputStream fin = new FileInputStream(f.getAbsolutePath());
 
@@ -459,6 +464,12 @@ public class Util {
             logger.error("Error", ex);
         }
         return false;
+    }
+
+    private static boolean isPathWithinDirectory(File file, String dirName) throws IOException {
+        File dir = new File(dirName).getCanonicalFile();
+        File canonicalFile = file.getCanonicalFile();
+        return canonicalFile.toPath().startsWith(dir.toPath());
     }
 
     static public void putPartialDate(cdsDt.DateFullOrPartial dfp, CaseManagementNoteExt cme) {

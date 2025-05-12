@@ -61,6 +61,42 @@
         document.titlesearch.outofdomain.value = "true";
         if (checkTypeIn()) document.titlesearch.submit();
     }
+    
+    function formatDateInput(input) {
+        // Remove any non-digit characters
+        var value = input.value.replace(/\D/g, '');
+        
+        // Format as YYYY-MM-DD
+        if (value.length > 0) {
+            // Ensure we only take the first 8 digits
+            value = value.substring(0, Math.min(8, value.length));
+            
+            // Add hyphens
+            if (value.length > 4) {
+                value = value.substring(0, 4) + '-' + value.substring(4);
+            }
+            if (value.length > 7) {
+                value = value.substring(0, 7) + '-' + value.substring(7);
+            }
+        }
+        
+        input.value = value;
+    }
+    
+    function checkTypeIn() {
+        var dob = document.titlesearch.keyword;
+        if (document.titlesearch.search_mode.value == "search_dob") {
+            // Remove hyphens for validation
+            var dobValue = dob.value.replace(/-/g, '');
+            
+            // Check if we have enough digits
+            if (dobValue.length < 8) {
+                alert("Date format must be YYYY-MM-DD");
+                return false;
+            }
+        }
+        return true;
+    }
 
 </script>
 <div class="searchBox">
@@ -77,7 +113,7 @@
             }
         %>
         <div class="input-group select-group">
-            <select class="form-control input-group-addon" name="search_mode" id="search_mode">
+            <select class="form-control input-group-addon" name="search_mode" id="search_mode" onchange="if(this.value === 'search_dob') document.titlesearch.keyword.value = '';">
                 <option value="search_name" <%=searchMode.equals("search_name") ? "selected" : ""%>>
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.zdemographicfulltitlesearch.formName"/>
                 </option>
@@ -107,7 +143,9 @@
             </select>
 
             <input class="wideInput form-control" type="search" placeholder="Search Patient" NAME="keyword"
-                   VALUE="<%=StringEscapeUtils.escapeHtml(keyWord)%>" SIZE="17" MAXLENGTH="100">
+                   VALUE="<%=StringEscapeUtils.escapeHtml(keyWord)%>" SIZE="17" MAXLENGTH="100"
+                   oninput="if(document.titlesearch.search_mode.value === 'search_dob') formatDateInput(this);"
+                   onkeyup="if(document.titlesearch.search_mode.value === 'search_dob') formatDateInput(this);">
 
 
             <INPUT TYPE="hidden" NAME="orderby" VALUE="last_name, first_name">
