@@ -693,6 +693,63 @@ public class RxUtil {
 			takeMax = amountFrequency;
 		}
 
+
+		String originalTakeMinForStrengthCheck = takeMin;
+		boolean takeMinCorrectedForStrength = false;
+
+		if (!takeMin.equals("0") && !takeMin.isEmpty()) {
+			try {
+				float parsedTakeMinValue = Float.parseFloat(takeMin.trim());
+				if (parsedTakeMinValue > 10.0f) {
+					Pattern strengthPattern = Pattern.compile(
+							"\\b" + Pattern.quote(takeMin.trim()) + "\\s*(mg|g|mcg|ml|iu|meq|unit)", Pattern.CASE_INSENSITIVE);
+					if (strengthPattern.matcher(instructions).find()) {
+						MiscUtils.getLogger().debug("takeMin value '" + takeMin + "' from instructions '" + instructions + "' appears to be a dosage strength. Resetting to '1'.");
+						takeMin = "1";
+						takeMinCorrectedForStrength = true;
+					}
+				}
+			} catch (NumberFormatException e) {
+				logger.error(e.getMessage());
+			}
+		}
+
+		if (takeMinCorrectedForStrength && takeMax.equals(originalTakeMinForStrengthCheck)) {
+			takeMax = "1";
+		} else if (!takeMax.equals("0") && !takeMax.isEmpty() && !takeMax.equals(takeMin)) {
+			try {
+				float parsedTakeMaxValue = Float.parseFloat(takeMax.trim());
+				if (parsedTakeMaxValue > 10.0f) {
+					Pattern strengthPattern = Pattern.compile(
+							"\\b" + Pattern.quote(takeMax.trim()) + "\\s*(mg|g|mcg|ml|iu|meq|unit)", Pattern.CASE_INSENSITIVE);
+					if (strengthPattern.matcher(instructions).find()) {
+						MiscUtils.getLogger().debug("takeMax value '" + takeMax + "' from instructions '" + instructions + "' appears to be a dosage strength. Resetting to '1'.");
+						takeMax = "1";
+						if (originalTakeMinForStrengthCheck.equals("0")) {
+							takeMin = "1";
+						}
+					}
+				}
+			} catch (NumberFormatException e) {
+				logger.error(e.getMessage());
+			}
+		}
+
+
+		if (takeMin.equals("0")) {
+			boolean hasFrequency = !frequency.isEmpty();
+			boolean hasDurationOrExistingQuantity = !duration.equals("0") ||
+					(rx.getQuantity() != null && !rx.getQuantity().trim().isEmpty() && !rx.getQuantity().trim().equals("0") && !rx.getQuantity().trim().equalsIgnoreCase("null"));
+
+			if (hasFrequency && hasDurationOrExistingQuantity) {
+				MiscUtils.getLogger().debug("takeMin is '0' with other SIG components present (Freq: " + frequency + ", Dur: " + duration + ", Qty: " + rx.getQuantity() + "). Defaulting to 'take 1'.");
+				takeMin = "1";
+				if (takeMax.equals("0")) {
+					takeMax = "1";
+				}
+			}
+		}
+
 		//calculate the number of pills to have per frequency which is used to calculate the duration later on.
 		//from frequency code we can deduce a duration unit.
 		//check if a durationunit is already specified, if not, use that, if yes,check if they are equal,if not output an warning and use specified.
