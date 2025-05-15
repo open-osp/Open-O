@@ -856,16 +856,21 @@ function toggleView(form) {
 							</select>
 						</td>
 					</tr>
+
+					<%
+						String isFaxDisabled = (bean.getStashSize() == 0 || Objects.isNull(bean.getStashItem(0).getDigitalSignatureId()))
+								? "disabled" : "";
+					%>
 					<tr>
 						<td style="padding-top: 0; padding-bottom: 0"><span><input type=button value="Fax"
 										 class="ControlPushButton" id="faxButton" style="width: 210px"
-										 onClick="sendFax();" disabled/></span>
+										 onClick="sendFax();" <%=isFaxDisabled%>/></span>
 						</td>
 					</tr>
 					<tr>
                             <td style="padding-top: 0"><span><input type=button value="Fax &amp; Add to encounter note"
                                     class="ControlPushButton" id="faxPasteButton" style="width: 210px"
-                                    onClick="printPaste2Parent(false, true, true);sendFax();" disabled/></span>
+                                    onClick="printPaste2Parent(false, true, true);sendFax();" <%=isFaxDisabled%>/></span>
 
                            </td>
                     </tr>
