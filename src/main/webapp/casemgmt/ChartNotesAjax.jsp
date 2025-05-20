@@ -102,9 +102,8 @@ if (pId == null) {
 }
 
 String demographicNo = request.getParameter("demographicNo");
-oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
-String strBeanName = "casemgmt_oscar_bean" + demographicNo;
-if ((bean = (oscar.oscarEncounter.pageUtil.EctSessionBean)request.getSession().getAttribute(strBeanName)) == null)
+oscar.oscarEncounter.pageUtil.EctSessionBean bean;
+if ((bean = (oscar.oscarEncounter.pageUtil.EctSessionBean)request.getSession().getAttribute("EctSessionBean")) == null)
 {
 	response.sendRedirect("error.jsp");
 	return;
