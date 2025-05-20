@@ -1107,6 +1107,7 @@
 			<forward name="success" path="/oscarRx/ViewScript2.jsp" />
 		</action>
 
+		<action path="/oscarRx/printPreview" parameter="method" scope="request" type="org.oscarehr.rx.RxPrintPreviewAction" validate="true">
 		<action path="/oscarMDS/SendMRP" scope="request" type="oscar.oscarMDS.pageUtil.SendMostResponProvAction">
 			<forward name="failure" path="/errorpage.jsp" />
 		</action>
