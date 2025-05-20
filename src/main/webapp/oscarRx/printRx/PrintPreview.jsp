@@ -21,6 +21,7 @@
    Toronto, Ontario, Canada
 
 --%>
+
 <%@ page import="oscar.OscarProperties, java.util.*" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -44,24 +45,30 @@
 <%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
 <%@ page import="org.apache.logging.log4j.core.util.KeyValuePair" %>
 
-<c:set var="loggedInInfo" value="${LoggedInInfo.getLoggedInInfoFromSession(pageContext.request)}" />
+<%
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+%>
 
-<c:set var="roleName$" value="${sessionScope.userrole},${sessionScope.user}" />
-<c:set var="authed" value="true" />
-<security:oscarSec roleName="${roleName$}" objectName="_rx" rights="r" reverse="true">
-    <c:set var="authed" value="false" />
-    <% response.sendRedirect("../securityError.jsp?type=_rx"); %>
+<%
+    String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
+    boolean authed = true;
+%>
+<security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
+    <%authed = false; %>
+    <%response.sendRedirect("../securityError.jsp?type=_rx");%>
 </security:oscarSec>
-<c:if test="${!authed}">
-    <% return; %>
-</c:if>
+<%
+    if (!authed) {
+        return;
+    }
+%>
 
 
 <html:html lang="en">
 
     <head>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/oscarRx/printRx/PrintPreview.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/oscarRx/printRx/PrintPreview.js"></script>
         <title><bean:message key="ViewScript.title"/></title>
 
         <html:base/>
@@ -77,19 +84,24 @@
         </logic:present>
         <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
-        <c:set var="sessionBean" value="${pageScope.bean}" />
-        <c:set var="reprint" value="${requestScope.reprint != null ? requestScope.reprint : 'false'}" />
-        <c:set var="addressName" value="${requestScope.addressName}" />
-        <c:set var="address" value="${requestScope.address}" />
-        <c:set var="prefPharmacy" value="${requestScope.prefPharmacy}" />
-        <c:set var="prefPharmacyId" value="${requestScope.prefPharmacyId}" />
-        <c:set var="pharmacy" value="${requestScope.pharmacy}" />
-        <c:set var="comment" value="${requestScope.comment}" />
-        <c:set var="props" value="${OscarProperties.getInstance()}" />
+        <%
+            oscar.oscarRx.pageUtil.RxSessionBean sessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
 
-        <c:if test="${reprint eq 'true'}">
-            <c:set var="sessionBean" value="${sessionScope.tmpBeanRX}" />
-        </c:if>
+            String reprint = request.getAttribute("reprint") != null ? request.getAttribute("reprint").toString() : "false";
+            List<String> addressName = (List<String>) request.getAttribute("addressName");
+            List<String> address = (List<String>) request.getAttribute("address");
+
+            String prefPharmacy = (String) request.getAttribute("prefPharmacy");
+            String prefPharmacyId = (String) request.getAttribute("prefPharmacyId");
+            PharmacyInfo pharmacy = (PharmacyInfo) request.getAttribute("pharmacy");
+            String comment = (String) request.getAttribute("comment");
+
+            OscarProperties props = OscarProperties.getInstance();
+
+            if (reprint.equalsIgnoreCase("true")) {
+                sessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("tmpBeanRX");
+            }
+        %>
 
         <script type="text/javascript">
 
@@ -130,14 +142,16 @@
                 const rxPageSize = $('printPageSize').value;
                 console.log("rxPagesize  " + rxPageSize);
 
-                <c:if test="${addressName != null}">
+                <% if(addressName != null) { %>
                 useSC = true;
-                <c:forEach var="i" begin="0" end="${addressName.size()-1}">
-                if (document.getElementById("addressSel").value === "${i}") {
-                    scAddress = "${Encode.forUriComponent(StringEscapeUtils.unescapeHtml(address.get(i)))}";
+                <%for(int i=0; i<addressName.size(); i++) { %>
+                if (document.getElementById("addressSel").value === "<%=i%>") {
+                    scAddress = "<%=Encode.forUriComponent(StringEscapeUtils.unescapeHtml(address.get(i)))%>";
                 }
-                </c:forEach>
-                </c:if>
+                <%
+                }
+                }
+                %>
                 let action = "../form/createcustomedpdf?__title=Rx&__method=" + method + "&useSC=" + useSC + "&scAddress=" + scAddress + "&rxPageSize=" + rxPageSize + "&scriptId=" + scriptId;
                 document.getElementById("preview").contentWindow.document.getElementById("preview2Form").action = action;
                 if (method !== "oscarRxFax") {
