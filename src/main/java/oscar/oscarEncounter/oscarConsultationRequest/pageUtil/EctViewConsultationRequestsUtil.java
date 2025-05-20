@@ -181,6 +181,7 @@ public class EctViewConsultationRequestsUtil {
       patient = new Vector<String>();
       provider = new Vector<String>();
       service = new Vector<String>();
+      vSpecialist = new Vector<String>();
       date = new Vector<String>();
       this.patientWillBook = new Vector<String>();
       urgency = new Vector<String>();
@@ -196,6 +197,9 @@ public class EctViewConsultationRequestsUtil {
           DemographicManager demoManager = SpringUtils.getBean(DemographicManager.class);
           ConsultationServiceDao serviceDao = (ConsultationServiceDao) SpringUtils.getBean(ConsultationServiceDao.class);
 
+          ProfessionalSpecialist specialist;
+          String specialistName = "";
+
           List <ConsultationRequest> consultList = consultReqDao.getConsults(Integer.parseInt(demoNo));
           for( ConsultationRequest consult : consultList ) {
               String serviceDescription = "unknown";
@@ -209,6 +213,17 @@ public class EctViewConsultationRequestsUtil {
                  }
               }
 
+               if(consult.getProfessionalSpecialist() == null) {
+                  specialistName = "N/A";
+                  if (consult.getServiceId() == 0) {
+                     specialistName = consultationRequestExtDao.getConsultationRequestExtsByKey(consult.getId(), ConsultationRequestExtKey.EREFERRAL_DOCTOR.getKey());
+                  }
+               }
+               else {
+                  specialist = consult.getProfessionalSpecialist();
+                  specialistName = specialist.getLastName() + ", " + specialist.getFirstName();
+               }
+
               Demographic demo = demoManager.getDemographic(loggedInInfo, consult.getDemographicId());
               String providerId = demo.getProviderNo();
               String providerName = (providerId != null && !providerId.isEmpty()) ? providerDao.getProvider(providerId).getFormattedName() : "N/A";
@@ -218,6 +233,7 @@ public class EctViewConsultationRequestsUtil {
               patient.add(demo.getFormattedName());
               provider.add(providerName);
               service.add(serviceDescription);
+              vSpecialist.add(specialistName);
               urgency.add(consult.getUrgency());
               patientWillBook.add(""+consult.isPatientWillBook());
               date.add(DateFormatUtils.ISO_DATE_FORMAT.format(consult.getReferralDate()));
