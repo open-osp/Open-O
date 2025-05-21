@@ -32,36 +32,23 @@
 <%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
 <%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.ui.servlet.ImageRenderingServlet" %>
 
-
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.managers.FaxManager" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page import="org.oscarehr.common.model.*" %>
 <%@ page import="oscar.oscarProvider.data.ProviderData" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
-<%@ page import="org.apache.logging.log4j.core.util.KeyValuePair" %>
 
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
 
-<%
-    String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
-    boolean authed = true;
-%>
-<security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
-    <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_rx");%>
+
+<c:set var="roleName" value="${sessionScope.userrole},${sessionScope.user}"/>
+<security:oscarSec roleName="${roleName}" objectName="_rx" rights="r" reverse="true">
+    <c:redirect url="../securityError.jsp?type=_rx"/>
 </security:oscarSec>
-<%
-    if (!authed) {
-        return;
-    }
-%>
 
 
 <html:html lang="en">
@@ -92,7 +79,6 @@
             List<String> address = (List<String>) request.getAttribute("address");
 
             String prefPharmacy = (String) request.getAttribute("prefPharmacy");
-            String prefPharmacyId = (String) request.getAttribute("prefPharmacyId");
             PharmacyInfo pharmacy = (PharmacyInfo) request.getAttribute("pharmacy");
             String comment = (String) request.getAttribute("comment");
 
@@ -276,17 +262,10 @@
                 <%if (comment != null){ %>
                 setComment();
                 <%}%>
-
-
             }
 
         </script>
-        <%
-            String signatureRequestId = "";
-            String imageUrl = "";
-            signatureRequestId = DigitalSignatureUtils.generateSignatureRequestId(loggedInInfo.getLoggedInProviderNo());
-            imageUrl = request.getContextPath() + "/imageRenderingServlet?source=" + ImageRenderingServlet.Source.signature_preview.name() + "&" + DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY + "=" + signatureRequestId;
-        %>
+
         <script type="text/javascript">
             const POLL_TIME = 1500;
             let counter = 0;
@@ -294,11 +273,11 @@
             var isSignatureDirty = false;
             var isSignatureSaved = false;
             <% if (OscarProperties.getInstance().isRxFaxEnabled()) { %>
-            var hasFaxNumber = <%= pharmacy != null && pharmacy.getFax() != null && pharmacy.getFax().trim().length() > 0 ? "true" : "false" %>;
+            var hasFaxNumber = <%= pharmacy != null && pharmacy.getFax() != null && !pharmacy.getFax().trim().isEmpty() ? "true" : "false" %>;
             <% } %>
 
             <% if (OscarProperties.getInstance().isRxFaxEnabled()) { %>
-            window.hasFaxNumber = <%= pharmacy != null && pharmacy.getFax() != null && pharmacy.getFax().trim().length() > 0 ? "true" : "false" %>;
+            window.hasFaxNumber = <%= pharmacy != null && pharmacy.getFax() != null && !pharmacy.getFax().trim().isEmpty() ? "true" : "false" %>;
             <% } %>
 
             <% if (sessionBean.getStashSize() > 0) { %>
@@ -306,9 +285,9 @@
             window.scriptNo = <%=sessionBean.getStashItem(0).getScript_no() %>;
             <% } %>
 
-            window.imageUrl = "<%=imageUrl%>";
-            window.tempPath = '<%=System.getProperty("java.io.tmpdir").replaceAll("\\\\", "/")%>/signature_<%=signatureRequestId%>.jpg';
-            window.requestIdKey = "<%=signatureRequestId %>";
+            window.imageUrl = "${requestScope.imageUrl}";
+            window.tempPath = '<%=System.getProperty("java.io.tmpdir").replaceAll("\\\\", "/")%>/signature_${requestScope.signatureRequestId}.jpg';
+            window.requestIdKey = "${requestScope.signatureRequestId}";
 
 
             <%--function signatureHandler(e) {--%>
@@ -340,7 +319,7 @@
             <%--    }--%>
             <%--}--%>
 
-            var requestIdKey = "<%=signatureRequestId %>";
+            var requestIdKey = "${requestScope.signatureRequestId}";
 
         </script>
         <style media="all">
@@ -362,19 +341,11 @@
 
     <body topmargin="0" leftmargin="0" vlink="#0000FF"
           onload="addressSelect();
-                  printPharmacy(<c:out value="${ctx}"/>, '<%=prefPharmacyId%>', '<bean:message
-                  key="oscarRx.printPharmacyInfo.paperSizeWarning"/>');
-                  showFaxWarning();">
+                  printPharmacy(<c:out value="${ctx}"/>, '${requestScope.prefPharmacyId}',
+                  '<bean:message key="oscarRx.printPharmacyInfo.paperSizeWarning"/>'); showFaxWarning();">
 
     <!-- added by vic, hsfo -->
-    <%
-        int hsfo_patient_id = sessionBean.getDemographicNo();
-        oscar.form.study.HSFO.HSFODAO hsfoDAO = new oscar.form.study.HSFO.HSFODAO();
-        int dx = hsfoDAO.retrievePatientDx(String.valueOf(hsfo_patient_id));
-        if (dx >= 0 && dx < 7) {
-            // dx>=0 means patient is enrolled in HSFO program
-            // dx==7 means patient has all 3 symptoms, according to hsfo requirement, stop showing the popup
-    %>
+    <c:if test="${requestScope.dx >= 0 && requestScope.dx < 7}">
     <div id="hsfoPop"
          style="border: ridge; background-color: ivory; width: 550px; height: 150px; position: absolute; left: 100px; top: 100px;">
         <form name="hsfoForm">
@@ -385,30 +356,35 @@
                             for the enrolled patient.</b></td>
                     </tr>
                     <tr>
-                        <td><input type="checkbox" name="hsfo_Hypertension" value="1"
-                                <%= (dx&1)==0?"":"checked" %>> Hypertension
+                        <td>
+                            <input type="checkbox" name="hsfo_Hypertension" value="1"
+                                   <c:if test="${(requestScope.dx and 1) != 0}">checked</c:if>> Hypertension
                         </td>
-                        <td><input type="checkbox" name="hsfo_Diabetes" value="2"
-                                <%= (dx&2)==0?"":"checked" %>> Diabetes
+                        <td>
+                            <input type="checkbox" name="hsfo_Diabetes" value="2"
+                                   <c:if test="${(requestScope.dx and 2) != 0}">checked</c:if>> Diabetes
                         </td>
-                        <td><input type="checkbox" name="hsfo_Dyslipidemia" value="4"
-                                <%= (dx&4)==0?"":"checked" %>> Dyslipidemia
+                        <td>
+                            <input type="checkbox" name="hsfo_Dyslipidemia" value="4"
+                                   <c:if test="${(requestScope.dx and 4) != 0}">checked</c:if>> Dyslipidemia
                         </td>
                     </tr>
                     <tr>
                         <td colspan="3" align="center">
                             <hr>
                             <input type="button" name="hsfo_submit" value="submit"
-                                   onclick="toggleView(this.form);"></td>
+                                   onclick="toggleView(this.form);">
+                        </td>
                     </tr>
                 </table>
             </center>
         </form>
     </div>
     <div id="bodyView" style="display: none">
-        <% } else { %>
+        </c:if>
+        <c:if test="${requestScope.dx < 0 || requestScope.dx >= 7}">
         <div id="bodyView">
-            <% } %>
+            </c:if>
 
 
             <table border="0" cellpadding="0" cellspacing="0"
@@ -430,25 +406,27 @@
                             <tr>
                                 <td style="display: flex; justify-content: start">
                                     <div class="DivContentPadding"><!-- src modified by vic, hsfo -->
-                                        <% if (sessionBean.getStashSize() > 0) {
-                                            String iframeSrc;
-                                            if (dx < 0) {
-                                                iframeSrc = "Preview2.jsp?scriptId=" + sessionBean.getStashItem(0).getScript_no()
-                                                        + "&rePrint=" + reprint
-                                                        + "&pharmacyId=" + request.getParameter("pharmacyId");
-                                            } else if (dx == 7) {
-                                                iframeSrc = "HsfoPreview.jsp?dxCode=7";
-                                            } else {
-                                                iframeSrc = "about:blank";
-                                            }
-                                        %>
-                                        <iframe id="preview"
-                                                name="preview"
-                                                style="width: 465px; height: 90vh; border: none; display: block; margin: 0 auto;"
-                                                src="<%= iframeSrc %>">
-                                        </iframe>
+                                        <c:if test="${requestScope.sessionBean.stashSize > 0}">
+                                            <c:set var="iframeSrc">
+                                                <c:choose>
+                                                    <c:when test="${requestScope.dx < 0}">
+                                                        Preview2.jsp?scriptId=${requestScope.sessionBean.getStashItem(0).script_no}&rePrint=${requestScope.reprint}&pharmacyId=${param.pharmacyId}
+                                                    </c:when>
+                                                    <c:when test="${requestScope.dx == 7}">
+                                                        HsfoPreview.jsp?dxCode=7
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        about:blank
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:set>
+                                            <iframe id="preview"
+                                                    name="preview"
+                                                    style="width: 465px; height: 90vh; border: none; display: block; margin: 0 auto;"
+                                                    src="${iframeSrc}">
+                                            </iframe>
+                                        </c:if>
                                     </div>
-                                    <% } %>
                                 </td>
 
                                 <td valign=top><html:form action="/oscarRx/clearPending">
@@ -461,27 +439,22 @@
                                 </html:form>
 
                                     <table cellpadding=10 cellspacingp=0>
-                                        <% //vecAddress=null;
-                                            if (address != null) { %>
-                                        <tr>
-                                            <td align="left" colspan=2><bean:message key="ViewScript.msgAddress"/>
-                                                <select name="addressSel" id="addressSel" onChange="addressSelect()"
-                                                        style="width:200px;">
-                                                    <% String rxAddr = (String) session.getAttribute("RX_ADDR");
-                                                        for (int i = 0; i < addressName.size(); i++) {
-                                                            String te = addressName.get(i);
-                                                            String tf = address.get(i);%>
-
-                                                    <option value="<%=i%>"
-                                                            <% if ( rxAddr != null && rxAddr.equals(""+i)){ %>SELECTED<%}%>
-                                                    ><%=te%>
-                                                    </option>
-                                                    <% }%>
-
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <% } %>
+                                        <c:if test="${not empty requestScope.address}">
+                                            <tr>
+                                                <td align="left" colspan="2"><bean:message key="ViewScript.msgAddress"/>
+                                                    <select name="addressSel" id="addressSel" onChange="addressSelect()"
+                                                            style="width:200px;">
+                                                        <c:forEach var="addr" items="${requestScope.addressName}"
+                                                                   varStatus="loop">
+                                                            <option value="${loop.index}"
+                                                                    <c:if test="${sessionScope.RX_ADDR eq loop.index}">selected</c:if>>
+                                                                    ${addr}
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </c:if>
                                         <tr>
                                             <td colspan=2 style="font-weight: bold;"><span><bean:message
                                                     key="ViewScript.msgActions"/></span>
@@ -493,17 +466,12 @@
                                             <td>Page size:
                                                 <select name="printPageSize" id="printPageSize"
                                                         style="height:20px;font-size:10px">
-                                                    <%
-                                                        String rxPageSize = (String) request.getSession().getAttribute("rxPageSize");
-                                                        List<KeyValuePair> pageSizes = (List<KeyValuePair>) request.getAttribute("pageSizes");
-                                                        for (int i = 0; i < pageSizes.size(); i++) {
-                                                            String te = pageSizes.get(i).getKey();
-                                                            String tf = pageSizes.get(i).getValue();%>
-                                                    <option value="<%=tf%>"
-                                                            <%if(rxPageSize!=null && rxPageSize.equals(tf)){%>SELECTED<%}%>
-                                                    ><%=te%>
-                                                    </option>
-                                                    <% }%>
+                                                    <c:forEach items="${requestScope.pageSizes}" var="pageSize">
+                                                        <option value="${pageSize.value}"
+                                                                <c:if test="${sessionScope.rxPageSize eq pageSize.value}">selected</c:if>>
+                                                                ${pageSize.key}
+                                                        </option>
+                                                    </c:forEach>
                                                 </select>
                                             </td>
                                         </tr>
@@ -518,59 +486,53 @@
                                         </tr>
                                         <tr>
                                             <td style="padding-top: 0"><span><input type=button
-                                                    <%=reprint.equals("true") ? "disabled='true'" : ""%>
+                                                                                    <c:if test="${requestScope.reprint eq 'true'}">disabled</c:if>
                                                                                     value="Print &amp; Add to encounter note"
                                                                                     class="ControlPushButton"
                                                                                     style="width: 210px"
                                                                                     onClick="printPaste2Parent(true, false, true);"/></span>
                                             </td>
                                         </tr>
-                                        <% if (OscarProperties.getInstance().isRxFaxEnabled()) {
-                                            FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
-                                            List<FaxConfig> faxConfigs = faxManager.getFaxGatewayAccounts(loggedInInfo);
-                                        %>
-                                        <tr>
-                                            <td style="padding-bottom: 0">
-                                                <span>From Fax Number:</span>
-                                                <select id="faxNumber" name="faxNumber">
-                                                    <%
-                                                        for (FaxConfig faxConfig : faxConfigs) {
-                                                    %>
-                                                    <option value="<%=faxConfig.getFaxNumber()%>"
-                                                            selected="<%=request.getAttribute("providerFax").equals(faxConfig.getFaxNumber())%>"><%=faxConfig.getAccountName()%>
-                                                    </option>
-                                                    <%
-                                                        }
-                                                    %>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="padding-top: 0; padding-bottom: 0">
+                                        <c:if test="${requestScope.showRxFaxBlock}">
+                                            <tr>
+                                                <td style="padding-bottom: 0">
+                                                    <span>From Fax Number:</span>
+                                                    <select id="faxNumber" name="faxNumber">
+                                                        <c:forEach var="faxConfig" items="${requestScope.faxConfigs}">
+                                                            <option value="${faxConfig.faxNumber}"
+                                                                    <c:if test="${requestScope.providerFax eq faxConfig.faxNumber}">selected</c:if>>
+                                                                    ${faxConfig.accountName}
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-top: 0; padding-bottom: 0">
+                                                        <span>
+                                                            <input type=button
+                                                                   value="Fax"
+                                                                   class="ControlPushButton"
+                                                                   id="faxButton"
+                                                                   style="width: 210px"
+                                                                   onClick="sendFax(${param.scriptId}, ${requestScope.signatureRequestId});"
+                                                                   disabled/></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-top: 0">
                                                     <span>
                                                         <input type=button
-                                                               value="Fax"
+                                                               value="Fax &amp; Add to encounter note"
                                                                class="ControlPushButton"
-                                                               id="faxButton"
+                                                               id="faxPasteButton"
                                                                style="width: 210px"
-                                                               onClick="sendFax(<%=request.getParameter("scriptId")%>, <%=signatureRequestId%>);"
+                                                               onClick="printPaste2Parent(false, true, true);
+                                                                       sendFax(${param.scriptId}, ${requestScope.signatureRequestId});"
                                                                disabled/></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="padding-top: 0"><span><input type=button
-                                                                                    value="Fax &amp; Add to encounter note"
-                                                                                    class="ControlPushButton"
-                                                                                    id="faxPasteButton"
-                                                                                    style="width: 210px"
-                                                                                    onClick="printPaste2Parent(false, true, true);
-                                                                                            sendFax(<%=request.getParameter("scriptId")%>, <%=signatureRequestId%>);"
-                                                                                    disabled/></span>
-
-                                            </td>
-                                        </tr>
-
-                                        <% } %>
+                                                </td>
+                                            </tr>
+                                        </c:if>
                                         <tr>
                                             <!--td width=10px></td-->
                                             <td><span><input type=button
@@ -592,60 +554,53 @@
                                             </td>
                                         </tr>
 
-                                        <%
-                                            if (request.getSession().getAttribute("rePrint") == null) {%>
-
-                                        <tr>
-                                            <td colspan=2 style="font-weight: bold"><span><bean:message
-                                                    key="ViewScript.msgAddNotesRx"/></span></td>
-                                        </tr>
-                                        <tr>
-                                            <!--td width=10px></td-->
-                                            <td>
+                                        <c:if test="${empty sessionScope.rePrint}">
+                                            <tr>
+                                                <td colspan=2 style="font-weight: bold">
+                                                    <span><bean:message key="ViewScript.msgAddNotesRx"/></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
                                                     <textarea id="additionalNotes" style="width: 200px"
-                                                              onchange="addNotes(<%=request.getParameter("scriptId")%>);"></textarea>
-                                                <input type="button" value="Additional Rx Notes"
-                                                       onclick="addNotes(<%=request.getParameter("scriptId")%>);"/>
-                                            </td>
-                                        </tr>
-
-                                        <%}%>
-                                        <% if (OscarProperties.getInstance().isRxSignatureEnabled() && !OscarProperties.getInstance().getBooleanProperty("signature_tablet", "yes")) { %>
-                                        <% if (sessionBean.getStashSize() == 0 || Objects.isNull(sessionBean.getStashItem(0).getDigitalSignatureId())) { %>
-                                        <tr>
-                                            <td colspan=2 style="font-weight: bold"><span>Signature</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <input type="hidden"
-                                                       name="<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>"
-                                                       value="<%=signatureRequestId%>"/>
-                                                <iframe style="width:400px; height:132px;" id="signatureFrame"
-                                                        src="<%= request.getContextPath() %>/signature_pad/tabletSignature.jsp?inWindow=true&<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>=<%=signatureRequestId%>&saveToDB=true&demographicNo=<%=sessionBean.getDemographicNo()%>&<%=ModuleType.class.getSimpleName()%>=<%=ModuleType.PRESCRIPTION%>"></iframe>
-                                            </td>
-                                        </tr>
-                                        <% } %>
-                                        <%}%>
+                                                              onchange="addNotes(${param.scriptId});"></textarea>
+                                                    <input type="button" value="Additional Rx Notes"
+                                                           onclick="addNotes(${param.scriptId});"/>
+                                                </td>
+                                            </tr>
+                                        </c:if>
+                                        <c:if test="${requestScope.showSignatureBlock}">
+                                            <c:if test="${requestScope.sessionBean.stashSize == 0 || empty requestScope.sessionBean.getStashItem(0).digitalSignatureId}">
+                                                <tr>
+                                                    <td colspan=2 style="font-weight: bold"><span>Signature</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="hidden"
+                                                               name="${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}"
+                                                               value="${requestScope.signatureRequestId}"/>
+                                                        <iframe style="width:400px; height:132px;" id="signatureFrame"
+                                                                src="${pageContext.request.contextPath}/signature_pad/tabletSignature.jsp?inWindow=true&${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}=${requestScope.signatureRequestId}&saveToDB=true&demographicNo=${requestScope.sessionBean.demographicNo}&ModuleType=${ModuleType.PRESCRIPTION}"></iframe>
+                                                    </td>
+                                                </tr>
+                                            </c:if>
+                                        </c:if>
                                         <tr>
                                             <td colspan=2 style="font-weight: bold"><span><bean:message
                                                     key="ViewScript.msgDrugInfo"/></span></td>
                                         </tr>
-                                        <%
-                                            for (int i = 0; i < sessionBean.getStashSize(); i++) {
-                                                oscar.oscarRx.data.RxPrescriptionData.Prescription rx
-                                                        = sessionBean.getStashItem(i);
-
-                                                if (!rx.isCustom()) {
-                                        %>
-                                        <tr>
-                                            <td><span><a
-                                                    href="javascript:ShowDrugInfo('<%= rx.getGenericName() %>');">
-                            <%= rx.getGenericName() %> (<%= rx.getBrandName() %>) </a></span></td>
-                                        </tr>
-                                        <%
-                                                }
-                                            }
-                                        %>
+                                        <c:forEach begin="0" end="${requestScope.sessionBean.stashSize - 1}" var="i">
+                                            <c:set var="rx" value="${requestScope.sessionBean.getStashItem(i)}"/>
+                                            <c:if test="${!rx.custom}">
+                                                <tr>
+                                                    <td>
+                                                        <span>
+                                                            <a href="javascript:ShowDrugInfo('${rx.genericName}');">${rx.genericName} (${rx.brandName}) </a>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </c:if>
+                                        </c:forEach>
                                     </table>
                                 </td>
                             </tr>

@@ -30,13 +30,13 @@ import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.PMmodule.service.ProviderManager;
 import org.oscarehr.common.dao.OscarAppointmentDao;
 import org.oscarehr.common.dao.SiteDao;
-import org.oscarehr.common.model.Appointment;
-import org.oscarehr.common.model.PharmacyInfo;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.Site;
+import org.oscarehr.common.model.*;
+import org.oscarehr.managers.FaxManager;
+import org.oscarehr.ui.servlet.ImageRenderingServlet;
+import org.oscarehr.util.DigitalSignatureUtils;
+import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 import org.owasp.encoder.Encode;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import oscar.OscarProperties;
 import oscar.oscarProvider.data.ProSignatureData;
 import oscar.oscarRx.data.RxPharmacyData;
@@ -52,9 +52,13 @@ public class RxPrintPreviewAction extends DispatchAction {
     private final ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
     private final OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
     private final SiteDao siteDao = SpringUtils.getBean(SiteDao.class);
+    private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
     private static final boolean isMultiSitesEnabled = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
 
+
     public ActionForward printPreview(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        request.setAttribute("loggedInInfo", loggedInInfo);
         HttpSession session = request.getSession();
         oscar.oscarRx.pageUtil.RxSessionBean sessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
         Provider provider = this.providerManager.getProvider(sessionBean.getProviderNo());
@@ -77,6 +81,8 @@ public class RxPrintPreviewAction extends DispatchAction {
         if (reprint.equalsIgnoreCase("true")) {
             sessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("tmpBeanRX");
         }
+
+        request.setAttribute("sessionBean", sessionBean);
 
         // for satellite clinics
         List<String> addressName = null;
@@ -173,6 +179,32 @@ public class RxPrintPreviewAction extends DispatchAction {
         request.setAttribute("prefPharmacy", prefPharmacy);
         request.setAttribute("prefPharmacyId", prefPharmacyId);
         request.setAttribute("comment", comment);
+
+
+        String signatureRequestId = "";
+        String imageUrl = "";
+        signatureRequestId = DigitalSignatureUtils.generateSignatureRequestId(loggedInInfo.getLoggedInProviderNo());
+        imageUrl = request.getContextPath() + "/imageRenderingServlet?source=" + ImageRenderingServlet.Source.signature_preview.name() + "&" + DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY + "=" + signatureRequestId;
+
+        request.setAttribute("signatureRequestId", signatureRequestId);
+        request.setAttribute("imageUrl", imageUrl);
+
+
+        List<FaxConfig> faxConfigs = faxManager.getFaxGatewayAccounts(loggedInInfo);
+        request.setAttribute("faxConfigs", faxConfigs);
+
+
+        int hsfo_patient_id = sessionBean.getDemographicNo();
+        oscar.form.study.HSFO.HSFODAO hsfoDAO = new oscar.form.study.HSFO.HSFODAO();
+        int dx = hsfoDAO.retrievePatientDx(String.valueOf(hsfo_patient_id));
+        request.setAttribute("dx", dx);
+
+        boolean isRxFaxEnabled = OscarProperties.getInstance().isRxFaxEnabled();
+        request.setAttribute("showRxFaxBlock", isRxFaxEnabled);
+
+        boolean rxEnabled = OscarProperties.getInstance().isRxSignatureEnabled();
+        boolean disableTablet = !OscarProperties.getInstance().getBooleanProperty("signature_tablet", "yes");
+        request.setAttribute("showSignatureBlock", rxEnabled && disableTablet);
 
         return new ActionForward(mapping.findForward("success"));
     }
