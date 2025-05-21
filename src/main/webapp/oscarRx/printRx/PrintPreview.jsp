@@ -22,7 +22,6 @@
 
 --%>
 
-<%@ page import="oscar.OscarProperties, java.util.*" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -31,18 +30,9 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
 <%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
 
-<%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="org.oscarehr.common.model.*" %>
 <%@ page import="oscar.oscarProvider.data.ProviderData" %>
-<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
-
-<%
-    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-%>
 
 
 <c:set var="roleName" value="${sessionScope.userrole},${sessionScope.user}"/>
@@ -75,15 +65,6 @@
             oscar.oscarRx.pageUtil.RxSessionBean sessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
 
             String reprint = request.getAttribute("reprint") != null ? request.getAttribute("reprint").toString() : "false";
-            List<String> addressName = (List<String>) request.getAttribute("addressName");
-            List<String> address = (List<String>) request.getAttribute("address");
-
-            String prefPharmacy = (String) request.getAttribute("prefPharmacy");
-            PharmacyInfo pharmacy = (PharmacyInfo) request.getAttribute("pharmacy");
-            String comment = (String) request.getAttribute("comment");
-
-            OscarProperties props = OscarProperties.getInstance();
-
             if (reprint.equalsIgnoreCase("true")) {
                 sessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("tmpBeanRX");
             }
@@ -123,21 +104,12 @@
             }
 
             function onPrint2(method, scriptId) {
-                let useSC = false;
-                let scAddress = "";
+                // Get values from request attributes set by the Action class
+                let useSC = ${requestScope.useSC != null ? requestScope.useSC : false};
+                let scAddress = "${requestScope.selectedAddress != null ? requestScope.selectedAddress : ''}";
                 const rxPageSize = $('printPageSize').value;
                 console.log("rxPagesize  " + rxPageSize);
 
-                <% if(addressName != null) { %>
-                useSC = true;
-                <%for(int i=0; i<addressName.size(); i++) { %>
-                if (document.getElementById("addressSel").value === "<%=i%>") {
-                    scAddress = "<%=Encode.forUriComponent(StringEscapeUtils.unescapeHtml(address.get(i)))%>";
-                }
-                <%
-                }
-                }
-                %>
                 let action = "../form/createcustomedpdf?__title=Rx&__method=" + method + "&useSC=" + useSC + "&scAddress=" + scAddress + "&rxPageSize=" + rxPageSize + "&scriptId=" + scriptId;
                 document.getElementById("preview").contentWindow.document.getElementById("preview2Form").action = action;
                 if (method !== "oscarRxFax") {
@@ -152,26 +124,17 @@
             function printPaste2Parent(print, fax, pasteRx) {
                 //console.log("in printPaste2Parent");
                 try {
-                    text = "";
-                    <% if (props.isPropertyActive("rx_paste_asterisk")) { %>
+                    let text = "";
+                    <c:if test="${requestScope.rxPasteAsterisk}">
                     text += "**********************************************************************************\n";
-                    <% } %>
+                    </c:if>
 
                     if (print) {
-                        text += "Prescribed and printed by <%= Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName())%>\n";
+                        text += "Prescribed and printed by ${requestScope.prescribedBy}\n";
                     } else if (fax) {
-                        <%--    	 <% if(echartPreferencesMap.getOrDefault("echart_paste_fax_note", false)) {--%>
-                        <% String timeStamp = new SimpleDateFormat("dd-MMM-yyyy hh:mm a").format(Calendar.getInstance().getTime()); %>
-                        // %>
-                        text = "[Rx faxed to " + '<%= pharmacy!=null?StringEscapeUtils.escapeJavaScript(pharmacy.getName()):""%>' + " Fax#: " + '<%= pharmacy!=null?pharmacy.getFax():""%>';
-
-                        <%--    	 <% if (rxPreferencesMap.getOrDefault("rx_paste_provider_to_echart", false)) { %>--%>
-                        text += " prescribed by <%= Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName())%>";
-                        <%--    	 <% } %>--%>
-                        text += ", <%= timeStamp %>]\n";
-                        <%--   		 <%--%>
-                        <%--    	 }--%>
-                        <%--    	 %>    	--%>
+                        text = "[Rx faxed to " + '${requestScope.pharmacyName}' + " Fax#: " + '${requestScope.pharmacyFax}';
+                        text += " prescribed by ${requestScope.prescribedBy}";
+                        text += ", ${requestScope.timeStamp}]\n";
                     }
 
                     if (pasteRx) {
@@ -185,15 +148,15 @@
                             text += document.getElementById('additionalNotes').value + "\n";
                         }
                     }
-                    <% if (props.isPropertyActive("rx_paste_asterisk")) {
-                            if(!prefPharmacy.trim().equals("")){ %>
-                    text += "<%=prefPharmacy%>\n"
-                    <% } %>
-                    text += "****<%=Encode.forJavaScript(oscar.oscarProvider.data.ProviderData.getProviderName(sessionBean.getProviderNo()))%>********************************************************************************\n";
-                    <% } %>
+                    <c:if test="${requestScope.rxPasteAsterisk}">
+                    <c:if test="${not empty requestScope.prefPharmacy.trim()}">
+                    text += "${requestScope.prefPharmacy}\n"
+                    </c:if>
+                    text += "****<c:out value='${ProviderData.getProviderName(pageScope.sessionBean.providerNo)}' escapeXml='true'/>********************************************************************************\n";
+                    </c:if>
 
                     //we support pasting into orig encounter and new casemanagement
-                    demographicNo = <%=sessionBean.getDemographicNo()%>;
+                    demographicNo = <c:out value="${pageScope.sessionBean.demographicNo}"/>;
                     noteEditor = "noteEditor" + demographicNo;
                     if (window.parent.opener) {
                         if (window.parent.opener.document.forms["caseManagementEntryForm"] !== undefined &&
@@ -216,25 +179,25 @@
                                 printIframe();
                             }
                         } else if (pasteRx) {
-                            writeToEncounter(<%=request.getContextPath() %>,
+                            writeToEncounter('<c:out value="${pageContext.request.contextPath}"/>',
                                 print,
                                 text,
-                                <%=Encode.forJavaScriptBlock(prefPharmacy)%>,
-                                <%=sessionBean.getProviderNo()%>,
-                                <%= sessionBean.getDemographicNo() %>,
-                                <%= sessionBean.getProviderNo() %>,
-                                <%=Encode.forUriComponent(ProviderData.getProviderName(sessionBean.getProviderNo()))%>
+                                '<c:out value="${requestScope.prefPharmacy}" escapeXml="true"/>',
+                                '<c:out value="${sessionScope.RxSessionBean.providerNo}"/>',
+                                '<c:out value="${sessionScope.RxSessionBean.demographicNo}"/>',
+                                '<c:out value="${sessionScope.RxSessionBean.providerNo}"/>',
+                                '<c:out value="${requestScope.providerName}" escapeXml="true"/>'
                             );
                         }
                     } else {
-                        writeToEncounter(<%=request.getContextPath() %>,
+                        writeToEncounter('<c:out value="${pageContext.request.contextPath}"/>',
                             print,
                             text,
-                            <%=Encode.forJavaScriptBlock(prefPharmacy)%>,
-                            <%=sessionBean.getProviderNo()%>,
-                            <%= sessionBean.getDemographicNo() %>,
-                            <%= sessionBean.getProviderNo() %>,
-                            <%=Encode.forUriComponent(ProviderData.getProviderName(sessionBean.getProviderNo()))%>
+                            '<c:out value="${requestScope.prefPharmacy}" escapeXml="true"/>',
+                            '<c:out value="${sessionScope.RxSessionBean.providerNo}"/>',
+                            '<c:out value="${sessionScope.RxSessionBean.demographicNo}"/>',
+                            '<c:out value="${sessionScope.RxSessionBean.providerNo}"/>',
+                            '<c:out value="${requestScope.providerName}" escapeXml="true"/>'
                         );
                     }
 
@@ -249,19 +212,18 @@
 
 
             function addressSelect() {
-                <% if(addressName != null) {
-                 %>
+                <c:if test="${not empty requestScope.addressName}">
                 setDefaultAddr();
-                <%      for(int i=0; i<addressName.size(); i++) {%>
-                if (document.getElementById("addressSel").value === "<%=i%>") {
-                    frames['preview'].document.getElementById("clinicAddress").innerHTML = "<%=address.get(i)%>";
+                <c:forEach var="addr" items="${requestScope.addressName}" varStatus="loop">
+                if (document.getElementById("addressSel").value === "${loop.index}") {
+                    frames['preview'].document.getElementById("clinicAddress").innerHTML = "${requestScope.address[loop.index]}";
                 }
-                <%       }
-                      }%>
+                </c:forEach>
+                </c:if>
 
-                <%if (comment != null){ %>
+                <c:if test="${not empty requestScope.comment}">
                 setComment();
-                <%}%>
+                </c:if>
             }
 
         </script>
@@ -272,18 +234,17 @@
 
             var isSignatureDirty = false;
             var isSignatureSaved = false;
-            <% if (OscarProperties.getInstance().isRxFaxEnabled()) { %>
-            var hasFaxNumber = <%= pharmacy != null && pharmacy.getFax() != null && !pharmacy.getFax().trim().isEmpty() ? "true" : "false" %>;
-            <% } %>
+            <c:if test="${requestScope.showRxFaxBlock}">
+            <c:set var="hasFaxNumber" value="${empty requestScope.pharmacyFax ? false : true}"/>
+            </c:if>
+            <c:if test="${requestScope.showRxFaxBlock}">
+            window.hasFaxNumber = <c:set var="hasFaxNumber" value="${empty requestScope.pharmacyFax ? false : true}"/>;
+            </c:if>
 
-            <% if (OscarProperties.getInstance().isRxFaxEnabled()) { %>
-            window.hasFaxNumber = <%= pharmacy != null && pharmacy.getFax() != null && !pharmacy.getFax().trim().isEmpty() ? "true" : "false" %>;
-            <% } %>
-
-            <% if (sessionBean.getStashSize() > 0) { %>
-            window.contextPath = "<%=request.getContextPath() %>";
-            window.scriptNo = <%=sessionBean.getStashItem(0).getScript_no() %>;
-            <% } %>
+            <c:if test="${requestScope.sessionBean.stashSize > 0}">
+            window.contextPath = "<c:out value="${pageContext.request.contextPath}"/>";
+            window.scriptNo = <c:out value="${requestScope.sessionBean.getStashItem(0).script_no}"/>;
+            </c:if>
 
             window.imageUrl = "${requestScope.imageUrl}";
             window.tempPath = '<%=System.getProperty("java.io.tmpdir").replaceAll("\\\\", "/")%>/signature_${requestScope.signatureRequestId}.jpg';
@@ -422,8 +383,13 @@
                                             </c:set>
                                             <iframe id="preview"
                                                     name="preview"
-                                                    style="width: 465px; height: 90vh; border: none; display: block; margin: 0 auto;"
-                                                    src="${iframeSrc}">
+                                                    style="width: 60vw; max-width: 65vw; height: 75vh; border: none; display: block; margin: 0 auto;"
+                                                    src="${iframeSrc}"
+                                                    onload="<c:if test='${not empty requestScope.pharmacyAddress}'>
+                                                            setTimeout(function() {
+                                                            document.getElementById('preview').contentWindow.document.getElementById('pharmInfo').innerHTML = '${requestScope.pharmacyAddress}';
+                                                            }, 50);
+                                                            </c:if>">
                                             </iframe>
                                         </c:if>
                                     </div>
@@ -579,7 +545,7 @@
                                                         <input type="hidden"
                                                                name="${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}"
                                                                value="${requestScope.signatureRequestId}"/>
-                                                        <iframe style="width:400px; height:132px;" id="signatureFrame"
+                                                        <iframe style="width:25vw; height:18vh;" id="signatureFrame"
                                                                 src="${pageContext.request.contextPath}/signature_pad/tabletSignature.jsp?inWindow=true&${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}=${requestScope.signatureRequestId}&saveToDB=true&demographicNo=${requestScope.sessionBean.demographicNo}&ModuleType=${ModuleType.PRESCRIPTION}"></iframe>
                                                     </td>
                                                 </tr>
