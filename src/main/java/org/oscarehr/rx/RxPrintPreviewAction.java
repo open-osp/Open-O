@@ -44,8 +44,11 @@ import oscar.oscarRx.data.RxPharmacyData;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class RxPrintPreviewAction extends DispatchAction {
 
@@ -119,8 +122,7 @@ public class RxPrintPreviewAction extends DispatchAction {
                 Site s = sites.get(i);
                 addressName.add(s.getName());
                 address.add("<b>" + doctorName + "</b><br>" + s.getName() + "<br>" + s.getAddress() + "<br>" + s.getCity() + ", " + s.getProvince() + " " + s.getPostal() + "<br>" + rb.getString("RxPreview.msgTel") + ": " + s.getPhone() + "<br>" + rb.getString("RxPreview.msgFax") + ": " + s.getFax());
-                if (s.getName().equals(location))
-                    session.setAttribute("RX_ADDR", String.valueOf(i));
+                if (s.getName().equals(location)) session.setAttribute("RX_ADDR", String.valueOf(i));
             }
 
 
@@ -156,9 +158,26 @@ public class RxPrintPreviewAction extends DispatchAction {
         request.setAttribute("addressName", addressName);
         request.setAttribute("address", address);
 
+        // Get the selected address index from the request or session
+        String selectedAddressIndex = request.getParameter("addressSel");
+        if (selectedAddressIndex == null && session.getAttribute("RX_ADDR") != null) {
+            selectedAddressIndex = (String) session.getAttribute("RX_ADDR");
+        }
+
+        // Get the selected address and set it in the request
+        if (address != null && !address.isEmpty()) {
+            String selectedAddress = getSelectedAddress(selectedAddressIndex, address);
+            request.setAttribute("selectedAddress", selectedAddress);
+
+            // Set useSC flag in the request
+            request.setAttribute("useSC", !selectedAddress.isEmpty());
+        }
+
 
         String comment = request.getSession().getAttribute("comment") != null ? request.getSession().getAttribute("comment").toString() : "";
         request.getSession().removeAttribute("comment");
+        request.setAttribute("comment", comment);
+
         String pharmacyId = request.getParameter("pharmacyId");
         RxPharmacyData pharmacyData = new RxPharmacyData();
         PharmacyInfo pharmacy = null;
@@ -172,13 +191,28 @@ public class RxPrintPreviewAction extends DispatchAction {
                 prefPharmacyId = String.valueOf(pharmacy.getId());
                 prefPharmacy = prefPharmacy.trim();
                 prefPharmacyId = prefPharmacyId.trim();
-            }
-        }
 
-        request.setAttribute("pharmacy", pharmacy);
-        request.setAttribute("prefPharmacy", prefPharmacy);
-        request.setAttribute("prefPharmacyId", prefPharmacyId);
-        request.setAttribute("comment", comment);
+                request.setAttribute("prefPharmacy", prefPharmacy);
+                request.setAttribute("prefPharmacyId", prefPharmacyId);
+
+
+                StringJoiner addressJoiner = new StringJoiner("<br>");
+                addressJoiner.add(pharmacy.getName());
+                addressJoiner.add(pharmacy.getAddress());
+                addressJoiner.add(pharmacy.getCity() + ", " + pharmacy.getProvince() + " " + pharmacy.getPostalCode());
+                addressJoiner.add("Tel: " + pharmacy.getPhone1() + " " + pharmacy.getPhone2());
+                addressJoiner.add("Fax: " + pharmacy.getFax());
+                if (pharmacy.getEmail() != null && !pharmacy.getEmail().isEmpty()) {
+                    addressJoiner.add("Email: " + pharmacy.getEmail());
+                }
+                if (pharmacy.getNotes() != null && !pharmacy.getNotes().isEmpty()) {
+                    addressJoiner.add("Note: " + pharmacy.getNotes());
+                }
+
+                request.setAttribute("pharmacyAddress", Encode.forHtml(addressJoiner.toString()));
+            }
+            request.setAttribute("pharmacy", pharmacy);
+        }
 
 
         String signatureRequestId = "";
@@ -206,7 +240,38 @@ public class RxPrintPreviewAction extends DispatchAction {
         boolean disableTablet = !OscarProperties.getInstance().getBooleanProperty("signature_tablet", "yes");
         request.setAttribute("showSignatureBlock", rxEnabled && disableTablet);
 
+        request.setAttribute("prescribedBy", Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName()));
+
+        String timeStamp = new SimpleDateFormat("dd-MMM-yyyy hh:mm a").format(Calendar.getInstance().getTime());
+        request.setAttribute("timeStamp", timeStamp);
+
+        request.setAttribute("pharmacyName", Encode.forJavaScript(pharmacy != null ? pharmacy.getName() : ""));
+        request.setAttribute("pharmacyFax", pharmacy != null ? pharmacy.getFax() : "");
+
+        request.setAttribute("rxPasteAsterisk", OscarProperties.getInstance().isPropertyActive("rx_paste_asterisk"));
+
         return new ActionForward(mapping.findForward("success"));
+    }
+
+    /**
+     * Gets the selected address based on the address index
+     *
+     * @param addressIndex The index of the selected address
+     * @param addresses    The list of addresses
+     * @return The selected address or empty string if not found
+     */
+    private String getSelectedAddress(String addressIndex, List<String> addresses) {
+        if (addressIndex != null && addresses != null && !addresses.isEmpty()) {
+            try {
+                int index = Integer.parseInt(addressIndex);
+                if (index >= 0 && index < addresses.size()) {
+                    return addresses.get(index);
+                }
+            } catch (NumberFormatException e) {
+                // Invalid index, return empty string
+            }
+        }
+        return "";
     }
 
 }
