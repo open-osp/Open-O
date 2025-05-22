@@ -148,8 +148,8 @@ public class RxPrintPreviewAction extends DispatchAction {
      * @param addressName List to store address names
      * @param address     List to store formatted addresses
      */
-    private void setupClinicAddresses(HttpServletRequest request, HttpSession session, 
-                                     oscar.oscarRx.pageUtil.RxSessionBean sessionBean, 
+    private void setupClinicAddresses(HttpServletRequest request, HttpSession session,
+                                     oscar.oscarRx.pageUtil.RxSessionBean sessionBean,
                                      List<String> addressName, List<String> address) {
         OscarProperties props = OscarProperties.getInstance();
 
@@ -200,9 +200,9 @@ public class RxPrintPreviewAction extends DispatchAction {
         for (int i = 0; i < sites.size(); i++) {
             Site s = sites.get(i);
             addressName.add(s.getName());
-            address.add("<b>" + doctorName + "</b><br>" + s.getName() + "<br>" + s.getAddress() + "<br>" + 
-                       s.getCity() + ", " + s.getProvince() + " " + s.getPostal() + "<br>" + 
-                       rb.getString("RxPreview.msgTel") + ": " + s.getPhone() + "<br>" + 
+            address.add("<b>" + doctorName + "</b><br>" + s.getName() + "<br>" + s.getAddress() + "<br>" +
+                       s.getCity() + ", " + s.getProvince() + " " + s.getPostal() + "<br>" +
+                       rb.getString("RxPreview.msgTel") + ": " + s.getPhone() + "<br>" +
                        rb.getString("RxPreview.msgFax") + ": " + s.getFax());
             if (s.getName().equals(location)) session.setAttribute("RX_ADDR", String.valueOf(i));
         }
@@ -232,9 +232,9 @@ public class RxPrintPreviewAction extends DispatchAction {
 
         for (int i = 0; i < temp0.length; i++) {
             addressName.add(temp0[i]);
-            address.add("<b>" + Encode.forHtml(doctorName) + "</b><br>" + Encode.forHtml(temp0[i]) + "<br>" + 
-                       Encode.forHtml(temp1[i]) + "<br>" + temp2[i] + ", " + temp3[i] + " " + temp4[i] + "<br>" + 
-                       rb.getString("RxPreview.msgTel") + ": " + temp5[i] + "<br>" + 
+            address.add("<b>" + Encode.forHtml(doctorName) + "</b><br>" + Encode.forHtml(temp0[i]) + "<br>" +
+                       Encode.forHtml(temp1[i]) + "<br>" + temp2[i] + ", " + temp3[i] + " " + temp4[i] + "<br>" +
+                       rb.getString("RxPreview.msgTel") + ": " + temp5[i] + "<br>" +
                        rb.getString("RxPreview.msgFax") + ": " + temp6[i]);
         }
     }
@@ -266,7 +266,7 @@ public class RxPrintPreviewAction extends DispatchAction {
      * @param request The HTTP request
      */
     private void setupComment(HttpServletRequest request) {
-        String comment = request.getSession().getAttribute("comment") != null ? 
+        String comment = request.getSession().getAttribute("comment") != null ?
                         request.getSession().getAttribute("comment").toString() : "";
         request.getSession().removeAttribute("comment");
         request.setAttribute("comment", comment);
@@ -335,12 +335,18 @@ public class RxPrintPreviewAction extends DispatchAction {
      */
     private void setupDigitalSignature(HttpServletRequest request, LoggedInInfo loggedInInfo) {
         String signatureRequestId = DigitalSignatureUtils.generateSignatureRequestId(loggedInInfo.getLoggedInProviderNo());
-        String imageUrl = request.getContextPath() + "/imageRenderingServlet?source=" + 
-                         ImageRenderingServlet.Source.signature_preview.name() + "&" + 
+        String imageUrl = request.getContextPath() + "/imageRenderingServlet?source=" +
+                         ImageRenderingServlet.Source.signature_preview.name() + "&" +
                          DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY + "=" + signatureRequestId;
 
         request.setAttribute("signatureRequestId", signatureRequestId);
         request.setAttribute("imageUrl", imageUrl);
+        request.setAttribute("tempPath", System.getProperty("java.io.tmpdir")
+                .replaceAll("\\\\", "/")
+                + "/signature_"
+                + signatureRequestId
+                + ".jpg"
+        );
     }
 
     /**

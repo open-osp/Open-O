@@ -44,8 +44,8 @@
 <html:html lang="en">
 
     <head>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/oscarRx/printRx/PrintPreview.js"></script>
+        <script type="text/javascript" src="<c:url value="/js/global.js"/>"></script>
+        <script type="text/javascript" src="<c:url value='/oscarRx/printRx/PrintPreview.js'/>"></script>
         <title><bean:message key="ViewScript.title"/></title>
 
         <html:base/>
@@ -60,15 +60,6 @@
             </logic:equal>
         </logic:present>
         <c:set var="ctx" value="${pageContext.request.contextPath}"/>
-
-        <%
-            oscar.oscarRx.pageUtil.RxSessionBean sessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
-
-            String reprint = request.getAttribute("reprint") != null ? request.getAttribute("reprint").toString() : "false";
-            if (reprint.equalsIgnoreCase("true")) {
-                sessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("tmpBeanRX");
-            }
-        %>
 
         <script type="text/javascript">
 
@@ -161,7 +152,7 @@
                     if (window.parent.opener) {
                         if (window.parent.opener.document.forms["caseManagementEntryForm"] !== undefined &&
                             window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo &&
-                            window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo.value === "<%=sessionBean.getDemographicNo()%>") {
+                            window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo.value === ${requestScope.sessionBean.getDemographicNo()} {
                             //oscarLog("3");
                             window.parent.opener.pasteToEncounterNote(text);
                             if (print) {
@@ -247,38 +238,8 @@
             </c:if>
 
             window.imageUrl = "${requestScope.imageUrl}";
-            window.tempPath = '<%=System.getProperty("java.io.tmpdir").replaceAll("\\\\", "/")%>/signature_${requestScope.signatureRequestId}.jpg';
+            window.tempPath = '${requestScope.tempPath}';
             window.requestIdKey = "${requestScope.signatureRequestId}";
-
-
-            <%--function signatureHandler(e) {--%>
-            <%--    isSignatureDirty = e.isDirty;--%>
-            <%--    isSignatureSaved = e.isSave;--%>
-            <%--    e.target.onbeforeunload = null;--%>
-            <%--    <% if (OscarProperties.getInstance().isRxFaxEnabled()) { //%>--%>
-            <%--    let disabled = !hasFaxNumber || !e.isSave;--%>
-            <%--    toggleFaxButtons(disabled);--%>
-            <%--    <% } %>--%>
-            <%--    if (e.isSave) {--%>
-            <%--        <% if (OscarProperties.getInstance().isRxFaxEnabled()) { //%>--%>
-            <%--        if (hasFaxNumber) {--%>
-            <%--            e.target.onbeforeunload = unloadMess;--%>
-            <%--        }--%>
-            <%--        <% }--%>
-
-            <%--        if (sessionBean.getStashSize() > 0) {--%>
-            <%--        %>--%>
-            <%--        try {--%>
-            <%--            let signId = new URLSearchParams(e.storedImageUrl.split('?')[1]).get('digitalSignatureId')--%>
-            <%--            this.setDigitalSignatureToRx(<%=request.getContextPath() %>, signId, <%=sessionBean.getStashItem(0).getScript_no() %>);--%>
-            <%--        } catch (e) {--%>
-            <%--            console.error(e);--%>
-            <%--        }--%>
-            <%--        <% } %>--%>
-
-            <%--        refreshImage(<%=imageUrl%>, '<%=System.getProperty("java.io.tmpdir").replaceAll("\\\\", "/")%>/signature_<%=signatureRequestId%>.jpg');--%>
-            <%--    }--%>
-            <%--}--%>
 
             var requestIdKey = "${requestScope.signatureRequestId}";
 
