@@ -152,7 +152,7 @@
                     if (window.parent.opener) {
                         if (window.parent.opener.document.forms["caseManagementEntryForm"] !== undefined &&
                             window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo &&
-                            window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo.value === ${requestScope.sessionBean.getDemographicNo()} {
+                            window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo.value === ${requestScope.sessionBean.getDemographicNo()}) {
                             //oscarLog("3");
                             window.parent.opener.pasteToEncounterNote(text);
                             if (print) {
