@@ -44,8 +44,6 @@
 <html:html lang="en">
 
     <head>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/oscarRx/printRx/PrintPreview.js"></script>
         <title><bean:message key="ViewScript.title"/></title>
 
         <html:base/>
@@ -250,36 +248,6 @@
             window.tempPath = '<%=System.getProperty("java.io.tmpdir").replaceAll("\\\\", "/")%>/signature_${requestScope.signatureRequestId}.jpg';
             window.requestIdKey = "${requestScope.signatureRequestId}";
 
-
-            <%--function signatureHandler(e) {--%>
-            <%--    isSignatureDirty = e.isDirty;--%>
-            <%--    isSignatureSaved = e.isSave;--%>
-            <%--    e.target.onbeforeunload = null;--%>
-            <%--    <% if (OscarProperties.getInstance().isRxFaxEnabled()) { //%>--%>
-            <%--    let disabled = !hasFaxNumber || !e.isSave;--%>
-            <%--    toggleFaxButtons(disabled);--%>
-            <%--    <% } %>--%>
-            <%--    if (e.isSave) {--%>
-            <%--        <% if (OscarProperties.getInstance().isRxFaxEnabled()) { //%>--%>
-            <%--        if (hasFaxNumber) {--%>
-            <%--            e.target.onbeforeunload = unloadMess;--%>
-            <%--        }--%>
-            <%--        <% }--%>
-
-            <%--        if (sessionBean.getStashSize() > 0) {--%>
-            <%--        %>--%>
-            <%--        try {--%>
-            <%--            let signId = new URLSearchParams(e.storedImageUrl.split('?')[1]).get('digitalSignatureId')--%>
-            <%--            this.setDigitalSignatureToRx(<%=request.getContextPath() %>, signId, <%=sessionBean.getStashItem(0).getScript_no() %>);--%>
-            <%--        } catch (e) {--%>
-            <%--            console.error(e);--%>
-            <%--        }--%>
-            <%--        <% } %>--%>
-
-            <%--        refreshImage(<%=imageUrl%>, '<%=System.getProperty("java.io.tmpdir").replaceAll("\\\\", "/")%>/signature_<%=signatureRequestId%>.jpg');--%>
-            <%--    }--%>
-            <%--}--%>
-
             var requestIdKey = "${requestScope.signatureRequestId}";
 
         </script>
@@ -300,7 +268,7 @@
 
     </head>
 
-    <body topmargin="0" leftmargin="0" vlink="#0000FF"
+    <body style="margin-top: 0; margin-left: 0;"
           onload="addressSelect();
                   printPharmacy(<c:out value="${ctx}"/>, '${requestScope.prefPharmacyId}',
                   '<bean:message key="oscarRx.printPharmacyInfo.paperSizeWarning"/>'); showFaxWarning();">
@@ -310,7 +278,7 @@
     <div id="hsfoPop"
          style="border: ridge; background-color: ivory; width: 550px; height: 150px; position: absolute; left: 100px; top: 100px;">
         <form name="hsfoForm">
-            <center><BR>
+            <div style="text-align: center;"><BR>
                 <table>
                     <tr>
                         <td colspan="3"><b>Please mark the corresponding symptom(s)
@@ -331,14 +299,14 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="3" align="center">
+                        <td colspan="3" style="text-align: center;">
                             <hr>
                             <input type="button" name="hsfo_submit" value="submit"
                                    onclick="toggleView(this.form);">
                         </td>
                     </tr>
                 </table>
-            </center>
+            </div>
         </form>
     </div>
     <div id="bodyView" style="display: none">
@@ -348,21 +316,18 @@
             </c:if>
 
 
-            <table border="0" cellpadding="0" cellspacing="0"
-                   style="border-collapse: collapse" bordercolor="#111111" width="100%"
-                   id="AutoNumber1" height="100%">
+            <table style="border-collapse: collapse; width: 100%; height: 100%; border: 0; padding: 0; margin: 0;"
+                   id="AutoNumber1">
                 <tr>
-                    <td width="100%"
-                        style="padding-left: 3px; padding-right: 3px; padding-top: 2px; padding-bottom: 2px"
-                        height="0%" colspan="2">
+                    <td style="width: 100%; height: 0%; padding-left: 3px; padding-right: 3px; padding-top: 2px; padding-bottom: 2px"
+                        colspan="2">
 
                     </td>
                 </tr>
 
                 <tr>
-                    <td width="100%" class="leftGreyLine" height="100%" valign="top">
-                        <table style="border-collapse: collapse" bordercolor="#111111"
-                               width="100%" height="100%">
+                    <td class="leftGreyLine" style="width: 100%; height: 100%; vertical-align: top;">
+                        <table style="border-collapse: collapse; border-color: #111111; width: 100%; height: 100%;">
 
                             <tr>
                                 <td style="display: flex; justify-content: start">
@@ -383,7 +348,7 @@
                                             </c:set>
                                             <iframe id="preview"
                                                     name="preview"
-                                                    style="width: 60vw; max-width: 65vw; height: 75vh; border: none; display: block; margin: 0 auto;"
+                                                    style="width: 60vw; min-width: 600px; max-width: 700px; height: 75vh; border: none; display: block; margin: 0 auto;"
                                                     src="${iframeSrc}"
                                                     onload="<c:if test='${not empty requestScope.pharmacyAddress}'>
                                                             setTimeout(function() {
@@ -395,19 +360,19 @@
                                     </div>
                                 </td>
 
-                                <td valign=top><html:form action="/oscarRx/clearPending">
+                                <td style="vertical-align: top;"><html:form action="/oscarRx/clearPending">
                                     <html:hidden property="action" value=""/>
                                     <div class="warning-note" id="faxWarningNote">
                                         <strong>Warning:</strong> faxing is disabled because no pharmacy fax number is
-                                        available.</br></br>To enable faxing, close this window and select a pharmacy
+                                        available.<br><br>To enable faxing, close this window and select a pharmacy
                                         with a fax number before trying again.
                                     </div>
                                 </html:form>
 
-                                    <table cellpadding=10 cellspacingp=0>
+                                    <table style="padding: 10px; border-spacing: 0;">
                                         <c:if test="${not empty requestScope.address}">
                                             <tr>
-                                                <td align="left" colspan="2"><bean:message key="ViewScript.msgAddress"/>
+                                                <td style="text-align: left;" colspan="2"><bean:message key="ViewScript.msgAddress"/>
                                                     <select name="addressSel" id="addressSel" onChange="addressSelect()"
                                                             style="width:200px;">
                                                         <c:forEach var="addr" items="${requestScope.addressName}"
@@ -422,7 +387,7 @@
                                             </tr>
                                         </c:if>
                                         <tr>
-                                            <td colspan=2 style="font-weight: bold;"><span><bean:message
+                                            <td colspan="2" style="font-weight: bold;"><span><bean:message
                                                     key="ViewScript.msgActions"/></span>
                                             </td>
                                         </tr>
@@ -443,20 +408,20 @@
                                         </tr>
 
                                         <tr>
-                                            <td style="padding-bottom: 0"><span><input type=button
+                                            <td style="padding-bottom: 0"><span><input type="button"
                                                                                        value="<bean:message key="ViewScript.msgPrint"/>"
                                                                                        class="ControlPushButton"
                                                                                        style="width: 210px"
-                                                                                       onClick="printIframe();"/></span>
+                                                                                       onclick="printIframe();"/></span>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-top: 0"><span><input type=button
+                                            <td style="padding-top: 0"><span><input type="button"
                                                                                     <c:if test="${requestScope.reprint eq 'true'}">disabled</c:if>
                                                                                     value="Print &amp; Add to encounter note"
                                                                                     class="ControlPushButton"
                                                                                     style="width: 210px"
-                                                                                    onClick="printPaste2Parent(true, false, true);"/></span>
+                                                                                    onclick="printPaste2Parent(true, false, true);"/></span>
                                             </td>
                                         </tr>
                                         <c:if test="${requestScope.showRxFaxBlock}">
@@ -476,32 +441,34 @@
                                             <tr>
                                                 <td style="padding-top: 0; padding-bottom: 0">
                                                         <span>
-                                                            <input type=button
+                                                            <input type="button"
                                                                    value="Fax"
                                                                    class="ControlPushButton"
                                                                    id="faxButton"
                                                                    style="width: 210px"
                                                                    onClick="sendFax(${param.scriptId}, ${requestScope.signatureRequestId});"
-                                                                   disabled/></span>
+                                                                   disabled/>
+                                                        </span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td style="padding-top: 0">
                                                     <span>
-                                                        <input type=button
+                                                        <input type="button"
                                                                value="Fax &amp; Add to encounter note"
                                                                class="ControlPushButton"
                                                                id="faxPasteButton"
                                                                style="width: 210px"
                                                                onClick="printPaste2Parent(false, true, true);
                                                                        sendFax(${param.scriptId}, ${requestScope.signatureRequestId});"
-                                                               disabled/></span>
+                                                               disabled/>
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </c:if>
                                         <tr>
                                             <!--td width=10px></td-->
-                                            <td><span><input type=button
+                                            <td><span><input type="button"
                                                              value="<bean:message key="ViewScript.msgCreateNewRx"/>"
                                                              class="ControlPushButton"
                                                              style="width: 210px"
@@ -512,7 +479,7 @@
                                         </tr>
                                         <tr>
                                             <!--td width=10px></td-->
-                                            <td><span><input type=button
+                                            <td><span><input type="button"
                                                              value="<bean:message key="ViewScript.msgBackToOscar"/>"
                                                              class="ControlPushButton" style="width: 210px"
                                                              onClick="clearPending('close');
@@ -522,7 +489,7 @@
 
                                         <c:if test="${empty sessionScope.rePrint}">
                                             <tr>
-                                                <td colspan=2 style="font-weight: bold">
+                                                <td colspan="2" style="font-weight: bold">
                                                     <span><bean:message key="ViewScript.msgAddNotesRx"/></span>
                                                 </td>
                                             </tr>
@@ -538,21 +505,21 @@
                                         <c:if test="${requestScope.showSignatureBlock}">
                                             <c:if test="${requestScope.sessionBean.stashSize == 0 || empty requestScope.sessionBean.getStashItem(0).digitalSignatureId}">
                                                 <tr>
-                                                    <td colspan=2 style="font-weight: bold"><span>Signature</span></td>
+                                                    <td colspan="2" style="font-weight: bold"><span>Signature</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td>
                                                         <input type="hidden"
                                                                name="${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}"
                                                                value="${requestScope.signatureRequestId}"/>
-                                                        <iframe style="width:25vw; height:18vh;" id="signatureFrame"
+                                                        <iframe style="width:25vw; height:18vh; min-width: 275px; max-width: 300px" id="signatureFrame"
                                                                 src="${pageContext.request.contextPath}/signature_pad/tabletSignature.jsp?inWindow=true&${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}=${requestScope.signatureRequestId}&saveToDB=true&demographicNo=${requestScope.sessionBean.demographicNo}&ModuleType=${ModuleType.PRESCRIPTION}"></iframe>
                                                     </td>
                                                 </tr>
                                             </c:if>
                                         </c:if>
                                         <tr>
-                                            <td colspan=2 style="font-weight: bold"><span><bean:message
+                                            <td colspan="2" style="font-weight: bold"><span><bean:message
                                                     key="ViewScript.msgDrugInfo"/></span></td>
                                         </tr>
                                         <c:forEach begin="0" end="${requestScope.sessionBean.stashSize - 1}" var="i">
@@ -570,21 +537,27 @@
                                     </table>
                                 </td>
                             </tr>
-                            <tr height="100%">
+                            <tr style="height: 100%;">
                                 <td></td>
                             </tr>
                         </table>
                     </td>
                 </tr>
                 <tr>
-                    <td height="0%" class="leftBottomGreyLine"></td>
-                    <td height="0%" class="leftBottomGreyLine"></td>
+                    <td style="height: 0;" class="leftBottomGreyLine"></td>
+                    <td style="height: 0;" class="leftBottomGreyLine"></td>
                 </tr>
                 <tr>
-                    <td width="100%" height="0%" colspan="2">&nbsp;</td>
+                    <td style="width: 100%; height: 0%;" colspan="2">&nbsp;</td>
                 </tr>
             </table>
         </div>
-    </div>
+
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/oscarRx/printRx/PrintPreview.js"></script>
+
+    <link rel="stylesheet" href="${ctx}/library/bootstrap/5.0.2/css/bootstrap.min.css" type="text/css"/>
+    <script type="text/javascript" src="${ctx}/library/bootstrap/5.0.2/js/bootstrap.min.js"></script>
+
     </body>
 </html:html>
