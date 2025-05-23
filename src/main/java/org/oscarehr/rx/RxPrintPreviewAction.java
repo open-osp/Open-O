@@ -40,15 +40,13 @@ import org.owasp.encoder.Encode;
 import oscar.OscarProperties;
 import oscar.oscarProvider.data.ProSignatureData;
 import oscar.oscarRx.data.RxPharmacyData;
+import oscar.oscarRx.pageUtil.RxSessionBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class RxPrintPreviewAction extends DispatchAction {
 
@@ -92,7 +90,7 @@ public class RxPrintPreviewAction extends DispatchAction {
 
         setupPatientDiagnosis(request, sessionBean);
 
-        setupDisplayFlags(request);
+        setupDisplayFlags(request, sessionBean);
 
         setupAdditionalAttributes(request, loggedInInfo, pharmacy);
 
@@ -366,7 +364,7 @@ public class RxPrintPreviewAction extends DispatchAction {
      * @param request     The HTTP request
      * @param sessionBean The RxSessionBean
      */
-    private void setupPatientDiagnosis(HttpServletRequest request, oscar.oscarRx.pageUtil.RxSessionBean sessionBean) {
+    private void setupPatientDiagnosis(HttpServletRequest request, RxSessionBean sessionBean) {
         int hsfo_patient_id = sessionBean.getDemographicNo();
         oscar.form.study.HSFO.HSFODAO hsfoDAO = new oscar.form.study.HSFO.HSFODAO();
         int dx = hsfoDAO.retrievePatientDx(String.valueOf(hsfo_patient_id));
@@ -378,9 +376,13 @@ public class RxPrintPreviewAction extends DispatchAction {
      *
      * @param request The HTTP request
      */
-    private void setupDisplayFlags(HttpServletRequest request) {
+    private void setupDisplayFlags(HttpServletRequest request, RxSessionBean sessionBean) {
         boolean isRxFaxEnabled = OscarProperties.getInstance().isRxFaxEnabled();
         request.setAttribute("showRxFaxBlock", isRxFaxEnabled);
+
+        boolean isFaxButtonsDisabled  = ((sessionBean.getStashSize() == 0
+                || Objects.isNull(sessionBean.getStashItem(0).getDigitalSignatureId())) ? "disabled" : "").isEmpty();
+        request.setAttribute("isFaxDisabled", isFaxButtonsDisabled);
 
         boolean rxEnabled = OscarProperties.getInstance().isRxSignatureEnabled();
         boolean disableTablet = !OscarProperties.getInstance().getBooleanProperty("signature_tablet", "yes");
