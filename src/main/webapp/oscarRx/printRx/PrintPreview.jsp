@@ -24,6 +24,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
+<%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -42,12 +43,12 @@
         <div class="col-12">
             <div class="row">
                 <div class="col-md-8">
-                    <div class="h-100">
+                    <div class="h-100 shadow border border-2 rounded">
                         <c:if test="${requestScope.sessionBean.stashSize > 0}">
                             <c:set var="iframeSrc">
                                 <c:choose>
                                     <c:when test="${requestScope.dx < 0}">
-                                        Preview2.jsp?scriptId=${requestScope.sessionBean.getStashItem(0).script_no}&rePrint=${requestScope.reprint}&pharmacyId=${param.pharmacyId}
+                                        Preview2.jsp?scriptId=${requestScope.sessionBean.getStashItem(0).script_no}&rePrint=${requestScope.reprint}&pharmacyId=${param.pharmacyId}&pharmaAddress=${requestScope.pharmacyAddress}
                                     </c:when>
                                     <c:when test="${requestScope.dx == 7}">
                                         HsfoPreview.jsp?dxCode=7
@@ -59,14 +60,9 @@
                             </c:set>
                             <iframe id="preview"
                                     name="preview"
-                                    class="h-100 w-100 border border-1 rounded"
+                                    class="h-100 w-100"
                                     style="max-width: 650px; min-width: 480px; border: none; display: block;"
-                                    src="${iframeSrc}"
-                                    onload="<c:if test='${not empty requestScope.pharmacyAddress}'>
-                                            setTimeout(function() {
-                                            document.getElementById('preview').contentWindow.document.getElementById('pharmInfo').innerHTML = '${requestScope.pharmacyAddress}';
-                                            }, 50);
-                                            </c:if>">
+                                    src="${iframeSrc}">
                             </iframe>
                         </c:if>
                     </div>
@@ -117,8 +113,8 @@
                                     <input type="hidden"
                                            name="${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}"
                                            value="${requestScope.signatureRequestId}"/>
-                                    <iframe class="w-100" style="height:18vh;" id="signatureFrame"
-                                            src="${pageContext.request.contextPath}/signature_pad/tabletSignature.jsp?inWindow=true&${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}=${requestScope.signatureRequestId}&saveToDB=true&demographicNo=${requestScope.sessionBean.demographicNo}&ModuleType=${ModuleType.PRESCRIPTION}"></iframe>
+                                    <iframe style="height:23vh; width: 26vw; max-width: -webkit-fill-available; width: -moz-available; max-height: 210px;" id="signatureFrame"
+                                            src="${pageContext.request.contextPath}/signature_pad/tabletSignature.jsp?inWindow=true&${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}=${requestScope.signatureRequestId}&saveToDB=true&demographicNo=${requestScope.sessionBean.demographicNo}&ModuleType=<%=ModuleType.PRESCRIPTION%>"></iframe>
                                 </div>
                             </div>
                         </c:if>
@@ -158,8 +154,8 @@
 
                                 <!-- Fax Block -->
                                 <c:if test="${requestScope.showRxFaxBlock}">
-                                    <div class="form-group mb-3">
-                                        <label for="faxNumber" class="form-label">From Fax Number:</label>
+                                    <div class="container-sm border mb-3 px-4 pb-3 shadow-sm">
+                                        <label for="faxNumber" class="form-label px-2" style="position: relative; top: -8%; background-color: white">From Fax Number:</label>
                                         <select id="faxNumber" name="faxNumber" class="form-select mb-2">
                                             <c:forEach var="faxConfig" items="${requestScope.faxConfigs}">
                                                 <option value="${faxConfig.faxNumber}"

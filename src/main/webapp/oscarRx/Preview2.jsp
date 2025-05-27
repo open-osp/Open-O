@@ -640,6 +640,7 @@ if(prop!=null && prop.getValue().equalsIgnoreCase("yes")){
 			</td>
 	        <td style="vertical-align: top;padding: 5px;">
 		        <div id="pharmInfo">
+					${param.pharmaAddress != null ? param.pharmaAddress : ''}
 		        </div>
 	        </td>
 		</tr>

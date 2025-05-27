@@ -20,16 +20,35 @@
  * Toronto, Ontario, Canada
  */
 
-function resetStash(ctx) {
+function resetStash(ctx, myDrugRefEnabled) {
     const url = ctx + "/oscarRx/deleteRx.do?parameterValue=clearStash";
     const data = "";
     new Ajax.Request(url, {
         method: 'post', parameters: data, onSuccess: function (transport) {
-            updateCurrentInteractions();
+            updateCurrentInteractions(myDrugRefEnabled);
         }
     });
     parent.document.getElementById('rxText').innerHTML = "";//make pending prescriptions disappear.
     parent.document.getElementById('searchString').focus();
+}
+
+function updateCurrentInteractions(myDrugRefEnabled) {
+    new Ajax.Request("GetmyDrugrefInfo.do?method=findInteractingDrugList", {
+        method: 'get', onSuccess: function (transport) {
+            new Ajax.Request("UpdateInteractingDrugs.jsp", {
+                method: 'get', onSuccess: function (transport) {
+                    let str = transport.responseText;
+                    str = str.replace('<script type="text/javascript">', '');
+                    str = str.replace(/<\/script>/, '');
+                    eval(str);
+                    //oscarLog("str="+str);
+                    if (myDrugRefEnabled) {
+                        callReplacementWebService("GetmyDrugrefInfo.do?method=view", 'interactionsRxMyD');
+                    }
+                }
+            });
+        }
+    });
 }
 
 function resetReRxDrugList(ctx) {
@@ -157,7 +176,7 @@ function clearPending(action) {
     document.forms.RxClearPendingForm.submit();
 }
 
-function ShowDrugInfo(drug) {
+function  ShowDrugInfo(drug) {
     window.open("drugInfo.do?GN=" + escape(drug), "_blank", "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
 }
 
@@ -254,4 +273,29 @@ function closeRxPreviewBootstrapModal() {
     if (bsModal) {
         bsModal.hide();
     }
+}
+
+function onPrint2(method, scriptId, useSC, scAddress) {
+    const rxPageSize = $('printPageSize').value;
+    console.log("rxPagesize  " + rxPageSize);
+
+    let action = "../form/createcustomedpdf?__title=Rx&__method=" + method + "&useSC=" + useSC + "&scAddress=" + scAddress + "&rxPageSize=" + rxPageSize + "&scriptId=" + scriptId;
+    document.getElementById("preview").contentWindow.document.getElementById("preview2Form").action = action;
+    if (method !== "oscarRxFax") {
+        document.getElementById("preview").contentWindow.document.getElementById("preview2Form").target = "_blank";
+    }
+    document.getElementById("preview").contentWindow.document.getElementById("preview2Form").submit();
+
+    return true;
+}
+
+function sendFax(scriptId, signatureRequestId, useSC, scAddress) {
+    if ('function' === typeof window.onbeforeunload) {
+        window.onbeforeunload = null;
+    }
+    let faxNumber = document.getElementById('faxNumber');
+    frames['preview'].document.getElementById('finalFax').value = faxNumber.options[faxNumber.selectedIndex].value;
+    frames['preview'].document.getElementById('pdfId').value = signatureRequestId;
+
+    onPrint2('oscarRxFax', scriptId, useSC, scAddress);
 }

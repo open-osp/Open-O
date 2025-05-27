@@ -1835,55 +1835,141 @@ function saveCustomName(element){
 function updateDeleteOnCloseRxBox(){
     $('deleteOnCloseRxBox').value='true';
 }
-function popForm2(scriptId){
-        try{
-            //oscarLog("popForm2 called");
-            var url1="<c:out value="${ctx}"/>"+"/oscarRx/WriteScript.do?parameterValue=checkNoStashItem&rand="+ Math.floor(Math.random()*10001);
-            var data="";
-            var h=900;
-            new Ajax.Request(url1, {method: 'get',parameters:data, onSuccess:function(transport){
-                //output default instructions
-                var json=transport.responseText.evalJSON();
-                var n=json.NoStashItem;
-                if(n>4){
-                    h=h+(n-4)*100;
-                }
-                //oscarLog("h="+h+"--n="+n);
-                var url;
-                var json = jQuery("#Calcs").val();
-                //oscarLog(json);
-                if( json != null && json != "" ) {
-                	
-                	var pharmacy = JSON.parse(json);
-                    
-                    if( pharmacy != null ) {
-                    	url= "<c:out value="${ctx}"/>" + "/oscarRx/ViewScript2.jsp?scriptId="+scriptId+"&pharmacyId="+pharmacy.id;
-                    }
-                    else {
-                    	url= "<c:out value="${ctx}"/>" + "/oscarRx/ViewScript2.jsp?scriptId="+scriptId;
-                    }	
-                }
-                else {
-                	url= "<c:out value="${ctx}"/>" + "/oscarRx/ViewScript2.jsp?scriptId="+scriptId;
-                }
-                
-                //oscarLog( "preview2 done");
-                myLightWindow.activateWindow({
-                    href: url,
-                    width: 980,
-                    height: h
-                });
-                var editRxMsg='<bean:message key="oscarRx.Preview.EditRx"/>';
-                $('lightwindow_title_bar_close_link').update(editRxMsg);
-                $('lightwindow_title_bar_close_link').onclick=updateDeleteOnCloseRxBox;
-            }});
 
+    function popForm2(scriptId) {
+        try {
+            const modalElement = document.getElementById('rxPreviewBootstrapModal');
+            const modalBodyElement = document.getElementById('rxPreviewBootstrapModalBody');
+            let editRxButton = document.getElementById('rxPreviewBootstrapEditRxButton');
+
+            modalBodyElement.innerHTML = ' <div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>'
+
+            let pharmacyData = JSON.parse(document.getElementById('Calcs').value);
+            let pharmacyId = pharmacyData.id ? pharmacyData.id : null;
+            let url = '${ctx}/oscarRx/printPreview.do?method=printPreview&scriptId=' + scriptId + '&pharmacyId=' + pharmacyId;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not OK');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    modalBodyElement.innerHTML = html;
+
+                    /*if (typeof loaded === 'function') {
+                        loaded();
+                    }*/
+                    const scripts = modalBodyElement.querySelectorAll('script');
+                    scripts.forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        newScript.text = oldScript.textContent;
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                            newScript.async = false; // preserve order
+                            document.head.appendChild(newScript);
+                        }
+                    });
+                })
+                .catch(error => {
+                    modalBodyElement.innerHTML = '<p>Error loading print preview content.</p>';
+                });
+
+            // Set up Edit Rx button
+            editRxButton.innerHTML = '<bean:message key="oscarRx.Preview.EditRx"/>';
+            const newEditRxButton = editRxButton.cloneNode(true);
+            editRxButton.parentNode.replaceChild(newEditRxButton, editRxButton);
+            editRxButton = newEditRxButton;
+
+            editRxButton.onclick = function () {
+                updateDeleteOnCloseRxBox();
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            };
+
+            let bsModal = bootstrap.Modal.getInstance(modalElement);
+            if (!bsModal) {
+                bsModal = new bootstrap.Modal(modalElement);
+            }
+            bsModal.show();
+
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                modalBodyElement.innerHTML = '';
+            }, {once: true});
+
+        } catch (er) {
+            console.error(er);
         }
-        catch(er){
-            oscarLog(er);
+    }
+
+   /* function popForm2(scriptId) {
+        try {
+            const url1 = "<c:out value='${ctx}'/>" + "/oscarRx/WriteScript.do?parameterValue=checkNoStashItem&rand=" + Math.floor(Math.random() * 10001);
+
+            new Ajax.Request(url1, {
+                method: 'get',
+                onSuccess: function (transport) {
+                    let h = 900;
+                    let json = transport.responseText.evalJSON();
+                    const n = json.NoStashItem || 0;
+                    if (n > 4) {
+                        h += (n - 4) * 100;
+                    }
+
+                    let url;
+                    const pharmacyJson = jQuery("#Calcs").val();
+                    if (pharmacyJson) {
+                        const pharmacy = JSON.parse(pharmacyJson);
+                        url = "<c:out value='${ctx}'/>" + "/oscarRx/ViewScript2.jsp?scriptId=" + scriptId + (pharmacy?.id ? "&pharmacyId=" + pharmacy.id : "");
+                    } else {
+                        url = "<c:out value='${ctx}'/>" + "/oscarRx/ViewScript2.jsp?scriptId=" + scriptId;
+                    }
+
+                    const modalElement = document.getElementById('rxPreviewBootstrapModal');
+                    const modalBodyElement = document.getElementById('rxPreviewBootstrapModalBody');
+                    let editRxButton = document.getElementById('rxPreviewBootstrapEditRxButton');
+
+                    // Insert iframe into modal body
+                    modalBodyElement.innerHTML = '<iframe src=' + url + ' width="100%" frameborder="0" ' +
+                        'style="border: none; height: 98vh"></iframe>';
+
+                    // Set up Edit Rx button
+                    editRxButton.innerHTML = '<bean:message key="oscarRx.Preview.EditRx"/>';
+                    const newEditRxButton = editRxButton.cloneNode(true);
+                    editRxButton.parentNode.replaceChild(newEditRxButton, editRxButton);
+                    editRxButton = newEditRxButton;
+
+                    editRxButton.onclick = function () {
+                        updateDeleteOnCloseRxBox();
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if (modalInstance) {
+                            modalInstance.hide();
+                        }
+                    };
+
+                    let bsModal = bootstrap.Modal.getInstance(modalElement);
+                    if (!bsModal) {
+                        bsModal = new bootstrap.Modal(modalElement);
+                    }
+                    bsModal.show();
+
+                    modalElement.addEventListener('hidden.bs.modal', function () {
+                        modalBodyElement.innerHTML = '';
+                    }, {once: true});
+                },
+                onFailure: function (transport) {
+                    console.error("Failed to check stash items: " + transport.statusText);
+                    alert("Error: Could not load prescription preview data.");
+                }
+            });
+
+        } catch (er) {
+            console.error(er);
         }
         //oscarLog("bottom of popForm");
-    }
+    }*/
 
      function callTreatments(textId,id){
          var ele = $(textId);
@@ -2750,9 +2836,73 @@ function updateLongTerm(rand,repeatEl) {
 	<% } %>
 }
 </script>
+
+        <style>
+            .custom-modal-size {
+                max-width: 95vw !important; /* Default for small screens */
+                width: 95vw !important;
+            }
+            @media (min-width: 1200px) {
+                /* xl breakpoint */
+                .custom-modal-size {
+                    max-width: 90vw !important;
+                    width: 90vw !important;
+                }
+            }
+            
+            @media (min-width: 1300px) {
+                /* xxl breakpoint */
+                .custom-modal-size {
+                    max-width: 85vw !important;
+                    width: 85vw !important;
+                }
+            }
+            @media (min-width: 1400px) {
+                /* xxl breakpoint */
+                .custom-modal-size {
+                    max-width: 75vw !important;
+                    width: 75vw !important;
+                }
+            }
+            .custom-modal-height {
+                height: 95vh;
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+        </style>
+        <!-- Bootstrap Modal for Prescription Preview -->
+        <div class="modal fade" id="rxPreviewBootstrapModal" tabindex="-1"
+             aria-labelledby="rxPreviewBootstrapModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable custom-modal-size custom-modal-height">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rxPreviewBootstrapModalLabel">Prescription Preview</h5>
+                        <button type="button" class="btn btn-secondary" id="rxPreviewBootstrapEditRxButton"
+                                data-bs-dismiss="modal">Edit Rx
+                        </button>
+                    </div>
+                        <div class="modal-body" id="rxPreviewBootstrapModalBody">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+           /* const rxPrintPreviewModal = document.getElementById('rxPreviewBootstrapModal');
+            const modalBody = document.getElementById('rxPreviewBootstrapModalBody');
+            rxPrintPreviewModal.addEventListener('shown.bs.modal', function () {
+
+            });*/
+        </script>
+
 <script language="javascript" src="../commons/scripts/sort_table/css.js"></script>
 <script language="javascript" src="../commons/scripts/sort_table/common.js"></script>
 <script language="javascript" src="../commons/scripts/sort_table/standardista-table-sorting.js"></script>
+
+<script type="text/javascript" src="<%= request.getContextPath() %>/oscarRx/printRx/PrintPreview.js"></script>
+
+<link rel="stylesheet" href="${ctx}/library/bootstrap/5.0.2/css/bootstrap.min.css" type="text/css"/>
+<script type="text/javascript" src="${ctx}/library/bootstrap/5.0.2/js/bootstrap.min.js"></script>
 
 </body>
 </html:html>
