@@ -53,6 +53,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * A utility that converts HTML into a PDF and returns an Oscar eDoc object.
@@ -581,9 +582,28 @@ public final class ConvertToEdoc {
 		
 		logger.debug( "Context path set to " + contextPath );
 		
-		if( ConvertToEdoc.contextPath != null && ConvertToEdoc.realPath != null ) {
+		if(ConvertToEdoc.realPath != null) {
 			logger.debug( "Relative file path " + uri );
-			contextRealPath = Paths.get(ConvertToEdoc.realPath, ConvertToEdoc.realPath).toAbsolutePath().toString();
+			try {
+				Path basePath = Paths.get(ConvertToEdoc.realPath);
+				String fileNameToFind = Paths.get(uri).getFileName().toString();
+	
+				try (Stream<Path> paths = Files.walk(basePath)) {
+					Path found = paths
+						.filter(Files::isRegularFile)
+						.filter(path -> path.getFileName().toString().equals(fileNameToFind))
+						.findFirst()
+						.orElse(null);
+	
+					if (found != null) { 
+						contextRealPath = found.toAbsolutePath().toString(); 
+					} else {
+						contextRealPath = uri;
+					}
+				}
+			} catch (Exception e) {
+				logger.error("Error while searching file in directory: " + ConvertToEdoc.realPath, e);
+			}
 		}
 
 		logger.debug( "Absolute file path " + contextRealPath );
