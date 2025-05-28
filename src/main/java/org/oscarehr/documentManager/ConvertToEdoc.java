@@ -347,6 +347,11 @@ public final class ConvertToEdoc {
 		}
 	}
 
+	public static Document getDocument(final String documenString, String realPath) {
+		ConvertToEdoc.realPath = realPath;
+		return getDocument(documenString);
+	}
+
 	/**
 	 * Clean and parse the HTML document string into a manageable DOM
 	 * with JSoup tools
