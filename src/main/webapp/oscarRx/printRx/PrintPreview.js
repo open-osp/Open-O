@@ -143,18 +143,6 @@ function openEncounter(providerNo, demographicNo, curProviderNo, userName) {
 
     return window.open(url, "encounter", windowProps);
 }
-
-function expandPreview(text, warning) {
-    parent.document.getElementById('lightwindow_container').style.width = "1140px";
-    // parent.document.getElementById('lightwindow_container').style.left="-600px"; // commented to resolve a UI alignment issue causing the print-rx window to shift off-screen to the left.
-    parent.document.getElementById('lightwindow_contents').style.width = "1120px";
-    document.getElementById('preview').style.width = "600px";
-    frames['preview'].document.getElementById('pharmInfo').innerHTML = text;
-    //frames['preview'].document.getElementById('removePharm').show();
-    $("selectedPharmacy").innerHTML = warning;
-
-}
-
 function reducePreview() {
     parent.document.getElementById('lightwindow_container').style.width = "1000px";
     parent.document.getElementById('lightwindow_contents').style.width = "980px";
@@ -171,41 +159,11 @@ function toggleView(form) {
     document.getElementById("preview").src = "HsfoPreview.jsp?dxCode=" + dxCode;
 }
 
-function clearPending(action) {
-    document.forms.RxClearPendingForm.action.value = action;
-    document.forms.RxClearPendingForm.submit();
-}
-
 function  ShowDrugInfo(drug) {
     window.open("drugInfo.do?GN=" + escape(drug), "_blank", "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
 }
 
-function printPharmacy(ctx, id, warning) {
-    //ajax call to get all info about a pharmacy
-    //use json to write to html
-    if (!id) {
-        return;
-    }
-    const url = ctx + "/oscarRx/managePharmacy2.do?";
-    const data = "method=getPharmacyInfo&pharmacyId=" + id;
-    new Ajax.Request(url, {
-        method: 'get', parameters: data, onSuccess: function (transport) {
-            const json = transport.responseText.evalJSON();
-
-            if (json != null) {
-                let text = json.name + "<br>" + json.address + "<br>" + json.city + ", " + json.province + ", " + json.postalCode + "<br>Tel:" + json.phone1 + " " + json.phone2 + "<br>Fax:" + json.fax + "<br>Email:" + json.email + "<br>Note:" + json.notes;
-
-                text += '<br><br><a class="noprint" style="text-align:center;" onclick="parent.reducePreview();" href="javascript:void(0);">Remove Pharmacy Info</a>';
-                text += "<input type='hidden' name='pharmacyInfo' value=" + id + " />"
-                expandPreview(text, warning);
-            }
-        }
-    });
-
-}
-
 function refreshImage(imgURL, signatureImg) {
-    // counter = counter + 1;
     if (frames["preview"].document.getElementById("signature") != null) {
         frames["preview"].document.getElementById("signature").src = imgURL;
     }

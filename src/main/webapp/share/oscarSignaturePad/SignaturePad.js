@@ -105,11 +105,7 @@ class DigitalSignaturePad {
          * @private
          */
         this._defaultOptions = {
-            backgroundColor: 'white',
-            dotSize: 1.5,
-            minWidth: 0.7,
-            maxWidth: 2,
-            penColor: 'black'
+            backgroundColor: 'white', dotSize: 1.5, minWidth: 0.7, maxWidth: 2, penColor: 'black'
         };
     }
 
@@ -122,65 +118,65 @@ class DigitalSignaturePad {
      * @returns {Promise<void>} A promise that resolves when the signature is saved
      * @throws {Error} If the canvas element is not found
      */
-    saveSignature(contextPath, requestIdKey, imageUrl, storedImageUrl) {
+    async _saveSignature(contextPath, requestIdKey, imageUrl, storedImageUrl) {
         try {
             if (!this._canvas) {
-                throw new Error("Canvas element not found");
+                this._notifySignatureErrorEvent(new Error("Canvas element not found"));
+                return;
             }
 
             const signatureImage = document.getElementById("signatureImage");
             if (!signatureImage) {
-                throw new Error("Signature image element not found");
+                this._notifySignatureErrorEvent(new Error("Signature image element not found"));
+                return;
+            }
+
+            if (typeof jQuery === 'undefined') {
+                this._notifySignatureErrorEvent(new Error("jQuery is not loaded"));
+                return;
             }
 
             signatureImage.value = this._canvas.toDataURL("image/png");
 
             const response = await fetch(`${contextPath}/digitalSignature.do`, {
                 method: "POST",
-                body: jQuery("#signatureForm").formSerialize(),
+                body: new URLSearchParams(new FormData(document.getElementById("signatureForm"))).toString(),
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             });
-
+            
             if (!response.ok) {
-                throw new Error(`Server responded with status: ${response.status}`);
+                this._notifySignatureErrorEvent(new Error(`Server responded with status: ${response.status}`));
+                return;
             }
 
             const data = await response.json();
-            const savedId = data.signatureId;
+            if (!data || !data.signatureId) {
+                this._notifySignatureErrorEvent(new Error("Invalid server response format"));
+                return;
+            }
 
             this._notifySignatureEvent({
                 isSave: true,
                 isDirty: false,
-                savedId,
+                savedId: data.signatureId,
                 requestIdKey,
                 previewImageUrl: imageUrl,
                 storedImageUrl
             });
         } catch (error) {
-            console.error("Error saving signature:", error);
-            // Notify of error through event
-            this._notifySignatureEvent({
-                isSave: false,
-                isDirty: true,
-                error: error.message,
-                requestIdKey,
-                previewImageUrl: imageUrl,
-                storedImageUrl
-            });
+            this._notifySignatureErrorEvent(error);
         }
     }
-
     /**
      * Initializes the signature pad with all necessary components
      * @param {SignaturePadEventListener|Function} eventListener - The event listener to handle signature events
-     * @param {SignaturePadOptions} [options] - Optional configuration options for the signature pad
      */
-    initializeSignaturePad(eventListener, options = {}) {
+    initializeSignaturePad(eventListener) {
         this._setupEventHandler(eventListener);
         this._setupCanvas(document.getElementById("signatureCanvas"));
-        this._createSignaturePad(options);
+        this._createSignaturePad();
         this._setupCanvasResizing();
         this._setupSignatureEvents();
         this._setupClearButton();
@@ -215,12 +211,10 @@ class DigitalSignaturePad {
 
     /**
      * Creates the signature pad with the specified options
-     * @param {SignaturePadOptions} options - Configuration options for the signature pad
      * @private
      */
-    _createSignaturePad(options) {
-        const mergedOptions = { ...this._defaultOptions, ...options };
-        this._signaturePad = new SignaturePad(this._canvas, mergedOptions);
+    _createSignaturePad() {
+        this._signaturePad = new SignaturePad(this._canvas, this._defaultOptions);
     }
 
     /**
@@ -252,15 +246,13 @@ class DigitalSignaturePad {
     _setupSignatureEvents() {
         if (!this._signaturePad) return;
 
-        this._signaturePad.onEnd = () => {
-            if (!this._signaturePad.isEmpty()) {
-                const signatureImage = document.getElementById("signatureImage");
-                if (signatureImage) {
-                    signatureImage.value = this._signaturePad.toDataURL();
-                }
-                this._notifySignatureEvent({ isSave: false, isDirty: true });
+        this._signaturePad.addEventListener('endStroke', () => {
+            const signatureImage = document.getElementById("signatureImage");
+            if (signatureImage) {
+                signatureImage.value = this._signaturePad.toDataURL();
             }
-        };
+            this._notifySignatureEvent({isSave: false, isDirty: true});
+        });
     }
 
     /**
@@ -273,10 +265,24 @@ class DigitalSignaturePad {
             clearButton.addEventListener('click', () => {
                 if (this._signaturePad) {
                     this._signaturePad.clear();
-                    this._notifySignatureEvent({ isSave: false, isDirty: false });
+                    this._notifySignatureEvent({isSave: false, isDirty: false});
                 }
             });
         }
+    }
+
+    /**
+     * Notifies an error event related to the signature with details about the error.
+     *
+     * @param {Error} error - The error object containing details about the signature-related issue.
+     * @return {void} Does not return a value.
+     */
+    _notifySignatureErrorEvent(error) {
+        console.error("Error saving signature:", error);
+        // Notify of error through event
+        this._notifySignatureEvent({
+            isSave: false, isDirty: true, error: error.message
+        });
     }
 
     /**
@@ -320,9 +326,7 @@ class DigitalSignaturePad {
                 isDirty: eventData.isDirty || false,
                 requestIdKey: eventData.requestIdKey,
                 previewImageUrl: eventData.previewImageUrl,
-                storedImageUrl: eventData.storedImageUrl ?
-                    `${eventData.storedImageUrl}${eventData.savedId || ''}` :
-                    undefined,
+                storedImageUrl: eventData.storedImageUrl ? `${eventData.storedImageUrl}${eventData.savedId || ''}` : undefined,
                 error: eventData.error
             };
 
@@ -349,7 +353,7 @@ class DigitalSignaturePad {
     clearSignature() {
         if (this._signaturePad) {
             this._signaturePad.clear();
-            this._notifySignatureEvent({ isSave: false, isDirty: false });
+            this._notifySignatureEvent({isSave: false, isDirty: false});
         }
     }
 
@@ -360,15 +364,12 @@ class DigitalSignaturePad {
      * @returns {string|null} The signature as a data URL, or null if the signature pad is not initialized
      */
     getSignatureDataUrl(type = 'image/png', encoderOptions = 0.92) {
-        return this._signaturePad ? 
-            this._signaturePad.toDataURL(type, encoderOptions) : 
-            null;
+        return this._signaturePad ? this._signaturePad.toDataURL(type, encoderOptions) : null;
     }
 }
 
 // Create a singleton instance
 const oscarSignaturePad = new DigitalSignaturePad();
-
 /**
  * Save the signature canvas
  * @param {string} contextPath - The context path for the server request
@@ -376,8 +377,8 @@ const oscarSignaturePad = new DigitalSignaturePad();
  * @param {string} imageUrl - URL for the image
  * @param {string} storedImageUrl - URL for the stored image
  */
-function saveCanvas(contextPath, requestIdKey, imageUrl, storedImageUrl) {
-    oscarSignaturePad.saveSignature(contextPath, requestIdKey, imageUrl, storedImageUrl);
+function saveSignature(contextPath, requestIdKey, imageUrl, storedImageUrl) {
+    oscarSignaturePad._saveSignature(contextPath, requestIdKey, imageUrl, storedImageUrl);
 }
 
 /**

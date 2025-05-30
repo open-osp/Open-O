@@ -105,7 +105,7 @@
                     <!-- Signature Block -->
                     <c:if test="${requestScope.showSignatureBlock}">
                         <c:if test="${requestScope.sessionBean.stashSize == 0 || empty requestScope.sessionBean.getStashItem(0).digitalSignatureId}">
-                            <div class="card mb-1">
+                            <div class="card mb-3">
                                 <div class="card-header">
                                     <h5 class="mb-0">Signature</h5>
                                 </div>
@@ -215,8 +215,7 @@
 
                                 <button type="button"
                                         class="btn btn-outline-secondary mb-3"
-                                        onClick="clearPending('close');
-                                                                parent.window.close();">
+                                        onClick="parent.window.close();">
                                     <bean:message key="ViewScript.msgBackToOscar"/>
                                 </button>
                             </div>

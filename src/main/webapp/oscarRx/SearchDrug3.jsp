@@ -2901,6 +2901,6 @@ function updateLongTerm(rand,repeatEl) {
 <script type="text/javascript" src="${ctx}/library/bootstrap/5.0.2/js/bootstrap.min.js"></script>
 
 <script type="text/javascript" src="<%= request.getContextPath() %>/share/oscarSignaturePad/SignaturePad.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/library/bootstrap/5.0.2/js/signature_pad.min.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/library/signature-pad/5.0.7/signature_pad.umd.min.js"></script>
 </body>
 </html:html>

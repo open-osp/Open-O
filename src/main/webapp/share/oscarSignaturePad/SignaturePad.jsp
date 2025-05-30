@@ -65,7 +65,7 @@
             <div class="mt-md-2 mt-xl-1">
                 <button id="clear" class="btn btn-outline-secondary me-2" disabled>Clear</button>
                 <button id="save" class="btn btn-outline-primary" disabled
-                        onclick="saveCanvas(
+                        onclick="saveSignature(
                                 '<%=request.getContextPath() %>',
                                 '<%= requestIdKey %>',
                                 '<%= imageUrl %>',
