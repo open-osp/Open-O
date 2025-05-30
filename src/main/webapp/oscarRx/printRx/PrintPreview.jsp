@@ -105,7 +105,7 @@
                     <!-- Signature Block -->
                     <c:if test="${requestScope.showSignatureBlock}">
                         <c:if test="${requestScope.sessionBean.stashSize == 0 || empty requestScope.sessionBean.getStashItem(0).digitalSignatureId}">
-                            <div class="card mb-3">
+                            <div class="card mb-1">
                                 <div class="card-header">
                                     <h5 class="mb-0">Signature</h5>
                                 </div>
@@ -113,8 +113,16 @@
                                     <input type="hidden"
                                            name="${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}"
                                            value="${requestScope.signatureRequestId}"/>
-                                    <iframe style="height:23vh; width: 26vw; max-width: -webkit-fill-available; width: -moz-available; max-height: 210px;" id="signatureFrame"
-                                            src="${pageContext.request.contextPath}/signature_pad/tabletSignature.jsp?inWindow=true&${DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY}=${requestScope.signatureRequestId}&saveToDB=true&demographicNo=${requestScope.sessionBean.demographicNo}&ModuleType=<%=ModuleType.PRESCRIPTION%>"></iframe>
+                                    <div style="height:23vh; width: 26vw; max-width: -webkit-fill-available; width: -moz-available; max-height: 210px;"
+                                         id="signatureFrame">
+                                        <jsp:include page="/share/oscarSignaturePad/SignaturePad.jsp">
+                                            <jsp:param name="inWindow" value="true"/>
+                                            <jsp:param name="signatureRequestId" value="${requestScope.signatureRequestId}"/>
+                                            <jsp:param name="saveToDB" value="true"/>
+                                            <jsp:param name="demographicNo"  value="${requestScope.sessionBean.demographicNo}"/>
+                                            <jsp:param name="ModuleType" value="${ModuleType.PRESCRIPTION.name()}"/>
+                                        </jsp:include>
+                                    </div>
                                 </div>
                             </div>
                         </c:if>

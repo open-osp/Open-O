@@ -1112,6 +1112,8 @@
 <!--			<forward name="success" path="/oscarRx/printRx/PrintPreview_NEW.jsp" />-->
 		</action>
 
+		<action path="/digitalSignature" type="org.oscarehr.digitalSignature.DigitalSignatureAction" scope="request" validate="false" parameter="method" />
+
 		<action path="/oscarMDS/SendMRP" scope="request" type="oscar.oscarMDS.pageUtil.SendMostResponProvAction">
 			<forward name="failure" path="/errorpage.jsp" />
 		</action>

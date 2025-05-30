@@ -1857,19 +1857,15 @@ function updateDeleteOnCloseRxBox(){
                 .then(html => {
                     modalBodyElement.innerHTML = html;
 
-                    /*if (typeof loaded === 'function') {
-                        loaded();
-                    }*/
-                    const scripts = modalBodyElement.querySelectorAll('script');
-                    scripts.forEach(oldScript => {
-                        const newScript = document.createElement('script');
-                        newScript.text = oldScript.textContent;
-                        if (oldScript.src) {
-                            newScript.src = oldScript.src;
-                            newScript.async = false; // preserve order
-                            document.head.appendChild(newScript);
-                        }
-                    });
+                    setTimeout(function () {
+                        oscarSignaturePad.initializeSignaturePad({
+                            onSignaturePadEvent(eventType, data) {
+                                if (eventType === SignatureEventType.SAVE) {
+                                    signatureHandler(data);
+                                }
+                            }
+                        });
+                    }, 250);
                 })
                 .catch(error => {
                     modalBodyElement.innerHTML = '<p>Error loading print preview content.</p>';
@@ -2904,5 +2900,7 @@ function updateLongTerm(rand,repeatEl) {
 <link rel="stylesheet" href="${ctx}/library/bootstrap/5.0.2/css/bootstrap.min.css" type="text/css"/>
 <script type="text/javascript" src="${ctx}/library/bootstrap/5.0.2/js/bootstrap.min.js"></script>
 
+<script type="text/javascript" src="<%= request.getContextPath() %>/share/oscarSignaturePad/SignaturePad.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/library/bootstrap/5.0.2/js/signature_pad.min.js"></script>
 </body>
 </html:html>

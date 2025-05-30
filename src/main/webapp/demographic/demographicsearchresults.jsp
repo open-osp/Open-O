@@ -438,7 +438,7 @@
 	<%	
 		} else { 
 	%>
-		<a title="Master Demographic File"  href="javascript:void(0)"  onclick="popup(700,1027,'demographiccontrol.jsp?demographic_no=<%=head%>&displaymode=edit&dboperation=search_detail')" ><%=dem_no%></a></td>
+		<a title="Master Demographic File"  href="javascript:void(0)"  onclick="popup(700,1100,'demographiccontrol.jsp?demographic_no=<%=head%>&displaymode=edit&dboperation=search_detail')" ><%=dem_no%></a></td>
 	
 		<!-- Rights -->
 		<td class="links"><security:oscarSec roleName="<%=roleName$%>"

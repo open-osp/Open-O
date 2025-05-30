@@ -205,9 +205,9 @@ function printPharmacy(ctx, id, warning) {
 }
 
 function refreshImage(imgURL, signatureImg) {
-    counter = counter + 1;
+    // counter = counter + 1;
     if (frames["preview"].document.getElementById("signature") != null) {
-        frames["preview"].document.getElementById("signature").src = imgURL + "&rand=" + counter;
+        frames["preview"].document.getElementById("signature").src = imgURL;
     }
     frames['preview'].document.getElementById('imgFile').value = signatureImg;
 }
@@ -237,32 +237,32 @@ function showFaxWarning() {
     }
 }
 
-function signatureHandler(e) {
-    isSignatureDirty = e.isDirty;
-    isSignatureSaved = e.isSave;
-    e.target.onbeforeunload = null;
+function signatureHandler(result) {
+    isSignatureDirty = result.isDirty;
+    isSignatureSaved = result.isSave;
+    result.target.onbeforeunload = null;
 
-    if (window.hasFaxNumber !== undefined) {
-        let disabled = !hasFaxNumber || !e.isSave;
-        toggleFaxButtons(disabled);
-    }
+    // if (window.hasFaxNumber !== undefined) {
+    //     let disabled = !hasFaxNumber || !result.isSave;
+    //     toggleFaxButtons(disabled);
+    // }
 
-    if (e.isSave) {
-        if (window.hasFaxNumber && hasFaxNumber) {
-            e.target.onbeforeunload = unloadMess;
-        }
+    if (result.isSave) {
+        // if (window.hasFaxNumber && hasFaxNumber) {
+        //     result.target.onbeforeunload = unloadMess;
+        // }
 
         if (window.setDigitalSignatureToRx && window.contextPath && window.scriptNo) {
             try {
-                let signId = new URLSearchParams(e.storedImageUrl.split('?')[1]).get('digitalSignatureId');
+                let signId = new URLSearchParams(result.storedImageUrl.split('?')[1]).get('digitalSignatureId');
                 setDigitalSignatureToRx(contextPath, signId, scriptNo);
             } catch (e) {
                 console.error(e);
             }
         }
 
-        if (window.refreshImage && window.imageUrl && window.tempPath) {
-            refreshImage(imageUrl, tempPath);
+        if (result.storedImageUrl) {
+            refreshImage(result.storedImageUrl, result.previewImageUrl);
         }
     }
 }
