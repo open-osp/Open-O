@@ -179,9 +179,13 @@ function unloadMess() {
 }
 
 function setDigitalSignatureToRx(ctx, digitalSignatureId, scriptId) {
-    new Ajax.Request(ctx + '/oscarRx/saveDigitalSignature.do?method=saveDigitalSignature' + '&digitalSignatureId=' + digitalSignatureId + "&scriptId=" + scriptId, {
-        method: 'get'
-    });
+    fetch(ctx + '/oscarRx/saveDigitalSignature.do', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'method=saveDigitalSignature&digitalSignatureId=' + digitalSignatureId + '&scriptId=' + scriptId
+    }).then(r => console.log(r));  // TODO (Chitrank Dave): handle response properly
 }
 
 function toggleFaxButtons(disabled) {
@@ -195,7 +199,7 @@ function showFaxWarning() {
     }
 }
 
-function signatureHandler(result) {
+function signatureHandler(result, contextPath, scriptNo) {
     isSignatureDirty = result.isDirty;
     isSignatureSaved = result.isSave;
     result.target.onbeforeunload = null;
@@ -210,7 +214,7 @@ function signatureHandler(result) {
         //     result.target.onbeforeunload = unloadMess;
         // }
 
-        if (window.setDigitalSignatureToRx && window.contextPath && window.scriptNo) {
+        if (contextPath && scriptNo) {
             try {
                 let signId = new URLSearchParams(result.storedImageUrl.split('?')[1]).get('digitalSignatureId');
                 setDigitalSignatureToRx(contextPath, signId, scriptNo);

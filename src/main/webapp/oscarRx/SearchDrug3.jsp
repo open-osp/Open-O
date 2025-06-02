@@ -1857,15 +1857,18 @@ function updateDeleteOnCloseRxBox(){
                 .then(html => {
                     modalBodyElement.innerHTML = html;
 
-                    setTimeout(function () {
-                        oscarSignaturePad.initializeSignaturePad({
-                            onSignaturePadEvent(eventType, data) {
-                                if (eventType === SignatureEventType.SAVE) {
-                                    signatureHandler(data);
+                    const modalBodySignaturePadElements = modalBodyElement.getElementsByClassName('signatureClass');
+                    if (modalBodySignaturePadElements && modalBodySignaturePadElements.length > 0) { // Initialize the signature pad if the showSignatureBlock is true
+                        setTimeout(function () {
+                            oscarSignaturePad.initializeSignaturePad({
+                                onSignaturePadEvent(eventType, data) {
+                                    if (eventType === SignatureEventType.SAVE) {
+                                        signatureHandler(data, '${ctx}', scriptId);
+                                    }
                                 }
-                            }
-                        });
-                    }, 250);
+                            });
+                        }, 250);
+                    }
                 })
                 .catch(error => {
                     modalBodyElement.innerHTML = '<p>Error loading print preview content.</p>';

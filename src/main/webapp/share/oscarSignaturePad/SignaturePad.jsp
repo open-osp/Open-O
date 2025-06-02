@@ -56,7 +56,7 @@
 
 <body>
 
-<div class="container-sm align-items-center justify-content-center h-75 w-100 p-0">
+<div class="signatureClass container-sm align-items-center justify-content-center h-75 w-100 p-0">
     <div class="p-0">
         <div class="p-0">
             <label id="signMessage" class="d-block">Please sign in the box.</label>
