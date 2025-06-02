@@ -42,6 +42,7 @@
 <%@page import="java.text.SimpleDateFormat"%>
 <%@ page import="org.oscarehr.phr.util.MyOscarUtils,org.oscarehr.myoscar.utils.MyOscarLoggedInInfo,org.oscarehr.util.WebUtils"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="org.owasp.encoder.Encode"%>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
@@ -105,10 +106,13 @@
             EDoc curdoc = EDocUtil.getDoc(documentNo);
 
             String demographicID = curdoc.getModuleId();
+            String mrpProviderName = "";
             if ((demographicID != null) && !demographicID.isEmpty() && !demographicID.equals("-1")){
                 DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
                 Demographic demographic = demographicDao.getDemographic(demographicID);  
 				demoName = demographic.getLastName()+","+demographic.getFirstName();
+                mrpProviderName = demographic.getProviderNo() == null || demographic.getProviderNo().isEmpty() ? "Unknown" : providerDao.getProviderNameLastFirst(demographic.getProviderNo());
+                mrpProviderName = " (MRP: " + Encode.forHtmlContent(mrpProviderName) + ")";
 				LogAction.addLog((String) session.getAttribute("user"), LogConst.READ, LogConst.CON_DOCUMENT, documentNo, request.getRemoteAddr(),demographicID);
             }
             
@@ -146,6 +150,8 @@
             String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
             Integer docCurrentFiledQueue = null;
+
+            request.setAttribute("mrpProviderName", mrpProviderName);
 %>
 
 <c:if test="${param.inWindow eq 'true'}">
@@ -449,7 +455,7 @@
                                             <input id="saved<%=docId%>" type="hidden" name="saved" value="true"/>
                                             <input type="hidden" value="<%=demographicID%>" name="demog" id="demofind<%=docId%>" />
                                             <input type="hidden" name="demofindName" value="<%=demoName%>" id="demofindName<%=docId%>"/> 
-                                            <%=demoName%><%}else{%>
+                                            <%=demoName%><c:out value="${mrpProviderName}" default=" (MRP: Unknown)" /><%}else{%>
                                             <input id="saved<%=docId%>" type="hidden" name="saved" value="false"/>
                                             <input type="hidden" name="demog" value="<%=demographicID%>" id="demofind<%=docId%>"/>   
                                             <input type="hidden" name="demofindName" value="<%=demoName%>" id="demofindName<%=docId%>"/>   
