@@ -144,7 +144,7 @@ class DigitalSignaturePad {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
-            });
+            }); // TODO (Chitrank Dave): show a loading indicator
             
             if (!response.ok) {
                 this._notifySignatureErrorEvent(new Error(`Server responded with status: ${response.status}`));

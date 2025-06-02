@@ -2844,7 +2844,7 @@ function updateLongTerm(rand,repeatEl) {
             @media (min-width: 1200px) {
                 /* xl breakpoint */
                 .custom-modal-size {
-                    max-width: 90vw !important;
+                    max-width: 1080px !important;
                     width: 90vw !important;
                 }
             }
@@ -2852,15 +2852,25 @@ function updateLongTerm(rand,repeatEl) {
             @media (min-width: 1300px) {
                 /* xxl breakpoint */
                 .custom-modal-size {
-                    max-width: 85vw !important;
                     width: 85vw !important;
                 }
             }
             @media (min-width: 1400px) {
                 /* xxl breakpoint */
                 .custom-modal-size {
-                    max-width: 75vw !important;
                     width: 75vw !important;
+                }
+            }
+            @media (min-width: 1500px) {
+                /* xxl+ breakpoint */
+                .custom-modal-size {
+                    width: 70vw !important;
+                }
+            }
+            @media (min-width: 1600px) {
+                /* xxxl breakpoint */
+                .custom-modal-size {
+                    width: 65vw !important;
                 }
             }
             .custom-modal-height {
@@ -2886,13 +2896,6 @@ function updateLongTerm(rand,repeatEl) {
             </div>
         </div>
 
-        <script>
-           /* const rxPrintPreviewModal = document.getElementById('rxPreviewBootstrapModal');
-            const modalBody = document.getElementById('rxPreviewBootstrapModalBody');
-            rxPrintPreviewModal.addEventListener('shown.bs.modal', function () {
-
-            });*/
-        </script>
 
 <script language="javascript" src="../commons/scripts/sort_table/css.js"></script>
 <script language="javascript" src="../commons/scripts/sort_table/common.js"></script>

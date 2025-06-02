@@ -38,7 +38,7 @@
 
 <html>
 <body>
-<div class="container-fluid">
+<div class="container-fluid" style="min-height: 85vh;">
     <div class="row">
         <div class="col-12">
             <div class="row">
@@ -61,7 +61,7 @@
                             <iframe id="preview"
                                     name="preview"
                                     class="h-100 w-100"
-                                    style="max-width: 650px; min-width: 480px; border: none; display: block;"
+                                    style="max-width: 650px; min-width: 480px; min-height: 84vh; border: none; display: block;"
                                     src="${iframeSrc}">
                             </iframe>
                         </c:if>
