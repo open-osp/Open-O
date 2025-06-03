@@ -693,6 +693,56 @@ public class RxUtil {
 			takeMax = amountFrequency;
 		}
 
+
+		String originalTakeMinForStrengthCheck = takeMin;
+		boolean takeMinCorrectedForStrength = false;
+
+		if (!takeMin.equals("0") && !takeMin.isEmpty()) {
+			try {
+				float parsedTakeMinValue = Float.parseFloat(takeMin.trim());
+				if (parsedTakeMinValue > 10.0f) {
+					if (checkIfStrengthVal(takeMin, instructions)) {
+						takeMin = "1";
+						takeMinCorrectedForStrength = true;
+					}
+				}
+			} catch (NumberFormatException e) {
+				logger.error(e.getMessage());
+			}
+		}
+
+		if (takeMinCorrectedForStrength && takeMax.equals(originalTakeMinForStrengthCheck)) {
+			takeMax = "1";
+		} else if (!takeMax.equals("0") && !takeMax.isEmpty() && !takeMax.equals(takeMin)) {
+			try {
+				float parsedTakeMaxValue = Float.parseFloat(takeMax.trim());
+				if (parsedTakeMaxValue > 10.0f) {
+					if (checkIfStrengthVal(takeMax, instructions)) {
+						takeMax = "1";
+						if (originalTakeMinForStrengthCheck.equals("0")) {
+							takeMin = "1";
+						}
+					}
+				}
+			} catch (NumberFormatException e) {
+				logger.error(e.getMessage());
+			}
+		}
+
+
+		if (takeMin.equals("0")) {
+			boolean hasFrequency = !frequency.isEmpty();
+			boolean hasDurationOrExistingQuantity = !duration.equals("0") ||
+					(rx.getQuantity() != null && !rx.getQuantity().trim().isEmpty() && !rx.getQuantity().trim().equals("0") && !rx.getQuantity().trim().equalsIgnoreCase("null"));
+
+			if (hasFrequency && hasDurationOrExistingQuantity) {
+                takeMin = "1";
+				if (takeMax.equals("0")) {
+					takeMax = "1";
+				}
+			}
+		}
+
 		//calculate the number of pills to have per frequency which is used to calculate the duration later on.
 		//from frequency code we can deduce a duration unit.
 		//check if a durationunit is already specified, if not, use that, if yes,check if they are equal,if not output an warning and use specified.
@@ -875,14 +925,14 @@ public class RxUtil {
 		if (!isUnitNameUsed && quantity != 0) {
 			rx.setQuantity(Integer.toString(quantity));
 		}
-		
+
 		rx.setSpecial(instructions);
 
 		if (rx.isCustomNote()) {
 			rx.setQuantity(null);
 			rx.setUnitName(null);
 		}
-		
+
 		rx.setPolicyViolations(policyViolations);
 
 		p("below set special");
@@ -900,6 +950,22 @@ public class RxUtil {
 
 		MiscUtils.getLogger().debug("in parse instruction: " + hm);
 		return;
+	}
+
+	/**
+	 * Checks if the specified strength value is present in the instruction string.
+	 * The method uses a regular expression to determine if the strength value, followed
+	 * by a valid unit (e.g., mg, g, mcg, ml, etc.), exists in the given instructions.
+	 *
+	 * @param val The strength value to check.
+	 * @param instruction The instructions text to search in.
+	 * @return true if the strength value followed by its unit exists in the instructions;
+	 *         false otherwise.
+	 */
+	private static boolean checkIfStrengthVal(String val, String instruction) {
+		Pattern strengthPattern = Pattern.compile(
+				"\\b" + Pattern.quote(val.trim()) + "\\s*(mg|g|mcg|ml|iu|meq|unit)", Pattern.CASE_INSENSITIVE);
+		return strengthPattern.matcher(instruction).find();
 	}
 
 	public static boolean isStringToNumber(String s) {//see if string contains decimal or integer
