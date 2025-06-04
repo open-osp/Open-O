@@ -1109,7 +1109,6 @@
 
 		<action path="/oscarRx/printPreview" parameter="method" scope="request" type="org.oscarehr.rx.RxPrintPreviewAction" validate="true">
 			<forward name="success" path="/oscarRx/printRx/PrintPreview.jsp" />
-<!--			<forward name="success" path="/oscarRx/printRx/PrintPreview_NEW.jsp" />-->
 		</action>
 
 		<action path="/digitalSignature" type="org.oscarehr.digitalSignature.DigitalSignatureAction" scope="request" validate="false" parameter="method" />

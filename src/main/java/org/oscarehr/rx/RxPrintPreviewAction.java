@@ -30,17 +30,23 @@ import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.PMmodule.service.ProviderManager;
 import org.oscarehr.common.dao.OscarAppointmentDao;
 import org.oscarehr.common.dao.SiteDao;
+import org.oscarehr.common.dao.UserPropertyDAO;
 import org.oscarehr.common.model.*;
+import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.managers.FaxManager;
 import org.oscarehr.ui.servlet.ImageRenderingServlet;
 import org.oscarehr.util.DigitalSignatureUtils;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
+import org.oscarehr.web.PrescriptionQrCodeUIBean;
 import org.owasp.encoder.Encode;
 import oscar.OscarProperties;
 import oscar.oscarProvider.data.ProSignatureData;
+import oscar.oscarRx.data.RxPatientData;
 import oscar.oscarRx.data.RxPharmacyData;
+import oscar.oscarRx.data.RxPrescriptionData;
 import oscar.oscarRx.pageUtil.RxSessionBean;
+import oscar.oscarRx.util.RxUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -94,7 +100,249 @@ public class RxPrintPreviewAction extends DispatchAction {
 
         setupAdditionalAttributes(request, loggedInInfo, pharmacy);
 
+        // Setup additional data from PreviewContent.jsp
+        Date rxDate = setupRxDate(sessionBean, request);
+        request.setAttribute("rxDate", rxDate);
+
+        setupPatientInfo(loggedInInfo, sessionBean, request);
+
+        setupDoctorInfo(sessionBean, request);
+
+        setupFirstNationsInfo(loggedInInfo, sessionBean, request);
+
+        setupPatientDOBDisplay(sessionBean, request);
+
+        setupPrescriptionData(sessionBean, request);
+
+        setupClinicTitle(request);
+
+        setupEnhancedRxInfo(request, sessionBean);
+
+        setupQrCodeEnabled(request);
+
+        setupFormsPromoText(request);
+
         return new ActionForward(mapping.findForward("success"));
+    }
+
+    /**
+     * Sets up the prescription date
+     *
+     * @param sessionBean The RxSessionBean
+     * @param request     The HTTP request
+     * @return The prescription date
+     */
+    private Date setupRxDate(RxSessionBean sessionBean, HttpServletRequest request) {
+        Date rxDate = RxUtil.Today();
+        String rePrint = (String) request.getSession().getAttribute("rePrint");
+
+        if (rePrint != null && rePrint.equalsIgnoreCase("true")) {
+            rxDate = sessionBean.getStashItem(0).getRxDate();
+        } else {
+            // Set Date to latest in stash
+            Date tmp;
+            for (int idx = 0; idx < sessionBean.getStashSize(); ++idx) {
+                tmp = sessionBean.getStashItem(idx).getRxDate();
+                if (tmp.after(rxDate)) {
+                    rxDate = tmp;
+                }
+            }
+        }
+
+        request.setAttribute("rxDateFormatted", RxUtil.DateToString(rxDate, "MMMM d, yyyy", request.getLocale()));
+        return rxDate;
+    }
+
+    /**
+     * Sets up patient information
+     *
+     * @param loggedInInfo The LoggedInInfo object
+     * @param sessionBean  The RxSessionBean
+     * @param request      The HTTP request
+     */
+    private void setupPatientInfo(LoggedInInfo loggedInInfo, RxSessionBean sessionBean, HttpServletRequest request) {
+        RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, sessionBean.getDemographicNo());
+        String patientAddress = patient.getAddress() == null ? "" : patient.getAddress();
+        String patientCity = patient.getCity() == null ? "" : patient.getCity();
+        String patientProvince = patient.getProvince() == null ? "" : patient.getProvince();
+        String patientPostal = patient.getPostal() == null ? "" : patient.getPostal();
+        String patientPhone = patient.getPhone() == null ? "" : patient.getPhone();
+        String patientHin = patient.getHin() == null ? "" : patient.getHin();
+
+        // Format patient city and postal code
+        int check = (patientCity.trim().length() > 0 ? 1 : 0) | (patientProvince.trim().length() > 0 ? 2 : 0);
+        String patientCityPostal = String.format("%s%s%s %s", patientCity, check == 3 ? ", " : check == 2 ? "" : " ", patientProvince, patientPostal);
+
+        // Get patient chart number if enabled
+        String ptChartNo = "";
+        if (OscarProperties.getInstance().getProperty("showRxChartNo", "").equalsIgnoreCase("true")) {
+            ptChartNo = patient.getChartNo() == null ? "" : patient.getChartNo();
+        }
+
+        request.setAttribute("patient", patient);
+        request.setAttribute("patientAddress", patientAddress);
+        request.setAttribute("patientCity", patientCity);
+        request.setAttribute("patientProvince", patientProvince);
+        request.setAttribute("patientPostal", patientPostal);
+        request.setAttribute("patientCityPostal", patientCityPostal);
+        request.setAttribute("patientPhone", patientPhone);
+        request.setAttribute("patientHin", patientHin);
+        request.setAttribute("patientChartNo", ptChartNo);
+    }
+
+    /**
+     * Sets up doctor information
+     *
+     * @param sessionBean The RxSessionBean
+     * @param request     The HTTP request
+     */
+    private void setupDoctorInfo(RxSessionBean sessionBean, HttpServletRequest request) {
+        String signingProvider = sessionBean.getProviderNo();
+        String rePrint = (String) request.getSession().getAttribute("rePrint");
+
+        if (rePrint != null && rePrint.equalsIgnoreCase("true")) {
+            signingProvider = sessionBean.getStashItem(0).getProviderNo();
+        }
+
+        oscar.oscarRx.data.RxProviderData.Provider provider = new oscar.oscarRx.data.RxProviderData().getProvider(signingProvider);
+
+        ProSignatureData sig = new ProSignatureData();
+        boolean hasSig = sig.hasSignature(signingProvider);
+        String doctorName = "";
+        if (hasSig) {
+            doctorName = sig.getSignature(signingProvider);
+        } else {
+            doctorName = (provider.getFirstName() + ' ' + provider.getSurname());
+        }
+
+        String pracNo = provider.getPractitionerNo();
+
+        request.setAttribute("signingProvider", signingProvider);
+        request.setAttribute("provider", provider);
+        request.setAttribute("doctorName", doctorName);
+        request.setAttribute("pracNo", pracNo);
+    }
+
+    /**
+     * Sets up First Nations module information
+     *
+     * @param loggedInInfo The LoggedInInfo object
+     * @param sessionBean  The RxSessionBean
+     * @param request      The HTTP request
+     */
+    private void setupFirstNationsInfo(LoggedInInfo loggedInInfo, RxSessionBean sessionBean, HttpServletRequest request) {
+        if ("true".equalsIgnoreCase(OscarProperties.getInstance().getProperty("FIRST_NATIONS_MODULE"))) {
+            DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+
+            // Addition of First Nations Band Number to prescriptions
+            DemographicExt demographicExtStatusNum = demographicManager.getDemographicExt(loggedInInfo, sessionBean.getDemographicNo(), "statusNum");
+            DemographicExt demographicExtBandName = null;
+            DemographicExt demographicExtBandFamily = null;
+            DemographicExt demographicExtBandFamilyPosition = null;
+            String bandNumber = "";
+            String bandName = "";
+            String bandFamily = "";
+            String bandFamilyPosition = "";
+
+            if (demographicExtStatusNum != null) {
+                bandNumber = demographicExtStatusNum.getValue();
+            }
+
+            if (bandNumber == null) {
+                bandNumber = "";
+            }
+
+            // if band number is empty try the alternate composite.
+            if (bandNumber.isEmpty()) {
+                demographicExtBandName = demographicManager.getDemographicExt(loggedInInfo, sessionBean.getDemographicNo(), "fNationCom");
+                demographicExtBandFamily = demographicManager.getDemographicExt(loggedInInfo, sessionBean.getDemographicNo(), "fNationFamilyNumber");
+                demographicExtBandFamilyPosition = demographicManager.getDemographicExt(loggedInInfo, sessionBean.getDemographicNo(), "fNationFamilyPosition");
+
+                if (demographicExtBandName != null) {
+                    bandName = demographicExtBandName.getValue();
+                }
+
+                if (demographicExtBandFamily != null) {
+                    bandFamily = demographicExtBandFamily.getValue();
+                }
+
+                if (demographicExtBandFamilyPosition != null) {
+                    bandFamilyPosition = demographicExtBandFamilyPosition.getValue();
+                }
+
+                if (bandName == null) {
+                    bandName = "";
+                }
+
+                if (bandFamily == null) {
+                    bandFamily = "";
+                }
+
+                if (bandFamilyPosition == null) {
+                    bandFamilyPosition = "";
+                }
+
+                StringBuilder bandNumberString = new StringBuilder();
+
+                if (!bandName.isEmpty()) {
+                    bandNumberString.append(bandName);
+                }
+
+                if (!bandFamily.isEmpty()) {
+                    bandNumberString.append("-" + bandFamily);
+                }
+
+                if (!bandFamilyPosition.isEmpty()) {
+                    bandNumberString.append("-" + bandFamilyPosition);
+                }
+
+                bandNumber = bandNumberString.toString();
+            }
+
+            request.setAttribute("bandNumber", bandNumber);
+        }
+    }
+
+    /**
+     * Sets up patient DOB display preferences
+     *
+     * @param sessionBean The RxSessionBean
+     * @param request     The HTTP request
+     */
+    private void setupPatientDOBDisplay(RxSessionBean sessionBean, HttpServletRequest request) {
+        RxPatientData.Patient patient = (RxPatientData.Patient) request.getAttribute("patient");
+        String patientDOBStr = RxUtil.DateToString(patient.getDOB(), "MMM d, yyyy");
+        boolean showPatientDOB = false;
+
+        // Check if user prefers to show DOB in print
+        UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
+        UserProperty prop = userPropertyDAO.getProp(sessionBean.getProviderNo(), UserProperty.RX_SHOW_PATIENT_DOB);
+        if (prop != null && prop.getValue().equalsIgnoreCase("yes")) {
+            showPatientDOB = true;
+        }
+
+        request.setAttribute("patientDOBStr", patientDOBStr);
+        request.setAttribute("showPatientDOB", showPatientDOB);
+    }
+
+    /**
+     * Sets up prescription data
+     *
+     * @param sessionBean The RxSessionBean
+     * @param request     The HTTP request
+     */
+    private void setupPrescriptionData(RxSessionBean sessionBean, HttpServletRequest request) {
+        String strRx = "";
+        StringBuffer strRxNoNewLines = new StringBuffer();
+
+        for (int i = 0; i < sessionBean.getStashSize(); i++) {
+            RxPrescriptionData.Prescription rx = sessionBean.getStashItem(i);
+            strRx += rx.getFullOutLine() + ";;";
+            strRxNoNewLines.append(rx.getFullOutLine().replaceAll(";", " ") + "\n");
+        }
+
+        request.setAttribute("strRx", strRx.replaceAll(";", "\\\n"));
+        request.setAttribute("strRxNoNewLines", strRxNoNewLines.toString());
     }
 
     /**
@@ -146,9 +394,7 @@ public class RxPrintPreviewAction extends DispatchAction {
      * @param addressName List to store address names
      * @param address     List to store formatted addresses
      */
-    private void setupClinicAddresses(HttpServletRequest request, HttpSession session,
-                                     oscar.oscarRx.pageUtil.RxSessionBean sessionBean,
-                                     List<String> addressName, List<String> address) {
+    private void setupClinicAddresses(HttpServletRequest request, HttpSession session, oscar.oscarRx.pageUtil.RxSessionBean sessionBean, List<String> addressName, List<String> address) {
         OscarProperties props = OscarProperties.getInstance();
 
         if (isMultiSitesEnabled) {
@@ -181,8 +427,7 @@ public class RxPrintPreviewAction extends DispatchAction {
      * @param addressName List to store address names
      * @param address     List to store formatted addresses
      */
-    private void setupMultiSiteAddresses(HttpSession session, oscar.oscarRx.pageUtil.RxSessionBean sessionBean,
-                                        List<String> addressName, List<String> address) {
+    private void setupMultiSiteAddresses(HttpSession session, oscar.oscarRx.pageUtil.RxSessionBean sessionBean, List<String> addressName, List<String> address) {
         String appt_no = (String) session.getAttribute("cur_appointment_no");
         String location = null;
         if (appt_no != null) {
@@ -198,10 +443,7 @@ public class RxPrintPreviewAction extends DispatchAction {
         for (int i = 0; i < sites.size(); i++) {
             Site s = sites.get(i);
             addressName.add(s.getName());
-            address.add("<b>" + doctorName + "</b><br>" + s.getName() + "<br>" + s.getAddress() + "<br>" +
-                       s.getCity() + ", " + s.getProvince() + " " + s.getPostal() + "<br>" +
-                       rb.getString("RxPreview.msgTel") + ": " + s.getPhone() + "<br>" +
-                       rb.getString("RxPreview.msgFax") + ": " + s.getFax());
+            address.add("<b>" + doctorName + "</b><br>" + s.getName() + "<br>" + s.getAddress() + "<br>" + s.getCity() + ", " + s.getProvince() + " " + s.getPostal() + "<br>" + rb.getString("RxPreview.msgTel") + ": " + s.getPhone() + "<br>" + rb.getString("RxPreview.msgFax") + ": " + s.getFax());
             if (s.getName().equals(location)) session.setAttribute("RX_ADDR", String.valueOf(i));
         }
     }
@@ -215,8 +457,7 @@ public class RxPrintPreviewAction extends DispatchAction {
      * @param address     List to store formatted addresses
      * @param request     The HTTP request
      */
-    private void setupSatelliteAddresses(oscar.oscarRx.pageUtil.RxSessionBean sessionBean, OscarProperties props,
-                                        List<String> addressName, List<String> address, HttpServletRequest request) {
+    private void setupSatelliteAddresses(oscar.oscarRx.pageUtil.RxSessionBean sessionBean, OscarProperties props, List<String> addressName, List<String> address, HttpServletRequest request) {
         String doctorName = getDoctorName(sessionBean);
 
         String[] temp0 = props.getProperty("clinicSatelliteName", "").split("\\|");
@@ -230,10 +471,7 @@ public class RxPrintPreviewAction extends DispatchAction {
 
         for (int i = 0; i < temp0.length; i++) {
             addressName.add(temp0[i]);
-            address.add("<b>" + Encode.forHtml(doctorName) + "</b><br>" + Encode.forHtml(temp0[i]) + "<br>" +
-                       Encode.forHtml(temp1[i]) + "<br>" + temp2[i] + ", " + temp3[i] + " " + temp4[i] + "<br>" +
-                       rb.getString("RxPreview.msgTel") + ": " + temp5[i] + "<br>" +
-                       rb.getString("RxPreview.msgFax") + ": " + temp6[i]);
+            address.add("<b>" + Encode.forHtml(doctorName) + "</b><br>" + Encode.forHtml(temp0[i]) + "<br>" + Encode.forHtml(temp1[i]) + "<br>" + temp2[i] + ", " + temp3[i] + " " + temp4[i] + "<br>" + rb.getString("RxPreview.msgTel") + ": " + temp5[i] + "<br>" + rb.getString("RxPreview.msgFax") + ": " + temp6[i]);
         }
     }
 
@@ -264,8 +502,7 @@ public class RxPrintPreviewAction extends DispatchAction {
      * @param request The HTTP request
      */
     private void setupComment(HttpServletRequest request) {
-        String comment = request.getSession().getAttribute("comment") != null ?
-                        request.getSession().getAttribute("comment").toString() : "";
+        String comment = request.getSession().getAttribute("comment") != null ? request.getSession().getAttribute("comment").toString() : "";
         request.getSession().removeAttribute("comment");
         request.setAttribute("comment", comment);
     }
@@ -322,35 +559,41 @@ public class RxPrintPreviewAction extends DispatchAction {
             addressJoiner.add("Note: " + pharmacy.getNotes());
         }
 
-        request.setAttribute("pharmacyAddress", Encode.forHtml(addressJoiner.toString()));
+        request.setAttribute("pharmacyAddress", addressJoiner.toString());
     }
 
     /**
      * Sets up digital signature
      *
-     * @param request     The HTTP request
+     * @param request      The HTTP request
      * @param loggedInInfo The LoggedInInfo object
      */
     private void setupDigitalSignature(HttpServletRequest request, LoggedInInfo loggedInInfo) {
         String signatureRequestId = DigitalSignatureUtils.generateSignatureRequestId(loggedInInfo.getLoggedInProviderNo());
-        String imageUrl = request.getContextPath() + "/imageRenderingServlet?source=" +
-                         ImageRenderingServlet.Source.signature_preview.name() + "&" +
-                         DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY + "=" + signatureRequestId;
+        String imageUrl = request.getContextPath() + "/imageRenderingServlet?source=" + ImageRenderingServlet.Source.signature_preview.name() + "&" + DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY + "=" + signatureRequestId;
 
         request.setAttribute("signatureRequestId", signatureRequestId);
         request.setAttribute("imageUrl", imageUrl);
-        request.setAttribute("tempPath", System.getProperty("java.io.tmpdir")
-                .replaceAll("\\\\", "/")
-                + "/signature_"
-                + signatureRequestId
-                + ".jpg"
-        );
+        request.setAttribute("tempPath", System.getProperty("java.io.tmpdir").replaceAll("\\\\", "/") + "/signature_" + signatureRequestId + ".jpg");
+
+        // Set start image URL for digital signature
+        String startimageUrl = request.getContextPath() + "/images/1x1.gif";
+
+        // Check if there's a digital signature ID in the stash
+        HttpSession session = request.getSession();
+        RxSessionBean xbean = (RxSessionBean) session.getAttribute("tmpBeanRX");
+        if (xbean != null && xbean.getStashSize() > 0 && Objects.nonNull(xbean.getStashItem(0).getDigitalSignatureId())) {
+            startimageUrl = request.getContextPath() + "/imageRenderingServlet?source=" + ImageRenderingServlet.Source.signature_stored.name() + "&digitalSignatureId=" + xbean.getStashItem(0).getDigitalSignatureId();
+        }
+
+        request.setAttribute("startimageUrl", startimageUrl);
+        request.setAttribute("tmpBeanRX", xbean);
     }
 
     /**
      * Sets up fax configurations
      *
-     * @param request     The HTTP request
+     * @param request      The HTTP request
      * @param loggedInInfo The LoggedInInfo object
      */
     private void setupFaxConfigs(HttpServletRequest request, LoggedInInfo loggedInInfo) {
@@ -380,8 +623,7 @@ public class RxPrintPreviewAction extends DispatchAction {
         boolean isRxFaxEnabled = OscarProperties.getInstance().isRxFaxEnabled();
         request.setAttribute("showRxFaxBlock", isRxFaxEnabled);
 
-        boolean isFaxButtonsDisabled  = ((sessionBean.getStashSize() == 0
-                || Objects.isNull(sessionBean.getStashItem(0).getDigitalSignatureId())) ? "disabled" : "").isEmpty();
+        boolean isFaxButtonsDisabled = ((sessionBean.getStashSize() == 0 || Objects.isNull(sessionBean.getStashItem(0).getDigitalSignatureId())) ? "disabled" : "").isEmpty();
         request.setAttribute("isFaxDisabled", isFaxButtonsDisabled);
 
         boolean rxEnabled = OscarProperties.getInstance().isRxSignatureEnabled();
@@ -394,9 +636,9 @@ public class RxPrintPreviewAction extends DispatchAction {
     /**
      * Sets up additional attributes
      *
-     * @param request     The HTTP request
+     * @param request      The HTTP request
      * @param loggedInInfo The LoggedInInfo object
-     * @param pharmacy    The PharmacyInfo object
+     * @param pharmacy     The PharmacyInfo object
      */
     private void setupAdditionalAttributes(HttpServletRequest request, LoggedInInfo loggedInInfo, PharmacyInfo pharmacy) {
         request.setAttribute("prescribedBy", Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName()));
@@ -427,6 +669,91 @@ public class RxPrintPreviewAction extends DispatchAction {
             }
         }
         return "";
+    }
+
+    /**
+     * Sets up clinic title for display
+     *
+     * @param request The HTTP request
+     */
+    private void setupClinicTitle(HttpServletRequest request) {
+        oscar.oscarRx.data.RxProviderData.Provider provider = (oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider");
+        String clinicTitle = provider.getClinicName().replaceAll("\\(\\d{6}\\)", "") + "<br>";
+        clinicTitle += provider.getClinicAddress() + "<br>";
+        clinicTitle += provider.getClinicCity() + "   " + provider.getClinicPostal();
+
+        request.setAttribute("clinicTitle", clinicTitle);
+
+        // Set clinic phone for use in JSP
+        String finalPhone = provider.getClinicPhone();
+        request.setAttribute("phone", finalPhone);
+
+        // Handle infirmary view program phone
+        HttpSession session = request.getSession();
+        if (session.getAttribute("infirmaryView_programTel") != null) {
+            String infirmaryPhone = (String) session.getAttribute("infirmaryView_programTel");
+            request.setAttribute("infirmaryPhone", infirmaryPhone);
+        }
+    }
+
+    /**
+     * Sets up enhanced RX information if enabled
+     *
+     * @param request     The HTTP request
+     * @param sessionBean The RxSessionBean
+     */
+    private void setupEnhancedRxInfo(HttpServletRequest request, RxSessionBean sessionBean) {
+        String rx_enhance = OscarProperties.getInstance().getProperty("rx_enhance");
+
+        if (rx_enhance != null && rx_enhance.equals("true")) {
+            RxPatientData.Patient patient = (RxPatientData.Patient) request.getAttribute("patient");
+            oscar.oscarRx.data.RxProviderData.Provider provider = (oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider");
+
+            // Format patient DOB
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+            String patientDOB = patient.getDOB() == null ? "" : formatter.format(patient.getDOB());
+
+            // Format doctor info
+            String docInfo = request.getAttribute("doctorName") + "\n" + provider.getClinicName().replaceAll("\\(\\d{6}\\)", "") + "RxPreview.PractNo" + request.getAttribute("pracNo") + "\n" + provider.getClinicAddress() + "\n" + provider.getClinicCity() + "   " + provider.getClinicPostal() + "\n" + "RxPreview.msgTel" + ": " + provider.getClinicPhone() + "\n" + "RxPreview.msgFax" + ": " + provider.getClinicFax();
+
+            // Format patient info
+            String patientInfo = patient.getFirstName() + " " + patient.getSurname() + "\n" + request.getAttribute("patientAddress") + "\n" + request.getAttribute("patientCity") + "   " + request.getAttribute("patientPostal") + "\n" + "RxPreview.msgTel" + ": " + request.getAttribute("patientPhone") + (patientDOB != null && !patientDOB.trim().equals("") ? "\n" + "RxPreview.msgDOB" + ": " + patientDOB : "") + (!((String) request.getAttribute("patientHin")).trim().equals("") ? "\n" + "oscar.oscarRx.hin" + ": " + request.getAttribute("patientHin") : "");
+
+            request.setAttribute("enhancedDocInfo", docInfo);
+            request.setAttribute("enhancedPatientInfo", patientInfo);
+            request.setAttribute("patientDOBFormatted", patientDOB);
+        }
+
+        request.setAttribute("rx_enhance", rx_enhance);
+    }
+
+    /**
+     * Sets up QR code enabled flag
+     *
+     * @param request The HTTP request
+     */
+    private void setupQrCodeEnabled(HttpServletRequest request) {
+        String signingProvider = (String) request.getAttribute("signingProvider");
+        boolean qrCodeEnabled = PrescriptionQrCodeUIBean.isPrescriptionQrCodeEnabledForProvider(signingProvider);
+        request.setAttribute("qrCodeEnabled", qrCodeEnabled);
+    }
+
+    /**
+     * Sets up forms promo text if available
+     *
+     * @param request The HTTP request
+     */
+    private void setupFormsPromoText(HttpServletRequest request) {
+        String formsPromoText = OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT");
+        if (formsPromoText != null && formsPromoText.length() > 0) {
+            request.setAttribute("formsPromoText", formsPromoText);
+        }
+
+        // Set RX_FOOTER if available
+        String rxFooter = OscarProperties.getInstance().getProperty("RX_FOOTER");
+        if (rxFooter != null) {
+            request.setAttribute("rxFooter", rxFooter);
+        }
     }
 
 }
