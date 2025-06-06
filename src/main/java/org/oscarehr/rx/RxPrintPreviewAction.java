@@ -332,17 +332,24 @@ public class RxPrintPreviewAction extends DispatchAction {
      * @param request     The HTTP request
      */
     private void setupPrescriptionData(RxSessionBean sessionBean, HttpServletRequest request) {
-        String strRx = "";
-        StringBuffer strRxNoNewLines = new StringBuffer();
+        StringJoiner strRx = new StringJoiner(";;");
+        StringJoiner strRxNoNewLines = new StringJoiner("<br>");
+
+        String[] rxFullOutLines = new String[sessionBean.getStashSize()];
 
         for (int i = 0; i < sessionBean.getStashSize(); i++) {
             RxPrescriptionData.Prescription rx = sessionBean.getStashItem(i);
-            strRx += rx.getFullOutLine() + ";;";
-            strRxNoNewLines.append(rx.getFullOutLine().replaceAll(";", " ") + "\n");
+            String fullOutLine = rx.getFullOutLine();
+            strRx.add(fullOutLine);
+            strRxNoNewLines.add(fullOutLine.replaceAll(";", " ")
+                        .replaceAll("\\\\n", "<br>"));
+            rxFullOutLines[i] = fullOutLine.replaceAll(";", "<br>")
+                    .replaceAll("\\\\n", "<br>");
         }
 
-        request.setAttribute("strRx", strRx.replaceAll(";", "\\\n"));
+        request.setAttribute("strRx", strRx.toString().replaceAll("\\\\n", "<br>"));
         request.setAttribute("strRxNoNewLines", strRxNoNewLines.toString());
+        request.setAttribute("rxFullOutLines", rxFullOutLines);
     }
 
     /**

@@ -35,21 +35,6 @@
 <%@ page import="oscar.oscarRx.data.RxPatientData" %>
 <%@ page import="oscar.oscarProvider.data.ProviderData" %>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%
-    String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
-    boolean authed = true;
-%>
-<security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
-    <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_rx");%>
-</security:oscarSec>
-<%
-    if (!authed) {
-        return;
-    }
-%>
-
 <!DOCTYPE html>
 <html:html lang="en">
     <head>
@@ -307,8 +292,7 @@
                         </tfoot>
                         <tbody>
                         <c:forEach var="i" begin="0" end="${sessionScope.tmpBeanRX.stashSize - 1}">
-                            <c:set var="rx" value="${sessionScope.tmpBeanRX.getStashItem(i)}"/>
-                            <c:set var="fullOutLine" value="${rx.fullOutLine.replaceAll(';','<br />')}"/>
+                            <c:set var="fullOutLine" value="${requestScope.rxFullOutLines[i]}"/>
 
                             <c:if test="${empty fullOutLine || fullOutLine.length() <= 6}">
                                 <c:set var="fullOutLine"
@@ -316,6 +300,7 @@
                             </c:if>
 
                             <tr style="page-break-inside: avoid;">
+                                <% System.out.println("break-point: " + pageContext.getAttribute("fullOutLine")); %>
                                 <td colspan=2 style>${fullOutLine}</td>
                             </tr>
                         </c:forEach>

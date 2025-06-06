@@ -164,10 +164,10 @@ function  ShowDrugInfo(drug) {
 }
 
 function refreshImage(imgURL, signatureImg) {
-    if (frames["preview"].document.getElementById("signature") != null) {
-        frames["preview"].document.getElementById("signature").src = imgURL;
+    if (document.getElementById("signature") != null) {
+        document.getElementById("signature").src = imgURL;
     }
-    frames['preview'].document.getElementById('imgFile').value = signatureImg;
+    document.getElementById('imgFile').value = signatureImg;
 }
 
 function unloadMess() {
@@ -256,8 +256,8 @@ function sendFax(scriptId, signatureRequestId, useSC, scAddress) {
         window.onbeforeunload = null;
     }
     let faxNumber = document.getElementById('faxNumber');
-    frames['preview'].document.getElementById('finalFax').value = faxNumber.options[faxNumber.selectedIndex].value;
-    frames['preview'].document.getElementById('pdfId').value = signatureRequestId;
+    document.getElementById('finalFax').value = faxNumber.options[faxNumber.selectedIndex].value;
+    document.getElementById('pdfId').value = signatureRequestId;
 
     onPrint2('oscarRxFax', scriptId, useSC, scAddress);
 }
