@@ -42,6 +42,7 @@ import org.oscarehr.common.dao.IndivoDocsDao;
 import org.oscarehr.common.dao.PrescriptionDao;
 import org.oscarehr.common.model.Drug;
 import org.oscarehr.common.model.IndivoDocs;
+import org.oscarehr.common.model.Prescription;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -50,6 +51,8 @@ import oscar.oscarProvider.data.ProSignatureData;
 import oscar.oscarRx.util.RxUtil;
 import oscar.util.ConversionUtils;
 import oscar.util.DateUtils;
+
+import javax.persistence.TypedQuery;
 
 public class RxPrescriptionData {
 
@@ -374,13 +377,23 @@ public class RxPrescriptionData {
 		return prescription;
 	}
 
+	/**
+	 * This function returns a list of prescriptions for a given script number and demographic number.
+	 * It retrieves the drug information and prescription details, then converts them into Prescription objects.
+	 *
+	 * @param script_no The script number to filter prescriptions by.
+	 * @param demographicNo The demographic number to filter prescriptions by.
+	 * @return A list of Prescription objects corresponding to the specified script number and demographic number.
+	 */
 	public List<Prescription> getPrescriptionsByScriptNo(int script_no, int demographicNo) {
-		List<Prescription> lst = new ArrayList<Prescription>();
-		DrugDao dao = SpringUtils.getBean(DrugDao.class);
-		for (Object[] pair : dao.findDrugsAndPrescriptionsByScriptNumber(script_no)) {
-			Drug drug = (Drug) pair[0];
-			org.oscarehr.common.model.Prescription rx = (org.oscarehr.common.model.Prescription) pair[1];
+		List<Prescription> lst = new ArrayList<>();
+		DrugDao drugDao = SpringUtils.getBean(DrugDao.class);
+		PrescriptionDao rxDao = SpringUtils.getBean(PrescriptionDao.class);
 
+		org.oscarehr.common.model.Prescription rx = rxDao.find(script_no);
+		List<Drug> drugQuery = drugDao.findBy(script_no, demographicNo);
+
+		for (Drug drug : drugQuery) {
 			lst.add(toPrescription(demographicNo, drug, rx));
 		}
 		return lst;
