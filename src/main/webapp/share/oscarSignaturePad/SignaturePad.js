@@ -225,6 +225,7 @@ class DigitalSignaturePad {
         const resizeCanvas = () => {
             if (!this._canvas || !this._signaturePad) return;
 
+            // Get the device pixel ratio
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
             this._canvas.width = this._canvas.offsetWidth * ratio;
             this._canvas.height = this._canvas.offsetHeight * ratio;

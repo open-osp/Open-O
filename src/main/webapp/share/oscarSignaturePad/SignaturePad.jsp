@@ -49,31 +49,47 @@
     #signatureCanvas {
         -webkit-user-select: none;
         cursor: pointer;
-        width: -webkit-fill-available;
-        width: -moz-available;
+        width: 100%;
+        height: 100%;
+    }
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .signature-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .canvas-wrapper {
+        flex: 1;
+        min-height: 0;
+        position: relative;
     }
 </style>
 
 <body>
 
-<div class="signatureClass container-sm align-items-center justify-content-center h-75 w-100 p-0">
-    <div class="p-0">
-        <div class="p-0">
-            <label id="signMessage" class="d-block">Please sign in the box.</label>
-            <canvas id='signatureCanvas' class="border rounded shadow-sm">
-            </canvas>
-            <div class="mt-md-2 mt-xl-1">
-                <button id="clear" class="btn btn-outline-secondary me-2" disabled>Clear</button>
-                <button id="save" class="btn btn-outline-primary" disabled
-                        onclick="saveSignature(
-                                '<%=request.getContextPath() %>',
-                                '<%= requestIdKey %>',
-                                '<%= imageUrl %>',
-                                '<%= storedImageUrl %>',
-                                );">Save
-                </button>
-            </div>
-        </div>
+<div class="signatureClass container-sm signature-container w-100 p-0">
+    <label id="signMessage" class="d-block">Please sign in the box.</label>
+    <div class="canvas-wrapper py-1">
+        <canvas id='signatureCanvas' class="border rounded shadow-sm">
+        </canvas>
+    </div>
+    <div class="mt-md-2 mt-xl-1">
+        <button id="clear" class="btn btn-outline-secondary me-2" disabled>Clear</button>
+        <button id="save" class="btn btn-outline-primary" disabled
+                onclick="saveSignature(
+                        '<%=request.getContextPath() %>',
+                        '<%= requestIdKey %>',
+                        '<%= imageUrl %>',
+                        '<%= storedImageUrl %>',
+                        );">Save
+        </button>
     </div>
 </div>
 

@@ -300,7 +300,6 @@
                             </c:if>
 
                             <tr style="page-break-inside: avoid;">
-                                <% System.out.println("break-point: " + pageContext.getAttribute("fullOutLine")); %>
                                 <td colspan=2 style>${fullOutLine}</td>
                             </tr>
                         </c:forEach>

@@ -630,8 +630,10 @@ public class RxPrintPreviewAction extends DispatchAction {
         boolean isRxFaxEnabled = OscarProperties.getInstance().isRxFaxEnabled();
         request.setAttribute("showRxFaxBlock", isRxFaxEnabled);
 
-        boolean isFaxButtonsDisabled = ((sessionBean.getStashSize() == 0 || Objects.isNull(sessionBean.getStashItem(0).getDigitalSignatureId())) ? "disabled" : "").isEmpty();
-        request.setAttribute("isFaxDisabled", isFaxButtonsDisabled);
+        if (isRxFaxEnabled) {
+            boolean isFaxButtonsDisabled = sessionBean.getStashSize() == 0 || Objects.isNull(sessionBean.getStashItem(0).getDigitalSignatureId());
+            request.setAttribute("isFaxDisabled", isFaxButtonsDisabled);
+        }
 
         boolean rxEnabled = OscarProperties.getInstance().isRxSignatureEnabled();
         boolean disableTablet = !OscarProperties.getInstance().getBooleanProperty("signature_tablet", "yes");
