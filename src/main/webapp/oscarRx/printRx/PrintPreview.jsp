@@ -140,6 +140,12 @@
                             <h5 class="mb-0"><bean:message key="ViewScript.msgActions"/></h5>
                         </div>
                         <div class="card-body">
+
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="showAddressSwitch" checked onchange="togglePharmaInfoVisibility(this.checked)">
+                                <label class="form-check-label" for="showAddressSwitch">Print Pharmacy Address</label>
+                            </div>
+
                             <div class="form-group mb-3">
                                 <label for="printPageSize" class="form-label">Page size:</label>
                                 <select name="printPageSize" id="printPageSize" class="form-select">

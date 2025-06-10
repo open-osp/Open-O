@@ -208,12 +208,12 @@ function openEncounter(providerNo, demographicNo, curProviderNo, userName) {
 
     return window.open(url, "encounter", windowProps);
 }
-function reducePreview() {
-    parent.document.getElementById('lightwindow_container').style.width = "1000px";
-    parent.document.getElementById('lightwindow_contents').style.width = "980px";
-    document.getElementById('preview').style.width = "460px";
-    frames['preview'].document.getElementById('pharmInfo').innerHTML = "";
-    $("selectedPharmacy").innerHTML = "";
+
+function togglePharmaInfoVisibility(show) {
+    const pharmaInfoDiv = document.getElementById("pharmInfo");
+    if (pharmaInfoDiv) {
+        pharmaInfoDiv.style.visibility = show ? "visible" : "hidden";
+    }
 }
 
 function toggleView(form) {
