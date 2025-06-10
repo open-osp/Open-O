@@ -39,11 +39,6 @@
 <html:html lang="en">
     <head>
         <title><bean:message key="RxPreview.title"/></title>
-        <style media="print">
-            .noprint {
-                display: none;
-            }
-        </style>
         <style media="all">
             * {
                 font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
@@ -57,6 +52,24 @@
                 border-bottom: 2px solid;
                 text-align: left;
             }
+
+            @media print {
+                body * {
+                    visibility: hidden;
+                }
+
+                #printableContent, #printableContent * {
+                    visibility: visible;
+                }
+
+                #printableContent {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                }
+            }
+
         </style>
         <html:base/>
 
@@ -71,14 +84,15 @@
             </logic:equal>
         </logic:present>
     </head>
-    <body topmargin="0" leftmargin="0" vlink="#0000FF">
+
+    <div topmargin="0" leftmargin="0" vlink="#0000FF" id="printableContent">
 
     <html:form action="/form/formname" styleId="preview2Form">
         <input type="hidden" name="demographic_no" value="${sessionScope.RxSessionBean.demographicNo}"/>
         <table>
             <tr>
                 <td>
-                    <table id="pwTable" width="400px" height="500px" cellspacing=0 cellpadding=10 border=2 rules="none">
+                    <table id="pwTable" width="400px" height="500px" cellspacing=0 cellpadding=10 border=2 rules="none" style="margin: 2px;">
                         <thead>
                         <tr>
                             <th valign=top width="100px">
@@ -321,5 +335,5 @@
             </tr>
         </table>
     </html:form>
-    </body>
+    </div>
 </html:html>

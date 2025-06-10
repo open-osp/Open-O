@@ -92,8 +92,7 @@ function printIframe() {
             window.onbeforeunload = null;
         }
 
-        preview.focus();
-        preview.print();
+        printDivContent('printableContent');
 
         self.onfocus = function () {
             self.setTimeout(function () {
@@ -102,6 +101,72 @@ function printIframe() {
         };
         self.focus();
     }
+}
+
+function printDivContent(divId) {
+    const content = document.getElementById(divId).innerHTML;
+
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'fixed';
+    printFrame.style.right = '0';
+    printFrame.style.bottom = '0';
+    printFrame.style.width = '0';
+    printFrame.style.height = '0';
+    printFrame.style.border = '0';
+    document.body.appendChild(printFrame);
+
+    // Wait for iframe to load content, then print
+    printFrame.onload = function () {
+        printFrame.contentWindow.focus();
+        printFrame.contentWindow.print();
+
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(printFrame);
+        }, 1000);
+    };
+
+    // Write the content into the iframe
+    const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+    doc.open();
+    doc.write(`
+  <html>
+    <head>
+      <title>Print Preview</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 20px; border: 1px transparent; }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          page-break-inside: auto;
+        }
+
+        thead {
+          display: table-header-group;
+        }
+
+        tbody {
+          display: table-row-group;
+        }
+
+        tr {
+          page-break-inside: avoid;
+          page-break-after: auto;
+        }
+
+        th, td {
+          padding: 8px;
+          text-align: left;
+        }
+      </style>
+    </head>
+    <body>
+      ${content}
+    </body>
+  </html>
+`);
+    doc.close();
 }
 
 function writeToEncounter(ctx, print, text, prefPharmacy, providerNo, demographicNo, curProviderNo, curDate, userName) {
