@@ -125,4 +125,26 @@ public class FileLabsAction extends DispatchAction {
 	
 	      return null;
 	}
+
+	@SuppressWarnings("unused")
+	public ActionForward fileLabAjaxByProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+	{
+		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_lab", "w", null)) {
+			throw new SecurityException("missing required security object (_lab)");
+		}
+		
+		String providerNo = request.getParameter("providerNo").trim();
+		String flaggedLab = request.getParameter("flaggedLabId").trim();
+		String labType = request.getParameter("labType").trim();
+		String comment = request.getParameter("comment").trim();
+
+		if (providerNo == null || flaggedLab == null) { return null; }
+
+		ArrayList<String[]> listFlaggedLabs = new ArrayList<String[]>();
+		String[] la = new String[] {flaggedLab,labType};
+		listFlaggedLabs.add(la);
+		CommonLabResultData.fileLabs(listFlaggedLabs, providerNo, comment);
+
+		return null;
+	}
 }

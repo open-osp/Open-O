@@ -608,7 +608,10 @@ public class CommonLabResultData {
 		
 	}
 	public static boolean fileLabs(ArrayList<String[]> flaggedLabs, String provider) {
+		return fileLabs(flaggedLabs, provider, "");
+	}
 
+	public static boolean fileLabs(ArrayList<String[]> flaggedLabs, String provider, String comment) {
 		CommonLabResultData data = new CommonLabResultData();
 		boolean success = Boolean.FALSE;
 		for (int i = 0; i < flaggedLabs.size(); i++) {
@@ -621,12 +624,12 @@ public class CommonLabResultData {
 			if (labs != null && !labs.equals("")) {
 				String[] labArray = labs.split(",");
 				for (int j = 0; j < labArray.length; j++) {
-					success = updateReportStatus(Integer.parseInt(labArray[j]), provider, 'F', "", labType);
+					success = updateReportStatus(Integer.parseInt(labArray[j]), provider, 'F', comment, labType);
 					removeFromQueue(Integer.parseInt(labArray[j]));
 				}
 
 			} else {
-				success = updateReportStatus(Integer.parseInt(lab), provider, 'F', "", labType);
+				success = updateReportStatus(Integer.parseInt(lab), provider, 'F', comment, labType);
 				removeFromQueue(Integer.parseInt(lab));
 			}
 			
