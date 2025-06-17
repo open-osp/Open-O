@@ -718,6 +718,30 @@ function checkFav(){
 
 <style type="text/css">
 
+    .floatingWindow {
+        position: fixed;
+        top: 70%;
+        right: 2px;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-size: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        z-index: 1050;
+        background-color: #ccf5ff;
+        max-width: 25%;
+        opacity: 0;
+        transform: translateX(50px);
+        visibility: hidden;
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    }
+
+    /* Active state for showing */
+    .floatingWindow.show {
+        opacity: 0.95;
+        transform: translateX(0);
+        visibility: visible;
+    }
+
     .ControlPushButton{
         font-size:x-small !important;
         padding:3px !important;
@@ -1242,30 +1266,6 @@ body {
 
   .wcblayerContent {
     padding-left: 20px;
-  }
-
-  .floatingWindow {
-      position: fixed;
-      top: 70%;
-      right: 2px;
-      border-radius: 10px;
-      padding: 12px 24px;
-      font-size: 16px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-      z-index: 1050;
-      background-color: #ccf5ff;
-      max-width: 25%;
-      opacity: 0;
-      transform: translateX(50px);
-      visibility: hidden;
-      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-  }
-
-  /* Active state for showing */
-  .floatingWindow.show {
-      opacity: 0.95;
-      transform: translateX(0);
-      visibility: visible;
   }
 
 </style>
