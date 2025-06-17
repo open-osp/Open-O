@@ -901,10 +901,10 @@ body {
                                                 <%}%>
                                                 <br>
                                                 <security:oscarSec roleName="<%=roleName2$%>" objectName="_rx" rights="x">
-                                                <input id="saveButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugsPrint();" value="<bean:message key="SearchDrug.msgSaveAndPrint"/>" title="<bean:message key="SearchDrug.help.SaveAndPrint"/>" />
+                                                <input id="saveButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugsPrintCheckContinue();" value="<bean:message key="SearchDrug.msgSaveAndPrint"/>" title="<bean:message key="SearchDrug.help.SaveAndPrint"/>" />
                                                 </security:oscarSec>
 
-                                                <input id="saveOnlyButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugs();" value="<bean:message key="SearchDrug.msgSaveOnly"/>" title="<bean:message key="SearchDrug.help.Save"/>"/>
+                                                <input id="saveOnlyButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugsCheckContinue();" value="<bean:message key="SearchDrug.msgSaveOnly"/>" title="<bean:message key="SearchDrug.help.Save"/>"/>
 												<%
                                                     	if(OscarProperties.getInstance().getProperty("oscarrx.medrec","false").equals("true")) {
                                                 %>
@@ -2576,8 +2576,43 @@ function updateQty(element){
         return x;
     }
 
-    
-    
+
+    function updateSaveAllDrugsPrintCheckContinue() {
+        showUnstagedReRxConfirmation(updateSaveAllDrugsPrint);
+    }
+
+    function updateSaveAllDrugsCheckContinue() {
+        showUnstagedReRxConfirmation(updateSaveAllDrugs);
+    }
+
+    const CONFIRMATION_MESSAGE = {
+        SINGLE: 'is 1 unstaged ReRx drug',
+        MULTIPLE: (count) => "are " + count + " unstaged ReRx drugs"
+    };
+
+    const SAVE_WARNING = 'If you continue, the unstaged ReRx drug(s) will not be re-prescribed.';
+    const SAVE_PROMPT = 'Are you sure you want to save this prescription?';
+
+    function showUnstagedReRxConfirmation(onConfirm) {
+        if (selectedReRxIDs.length === 0) {
+            onConfirm();
+            return;
+        }
+
+        const message = buildConfirmationMessage(selectedReRxIDs.length);
+        if (confirm(message)) {
+            cancelAndClearSelection();
+            onConfirm();
+        }
+    }
+
+    function buildConfirmationMessage(count) {
+        const statusMessage = count === 1
+            ? CONFIRMATION_MESSAGE.SINGLE
+            : CONFIRMATION_MESSAGE.MULTIPLE(count);
+        return "There " + statusMessage + ".\n" + SAVE_WARNING + "\n" + SAVE_PROMPT;
+    }
+
 	<%
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add(String.valueOf(bean.getDemographicNo()));
