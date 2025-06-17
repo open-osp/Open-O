@@ -726,7 +726,7 @@ function checkFav(){
         padding: 12px 24px;
         font-size: 16px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        z-index: 1050;
+        z-index: 5000;
         background-color: #ccf5ff;
         max-width: 25%;
         opacity: 0;
