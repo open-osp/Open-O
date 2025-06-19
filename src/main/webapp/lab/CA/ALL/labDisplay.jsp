@@ -850,6 +850,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
                 request.setAttribute("ackLabFunc", ackLabFunc);
                 request.setAttribute("skipComment", skipComment);
+                request.setAttribute("loggedInProviderName", loggedInInfo.getLoggedInProvider().getFullName());
         %>
         <script type="text/javascript">
 
@@ -901,6 +902,9 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 			}
 		</script>
 
+        <!-- Save logged-in provider details -->
+        <input type="hidden" id="loggedInProviderNo" value="${e:forHtml(sessionScope.user)}" />
+        <input type="hidden" id="loggedInProviderName" value="${e:forHtml(loggedInProviderName)}" />
         <div id="acknowledgementDialog" title="Acknowledge Document" style="display: none;">
             <button id="tempAckBtn" onclick="${e:forHtml(ackLabFunc)}" style="display:none;"></button>
             <input id="skipAckComment" type="hidden" value="${e:forHtml(skipComment)}" />
@@ -912,9 +916,6 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                 <c:forEach var="report" items="${ackList}" varStatus="status">
                     <c:choose>
                         <c:when test="${report.oscarProviderNo == sessionScope.user}">
-                            <!-- Save logged-in provider details -->
-                            <input type="hidden" id="loggedInProviderNo" value="${e:forHtml(report.oscarProviderNo)}" />
-                            <input type="hidden" id="loggedInProviderName" value="${e:forHtml(report.providerName)}" />
                         </c:when>
                         <c:otherwise>
                             <c:if test="${report.status != 'F'}">
