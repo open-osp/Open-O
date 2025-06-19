@@ -1214,11 +1214,11 @@ request.setAttribute("missingTests", missingTests);
             ackLabFunc = "getComment('ackLab', " + segmentID + ");";
         }
 
-        request.setAttribute("ackLabFunc", ackLabFunc);
-        request.setAttribute("skipComment", skipComment);
-
-%>
-<script type="text/javascript">
+                request.setAttribute("ackLabFunc", ackLabFunc);
+                request.setAttribute("skipComment", skipComment);
+                request.setAttribute("loggedInProviderName", loggedInInfo.getLoggedInProvider().getFullName());
+        %>
+        <script type="text/javascript">
 
     jQuery(function () {
         jQuery("#createLabel_<%=Encode.forJavaScript(segmentID)%>").click(function () {
@@ -1285,6 +1285,9 @@ request.setAttribute("missingTests", missingTests);
     }
 </script>
 
+<!-- Save logged-in provider details -->
+<input type="hidden" id="loggedInProviderNo" value="${e:forHtml(sessionScope.user)}" />
+<input type="hidden" id="loggedInProviderName" value="${e:forHtml(loggedInProviderName)}" />
 <div id="acknowledgementDialog" title="Acknowledge Document" style="display: none;">
     <button id="tempAckBtn" onclick="${e:forHtml(ackLabFunc)}" style="display:none;"></button>
     <input id="skipAckComment" type="hidden" value="${e:forHtml(skipComment)}" />
