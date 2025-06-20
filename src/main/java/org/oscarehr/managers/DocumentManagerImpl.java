@@ -88,6 +88,9 @@ public class DocumentManagerImpl implements  DocumentManager{
 	@Autowired
 	private PatientLabRoutingDao patientLabRoutingDao;
 
+	@Autowired
+	private QueueDocumentLinkDao queueDocumentLinkDAO;
+
 	public Document getDocument(LoggedInInfo loggedInInfo, Integer id) {
 		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "r", "")) {
 			throw new RuntimeException("Read Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
@@ -171,11 +174,12 @@ public class DocumentManagerImpl implements  DocumentManager{
 		document.setNumberofpages(numberOfPages);
 		document.setDoccreator(loggedInInfo.getLoggedInProviderNo());
 		document.setDocfilename(fileName);
+		if (document.getDocdesc() == null || document.getDocdesc().isEmpty()) { document.setDocdesc(fileName); }
 
 		// Creates and saves the document
 		saveDocument(document, demographicNo, providerNo);
 
-		LogAction.addLogSynchronous(loggedInInfo, "DocumentManager.createDocument()", "Document ID: " + document.getId().toString() + " Demographic: " + demographicNo.toString() + " FileName: " + document.getDocfilename());
+		LogAction.addLogSynchronous(loggedInInfo, "DocumentManager.createDocument()", "Document ID: " + document.getId().toString() + " Demographic: " + (demographicNo != null ? demographicNo.toString() : "N/A") + " FileName: " + document.getDocfilename());
 
 		return document;
 	}
@@ -482,5 +486,17 @@ public class DocumentManagerImpl implements  DocumentManager{
 			throw new PDFGenerationException("Error Details: Document [" + eDoc.getDescription() + "] could not be converted into a PDF");
 		}
 		return eDocPDFPath;
+	}
+
+	public Integer addDocumentToQueue(LoggedInInfo loggedInInfo, Integer documentId, Integer queueId) {
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "w", "")) {
+			throw new RuntimeException("Write Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
+		}
+	
+		if (queueId != null && queueId > 0) {
+			queueDocumentLinkDAO.addActiveQueueDocumentLink(queueId, documentId);
+			return queueId;
+		}
+		return null;
 	}
 }
