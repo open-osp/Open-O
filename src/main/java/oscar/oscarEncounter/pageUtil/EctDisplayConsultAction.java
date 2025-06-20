@@ -101,12 +101,15 @@ public class EctDisplayConsultAction extends EctDisplayAction {
             for (int idx = theRequests.ids.size() - 1; idx >= 0; --idx ){
                 NavBarDisplayDAO.Item item = NavBarDisplayDAO.Item();
 
-                String service = "";
+                String service = "", specialist = "";
                 String dateStr = "";
                 String status = "";
 
                 if(theRequests.service != null && !theRequests.service.isEmpty()) {
                     service =  theRequests.service.get(idx);
+                }
+                if(theRequests.vSpecialist != null && !theRequests.vSpecialist.isEmpty()) {
+                    specialist =  theRequests.vSpecialist.get(idx);
                 }
                 if(theRequests.date != null && !theRequests.date.isEmpty()) {
                     dateStr    =  theRequests.date.get(idx);
@@ -131,7 +134,7 @@ public class EctDisplayConsultAction extends EctDisplayAction {
                 }
                 url = "popupPage(700,960,'" + winName + "','" + request.getContextPath() + "/oscarEncounter/ViewRequest.do?de=" + bean.demographicNo + "&requestId=" + theRequests.ids.get(idx) + "'); return false;";
                 
-                item.setLinkTitle(service + " " + serviceDateStr);
+                item.setLinkTitle(service + "(" + specialist + ") " + serviceDateStr);
                 service = StringUtils.maxLenString(service, MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
                 item.setTitle(service);
                 item.setURL(url);
