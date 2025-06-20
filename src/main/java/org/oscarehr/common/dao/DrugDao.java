@@ -25,17 +25,10 @@
  */
 package org.oscarehr.common.dao;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-
-import org.apache.commons.lang.StringUtils;
-import org.oscarehr.common.NativeSql;
 import org.oscarehr.common.model.Drug;
-import org.oscarehr.util.MiscUtils;
 
 public interface DrugDao extends AbstractDao<Drug> {
 
@@ -120,4 +113,12 @@ public interface DrugDao extends AbstractDao<Drug> {
 
 	public List<Drug> findLongTermDrugsByDemographic(Integer demographicId);
 
+	/**
+	 * Retrieves a list of Drug objects based on the provided script number and demographic number.
+	 *
+	 * @param scriptNo the script number associated with the drugs to be retrieved
+	 * @param demographicNo the demographic number associated with the drugs to be retrieved
+	 * @return a list of Drug objects matching the provided script number and demographic number
+	 */
+	List<Drug> findBy(int scriptNo, int demographicNo);
 }

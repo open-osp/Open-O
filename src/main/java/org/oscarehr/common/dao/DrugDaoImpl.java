@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
 import org.oscarehr.common.NativeSql;
@@ -618,6 +619,18 @@ public class DrugDaoImpl extends AbstractDaoImpl<Drug> implements DrugDao {
         List<Drug> results = query.getResultList();
         return (results);
 
+    }
+
+    @Override
+    public List<Drug> findBy(int scriptNo, int demographicNo) {
+        TypedQuery<Drug> drugQuery = entityManager.createQuery(
+                "SELECT d FROM Drug d WHERE d.scriptNo = :scriptNo AND d.demographicId = :demoId " +
+                        "ORDER BY d.position DESC, d.rxDate DESC, d.id ASC", Drug.class
+        );
+        drugQuery.setParameter("scriptNo", scriptNo);
+        drugQuery.setParameter("demoId", demographicNo);
+
+        return drugQuery.getResultList();
     }
 
 }

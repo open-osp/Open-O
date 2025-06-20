@@ -62,7 +62,7 @@ public class EctDisplayRxAction extends EctDisplayAction {
     	
         //set lefthand module heading and link
         String winName = "Rx" + bean.demographicNo;
-        String leftUrl="popupPage(580,1027,'" + winName + "','" + request.getContextPath() + "/oscarRx/choosePatient.do?providerNo=" + bean.providerNo + "&demographicNo=" + bean.demographicNo + "')";
+        String leftUrl="popupPage(900,1080,'" + winName + "','" + request.getContextPath() + "/oscarRx/choosePatient.do?providerNo=" + bean.providerNo + "&demographicNo=" + bean.demographicNo + "')";
         String url = leftUrl;
         Dao.setLeftHeading(messages.getMessage(request.getLocale(), "oscarEncounter.NavBar.Medications"));
         Dao.setLeftURL(leftUrl);
