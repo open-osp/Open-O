@@ -58,7 +58,7 @@
 	
 	String demographicNo = request.getParameter("demographicNo");
 	
-	String frmName = "caseManagementEntryForm" + demographicNo;
+	String frmName = "caseManagementEntryForm";
 	CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean)session.getAttribute(frmName);
 	String noteId = cform.getNoteId();
 	boolean isUpdate=false;
