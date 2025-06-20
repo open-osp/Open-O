@@ -64,9 +64,20 @@ Hashtable measurementHash = EctMeasurementsDataBeanHandler.getLast(demographicNo
 
 String wt= null;
 Date  wtDate = null;
-if (measurementHash != null && measurementHash.get("value") != null){
-    weight = Double.parseDouble((String) measurementHash.get("value"));
-    wtDate = (Date) measurementHash.get("dateObserved_date");
+if (measurementHash != null && 
+    measurementHash.get("value") != null && 
+    !((String)measurementHash.get("value")).trim().isEmpty()) {
+    try {
+        double value = Double.parseDouble((String)measurementHash.get("value"));
+        if (!Double.isNaN(value) && !Double.isInfinite(value)) {
+            // value is a valid non-null, non-empty, parseable double
+            // proceed with using the value
+            weight = Double.parseDouble((String) measurementHash.get("value"));
+            wtDate = (Date) measurementHash.get("dateObserved_date");
+        }
+    } catch (NumberFormatException e) {
+        // Handle or log invalid number format
+    }
 }
 
 double measurementsCr = -1;
