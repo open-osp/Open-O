@@ -25,17 +25,10 @@
  */
 package org.oscarehr.common.dao;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-
-import org.apache.commons.lang.StringUtils;
-import org.oscarehr.common.NativeSql;
 import org.oscarehr.common.model.Drug;
-import org.oscarehr.util.MiscUtils;
 
 public interface DrugDao extends AbstractDao<Drug> {
 
@@ -119,5 +112,13 @@ public interface DrugDao extends AbstractDao<Drug> {
 	public List<Integer> findNewDrugsSinceDemoKey(String keyName);
 
 	public List<Drug> findLongTermDrugsByDemographic(Integer demographicId);
+
+	/**
+	 * Finds special instructions that match a given string.
+	 *
+	 * @param spInstructQuery The string to match against special instructions.
+	 * @return A list of special instructions that contain the given string.
+	 */
+	List<String> findSpecialInstructionsMatching(String spInstructQuery);
 
 }
