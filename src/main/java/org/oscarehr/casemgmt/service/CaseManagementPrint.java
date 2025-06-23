@@ -80,7 +80,7 @@ public class CaseManagementPrint {
 		request.setAttribute("demoSex", getDemoSex(demono));
 		request.setAttribute("demoAge", getDemoAge(demono));
 		request.setAttribute("demoPhn", getDemoPhn(demono));
-		request.setAttribute("mrp", getMRP(request,demono));
+		request.setAttribute("mrp", getMRP(request));
 		String dob = getDemoDOB(demono);
 		dob = convertDateFmt(dob, request);
 		request.setAttribute("demoDOB", dob);
@@ -489,9 +489,8 @@ public class CaseManagementPrint {
 		return caseManagementMgr.getDemoPhn(demoNo);
 	}
 	
-	protected String getMRP(HttpServletRequest request,String demographicNo) {
-		String strBeanName = "casemgmt_oscar_bean" + demographicNo;
-		oscar.oscarEncounter.pageUtil.EctSessionBean bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute(strBeanName);
+	protected String getMRP(HttpServletRequest request) {
+        oscar.oscarEncounter.pageUtil.EctSessionBean bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute("EctSessionBean");
 		if (bean == null) return new String("");
 		if (bean.familyDoctorNo == null) return new String("");
 		if (bean.familyDoctorNo.isEmpty()) return new String("");
