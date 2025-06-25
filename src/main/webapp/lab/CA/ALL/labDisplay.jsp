@@ -943,7 +943,7 @@ request.setAttribute("missingTests", missingTests);
                                     jQuery("#labStatus_"+labid).val("A")
                                     updateStatus(formid,labid);
                                 }
-                            })
+                            });
                         }
 
                     } else {
@@ -1057,14 +1057,17 @@ request.setAttribute("missingTests", missingTests);
             });
         });
 
+        // Global flag to track if "file on behalf" was triggered
         var doFileOnBehalfOfProviders = false;
-        function openAcknowledgementDialog() {
-            if (jQuery(".ackProviderCheckbox").length === 0) {
+
+        // Opens the modal dialog asking if the user wants to file on behalf of others.
+        function openFileDialog(isFileOnly) {
+            if (jQuery(".ackProviderCheckbox").length === 0 && !isFileOnly) {
                 jQuery('#tempAckBtn').click();
                 return;
             }
 
-            jQuery("#acknowledgementDialog").dialog({
+            jQuery("#fileDialog").dialog({
                 autoOpen: false,
                 modal: true,
                 height: 'auto',
@@ -1074,12 +1077,8 @@ request.setAttribute("missingTests", missingTests);
                     {
                         text: "No",
                         click: function() {
-                            jQuery("#acknowledgementDialog").dialog("close");
-
-                            // Add a slight delay before triggering tempAckBtn to ensure the dialog is fully closed 
-                            setTimeout(function() {
-                                jQuery("#tempAckBtn").click();
-                            }, 50);
+                            jQuery("#fileDialog").dialog("close");
+                            if (!isFileOnly) { jQuery("#tempAckBtn").click(); }
                         }
                     },
                     {
@@ -1087,13 +1086,17 @@ request.setAttribute("missingTests", missingTests);
                         id: "ackYesButton",
                         click: function() {
                             doFileOnBehalfOfProviders = true;
-                            jQuery("#acknowledgementDialog").dialog("close");
+                            jQuery("#fileDialog").dialog("close");
 
-                            const skipAckComment = jQuery("#skipAckComment").val() === 'true';
-                            if (skipAckComment) {
-                                handleLab('acknowledgeForm_'+jQuery("#segmentID").val(),jQuery("#segmentID").val(), 'ackLabAndFileForOther');
+                            if (isFileOnly) {
+                                fileOnBehalfOfMultipleProviders().then(() => location.reload());
                             } else {
-                                getComment('ackLabAndFileForOther', jQuery("#segmentID").val());
+                                const skipAckComment = jQuery("#skipAckComment").val() === 'true';
+                                if (skipAckComment) {
+                                    handleLab('acknowledgeForm_'+jQuery("#segmentID").val(),jQuery("#segmentID").val(), 'ackLabAndFileForOther');
+                                } else {
+                                    getComment('ackLabAndFileForOther', jQuery("#segmentID").val());
+                                }
                             }
                         },
                         disabled: true // Initially disabled
@@ -1102,6 +1105,7 @@ request.setAttribute("missingTests", missingTests);
             }).dialog("open");
         }
 
+        // Sends file requests for all selected providers.
         function fileOnBehalfOfMultipleProviders() {
             const selectedProviders = jQuery(".ackProviderCheckbox:checked").map(function() {
                 return jQuery(this).val();
@@ -1185,6 +1189,7 @@ request.setAttribute("missingTests", missingTests);
 
         boolean notBeenAcked = ackList.size() == 0;
         boolean ackFlag = false;
+        boolean isLabNotFiledOrAckFlag = false; // Flag is true if any provider has NOT filed OR NOT acknowledged the lab
         String labStatus = "";
         if (ackList != null) {
             for (int i = 0; i < ackList.size(); i++) {
@@ -1195,6 +1200,10 @@ request.setAttribute("missingTests", missingTests);
                         ackFlag = true;//lab has been ack by this providers.
                         break;
                     }
+                }
+
+                if ("N".equals(reportStatus.getStatus())) {
+                    isLabNotFiledOrAckFlag = true; // Flag is true if any provider has NOT filed OR NOT acknowledged the lab
                 }
             }
         }
@@ -1288,10 +1297,18 @@ request.setAttribute("missingTests", missingTests);
 <!-- Save logged-in provider details -->
 <input type="hidden" id="loggedInProviderNo" value="${e:forHtml(sessionScope.user)}" />
 <input type="hidden" id="loggedInProviderName" value="${e:forHtml(loggedInProviderName)}" />
-<div id="acknowledgementDialog" title="Acknowledge Document" style="display: none;">
+
+<!-- Hidden dialog that appears when a locum MD clicks "Acknowledge" -->
+<div id="fileDialog" title="File Document" style="display: none;">
+
+    <!-- Hidden button used to trigger temp acknowledgment logic if no providers are found -->
     <button id="tempAckBtn" onclick="${e:forHtml(ackLabFunc)}" style="display:none;"></button>
+
+    <!-- Flag to determine if skip comment logic should be applied -->
     <input id="skipAckComment" type="hidden" value="${e:forHtml(skipComment)}" />
-    <form id="acknowledgementForm">
+
+    <!-- Form that lists providers to file on behalf of -->
+    <form id="fileForm">
         <p>Do you wish to "file" this document on behalf of any of the following providers?</p>
         <input type="checkbox" id="ackSelectAllCheckbox" />
         <label for="ackSelectAllCheckbox"><b>Select All</b></label><br/>
@@ -1304,6 +1321,7 @@ request.setAttribute("missingTests", missingTests);
                     <input type="hidden" id="loggedInProviderName" value="${e:forHtml(report.providerName)}" />
                 </c:when>
                 <c:otherwise>
+                    <!-- Show only providers that have not already filed (status != 'F') -->
                     <c:if test="${report.status != 'F'}">
                         <input type="checkbox"
                             name="providers"
@@ -1444,7 +1462,15 @@ request.setAttribute("missingTests", missingTests);
 
                                 <input type="button"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>"
-                                       onclick="openAcknowledgementDialog()" />
+                                       onclick="openFileDialog(false)" />
+                                <% } else if (isLabNotFiledOrAckFlag) {
+                                    // Flag is true if any provider has NOT filed OR NOT acknowledged the lab 
+                                    // Case: Current provider has acknowledged the lab,
+                                    // but at least one of the linked providers has NOT filed or acknowledged
+                                %>
+                                <input type="button"
+                                    value="File for..."
+                                    onclick="openFileDialog(true)" />
                                 <% } %>
                                 <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnComment"/>"
                                        onclick="return getComment('addComment',<%=Encode.forJavaScript(segmentID)%>);">
@@ -2851,9 +2877,19 @@ request.setAttribute("missingTests", missingTests);
                bgcolor="#003399">
             <tr>
                 <td align="left" width="50%">
-                    <% if (!ackFlag) { %>
+                    <% if (!ackFlag) {
+                        // Case: Current provider has not acknowledged the lab
+                    %>
                     <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>"
                            onclick="openAcknowledgementDialog()" />
+                    <% } else if (isLabNotFiledOrAckFlag) { 
+                        // Flag is true if any provider has NOT filed OR NOT acknowledged the lab 
+                        // Case: Current provider has acknowledged the lab,
+                        // but at least one of the linked providers has NOT filed or acknowledged
+                    %>
+                    <input type="button"
+                        value="File for..."
+                        onclick="openFileDialog(true)" />
                     <% } %>
                     <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnComment"/>"
                            onclick="return getComment('addComment',<%=Encode.forJavaScript(segmentID)%>);">
