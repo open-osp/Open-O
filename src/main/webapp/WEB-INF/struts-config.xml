@@ -670,6 +670,9 @@
 			<forward name="error" path="/failure.jsp" />
 			<forward name="ajax" path="/web/dashboard/admin/DashboardManager.do" />
 		</action>
+
+		<action path="/autoLinkToMrp" validate="false" parameter="method" type="org.oscarehr.dashboard.admin.AutoLinkToMrpAction" scope="request">
+		</action>
 		
 		<action name="FrmForm" path="/web/dashboard/display/DashboardDisplay" 
 			parameter="method" type="org.oscarehr.dashboard.display.DisplayDashboardAction" scope="request" >
