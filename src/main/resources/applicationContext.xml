@@ -32,7 +32,7 @@
 
 	<!-- setup CXF -->
 	<import resource="classpath:spring_ws.xml" />
-
+	<bean id="faxSchedulerJob" class="org.oscarehr.fax.core.FaxSchedulerJob" />
 	<bean id="hl7HandlerMSHMappingDao" class="org.oscarehr.common.dao.HL7HandlerMSHMappingDao" autowire="byName" />
 	<!-- hibernated DAO -->
         <bean id="gstControlDao" class="org.oscarehr.billing.CA.dao.GstControlDao" autowire="byName" />
