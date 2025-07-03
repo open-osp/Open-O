@@ -603,7 +603,7 @@ pageContext.setAttribute("isMobileDevice", isMobileDevice);
 										<input class="btn btn-oscar btn-primary btn-block" name="submit" id="mobileSubmit" type="submit" onclick="enhancedOrClassic('C');" value="Mobile" />
 									</c:when>
 									<c:otherwise>
-										<input class="btn btn-oscar btn-primary btn-block" name="submit" type="submit" onclick="enhancedOrClassic('C');" value="Login" />
+										<input class="btn btn-oscar btn-primary btn-block" name="submit" type="submit" onclick="enhancedOrClassic('C');" value="Login 111" />
 									</c:otherwise>
 								</c:choose>	
 							</div>
