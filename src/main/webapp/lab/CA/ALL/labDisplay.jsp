@@ -56,6 +56,7 @@
 <%@ page import="ca.openosp.openo.commn.model.MeasurementMap, ca.openosp.openo.commn.dao.MeasurementMapDao" %>
 <%@ page import="ca.openosp.openo.commn.model.Tickler" %>
 <%@ page import="ca.openosp.openo.managers.TicklerManager" %>
+<%@ page import="ca.openosp.openo.managers.ProviderManager2" %>
 <%@ page import="org.apache.commons.lang3.StringUtils" %>
 <%@ page
         import="ca.openosp.openo.casemgmt.service.CaseManagementManager, ca.openosp.openo.commn.dao.Hl7TextMessageDao, ca.openosp.openo.commn.model.Hl7TextMessage,ca.openosp.openo.commn.dao.Hl7TextInfoDao,ca.openosp.openo.commn.model.Hl7TextInfo" %>
@@ -1051,7 +1052,7 @@ request.setAttribute("missingTests", missingTests);
             jQuery(document).on('change', '.ackProviderCheckbox, #ackSelectAllCheckbox', function() {
                 if (this.id === 'ackSelectAllCheckbox') {
                     // When "Select All" changes, update all checkboxes
-                    jQuery(".ackProviderCheckbox").prop('checked', this.checked);
+                    jQuery(".ackProviderCheckbox:not(.disabled-checkbox)").prop('checked', this.checked);
                 }
                 jQuery("#ackYesButton").button("option", "disabled", jQuery(".ackProviderCheckbox:checked").length === 0);
             });
@@ -1062,7 +1063,7 @@ request.setAttribute("missingTests", missingTests);
 
         // Opens the modal dialog asking if the user wants to file on behalf of others.
         function openFileDialog(isFileOnly) {
-            if (jQuery(".ackProviderCheckbox").length === 0 && !isFileOnly) {
+            if ((jQuery(".ackProviderCheckbox:not(.disabled-checkbox)").length === 0 && !isFileOnly) || jQuery("#isHl7OfferFileForOthers").val() === "false") {
                 jQuery('#tempAckBtn').click();
                 return;
             }
@@ -1179,6 +1180,10 @@ request.setAttribute("missingTests", missingTests);
 
 <!-- form forwarding of the lab -->
 <%
+    ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
+    boolean isHl7OfferFileForOthers = providerManager.isHl7OfferFileForOthers(loggedInInfo, providerNo);
+    request.setAttribute("isHl7OfferFileForOthers", isHl7OfferFileForOthers);
+
     for (int idx = 0; idx < segmentIDs.length; ++idx) {
 
         if (remoteFacilityIdString == null) {
@@ -1194,6 +1199,7 @@ request.setAttribute("missingTests", missingTests);
         if (ackList != null) {
             for (int i = 0; i < ackList.size(); i++) {
                 ReportStatus reportStatus = ackList.get(i);
+                reportStatus.setHl7AllowOthersFileForYou(providerManager.isHl7AllowOthersFileForYou(loggedInInfo, reportStatus.getOscarProviderNo()));
                 if (providerNo.equals(reportStatus.getOscarProviderNo())) {
                     labStatus = reportStatus.getStatus();
                     if (labStatus.equals("A")) {
@@ -1297,6 +1303,7 @@ request.setAttribute("missingTests", missingTests);
 <!-- Save logged-in provider details -->
 <input type="hidden" id="loggedInProviderNo" value="${e:forHtml(sessionScope.user)}" />
 <input type="hidden" id="loggedInProviderName" value="${e:forHtml(loggedInProviderName)}" />
+<input type="hidden" id="isHl7OfferFileForOthers" value="${e:forHtml(isHl7OfferFileForOthers)}" />
 
 <!-- Hidden dialog that appears when a locum MD clicks "Acknowledge" -->
 <div id="fileDialog" title="File Document" style="display: none;">
@@ -1309,7 +1316,10 @@ request.setAttribute("missingTests", missingTests);
 
     <!-- Form that lists providers to file on behalf of -->
     <form id="fileForm">
-        <p>Do you wish to "file" this document on behalf of any of the following providers?</p>
+        <p>This result is linked to other providers who have not acknowledged or filed it yet.</p>
+        <p>Do you want to "file" this result on their behalf?</p>
+        <p>Important - doing so will mean they likely will not see this result. Only proceed if you are sure they will not need to see this result.</p>
+        <input type="checkbox" id="ackSelectAllCheckbox" />
         <input type="checkbox" id="ackSelectAllCheckbox" />
         <label for="ackSelectAllCheckbox"><b>Select All</b></label><br/>
 
@@ -1323,11 +1333,14 @@ request.setAttribute("missingTests", missingTests);
                 <c:otherwise>
                     <!-- Show only providers that have not already filed (status != 'F') -->
                     <c:if test="${report.status != 'F'}">
+                        <c:set var="isDisabled" value="${!report.isHl7AllowOthersFileForYou()}" />
                         <input type="checkbox"
                             name="providers"
-                            class="ackProviderCheckbox"
+                            class="ackProviderCheckbox 
+                                <c:if test='${isDisabled}'> disabled-checkbox</c:if>"
                             id="ackProvider${status.index}"
-                            value="${e:forHtml(report.oscarProviderNo)}" />
+                            value="${e:forHtml(report.oscarProviderNo)}" 
+                            <c:if test="${isDisabled}">disabled</c:if> />
                         <label for="ackProvider${status.index}">
                             <e:forHtml value="${report.providerName}" />
                         </label>
@@ -1339,6 +1352,7 @@ request.setAttribute("missingTests", missingTests);
                 </c:otherwise>
             </c:choose>
         </c:forEach>
+        <p>Tip: In your user preferences, you can hide this prompt or prevent others from filing results on your behalf. See "Set HL7 Lab Result Preferences".</p>
     </form>
 </div>
 

@@ -46,7 +46,6 @@ import ca.openosp.openo.lab.ca.on.CommonLabResultData;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.dispatcher.mapper.ActionMapping;
 
 public class FileLabs2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
@@ -61,6 +60,8 @@ public class FileLabs2Action extends ActionSupport {
     public String execute() {
         if ("fileLabAjax".equals(request.getParameter("method"))) {
             return fileLabAjax();
+        } else if ("fileLabAjaxByProvider".equals(request.getParameter("method"))) {
+            return fileLabAjaxByProvider();
         }
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
