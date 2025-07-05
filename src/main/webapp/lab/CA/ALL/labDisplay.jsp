@@ -54,6 +54,7 @@
 <%@ page import="org.oscarehr.common.model.MeasurementMap, org.oscarehr.common.dao.MeasurementMapDao" %>
 <%@ page import="org.oscarehr.common.model.Tickler" %>
 <%@ page import="org.oscarehr.managers.TicklerManager" %>
+<%@ page import="org.oscarehr.managers.ProviderManager2" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.oscarehr.casemgmt.service.CaseManagementManager, org.oscarehr.common.dao.Hl7TextMessageDao, org.oscarehr.common.model.Hl7TextMessage,org.oscarehr.common.dao.Hl7TextInfoDao,org.oscarehr.common.model.Hl7TextInfo"%>
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="session" />
@@ -684,7 +685,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
             jQuery(document).on('change', '.ackProviderCheckbox, #ackSelectAllCheckbox', function() {
                 if (this.id === 'ackSelectAllCheckbox') {
                     // When "Select All" changes, update all checkboxes
-                    jQuery(".ackProviderCheckbox").prop('checked', this.checked);
+                    jQuery(".ackProviderCheckbox:not(.disabled-checkbox)").prop('checked', this.checked);
                 }
                 jQuery("#ackYesButton").button("option", "disabled", jQuery(".ackProviderCheckbox:checked").length === 0);
             });
@@ -695,7 +696,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
         // Opens the modal dialog asking if the user wants to file on behalf of others.
         function openFileDialog(isFileOnly) {
-            if (jQuery(".ackProviderCheckbox").length === 0 && !isFileOnly) {
+            if ((jQuery(".ackProviderCheckbox:not(.disabled-checkbox)").length === 0 && !isFileOnly) || jQuery("#isHl7OfferFileForOthers").val() === "false") {
                 jQuery('#tempAckBtn').click();
                 return;
             }
@@ -812,6 +813,10 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
         <!-- form forwarding of the lab -->
         <%        
+            ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
+            boolean isHl7OfferFileForOthers = providerManager.isHl7OfferFileForOthers(loggedInInfo, providerNo);
+            request.setAttribute("isHl7OfferFileForOthers", isHl7OfferFileForOthers);
+
         	for( int idx = 0; idx < segmentIDs.length; ++idx ) {
         		       		
         		if (remoteFacilityIdString==null) {
@@ -827,6 +832,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
         		if (ackList != null){
         		    for (int i=0; i < ackList.size(); i++){
         		        ReportStatus reportStatus = ackList.get(i);
+                        reportStatus.setHl7AllowOthersFileForYou(providerManager.isHl7AllowOthersFileForYou(loggedInInfo, reportStatus.getOscarProviderNo()));
         		        if (providerNo.equals(reportStatus.getOscarProviderNo())) {
         		        	labStatus = reportStatus.getStatus();
         		        	if( labStatus.equals("A") ){
@@ -913,6 +919,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
         <!-- Save logged-in provider details -->
         <input type="hidden" id="loggedInProviderNo" value="${e:forHtml(sessionScope.user)}" />
         <input type="hidden" id="loggedInProviderName" value="${e:forHtml(loggedInProviderName)}" />
+        <input type="hidden" id="isHl7OfferFileForOthers" value="${e:forHtml(isHl7OfferFileForOthers)}" />
 
         <!-- Hidden dialog that appears when a locum MD clicks "Acknowledge" -->
         <div id="fileDialog" title="File Document" style="display: none;">
@@ -925,7 +932,9 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
             <!-- Form that lists providers to file on behalf of -->
             <form id="fileForm">
-                <p>Do you wish to "file" this document on behalf of any of the following providers?</p>
+                <p>This result is linked to other providers who have not acknowledged or filed it yet.</p>
+                <p>Do you want to "file" this result on their behalf?</p>
+                <p>Important - doing so will mean they likely will not see this result. Only proceed if you are sure they will not need to see this result.</p>
                 <input type="checkbox" id="ackSelectAllCheckbox" />
                 <label for="ackSelectAllCheckbox"><b>Select All</b></label><br/>
 
@@ -936,11 +945,14 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                         <c:otherwise>
                             <!-- Show only providers that have not already filed (status != 'F') -->
                             <c:if test="${report.status != 'F'}">
+                                <c:set var="isDisabled" value="${!report.isHl7AllowOthersFileForYou()}" />
                                 <input type="checkbox"
                                     name="providers"
-                                    class="ackProviderCheckbox"
+                                    class="ackProviderCheckbox
+                                        <c:if test='${isDisabled}'> disabled-checkbox</c:if>"
                                     id="ackProvider${status.index}"
-                                    value="${e:forHtml(report.oscarProviderNo)}" />
+                                    value="${e:forHtml(report.oscarProviderNo)}"
+                                    <c:if test="${isDisabled}">disabled</c:if> />
                                 <label for="ackProvider${status.index}">
                                     <e:forHtml value="${report.providerName}" />
                                 </label>
@@ -952,6 +964,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
+                <p>Tip: In your user preferences, you can hide this prompt or prevent others from filing results on your behalf. See "Set HL7 Lab Result Preferences".</p>
             </form>
         </div>
 

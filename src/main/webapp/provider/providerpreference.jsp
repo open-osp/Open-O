@@ -894,6 +894,9 @@ Event.observe('rxInteractionWarningLevel', 'change', function(event) {
     <tr>
     	<td align="center"><a href=# onClick ="popupPage(700,860,'../setProviderStaleDate.do?method=viewLabMacroPrefs');return false;"><bean:message key="provider.btnViewLabMacroPrefs"/></a></td>
     </tr>
+	<tr>
+    	<td align="center"><a href=# onClick ="popupPage(350,860,'../setProviderStaleDate.do?method=viewHl7LabResultPrefs');return false;"><bean:message key="provider.btnViewHl7LabPrefs"/></a></td>
+    </tr>
    <tr>
     	<td align="center"><a href=# onClick ="popupPage(280,730,'../setTicklerPreferences.do?method=viewTicklerTaskAssignee');return false;"><bean:message key="provider.btnViewTicklerPreferences"/></a></td>
     </tr>
