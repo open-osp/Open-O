@@ -372,6 +372,8 @@ public class RxPrintPreviewAction extends DispatchAction {
         String reprint = request.getSession().getAttribute("rePrint") != null ? (String) request.getSession().getAttribute("rePrint") : "false";
         if (reprint.equalsIgnoreCase("true")) {
             sessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("tmpBeanRX");
+        } else {
+            session.setAttribute("tmpBeanRX", sessionBean);
         }
         request.setAttribute("sessionBean", sessionBean);
         request.setAttribute("reprint", reprint);

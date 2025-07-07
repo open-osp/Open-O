@@ -52,11 +52,15 @@ function updateCurrentInteractions(myDrugRefEnabled) {
 }
 
 function resetReRxDrugList(ctx) {
+    if (!ctx) {
+        const contextPath = window.location.pathname.split('/')[1];
+        ctx = window.location.origin + '/' + contextPath;
+    }
     const url = ctx + "/oscarRx/deleteRx.do?parameterValue=clearReRxDrugList";
     const data = "";
-    new Ajax.Request(url, {
-        method: 'post', parameters: data, onSuccess: function (transport) {
-        }
+    fetch(url, {
+        method: 'POST',
+        body: data
     });
 }
 
