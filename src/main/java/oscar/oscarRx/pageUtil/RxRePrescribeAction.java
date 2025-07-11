@@ -315,7 +315,7 @@ public final class RxRePrescribeAction extends DispatchAction {
 			try {
 				rand = Long.parseLong(request.getParameter("rand"));
 			} catch (NumberFormatException e) {
-				rand = Math.round(Math.random() * 1000000);
+				rand = Math.round(Math.random() * 10001);
 			}
 			rx.setRandomId(rand);
 

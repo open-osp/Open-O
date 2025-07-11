@@ -23,8 +23,12 @@
  * Ontario, Canada 
  */
 --%>
-<% 
 
+<%@page import="java.util.List" %>
+<%@page import="org.oscarehr.common.model.CtlBillingServicePremium" %>
+<%@page import="org.oscarehr.common.dao.CtlBillingServicePremiumDao" %>
+
+<% 
   List<CtlBillingServicePremium> cbsps = ctlBillingServicePremiumDao.findByStatus("A");
   
    int rCount = 0;     int rCount1 = 0;  int tCount = 0;  int tCount1 = 0; int tCount2 = 0; int tCount3 = 0;

@@ -1,65 +1,84 @@
 #!/usr/bin/env sh
 
+# Script to manage building and deploying the openosp emr web application to Tomcat
+# This script supports the following operations:
+# - clean: Cleans the project and removes the deployed web app from Tomcat.
+# - install: Builds the project and deploys it to Tomcat. Optionally, you can run tests by passing --run-tests.
+
+# SCRIPT_DIR will hold the directory where this script is located.
+# This is useful because you may run the script from a different directory,
+# but we want to ensure that the relative paths (like the server script) always work correctly.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Function to handle the build and deploy logic
+# Takes a single argument ($1) which is a boolean indicating whether to run tests.
+build_and_deploy() {
+  run_tests="$1"
+
+  # Stop the Catalina server by calling the `server` script located in the same directory as this script.
+  "$SCRIPT_DIR/server" stop
+
+  # Build the project with or without tests based on the input argument
+  # - If run_tests is true, it builds the project and runs tests.
+  # - If run_tests is false, it skips tests during the build.
+  if [ "$run_tests" = true ]; then
+    mvn clean -T 1C package war:exploded
+  else
+    mvn clean -Dmaven.test.skip=true -T 1C package war:exploded
+  fi
+
+  # Extract the version from the pom.xml file.
+  # This will allow us to handle versioned directories during deployment.
+  pom_file="pom.xml"
+  version=$(grep -oPm 1 '<version>\K[^<]+' "$pom_file")
+  snapshot_src_dir="oscar-$version"
+  snapshot_dest_dir="oscar"
+
+  # Create a symlink from the exploded WAR directory to the Tomcat webapps directory.
+  # This ensures the app is deployed with the expected name (`oscar`) rather than `oscar-<version>`.
+  if [ -d "target/$snapshot_src_dir" ] && [ ! -L "target/$snapshot_src_dir" ]; then
+    mv "target/$snapshot_src_dir" "/usr/local/tomcat/webapps/$snapshot_dest_dir"
+    ln -s "/usr/local/tomcat/webapps/$snapshot_dest_dir" "target/$snapshot_src_dir"
+  fi
+
+  # Start the Catalina server by calling the `server` script located in the same directory as this script.
+  "$SCRIPT_DIR/server" start
+}
+
+# Default behavior is to skip tests unless --run-tests is explicitly provided.
+run_tests=false
+
+# If no arguments are provided, display usage instructions and exit.
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 [clean|install [--run-tests]]"
+  exit 1
+fi
+
+# Process command-line arguments
 for arg in "$@"; do
   case $arg in
     clean)
+      # Clean the project using Maven and remove the deployed app from Tomcat.
       mvn clean
       rm -rf /usr/local/tomcat/webapps/oscar
       ;;
-
     install)
-      # Stop the Catalina server.
-      server stop
-
-      # Build the project.
-      mvn -Dmaven.test.skip=true prepare-package war:exploded
-
-      # Create a symlink from the exploded WAR directory to the Tomcat webapps directory.
-      pom_file="pom.xml"
-      version=$(grep -oPm 1 '<version>\K[^<]+' "$pom_file")
-      snapshot_src_dir='oscar-'$version
-      snapshot_dest_dir='oscar'
-      if [ -d "target/$snapshot_src_dir" ] && [ ! -L "target/$snapshot_src_dir" ]; then
-            mv target/$snapshot_src_dir /usr/local/tomcat/webapps/$snapshot_dest_dir
-            ln -s /usr/local/tomcat/webapps/$snapshot_dest_dir target/$snapshot_src_dir
+      # Shift the arguments so that we can check for the optional --run-tests argument.
+      shift
+      if [ "$1" = "--run-tests" ]; then
+        run_tests=true
       fi
-
-      # Start the Catalina server.
-      server start
+      # Run the build and deploy process, passing in whether or not to run tests.
+      build_and_deploy "$run_tests"
       ;;
-
-    log)
-      server log
+    lock)
+      echo "Updating dependency lock file..." 
+      mvn se.vandmo:dependency-lock-maven-plugin:lock
       ;;
-
     *)
-      mvn -Dmaven.test.skip=true prepare-package war:exploded
-
-      # Assuming the pom.xml file is in the current directory
-      pom_file="pom.xml"
-
-      # This version number is the deployable war version from here: https://bitbucket.org/MagentaHealth/oscar/src/master/pom.xml
-        # <artifactId>oscar</artifactId>
-    # <packaging>war</packaging>
-    # <version>v24.02.0</version>
-    # <name>OpenOSCAR</name>
-      # Extract the first occurrence of version from pom.xml
-      version=$(grep -oPm 1 '<version>\K[^<]+' "$pom_file")
-
-      # It *should* be possible to deploy that `oscar-0.0.0-SNAPSHOT` directory to Tomcat using the `oscar-0.0.0-SNAPSHOT` name,
-      # but unknown bugs prevent the app from starting up if that name is used. :man_shrugging:
-      # So, let's rename it to `oscar`. Then, our properties file in the home directory can also be called `oscar.properties`
-      # (it's already been symlinked by the setup scripts).
-      # We'll also create a symlink so that we can continue to compile into `oscar-0.0.0-SNAPSHOT`,
-      # which is where Maven expects to deposit its artifacts.
-      snapshot_src_dir='oscar-'$version
-      snapshot_dest_dir='oscar'
-
-      # Only make the link if it hasn't already been linked yet
-      if [ -d "target/$snapshot_src_dir" ] && [ ! -L "target/$snapshot_src_dir" ]; then
-        mv target/$snapshot_src_dir target/$snapshot_dest_dir
-        ln -s $snapshot_dest_dir target/$snapshot_src_dir
-      fi
+      # If an unknown argument is passed, display usage instructions and exit.
+      echo "Usage: $0 [clean|install [--run-tests]]"
+      exit 1
       ;;
   esac
 done

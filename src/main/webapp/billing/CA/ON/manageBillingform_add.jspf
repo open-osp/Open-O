@@ -24,6 +24,9 @@
  */
 --%>
 
+<%@page import="java.util.List" %>
+<%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
+
 <% String errorMessage = request.getParameter("errorMessage"); %>
 
 <form name="servicetypeform" method="post">
@@ -128,7 +131,7 @@
 			</tr>
 
 			<% 
-		
+
 	List<Object[]> uniqueServiceTypeList =  ctlBillingServiceDao.getUniqueServiceTypes();		
 			
 	int rCount = 0;

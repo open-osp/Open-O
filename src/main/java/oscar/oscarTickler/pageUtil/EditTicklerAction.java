@@ -78,6 +78,7 @@ public class EditTicklerAction extends DispatchAction{
         String priority = request.getParameter("priority");
         String assignedTo = request.getParameter("assignedToProviders");
         String serviceDate = request.getParameter("xml_appointment_date");
+        String parentAjaxId = request.getParameter("parentAjaxId");
         
         if ((ticklerNo == null)
          || (status == null)
@@ -239,6 +240,9 @@ public class EditTicklerAction extends DispatchAction{
             return mapping.findForward("failure");
         } 
             
+        if (parentAjaxId != null) {
+            request.setAttribute("parentAjaxId", parentAjaxId);
+        }
         return mapping.findForward("close");
         
     }

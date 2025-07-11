@@ -24,6 +24,13 @@
  */
 -->
 
+<%@page import="oscar.MyDateFormat" %>
+<%@page import="oscar.util.ConversionUtils" %>
+<%@page import="java.sql.ResultSet" %> 
+<%@page import="java.util.List" %>
+<%@page import="org.oscarehr.common.model.Billing" %>
+<%@page import="org.oscarehr.common.dao.BillingDao" %>
+
 <table width="100%" border="2" valign="top">
 	<% 
  String dateBegin = request.getParameter("xml_vdate");
@@ -34,7 +41,7 @@
  List<Billing> bs = billingDao.search_unsettled_history_daterange(request.getParameter("providerview"),ConversionUtils.fromDateString(dateBegin),ConversionUtils.fromDateString(dateEnd));
 
   boolean bodd=false;
-   nItems=0;
+  nItems=0;
   String apptDoctorNo="", apptNo="", demoNo = "", demoName="", userno="", apptDate="", apptTime="", reason="",  note="";
   if(bs==null) {
     out.println("failed!!!"); 

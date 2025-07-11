@@ -39,6 +39,10 @@ if(!authed) {
 }
 %>
 
+<%@page import="oscar.MyDateFormat" %>
+<%@page import="java.math.BigDecimal" %>
+<%@page import="oscar.util.ConversionUtils" %>
+
 <%
 	String cTotal = "0", hTotal = "0", oTotal = "0", mNum = "", fNum = "";
 	String dateBegin = request.getParameter("xml_vdate");

@@ -23,70 +23,78 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <security:oscarSec roleName='${ sessionScope[userrole] }, ${ sessionScope[user] }' rights="r" objectName="_hrm">
-	<c:redirect url="securityError.jsp?type=_hrm" />
+    <c:redirect url="securityError.jsp?type=_hrm"/>
 </security:oscarSec>
 
-<!DOCTYPE html > 
-<html:html locale="true" >
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>HRM Inbox - OSCAR EMR</title>
+<!DOCTYPE html >
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HRM Inbox - OSCAR EMR</title>
 
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css" />
- 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css" /> 
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/hospitalReportManager/inbox.css" />
-	<script>var ctx = "${pageContext.request.contextPath}"</script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js" ></script>
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/hospitalReportManager/inbox.js"></script>
-	
-</head>
-<body>
-<div>
-<div class="col-sm-12">
-	
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <b>
-          <a class="navbar-brand" href="#">Health Report Manager</a>
-          </b>
+        <link rel="stylesheet" type="text/css"
+              href="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css"
+              href="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/css/jquery.dataTables.min.css"/>
+        <link rel="stylesheet" type="text/css"
+              href="${ pageContext.request.contextPath }/hospitalReportManager/inbox.css"/>
+        <script>var ctx = "${pageContext.request.contextPath}"</script>
+        <script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript"
+                src="${ pageContext.request.contextPath }/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript"
+                src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/dataTables.bootstrap.min.js"></script>
+        <script type="text/javascript"
+                src="${ pageContext.request.contextPath }/library/DataTables-1.10.12/media/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript"
+                src="${ pageContext.request.contextPath }/hospitalReportManager/inbox.js"></script>
+
+    </head>
+    <body>
+    <div>
+        <div class="col-sm-12">
+
+            <!-- Fixed navbar -->
+            <nav class="navbar navbar-default navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                                data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                            <span class="sr-only"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <b>
+                            <a class="navbar-brand" href="#">Health Report Manager</a>
+                        </b>
+                    </div>
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="inbox.jsp">HRM Inbox</a></li>
+                        </ul>
+                    </div><!--/.nav-collapse -->
+                </div>
+            </nav>
+
+            <div class="table-responsive" id="libraryTableContainer">
+
+                <div class="col-sm-12">
+                    <p>upload</p>
+                </div>
+            </div>
+
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-          <li><a href="inbox.jsp">HRM Inbox</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
-	
-	<div class="table-responsive" id="libraryTableContainer">
-	
-	<div class="col-sm-12">
-		<p>upload</p>
-	</div>
-	</div>
-
-</div>	
-</div> <!-- end container -->
-</body>
-</html:html>
+    </div> <!-- end container -->
+    </body>
+</html>

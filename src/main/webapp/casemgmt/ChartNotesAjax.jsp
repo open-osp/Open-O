@@ -1160,7 +1160,12 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
         document.forms["caseManagementEntryForm"].note_edit.value = "existing";
     <%}%>
     setupNotes();
-    Element.observe(caseNote, "keyup", monitorCaseNote);
+	jQuery('#' + caseNote).on('keyup', monitorCaseNote);
+	jQuery('#' + caseNote).on('paste', function(e) {
+		// Let the paste happen first, then resize
+		setTimeout(adjustCaseNote, 0);
+	});
+	
     Element.observe(caseNote, 'click', getActiveText);
 
 

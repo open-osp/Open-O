@@ -1607,30 +1607,30 @@ public class EFormUtil {
  		 */
 		eform.setStable(Boolean.FALSE);
 
-		/*
-		 * Logs are stored and compared with JSON.
-		 */
-		if(error != null && ! error.isEmpty()) {
-			String currentErrors = eform.getErrorLog();
-			JSONArray jsonArray;
-			if(currentErrors == null || currentErrors.isEmpty()) {
-				jsonArray = new JSONArray();
-				jsonArray.add(error);
-			} else {
-				jsonArray = JSONArray.fromObject(currentErrors);
-				boolean addError = true;
-				for(Object jsonArrayObject : jsonArray) {
-					if(((String)jsonArrayObject).equalsIgnoreCase(error)) {
-						addError = false;
-						break;
-					}
-				}
-				if(addError) {
-					jsonArray.add(error);
-				}
-			}
-			eform.setErrorLog(jsonArray.toString());
-		}
+//		/*
+//		 * Logs are stored and compared with JSON.
+//		 */
+//		if(error != null && ! error.isEmpty()) {
+//			String currentErrors = eform.getErrorLog();
+//			JSONArray jsonArray;
+//			if(currentErrors == null || currentErrors.isEmpty()) {
+//				jsonArray = new JSONArray();
+//				jsonArray.add(error);
+//			} else {
+//				jsonArray = JSONArray.fromObject(currentErrors);
+//				boolean addError = true;
+//				for(Object jsonArrayObject : jsonArray) {
+//					if(((String)jsonArrayObject).equalsIgnoreCase(error)) {
+//						addError = false;
+//						break;
+//					}
+//				}
+//				if(addError) {
+//					jsonArray.add(error);
+//				}
+//			}
+//			eform.setErrorLog(jsonArray.toString());
+//		}
 
 		eformDao.merge(eform);
 	}

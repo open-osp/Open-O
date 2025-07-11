@@ -65,6 +65,9 @@ $mysql_cmd < measurementMapData.sql
 echo 'loading expire_oscardoc.sql'
 $mysql_cmd < expire_oscardoc.sql
 
+echo "loading oscarinit_2024.sql"
+$mysql_cmd < oscarinit_2024.sql
+
 echo 'all done!'
 echo 'the default user is oscardoc'
 echo 'password mac2002'

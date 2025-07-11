@@ -1,3 +1,8 @@
+<%@page import="java.net.URLEncoder" %>
+<%@page import="java.util.List" %>
+<%@page import="org.oscarehr.common.model.Appointment" %>
+<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
+
 <table width="100%" border="2" valign="top">
 	<% 
 String dateBegin = request.getParameter("xml_vdate");

@@ -1351,11 +1351,6 @@ INSERT INTO provider VALUES ('999998','oscardoc','doctor','doctor',null,'','',''
 --
 -- Dumping data for table 'quickList'
 --
-INSERT INTO quickList VALUES(1,"default", "999997", "000","ichppc");
-INSERT INTO quickList VALUES(2,"default", "999997", "204","ichppc");
-INSERT INTO quickList VALUES(3,"default", "999997", "288","ichppc");
-INSERT INTO quickList VALUES(4,"default", "999997", "053","ichppc");
-INSERT INTO quickList VALUES(5,"default", "999997", "235","ichppc");
 INSERT INTO quickList VALUES(6,"List1", "999998", "235","ichppc");
 INSERT INTO quickList VALUES(7,"List1", "999998", "376","ichppc");
 INSERT INTO quickList VALUES(8,"List1", "999998", "246","ichppc");
@@ -1498,7 +1493,6 @@ insert into `secRole` (role_name, description) values('HRMAdmin','HRM Administat
 
 insert into `secUserRole` (`provider_no`,`role_name`,`orgcd`,`activeyn`,lastUpdateDate) values('999998', 'doctor', 'R0000001',1,now());
 insert into `secUserRole` (`provider_no`,`role_name`,`orgcd`,`activeyn`,lastUpdateDate) values('999998', 'admin', 'R0000001',1,now());
-insert into `secUserRole` (`provider_no`,`role_name`,`orgcd`,`activeyn`,lastUpdateDate) values('999997', 'receptionist', 'R0000001',1,now());
 
 insert into `secPrivilege` values(1, 'x', 'All rights.');
 insert into `secPrivilege` values(2, 'r', 'Read');

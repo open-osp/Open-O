@@ -122,4 +122,6 @@
      public Path renderDocument(LoggedInInfo loggedInInfo, EDoc eDoc) throws PDFGenerationException;
  
      public Path renderDocument(LoggedInInfo loggedInInfo, String documentId) throws PDFGenerationException;
+
+     public Integer addDocumentToQueue(LoggedInInfo loggedInInfo, Integer documentId, Integer queueId);
  }

@@ -84,7 +84,7 @@
 <%@page import="org.oscarehr.util.LoggedInInfo" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="org.oscarehr.managers.DemographicManager" %>
-<html:html>
+<html>
     <head>
         <title>
             <bean:message key="eform.myform.title"/>
@@ -254,4 +254,4 @@
         </div>
     </div>
     </body>
-</html:html>
+</html>

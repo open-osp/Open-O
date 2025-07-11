@@ -233,6 +233,17 @@ public final class RxWriteScriptAction extends DispatchAction {
 			reRxDrugIdList.add(drugId);
 		} else if (action.equals("removeFromReRxDrugIdList") && reRxDrugIdList.contains(drugId)) {
 			reRxDrugIdList.remove(drugId);
+			try {
+				for (Iterator<RxPrescriptionData.Prescription> iterator = bean.getStashList().iterator(); iterator.hasNext(); ) {
+					RxPrescriptionData.Prescription prescription = iterator.next();
+					if (prescription.getDrugReferenceId() == Integer.parseInt(drugId)) {
+						iterator.remove();
+						break;
+					}
+				}
+			} catch (NumberFormatException e) {
+                logger.error("Error: {}", e.getMessage());
+			}
 		} else if (action.equals("clearReRxDrugIdList")) {
 			bean.clearReRxDrugIdList();
 		} else {

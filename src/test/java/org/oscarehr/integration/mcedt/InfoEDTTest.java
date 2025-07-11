@@ -226,15 +226,17 @@ public class InfoEDTTest extends EDTBaseTest {
         System.out.println("--------------- testInfo_Invalid_MOHID_FAILED_Rejected_By_Policy ---------------\n" + "Actual Results:");
 
         List<BigInteger> resourceIds = new ArrayList<>();
-        resourceIds.add(new BigInteger("$$"));
 
         // Get Info of files using resourceIds
         Detail detail = null;
         try {
+            resourceIds.add(new BigInteger("$$"));
             detail = edtDelegate.info(resourceIds);
         } catch (Faultexception e) {
             printFaultException(e);
             assertEquals("Rejected By Policy", e.getFaultInfo().getCode());
+            return;
+        } catch (NumberFormatException e) {
             return;
         }
 

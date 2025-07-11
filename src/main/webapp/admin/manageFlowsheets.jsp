@@ -49,6 +49,7 @@
 <%@ page import="org.oscarehr.common.model.Flowsheet" %>
 <%@ page import="org.oscarehr.common.dao.FlowsheetDao" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%
 	String method = request.getParameter("method");
@@ -74,17 +75,24 @@
 
 <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" type="text/css">
 <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css"	rel="stylesheet" type="text/css">
-
+	<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+	<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
 <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+	<script src="<%=request.getContextPath()%>/js/bootstrap.js"></script>
 
-<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
-<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
 <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 
-<script src="<%=request.getContextPath()%>/js/bootstrap.js"></script>
+
 <script	src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
 
-
+	<style>
+		table {
+			table-layout: fixed;
+		}
+		table td {
+			word-wrap: break-word;
+		}
+	</style>
 
 <script>
 jQuery.noConflict();
@@ -98,10 +106,12 @@ jQuery(function() {
 
 <body>
 
+<div class="container-fluid">
+<div class="navbar" id="demoHeader"><div class="navbar-inner">
+	<a class="brand" href="javascript:void(0)">Flowsheets</a>
+</div></div>
 
-			<h3>Flowsheets</h3>
-			<br>
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-condensed table-hover">
                 <thead>
 				<tr>
 					<td><b>Name</b></td>
@@ -136,14 +146,14 @@ jQuery(function() {
 					%>
 
 						<tr>
-							<td><%=flowSheet.getDisplayName()%></td>
+							<td><%=Encode.forHtmlContent(flowSheet.getDisplayName())%></td>
 							<td><%=flowSheet.isUniversal() %></td>
-							<td><%=flowSheet.getDxTriggersString() %></td>
-							<td><%=flowSheet.getProgramTriggersString() %></td>
-							<td><%=type %></td>
+							<td><%=Encode.forHtmlContent(flowSheet.getDxTriggersString()) %></td>
+							<td><%=Encode.forHtmlContent(flowSheet.getProgramTriggersString()) %></td>
+							<td><%=Encode.forHtmlContent(type) %></td>
 							<td><%=enabled%></td>
 							<td>
-								<a href="/oscar/oscarEncounter/oscarMeasurements/adminFlowsheet/EditFlowsheet.jsp?flowsheet=<%=flowSheet.getName()%>">Edit</a>&nbsp;
+								<a href="<%=request.getContextPath()%>/oscarEncounter/oscarMeasurements/adminFlowsheet/EditFlowsheet.jsp?flowsheet=<%=flowSheet.getName()%>&displayName=<%=flowSheet.getDisplayName()%>">Edit</a>&nbsp;
 								<%if(enabled) { %>
 									<a href="manageFlowsheets.jsp?method=disable&name=<%=flowSheet.getName()%>">Disable</a>
 								<% } else { %>
@@ -158,14 +168,17 @@ jQuery(function() {
             </tbody>
 			</table>
 
-			<br><br><br>
-
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>Upload Custom Flowsheet</h4>
+			</div>
+		<div class="panel-body">
 			<form enctype="multipart/form-data" method="POST" action="<%=request.getContextPath()%>/admin/manageFlowsheetsUpload.jsp">
 				<input type="file" name="flowsheet_file">
-				<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img alt="alert" src="<%=request.getContextPath()%>/images/icon_alertsml.gif"/></span>
-
-				&nbsp;
+				<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;cursor:pointer"><img alt="alert" src="<%=request.getContextPath()%>/images/icon_alertsml.gif"/></span>
 				<input type="submit" value="Upload" class="btn btn-primary">
 			</form>
-
+		</div>
+		</div>
+</div>
 </html:html>

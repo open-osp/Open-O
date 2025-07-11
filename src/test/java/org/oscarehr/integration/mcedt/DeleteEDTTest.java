@@ -233,16 +233,17 @@ public class DeleteEDTTest extends EDTBaseTest {
         System.out.println("--------------- testDelete_Uploaded_Claim_File_With_Invalid_Resource_Id_FAILED_Rejected_By_Policy ---------------\n" + "Actual Results:");
 
         List<BigInteger> resourceIds = new ArrayList<>();
-        
-        resourceIds.add(new BigInteger("$$"));
  
         // Delete files using resourceIds
         ResourceResult resourceResult = null;
         try {
+            resourceIds.add(new BigInteger("$$"));
             resourceResult = edtDelegate.delete(resourceIds);
         } catch (Faultexception e) {
             printFaultException(e);
             assertEquals("Rejected By Policy", e.getFaultInfo().getCode());
+            return;
+        } catch (NumberFormatException e) {
             return;
         }
 

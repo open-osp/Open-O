@@ -26,10 +26,13 @@ import org.apache.xml.security.utils.resolver.ResourceResolver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.oscarehr.integration.ebs.client.EdtClientBuilder;
-import org.oscarehr.integration.ebs.client.EdtClientBuilderConfig;
+import org.oscarehr.common.dao.utils.ConfigUtils;
+import org.oscarehr.integration.ebs.client.ng.EdtClientBuilder;
+import org.oscarehr.integration.ebs.client.ng.EdtClientBuilderConfig;
 import org.oscarehr.integration.mcedt.mailbox.CidPrefixResourceResolver;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import ca.ontario.health.edt.Detail;
 import ca.ontario.health.edt.DetailData;
@@ -71,11 +74,16 @@ public abstract class EDTBaseTest {
         INVALID_TRANSACTION_CODE_MCEDT_OBEC_FILE("src/test/resources/org/oscarehr/integration/mcedt/INVALID_TRANSACTION_CODE_MCEDT_OBEC_FILE.txt"),
         INVALID_LENGTH_HEALTH_NUMBER_MCEDT_OBEC_FILE("src/test/resources/org/oscarehr/integration/mcedt/INVALID_LENGTH_HEALTH_NUMBER_MCEDT_OBEC_FILE.txt"),
         NON_NUMERIC_HEALTH_NUMBER_MCEDT_OBEC_FILE("src/test/resources/org/oscarehr/integration/mcedt/NON_NUMERIC_HEALTH_NUMBER_MCEDT_OBEC_FILE.txt");
-    
+
         private final String path;
-        FilePath(String path) { this.path = path; }
-    
-        public String getPath() { return path; }
+
+        FilePath(String path) {
+            this.path = path;
+        }
+
+        public String getPath() {
+            return path;
+        }
     }
 
     protected enum ResourceType {
@@ -106,11 +114,17 @@ public abstract class EDTBaseTest {
         DOWNLOAD_EC_OUTSIDE_USE_REPORT("CO"),
         DOWNLOAD_ERROR_REPORTS("ER"),
         DOWNLOAD_EC_SUMMARY_REPORT("CS"),
-        DOWNLOAD_ROSTER_CAPITANION_REPORT_PDF("RCP"); 
-    
+        DOWNLOAD_ROSTER_CAPITANION_REPORT_PDF("RCP");
+
         private final String type;
-        ResourceType(String type) { this.type = type; }
-        public String getType() { return type; }
+
+        ResourceType(String type) {
+            this.type = type;
+        }
+
+        public String getType() {
+            return type;
+        }
     }
 
     protected static EDTDelegate edtDelegate;
@@ -119,6 +133,25 @@ public abstract class EDTBaseTest {
     public static void setUpBeforeClass() {
         Init.init();
         ResourceResolver.register(CidPrefixResourceResolver.class, true);
+        // Check if the Spring context (bean factory) has been initialized yet
+        // Set up the context if it's null
+        if(SpringUtils.getBeanFactory() == null) {
+            oscar.OscarProperties p = oscar.OscarProperties.getInstance();
+            // Set the properties
+            p.setProperty("db_name", ConfigUtils.getProperty("db_schema") + ConfigUtils.getProperty("db_schema_properties"));
+            p.setProperty("db_username", ConfigUtils.getProperty("db_user"));
+            p.setProperty("db_password", ConfigUtils.getProperty("db_password"));
+            p.setProperty("db_uri", ConfigUtils.getProperty("db_url_prefix"));
+            p.setProperty("db_driver", ConfigUtils.getProperty("db_driver"));
+            // Load the Spring application context to initialize beans and other components
+            // It loads the configurations defined in the specified XML files
+            ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
+            // Set the configuration files for the application context
+            context.setConfigLocations(new String[]{"/applicationContext.xml"});
+            context.refresh();
+            // Set the application context in the Spring utility class, so it can be accessed throughout the application
+            SpringUtils.setBeanFactory(context);
+        }
     }
 
     @Before
@@ -127,14 +160,16 @@ public abstract class EDTBaseTest {
     }
 
     @After
-    public void tearDown() { 
-        edtDelegate = null; 
+    public void tearDown() {
+        edtDelegate = null;
     }
 
     protected List<BigInteger> getResourceIds(ResourceResult resourceResult) {
-        if (resourceResult == null) { return Collections.emptyList(); }
+        if (resourceResult == null) {
+            return Collections.emptyList();
+        }
         List<BigInteger> ids = new ArrayList<BigInteger>();
-        for (ResponseResult edtResponse: resourceResult.getResponse()) {
+        for (ResponseResult edtResponse : resourceResult.getResponse()) {
             ids.add(edtResponse.getResourceID());
         }
         return ids;
@@ -142,7 +177,9 @@ public abstract class EDTBaseTest {
 
     protected String printResourceResult(ResourceResult resourceResult) {
         String code = "";
-        if (resourceResult == null) { return code; }
+        if (resourceResult == null) {
+            return code;
+        }
         List<ResponseResult> responseResultList = resourceResult.getResponse();
 
         System.out.println("Audit ID: " + resourceResult.getAuditID());
@@ -159,7 +196,9 @@ public abstract class EDTBaseTest {
     }
 
     protected void printDetailList(Detail detail) {
-        if (detail == null) { return; }
+        if (detail == null) {
+            return;
+        }
         System.out.println("Audit ID: " + detail.getAuditID());
         System.out.println("Result Size(pages): " + detail.getResultSize());
 
@@ -180,21 +219,21 @@ public abstract class EDTBaseTest {
     protected void printTypeList(TypeListResult typeListData) {
         System.out.println("Audit ID: " + typeListData.getAuditID());
 
-		for (TypeListData data : typeListData.getData()) {
-			assertNotNull(data);
+        for (TypeListData data : typeListData.getData()) {
+            assertNotNull(data);
             System.out.print("Access: " + data.getAccess());
             System.out.print(" Description: " + data.getDescriptionEn());
             System.out.print(" Resource Type: " + data.getResourceType());
             System.out.print(" Code: " + data.getResult().getCode());
             System.out.print(" Message: " + data.getResult().getMsg());
             System.out.println();
-		}		
+        }
     }
 
     protected void printDownloadResult(DownloadResult downloadResult) {
         System.out.println("Audit ID: " + downloadResult.getAuditID());
         for (DownloadData data : downloadResult.getData()) {
-			assertNotNull(data);
+            assertNotNull(data);
             System.out.println("Resource ID: " + data.getResourceID());
             System.out.println("Resource Type: " + data.getResourceType());
             System.out.println("Description: " + data.getDescription());
@@ -202,7 +241,7 @@ public abstract class EDTBaseTest {
             System.out.println("Code: " + data.getResult().getCode());
             System.out.println("Message: " + data.getResult().getMsg());
             System.out.println();
-		}
+        }
     }
 
     protected void printFaultException(Faultexception e) {
@@ -215,10 +254,12 @@ public abstract class EDTBaseTest {
     }
 
     protected void assertEqualsOnResponseCode(String expected, ResourceResult resourceResult) {
-        if (resourceResult == null) { return; }
+        if (resourceResult == null) {
+            return;
+        }
         List<ResponseResult> responseResultList = resourceResult.getResponse();
-		assertNotNull(responseResultList);
-		assertFalse(responseResultList.isEmpty());
+        assertNotNull(responseResultList);
+        assertFalse(responseResultList.isEmpty());
         for (ResponseResult responseResult : responseResultList) {
             assertEquals(expected, responseResult.getResult().getCode());
         }
@@ -227,14 +268,16 @@ public abstract class EDTBaseTest {
     protected UploadData createUploadData(FilePath filePath, ResourceType resourceType) {
         String filePathString = filePath.getPath();
         UploadData uploadData = new UploadData();
-		uploadData.setContent(readFileAsBytes(filePathString));
-		uploadData.setDescription(filePathString.substring(filePathString.lastIndexOf("/") + 1));
-		uploadData.setResourceType(resourceType.getType());
+        uploadData.setContent(readFileAsBytes(filePathString));
+        uploadData.setDescription(filePathString.substring(filePathString.lastIndexOf("/") + 1));
+        uploadData.setResourceType(resourceType.getType());
         return uploadData;
     }
 
     protected List<UpdateRequest> createUpdateRequestList(FilePath filePath, ResourceResult resourceResult) {
-        if (resourceResult == null) { return Collections.emptyList(); }
+        if (resourceResult == null) {
+            return Collections.emptyList();
+        }
         String filePathString = filePath.getPath();
         List<UpdateRequest> updateRequests = new ArrayList<>();
         for (ResponseResult responseResult : resourceResult.getResponse()) {
@@ -247,7 +290,9 @@ public abstract class EDTBaseTest {
     }
 
     protected List<UpdateRequest> createUpdateRequestList(FilePath filePath, List<BigInteger> resourceIds) {
-        if (resourceIds == null) { return Collections.emptyList(); }
+        if (resourceIds == null) {
+            return Collections.emptyList();
+        }
         String filePathString = filePath.getPath();
         List<UpdateRequest> updateRequests = new ArrayList<>();
         for (BigInteger id : resourceIds) {
@@ -279,40 +324,42 @@ public abstract class EDTBaseTest {
     }
 
     protected static EDTDelegate newDelegate(String serviceId) {
-		OscarProperties props = OscarProperties.getInstance();
-		EdtClientBuilderConfig config = new EdtClientBuilderConfig();
-		config.setLoggingRequired(!Boolean.valueOf(props.getProperty("mcedt.logging.skip")));
-		config.setKeystoreUser(props.getProperty("mcedt.keystore.user"));
-		config.setKeystorePassword(props.getProperty("mcedt.keystore.pass"));
-		config.setUserNameTokenUser(props.getProperty("mcedt.service.user"));
-		config.setUserNameTokenPassword(props.getProperty("mcedt.service.pass"));
-		config.setServiceUrl(props.getProperty("mcedt.service.url"));
-		config.setConformanceKey(props.getProperty("mcedt.service.conformanceKey"));
-		config.setServiceId(serviceId==null ? props.getProperty("mcedt.service.id") : serviceId);
-		config.setMtomEnabled(true);
-		EdtClientBuilder builder = new EdtClientBuilder(config);
-		setExternalClientKeystoreFilename(props.getProperty("mcedt.service.clientKeystore.properties"));
-		EDTDelegate edtDelegate = builder.build(EDTDelegate.class);
-		if (logger.isInfoEnabled()) {
-			logger.info("Created new EDT delegate " + edtDelegate);
-		}
-		return edtDelegate;
-	}
+        OscarProperties props = OscarProperties.getInstance();
+        EdtClientBuilderConfig config = new EdtClientBuilderConfig();
+        config.setLoggingRequired(!Boolean.valueOf(props.getProperty("mcedt.logging.skip")));
+        config.setKeystoreUser(props.getProperty("mcedt.keystore.user"));
+        config.setKeystorePassword(props.getProperty("mcedt.keystore.pass"));
+        config.setUserNameTokenUser(props.getProperty("mcedt.service.user"));
+        config.setUserNameTokenPassword(props.getProperty("mcedt.service.pass"));
+        config.setServiceUrl(props.getProperty("mcedt.service.url"));
+        config.setConformanceKey(props.getProperty("mcedt.service.conformanceKey"));
+        config.setServiceId(serviceId == null ? props.getProperty("mcedt.service.id") : serviceId);
+        config.setMtomEnabled(true);
+        EdtClientBuilder builder = new EdtClientBuilder(config);
+        setExternalClientKeystoreFilename(props.getProperty("mcedt.service.clientKeystore.properties"));
+        EDTDelegate edtDelegate = builder.build(EDTDelegate.class);
+        if (logger.isInfoEnabled()) {
+            logger.info("Created new EDT delegate " + edtDelegate);
+        }
+        return edtDelegate;
+    }
 
     /*
-	 * User can set an external `clientKeystore.properties` by providing the path to the file. 
-	 * If the path is not provided, it will default to `src/main/resources/clientKeystore.properties`.
-	 */
-	protected static void setExternalClientKeystoreFilename(String clientKeystorePropertiesPath) {
-		if (clientKeystorePropertiesPath == null) { return; }
-		Path signaturePropFile = Paths.get(clientKeystorePropertiesPath);
-		if (Files.exists(signaturePropFile)) {
-			File file = new File(clientKeystorePropertiesPath);
-			try {
-				EdtClientBuilder.setClientKeystoreFilename(file.toURI().toURL().toString());
-			} catch (MalformedURLException e) {
-				logger.error("Malformed URL: " + clientKeystorePropertiesPath, e);
-			}
-		}
-	}
+     * User can set an external `clientKeystore.properties` by providing the path to the file.
+     * If the path is not provided, it will default to `src/main/resources/clientKeystore.properties`.
+     */
+    protected static void setExternalClientKeystoreFilename(String clientKeystorePropertiesPath) {
+        if (clientKeystorePropertiesPath == null) {
+            return;
+        }
+        Path signaturePropFile = Paths.get(clientKeystorePropertiesPath);
+        if (Files.exists(signaturePropFile)) {
+            File file = new File(clientKeystorePropertiesPath);
+            try {
+                EdtClientBuilder.setClientKeystoreFilename(file.toURI().toURL().toString());
+            } catch (MalformedURLException e) {
+                logger.error("Malformed URL: " + clientKeystorePropertiesPath, e);
+            }
+        }
+    }
 }

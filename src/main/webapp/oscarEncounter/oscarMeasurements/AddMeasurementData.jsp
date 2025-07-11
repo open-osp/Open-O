@@ -270,7 +270,7 @@
 
             input, textarea, select {
 
-            / / margin-bottom: 5 px;
+                /* margin-bottom: 5 px; */
             }
 
             textarea {

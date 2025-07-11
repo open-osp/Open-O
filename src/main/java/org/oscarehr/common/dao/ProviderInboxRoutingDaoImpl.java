@@ -93,6 +93,20 @@ public class ProviderInboxRoutingDaoImpl extends AbstractDaoImpl<ProviderInboxIt
         return results.size();
     }
 
+    @Override
+    public List<ProviderInboxItem> findDocumentsLinkedWithProvider(String docType, Integer docId, String providerNo) {
+        Query query = entityManager.createQuery(
+                "select p from ProviderInboxItem p where p.labType = ? and p.labNo = ? and p.providerNo=?");
+        query.setParameter(0, docType);
+        query.setParameter(1, docId);
+        query.setParameter(2, providerNo);
+
+        @SuppressWarnings("unchecked")
+        List<ProviderInboxItem> results = query.getResultList();
+
+        return results;
+    }
+
     /**
      * Adds lab results to the provider inbox
      * 
@@ -133,13 +147,17 @@ public class ProviderInboxRoutingDaoImpl extends AbstractDaoImpl<ProviderInboxIt
             p.setLabType(labType);
             p.setStatus(fileForMainProvider ? ProviderInboxItem.FILE : ProviderInboxItem.NEW);
 
-            if (!hasProviderBeenLinkedWithDocument(labType, labNo, providerNo))
+            List<ProviderInboxItem> documentsLinkedWithProvider = findDocumentsLinkedWithProvider(labType, labNo, providerNo);
+            if (documentsLinkedWithProvider.isEmpty()) {
                 persist(p);
+            } else {
+                ProviderInboxItem existingProviderInboxItem = documentsLinkedWithProvider.get(0);
+                existingProviderInboxItem.setStatus(p.getStatus());
+                merge(existingProviderInboxItem);
+            }
 
-            for (String s : listofAdditionalProviders) {
-                if (!hasProviderBeenLinkedWithDocument(labType, labNo, s)) {
-                    addToProviderInbox(s, labNo, labType);
-                }
+            for (String provider : listofAdditionalProviders) {
+                addToProviderInbox(provider, labNo, labType);
             }
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error", e);

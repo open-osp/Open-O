@@ -85,16 +85,13 @@ ArrayList<String> recomendations = mi.getRecommendations();
 
 <head>
 	<title><%=flowSheet%> - <oscar:nameage demographicNo="<%=demographic_no%>"/></title><!--I18n-->
-
-<%--	<script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/Oscar.js"></script>--%>
+	<script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+	<script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/Oscar.js"></script>
 	<script type="text/javascript" src="<%=request.getContextPath() %>/share/calendar/calendar.js" ></script>
 	<script type="text/javascript" src="<%=request.getContextPath() %>/share/calendar/lang/<bean:message key="global.javascript.calendar"/>" ></script>
 	<script type="text/javascript" src="<%=request.getContextPath() %>/share/calendar/calendar-setup.js" ></script>
-
 	<link rel="stylesheet" type="text/css" media="all" href="<%=request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1" />
-
-    <!-- The following replaces textareas with div, not used -->
-	<!-- <script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.autogrow-textarea.js"></script> -->
 	<script type="text/javascript" src="<%=request.getContextPath() %>/share/javascript/jquery/jquery.sparkline.js"></script>
 
 	<script type="text/javascript">

@@ -24,6 +24,10 @@
  */
 -->
 
+<%@page import="java.util.List" %>
+<%@page import="org.oscarehr.common.model.CtlBillingService" %>
+<%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
+
 <form name="servicetypeform" method="post">
 <table width="75%" border="0" height="285">
 	<tr>
@@ -85,7 +89,7 @@
 			</tr>
 
 			<% 
-
+			
 			List<CtlBillingService> cbss1 = ctlBillingServiceDao.findByServiceTypeId("%");
 int rCount = 0;
   boolean bodd=false;

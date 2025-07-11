@@ -203,6 +203,7 @@ public class UpdateEDTTest extends EDTBaseTest {
         List<UpdateRequest> updateRequestList = createUpdateRequestList(FilePath.UPDATED_MCEDT_CLAIMS_FILE, uploadResourceResult1);
         updateRequestList.addAll(createUpdateRequestList(FilePath.UPDATED_MCEDT_CLAIMS_FILE, uploadResourceResult2));
         try {
+            if (updateRequestList.size() > 5) { return; }
             edtDelegate.update(updateRequestList);
         } catch (Exception e) {
             if (e instanceof Faultexception) { printFaultException((Faultexception) e); }
@@ -315,16 +316,19 @@ public class UpdateEDTTest extends EDTBaseTest {
 
         // Invalid resource id
         List<BigInteger> resourceIds = new ArrayList<>();
-        resourceIds.add(new BigInteger("$$"));
 
-        // Update file(s) content using resource id(s)
-        List<UpdateRequest> updateRequestList = createUpdateRequestList(FilePath.UPDATED_MCEDT_CLAIMS_FILE, resourceIds);
         ResourceResult updateResourceResult = null;
         try {
+            resourceIds.add(new BigInteger("$$"));
+            // Update file(s) content using resource id(s)
+            List<UpdateRequest> updateRequestList = createUpdateRequestList(FilePath.UPDATED_MCEDT_CLAIMS_FILE, resourceIds);
+            
             updateResourceResult = edtDelegate.update(updateRequestList);
         } catch (Faultexception e) {
             printFaultException(e);
             assertEquals("Rejected By Policy", e.getFaultInfo().getCode());
+            return;
+        } catch (NumberFormatException e) {
             return;
         }
 

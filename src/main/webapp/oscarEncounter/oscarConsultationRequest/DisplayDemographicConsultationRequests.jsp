@@ -203,7 +203,7 @@ function popupOscarConS(vheight,vwidth,varpage) { //open a new popup window
 							href="javascript:popupOscarRx(700,960,'../../oscarEncounter/ViewRequest.do?de=<%=demo%>&requestId=<%=id%>')">
 						<%=patient%> </a></td>
 						<td class="stat<%=status%>"><%=provide%></td>
-						<td class="stat<%=status%>"><%=cProv.getFormattedName()%></td>
+						<td class="stat<%=status%>"><%= (cProv != null) ? cProv.getFormattedName() : "" %></td>
 						<td class="stat<%=status%>">
 							<a href="javascript:popupOscarRx(700,960,'../../oscarEncounter/ViewRequest.do?de=<%=demo%>&requestId=<%=id%>')">
 								<%=StringUtils.trimToEmpty(service)%> 

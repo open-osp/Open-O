@@ -24,6 +24,10 @@
  */
 -->
 
+<%@page import="java.util.List" %>
+<%@page import="org.oscarehr.common.model.CtlBillingService" %>
+<%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
+
 <form method="post" name="form1"
 	action="dbManageBillingform_service.jsp">
 <table width="75%" border="0" cellpadding="3" bgcolor="#9999CC">
@@ -47,7 +51,6 @@ for (int i=1;i<4;i++){
 int rCount = 0;
   boolean bodd=false;
   
- 
   String servicetype_name="";
   if(results==null) {
    out.println("failed!!!"); 

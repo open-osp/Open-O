@@ -26,7 +26,7 @@ package org.oscarehr.integration.mchcv;
 import ca.ontario.health.hcv.HcvResults;
 import ca.ontario.health.hcv.Requests;
 import org.apache.commons.lang.StringUtils;
-import org.oscarehr.integration.ebs.client.EdtClientBuilder;
+import org.oscarehr.integration.ebs.client.ng.EdtClientBuilder;
 
 public class SimpleHCValidator implements HCValidator {
 

@@ -18,9 +18,14 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%if (session.getAttribute("user") == null) {response.sendRedirect("../logout.jsp");} %>
-<%@ page import="java.util.*,oscar.oscarBilling.ca.bc.data.BillingCodeData"%>
-<%@ page import="oscar.oscarBilling.ca.shared.administration.GstControlAction" %>
+<%
+    if (session.getAttribute("user") == null) {
+        response.sendRedirect("../logout.jsp");
+    }
+%>
+<%@ page import="java.util.*,oscar.oscarBilling.ca.bc.data.BillingCodeData" %>
+<%@ page import="oscar.oscarBilling.ca.on.administration.GstControlAction" %>
+<%@ page import="oscar.oscarBilling.ca.on.data.JdbcBillingCodeImpl" %>
 <%@ page import="java.math.BigDecimal" %>
 <%@ page import="org.oscarehr.common.model.BillingService" %>
 <%@ page import="org.apache.commons.lang3.StringUtils" %>
@@ -29,14 +34,17 @@
     String action = StringUtils.trimToNull(request.getParameter("action")) == null ? "search" : request.getParameter("action"); // add/edit
     String alert = "info";
     String description = StringUtils.trimToEmpty(request.getParameter("description"));
+    String percentage = StringUtils.trimToEmpty(request.getParameter("percentage"));
     String gstFlag = StringUtils.trimToNull(request.getParameter("gstFlag")) == null ? "0" : request.getParameter("gstFlag");
     String msg = "Type in a service code and search first to see if it is available.";
     String serviceCode = StringUtils.trimToEmpty(request.getParameter("service_code"));
-    String submit = StringUtils.trimToEmpty(request.getParameter("submit")) ;
+    String submit = StringUtils.trimToEmpty(request.getParameter("submit"));
     String today = (new SimpleDateFormat("yyyy-MM-dd")).format(new Date());
     String value = request.getParameter("value");
 
     BillingCodeData bcds = new BillingCodeData();
+    JdbcBillingCodeImpl jdbc = new JdbcBillingCodeImpl();
+
     Properties prop = new Properties();
     String gstPercent = new BigDecimal((new GstControlAction()).readDatabase().getProperty("gstPercent")).divide(new BigDecimal(100), 0).toString();
 
@@ -49,7 +57,7 @@
             // update the service code
             serviceCode = "A" + serviceCode;
             if (serviceCode.equals(action.substring("edit".length()))) {
-                if (bcds.updateCodeByName(serviceCode, description, value, request.getParameter("billingservice_date"), gstFlag)) {
+                if (jdbc.updateCodeByName(serviceCode, description, value, percentage, request.getParameter("billingservice_date"), gstFlag)) {
                     msg = serviceCode + " is updated.<br>" + "Type in a service code and search first to see if it is available.";
                     action = "search";
                     prop.setProperty("service_code", serviceCode);
@@ -70,7 +78,7 @@
         } else if (action.startsWith("add")) {
             serviceCode = "A" + serviceCode;
             if (serviceCode.equals(action.substring("add".length()))) {
-                if (bcds.addBillingCode(serviceCode, description, value, request.getParameter("billingservice_date"), gstFlag) > 0) {
+                if (bcds.addBillingCode(serviceCode, description, value)) {
                     msg = serviceCode + " is added.<br>" + "Type in a service code and search first to see if it is available.";
                     action = "search";
                     prop.setProperty("service_code", serviceCode);
@@ -102,12 +110,12 @@
             if (!serviceCode.startsWith("A")) {
                 serviceCode = "A" + serviceCode;
             }
-            List<String> ls = bcds.getBillingCodeAttr(serviceCode);
+            List<String> ls = jdbc.getBillingCodeAttr(serviceCode);
             if (ls.size() > 0) {
                 prop.setProperty("service_code", serviceCode);
                 prop.setProperty("description", ls.get(1));
                 prop.setProperty("value", ls.get(2));
-                prop.setProperty("percentage",  ls.get(3));
+                prop.setProperty("percentage", ls.get(3));
                 prop.setProperty("billingservice_date", ls.get(4));
                 prop.setProperty("gstFlag", ls.get(5));
                 msg = "You can edit the service code.";
@@ -123,7 +131,7 @@
             msg = "Please type in a right service code.";
         } else {
             serviceCode = "A" + serviceCode;
-            if (bcds.deletePrivateCode(serviceCode)) {
+            if (jdbc.deletePrivateCode(serviceCode)) {
                 msg = serviceCode + " is deleted.<br>" + "Type in a service code and search first to see if it is available.";
                 action = "search";
                 prop.setProperty("service_code", "A");
@@ -135,11 +143,12 @@
         }
     }
 
-    List<BillingService> sL = bcds.findAllPrivateCodes();
+    // List<BillingService> sL = bcds.findAllPrivateCodes();
+    List<BillingService> sL = new ArrayList<>();
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html:html lang="en">
@@ -165,7 +174,8 @@
                             String strDesc = StringUtils.trimToEmpty(s.getDescription());
                             strDesc = strDesc.length() > 30 ? strDesc.substring(0, 30) : strDesc;
                     %>
-                    <option value="<%=strCode%>"><%=(strCode + "| " + strDesc)%></option>
+                    <option value="<%=strCode%>"><%=(strCode + "| " + strDesc)%>
+                    </option>
                     <%}%>
                 </select>
                 <input type="hidden" name="submit" value="Search">
@@ -185,25 +195,34 @@
                 </label>
                 <div class="input-append input-prepend">
                     <span class="add-on">A</span>
-                    <input type="text" name="service_code" id="service_code" value="<%=prop.getProperty("service_code", "?").substring(1)%>" class="span2" maxlength='10' onblur="upCaseCtrl(this)" required/>
-                    <button type="submit" name="submit" class="btn btn-primary" onclick="return onSearch();" value="Search">Search</button>
+                    <input type="text" name="service_code" id="service_code"
+                           value="<%=prop.getProperty("service_code", "?").substring(1)%>" class="span2" maxlength='10'
+                           onblur="upCaseCtrl(this)" required/>
+                    <button type="submit" name="submit" class="btn btn-primary" onclick="return onSearch();"
+                            value="Search">Search
+                    </button>
                 </div>
 
                 <label for="description">Description</label>
-                <input type="text" name="description" id="description" value="<%=prop.getProperty("description", "")%>" size='50'><br/>
+                <input type="text" name="description" id="description" value="<%=prop.getProperty("description", "")%>"
+                       size='50'><br/>
 
                 <label for="value">Fee <small>(format: xx.xx, e.g. 18.20)</small></label>
-                <input type="text" name="value" id="value" value="<%=prop.getProperty("value", "")%>" size='8' maxlength='8'>
+                <input type="text" name="value" id="value" value="<%=prop.getProperty("value", "")%>" size='8'
+                       maxlength='8'>
 
                 <label for="gstFlag">
-                    <input type="checkbox" name="gstFlag" id="gstFlag" value="1" <%="1".equals(prop.getProperty("gstFlag", ""))?"checked":""%> />
+                    <input type="checkbox" name="gstFlag" id="gstFlag"
+                           value="1" <%="1".equals(prop.getProperty("gstFlag", "")) ? "checked" : ""%> />
                     Add GST
                 </label>
 
                 <label class="date" for="billingservice_date">Issued Date <small>(effective date)</small></label>
-                <% String billingServiceDate = prop.getProperty("billingservice_date")!=null?prop.getProperty("billingservice_date"):today; %>
+                <% String billingServiceDate = prop.getProperty("billingservice_date") != null ? prop.getProperty("billingservice_date") : today; %>
                 <div class="input-append">
-                    <input  style="width:90px" name="billingservice_date" id="billingservice_date" data-date="today()" data-date-format="yyyy-mm-dd" size="16" type="text" value="<%=billingServiceDate%>" pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" readonly>
+                    <input style="width:90px" name="billingservice_date" id="billingservice_date" data-date="today()"
+                           data-date-format="yyyy-mm-dd" size="16" type="text" value="<%=billingServiceDate%>"
+                           pattern="^\d{4}-((0\d)|(1[012]))-(([012]\d)|3[01])$" readonly>
                     <span class="btn"><i class="icon-calendar"></i></span>
                 </div>
 
@@ -212,7 +231,8 @@
                     <%if (action.startsWith("edit")) { %>
                     <input class="btn" type="submit" name="submit" value="Delete" onclick="return onDelete();"/>
                     <%}%>
-                    <input class="btn" type="submit" name="submit" value="<bean:message key="admin.resourcebaseurl.btnSave"/>" onclick="return onSave();"/>
+                    <input class="btn" type="submit" name="submit"
+                           value="<bean:message key="admin.resourcebaseurl.btnSave"/>" onclick="return onSave();"/>
                 </div>
             </form>
         </div>
@@ -230,17 +250,18 @@
             this.focus();
             document.forms[1].service_code.focus();
             document.forms[1].service_code.select();
-            let gstFlag ="<%=prop.getProperty("gstFlag")%>";
+            let gstFlag = "<%=prop.getProperty("gstFlag")%>";
 
-            if(gstFlag === "1"){
+            if (gstFlag === "1") {
                 document.getElementById("gstFlag").setAttribute("checked", "checked");
             } else {
                 document.getElementById("gstFlag").removeAttribute("checked")
             }
         }
+
         //-->
 
-        $(function (){
+        $(function () {
             $('#billingservice_date').datepicker();
         });
     </script>

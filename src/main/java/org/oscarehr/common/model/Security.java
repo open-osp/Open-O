@@ -222,6 +222,7 @@ public class Security extends AbstractModel<Integer> {
 	/**
 	 * @return true if inputed password equals password in the DB, false otherwise.
 	 */
+	@Deprecated
 	public boolean checkPassword(String inputedPassword) {
 		if (password == null) return (false);
 

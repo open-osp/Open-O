@@ -345,7 +345,9 @@ if(newCaseManagement) {
 
 				if(programProvider == null || programProvider.isEmpty()) {
                     ProviderData provider = providerDao.findByProviderNo(user);
-                    msg += String.format("</br><span style='color:red;'>WARNING: Provider %s requires a primary role assignment.</span>", provider.getFirstName() + " " + provider.getLastName());
+                    if (provider != null) {
+                        msg += String.format("</br><span style='color:red;'>WARNING: Provider %s requires a primary role assignment.</span>", provider.getFirstName() + " " + provider.getLastName());
+                    }
                 }
             }
         }

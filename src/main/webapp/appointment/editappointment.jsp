@@ -851,6 +851,13 @@ function locale(){
     } else if (!request.getParameter("doctor_no").equals("")) {
         doctorNo = request.getParameter("doctor_no");
     }
+
+	/* null check because demo.getProvider and/or request.getParameter("doctor_no") can
+     * BOTH return a null value that will cause the entire page to crash
+     */
+	if (doctorNo == null) {
+		doctorNo = "";
+    }
 %>
 
 

@@ -25,9 +25,10 @@
 			<%
 		}
 		
-		Collection<Integer> eFormIds=providerPreference.getAppointmentScreenEForms();
-		for (Integer eFormIdTemp : eFormIds)
+		Collection<ProviderPreference.EformLink> eFormLinks = providerPreference.getAppointmentScreenEForms();
+		for (ProviderPreference.EformLink eFormLink : eFormLinks)
 		{
+			Integer eFormIdTemp = eFormLink.getAppointmentScreenEForm();
 			EForm eForm=AppointmentProviderAdminDayUIBean.getEForms(eFormIdTemp);
 			String trimmedEscapedLinkName=StringEscapeUtils.escapeHtml(AppointmentProviderAdminDayUIBean.getLengthLimitedLinkName(loggedInInfo3, eForm.getFormName()));
 			String escapedLinkName=StringEscapeUtils.escapeHtml(eForm.getFormName());

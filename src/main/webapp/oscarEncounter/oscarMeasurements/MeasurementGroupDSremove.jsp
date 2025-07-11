@@ -24,80 +24,87 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin.measurements" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_admin.measurements");%>
+    <%authed = false; %>
+    <%response.sendRedirect("../../securityError.jsp?type=_admin.measurements");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 
-<%@ page import="java.util.*"%>
-<%@ page import="org.oscarehr.managers.MeasurementManager"%>
+<%@ page import="java.util.*" %>
+<%@ page import="org.oscarehr.managers.MeasurementManager" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
 
 <%
-String groupName = session.getAttribute( "groupName").toString();
-String groupId = null;
-String propKey = null;
-String propValue = null;
-String valueDisplay = null;
+    String groupName = session.getAttribute("groupName").toString();
+    String groupId = null;
+    String propKey = null;
+    String propValue = null;
+    String valueDisplay = null;
 
-MeasurementManager measurementManager = SpringUtils.getBean(MeasurementManager.class);
+    MeasurementManager measurementManager = SpringUtils.getBean(MeasurementManager.class);
 
-if(groupName!=null){
+    if (groupName != null) {
 
-groupId = measurementManager.findGroupId(groupName);
-propKey = "mgroup.ds.html."+groupId;
+        groupId = measurementManager.findGroupId(groupName);
+        propKey = "mgroup.ds.html." + groupId;
 
-}//if groupName
+    }//if groupName
 %>
 <!DOCTYPE html>
 <html>
 <head>
 
-		<title><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - <%=groupName%></title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <title><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup"/> - <%=groupName%>
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
 </head>
 
 <body>
 <div class="container">
 
-<h3><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - Remove Decision Support from Group </h3>
-<%
-	propValue = measurementManager.getPropertyValue(propKey);
-	valueDisplay = propValue.substring(0, propValue.lastIndexOf('.'));
-%>
+    <h3><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup"/> - Remove Decision Support from
+        Group </h3>
+    <%
+        propValue = MeasurementManager.getPropertyValue(propKey);
+        valueDisplay = propValue.substring(0, propValue.lastIndexOf('.'));
+    %>
 
 
-<form action="MeasurementGroupDScomplete.jsp" method="post" name="formRemove">
-	<input type="hidden" name="property" value="<%=propKey%>">
-	
-	
-	    <div class="alert alert-warning alert-block">
-      <h4>Warning!</h4>
-      Measurement group <em><strong><%=groupName%></strong></em> is associated with the <em><strong><%=valueDisplay%></strong></em> decision support. To remove this association please click on the remove button.
-     
-      <div style="width:100%;text-align:right;margin-top:10px"><button class="btn" onclick="window.close();">Cancel</button>  <button type="submit" name="remove" class="btn btn-danger">Remove</button>	</div>
-      
-    </div>
-</form>
+    <form action="MeasurementGroupDScomplete.jsp" method="post" name="formRemove">
+        <input type="hidden" name="property" value="<%=propKey%>">
 
-</div><!-- container -->						
-						
+
+        <div class="alert alert-warning alert-block">
+            <h4>Warning!</h4>
+            Measurement group <em><strong><%=groupName%>
+        </strong></em> is associated with the <em><strong><%=valueDisplay%>
+        </strong></em> decision support. To remove this association please click on the remove button.
+
+            <div style="width:100%;text-align:right;margin-top:10px">
+                <button class="btn" onclick="window.close();">Cancel</button>
+                <button type="submit" name="remove" class="btn btn-danger">Remove</button>
+            </div>
+
+        </div>
+    </form>
+
+</div><!-- container -->
+
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
 

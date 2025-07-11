@@ -57,6 +57,7 @@ public class PATHL7Handler implements MessageHandler {
 
 	private Integer labNo = null;
 
+	@Override
 	public Integer getLastLabNo() {
 		return labNo;
 	}

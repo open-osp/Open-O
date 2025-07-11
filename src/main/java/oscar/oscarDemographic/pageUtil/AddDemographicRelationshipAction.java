@@ -25,9 +25,6 @@
 
 package oscar.oscarDemographic.pageUtil;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -41,8 +38,10 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SessionConstants;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.oscarDemographic.data.DemographicRelationship;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -61,22 +60,22 @@ public class AddDemographicRelationshipAction extends Action {
     	if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", null)) {
 			throw new SecurityException("missing required security object (_demographic)");
 		}
-    	
-        String origDemo = request.getParameter("origDemo");
+
+	    String origDemo = request.getParameter("origDemo");
         String linkingDemo = request.getParameter("linkingDemo");
         String relation = request.getParameter("relation");
         String sdm = request.getParameter("sdm");
         String emergContact = request.getParameter("emergContact");
         String notes = request.getParameter("notes");
-        
-        request.setAttribute("demographicNo",origDemo);
+
+	    if (origDemo != null && origDemo.matches("[a-zA-Z0-9]+")) {
+		    request.setAttribute("demographicNo",origDemo);
+	    }
+
         if(request.getParameter("pmmClient") !=null && request.getParameter("pmmClient").equals("Finished")){
             return mapping.findForward("pmmClient");
         }
-        
-        
-        
-        
+
         String providerNo = (String) request.getSession().getAttribute("user");
         
         boolean sdmBool = false;
@@ -95,8 +94,10 @@ public class AddDemographicRelationshipAction extends Action {
         
         DemographicRelationship demo = new DemographicRelationship();
         demo.addDemographicRelationship(origDemo,linkingDemo,relation,sdmBool,eBool,notes,providerNo, facilityId);
-        
-        request.setAttribute("demo", origDemo);
+
+	    if (origDemo != null && origDemo.matches("[a-zA-Z0-9]+")) {
+		    request.setAttribute("demo", origDemo);
+	    }
         // ***** NEW CODE *****
         // Now link in the opposite direction
         // First work out which pairs match up

@@ -24,72 +24,78 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin.measurements" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_admin.measurements");%>
+    <%authed = false; %>
+    <%response.sendRedirect("../../securityError.jsp?type=_admin.measurements");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 
-<%@ page import="java.util.*"%>
-<%@ page import="org.oscarehr.managers.MeasurementManager"%>
+<%@ page import="java.util.*" %>
+<%@ page import="org.oscarehr.managers.MeasurementManager" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 
 <%
-String groupName = session.getAttribute( "groupName").toString();
-String groupId = null;
-String propKey = null;
+    String groupName = session.getAttribute("groupName").toString();
+    String groupId = null;
+    String propKey = null;
 
-MeasurementManager measurementManager = SpringUtils.getBean(MeasurementManager.class);
+    MeasurementManager measurementManager = SpringUtils.getBean(MeasurementManager.class);
 
 %>
 <!DOCTYPE html>
 <html>
 <head>
 
-		<title><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - <%=groupName%></title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <title><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup"/> - <%=groupName%>
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
 </head>
 
 <body>
 <div class="container">
 
-<h3><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup" /> - Add Decision Support to <em class="text-info"><%=groupName%></em> Group </h3>
-<p><em>The following listed decision support files are available for both the flowsheets and Health Tracker. Make a selection and press "add" to make that decision support available on the <strong><%=groupName%></strong>  measurement group.</em></p>
+    <h3><bean:message key="oscarEncounter.Measurements.msgEditMeasurementGroup"/> - Add Decision Support to <em
+            class="text-info"><%=groupName%>
+    </em> Group </h3>
+    <p><em>The following listed decision support files are available for both the flowsheets and Health Tracker. Make a
+        selection and press "add" to make that decision support available on the <strong><%=groupName%>
+        </strong> measurement group.</em></p>
 
 
-<form action="MeasurementGroupDScomplete.jsp" method="post" name="formAdd">
-         <select name="htmlName">
-                 <option value="-1">Select Decision Support</option>
-<%
-List<String> dsHtmlList = measurementManager.getFlowsheetDsHTML();
-for (String file : dsHtmlList) {%>
+    <form action="MeasurementGroupDScomplete.jsp" method="post" name="formAdd">
+        <select name="htmlName">
+            <option value="-1">Select Decision Support</option>
+            <%
+                List<String> dsHtmlList = MeasurementManager.getFlowsheetDsHTML();
+                for (String file : dsHtmlList) {%>
 
-                 <option value="<%=file%>"><%=file.substring(0, file.lastIndexOf('.'))%></option>
-                 
-<%}%>
-		 </select> 	
-		 
-		 <button type="submit" name="add" class="btn btn-primary" style="margin-top:-10px">Add</button>	
-		 <a href="SetupGroupList.do" class="btn" style="margin-top:-10px">Cancel</a>	
-</form>
+            <option value="<%=file%>"><%=file.substring(0, file.lastIndexOf('.'))%>
+            </option>
 
-</div><!-- container -->						
-						
+            <%}%>
+        </select>
+
+        <button type="submit" name="add" class="btn btn-primary" style="margin-top:-10px">Add</button>
+        <a href="SetupGroupList.do" class="btn" style="margin-top:-10px">Cancel</a>
+    </form>
+
+</div><!-- container -->
+
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
 

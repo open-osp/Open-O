@@ -42,6 +42,7 @@
 		<log4j2.version>2.17.0</log4j2.version>
 		<slf4j.version>1.7.32</slf4j.version>
 		<hapifhir.version>5.4.0</hapifhir.version>
+		<struts.version>1.3.11</struts.version>
 	</properties>
 
 	<repositories>
@@ -418,40 +419,40 @@
 <!--			<version>1.2.7</version>-->
 <!--		</dependency>-->
 
-		<!--Struts 1.3.10-->
+		<!--Struts 1.3.11-->
 		<!-- Struts Core Library -->
 		<dependency>
-			<groupId>org.apache.struts</groupId>
+			<groupId>io.github.weblegacy</groupId>
 			<artifactId>struts-core</artifactId>
-			<version>1.3.8</version>
+			<version>${struts.version}</version>
 		</dependency>
 
 		<!-- Struts Taglib Library -->
 		<dependency>
-			<groupId>org.apache.struts</groupId>
+			<groupId>io.github.weblegacy</groupId>
 			<artifactId>struts-taglib</artifactId>
-			<version>1.3.8</version>
+			<version>${struts.version}</version>
 		</dependency>
 
 		<!-- Struts Tiles Library -->
 		<dependency>
-			<groupId>org.apache.struts</groupId>
+			<groupId>io.github.weblegacy</groupId>
 			<artifactId>struts-tiles</artifactId>
-			<version>1.3.8</version>
+			<version>${struts.version}</version>
 		</dependency>
 
 		<!-- Struts Extras Library -->
 		<dependency>
-			<groupId>org.apache.struts</groupId>
+			<groupId>io.github.weblegacy</groupId>
 			<artifactId>struts-extras</artifactId>
-			<version>1.3.8</version>
+			<version>${struts.version}</version>
 		</dependency>
 
 		<!-- Struts El Library -->
 		<dependency>
-			<groupId>org.apache.struts</groupId>
+			<groupId>io.github.weblegacy</groupId>
 			<artifactId>struts-el</artifactId>
-			<version>1.3.8</version>
+			<version>${struts.version}</version>
 		</dependency>
 
 		<!-- Commons Digester Library -->
@@ -1341,21 +1342,6 @@
 
         <dependency>
                 <groupId>org.oscarehr.integration.ebs</groupId>
-                <artifactId>ebs-client</artifactId>
-                <version>0.0.6</version>
-                <exclusions>
-					<exclusion>
-						<groupId>org.bouncycastle</groupId>
-						<artifactId>bcprov-jdk16</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-					</exclusion>
-				</exclusions>
-        </dependency>
-        <dependency>
-                <groupId>org.oscarehr.integration.ebs</groupId>
                 <artifactId>edt-stubs</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -1647,6 +1633,20 @@
 					</execution>
 				</executions>
 			</plugin>
+            
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-war-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1728,11 +1728,11 @@
 		      </plugin>
 
 		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-maven-plugin -->
-		<plugin>
+		<!-- <plugin>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-maven-plugin</artifactId>
 			<version>11.0.20</version>
-		</plugin>
+		</plugin> -->
 <!--
 Comming soon. After spring and java upgrades
             <plugin>
@@ -2053,6 +2053,44 @@ Comming soon. After spring and java upgrades
 				</plugins>
 			</build>
 		</profile>
+
+        <profile>
+            <!-- Skip jsp compile, run 'mvn package -Pjspc' to compile jsps -->
+            <id>jspc</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- https://mvnrepository.com/artifact/io.leonard.maven.plugins/jspc-maven-plugin -->
+                    <plugin>
+                        <groupId>io.leonard.maven.plugins</groupId>
+                        <artifactId>jspc-maven-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>jspc</id>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceDirectory>src/main/webapp</sourceDirectory>
+                                    <outputDirectory>src/main/jsp</outputDirectory>
+                                    <excludes>
+                                        <exclude>**/*.jspf</exclude>
+                                        <!-- Exclude the deprecated jsp file, the file is not using now -->
+                                        <exclude>oscarEncounter/oscarConsultationRequest/attachConsultation2.jsp</exclude>
+                                        <!-- Detect html taglib related errors, exclude for now -->
+                                        <exclude>PMmodule/Admin/Bed/Bed.jsp</exclude>
+                                        <exclude>PMmodule/Admin/AgencyEdit/bed.jsp</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 	</profiles>
 
 </project>
