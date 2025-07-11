@@ -1334,19 +1334,25 @@ request.setAttribute("missingTests", missingTests);
                     <!-- Show only providers that have not already filed (status != 'F') -->
                     <c:if test="${report.status != 'F'}">
                         <c:set var="isDisabled" value="${!report.isHl7AllowOthersFileForYou()}" />
+                        <c:set var="providerId" value="ackProvider${status.index}" />
+                        <c:set var="providerNo" value="${e:forHtml(report.oscarProviderNo)}" />
+                        <c:set var="providerName" value="${e:forHtml(report.providerName)}" />
+                        
                         <input type="checkbox"
                             name="providers"
-                            class="ackProviderCheckbox 
-                                <c:if test='${isDisabled}'> disabled-checkbox</c:if>"
-                            id="ackProvider${status.index}"
-                            value="${e:forHtml(report.oscarProviderNo)}" 
-                            <c:if test="${isDisabled}">disabled</c:if> />
-                        <label for="ackProvider${status.index}">
-                            <e:forHtml value="${report.providerName}" />
+                            id="${providerId}"
+                            value="${providerNo}"
+                            class="ackProviderCheckbox${isDisabled ? ' disabled-checkbox' : ''}"
+                            ${isDisabled ? 'disabled' : ''} />
+                        
+                        <label for="${providerId}" 
+                            style="${isDisabled ? 'color: gray; cursor: not-allowed;' : ''}">
+                            <e:forHtml value="${providerName}${isDisabled ? ' (opted out by user preference)' : ''}" />
                         </label>
+                        
                         <input type="hidden"
                             class="ackProviderName"
-                            data-provider-no="${e:forHtml(report.oscarProviderNo)}"
+                            data-provider-no="${providerNo}"
                             value="${e:forHtml(report.providerName)}" /><br/>
                     </c:if>
                 </c:otherwise>
