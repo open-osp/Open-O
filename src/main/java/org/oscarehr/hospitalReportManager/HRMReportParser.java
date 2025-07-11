@@ -238,21 +238,24 @@ public class HRMReportParser {
 				HRMReportParser.doSimilarReportCheck(loggedInInfo, report, document);
 
 				PropertyDao propertyDao = SpringUtils.getBean(PropertyDao.class);
+
+				// Link the HRM to the MRP
 				boolean autoLinkToMrp = propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.auto_link_to_mrp);
 				if (autoLinkToMrp && demProviderNo != null && !demProviderNo.equals("0")) {
 					routeReportToProvider(document.getId(), demProviderNo);
-				} else {
-					Boolean routeSuccess = HRMReportParser.routeReportToProvider(report, document.getId());
-					if (!routeSuccess) {
-						
-						logger.info("Adding the provider name to the list of unidentified providers, for file:"+report.getFileLocation());
-						
-						// Add the provider name to the list of unidentified providers for this report
-						document.setUnmatchedProviders((document.getUnmatchedProviders() != null ? document.getUnmatchedProviders() : "") + "|" + ((report.getDeliverToUserIdLastName()!=null)?report.getDeliverToUserIdLastName() + ", " + report.getDeliverToUserIdFirstName():report.getDeliverToUserId()) + " (" + report.getDeliverToUserId() + ")");
-						hrmDocumentDao.merge(document);
-						// Route this report to the "system" user so that a search for "all" in the inbox will come up with them
-						HRMReportParser.routeReportToProvider(document.getId(), "-1");
-					}
+				}
+
+				// Attempt a route to the provider listed in the report -- if they don't exist, note that in the record
+				Boolean routeSuccess = HRMReportParser.routeReportToProvider(report, document.getId());
+				if (!routeSuccess) {
+					
+					logger.info("Adding the provider name to the list of unidentified providers, for file:"+report.getFileLocation());
+					
+					// Add the provider name to the list of unidentified providers for this report
+					document.setUnmatchedProviders((document.getUnmatchedProviders() != null ? document.getUnmatchedProviders() : "") + "|" + ((report.getDeliverToUserIdLastName()!=null)?report.getDeliverToUserIdLastName() + ", " + report.getDeliverToUserIdFirstName():report.getDeliverToUserId()) + " (" + report.getDeliverToUserId() + ")");
+					hrmDocumentDao.merge(document);
+					// Route this report to the "system" user so that a search for "all" in the inbox will come up with them
+					HRMReportParser.routeReportToProvider(document.getId(), "-1");
 				}
 
 				HRMReportParser.routeReportToSubClass(report, document.getId());
