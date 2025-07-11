@@ -49,6 +49,7 @@
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
 <%@ page import="oscar.log.*"%>
+<%@ page import="org.oscarehr.util.LoggedInInfo"%>
 <%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
 <%@ page import="org.oscarehr.common.model.Provider" %>
 <%@ page import="oscar.util.ConversionUtils" %>
@@ -64,7 +65,8 @@
             OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
             ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
                
-            String providerNo = request.getParameter("providerNo");
+            LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+            String providerNo = loggedInInfo.getLoggedInProviderNo();
             UserProperty uProp = userPropertyDAO.getProp(providerNo, UserProperty.LAB_ACK_COMMENT);                        
             boolean skipComment = false;
 
@@ -82,8 +84,8 @@
             String documentNo = request.getParameter("segmentID");
 
             
-            String searchProviderNo = request.getParameter("searchProviderNo");
-            String status = request.getParameter("status");
+            //String searchProviderNo = request.getParameter("searchProviderNo");
+            //String status = request.getParameter("status");
             String inQueue=request.getParameter("inQueue");
             
             boolean inQueueB=false;
