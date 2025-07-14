@@ -55,7 +55,7 @@
     
     org.oscarehr.casemgmt.model.CaseManagementNoteExt cme = new org.oscarehr.casemgmt.model.CaseManagementNoteExt();
 
-    String frmName = "caseManagementEntryForm" + request.getParameter("demographicNo");
+    String frmName = "caseManagementEntryForm";
 	CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean)session.getAttribute(frmName);
 
     String encTimeMandatoryValue = OscarProperties.getInstance().getProperty("ENCOUNTER_TIME_MANDATORY","false");
