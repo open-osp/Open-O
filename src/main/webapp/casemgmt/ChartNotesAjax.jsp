@@ -141,7 +141,7 @@ Integer offset = Integer.parseInt(request.getParameter("offset"));
 int maxId = 0;
 
 //We determine the lock status of the note
-CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("casemgmtNoteLock"+demographicNo);
+CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("casemgmtNoteLock");
 %>
 
 <c:if test="${not empty notesToDisplay}">
