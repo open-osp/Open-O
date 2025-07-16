@@ -40,13 +40,28 @@ import org.oscarehr.util.SpringUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
-public class EctViewConsultationRequestsUtil {         
+public class EctViewConsultationRequestsUtil {  
+   public List<String> ids;
+   public List<String> status;
+   public List<String> patient;
+   public List<String> teams;
+   public List<String> provider;
+   public List<String> service;
+   public List<String> vSpecialist;
+   public List<String> date;
+   public List<String> demographicNo;
+   public List<String> apptDate;
+   public List<String> patientWillBook;
+   public List<String> urgency;
+   public List<String> followUpDate;
+   public List<String> providerNo;   
+   public List<String> siteName;
+   public List<Provider> consultProvider;
+   public List<Boolean> eReferral; 
    
    public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo,String team) {   
       return estConsultationVecByTeam(loggedInInfo,team,false,null,null);
@@ -65,25 +80,25 @@ public class EctViewConsultationRequestsUtil {
    }  
             
    public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo, String team,boolean showCompleted,Date startDate, Date endDate,String orderby,String desc,String searchDate, Integer offset, Integer limit) {       
-      ids = new Vector<String>();
-      status = new Vector<String>();
-      patient = new Vector<String>();
-      provider = new Vector<String>();
-      providerNo = new Vector();
-      teams = new Vector<String>();
-      service = new Vector<String>();
-      vSpecialist = new Vector<String>();
-      urgency = new Vector<String>();
-      date = new Vector<String>();
-      demographicNo = new Vector<String>();
-      siteName = new Vector<String>();
-      this.patientWillBook = new Vector<String>();
-      apptDate = new Vector<String>();
-      followUpDate = new Vector<String>();
-      boolean verdict = true;
-      consultProvider = new Vector();
-      eReferral = Collections.synchronizedList(new ArrayList<>());
+      ids = new ArrayList<>();
+      status = new ArrayList<>();
+      patient = new ArrayList<>();
+      provider = new ArrayList<>();
+      providerNo = new ArrayList<>();
+      teams = new ArrayList<>();
+      service = new ArrayList<>();
+      vSpecialist = new ArrayList<>();
+      urgency = new ArrayList<>();
+      date = new ArrayList<>();
+      demographicNo = new ArrayList<>();
+      siteName = new ArrayList<>();
+      patientWillBook = new ArrayList<>();
+      apptDate = new ArrayList<>();
+      followUpDate = new ArrayList<>();
+      consultProvider = new ArrayList<>();
+      eReferral = new ArrayList<>();
       
+      boolean verdict = true;
       try {
           ConsultationRequestDao consultReqDao = (ConsultationRequestDao) SpringUtils.getBean(ConsultationRequestDao.class);
           ConsultationRequestExtDao consultationRequestExtDao = SpringUtils.getBean(ConsultationRequestExtDao.class);
@@ -99,7 +114,7 @@ public class EctViewConsultationRequestsUtil {
           Calendar cal = Calendar.getInstance();
           Date date1, date2;
           String providerId, providerName, specialistName;
-          List consultList = consultReqDao.getConsults(team, showCompleted, startDate, endDate, orderby, desc, searchDate, offset, limit);
+          List<ConsultationRequest> consultList = consultReqDao.getConsults(team, showCompleted, startDate, endDate, orderby, desc, searchDate, offset, limit);
 
           for( int idx = 0; idx < consultList.size(); ++idx ) {
               consult = (ConsultationRequest)consultList.get(idx);
@@ -191,16 +206,17 @@ public class EctViewConsultationRequestsUtil {
    
       
    public boolean estConsultationVecByDemographic(LoggedInInfo loggedInInfo, String demoNo) {      
-      ids = new Vector<String>();
-      status = new Vector<String>();
-      patient = new Vector<String>();
-      provider = new Vector<String>();
-      service = new Vector<String>();
-      date = new Vector<String>();
-      this.patientWillBook = new Vector<String>();
-      urgency = new Vector<String>();
-      apptDate = new Vector<String>();
-      consultProvider = new Vector();
+      ids = new ArrayList<>();
+      status = new ArrayList<>();
+      patient = new ArrayList<>();
+      provider = new ArrayList<>();
+      service = new ArrayList<>();
+      vSpecialist = new ArrayList<>();
+      date = new ArrayList<>();
+      patientWillBook = new ArrayList<>();
+      urgency = new ArrayList<>();
+      apptDate = new ArrayList<>();
+      consultProvider = new ArrayList<>();
       
       boolean verdict = true;      
       try {                           
@@ -210,6 +226,9 @@ public class EctViewConsultationRequestsUtil {
           ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
           DemographicManager demoManager = SpringUtils.getBean(DemographicManager.class);
           ConsultationServiceDao serviceDao = (ConsultationServiceDao) SpringUtils.getBean(ConsultationServiceDao.class);
+
+          ProfessionalSpecialist specialist;
+          String specialistName = "";
 
           List <ConsultationRequest> consultList = consultReqDao.getConsults(Integer.parseInt(demoNo));
           for( ConsultationRequest consult : consultList ) {
@@ -224,6 +243,17 @@ public class EctViewConsultationRequestsUtil {
                  }
               }
 
+               if(consult.getProfessionalSpecialist() == null) {
+                  specialistName = "N/A";
+                  if (consult.getServiceId() == 0) {
+                     specialistName = consultationRequestExtDao.getConsultationRequestExtsByKey(consult.getId(), ConsultationRequestExtKey.EREFERRAL_DOCTOR.getKey());
+                  }
+               }
+               else {
+                  specialist = consult.getProfessionalSpecialist();
+                  specialistName = specialist.getLastName() + ", " + specialist.getFirstName();
+               }
+
               Demographic demo = demoManager.getDemographic(loggedInInfo, consult.getDemographicId());
               String providerId = demo.getProviderNo();
               String providerName = (providerId != null && !providerId.isEmpty()) ? providerDao.getProvider(providerId).getFormattedName() : "N/A";
@@ -233,6 +263,7 @@ public class EctViewConsultationRequestsUtil {
               patient.add(demo.getFormattedName());
               provider.add(providerName);
               service.add(serviceDescription);
+              vSpecialist.add(specialistName);
               urgency.add(consult.getUrgency());
               patientWillBook.add(""+consult.isPatientWillBook());
               date.add(DateFormatUtils.ISO_DATE_FORMAT.format(consult.getReferralDate()));
@@ -246,23 +277,4 @@ public class EctViewConsultationRequestsUtil {
       }      
       return verdict;      
    }
-   
-      
-   public Vector<String> ids;
-   public Vector<String> status;
-   public Vector<String> patient;
-   public Vector<String> teams;
-   public Vector<String> provider;
-   public Vector<String> service;
-   public Vector<String> vSpecialist;
-   public Vector<String> date;
-   public Vector<String> demographicNo;
-   public Vector<String> apptDate;
-   public Vector<String> patientWillBook;
-   public Vector<String> urgency;
-   public Vector<String> followUpDate;
-   public Vector<String> providerNo;   
-   public Vector<String> siteName;
-   public List<Boolean> eReferral; 
-   public Vector consultProvider;
 }
