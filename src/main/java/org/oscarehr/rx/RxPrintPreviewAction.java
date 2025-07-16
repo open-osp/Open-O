@@ -188,6 +188,7 @@ public class RxPrintPreviewAction extends DispatchAction {
         request.setAttribute("patientPhone", patientPhone);
         request.setAttribute("patientHin", patientHin);
         request.setAttribute("patientChartNo", ptChartNo);
+        request.setAttribute("demographicNo", sessionBean.getDemographicNo());
     }
 
     /**
@@ -333,7 +334,7 @@ public class RxPrintPreviewAction extends DispatchAction {
      */
     private void setupPrescriptionData(RxSessionBean sessionBean, HttpServletRequest request) {
         StringJoiner strRx = new StringJoiner(";;");
-        StringJoiner strRxNoNewLines = new StringJoiner("<br>");
+        StringJoiner strRxNoNewLines = new StringJoiner("\n");
 
         String[] rxFullOutLines = new String[sessionBean.getStashSize()];
 
@@ -342,7 +343,7 @@ public class RxPrintPreviewAction extends DispatchAction {
             String fullOutLine = rx.getFullOutLine();
             strRx.add(fullOutLine);
             strRxNoNewLines.add(fullOutLine.replaceAll(";", " ")
-                        .replaceAll("\\\\n", "<br>"));
+                        .replaceAll("\\\\n", "\n"));
             rxFullOutLines[i] = fullOutLine.replaceAll(";", "<br>")
                     .replaceAll("\\\\n", "<br>");
         }
@@ -377,6 +378,9 @@ public class RxPrintPreviewAction extends DispatchAction {
         }
         request.setAttribute("sessionBean", sessionBean);
         request.setAttribute("reprint", reprint);
+
+        request.setAttribute("providerName", oscar.oscarProvider.data.ProviderData.getProviderName(sessionBean.getProviderNo()));
+        request.setAttribute("providerNo", sessionBean.getProviderNo());
 
         return sessionBean;
     }
@@ -513,7 +517,7 @@ public class RxPrintPreviewAction extends DispatchAction {
     private void setupComment(HttpServletRequest request) {
         String comment = request.getSession().getAttribute("comment") != null ? request.getSession().getAttribute("comment").toString() : "";
         request.getSession().removeAttribute("comment");
-        request.setAttribute("comment", comment);
+        request.setAttribute("comment", Encode.forJavaScript(comment.replaceAll("\n", "<br>")));
     }
 
     /**

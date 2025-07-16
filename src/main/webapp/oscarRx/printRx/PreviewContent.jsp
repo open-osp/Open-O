@@ -318,12 +318,12 @@
                             </tr>
                         </c:forEach>
                         <tr valign="bottom">
-                            <td colspan="2" id="additNotes"></td>
+                            <td colspan="2" id="additNotes">${requestScope.comment}</td>
                         </tr>
 
                         <input type="hidden" name="rx" value="${requestScope.strRx}"/>
-                        <input type="hidden" name="rx_no_newlines" value="${requestScope.strRxNoNewLines}"/>
-                        <input type="hidden" name="additNotes" value=""/>
+                        <input type="hidden" name="rx_no_newlines" id="rx_no_newlines" value="${requestScope.strRxNoNewLines}"/>
+                        <input type="hidden" name="additNotes" value="${requestScope.comment}"/>
                         </tbody>
                     </table>
                 </td>

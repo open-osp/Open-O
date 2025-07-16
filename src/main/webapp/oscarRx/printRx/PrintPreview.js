@@ -65,8 +65,8 @@ function resetReRxDrugList(ctx) {
 }
 
 function setComment() {
-    frames['preview'].document.getElementById('additNotes').innerHTML = '<%=Encode.forJavaScript(comment.replaceAll("\n", "<br>"))%>';
-    frames['preview'].document.getElementsByName('additNotes')[0].value = frames['preview'].document.getElementById('additNotes').innerHTML;
+    document.getElementById('additNotes').innerHTML = '<%=Encode.forJavaScript(comment.replaceAll("\n", "<br>"))%>';
+    document.getElementsByName('additNotes')[0].value = frames['preview'].document.getElementById('additNotes').innerHTML;
 }
 
 function setDefaultAddr() {
@@ -83,8 +83,8 @@ function addNotes(scriptId) {
     const comment = encodeURIComponent(document.getElementById('additionalNotes').value);
     const params = "scriptNo=" + scriptId + "&comment=" + comment + "&rand=" + ran_number;  //]
     new Ajax.Request(url, {method: 'post', parameters: params});
-    frames['preview'].document.getElementById('additNotes').innerHTML = document.getElementById('additionalNotes').value.replace(/\n/g, "<br>");
-    frames['preview'].document.getElementsByName('additNotes')[0].value = document.getElementById('additionalNotes').value.replace(/\n/g, "\r\n");
+    document.getElementById('additNotes').innerHTML = document.getElementById('additionalNotes').value.replace(/\n/g, "<br>");
+    document.getElementsByName('additNotes')[0].value = document.getElementById('additionalNotes').value.replace(/\n/g, "\r\n");
 }
 
 function printIframe() {
@@ -173,7 +173,7 @@ function printDivContent(divId) {
     doc.close();
 }
 
-function writeToEncounter(ctx, print, text, prefPharmacy, providerNo, demographicNo, curProviderNo, curDate, userName) {
+function writeToEncounter(ctx, print, text, prefPharmacy, providerNo, demographicNo, curDate, userName) {
     try {
         const url = ctx + "/oscarRx/WriteToEncounter.do";
         new Ajax.Request(url, {
@@ -184,14 +184,14 @@ function writeToEncounter(ctx, print, text, prefPharmacy, providerNo, demographi
                 if (print) {
                     printIframe();
                 }
-                openEncounter(providerNo, demographicNo, curProviderNo, userName);
+                openEncounter(providerNo, demographicNo, providerNo, userName);
             },
             onError: function (e) {
                 alert("ERROR: could not paste to EMR" + e);
                 if (print) {
                     printIframe();
                 }
-                openEncounter(providerNo, demographicNo, curProviderNo, userName);
+                openEncounter(providerNo, demographicNo, providerNo, userName);
             }
         });
     } catch (e) {
@@ -311,11 +311,11 @@ function onPrint2(method, scriptId, useSC, scAddress) {
     console.log("rxPagesize  " + rxPageSize);
 
     let action = "../form/createcustomedpdf?__title=Rx&__method=" + method + "&useSC=" + useSC + "&scAddress=" + scAddress + "&rxPageSize=" + rxPageSize + "&scriptId=" + scriptId;
-    document.getElementById("preview").contentWindow.document.getElementById("preview2Form").action = action;
+    document.getElementById("preview2Form").action = action;
     if (method !== "oscarRxFax") {
-        document.getElementById("preview").contentWindow.document.getElementById("preview2Form").target = "_blank";
+        document.getElementById("preview2Form").target = "_blank";
     }
-    document.getElementById("preview").contentWindow.document.getElementById("preview2Form").submit();
+    document.getElementById("preview2Form").submit();
 
     return true;
 }
@@ -329,4 +329,101 @@ function sendFax(scriptId, signatureRequestId, useSC, scAddress) {
     document.getElementById('pdfId').value = signatureRequestId;
 
     onPrint2('oscarRxFax', scriptId, useSC, scAddress);
+}
+
+function printPasteToParent(ctx, rxPasteAsterisk, prefPharmacy, demographicNo, providerName, providerNo, pharmacyName,
+                            pharmacyFax, prescribedBy) {
+    printPaste2Parent(ctx, true, false, true, rxPasteAsterisk, prefPharmacy, demographicNo, providerName,
+        providerNo, pharmacyName, pharmacyFax, prescribedBy)
+}
+
+function faxPasteToParent(ctx, rxPasteAsterisk, prefPharmacy, demographicNo, providerName, providerNo, pharmacyName,
+                            pharmacyFax, prescribedBy) {
+    printPaste2Parent(ctx, false, true, true, rxPasteAsterisk, prefPharmacy, demographicNo, providerName,
+        providerNo, pharmacyName, pharmacyFax, prescribedBy)
+}
+
+function printPaste2Parent(ctx, print, fax, pasteRx, rxPasteAsterisk, prefPharmacy, demographicNo, providerName,
+                           providerNo, pharmacyName, pharmacyFax, prescribedBy) {
+    try {
+        let text = "";
+        const timeStamp = new Date().toLocaleString('en-US', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+            timeZone: 'UTC'
+        });
+        if (rxPasteAsterisk) {
+            text += "**********************************************************************************\n";
+
+        }
+        if (print) {
+            text += "Prescribed and printed by " + prescribedBy + "\n";
+
+        } else if (fax) {
+            text = "[Rx faxed to " + pharmacyName.replace(/\\n/g, '\n') + " Fax#: " + pharmacyFax;
+
+            text += " prescribed by " + prescribedBy;
+
+            text += "," + timeStamp + "]\n";
+        }
+
+        if (pasteRx) {
+            const rxNoNewLines = document.getElementById("rx_no_newlines");
+            if (rxNoNewLines && rxNoNewLines.value.length > 0) {
+                text += rxNoNewLines.value + "\n";
+            }
+        }
+        if (rxPasteAsterisk) {
+            if (prefPharmacy != null && prefPharmacy.trim() !== "") {
+                text += prefPharmacy + "\n"
+            }
+            text += "****" + providerName
+                + "********************************************************************************\n";
+        }
+
+        text = text.replace(/\\n/g, '\n');
+
+        let noteEditor = "noteEditor" + demographicNo;
+        if (window.parent.opener) {
+            if (window.parent.opener.document.forms["caseManagementEntryForm"] !== undefined
+                && window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo
+                && window.parent.opener.document.forms["caseManagementEntryForm"].demographicNo.value === demographicNo) {
+                //oscarLog("3");
+                window.parent.opener.pasteToEncounterNote(text);
+                if (print) {
+                    printIframe();
+                }
+            } else if (window.parent.opener.document.encForm !== undefined) {
+                //oscarLog("4");
+                window.parent.opener.document.encForm.enTextarea.value =
+                    window.parent.opener.document.encForm.enTextarea.value + text;
+                if (print) {
+                    printIframe();
+                }
+            } else if (window.parent.opener.document.getElementById(noteEditor) !== null) {
+                window.parent.opener.document.getElementById(noteEditor).value =
+                    window.parent.opener.document.getElementById(noteEditor).value + text;
+                if (print) {
+                    printIframe();
+                }
+            } else if (pasteRx) {
+                writeToEncounter(ctx, print, text, prefPharmacy, providerNo, demographicNo,
+                    new Date().toISOString().substring(0, 10), providerName);
+            }
+        } else {
+            writeToEncounter(ctx, print, text, prefPharmacy, providerNo, demographicNo,
+                new Date().toISOString().substring(0, 10), providerName);
+        }
+
+    } catch (e) {
+        alert("ERROR: could not paste to EMR" + e);
+        if (print) {
+            printIframe();
+        }
+    }
+
 }

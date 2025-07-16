@@ -168,7 +168,15 @@
                                 <button type="button"
                                         class="btn btn-success mb-3"
                                         <c:if test="${requestScope.reprint eq 'true'}">disabled</c:if>
-                                        onClick="printPaste2Parent(true, false, true);">
+                                        onClick="printPasteToParent('${ctx}',
+                                                ${requestScope.rxPasteAsterisk},
+                                                '${requestScope.prefPharmacy}',
+                                                '${requestScope.demographicNo}',
+                                                '${requestScope.providerName}',
+                                                '${requestScope.providerNo}',
+                                                '${requestScope.pharmacyName}',
+                                                '${requestScope.pharmacyFax}',
+                                                '${requestScope.prescribedBy}');">
                                     Print &amp; Add to encounter note
                                 </button>
 
@@ -202,7 +210,15 @@
                                         <button type="button"
                                                 class="btn btn-outline-info mb-3 w-100"
                                                 id="faxPasteButton"
-                                                onClick="printPaste2Parent(false, true, true);
+                                                onClick="faxPasteToParent('${ctx}',
+                                                    '${requestScope.rxPasteAsterisk}',
+                                                    '${requestScope.prefPharmacy}',
+                                                    '${requestScope.demographicNo}',
+                                                    '${requestScope.providerName}',
+                                                    '${requestScope.providerNo}',
+                                                    '${requestScope.pharmacyName}',
+                                                    '${requestScope.pharmacyFax}',
+                                                    '${requestScope.prescribedBy}');
                                                         sendFax(${param.scriptId},
                                                     ${requestScope.signatureRequestId},
                                                     ${requestScope.useSC != null ? requestScope.useSC : false},
