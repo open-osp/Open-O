@@ -211,7 +211,7 @@
                                                 class="btn btn-outline-info mb-3 w-100"
                                                 id="faxPasteButton"
                                                 onClick="faxPasteToParent('${ctx}',
-                                                    '${requestScope.rxPasteAsterisk}',
+                                                    ${requestScope.rxPasteAsterisk},
                                                     '${requestScope.prefPharmacy}',
                                                     '${requestScope.demographicNo}',
                                                     '${requestScope.providerName}',

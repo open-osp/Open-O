@@ -273,15 +273,7 @@ function signatureHandler(result, contextPath, scriptNo) {
     isSignatureSaved = result.isSave;
     result.target.onbeforeunload = null;
 
-    // if (window.hasFaxNumber !== undefined) {
-    //     let disabled = !hasFaxNumber || !result.isSave;
-    //     toggleFaxButtons(disabled);
-    // }
-
     if (result.isSave) {
-        // if (window.hasFaxNumber && hasFaxNumber) {
-        //     result.target.onbeforeunload = unloadMess;
-        // }
 
         if (contextPath && scriptNo) {
             try {
@@ -294,6 +286,11 @@ function signatureHandler(result, contextPath, scriptNo) {
 
         if (result.storedImageUrl) {
             refreshImage(result.storedImageUrl, result.previewImageUrl);
+
+            if (document.getElementById("faxButton")) {
+                document.getElementById("faxButton").disabled = false;
+                document.getElementById("faxPasteButton").disabled = false;
+            }
         }
     }
 }
