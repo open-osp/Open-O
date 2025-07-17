@@ -41,6 +41,8 @@ public class Hl7TextMessageTo1 implements Serializable {
 
 	private Date created;
 
+	private String fileName;
+
 	public Integer getId() {
 		return id;
 	}
@@ -93,6 +95,12 @@ public class Hl7TextMessageTo1 implements Serializable {
 		return serialVersionUID;
 	}
 	
+	public String getFileName() {
+		return fileName;
+	}
 	
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
 }

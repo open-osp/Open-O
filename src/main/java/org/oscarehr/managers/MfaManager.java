@@ -39,6 +39,7 @@ public interface MfaManager {
 
     String TOTP_URL_FORMAT = "otpauth://totp/%s:%s?secret=%s&issuer=%s";
     String MFA_ENABLE_PROPERTY = "mfa.enabled";
+    String MFA_LEGACY_PIN_ENABLE = "mfa.legacy.pin.enable";
 
     /**
      * Checks if Multi-Factor Authentication (MFA) is enabled in the OSCAR system.
@@ -47,6 +48,16 @@ public interface MfaManager {
      */
     static boolean isOscarMfaEnabled() {
         return Boolean.parseBoolean(OscarProperties.getInstance().getProperty(MFA_ENABLE_PROPERTY));
+    }
+
+    /**
+     * Checks if legacy PIN authentication is enabled in the OSCAR system.
+     *
+     * @return true if legacy PIN authentication is enabled, false otherwise.
+     */
+    static boolean isOscarLegacyPinEnabled() {
+        return Boolean.parseBoolean(OscarProperties.getInstance()
+                .getProperty(MFA_LEGACY_PIN_ENABLE, String.valueOf(!MfaManager.isOscarMfaEnabled())));
     }
 
     /**
