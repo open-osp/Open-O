@@ -683,6 +683,20 @@ public class RxPrescriptionData {
 		private String drugReasonCode;
 		private String drugReasonCodeSystem;
 
+		/*
+		 * used to determine exactly what was prescribed instead
+		 * of depending on the brand name every time.
+		 */
+		private String drugPrescribed;
+
+		public String getDrugPrescribed() {
+			return drugPrescribed;
+		}
+
+		public void setDrugPrescribed(String drugPrescribed) {
+			this.drugPrescribed = drugPrescribed;
+		}
+
 		private String protocol;
 		private String priorRxProtocol;
 		private Integer pharmacyId;
