@@ -151,17 +151,21 @@ public class LabManagerImpl implements LabManager{
 	/**
 	 * Files lab results for a provider up to (and including) a specific flagged lab,
 	 * depending on the fileUpToLabNo flag. Skips acknowledged or already filed results.
+	 * 
+	 * This method is specifically designed to support filing labs on behalf of another provider,
+	 * so the logic and conditions (such as checking for lab status 'N' when filing on behalf) 
+	 * are tailored for that use case.
 	 *
-	 * @param loggedInInfo      the currently logged-in user
-	 * @param providerNo        the provider number
-	 * @param flaggedLabId      the lab ID that was flagged (i.e., selected by the user)
-	 * @param labType           the type of the lab
-	 * @param comment           the comment to add while filing
-	 * @param fileUpToLabNo     if true, file all labs up to and including flaggedLabId
-	 * @param onBehalfOfMultipleProviders if true, updates lab status only if it is 'N' (Not Acknowledged)
+	 * @param loggedInInfo                 the currently logged-in user
+	 * @param providerNo                   the provider number
+	 * @param flaggedLabId                 the lab ID that was flagged (i.e., selected by the user)
+	 * @param labType                      the type of the lab
+	 * @param comment                      the comment to add while filing
+	 * @param fileUpToLabNo                if true, file all labs up to and including flaggedLabId
+	 * @param onBehalfOfOtherProvider      if true, updates lab status only if it is 'N' (Not Acknowledged)
 	 */
 	@Override
-	public void fileLabsForProviderUpToFlaggedLab(LoggedInInfo loggedInInfo, String providerNo, String flaggedLabId, String labType, String comment, boolean fileUpToLabNo, boolean onBehalfOfMultipleProviders) {
+	public void fileLabsForProviderUpToFlaggedLab(LoggedInInfo loggedInInfo, String providerNo, String flaggedLabId, String labType, String comment, boolean fileUpToLabNo, boolean onBehalfOfOtherProvider) {
 		checkPrivilege(loggedInInfo, "w");
 
 		CommonLabResultData commonLabResultData = new CommonLabResultData();
@@ -191,7 +195,7 @@ public class LabManagerImpl implements LabManager{
 
 			// Skip if lab is already Acknowledged or Filed
 			String status = providerLabRouting.getStatus();
-			if (ProviderLabRoutingDao.STATUS.A.name().equals(status) || ProviderLabRoutingDao.STATUS.F.name().equals(status)) {
+			if (onBehalfOfOtherProvider && (ProviderLabRoutingDao.STATUS.A.name().equals(status) || ProviderLabRoutingDao.STATUS.F.name().equals(status))) {
 				continue;
 			}
 

@@ -770,7 +770,7 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                             labType: labType,
                             comment: comment,
                             fileUpToLabNo: true,
-                            onBehalfOfMultipleProviders: true
+                            onBehalfOfOtherProvider: true
                         },
                         success: function(response) {
                             console.log("Filed lab for provider: " + providerNo);
