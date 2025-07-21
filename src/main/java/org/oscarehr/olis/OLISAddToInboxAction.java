@@ -72,7 +72,7 @@ public class OLISAddToInboxAction extends DispatchAction {
 						ArrayList<String[]> labsToFile = new ArrayList<String[]>();
 						String item[] = new String[] { String.valueOf(msgHandler.getLastSegmentId()), "HL7" };
 						labsToFile.add(item);
-						CommonLabResultData.fileLabs(labsToFile, providerNo);
+						CommonLabResultData.fileLabs(labsToFile, providerNo, loggedInInfo);
 					}
 					if (doAck) {
 						String demographicID = getDemographicIdFromLab("HL7", msgHandler.getLastSegmentId());

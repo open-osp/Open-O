@@ -58,6 +58,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class CommonLabResultData {
 
@@ -411,16 +412,15 @@ public class CommonLabResultData {
 			{
 				providerLabRoutingModel.setStatus(""+status);
 
-				//we don't want to clobber existing comments when filing labs
-				String currentComment = providerLabRoutingModel.getComment();
-				if(currentComment == null) {
-					currentComment = "";
+				// we don't want to clobber existing comments when filing labs
+				// skipCommentOnUpdate: if true, do not update the comment at all
+				if (!skipCommentOnUpdate) {
+					String currentComment = Optional.ofNullable(providerLabRoutingModel.getComment()).orElse("").trim();
+					if (!comment.isEmpty() && !comment.equalsIgnoreCase(currentComment)) {
+						providerLabRoutingModel.setComment(comment.replaceAll(currentComment, currentComment));
+					}
 				}
-
-				// use the new incoming comment on these conditions.
-				if(! comment.isEmpty() && ! comment.equalsIgnoreCase(currentComment.trim())) {
-					providerLabRoutingModel.setComment(comment.replaceAll(currentComment, currentComment));
-				}
+				
 				providerLabRoutingModel.setTimestamp(new Date());
 				providerLabRoutingDao.merge(providerLabRoutingModel);
 			}
@@ -600,18 +600,18 @@ public class CommonLabResultData {
 	}
 
 	public static boolean fileLabs(ArrayList<String[]> flaggedLabs, LoggedInInfo loggedInInfo) {
-		
-	    if(!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
-			throw new SecurityException("missing required security object (_lab)");
-		}
-		return fileLabs(flaggedLabs, loggedInInfo.getLoggedInProviderNo());
+		return fileLabs(flaggedLabs, loggedInInfo.getLoggedInProviderNo(), loggedInInfo);
 		
 	}
-	public static boolean fileLabs(ArrayList<String[]> flaggedLabs, String provider) {
-		return fileLabs(flaggedLabs, provider, "");
+	public static boolean fileLabs(ArrayList<String[]> flaggedLabs, String provider, LoggedInInfo loggedInInfo) {
+		return fileLabs(flaggedLabs, provider, "", loggedInInfo);
 	}
 
-	public static boolean fileLabs(ArrayList<String[]> flaggedLabs, String provider, String comment) {
+	public static boolean fileLabs(ArrayList<String[]> flaggedLabs, String provider, String comment, LoggedInInfo loggedInInfo) {
+		if(!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+			throw new SecurityException("missing required security object (_lab)");
+		}
+
 		CommonLabResultData data = new CommonLabResultData();
 		boolean success = Boolean.FALSE;
 		for (int i = 0; i < flaggedLabs.size(); i++) {
@@ -642,7 +642,7 @@ public class CommonLabResultData {
 	}
 	
 	
-	private static void removeFromQueue(Integer lab_no) {
+	public static void removeFromQueue(Integer lab_no) {
 		List<QueueDocumentLink> queues = queueDocumentLinkDao.getQueueFromDocument(lab_no);
 		
 		for( QueueDocumentLink queue : queues ) {

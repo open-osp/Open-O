@@ -764,11 +764,13 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                         url: url,
                         type: 'POST',
                         data: {
-                            method: 'fileLabAjaxByProvider',
+                            method: 'fileOnBehalfOfMultipleProviders',
                             providerNo: providerNo,
                             flaggedLabId: flaggedLabId,
                             labType: labType,
-                            comment: comment
+                            comment: comment,
+                            fileUpToLabNo: true,
+                            onBehalfOfMultipleProviders: true
                         },
                         success: function(response) {
                             console.log("Filed lab for provider: " + providerNo);

@@ -41,6 +41,7 @@ import org.oscarehr.common.dao.PatientLabRoutingDao;
 import org.oscarehr.common.model.Hl7TextInfo;
 import org.oscarehr.common.model.Hl7TextMessage;
 import org.oscarehr.common.model.PatientLabRouting;
+import org.oscarehr.common.model.ProviderLabRoutingModel;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.PDFGenerationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,4 +61,8 @@ public interface LabManager{
 	public Hl7TextMessage getHl7Message(LoggedInInfo loggedInInfo, int labId);
 
 	public Path renderLab(LoggedInInfo loggedInInfo, Integer segmentId) throws PDFGenerationException;
+
+	public List<ProviderLabRoutingModel> findByLabNoAndLabTypeAndProviderNo(LoggedInInfo loggedInInfo, Integer labId, String labType, String providerNo);
+
+	public void fileLabsForProviderUpToFlaggedLab(LoggedInInfo loggedInInfo, String providerNo, String flaggedLabId, String labType, String comment, boolean fileUpToLabNo, boolean onBehalfOfMultipleProviders);
 }

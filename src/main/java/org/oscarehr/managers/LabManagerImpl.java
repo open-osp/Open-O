@@ -32,15 +32,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.oscarehr.common.dao.Hl7TextInfoDao;
 import org.oscarehr.common.dao.Hl7TextMessageDao;
 import org.oscarehr.common.dao.PatientLabRoutingDao;
+import org.oscarehr.common.dao.ProviderLabRoutingDao;
 import org.oscarehr.common.model.Hl7TextInfo;
 import org.oscarehr.common.model.Hl7TextMessage;
 import org.oscarehr.common.model.PatientLabRouting;
+import org.oscarehr.common.model.ProviderLabRoutingModel;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.PDFGenerationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +54,7 @@ import com.lowagie.text.DocumentException;
 
 import oscar.log.LogAction;
 import oscar.oscarLab.ca.all.pageUtil.LabPDFCreator;
+import oscar.oscarLab.ca.on.CommonLabResultData;
 import oscar.util.StringUtils;
 
 
@@ -64,6 +69,9 @@ public class LabManagerImpl implements LabManager{
 
 	@Autowired
 	Hl7TextMessageDao hl7TextMessageDao;
+
+	@Autowired
+	private ProviderLabRoutingDao providerLabRoutingDao;
 
 	@Autowired
 	private NioFileManager nioFileManager;
@@ -132,6 +140,65 @@ public class LabManagerImpl implements LabManager{
 		}
 
 		return path;
+	}
+
+	@Override
+	public List<ProviderLabRoutingModel> findByLabNoAndLabTypeAndProviderNo(LoggedInInfo loggedInInfo, Integer labId, String labType, String providerNo) {
+		checkPrivilege(loggedInInfo, "r");
+		return providerLabRoutingDao.findByLabNoAndLabTypeAndProviderNo(labId, labType, providerNo);
+	}
+
+	/**
+	 * Files lab results for a provider up to (and including) a specific flagged lab,
+	 * depending on the fileUpToLabNo flag. Skips acknowledged or already filed results.
+	 *
+	 * @param loggedInInfo      the currently logged-in user
+	 * @param providerNo        the provider number
+	 * @param flaggedLabId      the lab ID that was flagged (i.e., selected by the user)
+	 * @param labType           the type of the lab
+	 * @param comment           the comment to add while filing
+	 * @param fileUpToLabNo     if true, file all labs up to and including flaggedLabId
+	 * @param onBehalfOfMultipleProviders if true, updates lab status only if it is 'N' (Not Acknowledged)
+	 */
+	@Override
+	public void fileLabsForProviderUpToFlaggedLab(LoggedInInfo loggedInInfo, String providerNo, String flaggedLabId, String labType, String comment, boolean fileUpToLabNo, boolean onBehalfOfMultipleProviders) {
+		checkPrivilege(loggedInInfo, "w");
+
+		CommonLabResultData commonLabResultData = new CommonLabResultData();
+
+		// Gets lab IDs in order from oldest to latest (e.g., v1, v2, ..., vn)
+		String labs = commonLabResultData.getMatchingLabs(flaggedLabId, labType);
+
+		// Filter labs: if fileUpToLabNo is true, include only those <= flaggedLabId
+		List<Integer> filteredLabs = Arrays.stream(labs.split(","))
+				.map(String::trim)
+				.map(Integer::parseInt)
+				.filter(labId -> !fileUpToLabNo || labId <= Integer.parseInt(flaggedLabId))
+				.collect(Collectors.toList());
+
+		for (Integer labId : filteredLabs) {
+			// Get routing info for the lab and provider
+			List<ProviderLabRoutingModel> providerLabRoutings = findByLabNoAndLabTypeAndProviderNo(loggedInInfo, labId, labType, providerNo);
+			if (providerLabRoutings.isEmpty()) continue;
+
+			ProviderLabRoutingModel providerLabRouting = providerLabRoutings.get(0);
+
+			// Determine whether to skip updating comment based on existing content
+			boolean skipCommentOnUpdate = true;
+			if (providerLabRouting.getComment() == null || providerLabRouting.getComment().trim().isEmpty()) {
+				skipCommentOnUpdate = false;
+			}
+
+			// Skip if lab is already Acknowledged or Filed
+			String status = providerLabRouting.getStatus();
+			if (ProviderLabRoutingDao.STATUS.A.name().equals(status) || ProviderLabRoutingDao.STATUS.F.name().equals(status)) {
+				continue;
+			}
+
+			// Update report status and remove it from the queue
+			CommonLabResultData.updateReportStatus(labId, providerNo, ProviderLabRoutingDao.STATUS.F.name().charAt(0),comment, labType, skipCommentOnUpdate);
+			CommonLabResultData.removeFromQueue(labId);
+		}
 	}
 
 	private void checkPrivilege(LoggedInInfo loggedInInfo, String privilege) {

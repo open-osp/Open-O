@@ -37,6 +37,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.managers.LabManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 
@@ -49,7 +50,8 @@ import oscar.oscarLab.ca.on.CommonLabResultData;
 public class FileLabsAction extends DispatchAction {
 
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-	
+	private LabManager labManager = SpringUtils.getBean(LabManager.class);
+
    public FileLabsAction() {
    }
 
@@ -109,8 +111,8 @@ public class FileLabsAction extends DispatchAction {
 	   HttpServletRequest request,
 	   HttpServletResponse response)
 	   {
-	
-		   if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_lab", "w", null)) {
+		   LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		   if(!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", "w", null)) {
 				throw new SecurityException("missing required security object (_lab)");
 			}
 		   
@@ -121,29 +123,29 @@ public class FileLabsAction extends DispatchAction {
 	      ArrayList<String[]> listFlaggedLabs = new ArrayList<String[]>();
 	      String[] la =  new String[] {flaggedLab,labType};
 	      listFlaggedLabs.add(la);
-	      CommonLabResultData.fileLabs(listFlaggedLabs, providerNo);
+	      CommonLabResultData.fileLabs(listFlaggedLabs, providerNo, loggedInInfo);
 	
 	      return null;
 	}
 
 	@SuppressWarnings("unused")
-	public ActionForward fileLabAjaxByProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
+	public ActionForward fileOnBehalfOfMultipleProviders(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response)
 	{
-		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_lab", "w", null)) {
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		if(!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", "w", null)) {
 			throw new SecurityException("missing required security object (_lab)");
 		}
 		
-		String providerNo = request.getParameter("providerNo").trim();
-		String flaggedLab = request.getParameter("flaggedLabId").trim();
-		String labType = request.getParameter("labType").trim();
-		String comment = request.getParameter("comment").trim();
+		String providerNo = request.getParameter("providerNo");
+		String flaggedLab = request.getParameter("flaggedLabId");
+		String labType = request.getParameter("labType");
+		String comment = request.getParameter("comment");
+		boolean fileUpToLabNo = Boolean.valueOf(request.getParameter("fileUpToLabNo"));
+		boolean onBehalfOfMultipleProviders = Boolean.valueOf(request.getParameter("onBehalfOfMultipleProviders"));
 
 		if (providerNo == null || flaggedLab == null) { return null; }
 
-		ArrayList<String[]> listFlaggedLabs = new ArrayList<String[]>();
-		String[] la = new String[] {flaggedLab,labType};
-		listFlaggedLabs.add(la);
-		CommonLabResultData.fileLabs(listFlaggedLabs, providerNo, comment);
+		labManager.fileLabsForProviderUpToFlaggedLab(loggedInInfo, providerNo, flaggedLab, labType, comment, fileUpToLabNo, onBehalfOfMultipleProviders);
 
 		return null;
 	}
