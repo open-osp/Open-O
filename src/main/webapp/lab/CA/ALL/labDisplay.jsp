@@ -1137,7 +1137,7 @@ request.setAttribute("missingTests", missingTests);
                             labType: labType,
                             comment: comment,
                             fileUpToLabNo: true,
-                            onBehalfOfMultipleProviders: true
+                            onBehalfOfOtherProvider: true
                         },
                         success: function(response) {
                             console.log("Filed lab for provider: " + providerNo);
@@ -1321,7 +1321,6 @@ request.setAttribute("missingTests", missingTests);
         <p>This result is linked to other providers who have not acknowledged or filed it yet.</p>
         <p>Do you want to "file" this result on their behalf?</p>
         <p>Important - doing so will mean they likely will not see this result. Only proceed if you are sure they will not need to see this result.</p>
-        <input type="checkbox" id="ackSelectAllCheckbox" />
         <input type="checkbox" id="ackSelectAllCheckbox" />
         <label for="ackSelectAllCheckbox"><b>Select All</b></label><br/>
 
