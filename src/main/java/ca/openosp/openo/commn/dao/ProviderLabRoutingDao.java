@@ -25,7 +25,7 @@ public interface ProviderLabRoutingDao extends AbstractDao<ProviderLabRoutingMod
     }
 
     public enum STATUS {
-        X, N, A, D
+        X, N, A, D, F
     }
 
     public List<ProviderLabRoutingModel> findByLabNoAndLabTypeAndProviderNo(int labNo, String labType,
