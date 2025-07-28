@@ -945,8 +945,8 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                         <c:when test="${report.oscarProviderNo == sessionScope.user}">
                         </c:when>
                         <c:otherwise>
-                            <!-- Show only providers that have not already filed (status != 'F') -->
-                            <c:if test="${report.status != 'F'}">
+                            <!-- Show only providers that have not already filed or ack (status != 'F' && status != 'A') -->
+                            <c:if test="${report.status != 'F' && report.status != 'A'}">
                                 <c:set var="isDisabled" value="${!report.isHl7AllowOthersFileForYou()}" />
                                 <c:set var="providerId" value="ackProvider${status.index}" />
                                 <c:set var="providerNo" value="${e:forHtml(report.oscarProviderNo)}" />
