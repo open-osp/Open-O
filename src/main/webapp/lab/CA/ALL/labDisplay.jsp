@@ -1332,8 +1332,8 @@ request.setAttribute("missingTests", missingTests);
                     <input type="hidden" id="loggedInProviderName" value="${e:forHtml(report.providerName)}" />
                 </c:when>
                 <c:otherwise>
-                    <!-- Show only providers that have not already filed (status != 'F') -->
-                    <c:if test="${report.status != 'F'}">
+                    <!-- Show only providers that have not already filed or ack (status != 'F' && status != 'A') -->
+                    <c:if test="${report.status != 'F' && report.status != 'A'}">
                         <c:set var="isDisabled" value="${!report.isHl7AllowOthersFileForYou()}" />
                         <c:set var="providerId" value="ackProvider${status.index}" />
                         <c:set var="providerNo" value="${e:forHtml(report.oscarProviderNo)}" />
