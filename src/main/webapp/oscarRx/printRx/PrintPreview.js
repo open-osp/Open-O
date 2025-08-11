@@ -23,32 +23,30 @@
 function resetStash(ctx, myDrugRefEnabled) {
     const url = ctx + "/oscarRx/deleteRx.do?parameterValue=clearStash";
     const data = "";
-    new Ajax.Request(url, {
-        method: 'post', parameters: data, onSuccess: function (transport) {
-            updateCurrentInteractions(myDrugRefEnabled);
-        }
+    fetch(url, {
+        method: 'POST',
+        body: data
+    }).then(() => {
+        updateCurrentInteractions(myDrugRefEnabled);
     });
     parent.document.getElementById('rxText').innerHTML = "";//make pending prescriptions disappear.
     parent.document.getElementById('searchString').focus();
 }
 
 function updateCurrentInteractions(myDrugRefEnabled) {
-    new Ajax.Request("GetmyDrugrefInfo.do?method=findInteractingDrugList", {
-        method: 'get', onSuccess: function (transport) {
-            new Ajax.Request("UpdateInteractingDrugs.jsp", {
-                method: 'get', onSuccess: function (transport) {
-                    let str = transport.responseText;
+    fetch("GetmyDrugrefInfo.do?method=findInteractingDrugList")
+        .then(response => {
+            return fetch("UpdateInteractingDrugs.jsp")
+                .then(response => response.text())
+                .then(str => {
                     str = str.replace('<script type="text/javascript">', '');
                     str = str.replace(/<\/script>/, '');
                     eval(str);
-                    //oscarLog("str="+str);
                     if (myDrugRefEnabled) {
                         callReplacementWebService("GetmyDrugrefInfo.do?method=view", 'interactionsRxMyD');
                     }
-                }
-            });
-        }
-    });
+                });
+        });
 }
 
 function resetReRxDrugList(ctx) {
@@ -73,16 +71,34 @@ function setDefaultAddr() {
     const url = "setDefaultAddr.jsp";
     const ran_number = Math.round(Math.random() * 1000000);
     const addr = encodeURIComponent(document.getElementById('addressSel').value);
-    const params = "addr=" + addr + "&rand=" + ran_number;
-    new Ajax.Request(url, {method: 'post', parameters: params});
+    const params = `addr=${addr}&rand=${ran_number}`;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
 
 function addNotes(scriptId) {
     const url = "AddRxComment.jsp";
     const ran_number = Math.round(Math.random() * 1000000);
     const comment = encodeURIComponent(document.getElementById('additionalNotes').value);
-    const params = "scriptNo=" + scriptId + "&comment=" + comment + "&rand=" + ran_number;  //]
-    new Ajax.Request(url, {method: 'post', parameters: params});
+    const params = `scriptNo=${scriptId}&comment=${comment}&rand=${ran_number}`;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params
+    });
+
     document.getElementById('additNotes').innerHTML = document.getElementById('additionalNotes').value.replace(/\n/g, "<br>");
     document.getElementsByName('additNotes')[0].value = document.getElementById('additionalNotes').value.replace(/\n/g, "\r\n");
 }
@@ -176,24 +192,26 @@ function printDivContent(divId) {
 function writeToEncounter(ctx, print, text, prefPharmacy, providerNo, demographicNo, curDate, userName) {
     try {
         const url = ctx + "/oscarRx/WriteToEncounter.do";
-        new Ajax.Request(url, {
-            method: 'post',
-            parameters: "prefPharmacy=" + encodeURIComponent(prefPharmacy) + "&additionalNotes=" + "&body=" + encodeURIComponent(text),
-            onSuccess: function (ret) {
-                //console.log("success")
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: "prefPharmacy=" + encodeURIComponent(prefPharmacy) + "&additionalNotes=" + "&body=" + encodeURIComponent(text)
+        })
+            .then(() => {
                 if (print) {
                     printIframe();
                 }
                 openEncounter(providerNo, demographicNo, providerNo, userName);
-            },
-            onError: function (e) {
+            })
+            .catch((e) => {
                 alert("ERROR: could not paste to EMR" + e);
                 if (print) {
                     printIframe();
                 }
                 openEncounter(providerNo, demographicNo, providerNo, userName);
-            }
-        });
+            });
     } catch (e) {
         alert("ERROR: could not paste to EMR" + e);
     }
