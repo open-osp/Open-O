@@ -103,7 +103,7 @@ function addNotes(scriptId) {
     document.getElementsByName('additNotes')[0].value = document.getElementById('additionalNotes').value.replace(/\n/g, "\r\n");
 }
 
-function printIframe() {
+function printIframe(providerNo, demographicNo, userName) {
     const browserName = navigator.appName;
     if (browserName === "Microsoft Internet Explorer") {
         alert("Use of Microsoft Internet Explorer is not permitted")
@@ -116,10 +116,12 @@ function printIframe() {
 
         self.onfocus = function () {
             self.setTimeout(function () {
+                if (demographicNo) {
+                    openEncounter(providerNo, demographicNo, providerNo, userName);
+                }
                 self.parent.close();
             }, 1000);
         };
-        self.focus();
     }
 }
 
@@ -140,10 +142,8 @@ function printDivContent(divId) {
         printFrame.contentWindow.focus();
         printFrame.contentWindow.print();
 
-        // Clean up
-        setTimeout(() => {
-            document.body.removeChild(printFrame);
-        }, 1000);
+        // change the focus back to the parent window
+        self.onfocus();
     };
 
     // Write the content into the iframe
@@ -201,16 +201,14 @@ function writeToEncounter(ctx, print, text, prefPharmacy, providerNo, demographi
         })
             .then(() => {
                 if (print) {
-                    printIframe();
+                    printIframe(providerNo, demographicNo, userName);
                 }
-                openEncounter(providerNo, demographicNo, providerNo, userName);
             })
             .catch((e) => {
                 alert("ERROR: could not paste to EMR" + e);
                 if (print) {
-                    printIframe();
+                    printIframe(providerNo, demographicNo, userName);
                 }
-                openEncounter(providerNo, demographicNo, providerNo, userName);
             });
     } catch (e) {
         alert("ERROR: could not paste to EMR" + e);
