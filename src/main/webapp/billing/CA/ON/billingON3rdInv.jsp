@@ -49,7 +49,7 @@
     Integer invoiceNo = null;
     try {
         invoiceNo = Integer.parseInt(invoiceNoStr);
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException | NullPointerException e) {
         invoiceNoStr = "";
         MiscUtils.getLogger().warn("Invalid Invoice No.");
     }

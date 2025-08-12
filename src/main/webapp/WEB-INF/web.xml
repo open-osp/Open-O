@@ -320,7 +320,7 @@
 		<load-on-startup>0</load-on-startup>
 	</servlet> -->
 	<servlet>
-		<servlet-name>PatientListByAppointment</servlet-name>
+		<servlet-name>PatientListByAppt</servlet-name>
 		<servlet-class>oscar.oscarReport.data.PatientListByAppt</servlet-class>
 	</servlet>
 	<servlet>
@@ -456,7 +456,7 @@
 		<url-pattern>/servlet/oscar.DocumentUploadServlet</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>PatientListByAppointment</servlet-name>
+		<servlet-name>PatientListByAppt</servlet-name>
 		<url-pattern>/patientlistbyappt</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>

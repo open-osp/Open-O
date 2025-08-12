@@ -29,7 +29,6 @@
 
 package org.oscarehr.ws.oauth.util;
 
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -38,90 +37,73 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.PhaseInterceptor;
 import org.apache.cxf.phase.Phase;
-import org.apache.cxf.rs.security.oauth.filters.OAuthRequestFilter;
-import org.apache.cxf.rs.security.oauth.data.OAuthContext;
+import org.apache.cxf.phase.PhaseInterceptor;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
+import org.oscarehr.common.dao.AppDefinitionDao;
+import org.oscarehr.common.model.AppDefinition;
 import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.common.model.Provider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import oscar.login.OscarOAuthDataProvider;
+import oscar.login.AppOAuth1Config;
+
 import org.oscarehr.PMmodule.dao.ProviderDao;
 
+@Component
+public class OAuthInterceptor implements PhaseInterceptor<Message> {
 
-public class OAuthInterceptor extends OAuthRequestFilter implements PhaseInterceptor<Message> {
+    @Autowired private AppDefinitionDao           appDefinitionDao;
+    @Autowired private OscarOAuthDataProvider     oauthDataProvider;
+    @Autowired private OAuth1SignatureVerifier    signatureVerifier;
+    @Autowired private ProviderDao                providerDao;              
 
-    @Autowired
-    protected ProviderDao providerDao;
+    @Override public String getPhase() { return Phase.PRE_INVOKE; }
 
     @Override
     public void handleMessage(Message message) throws Fault {
+        HttpServletRequest req =
+            (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
 
-        /*
-         * Setup a LoggedInInfo and throw it onto the Request for use elsewhere.
-         * All we have is a providerNo so we access the ProviderDao directly.
-         * There (likely) may be a better way to do this.
-         *
-         */
-
-        // Create a new LoggedInInfo
-        LoggedInInfo loggedInInfo = new LoggedInInfo();
-
-        // Obtain the OAuthContext and the login (which in OSCAR is the providerNo)
-        OAuthContext oc = message.getContent(OAuthContext.class);
-
-        if (oc == null) {
+        // 1) Skip non-OAuth1 requests
+        if (!OAuthRequestParser.isOAuth1Request(req)) {
             return;
         }
-        String providerNo = oc.getSubject().getLogin();
 
-        // Create a new provider directly from the Dao with the providerNo.
-        // We can trust this number as it was authenticated from OAuth.
-        Provider provider = providerDao.getProvider(providerNo);
-        loggedInInfo.setLoggedInProvider(provider);
+        try {
+            // 2) Load AppDefinition & config
+            String consumerKey = OAuthRequestParser.getConsumerKey(req);
+            AppDefinition appDef = appDefinitionDao.findByConsumerKey(consumerKey);
+            if (appDef == null) {
+                throw new IllegalArgumentException("Unknown consumer_key: " + consumerKey);
+            }
+            AppOAuth1Config cfg = AppOAuth1Config.fromDocument(appDef.getConfig());
 
-        /* NOTE:
-         * A LoggedInInfo object from OAuth will NOT have the following:
-         * - session (no active session -- OAuth requests are stateless)
-         * - loggedInSecurity (the logged in user is OAuth, so no actual username/password security)
-         * - currentFacility (this could change, I'm not sure what it's for)
-         * - initiatingCode (this could change, I'm not sure what it's for)
-         * - locale (this could change, I'm not sure what it's for)
-         */
+            // 3) Delegate signature verification & grab the token
+            String token = signatureVerifier.verifySignature(req, cfg);
 
-        // Throw our new loggedInInfo onto the request for future use.
-        HttpServletRequest request = (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
-        request.setAttribute(new LoggedInInfo().LOGGED_IN_INFO_KEY, loggedInInfo);
+            // 4) Resolve provider via ProviderDao, attach LoggedInInfo
+            String providerNo = oauthDataProvider.getProviderNoByToken(token);
+            var provider = providerDao.getProvider(providerNo);
+            if (provider == null) {
+                throw new IllegalArgumentException("Unknown provider for token: " + token);
+            }
 
+            LoggedInInfo info = new LoggedInInfo();
+            info.setLoggedInProvider(provider);
+            req.setAttribute(info.getLoggedInInfoKey(), info);
 
-        return;
+        } catch (Exception e) {
+            throw new Fault(e);
+        }
     }
 
-
-    public Collection<PhaseInterceptor<? extends Message>> getAdditionalInterceptors() {
+    @Override public void handleFault(Message message) { /* no-op */ }
+    @Override public Set<String> getBefore()  { return Collections.emptySet(); }
+    @Override public Set<String> getAfter()   { return Collections.emptySet(); }
+    @Override public Collection<PhaseInterceptor<? extends Message>> getAdditionalInterceptors() {
         return null;
     }
-
-    public Set<String> getAfter() {
-        return Collections.emptySet();
-    }
-
-    public Set<String> getBefore() {
-        return Collections.emptySet();
-    }
-
-    public String getId() {
-        return getClass().getName();
-    }
-
-    public String getPhase() {
-        return Phase.PRE_INVOKE;
-    }
-
-    public void handleFault(Message message) {
-    }
-
-
+    @Override public String getId() { return getClass().getSimpleName(); }
 }

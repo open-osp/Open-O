@@ -97,7 +97,7 @@
 
             function deleteProduct(productId) {
                 if (confirm("Are you sure you want to delete this?")) {
-                    jQuery.getJSON("../../ws/rs/productDispensing/deleteDrugProduct/" + productId, {},
+                    jQuery.getJSON("${pageContext.request.contextPath}/ws/rs/productDispensing/deleteDrugProduct/" + productId, {},
                         function (xml) {
                             if (xml.message) {
                                 updatePage();
@@ -109,32 +109,24 @@
             }
 
             function editProduct(productId) {
-                jQuery.getJSON("../../ws/rs/productDispensing/drugProduct/" + productId, {},
+                jQuery.getJSON("${pageContext.request.contextPath}/ws/rs/productDispensing/drugProduct/" + productId, {},
                     function (xml) {
-                        if (xml.content) {
-                            var drugProduct;
-                            if (xml.drugProduct instanceof Array) {
-                                drugProduct = xml.content[0];
-                            } else {
-                                drugProduct = xml.content;
-                            }
+                        if (xml.content || xml.drugProduct) {
+                            const productList = xml.drugProduct || xml.content;
 
-
-                            $('#productName').val(drugProduct.name);
-                            $('#productCode').val(drugProduct.code);
-                            $('#productLocation').val(drugProduct.location);
-                            $('#productLot').val(drugProduct.lotNumber);
-                            $('#productExpiryDate').val(dateToYMD(drugProduct.expiryDate));
-                            $('#productAmount').val(drugProduct.amount);
-                            $('#productId').val(drugProduct.id);
+                            $('#productName').val(productList.name);
+                            $('#productCode').val(productList.code);
+                            $('#productLocation').val(productList.location);
+                            $('#productLot').val(productList.lotNumber);
+                            $('#productExpiryDate').val(dateToYMD(productList.expiryDate));
+                            $('#productAmount').val(productList.amount);
+                            $('#productId').val(productList.id);
                             $('#totalEntriesToCreateGroup').hide();
                             $('#new-product').dialog('open');
 
                             fetchCurrentNamesAndCodes();
-
                         }
                     });
-
             }
 
             function addNewProduct() {
@@ -154,15 +146,14 @@
 
 
             function fetchCurrentNamesAndCodes() {
-                jQuery.getJSON("../../ws/rs/productDispensing/drugProductTemplates", {},
+                jQuery.getJSON("${pageContext.request.contextPath}/ws/rs/productDispensing/drugProductTemplates", {},
                     function (xml) {
-                        //console.log(xml);
                         $("#productNameTemplate option").remove();
-                        if (xml.templates) {
-                            templates = xml.templates;
+                        if (xml.templates || xml.drugProduct) {
+                            const productList = xml.drugProduct || xml.templates;
                             $("#productNameTemplate").append("<option value=\"\"></option>");
-                            for (var x = 0; x < xml.templates.length; x++) {
-                                $("#productNameTemplate").append("<option value=\"" + xml.templates[x].name + "\">" + xml.templates[x].name + "</option>");
+                            for (var x = 0; x < productList.length; x++) {
+                                $("#productNameTemplate").append("<option value=\"" + productList[x].name + "\">" + productList[x].name + "</option>");
                             }
                         }
                     });
@@ -214,69 +205,48 @@
 
                 console.log('start index is ' + startIndex);
 
-                jQuery.getJSON("../../ws/rs/productDispensing/drugProducts?offset=" + startIndex + "&limit=" + pageSize + "&limitByName=" + escape(productNameFilterValue) + "&limitByLot=" + productLotFilterValue + "&limitByLocation=" + productLocationFilterValue + "&availableOnly=" + availableOnly, {},
+                jQuery.getJSON("${pageContext.request.contextPath}/ws/rs/productDispensing/drugProducts?offset=" + startIndex + "&limit=" + pageSize + "&limitByName=" + escape(productNameFilterValue) + "&limitByLot=" + productLotFilterValue + "&limitByLocation=" + productLocationFilterValue + "&availableOnly=" + availableOnly, {},
                     function (xml) {
                         $("#productTable tbody tr").remove();
-
                         var total = xml.total;
-
                         console.log(xml);
                         $("#productFilterMessage").empty();
 
-                        if (xml.content) {
-                            var arr = new Array();
-                            if (xml.content instanceof Array) {
-                                arr = xml.content;
-                            } else {
-                                arr[0] = xml.content;
+                        const productList = xml.drugProduct || [];
+
+                        for (var i = 0; i < productList.length; i++) {
+                            const drugProduct = productList[i];
+
+                            var expDate = drugProduct.expiryDate || '';
+                            if (expDate.length > 9) {
+                                expDate = expDate.substring(0, 10);
                             }
 
+                            var html = '<tr>';
+                            html += '<td><a href="javascript:void(0)" onclick="editProduct(' + drugProduct.id + ')">Edit</a>&nbsp;|&nbsp;<a href="javascript:void(0)" onclick="deleteProduct(' + drugProduct.id + ')">Delete</a></td>';
+                            html += '<td>' + drugProduct.name + '</td>';
+                            html += '<td>' + drugProduct.code + '</td>';
+                            html += '<td>' + drugProduct.lotNumber + '</td>';
+                            html += '<td>' + expDate + '</td>';
+                            html += '<td>' + drugProduct.amount + '</td>';
 
-                            for (var i = 0; i < arr.length; i++) {
-                                var drugProduct = arr[i];
-                                //console.log(arr[i]);
-                                var expDate = drugProduct.expiryDate;
-                                //console.log(expDate);
-                                if (expDate.length > 9) {
-                                    expDate = expDate.substring(0, 10);
-                                }
+                            html += '</tr>';
 
-                                var html = '<tr>';
-                                html += '<td><a href="javascript:void(0)" onclick="editProduct(' + drugProduct.id + ')">Edit</a>&nbsp;|&nbsp;<a href="javascript:void(0)" onclick="deleteProduct(' + drugProduct.id + ')">Delete</a></td>';
-                                html += '<td>' + drugProduct.name + '</td>';
-                                html += '<td>' + drugProduct.code + '</td>';
-                                html += '<td>' + drugProduct.lotNumber + '</td>';
-                                html += '<td>' + expDate + '</td>';
-                                html += '<td>' + drugProduct.amount + '</td>';
-                                //html += '<td>'+drugProduct.id+'</td>';
-
-                                html += '</tr>';
-
-                                jQuery('#productTable tbody').append(html);
-
-
-                            }
-
-                            //pagination here
-                            // $('button').prop('disabled', true);
-                            //$('#btnPrevPage').
-
-                            //next page..add condition for full last page
-
-                            $('#btnPrevPage').prop('disabled', startIndex == 0);
-                            $('#btnNextPage').prop('disabled', arr.length < pageSize);
-
-                            $("#productFilterMessage").append("<b>Showing Results:</b>&nbsp;" + (startIndex + 1) + "-" + (startIndex + arr.length) + " of " + total);
-
+                            jQuery('#productTable tbody').append(html);
                         }
 
+                            $('#btnPrevPage').prop('disabled', startIndex == 0);
+                            $('#btnNextPage').prop('disabled', productList.length < pageSize);
 
-                    });
-            }
+                            $("#productFilterMessage").append("<b>Showing Results:</b>&nbsp;" + (startIndex + 1) + "-" + (startIndex + productList.length) + " of " + total);
+
+                        }
+                    );
+                }
 
 
             function setProductLocations() {
-                jQuery.getJSON("../../ws/rs/productDispensing/productLocations", {},
+                jQuery.getJSON("${pageContext.request.contextPath}/ws/rs/productDispensing/productLocations", {},
                     function (xml) {
                         if (xml.productLocations) {
                             var arr = new Array();
@@ -302,24 +272,19 @@
             }
 
             function updateProductNames() {
-                jQuery.getJSON("../../ws/rs/productDispensing/drugProducts/uniqueNames", {},
+                jQuery.getJSON("${pageContext.request.contextPath}/ws/rs/productDispensing/drugProducts/uniqueNames", {},
                     function (xml) {
-                        if (xml.content) {
-                            var arr = new Array();
-                            if (xml.content instanceof Array) {
-                                arr = xml.content;
-                            } else {
-                                arr[0] = xml.content;
-                            }
+                        if (xml.content || xml.drugProduct) {
+                            const productList = xml.drugProduct || xml.content;
 
                             var currentVal = $("#productNameFilter").val();
                             $("#productNameFilter").empty();
                             $("#productNameFilter").append('<option value=""></option>');
 
-                            for (var i = 0; i < arr.length; i++) {
+                            for (var i = 0; i < productList.length; i++) {
                                 $('#productNameFilter').append($('<option>', {
-                                    value: arr[i],
-                                    text: arr[i]
+                                    value: productList[i],
+                                    text: productList[i]
                                 }));
                             }
                             $("#productNameFilter").val(currentVal);
@@ -333,27 +298,21 @@
             function updateProductLots() {
                 var currentVal = $("#productLotFilter").val();
 
-
                 $('#productLotFilter').html("<option value=''></option>");
-                jQuery.getJSON("../../ws/rs/productDispensing/drugProducts/uniqueLots?name=" + $('#productNameFilter').val(), {},
+                jQuery.getJSON("${pageContext.request.contextPath}/ws/rs/productDispensing/drugProducts/uniqueLots?name=" + $('#productNameFilter').val(), {},
                     function (xml) {
-                        if (xml.content) {
-                            var arr = new Array();
-                            if (xml.content instanceof Array) {
-                                arr = xml.content;
-                            } else {
-                                arr[0] = xml.content;
-                            }
+                        if (xml.content || xml.drugProduct) {
+                            const productList = xml.drugProduct || xml.content;
 
                             $("#productLotFilter").val();
 
                             $("#productLotFilter").empty();
                             $("#productLotFilter").append('<option value=""></option>');
 
-                            for (var i = 0; i < arr.length; i++) {
+                            for (var i = 0; i < productList.length; i++) {
                                 $('#productLotFilter').append($('<option>', {
-                                    value: arr[i],
-                                    text: arr[i]
+                                    value: productList[i],
+                                    text: productList[i]
                                 }));
                             }
                             $("#productLotFilter").val(currentVal);
@@ -410,7 +369,7 @@
                     width: 800,
                     modal: true,
                     buttons: {
-                        "Save Product": {
+                        Save: {
                             class: "btn btn-primary", text: "Save", click: function () {
                                 if (validateSaveProduct()) {
 
@@ -424,7 +383,7 @@
                                     $("#productName").attr("disabled", false);
                                     $("#productCode").attr("disabled", false);
                                     $("#productAmount").attr("disabled", false);
-                                    $.post('../../ws/rs/productDispensing/saveDrugProduct', $('#productForm').serialize(),
+                                    $.post('${pageContext.request.contextPath}/ws/rs/productDispensing/saveDrugProduct', $('#productForm').serialize(),
                                         function (data) {
                                             updatePage();
                                         });
@@ -447,8 +406,6 @@
 
                     }
                 });
-
-
             });
 
             function toggleFormFieldErrorDisplay(name, hasError) {
@@ -497,7 +454,6 @@
                 } else {
                     toggleFormFieldErrorDisplay('productAmount', false);
                 }
-
 
                 return !hasErrors;
 
@@ -638,7 +594,6 @@
                         <label class="control-label" for="productLocation">Location:</label>
                         <div class="controls">
                             <select name="product.location" id="productLocation">
-
                             </select>
                         </div>
                     </div>

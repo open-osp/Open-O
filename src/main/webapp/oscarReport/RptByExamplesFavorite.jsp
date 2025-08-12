@@ -72,10 +72,10 @@
             <td class="MainTableRightColumn">
                 <table>
                     <tr>
-                        <td><input type="checkbox" name="favoriteName" size="40" /></td>
+                       <td><input type="text" name="favoriteName" size="40" value="${favoriteName}"/></td>
                     </tr>
                     <tr>
-                        <td><textarea name="query" cols="80" rows="3"></textarea></td>
+                        <td><textarea name="query" cols="80" rows="3">${newQuery}</textarea></td>
                     </tr>
                     <tr>
                         <td><input type="button" value="Add" onclick="submit();"/> <input

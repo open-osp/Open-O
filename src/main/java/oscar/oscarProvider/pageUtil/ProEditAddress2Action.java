@@ -39,7 +39,6 @@ public class ProEditAddress2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
 
     public String execute() throws Exception {
@@ -53,7 +52,6 @@ public class ProEditAddress2Action extends ActionSupport {
         request.setAttribute("status", "complete");
         return SUCCESS;
     }
-
 
     private void createOrUpdateProperty(String providerNo, String key, String value) {
         UserProperty prop = propertyDao.getProp(providerNo, key);
@@ -72,4 +70,36 @@ public class ProEditAddress2Action extends ActionSupport {
     private String city;
     private String province;
     private String postal;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getPostal() {
+        return postal;
+    }
+
+    public void setPostal(String postal) {
+        this.postal = postal;
+    }
 }

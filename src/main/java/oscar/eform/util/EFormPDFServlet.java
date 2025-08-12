@@ -253,7 +253,7 @@ public class EFormPDFServlet extends HttpServlet {
             addDocumentProps(document, title, props);
 
             // create a reader for a certain document
-            String propFilename = OscarProperties.getInstance().getProperty("eform_image", "") + "/" + template;
+            String propFilename = OscarProperties.getInstance().getEformImageDirectory() + "/" + template;
             PdfReader reader = null;
 
             try {
@@ -328,7 +328,7 @@ public class EFormPDFServlet extends HttpServlet {
 
     protected Properties getCfgProp(String cfgFilename) {
         Properties ret = new Properties();
-        String propFilename = OscarProperties.getInstance().getProperty("eform_image", "") + "/" + cfgFilename;
+        String propFilename = OscarProperties.getInstance().getEformImageDirectory() + "/" + cfgFilename;
         InputStream is = null;
 
         try {

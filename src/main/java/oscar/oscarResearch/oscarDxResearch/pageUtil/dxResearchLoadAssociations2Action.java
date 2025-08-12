@@ -67,6 +67,26 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
     private static final String PRIVILEGE_UPDATE = "u";
     private static final String PRIVILEGE_WRITE = "w";
 
+    public String execute() throws Exception {
+        getAllAssociations();
+
+        String method = request.getParameter("method");
+        if ("uploadFile".equals(method)) {
+            uploadFile();
+        }
+        if ("clearAssociations".equals(method)) {
+            clearAssociations();
+        }
+        if ("export".equals(method)) {
+            export();
+        }
+        if ("autoPopulateAssociations".equals(method)) {
+            autoPopulateAssociations();
+        }
+
+        return SUCCESS;
+     }
+
     public String getAllAssociations() throws IOException {
         checkPrivilege(request, PRIVILEGE_READ);
 

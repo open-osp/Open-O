@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "listTopMatches", propOrder = {"arg0"})
+@XmlType(name = "listTopMatches", propOrder = "arg0")
 public class ListTopMatches {
 
     protected TopMatchesQuery arg0;

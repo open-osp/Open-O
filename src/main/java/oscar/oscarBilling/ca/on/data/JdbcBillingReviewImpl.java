@@ -414,7 +414,7 @@ public class JdbcBillingReviewImpl {
                 ch1Obj = new BillingClaimHeader1Data();
                 ch1Obj.setId("" + h.getId());
                 ch1Obj.setBilling_date(ConversionUtils.toDateString(h.getBillingDate()));
-                ch1Obj.setBilling_time(ConversionUtils.toDateString(h.getBillingTime()));
+                ch1Obj.setBilling_time(ConversionUtils.toTimeString(h.getBillingTime()));
                 ch1Obj.setStatus(h.getStatus());
                 ch1Obj.setProviderNo(h.getProviderNo());
                 ch1Obj.setApptProvider_no(h.getApptProviderNo());

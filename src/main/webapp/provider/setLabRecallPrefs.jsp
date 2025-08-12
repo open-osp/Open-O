@@ -66,9 +66,9 @@
                         <tr>
                             <td>Delegate: <font color="red">*required</font></td>
                             <td>
-                                <select name="value" onchange="delegateCheck();">
+                                <select name="labRecallDelegate.value" id="labRecallDelegate.value" onchange="delegateCheck();">
                                     <c:forEach var="provider" items="${providerSelect}">
-                                        <option value="${provider.value}">
+                                        <option value="${provider.value}" <c:if test="${provider.value == labRecallDelegate.value}">selected</c:if> >
                                                 ${provider.label}
                                         </option>
                                     </c:forEach>
@@ -78,19 +78,19 @@
 
                         <tr>
                             <td>Default Message Subject:</td>
-                            <td><input type="checkbox" name="labRecallMsgSubject.value" size="50" /></td>
+                            <td><input type="text" name="labRecallMsgSubject.value" value="<c:out value='${subject.value}'/>" size="50" /></td>
                         </tr>
 
                         <tr>
                             <td>Tickler Assignee:</td>
-                            <td><input type="checkbox" name="labRecallTicklerAssignee.checked" />default to delegate</td>
+                            <td><input type="checkbox" name="labRecallTicklerAssignee.checked" <c:if test="${labRecallTicklerAssignee.checked}">checked</c:if> />default to delegate</td>
                         </tr>
 
                         <tr>
                             <td>Tickler Priority:</td>
                             <td><select name="labRecallTicklerPriority.value" id="labRecallTicklerPriority.value">
                                 <c:forEach var="priority" items="${prioritySelect}">
-                                    <option value="${priority.value}">
+                                    <option value="${priority.value}" <c:if test="${priority.value == labRecallTicklerPriority.value}">selected</c:if> >
                                             ${priority.label}
                                     </option>
                                 </c:forEach>
@@ -98,7 +98,7 @@
                         </tr>
 
                     </table>
-                    <input type="submit" name="btnApply" value="Apply" />
+                    <input type="submit" name="btnApply" value="Submit" />
                     <input type="button" name="delete" value="Delete" onclick="deleteProp();" style="display:none;">
                 </form> <%} else {%> <%=bundle.getString(providermsgSuccess)%> <br>
                 <%}%>

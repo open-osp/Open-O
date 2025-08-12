@@ -120,7 +120,7 @@
                 <br/>
                 <div id="upload_form">
                     <h4>Upload CSV file:</h4>
-                    <form action="${pageContext.request.contextPath}/oscarResearch/oscarDxResearch/dxResearchLoadAssociations.do?method=uploadFile.do"
+                    <form action="${pageContext.request.contextPath}/oscarResearch/oscarDxResearch/dxResearchLoadAssociations.do?method=uploadFile"
                                method="post" enctype="multipart/form-data">
                         <input type="file" name="file" id="file" size="35"/>
                         <span title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"

@@ -62,7 +62,7 @@
                 </p>
             </div>
             <div style="color: #0000FF;">
-                <c:if test="${not empty current[idx] and current[idx] == false}">
+                <c:if test="${not empty current[idx.index] and current[idx.index] == false}">
                     <div style="color: #FF0000;">REMOVED</div>
                 </c:if>
                 <c:if test="${note.archived == true}">

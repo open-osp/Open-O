@@ -114,7 +114,7 @@
                 <%if (request.getAttribute("status") == null) {%> <%=bundle.getString(providermsgEdit)%> <c:out value="${rxPageSizeProperty.value}"/>
                 <form action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
                     <input type="hidden" name="method" value="<c:out value="${method}"/>">
-                    <input type="checkbox" name="rxUseRx3Property.checked" value="true" />Use Rx3
+                    <input type="checkbox" name="rxUseRx3Property.checked" <c:if test="${rxUseRx3Property.checked}">checked</c:if> />Use Rx3
                     <br/>
                     <input type="submit" name="btnApply" value="Apply" />
                     <%--  <input type="submit" value="<%=bundle.getString(providerbtnSubmit)%>" />--%>

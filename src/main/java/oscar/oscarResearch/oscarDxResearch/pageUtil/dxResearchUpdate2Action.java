@@ -90,7 +90,7 @@ public class dxResearchUpdate2Action extends ActionSupport {
             dao.merge(research);
         }
 
-        StringBuffer forward = new StringBuffer("/oscarResearch/oscarDxResearch/setupDxResearch.do");
+        StringBuffer forward = new StringBuffer(request.getContextPath() + "/oscarResearch/oscarDxResearch/setupDxResearch.do");
         forward.append("?demographicNo=").append(demographicNo);
         forward.append("&providerNo=").append(providerNo);
         forward.append("&quickList=");

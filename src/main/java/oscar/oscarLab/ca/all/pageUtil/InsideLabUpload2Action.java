@@ -35,6 +35,8 @@
 
 package oscar.oscarLab.ca.all.pageUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -52,6 +54,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.oscarehr.hospitalReportManager.HRMUploadLab2Action.FileStatus;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -76,24 +79,34 @@ public class InsideLabUpload2Action extends ActionSupport {
         EXISTS
     }
 
+    private List<File> importFiles;
+    private List<String> importFilesFileName;
+    private List<String> importFilesContentType;
+    
     @Override
     public String execute() {
-        String success = SUCCESS;
-        if (!ServletFileUpload.isMultipartContent(request)) {
-            return success;
+        if (importFiles == null || importFiles.isEmpty()) {
+            addActionError("No files were uploaded");
+            return INPUT;
         }
 
-        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(ServletActionContext.getRequest());
         checkUserPrivilege(loggedInInfo);
 
-        List<FileItem> fileItems = getFiles(request);
-        if (fileItems == null) {
-            return success;
+        Map<String, FileStatus> filesStatusMap = new HashMap<>();
+        
+        for (int i = 0; i < importFiles.size(); i++) {
+            File file = importFiles.get(i);
+            String fileName = importFilesFileName.get(i);
+            String contentType = importFilesContentType.get(i);
+            
+            // Process each file
+            FileStatus status = processUploadedFile(loggedInInfo, file, fileName, contentType);
+            filesStatusMap.put(fileName, status);
         }
-        Map<String, FileStatus> filesStatusMap = processFiles(loggedInInfo, request, fileItems);
-        request.setAttribute("filesStatusMap", filesStatusMap);
-
-        return success;
+        
+        ServletActionContext.getRequest().setAttribute("filesStatusMap", filesStatusMap);
+        return SUCCESS;
     }
 
     private void checkUserPrivilege(LoggedInInfo loggedInInfo) {
@@ -103,42 +116,16 @@ public class InsideLabUpload2Action extends ActionSupport {
         }
     }
 
-    private List<FileItem> getFiles(HttpServletRequest request) {
-        DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
-        ServletFileUpload servletFileUpload = new ServletFileUpload(diskFileItemFactory);
-
-        try {
-            List<FileItem> fileItems = servletFileUpload.parseRequest(request);
-            List<FileItem> filteredFileItems = new ArrayList<>();
-
-            for (FileItem fileItem : fileItems) {
-                if (fileItem.getFieldName().equals("importFiles")) {
-                    filteredFileItems.add(fileItem);
-                }
-            }
-            return filteredFileItems;
-        } catch (FileUploadException e) {
-            MiscUtils.getLogger().error("Error occurred while uploading HL7 labs", e);
-            return null;
+    private FileStatus processUploadedFile(LoggedInInfo loggedInInfo, File file, String fileName, String contentType) {
+        // Convert File to InputStream and process
+        try (InputStream inputStream = new FileInputStream(file)) {
+            String filePath = Utilities.saveFile(inputStream, fileName);
+            // Continue with your existing processing logic
+            return processFile(loggedInInfo, ServletActionContext.getRequest(), filePath, getFileType(ServletActionContext.getRequest()));
+        } catch (IOException e) {
+            MiscUtils.getLogger().error("Error processing file: " + fileName, e);
+            return FileStatus.FAILED;
         }
-    }
-
-    private Map<String, FileStatus> processFiles(LoggedInInfo loggedInInfo, HttpServletRequest request, List<FileItem> fileItems) {
-        Map<String, FileStatus> filesStatusMap = new HashMap<>();
-        String fileType = getFileType(request);
-
-        for (FileItem fileItem : fileItems) {
-            String fileName = fileItem.getName();
-            String filePath = saveFile(fileItem);
-            if (filePath == null) {
-                filesStatusMap.put(fileName, FileStatus.FAILED);
-                break;
-            }
-            FileStatus fileStatus = processFile(loggedInInfo, request, filePath, fileType);
-            filesStatusMap.put(fileName, fileStatus);
-        }
-
-        return filesStatusMap;
     }
 
     private String getFileType(HttpServletRequest request) {
@@ -152,15 +139,6 @@ public class InsideLabUpload2Action extends ActionSupport {
         }
 
         return null;
-    }
-
-    private String saveFile(FileItem fileItem) {
-        try (InputStream formFileInputStream = fileItem.getInputStream()) {
-            return Utilities.saveFile(formFileInputStream, fileItem.getName());
-        } catch (IOException e) {
-            MiscUtils.getLogger().error("Error occurred while saving " + fileItem.getName() + " file", e);
-            return null;
-        }
     }
 
     private FileStatus processFile(LoggedInInfo loggedInInfo, HttpServletRequest request, String filePath, String fileType) {
@@ -184,5 +162,32 @@ public class InsideLabUpload2Action extends ActionSupport {
             return FileStatus.COMPLETED;
         }
         return FileStatus.INVALID;
+    }
+
+    public List<File> getImportFiles() 
+    { 
+        return importFiles; 
+    }
+    public void setImportFiles(List<File> importFiles) 
+    { 
+        this.importFiles = importFiles; 
+    }
+    
+    public List<String> getImportFilesFileName() 
+    { 
+        return importFilesFileName; 
+    }
+    public void setImportFilesFileName(List<String> importFilesFileName) 
+    { 
+        this.importFilesFileName = importFilesFileName; 
+    }
+    
+    public List<String> getImportFilesContentType() 
+    { 
+        return importFilesContentType; 
+    }
+    public void setImportFilesContentType(List<String> importFilesContentType) 
+    { 
+        this.importFilesContentType = importFilesContentType; 
     }
 }

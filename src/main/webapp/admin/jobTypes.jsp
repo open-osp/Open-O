@@ -113,7 +113,7 @@
             }
 
             function getJobTypes() {
-                jQuery.getJSON("../ws/rs/jobs/types/all", {async: false},
+                jQuery.getJSON("${pageContext.request.contextPath}/ws/rs/jobs/types/all", {async: false},
                     function (xml) {
                         if (xml.types) {
                             var arr = new Array();
@@ -163,7 +163,7 @@
                     buttons: {
                         "Save Job Type": {
                             class: "btn btn-primary", text: "Save Job Type", click: function () {
-                                $.post('../ws/rs/jobs/saveJobType', $('#jobTypeForm').serialize(), function (data) {
+                                $.post('${pageContext.request.contextPath}/ws/rs/jobs/saveJobType', $('#jobTypeForm').serialize(), function (data) {
                                     clearJobs();
                                     listJobs();
                                 });

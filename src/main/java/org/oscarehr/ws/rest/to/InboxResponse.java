@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import org.oscarehr.ws.rest.to.model.InboxTo1;
 
 @XmlRootElement
-@XmlSeeAlso({InboxTo1.class})
+@XmlSeeAlso(InboxTo1.class)
 public class InboxResponse extends AbstractSearchResponse<InboxTo1> {
 
     private static final long serialVersionUID = 1L;

@@ -589,8 +589,10 @@ public class DefaultNoteService implements NoteService {
 
         if (issueId.contains("n")) {
             for (EChartNoteEntry e : notes) {
+                Integer id = safeToInt(e.getId());
+                if (id == null) continue;
                 List<CaseManagementIssue> issues = cmeIssueNotesDao
-                        .getNoteIssues((Integer.valueOf(e.getId().toString())));
+                        .getNoteIssues(id);
                 if (issues.size() == 0) {
                     filteredNotes.add(e);
                 }
@@ -615,6 +617,20 @@ public class DefaultNoteService implements NoteService {
         }
 
         return filteredNotes;
+    }
+
+    public Integer safeToInt(Object obj) {
+        if (obj instanceof Number) return ((Number) obj).intValue();
+        if (obj instanceof String[]) {
+            String[] arr = (String[]) obj;
+            if (arr.length > 0) obj = arr[0];
+            else return null;
+        }
+        try {
+            return Integer.valueOf(String.valueOf(obj));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private CaseManagementNote findNote(Long id, List<CaseManagementNote> notes) {

@@ -164,7 +164,7 @@ public class Startup implements ServletContextListener {
 				checkAndSetProperty(baseDocumentDir, contextPath, "HOME_DIR", "/billing/download/");
 				checkAndSetProperty(baseDocumentDir, contextPath, "DOCUMENT_DIR", "/document/");
 				checkAndSetProperty(baseDocumentDir, contextPath, "DOCUMENT_CACHE_DIR", "/document_cache/");
-				checkAndSetProperty(baseDocumentDir, contextPath, "eform_image", "/eform/images/");
+				checkAndSetProperty(baseDocumentDir, contextPath, "EFORM_IMAGES_DIR", "/eform/images/");
 
                 checkAndSetProperty(baseDocumentDir, contextPath, "oscarMeasurement_css_upload_path", "/oscarEncounter/oscarMeasurements/styles/");
                 checkAndSetProperty(baseDocumentDir, contextPath, "TMP_DIR", "/export/");

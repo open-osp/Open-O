@@ -135,7 +135,7 @@
                                 </c:forEach>
 
                                 <td><a href="#" name='<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.oldMeasurements"/>'
-                                       onClick="popupPage(300,800,'SetupDisplayHistory.do?type=<c:out
+                                       onClick="popupPage(300,800,'oscarEncounter/oscarMeasurements/SetupDisplayHistory.do?type=<c:out
                                                value="${pair.key}"/>'); return false;">more...</a></td>
                             </tr>
                         </c:forEach>

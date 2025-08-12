@@ -31,12 +31,13 @@ package org.oscarehr.ws.oauth;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.cxf.rs.security.oauth.data.OAuthContext;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.LoggedInInfo;
+
+import com.github.scribejava.core.model.OAuth1AccessToken;
 
 /**
  * Base class for OAuth web services
@@ -49,10 +50,15 @@ public abstract class AbstractServiceImpl {
         return (request);
     }
 
-    protected OAuthContext getOAuthContext() {
+    protected OAuth1AccessToken getOAuthAccessToken() {
         Message m = PhaseInterceptorChain.getCurrentMessage();
-        OAuthContext oac = m.getContent(OAuthContext.class);
-        return oac;
+        OAuth1AccessToken token = m.getContent(OAuth1AccessToken.class);
+        return token;
+    }
+    
+    protected String getOAuthProviderNo() {
+        HttpServletRequest request = getHttpServletRequest();
+        return (String) request.getAttribute("oauth.provider.no");
     }
 
     protected Provider getCurrentProvider() {

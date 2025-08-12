@@ -54,7 +54,7 @@ public class DelImage2Action extends ActionSupport {
         }
 
         String imgname = request.getParameter("filename");
-        String imgpath = OscarProperties.getInstance().getProperty("eform_image");
+        String imgpath = OscarProperties.getInstance().getEformImageDirectory();
         File image = new File(imgpath + "/" + imgname);
         image.delete();
         return SUCCESS;

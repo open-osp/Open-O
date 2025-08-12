@@ -27,6 +27,7 @@ package oscar.eform;
 
 import com.quatro.model.security.Secobjprivilege;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -203,7 +204,7 @@ public class EFormUtil {
     }
 
     public static ArrayList<String> listImages() {
-        String imagePath = OscarProperties.getInstance().getProperty("eform_image");
+        String imagePath = OscarProperties.getInstance().getEformImageDirectory();
         logger.debug("Img Path: " + imagePath);
         File dir = new File(imagePath);
         String[] files = dir.list();
@@ -1162,7 +1163,7 @@ public class EFormUtil {
     }
 
     public static ArrayList<String> listRichTextLetterTemplates() {
-        String imagePath = OscarProperties.getInstance().getProperty("eform_image");
+        String imagePath = OscarProperties.getInstance().getEformImageDirectory();
         MiscUtils.getLogger().debug("Img Path: " + imagePath);
         File dir = new File(imagePath);
         String[] files = getRichTextLetterTemplates(dir);
@@ -1631,8 +1632,14 @@ public class EFormUtil {
             if (currentErrors == null || currentErrors.isEmpty()) {
                 jsonArray = new JSONArray();
                 jsonArray.add(error);
-            } else {
-                jsonArray = JSONArray.fromObject(currentErrors);
+            } else {                    
+                try {
+                    jsonArray = JSONArray.fromObject(currentErrors);
+                } catch (JSONException e) {
+                    logger.warn("Malformed JSON in currentErrors, resetting: " + currentErrors, e);
+                    jsonArray = new JSONArray();
+                }
+
                 boolean addError = true;
                 for (Object jsonArrayObject : jsonArray) {
                     if (((String) jsonArrayObject).equalsIgnoreCase(error)) {

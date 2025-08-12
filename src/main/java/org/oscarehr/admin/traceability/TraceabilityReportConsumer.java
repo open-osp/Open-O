@@ -49,10 +49,11 @@ public class TraceabilityReportConsumer implements Callable<String> {
     @Override
     public String call() throws Exception {
         //setting content type to 'binary'
-        response.setContentType("application/text/plain");
+        response.setContentType("application/octet-stream");
         //the file is not created on server, users will see the file name after download
         String fileName = "trace_report.txt";
         response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        response.setHeader("Cache-Control", "no-cache");
         ServletOutputStream servletOutputStream = response.getOutputStream();
         int byte_;
         while ((byte_ = inputStream.read()) != -1) {

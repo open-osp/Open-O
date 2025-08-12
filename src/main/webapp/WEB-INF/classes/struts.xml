@@ -1383,6 +1383,8 @@
             <result name="continue">/oscarEncounter/oscarMeasurements/DisplayMeasurementStyleSheet.jsp</result>
         </action>
         <action name="oscarEncounter/oscarMeasurements/AddMeasurementStyleSheet" class="oscar.oscarEncounter.oscarMeasurements.pageUtil.EctAddMeasurementStyleSheet2Action">
+            <interceptor-ref name="fileUpload" />
+            <interceptor-ref name="defaultStack"/>
             <result name="success">/oscarEncounter/oscarMeasurements/AddMeasurementStyleSheet.jsp</result>
         </action>
         <action name="oscarEncounter/oscarMeasurements/AddMeasurementMap" class="oscar.oscarEncounter.oscarMeasurements.pageUtil.EctAddMeasurementMap2Action">
@@ -1594,6 +1596,8 @@
         </action>
         <action name="dxCodeSearchJSON" class="oscar.oscarResearch.oscarDxResearch.pageUtil.dxCodeSearchJSON2Action"/>
         <action name="oscarResearch/oscarDxResearch/dxResearchLoadAssociations" class="oscar.oscarResearch.oscarDxResearch.pageUtil.dxResearchLoadAssociations2Action">
+            <interceptor-ref name="fileUpload" />
+            <interceptor-ref name="defaultStack"/>
             <result name="success">/oscarResearch/oscarDxResearch/dxResearchSelectAssociations.jsp</result>
         </action>
         <action name="oscarLearning/CourseManager" class="org.oscarehr.learning.web.CourseManager2Action">
@@ -1723,6 +1727,8 @@
             <result name="success">/demographic/AddAlternateContact.jsp</result>
         </action>
         <action name="form/importUpload" class="oscar.oscarDemographic.pageUtil.ImportDemographicDataAction42Action">
+            <interceptor-ref name="fileUpload" />
+            <interceptor-ref name="defaultStack"/>
             <result name="success">/demographic/demographicImport.jsp</result>
         </action>
         <action name="form/importLogDownload" class="oscar.oscarDemographic.pageUtil.ImportLogDownload2Action">
@@ -1843,7 +1849,9 @@
         <action name="lab/newLabUpload" class="oscar.oscarLab.ca.all.pageUtil.LabUpload2Action">
             <result name="success">/lab/CA/ALL/uploadComplete.jsp</result>
         </action>
-        <action name="lab/CA/ALL/insideLabUpload" class="oscar.oscarLab.ca.all.pageUtil.InsideLabUpload2Action">
+        <action name="lab/CA/ALL/insideLabUpload" class="oscar.oscarLab.ca.all.pageUtil.InsideLabUpload2Action"> 
+            <interceptor-ref name="fileUpload" />
+            <interceptor-ref name="defaultStack"/>
             <result name="success">/lab/CA/ALL/testUploader.jsp</result>
         </action>
         <action name="lab/CA/ALL/oruR01Upload" class="oscar.oscarLab.ca.all.pageUtil.OruR01Upload2Action">
@@ -2146,7 +2154,9 @@
             <result name="setUpMainEncounterPage">/casemgmt/newEncounterLayout.jsp</result>
             <result name="view">/casemgmt/CaseManagementEntry.jsp</result>
             <result name="list">/CaseManagementView.do?method=view</result>
-            <result name="listCPPNotes">/CaseManagementView.do</result>
+            <result name="listCPPNotes" type="redirect">
+                <param name="location">${reloadUrl}</param>
+            </result>
             <result name="IssueSearch">/casemgmt/IssueSearch.jsp</result>
             <result name="NoDemoERR">/casemgmt/noDemo.jsp</result>
             <result name="windowClose">/casemgmt/close.jsp</result>
@@ -2160,6 +2170,10 @@
         </action>
         <action name="OscarChartPrint" class="org.oscarehr.casemgmt.web.EChartPrint2Action"/>
         <action name="ClientImage" class="org.oscarehr.casemgmt.web.ClientImage2Action" method="execute">
+            <interceptor-ref name="defaultStack"/>
+            <interceptor-ref name="fileUpload">
+                <param name="allowedTypes">image/jpeg,image/gif</param>
+            </interceptor-ref>
             <result name="success">/casemgmt/uploadimage.jsp</result>
         </action>
         <action name="OnCallQuestionnaire" class="org.oscarehr.casemgmt.web.OnCallQuestionnaire2Action">
@@ -2555,7 +2569,10 @@
         </action>
         <action name="renal/Renal" class="org.oscarehr.renal.web.Renal2Action"/>
         <action name="admin/GenerateTraceAction" class="org.oscarehr.admin.traceability.GenerateTrace2Action"/>
-        <action name="admin/GenerateTraceabilityReportAction" class="org.oscarehr.admin.traceability.GenerateTraceabilityReport2Action"/>
+        <action name="admin/GenerateTraceabilityReportAction" class="org.oscarehr.admin.traceability.GenerateTraceabilityReport2Action">
+            <interceptor-ref name="fileUpload" />
+            <interceptor-ref name="defaultStack"/>
+        </action>
         <action name="sharingcenter/affinitydomain/AffinityDomain" class="org.oscarehr.sharingcenter.actions.AffinityDomainServlet2Action"/>
         <action name="sharingcenter/affinitydomain/AffinityDomainParser" class="org.oscarehr.sharingcenter.actions.AffinityDomainParseServlet2Action"/>
         <action name="sharingcenter/affinitydomain/ClinicInfo" class="org.oscarehr.sharingcenter.actions.ClinicInfoServlet2Action"/>

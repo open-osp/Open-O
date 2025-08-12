@@ -81,13 +81,9 @@ public class FrmSetupSelect2Action extends ActionSupport {
             else formShownVector.put(encounterForm.getDisplayOrder(), encounterForm);
         }
 
-        HttpSession session = request.getSession();
-        session.setAttribute("formShownVector", formShownVector.values());
-        session.setAttribute("formHiddenVector", formHiddenVector);
+        request.setAttribute("formShownVector", formShownVector.values());
+        request.setAttribute("formHiddenVector", formHiddenVector);
 
         return "continue";
-
-
     }
-
 }

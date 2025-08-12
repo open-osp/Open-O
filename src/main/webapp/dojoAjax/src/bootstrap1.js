@@ -321,7 +321,7 @@ dojo.hostenv = (function () {
 
 
         getName: function () {
-            // sumary: Return the name of the host environment.
+            // summary: Return the name of the host environment.
             return this.name_; 	// String
         },
 

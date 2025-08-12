@@ -299,7 +299,7 @@
                                             <tr>
                                                 <td class="messengerButtonsA">
                                                     <a href="${pageContext.request.contextPath}/oscarMessenger/CreateMessage.jsp"
-                                                               styleClass="messengerButtons">
+                                                               class="messengerButtons">
                                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.DisplayMessages.btnCompose"/>
                                                     </a>
                                                 </td>
@@ -311,7 +311,7 @@
                                             <tr>
                                                 <td class="messengerButtonsA">
                                                     <a href="${pageContext.request.contextPath}/oscarMessenger/DisplayMessages.jsp"
-                                                               styleClass="messengerButtons">
+                                                               class="messengerButtons">
                                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.DisplayMessages.btnRefresh"/>
                                                     </a>
                                                 </td>
@@ -323,7 +323,7 @@
                                             <tr>
                                                 <td class="messengerButtonsA">
                                                     <a href="${pageContext.request.contextPath}/oscarMessenger/DisplayMessages.jsp?boxType=1"
-                                                               styleClass="messengerButtons">
+                                                               class="messengerButtons">
                                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.DisplayMessages.btnSent"/><!--sentMessage--link-->
                                                     </a>
                                                 </td>
@@ -335,7 +335,7 @@
                                             <tr>
                                                 <td class="messengerButtonsA">
                                                     <a href="${pageContext.request.contextPath}/oscarMessenger/DisplayMessages.jsp?boxType=2"
-                                                               styleClass="messengerButtons">
+                                                               class="messengerButtons">
                                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.DisplayMessages.btnDeletedMessage"/><!--deletedMessage--link-->
                                                     </a>
                                                 </td>

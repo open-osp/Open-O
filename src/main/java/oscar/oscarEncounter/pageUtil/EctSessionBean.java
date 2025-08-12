@@ -244,6 +244,7 @@ public class EctSessionBean implements java.io.Serializable {
      */
     public void setUpEncounterPage(LoggedInInfo loggedInInfo, String appointmentNo) {
         resetAll();
+        
         appointmentsIdArray = new ArrayList<String>();
         appointmentsNamesArray = new ArrayList<String>();
         templateNames = new ArrayList<String>();

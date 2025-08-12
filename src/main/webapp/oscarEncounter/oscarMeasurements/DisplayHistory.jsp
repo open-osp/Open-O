@@ -224,7 +224,7 @@
                         <tr>
                             <td><input type="button" name="Button" class="btn DoNotPrint"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.oldmesurementindex"/>"
-                                       onClick="javascript: popupPage(300,800,'SetupHistoryIndex.do')"></td>
+                                       onClick="javascript: popupPage(300,800,'oscarEncounter/oscarMeasurements/SetupHistoryIndex.do')"></td>
                             <td><input type="button" name="Button" class="btn DoNotPrint"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/>"
                                        onClick="window.print()"></td>

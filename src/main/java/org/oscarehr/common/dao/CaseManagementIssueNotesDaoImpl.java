@@ -62,15 +62,22 @@ public class CaseManagementIssueNotesDaoImpl implements CaseManagementIssueNotes
         if (issueId.length == 1 && issueId[0].equals(""))
             return null;
 
-        StringBuilder issueIdList = new StringBuilder();
-        for (String i : issueId) {
-            if (issueIdList.length() > 0)
-                issueIdList.append(",");
-            issueIdList.append(i);
+        // Build parameterized IN clause
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < issueId.length; i++) {
+            if (i > 0) {
+                placeholders.append(",");
+            }
+            placeholders.append("?").append(i + 1);
         }
-        String sql = "select note_id  from casemgmt_issue_notes where id in (" + issueIdList.toString() + ")";
+
+        String sql = "select note_id from casemgmt_issue_notes where id in (" + placeholders.toString() + ")";
 
         Query query = entityManager.createNativeQuery(sql);
+
+        for (int i = 0; i < issueId.length; i++) {
+            query.setParameter(i + 1, issueId[i]);
+        }
 
         @SuppressWarnings("unchecked")
         List<Integer> results = query.getResultList();

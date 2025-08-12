@@ -71,7 +71,7 @@
 
     </head>
     <%
-        oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getAttribute("Patient");
+        oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getSession().getAttribute("Patient");
         String scriptNo = request.getParameter("scriptNo");
         //load prescription
         oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs = patient.getPrescribedDrugScripts();

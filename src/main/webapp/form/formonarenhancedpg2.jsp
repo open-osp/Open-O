@@ -2378,11 +2378,11 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             &nbsp;&nbsp;&nbsp;
                             <b>View:</b> <a
                                 href="javascript:void(0);"
-                                onclick="popupPage(960,700,'formonarenhancedpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo+historyet%>&view=1');">
+                                onclick="popupPage(960,700,'form/formonarenhancedpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo+historyet%>&view=1');">
                             AR1</a> &nbsp;&nbsp;&nbsp;
                             <b>Edit:</b> <a
                                 href="javascript:void(0);"
-                                onclick="return onPageChange('formonarenhancedpg1.jsp?demographic_no=<%=demoNo%>&formId=#id&provNo=<%=provNo%>');">AR1</a>
+                                onclick="return onPageChange('form/formonarenhancedpg1.jsp?demographic_no=<%=demoNo%>&formId=#id&provNo=<%=provNo%>');">AR1</a>
 
                         </td>
                         <%

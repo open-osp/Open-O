@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.oscarehr.ws.rest.to.model.DemographicMergedTo1;
 
 @XmlRootElement
-@XmlSeeAlso({DemographicMergedTo1.class})
+@XmlSeeAlso(DemographicMergedTo1.class)
 public class DemographicMergeResponse extends AbstractSearchResponse<DemographicMergedTo1> {
 
     private static final long serialVersionUID = 1L;

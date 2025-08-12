@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import org.oscarehr.ws.rest.to.model.ProviderPeriodAppsTo;
 
 @XmlRootElement
-@XmlSeeAlso({ProviderPeriodAppsTo.class})
+@XmlSeeAlso(ProviderPeriodAppsTo.class)
 public class ProviderPeriodAppsResponse extends AbstractSearchResponse<ProviderPeriodAppsTo> {
 
     private static final long serialVersionUID = 1L;

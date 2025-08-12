@@ -9,6 +9,7 @@ services:
     volumes:
       - m2-volume:/root/.m2
       - ..:/workspace:cached 
+      - ../src/main/resources/db_data/:/db-data/
     env_file:
       - ./development/config/shared/local.env
     environment:

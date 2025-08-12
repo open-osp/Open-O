@@ -46,6 +46,7 @@
 <html>
 <head>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.manageCodeStyles"/></title>
+    <meta charset="UTF-8">
     <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
     <script src="<c:out value="${ctx}"/>/share/javascript/prototype.js" type="text/javascript"></script>
     <script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js" type="text/javascript"></script>
@@ -136,6 +137,7 @@
             $("color").value = "";
             $("background-color").value = "";
             $("styleText").value = "";
+            $("example").style.cssText = "";
 
             for (var idx = 0; idx < styles.length - 1; ++idx) {
                 components = styles[idx].split(":");
@@ -145,7 +147,7 @@
                 if (item == "color" || item == "background-color") {
                     $(item).value = value;
                 } else {
-                    for (var idx2 = 0; idx < $(item).options.length; ++idx2) {
+                    for (var idx2 = 0; idx2 < $(item).options.length; ++idx2) {
                         if ($(item).options[idx2].value == value) {
                             $(item).options[idx2].selected = true;
                             break;
@@ -160,7 +162,6 @@
                 $("example").style.cssText = style;
                 $("styleName").value = $("style").options[$("style").selectedIndex].text;
             }
-
         }
 
         function checkfields() {
@@ -181,6 +182,8 @@
 
             //if it's a new style save it for addition
             if ($("style").selectedIndex == 0) {
+                addStyle("color", $("color"));
+                addStyle("background-color", $("background-color"));
                 $("editStyle").value = $("styleText").value;
             }
             $("method").value = "save";
@@ -266,7 +269,7 @@
         }
     %>
 
-    <form action="${pageContext.request.contextPath}/admin/manageCSSStyles.do" method="post">
+    <form action="${pageContext.request.contextPath}/admin/manageCSSStyles.do" method="post" accept-charset="UTF-8">
         <input type="hidden" id="method" name="method" value="save"/>
 
         <div class="row well"><!--select existing styles-->

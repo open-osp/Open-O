@@ -1,1 +1,0 @@
-The source for oscar_ws_client_utils is located on sourceforge under the oscar project.

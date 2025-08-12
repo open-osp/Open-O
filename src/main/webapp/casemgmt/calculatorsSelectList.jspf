@@ -40,11 +40,11 @@
 		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.bodyMass"/>
 	</option>
 
-	<option onclick="popperup(525,775,'../oscarEncounter/calculators/CoronaryArteryDiseaseRiskPrediction.jsp?sex=<%=bean.patientSex%>&age=<%=pAge%>','CoronaryArteryDiseaseRisk');">
+	<option onclick="popperup(525,775,'<%= request.getContextPath() %>/oscarEncounter/calculators/CoronaryArteryDiseaseRiskPrediction.jsp?sex=<%=bean.patientSex%>&age=<%=pAge%>','CoronaryArteryDiseaseRisk');">
 		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.coronary"/>
 	</option>
 
-	<option onclick="popperup(525,775,'../oscarEncounter/calculators/riskcalc/index.html?sex=<%=bean.patientSex%>&age=<%=pAge%>','Framingham');">
+	<option onclick="popperup(525,775,'<%= request.getContextPath() %>/oscarEncounter/calculators/riskcalc/index.html?sex=<%=bean.patientSex%>&age=<%=pAge%>','Framingham');">
 		Framingham/UKPDS Risk Calculator
 	</option>
 
@@ -52,7 +52,7 @@
 		CV Risk
 	</option>
 
-	<option onclick="popperup(525,775,'../oscarEncounter/calculators/OsteoporoticFracture.jsp?sex=<%=bean.patientSex%>&age=<%=pAge%>','OsteoporoticFracture');">
+	<option onclick="popperup(525,775,'<%= request.getContextPath() %>/oscarEncounter/calculators/OsteoporoticFracture.jsp?sex=<%=bean.patientSex%>&age=<%=pAge%>','OsteoporoticFracture');">
 		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.msgOsteoporotic"/>
 	</option>
 
@@ -60,11 +60,11 @@
 		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.pregnancy"/>
 	</option>
 
-	<option onclick="popperup(400,500,'../oscarEncounter/calculators/SimpleCalculator.jsp','SimpleCalc');">
+	<option onclick="popperup(400,500,'<%= request.getContextPath() %>/oscarEncounter/calculators/SimpleCalculator.jsp','SimpleCalc');">
 		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.simpleCalculator"/>
 	</option>
 
-	<option onclick="popperup(650,775,'../oscarEncounter/calculators/GeneralCalculators.jsp','GeneralConversions'); ">
+	<option onclick="popperup(650,775,'<%= request.getContextPath() %>/oscarEncounter/calculators/GeneralCalculators.jsp','GeneralConversions'); ">
 		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.generalConversions"/>
 	</option>
 </select>

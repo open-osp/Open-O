@@ -131,7 +131,7 @@ public class EFormExportZip {
 
 
     public File getImageFile(String imageFileName) throws Exception {
-        String home_dir = OscarProperties.getInstance().getProperty("eform_image");
+        String home_dir = OscarProperties.getInstance().getEformImageDirectory();
 
         File file = null;
         try {

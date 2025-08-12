@@ -64,7 +64,7 @@
                 <%if (request.getAttribute("status") == null) {%>
                 <form action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
                     <input type="hidden" name="method" value="<c:out value="${method}"/>">
-                    <input type="checkbox" name="bornPromptsProperty.checked" />
+                    <input type="checkbox" name="bornPromptsProperty.checked" <c:if test="${bornPromptsProperty.checked}">checked</c:if> />
                         <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.bornPrompts"/>
                     <br/><br/>
                     <input type="submit" value="<%=bundle.getString(providerbtnSubmit)%>"/>

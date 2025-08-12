@@ -159,43 +159,9 @@ public class RptDemographicQuery2Builder {
         int yStyle = 0;
         try {
             yStyle = Integer.parseInt(yearStyle);
-        } catch (Exception e) {
-            //empty
+        } catch (NumberFormatException e) {
+            MiscUtils.getLogger().error("Error:" + e);
         }
-
-        // value="0"> nothing specified
-        // value="1">born before
-        // value="2">born after
-        // value="3">born in
-        // value="4">born between
-
-		/*switch (yStyle){
-		    case 1:
-		        whereClause();
-		        stringBuffer.append(" ( year_of_birth < "+startYear+"  )");
-		        theFirstFlag = 1;
-		        break;
-		    case 2:
-		        whereClause();
-		        stringBuffer.append(" ( year_of_birth > "+startYear+"  )");
-		        theFirstFlag = 1;
-		        break;
-		    case 3:
-		        whereClause();
-		        stringBuffer.append(" ( year_of_birth = "+startYear+"  )");
-		        theFirstFlag = 1;
-		        break;
-		    case 4:
-		        whereClause();
-		        stringBuffer.append(" ( year_of_birth > "+startYear+" and year_of_birth < "+endYear+" ) ");
-		        theFirstFlag = 1;
-		        break;
-		}*/
-        // value="0"> nothing specified
-        // value="1">born before
-        // value="2">born after
-        // value="3">born in
-        // value="4">born between
 
         MiscUtils.getLogger().debug("date style" + yStyle);
         switch (yStyle) {

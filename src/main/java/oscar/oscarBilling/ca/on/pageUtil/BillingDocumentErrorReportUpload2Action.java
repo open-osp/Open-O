@@ -71,16 +71,18 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
             if (!saveFile(file1, file1FileName)) {
                 addActionError(getText("errors.fileNotAdded"));
 
-                response.sendRedirect("/billing/CA/ON/billingOBECEA.jsp");
+                response.sendRedirect(request.getContextPath() + "/billing/CA/ON/billingOBECEA.jsp");
                 return NONE;
             } else {
-                if (getData(loggedInInfo, file1.toString(), "DOCUMENT_DIR", request))
+                if (getData(loggedInInfo, file1FileName, "DOCUMENT_DIR", request)) {
                     return filename.startsWith("L") ? "outside" : SUCCESS;
+                }
                 else {
                     addActionError(getText("errors.incorrectFileFormat"));
 
-                    response.sendRedirect("/billing/CA/ON/billingOBECEA.jsp");
-                    return NONE;                }
+                    response.sendRedirect(request.getContextPath() + "/billing/CA/ON/billingOBECEA.jsp");
+                    return NONE;                
+                }
             }
         } else {
             if (getData(loggedInInfo, filename, "ONEDT_INBOX", request)) {
@@ -90,7 +92,7 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
             } else {
                 addActionError(getText("errors.incorrectFileFormat"));
 
-                response.sendRedirect("/billing/CA/ON/billingOBECEA.jsp");
+                response.sendRedirect(request.getContextPath() + "/billing/CA/ON/billingOBECEA.jsp");
                 return NONE;
             }
         }
@@ -153,19 +155,31 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
      * @param file
      * @return
      */
-    private boolean getData(LoggedInInfo loggedInInfo, String fileName, String pathDir, HttpServletRequest request) {
+    private boolean getData(LoggedInInfo loggedInInfo, String fileName, String pathDir, HttpServletRequest request) 
+            throws ServletException, IOException {
         boolean isGot = false;
 
         try {
             OscarProperties props = OscarProperties.getInstance();
-            // properties must exist
             String filepath = props.getProperty(pathDir);
-            boolean bNewBilling = props.getProperty("isNewONbilling", "").equals("true") ? true : false;
-            if (!filepath.endsWith("/"))
-                filepath = new StringBuilder(filepath).insert(filepath.length(), "/").toString();
+            boolean bNewBilling = "true".equals(props.getProperty("isNewONbilling", ""));
 
-            FileInputStream file = new FileInputStream(filepath + fileName);
-            MiscUtils.getLogger().debug("file path: " + filepath + fileName);
+            if (filepath == null || filepath.isBlank()) {
+                throw new IllegalStateException("Missing or empty path: " + pathDir);
+            }
+
+            File safeDir = new File(filepath).getCanonicalFile();
+            File inputFile = new File(filepath, fileName).getCanonicalFile();
+
+            String safeDirPath = safeDir.getPath() + File.separator;
+            String filePath = inputFile.getPath();
+
+            if (!filePath.startsWith(safeDirPath)) {
+                throw new IllegalArgumentException("File path is outside allowed directory: " + filePath);
+            }
+
+            FileInputStream file = new FileInputStream(inputFile);
+            MiscUtils.getLogger().debug("File path: " + inputFile.getAbsolutePath());
             // Assign associated report Name
             ArrayList<String> messages = new ArrayList<String>();
             String ReportName = "";
@@ -205,6 +219,7 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
             return isGot = false;
 
         }
+
         return isGot;
     }
 

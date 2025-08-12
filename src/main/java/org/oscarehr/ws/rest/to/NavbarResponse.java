@@ -36,7 +36,7 @@ import org.oscarehr.ws.rest.to.model.NavBarMenuTo1;
 import org.oscarehr.ws.rest.to.model.ProgramProviderTo1;
 
 @XmlRootElement
-@XmlSeeAlso({ProgramProviderTo1.class})
+@XmlSeeAlso(ProgramProviderTo1.class)
 public class NavbarResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;

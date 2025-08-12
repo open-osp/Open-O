@@ -151,23 +151,51 @@
 <%
     message = "";
     Dxresearch screeningDx = null;
-    List<Dxresearch> dxs = dxResearchDao.findByDemographicNoResearchCodeAndCodingSystem(Integer.parseInt(demographicNo), "CKDSCREEN", "OscarCode");
+    List<Dxresearch> dxs = dxResearchDao
+        .findByDemographicNoResearchCodeAndCodingSystem(
+            Integer.parseInt(demographicNo),
+            "CKDSCREEN",
+            "OscarCode"
+        );
     for (Dxresearch dx : dxs) {
-        if (dx.getStatus() == 'A')
+        if (dx.getStatus() == 'A') {
             screeningDx = dx;
+            break;
+        }
     }
 
     if (screeningDx != null) {
-        message += "Screening complete - <a href=\"javascript:void(0)\" onClick=\"popupPage(580,900,'../oscarResearch/oscarDxResearch/dxResearchUpdate.do?status=C&did=" + screeningDx.getId() + "&demographicNo=" + Integer.parseInt(demographicNo) + "&providerNo=" + loggedInInfo.getLoggedInProviderNo() + "');\">Click Here</a>.<br/>";
-        message += "Screening not appropriate - <a href=\"javascript:void(0)\" onClick=\"popupPage(580,900,'../oscarResearch/oscarDxResearch/dxResearchUpdate.do?status=D&did=" + screeningDx.getId() + "&demographicNo=" + Integer.parseInt(demographicNo) + "&providerNo=" + loggedInInfo.getLoggedInProviderNo() + "');\">Click Here</a>.<br/>";
+        String baseUrl = request.getContextPath() + "/oscarResearch/oscarDxResearch/dxResearchUpdate.do";
+        String did = screeningDx.getId().toString();
+        String demo = Integer.toString(Integer.parseInt(demographicNo));
+        String provider = loggedInInfo.getLoggedInProviderNo();
+
+        String urlC = baseUrl + "?status=C&did=" + did + "&demographicNo=" + demo + "&providerNo=" + provider;
+        String urlD = baseUrl + "?status=D&did=" + did + "&demographicNo=" + demo + "&providerNo=" + provider;
+
+        message += "Screening complete - <a href=\"javascript:void(0)\" onclick=\"popupPage(580,900,'" + urlC + "');\">Click Here</a>.<br/>";
+        message += "Screening not appropriate - <a href=\"javascript:void(0)\" onclick=\"popupPage(580,900,'" + urlD + "');\">Click Here</a>.<br/>";
     }
 
     dxs = dxResearchDao.findByDemographicNoResearchCodeAndCodingSystem(Integer.parseInt(demographicNo), "585", "icd9");
     if (dxs.size() == 0) {
-        message += "<br/>Add 'Chronic Renal Failure' to Dx Registry, and prevent subsequent notifications - <a href=\"javascript:void(0);\" onClick=\"popupPage(580,900,'../oscarResearch/oscarDxResearch/dxResearch.do?selectedCodingSystem=icd9&xml_research1=585&xml_research2=&xml_research3=&xml_research4=&xml_research5=&demographicNo=" + demographicNo + "&quickList=default&forward=');\">Click Here</a></br/>";
+        String popupUrl = request.getContextPath() + "/oscarResearch/oscarDxResearch/dxResearch.do"
+                        + "?selectedCodingSystem=icd9"
+                        + "&xml_research1=585"
+                        + "&xml_research2="
+                        + "&xml_research3="
+                        + "&xml_research4="
+                        + "&xml_research5="
+                        + "&demographicNo=" + demographicNo
+                        + "&quickList=default"
+                        + "&forward=";
+
+        message += "<br/>Add 'Chronic Renal Failure' to Dx Registry, and prevent subsequent notifications - "
+                + "<a href=\"javascript:void(0);\" onclick=\"popupPage(580,900,'" + popupUrl + "');\">Click Here</a><br/>";
     }
 %>
-<%=message %>
+<%= message %>
+
 
 <br/>
 Order Labs - <a title="Create Lab Requisition" href="javascript:void(0);"
@@ -178,15 +206,15 @@ Order Labs - <a title="Create Lab Requisition" href="javascript:void(0);"
     if (flowsheet.equals("indicators")) {
 %>
 Go to CDM Indicators <a href="javascript:void(0);"
-                        onclick="popupPage(700,1000,'../oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp?demographic_no=<%=demographicNo %>&amp;template=diab3');return false;">here</a><br/>
+                        onclick="popupPage(700,1000,'<%=request.getContextPath() %>/oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp?demographic_no=<%=demographicNo %>&amp;template=diab3');return false;">here</a><br/>
 <% } else if (flowsheet.equals("diabetes")) { %>
 
 Go to Diabetes Flowsheet <a href="javascript:void(0)"
-                            onclick="popupPage(700,1000,'../oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp?demographic_no=<%=demographicNo %>&amp;template=diab2');return false;">here</a><br/>
+                            onclick="popupPage(700,1000,'<%=request.getContextPath() %>/oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp?demographic_no=<%=demographicNo %>&amp;template=diab2');return false;">here</a><br/>
 <% } %>
 
 Go to Disease Registry to mark CKD Screening as resolved/deleted <a href="javascript:void(0);"
-                                                                    onclick="popupPage(580,900,'../oscarResearch/oscarDxResearch/setupDxResearch.do?demographicNo=<%=demographicNo %>&amp;quickList='); return false;">here</a><br/>
+                                                                    onclick="popupPage(580,900,'<%=request.getContextPath() %>/oscarResearch/oscarDxResearch/setupDxResearch.do?demographicNo=<%=demographicNo %>&amp;quickList='); return false;">here</a><br/>
 
 
 </body>

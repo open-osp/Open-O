@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 @XmlRootElement(name = "searchResults")
-@XmlSeeAlso(value = ProviderSearchResultItem.class)
+@XmlSeeAlso(ProviderSearchResultItem.class)
 public class ProviderSearchResults implements Serializable {
 
     private static final long serialVersionUID = 1L;

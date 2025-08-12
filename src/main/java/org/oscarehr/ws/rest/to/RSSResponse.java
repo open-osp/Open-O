@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import org.oscarehr.ws.rest.to.model.RssItem;
 
 @XmlRootElement
-@XmlSeeAlso({RssItem.class})
+@XmlSeeAlso(RssItem.class)
 public class RSSResponse extends AbstractSearchResponse<RssItem> {
 
     private static final long serialVersionUID = 1L;

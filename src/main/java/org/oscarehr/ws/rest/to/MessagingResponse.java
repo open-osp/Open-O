@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import org.oscarehr.ws.rest.to.model.MessageTo1;
 
 @XmlRootElement
-@XmlSeeAlso({MessageTo1.class})
+@XmlSeeAlso(MessageTo1.class)
 public class MessagingResponse extends AbstractSearchResponse<MessageTo1> {
 
     private static final long serialVersionUID = 1L;

@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import org.oscarehr.ws.rest.to.model.DemographicTo1;
 
 @XmlRootElement
-@XmlSeeAlso({DemographicTo1.class})
+@XmlSeeAlso(DemographicTo1.class)
 public class DemographicResponse extends AbstractSearchResponse<DemographicTo1> {
 
     private static final long serialVersionUID = 1L;

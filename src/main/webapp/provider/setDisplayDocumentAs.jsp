@@ -67,8 +67,9 @@
                     <input type="hidden" name="method" value="<c:out value="${method}"/>">
                     <select name="displayDocumentAsProperty.value" id="displayDocumentAsProperty.value">
                         <c:forEach var="dropOpt" items="${dropOpts}">
-                            <option value="${dropOpt.value}">
-                                    ${dropOpt.label}
+                            <option value="${dropOpt.value}" 
+                                <c:if test="${dropOpt.value == fmt.value}">selected</c:if>>
+                                ${dropOpt.label}
                             </option>
                         </c:forEach>
                     </select>

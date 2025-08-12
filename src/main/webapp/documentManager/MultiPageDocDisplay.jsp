@@ -78,6 +78,7 @@
     Provider provider = providerDao.getProvider(providerNo);
     String creator = (String) session.getAttribute("user");
     ArrayList doctypes = EDocUtil.getActiveDocTypes("demographic");
+
     EDoc curdoc = EDocUtil.getDoc(documentNo);
 
     String demographicID = curdoc.getModuleId();
@@ -108,6 +109,7 @@
         numOfPageStr = "unknown";
     else
         numOfPageStr = (new Integer(numOfPage)).toString();
+
     String url = request.getContextPath() + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + docId + "&curPage=1";
     String url2 = request.getContextPath() + "/documentManager/ManageDocument.do?method=display&doc_no=" + docId;
 %>
@@ -216,7 +218,7 @@
             </td>
             <td align="left" valign="top" class="docTable">
                 <fieldset>
-                    <legend>Patient:<%=demoName%>
+                    <legend>Patient: <%=demoName%>
                     </legend>
                     <table border="0">
                         <tr>
@@ -332,15 +334,29 @@
 
                                         }
 
+                                        function updateQueryParam(url, key, value) {
+                                            let baseUrl = url.split('?')[0];
+                                            // Ensure that the query does not have multiple repeated params
+                                            let params = new URLSearchParams(url.split('?')[1] || '');
+                                            // Set params to new key and value
+                                            params.set(key, value);
+                                            return baseUrl + '?' + params.toString();
+                                        }
+
 
                                         var curPage = 1;
                                         var totalPage =<%=numOfPage%>;
                                         showPageImg = function (docid, pn) {
                                             if (docid && pn) {
                                                 var e = $('docImg_' + docid);
-                                                var url = '<%=request.getContextPath()%>' + '/documentManager/ManageDocument.do?method=viewDocPage&doc_no='
-                                                    + docid + '&curPage=' + pn;
-                                                e.setAttribute('src', url);
+                                                if (e) {
+                                                    // Find URl from src of image
+                                                    var url = e.getAttribute('src');
+                                                    // Update query parameters based on URL, current page, and page number
+                                                    url = updateQueryParam(url, 'curPage', pn);
+                                                    // Set attribute to newly updated URL
+                                                    e.setAttribute('src', url);
+                                                }
                                             }
                                         }
                                         nextPage = function (docid) {
@@ -890,7 +906,7 @@
                                                 <input type="button" tabindex="<%=tabindex++%>" value="Msg"
                                                        onclick="popup(700,960,'../oscarMessenger/SendDemoMessage.do?demographic_no=<%=demographicID%>','msg')"/>
                                                 <input type="button" tabindex="<%=tabindex++%>" value="Tickler"
-                                                       onclick="popup(450,600,'../tickler/ForwardDemographicTickler.do?docType=DOC&docId=<%=docId%>&demographic_no=<%=demographicID%>','tickler')"/>
+                                                       onclick="popup(450,600,'../tickler/ForwardDemographicTickler.do?docType=DOC&docId=<%=docId%>&demographic_no=<%=demographicID%>&providerNo=<%=providerNo%>','tickler')"/>
                                                 <input type="button" tabindex="<%=tabindex++%>" value="eChart"
                                                        onclick="popup(710,1024,'<%=eURL%>','encounter')"/>
                                                 <%

@@ -148,19 +148,19 @@
                             <table width="100%" border="0" cellspacing="0" cellpadding="2"
                                    height="200">
                                 <tr>
-                                    <td><input type="checkbox" name="xml_research1" size="30" /></td>
+                                    <td><input type="text" name="xml_research1" size="30" /></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox" name="xml_research2" size="30" /></td>
+                                    <td><input type="text" name="xml_research2" size="30" /></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox" name="xml_research3" size="30" /></td>
+                                    <td><input type="text" name="xml_research3" size="30" /></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox" name="xml_research4" size="30" /></td>
+                                    <td><input type="text" name="xml_research4" size="30" /></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox" name="xml_research5" size="30" /></td>
+                                    <td><input type="text" name="xml_research5" size="30" /></td>
                                 </tr>
                                 <tr>
                                     <td><input type="button" name="button" class=mbttn

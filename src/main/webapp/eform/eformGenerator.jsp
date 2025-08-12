@@ -1913,15 +1913,15 @@ and other liscences (MIT, LGPL etc) as indicated
                          This function/scriplet looks in the images directory and populates the selection
                          so that the user can select which image they want to use for generating an eform
                          */
-                        String imagePath = OscarProperties.getInstance().getProperty("eform_image");
+                        String imagePath = OscarProperties.getInstance().getEformImageDirectory();
                         if (imagePath == null) {
-                            MiscUtils.getLogger().debug("Please provide a valid image path for eform_image in properties");
+                            MiscUtils.getLogger().debug("Please provide a valid image path for EFORM_IMAGES_DIR in properties");
                         }
 
                         // Fetch file names from the specified directory
                         String[] fileINames = new File(imagePath).list();
                         if (fileINames == null) {
-                            MiscUtils.getLogger().debug("Strange, no files found in the supplied eform_image directory");
+                            MiscUtils.getLogger().debug("Strange, no files found in the supplied EFORM_IMAGES_DIR directory");
                             fileINames = new String[0]; // Initialize to an empty array to avoid NullPointerException
                         } else {
                             Arrays.sort(fileINames); // Sort only if fileINames is not null

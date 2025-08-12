@@ -291,7 +291,16 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
                 }
 
                 ConsultationRequest consult = consultationRequestDao.find(new Integer(requestId));
-                Date date = DateUtils.parseDate(this.getReferalDate(), format);
+                Date date = null;
+
+                // By default, the referral date will not have a value on edit, so we need to make sure
+                // that the newly inputted date is parsed, or pulled from the previous date value
+                if (StringUtils.isNotBlank(this.getReferalDate())) {
+                    date = DateUtils.parseDate(this.getReferalDate(), format);
+                } else {
+                    date = consult.getReferralDate();
+                }
+
                 consult.setReferralDate(date);
                 consult.setServiceId(new Integer(this.getService()));
                 consult.setSignatureImg(signatureId);
@@ -382,8 +391,6 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
                 }
 
                 // save any additional attachments added on the update
-
-
                 documentAttachmentManager.attachToConsult(loggedInInfo, DocumentType.DOC, attachedDocuments, providerNo, Integer.parseInt(requestId), Integer.parseInt(demographicNo));
                 documentAttachmentManager.attachToConsult(loggedInInfo, DocumentType.LAB, attachedLabs, providerNo, Integer.parseInt(requestId), Integer.parseInt(demographicNo));
                 documentAttachmentManager.attachToConsult(loggedInInfo, DocumentType.FORM, attachedForms, providerNo, Integer.parseInt(requestId), Integer.parseInt(demographicNo));

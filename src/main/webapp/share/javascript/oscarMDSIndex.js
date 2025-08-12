@@ -1609,45 +1609,65 @@ function updateDocument(eleId) {
     if (!checkObservationDate(eleId)) {
         return false;
     }
+
     //save doc info
-    var url = "../documentManager/ManageDocument.do", data = $(eleId).serialize(true);
+    var url = "../documentManager/ManageDocument.do";
+    var data = $(eleId).serialize(true);
+
     new Ajax.Request(url, {
-        method: 'post', parameters: data, onSuccess: function (transport) {
-            var json = transport.responseText.evalJSON();
-            var patientId;
-            //oscarLog(json);
-            if (json != null) {
-                patientId = json.patientId;
+        method: 'post',
+        parameters: data,
+        onSuccess: function (transport) {
+            var ar = eleId.split("_");
+            var num = ar[1].replace(/\s/g, '');
 
-                var ar = eleId.split("_");
-                var num = ar[1];
-                num = num.replace(/\s/g, '');
-                $("saveSucessMsg_" + num).show();
-                $('saved' + num).value = 'true';
-                $("msgBtn_" + num).onclick = function () {
-                    popup(700, 960, contextpath + '/oscarMessenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
-                };
+            var msg = document.getElementById("saveSucessMsg_" + num);
+            if (msg) msg.style.display = "inline";
 
-                updateDocStatusInQueue(num);
-                var success = false;
-                if (typeof _in_window !== 'undefined' && _in_window) {
-                    if (typeof self.opener.removeReport !== 'undefined') {
-                        self.opener.removeReport(num);
-                        success = true;
+            var savedField = document.getElementById("saved" + num);
+            if (savedField) savedField.value = "true";
+
+            var success = false;
+            var patientId = null;
+
+            try {
+                var json = transport.responseText.evalJSON();
+                if (json && json.patientId) {
+                    patientId = json.patientId;
+
+                    var msgBtn = document.getElementById("msgBtn_" + num);
+                    if (msgBtn) {
+                        msgBtn.onclick = function () {
+                            popup(700, 960, contextpath + '/oscarMessenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
+                        };
                     }
-                } else {
-                    success = updateGlobalDataAndSideNav(num, patientId);
-                }
 
-                if (success) {
-                    success = updatePatientDocLabNav(num, patientId);
+                    if (typeof _in_window !== 'undefined' && _in_window) {
+                        if (typeof self.opener.removeReport !== 'undefined') {
+                            self.opener.removeReport(num);
+                            success = true;
+                        }
+                    } else {
+                        success = updateGlobalDataAndSideNav(num, patientId);
+                    }
+
                     if (success) {
-                        $('autocompletedemo' + num).disabled = true;
+                        success = updatePatientDocLabNav(num, patientId);
+                        if (success) {
+                            var ac = document.getElementById("autocompletedemo" + num);
+                            if (ac) ac.disabled = true;
+                        }
                     }
                 }
+            } catch (e) {
+                console.warn("Not JSON");
             }
+        },
+        onFailure: function () {
+            console.error("Save failed");
         }
     });
+
     return false;
 }
 

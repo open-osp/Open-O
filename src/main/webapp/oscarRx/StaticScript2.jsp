@@ -142,7 +142,7 @@
                     var data = "drugId=" + drugId + "&favoriteName=" + favoriteName;
                     new Ajax.Request(url, {
                         method: 'get', parameters: data, onSuccess: function (transport) {
-                            window.location.href = "<c:out value="${ctx}"/>" + "oscarRx/StaticScript2.jsp?regionalIdentifier=" + '<%=regionalIdentifier%>' + "&cn=" + '<%=cn%>';
+                            window.location.href = "<c:out value="${ctx}"/>" + "/oscarRx/StaticScript2.jsp?regionalIdentifier=" + '<%=regionalIdentifier%>' + "&cn=" + '<%=cn%>';
                         }
                     });
                 }
@@ -243,7 +243,7 @@
                                     <td>
                                         <%if (drug.localDrugId != null) { %>
                                         <a href="javascript:void(0);"
-                                           onclick="popup(600, 425,'DisplayRxRecord.jsp?id=<%=drug.localDrugId%>','displayRxWindow')">
+                                           onclick="popup(600, 425,'oscarRx/DisplayRxRecord.jsp?id=<%=drug.localDrugId%>','displayRxWindow')">
                                             <%}%>
                                             <%=drug.prescriptionDetails%>
                                             <%if (drug.localDrugId != null) { %>

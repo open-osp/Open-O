@@ -67,7 +67,7 @@
     <span id="txt<c:out value="${Note.id}"/>"><c:out
             escapeXml="false" value="${fmtTxt}"/></span>
     <div id="sig<c:out value="${Note.id}"/>">
-        <div class="sig" id="sumary<c:out value="${Note.id}"/>">
+        <div class="sig" id="summary<c:out value="${Note.id}"/>">
             <div id="observation<c:out value="${Note.id}"/>"
                  style="float: right; margin-right: 3px;"><i>Encounter Date:&nbsp;<span
                     id="obs<c:out value="${Note.id}"/>"><%=DateUtils.getDate(note.getObservation_date(), dateFormat)%></span>&nbsp;rev<a

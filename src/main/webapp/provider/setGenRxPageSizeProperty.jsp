@@ -117,8 +117,8 @@
                 <input type="hidden" name="method" value="<c:out value="${method}"/>">
                 <!--input type="text" name="rxPageSizeProperty.value" /-->
                 <select name="rxPageSizeProperty.value" id="rxPageSizeProperty.value">
-                    <option value="PageSize.A4">A4</option>
-                    <option value="PageSize.A6">A6</option>
+                    <option value="PageSize.A4" <c:if test="${rxPageSizeProperty.value == 'PageSize.A4'}">selected</c:if>>A4</option>
+                    <option value="PageSize.A6" <c:if test="${rxPageSizeProperty.value == 'PageSize.A6'}">selected</c:if>>A6</option>
                 </select>
                 <input type="submit" value="<%=bundle.getString(providerbtnSubmit)%>"/>
             </form> <%} else {%> <%=bundle.getString(providermsgSuccess)%> <br>

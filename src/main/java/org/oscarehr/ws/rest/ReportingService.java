@@ -37,9 +37,10 @@ import javax.ws.rs.Produces;
 
 import net.sf.json.JSONObject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.oscarehr.common.dao.EFormReportToolDao;
 import org.oscarehr.common.model.PreventionReport;
 import org.oscarehr.common.dao.PreventionReportDao;

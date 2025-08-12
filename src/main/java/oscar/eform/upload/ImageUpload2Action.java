@@ -58,13 +58,20 @@ public class ImageUpload2Action extends ActionSupport {
         }
 
         try {
-            OutputStream fos = ImageUpload2Action.getEFormImageOutputStream(image.getName());
+            if (!imageFileName.matches("^[a-zA-Z0-9._-]+$")) {
+                throw new IllegalArgumentException("Invalid image file name");
+            }
+            
+            OutputStream fos = ImageUpload2Action.getEFormImageOutputStream(imageFileName);
             InputStream fis = Files.newInputStream(image.toPath());
-            byte[] buffer = new byte[4096]; // 缓冲区
-            while (fis.read(buffer) != -1) {
-                fos.write(buffer);
+            byte[] buffer = new byte[4096]; 
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
             }
             fos.flush();
+
+            request.setAttribute("status", "uploaded");
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error", e);
         }
@@ -74,12 +81,13 @@ public class ImageUpload2Action extends ActionSupport {
     public static OutputStream getEFormImageOutputStream(String imageFileName) throws IOException {
         Path path = Paths.get(OscarProperties.getInstance().getEformImageDirectory(), imageFileName);
         return Files.newOutputStream(path);
+        
     }
 
     public static File getImageFolder() throws IOException {
-        File imageFolder = new File(OscarProperties.getInstance().getProperty("eform_image") + "/");
+        File imageFolder = new File(OscarProperties.getInstance().getEformImageDirectory() + "/");
         if (!imageFolder.exists() && !imageFolder.mkdirs())
-            throw new IOException("Could not create directory " + imageFolder.getAbsolutePath() + " check permissions and ensure the correct eform_image property is set in the properties file");
+            throw new IOException("Could not create directory " + imageFolder.getAbsolutePath() + " check permissions and ensure the correct EFORM_IMAGES_DIR property is set in the properties file");
         return imageFolder;
     }
 
@@ -91,5 +99,16 @@ public class ImageUpload2Action extends ActionSupport {
 
     public void setImage(File image) {
         this.image = image;
+    }
+
+    private String imageFileName;    
+    private String imageFileContentType; 
+
+    public void setImageFileName(String imageFileName) {
+        this.imageFileName = imageFileName;
+    }
+
+    public void setImageFileContentType(String imageFileContentType) {
+        this.imageFileContentType = imageFileContentType;
     }
 }

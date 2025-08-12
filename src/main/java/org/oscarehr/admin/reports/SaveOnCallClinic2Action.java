@@ -33,14 +33,15 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
 import org.oscarehr.common.dao.OnCallClinicDao;
 import org.oscarehr.common.model.OnCallClinic;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import org.apache.struts2.ServletActionContext;
 
 public class SaveOnCallClinic2Action extends ActionSupport {
@@ -48,50 +49,52 @@ public class SaveOnCallClinic2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
     public String execute() {
-        if ("Save".equals(request.getParameter("method"))) {
+        String method = request.getParameter("method");
+        if ("Save".equals(method)) {
             return Save();
-        }
-        if ("Delete".equals(request.getParameter("method"))) {
+        } else if ("Delete".equals(method)) {
             return Delete();
         }
         return Load();
     }
 
-
     public String Save() {
         String json = "{\"error\" : \"false\"}";
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+            // configure JSON mapper to parse dates in the expected format
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.getSerializationConfig().setDateFormat(simpleDateFormat);
-            OnCallClinic onCallClinic = objectMapper.readValue(request.getParameter("event"), OnCallClinic.class);
+            objectMapper.setDateFormat(sdf);
 
-            OnCallClinicDao onCallClinicDao = SpringUtils.getBean(OnCallClinicDao.class);
-            onCallClinicDao.persist(onCallClinic);
+            // deserialize the incoming JSON payload
+            OnCallClinic onCallClinic =
+                objectMapper.readValue(request.getParameter("event"), OnCallClinic.class);
+
+            // persist
+            OnCallClinicDao dao = SpringUtils.getBean(OnCallClinicDao.class);
+            dao.persist(onCallClinic);
         } catch (Exception e) {
             MiscUtils.getLogger().error("ERROR SAVING ", e);
             json = "{\"error\" : \"true\"}";
         }
 
         try {
-            PrintWriter printWriter = response.getWriter();
-            printWriter.print(json);
-            printWriter.flush();
+            PrintWriter out = response.getWriter();
+            out.print(json);
+            out.flush();
         } catch (IOException e) {
-
+            MiscUtils.getLogger().error("Error writing response in Save method", e);
         }
 
         return null;
     }
 
-
     public String Delete() {
-        OnCallClinicDao onCallClinicDao = SpringUtils.getBean(OnCallClinicDao.class);
+        OnCallClinicDao dao = SpringUtils.getBean(OnCallClinicDao.class);
         String json = "{\"error\" : \"false\"}";
         try {
-            String strId = request.getParameter("id");
-            Long id = Long.valueOf(strId);
-            if (!onCallClinicDao.remove(id)) {
+            Long id = Long.valueOf(request.getParameter("id"));
+            if (!dao.remove(id)) {
                 json = "{\"error\" : \"true\"}";
             }
         } catch (Exception e) {
@@ -100,35 +103,27 @@ public class SaveOnCallClinic2Action extends ActionSupport {
         }
 
         try {
-            PrintWriter printWriter = response.getWriter();
-            printWriter.print(json);
-            printWriter.flush();
-        } catch (IOException e) {
-
+            PrintWriter out = response.getWriter();
+            out.print(json);
+            out.flush();
+        } catch (IOException ignored) {
         }
         return null;
     }
 
     public String Load() {
-
-        OnCallClinicDao onCallClinicDao = SpringUtils.getBean(OnCallClinicDao.class);
-
-        List<OnCallClinic> onCallClinics = onCallClinicDao.findAll(null, null);
+        OnCallClinicDao dao = SpringUtils.getBean(OnCallClinicDao.class);
+        List<OnCallClinic> onCallClinics = dao.findAll(null, null);
 
         ObjectMapper mapper = new ObjectMapper();
+        // write dates as timestamps (true) or disable for ISO strings if desired
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
 
-        try {
-            OutputStream out = response.getOutputStream();
-            SerializationConfig serializationConfig = mapper.getSerializationConfig();
-            serializationConfig.enable(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS);
-            mapper.setSerializationConfig(serializationConfig);
+        try (OutputStream out = response.getOutputStream()) {
             mapper.writeValue(out, onCallClinics);
-            out.flush();
-        } catch (IOException e) {
-
+        } catch (IOException ignored) {
         }
 
         return null;
     }
-
 }

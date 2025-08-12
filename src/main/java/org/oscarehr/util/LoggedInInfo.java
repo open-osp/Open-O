@@ -198,4 +198,8 @@ public final class LoggedInInfo implements Serializable {
     public void setIp(String ip) {
         this.ip = ip;
     }
+
+    public String getLoggedInInfoKey() {
+         return LOGGED_IN_INFO_KEY; 
+    }
 }

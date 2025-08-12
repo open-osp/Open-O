@@ -48,11 +48,16 @@
     boolean disable;
     SecurityManager sm = new SecurityManager();
 
+    // Check to see if the currently logged in role has write access, if so, disable input fields present in the page
     if (sm.hasWriteAccess("_dx.code", roleName$)) {
         disable = false;
     } else {
         disable = true;
     }
+
+    // Set a String based on the "disable" boolean for easy access to use html functionality of "disabled" attribute
+    String disabled = disable ? "disabled" : "";
+
     boolean showQuicklist = false;
 
     if (sm.hasWriteAccess("_dx.quicklist", roleName$)) {
@@ -65,6 +70,7 @@
 
     pageContext.setAttribute("showQuicklist", showQuicklist);
     pageContext.setAttribute("disable", disable);
+    pageContext.setAttribute("disabled", disabled);
 %>
 
 <!DOCTYPE html>
@@ -234,7 +240,7 @@
 								</span>
 
                                                 <select class="form-control" name="selectedCodingSystem"
-                                                             disabled="<%=disable%>">
+                                                            <%=disabled%>>
                                                     <c:forEach var="codingSys" items="${codingSystem.codingSystems}">
                                                         <option value="${codingSys}">
                                                             <c:out value="${codingSys}"/>
@@ -246,7 +252,7 @@
                                     </tr>
                                     <tr>
                                         <td><input type="text" class="form-control" name="xml_research1"
-                                                       disabled="<%=disable%>"/>
+                                                    <%=disabled%> />
                                             <input type="hidden" name="demographicNo"
                                                    value="<c:out value="${demographicNo}"/>">
                                             <input type="hidden" name="providerNo"
@@ -254,19 +260,19 @@
                                     </tr>
                                     <tr>
                                         <td><input type="text" class="form-control" name="xml_research2"
-                                                       disabled="<%=disable%>"/></td>
+                                                       <%=disabled%>/></td>
                                     </tr>
                                     <tr>
                                         <td><input type="text" class="form-control" name="xml_research3"
-                                                       disabled="<%=disable%>"/></td>
+                                                       <%=disabled%>/></td>
                                     </tr>
                                     <tr>
                                         <td><input type="text" class="form-control" name="xml_research4"
-                                                       disabled="<%=disable%>"/></td>
+                                                       <%=disabled%>/></td>
                                     </tr>
                                     <tr>
                                         <td><input type="text" class="form-control" name="xml_research5"
-                                                       disabled="<%=disable%>"/></td>
+                                                       <%=disabled%>/></td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -285,11 +291,11 @@
                                             <input type="button" name="button" class="btn btn-primary"
                                                    value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.btnCodeSearch"/>"
                                                    onClick="javascript: ResearchScriptAttach();" )
-                                                   disabled="<%=disable%>">
+                                                   <%=disabled%>">
 
                                             <input type="button" name="button" class="btn btn-primary"
                                                    value="<fmt:setBundle basename="oscarResources"/><fmt:message key="ADD"/>"
-                                                   onClick="javascript: submitform('','');" disabled="<%=disable%>">
+                                                   onClick="javascript: submitform('','');" <%=disabled%>">
                                             <% } %>
                                         </td>
                                     </tr>

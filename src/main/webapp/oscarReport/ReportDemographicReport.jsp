@@ -208,37 +208,10 @@
             </td>
         </tr>
         <tr>
-
             <td class="MainTableLeftColumn">
                 &nbsp;
             </td>
             <td class="MainTableRightColumn">
-
-                <%
-                    oscar.oscarReport.pageUtil.RptDemographicReport2Form thisForm = null;
-
-                    // Get the form bean from the request
-                    if (request.getAttribute("formBean") != null) {
-                        thisForm = (oscar.oscarReport.pageUtil.RptDemographicReport2Form) request.getAttribute("formBean");
-                    }
-
-                    // Initialize the form bean if it is null
-                    if (thisForm == null) {
-                        thisForm = new oscar.oscarReport.pageUtil.RptDemographicReport2Form();
-                        request.setAttribute("formBean", thisForm); // Ensure the form bean is set in the request
-                    }
-
-                    // Call the copy constructor if the form is already in the request
-                    if (request.getAttribute("RptDemographicReport2Form") != null) {
-                        thisForm.copyConstructor((oscar.oscarReport.pageUtil.RptDemographicReport2Form) request.getAttribute("RptDemographicReport2Form"));
-                    }
-
-                    // Set the default values for the form bean
-                    if (thisForm.getAgeStyle() == null || "2".equals(thisForm.getAgeStyle())) {
-                        thisForm.setAgeStyle("1");
-                    }
-                %>
-
                 <table border=1>
                     <tr>
                         <td>
@@ -250,7 +223,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value=""/>
+                                        <input type="checkbox" name="select" id="select_demographic_no" value="demographic_no"/>
                                     </td>
                                     <td>
                                         Demographic #
@@ -258,7 +231,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="last_name"/>
+                                        <input type="checkbox" name="select" id="select_last_name" value="last_name"/>
                                     </td>
                                     <td>
                                         Last Name
@@ -266,7 +239,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="first_name"/>
+                                        <input type="checkbox" name="select" id="select_first_name" value="first_name"/>
                                     </td>
                                     <td>
                                         First Name
@@ -274,7 +247,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="address"/>
+                                        <input type="checkbox" name="select" id="select_address" value="address"/>
                                     </td>
                                     <td>
                                         Address
@@ -282,7 +255,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="city"/>
+                                        <input type="checkbox" name="select" id="select_city" value="city"/>
                                     </td>
                                     <td>
                                         City
@@ -290,7 +263,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="province"/>
+                                        <input type="checkbox" name="select" id="select_province" value="province"/>
                                     </td>
                                     <td>
                                         Province
@@ -298,7 +271,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="postal"/>
+                                        <input type="checkbox" name="select" id="select_postal_code" value="postal"/>
                                     </td>
                                     <td>
                                         Postal Code
@@ -306,7 +279,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="phone"/>
+                                        <input type="checkbox" name="select" id="select_phone" value="phone"/>
                                     </td>
                                     <td>
                                         Phone
@@ -314,7 +287,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="phone2"/>
+                                        <input type="checkbox" name="select" id="select_phone_2" value="phone2"/>
                                     </td>
                                     <td>
                                         Phone 2
@@ -322,7 +295,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="email"/>
+                                        <input type="checkbox" name="select" id="select_email" value="email"/>
                                     </td>
                                     <td>
                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportscpbDemo.msgEmail"/>
@@ -330,7 +303,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="year_of_birth"/>
+                                        <input type="checkbox" name="select" id="select_year_of_birth" value="year_of_birth"/>
                                     </td>
                                     <td>
                                         Year of Birth
@@ -338,7 +311,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="month_of_birth"/>
+                                        <input type="checkbox" name="select" id="select_month_of_birth" value="month_of_birth"/>
                                     </td>
                                     <td>
                                         Month of Birth
@@ -346,7 +319,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="date_of_birth"/>
+                                        <input type="checkbox" name="select" id="select_date_of_birth" value="date_of_birth"/>
                                     </td>
                                     <td>
                                         Date of Birth
@@ -354,7 +327,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="hin"/>
+                                        <input type="checkbox" name="select" id="select_hin" value="hin"/>
                                     </td>
                                     <td>
                                         HIN
@@ -362,7 +335,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="ver"/>
+                                        <input type="checkbox" name="select" id="select_ver" value="ver"/>
                                     </td>
                                     <td>
                                         Version Code
@@ -370,7 +343,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="roster_status"/>
+                                        <input type="checkbox" name="select" id="select_roster_status" value="roster_status"/>
                                     </td>
                                     <td>
                                         Roster Status
@@ -378,7 +351,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="patient_status"/>
+                                        <input type="checkbox" name="select" id="select_patient_status" value="patient_status"/>
                                     </td>
                                     <td>
                                         Patient Status
@@ -386,7 +359,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="date_joined"/>
+                                        <input type="checkbox" name="select" id="select_date_joined" value="date_joined"/>
                                     </td>
                                     <td>
                                         Date Joined
@@ -394,7 +367,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="chart_no"/>
+                                        <input type="checkbox" name="select" id="select_chart_no" value="chart_no"/>
                                     </td>
                                     <td>
                                         Chart #
@@ -402,7 +375,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="provider_no"/>
+                                        <input type="checkbox" name="select" id="select_provider_no" value="provider_no"/>
                                     </td>
                                     <td>
                                         Provider #
@@ -410,7 +383,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="provider_name"/>
+                                        <input type="checkbox" name="select" id="select_provider_name" value="provider_name"/>
                                     </td>
                                     <td>
                                         Provider Name
@@ -418,7 +391,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="sex"/>
+                                        <input type="checkbox" name="select" id="select_sex" value="sex"/>
                                     </td>
                                     <td>
                                         Sex
@@ -426,7 +399,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="end_date"/>
+                                        <input type="checkbox" name="select" id="select_end_date" value="end_date"/>
                                     </td>
                                     <td>
                                         End Date
@@ -434,7 +407,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="eff_date"/>
+                                        <input type="checkbox" name="select" id="select_eff_date" value="eff_date"/>
                                     </td>
                                     <td>
                                         Eff. Date
@@ -442,7 +415,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="pcn_indicator"/>
+                                        <input type="checkbox" name="select" id="select_pcn_indicator" value="pcn_indicator"/>
                                     </td>
                                     <td>
                                         Pcn indicator
@@ -450,7 +423,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="hc_type"/>
+                                        <input type="checkbox" name="select" id="select_hc_type" value="hc_type"/>
                                     </td>
                                     <td>
                                         Health Card Type
@@ -458,7 +431,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="hc_renew_date"/>
+                                        <input type="checkbox" name="select" id="select_hc_renew_date" value="hc_renew_date"/>
                                     </td>
                                     <td>
                                         HC Renew Date
@@ -466,7 +439,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="family_doctor"/>
+                                        <input type="checkbox" name="select" id="select_family_doctor" value="family_doctor"/>
                                     </td>
                                     <td>
                                         Family Doctor
@@ -474,7 +447,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="select" id="select" value="newsletter"/>
+                                        <input type="checkbox" name="select" id="select_newsletter" value="newsletter"/>
                                     </td>
                                     <td>
                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportDemoReport.frmNewsletter"/>
@@ -515,8 +488,8 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="startYear" size="4" />
-                                        <input type="checkbox" name="endYear" size="4" />
+                                        <input type="text" name="startYear" size="4" />
+                                        <input type="text" name="endYear" size="4" />
                                     </td>
                                     <td>
 
@@ -726,7 +699,7 @@
     <%
         String[] selectArray = (String[]) request.getAttribute("selectArray");
         java.util.ArrayList searchList = (java.util.ArrayList) request.getAttribute("searchedArray");
-        if (searchList != null) {
+        if (searchList != null && selectArray != null) {
             oscar.oscarReport.data.RptDemographicColumnNames dcn = new oscar.oscarReport.data.RptDemographicColumnNames();
     %>
 

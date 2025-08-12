@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "listActiveContactAttempts", propOrder = {"arg0"})
+@XmlType(name = "listActiveContactAttempts", propOrder = "arg0")
 public class ListActiveContactAttempts {
 
     protected ClientQuery arg0;

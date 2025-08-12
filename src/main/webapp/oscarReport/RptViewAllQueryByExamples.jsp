@@ -57,6 +57,10 @@
             function set(text) {
                 document.forms[1].newQuery.value = text;
             };
+
+            function submitFavouriteForm() {
+                document.getElementById("favouriteForm").submit();
+            }
         </script>
 
     </head>
@@ -88,21 +92,22 @@
                         <td align="left" width="140"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.RptByExample.MsgDate"/></td>
                         <td align="left" width="400"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.RptByExample.MsgQuery"/></td>
                         <td align="left" width="100"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.RptByExample.MsgProvider"/></td>
-                        <td></td>
+                        <td align="left" width="100"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.RptByExample.MsgAddToFavorite"/></td>
                     </tr>
 
-                    <form action="${pageContext.request.contextPath}/oscarReport/RptByExamplesFavorite.do" method="post">
-                        <input type="hidden" name="newQuery" value="error"/>
+                    <form id="favouriteForm" action="${pageContext.request.contextPath}/oscarReport/RptByExamplesFavorite.do" method="post">
+                        <input type="hidden" id="newQuery" name="newQuery" value="error"/>
                         <c:forEach var="queryInfo" items="${allQueries.queryVector}">
+                            <c:set var="escapedQuery" value="${queryInfo.queryWithEscapeChar}"/>
+
                             <tr class="data">
                                 <td><c:out value="${queryInfo.date}"/></td>
                                 <td><c:out value="${queryInfo.query}"/></td>
                                 <td><c:out value="${queryInfo.providerLastName}"/>, <c:out value="${queryInfo.providerFirstName}"/></td>
                                 <td>
                                     <input type="button"
-                                           value="${msg['oscarReport.RptByExample.MsgAddToFavorite']}"
-                                           onclick="javascript:set('${fn:escapeXml(queryInfo.queryWithEscapeChar)}'); submit();"/>
-                                </td>
+                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.RptByExample.MsgAddToFavorite"/>"
+                                         onclick="set('<c:out value="${escapedQuery}" escapeXml="true"/>'); submitFavouriteForm();" />
                             </tr>
                         </c:forEach>
                     </form>

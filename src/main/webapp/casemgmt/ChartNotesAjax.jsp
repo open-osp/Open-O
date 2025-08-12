@@ -262,7 +262,7 @@
             String dispFilename = "";
             String dispStatus = " ";
             String globalNoteId = "";
-
+            
             if (note.getRemoteFacilityId() != null) {
                 globalNoteId = "UUID" + note.getUuid();
             }
@@ -522,7 +522,7 @@
 
                 String winName = "docs" + demographicNo;
                 int hash = Math.abs(winName.hashCode());
-
+                
                 url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
                 url = url + "return false;";
 
@@ -708,7 +708,7 @@
                 }
             %>
             <div id="sig<%=globalNoteId%>" class="sig">
-                <div id="sumary<%=globalNoteId%>">
+                <div id="summary<%=globalNoteId%>">
                     <div id="observation<%=globalNoteId%>" style="float: right; margin-right: 3px;">
                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.encounterDate.title"/>:&nbsp;
                         <span id="obs<%=globalNoteId%>"><%=DateUtils.getDate(note.getObservationDate(), dateFormat, request.getLocale())%></span>&nbsp;

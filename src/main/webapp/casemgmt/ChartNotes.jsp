@@ -187,7 +187,8 @@
 
 </script>
 <div id="topContent">
-    <form action="${pageContext.request.contextPath}/CaseManagementView.do" method="post">
+
+    <form name="caseManagementViewForm" action="${pageContext.request.contextPath}/CaseManagementView.do" method="post">
         <input type="hidden" name="demographicNo" value="<%=demographicNo%>"/>
         <input type="hidden" name="providerNo" value="<%=provNo%>"/>
         <input type="hidden" name="tab" value="Current Issues"/>
@@ -199,6 +200,7 @@
         <input type="hidden" id="check_issue" name="check_issue">
         <input type="hidden" id="serverDate" value="<%=strToday%>">
         <input type="hidden" id="resetFilter" name="resetFilter" value="false">
+
         <div id="filteredresults">
             <c:if test="${not empty caseManagementViewForm.filter_providers}">
                 <fieldset class="filterresult">
@@ -439,8 +441,8 @@
                             <fmt:setBundle basename="oscarResources"/><fmt:message key="global.pubmed"/></option>
                         <option value="http://search.nlm.nih.gov/medlineplus/query?DISAMBIGUATION=true&amp;FUNCTION=search&amp;SERVER2=server2&amp;SERVER1=server1&amp;PARAMETER=">
                             <fmt:setBundle basename="oscarResources"/><fmt:message key="global.medlineplus"/></option>
-                        <option value="tripsearch.jsp?searchterm=">Trip Database</option>
-                        <option value="macplussearch.jsp?searchterm=">MacPlus Database</option>
+                        <option value="casemgmt/tripsearch.jsp?searchterm=">Trip Database</option>
+                        <option value="casemgmt/macplussearch.jsp?searchterm=">MacPlus Database</option>
                         <option value="https://empendium.com/mcmtextbook/search?type=textbook&q=">McMaster Text Book
                         </option>
                     </select>
@@ -514,7 +516,7 @@
     String oscarMsgType = (String) request.getParameter("msgType");
     String OscarMsgTypeLink = (String) request.getParameter("OscarMsgTypeLink");
 %>
-<form action="<%=request.getContextPath()%>/CaseManagementEntry.do" method="post">
+<form name="caseManagementEntryForm" id="caseManagementEntryForm" action="<%=request.getContextPath()%>/CaseManagementEntry.do" method="post">
     <input type="hidden" name="demographicNo" value="<%=demographicNo%>"/>
     <input type="hidden" name="includeIssue" value="off"/>
     <input type="hidden" name="OscarMsgType" value="<%=oscarMsgType%>"/>

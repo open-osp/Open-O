@@ -17,16 +17,20 @@ ARG DRUGREF_DOWNLOAD_URL=https://bitbucket.org/openoscar/drugref/downloads/drugr
 ARG TOMCAT_PATH=/usr/local/tomcat
 ARG DOCS_PATH='/home/oscar/development/volumes'
 ARG OSCAR_DOCUMENT="${DOCS_PATH}/OscarDocument"
+ARG DB_DOCS="/db-data/documents"
+ARG DOCS_DEST="/var/lib/OscarDocument/oscar/document"
 
 WORKDIR /workspace
 
 # Install required packages and clean up apt lists
 RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix curl git wget apt-transport-https ca-certificates gnupg lsb-release \
+    wkhtmltopdf \
     locales iputils-ping gettext fontconfig libc6 libfreetype6 \
     libpng16-16 libssl-dev libstdc++6 libx11-6 libxcb1 libxext6 libxtst6 libjpeg62 \
-    libxrender1 libxi6 xfonts-75dpi xfonts-base zlib1g maven mariadb-client \
+    libxrender1 libfontconfig1 libxi6 xfonts-75dpi xfonts-base zlib1g maven mariadb-client \
     nano openssh-client vim-tiny \
+    python3 python3-pip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Remove unnecessary default web apps in Tomcat
@@ -55,7 +59,8 @@ COPY ./openosp_files/logging.properties $TOMCAT_PATH/conf/logging.properties
 COPY ./openosp_files/logging-servlet.properties $TOMCAT_PATH/conf/logging-servlet.properties
 COPY ./openosp_files/tomcat-users.xml $TOMCAT_PATH/conf/tomcat-users.xml
 
-# Set up document directories
+# Set up document directories, including seeded document data for the database and the destination
+# of all documents
 RUN mkdir -p $OSCAR_DOCUMENT/oscar/document \
     $OSCAR_DOCUMENT/oscar/billing/download \
     $OSCAR_DOCUMENT/oscar/billing/invoices \
@@ -66,7 +71,9 @@ RUN mkdir -p $OSCAR_DOCUMENT/oscar/document \
     $OSCAR_DOCUMENT/oscar/onEDTDocs/sent \
     $OSCAR_DOCUMENT/oscar/onEDTDocs/archive \
     $OSCAR_DOCUMENT/oscar/oscarEncounter/oscarMeasurements/styles \
-    $OSCAR_DOCUMENT/oscar/incomingdocs
+    $OSCAR_DOCUMENT/oscar/incomingdocs \
+    $DB_DOCS \
+    $DOCS_DEST 
 
 # Convert script files from DOS to Unix format (if necessary)
 RUN dos2unix /scripts/* \

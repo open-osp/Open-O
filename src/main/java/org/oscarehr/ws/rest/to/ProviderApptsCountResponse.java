@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import org.oscarehr.ws.rest.to.model.ProviderApptsCountTo;
 
 @XmlRootElement
-@XmlSeeAlso({ProviderApptsCountTo.class})
+@XmlSeeAlso(ProviderApptsCountTo.class)
 public class ProviderApptsCountResponse extends AbstractSearchResponse<ProviderApptsCountTo> {
 
     private static final long serialVersionUID = 1L;

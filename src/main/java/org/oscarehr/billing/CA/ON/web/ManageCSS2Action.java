@@ -59,8 +59,6 @@ public class ManageCSS2Action extends ActionSupport {
     }
 
     public String save() {
-
-
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin", "w", null)) {
             throw new SecurityException("missing required security object (_admin)");
         }
@@ -68,7 +66,6 @@ public class ManageCSS2Action extends ActionSupport {
         CssStyle cssStyle = null;
         boolean newStyle = false;
         List<CssStyle> styles = cssStylesDao.findAll();
-        ;
 
         if (selectedStyle.equals("-1")) {
             cssStyle = new CssStyle();
@@ -85,7 +82,7 @@ public class ManageCSS2Action extends ActionSupport {
         }
 
         cssStyle.setName(this.getStyleName());
-        cssStyle.setStyle(this.getSelectedStyle());
+        cssStyle.setStyle(this.getEditStyle());
 
         if (newStyle) {
             cssStylesDao.persist(cssStyle);

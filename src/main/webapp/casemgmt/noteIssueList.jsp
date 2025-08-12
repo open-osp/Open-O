@@ -56,31 +56,28 @@
         frm = (CaseManagementEntryFormBean) session.getAttribute(caseMgmtEntryFrm);
         request.setAttribute("caseManagementEntryForm", frm);
     }
+    request.setAttribute("encSelect", encSelect);
 %>
 <c:choose>
     <c:when test="${empty caseManagementEntryForm.caseNote.id}">
         <c:choose>
             <c:when test="${not empty param.newNoteIdx}">
                 <c:set var="noteIndex" value="${param.newNoteIdx}" />
-                <div id="sumary${param.newNoteIdx}">
+                <div id="summary${param.newNoteIdx}">
                     <div id="observation${param.newNoteIdx}" style="float: right; margin-right: 3px;">
-                </div>
             </c:when>
             <c:otherwise>
                 <c:set var="noteIndex" value="0" />
-                <div id="sumary0">
+                <div id="summary0">
                     <div id="observation0" style="float: right; margin-right: 3px;">
-                </div>
             </c:otherwise>
         </c:choose>
     </c:when>
     <c:otherwise>
         <c:set var="noteIndex" value="${caseManagementEntryForm.caseNote.id}" />
         <div style="background-color: #CCCCFF;"
-             id="sumary${caseManagementEntryForm.caseNote.id}">
+             id="summary${caseManagementEntryForm.caseNote.id}">
             <div id="observation${caseManagementEntryForm.caseNote.id}" style="float: right; margin-right: 3px;">
-            </div>
-        </div>
     </c:otherwise>
 </c:choose>
 </div>
@@ -206,50 +203,24 @@
 
 <div id="current_note_addon"></div>
 
-<%
-    encSelect += noteIndex;
-%>
+<c:set var="encSelect" value="${encSelect}${noteIndex}" />
 <div style="clear: right; margin: 0 3px 0 0; float: right;">
     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.encType.title"/>:&nbsp;
-    <span id="encType<%=noteIndex%>">
+    <span id="encType${noteIndex}">
         <c:choose>
             <c:when test="${empty ajaxsave}">
-                <select id="${encSelect}" class="encTypeCombo" name="encounter_type">
-                    <option value=""></option>
-                    <option value="face to face encounter with client">
-                        <fmt:setBundle basename="oscarResources"/>
-                        <fmt:message key="oscarEncounter.faceToFaceEnc.title"/>
-                    </option>
-                    <option value="telephone encounter with client">
-                        <fmt:setBundle basename="oscarResources"/>
-                        <fmt:message key="oscarEncounter.telephoneEnc.title"/>
-                    </option>
-                    <option value="email encounter with client">
-                        <fmt:setBundle basename="oscarResources"/>
-                        <fmt:message key="oscarEncounter.emailEnc.title"/>
-                    </option>
-                    <option value="encounter without client">
-                        <fmt:setBundle basename="oscarResources"/>
-                        <fmt:message key="oscarEncounter.noClientEnc.title"/>
-                    </option>
+                <select id="${encSelect}" class="encTypeCombo" name="caseNote.encounter_type">
+                    <option value="" ${empty caseManagementEntryForm.caseNote.encounter_type ? 'selected' : ''}></option>
+                    <option value="face to face encounter with client" ${caseManagementEntryForm.caseNote.encounter_type == 'face to face encounter with client' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.faceToFaceEnc.title"/></option>
+                    <option value="telephone encounter with client" ${caseManagementEntryForm.caseNote.encounter_type == 'telephone encounter with client' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.telephoneEnc.title"/></option>
+                    <option value="email encounter with client" ${caseManagementEntryForm.caseNote.encounter_type == 'email encounter with client' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.emailEnc.title"/></option>
+                    <option value="encounter without client" ${caseManagementEntryForm.caseNote.encounter_type == 'encounter without client' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.noClientEnc.title"/></option>
         
                     <c:if test="${loggedInInfo73557.currentFacility.enableGroupNotes}">
-                        <option value="group face to face encounter">
-                            <fmt:setBundle basename="oscarResources"/>
-                            <fmt:message key="oscarEncounter.groupFaceEnc.title"/>
-                        </option>
-                        <option value="group telephone encounter">
-                            <fmt:setBundle basename="oscarResources"/>
-                            <fmt:message key="oscarEncounter.groupTelephoneEnc.title"/>
-                        </option>
-                        <option value="group encounter with client">
-                            <fmt:setBundle basename="oscarResources"/>
-                            <fmt:message key="oscarEncounter.emailEnc.title"/>
-                        </option>
-                        <option value="group encounter without group">
-                            <fmt:setBundle basename="oscarResources"/>
-                            <fmt:message key="oscarEncounter.groupNoClientEnc.title"/>
-                        </option>
+                        <option value="group face to face encounter" ${caseManagementEntryForm.caseNote.encounter_type == 'group face to face encounter' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.groupFaceEnc.title"/></option>
+                        <option value="group telephone encounter" ${caseManagementEntryForm.caseNote.encounter_type == 'group telephone encounter' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.groupTelephoneEnc.title"/></option>
+                        <option value="group encounter with client" ${caseManagementEntryForm.caseNote.encounter_type == 'group encounter with client' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.emailEnc.title"/></option>
+                        <option value="group encounter without group" ${caseManagementEntryForm.caseNote.encounter_type == 'group encounter without group' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.groupNoClientEnc.title"/></option>
                     </c:if>
                 </select>
             </c:when>
@@ -257,7 +228,8 @@
                 "&quot;<c:out value="${caseManagementEntryForm.caseNote.encounter_type}"/>&quot;"
             </c:otherwise>
         </c:choose>        
-</span></div>
+    </span>
+</div>
 
 
 <c:set var="numIssues" value="${fn:length(caseManagementEntryForm.caseNote.issues)}"/>
@@ -398,7 +370,7 @@
                 ${issueCheckList.issueDisplay.description}
             </a>
 
-            <c:if test="${issueCheckList.issue.used == false}">
+            <c:if test="${issueCheckList.used == false}">
                 <c:set var="submitDelete" value="removeIssue('${winame}');document.forms['caseManagementEntryForm'].deleteId.value='${status.index}';return ajaxUpdateIssues('issueDelete', $('noteIssues').up().id);" />
                 &nbsp;
                 <a href="#" onclick="${submitDelete}">Delete</a>
@@ -458,7 +430,6 @@
     //check to see if we need to update div containers to most recent note id
     //this happens only when we're called thru ajaxsave
     <c:if test="${not empty ajaxsave}">
-    <script type="text/javascript">
         var origId = "${origNoteId}";
         var newId = "${ajaxsave}";
         var oldDiv;
@@ -485,15 +456,14 @@
         <c:if test="${not empty DateError}">
             alert("${DateError}");
         </c:if>
-    </script>
-</c:if>
+    </c:if>
 
 
-    var c = "bgColour" + "<%=noteIndex%>";
+    var c = "bgColour" + "${noteIndex}";
     var txtStyles = $F(c).split(";");
     var txtColour = txtStyles[0].substr(txtStyles[0].indexOf("#"));
     var background = txtStyles[1].substr(txtStyles[1].indexOf("#"));
-    var summary = "sumary" + "<%=noteIndex%>";
+    var summary = "summary" + "${noteIndex}";
 
     if ($("observationDate") != null) {
         $("observationDate").style.color = txtColour;
@@ -514,7 +484,7 @@
 
     //do we have a custom encounter type?  if so add an option to the encounter type select
     var encounterType = '${caseManagementEntryForm.caseNote.encounter_type}';
-    var selectEnc = "<%=encSelect%>";
+    var selectEnc = "${encSelect}";
 
     if ($(selectEnc) != null) {
 

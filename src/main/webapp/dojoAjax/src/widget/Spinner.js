@@ -276,7 +276,7 @@ dojo.widget.defineWidget(
         },
 
         adjustValue: function (/*Number*/ direction, /*Number*/ x) {
-            // sumary
+            // summary
             //	spin the input field
             //	direction < 0: spin down
             //	direction > 0: spin up

@@ -84,9 +84,7 @@
         <script>
             window.top.location.href = "<%=request.getContextPath()%>/administration/?show=ImageUpload";
         </script>
-
     </c:if>
-
 
     <div class="row-fluid">
         <div class="well">

@@ -102,6 +102,20 @@
 
                 return true;
             }
+
+            function validateForm() {
+                var input = document.getElementById("numericFormField");
+
+                if (input) {
+                    var val = input.value.trim();
+                    if (!/^\d+$/.test(val)) {
+                        document.getElementById("errorMessage").style.display = "block";
+                        return false; 
+                    }
+                }
+
+                return true; 
+            }
         </script>
 
     </head>
@@ -117,7 +131,7 @@
             <td class="MainTableLeftColumn">&nbsp;</td>
             <td class="MainTableRightColumn">
                 <%if (request.getAttribute("status") == null) {%> <%=bundle.getString(providermsgEdit)%> <c:out value="${dateProperty.value}"/>
-                <form styleId="providerForm" action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
+                <form styleId="providerForm" action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post" onsubmit="return validateForm();">
                 <input type="hidden" name="method" value="<c:out value="${method}"/>">
 
                 <p id="errorMessage" style="display: none; color: red;">
@@ -127,15 +141,16 @@
                 <% if (request.getAttribute("dropOpts") == null) { %>
                 <input type="text"
                         id="numericFormField"
-                        name="dateProperty.value"/>
+                        name="dateProperty.value"  value="<c:out value='${dateProperty.value}'/>" />
                 <%if (request.getAttribute("dateProperty2") != null) {%>
                 <input type="text" name="dateProperty2.value" id="dateProperty2.value" />
                 <%}%>
                 <% } else { %>
                 <select name="dateProperty.value" id="dateProperty.value">
                     <c:forEach var="dropOpt" items="${dropOpts}">
-                        <option value="${dropOpt.value}">
-                                ${dropOpt.label}
+                        <option value="${dropOpt.value}" 
+                            <c:if test="${dropOpt.value == dateProperty.value}">selected</c:if>>
+                            ${dropOpt.label}
                         </option>
                     </c:forEach>
                 </select>

@@ -17,12 +17,14 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="org.oscarehr.util.SessionConstants" %>
 <%@ page import="org.oscarehr.common.model.ProviderPreference" %>
 <%@ include file="/taglibs.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
@@ -57,6 +59,8 @@
 <html>
     <head>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DiseaseRegistry"/></title>
+
+        <meta charset="UTF-8">
 
         <link rel="stylesheet" type="text/css" media="all"
               href="${pageContext.servletContext.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css"/>
@@ -123,9 +127,12 @@
         String mygroupno = providerPreference.getMyGroupNo();
         pageContext.setAttribute("mygroupno", mygroupno);
         String radiostatus = (String) session.getAttribute("radiovaluestatus");
-        if (radiostatus == null || radiostatus == "")
+        if (radiostatus == null || radiostatus.isEmpty()) {
             radiostatus = "patientRegistedAll";
-        String formAction = "/report/DxresearchReport?method=" + radiostatus;
+            session.setAttribute("radiovaluestatus", radiostatus);
+        }
+        String formAction = request.getContextPath() + "/report/DxresearchReport.do?method=" + radiostatus;
+        request.setAttribute("radiostatus", radiostatus);
         request.setAttribute("listview", request.getSession().getAttribute("listview"));
         request.setAttribute("codeSearch", request.getSession().getAttribute("codeSearch"));
         //request.setAttribute("editingCode", request.getSession().getAttribute("editingCode"));
@@ -144,7 +151,7 @@
         </div>
 
         <div class="well well-small">
-            <form action="${pageContext.request.contextPath}/report/DxresearchReport?method=addSearchCode.do" method="post">
+            <form action="${pageContext.request.contextPath}/report/DxresearchReport.do?method=addSearchCode" method="post" accept-charset="UTF-8">
                 <div class="row-fluid">
                     <input type="hidden" name="action" value="NA"/>
                     <select name="quicklistname" class="sel">
@@ -166,7 +173,7 @@
                            class="span4 jsonDxSearch"/>
                 </div>
                 <div class="row-fluid">
-                    <nested:submit styleClass="btn btn-primary">Add</nested:submit>
+                    <input type="submit" class="btn btn-primary" value="Add" />
                     <input type="button" class="btn btn-danger" value="Clear"
                            onclick="javascript:this.form.action='${pageContext.servletContext.contextPath}/report/DxresearchReport.do?method=clearSearchCode';this.form.submit()"/>
                 </div>
@@ -177,7 +184,7 @@
             <strong>Search all patients with disease codes:</strong>
         </div>
 
-        <nested:form action='<%=formAction%>' styleClass="form-inline">
+        <form action="<%=formAction%>" method="post" class="form-inline" accept-charset="UTF-8">
 
             <div class="row-fluid">
                 <display:table name="codeSearch" id="codeSearch" class="table table-condensed table-striped">
@@ -188,28 +195,28 @@
             </div>
             <div class="row-fluid">
                 <label class="radio">
-                    <input type="radio" name="SearchBy" value="radio"
-                           id="SearchBy_0" <c:if test="${radiostatus == 'patientRegistedDistincted'}">checked</c:if>
+                    <input type="radio" name="SearchBy" value="patientRegistedDistincted"
+                           id="SearchBy_Distincted" <c:if test="${radiostatus == 'patientRegistedDistincted'}">checked</c:if>
                            onclick="javascript:this.form.action='<%= request.getContextPath()%>/report/DxresearchReport.do?method=patientRegistedDistincted'">
                     ALL(distincted)</label>
                 <label class="radio">
-                    <input type="radio" name="SearchBy" value="radio"
-                           id="SearchBy_1" <c:if test="${radiostatus == 'patientRegistedAll'}">checked</c:if>
+                    <input type="radio" name="SearchBy" value="patientRegistedAll"
+                           id="SearchBy_All" <c:if test="${radiostatus == 'patientRegistedAll'}">checked</c:if>
                            onclick="javascript:this.form.action='<%= request.getContextPath()%>/report/DxresearchReport.do?method=patientRegistedAll'">
                     ALL</label>
                 <label class="radio">
-                    <input type="radio" name="SearchBy" value="radio"
-                           id="SearchBy_0" <c:if test="${radiostatus == 'patientRegistedActive'}">checked</c:if>
+                    <input type="radio" name="SearchBy" value="patientRegistedActive"
+                           id="SearchBy_Active" <c:if test="${radiostatus == 'patientRegistedActive'}">checked</c:if>
                            onclick="javascript:this.form.action='<%= request.getContextPath()%>/report/DxresearchReport.do?method=patientRegistedActive'">
                     Active</label>
                 <label class="radio">
-                    <input type="radio" name="SearchBy" value="radio"
-                           id="SearchBy_0" <c:if test="${radiostatus == 'patientRegistedDeleted'}">checked</c:if>
+                    <input type="radio" name="SearchBy" value="patientRegistedDeleted"
+                           id="SearchBy_Deleted" <c:if test="${radiostatus == 'patientRegistedDeleted'}">checked</c:if>
                            onclick="javascript:this.form.action='<%= request.getContextPath()%>/report/DxresearchReport.do?method=patientRegistedDeleted'">
                     Deleted</label>
                 <label class="radio">
-                    <input type="radio" name="SearchBy" value="radio"
-                           id="SearchBy_1" <c:if test="${radiostatus == 'patientRegistedResolve'}">checked</c:if>
+                    <input type="radio" name="SearchBy" value="patientRegistedResolve"
+                           id="SearchBy_Resolved" <c:if test="${radiostatus == 'patientRegistedResolve'}">checked</c:if>
                            onclick="javascript:this.form.action='<%= request.getContextPath()%>/report/DxresearchReport.do?method=patientRegistedResolve'">
                     Resolved</label>
 
@@ -255,7 +262,7 @@
                 </select>
 
 
-                <nested:submit styleClass="btn btn-primary">Search</nested:submit>
+                <input type="submit" class="btn btn-primary" value="Search" />
             </div>
 
             <h3>Results</h3>
@@ -281,7 +288,7 @@
                        onclick="javascript:this.form.action='${pageContext.servletContext.contextPath}/report/DxresearchReport.do?method=patientExcelReport';this.form.submit()">
             </c:if>
 
-        </nested:form>
+        </form>
     </div>
     </body>
 </html>

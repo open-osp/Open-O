@@ -497,7 +497,7 @@
             <br/>
 
             <input type="button" value="Annotation" title="Annotation" class="ControlPushButton"
-                   onclick="window.open('../annotation/annotation.jsp?display=<%=org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP%>&table_id=<%=drug.getId()%>&demo=<%=drug.getDemographicId()%>','anwin','width=400,height=500');">
+                   onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP%>&table_id=<%=drug.getId()%>&demo=<%=drug.getDemographicId()%>','anwin','width=400,height=500');">
 
 
             <%--

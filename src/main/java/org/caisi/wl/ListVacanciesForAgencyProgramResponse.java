@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "listVacanciesForAgencyProgramResponse", propOrder = {"_return"})
+@XmlType(name = "listVacanciesForAgencyProgramResponse", propOrder = "_return")
 public class ListVacanciesForAgencyProgramResponse {
 
     @XmlElement(name = "return")

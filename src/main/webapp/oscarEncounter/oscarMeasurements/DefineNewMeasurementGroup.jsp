@@ -77,7 +77,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><input type="checkbox" name="groupName" size="35" /></td>
+                                        <td><input type="text" name="groupName" size="35" /></td>
                                     </tr>
                                     <tr>
                                         <td align="left"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.addMeasurementGroup.selectStyleSheet"/>

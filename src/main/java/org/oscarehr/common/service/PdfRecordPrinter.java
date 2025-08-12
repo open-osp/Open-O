@@ -1247,7 +1247,7 @@ public class PdfRecordPrinter {
 
         for (EFormValue value : diagrams) {
             //this is a form from our group, and our appt
-            String imgPath = OscarProperties.getInstance().getProperty("eform_image");
+            String imgPath = OscarProperties.getInstance().getEformImageDirectory();
             EFormValue imageName = eFormValueDao.findByFormDataIdAndKey(value.getFormDataId(), "image");
             EFormValue drawData = eFormValueDao.findByFormDataIdAndKey(value.getFormDataId(), "DrawData");
             EFormValue subject = eFormValueDao.findByFormDataIdAndKey(value.getFormDataId(), "subject");

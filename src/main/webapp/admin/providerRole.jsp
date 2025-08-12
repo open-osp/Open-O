@@ -43,6 +43,9 @@
 <%@ page import="org.oscarehr.common.dao.RecycleBinDao" %>
 <%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.springframework.web.context.WebApplicationContext" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.oscarehr.PMmodule.service.ProgramProviderService" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     ProgramDao programDao = SpringUtils.getBean(ProgramDao.class);
@@ -52,6 +55,9 @@
     SecuserroleDao secUserRoleDao = (SecuserroleDao) SpringUtils.getBean(SecuserroleDao.class);
     RecycleBinDao recycleBinDao = SpringUtils.getBean(RecycleBinDao.class);
     ProgramProviderDAO programProviderDao = (ProgramProviderDAO) SpringUtils.getBean(ProgramProviderDAO.class);
+
+    WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(application);
+    ProgramProviderService programProviderService = (ProgramProviderService) ctx.getBean("programProviderService");
 
 
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -238,7 +244,7 @@
             if (newCaseManagement) {
                 ProgramProvider programProvider = programProviderDao.getProgramProvider(number, Long.valueOf(caisiProgram));
                 if (programProvider != null) {
-                    programProviderDao.deleteProgramProvider(programProvider.getId());
+                    programProviderService.deleteProgramProvider(programProvider.getId());
                 }
             }
         } else {

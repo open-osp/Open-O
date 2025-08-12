@@ -72,7 +72,7 @@
                     <p id="errorMessage" class="alert alert-danger" style="display: none; color: red;">
                         Invalid input.
                     </p>
-                    Number of Notes : <input type="text" id="numericFormField" name="quickChartSize.value" size="5"/>
+                    Number of Notes : <input type="text" id="numericFormField" name="quickChartSize.value" value="<c:out value='${size.value}'/>" size="5"/>
                     <br/>
                     <input type="submit" name="submit" value="Apply"class="btn btn-primary" />
                 </form>

@@ -52,6 +52,7 @@
 
 <%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <% if (session.getAttribute("user") == null)
     response.sendRedirect("../../../logout.htm");
@@ -339,8 +340,8 @@
                 }
             }
 
-            function sanityCheck(id) {
-                if (id != "") {
+            function sanityCheck(id, billNoErr) {
+                if (id != "" && !billNoErr) {
                     location.href = "billingON3rdInv.jsp?billingNo=" + id;
                 } else {
                     alert("Please search a valid invoice number");
@@ -462,7 +463,6 @@
             billNoErr = (bCh1 == null);
 
             if (bCh1 != null) {
-
                 clinicSite = bCh1.getClinic();
 
                 //multisite. check provider no
@@ -672,7 +672,7 @@
                 <input type="hidden" id="billTotal" value="<%=BillTotal%>"/>
 
                 <div class="span2">
-                    <a href="#" onclick="return sanityCheck('<%=nullToEmpty(billNo)%>');"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.billingCorrection.formInvoiceNo"/></a><br>
+                    <a href="#" onclick="return sanityCheck('<%=nullToEmpty(billNo)%>', <%=billNoErr%>);"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.billingCorrection.formInvoiceNo"/></a><br>
                     <input type="text" id="billing_no" name="billing_no" value="<%=nullToEmpty(billNo)%>" class="span2"
                            required>
                 </div>
@@ -1241,7 +1241,7 @@
 
                     <%if (billNo != null) {%>
 
-                    <a id="reprintLink" href="billingON3rdInv.jsp?billingNo=<%=billNo%>" class="btn"><i
+                    <a id="reprintLink" onclick="return sanityCheck('<%=nullToEmpty(billNo)%>', <%=billNoErr%>)" href="billingON3rdInv.jsp?billingNo=<%=billNo%>" class="btn"><i
                             class="icon icon-print"></i> Reprint</a>
                     <a id="rebillLink"
                        onclick="document.querySelector(&quot;select[name='status']&quot;).value = 'O'; document.getElementsByName(&quot;submit&quot;)[1].click();"

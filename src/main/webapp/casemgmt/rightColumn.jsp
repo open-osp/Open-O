@@ -27,72 +27,45 @@
 <%@page import="org.oscarehr.sharingcenter.SharingCenterUtil" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ include file="/casemgmt/taglibs.jsp" %>
-<%@taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
+<%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page import="org.oscarehr.casemgmt.model.*" %>
 
 <%
     String demo = request.getParameter("demographicNo");
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-
-// MARC-HI's Sharing Center
-    boolean isSharingCenterEnabled = SharingCenterUtil.isEnabled();
-
 %>
-<script type="text/javascript">
 
-    //This object stores the key -> cmd value passed to action class and the id of the created div
-    // and the value -> URL of the action class
-    <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
+<html>
+<head>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/oscarClientManagement/profilePicture.js"></script>
+</head>
+<body>
+    <!-- Sets the profile picture of a loaded case -->
+    <!-- "roleName$" is the correct name for this role, see other jsp pages for confirmation -->
+    <security:oscarSec roleName="<%=roleName$%>" objectName="_newCasemgmt.photo" rights="r">
+        <c:choose>
+            <c:when test="${not empty requestScope.image_exists}">
+                <c:set var="clientId" value="${demographicNo}"></c:set>
+                <img style="cursor: pointer;" id="ci"
+                    src="${pageContext.request.contextPath}/${ClientImage.imagePresentPlaceholderUrl}" alt="id_photo" height="100"
+                    title="Click to upload a new photo."
+                    OnMouseOver="document.getElementById('ci').src='${pageContext.request.contextPath}/imageRenderingServlet?source=local_client&clientId=${demographicNo}'"
+                    OnMouseOut="delay(5000, '${pageContext.request.contextPath}${ClientImage.imagePresentPlaceholderUrl}')" window.status='Click to upload a new photo.'; return true;"
+                onClick="popupUploadPage('${pageContext.request.contextPath}/casemgmt/uploadimage.jsp', ${demographicNo}); return false;"/>
+            </c:when>
+            <c:otherwise>
+                <img style="cursor: pointer;" src="${pageContext.request.contextPath}/${ClientImage.imageMissingPlaceholderUrl}"
+                    alt="No_Id_Photo" height="100" title="Click to upload a new photo."
+                    OnMouseOver="window.status='Click to upload a new photo.'; return true;"
+                    onClick="popupUploadPage('${pageContext.request.contextPath}/casemgmt/uploadimage.jsp', ${demographicNo}); return false;"/>
+            </c:otherwise>
+        </c:choose>
+    </security:oscarSec>
 
-    function popupUploadPage(varpage, dn) {
-        var page = "" + varpage + "?demographicNo=" + dn;
-        windowprops = "height=500,width=500,location=no,"
-            + "scrollbars=no,menubars=no,toolbars=no,resizable=yes,top=50,left=50";
-        var popup = window.open(page, "", windowprops);
-        popup.focus();
-
-    }
-
-    function delay(time) {
-        string = "document.getElementById('ci').src='<%=request.getContextPath()+ClientImage.imagePresentPlaceholderUrl%>'";
-        setTimeout(string, time);
-    }
-
-</script>
-
-<!--dummmy div to force browser to allocate space -->
-<security:oscarSec roleName="<%=roleName$%>" objectName="_newCasemgmt.photo" rights="r">
-    <c:choose>
-        <c:when test="${not empty requestScope.image_exists}">
-            <c:set var="clientId" value="${demographicNo}"></c:set>
-            <img style="cursor: pointer;" id="ci"
-                 src="<c:out value="${ctx}"/><%=ClientImage.imagePresentPlaceholderUrl%>" alt="id_photo" height="100"
-                 title="Click to upload new photo."
-                 OnMouseOver="document.getElementById('ci').src="<%= request.getContextPath() %>/imageRenderingServlet?source=local_client&clientId=<c:out value="${clientId}"/>'"
-                 OnMouseOut="delay(5000)" window.status='Click to upload new photo' ; return true;"
-            onClick="popupUploadPage('uploadimage.jsp',<%=demo%>);return false;" />
-        </c:when>
-        <c:otherwise>
-            <img style="cursor: pointer;" src="<c:out value="${ctx}"/><%=ClientImage.imageMissingPlaceholderUrl%>"
-                 alt="No_Id_Photo" height="100" title="Click to upload new photo."
-                 OnMouseOver="window.status='Click to upload new photo';return true"
-                 onClick="popupUploadPage('uploadimage.jsp',<%=demo%>);return false;"/>
-        </c:otherwise>
-    </c:choose>
-</security:oscarSec>
-
-<!-- MARC-HI's Sharing Center -->
-<% if (isSharingCenterEnabled) { %>
-<div>
-    <button type="button"
-            onclick="window.open('${ctx}/sharingcenter/documents/demographicExport.jsp?demographic_no=<%=demo%>');">
-        Export Patient Demographic
-    </button>
-</div>
-<% } %>
-
-<div id="rightColLoader" style="width: 100%;">
-    <h3 style="width: 100%; background-color: #CCCCFF;">
-        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.LeftNavBar.msgLoading"/></h3>
-</div>
+    <div id="rightColLoader" style="width: 100%;">
+        <h3 style="width: 100%; background-color: #CCCCFF;">
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.LeftNavBar.msgLoading"/></h3>
+    </div>
+</body>
+</html>

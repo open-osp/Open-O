@@ -35,7 +35,7 @@ import org.oscarehr.ws.rest.to.model.DemographicTo1;
 import org.oscarehr.ws.rest.to.model.PharmacyInfoTo1;
 
 @XmlRootElement
-@XmlSeeAlso({PharmacyInfoTo1.class})
+@XmlSeeAlso(PharmacyInfoTo1.class)
 public class PharmacyResponse extends AbstractSearchResponse<PharmacyInfoTo1> {
 
     private static final long serialVersionUID = 1L;

@@ -119,7 +119,8 @@ public class CaseManagementView2Action extends ActionSupport {
         request.getSession().setAttribute("casemgmt_msgBeans", new ArrayList<Object>());
 
 
-        String method = request.getParameter("method");
+        String method = request.getParameter("method") != null ? request.getParameter("method") : (String) request.getAttribute("method");
+
         if ("saveAndExit".equals(method)) {
             return saveAndExit();
         } else if ("save".equals(method)) {
@@ -249,7 +250,11 @@ public class CaseManagementView2Action extends ActionSupport {
         long beginning = start;
         long current = 0;
         boolean useNewCaseMgmt = false;
+        // First, try to get the newCaseManagement boolean from the session
         String useNewCaseMgmtString = (String) request.getSession().getAttribute("newCaseManagement");
+        // If null, try to get the newCaseManagement boolean from the parameters
+        if (useNewCaseMgmtString == null) useNewCaseMgmtString = (String) request.getParameter("newCaseManagement");
+        // Set the correct boolean if default or fallback value is present
         if (useNewCaseMgmtString != null) useNewCaseMgmt = Boolean.parseBoolean(useNewCaseMgmtString);
 
         logger.debug("Starting VIEW");
@@ -779,7 +784,6 @@ public class CaseManagementView2Action extends ActionSupport {
 
         List<Secrole> roles = roleMgr.getRoles();
         request.setAttribute("roles", roles);
-
     }
 
     private void fetchInvoices(ArrayList<NoteDisplay> notes, String demographicNo) {
@@ -1861,29 +1865,25 @@ public class CaseManagementView2Action extends ActionSupport {
         criteria.setDemographicId(ConversionUtils.fromIntString(demoNo));
         criteria.setUserRole((String) request.getSession().getAttribute("userrole"));
         criteria.setUserName((String) request.getSession().getAttribute("user"));
-        if (request.getParameter("note_sort") != null && request.getParameter("note_sort").length() > 0) {
-            criteria.setNoteSort(request.getParameter("note_sort"));
-        }
-        if (programId != null && !programId.trim().isEmpty()) {
-            criteria.setProgramId(programId);
-        }
-        if (this.getFilter_roles() != null) {
-            List<String> rs = Arrays.asList(this.getFilter_roles());
+
+        getParamOrSession("note_sort")
+            .ifPresent(criteria::setNoteSort);
+
+        getParamsOrSession("filter_roles").ifPresent(rs -> {
             criteria.getRoles().addAll(rs);
             se.setAttribute("CaseManagementViewAction_filter_roles", rs);
-        }
-
-        if (this.getFilter_providers() != null) {
-            List<String> rs = Arrays.asList(this.getFilter_providers());
+        });
+        getParamsOrSession("filter_provider").ifPresent(rs -> {
             criteria.getProviders().addAll(rs);
             se.setAttribute("CaseManagementViewAction_filter_providers", rs);
-        }
-
-        String[] checkedIssues = request.getParameterValues("issues");
-        if (checkedIssues != null) {
-            List<String> rs = Arrays.asList(checkedIssues);
+        });
+        getParamsOrSession("issues").ifPresent(rs -> {
             criteria.getIssues().addAll(rs);
             se.setAttribute("CaseManagementViewAction_filter_issues", rs);
+        });
+
+        if (programId != null && !programId.trim().isEmpty()) {
+            criteria.setProgramId(programId);
         }
 
         if (logger.isDebugEnabled()) {
@@ -1905,6 +1905,33 @@ public class CaseManagementView2Action extends ActionSupport {
         request.setAttribute("notesToDisplay", result.getNotes());
         return "ajaxDisplayNotes";
     }
+
+    // Gets the parameters or attributes that are connected to the inputted name
+    // Works for string outputs
+    private Optional<String> getParamOrSession(String name) {
+        HttpSession session = request.getSession();
+        String val = request.getParameter(name);
+        if (val == null) {
+            val = (String) session.getAttribute(name);
+            session.removeAttribute(name);
+        }
+        return Optional.ofNullable(val).filter(s -> !s.isEmpty());
+    }
+
+    // Gets the parameters or attributes that are connected to the inputted name
+    // Works for Array and List string outputs
+    private Optional<List<String>> getParamsOrSession(String name) {
+        HttpSession session = request.getSession();
+        String[] vals = request.getParameterValues(name);
+        if (vals == null) {
+            Object o = session.getAttribute(name);
+            session.removeAttribute(name);
+            if      (o instanceof String[]) vals = (String[]) o;
+            else if (o instanceof String)   vals = new String[]{(String)o};
+        }
+        return Optional.ofNullable(vals).map(Arrays::asList);
+    }
+
     private String demographicNo;
     private String providerNo;
     private String issues[];

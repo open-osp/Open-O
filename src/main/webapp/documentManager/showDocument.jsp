@@ -107,10 +107,18 @@
     EDoc curdoc = EDocUtil.getDoc(documentNo);
 
     String demographicID = curdoc.getModuleId();
+
+    // Ensure that demographic id is not null, empty, or negative default value of "-1"
     if ((demographicID != null) && !demographicID.isEmpty() && !demographicID.equals("-1")) {
-        DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
-        Demographic demographic = demographicDao.getDemographic(demographicID);
-        demoName = demographic.getLastName() + "," + demographic.getFirstName();
+        // If demographic number does not equal to provider number (only for patient tickler), get the patient name
+        // Else get the provider name (only for doctor tickler)
+        if (!demographicID.equals(providerNo)) {
+            DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
+            Demographic demographic = demographicDao.getDemographic(demographicID);
+            demoName = demographic.getLastName() + "," + demographic.getFirstName();
+        } else {
+            demoName = EDocUtil.getProviderName(providerNo);
+        }
         LogAction.addLog((String) session.getAttribute("user"), LogConst.READ, LogConst.CON_DOCUMENT, documentNo, request.getRemoteAddr(), demographicID);
     }
 
@@ -336,8 +344,7 @@
 
         <input type="button" id="mainEchart_<%=docId%>"
                value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnEChart"/> "
-               onClick="popupPatient(710, 1024,'${pageContext.servletContext.contextPath}/oscarEncounter/IncomingEncounter.do?reason=
-               <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.labResults"/>&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>')" <%=btnDisabled %>>
+               onClick="popupPatient(710, 1024,'${pageContext.servletContext.contextPath}/oscarEncounter/IncomingEncounter.do?reason=<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.labResults"/>&curDate=<%=currentDate%>>&appointmentNo=&appointmentDate=&startTime=&status=&demographicNo=', 'encounter', '<%=docId%>')" <%=btnDisabled %>>
         <input type="button" id="mainMaster_<%=docId%>" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnMaster"/>"
                onClick="popupPatient(710,1024,'${pageContext.servletContext.contextPath}/demographic/demographiccontrol.jsp?displaymode=edit&dboperation=search_detail&demographic_no=','master','<%=docId%>')" <%=btnDisabled %>>
         <input type="button" id="mainApptHistory_<%=docId%>"
@@ -451,6 +458,7 @@
                     <form id="forms_<%=docId%>" onsubmit="return updateDocument('forms_<%=docId%>');">
                         <input type="hidden" name="method" value="documentUpdateAjax"/>
                         <input type="hidden" name="documentId" value="<%=docId%>"/>
+                        <input type="hidden" name="providerNo" value="<%= providerNo%>"/>
                         <input type="hidden" name="curPage_<%=docId%>" id="curPage_<%=docId%>" value="1"/>
                         <input type="hidden" name="totalPage_<%=docId%>" id="totalPage_<%=docId%>"
                                value="<%=numOfPage%>"/>

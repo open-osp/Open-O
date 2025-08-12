@@ -109,7 +109,7 @@
 
             <div>
                 1. Download the text file from <a
-                    href="https://www.health.gov.on.ca/en/pro/programs/ohip/sob/schedule_master/ohipfee_schedulemaster.txt"
+                    href="https://www.ontario.ca/page/ohip-schedule-benefits-and-fees"
                     target="_blank">OHIP Fee Schedule</a> and save it to your computer.
             </div><!--#1-->
 

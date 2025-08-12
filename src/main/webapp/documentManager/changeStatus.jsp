@@ -9,6 +9,7 @@
 
 --%>
 
+<!DOCTYPE html>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -41,18 +42,8 @@
 
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-    <script type="text/javascript">
-        function selectDocMenu() {
-            if (document.getElementById(module).options[this.selectedIndex].value == "Demographic") {
-                document.getElementById(provdiv).style.display = 'hidden';
-            } else {
-                document.getElementById(demodiv).style.display = 'hidden';
-            }
-        }
-
-
-    </script>
     <% Iterator iter = doctypeerrors.keySet().iterator();
         while (iter.hasNext()) {%>
     <font class="warning">Error: <fmt:setBundle basename="oscarResources"/><fmt:message key="<%=doctypeerrors.get(iter.next())%>"/></font><br/>
@@ -89,8 +80,8 @@
                         <select id="docTypeD" name="docTypeD" style="width: 160">
                             <option value="">Demographic Document Types</option>
                             <% for (String doctypeD : doctypesD) { %>
-                            <option value="<%= doctypeD%>"
-                                    <%= doctypeD%>
+                            <option value="<%=doctypeD%>">
+                                    <%=doctypeD%>
                             </option>
                             <%}%>
                         </select>
@@ -118,8 +109,8 @@
                             <option value="">Provider Document Types</option>
                             <%
                                 for (String doctypeP : doctypesP) { %>
-                            <option value="<%= doctypeP%>">
-                                    <%= doctypeP%>
+                            <option value="<%=doctypeP%>">
+                                    <%=doctypeP%>
                             </option>
                             <%}%>
                         </select>

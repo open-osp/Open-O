@@ -54,10 +54,10 @@
 <%@ page import="org.oscarehr.common.model.ProviderData" %>
 <%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
 
+<%@ page import="java.text.SimpleDateFormat" %>
+
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
-
 
 <%
     String curProvider_no = (String) session.getAttribute("user");
@@ -86,8 +86,6 @@
     } catch (NumberFormatException e) {
         limit = 100;
     }
-
-
 %>
 <security:oscarSec objectName="_site_access_privacy" roleName="<%=roleName$%>" rights="r"
                    reverse="false"><%isSiteAccessPrivacy = true; %></security:oscarSec>
@@ -144,14 +142,38 @@
         Boolean includeBool = (Boolean) request.getAttribute("includeCompleted");
         boolean includeCompleted = false;
         if (includeBool != null) {
-            includeCompleted = includeBool.booleanValue();
+            includeCompleted = "on".equals(request.getParameter("includeCompleted"));
         }
 
-        Date startDate = (Date) request.getAttribute("startDate");
-        Date endDate = (Date) request.getAttribute("endDate");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        // Getting startDate attribute of the consultation request and ensuring that it is of type "Date" before casting
+        Object startDateObj = request.getAttribute("startDate");
+        Date startDate = null;
+        String formattedStartDate = "";
+        if (startDateObj instanceof Date) {
+            startDate = (Date) startDateObj;
+            formattedStartDate = sdf.format(startDateObj);
+        }
+    
+        // Getting endDate attribute of the consultation request and ensuring that it is of type "Date" before casting
+        Object endDateObj = request.getAttribute("endDate");
+        Date endDate = null;
+        String formattedEndDate = "";
+        if (endDateObj instanceof Date) {
+            endDate = (Date) endDateObj;
+            formattedEndDate = sdf.format(endDateObj);
+        }
+
+        // Getting orderby, description, and searchDate attributes of the consultation request
         String orderby = (String) request.getAttribute("orderby");
         String desc = (String) request.getAttribute("desc");
         String searchDate = (String) request.getAttribute("searchDate");
+
+        // Setting defaults to match consultation request in struts 1
+        if (searchDate == null) {
+            searchDate = "0";
+        }
 
         oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil consultUtil;
         consultUtil = new oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil();
@@ -347,22 +369,24 @@
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.btnConsReq"/>"/>
                                 <div style="margin: 0; padding: 0; ">
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgStart"/>:
-                                    <input type="text" name="startDate" size="8" id="startDate"/><a id="SCal"><img
+                                    <input type="text" name="startDate" size="8" id="startDate" value="<%= formattedStartDate %>" /><a id="SCal"><img
                                         title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgEnd"/>:
-                                    <input type="text" name="endDate" size="8" id="endDate"/><a id="ECal"><img
+                                    <input type="text" name="endDate" size="8" id="endDate" value="<%= formattedEndDate %>" /><a id="ECal"><img
                                         title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"/></a>
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgIncludeCompleted"/>:
-                                    <input type="checkbox" name="includeCompleted" value="include"/>
+                                    <input type="checkbox" name="includeCompleted" <%= includeCompleted ? "checked" : "" %> />
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgSearchon"/>
-                                    <input type="radio" name="searchDate" value="0" titleKey="Search on Referal Date"/>
+                                    <input type="radio" name="searchDate" value="0" titleKey="Search on Referal Date"
+                                        <%= "0".equals(searchDate) ? "checked" : "" %> />
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgApptDate"/>
-                                    <input type="radio" name="searchDate" value="1" titleKey="Search on Appt. Date"/>
+                                    <input type="radio" name="searchDate" value="1" titleKey="Search on Appt. Date"
+                                        <%= "1".equals(searchDate) ? "checked" : "" %> />
                                     <input type="hidden" name="currentTeam" id="currentTeam"/>
                                     <input type="hidden" name="orderby" id="orderby"/>
                                     <input type="hidden" name="desc" id="desc"/>
-                                    <input type="hidden" name="offset" id="offset"/>
-                                    <input type="hidden" name="limit" id="limit"/>
+                                    <input type="hidden" name="offset" id="offset" value="<%= offset %>"/>
+                                    <input type="hidden" name="limit" id="limit" value="<%= limit %>"/>
                                 </div>
                             </form>
                         </td>

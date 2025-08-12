@@ -697,7 +697,7 @@
     <div class="col-md-4">
         <div class="clearfix">
             <img class="pull-left" id="photo" title="Click to upload photo" ng-click="launchPhoto()"
-                 ng-src="<%= request.getContextPath() %>/imageRenderingServlet?source=local_client&clientId={{page.demo.demographicNo}}"/>
+                 ng-src="${pageContext.request.contextPath}/imageRenderingServlet?source=local_client&clientId={{page.demo.demographicNo}}"/>
             <div class="pull-left" style="margin-left:5px;">
                 <address>
                     <strong>{{page.demo.lastName}}, {{page.demo.firstName}}</strong><br/>

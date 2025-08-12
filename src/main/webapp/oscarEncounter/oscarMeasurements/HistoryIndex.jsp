@@ -97,7 +97,7 @@
                         <td width="200">${data.typeDescription}</td>
                         <td width="50"><a href="#"
                                           name='<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.oldMeasurements"/>'
-                                          onClick="popupPage(300,800,'SetupDisplayHistory.do?type=${data.type}'); return false;">more...</a></td>
+                                          onClick="popupPage(300,800,'oscarEncounter/oscarMeasurements/SetupDisplayHistory.do?type=${data.type}'); return false;">more...</a></td>
                     </tr>
                 </c:forEach>
             </c:if>

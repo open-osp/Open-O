@@ -108,7 +108,7 @@
                                     pharm += preferredPharmacyInfo.postalCode + "<br />";
                                     pharm += "Main Phone: " + preferredPharmacyInfo.phone1 + "<br />";
                                     pharm += "Fax: " + preferredPharmacyInfo.fax + "<br />";
-                                    pharm += "<a href='#'  onclick='viewPharmacy(" + preferredPharmacyInfo.id + ");'>View More</a>" + "</td>";
+                                    pharm += "<a href='javascript:void(0)' onclick='viewPharmacy(" + preferredPharmacyInfo.id + "); event.stopPropagation(); return false;'>View More</a></td>";
                                     pharm += "</tr><tr><td class='prefAction prefUnlink'> Remove from List </td></tr><tr><td class='prefAction prefDown'> Move Down </td></tr></table></div>";
                                     $("#preferredList").append(pharm);
                                 }

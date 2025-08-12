@@ -54,7 +54,7 @@ The tests have been saved without the base url saved in the html files.  This me
 
 Syntax for the BASE URL code in the HTML files (test files):
 
-<link rel="selenium.base" href="https://www.domain.org:8088/" />
+&lt;link rel="selenium.base" href="https://www.domain.org:8088/" /&gt;
 
 
  

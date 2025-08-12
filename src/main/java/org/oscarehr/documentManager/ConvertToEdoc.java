@@ -25,15 +25,13 @@
 package org.oscarehr.documentManager;
 
 import com.lowagie.text.DocumentException;
-import io.woo.htmltopdf.HtmlToPdf;
-import io.woo.htmltopdf.HtmlToPdfObject;
-import io.woo.htmltopdf.PdfPageSize;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities;
 import org.jsoup.select.Elements;
 import org.oscarehr.common.model.EFormData;
 import org.oscarehr.email.core.EmailData;
@@ -48,7 +46,7 @@ import oscar.form.util.FormTransportContainer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,7 +71,7 @@ public final class ConvertToEdoc {
     private enum FileType {pdf, css, jpeg, png, gif, js, jpg}
 
     public static final String CUSTOM_STYLESHEET_ID = "pdfMediaStylesheet";
-    private static final String DEFAULT_IMAGE_DIRECTORY = String.format("%1$s", OscarProperties.getInstance().getProperty("eform_image"));
+    private static final String DEFAULT_IMAGE_DIRECTORY = String.format("%1$s", OscarProperties.getInstance().getEformImageDirectory());
     private static final String DEFAULT_FILENAME = "temporaryPDF";
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
     private static final String DEFAULT_CONTENT_TYPE = "application/pdf";
@@ -308,37 +306,31 @@ public final class ConvertToEdoc {
     private static void renderPDF(final String document, ByteArrayOutputStream os)
             throws DocumentException, IOException {
 
-        HashMap<String, String> htmlToPdfSettings = new HashMap<String, String>() {{
-            put("load.blockLocalFileAccess", "false");
-            put("web.enableIntelligentShrinking", "true");
-            put("web.minimumFontSize", "10");
-//	        put("load.zoomFactor", "0.92");
-            put("web.printMediaType", "true");
-            put("web.defaultEncoding", "utf-8");
-            put("T", "10mm");
-            put("L", "8mm");
-            put("R", "8mm");
-            put("web.enableJavascript", "false");
-        }};
+        OscarProperties props = OscarProperties.getInstance();
+        String cmd = props.getProperty("WKHTMLTOPDF_COMMAND");
+        String args = props.getProperty("WKHTMLTOPDF_ARGS");
 
-        try (InputStream inputStream = HtmlToPdf.create()
-                .object(HtmlToPdfObject.forHtml(document, htmlToPdfSettings))
-                .pageSize(PdfPageSize.Letter)
-                .convert()
-        ) {
-            IOUtils.copy(inputStream, os);
-        } catch (Exception e) {
-            logger.error("Document conversion exception thrown, attempting with alternate conversion library.", e);
-            ITextRenderer renderer = new ITextRenderer();
-            SharedContext sharedContext = renderer.getSharedContext();
-            sharedContext.setPrint(true);
-            sharedContext.setInteractive(false);
-            sharedContext.setReplacedElementFactory(new ReplacedElementFactoryImpl());
-            sharedContext.getTextRenderer().setSmoothingThreshold(0);
-            renderer.setDocumentFromString(document, null);
-            renderer.layout();
-            renderer.createPDF(os, true);
+        EDocConverterInterface converter = "internal".equalsIgnoreCase(cmd) ? new InternalEDocConverter() : new ExternalEDocConverter(cmd, args);
+
+        try {
+            converter.convert(document, os);
+        } catch(Exception e) {
+            logger.error("Primary conversion failed", e);
+            fallbackRender(document, os);
         }
+    }
+
+    private static void fallbackRender(String document, OutputStream os)
+            throws DocumentException, IOException {
+        ITextRenderer renderer = new ITextRenderer();
+        SharedContext sharedContext = renderer.getSharedContext();
+        sharedContext.setPrint(true);
+        sharedContext.setInteractive(false);
+        sharedContext.setReplacedElementFactory(new ReplacedElementFactoryImpl());
+        sharedContext.getTextRenderer().setSmoothingThreshold(0);
+        renderer.setDocumentFromString(document, null);
+        renderer.layout();
+        renderer.createPDF(os, true);
     }
 
     /**
@@ -349,28 +341,21 @@ public final class ConvertToEdoc {
      * @param documentString raw HTML string
      * @return org.jsoup.nodes.Document JSoup DOM
      */
-    public static Document getDocument(final String documentString) {
-        String incomingDocumentString = "";
-
-        // null check
-        if (documentString != null) {
-            incomingDocumentString = documentString;
+    public static Document getDocument(String documentString) {
+        if (StringUtils.isBlank(documentString)) {
+            throw new IllegalArgumentException("HTML cannot be blank");
         }
 
         // DOCTYPE declarations are mandatory. HTML5 if none is declared.
-//		if(! incomingDocumentString.startsWith("<!DOCTYPE") || ! incomingDocumentString.startsWith("<!doctype")) {
-//			incomingDocumentString = "<!DOCTYPE html>" + incomingDocumentString;
-//		}
+        if(!documentString.trim().toLowerCase().startsWith("<!doctype")) {
+            documentString = "<!DOCTYPE html>\n" + documentString;
+        }
 
-        //TODO: COMING SOON.  EForms should be selectively sanitized against potential injection attacks and etc...
-//		Safelist safelist = Safelist.relaxed();
-//		safelist.addTags().addTags() etc...
-//		String sanitized = Jsoup.clean(documentString, safeList);
-
-        Document document = Jsoup.parse(incomingDocumentString);
-
-        //TODO add any other custom Document.OutputSettings here.
-        document.outputSettings().prettyPrint(Boolean.FALSE);
+        Document document = Jsoup.parse(documentString);
+        document.outputSettings()
+            .syntax(Document.OutputSettings.Syntax.xml)  // Enforce XML syntax
+            .escapeMode(Entities.EscapeMode.xhtml)
+            .prettyPrint(false);
 
         /*
          * remove invalid, suspicious, and CDN links

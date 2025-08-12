@@ -555,7 +555,14 @@
                         }
                     }
 
-                    if (transport.responseText.indexOf("<input type=\"hidden\" name=\"NoMoreItems\" value=\"true\" />") >= 0) {
+                    // Parsing HTML with DOMParser, checking to see if input with the name of "NoMoreItems"
+                    // is not null, if true then set and update html to show information about "NoMoreItems"
+                    // if null, then it will fake scroll to populate the information in the list
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(transport.responseText, "text/html");
+                    var noMoreItems = doc.querySelector("input[name='NoMoreItems']");
+
+                    if (noMoreItems) {
                         canLoad = false;
                         var div = document.getElementById("summaryBody");
                         var newDiv = "<tbody id=\"newBody\"></tbody>";

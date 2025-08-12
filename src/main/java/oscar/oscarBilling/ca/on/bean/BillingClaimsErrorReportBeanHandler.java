@@ -44,8 +44,6 @@ public class BillingClaimsErrorReportBeanHandler {
     }
 
     public boolean init(FileInputStream file) {
-
-
         InputStreamReader reader = new InputStreamReader(file);
         BufferedReader input = new BufferedReader(reader);
         String nextline;
@@ -53,9 +51,15 @@ public class BillingClaimsErrorReportBeanHandler {
 
         boolean isNewHin = false;
         try {
-            while ((nextline = input.readLine()) != null) {
+            while ((nextline = input.readLine()) != null) {     
+                String headerCount = "";
+                if (nextline.length() >= 3) {
+                    headerCount = nextline.substring(2, 3);
+                } else {
+                    // Handle unexpected short line gracefully, e.g. skip and log warning
+                    MiscUtils.getLogger().warn("Skipping short or malformed line: '" + nextline + "'");
+                }
 
-                String headerCount = nextline.substring(2, 3);
                 if (headerCount.compareTo("1") == 0) {
                     CERBean = new BillingClaimsErrorReportBean();
                     CERBean.setTechSpec(nextline.substring(3, 6));
@@ -145,7 +149,9 @@ public class BillingClaimsErrorReportBeanHandler {
             MiscUtils.getLogger().error("Error", ioe);
         } catch (StringIndexOutOfBoundsException ioe) {
             verdict = false;
+            MiscUtils.getLogger().error("Error, setting verdict to false:", ioe);
         }
+
         return verdict;
     }
 

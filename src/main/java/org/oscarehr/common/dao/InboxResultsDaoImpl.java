@@ -50,17 +50,17 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public ArrayList populateHL7ResultsData(String demographicNo, String consultationId, boolean attached) {
         String sql = "SELECT hl7.label, hl7.lab_no, hl7.obr_date, hl7.discipline, hl7.accessionNum, hl7.final_result_count, patientLabRouting.id "
-                + "FROM hl7TextInfo hl7, patientLabRouting "
-                + "WHERE patientLabRouting.lab_no = hl7.lab_no "
-                + "AND patientLabRouting.lab_type = 'HL7' AND patientLabRouting.demographic_no="
-                + demographicNo
-                + " GROUP BY hl7.lab_no"
-                + " ORDER BY date(hl7.obr_date) DESC";
+            + "FROM hl7TextInfo hl7, patientLabRouting "
+            + "WHERE patientLabRouting.lab_no = hl7.lab_no "
+            + "AND patientLabRouting.lab_type = 'HL7' AND patientLabRouting.demographic_no="
+            + demographicNo
+            + " GROUP BY hl7.lab_no"
+            + " ORDER BY date(hl7.obr_date) DESC";
 
         String attachQuery = "SELECT consultdocs.document_no FROM consultdocs, patientLabRouting "
-                + "WHERE patientLabRouting.id = consultdocs.document_no AND " + "consultdocs.requestId = "
-                + consultationId
-                + " AND consultdocs.doctype = 'L' AND consultdocs.deleted IS NULL ORDER BY consultdocs.document_no";
+            + "WHERE patientLabRouting.id = consultdocs.document_no AND " + "consultdocs.requestId = "
+            + consultationId
+            + " AND consultdocs.doctype = 'L' AND consultdocs.deleted IS NULL ORDER BY consultdocs.document_no";
 
         ArrayList labResults = new ArrayList<LabResultData>();
         ArrayList attachedLabs = new ArrayList<LabResultData>();
@@ -111,7 +111,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
             int dn = Integer.parseInt(docNo.trim());
             providerNo = providerNo.trim();
             String sql = "select * from providerLabRouting plr where plr.lab_type='DOC' and plr.lab_no=" + dn
-                    + " and plr.provider_no='" + providerNo + "'";
+                + " and plr.provider_no='" + providerNo + "'";
             try {
 
                 Query q = entityManager.createNativeQuery(sql);
@@ -140,7 +140,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
     public ArrayList populateDocumentResultsData(String providerNo, String demographicNo, String patientFirstName,
                                                  String patientLastName, String patientHealthNumber, String status) {
         return populateDocumentResultsData(providerNo, demographicNo, patientFirstName, patientLastName,
-                patientHealthNumber, status, false, null, null, false, null);
+            patientHealthNumber, status, false, null, null, false, null);
     }
 
     @SuppressWarnings({"unchecked", "deprecation"})
@@ -151,7 +151,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
         return populateDocumentResultsData(providerNo, demographicNo, patientFirstName, patientLastName, patientHealthNumber, status, isPaged, page, pageSize, mixLabsAndDocs, isAbnormal, null, null);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings("unchecked")
     public ArrayList<LabResultData> populateDocumentResultsData(String providerNo, String demographicNo, String patientFirstName,
                                                                 String patientLastName, String patientHealthNumber, String status, boolean isPaged, Integer page,
                                                                 Integer pageSize, boolean mixLabsAndDocs, Boolean isAbnormal, Date startDate, Date endDate) {
@@ -169,7 +169,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
             patientHealthNumber = "";
         }
         boolean patientSearch = !"".equals(patientFirstName) || !"".equals(patientLastName)
-                || !"".equals(patientHealthNumber);
+            || !"".equals(patientHealthNumber);
         if (status == null) {
             status = "";
         }
@@ -243,37 +243,37 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     descriptionLoc = 10;
                     updateDateLoc = 11;
                     sql = " SELECT X.id, X.lab_no as document_no, X.status, X.lab_type as doctype, d.last_name, d.first_name, hin, sex, d.demographic_no as module_id, "
-                            + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", doc.doctype as description, date(doc.updatedatetime) "
-                            + " FROM document doc, "
-                            + " (SELECT plr.id, plr.lab_type, plr.lab_no, plr.status "
-                            + "  FROM patientLabRouting plr2, providerLabRouting plr, hl7TextInfo info "
-                            + "  WHERE plr.lab_no = plr2.lab_no "
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
-                            + "    AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + "    AND plr.lab_type = 'HL7'   "
-                            + "    AND plr2.lab_type = 'HL7' "
-                            + "    AND plr2.demographic_no = '0' "
-                            + "    AND info.lab_no = plr.lab_no "
-                            + (isAbnormal != null && isAbnormal ? "AND info.result_status = 'A'" : isAbnormal != null
-                            && !isAbnormal ? "AND (info.result_status IS NULL OR info.result_status != 'A')" : "")
-                            + " UNION "
-                            + " SELECT plr.id, plr.lab_type, plr.lab_no, plr.status "
-                            + " FROM providerLabRouting plr, ctl_document cd  "
-                            + " WHERE plr.lab_type = 'DOC' "
-                            + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + " AND cd.document_no  = plr.lab_no "
-                            + " AND cd.module_id = -1 "
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
-                            + " ORDER BY id DESC "
-                            + " ) AS X "
-                            + " LEFT JOIN demographic d "
-                            + " ON d.demographic_no = -1 "
-                            + " WHERE X.lab_type = 'DOC' AND doc.document_no = X.lab_no "
-                            + isDocAbnormalSql
-                            + dateSql
-                            + " GROUP BY doc.document_no"
-                            + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC," : "doc.observationdate DESC,") + " doc.document_no DESC "
-                            + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
+                        + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", doc.doctype as description, date(doc.updatedatetime) "
+                        + " FROM document doc, "
+                        + " (SELECT plr.id, plr.lab_type, plr.lab_no, plr.status "
+                        + "  FROM patientLabRouting plr2, providerLabRouting plr, hl7TextInfo info "
+                        + "  WHERE plr.lab_no = plr2.lab_no "
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + "    AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + "    AND plr.lab_type = 'HL7'   "
+                        + "    AND plr2.lab_type = 'HL7' "
+                        + "    AND plr2.demographic_no = '0' "
+                        + "    AND info.lab_no = plr.lab_no "
+                        + (isAbnormal != null && isAbnormal ? "AND info.result_status = 'A'" : isAbnormal != null
+                        && !isAbnormal ? "AND (info.result_status IS NULL OR info.result_status != 'A')" : "")
+                        + " UNION "
+                        + " SELECT plr.id, plr.lab_type, plr.lab_no, plr.status "
+                        + " FROM providerLabRouting plr, ctl_document cd  "
+                        + " WHERE plr.lab_type = 'DOC' "
+                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + " AND cd.document_no  = plr.lab_no "
+                        + " AND cd.module_id = -1 "
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + " ORDER BY id DESC "
+                        + " ) AS X "
+                        + " LEFT JOIN demographic d "
+                        + " ON d.demographic_no = -1 "
+                        + " WHERE X.lab_type = 'DOC' AND doc.document_no = X.lab_no "
+                        + isDocAbnormalSql
+                        + dateSql
+                        + " GROUP BY doc.document_no"
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC," : "doc.observationdate DESC,") + " doc.document_no DESC "
+                        + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
 
                 } else if (demographicNo != null && !"".equals(demographicNo)) {
                     docNoLoc = 1;
@@ -288,38 +288,38 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     descriptionLoc = 10;
                     updateDateLoc = 11;
                     sql = " SELECT plr.id, doc.document_no, plr.status, d.last_name, d.first_name, hin, sex, d.demographic_no as module_id,"
-                            + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, doc.doctype as description, date(doc.updatedatetime) "
-                            + " FROM demographic d, providerLabRouting plr, document doc, "
-                            + " (SELECT * FROM "
-                            + " (SELECT DISTINCT plr.id, plr.lab_type  FROM providerLabRouting plr, ctl_document cd "
-                            + " WHERE 	" + " (cd.module_id = '"
-                            + demographicNo
-                            + "' "
-                            + "	AND cd.document_no = plr.lab_no"
-                            + "	AND plr.lab_type = 'DOC'  	"
-                            + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' )" : " )")
-                            + " ORDER BY id DESC) AS Y"
-                            + " UNION"
-                            + " SELECT * FROM"
-                            + " (SELECT DISTINCT plr.id, plr.lab_type  FROM providerLabRouting plr, patientLabRouting plr2"
-                            + " WHERE"
-                            + "	plr.lab_type = 'HL7' AND plr2.lab_type = 'HL7'"
-                            + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
-                            + " 	AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = '"
-                            + demographicNo
-                            + "'"
-                            + " ORDER BY id DESC) AS Z"
-                            + " ORDER BY id DESC "
-                            + " ) AS X "
-                            + " WHERE X.lab_type = 'DOC' and X.id = plr.id and doc.document_no = plr.lab_no and d.demographic_no = '"
-                            + demographicNo + "' "
-                            + isDocAbnormalSql
-                            + dateSql
-                            + " GROUP BY doc.document_no"
-                            + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC," : "doc.observationdate DESC,") + " doc.document_no DESC "
-                            + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
+                        + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, doc.doctype as description, date(doc.updatedatetime) "
+                        + " FROM demographic d, providerLabRouting plr, document doc, "
+                        + " (SELECT * FROM "
+                        + " (SELECT DISTINCT plr.id, plr.lab_type  FROM providerLabRouting plr, ctl_document cd "
+                        + " WHERE 	" + " (cd.module_id = '"
+                        + demographicNo
+                        + "' "
+                        + "	AND cd.document_no = plr.lab_no"
+                        + "	AND plr.lab_type = 'DOC'  	"
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' )" : " )")
+                        + " ORDER BY id DESC) AS Y"
+                        + " UNION"
+                        + " SELECT * FROM"
+                        + " (SELECT DISTINCT plr.id, plr.lab_type  FROM providerLabRouting plr, patientLabRouting plr2"
+                        + " WHERE"
+                        + "	plr.lab_type = 'HL7' AND plr2.lab_type = 'HL7'"
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + " 	AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = '"
+                        + demographicNo
+                        + "'"
+                        + " ORDER BY id DESC) AS Z"
+                        + " ORDER BY id DESC "
+                        + " ) AS X "
+                        + " WHERE X.lab_type = 'DOC' and X.id = plr.id and doc.document_no = plr.lab_no and d.demographic_no = '"
+                        + demographicNo + "' "
+                        + isDocAbnormalSql
+                        + dateSql
+                        + " GROUP BY doc.document_no"
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC," : "doc.observationdate DESC,") + " doc.document_no DESC "
+                        + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
                 } else if (patientSearch) { // N arg
                     docNoLoc = 1;
                     statusLoc = 2;
@@ -333,50 +333,50 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     descriptionLoc = 10;
                     updateDateLoc = 11;
                     sql = " SELECT plr.id, doc.document_no, plr.status, d.last_name, d.first_name, hin, sex, d.demographic_no as module_id, "
-                            + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, doc.doctype as description, date(doc.updatedatetime) "
-                            + " FROM demographic d, providerLabRouting plr, document doc,  "
-                            + " (SELECT * FROM "
-                            + "	 (SELECT * FROM  "
-                            + "		(SELECT DISTINCT plr.id, plr.lab_type, d.demographic_no "
-                            + "			FROM providerLabRouting plr, ctl_document cd, demographic d "
-                            + "			WHERE 	 "
-                            + "			(d.first_name like '%"
-                            + patientFirstName
-                            + "%' AND d.last_name like '%"
-                            + patientLastName
-                            + "%' AND d.hin like '%"
-                            + patientHealthNumber
-                            + "%' "
-                            + "		AND cd.module_id = d.demographic_no 	AND cd.document_no = plr.lab_no	AND plr.lab_type = 'DOC' "
-                            + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
-                            + "		) ORDER BY id DESC) AS Y "
-                            + " 	UNION "
-                            + "	SELECT * FROM "
-                            + "		(SELECT DISTINCT plr.id, plr.lab_type, d.demographic_no "
-                            + "		FROM providerLabRouting plr, patientLabRouting plr2, demographic d"
-                            + (isAbnormal != null ? ", hl7TextInfo info " : " ")
-                            + "		WHERE d.first_name like '%"
-                            + patientFirstName
-                            + "%' AND d.last_name like '%"
-                            + patientLastName
-                            + "%' AND d.hin like '%"
-                            + patientHealthNumber
-                            + "%' "
-                            + "		AND	plr.lab_type = 'HL7' AND plr2.lab_type = 'HL7' "
-                            + (isAbnormal != null ? " AND plr.lab_no = info.lab_no AND (info.result_status IS NULL OR info.result_status != 'A') "
-                            : " ")
-                            + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
-                            + " 	AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = d.demographic_no ORDER BY id DESC) AS Z "
-                            + " 			ORDER BY id DESC) AS X "
-                            + " 	  ) AS Z  "
-                            + " WHERE Z.lab_type = 'DOC' and Z.id = plr.id and doc.document_no = plr.lab_no and d.demographic_no = Z.demographic_no "
-                            + isDocAbnormalSql
-                            + dateSql
-                            + " GROUP BY doc.document_no"
-                            + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC," : "doc.observationdate DESC,") + " doc.document_no DESC "
-                            + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
+                        + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, doc.doctype as description, date(doc.updatedatetime) "
+                        + " FROM demographic d, providerLabRouting plr, document doc,  "
+                        + " (SELECT * FROM "
+                        + "	 (SELECT * FROM  "
+                        + "		(SELECT DISTINCT plr.id, plr.lab_type, d.demographic_no "
+                        + "			FROM providerLabRouting plr, ctl_document cd, demographic d "
+                        + "			WHERE 	 "
+                        + "			(d.first_name like '%"
+                        + patientFirstName
+                        + "%' AND d.last_name like '%"
+                        + patientLastName
+                        + "%' AND d.hin like '%"
+                        + patientHealthNumber
+                        + "%' "
+                        + "		AND cd.module_id = d.demographic_no 	AND cd.document_no = plr.lab_no	AND plr.lab_type = 'DOC' "
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + "		) ORDER BY id DESC) AS Y "
+                        + " 	UNION "
+                        + "	SELECT * FROM "
+                        + "		(SELECT DISTINCT plr.id, plr.lab_type, d.demographic_no "
+                        + "		FROM providerLabRouting plr, patientLabRouting plr2, demographic d"
+                        + (isAbnormal != null ? ", hl7TextInfo info " : " ")
+                        + "		WHERE d.first_name like '%"
+                        + patientFirstName
+                        + "%' AND d.last_name like '%"
+                        + patientLastName
+                        + "%' AND d.hin like '%"
+                        + patientHealthNumber
+                        + "%' "
+                        + "		AND	plr.lab_type = 'HL7' AND plr2.lab_type = 'HL7' "
+                        + (isAbnormal != null ? " AND plr.lab_no = info.lab_no AND (info.result_status IS NULL OR info.result_status != 'A') "
+                        : " ")
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + " 	AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = d.demographic_no ORDER BY id DESC) AS Z "
+                        + " 			ORDER BY id DESC) AS X "
+                        + " 	  ) AS Z  "
+                        + " WHERE Z.lab_type = 'DOC' and Z.id = plr.id and doc.document_no = plr.lab_no and d.demographic_no = Z.demographic_no "
+                        + isDocAbnormalSql
+                        + dateSql
+                        + " GROUP BY doc.document_no"
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC," : "doc.observationdate DESC,") + " doc.document_no DESC "
+                        + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
 
                 } else {
                     docNoLoc = 0;
@@ -393,19 +393,19 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     // N
                     // document_no, status, last_name, first_name, hin, sex, module_id, observationdate
                     sql = "SELECT doc.document_no, plr.status, d.last_name, d.first_name, d.hin, d.sex, cd.module_id,"
-                            + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type, doc.doctype, date(doc.updatedatetime) "
-                            + "FROM document doc "
-                            + "LEFT JOIN providerLabRouting plr ON doc.document_no = plr.lab_no "
-                            + "LEFT JOIN ctl_document cd ON cd.document_no = doc.document_no "
-                            + "LEFT JOIN demographic d ON cd.module_id = d.demographic_no "
-                            + "WHERE plr.lab_type = 'DOC' "
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
-                            + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + isDocAbnormalSql
-                            + dateSql
-                            + " GROUP BY doc.document_no "
-                            + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC")
-                            + (isPaged ? " LIMIT " + (page * pageSize) + "," + pageSize : "");
+                        + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type, doc.doctype, date(doc.updatedatetime) "
+                        + "FROM document doc "
+                        + "LEFT JOIN providerLabRouting plr ON doc.document_no = plr.lab_no "
+                        + "LEFT JOIN ctl_document cd ON cd.document_no = doc.document_no "
+                        + "LEFT JOIN demographic d ON cd.module_id = d.demographic_no "
+                        + "WHERE plr.lab_type = 'DOC' "
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + isDocAbnormalSql
+                        + dateSql
+                        + " GROUP BY doc.document_no "
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC")
+                        + (isPaged ? " LIMIT " + (page * pageSize) + "," + pageSize : "");
                 }
             } else { // Don't mix labs and docs.
                 if ("0".equals(demographicNo)) {
@@ -421,19 +421,19 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     descriptionLoc = 10;
                     updateDateLoc = 11;
                     sql = "SELECT plr.id, doc.document_no, plr.status, demographic_no as module_id,"
-                            + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, last_name, first_name, hin, sex, docdesc, date(doc.updatedatetime) as updateDateLoc"
-                            + " FROM providerLabRouting plr"
-                            + " LEFT JOIN document doc ON doc.document_no = plr.lab_no"
-                            + " RIGHT JOIN ctl_document cd ON cd.document_no = plr.lab_no AND cd.module_id = -1"
-                            + " LEFT JOIN demographic d ON d.demographic_no = -1"
-                            + " WHERE plr.lab_type = 'DOC' "
-                            + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
-                            + isDocAbnormalSql
-                            + dateSql
-                            + " GROUP BY doc.document_no"
-                            + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC")
-                            + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
+                        + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, last_name, first_name, hin, sex, docdesc, date(doc.updatedatetime) as updateDateLoc"
+                        + " FROM providerLabRouting plr"
+                        + " LEFT JOIN document doc ON doc.document_no = plr.lab_no"
+                        + " RIGHT JOIN ctl_document cd ON cd.document_no = plr.lab_no AND cd.module_id = -1"
+                        + " LEFT JOIN demographic d ON d.demographic_no = -1"
+                        + " WHERE plr.lab_type = 'DOC' "
+                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + isDocAbnormalSql
+                        + dateSql
+                        + " GROUP BY doc.document_no"
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC")
+                        + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
                 } else if (demographicNo != null && !"".equals(demographicNo)) {
                     docNoLoc = 1;
                     statusLoc = 2;
@@ -447,22 +447,22 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     descriptionLoc = 10;
                     updateDateLoc = 11;
                     sql = "SELECT plr.id, doc.document_no, plr.status, last_name, first_name, hin, sex, module_id,"
-                            + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, doc.doctype as description, date(doc.updatedatetime) "
-                            + "FROM ctl_document cd, demographic d, providerLabRouting plr, document doc "
-                            + "WHERE d.demographic_no = '"
-                            + demographicNo
-                            + "' "
-                            + "	AND cd.module_id = d.demographic_no "
-                            + "	AND cd.document_no = plr.lab_no "
-                            + "	AND plr.lab_type = 'DOC' "
-                            + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
-                            + "	AND doc.document_no = cd.document_no "
-                            + isDocAbnormalSql
-                            + dateSql
-                            + " GROUP BY doc.document_no"
-                            + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC " : "doc.observationdate DESC ")
-                            + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
+                        + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, doc.doctype as description, date(doc.updatedatetime) "
+                        + "FROM ctl_document cd, demographic d, providerLabRouting plr, document doc "
+                        + "WHERE d.demographic_no = '"
+                        + demographicNo
+                        + "' "
+                        + "	AND cd.module_id = d.demographic_no "
+                        + "	AND cd.document_no = plr.lab_no "
+                        + "	AND plr.lab_type = 'DOC' "
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + "	AND doc.document_no = cd.document_no "
+                        + isDocAbnormalSql
+                        + dateSql
+                        + " GROUP BY doc.document_no"
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC " : "doc.observationdate DESC ")
+                        + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
                 } else if (patientSearch) {
                     docNoLoc = 1;
                     statusLoc = 2;
@@ -476,26 +476,26 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     descriptionLoc = 10;
                     updateDateLoc = 11;
                     sql = "SELECT plr.id, doc.document_no, plr.status, last_name, first_name, hin, sex, module_id,"
-                            + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, doc.doctype as description, date(doc.updatedatetime) "
-                            + "FROM ctl_document cd, demographic d, providerLabRouting plr, document doc "
-                            + "WHERE d.first_name like '%"
-                            + patientFirstName
-                            + "%' AND d.last_name like '%"
-                            + patientLastName
-                            + "%' AND d.hin like '%"
-                            + patientHealthNumber
-                            + "%' "
-                            + "	AND cd.module_id = d.demographic_no "
-                            + "	AND cd.document_no = plr.lab_no "
-                            + "	AND plr.lab_type = 'DOC' "
-                            + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
-                            + "	AND doc.document_no = cd.document_no "
-                            + isDocAbnormalSql
-                            + dateSql
-                            + " GROUP BY doc.document_no"
-                            + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC")
-                            + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
+                        + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, doc.doctype as description, date(doc.updatedatetime) "
+                        + "FROM ctl_document cd, demographic d, providerLabRouting plr, document doc "
+                        + "WHERE d.first_name like '%"
+                        + patientFirstName
+                        + "%' AND d.last_name like '%"
+                        + patientLastName
+                        + "%' AND d.hin like '%"
+                        + patientHealthNumber
+                        + "%' "
+                        + "	AND cd.module_id = d.demographic_no "
+                        + "	AND cd.document_no = plr.lab_no "
+                        + "	AND plr.lab_type = 'DOC' "
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + "	AND doc.document_no = cd.document_no "
+                        + isDocAbnormalSql
+                        + dateSql
+                        + " GROUP BY doc.document_no"
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC")
+                        + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
                 } else {
                     docNoLoc = 1;
                     statusLoc = 2;
@@ -509,36 +509,36 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     descriptionLoc = 10;
                     updateDateLoc = 11;
                     sql = " SELECT * "
-                            + " FROM (SELECT plr.id, doc.document_no, plr.status, last_name, first_name, hin, sex, module_id,"
-                            + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, docdesc, updatedatetime "
-                            + " FROM ctl_document cd, demographic d, providerLabRouting plr, document doc "
-                            + " WHERE (cd.module_id = d.demographic_no) "
-                            + " 	AND cd.document_no = plr.lab_no "
-                            + " 	AND plr.lab_type = 'DOC' "
-                            + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
-                            + " 	AND doc.document_no = cd.document_no  "
-                            + isDocAbnormalSql
-                            + dateSql
-                            + " UNION "
-                            + " SELECT X.id, X.lab_no as document_no, X.status, last_name, first_name, hin, sex, X.module_id,"
-                            + (dateSearchType.equals("receivedCreated") ? "X.contentdatetime" : "X.observationdate") + ", X.lab_type as doctype, docdesc, updatedatetime "
-                            + " FROM (SELECT plr.id, plr.lab_no, plr.status, plr.lab_type, cd.module_id,"
-                            + (dateSearchType.equals("receivedCreated") ? "contentdatetime" : "observationdate") + ", docdesc, updatedatetime "
-                            + " FROM ctl_document cd, providerLabRouting plr, document d "
-                            + " WHERE plr.lab_type = 'DOC' "
-                            + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                            + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
-                            + " AND plr.lab_no = cd.document_no " + " AND cd.module_id = -1 "
-                            + " AND d.document_no = cd.document_no "
-                            + isDocAbnormalSql.replaceAll("doc.", "d.")
-                            + dateSql.replaceAll("doc.", "d.")
-                            + " ) AS X " + " LEFT JOIN demographic d "
-                            + " ON d.demographic_no = -1"
-                            + ") AS X "
-                            + " GROUP BY document_no"
-                            + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "contentdatetime DESC" : "observationdate DESC")
-                            + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
+                        + " FROM (SELECT plr.id, doc.document_no, plr.status, last_name, first_name, hin, sex, module_id,"
+                        + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, docdesc, updatedatetime "
+                        + " FROM ctl_document cd, demographic d, providerLabRouting plr, document doc "
+                        + " WHERE (cd.module_id = d.demographic_no) "
+                        + " 	AND cd.document_no = plr.lab_no "
+                        + " 	AND plr.lab_type = 'DOC' "
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + " 	AND doc.document_no = cd.document_no  "
+                        + isDocAbnormalSql
+                        + dateSql
+                        + " UNION "
+                        + " SELECT X.id, X.lab_no as document_no, X.status, last_name, first_name, hin, sex, X.module_id,"
+                        + (dateSearchType.equals("receivedCreated") ? "X.contentdatetime" : "X.observationdate") + ", X.lab_type as doctype, docdesc, updatedatetime "
+                        + " FROM (SELECT plr.id, plr.lab_no, plr.status, plr.lab_type, cd.module_id,"
+                        + (dateSearchType.equals("receivedCreated") ? "contentdatetime" : "observationdate") + ", docdesc, updatedatetime "
+                        + " FROM ctl_document cd, providerLabRouting plr, document d "
+                        + " WHERE plr.lab_type = 'DOC' "
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + " AND plr.lab_no = cd.document_no " + " AND cd.module_id = -1 "
+                        + " AND d.document_no = cd.document_no "
+                        + isDocAbnormalSql.replaceAll("doc.", "d.")
+                        + dateSql.replaceAll("doc.", "d.")
+                        + " ) AS X " + " LEFT JOIN demographic d "
+                        + " ON d.demographic_no = -1"
+                        + ") AS X "
+                        + " GROUP BY document_no"
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "contentdatetime DESC" : "observationdate DESC")
+                        + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
                 }
             }
 
@@ -587,13 +587,13 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     //if observation is not null, set that as date
                     lbData.dateTime = getStringValue(r[obsDateLoc]);
                     lbData.setDateObj(DateUtils.parseDate(getStringValue(r[obsDateLoc]), new String[]{
-                            "yyyy-MM-dd"
+                        "yyyy-MM-dd"
                     }));
                 } else if (!StringUtils.isNullOrEmpty(getStringValue(r[updateDateLoc]))) {
                     //elseif updateDate is not null, set that as date
                     lbData.dateTime = getStringValue(r[updateDateLoc]);
                     lbData.setDateObj(DateUtils.parseDate(getStringValue(r[updateDateLoc]), new String[]{
-                            "yyyy-MM-dd"
+                        "yyyy-MM-dd"
                     }));
                 } else if (contentDateTime != null) {
                     //elseif contentDate is not null, set that as date

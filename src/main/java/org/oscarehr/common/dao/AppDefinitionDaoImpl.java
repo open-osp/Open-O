@@ -60,4 +60,17 @@ public class AppDefinitionDaoImpl extends AbstractDaoImpl<AppDefinition> impleme
         }
         return list.get(0);
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public AppDefinition findByConsumerKey(String consumerKey) {
+        Query query = entityManager.createQuery("select x from AppDefinition x where x.config like ?1");
+        query.setParameter(1, "%<consumerKey>" + consumerKey + "</consumerKey>%");
+
+        List<AppDefinition> list = query.getResultList();
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
 }

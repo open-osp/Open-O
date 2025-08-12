@@ -303,7 +303,7 @@ public class AddEForm2Action extends ActionSupport {
                 /*
                  * For now, this download code is added here and will be moved to the appropriate place after refactoring is done.
                  */
-                String path = "/eform/efmshowform_data.jsp?fdid=" + fdid + "&parentAjaxId=eforms";
+                String path = request.getContextPath() + "/eform/efmshowform_data.jsp?fdid=" + fdid + "&parentAjaxId=eforms";
                 String fileName = generateFileName(loggedInInfo, Integer.parseInt(demographic_no));
                 String pdfBase64 = "";
                 try {
@@ -383,7 +383,7 @@ public class AddEForm2Action extends ActionSupport {
                 /*
                  * For now, this download code is added here and will be moved to the appropriate place after refactoring is done.
                  */
-                String path = "/eform/efmshowform_data.jsp?fdid=" + prev_fdid + "&parentAjaxId=eforms";
+                String path = request.getContextPath() + "/eform/efmshowform_data.jsp?fdid=" + prev_fdid + "&parentAjaxId=eforms";
                 String fileName = generateFileName(loggedInInfo, Integer.parseInt(demographic_no));
                 String pdfBase64 = "";
                 try {
@@ -440,7 +440,8 @@ public class AddEForm2Action extends ActionSupport {
             }
 		}
 
-		String path = "/eform/efmshowform_data.jsp?fdid=" + prev_fdid + "&parentAjaxId=eforms";
+        String fdid = (String) request.getAttribute("fdid");
+        String path = request.getContextPath() + "/eform/efmshowform_data.jsp?fdid=" + fdid + "&parentAjaxId=eforms";
 
 		String pdfBase64;
 		try {

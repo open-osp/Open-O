@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import org.oscarehr.ws.rest.to.model.AppointmentExtTo;
 
 @XmlRootElement
-@XmlSeeAlso({AppointmentExtTo.class})
+@XmlSeeAlso(AppointmentExtTo.class)
 public class AppointmentExtResponse extends AbstractSearchResponse<AppointmentExtTo> {
 
     private static final long serialVersionUID = 1L;

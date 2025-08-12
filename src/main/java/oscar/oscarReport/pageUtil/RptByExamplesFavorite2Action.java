@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.oscarehr.common.dao.ReportByExamplesFavoriteDao;
 import org.oscarehr.common.model.ReportByExamplesFavorite;
 import org.oscarehr.util.MiscUtils;
@@ -52,30 +53,35 @@ public class RptByExamplesFavorite2Action extends ActionSupport {
 
     public String execute() throws ServletException, IOException {
         String providerNo = (String) request.getSession().getAttribute("user");
-        if (this.getNewQuery() != null) {
-            if (this.getNewQuery().compareTo("") != 0) {
-                this.setQuery(this.getNewQuery());
-                if (this.getNewName() != null) this.setFavoriteName(this.getNewName());
-                else {
-                    ReportByExamplesFavoriteDao dao = SpringUtils.getBean(ReportByExamplesFavoriteDao.class);
-                    for (ReportByExamplesFavorite f : dao.findByQuery(this.getNewQuery())) {
-                        this.setFavoriteName(f.getName());
-                    }
-                }
-                return "edit";
-            } else if (this.getToDelete() != null) {
-                if (this.getToDelete().compareTo("true") == 0) {
-                    deleteQuery(this.getId());
+       
+        // Deletion case
+        if ("true".equalsIgnoreCase(this.getToDelete())) {
+            deleteQuery(this.getId());
+            return SUCCESS;
+        }
+
+        // Edit case
+        if (!StringUtils.isEmpty(this.getNewQuery())) {
+            this.setQuery(this.getNewQuery());
+            if (!StringUtils.isEmpty(this.getNewName())) {
+                this.setFavoriteName(this.getNewName());
+            } else {
+                ReportByExamplesFavoriteDao dao = SpringUtils.getBean(ReportByExamplesFavoriteDao.class);
+                for (ReportByExamplesFavorite f : dao.findByQuery(this.getNewQuery())) {
+                    this.setFavoriteName(f.getName());
+                    break;
                 }
             }
-        } else {
-            String favoriteName = this.getFavoriteName();
-            String query = this.getQuery();
-
-            String queryWithEscapeChar = StringEscapeUtils.escapeSql(query);///queryWithEscapeChar);
-            MiscUtils.getLogger().debug("escapeSql: " + queryWithEscapeChar);
-            write2Database(providerNo, favoriteName, queryWithEscapeChar);
+            return "edit";
         }
+
+        // Save new favorite
+        String favoriteName = this.getFavoriteName();
+        String query = this.getQuery();
+        String queryWithEscapeChar = StringEscapeUtils.escapeSql(StringUtils.defaultString(query));
+        MiscUtils.getLogger().debug("escapeSql: " + queryWithEscapeChar);
+        write2Database(providerNo, favoriteName, queryWithEscapeChar);
+
         RptByExampleQueryBeanHandler hd = new RptByExampleQueryBeanHandler(providerNo);
         request.setAttribute("allFavorites", hd);
         return SUCCESS;

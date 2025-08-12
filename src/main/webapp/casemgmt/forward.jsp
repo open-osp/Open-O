@@ -44,7 +44,7 @@
 
     String redirectURL;
     if ("true".equals(useNewCaseMgmt)) {
-        redirectURL = request.getContextPath() + "/CaseManagementEntry.do?method=setUpMainEncounter&from=casemgmt&chain=list&demographicNo=" + request.getParameter("demographicNo") + "&OscarMsgTypeLink=" + request.getParameter("OscarMsgTypeLink") + "&msgType=" + request.getParameter("msgType");
+        redirectURL = request.getContextPath() + "/CaseManagementEntry.do?method=setUpMainEncounter&from=casemgmt&chain=list&demographicNo=" + request.getParameter("demographicNo") + "&providerNo=" + request.getParameter("providerNo") + "&OscarMsgTypeLink=" + request.getParameter("OscarMsgTypeLink") + "&msgType=" + request.getParameter("msgType");
     } else {
         redirectURL = request.getContextPath() + "/CaseManagementView.do";
     }

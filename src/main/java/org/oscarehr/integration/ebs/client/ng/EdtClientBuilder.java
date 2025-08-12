@@ -28,6 +28,7 @@ import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.apache.xml.security.exceptions.AlgorithmAlreadyRegisteredException;
+import org.apache.xml.security.transforms.Transform;
 import org.apache.xml.security.utils.resolver.ResourceResolver;
 
 import ca.ontario.health.ebs.idp.IdpHeader;
@@ -75,337 +76,308 @@ import ca.ontario.health.ebs.idp.IdpHeader;
  */
 public class EdtClientBuilder {
 
-	private static final String DEFAULT_CLIENT_KEYSTORE = "clientKeystore.properties";
-	private static final String TAG_NAME_AUDIT_ID = "AuditId";
-	private static final String TAG_NAME_SOFTWARE_CONFORMANCE_KEY = "SoftwareConformanceKey";
-	private static final String TAG_NAME_EBS = "EBS";
-	private static final String TAG_NAME_IDP = "IDP";
-	private static final String TAG_NAME_SERVICE_USER_MUID = "ServiceUserMUID";
-	private static final String NS_EBS = "http://ebs.health.ontario.ca/";
-	private static final String NS_IDP = "http://idp.ebs.health.ontario.ca/";
+    private static final String DEFAULT_CLIENT_KEYSTORE = "clientKeystore.properties";
 
-	private static final QName QNAME_IDP = new QName(NS_IDP, TAG_NAME_IDP, "idp");
-	private static final QName QNAME_EBS = new QName(NS_EBS, TAG_NAME_EBS, "ebs");
+    // EBS and IDP SOAP header element names and namespaces
+    private static final String TAG_NAME_EBS                      = "EBS";
+    private static final String TAG_NAME_SOFTWARE_CONFORMANCE_KEY = "SoftwareConformanceKey";
+    private static final String TAG_NAME_AUDIT_ID                 = "AuditId";
+    private static final String TAG_NAME_IDP                      = "IDP";
+    private static final String TAG_NAME_SERVICE_USER_MUID        = "ServiceUserMUID";
+    private static final String NS_EBS                            = "http://ebs.health.ontario.ca/";
+    private static final String NS_IDP                            = "http://idp.ebs.health.ontario.ca/";
 
-	private static AtomicBoolean isInitialized = new AtomicBoolean(false);
+    private static final QName QNAME_EBS = new QName(NS_EBS, TAG_NAME_EBS, "ebs");
+    private static final QName QNAME_IDP = new QName(NS_IDP, TAG_NAME_IDP, "idp");
 
-	private static String clientKeystore = DEFAULT_CLIENT_KEYSTORE;
-	/**
-	 * CXF directive for determining which message elements needs to be signed as
-	 * declared in the
-	 * MCEDT spec
-	 */
-	private static final String SIGNED_MESSAGE_ELEMENTS = "{Element}{"
-			+ NS_EBS
-			+ "}EBS;"
-			+ "{Element}{"
-			+ NS_IDP
-			+ "}IDP;"
-			+ "{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;"
-			+ "{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;";
+    // Directives for which SOAP parts to sign
+    private static final String SIGNED_MESSAGE_ELEMENTS =
+        "{Element}{" + NS_EBS + "}EBS;" +
+        "{Element}{" + NS_IDP + "}IDP;" +
+        "{Element}{http://docs.oasis-open.org/wss/2004/01/"
+            + "oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;" +
+        "{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;";
 
-	protected EdtClientBuilderConfig config;
+    private static final AtomicBoolean isInitialized = new AtomicBoolean(false);
+    private static String clientKeystore = DEFAULT_CLIENT_KEYSTORE;
 
-	private static void registerAttachmentResolver() {
-		if (isInitialized.compareAndSet(false, true)) {
-			ResourceResolver.register(AttachmentResolverSpi.class, true);
-			try {
-				org.apache.xml.security.transforms.Transform.register(
-						TransformAttachmentCiphertext.TRANSFORM_ATTACHMENT_CIPHERTEXT,
-						TransformAttachmentCiphertext.class);
-			} catch (AlgorithmAlreadyRegisteredException e) {
-				// swallow
-			}
-		}
-	}
+    protected EdtClientBuilderConfig config;
 
-	/**
-	 * Initializes the EdtClientBuilder and registers the attachment resolver.
-	 */
-	public EdtClientBuilder() {
-		registerAttachmentResolver();
-	}
+    /**
+     * Creates a new builder and registers the attachment resolver
+     * necessary for handling custom transforms.
+     */
+    public EdtClientBuilder() {
+        registerAttachmentResolver();
+    }
 
-	/**
-	 * Initializes the EdtClientBuilder with the specified configuration.
-	 *
-	 * @param config the configuration to be used by this builder
-	 */
-	public EdtClientBuilder(EdtClientBuilderConfig config) {
-		this();
-		setConfig(config);
-	}
+    /**
+     * Creates a new builder with the given configuration.
+     *
+     * @param config user-specified builder configuration
+     */
+    public EdtClientBuilder(EdtClientBuilderConfig config) {
+        this();
+        setConfig(config);
+    }
 
-	/**
-	 * Retrieves the current configuration for this client builder.
-	 *
-	 * @return the configuration being used by this client builder
-	 */
-	public EdtClientBuilderConfig getConfig() {
-		return config;
-	}
+    /**
+     * @return the current builder configuration
+     */
+    public EdtClientBuilderConfig getConfig() {
+        return config;
+    }
 
-	/**
-	 * Sets the configuration for this client builder.
-	 *
-	 * @param config the configuration to set
-	 */
-	public void setConfig(EdtClientBuilderConfig config) {
-		this.config = config;
-	}
+    /**
+     * @param config the configuration to use for building clients
+     */
+    public void setConfig(EdtClientBuilderConfig config) {
+        this.config = config;
+    }
 
-	/**
-	 * Initializes service client for carrying out the request operation.
-	 *
-	 * @param clientClass the class of the service client to be built
-     * @return an instance of the service client
-     * @param <T> the type of the service client
-	 */
-	public <T> T build(Class<T> clientClass) {
-		T result = newDelegate(clientClass);
+    /**
+     * Builds and configures a SOAP client of the given service interface.
+     * <p>
+     * Steps performed:
+     * <ol>
+     *   <li>Create proxy via JaxWsProxyFactoryBean</li>
+     *   <li>Configure SSL/TLS settings</li>
+     *   <li>Install WS-Security in/out interceptors</li>
+     *   <li>Enable MTOM on the SOAPBinding if requested</li>
+     *   <li>Set HTTP timeouts</li>
+     *   <li>Add custom EBS/IDP headers</li>
+     * </ol>
+     *
+     * @param <T>         the service interface
+     * @param clientClass the service interface class
+     * @return a configured proxy implementing the interface
+     */
+    public <T> T build(Class<T> clientClass) {
+        T port = newDelegate(clientClass);
 
-		Client client = ClientProxy.getClient(result);
-		configureSsl((HTTPConduit) client.getConduit());
-		configureOutInterceptor(client);
-		configureInInterceptor(client);
+        Client client = ClientProxy.getClient(port);
+        // Set up SSL trust-all if needed
+        configureSsl((HTTPConduit) client.getConduit());
 
-		BindingProvider bindingProvider = ((BindingProvider) result);
-		SOAPBinding sp = (SOAPBinding) bindingProvider.getBinding();
-		if (getConfig().isMtomEnabled()) {
-			sp.setMTOMEnabled(true);
-		}
+        // Add security interceptors
+        configureOutInterceptor(client);
+        configureInInterceptor(client);
 
-		Map<String, Object> requestContext = bindingProvider.getRequestContext();
-		requestContext.put("com.sun.xml.internal.ws.request.timeout", 1000 * 240); // Timeout in millis
+        // Enable MTOM on SOAPBinding if configured
+        BindingProvider bp = (BindingProvider) port;
+        SOAPBinding sb = (SOAPBinding) bp.getBinding();
+        if (getConfig().isMtomEnabled()) {
+            sb.setMTOMEnabled(true);
+        }
 
-		HTTPConduit conduit = (HTTPConduit) client.getConduit();
+        // Configure HTTP timeouts
+        bp.getRequestContext().put("com.sun.xml.internal.ws.request.timeout", 240_000);
+        HTTPConduit conduit = (HTTPConduit) client.getConduit();
+        HTTPClientPolicy policy = new HTTPClientPolicy();
+        policy.setConnectionTimeout(100_000);
+        policy.setReceiveTimeout(240_000);
+        conduit.setClient(policy);
 
-		// HTTPClientPolicy - Properties used to configure a client-side HTTP port
-		HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy(); // Line #1
-		httpClientPolicy.setConnectionTimeout(100000); // Line #2
-		httpClientPolicy.setReceiveTimeout(240000); // Line #3
+        // Point WS-Security signature properties to our keystore
+        bp.getRequestContext().put("signaturePropFile", clientKeystore);
 
-		conduit.setClient(httpClientPolicy);
+        // Add EBS/IDP SOAP headers
+        try {
+            configureHeaderList(bp);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to configure EBS/IDP headers", e);
+        }
 
-		bindingProvider.getRequestContext().put("signaturePropFile", clientKeystore);
+        return port;
+    }
 
-		try {
-			configureHeaderList(bindingProvider);
-		} catch (Exception e) {
-			throw new RuntimeException("Unable to configure header list", e);
-		}
-		return result;
-	}
+    /**
+     * Creates the actual JAX-WS proxy for the service interface.
+     */
+    @SuppressWarnings("unchecked")
+    protected <T> T newDelegate(Class<T> clientClass) {
+        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+        factory.setServiceClass(clientClass);
+        factory.setAddress(getConfig().getServiceUrl());
+        return (T) factory.create();
+    }
 
-	/**
-	 * Creates a new delegate instance of the specified client class.
-	 *
-	 * @param clientClass the class of the client to create
-	 * @return a new instance of the client
-	 * @param <T> the type of the client class
-	 */
-	@SuppressWarnings("unchecked")
-	protected <T> T newDelegate(Class<T> clientClass) {
-		JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-		factory.setServiceClass(clientClass);
-		factory.setAddress(getConfig().getServiceUrl());
-		return (T) factory.create();
-	}
+    /**
+     * Adds the EBS and IDP SOAP headers (AuditId, SoftwareConformanceKey, ServiceUserMUID).
+     */
+    protected void configureHeaderList(BindingProvider bp) throws Exception {
+        SOAPFactory sf = SOAPFactory.newInstance();
 
-	/**
-	 * Configures the header list to be included in the SOAP request.
-	 *
-	 * @param bindingProvider the binding provider to configure
-	 * @throws Exception if an error occurs during configuration
-	 */
-	protected void configureHeaderList(BindingProvider bindingProvider) throws Exception {
-		SOAPFactory sf = SOAPFactory.newInstance();
-		// initializes custom IDP header
-		SOAPElement ebsHeader = sf.createElement(QNAME_EBS);
-		SOAPElement softwareConformanceKey = sf
-				.createElement(TAG_NAME_SOFTWARE_CONFORMANCE_KEY);
-		softwareConformanceKey.setTextContent(getConfig().getConformanceKey());
-		ebsHeader.addChildElement(softwareConformanceKey);
-		SOAPElement auditId = sf.createElement(TAG_NAME_AUDIT_ID);
-		auditId.setTextContent(getConfig().getAuditId());
-		ebsHeader.addChildElement(auditId);
-		SOAPElement idpHeader = sf.createElement(QNAME_IDP);
-		SOAPElement serviceUserMUID = sf
-				.createElement(TAG_NAME_SERVICE_USER_MUID);
-		serviceUserMUID.setTextContent(getConfig().getServiceId());
-		idpHeader.addChildElement(serviceUserMUID);
+        // Build <ebs:EBS> header
+        SOAPElement ebs = sf.createElement(QNAME_EBS);
+        SOAPElement scKey = sf.createElement(TAG_NAME_SOFTWARE_CONFORMANCE_KEY);
+        scKey.setTextContent(getConfig().getConformanceKey());
+        ebs.addChildElement(scKey);
 
-		List<Header> headersList = new ArrayList<Header>();
-		headersList.add(new Header(QNAME_EBS, ebsHeader));
-		headersList.add(new Header(QNAME_IDP, idpHeader));
+        SOAPElement audit = sf.createElement(TAG_NAME_AUDIT_ID);
+        audit.setTextContent(getConfig().getAuditId());
+        ebs.addChildElement(audit);
 
-		bindingProvider.getRequestContext().put(Header.HEADER_LIST, headersList);
-	}
+        // Build <idp:IDP> header
+        SOAPElement idp = sf.createElement(QNAME_IDP);
+        SOAPElement muid = sf.createElement(TAG_NAME_SERVICE_USER_MUID);
+        muid.setTextContent(getConfig().getServiceId());
+        idp.addChildElement(muid);
 
-	/**
-	 * Configures the inbound interceptors for the client.
-	 *
-	 * @param client the client to configure
-	 */
-	protected void configureInInterceptor(Client client) {
-		if (getConfig().isLoggingRequired()) {
-			client.getEndpoint().getInInterceptors().add(new LoggingInInterceptor());
-		}
-		client.getEndpoint().getInInterceptors().add(new AttachmentCachingInterceptor());
-		Map<String, Object> inProps = newWSSInInterceptorConfiguration();
-		WSS4JInInterceptor wssIn = new WSS4JInNonValidatingActionInterceptor(inProps);
-		client.getEndpoint().getInInterceptors().add(wssIn);
-		client.getEndpoint().getInInterceptors().add(new DownloadInInterceptor());
-		client.getEndpoint().getInInterceptors().add(new AttachmentCleanupInterceptor());
-	}
+        List<Header> headers = new ArrayList<>();
+        headers.add(new Header(QNAME_EBS, ebs));
+        headers.add(new Header(QNAME_IDP, idp));
+        bp.getRequestContext().put(Header.HEADER_LIST, headers);
+    }
 
-	/**
-	 * Creates a new configuration for the inbound WSS4J interceptor.
-	 *
-	 * @return a map of properties for configuring the inbound interceptor
-	 */
-	protected Map<String, Object> newWSSInInterceptorConfiguration() {
-		Map<String, Object> inProps = new HashMap<String, Object>();
-		inProps.put(WSHandlerConstants.ACTION, getCxfOutHandlerDirectives());
-		inProps.put(WSHandlerConstants.PW_CALLBACK_REF, newCallback());
-		inProps.put(WSHandlerConstants.DEC_PROP_FILE, clientKeystore);
-		inProps.put(WSHandlerConstants.ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM, "true");
-		inProps.put(WSHandlerConstants.STORE_BYTES_IN_ATTACHMENT, "false");
-		inProps.put(WSHandlerConstants.EXPAND_XOP_INCLUDE, "false");
-		return inProps;
-	}
+    /**
+     * Installs inbound interceptors: logging, attachment caching, WS-Security, etc.
+     */
+    protected void configureInInterceptor(Client client) {
+        if (getConfig().isLoggingRequired()) {
+            client.getEndpoint().getInInterceptors().add(new LoggingInInterceptor());
+        }
+        // Cache attachments for later processing
+        client.getEndpoint().getInInterceptors().add(new AttachmentCachingInterceptor());
+        // Apply WS-Security in interceptor
+        client.getEndpoint().getInInterceptors().add(
+            new WSS4JInInterceptor(newWSSInInterceptorConfiguration())
+        );
+        client.getEndpoint().getInInterceptors().add(new DownloadInInterceptor());
+        client.getEndpoint().getInInterceptors().add(new AttachmentCleanupInterceptor());
+    }
 
-	/**
-	 * Configures the outbound interceptors for the client.
-	 *
-	 * @param client the client to configure
-	 */
-	protected void configureOutInterceptor(Client client) {
-		if (getConfig().isLoggingRequired()) {
-			client.getEndpoint().getOutInterceptors().add(new LoggingOutInterceptor());
-		}
+    /**
+     * Builds the property map for the inbound WS-Security interceptor.
+     */
+    protected Map<String,Object> newWSSInInterceptorConfiguration() {
+        Map<String,Object> props = new HashMap<>();
+        // Specify which security actions to perform
+        props.put(WSHandlerConstants.ACTION, getCxfOutHandlerDirectives());
+        // Callback for password retrieval
+        props.put(WSHandlerConstants.PW_CALLBACK_REF, newCallback());
+        // Keystore for decryption
+        props.put(WSHandlerConstants.DEC_PROP_FILE, clientKeystore);
+        props.put(WSHandlerConstants.ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM, "true");
+        props.put(WSHandlerConstants.STORE_BYTES_IN_ATTACHMENT, "false");
+        props.put(WSHandlerConstants.EXPAND_XOP_INCLUDE, "false");
+        return props;
+    }
 
-		Map<String, Object> outProps = newWSSOutInterceptorConfiguration();
-		WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
-		wssOut.setAllowMTOM(true);
-		client.getEndpoint().getOutInterceptors().add(wssOut);
-	}
+    /**
+     * Installs outbound interceptors: logging and WS-Security signing/encryption.
+     */
+    protected void configureOutInterceptor(Client client) {
+        if (getConfig().isLoggingRequired()) {
+            client.getEndpoint().getOutInterceptors().add(new org.apache.cxf.ext.logging.LoggingOutInterceptor());
+        }
+        Map<String,Object> outProps = newWSSOutInterceptorConfiguration();
+        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        // MTOM is enabled on the SOAPBinding, so remove deprecated setAllowMTOM
+        client.getEndpoint().getOutInterceptors().add(wssOut);
+    }
 
-	/**
-	 * Creates a new configuration for the outbound WSS4J interceptor.
-	 *
-	 * @return a map of properties for configuring the outbound interceptor
-	 */
-	protected Map<String, Object> newWSSOutInterceptorConfiguration() {
-		Map<String, Object> outProps = new HashMap<String, Object>();
-		outProps.put(WSHandlerConstants.MUST_UNDERSTAND, "1");
-		outProps.put(WSHandlerConstants.ACTION, getCxfOutHandlerDriectives());
-		outProps.put(WSHandlerConstants.USER, getConfig().getKeystoreUser());
-		outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
-		outProps.put(WSHandlerConstants.PW_CALLBACK_REF, newCallback());
-		// configure parts of the message that needs to be signed
-		outProps.put(WSHandlerConstants.SIGNATURE_PARTS, SIGNED_MESSAGE_ELEMENTS);
-		// keystore file is loaded via classpath loader
-		outProps.put(WSHandlerConstants.SIG_PROP_FILE, clientKeystore);
-		outProps.put(WSHandlerConstants.SIG_KEY_ID, "DirectReference");
-		outProps.put(WSHandlerConstants.STORE_BYTES_IN_ATTACHMENT, "0");
-		outProps.put(WSHandlerConstants.EXPAND_XOP_INCLUDE, "0");
-		return outProps;
-	}
+    /**
+     * Builds the property map for the outbound WS-Security interceptor.
+     */
+    protected Map<String,Object> newWSSOutInterceptorConfiguration() {
+        Map<String,Object> props = new HashMap<>();
+        props.put(WSHandlerConstants.MUST_UNDERSTAND, "1");
+        props.put(WSHandlerConstants.ACTION, getCxfOutHandlerDirectives());
+        props.put(WSHandlerConstants.USER, getConfig().getKeystoreUser());
+        props.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
+        props.put(WSHandlerConstants.PW_CALLBACK_REF, newCallback());
+        props.put(WSHandlerConstants.SIGNATURE_PARTS, SIGNED_MESSAGE_ELEMENTS);
+        props.put(WSHandlerConstants.SIG_PROP_FILE, clientKeystore);
+        props.put(WSHandlerConstants.SIG_KEY_ID, "DirectReference");
+        props.put(WSHandlerConstants.STORE_BYTES_IN_ATTACHMENT, "0");
+        props.put(WSHandlerConstants.EXPAND_XOP_INCLUDE, "0");
+        return props;
+    }
 
-	/**
-	 * Returns the CXF directives for the outbound handler configuration, including
-	 * additional encryption directives.
-	 *
-	 * @return a string of directives for the outbound handler, including encryption
-	 */
-	protected String getCxfOutHandlerDirectives() {
-		return getCxfOutHandlerDriectives() // same as for In handler
-				+ " " + WSHandlerConstants.ENCRYPT; // plus decryption
-	}
+    /**
+     * @return concatenated WS-Security directives including encryption
+     */
+    protected String getCxfOutHandlerDirectives() {
+         return getCxfOutHandlerDirectivesBase() + " " + WSHandlerConstants.ENCRYPT;
+    }
+ 
 
-	/**
-	 * Returns the CXF directives for the outbound handler configuration, specifying
-	 * the required security actions such as username token, timestamp, and signature.
-	 *
-	 * @return a string of directives for the outbound handler
-	 */
-	protected String getCxfOutHandlerDriectives() {
-		return WSHandlerConstants.USERNAME_TOKEN + " " + // Tells CXF to add user name token
-				WSHandlerConstants.TIMESTAMP + " " + // and timestamp element
-				WSHandlerConstants.SIGNATURE; // and finally sing the content
-	}
+    /**
+     * @return WS-Security directives for username token, timestamp, and signature
+     */
+    protected String getCxfOutHandlerDirectivesBase() {
+        return WSHandlerConstants.USERNAME_TOKEN + " "
+             + WSHandlerConstants.TIMESTAMP     + " "
+             + WSHandlerConstants.SIGNATURE;
+    }
 
-	/**
-	 * Creates a new callback for client password handling.
-	 *
-	 * @return a new ClientPasswordCallback instance
-	 */
-	protected ClientPasswordCallback newCallback() {
-		return new ClientPasswordCallback(getConfig().getUserNameTokenUser(), getConfig().getUserNameTokenPassword(),
-				getConfig().getKeystoreUser(), getConfig().getKeystorePassword());
-	}
+    /**
+     * @return callback for retrieving passwords during WS-Security processing
+     */
+    protected ClientPasswordCallback newCallback() {
+        return new ClientPasswordCallback(
+            getConfig().getUserNameTokenUser(),
+            getConfig().getUserNameTokenPassword(),
+            getConfig().getKeystoreUser(),
+            getConfig().getKeystorePassword()
+        );
+    }
 
-	/**
-	 * Creates an IDP header with the specified user MUID.
-	 *
-	 * @param userMuid the user MUID to include in the header
-	 * @return a new IdpHeader instance
-	 */
-	protected IdpHeader createIdpHeader(String userMuid) {
-		IdpHeader idpHeader = new IdpHeader();
-		idpHeader.setServiceUserMUID(userMuid);
-		return idpHeader;
-	}
+    /**
+     * Creates an IDP header object for the given user MUID.
+     */
+    public static IdpHeader createIdpHeader(String userMuid) {
+        IdpHeader header = new IdpHeader();
+        header.setServiceUserMUID(userMuid);
+        return header;
+    }
 
-	/**
-	 * Configures SSL settings for the specified HTTP conduit.
-	 *
-	 * @param httpConduit the HTTP conduit to configure
-	 */
-	public static void configureSsl(HTTPConduit httpConduit) {
-		TLSClientParameters tslClientParameters = httpConduit
-				.getTlsClientParameters();
-		if (tslClientParameters == null) {
-			tslClientParameters = new TLSClientParameters();
-		}
-		tslClientParameters.setDisableCNCheck(true);
+    /**
+     * Configures SSL/TLS parameters on the HTTPConduit.
+     */
+    public static void configureSsl(HTTPConduit conduit) {
+        TLSClientParameters tls = conduit.getTlsClientParameters();
+        if (tls == null) {
+            tls = new TLSClientParameters();
+        }
+        tls.setDisableCNCheck(true);
+        tls.setTrustManagers(new X509TrustManager[]{new TrustAllManager()});
+        tls.setSecureSocketProtocol("TLS");
+        conduit.setTlsClientParameters(tls);
+    }
 
-		TrustAllManager[] tam = { new TrustAllManager() };
-		tslClientParameters.setTrustManagers(tam);
-		tslClientParameters.setSecureSocketProtocol("TLS");
-		httpConduit.setTlsClientParameters(tslClientParameters);
-	}
+    /**
+     * Allows overriding the client keystore filename.
+     */
+    public static void setClientKeystoreFilename(String filename) {
+        clientKeystore = filename;
+    }
 
-	/**
-	 * Sets the client keystore filename to the specified file in the classpath.
-	 *
-	 * @param fileInClassPath the filename of the keystore in the classpath
-	 */
-	public static void setClientKeystoreFilename(String fileInClassPath) {
-		clientKeystore = fileInClassPath;
-	}
+    /**
+     * Trust manager implementation that accepts all certificates.
+     */
+    public static class TrustAllManager implements X509TrustManager {
+        @Override public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+        @Override public void checkClientTrusted(X509Certificate[] chain, String authType) { /* no-op */ }
+        @Override public void checkServerTrusted(X509Certificate[] chain, String authType) { /* no-op */ }
+    }
 
-	/**
-	 * Trust manager that accepts all certificates.
-	 */
-	public static class TrustAllManager implements X509TrustManager {
-		@Override
-		public X509Certificate[] getAcceptedIssuers() {
-			return new X509Certificate[0];
-		}
-
-		@Override
-		public void checkClientTrusted(
-				java.security.cert.X509Certificate[] certs, String authType) {
-			// allow local self made
-		}
-
-		@Override
-		public void checkServerTrusted(
-				java.security.cert.X509Certificate[] certs, String authType) {
-			// allow local self made
-		}
-	}
-
+    /**
+     * Registers the attachment resolver and transform for custom MTOM handling.
+     * Ensures registration only happens once.
+     */
+    private static void registerAttachmentResolver() {
+        if (isInitialized.compareAndSet(false, true)) {
+            ResourceResolver.register(AttachmentResolverSpi.class, true);
+            try {
+                Transform.register(
+                    TransformAttachmentCiphertext.TRANSFORM_ATTACHMENT_CIPHERTEXT,
+                    TransformAttachmentCiphertext.class
+                );
+            } catch (AlgorithmAlreadyRegisteredException e) {
+                // ignore if already registered
+            }
+        }
+    }
 }

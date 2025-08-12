@@ -272,7 +272,7 @@
                 <td><!--a href="diabetetrackercontact.jsp?demographic_no=<%=demoNo%>">Contact</a> |
 		  <a href="diabetetracker.jsp?demographic_no=<%=demoNo%>">Diabete Tracker</a-->
                     <a href=#
-                       onclick="popupPage(390,510,'redirectstudysite.jsp?demographic_no=<%=demoNo%>&study_no=<%=studyId%>');return false;">Diabete
+                       onclick="popupPage(390,510,'form/study/redirectstudysite.jsp?demographic_no=<%=demoNo%>&study_no=<%=studyId%>');return false;">Diabete
                         Tracker</a></td>
             </tr>
         </table>

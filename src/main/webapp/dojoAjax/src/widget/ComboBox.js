@@ -605,7 +605,7 @@ dojo.widget.defineWidget(
         },
 
         _blurOptionNode: function () {
-            // sumary: removes highlight on highlighted
+            // summary: removes highlight on highlighted
             if (this._highlighted_option) {
                 dojo.html.removeClass(this._highlighted_option, "dojoComboBoxItemHighlight");
                 this._highlighted_option = null;

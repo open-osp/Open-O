@@ -34,8 +34,8 @@ public class BillingBCDaoImpl extends BillingDaoImpl implements BillingBCDao {
     @SuppressWarnings("unchecked")
     public List<Object[]> findBillingServices(String billRegion, String serviceGroup, String serviceType) {
         Query query = entityManager.createNativeQuery("SELECT DISTINCT b.service_code, b.description, b.value, b.percentage "
-                + "FROM ctl_billingservice c left outer join billingservice b on b.service_code="
-                + "c.service_code where b.region = ? and c.service_group= ? and c.servicetype = ? order by c.service_order");
+            + "FROM ctl_billingservice c left outer join billingservice b on b.service_code="
+            + "c.service_code where b.region = ? and c.service_group= ? and c.servicetype = ? order by c.service_order");
 
         query.setParameter(1, billRegion);
         query.setParameter(2, serviceGroup);
@@ -44,11 +44,11 @@ public class BillingBCDaoImpl extends BillingDaoImpl implements BillingBCDao {
         return query.getResultList();
     }
 
-    @NativeSql({"ctl_billingservice"})
+    @NativeSql("ctl_billingservice")
     @SuppressWarnings("unchecked")
     public List<Object[]> findBillingServicesByType(String serviceType) {
         Query query = entityManager.createNativeQuery("SELECT DISTINCT service_code, servicetype, service_group, status, service_order "
-                + "FROM ctl_billingservice where servicetype = ? order by service_order");
+            + "FROM ctl_billingservice where servicetype = ? order by service_order");
 
         query.setParameter(1, serviceType);
 
@@ -59,10 +59,10 @@ public class BillingBCDaoImpl extends BillingDaoImpl implements BillingBCDao {
     @SuppressWarnings("unchecked")
     public List<Object[]> findBillingServices(String billRegion, String serviceGroup, String serviceType, String billReferenceDate) {
         Query query = entityManager.createNativeQuery(
-                "SELECT DISTINCT b.service_code, b.description , b.value, b.percentage " +
-                        "FROM ctl_billingservice c left outer join billingservice b on b.service_code="
-                        + "c.service_code where b.region = ? and c.service_group = ? and c.servicetype = ?" +
-                        " and b.billingservice_date in (select max(b2.billingservice_date) from billingservice b2 where b2.billingservice_date <= ? and b2.service_code = b.service_code) order by c.service_order");
+            "SELECT DISTINCT b.service_code, b.description , b.value, b.percentage " +
+                "FROM ctl_billingservice c left outer join billingservice b on b.service_code="
+                + "c.service_code where b.region = ? and c.service_group = ? and c.servicetype = ?" +
+                " and b.billingservice_date in (select max(b2.billingservice_date) from billingservice b2 where b2.billingservice_date <= ? and b2.service_code = b.service_code) order by c.service_order");
 
         query.setParameter(1, billRegion);
         query.setParameter(2, serviceGroup);

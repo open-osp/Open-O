@@ -42,11 +42,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.util.MiscUtils;
 
 @Entity
 @Table(name = "billing_on_cheader1")
 public class BillingONCHeader1 extends AbstractModel<Integer> implements Serializable {
 
+    private static final Logger logger = MiscUtils.getLogger();
     private static final long serialVersionUID = 1L;
 
     public static final String SETTLED = "S";
@@ -384,10 +387,15 @@ public class BillingONCHeader1 extends AbstractModel<Integer> implements Seriali
     }
 
     public Date getBillingDate() {
+        // Return null if billing date is null or empty to avoid unecessary parse exception call
+        if (billingDate == null || billingDate.trim().isEmpty()) {
+            return null;
+        }
+
         try {
             return (new SimpleDateFormat("yyyy-MM-dd")).parse(this.billingDate);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
+            logger.error("Error getting billing date:", e);
             return null;
         }
     }
@@ -397,10 +405,15 @@ public class BillingONCHeader1 extends AbstractModel<Integer> implements Seriali
     }
 
     public Date getBillingTime() {
+        // Return null if billing date is null or empty to avoid unecessary parse exception call
+        if (billingTime == null || billingTime.trim().isEmpty()) {
+            return null;
+        }
+
         try {
             return (new SimpleDateFormat("HH:mm:ss")).parse(this.billingTime);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
+            logger.error("Error getting billing time:", e);
             return null;
         }
     }
@@ -532,5 +545,4 @@ public class BillingONCHeader1 extends AbstractModel<Integer> implements Seriali
     public int hashCode() {
         return (id != null ? id.hashCode() : 0);
     }
-
 }

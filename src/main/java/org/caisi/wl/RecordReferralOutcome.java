@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "recordReferralOutcome", propOrder = {"arg0"})
+@XmlType(name = "recordReferralOutcome", propOrder = "arg0")
 public class RecordReferralOutcome {
 
     protected ReferralOutcomeBO arg0;

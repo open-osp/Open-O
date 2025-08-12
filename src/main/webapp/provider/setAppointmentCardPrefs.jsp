@@ -76,11 +76,11 @@
                 <form action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
                     <input type="hidden" name="method" value="<c:out value="${method}"/>">
                     <br/>
-                    Name: <input type="checkbox" name="appointmentCardName.value" size="50" />
+                    Name: <input type="text" name="appointmentCardName.value" value="<c:out value='${name.value}'/>" size="50" />
                     <br/>
-                    Phone: <input type="checkbox" name="appointmentCardPhone.value" size="50" />
+                    Phone: <input type="text" name="appointmentCardPhone.value" value="<c:out value='${phone.value}'/>" size="50" />
                     <br/>
-                    Fax: <input type="checkbox" name="appointmentCardFax.value" size="50" />
+                    Fax: <input type="text" name="appointmentCardFax.value" value="<c:out value='${fax.value}'/>" size="50" />
                     <br/>
                     <input type="submit" name="btnApply" value="Apply" />
                 </form>

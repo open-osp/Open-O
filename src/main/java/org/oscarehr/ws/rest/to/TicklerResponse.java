@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import org.oscarehr.ws.rest.to.model.TicklerTo1;
 
 @XmlRootElement
-@XmlSeeAlso({TicklerTo1.class})
+@XmlSeeAlso(TicklerTo1.class)
 public class TicklerResponse extends AbstractSearchResponse<TicklerTo1> {
 
     private static final long serialVersionUID = 1L;

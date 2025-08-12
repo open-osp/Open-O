@@ -25,20 +25,17 @@
 
 package org.oscarehr.admin.traceability;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.zip.GZIPInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.oscarehr.common.dao.ClinicDAO;
 import org.oscarehr.common.model.Clinic;
 import org.oscarehr.util.SpringUtils;
@@ -54,12 +51,14 @@ import com.google.common.collect.Maps;
  */
 public class TraceabilityReportProcessor implements Callable<String> {
     private OutputStream outputStream = null;
+    private File uploadedFile;
     HttpServletRequest request = null;
 
     private String newLine = System.getProperty("line.separator");
 
-    public TraceabilityReportProcessor(OutputStream outputStream, HttpServletRequest request) {
+    public TraceabilityReportProcessor(OutputStream outputStream, File uploadedFile, HttpServletRequest request) {
         this.request = request;
+        this.uploadedFile = uploadedFile;
         this.outputStream = outputStream;
     }
 
@@ -70,23 +69,19 @@ public class TraceabilityReportProcessor implements Callable<String> {
         String clinicName = clinic.getClinicName();
         String originDate = null;
         String gitSHA = null;
-        clinicName = (clinicName == null) ? "" : clinicName;
-        FileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        PrintWriter pw = new PrintWriter(outputStream);
-        List<FileItem> items = upload.parseRequest(request);
-        for (FileItem diskFileItem : items) {
-            GZIPInputStream gzip = new GZIPInputStream(diskFileItem.getInputStream());
-            ObjectInputStream ios = new ObjectInputStream(gzip);
+
+        try (GZIPInputStream gzip = new GZIPInputStream(new FileInputStream(uploadedFile));
+         ObjectInputStream ios = new ObjectInputStream(gzip);
+         PrintWriter pw = new PrintWriter(outputStream)) {
+
             @SuppressWarnings("unchecked")
             Map<String, String> sourceMap = (Map<String, String>) ios.readObject();
-            originDate = sourceMap.get("origin_date");
-            originDate = (originDate == null) ? "n/a" : originDate;
-            sourceMap.remove("origin_date");
-            gitSHA = sourceMap.get("git_sha");
-            gitSHA = (gitSHA == null) ? "n/a" : gitSHA;
+
+            originDate = sourceMap.getOrDefault("origin_date", "n/a");
+            gitSHA = sourceMap.getOrDefault("git_sha", "n/a");
             sourceMap.remove("origin_date");
             sourceMap.remove("git_sha");
+
             // build local 'trace'
             Map<String, String> targetMap = GenerateTraceabilityUtil.buildTraceMap(request);
             // find the difference between incoming and local 'trace'
@@ -173,8 +168,6 @@ public class TraceabilityReportProcessor implements Callable<String> {
             pw.write("---------------------------------------------------------------------------------------");
             pw.write(newLine);
             pw.flush();
-            pw.close();
-            break;
         }
         return getClass().getName();
     }

@@ -57,7 +57,7 @@ public class UploadImage extends HttpServlet {
         String foldername = "", fileheader = "";
 
         Properties ap = OscarProperties.getInstance();
-        foldername = ap.getProperty("eform_image");
+        foldername = ap.getProperty("EFORM_IMAGES_DIR");
 
         //		 Create a new file upload handler
         DiskFileUpload upload = new DiskFileUpload();

@@ -100,7 +100,6 @@ public class ManageDocument2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     private final Logger log = MiscUtils.getLogger();
 
     private final DocumentDao documentDao = SpringUtils.getBean(DocumentDao.class);
@@ -111,15 +110,47 @@ public class ManageDocument2Action extends ActionSupport {
     private static final String DOCUMENT_DIR = OscarProperties.getInstance().getDocumentDirectory();
     private static final String DOCUMENT_CACHE_DIR = OscarProperties.getInstance().getDocumentCacheDirectory();
 
+    private static final Map<String, ActionHandler> ACTIONS = new HashMap<>();
+
+    // Static initializer used to set the actions of the map for the execute function
+    static {
+        ACTIONS.put("refileDocumentAjax", ctx -> ctx.refileDocumentAjax());
+        ACTIONS.put("viewDocPage", ctx -> { ctx.viewDocPage(); return "viewDocPage"; });
+        ACTIONS.put("display", ctx -> { ctx.display(); return "display"; });
+        ACTIONS.put("viewAnnotationAcknowledgementTickler", ctx -> { ctx.viewAnnotationAcknowledgementTickler(); return "viewAnnotationAcknowledgementTickler"; });
+        ACTIONS.put("viewDocumentDescription", ctx -> { ctx.viewDocumentDescription(); return "viewDocumentDescription"; });
+        //  Enable calling the method to remove provider
+        ACTIONS.put("removeLinkFromDocument", new ActionHandler() {
+            public String handle(ManageDocument2Action action) {
+                action.removeLinkFromDocument();
+                return null;
+            }
+        });
+    }
+
+    // Called on default by struts.xml, finds the correct method to use by finding what the URL "method" param is equal to
     public String execute() {
-        if ("refileDocumentAjax".equals(request.getParameter("method"))) {
-            return refileDocumentAjax();
+        String method = request.getParameter("method");
+        ActionHandler handler = ACTIONS.get(method);
+
+        if (handler != null) {
+            try {
+                return handler.handle(this);
+            } catch (Exception e) {
+                log.error("Error in " + method + "():", e);
+            }
         }
+
         return documentUpdate();
     }
 
-    public void documentUpdateAjax() {
+    // Functional interface for our handlers.
+    @FunctionalInterface
+    private interface ActionHandler {
+        String handle(ManageDocument2Action ctx) throws Exception;
+    }
 
+    public void documentUpdateAjax() {
         String observationDate = request.getParameter("observationDate");// :2008-08-22<
         String documentDescription = request.getParameter("documentDescription");// :test2<
         String documentId = request.getParameter("documentId");// :29<
@@ -242,7 +273,6 @@ public class ManageDocument2Action extends ActionSupport {
             throw new SecurityException("missing required security object (_edoc)");
         }
 
-
         providerInboxRoutingDAO.removeLinkFromDocument(docType, Integer.parseInt(docId), providerNo);
         HashMap hm = new HashMap();
         hm.put("linkedProviders", providerInboxRoutingDAO.getProvidersWithRoutingForDocument(docType, Integer.parseInt(docId)));
@@ -273,7 +303,6 @@ public class ManageDocument2Action extends ActionSupport {
     }
 
     public String documentUpdate() {
-
         String observationDate = request.getParameter("observationDate");// :2008-08-22<
         String documentDescription = request.getParameter("documentDescription");// :test2<
         String documentId = request.getParameter("documentId");// :29<
@@ -317,7 +346,6 @@ public class ManageDocument2Action extends ActionSupport {
         }
 
         try {
-
             CtlDocument ctlDocument = ctlDocumentDao.getCtrlDocument(Integer.parseInt(documentId));
             if (ctlDocument != null) {
                 ctlDocument.getId().setModuleId(Integer.parseInt(demog));
@@ -347,10 +375,8 @@ public class ManageDocument2Action extends ActionSupport {
     }
 
     private String getDemoName(LoggedInInfo loggedInInfo, String demog) {
-        DemographicData demoD = new DemographicData();
-        org.oscarehr.common.model.Demographic demo = demoD.getDemographic(loggedInInfo, demog);
-        String demoName = demo.getLastName() + ", " + demo.getFirstName();
-        return demoName;
+        // Get demographic name based on login info and the demographic number of patient
+        return EDocUtil.getDemographicName(loggedInInfo, demog);
     }
 
     private void saveDocNote(final HttpServletRequest request, String docDesc, String demog, String documentId) {
@@ -562,7 +588,6 @@ public class ManageDocument2Action extends ActionSupport {
     }
 
     public void viewDocPage() {
-
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_edoc", "r", null)) {
             throw new SecurityException("missing required security object (_edoc)");
         }
@@ -711,7 +736,6 @@ public class ManageDocument2Action extends ActionSupport {
     }
 
     public void display() throws Exception {
-
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_edoc", "r", null)) {

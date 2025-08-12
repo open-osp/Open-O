@@ -39,4 +39,6 @@ public interface AppDefinitionDao extends AbstractDao<AppDefinition> {
     public List<AppDefinition> findAll();
 
     public AppDefinition findByName(String name);
+    
+    public AppDefinition findByConsumerKey(String consumerKey);
 }

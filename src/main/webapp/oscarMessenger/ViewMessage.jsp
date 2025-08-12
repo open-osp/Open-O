@@ -262,7 +262,7 @@
                                                     <tr>
                                                         <td class="messengerButtonsA"><a
                                                                 href="${pageContext.request.contextPath}/oscarMessenger/CreateMessage.jsp"
-                                                                styleClass="messengerButtons">
+                                                                class="messengerButtons">
                                                             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.ViewMessage.btnCompose"/>
                                                         </a></td>
                                                     </tr>
@@ -287,7 +287,7 @@
                                                     <tr>
                                                         <td class="messengerButtonsA"><a
                                                                 href="${pageContext.request.contextPath}/oscarMessenger/DisplayMessages.jsp"
-                                                                styleClass="messengerButtons">
+                                                                class="messengerButtons">
                                                             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.ViewMessage.btnInbox"/>
                                                         </a></td>
                                                     </tr>
@@ -301,7 +301,7 @@
                                                 <tr>
                                                     <td class="messengerButtonsA"><a
                                                             href="${pageContext.request.contextPath}/oscarMessenger/DisplayMessages.jsp?boxType=1"
-                                                            styleClass="messengerButtons">
+                                                            class="messengerButtons">
                                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.ViewMessage.btnSent"/>
                                                     </a></td>
                                                 </tr>

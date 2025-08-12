@@ -42,13 +42,10 @@ public class ProEditPhoneNum2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
     public String execute() throws Exception {
         String providerNo = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
         if (providerNo == null)
             return "eject";
-
-        //DynaActionForm frm = (DynaActionForm) form;
 
         UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
         UserProperty prop = propertyDao.getProp(providerNo, "rxPhone");

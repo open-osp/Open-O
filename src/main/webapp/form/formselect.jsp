@@ -26,20 +26,17 @@
 
 
 <%@ page import="java.util.*,oscar.oscarReport.pageUtil.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
 
 <html>
     <head>
-
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnSelectForm"/></title>
-
-
     </head>
 
     <body>
-
     <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnSelectForm"/></h3>
 
     <div class="well">
@@ -110,12 +107,10 @@
             </table>
             </td>
             </tr>
-
             </table>
 
             <input type="hidden" name="forward" id="forward" value="error"/>
         </form>
-
     </div>
 
     <script>
@@ -131,9 +126,6 @@
             });
 
         });
-
-
     </script>
-
     </body>
 </html>

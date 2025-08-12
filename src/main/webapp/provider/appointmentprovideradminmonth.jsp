@@ -646,7 +646,7 @@
                                         param[0] = year + "-" + month + "-" + "1";
                                         param[1] = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "1";
                                         if (selectedSite == null) {
-                                            sds = scheduleDateDao.search_scheduledate_datep(ConversionUtils.fromDateString(year + "-" + month + "-" + "01"), ConversionUtils.fromDateString(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "01"), "A");
+                                            sds = scheduleDateDao.search_scheduledate_datep(ConversionUtils.fromDateString(year + "-" + month + "-" + "01"), ConversionUtils.fromDateString(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "01"), 'A');
                                         } else {
                                             List<String> ps = providerSiteDao.findByProviderNoBySiteName(selectedSite);
                                             sds = scheduleDateDao.search_scheduledate_teamp(ConversionUtils.fromDateString(year + "-" + month + "-" + "01"), ConversionUtils.fromDateString(cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + "01"), 'A', ps);

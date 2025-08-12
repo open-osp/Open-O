@@ -96,7 +96,7 @@
 
 %>
 
-<form method="post" action="../study/ManageStudy.do">
+<form method="post" action="${pageContext.request.contextPath}/study/ManageStudy.do">
     <input type="hidden" name="studyId" value="<%=studyId%>"/>
     <input type="hidden" name="method" value="saveUpdateStudy"/>
 

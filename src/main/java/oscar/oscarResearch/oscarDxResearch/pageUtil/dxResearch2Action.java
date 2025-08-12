@@ -150,7 +150,7 @@ public class dxResearch2Action extends ActionSupport {
         }
 
         if (!valid) {
-            response.sendRedirect("/oscarResearch/oscarDxResearch/dxResearch.jsp");
+            response.sendRedirect(request.getContextPath() + "/oscarResearch/oscarDxResearch/dxResearch.jsp");
             return NONE;
         }
 
@@ -161,11 +161,11 @@ public class dxResearch2Action extends ActionSupport {
 
         StringBuilder actionforward = new StringBuilder();
         if ("success".equals(forwardTo)) {
-            actionforward = new StringBuilder("/oscarResearch/oscarDxResearch/setupDxResearch.do");
+            actionforward = new StringBuilder(request.getContextPath() + "/oscarResearch/oscarDxResearch/setupDxResearch.do");
         } else if ("codeSearch".equals(forwardTo)) {
-            actionforward = new StringBuilder("/oscarResearch/oscarDxResearch/dxcodeSearch.do");
+            actionforward = new StringBuilder(request.getContextPath() + "/oscarResearch/oscarDxResearch/dxcodeSearch.do");
         } else if ("codeList".equals(forwardTo)) {
-            actionforward = new StringBuilder("/oscarResearch/oscarDxResearch/quickCodeList.jsp");
+            actionforward = new StringBuilder(request.getContextPath() + "/oscarResearch/oscarDxResearch/quickCodeList.jsp");
         }
         actionforward.append("?demographicNo=").append(demographicNo);
         actionforward.append("&providerNo=").append(providerNo);

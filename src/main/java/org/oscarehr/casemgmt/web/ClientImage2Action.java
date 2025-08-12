@@ -24,6 +24,9 @@
 package org.oscarehr.casemgmt.web;
 
 import com.opensymphony.xwork2.ActionSupport;
+
+import oscar.OscarProperties;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.oscarehr.casemgmt.model.ClientImage;
@@ -31,6 +34,7 @@ import org.oscarehr.casemgmt.service.ClientImageManager;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -41,55 +45,76 @@ public class ClientImage2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    private File clientImage;
+    private String clientImageFileName;
 
     private static Logger log = MiscUtils.getLogger();
 
     private ClientImageManager clientImageManager = SpringUtils.getBean(ClientImageManager.class);
 
+    // Execute on struts action call
     public String execute() {
         return saveImage();
     }
 
     public String saveImage() {
-
         HttpSession session = request.getSession(true);
-        String id = (String) (session.getAttribute("clientId"));
+        String id = (String) session.getAttribute("clientId");
 
         log.info("client image upload: id=" + id);
 
-        File formFile = this.getClientImage();
-        String type = formFile.getName().substring(formFile.getName().lastIndexOf(".") + 1);
-        if (type != null) type = type.toLowerCase();
+        // Get file extension from original filename
+        String type = null;
+        if (clientImageFileName != null && clientImageFileName.contains(".")) {
+            type = clientImageFileName.substring(clientImageFileName.lastIndexOf('.') + 1).toLowerCase();
+        }
 
         log.info("extension = " + type);
 
+        // Ensure that the upload directory is correcnt and create a new image object that will be saved to the client
         try {
-            byte[] imageData = Files.readAllBytes(formFile.toPath());
+            // Get context of the temp directory, get the file path to the the temp directory
+            ServletContext servletContext = ServletActionContext.getServletContext();
+            File tmpdirAttribute = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
+            String tmpdir = tmpdirAttribute.toString();
 
-            ClientImage clientImage = new ClientImage();
-            clientImage.setDemographic_no(Integer.parseInt(id));
-            clientImage.setImage_data(imageData);
-            clientImage.setImage_type(type);
+            // Set safe directory and client image canonical files
+            File safeDirectory = new File(tmpdir).getCanonicalFile();
+            File resolvedFile = clientImage.getCanonicalFile();
 
-            clientImageManager.saveClientImage(clientImage);
+            // Get safe path and resolved canonical paths
+            String safePath = safeDirectory.getCanonicalPath();
+            String resolvedPath = resolvedFile.getCanonicalPath();
+
+            // Ensure the file is within the safe directory
+            if (!resolvedPath.startsWith(safePath + File.separator)) {
+                throw new IllegalArgumentException("Invalid file path: " + resolvedPath);
+            }
+
+            byte[] imageData = Files.readAllBytes(resolvedFile.toPath());
+
+            ClientImage clientImageObj = new ClientImage();
+            clientImageObj.setDemographic_no(Integer.parseInt(id));
+            clientImageObj.setImage_data(imageData);
+            clientImageObj.setImage_type(type);
+
+            clientImageManager.saveClientImage(clientImageObj);
 
         } catch (Exception e) {
-            log.error("Error", e);
-            //post error to page
+            log.error("Error saving image", e);
+            addActionError("Error saving image.");
+            return ERROR;
         }
 
-        request.setAttribute("success", new Boolean(true));
-
+        request.setAttribute("success", true);
         return SUCCESS;
     }
 
-    private File clientImage;
-
-    public File getClientImage() {
-        return clientImage;
+    public void setClientImage(File clientImage) { 
+        this.clientImage = clientImage; 
     }
 
-    public void setClientImage(File clientImage) {
-        this.clientImage = clientImage;
+    public void setClientImageFileName(String name) { 
+        this.clientImageFileName = name; 
     }
 }

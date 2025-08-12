@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import java.util.List;
 
 @XmlRootElement
-@XmlSeeAlso({DrugTo1.class})
+@XmlSeeAlso(DrugTo1.class)
 public class DrugSearchResponse extends AbstractSearchResponse<DrugTo1> {
 
     private static final long serialVersionUID = 1L;

@@ -28,6 +28,7 @@ package oscar.oscarEncounter.oscarMeasurements.pageUtil;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,9 @@ public class EctAddMeasurementStyleSheet2Action extends ActionSupport {
             // Retrieve the target directory from properties
             String uploadPath = OscarProperties.getInstance().getProperty("oscarMeasurement_css_upload_path");
 
+            Path path = Paths.get(uploadPath);
+            Files.createDirectories(path);
+
             // Ensure the path ends with a slash
             if (!uploadPath.endsWith("/")) {
                 uploadPath += "/";
@@ -108,6 +112,10 @@ public class EctAddMeasurementStyleSheet2Action extends ActionSupport {
 
             // Build the full path for the file
             String destinationPath = uploadPath + fileName;
+
+            if (fileName == null || fileName.trim().isEmpty()) {
+                throw new IllegalArgumentException("fileName cannot be null or empty");
+            }
 
             // Write the file to the destination
             Files.copy(new FileInputStream(file), Paths.get(destinationPath));
@@ -146,7 +154,7 @@ public class EctAddMeasurementStyleSheet2Action extends ActionSupport {
         return fileName;
     }
 
-    public void setFileName(String fileName) {
+    public void setFileFileName(String fileName) {
         this.fileName = fileName;
     }
 }

@@ -84,7 +84,7 @@ public class DisplayImage2Action extends ActionSupport {
         if (fileName.contains("..") || fileName.contains("/") || fileName.contains("\\")) {
             throw new IllegalArgumentException("Invalid filename");
         }
-        String home_dir = OscarProperties.getInstance().getProperty("eform_image");
+        String home_dir = OscarProperties.getInstance().getEformImageDirectory();
 
         File file = null;
         try {
@@ -153,9 +153,9 @@ public class DisplayImage2Action extends ActionSupport {
                 contentType = "image/x-cmu-raster";
             } else if (extension(file.getName()).equalsIgnoreCase("gif")) { // for GIF
                 contentType = "image/gif";
-            } else if (extension(file.getName()).equalsIgnoreCase("js")) { // for GIF
+            } else if (extension(file.getName()).equalsIgnoreCase("js")) { // for JS
                 contentType = "text/javascript";
-            } else if (extension(file.getName()).equalsIgnoreCase("css")) { // for GIF
+            } else if (extension(file.getName()).equalsIgnoreCase("css")) { // for CSS
                 contentType = "text/css";
             } else if (extension(file.getName()).equalsIgnoreCase("rtl") || extension(file.getName()).equalsIgnoreCase("html") || extension(file.getName()).equalsIgnoreCase("htm")) { // for HTML
                 contentType = "text/html";
@@ -184,7 +184,7 @@ public class DisplayImage2Action extends ActionSupport {
     }
 
     public static File getImageFile(String imageFileName) throws Exception {
-        String home_dir = OscarProperties.getInstance().getProperty("eform_image");
+        String home_dir = OscarProperties.getInstance().getEformImageDirectory();
 
         File file = null;
         try {

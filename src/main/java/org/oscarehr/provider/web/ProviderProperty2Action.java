@@ -40,9 +40,11 @@ import oscar.eform.EFormUtil;
 import oscar.log.LogAction;
 import oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * @author rjonasz
@@ -59,20 +61,7 @@ public class ProviderProperty2Action extends ActionSupport {
 
     public String execute() {
         String method = request.getParameter("method");
-        if ("OscarMsgRecvd".equals(method)) {
-            return OscarMsgRecvd();
-        } else if ("remove".equals(method)) {
-            return remove();
-        } else if ("save".equals(method)) {
-            return save();
-        } else if ("viewDefaultSex".equals(method)) {
-            return viewDefaultSex();
-        } else if ("saveDefaultSex".equals(method)) {
-            return saveDefaultSex();
-        } else if ("viewHCType".equals(method)) {
-            return viewHCType();
-        }
-        return view();
+        return methodMap.getOrDefault(method, this::view).get();
     }
 
     public String OscarMsgRecvd() {
@@ -84,54 +73,82 @@ public class ProviderProperty2Action extends ActionSupport {
     }
 
     public String remove() {
-        
-        UserProperty prop = this.getDateProperty();
-        UserProperty prop2 = this.getSingleViewProperty();
+        String provider = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
 
-        this.userPropertyDAO.delete(prop);
-        this.userPropertyDAO.delete(prop2);
+        UserProperty prop = this.userPropertyDAO.getProp(provider, UserProperty.STALE_NOTEDATE);
+        if (prop != null) {
+            this.userPropertyDAO.delete(prop);
+        }
+
+        UserProperty prop2 = this.userPropertyDAO.getProp(provider, UserProperty.STALE_FORMAT);
+        if (prop2 != null) {
+            this.userPropertyDAO.delete(prop2);
+        }
 
         request.setAttribute("status", "success");
-
         return SUCCESS;
     }
 
     public String view() {
-        
         String provider = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
-        UserProperty prop = this.userPropertyDAO.getProp(provider, UserProperty.STALE_NOTEDATE);
+        request.setAttribute("providerNo", provider);
 
+        UserProperty prop = this.userPropertyDAO.getProp(provider, UserProperty.STALE_NOTEDATE);
         if (prop == null) {
             prop = new UserProperty();
             prop.setProviderNo(provider);
             prop.setName(UserProperty.STALE_NOTEDATE);
         }
-        
         this.setDateProperty(prop);
 
         UserProperty prop2 = this.userPropertyDAO.getProp(provider, UserProperty.STALE_FORMAT);
-
         if (prop2 == null) {
             prop2 = new UserProperty();
             prop2.setProviderNo(provider);
             prop2.setName(UserProperty.STALE_FORMAT);
         }
-
         this.setSingleViewProperty(prop2);
+
+        // dropdown menus
+        List<LabelValueBean> staleOptions = new ArrayList<>();
+        staleOptions.add(new LabelValueBean("All", "A"));
+        for (int i = 0; i <= 36; i++) {
+            staleOptions.add(new LabelValueBean(String.valueOf(i), "-" + i));
+        }
+        request.setAttribute("staleDateOptions", staleOptions);
+
+        List<LabelValueBean> viewOptions = new ArrayList<>();
+        viewOptions.add(new LabelValueBean("No", "no"));
+        viewOptions.add(new LabelValueBean("Yes", "yes"));
+        request.setAttribute("viewOptions", viewOptions);
 
         return SUCCESS;
     }
 
 
     public String save() {
+        String provider = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
 
-        UserProperty prop = this.getDateProperty();
+        String staleDateValue = request.getParameter("dateProperty.value");
+        String singleViewValue = request.getParameter("singleViewProperty.value");
 
-        this.userPropertyDAO.saveProp(prop);
+        UserProperty prop = this.userPropertyDAO.getProp(provider, UserProperty.STALE_NOTEDATE);
+        if (prop == null) {
+            prop = new UserProperty();
+            prop.setProviderNo(provider);
+            prop.setName(UserProperty.STALE_NOTEDATE);
+        }
+        prop.setValue(staleDateValue);
+        userPropertyDAO.saveProp(prop);
 
-        UserProperty prop2 = this.getSingleViewProperty();
-
-        this.userPropertyDAO.saveProp(prop2);
+        UserProperty prop2 = this.userPropertyDAO.getProp(provider, UserProperty.STALE_FORMAT);
+        if (prop2 == null) {
+            prop2 = new UserProperty();
+            prop2.setProviderNo(provider);
+            prop2.setName(UserProperty.STALE_FORMAT);
+        }
+        prop2.setValue(singleViewValue);
+        userPropertyDAO.saveProp(prop2);
 
         request.setAttribute("status", "success");
         return SUCCESS;
@@ -167,7 +184,6 @@ public class ProviderProperty2Action extends ActionSupport {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
-
 
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.DEFAULT_SEX);
 
@@ -326,7 +342,6 @@ public class ProviderProperty2Action extends ActionSupport {
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.RX_PAGE_SIZE);
-
 
         if (prop == null) {
             prop = new UserProperty();
@@ -581,25 +596,24 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("method", "saveShowPatientDOB");
 
         this.setRxShowPatientDOBProperty(prop);
-        return "genSho";
+        return "genShowPatientDOB";
     }
 
     public String saveShowPatientDOB() {
+        String checkboxValue = request.getParameter("rxShowPatientDOBProperty.checked");
 
         UserProperty UShowPatientDOB = this.getRxShowPatientDOBProperty();
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        boolean checked = false;
-        if (UShowPatientDOB != null)
-            checked = UShowPatientDOB.isChecked();
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.RX_SHOW_PATIENT_DOB);
         if (prop == null) {
             prop = new UserProperty();
             prop.setName(UserProperty.RX_SHOW_PATIENT_DOB);
             prop.setProviderNo(providerNo);
         }
+        boolean checked = checkboxValue != null;
         String showPatientDOB = "no";
         if (checked)
             showPatientDOB = "yes";
@@ -618,7 +632,7 @@ public class ProviderProperty2Action extends ActionSupport {
         else
             request.setAttribute("providermsgSuccess", "provider.setShowPatientDOB.msgSuccess_unselected"); //=Rx3 is unselected
         request.setAttribute("method", "saveShowPatientDOB");
-        return "genSho";
+        return "genShowPatientDOB";
     }
 
     public String viewUseMyMeds() {
@@ -626,12 +640,19 @@ public class ProviderProperty2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.USE_MYMEDS);
-        if (prop == null) prop = new UserProperty();
+        String propValue = "";
+        if (prop == null) {
+            prop = new UserProperty();
+        } else {
+            propValue = prop.getValue();
+        }
 
-        String propValue = prop.getValue();
-        boolean checked = Boolean.parseBoolean(propValue);
+        boolean checked;
+        if (propValue.equalsIgnoreCase("yes"))
+            checked = true;
+        else
+            checked = false;
 
         prop.setChecked(checked);
         request.setAttribute("useMyMedsProperty", prop);
@@ -648,23 +669,25 @@ public class ProviderProperty2Action extends ActionSupport {
     }
 
     public String saveUseMyMeds() {
+        String checkboxValue = request.getParameter("useMyMedsProperty.checked");
 
         UserProperty UUseMyMeds = this.getUseMyMedsProperty();
-        //UserProperty UUseRx3=(UserProperty)request.getAttribute("rxUseRx3Property");
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        boolean checked = false;
-        if (UUseMyMeds != null)
-            checked = UUseMyMeds.isChecked();
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.USE_MYMEDS);
         if (prop == null) {
             prop = new UserProperty();
             prop.setName(UserProperty.USE_MYMEDS);
             prop.setProviderNo(providerNo);
         }
-        prop.setValue(String.valueOf(checked));
+        boolean checked = checkboxValue != null;
+        String propValue = "no";
+        if (checked)
+            propValue = "yes";
+
+        prop.setValue(propValue);
         this.userPropertyDAO.saveProp(prop);
 
         request.setAttribute("status", "success");
@@ -687,7 +710,6 @@ public class ProviderProperty2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.RX_USE_RX3);
 
         String propValue = "";
@@ -697,7 +719,6 @@ public class ProviderProperty2Action extends ActionSupport {
             propValue = prop.getValue();
         }
 
-        //String [] propertyArray= new String[7];
         boolean checked;
         if (propValue.equalsIgnoreCase("yes"))
             checked = true;
@@ -719,21 +740,20 @@ public class ProviderProperty2Action extends ActionSupport {
     }
 
     public String saveUseRx3() {
+        String checkboxValue = request.getParameter("rxUseRx3Property.checked");
+
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-
         UserProperty UUseRx3 = this.getRxUseRx3Property();
 
-        boolean checked = false;
-        if (UUseRx3 != null)
-            checked = UUseRx3.isChecked();
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.RX_USE_RX3);
         if (prop == null) {
             prop = new UserProperty();
             prop.setName(UserProperty.RX_USE_RX3);
             prop.setProviderNo(providerNo);
         }
+        boolean checked = checkboxValue != null;
         String useRx3 = "no";
         if (checked)
             useRx3 = "yes";
@@ -760,16 +780,14 @@ public class ProviderProperty2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
+        UserProperty quantity = this.userPropertyDAO.getProp(providerNo, "rxDefaultQuantityProperty");
 
-        UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.RX_DEFAULT_QUANTITY);
-
-
-        if (prop == null) {
-            prop = new UserProperty();
+        if (quantity == null) {
+            quantity = new UserProperty();
         }
 
         //request.setAttribute("propert",propertyToSet);
-        request.setAttribute("rxDefaultQuantityProperty", prop);
+        request.setAttribute("quantity", quantity);
         request.setAttribute("providertitle", "provider.setRxDefaultQuantity.title"); //=Set Rx Default Quantity
         request.setAttribute("providermsgPrefs", "provider.setRxDefaultQuantity.msgPrefs"); //=Preferences"); //
         request.setAttribute("providermsgProvider", "provider.setRxDefaultQuantity.msgDefaultQuantity"); //=Rx Default Quantity
@@ -778,7 +796,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgSuccess", "provider.setRxDefaultQuantity.msgSuccess"); //=Rx Default Quantity saved
         request.setAttribute("method", "saveDefaultQuantity");
 
-        this.setRxDefaultQuantityProperty(prop);
+        this.setRxDefaultQuantityProperty(quantity);
 
         return "genRxDefaultQuantity";
     }
@@ -787,22 +805,20 @@ public class ProviderProperty2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-
         UserProperty UDefaultQuantity = this.getRxDefaultQuantityProperty();
-        String rxDefaultQuantity = "";
-        if (UDefaultQuantity != null)
-            rxDefaultQuantity = UDefaultQuantity.getValue();
-        UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.RX_DEFAULT_QUANTITY);
+        String quantity = UDefaultQuantity != null ? UDefaultQuantity.getValue() : "";
+
+        UserProperty prop = this.userPropertyDAO.getProp(providerNo, "rxDefaultQuantityProperty");
         if (prop == null) {
             prop = new UserProperty();
-            prop.setName(UserProperty.RX_DEFAULT_QUANTITY);
+            prop.setName("rxDefaultQuantityProperty");
             prop.setProviderNo(providerNo);
         }
-        prop.setValue(rxDefaultQuantity);
+        prop.setValue(quantity);
         this.userPropertyDAO.saveProp(prop);
 
         request.setAttribute("status", "success");
-        request.setAttribute("rxDefaultQuantityProperty", prop);
+        request.setAttribute("quantity", quantity);
         request.setAttribute("providertitle", "provider.setRxDefaultQuantity.title"); //=Set Rx Default Quantity
         request.setAttribute("providermsgPrefs", "provider.setRxDefaultQuantity.msgPrefs"); //=Preferences"); //
         request.setAttribute("providermsgProvider", "provider.setRxDefaultQuantity.msgDefaultQuantity"); //=Rx Default Quantity
@@ -811,7 +827,6 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgSuccess", "provider.setRxDefaultQuantity.msgSuccess"); //=Rx Default Quantity saved
         request.setAttribute("method", "saveDefaultQuantity");
         return "genRxDefaultQuantity";
-
     }
 
     public String saveMyDrugrefId() {
@@ -839,7 +854,7 @@ public class ProviderProperty2Action extends ActionSupport {
         this.userPropertyDAO.saveProp(prop);
 
         request.setAttribute("status", "success");
-        request.setAttribute("dateProperty", prop);
+        request.setAttribute("drugrefId", prop);
         request.setAttribute("providertitle", "provider.setmyDrugrefId.title"); //=Set myDrugref ID
         request.setAttribute("providermsgPrefs", "provider.setmyDrugrefId.msgPrefs"); //=Preferences"); //
         request.setAttribute("providermsgProvider", "provider.setmyDrugrefId.msgProvider"); //=myDrugref ID
@@ -1102,14 +1117,13 @@ public class ProviderProperty2Action extends ActionSupport {
 
     //WORKLOAD MANAGEMENT SCREEN PROPERTY
     public String viewWorkLoadManagement() {
-
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.WORKLOAD_MANAGEMENT);
+        UserProperty UdrugrefId = this.userPropertyDAO.getProp(providerNo,"dateProperty");
 
-        if (prop == null)
-            prop = new UserProperty();
+        if (UdrugrefId == null)
+            UdrugrefId = new UserProperty();
 
         ArrayList<LabelValueBean> serviceList = new ArrayList<LabelValueBean>();
         CtlBillingServiceDao dao = SpringUtils.getBean(CtlBillingServiceDao.class);
@@ -1119,7 +1133,7 @@ public class ProviderProperty2Action extends ActionSupport {
 
         request.setAttribute("dropOpts", serviceList);
 
-        request.setAttribute("dateProperty", prop);
+        request.setAttribute("UdrugrefId", UdrugrefId);
 
         request.setAttribute("providertitle", "provider.setWorkLoadManagement.title"); //=Set myDrugref ID
         request.setAttribute("providermsgPrefs", "provider.setWorkLoadManagement.msgPrefs"); //=Preferences"); //
@@ -1129,33 +1143,26 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgSuccess", "provider.setWorkLoadManagement.msgSuccess"); //=myDrugref Id saved
         request.setAttribute("method", "saveWorkLoadManagement");
 
-        this.setDateProperty(prop);
+        this.setDateProperty(UdrugrefId);
         return "gen";
     }
-
 
     public String saveWorkLoadManagement() {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        UserProperty UdrugrefId = this.getDateProperty();
-        String drugrefId = "";
+        UserProperty prop = this.getDateProperty();
+        String UdrugrefId = prop != null ? prop.getValue() : "";
+        UserProperty saveProperty = this.userPropertyDAO.getProp(providerNo, "dateProperty");
 
-        if (UdrugrefId != null) {
-            drugrefId = UdrugrefId.getValue();
+        if (saveProperty == null) {
+            saveProperty = new UserProperty();
+            saveProperty.setName("dateProperty");
+            saveProperty.setProviderNo(providerNo);
         }
-
-        UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.WORKLOAD_MANAGEMENT);
-
-        if (prop == null) {
-            prop = new UserProperty();
-            prop.setName(UserProperty.WORKLOAD_MANAGEMENT);
-            prop.setProviderNo(providerNo);
-        }
-        prop.setValue(drugrefId);
-
-        this.userPropertyDAO.saveProp(prop);
+        saveProperty.setValue(UdrugrefId);
+        this.userPropertyDAO.saveProp(saveProperty);
 
         ArrayList<LabelValueBean> serviceList = new ArrayList<LabelValueBean>();
         CtlBillingServiceDao dao = SpringUtils.getBean(CtlBillingServiceDao.class);
@@ -1428,20 +1435,20 @@ public class ProviderProperty2Action extends ActionSupport {
 
 
     public String saveUseCppSingleLine() {
+        String checkboxValue = request.getParameter("cppSingleLineProperty.checked");
+
         UserProperty UUseRx3 = this.getCppSingleLineProperty();
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        boolean checked = false;
-        if (UUseRx3 != null)
-            checked = UUseRx3.isChecked();
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.CPP_SINGLE_LINE);
         if (prop == null) {
             prop = new UserProperty();
             prop.setName(UserProperty.CPP_SINGLE_LINE);
             prop.setProviderNo(providerNo);
         }
+        boolean checked = checkboxValue != null;
         String useRx3 = "no";
         if (checked)
             useRx3 = "yes";
@@ -1501,20 +1508,19 @@ public class ProviderProperty2Action extends ActionSupport {
 
 
     public String saveEDocBrowserInDocumentReport() {
+        String checkboxValue = request.getParameter("eDocBrowserInDocumentReportProperty.checked");
+
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
         UserProperty Uprop = this.geteDocBrowserInDocumentReportProperty();
-
-        boolean checked = false;
-        if (Uprop != null)
-            checked = Uprop.isChecked();
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.EDOC_BROWSER_IN_DOCUMENT_REPORT);
         if (prop == null) {
             prop = new UserProperty();
             prop.setName(UserProperty.EDOC_BROWSER_IN_DOCUMENT_REPORT);
             prop.setProviderNo(providerNo);
         }
+        boolean checked = checkboxValue != null;
         String propValue = "no";
         if (checked)
             propValue = "yes";
@@ -1573,22 +1579,21 @@ public class ProviderProperty2Action extends ActionSupport {
         return "genEDocBrowserInMasterFile";
     }
 
-
     public String saveEDocBrowserInMasterFile() {
+        String checkboxValue = request.getParameter("eDocBrowserInMasterFileProperty.checked");
+
         UserProperty Uprop = this.geteDocBrowserInMasterFileProperty();
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        boolean checked = false;
-        if (Uprop != null)
-            checked = Uprop.isChecked();
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.EDOC_BROWSER_IN_MASTER_FILE);
         if (prop == null) {
             prop = new UserProperty();
             prop.setName(UserProperty.EDOC_BROWSER_IN_MASTER_FILE);
             prop.setProviderNo(providerNo);
         }
+        boolean checked = checkboxValue != null;
         String propValue = "no";
         if (checked)
             propValue = "yes";
@@ -1648,24 +1653,23 @@ public class ProviderProperty2Action extends ActionSupport {
     }
 
     public String saveCommentLab() {
+        String checkboxValue = request.getParameter("labAckCommentProperty.checked");
+
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
         UserProperty Uprop = this.getLabAckCommentProperty();
-
-        boolean checked = false;
-        if (Uprop != null)
-            checked = Uprop.isChecked();
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_ACK_COMMENT);
         if (prop == null) {
             prop = new UserProperty();
             prop.setName(UserProperty.LAB_ACK_COMMENT);
             prop.setProviderNo(providerNo);
         }
+        boolean checked = checkboxValue != null;
         String disableComment = "no";
         if (checked)
             disableComment = "yes";
-
+        
         prop.setValue(disableComment);
         this.userPropertyDAO.saveProp(prop);
 
@@ -1684,7 +1688,6 @@ public class ProviderProperty2Action extends ActionSupport {
         else
             request.setAttribute("providermsgSuccess", "provider.setAckComment.msgSuccess_unselected");
 
-
         return "genAckCommentLab";
     }
 
@@ -1695,7 +1698,7 @@ public class ProviderProperty2Action extends ActionSupport {
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
         UserProperty delegate = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_DELEGATE);
-        UserProperty subject = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_MSG_SUBJECT);
+        UserProperty subject = this.userPropertyDAO.getProp(providerNo, "labRecallMsgSubject");
         UserProperty ticklerAssignee = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_TICKLER_ASSIGNEE);
         UserProperty priority = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_TICKLER_PRIORITY);
 
@@ -1714,16 +1717,11 @@ public class ProviderProperty2Action extends ActionSupport {
             defaultToDelegate = ticklerAssignee.getValue();
         }
 
-        boolean checked;
-        if (defaultToDelegate.equalsIgnoreCase("yes")) {
-            checked = true;
-        } else {
-            checked = false;
-        }
-
         if (priority == null) {
             priority = new UserProperty();
         }
+
+        ticklerAssignee.setChecked("yes".equalsIgnoreCase(ticklerAssignee.getValue()));
 
         ArrayList<LabelValueBean> providerList = new ArrayList<LabelValueBean>();
         providerList.add(new LabelValueBean("Select", "")); //key , value
@@ -1732,14 +1730,11 @@ public class ProviderProperty2Action extends ActionSupport {
         List<Provider> ps = dao.getProviders();
         Collections.sort(ps, new BeanComparator("lastName"));
         try {
-
             for (Provider p : ps) {
                 if (!p.getProviderNo().equals("-1")) {
                     providerList.add(new LabelValueBean(p.getLastName() + ", " + p.getFirstName(), p.getProviderNo()));
                 }
             }
-
-
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error", e);
         }
@@ -1754,11 +1749,8 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("prioritySelect", priorityList);
 
         request.setAttribute("labRecallDelegate", delegate);
-        request.setAttribute("labRecallMsgSubject", subject);
-
-        ticklerAssignee.setChecked(checked);
+        request.setAttribute("subject", subject);
         request.setAttribute("labRecallTicklerAssignee", ticklerAssignee);
-
         request.setAttribute("labRecallTicklerPriority", priority);
 
         request.setAttribute("providertitle", "provider.setLabRecall.title");
@@ -1781,30 +1773,26 @@ public class ProviderProperty2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        UserProperty d = this.getLabRecallDelegate();
         UserProperty s = this.getLabRecallMsgSubject();
-        UserProperty a = this.getLabRecallTicklerAssignee();
-        UserProperty p = this.getLabRecallTicklerPriority();
-
-        String delegate = d != null ? d.getValue() : "";
         String subject = s != null ? s.getValue() : "";
 
-        boolean checked = a != null ? a.isChecked() : false;
+        String delegate = request.getParameter("labRecallDelegate.value"); 
+        String priority = request.getParameter("labRecallTicklerPriority.value");
 
-        String priority = p != null ? p.getValue() : "";
+        boolean assignee = request.getParameter("labRecallTicklerAssignee.checked") != null;
 
         boolean delete = false;
         if (delegate.equals("")) {
             delete = true;
         }
 
+        // Save delegate (dropdown)
         UserProperty dProperty = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_DELEGATE);
         if (dProperty == null) {
             dProperty = new UserProperty();
             dProperty.setProviderNo(providerNo);
             dProperty.setName(UserProperty.LAB_RECALL_DELEGATE);
         }
-
         if (delete) {
             userPropertyDAO.delete(dProperty);
         } else {
@@ -1812,11 +1800,12 @@ public class ProviderProperty2Action extends ActionSupport {
             userPropertyDAO.saveProp(dProperty);
         }
 
-        UserProperty sProperty = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_MSG_SUBJECT);
+        // Save subject text field
+        UserProperty sProperty = this.userPropertyDAO.getProp(providerNo, "labRecallMsgSubject");
         if (sProperty == null) {
             sProperty = new UserProperty();
             sProperty.setProviderNo(providerNo);
-            sProperty.setName(UserProperty.LAB_RECALL_MSG_SUBJECT);
+            sProperty.setName("labRecallMsgSubject");
         }
         if (delete) {
             userPropertyDAO.delete(sProperty);
@@ -1825,6 +1814,7 @@ public class ProviderProperty2Action extends ActionSupport {
             userPropertyDAO.saveProp(sProperty);
         }
 
+        // Save tickler assignee checkbox
         String defaultToDelegate = "no";
         UserProperty aProperty = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_TICKLER_ASSIGNEE);
         if (aProperty == null) {
@@ -1835,14 +1825,11 @@ public class ProviderProperty2Action extends ActionSupport {
         if (delete) {
             userPropertyDAO.delete(aProperty);
         } else {
-            if (checked) {
-                defaultToDelegate = "yes";
-            }
-
-            aProperty.setValue(defaultToDelegate);
+            aProperty.setValue(assignee ? "yes" : "no");
             userPropertyDAO.saveProp(aProperty);
         }
 
+        // Save tickler priority (dropdown)
         UserProperty pProperty = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_RECALL_TICKLER_PRIORITY);
         if (pProperty == null) {
             pProperty = new UserProperty();
@@ -1855,6 +1842,8 @@ public class ProviderProperty2Action extends ActionSupport {
             pProperty.setValue(priority);
             userPropertyDAO.saveProp(pProperty);
         }
+        
+        aProperty.setChecked(assignee);
 
         request.setAttribute("status", "success");
         request.setAttribute("providertitle", "provider.setLabRecall.title");
@@ -1868,7 +1857,6 @@ public class ProviderProperty2Action extends ActionSupport {
             msgSuccess = "provider.setLabRecall.msgDeleted";
         }
         request.setAttribute("providermsgSuccess", msgSuccess);
-
         request.setAttribute("method", "saveLabRecallPrefs");
 
         return "genLabRecallPrefs";
@@ -1884,11 +1872,18 @@ public class ProviderProperty2Action extends ActionSupport {
         if (ticklerTaskAssignee == null) {
             ticklerTaskAssignee = new UserProperty();
             ticklerTaskAssignee.setValue("default");
-            defaultTo = ticklerTaskAssignee.getValue();
-        } else if (ticklerTaskAssignee.getValue().equals("mrp")) {
-            defaultTo = "mrp";
+            defaultTo = "default";
         } else {
-            defaultTo = "provider";
+            String value = ticklerTaskAssignee.getValue();
+            if ("default".equals(value) || "mrp".equals(value)) {
+                defaultTo = value;
+            } else {
+                defaultTo = "provider"; 
+
+                if ("provider".equals(defaultTo)) {
+                    request.setAttribute("selectedProvider", ticklerTaskAssignee.getValue());
+                }
+            }
         }
 
         ArrayList<LabelValueBean> providerList = new ArrayList<LabelValueBean>();
@@ -1898,30 +1893,26 @@ public class ProviderProperty2Action extends ActionSupport {
         List<Provider> ps = dao.getProviders();
         Collections.sort(ps, new BeanComparator("lastName"));
         try {
-
             for (Provider p : ps) {
                 if (!p.getProviderNo().equals("-1")) {
                     providerList.add(new LabelValueBean(p.getLastName() + ", " + p.getFirstName(), p.getProviderNo()));
                 }
             }
-
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error", e);
         }
         request.setAttribute("providerSelect", providerList);
-
         request.setAttribute("providertitle", "provider.ticklerPreference.title");
         request.setAttribute("providermsgPrefs", "provider.ticklerPreference.msgPrefs"); //=Preferences
         request.setAttribute("providerbtnSubmit", "provider.ticklerPreference.btnSubmit"); //=Save
         request.setAttribute("providerbtnCancel", "provider.ticklerPreference.btnCancel"); //=Cancel
         request.setAttribute("method", "saveTicklerTaskAssignee");
-
         request.setAttribute("taskAssigneeSelection", ticklerTaskAssignee);
         this.setTaskAssigneeSelection(ticklerTaskAssignee);
+        this.setTaskAssigneeMRP(ticklerTaskAssignee);
 
         request.setAttribute("providerMsg", "");
-
-        request.setAttribute("taskAssigneeMRP", defaultTo);
+        request.setAttribute("taskAssigneeMRPValue", defaultTo);
 
         UserProperty t = this.getTaskAssigneeMRP();
         t.setValue(defaultTo);
@@ -1929,18 +1920,23 @@ public class ProviderProperty2Action extends ActionSupport {
         return SUCCESS;
     }
 
-
     public String saveTicklerTaskAssignee() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
+        String radioValue = request.getParameter("taskAssigneeMRP.value");
+        String providerValue = request.getParameter("taskAssigneeSelection.value");
+
         UserProperty a = this.getTaskAssigneeSelection();
+        if ("provider".equals(radioValue)) {
+            a.setValue(providerValue); // providerNo
+        } else {
+            a.setValue(radioValue); // default or mrp
+        }
+
         String tickerTaskAssignee = a != null ? a.getValue() : "";
 
-        boolean delete = false;
-        if (tickerTaskAssignee.equals("")) {
-            delete = true;
-        }
+        boolean delete = "".equals(tickerTaskAssignee);
 
         UserProperty property = this.userPropertyDAO.getProp(providerNo, UserProperty.TICKLER_TASK_ASSIGNEE);
         if (property == null) {
@@ -1965,22 +1961,16 @@ public class ProviderProperty2Action extends ActionSupport {
             return "complete";
         }
 
-
         request.setAttribute("status", "success");
-
         request.setAttribute("providertitle", "provider.ticklerPreference.title");
         request.setAttribute("providermsgPrefs", "provider.ticklerPreference.msgPrefs"); //=Preferences
         request.setAttribute("providerbtnSubmit", "provider.ticklerPreference.btnSubmit"); //=Save
         request.setAttribute("providerbtnCancel", "provider.ticklerPreference.btnCancel"); //=Cancel
-
         request.setAttribute("providerbtnClose", "provider.ticklerPreference.providerbtnClose"); //=Close Window
-
         request.setAttribute("providerMsg", "provider.ticklerPreference.savedMsg");
-
         request.setAttribute("method", "saveTicklerTaskAssignee");
 
         return "complete";
-
     }
 
     public String viewEncounterWindowSize() {
@@ -2026,6 +2016,7 @@ public class ProviderProperty2Action extends ActionSupport {
     }
 
     public String saveEncounterWindowSize() {
+        String checkboxValue = request.getParameter("encounterWindowMaximize.checked");
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
@@ -2036,7 +2027,6 @@ public class ProviderProperty2Action extends ActionSupport {
 
         String width = w != null ? w.getValue() : "";
         String height = h != null ? h.getValue() : "";
-        boolean maximize = m != null ? m.isChecked() : false;
 
         UserProperty wProperty = this.userPropertyDAO.getProp(providerNo, "encounterWindowWidth");
         if (wProperty == null) {
@@ -2062,7 +2052,11 @@ public class ProviderProperty2Action extends ActionSupport {
             mProperty.setProviderNo(providerNo);
             mProperty.setName("encounterWindowMaximize");
         }
-        mProperty.setValue(maximize ? "yes" : "no");
+        boolean checked = checkboxValue != null;
+        String maximizeSetting = "no";
+        if (checked)
+            maximizeSetting = "yes";
+        mProperty.setValue(maximizeSetting);
         userPropertyDAO.saveProp(mProperty);
 
         request.setAttribute("status", "success");
@@ -2088,9 +2082,7 @@ public class ProviderProperty2Action extends ActionSupport {
             size = new UserProperty();
         }
 
-
         request.setAttribute("size", size);
-
 
         request.setAttribute("providertitle", "provider.quickChartSize.title"); //=Set myDrugref ID
         request.setAttribute("providermsgPrefs", "provider.quickChartSize.msgPrefs"); //=Preferences"); //
@@ -2118,11 +2110,10 @@ public class ProviderProperty2Action extends ActionSupport {
         if (wProperty == null) {
             wProperty = new UserProperty();
             wProperty.setProviderNo(providerNo);
-            wProperty.setName("quickChartsize");
+            wProperty.setName("quickChartSize");
         }
         wProperty.setValue(size);
         userPropertyDAO.saveProp(wProperty);
-
 
         request.setAttribute("status", "success");
         request.setAttribute("providertitle", "provider.quickChartSize.title"); //=Set myDrugref ID
@@ -2204,14 +2195,14 @@ public class ProviderProperty2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        UserProperty length = this.userPropertyDAO.getProp(providerNo, UserProperty.PATIENT_NAME_LENGTH);
+        UserProperty length = this.userPropertyDAO.getProp(providerNo, "patientNameLength");
 
         if (length == null) {
             length = new UserProperty();
         }
 
 
-        request.setAttribute("patientnameLength", length);
+        request.setAttribute("length", length);
 
 
         request.setAttribute("providertitle", "provider.patientNameLength.title");
@@ -2235,11 +2226,11 @@ public class ProviderProperty2Action extends ActionSupport {
 
         String length = s != null ? s.getValue() : "";
 
-        UserProperty wProperty = this.userPropertyDAO.getProp(providerNo, UserProperty.PATIENT_NAME_LENGTH);
+        UserProperty wProperty = this.userPropertyDAO.getProp(providerNo,"patientNameLength");
         if (wProperty == null) {
             wProperty = new UserProperty();
             wProperty.setProviderNo(providerNo);
-            wProperty.setName(UserProperty.PATIENT_NAME_LENGTH);
+            wProperty.setName("patientNameLength");
         }
         wProperty.setValue(length);
         userPropertyDAO.saveProp(wProperty);
@@ -2258,13 +2249,12 @@ public class ProviderProperty2Action extends ActionSupport {
     }
 
     public String viewDisplayDocumentAs() {
-
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
-        UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.DISPLAY_DOCUMENT_AS);
+        UserProperty fmt = this.userPropertyDAO.getProp(providerNo, UserProperty.DISPLAY_DOCUMENT_AS);
 
-        if (prop == null) {
-            prop = new UserProperty();
+        if (fmt == null) {
+            fmt = new UserProperty();
         }
 
         ArrayList<LabelValueBean> serviceList = new ArrayList<LabelValueBean>();
@@ -2273,7 +2263,7 @@ public class ProviderProperty2Action extends ActionSupport {
 
         request.setAttribute("dropOpts", serviceList);
 
-        request.setAttribute("displayDocumentAsProperty", prop);
+        request.setAttribute("fmt", fmt);
 
         request.setAttribute("providertitle", "provider.displayDocumentAs.title");
         request.setAttribute("providermsgPrefs", "provider.displayDocumentAs.msgPrefs");
@@ -2283,12 +2273,11 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgSuccess", "provider.displayDocumentAs.msgSuccess");
         request.setAttribute("method", "saveDisplayDocumentAs");
 
-        this.setDisplayDocumentAsProperty(prop);
+        this.setDisplayDocumentAsProperty(fmt);
         return "genDisplayDocumentAs";
     }
 
     public String saveDisplayDocumentAs() {
-
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
@@ -2316,7 +2305,6 @@ public class ProviderProperty2Action extends ActionSupport {
 
         return "genDisplayDocumentAs";
     }
-
 
     public String viewCobalt() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -2353,19 +2341,19 @@ public class ProviderProperty2Action extends ActionSupport {
 
 
     public String saveCobalt() {
+        String checkboxValue = request.getParameter("cobaltProperty.checked");
+
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
         UserProperty Uprop = this.getCobaltProperty();
 
-        boolean checked = false;
-        if (Uprop != null)
-            checked = Uprop.isChecked();
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.COBALT);
         if (prop == null) {
             prop = new UserProperty();
             prop.setName(UserProperty.COBALT);
             prop.setProviderNo(providerNo);
         }
+        boolean checked = checkboxValue != null;
         String propValue = "no";
         if (checked)
             propValue = "yes";
@@ -2470,7 +2458,7 @@ public class ProviderProperty2Action extends ActionSupport {
         }
 
         boolean checked;
-        if (propValue.equals("true"))
+        if (propValue.equals("yes"))
             checked = true;
         else
             checked = false;
@@ -2489,21 +2477,21 @@ public class ProviderProperty2Action extends ActionSupport {
     }
 
     public String saveDashboardPrefs() {
+        String checkboxValue = request.getParameter("dashboardShareProperty.checked");
+
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
         UserProperty Uprop = this.getDashboardShareProperty();
 
-        boolean checked = false;
-        if (Uprop != null)
-            checked = Uprop.isChecked();
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.DASHBOARD_SHARE);
         if (prop == null) {
             prop = new UserProperty();
             prop.setName(UserProperty.DASHBOARD_SHARE);
             prop.setProviderNo(providerNo);
         }
-        String propValue = "false";
-        if (checked) propValue = "true";
+        boolean checked = checkboxValue != null;
+        String propValue = "no";
+        if (checked) propValue = "yes";
 
         prop.setValue(propValue);
         this.userPropertyDAO.saveProp(prop);
@@ -2523,12 +2511,11 @@ public class ProviderProperty2Action extends ActionSupport {
     }
 
     public String viewAppointmentCardPrefs() {
-
         String provider = (String) request.getSession().getAttribute("user");
 
-        UserProperty name = this.userPropertyDAO.getProp(provider, "APPT_CARD_NAME");
-        UserProperty phone = this.userPropertyDAO.getProp(provider, "APPT_CARD_PHONE");
-        UserProperty fax = this.userPropertyDAO.getProp(provider, "APPT_CARD_FAX");
+        UserProperty name = this.userPropertyDAO.getProp(provider, "appointmentCardName");
+        UserProperty phone = this.userPropertyDAO.getProp(provider, "appointmentCardPhone");
+        UserProperty fax = this.userPropertyDAO.getProp(provider, "appointmentCardFax");
 
         if (name == null) {
             name = new UserProperty();
@@ -2540,10 +2527,9 @@ public class ProviderProperty2Action extends ActionSupport {
             fax = new UserProperty();
         }
 
-        request.setAttribute("appointmentCardName", name);
-        request.setAttribute("appointmentCardPhone", phone);
-        request.setAttribute("appointmentCardFax", fax);
-
+        request.setAttribute("name", name);
+        request.setAttribute("phone", phone);
+        request.setAttribute("fax", fax);
 
         request.setAttribute("providertitle", "provider.appointmentCardPrefs.title"); //=Set myDrugref ID
         request.setAttribute("providermsgPrefs", "provider.appointmentCardPrefs.msgPrefs"); //=Preferences"); //
@@ -2561,7 +2547,6 @@ public class ProviderProperty2Action extends ActionSupport {
     }
 
     public String saveAppointmentCardPrefs() {
-
         UserProperty n = this.getAppointmentCardName();
         UserProperty p = this.getAppointmentCardPhone();
         UserProperty f = this.getAppointmentCardFax();
@@ -2572,34 +2557,33 @@ public class ProviderProperty2Action extends ActionSupport {
 
         String provider = (String) request.getSession().getAttribute("user");
 
-        UserProperty wProperty = this.userPropertyDAO.getProp(provider, "APPT_CARD_NAME");
+        UserProperty wProperty = this.userPropertyDAO.getProp(provider, "appointmentCardName");
         if (wProperty == null) {
             wProperty = new UserProperty();
             wProperty.setProviderNo(provider);
-            wProperty.setName("APPT_CARD_NAME");
+            wProperty.setName("appointmentCardName");
         }
         wProperty.setValue(name);
 
         userPropertyDAO.saveProp(wProperty);
 
-        UserProperty hProperty = this.userPropertyDAO.getProp(provider, "APPT_CARD_PHONE");
+        UserProperty hProperty = this.userPropertyDAO.getProp(provider, "appointmentCardPhone");
         if (hProperty == null) {
             hProperty = new UserProperty();
             hProperty.setProviderNo(provider);
-            hProperty.setName("APPT_CARD_PHONE");
+            hProperty.setName("appointmentCardPhone");
         }
         hProperty.setValue(phone);
         userPropertyDAO.saveProp(hProperty);
 
-        UserProperty mProperty = this.userPropertyDAO.getProp(provider, "APPT_CARD_FAX");
+        UserProperty mProperty = this.userPropertyDAO.getProp(provider, "appointmentCardFax");
         if (mProperty == null) {
             mProperty = new UserProperty();
             mProperty.setProviderNo(provider);
-            mProperty.setName("APPT_CARD_FAX");
+            mProperty.setName("appointmentCardFax");
         }
         mProperty.setValue(fax);
         userPropertyDAO.saveProp(mProperty);
-
 
         request.setAttribute("status", "success");
         request.setAttribute("providertitle", "provider.appointmentCardPrefs.title"); //=Set myDrugref ID
@@ -2645,22 +2629,21 @@ public class ProviderProperty2Action extends ActionSupport {
     }
 
     public String saveBornPrefs() {
+        String checkboxValue = request.getParameter("bornPromptsProperty.checked");
+
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
         UserProperty Uprop = this.getBornPromptsProperty();
 
-        boolean checked = false;
-        if (Uprop != null)
-            checked = Uprop.isChecked();
         UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.DISABLE_BORN_PROMPTS);
         if (prop == null) {
             prop = new UserProperty();
             prop.setName(UserProperty.DISABLE_BORN_PROMPTS);
             prop.setProviderNo(providerNo);
         }
+        boolean checked = checkboxValue != null;
         String propValue = "N";
         if (checked) propValue = "Y";
-
         prop.setValue(propValue);
         this.userPropertyDAO.saveProp(prop);
 
@@ -2772,8 +2755,14 @@ public class ProviderProperty2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        UserProperty prop = loadProperty(providerNo, UserProperty.CLINICALCONNECT_DISABLE_CLOSE_WINDOW);
-        UserProperty prop2 = loadProperty(providerNo, UserProperty.CLINICALCONNECT_DISABLE_LOGOUT_WARNING);
+        UserProperty prop = loadProperty(providerNo, "clinicalConnectDisableCloseWindow");
+        UserProperty prop2 = loadProperty(providerNo, "clinicalConnectDisableLogoutWarning");
+
+        if (prop == null) prop = new UserProperty();
+        if (prop2 == null) prop2 = new UserProperty();
+
+        prop.setChecked("yes".equals(prop.getValue()));
+        prop2.setChecked("yes".equals(prop2.getValue()));
 
         request.setAttribute("clinicalConnectDisableCloseWindow", prop);
         request.setAttribute("clinicalConnectDisableLogoutWarning", prop2);
@@ -2792,14 +2781,43 @@ public class ProviderProperty2Action extends ActionSupport {
 
 
     public String saveClinicalConnectPrefs() {
+        String checkboxValue1 = request.getParameter("clinicalConnectDisableCloseWindow.checked");
+        String checkboxValue2 = request.getParameter("clinicalConnectDisableLogoutWarning.checked");
+
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        UserProperty prop = saveProperty(providerNo, getClinicalConnectDisableCloseWindow(), UserProperty.CLINICALCONNECT_DISABLE_CLOSE_WINDOW);
-        UserProperty prop2 = saveProperty(providerNo, getClinicalConnectDisableLogoutWarning(), UserProperty.CLINICALCONNECT_DISABLE_LOGOUT_WARNING);
+        boolean checked1 = checkboxValue1 != null;
+        boolean checked2 = checkboxValue2 != null;
 
-        LogAction.addLog(LoggedInInfo.getLoggedInInfoFromSession(request), "ClinicalConnectPreferences", "clinicalConnectDisableCloseWindow", "", null, prop.getValue());
-        LogAction.addLog(LoggedInInfo.getLoggedInInfoFromSession(request), "ClinicalConnectPreferences", "clinicalConnectDisableLogoutWarning", "", null, prop.getValue());
+        String value1 = checked1 ? "yes" : "no";
+        String value2 = checked2 ? "yes" : "no";
+
+        // Disable Close Window setting
+        UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.CLINICALCONNECT_DISABLE_CLOSE_WINDOW);
+        if (prop == null) {
+            prop = new UserProperty();
+            prop.setProviderNo(providerNo);
+            prop.setName(UserProperty.CLINICALCONNECT_DISABLE_CLOSE_WINDOW);
+        }
+        prop.setValue(value1);
+        this.userPropertyDAO.saveProp(prop);
+
+        // Disable Logout Warning setting
+        UserProperty prop2 = this.userPropertyDAO.getProp(providerNo, UserProperty.CLINICALCONNECT_DISABLE_LOGOUT_WARNING);
+        if (prop2 == null) {
+            prop2 = new UserProperty();
+            prop2.setProviderNo(providerNo);
+            prop2.setName(UserProperty.CLINICALCONNECT_DISABLE_LOGOUT_WARNING);
+        }
+        prop2.setValue(value2);
+        this.userPropertyDAO.saveProp(prop2);
+
+        LogAction.addLog(loggedInInfo, "ClinicalConnectPreferences", "clinicalConnectDisableCloseWindow", "", null, value1);
+        LogAction.addLog(loggedInInfo, "ClinicalConnectPreferences", "clinicalConnectDisableLogoutWarning", "", null, value2);
+
+        prop.setChecked(checked1);
+        prop2.setChecked(checked2);
 
         request.setAttribute("status", "success");
         request.setAttribute("clinicalConnectDisableCloseWindow", prop);
@@ -2820,9 +2838,9 @@ public class ProviderProperty2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        UserProperty prop = loadProperty(providerNo, UserProperty.LAB_MACRO_JSON);
+        UserProperty prefs = loadProperty(providerNo, "labMacroJSON");
 
-        request.setAttribute("labMacroJSON", prop);
+        request.setAttribute("prefs", prefs);
 
         request.setAttribute("providertitle", "provider.labMacroPrefs.title");
         request.setAttribute("providermsgPrefs", "provider.labMacroPrefs.msgPrefs"); //=Preferences
@@ -2830,7 +2848,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providerbtnCancel", "provider.labMacroPrefs.btnCancel"); //=Cancel
         request.setAttribute("method", "saveLabMacroPrefs");
 
-        this.setLabMacroJSON(prop);
+        this.setLabMacroJSON(prefs);
 
         return "genLabMacroPrefs";
     }
@@ -2842,30 +2860,97 @@ public class ProviderProperty2Action extends ActionSupport {
 
         UserProperty s = this.getLabMacroJSON();
 
-        String length = s != null ? s.getValue() : "";
+        String prefs = s != null ? s.getValue() : "";
 
-        UserProperty wProperty = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_MACRO_JSON);
+        UserProperty wProperty = this.userPropertyDAO.getProp(providerNo, "labMacroJSON");
         if (wProperty == null) {
             wProperty = new UserProperty();
             wProperty.setProviderNo(providerNo);
-            wProperty.setName(UserProperty.LAB_MACRO_JSON);
+            wProperty.setName("labMacroJSON");
         }
-        wProperty.setValue(length);
+        wProperty.setValue(prefs);
         userPropertyDAO.saveProp(wProperty);
 
         LogAction.addLog(LoggedInInfo.getLoggedInInfoFromSession(request), "LabMacroPreferences", "labMacroJSON", "", null, wProperty.getValue());
 
         request.setAttribute("status", "success");
-        request.setAttribute("labMacroJSON", wProperty);
-
+        // request.setAttribute("labMacroJSON", wProperty);
         request.setAttribute("providertitle", "provider.labMacroPrefs.title");
         request.setAttribute("providermsgPrefs", "provider.labMacroPrefs.msgPrefs"); //=Preferences
         request.setAttribute("providerbtnClose", "provider.labMacroPrefs.btnClose"); //=Close
         request.setAttribute("providermsgSuccess", "provider.labMacroPrefs.msgSuccess");
-
         request.setAttribute("method", "saveLabMacroPrefs");
 
         return "genLabMacroPrefs";
+    }
+
+    private static final Map<String, Supplier<String>> methodMap = new HashMap<>();
+
+    @PostConstruct
+    public void init() {
+        methodMap.put("OscarMsgRecvd", this::OscarMsgRecvd);
+        methodMap.put("remove", this::remove);
+        methodMap.put("save", this::save);
+        methodMap.put("viewDefaultSex", this::viewDefaultSex);
+        methodMap.put("saveDefaultSex", this::saveDefaultSex);
+        methodMap.put("viewRxPageSize", this::viewRxPageSize);
+        methodMap.put("saveRxPageSize", this::saveRxPageSize);
+        methodMap.put("viewUseRx3", this::viewUseRx3);
+        methodMap.put("saveUseRx3", this::saveUseRx3);
+        methodMap.put("viewCppSingleLine", this::viewCppSingleLine);
+        methodMap.put("saveUseCppSingleLine", this::saveUseCppSingleLine);
+        methodMap.put("viewShowPatientDOB", this::viewShowPatientDOB);
+        methodMap.put("saveShowPatientDOB", this::saveShowPatientDOB);
+        methodMap.put("viewDefaultQuantity", this::viewDefaultQuantity);
+        methodMap.put("saveDefaultQuantity", this::saveDefaultQuantity);
+        methodMap.put("viewMyDrugrefId", this::viewMyDrugrefId);
+        methodMap.put("saveMyDrugrefId", this::saveMyDrugrefId);
+        methodMap.put("viewConsultationRequestCuffOffDate", this::viewConsultationRequestCuffOffDate);
+        methodMap.put("saveConsultationRequestCuffOffDate", this::saveConsultationRequestCuffOffDate);
+        methodMap.put("viewConsultationRequestTeamWarning", this::viewConsultationRequestTeamWarning);
+        methodMap.put("saveConsultationRequestTeamWarning", this::saveConsultationRequestTeamWarning);
+        methodMap.put("viewWorkLoadManagement", this::viewWorkLoadManagement);
+        methodMap.put("saveWorkLoadManagement", this::saveWorkLoadManagement);
+        methodMap.put("viewConsultPasteFmt", this::viewConsultPasteFmt);
+        methodMap.put("saveConsultPasteFmt", this::saveConsultPasteFmt);
+        methodMap.put("viewFavouriteEformGroup", this::viewFavouriteEformGroup);
+        methodMap.put("saveFavouriteEformGroup", this::saveFavouriteEformGroup);
+        methodMap.put("viewHCType", this::viewHCType);
+        methodMap.put("saveHCType", this::saveHCType);
+        methodMap.put("viewUseMyMeds", this::viewUseMyMeds);
+        methodMap.put("saveUseMyMeds", this::saveUseMyMeds);
+        methodMap.put("viewCommentLab", this::viewCommentLab);
+        methodMap.put("saveCommentLab", this::saveCommentLab);
+        methodMap.put("viewLabRecall", this::viewLabRecall);
+        methodMap.put("saveLabRecallPrefs", this::saveLabRecallPrefs);
+        methodMap.put("viewEncounterWindowSize", this::viewEncounterWindowSize);
+        methodMap.put("saveEncounterWindowSize", this::saveEncounterWindowSize);
+        methodMap.put("viewQuickChartSize", this::viewQuickChartSize);
+        methodMap.put("saveQuickChartSize", this::saveQuickChartSize);
+        methodMap.put("viewEDocBrowserInDocumentReport", this::viewEDocBrowserInDocumentReport);
+        methodMap.put("saveEDocBrowserInDocumentReport", this::saveEDocBrowserInDocumentReport);
+        methodMap.put("viewEDocBrowserInMasterFile", this::viewEDocBrowserInMasterFile);
+        methodMap.put("saveEDocBrowserInMasterFile", this::saveEDocBrowserInMasterFile);
+        methodMap.put("viewPatientNameLength", this::viewPatientNameLength);
+        methodMap.put("savePatientNameLength", this::savePatientNameLength);
+        methodMap.put("viewDisplayDocumentAs", this::viewDisplayDocumentAs);
+        methodMap.put("saveDisplayDocumentAs", this::saveDisplayDocumentAs);
+        methodMap.put("viewCobalt", this::viewCobalt);
+        methodMap.put("saveCobalt", this::saveCobalt);
+        methodMap.put("viewBornPrefs", this::viewBornPrefs);
+        methodMap.put("saveBornPrefs", this::saveBornPrefs);
+        methodMap.put("viewAppointmentCardPrefs", this::viewAppointmentCardPrefs);
+        methodMap.put("saveAppointmentCardPrefs", this::saveAppointmentCardPrefs);
+        methodMap.put("viewDashboardPrefs", this::viewDashboardPrefs);
+        methodMap.put("saveDashboardPrefs", this::saveDashboardPrefs);
+        methodMap.put("viewPreventionPrefs", this::viewPreventionPrefs);
+        methodMap.put("savePreventionPrefs", this::savePreventionPrefs);
+        methodMap.put("viewClinicalConnectPrefs", this::viewClinicalConnectPrefs);
+        methodMap.put("saveClinicalConnectPrefs", this::saveClinicalConnectPrefs);
+        methodMap.put("viewLabMacroPrefs", this::viewLabMacroPrefs);
+        methodMap.put("saveLabMacroPrefs", this::saveLabMacroPrefs);
+        methodMap.put("viewTicklerTaskAssignee", this::viewTicklerTaskAssignee);
+        methodMap.put("saveTicklerTaskAssignee", this::saveTicklerTaskAssignee);
     }
 
     private UserProperty dateProperty;

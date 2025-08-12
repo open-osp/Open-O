@@ -31,6 +31,7 @@ import java.util.Hashtable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.oscarehr.documentManager.EDocUtil;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
@@ -63,18 +64,27 @@ public class ForwardDemographicTickler2Action extends ActionSupport {
         }
 
         String demoNo = request.getParameter("demographic_no");
-        if (demoNo != null) {
-            Hashtable h = DemographicNameAgeString.getInstance().getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo);
-            request.setAttribute("demographic_no", demoNo);
-            request.setAttribute("demoName", "" + h.get("lastName") + ", " + h.get("firstName"));
+        String providerNo = request.getParameter("providerNo");
+        
+        // Ensure that both demographic number of patient and provier number are both not null
+        if (demoNo != null && providerNo != null) {
+            // If demographic number does not equal to provider number (only for patient tickler), get the patient name
+            // Else get the provider name (only for doctor tickler)
+            if (!demoNo.equals(providerNo)) {
+                Hashtable h = DemographicNameAgeString.getInstance().getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo);
+                request.setAttribute("demographic_no", demoNo);
+                request.setAttribute("demoName", "" + h.get("lastName") + ", " + h.get("firstName"));
+            } else {
+                String providerName = EDocUtil.getProviderName(providerNo);
+                request.setAttribute("demographic_no", providerNo);
+                request.setAttribute("demoName", providerName);
+            }
 
             String docType = request.getParameter("docType");
             String docId = request.getParameter("docId");
 
             request.setAttribute("docType", docType);
             request.setAttribute("docId", docId);
-
-
         }
         return SUCCESS;
     }

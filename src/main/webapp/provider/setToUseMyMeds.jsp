@@ -114,7 +114,7 @@
                 <%if (request.getAttribute("status") == null) {%> <%=bundle.getString(providermsgEdit)%>
                 <form action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
                     <input type="hidden" name="method" value="<c:out value="${method}"/>">
-                    <input type="checkbox" name="useMyMedsProperty.checked" value="true" />Use MyMeds
+                    <input type="checkbox" name="useMyMedsProperty.checked" <c:if test="${useMyMedsProperty.checked}">checked</c:if> />Use MyMeds
                     <br/>
                     <input type="submit" name="btnApply" value="Apply" />
                 </form> <%} else {%> <%=bundle.getString(providermsgSuccess)%> <br>

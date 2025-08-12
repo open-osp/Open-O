@@ -131,12 +131,15 @@
             }
 
 
+            // Sets the text area to the currently select favourite query, or to an empty string
             function write2TextArea() {
-                if (document.forms[0].selectedRecentSearch.options[document.forms[0].selectedRecentSearch.selectedIndex].value == 'Recent Search')
-                    document.forms[0].sql.value = '';
-                else {
-                    var selectedQuery = document.forms[0].selectedRecentSearch.options[document.forms[0].selectedRecentSearch.selectedIndex].value;
-                    document.forms[0].sql.value = selectedQuery;
+                const form = document.forms[0];
+                const select = form.selectedRecentSearch;
+                const selectedValue = select.options[select.selectedIndex].value;
+                if (selectedValue === 'Recent Search') {
+                    form.sql.value = '';
+                } else {
+                    form.sql.value = selectedValue;
                 }
             }
         </script>
@@ -203,7 +206,7 @@
                                          style="width:660">
                             <option value="My favorites" disabled="true"/>
                             <c:forEach var="favorite" items="${favorites}">
-                                <option value="${favorite.queryName}">
+                                <option value="${favorite.query}">
                                         ${favorite.query}
                                 </option>
                             </c:forEach>

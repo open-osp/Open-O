@@ -24,13 +24,18 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <log4j2.version>2.24.1</log4j2.version>
-        <slf4j.version>1.7.32</slf4j.version>
+        <!-- Log4j Version -->
+        <log4j2.version>2.25.1</log4j2.version>
+        <!-- Slf4j Version -->
+        <slf4j.version>2.0.17</slf4j.version>
+        <!-- Hapi Fhir Version -->
         <hapifhir.version>5.4.0</hapifhir.version>
-        <struts.version>1.3.11</struts.version>
+        <!-- Apache CXF Version -->
+        <cxf.version>3.5.10</cxf.version>
     </properties>
 
     <repositories>
+        <!-- local folder including manually installed dependencies -->
         <repository>
             <id>local_repo</id>
             <url>file://${basedir}/local_repo</url>
@@ -49,6 +54,7 @@
     </repositories>
 
     <pluginRepositories>
+        <!-- local folder including manually installed dependencies -->
         <pluginRepository>
             <id>local_repo</id>
             <url>file://${basedir}/local_repo</url>
@@ -57,6 +63,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
@@ -66,6 +73,22 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <reporting>
+        <!-- Used for site.xml reports -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.9.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>3.6.0</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <dependencies>
         <!-- For Jasper Reports and backwards compatibility -->
@@ -107,7 +130,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.10.0</version>
+            <version>1.13.1</version>
         </dependency>
 
         <!--Log4j-2 libraries-->
@@ -137,16 +160,11 @@
             <version>${slf4j.version}</version>
         </dependency>
 
-        <!-- commons -->
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
-        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>1.3.1</version>
+            <version>1.9.0</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -173,13 +191,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.7</version>
-        </dependency>
-        <!-- commons-betwixt ... what is this for? -->
-        <dependency>
-            <groupId>commons-betwixt</groupId>
-            <artifactId>commons-betwixt</artifactId>
-            <version>0.7</version>
+            <version>1.18.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -221,22 +233,7 @@
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v26</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-structures-v25</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v23</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-structures-v22</artifactId>
             <version>1.0.1</version>
         </dependency>
         <dependency>
@@ -264,7 +261,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>5.3.39</version>
+            <version>6.2.9</version>
         </dependency>
         <!-- throws an compilation error when removed/commented -->
         <dependency>
@@ -331,11 +328,11 @@
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
         </dependency>
-        <!-- throws a 404 error when removed/uncommented -->
+        <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>9.3.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
         <dependency>
@@ -357,39 +354,10 @@
             <artifactId>pdfbox</artifactId>
             <version>2.0.27</version>
         </dependency>
-        <!-- throws an compilation error when removed/commented -->
         <dependency>
-            <groupId>com.twelvemonkeys.imageio</groupId>
-            <artifactId>imageio-jpeg</artifactId>
-            <version>3.7.1</version>
-        </dependency>
-
-        <!-- struts2 coming soon...-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.apache.struts</groupId>-->
-        <!--            <artifactId>struts2-core</artifactId>-->
-        <!--            <version>2.5.33</version>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.apache.struts</groupId>-->
-        <!--            <artifactId>struts2-spring-plugin</artifactId>-->
-        <!--            <version>2.5.33</version> -->
-        <!--        </dependency>-->
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc-struts</artifactId>
-            <version>2.5.6.SEC03</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-web</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.twelvemonkeys.common</groupId>
+            <artifactId>common-lang</artifactId>
+            <version>3.12.0</version>
         </dependency>
 
         <dependency>
@@ -499,25 +467,29 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        
+        <!-- Jackson dependencies for JSON processing -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.12.7.2</version>
+            <version>2.19.2</version>
         </dependency>
+
+        <!-- barbecue: can be found in the local_repo folder -->
         <dependency>
             <groupId>net.sourceforge.barbecue</groupId>
             <artifactId>barbecue</artifactId>
             <version>1.0.6b</version>
         </dependency>
 
-        <!-- caisi integrator -->
+        <!-- caisi integrator: can be found in the local_repo folder -->
         <dependency>
             <groupId>org.oscarehr.caisi_integrator</groupId>
             <artifactId>caisi_integrator_client_stubs</artifactId>
             <version>1.1</version>
         </dependency>
 
-        <!-- macplus -->
+        <!-- macplus: can be found in the local_repo folder -->
         <!-- Detected as "Unused dependency" but don't remove it, it's using in jsp -->
         <dependency>
             <groupId>ca.mcmaster.plus</groupId>
@@ -525,7 +497,7 @@
             <version>SNAPSHOT</version>
         </dependency>
 
-        <!-- indivo -->
+        <!-- indivo: can be found in the local_repo folder -->
         <dependency>
             <groupId>org.indivo</groupId>
             <artifactId>indivo-core</artifactId>
@@ -542,59 +514,59 @@
             <version>3.1-SNAPSHOT</version>
         </dependency>
 
-        <!-- jcharts -->
+        <!-- jcharts: can be found in the local_repo folder -->
         <dependency>
             <groupId>net.sf.jcharts</groupId>
             <artifactId>krysalis-jCharts</artifactId>
             <version>0.7.5</version>
         </dependency>
         
-        <!-- cds -->
+        <!-- cds: can be found in the local_repo folder -->
         <dependency>
             <groupId>cds</groupId>
             <artifactId>cds</artifactId>
             <version>5.2.3</version>
         </dependency>
 
-        <!-- cds cihi phc vrs -->
+        <!-- cds cihi phc vrs: can be found in the local_repo folder -->
         <dependency>
             <groupId>cds</groupId>
             <artifactId>cds_cihi_phcvrs</artifactId>
             <version>1.0</version>
         </dependency>
-        <!-- cds cihi -->
+        <!-- cds cihi: can be found in the local_repo folder -->
         <dependency>
             <groupId>cds</groupId>
             <artifactId>cds_cihi</artifactId>
             <version>1.0</version>
         </dependency>
-        <!-- cds rourke -->
+        <!-- cds rourke: can be found in the local_repo folder -->
         <dependency>
             <groupId>cds</groupId>
             <artifactId>cds_rourke</artifactId>
             <version>1.0</version>
         </dependency>
-        <!-- cds hrm -->
+        <!-- cds hrm: can be found in the local_repo folder -->
         <dependency>
             <groupId>cds</groupId>
             <artifactId>cds_hrm</artifactId>
             <version>4.3.1</version>
         </dependency>
 
-        <!-- HRM module -->
+        <!-- HRM module: can be found in the local_repo folder -->
         <dependency>
             <groupId>org.oscarehr.hrm</groupId>
             <artifactId>hrm-jaxb</artifactId>
             <version>4.1a</version>
         </dependency>
-        <!-- HRM module 4.3 -->
+        <!-- HRM module 4.3: can be found in the local_repo folder -->
         <dependency>
             <groupId>omd</groupId>
             <artifactId>hrm</artifactId>
             <version>4.3</version>
         </dependency>
 
-        <!-- hsfo -->
+        <!-- hsfo: can be found in the local_repo folder -->
         <dependency>
             <groupId>hsfo</groupId>
             <artifactId>hsfo</artifactId>
@@ -617,7 +589,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
+            <version>4.5.14</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -642,7 +614,7 @@
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
-            <version>1.6.7</version>
+            <version>2.0.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
@@ -652,7 +624,8 @@
             <version>1.5.4</version>
         </dependency>
 
-        <!-- ocan.jar , suspect this is generated classes and should be removed as a jar in the future -->
+        <!-- ocan.jar, suspect this is generated classes and should be removed as a jar in the future -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>ocan</groupId>
             <artifactId>ocan</artifactId>
@@ -660,6 +633,7 @@
         </dependency>
 
         <!-- FOR BORN Project - AR2005 in XML format -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>org.oscarehr.ar2005</groupId>
             <artifactId>ar2005</artifactId>
@@ -667,6 +641,7 @@
         </dependency>
 
         <!-- FOR BORN18MWBV Project - Rourke, NDDS, 18M Summary in XML format -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>ca.bornontario</groupId>
             <artifactId>x18MEWBV</artifactId>
@@ -684,6 +659,7 @@
         </dependency>
 
         <!-- FOR ORN Project - CKD config in XML format -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>org.oscarehr.ckd</groupId>
             <artifactId>ckd</artifactId>
@@ -691,6 +667,7 @@
         </dependency>
 
         <!-- patientSiteVisit.jar , suspect this is generated classes and should be removed as a jar in the future -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>patientSiteVisit</groupId>
             <artifactId>patientSiteVisit</artifactId>
@@ -698,6 +675,7 @@
         </dependency>
 
         <!-- surveyModel.jar , suspect this is generated classes and should be removed as a jar in the future -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>surveyModel</groupId>
             <artifactId>surveyModel</artifactId>
@@ -705,6 +683,7 @@
         </dependency>
 
         <!-- jaxm api ... why do we need this? -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>javax.xml</groupId>
             <artifactId>jaxm-api</artifactId>
@@ -726,22 +705,17 @@
 
         <!-- ostermillerutils_1_04_03_for_java_1_4.jar
         we need to stop using this and replace it with apache commons -->
+        <!-- Please look at PR #386 commit: 7da510760a7dd71fd86eabd7eb23842b60a482de for removal -->
         <dependency>
             <groupId>com.ostermiller</groupId>
             <artifactId>ostermillerutils</artifactId>
             <version>1.4.3</version>
         </dependency>
 
-        <!-- com.sun -->
-        <!-- sun pdfview -->
-        <dependency>
-            <groupId>com.sun</groupId>
-            <artifactId>pdfview</artifactId>
-            <version>UNKNOWN</version>
-        </dependency>
-
         <!-- REMOVE displayTag. It's only used in 1 deprecated feature of this code
         and is not well maintained. -->
+        <!-- From my current understanding, displayTag is used in a lot of jsp files -->
+        <!-- This should be removed but at a later date -->
         <dependency>
             <groupId>displaytag</groupId>
             <artifactId>displaytag</artifactId>
@@ -776,6 +750,7 @@
 
         <!-- chip / ping libararies -->
         <!-- Detected as "Unused dependency" but don't remove it, it's using in jsp -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>org.chip.ping</groupId>
             <artifactId>oscar-ping</artifactId>
@@ -832,7 +807,7 @@
             <version>2.3.2</version>
         </dependency>
 
-        <!-- ocan -->
+        <!-- ocan: can be found in the local_repo folder -->
         <dependency>
             <groupId>ocan</groupId>
             <artifactId>ocan-iar</artifactId>
@@ -935,7 +910,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>apache-cxf</artifactId>
-            <version>3.2.0</version>
+            <version>${cxf.version}</version>
             <type>pom</type>
             <exclusions>
                 <exclusion>
@@ -979,7 +954,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>3.2.0</version>
+            <version>${cxf.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.codehaus.woodstox</groupId>
@@ -990,9 +965,37 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
-            <version>3.2.0</version>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-client</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-extension-providers</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
 
+        <!-- ScribeJava OAuth 1.0a dependencies. Added after apache cxf was bumped to version 3.5.10 and lost support. -->
+        <dependency>
+            <groupId>com.github.scribejava</groupId>
+            <artifactId>scribejava-apis</artifactId>
+            <version>8.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.scribejava</groupId>
+            <artifactId>scribejava-core</artifactId>
+            <version>8.3.3</version>
+        </dependency>
+
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>org.oscarehr</groupId>
             <artifactId>myoscar_client_utils</artifactId>
@@ -1017,6 +1020,7 @@
             </exclusions>
         </dependency>
 
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>org.oscarehr.myoscar_server</groupId>
             <artifactId>myoscar_server_client_stubs2</artifactId>
@@ -1024,6 +1028,7 @@
         </dependency>
 
         <!-- MARC-HI - Shared Health Integration Components (SHIC) Library -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>org.marc.shic</groupId>
             <artifactId>shic-core</artifactId>
@@ -1111,6 +1116,7 @@
             <version>1.2.1</version>
         </dependency>
 
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>com.cbi.ws</groupId>
             <artifactId>cbi_ws_client</artifactId>
@@ -1118,22 +1124,23 @@
         </dependency>
 
         <!-- EBS and HCV Stubs -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>org.oscarehr.integration.ebs</groupId>
             <artifactId>edt-stubs</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1-20140911.161211-1</version>
         </dependency>
         <dependency>
             <groupId>org.oscarehr.integration.ebs</groupId>
             <artifactId>hcv-stubs</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1-20140911.161502-1</version>
         </dependency>
 
         <!-- Detected as "Unused dependency" but don't remove it, it's using actually -->
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-jaxrs</artifactId>
-            <version>1.9.13</version>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>2.15.2</version>
         </dependency>
 
         <!-- OWASP Encoder -->
@@ -1155,17 +1162,20 @@
             <version>3.1.0</version>
         </dependency>
 
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>com.medseek.clinical.service</groupId>
             <artifactId>SSOClinicalConnect</artifactId>
             <version>20171101</version>
         </dependency>
 
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>com.medseek</groupId>
             <artifactId>PatientService</artifactId>
             <version>20161213</version>
         </dependency>
+        
         <dependency>
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt</artifactId>
@@ -1198,7 +1208,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>25.1-jre</version>
+            <version>33.4.8-jre</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-pdf -->
@@ -1209,6 +1219,7 @@
         </dependency>
 
         <!-- Caisi Integrator -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>org.oscarehr.caisi_integrator</groupId>
             <artifactId>integrator-objects</artifactId>
@@ -1231,6 +1242,7 @@
         </dependency>
 
         <!-- HAPI FHIR -->
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-base</artifactId>
@@ -1258,6 +1270,7 @@
             <version>${hapifhir.version}</version>
         </dependency>
 
+        <!-- can be found in the local_repo folder -->
         <dependency>
             <groupId>org.oscarehr</groupId>
             <artifactId>flowsheets</artifactId>
@@ -1375,12 +1388,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>4.0.0-M13</version>
+                <version>3.21.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.doxia</groupId>
                         <artifactId>doxia-module-markdown</artifactId>
-                        <version>2.0.0-M9</version>
+                        <version>2.0.0</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -1397,6 +1410,12 @@
                     <source>21</source>
                     <target>21</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.5.0</version>
             </plugin>
 
             <plugin>
@@ -1420,11 +1439,11 @@
                                 <tstamp>
                                     <format property="build.dateTime.value" pattern="yyyy-MM-dd hh:mm aa"/>
                                 </tstamp>
-                                <echo message="build time : ${build.dateTime.value}"/>
+                                <echo level="info" message="build time : ${build.dateTime.value}"/>
                                 <replace file="target/classes/oscar_mcmaster.properties" token="${build.dateTime}"
                                          value="${build.dateTime.value}"/>
                                 <property environment="env"/>
-                                <echo message="JOB_NAME - BUILD_NUMBER : ${env.JOB_NAME}-${env.BUILD_NUMBER}"/>
+                                <echo level="info" message="JOB_NAME - BUILD_NUMBER : ${env.JOB_NAME}-${env.BUILD_NUMBER}"/>
                                 <replace file="target/classes/oscar_mcmaster.properties" token="${build.JOB_NAME}"
                                          value="${env.JOB_NAME}"/>
                                 <replace file="target/classes/oscar_mcmaster.properties" token="${build.BUILD_NUMBER}"
@@ -1511,16 +1530,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.21.2</version>
-                <!-- DO NOT execute until these tests actually pass
-                <executions>
-                    <execution>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>pmd</goal>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions> -->
                 <configuration>
                     <targetJdk>1.8</targetJdk>
                     <rulesets>
@@ -1551,45 +1560,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Comming soon. After spring and java upgrades -->
-            <!-- <plugin>
-                <groupId>org.apache.axis2</groupId>
-                <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
-                <version>1.5.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>wsdl2code</goal>
-                        </goals>
-                        <configuration>
-                            <packageName>test</packageName>
-                            <wsdlFile>src/main/resources/olis.wsdl</wsdlFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.sun.tools.xjc.maven2</groupId>
-                <artifactId>maven-jaxb-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <generatePackage>ca.ssha._2005.hial</generatePackage>
-                    <schemaDirectory>${basedir}/src/main/webapp/olis</schemaDirectory>
-                    <includeSchemas>
-                        <includeSchema>response.xsd</includeSchema>
-                    </includeSchemas>
-                    <strict>true</strict>
-                    <verbose>true</verbose>
-                </configuration>
-            </plugin> -->
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -1610,21 +1580,6 @@
                 </executions>
             </plugin>
 
-            <!-- Update lockfile - mvn se.vandmo:dependency-lock-maven-plugin:lock -->
-            <plugin>
-                <groupId>se.vandmo</groupId>
-                <artifactId>dependency-lock-maven-plugin</artifactId>
-                <version>1.1.0</version>
-                <executions>
-                    <execution>
-                        <id>check</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <!-- Update lockfile - mvn se.vandmo:dependency-lock-maven-plugin:lock -->
             <plugin>
                 <groupId>se.vandmo</groupId>

@@ -515,9 +515,7 @@
                            onclick='popupPage(660,1000, "${pageContext.request.contextPath}/report/reportonbilledphcp.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.PHCP"/></a>
                         <span style="font-size: x-small;"> (Setting: <a href="#"
                                                                         onclick='popupPage(660,1000, "${pageContext.request.contextPath}/report/reportonbilledvisitprovider.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.provider"/></a>,
-			<a href="#"
-               onclick='popupPage(660,1000, "${pageContext.request.contextPath}/report/reportonbilleddxgrp.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.dx"/>
-			category</a>) </span></li>
+			        ) </span></li>
                     <%
                         }
 

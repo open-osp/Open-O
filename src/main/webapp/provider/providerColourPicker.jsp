@@ -55,6 +55,23 @@
                 setTimeout('update()', 1000);
             }
         </script>
+        <script>
+            if (typeof TCP !== 'undefined') {
+                TCP.popup = function(field, palette) {
+                    this.field = field;
+                    this.initPalette = !palette || palette > 3 ? 0 : palette;
+        
+                    var w = 194, h = 400,
+                        move = screen ?
+                            ',left=' + ((screen.width - w) >> 1) + ',top=' + ((screen.height - h) >> 1) : '',
+                        o_colWindow = window.open('<%= request.getContextPath() %>/admin/picker.html', null,
+                            "help=no,status=no,scrollbars=no,resizable=no" + move +
+                            ",width=" + w + ",height=" + h + ",dependent=yes", true);
+                    o_colWindow.opener = window;
+                    o_colWindow.focus();
+                }
+            }
+        </script>
 
     </head>
 

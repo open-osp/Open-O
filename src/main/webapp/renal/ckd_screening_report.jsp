@@ -277,7 +277,7 @@
                             src="<%= request.getContextPath() %>/images/lab_icon.png" height="16" border="0"/></a>
                     <a title="Add Chronic Renal Failure to Disease Registry, and disable further notifications"
                        href="javascript.void(0);"
-                       onclick="popupPage(580,900,'../oscarResearch/oscarDxResearch/dxResearch.do?selectedCodingSystem=icd9&xml_research1=585&xml_research2=&xml_research3=&xml_research4=&xml_research5=&demographicNo=<%=ckd.getDemographic().getDemographicNo()%>&quickList=default&forward=');return false;"><img
+                       onclick="popupPage(580,900,'<%=request.getContextPath()%>/oscarResearch/oscarDxResearch/dxResearch.do?selectedCodingSystem=icd9&xml_research1=585&xml_research2=&xml_research3=&xml_research4=&xml_research5=&demographicNo=<%=ckd.getDemographic().getDemographicNo()%>&quickList=default&forward=');return false;"><img
                             src="<%= request.getContextPath() %>/images/kidney.jpg" height="16" border="0"/></a>
                 </td>
             </tr>

@@ -112,7 +112,7 @@
                                             <tr>
                                                 <td class="messengerButtonsA"><a
                                                         href="${pageContext.request.contextPath}/oscarMessenger/CreateMessage.jsp"
-                                                        styleClass="messengerButtons">
+                                                        class="messengerButtons">
                                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.SentMessage.btnCompose"/>
                                                 </a></td>
                                             </tr>
@@ -123,7 +123,7 @@
                                             <tr>
                                                 <td class="messengerButtonsA"><a
                                                         href="${pageContext.request.contextPath}/oscarMessenger/DisplayMessages.jsp"
-                                                        styleClass="messengerButtons">
+                                                        class="messengerButtons">
                                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMessenger.SentMessagebtnBack"/>
                                                 </a></td>
                                             </tr>

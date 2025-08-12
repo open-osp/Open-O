@@ -2981,6 +2981,7 @@ if (userAgent != null) {
              DOCUMENT ATTACHMENT MANAGER JAVASCRIPT
              **/
             jQuery(document).on('click', '*[data-poload]', function () {
+                const $mainForm = jQuery('#EctConsultationFormRequest2Form');  
 
                 var trigger = jQuery(this);
                 trigger.off('click');
@@ -2989,7 +2990,7 @@ if (userAgent != null) {
 
                 jQuery("#attachDocumentDisplay").load(trigger.data('poload'), function (response, status, xhr) {
                     if (status === "success") {
-                        jQuery('#consultationRequestForm').find(".delegateAttachment").each(function (index, data) {
+                        $mainForm.find(".delegateAttachment").each(function (index, data) {
                             let delegate = "#" + this.id.split("_")[1];
                             let element = jQuery('#attachDocumentsForm').find(delegate);
                             if (element.length === 0) {
@@ -3065,7 +3066,7 @@ if (userAgent != null) {
                             column.append(input);
                             row.append(column);
 
-                            jQuery('#consultationRequestForm').find(target).append(row);
+                            jQuery('#EctConsultationFormRequest2Form').find(target).append(row);
                         });
 
                         // remove unchecked elements from the request form.
@@ -3074,7 +3075,7 @@ if (userAgent != null) {
 
                             if (!checkedElement.is(':checked')) {
                                 var checkedElementClass = checkedElement.attr("class");
-                                jQuery('#consultationRequestForm').find("#entry_" + checkedElement.attr("id")).remove();
+                                $mainForm.find("#entry_" + checkedElement.attr("id")).remove();
                                 checkedElement.attr("class", checkedElementClass.split("_")[0] + "_check");
                             }
                         });

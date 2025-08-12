@@ -54,8 +54,6 @@ public class EctSetupEditMeasurementGroup2Action extends ActionSupport {
 
     public String execute() throws ServletException, IOException {
         if (securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin", "w", null) || securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin.measurements", "w", null)) {
-            String groupName = (String) this.getValue("groupName");
-
             EctTypeDisplayNameBeanHandler hd = new EctTypeDisplayNameBeanHandler(groupName, false);
             Collection existingTypeDisplayName = hd.getTypeDisplayNameVector();
             hd = new EctTypeDisplayNameBeanHandler(groupName, true);
@@ -71,6 +69,16 @@ public class EctSetupEditMeasurementGroup2Action extends ActionSupport {
             throw new SecurityException("Access Denied!"); //missing required security object (_admin)
         }
 
+    }
+
+    private String groupName;
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getGroupName() {
+        return groupName;
     }
 
     private final Map values = new HashMap();

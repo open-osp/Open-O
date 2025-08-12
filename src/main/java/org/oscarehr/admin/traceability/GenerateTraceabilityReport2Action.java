@@ -25,6 +25,7 @@
 
 package org.oscarehr.admin.traceability;
 
+import java.io.File;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.concurrent.ExecutorService;
@@ -54,14 +55,18 @@ public class GenerateTraceabilityReport2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
     public static int BUFFER_SIZE = 8192;
 
+    private File file;
+
     @Override
     public String execute() throws Exception {
         String userName = (String) request.getSession().getAttribute("user");
         String roleName$ = (String) request.getSession().getAttribute("userrole") + "," + userName;
+
         if (!GenerateTraceabilityUtil.hasPrivilege("_admin, _admin.traceability", roleName$)) {
             MiscUtils.getLogger().error("Access denied: " + userName);
             return null;
         }
+
         PipedInputStream pipedInputStream = null;
         PipedOutputStream pipedOutputStream = null;
         ExecutorService executor = null;
@@ -70,9 +75,9 @@ public class GenerateTraceabilityReport2Action extends ActionSupport {
         try {
             pipedInputStream = new PipedInputStream(BUFFER_SIZE);
             pipedOutputStream = new PipedOutputStream(pipedInputStream);
-
             executor = Executors.newFixedThreadPool(2);
-            TraceabilityReportProcessor traceabilityReportProcessor = new TraceabilityReportProcessor(pipedOutputStream, request);
+
+            TraceabilityReportProcessor traceabilityReportProcessor = new TraceabilityReportProcessor(pipedOutputStream, file, request);
             TraceabilityReportConsumer traceabilityReportConsumer = new TraceabilityReportConsumer(pipedInputStream, response);
 
             futureTRP = executor.submit(traceabilityReportProcessor);
@@ -90,5 +95,13 @@ public class GenerateTraceabilityReport2Action extends ActionSupport {
             pipedOutputStream.close();
         }
         return null;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 }

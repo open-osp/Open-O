@@ -18,7 +18,7 @@
 
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 
@@ -64,29 +64,29 @@
 
 <form action="${pageContext.request.contextPath}/appointment/apptStatusSetting.do" method="post">
     <input type="hidden" name="dispatch" value="update"/>
-    <input type="hidden" name="ID" value="${ID}"/>
+    <input type="hidden" name="ID" value="${fn:escapeXml(ID)}"/>
     <table>
         <tr>
             <td class="tdLabel"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appt.status.mgr.label.status"/>:
             </td>
-            <td><input type="text" readonly="readonly" name="apptStatus" value="${apptStatus}" size="40"/></td>
+            <td><input type="text" readonly="readonly" name="apptStatus" value="${fn:escapeXml(apptStatus)}" size="40"/></td>
         </tr>
         <tr>
             <td class="tdLabel"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appt.status.mgr.label.desc"/>:
             </td>
-            <td><input type="checkbox" name="apptDesc" value="${apptDesc}" size="40" /></td>
+            <td><input type="text" name="apptDesc" value="${fn:escapeXml(apptDesc)}" size="40" /></td>
         </tr>
         <tr>
             <td class="tdLabel"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appt.status.mgr.label.oldcolor"/>:
             </td>
-            <td><input type="text" readonly="true" id="old_color" name="apptOldColor" value="${apptOldColor}" size="40"/>
+            <td><input type="text" readonly="true" id="old_color" name="apptOldColor" value="${fn:escapeXml(apptOldColor)}" size="40"/>
             </td>
         </tr>
         <tr>
             <td class="tdLabel"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appt.status.mgr.label.newcolor"/>:
             </td>
             <td>
-                <input id="apptColor" name="apptColor" value="${apptOldColor}" size="20"/>
+                <input id="apptColor" name="apptColor" value="${fn:escapeXml(apptOldColor)}" size="20"/>
             </td>
         </tr>
 

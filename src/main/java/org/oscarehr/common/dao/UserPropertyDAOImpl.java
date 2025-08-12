@@ -51,9 +51,13 @@ public class UserPropertyDAOImpl extends AbstractDaoImpl<UserProperty> implement
     }
 
 
+    @Override
     public void delete(UserProperty prop) {
-        remove(prop.getId());
+        if (prop != null && prop.getId() != null) {
+            remove(prop.getId());
+        }
     }
+    
 
     public void saveProp(String provider, String userPropertyName, String value) {
         UserProperty prop = getProp(provider, userPropertyName);

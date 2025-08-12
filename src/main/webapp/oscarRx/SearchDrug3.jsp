@@ -664,7 +664,7 @@
             }
 
             function showPreviousPrints(scriptNo) {
-                popupWindow(720, 700, 'ShowPreviousPrints.jsp?scriptNo=' + scriptNo, 'ShowPreviousPrints')
+                popupWindow(720, 700, 'oscarRx/ShowPreviousPrints.jsp?scriptNo=' + scriptNo, 'ShowPreviousPrints')
             }
 
 

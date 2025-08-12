@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getVacancy", propOrder = {"arg0"})
+@XmlType(name = "getVacancy", propOrder = "arg0")
 public class GetVacancy {
 
     protected VacancyQuery arg0;

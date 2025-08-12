@@ -245,7 +245,7 @@
                           onClick="popupPage(600,900,'../provider/providercontrol.jsp?appointment_no=<%=request.getParameter("appointment_no")%>&demographic_no=<%=request.getParameter("demographic_no")%>&curProvider_no=&bNewForm=1&username=&reason=<%=URLEncoder.encode(request.getParameter("reason")==null?"":request.getParameter("reason"))%>&displaymode=ar1&dboperation=search_demograph');return false;"
                           title="Antenatal Record 1"> <font color='yellow'>View AR1</font></a>
                     | <a href=#
-                         onClick="popupPage(500,600,'../demographic/formhistory.jsp?demographic_no=<%=request.getParameter("demographic_no")%>')"
+                         onClick="popupPage(500,600,'<%=request.getContextPath()%>/demographic/formhistory.jsp?demographic_no=<%=request.getParameter("demographic_no")%>')"
                          title="Previous Antenatal Record 2"> <font color='yellow'>Prev.
                     AR2</font></a> | <a
                         href="<%= request.getContextPath() %>/provider/providercontrol.jsp?appointment_no=<%=request.getParameter("appointment_no")%>&demographic_no=<%=request.getParameter("demographic_no")%>&curProvider_no=<%=request.getParameter("curProvider_no")%>&username=<%=request.getParameter("username")%>&reason=<%=request.getParameter("reason")%>&displaymode=ar2&dboperation=search_demograph&template=&bNext=1"

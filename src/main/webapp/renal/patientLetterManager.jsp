@@ -103,7 +103,7 @@
         <br/>
         <form action="patientLetterManager.jsp?action=save">
             <input type="hidden" name="action" value="save"/>
-            <textarea name="letter" rows="30" cols="80"><%=currentLetter %></textarea>
+            <textarea name="letter" rows="30" cols="80"><%=currentLetter%></textarea>
             <br/>
             <input class="btn btn-primary" type="submit" value="Save"/>
         </form>

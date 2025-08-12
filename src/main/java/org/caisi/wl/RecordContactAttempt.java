@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "recordContactAttempt", propOrder = {"arg0"})
+@XmlType(name = "recordContactAttempt", propOrder = "arg0")
 public class RecordContactAttempt {
 
     protected MatchParam arg0;

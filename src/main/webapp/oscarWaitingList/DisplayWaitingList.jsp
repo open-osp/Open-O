@@ -34,7 +34,7 @@
 <%@ page
         import="java.util.*,oscar.util.*, oscar.oscarWaitingList.bean.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%
     String wlid = (String) request.getAttribute("WLId");
@@ -65,96 +65,6 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
     </head>
-
-    <script language="JavaScript">
-
-
-        function goToPage() {
-            document.forms[0].waitingListId.value =
-                document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value;
-            window.location = "../oscarWaitingList/SetupDisplayWaitingList.do?waitingListId=" +
-                document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value;
-        }
-
-        function popupEditWlNamePage() {
-            document.forms[0].waitingListId.value =
-                document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value;
-
-            var redirectPage = "../oscarWaitingList/WLEditWaitingListNameAction.do?waitingListId=" +
-                document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value + "&edit=Y";
-            popupDemographicPage(redirectPage);
-        }
-
-        function popupDemographicPage(varpage) { //open a new popup window
-            var page = "" + varpage;
-            var windowprops = "height=660,width=1000,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=0,left=0";
-            var popup = window.open(page, "studydemo", windowprops);
-            if (popup != null) {
-                if (popup.opener == null) {
-                    popup.opener = self;
-                }
-            }
-        }
-
-        function setParameters(thisObj) {
-
-            var thisObjName = thisObj.name;
-            var indexNum1 = thisObjName.indexOf("[");
-            var indexNum2 = thisObjName.indexOf("]");
-
-            var wlcount = 0;
-            if (indexNum1 > 0) {
-                wlCount = thisObjName.substring(indexNum1 + 1, indexNum2);
-            }
-            //alert("setParameters(): wlCount = " + wlCount);
-            document.forms[0].demographicNumSelected.value = "waitingListBean[" + wlCount + "].demographicNo";
-            document.forms[0].wlNoteSelected.value = "waitingListBean[" + wlCount + "].note";
-            document.forms[0].onListSinceSelected.value = "waitingListBean[" + wlCount + "].onListSince";
-            //alert("setParameters(): wlNoteSelected = " + document.forms[0].wlNoteSelected.value);
-            //alert("setParameters(): onListSinceSelected = " + document.forms[0].onListSinceSelected.value);
-        }
-
-
-        function popupPage(ctr, patientName, demographicNo, startDate, vheight, vwidth, varpage) {
-            var nbPatients = "<c:out value="${nbPatients}"/>";
-            if (nbPatients > 1) {
-                var selected = document.forms[0].selectedProvider[ctr].options[document.forms[0].selectedProvider[ctr].selectedIndex].value;
-            } else {
-                var selected = document.forms[0].selectedProvider.options[document.forms[0].selectedProvider.selectedIndex].value;
-            }
-            var page = varpage + '&provider_no=' + selected + '&startDate=' + startDate + '&demographic_no=' + demographicNo + '&demographic_name=' + patientName;
-            var windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=0,left=0";
-            var popup = window.open(page, "<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.apptProvider"/>", windowprops);
-            if (popup != null) {
-                if (popup.opener == null) {
-                    popup.opener = self;
-                }
-                popup.focus();
-            }
-        }
-
-        function updateWaitingList(waitingListId, ctr) {
-            document.forms[0].waitingListId.value = waitingListId;
-            document.forms[0].update.value = "Y";
-            document.forms[0].action = "../oscarWaitingList/SetupDisplayWaitingList.do#anchor_" + ctr;
-
-//	document.forms[0].action = "../oscarWaitingList/SetupDisplayWaitingList.do?update=Y&waitingListId=" + waitingListId;
-            document.forms[0].submit();
-        }
-
-        function removePatient(demographicNo, waitingList) {
-            var agree = confirm("Are you sure you want to remove this patient from the waiting list?");
-            if (agree) {
-                var windowprops = "height=50,width=50,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=0,left=0";
-                var page = "RemoveFromWaitingList.jsp?listId=" + waitingList + "&demographicNo=" + demographicNo + "&remove=Y";
-                var popup = window.open(page, "removeWaitingList", windowprops);
-            } else {
-                return false;
-            }
-
-
-        }
-    </script>
     <body class="BodyStyle" vlink="#0000FF"
           onload='window.resizeTo(900,400)'>
     <!--  -->
@@ -317,6 +227,87 @@
         </tr>
         </table>
     </form>
+    <script type="text/javascript">
+        function goToPage() {
+            document.forms[0].waitingListId.value =
+                document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value;
+            window.location = "../oscarWaitingList/SetupDisplayWaitingList.do?waitingListId=" +
+                document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value;
+        }
 
+        function popupEditWlNamePage() {
+            document.forms[0].waitingListId.value =
+                document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value;
+
+            var redirectPage = "../oscarWaitingList/WLEditWaitingListNameAction.do?waitingListId=" +
+                document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value + "&edit=Y";
+            popupDemographicPage(redirectPage);
+        }
+
+        function popupDemographicPage(varpage) { //open a new popup window
+            var page = "" + varpage;
+            var windowprops = "height=660,width=1000,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=0,left=0";
+            var popup = window.open(page, "studydemo", windowprops);
+            if (popup != null) {
+                if (popup.opener == null) {
+                    popup.opener = self;
+                }
+            }
+        }
+
+        function setParameters(thisObj) {
+
+            var thisObjName = thisObj.name;
+            var indexNum1 = thisObjName.indexOf("[");
+            var indexNum2 = thisObjName.indexOf("]");
+
+            var wlcount = 0;
+            if (indexNum1 > 0) {
+                wlCount = thisObjName.substring(indexNum1 + 1, indexNum2);
+            }
+            //alert("setParameters(): wlCount = " + wlCount);
+            document.forms[0].demographicNumSelected.value = "waitingListBean[" + wlCount + "].demographicNo";
+            document.forms[0].wlNoteSelected.value = "waitingListBean[" + wlCount + "].note";
+            document.forms[0].onListSinceSelected.value = "waitingListBean[" + wlCount + "].onListSince";
+            //alert("setParameters(): wlNoteSelected = " + document.forms[0].wlNoteSelected.value);
+            //alert("setParameters(): onListSinceSelected = " + document.forms[0].onListSinceSelected.value);
+        }
+
+        function popupPage(ctr, patientName, demographicNo, startDate, vheight, vwidth, varpage) {
+            var nbPatients = parseInt('<c:out value="${nbPatients}" default="0"/>');
+            if (nbPatients > 1) {
+                var selected = document.forms[0].selectedProvider[ctr].options[document.forms[0].selectedProvider[ctr].selectedIndex].value;
+            } else {
+                var selected = document.forms[0].selectedProvider.options[document.forms[0].selectedProvider.selectedIndex].value;
+            }
+            var page = varpage + '&provider_no=' + selected + '&startDate=' + startDate + '&demographic_no=' + demographicNo + '&demographic_name=' + patientName;
+            var windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=0,left=0";
+            var popup = window.open(page, "<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.apptProvider"/>", windowprops);
+            if (popup != null) {
+                if (popup.opener == null) {
+                    popup.opener = self;
+                }
+                popup.focus();
+            }
+        }
+
+        function updateWaitingList(waitingListId, ctr) {
+            document.forms[0].waitingListId.value = waitingListId;
+            document.forms[0].update.value = "Y";
+            document.forms[0].action = "../oscarWaitingList/SetupDisplayWaitingList.do#anchor_" + ctr;
+            document.forms[0].submit();
+        }
+
+        function removePatient(demographicNo, waitingList) {
+            var agree = confirm("Are you sure you want to remove this patient from the waiting list?");
+            if (agree) {
+                var windowprops = "height=50,width=50,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=0,left=0";
+                var page = "RemoveFromWaitingList.jsp?listId=" + waitingList + "&demographicNo=" + demographicNo + "&remove=Y";
+                var popup = window.open(page, "removeWaitingList", windowprops);
+            } else {
+                return false;
+            }
+        }
+    </script>
     </body>
 </html>

@@ -268,7 +268,7 @@
                                                                 <td>&nbsp;${measurementType.lastComments}</td>
                                                                 <td>
                                                                     <i class="icon-time icon-large" title="<fmt:message key='oscarEncounter.Index.oldMeasurements'/>"
-                                                                       onclick="popupPage(300,800,'SetupDisplayHistory.do?type=${measurementType.type}'); return false;">
+                                                                       onclick="popupPage(300,800,'oscarEncounter/oscarMeasurements/SetupDisplayHistory.do?type=${measurementType.type}'); return false;">
                                                                     </i>
                                                                 </td>
                                                             </tr>

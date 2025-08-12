@@ -33,7 +33,7 @@
 
 <%@ page import="oscar.oscarProvider.data.*" %>
 <%@ page import="oscar.oscarProvider.pageUtil.*" %>
-
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%
     if (session.getValue("user") == null)
@@ -93,7 +93,7 @@
                 %>
                 <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.editSignature.msgEdit"/>
                 <br>
-                <input type="checkbox" name="signature" size="40" />
+                <input type="text" name="signature" size="40" value="<%= Encode.forHtmlAttribute(sig.getSignature(curUser_no)) %>" />
                 <br>
 
                 <!-- add by caisi -->

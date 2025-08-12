@@ -376,7 +376,14 @@ public class OscarProperties extends Properties {
     }
 
     public String getDocumentDirectory() {
-        return oscarProperties.getProperty("DOCUMENT_DIR");
+       String documents = oscarProperties.getProperty("DOCUMENT_DIR");
+
+        // String value will equal null if property is not found
+        if (documents == null) {
+            // Setting derived path for documents incase starting path is not found
+            documents = Paths.get(oscarProperties.getProperty("BASE_DOCUMENT_DIR"), "document").toString();
+        }
+       return documents;
     }
 
     public String getDocumentCacheDirectory() {
@@ -384,13 +391,15 @@ public class OscarProperties extends Properties {
     }
 
     public String getEformImageDirectory() {
-        String eform_images = oscarProperties.getProperty("eform_image");
+        String eform_images = oscarProperties.getProperty("EFORM_IMAGES_DIR");
+
+        // String value will equal null if property is not found
         if (eform_images == null) {
+            // Setting derived path for eform images incase starting path is not found
             eform_images = Paths.get(oscarProperties.getProperty("BASE_DOCUMENT_DIR"), "eform", "images").toString();
         }
         return eform_images;
     }
-
 
 	/**
 	 * Saves property to the specified properties file.

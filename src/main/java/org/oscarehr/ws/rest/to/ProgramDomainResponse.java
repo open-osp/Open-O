@@ -35,7 +35,7 @@ import org.oscarehr.ws.rest.to.model.ProgramTo1;
 
 
 @XmlRootElement
-@XmlSeeAlso({ProgramTo1.class})
+@XmlSeeAlso(ProgramTo1.class)
 public class ProgramDomainResponse extends AbstractSearchResponse<ProgramTo1> {
 
     private static final long serialVersionUID = 1L;

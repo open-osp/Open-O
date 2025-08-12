@@ -493,18 +493,18 @@
                 </td>
 
                 <td align="right"><b>View:</b> <a
-                        href="javascript: popupPage('formarpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">
+                        href="javascript: popupPage('form/formarpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">
                     AR1</a> &nbsp;|&nbsp; <a
-                        href="javascript: popupPage('formarpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">AR2
+                        href="javascript: popupPage('form/formarpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">AR2
                     <font size=-2>(pg.1)</a></td>
                 <td align="right"><b>Edit:</b> <a
-                        href="formarpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">AR1</a>
+                        href="form/formarpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">AR1</a>
                     &nbsp;|&nbsp; <a
-                            href="formarpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">AR2
+                            href="form/formarpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">AR2
                         <font size=-2>(pg.1)</a> &nbsp;|&nbsp;
                     <!--a href="javascript: popupFixedPage(700,950,'../decision/antenatal/antenatalplanner.jsp?demographic_no=<%--=demoNo%>&formId=<%=formId%>&provNo=<%=provNo--%>');">AR Planner</a-->
                     <%if (((FrmARRecord) rec).isSendToPing("" + demoNo)) { %> <a
-                            href="study/ar2ping.jsp?demographic_no=<%=demoNo%>">Send to PING</a>
+                            href="form/study/ar2ping.jsp?demographic_no=<%=demoNo%>">Send to PING</a>
                     <% } %>
                 </td>
                 <%
@@ -1586,16 +1586,16 @@
                 </td>
 
                 <td align="right"><b>View:</b> <a
-                        href="javascript: popupPage('formarpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">
+                        href="javascript: popupPage('form/formarpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">
                     AR1</a> &nbsp;|&nbsp; <a
-                        href="javascript: popupPage('formarpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">AR2
+                        href="javascript: popupPage('form/formarpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>&view=1');">AR2
                     <font size=-2>(pg.1)</a></td>
                 <td align="right"><b>Edit:</b> <a
-                        href="formarpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">AR1</a>
+                        href="form/formarpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">AR1</a>
                     &nbsp;|&nbsp; <a
-                            href="formarpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">AR2
+                            href="form/formarpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">AR2
                         <font size=-2>(pg.1)</a> &nbsp;|&nbsp; <a
-                            href="javascript: popupFixedPage(700,950,'../decision/antenatal/antenatal/antenatalplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">AR
+                            href="javascript: popupFixedPage(700,950,'<%=request.getContextPath()%>/decision/antenatal/antenatal/antenatalplanner.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>');">AR
                         Planner</a></td>
                 <%
                     }

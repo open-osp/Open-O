@@ -33,6 +33,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
@@ -159,7 +161,7 @@ public class AddEditDocument2Action extends ActionSupport {
     public static int countNumOfPages(String fileName) {// count number of pages in a local pdf file
 
         int numOfPage = 0;
-        String docdownload = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+        String docdownload = oscar.OscarProperties.getInstance().getDocumentDirectory();
         if (!docdownload.endsWith(File.separator)) {
             docdownload += File.separator;
         }
@@ -250,6 +252,7 @@ public class AddEditDocument2Action extends ActionSupport {
             }
             // original file name
             String fileName1 = this.docFileFileName;
+
             EDoc newDoc = new EDoc(this.getDocDesc(), this.getDocType(), fileName1, "", this.getDocCreator(), this.getResponsibleId(), this.getSource(), 'A', this.getObservationDate(), "", "", this.getFunction(), this.getFunctionId());
             newDoc.setDocPublic(this.getDocPublic());
 
@@ -261,11 +264,14 @@ public class AddEditDocument2Action extends ActionSupport {
 
             // save local file
             File file = writeLocalFile(Files.newInputStream(docFile.toPath()), fileName2);
-            //newDoc.setContentType(docFile.getContentType());
+
             if (fileName2.toLowerCase().endsWith(".pdf")) {
                 newDoc.setContentType("application/pdf");
                 int numberOfPages = countNumOfPages(fileName2);
                 newDoc.setNumberOfPages(numberOfPages);
+            } else {
+                int dotIndex = fileName2.lastIndexOf('.');
+                newDoc.setContentType(fileName2.substring(dotIndex + 1));
             }
 
 
@@ -482,9 +488,27 @@ this.getSource(), 'A', this.getObservationDate(), reviewerId, reviewDateTime, th
         FileOutputStream fos = null;
         File file = null;
         try {
-            String savePath = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR") + "/" + fileName;
-            file = new File(savePath);
-            fos = new FileOutputStream(savePath);
+            // Get the base directory from properties
+            String docDir = oscar.OscarProperties.getInstance().getDocumentDirectory();
+            Path baseDir = Paths.get(docDir).normalize().toAbsolutePath();
+
+            // Resolve the full path
+            Path savePath = baseDir.resolve(fileName).normalize();
+
+            // Verify the path is still inside the base directory
+            if (!savePath.startsWith(baseDir)) {
+                throw new SecurityException("Path is no longer in the base directory");
+            }
+
+            // Create the parent directory
+            Files.createDirectories(savePath.getParent());
+
+            String savePathStr = savePath.toString();
+            file = new File(savePathStr);
+
+            // Set file output stream to the save path 
+            fos = new FileOutputStream(savePathStr);
+            
             byte[] buf = new byte[128 * 1024];
             int i = 0;
             while ((i = is.read(buf)) != -1) {

@@ -50,22 +50,26 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
     private static SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     private static final Logger logger = MiscUtils.getLogger();
 
-    public String execute()
-            throws ServletException, IOException {
+    private String sendTo;
+    private String currentTeam;
 
+    private String startDate;
+    private String endDate;
+    private String includeCompleted;
+    private String orderby;
+    private String desc;
+    private String searchDate = null;
+    private Integer offset;
+    private Integer limit = ConsultationRequestDaoImpl.DEFAULT_CONSULT_REQUEST_RESULTS_LIMIT;
+
+    public String execute() throws ServletException, IOException {
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_con", "r", null)) {
             throw new SecurityException("missing required security object (_con)");
         }
 
         String defaultPattern = "yyyy-MM-dd";
-        //String sendTo = null;
         String includeCompleted = null;
-        //String startDate = frm.getStartDate();
-        //String endDate = frm.getEndDate();
         boolean includedComp = false;
-
-        //sendTo = frm.getSendTo();
-        //includeCompleted = frm.getIncludeCompleted();
 
         if (includeCompleted != null && includeCompleted.equals("include")) {
             includedComp = true;
@@ -98,24 +102,20 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
     }
 
     public String getSendTo() {
-
         return sendTo;
     }
 
     public void setSendTo(String str) {
-
         sendTo = str;
     }
 
     public String getCurrentTeam() {
-
         if (currentTeam == null)
             currentTeam = new String();
         return currentTeam;
     }
 
     public void setCurrentTeam(String str) {
-
         currentTeam = str;
     }
 
@@ -124,7 +124,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @return Value of property startDate.
      */
-    public java.lang.String getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
@@ -133,7 +133,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @param startDate New value of property startDate.
      */
-    public void setStartDate(java.lang.String startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
@@ -142,7 +142,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @return Value of property endDate.
      */
-    public java.lang.String getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
@@ -151,7 +151,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @param endDate New value of property endDate.
      */
-    public void setEndDate(java.lang.String endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
@@ -160,7 +160,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @return Value of property includeCompleted.
      */
-    public java.lang.String getIncludeCompleted() {
+    public String getIncludeCompleted() {
         return includeCompleted;
     }
 
@@ -169,7 +169,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @param includeCompleted New value of property includeCompleted.
      */
-    public void setIncludeCompleted(java.lang.String includeCompleted) {
+    public void setIncludeCompleted(String includeCompleted) {
         this.includeCompleted = includeCompleted;
     }
 
@@ -178,7 +178,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @return Value of property orderby.
      */
-    public java.lang.String getOrderby() {
+    public String getOrderby() {
         return orderby;
     }
 
@@ -187,7 +187,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @param orderby New value of property orderby.
      */
-    public void setOrderby(java.lang.String orderby) {
+    public void setOrderby(String orderby) {
         this.orderby = orderby;
     }
 
@@ -196,7 +196,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @return Value of property desc.
      */
-    public java.lang.String getDesc() {
+    public String getDesc() {
         return desc;
     }
 
@@ -205,7 +205,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @param desc New value of property desc.
      */
-    public void setDesc(java.lang.String desc) {
+    public void setDesc(String desc) {
         this.desc = desc;
     }
 
@@ -214,7 +214,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @return Value of property searchDate.
      */
-    public java.lang.String getSearchDate() {
+    public String getSearchDate() {
         if (searchDate == null) {
             searchDate = "0";
         }
@@ -226,7 +226,7 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
      *
      * @param searchDate New value of property searchDate.
      */
-    public void setSearchDate(java.lang.String searchDate) {
+    public void setSearchDate(String searchDate) {
         this.searchDate = searchDate;
     }
 
@@ -245,16 +245,4 @@ public class EctViewConsultationRequests2Action extends ActionSupport {
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
-
-    String sendTo;
-    String currentTeam;
-
-    String startDate;
-    String endDate;
-    String includeCompleted;
-    String orderby;
-    String desc;
-    String searchDate = null;
-    Integer offset;
-    Integer limit = ConsultationRequestDaoImpl.DEFAULT_CONSULT_REQUEST_RESULTS_LIMIT;
 }

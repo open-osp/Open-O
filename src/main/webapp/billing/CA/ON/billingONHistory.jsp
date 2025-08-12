@@ -25,7 +25,7 @@
     curProvider_no = (String) session.getAttribute("user");
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     //display the main provider page
-    //includeing the provider name and a month calendar
+    //including the provider name and a month calendar
     String strLimit1 = "0";
     String strLimit2 = "10";
     if (request.getParameter("limit1") != null) strLimit1 = request.getParameter("limit1");

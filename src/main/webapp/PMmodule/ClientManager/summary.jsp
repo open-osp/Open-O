@@ -186,14 +186,14 @@
 
                     if (clientImage != null) {
                         imagePlaceholder = ClientImage.imagePresentPlaceholderUrl;
-                        imageUrl = "/imageRenderingServlet?source=" + ImageRenderingServlet.Source.local_client.name() + "&clientId=" + currentDemographic.getDemographicNo();
+                        imageUrl = "${pageContext.request.contextPath}/imageRenderingServlet?source=" + ImageRenderingServlet.Source.local_client.name() + "&clientId=" + currentDemographic.getDemographicNo();
                     }
                 %>
-                <img style="height:96px; width:96px" src="<%=request.getContextPath()+imagePlaceholder%>"
+                <img style="height:96px; width:96px" src="${pageContext.request.contextPath}${imagePlaceholder}"
                      alt="client_image_<%=currentDemographic.getDemographicNo()%>"
-                     onmouseover="src='<%=request.getContextPath()+imageUrl%>'"
-                     onmouseout="src='<%=request.getContextPath()+imagePlaceholder%>'"
-                     onClick="window.open('<%=request.getContextPath()%>/casemgmt/uploadimage.jsp?demographicNo=<%=currentDemographic.getDemographicNo()%>', '', 'height=500,width=500,location=no,scrollbars=no,menubars=no,toolbars=no,resizable=yes,top=50,left=50')"/>
+                     onmouseover="src='${pageContext.request.contextPath}${imageUrl}'"
+                     onmouseout="src='${pageContext.request.contextPath}${imagePlaceholder}'"
+                     onClick="window.open('${pageContext.request.contextPath}/ClientImage?demographicNo=<%=currentDemographic.getDemographicNo()%>', '', 'height=500,width=500,location=no,scrollbars=no,menubars=no,toolbars=no,resizable=yes,top=50,left=50')"/>
             </div>
         </td>
     </tr>

@@ -50,9 +50,6 @@
         <td><a href="reportonbilledvisitprovider.jsp"> Provider list
         </a></td>
     </tr>
-    <tr>
-        <td><a href="reportonbilleddxgrp.jsp"> Dx group list </a></td>
-    </tr>
 </table>
 </body>
 </html>

@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "programQuery", propOrder = {"programID"})
+@XmlType(name = "programQuery", propOrder = "programID")
 public class ProgramQuery {
 
     protected int programID;

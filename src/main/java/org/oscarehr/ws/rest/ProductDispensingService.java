@@ -79,7 +79,15 @@ public class ProductDispensingService extends AbstractServiceImpl {
         drugProduct.setId(Integer.parseInt(params.getFirst("product.id")));
         drugProduct.setName(params.getFirst("product.name"));
         drugProduct.setCode(params.getFirst("product.code"));
-        drugProduct.setLocation(Integer.parseInt(params.getFirst("product.location")));
+
+        // We cannot parse the location value if it is not set, going to default to 1 if not an int
+        String locationStr = params.getFirst("product.location");
+        String defaultLocation = "1";
+        if (locationStr == null) {
+            locationStr = defaultLocation;
+        }
+        
+        drugProduct.setLocation(Integer.parseInt(locationStr));
         drugProduct.setLotNumber(params.getFirst("product.lotNumber"));
         drugProduct.setExpiryDate(DateUtils.parseDate(params.getFirst("product.expiryDate"), new String[]{"yyyy-MM-dd"}));
         drugProduct.setAmount(Integer.parseInt(params.getFirst("product.amount")));

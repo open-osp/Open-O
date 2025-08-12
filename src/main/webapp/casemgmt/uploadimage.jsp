@@ -50,10 +50,11 @@
     }
 %>
 <head>
-    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>
     <title>Client Image Manager</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/web.css"/>
     <script>
+        // If page is successful, reload the client E-Chart and close the profile picture upload page
         function init_page() {
             <%
                 if(request.getAttribute("success") != null)
@@ -66,10 +67,11 @@
     %>
         }
 
+        // Makes sure that a picture has been uploaded to the submission box
         function onPicUpload() {
-            var obj = document.getElementsByName("clientImage.imagefile")[0];
-            if (obj.value == "") {
-                alert("Please specify picture path and name for upload.");
+            var file = document.getElementById("clientImage").files[0];
+            if (!file) {
+                alert("Please specify a picture path and name for the upload.");
                 return false;
             }
             return true;

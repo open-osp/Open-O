@@ -30,7 +30,9 @@
 <%@ page import="java.util.*,oscar.oscarReport.pageUtil.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%
+    String groupName = (String) session.getAttribute("groupName");
+%>
 
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
 <html>
@@ -93,13 +95,13 @@
                                         <th align="left"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.MeasurementGroup.allTypes"/>
                                         </th>
 
-                                        <th align="left"><c:out value="${groupName}"/></th>
+                                        <th align="left"><%= session.getAttribute("groupName") %></th>
                                     </tr>
                                     <tr>
                                         <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.MeasurementGroup.add2Group"/>
-                                            <c:out value="${groupName}"/></td>
+                                            <%= session.getAttribute("groupName") %></td>
                                         <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.MeasurementGroup.deleteTypes"/>
-                                            <c:out value="${groupName}"/></td>
+                                            <%= session.getAttribute("groupName") %></td>
                                     <tr>
                                         <td><select multiple="true" name="selectedAddTypes" size="10">
                                             <c:forEach var="allTypeDisplayName" items="${allTypeDisplayNames}">
@@ -131,8 +133,7 @@
                                                    onClick="window.close()"></td>
                                         <td></td>
                                     </tr>
-                                    <input type="hidden" name="groupName"
-                                           value="<c:out value="${groupName}"/>"/>
+                                    <input type="hidden" name="groupName" value="<%= groupName %>"/>
                                 </table>
                             </td>
                         </tr>

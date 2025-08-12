@@ -25,7 +25,7 @@
     <h4>Patient List</h4>
 </div>
 
-<form id="plForm" action="<%=request.getContextPath() %>/patientlistbyappt.do" class="well form-horizontal">
+<form id="plForm" action="<%=request.getContextPath() %>/patientlistbyappt" class="well form-horizontal">
 
     <fieldset>
         <h4>

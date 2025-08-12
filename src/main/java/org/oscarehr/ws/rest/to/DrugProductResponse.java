@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import org.oscarehr.ws.rest.to.model.DrugProductTo1;
 
 @XmlRootElement
-@XmlSeeAlso({DrugProductTo1.class})
+@XmlSeeAlso(DrugProductTo1.class)
 public class DrugProductResponse extends AbstractSearchResponse<DrugProductTo1> {
 
     private static final long serialVersionUID = 1L;

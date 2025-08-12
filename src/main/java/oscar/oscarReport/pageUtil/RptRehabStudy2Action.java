@@ -54,15 +54,12 @@ public class RptRehabStudy2Action extends ActionSupport {
             response.sendRedirect("../logout.htm");
         }
 
-        //String formName = frm.getFormName();
-        //String startDate = frm.getStartDate();
-        //String endDate = frm.getEndDate();
         FormsDao dao = SpringUtils.getBean(FormsDao.class);
         List<String> headers = new ArrayList<String>();
         List<Object[]> rows = null;
 
         try {
-            String sql = "select * from " + formName + "limit 1";
+            String sql = "select * from " + formName + " limit 1";
             ResultSet rs = null;
             try {
                 rs = DBHandler.GetSQL(sql);

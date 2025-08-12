@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * };
  */
 @XmlRootElement(name = "summaryItem")
-@XmlSeeAlso(value = {DiagnosisTo1.class})
+@XmlSeeAlso(DiagnosisTo1.class)
 public class SummaryItemTo1 {
     Integer id;
     Long noteId;

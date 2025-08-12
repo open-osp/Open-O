@@ -47,7 +47,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "clientQuery", propOrder = {"clientID"})
+@XmlType(name = "clientQuery", propOrder = "clientID")
 public class ClientQuery {
 
     protected int clientID;

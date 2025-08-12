@@ -467,13 +467,13 @@
                 %>
 
                 <td align="right"><!--  b>View:</b>
-            <a href="javascript: popupPage('formbcnewbornpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&view=1');">Part1 </a>
-            <a href="javascript: popupPage('formbcnewbornpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&view=1');">Part2 <font size=-2>(pg.1)</font></a> |
+            <a href="javascript: popupPage('form/formbcnewbornpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&view=1');">Part1 </a>
+            <a href="javascript: popupPage('form/formbcnewbornpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&view=1');">Part2 <font size=-2>(pg.1)</font></a> |
             &nbsp;--></td>
                 <td align="right"><b>Edit:</b> <a
-                        href="formbcnewbornpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>">Part1</a>
+                        href="form/formbcnewbornpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>">Part1</a>
                     | <a
-                            href="formbcnewbornpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>">Part2
+                            href="form/formbcnewbornpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>">Part2
                         <font size=-2>(pg.1)</font></a> | Part2 <font size=-2>(pg.2)</font> |
                 </td>
                 <%
@@ -1141,13 +1141,13 @@
                 %>
 
                 <td align="right"><!--  b>View:</b>
-            <a href="javascript: popupPage('formbcnewbornpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&view=1');">Part1 </a>
-            <a href="javascript: popupPage('formbcnewbornpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&view=1');">Part2 <font size=-2>(pg.1)</font></a> |
+            <a href="javascript: popupPage('form/formbcnewbornpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&view=1');">Part1 </a>
+            <a href="javascript: popupPage('form/formbcnewbornpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&view=1');">Part2 <font size=-2>(pg.1)</font></a> |
             &nbsp;--></td>
                 <td align="right"><b>Edit:</b> <a
-                        href="formbcnewbornpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>">Part1</a>
+                        href="form/formbcnewbornpg1.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>">Part1</a>
                     | <a
-                            href="formbcnewbornpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>">Part2
+                            href="form/formbcnewbornpg2.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>">Part2
                         <font size=-2>(pg.1)</font></a> | Part2 <font size=-2>(pg.2)</font> |
                 </td>
                 <%

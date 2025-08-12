@@ -60,7 +60,13 @@ public class BillingClaimsErrorReportBeanHandlerSave {
             while ((nextline = input.readLine()) != null) {
                 String codeError = "";
 
-                String headerCount = nextline.substring(2, 3);
+                String headerCount = "";
+                if (nextline.length() >= 3) {
+                    headerCount = nextline.substring(2, 3);
+                } else {
+                    // Handle unexpected short line gracefully, e.g. skip and log warning
+                    MiscUtils.getLogger().warn("Skipping short or malformed line: '" + nextline + "'");
+                }
                 if (headerCount.compareTo("1") == 0) {
                     erObj = new BillingErrorRepData();
                     CERBean = new BillingClaimsErrorReportBean();
@@ -202,6 +208,7 @@ public class BillingClaimsErrorReportBeanHandlerSave {
             MiscUtils.getLogger().error("Error", ioe);
         } catch (StringIndexOutOfBoundsException ioe) {
             verdict = false;
+            MiscUtils.getLogger().error("Error, setting verdict to false:", ioe);
         }
         return verdict;
     }

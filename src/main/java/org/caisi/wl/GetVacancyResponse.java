@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getVacancyResponse", propOrder = {"_return"})
+@XmlType(name = "getVacancyResponse", propOrder = "_return")
 public class GetVacancyResponse {
 
     @XmlElement(name = "return")

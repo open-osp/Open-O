@@ -406,6 +406,9 @@ public class EctFormData {
         }
 
         public String getCreated() {
+            if (created == null) {
+                return null;
+            }
             return dateFormat.format(created);
         }
 

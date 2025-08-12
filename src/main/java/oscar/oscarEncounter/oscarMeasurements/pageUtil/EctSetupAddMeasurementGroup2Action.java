@@ -23,7 +23,6 @@
  * Ontario, Canada
  */
 
-
 package oscar.oscarEncounter.oscarMeasurements.pageUtil;
 
 import java.io.IOException;
@@ -55,7 +54,6 @@ public class EctSetupAddMeasurementGroup2Action extends ActionSupport {
 
     public String execute() throws ServletException, IOException {
         if (securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin", "w", null) || securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin.measurements", "w", null)) {
-            String groupName = (String) this.getValue("groupName");
             MiscUtils.getLogger().debug("The selected groupName is: " + groupName);
 
             EctTypeDisplayNameBeanHandler hd = new EctTypeDisplayNameBeanHandler(groupName, false);
@@ -67,7 +65,7 @@ public class EctSetupAddMeasurementGroup2Action extends ActionSupport {
             session.setAttribute("existingTypeDisplayNames", existingTypeDisplayName);
             session.setAttribute("allTypeDisplayNames", allTypeDisplayName);
             session.setAttribute("groupName", groupName);
-
+            
             return "continue";
 
         } else {
@@ -75,6 +73,15 @@ public class EctSetupAddMeasurementGroup2Action extends ActionSupport {
         }
     }
 
+    private String groupName;
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
 
     private final Map values = new HashMap();
 

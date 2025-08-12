@@ -89,7 +89,7 @@
 %>
 <%
     //The oscarEncounter session manager, if the session bean is not in the context it looks for a session cookie with the appropriate name and value, if the required cookie is not available
-    //it dumps you out to an erros page.
+    //it dumps you out to an error page.
 
     oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
     if ((bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute("EctSessionBean")) == null) {
@@ -1007,7 +1007,7 @@
                         <tr class="Header">
                             <td style="font-weight: bold">oscarMessenger <a
                                     href="javascript: function myFunction() {return false; }"
-                                    onClick="popup(700,960,'../oscarMessenger/SendDemoMessage.do?demographic_no=<%=demoNo%>','msg')">Send
+                                    onClick="popup(700,960,'${pageContext.request.contextPath}/oscarMessenger/SendDemoMessage.do?demographic_no=<%=demoNo%>','msg')">Send
                                 Msg</a></td>
                         </tr>
                         <tr>

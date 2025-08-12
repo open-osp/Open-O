@@ -29,7 +29,9 @@
 %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%
+    String groupName = (String) session.getAttribute("groupName");
+%>
 
 <%@ page
         import="java.lang.*,oscar.oscarEncounter.oscarMeasurements.pageUtil.*" %>
@@ -71,8 +73,7 @@
     <table>
         <form action="oscarEncounter/oscarMeasurements/SetupAddMeasurementGroup.do">
             <tr>
-                <input type="hidden" name="value(groupName)"
-                       value="<c:out value="${groupName}"/>"/>
+                <input type="hidden" name="groupName" value="<%= groupName %>"/>
                 <td>Processing...</td>
                 <script>
                     submitForm();

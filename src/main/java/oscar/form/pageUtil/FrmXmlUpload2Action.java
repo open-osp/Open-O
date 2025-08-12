@@ -33,6 +33,7 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 import oscar.util.JDBCUtil;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,8 +61,27 @@ public class FrmXmlUpload2Action extends ActionSupport {
         File tmpFile = File.createTempFile("tmp", ".zip");
         tmpFile.deleteOnExit();
 
-        try (InputStream is = new FileInputStream(tmpFile);
-             FileOutputStream fos = new FileOutputStream(tmpFile)) {
+        // Get context of the temp directory, get the file path to the the temp directory
+        ServletContext servletContext = ServletActionContext.getServletContext();
+
+        // Validate the paths
+        File safeDir = (File) servletContext.getAttribute("javax.servlet.context.tempdir"); // Use a safe directory
+        
+        if (safeDir == null) {
+            throw new IllegalStateException("Temporary directory attribute is not set.");
+        }
+        
+        File normalizedFile = file1.toPath().normalize().toFile();
+        String safeDirPath = safeDir.getCanonicalPath() + File.separator;
+        String filePath = normalizedFile.getCanonicalPath();
+
+        // Ensure that it is not in an invalid file path
+        if (!filePath.startsWith(safeDirPath)) {
+            throw new IllegalArgumentException("Invalid file path: " + filePath);
+        }
+
+       try (InputStream is = new FileInputStream(normalizedFile);
+            OutputStream fos = new FileOutputStream(tmpFile)) {
             byte[] data = new byte[BUFFER];
             int count;
             while ((count = is.read(data)) != -1) {
