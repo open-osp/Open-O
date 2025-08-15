@@ -26,6 +26,7 @@
 
 
 <%@ page import="oscar.login.UAgentInfo" %>
+<%@ page import="org.oscarehr.managers.MfaManager" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix="c" %>
@@ -583,6 +584,7 @@ pageContext.setAttribute("isMobileDevice", isMobileDevice);
    	                        	class="form-control" required/>
    	                        </div>
 
+							<% if (MfaManager.isOscarLegacyPinEnabled()) { %>
 							<c:if test="${not LoginResourceBean.ssoEnabled}">
 								<div class="form-group ${ login_error }">
 									<input type="password" name="pin" placeholder="Enter your PIN" value=""
@@ -592,6 +594,7 @@ pageContext.setAttribute("isMobileDevice", isMobileDevice);
 									</span>
 								</div>
 							</c:if>
+							<% } %>
    	                        <input type="hidden" id="oneIdKey" name="nameId" value="${ nameId }"/>
 							<input type="hidden" id="loginType" name="loginType" value=""/>
    	                        <input type=hidden name='propname' value='<bean:message key="loginApplication.propertyFile"/>' />

@@ -64,6 +64,17 @@ public class Hl7TextMessageDaoImpl extends AbstractDaoImpl<Hl7TextMessage> imple
         return results;
     }
 
+    @Override
+    public List<Hl7TextMessage> findByIds(List<Integer> ids) {
+        Query query = entityManager.createQuery("SELECT x FROM Hl7TextMessage x WHERE x.id IN :ids");
+        query.setParameter("ids", ids);
+
+        @SuppressWarnings("unchecked")
+        List<Hl7TextMessage> results = query.getResultList();
+
+        return results;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<Integer> getLabResultsSince(Integer demographicNo, Date updateDate) {

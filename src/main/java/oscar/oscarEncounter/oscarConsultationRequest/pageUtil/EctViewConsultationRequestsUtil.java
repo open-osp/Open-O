@@ -32,14 +32,18 @@ import org.oscarehr.common.dao.ConsultationRequestExtDao;
 import org.oscarehr.common.dao.ConsultationServiceDao;
 import org.oscarehr.common.model.*;
 import org.oscarehr.common.model.enumerator.ConsultationRequestExtKey;
+import org.oscarehr.managers.ConsultationManager;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 public class EctViewConsultationRequestsUtil {         
@@ -78,11 +82,13 @@ public class EctViewConsultationRequestsUtil {
       followUpDate = new Vector<String>();
       boolean verdict = true;
       consultProvider = new Vector();
+      eReferral = Collections.synchronizedList(new ArrayList<>());
       
       try {
           ConsultationRequestDao consultReqDao = (ConsultationRequestDao) SpringUtils.getBean(ConsultationRequestDao.class);
           ConsultationRequestExtDao consultationRequestExtDao = SpringUtils.getBean(ConsultationRequestExtDao.class);
           DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+          ConsultationManager consultationManager = SpringUtils.getBean(ConsultationManager.class);
           ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
           ConsultationServiceDao serviceDao = (ConsultationServiceDao) SpringUtils.getBean(ConsultationServiceDao.class);
           ConsultationRequest consult;
@@ -98,11 +104,14 @@ public class EctViewConsultationRequestsUtil {
           for( int idx = 0; idx < consultList.size(); ++idx ) {
               consult = (ConsultationRequest)consultList.get(idx);
               demo = demographicManager.getDemographic(loggedInInfo, consult.getDemographicId());
+
+              List<ConsultationRequestExt> extras = consultationRequestExtDao.getConsultationRequestExts(consult.getId());
+              Map<String, String> extraMap = consultationManager.getExtValuesAsMap(extras);
               
               String serviceDescription = "";
               // If service id is 0, check the extensions table
               if (consult.getServiceId() == 0) {
-                 serviceDescription = consultationRequestExtDao.getConsultationRequestExtsByKey(consult.getId(), ConsultationRequestExtKey.EREFERRAL_SERVICE.getKey());
+                 serviceDescription = extraMap.getOrDefault(ConsultationRequestExtKey.EREFERRAL_SERVICE.getKey(), "");
               } else {
                  services = serviceDao.find(consult.getServiceId());
                  if (services != null) {
@@ -123,11 +132,16 @@ public class EctViewConsultationRequestsUtil {
 
               if( consult.getProfessionalSpecialist() == null ) {
                   specialistName = "N/A";
+                  if (consult.getServiceId() == 0) {
+                     specialistName = extraMap.getOrDefault(ConsultationRequestExtKey.EREFERRAL_DOCTOR.getKey(), "N/A");
+                  }
               }
               else {
                   specialist = consult.getProfessionalSpecialist();
                   specialistName = specialist.getLastName() + ", " + specialist.getFirstName();
               }
+
+              boolean isEReferral = extraMap.containsKey(ConsultationRequestExtKey.EREFERRAL_REF.getKey());
 
               demographicNo.add(consult.getDemographicId().toString());
               date.add(DateFormatUtils.ISO_DATE_FORMAT.format(consult.getReferralDate()));
@@ -140,6 +154,7 @@ public class EctViewConsultationRequestsUtil {
               urgency.add(consult.getUrgency());
               siteName.add(consult.getSiteName());
               teams.add(consult.getSendTo());
+              eReferral.add(isEReferral);
               
               date1 = consult.getAppointmentDate();
               date2 = consult.getAppointmentTime();
@@ -248,5 +263,6 @@ public class EctViewConsultationRequestsUtil {
    public Vector<String> followUpDate;
    public Vector<String> providerNo;   
    public Vector<String> siteName;
+   public List<Boolean> eReferral; 
    public Vector consultProvider;
 }

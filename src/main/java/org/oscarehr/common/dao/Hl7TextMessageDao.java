@@ -41,6 +41,8 @@ public interface Hl7TextMessageDao extends AbstractDao<Hl7TextMessage> {
 
 	public List<Hl7TextMessage> findByFileUploadCheckId(int id);
 
+	public List<Hl7TextMessage> findByIds(List<Integer> ids);
+
 	public List<Integer> getLabResultsSince(Integer demographicNo, Date updateDate);
 
 	public List<Hl7TextMessage> findByDemographicNo(Integer demographicNo, int offset, int limit);

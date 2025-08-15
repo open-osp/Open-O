@@ -55,6 +55,7 @@ public class MDSHandler implements MessageHandler {
 
 	private Integer labNo = null;
 	
+	@Override
 	public Integer getLastLabNo() {
 		return labNo;
 	}

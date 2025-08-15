@@ -34,6 +34,7 @@
 
 package oscar.oscarLab.ca.all.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,6 +43,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -113,38 +117,34 @@ public class Utilities {
      * @param filename
      * @return String
      */
-    public static String saveFile(InputStream stream,String filename ){
+    public static String saveFile(InputStream stream, String filename) {
         String retVal = null;
-        
         
         try {
             OscarProperties props = OscarProperties.getInstance();
-            //properties must exist
-            String place= props.getProperty("DOCUMENT_DIR");
-            
-            if(!place.endsWith("/"))
-                place = new StringBuilder(place).insert(place.length(),"/").toString();
-            retVal = place+"LabUpload."+filename.replaceAll(".enc", "")+"."+(new Date()).getTime();
-            
-            logger.debug("saveFile place="+place+", retVal="+retVal);
-            //write the  file to the file specified
-            OutputStream os = new FileOutputStream(retVal);
-            
-            int bytesRead = 0;
-            while ((bytesRead = stream.read()) != -1){
-                os.write(bytesRead);
+            String place = props.getProperty("DOCUMENT_DIR");
+
+            String cleanedFilename = filename.replaceAll(".enc", "");
+            String finalFilename = "LabUpload." + cleanedFilename + "." + System.currentTimeMillis();
+
+            Path filePath = Paths.get(place, finalFilename);
+            retVal = filePath.toString();
+
+            logger.debug("saveFile place=" + place + ", retVal=" + retVal);
+
+            try (OutputStream os = Files.newOutputStream(filePath);
+                BufferedInputStream bis = new BufferedInputStream(stream)) {
+
+                byte[] buffer = new byte[8192]; // 8KB buffer
+                int bytesRead;
+                while ((bytesRead = bis.read(buffer)) != -1) {
+                    os.write(buffer, 0, bytesRead);
+                }
             }
-            os.close();
-            
-            //close the stream
-            stream.close();
-        }catch (FileNotFoundException fnfe) {
-        	logger.error("Error", fnfe);
-            return retVal;
-            
-        }catch (IOException ioe) {
-        	logger.error("Error", ioe);
-            return retVal;
+        } catch (FileNotFoundException fnfe) {
+            logger.error("Unable to create or write to file: " + filename, fnfe);
+        } catch (IOException ioe) {
+            logger.error("Error processing file: " + filename, ioe);
         }
         return retVal;
     }    

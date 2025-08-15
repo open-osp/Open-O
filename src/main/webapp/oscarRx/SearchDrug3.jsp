@@ -718,6 +718,30 @@ function checkFav(){
 
 <style type="text/css">
 
+    .floatingWindow {
+        position: fixed;
+        top: 70%;
+        right: 2px;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-size: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        z-index: 5000;
+        background-color: #ccf5ff;
+        max-width: 25%;
+        opacity: 0;
+        transform: translateX(50px);
+        visibility: hidden;
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    }
+
+    /* Active state for showing */
+    .floatingWindow.show {
+        opacity: 0.95;
+        transform: translateX(0);
+        visibility: visible;
+    }
+
     .ControlPushButton{
         font-size:x-small !important;
         padding:3px !important;
@@ -878,10 +902,10 @@ body {
                                                 <%}%>
                                                 <br>
                                                 <security:oscarSec roleName="<%=roleName2$%>" objectName="_rx" rights="x">
-                                                <input id="saveButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugsPrint();" value="<bean:message key="SearchDrug.msgSaveAndPrint"/>" title="<bean:message key="SearchDrug.help.SaveAndPrint"/>" />
+                                                <input id="saveButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugsPrintCheckContinue();" value="<bean:message key="SearchDrug.msgSaveAndPrint"/>" title="<bean:message key="SearchDrug.help.SaveAndPrint"/>" />
                                                 </security:oscarSec>
 
-                                                <input id="saveOnlyButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugs();" value="<bean:message key="SearchDrug.msgSaveOnly"/>" title="<bean:message key="SearchDrug.help.Save"/>"/>
+                                                <input id="saveOnlyButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugsCheckContinue();" value="<bean:message key="SearchDrug.msgSaveOnly"/>" title="<bean:message key="SearchDrug.help.Save"/>"/>
 												<%
                                                     	if(OscarProperties.getInstance().getProperty("oscarrx.medrec","false").equals("true")) {
                                                 %>
@@ -1242,30 +1266,6 @@ body {
 
   .wcblayerContent {
     padding-left: 20px;
-  }
-
-  .floatingWindow {
-      position: fixed;
-      top: 70%;
-      right: 2px;
-      border-radius: 10px;
-      padding: 12px 24px;
-      font-size: 16px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-      z-index: 1050;
-      background-color: #ccf5ff;
-      max-width: 25%;
-      opacity: 0;
-      transform: translateX(50px);
-      visibility: hidden;
-      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-  }
-
-  /* Active state for showing */
-  .floatingWindow.show {
-      opacity: 0.95;
-      transform: translateX(0);
-      visibility: visible;
   }
 
 </style>
@@ -2577,8 +2577,43 @@ function updateQty(element){
         return x;
     }
 
-    
-    
+
+    function updateSaveAllDrugsPrintCheckContinue() {
+        showUnstagedReRxConfirmation(updateSaveAllDrugsPrint);
+    }
+
+    function updateSaveAllDrugsCheckContinue() {
+        showUnstagedReRxConfirmation(updateSaveAllDrugs);
+    }
+
+    const CONFIRMATION_MESSAGE = {
+        SINGLE: 'is 1 unstaged ReRx drug',
+        MULTIPLE: (count) => "are " + count + " unstaged ReRx drugs"
+    };
+
+    const SAVE_WARNING = 'If you continue, the unstaged ReRx drug(s) will not be re-prescribed.';
+    const SAVE_PROMPT = 'Are you sure you want to save this prescription?';
+
+    function showUnstagedReRxConfirmation(onConfirm) {
+        if (selectedReRxIDs.length === 0) {
+            onConfirm();
+            return;
+        }
+
+        const message = buildConfirmationMessage(selectedReRxIDs.length);
+        if (confirm(message)) {
+            cancelAndClearSelection();
+            onConfirm();
+        }
+    }
+
+    function buildConfirmationMessage(count) {
+        const statusMessage = count === 1
+            ? CONFIRMATION_MESSAGE.SINGLE
+            : CONFIRMATION_MESSAGE.MULTIPLE(count);
+        return "There " + statusMessage + ".\n" + SAVE_WARNING + "\n" + SAVE_PROMPT;
+    }
+
 	<%
 		ArrayList<Object> args = new ArrayList<Object>();
 		args.add(String.valueOf(bean.getDemographicNo()));

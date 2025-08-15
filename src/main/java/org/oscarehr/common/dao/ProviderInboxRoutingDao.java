@@ -53,6 +53,8 @@ public interface ProviderInboxRoutingDao extends AbstractDao<ProviderInboxItem> 
 
 	public int howManyDocumentsLinkedWithAProvider(String providerNo);
 
+	public List<ProviderInboxItem> findDocumentsLinkedWithProvider(String docType, Integer docId, String providerNo);
+
 	public void addToProviderInbox(String providerNo, Integer labNo, String labType);
 
 }

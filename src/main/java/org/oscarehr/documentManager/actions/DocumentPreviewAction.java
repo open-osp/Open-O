@@ -43,12 +43,6 @@ public class DocumentPreviewAction extends DispatchAction {
 	private final DocumentAttachmentManager documentAttachmentManager = SpringUtils.getBean(DocumentAttachmentManager.class);
 	private final FormsManager formsManager = SpringUtils.getBean(FormsManager.class);
 
-	private List<EDoc> allDocuments = new ArrayList<>();
-	private List<EFormData> allEForms = new ArrayList<>();
-	private ArrayList<HashMap<String,? extends Object>> allHRMDocuments = new ArrayList<>();
-	private List<AttachmentLabResultData> allLabsSortedByVersions = new ArrayList<>();
-	private List<EctFormData.PatientForm> allForms = new ArrayList<>();
-
 	public void renderEDocPDF(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		String eDocId = request.getParameter("eDocId");
@@ -131,13 +125,18 @@ public class DocumentPreviewAction extends DispatchAction {
 		
 		String demographicNo = StringUtils.isNullOrEmpty(request.getParameter("demographicNo")) ? "0" : request.getParameter("demographicNo");
 
-		allDocuments = EDocUtil.listDocs(loggedInInfo, "demographic", demographicNo, null, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE);
-		allEForms = EFormUtil.listPatientEformsCurrent(new Integer(demographicNo), true);
-		allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicNo,false);
-		allLabsSortedByVersions = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
-		allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicNo), false, true);
+		List<EDoc> allDocuments = EDocUtil.listDocs(loggedInInfo, "demographic", demographicNo, null, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE);
+		List<EFormData> allEForms = EFormUtil.listPatientEformsCurrent(new Integer(demographicNo), true);
+		ArrayList<HashMap<String,? extends Object>> allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicNo,false);
+		List<AttachmentLabResultData> allLabsSortedByVersions = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
+		List<EctFormData.PatientForm> allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicNo), false, true);
 
-		return forwardDocuments(mapping, request);
+		request.setAttribute("allDocuments", allDocuments);
+		request.setAttribute("allLabsSortedByVersions", allLabsSortedByVersions);
+		request.setAttribute("allForms", allForms);
+		request.setAttribute("allEForms", allEForms);
+		request.setAttribute("allHRMDocuments", allHRMDocuments);
+		return mapping.findForward("fetchDocuments");
 	}
 
 	public ActionForward fetchEFormDocuments(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
@@ -146,13 +145,18 @@ public class DocumentPreviewAction extends DispatchAction {
 		String demographicNo = StringUtils.isNullOrEmpty(request.getParameter("demographicNo")) ? "0" : request.getParameter("demographicNo");
 		String fdid = StringUtils.isNullOrEmpty(request.getParameter("fdid")) ? "0" : request.getParameter("fdid");
 
-		allDocuments = EDocUtil.listDocs(loggedInInfo, "demographic", demographicNo, null, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE);
-		allEForms = documentAttachmentManager.getAllEFormsExpectFdid(loggedInInfo, Integer.parseInt(demographicNo), Integer.parseInt(fdid));
-		allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicNo,false);
-		allLabsSortedByVersions = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
-		allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicNo), false, true);
+		List<EDoc> allDocuments = EDocUtil.listDocs(loggedInInfo, "demographic", demographicNo, null, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE);
+		List<EFormData> allEForms = documentAttachmentManager.getAllEFormsExpectFdid(loggedInInfo, Integer.parseInt(demographicNo), Integer.parseInt(fdid));
+		ArrayList<HashMap<String,? extends Object>> allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicNo,false);
+		List<AttachmentLabResultData> allLabsSortedByVersions = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
+		List<EctFormData.PatientForm> allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicNo), false, true);
 
-		return forwardDocuments(mapping, request);
+		request.setAttribute("allDocuments", allDocuments);
+		request.setAttribute("allLabsSortedByVersions", allLabsSortedByVersions);
+		request.setAttribute("allForms", allForms);
+		request.setAttribute("allEForms", allEForms);
+		request.setAttribute("allHRMDocuments", allHRMDocuments);
+		return mapping.findForward("fetchDocuments");
 	}
 
 	private void generateResponse(HttpServletResponse response, Path pdfPath) throws PDFGenerationException {
@@ -176,14 +180,5 @@ public class DocumentPreviewAction extends DispatchAction {
 		} catch (IOException e) {
 			logger.error("An error occurred while writing JSON response to the output stream", e);
 		}
-	}
-
-	private ActionForward forwardDocuments(ActionMapping mapping, HttpServletRequest request) {
-		request.setAttribute("allDocuments", allDocuments);
-		request.setAttribute("allLabsSortedByVersions", allLabsSortedByVersions);
-		request.setAttribute("allForms", allForms);
-		request.setAttribute("allEForms", allEForms);
-		request.setAttribute("allHRMDocuments", allHRMDocuments);
-		return mapping.findForward("fetchDocuments");
 	}
 }

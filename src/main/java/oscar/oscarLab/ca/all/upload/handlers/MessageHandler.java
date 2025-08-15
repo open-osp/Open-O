@@ -50,5 +50,9 @@ public interface MessageHandler {
      *  otherwise it should return the String "success"
      */
     public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName,int fileId, String ipAddr);
+
+    default Integer getLastLabNo() {
+        return null; // or override in implementing classes as needed
+    }
     
 }

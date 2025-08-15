@@ -32,7 +32,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionMessages;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.TokenQueue;
 import org.jsoup.select.Elements;
+import org.jsoup.select.Selector;
 import org.oscarehr.common.OtherIdManager;
 import org.oscarehr.common.dao.EFormDataDao;
 import org.oscarehr.common.model.EFormData;
@@ -208,7 +210,11 @@ public class EForm extends EFormBase {
 
                 String val = values.get(i);
                 pointer = nextSpot(html, pointer);
-                html = putValue(val, getFieldType(fieldHeader), pointer, html);
+
+				/*
+				 * TODO: Remove the use of pointer completely from this method and update values using the org.jsoup.nodes.Document
+				 */
+                html = putValue(val, getFieldType(fieldHeader), fieldName, pointer, html);
             }
             this.formHtml = html.toString();
 	}
@@ -238,7 +244,11 @@ public class EForm extends EFormBase {
                             int valueEnd = nextSpot(html, pointer);
                             html.delete(pointer-1, valueEnd);
                         }
-                        html = putValue(values.get(i), OPENER_VALUE, pointer, html);
+
+                        /*
+                         * TODO: Remove the use of pointer completely from this method and update values using the org.jsoup.nodes.Document
+                         */
+                        html = putValue(values.get(i), OPENER_VALUE, fieldName, pointer, html);
                 }
                 formHtml = html.toString();
 	}
@@ -365,7 +375,11 @@ public class EForm extends EFormBase {
                         } else {
                             pointer = nextSpot(html, markerLoc+pointer);
                         }
-                        html = putValue(onclick, type, pointer, html);
+
+                        /*
+                         * TODO: Remove the use of pointer completely from this method and update values using the org.jsoup.nodes.Document
+                         */
+                        html = putValue(onclick, type, fieldName, pointer, html);
 
                         log.debug("Opener ==== " + markerLoc);
                         log.debug("=================End Opener Cycle==============");
@@ -533,7 +547,10 @@ public class EForm extends EFormBase {
 		return curAP;
 	}
 
-	private StringBuilder putValue(String value, String type, int pointer, StringBuilder html) {
+    /*
+    * TODO: Remove the use of pointer completely from this method and update values using the org.jsoup.nodes.Document
+    */
+	private StringBuilder putValue(String value, String type, String fieldName, int pointer, StringBuilder html) {
 		// inserts value= into tag or textarea
         if (type.equals("onclick") || type.equals("onclick_append")) {
             if (type.equals("onclick_append")) {
@@ -545,41 +562,52 @@ public class EForm extends EFormBase {
 			html.insert(pointer, " " + value);
 		} else if (type.equals(OPENER_VALUE)) {
 				html.insert(pointer, " "+OPENER_VALUE+"=\""+value+"\"");
-		} else if (type.equals("text") || type.equals("hidden")) {
-			html.insert(pointer, " value=\""+value.replace("\"", "&quot;")+"\"");
-		} else if(type.equals("textarea")) {
-			pointer = html.indexOf(">", pointer) + 1;
-			int endPointer = html.indexOf("<", pointer);
-			html.delete(pointer, endPointer);
-			html.insert(pointer, value);
-		} else if (type.equals("checkbox")) {
-			html.insert(pointer, " checked");
-		} else if (type.equals("select")) {
-			int endindex = StringBuilderUtils.indexOfIgnoreCase(html, "</select>", pointer);
-			if (endindex < 0) return html; // if closing tag not found
-
-			int valueLoc = nextIndex(html, " value="+value, " value=\""+value, pointer);
-			if (valueLoc < 0 || valueLoc > endindex) return html;
-
-			pointer = nextSpot(html, valueLoc + 1);
-			html.insert(pointer, " selected");
-		} else if (type.equals("radio")) {
-			int endindex = html.indexOf(">", pointer);
-			int valindexS = nextIndex(html, " value=", " value=", pointer);
-			if (valindexS < 0 || valindexS > endindex) return html; // if value= not found in tag
-
-			valindexS += 7;
-			if (html.charAt(valindexS) == '"') valindexS++;
-			int valindexE = valindexS + value.length();
-			if (html.substring(valindexS, valindexE).equals(value)) {
-				pointer = nextSpot(html, valindexE);
-				html.insert(pointer, " checked");
-			}
-		} else if(type.equals("date")) {
-	        html.insert(pointer, " value=\""+value+"\"");
-        }
+		} else {
+            html = putValueUsingDocument(fieldName, type, value);
+		}
 		return html;
 	}
+
+    private StringBuilder putValueUsingDocument(String fieldName, String type, String value) {
+        Element field = getDocument().selectFirst("[name=\"" + TokenQueue.escapeCssIdentifier(fieldName) + "\"]");
+        if (field == null) return new StringBuilder(getFormHtml());
+        switch (type) {
+            case "text":
+            case "hidden":
+            case "date":
+                field.attr("value", value);
+                break;
+            case "textarea":
+                field.text(value);
+                break;
+            case "checkbox":
+                field.attr("checked", "checked");
+                break;
+            case "radio":
+                // For radio buttons, find all radios with the same name and check the correct one based on value
+                for (Element radio : getDocument().select("input[type=radio][name=\"" + TokenQueue.escapeCssIdentifier(fieldName) + "\"]")) {
+                    if (value.equals(radio.attr("value"))) {
+                        radio.attr("checked", "checked");
+                    } else {
+                        radio.removeAttr("checked");
+                    }
+                }
+                break;
+            case "select":
+                for (Element option : field.select("option")) {
+                    if (option.attr("value").equals(value)) {
+                        option.attr("selected", "selected");
+                    } else {
+                        option.removeAttr("selected");
+                    }
+                }
+                break;
+            default:
+                // Do nothing for unknown types
+        }
+
+		return new StringBuilder(getFormHtml());
+    }
 
 	private int nextIndex(StringBuilder text, String option1, String option2, int pointer) {
                 // converts text content to lowercase
