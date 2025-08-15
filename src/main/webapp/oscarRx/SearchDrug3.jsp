@@ -2387,6 +2387,40 @@ function updateQty(element){
             }});
         return true;
 }
+
+    const methods = ["Take", "Apply", "Rub well in"];
+    const routes = ["PO", "SL", "IM", "Subcut", "PATCH", "TOP", "INH", "SUPP", "right eye", "left eye", "both eyes"];
+    const frequencies = ["BID", "TID", "QID", "once daily", "twice daily", "3x daily", "4x daily", "weekly"];
+    const numbers = ["1/4", "1/2", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    const durations = ["day", "days", "week", "weeks", "month", "months", "3 months"];
+
+    let placeholderInterval;
+
+    function getRandom(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function generateExample() {
+        return getRandom(methods) + " " +
+            getRandom(routes) + " " +
+            getRandom(frequencies) + " " +
+            getRandom(numbers) + " for " +
+            getRandom(durations);
+    }
+
+    function startShowingSampleInstructions(element) {
+        element.placeholder = "e.g. " + generateExample();
+        element._placeholderInterval = setInterval(() => {
+            element.placeholder = "e.g. " + generateExample();
+        }, 2000);
+    }
+
+
+    function stopShowingSampleInstructions(element) {
+        clearInterval(element._placeholderInterval);
+        element._placeholderInterval = null;
+    }
+
     function parseIntr(element){
         var elemId=element.id;
         var ar=elemId.split("_");
