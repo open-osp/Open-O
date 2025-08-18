@@ -83,23 +83,23 @@ if(listRxDrugs!=null){
          String ATCcode			= rx.getAtcCode();
          String genericName     = rx.getGenericName();
          String dosage = rx.getDosage();
- 
+
          String pickupDate      = RxUtil.DateToString(rx.getPickupDate(), "yyyy-MM-dd");
          String pickupTime      = RxUtil.DateToString(rx.getPickupTime(), "HH:mm");
          String eTreatmentType  = rx.getETreatmentType()!=null ? rx.getETreatmentType() : "";
-         String rxStatus        = rx.getRxStatus()!=null ? rx.getRxStatus() : "";		    
-		String protocol		= rx.getProtocol()!=null ? rx.getProtocol() : ""; 
+         String rxStatus        = rx.getRxStatus()!=null ? rx.getRxStatus() : "";
+		String protocol		= rx.getProtocol()!=null ? rx.getProtocol() : "";
 		/*  Field not required. Commented out because it may be reactivated in the future. 
          String priorRxProtocol	= rx.getPriorRxProtocol()!=null ? rx.getPriorRxProtocol() : "";
          */
          String drugForm		= rx.getDrugForm();
          //remove from the rerx list
          int DrugReferenceId = rx.getDrugReferenceId();
-         
+
          if( ATCcode == null || ATCcode.trim().length() == 0 ) {
              ATCcode = "";
          }
-         
+
          if(ATC != null && ATC.trim().length()>0)
              ATC="ATC: "+ATC;
          String drugName;
@@ -194,14 +194,14 @@ if(listRxDrugs!=null){
 				<!--spacer cell-->
 			</td>
 		</tr>
-	
+
 		<tr>
-			<td >    
+			<td >
 	    		<span id="alleg_<%=rand%>" style="font-size:11px;"></span>
 			</td>
 		</tr>
-	</table> 
-	    
+	</table>
+
     <%-- Splice in the Indication field --%>
 <br />
 	<label style="float:left;width:80px;" for="jsonDxSearch_<%=rand%>" >Indication</label>
@@ -213,16 +213,16 @@ if(listRxDrugs!=null){
 	<input type="text" class="codeTxt" name="jsonDxSearch_<%=rand%>" id="jsonDxSearch_<%=rand%>" placeholder="Search Dx" />
 <br />
      <%-- Splice in the Indication field --%>
-     
+
     <a tabindex="-1" href="javascript:void(0);" onclick="showHideSpecInst('siAutoComplete_<%=rand%>')" style="float:left;width:80px;">Instructions:</a>
-    <input type="text" id="instructions_<%=rand%>" name="instructions_<%=rand%>" onkeypress="handleEnter(this,event);" value="<%=instructions%>" size="60" onchange="parseIntr(this);" onfocus="startShowingSampleInstructions(this);" onblur="stopShowingSampleInstructions(this)" /><a href="javascript:void(0);" tabindex="-1" onclick="displayMedHistory('<%=rand%>');" style="color:red;font-size:13pt;vertical-align:super;text-decoration:none" TITLE="Instruction Examples"><b>*</b></a>  <a href="javascript:void(0);" tabindex="-1" onclick="displayInstructions('<%=rand%>');"><img src="<c:out value="${ctx}/images/icon_help_sml.gif"/>" border="0" TITLE="Instructions Field Reference" ></a> <span id="major_<%=rand%>" style="display:none;background-color:red"></span>&nbsp;<span id="moderate_<%=rand%>" style="display:none;background-color:orange"></span>&nbsp;<span id='minor_<%=rand%>' style="display:none;background-color:yellow;"></span>&nbsp;<span id='unknown_<%=rand%>' style="display:none;background-color:#B1FB17"></span>
+    <input type="text" id="instructions_<%=rand%>" name="instructions_<%=rand%>" onkeypress="handleEnter(this,event);" value="<%=instructions%>" size="60" onchange="parseIntr(this);" onfocus="startShowingSampleInstructions(this, <%=rand%>);" onblur="stopShowingSampleInstructions(this, <%=rand%>)" /><a href="javascript:void(0);" tabindex="-1" onclick="displayMedHistory('<%=rand%>');" style="color:red;font-size:13pt;vertical-align:super;text-decoration:none" TITLE="Instruction Examples"><b>*</b></a>  <a href="javascript:void(0);" id="disp_instruct_link_<%=rand%>" class="disp-instruct-link ripple-wrap" tabindex="-1" onclick="displayInstructions('<%=rand%>');"><img src="<c:out value="${ctx}/images/icon_help_sml.gif"/>" id="disp_instruct_img_<%=rand%>" class="disp-instruct-img ripple-icon pulse-icon" border="0" TITLE="Instructions Field Reference" ></a> <span id="major_<%=rand%>" style="display:none;background-color:red"></span>&nbsp;<span id="moderate_<%=rand%>" style="display:none;background-color:orange"></span>&nbsp;<span id='minor_<%=rand%>' style="display:none;background-color:yellow;"></span>&nbsp;<span id='unknown_<%=rand%>' style="display:none;background-color:#B1FB17"></span>
        <br>
        <label for="siInput_<%=rand%>" ></label>
        <div id="siAutoComplete_<%=rand%>" <%if(isSpecInstPresent){%> style="overflow:visible;"<%} else{%> style="overflow:visible;display:none;"<%}%> >
            <label style="float:left;width:80px;">&nbsp;&nbsp;</label><input id="siInput_<%=rand%>"  type="text" size="60" <%if(!isSpecInstPresent) {%>style="color:gray; width:auto" value="Enter Special Instruction" <%} else {%> style="color:black; width:auto" value="<%=specialInstruction%>" <%}%> onblur="changeText('siInput_<%=rand%>');updateSpecialInstruction('siInput_<%=rand%>');" onfocus="changeText('siInput_<%=rand%>');" >
            <div id="siContainer_<%=rand%>" style="float:right" >
            </div>
-              	<br><br>         
+              	<br><br>
         </div>
 		<div>
         <label id="labelQuantity_<%=rand%>"  style="float:left;width:80px;">Qty/Mitte:</label><input size="8" <%if(rx.isCustomNote()){%> disabled <%}%> type="text" id="quantity_<%=rand%>"     name="quantity_<%=rand%>"     value="<%=quantityText%>" onblur="updateQty(this);" />
@@ -240,12 +240,12 @@ if(listRxDrugs!=null){
 			  	<label for="longTermE_<%=rand%>" ><bean:message key="WriteScript.msgUnset" /> </label>
 			  	<input type="radio" id="longTermE_<%=rand%>"  name="longTerm_<%=rand%>" value="unset" class="med-term" <%if(longTerm == null) {%> checked="checked" <%}%> onChange="updateShortTerm('<%=rand%>',false)"/>
 				<div style="display:none">
-					<label for="shortTerm_<%=rand%>" ><bean:message key="WriteScript.msgSortTermMedication"/> </label> 
+					<label for="shortTerm_<%=rand%>" ><bean:message key="WriteScript.msgSortTermMedication"/> </label>
 	        		<input  type="checkbox" id="shortTerm_<%=rand%>"  name="shortTerm_<%=rand%>" class="med-term" <%if(shortTerm) {%> checked="checked" <%}%> />
 	        	</div>
 	        </span>
 		</div>
-        
+
         <%if(genericName!=null&&!genericName.equalsIgnoreCase("null")){%>
         <div><a>Ingredient:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%=genericName%></a></div><%}%>
        <div class="rxStr" title="not what you mean?" >
@@ -269,18 +269,18 @@ if(listRxDrugs!=null){
        	  <bean:message key="WriteScript.msgPrescribedRefillDuration"/>
        	  <input type="text" size="6" id="refillDuration_<%=rand%>" name="refillDuration_<%=rand%>" value="<%=refillDuration%>"
        	   onchange="if(isNaN(this.value)||this.value<0){alert('Refill duration must be number (of days)');this.focus();return false;}return true;" /><bean:message key="WriteScript.msgPrescribedRefillDurationDays"/>
-       	  &nbsp;       	  
+       	  &nbsp;
        	  <bean:message key="WriteScript.msgPrescribedRefillQuantity"/>
        	  <input type="text" size="6" id="refillQuantity_<%=rand%>" name="refillQuantity_<%=rand%>" value="<%=refillQuantity%>" />
-       	  </div><div> 
-    	  
+       	  </div><div>
+
        	  <bean:message key="WriteScript.msgPrescribedDispenseInterval"/>
        	  <input type="text" size="6" id="dispenseInterval_<%=rand%>" name="dispenseInterval_<%=rand%>" value="<%=dispenseInterval%>" />
        	  </div>
-       	  
-	     <%if(OscarProperties.getInstance().getProperty("rx.enable_internal_dispensing","false").equals("true")) {%>  
+
+	     <%if(OscarProperties.getInstance().getProperty("rx.enable_internal_dispensing","false").equals("true")) {%>
 	       <div>
-	       	   <bean:message key="WriteScript.msgDispenseInternal"/>	
+	       	   <bean:message key="WriteScript.msgDispenseInternal"/>
 			  <input type="checkbox" name="dispenseInternal_<%=rand%>" id="dispenseInternal_<%=rand%>" <%if(dispenseInternal) {%> checked="checked" <%}%> />
       	 </div>
       	 <% } %>
@@ -294,7 +294,7 @@ if(listRxDrugs!=null){
     </div><div>
 
         <label for="pastMedSelection" title="Medications taken at home that were previously ordered."><bean:message key="WriteScript.msgPastMedication" /></label>
-        
+
         <span id="pastMedSelection">
         	<label for="pastMedY_<%=rand%>"><bean:message key="WriteScript.msgYes"/></label> 
             <input  type="radio" value="yes" name="pastMed_<%=rand%>" id="pastMedY_<%=rand%>" <%if(pastMed != null && pastMed) {%> checked="checked" <%}%>  />
@@ -304,9 +304,9 @@ if(listRxDrugs!=null){
             
             <label for="pastMedE_<%=rand%>"><bean:message key="WriteScript.msgUnknown"/></label> 
             <input  type="radio" value="unset" name="pastMed_<%=rand%>" id="pastMedE_<%=rand%>" <%if(pastMed == null) {%> checked="checked" <%}%>  />
-         </span>         
+         </span>
 	</div><div>
-	
+
 	<label for="patientCompliantSelection"><bean:message key="WriteScript.msgPatientCompliance"/>:</label>
 	<span id="patientCompliantSelection">
          <label for="patientComplianceY_<%=rand%>"><bean:message key="WriteScript.msgYes"/></label> 
@@ -322,7 +322,7 @@ if(listRxDrugs!=null){
           <bean:message key="WriteScript.msgNonAuthoritative"/>
             <input type="checkbox" name="nonAuthoritativeN_<%=rand%>" id="nonAuthoritativeN_<%=rand%>" <%if(nonAuthoritative) {%> checked="checked" <%}%> />
     </div><div>
-    
+
     		<bean:message key="WriteScript.msgSubNotAllowed"/>
     		<input type="checkbox" name="nosubs_<%=rand%>" id="nosubs_<%=rand%>" <%if(nosubs) {%> checked="checked" <%}%> />
     </div><div>
@@ -331,7 +331,7 @@ if(listRxDrugs!=null){
            <input type="text" id="rxDate_<%=rand%>" name="rxDate_<%=rand%>" value="<%=startDate%>" <%if(startDateUnknown) {%> disabled="disabled" <%}%>/>
         <bean:message key="WriteScript.msgUnknown"/>
            <input  type="checkbox" name="startDateUnknown_<%=rand%>" id="startDateUnknown_<%=rand%>" <%if(startDateUnknown) {%> checked="checked" <%}%> onclick="toggleStartDateUnknown('<%=rand%>');"/>
-           
+
            </div><div>
 	<label style="">Last Refill Date:</label>
            <input type="text" id="lastRefillDate_<%=rand%>"  name="lastRefillDate_<%=rand%>" value="<%=lastRefillDate%>" />
@@ -339,28 +339,28 @@ if(listRxDrugs!=null){
         <label style="float:left;width:80px;">Written Date:</label>
            <input type="text" id="writtenDate_<%=rand%>"  name="writtenDate_<%=rand%>" value="<%=writtenDate%>" />
            <a href="javascript:void(0);" style="float:right;margin-top:0px;padding-top:0px;" onclick="addFav('<%=rand%>','<%=drugName%>');return false;">Add to Favorite</a>
-       
-           </div><div>
-           			           
-			<bean:message key="WriteScript.msgProtocolReference"/>: 
-           <input type="text" id="protocol_<%=rand%>"  name="protocol_<%=rand%>" value="<%=protocol%>" />          
 
-           <%--  OMD Revalidation: field not required currently. Commented out as this may be used again in the future. 
+           </div><div>
+
+			<bean:message key="WriteScript.msgProtocolReference"/>:
+           <input type="text" id="protocol_<%=rand%>"  name="protocol_<%=rand%>" value="<%=protocol%>" />
+
+           <%--  OMD Revalidation: field not required currently. Commented out as this may be used again in the future.
           <label style="">Prior Rx Protocol:</label>
            <input type="text" id="protocol_<%=rand%>"  name="priorRxProtocol_<%=rand%>" value="<%=priorRxProtocol%>" />
             --%>
-            
+
            </div><div>
-           
-           <bean:message key="WriteScript.msgPickUpDate"/>: 
+
+           <bean:message key="WriteScript.msgPickUpDate"/>:
            <input type="text" id="pickupDate_<%=rand%>"  name="pickupDate_<%=rand%>" value="<%=pickupDate%>" onchange="if (!isValidDate(this.value)) {this.value=null}" />
-           <bean:message key="WriteScript.msgPickUpTime"/>: 
+           <bean:message key="WriteScript.msgPickUpTime"/>:
            <input type="text" id="pickupTime_<%=rand%>"  name="pickupTime_<%=rand%>" value="<%=pickupTime%>" onchange="if (!isValidTime(this.value)) {this.value=null}" />
            </div><div>
            <bean:message key="WriteScript.msgComment"/>:
            <input type="text" id="comment_<%=rand%>" name="comment_<%=rand%>" value="<%=comment%>" size="60"/>
-           </div><div>  
-           <bean:message key="WriteScript.msgETreatmentType"/>:     
+           </div><div>
+           <bean:message key="WriteScript.msgETreatmentType"/>:
            <select name="eTreatmentType_<%=rand%>">
            		<option>--</option>
                          <option value="CHRON" <%=eTreatmentType.equals("CHRON")?"selected":""%>><bean:message key="WriteScript.msgETreatment.Continuous"/></option>
@@ -378,8 +378,8 @@ if(listRxDrugs!=null){
                          <option value="Obsolete" <%=rxStatus.equals("Obsolete")?"selected":""%>><bean:message key="WriteScript.msgRxStatus.Obsolete"/></option>
                          <option value="Nullified" <%=rxStatus.equals("Nullified")?"selected":""%>><bean:message key="WriteScript.msgRxStatus.Nullified"/></option>
            </select>
-                </div><div>                
-                <bean:message key="WriteScript.msgDrugForm"/>: 
+                </div><div>
+                <bean:message key="WriteScript.msgDrugForm"/>:
                 <%if(rx.getDrugFormList()!=null && rx.getDrugFormList().indexOf(",")!=-1){ %>
                 <select name="drugForm_<%=rand%>">
                 	<%
@@ -388,7 +388,7 @@ if(listRxDrugs!=null){
                 	%>
                 		<option value="<%=form%>" <%=form.equals(drugForm)?"selected":"" %>><%=form%></option>
                 	<% } %>
-                </select>    
+                </select>
 				<%} else { %>
 					<%=drugForm%>
 				<% } %>
@@ -397,26 +397,84 @@ if(listRxDrugs!=null){
 
 
        			</div>
-       
+
         </div>
-           
+
            <div id="renalDosing_<%=rand%>" ></div>
            <div id="luc_<%=rand%>" style="margin-top:2px;" >
             </div>
-         
-           
+
+
            <oscar:oscarPropertiesCheck property="RENAL_DOSING_DS" value="yes">
             <script type="text/javascript">getRenalDosingInformation('renalDosing_<%=rand%>','<%=rx.getAtcCode()%>');</script>
             </oscar:oscarPropertiesCheck>
            <oscar:oscarPropertiesCheck property="billregion" value="ON" >
                <script type="text/javascript">getLUC('luc_<%=rand%>','<%=rand%>','<%=rx.getRegionalIdentifier()%>');</script>
             </oscar:oscarPropertiesCheck>
-			
+
 
 
 </fieldset>
 
 <style type="text/css" >
+    .disp-instruct-link {
+        display: inline-flex;
+        height: 16px;
+        width: 16px;
+        vertical-align: middle;
+    }
+    .ripple-wrap {
+        position: relative;
+    }
+
+    .disp-instruct-img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .ripple-icon {
+        position: relative;
+        z-index: 2;
+    }
+
+    .ripple-wrap::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+        border-radius: 50%;
+        background: rgba(0, 123, 255, 0.8);
+        transform: translate(-50%, -50%) scale(0.8);
+        z-index: 1;
+        animation: ripple 1.5s infinite ease-out;
+    }
+
+    @keyframes ripple {
+        0% {
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0.6;
+        }
+        80% {
+            transform: translate(-50%, -50%) scale(2.5);
+            opacity: 0;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+    .pulse-icon {
+        display: inline-block;
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+        0%   { transform: scale(1); }
+        50%  { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
 
 
 /*
@@ -428,7 +486,7 @@ if(listRxDrugs!=null){
  *
  * http://docs.jquery.com/UI/Autocomplete#theming
  */
-.ui-autocomplete { position: absolute; cursor: default; }	
+.ui-autocomplete { position: absolute; cursor: default; }
 
 /* workarounds */
 * html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
@@ -474,9 +532,9 @@ if(listRxDrugs!=null){
 }
 
 
-	.ui-autocomplete-loading { 
-		background: white url('../images/ui-anim_basic_16x16.gif') right center no-repeat; 
-	} 
+	.ui-autocomplete-loading {
+		background: white url('../images/ui-anim_basic_16x16.gif') right center no-repeat;
+	}
 	.ui-autocomplete {
 		max-height: 200px;
 		overflow-y: auto;
@@ -486,10 +544,10 @@ if(listRxDrugs!=null){
 	}
 
 	.ui-menu .ui-menu {
-	
+
 		background-color: whitesmoke;
 	}
-	
+
 	.ui-menu .ui-menu-item a {
 		border-bottom:white thin solid;
 	}
@@ -502,7 +560,7 @@ if(listRxDrugs!=null){
 
 <script type="text/javascript">
        jQuery("document").ready(function() {
-    	   
+
                if ( jQuery.browser.msie ) {
                        jQuery('#rx_save_updates_<%=rand%>').show();
                } else {
@@ -510,31 +568,31 @@ if(listRxDrugs!=null){
                }
 
 				var idindex = "";
-               jQuery( "input[id*='jsonDxSearch']" ).autocomplete({	
+               jQuery( "input[id*='jsonDxSearch']" ).autocomplete({
        			source: function(request, response) {
-       				
+
        				var elementid = this.element[0].id;
 	   				if( elementid.indexOf("_") > 0 ) {
 	   					idindex = "_" + elementid.split("_")[1];
 	   				}
-       				       				
+
        				jQuery.ajax({
        				    url: ctx + "/dxCodeSearchJSON.do",
        				    type: 'POST',
        				    data: 'method=search' + ( jQuery( '#codingSystem' + idindex ).find(":selected").val() ).toUpperCase()
-       				    				+ '&keyword=' 
+       				    				+ '&keyword='
        				    				+ jQuery( "#jsonDxSearch" + idindex ).val(),
        				  	dataType: "json",
        				    success: function(data) {
-       						response(jQuery.map( data, function(item) { 
+       						response(jQuery.map( data, function(item) {
        							return {
        								label: item.description.trim() + ' (' + item.code + ')',
        								value: item.code,
        								id: item.id
        							};
        				    	}))
-       				    }			    
-       				})					  
+       				    }
+       				})
        			},
        			delay: 100,
        			minLength: 2,
@@ -555,10 +613,10 @@ if(listRxDrugs!=null){
        			}
        		})
 
-		
+
 
 		<%--   Removed during OMD Re-Evaluation.  This function auto set the LongTerm field
-		if number of refills more than 0.  This is not a definitive Long Term drug.        
+		if number of refills more than 0.  This is not a definitive Long Term drug.
 			jQuery("input[id^='repeats_']").keyup(function(){
             	var rand = <%=rand%>;
             	var repeatsVal = this.value;
@@ -567,8 +625,8 @@ if(listRxDrugs!=null){
             		jQuery(".med-term").trigger('change');
             	}
             }); --%>
-      
-		  
+
+
        });
 </script>
 
@@ -598,7 +656,7 @@ if(listRxDrugs!=null){
 
             var specArr=new Array();
             var specStr='<%=org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(specStr)%>';
-            
+
             specArr=specStr.split("*");// * is used as delimiter
             //oscarLog("specArr="+specArr);
             YAHOO.example.BasicLocal = function() {

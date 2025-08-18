@@ -2408,17 +2408,23 @@ function updateQty(element){
             getRandom(durations);
     }
 
-    function startShowingSampleInstructions(element) {
+    function startShowingSampleInstructions(element, randId) {
         element.placeholder = "e.g. " + generateExample();
         element._placeholderInterval = setInterval(() => {
             element.placeholder = "e.g. " + generateExample();
         }, 2000);
+
+        document.getElementById("disp_instruct_link_" + randId).classList.add('ripple-wrap');
+        document.getElementById("disp_instruct_img_" + randId).classList.add('ripple-icon', 'pulse-icon');
     }
 
 
-    function stopShowingSampleInstructions(element) {
+    function stopShowingSampleInstructions(element, randId) {
         clearInterval(element._placeholderInterval);
         element._placeholderInterval = null;
+
+        document.getElementById("disp_instruct_link_" + randId).classList.remove('ripple-wrap');
+        document.getElementById("disp_instruct_img_" + randId).classList.remove('ripple-icon', 'pulse-icon');
     }
 
     function parseIntr(element){
