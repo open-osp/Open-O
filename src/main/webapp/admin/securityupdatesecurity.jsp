@@ -47,6 +47,8 @@
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.Security" %>
 <%@ page import="org.oscarehr.common.dao.SecurityDao" %>
+<%@ page import="org.oscarehr.security.MfaActions2Action" %>
+<%@ page import="org.oscarehr.managers.MfaManager" %>
 
 
 <%!
@@ -58,6 +60,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/checkPassword.js.jsp"></script>
+        <script src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityupdatesecurity.title"/></title>
         <link rel="stylesheet" type="text/css" href="bcArStyle.css">
         <!-- calendar stylesheet -->
@@ -135,6 +138,68 @@
                 return true;
             }
 
+
+	/**
+	 * Handles the change event of the MFA checkbox.
+	 * @param {HTMLInputElement} checkbox - The MFA checkbox element.
+	 */
+	function handleMfaChange(checkbox) {
+		updateMfaElementsVisibility(checkbox.checked, checkbox.checked);
+	}
+
+	function updatePinComponentsAccess(checked) {
+		let pinCheckbox = document.getElementsByName('b_RemoteLockSet')
+		let pinConfCheckbox = document.getElementsByName('b_LocalLockSet')
+		let pinInput = document.getElementsByName('pin')
+		let pinConfInput = document.getElementsByName('conPin')
+
+		pinCheckbox[0].disabled = checked;
+		pinConfCheckbox[0].disabled = checked;
+		pinInput[0].disabled = checked;
+		pinConfInput[0].disabled = checked;
+	}
+
+	/**
+	 * Updates the visibility of MFA-related elements based on the provided flags.
+	 *
+	 * @param {boolean} showMfaNote - Whether to show the MFA note.
+	 * @param {boolean} showResetMfaLink - Whether to show the reset MFA link.
+	 */
+	function updateMfaElementsVisibility(showMfaNote, showResetMfaLink) {
+		let mfaNote = document.getElementById('mfaNote');
+		let resetMfa = document.getElementById('resetMfaLink');
+
+		if (resetMfa !== null)
+			resetMfa.style.display = showResetMfaLink ? 'inline' : 'none';
+		if (mfaNote !== null)
+			mfaNote.style.display = showMfaNote ? 'inline' : 'none';
+	}
+
+	/**
+	 * Handles the reset MFA action for a given security ID.
+	 *
+	 * @param {number} securityId - The ID of the security record.
+	 */
+	function handleResetMfa(securityId) {
+		if (confirm("<bean:message key="admin.securityAddRecord.mfa.reset.confirm"/>")) {
+			let url = "${pageContext.request.contextPath}/securityRecord/mfa.do";
+			let data = {
+				method: '<%= MfaActions2Action.METHOD_RESET_MFA %>',
+				securityId: securityId
+			};
+			new Ajax.Request(url, {
+				method: 'get',
+				parameters: data,
+				onSuccess: function (transport) {
+					updateMfaElementsVisibility(true, false);
+				},
+				onFailure: function () {
+					console.log("error resetting MFA");
+				}
+			});
+		}
+	}
+
             //-->
         </script>
     </head>
@@ -200,12 +265,16 @@
                             size="10" readonly/> <img src="<%= request.getContextPath() %>/images/cal.gif"
                                                       id="date_ExpireDate_cal"/></td>
                 </tr>
+
+		<% if (MfaManager.isOscarLegacyPinEnabled()) { %>
+
                 <tr>
                     <td align="right" nowrap><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formRemotePIN"/>:
                     </td>
                     <td><input type="checkbox" name="b_RemoteLockSet" value="1"
+                            <%=security.isUsingMfa() ? "disabled" : ""%>
                             <%= security.getBRemotelockset()==0?"":"checked" %>>
-                        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formLocalPIN"/>: <input type="checkbox" name="b_LocalLockSet"
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formLocalPIN"/>: <%=security.isUsingMfa() ? "disabled" : ""%>
                                                                                   value="1" <%= security.getBLocallockset()==0?"":"checked" %>>
                     </td>
                 </tr>
@@ -213,7 +282,7 @@
                 <tr>
                     <td align="right" nowrap><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formPIN"/>:
                     </td>
-                    <td><input type="password" name="pin" value="****" size="6" maxlength="6"> <font
+                    <td><input type="password" name="pin" value="****" <%=security.isUsingMfa() ? "disabled" : ""%> size="6" maxlength="6"> <font
                             size="-2">(<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.msgAtLeast"/>
                         <%=op.getProperty("password_pin_min_length")%> <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.msgDigits"/>)</font>
                     </td>
@@ -221,8 +290,10 @@
                 <tr>
                     <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formConfirm"/>:
                     </td>
-                    <td><input type="password" name="conPin" value="****" size="6" maxlength="6"/></td>
+                    <td><input type="password" name="conPin" value="****" <%=security.isUsingMfa() ? "disabled" : ""%> size="6" maxlength="6" /></td>
                 </tr>
+
+		<% } %>
 
                 <%
                     if (!OscarProperties.getInstance().getBooleanProperty("mandatory_password_reset", "false")) {
@@ -243,6 +314,39 @@
                 </tr>
                 <%} %>
 
+			<%--	MFA Setting   --%>
+		<% if (MfaManager.isOscarMfaEnabled()) { %>
+		<tr>
+			<td style="text-align: right">
+				<bean:message key="admin.securityAddRecord.mfa.title"/>:
+			</td>
+			<td style="">
+				<label>
+					<input type="checkbox" name="enableMfa" value="1"
+						   onchange="handleMfaChange(this);
+								   <%if (MfaManager.isOscarLegacyPinEnabled()) { %>
+								   updatePinComponentsAccess(this.checked);
+								   <% } %>"
+							<%= security.isUsingMfa() ? "checked" : "" %>/>
+					<bean:message key="admin.securityAddRecord.mfa.description"/>
+				</label>
+				<% if (security.isUsingMfa() && !security.isMfaRegistrationNeeded()) { %>
+				<a id="resetMfaLink" onclick="handleResetMfa(<%=securityId%>)"
+				   style="margin-left: 4px; font-size: small; color: blue; text-decoration:
+				   underline; cursor: pointer;"><bean:message key="admin.securityAddRecord.mfa.reset.link"/></a>
+				<% } %>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td style="padding-left: 8px;">
+			<span id="mfaNote"
+				  style="font-size: x-small; color: darkslategray; vertical-align: top;
+				  display: <%= (security.isUsingMfa() && security.isMfaRegistrationNeeded()) ? "inline" : "none" %>">
+				<bean:message key="admin.securityAddRecord.mfa.note"/></span>
+			</td>
+		</tr>
+		<% } %>
 
                 <tr>
                     <td colspan="2" align="center">

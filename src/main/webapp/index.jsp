@@ -26,6 +26,7 @@
 
 
 <%@ page import="oscar.login.UAgentInfo" %>
+<%@ page import="org.oscarehr.managers.MfaManager" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix="c" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
@@ -194,7 +195,7 @@
 
             .auaContainer {
                 margin: 0 auto;
-                text-align: center;
+			text-align: left;
                 z-index: 3;
                 margin-bottom: 30px;
                 padding: 15px;
@@ -206,6 +207,7 @@
 
             .auaContainer .panel-heading {
                 font-size: small;
+			text-align: center;
             }
 
             .auaContainer .panel-body {
@@ -574,6 +576,7 @@
                                        class="form-control" required/>
                             </div>
 
+							<% if (MfaManager.isOscarLegacyPinEnabled()) { %>
                             <c:if test="${not LoginResourceBean.ssoEnabled}">
                                 <div class="form-group ${ login_error }">
                                     <input type="password" name="pin" placeholder="Enter your PIN" value=""
@@ -583,6 +586,7 @@
 									</span>
                                 </div>
                             </c:if>
+							<% } %>
                             <input type="hidden" id="oneIdKey" name="nameId" value="${ nameId }"/>
                             <input type="hidden" id="loginType" name="loginType" value=""/>
                             <input type=hidden name='propname'
@@ -648,7 +652,7 @@
 
         <div class="powered">
             <c:if test="${ not empty LoginResourceBean.supportLink
-								or not empty LoginResourceBean.supportName 
+								or not empty LoginResourceBean.supportName
 								or not empty LoginResourceBean.supportText }">
                 <div class="details">
                     <div>Powered</div>

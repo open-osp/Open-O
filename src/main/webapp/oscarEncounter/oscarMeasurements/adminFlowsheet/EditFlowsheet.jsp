@@ -42,6 +42,7 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed2 = true;
@@ -74,6 +75,9 @@
     String temp = "";
     if (request.getParameter("flowsheet") != null) {
         temp = request.getParameter("flowsheet");
+    }else if(request.getAttribute("flowsheet") != null)
+	{
+		temp = (String) request.getAttribute("flowsheet");
     } else {
         temp = "tracker";
     }
@@ -128,12 +132,6 @@
 
     <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet">
 
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-  <script src="<%=request.getContextPath() %>/js/html5.js"></script>
-<![endif]-->
-
     <!-- Fav and touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
@@ -146,14 +144,14 @@
     <%
         if (request.getParameter("htracker") != null && request.getParameter("htracker").equals("slim")) {
     %>
-    <style type="text/css">
+<style>
         #container-main {
             width: 720px !important;
         }
     </style>
     <%}%>
 
-    <style type="text/css">
+<style>
 
         .table tbody tr:hover td, .table tbody tr:hover th {
             background-color: #FFFFAA;
@@ -215,7 +213,7 @@
         }
     </style>
 
-    <style type="text/css" media="print">
+<style media="print">
         .DoNotPrint {
             display: none;
         }
@@ -225,21 +223,17 @@
 
 <body id="editFlowsheetBody">
 
-<%
-    if (request.getParameter("tracker") != null && request.getParameter("tracker").equals("slim")) {
-
-    } else {
-        if (request.getParameter("demographic") == null) { %>
-<div class="well well-small" id="demoHeader"></div>
-<%} else {%>
+<% if(demographic == null || "null".equalsIgnoreCase(demographic)){ %>
+	<div class="navbar" id="demoHeader"><div class="navbar-inner">
+		<a class="brand" href="javascript:void(0)">Edit Flowsheet</a>
+	</div></div>
+<% }%>
+<% if(demographic != null) { %>
 <%@ include file="/share/templates/patient.jspf" %>
 <div style="height:60px;"></div>
-<%
-        }
-    }
-%>
+<% }%>
 
-<div class="container" id="container-main">
+<div class="container-fluid" id="container-main">
 
     <div class="row-fluid">
 
@@ -267,7 +261,7 @@
 
             <%}%>
 
-            Flowsheet: <span style="font-weight:normal"><%=flowsheet.toUpperCase()%></span>
+Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.displayName ? requestScope.displayName : param.displayName}" />(<%=flowsheet%>)</span>
         </h4>
         <span class="mode-toggle">
 		  	<% if (scope == null) {
@@ -275,16 +269,16 @@
 							Patient
 						<security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w">
                             | <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>">Your Patients</a>
-                            | <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&scope=clinic">All Patients</a>
+							| <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&scope=clinic&displayName=${requestScope.displayName ? requestScope.displayName : param.displayName}">All Patients</a>
                         </security:oscarSec>
-						
+
 		            <%} else {%>
 						<security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w">
 							<a href="#" onclick="editFlowsheetByDemographic('<%=flowsheet%>')">Patient</a>
 						</security:oscarSec>
 							| Your Patients
 						<security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w">
-                            | <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&scope=clinic">All Patients</a>
+							| <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&scope=clinic&displayName=${requestScope.displayName ? requestScope.displayName : param.displayName}">All Patients</a>
                         </security:oscarSec>
 		            <%
                         }
@@ -292,7 +286,7 @@
                     %>
 						<security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w">
 							<a href="#" onclick="editFlowsheetByDemographic('<%=flowsheet%>')">Patient</a>
-							| <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>">Your Patients</a>
+							| <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&displayName=${requestScope.displayName ? requestScope.displayName : param.displayName}">Your Patients</a>
 						</security:oscarSec>
 							| All Patients
 			<% } %>
@@ -345,19 +339,19 @@
 		<th style="min-width:200px;max-width:500px">Guideline</th>
 		</tr>
 		</thead>
-		
+
 		<tbody>
 		            <%
 		            MeasurementFlowSheet mFlowsheet = templateConfig.getFlowSheet(temp,custList);
 		            Element va = templateConfig.getExportFlowsheet(mFlowsheet);
-		
+
 		            List<String> measurements = mFlowsheet.getMeasurementList();
-				
+
 			    int counter = 1;
-		            
+
 		            if (measurements != null) {
 		                for (String mstring : measurements) {
-		                	
+
 		               %>
 		                <tr>
 		         		<td>
@@ -376,44 +370,44 @@
 		               %>
 		               	<a href="FlowSheetCustomAction.do?method=restore&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>">RESTORE</a>
 		               <% } %>
-		                	
-						
+
+
 		                </td>
 		                <td><%=counter%></td>
 		                <td><%=mstring%></td>
 		                <td title="<%=mstring%>"><%=mFlowsheet.getFlowSheetItem(mstring).getDisplayName()%></td>
 		                <td title="<%=mstring%>"><%=mFlowsheet.getFlowSheetItem(mstring).getGuideline()%></td>
 						</tr>
-				            
-		            <%	
+
+		            <%
 				counter++;
 		                }
-		
+
 		            }
 		            %>
-		 </tbody>    
+		 </tbody>
 		</table><!-- Flowsheet Measurement List END-->
-		
-		
+
+
 	</div><!-- main tab -->
-	
+
 	<div class="tab-pane" id="custom">
-		
+
 		<div class="span4">
 		<!--right sidebar-->
-		
+
 			<!-- Custom List -->
 		    <div class="well" style="min-width: 240px">
 		    <h4>Custom List:</h4>
 		    <%
 		    if(custList.size()==0){
-	    		%>    	    		
+	    		%>
 	    		<p class="muted">No custom measurements</p>
 	    		<%
 	    	}else{
 	    	%>
 		    <table class="table table-striped table-condensed">
-		
+
 			<tbody>
 
                                 <%
@@ -624,7 +618,7 @@
     <textarea style="display:none;" cols="200" rows="200">
             <%=outp.outputString(va)%>
         </textarea><!-- flowsheet xml output END-->
-
+</div>
     <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
     <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
@@ -641,11 +635,13 @@
 
             if (self !== top) {
                 var h = $(document).height();
-                parent.parent.document.getElementById('trackerSlim').style.height = h + "px";
-
+		const trackerSlim = document.getElementById('trackerSlim');
+		if(trackerSlim) {
+			trackerSlim.style.height = h+"px";
+		}
                 $("#demoHeader").hide();
             } else {
-
+		// do nothing??
             }
 
             $('html, body', window.parent.document).animate({scrollTop: 0}, 'slow');
@@ -704,7 +700,7 @@ function editFlowsheetByDemographic(flowsheet) {
 	const demographicNo = prompt("Enter demographic no:");
 
 	if (demographicNo && !isNaN(demographicNo) && demographicNo.trim() !== "") {
-		window.location.href = "EditFlowsheet.jsp?flowsheet=" + flowsheet + "&demographic=" + encodeURIComponent(demographicNo);
+		window.location.href = "EditFlowsheet.jsp?flowsheet=" + flowsheet + "&demographic=" + encodeURIComponent(demographicNo) + "&displayName=${requestScope.displayName ? requestScope.displayName : param.displayName}";
 	} else {
 		alert("Invalid demographic number. Please enter a valid number.");
 	}

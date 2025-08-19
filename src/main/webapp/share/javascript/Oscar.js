@@ -1,25 +1,25 @@
 /*
- * 
+ *
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved. *
- * This software is published under the GPL GNU General Public License. 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU General Public License 
- * as published by the Free Software Foundation; either version 2 
- * of the License, or (at your option) any later version. * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU General Public License for more details. * * You should have received a copy of the GNU General Public License 
- * along with this program; if not, write to the Free Software 
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. * 
- * 
+ * This software is published under the GPL GNU General Public License.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version. *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details. * * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. *
+ *
  * <OSCAR TEAM>
- * 
- * This software was written for the 
- * Department of Family Medicine 
- * McMaster University 
- * Hamilton 
- * Ontario, Canada 
+ *
+ * This software was written for the
+ * Department of Family Medicine
+ * McMaster University
+ * Hamilton
+ * Ontario, Canada
  */
 
 function popup(height, width, url, windowName) {
@@ -38,19 +38,46 @@ function newWindow(url, windowName) {
 
 
 function popup2(height, width, top, left, url, windowName) {
-    if (typeof popup2.winRefs == 'undefined') {
-        popup2.winRefs = {};
-    }
-    if (typeof popup2.winRefs[windowName] == 'undefined' || popup2.winRefs[windowName].closed) {
-        windowprops = "height=" + height + ",width=" + width + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=" + top + ",left=" + left;
-        popup2.winRefs[windowName] = window.open(url, windowName, windowprops);
-    } else {
-        popup2.winRefs[windowName].location.href = url;
-        popup2.winRefs[windowName].resizeTo(width, height);
-        popup2.winRefs[windowName].focus();
+   // Check if the document is inside an iframe or not
+   // In the new inbox, we are showing previews in an iframe, so this check is necessary
+   let context = window;
+
+   // If the function is being called from within an iframe, try to access the parent window
+   if (window.self !== window.top) {
+         try {
+            // If cross-origin access is allowed, use the parent context for the popup
+            if (window.parent && window.parent !== window) {
+               context = window.parent;
+            }
+         } catch (e) {
+            // If cross-origin access is restricted, fallback to the current window
+            console.warn("Unable to access parent frame due to cross-origin restrictions.");
+         }
     }
 
-    return popup2.winRefs[windowName];
+   // Ensure the 'winRefs' object is initialized in the correct context (parent or current window)
+   if (typeof context.popup2 === 'undefined') {
+      context.popup2 = { winRefs: {} };
+   } else if (typeof context.popup2.winRefs === 'undefined') {
+      context.popup2.winRefs = {};
+   }
+
+   // Reference the 'winRefs' array from the proper context (parent or current window)
+   const winRefs = context.popup2.winRefs;
+
+   // Check if the popup window already exists or if it has been closed
+   if (typeof winRefs[windowName] === 'undefined' || winRefs[windowName].closed) {
+      // If the window does not exist or is closed, open a new popup with the specified properties
+      const windowprops = "height="+height+",width="+width+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=" + top + ",left=" + left;
+      winRefs[windowName] = window.open(url, windowName, windowprops);
+   } else {
+      // If the popup already exists, reuse it by updating its URL and size
+      winRefs[windowName].location.href = url;
+      winRefs[windowName].resizeTo(width, height);
+      winRefs[windowName].focus();
+    }
+
+   return winRefs[windowName];
 }
 
 function confirmNGo(url, message) {

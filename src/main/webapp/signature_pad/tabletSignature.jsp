@@ -9,13 +9,13 @@
 
 --%>
 <%--
-When including the "inWindow" parameter as "true" it is assumed that tabletSignature.jsp 
+When including the "inWindow" parameter as "true" it is assumed that tabletSignature.jsp
 is hosted in an IFrame and that the IFrame's parent window implements signatureHandler(e)
 --%>
 <%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
-<%@ page import="org.oscarehr.util.MiscUtils" %>
 <%@ page import="org.oscarehr.util.LoggedInInfo" %>
 <%@ page import="org.oscarehr.ui.servlet.ImageRenderingServlet" %>
+<%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -74,6 +74,8 @@ is hosted in an IFrame and that the IFrame's parent window implements signatureH
     <input type="hidden" name="source" value="IPAD"/>
     <input type="hidden" name="<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY %>" value="<%= requestIdKey %>"/>
     <input type="hidden" name="demographicNo" value="<%= request.getParameter("demographicNo") %>"/>
+	<input type="hidden" name="<%= ModuleType.class.getSimpleName()%>"
+			value="<%= request.getParameter(ModuleType.class.getSimpleName()) %>" />
     <input type="hidden" name="saveToDB" value="<%=saveToDB%>"/>
 </form>
 

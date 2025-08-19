@@ -95,7 +95,7 @@ public class AddEditDocument2Action extends ActionSupport {
         }
 
         int numberOfPages = 0;
-        String fileName = this.getDocFile().getName();
+        String fileName = MiscUtils.sanitizeFileName(this.getDocFile().getName());
         String user = (String) request.getSession().getAttribute("user");
         EDoc newDoc = new EDoc("", "", fileName, "", user, user, this.getSource(), 'A', oscar.util.UtilDateUtilities.getToday("yyyy-MM-dd"), "", "", "demographic", "-1", 0);
         newDoc.setDocPublic("0");
@@ -109,7 +109,7 @@ public class AddEditDocument2Action extends ActionSupport {
             newDoc.setProgramId(pp.getProgramId().intValue());
         }
 
-        fileName = newDoc.getFileName();
+        fileName = MiscUtils.sanitizeFileName(newDoc.getFileName());
         // save local file;
         if (this.getDocFile().length() == 0) {
             //errors.put("uploaderror", "documentManager.error.uploadError");
@@ -260,7 +260,7 @@ public class AddEditDocument2Action extends ActionSupport {
             newDoc.setDocClass(this.getDocClass());
             newDoc.setDocSubClass(this.getDocSubClass());
             // new file name with date attached
-            String fileName2 = newDoc.getFileName();
+            String fileName2 = MiscUtils.sanitizeFileName(newDoc.getFileName());
 
             // save local file
             File file = writeLocalFile(Files.newInputStream(docFile.toPath()), fileName2);
@@ -428,7 +428,7 @@ this.getSource(), 'A', this.getObservationDate(), reviewerId, reviewDateTime, th
 
             // if the update behavior is true, get the file name
             if (updateFileContent) {
-                fileName = newDoc.getFileName();
+                fileName = MiscUtils.sanitizeFileName(newDoc.getFileName());
                 // save local file
                 writeLocalFile(Files.newInputStream(this.getDocFile().toPath()), fileName);
                 if (fileName.toLowerCase().endsWith(".pdf")) {

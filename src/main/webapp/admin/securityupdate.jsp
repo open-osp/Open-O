@@ -49,6 +49,7 @@
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.Security" %>
 <%@ page import="org.oscarehr.common.dao.SecurityDao" %>
+<%@ page import="org.oscarehr.managers.SecurityManager" %>
 <%
     SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
 %>
@@ -68,10 +69,7 @@
             </tr>
         </table>
         <%
-            StringBuffer sbTemp = new StringBuffer();
-            MessageDigest md = MessageDigest.getInstance("SHA");
-            byte[] btNewPasswd = md.digest(request.getParameter("password").getBytes());
-            for (int i = 0; i < btNewPasswd.length; i++) sbTemp = sbTemp.append(btNewPasswd[i]);
+	SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
 
             String sPin = request.getParameter("pin");
             if (OscarProperties.getInstance().isPINEncripted()) sPin = Misc.encryptPIN(request.getParameter("pin"));
@@ -88,7 +86,7 @@
                 s.setBRemotelockset(request.getParameter("b_RemoteLockSet") == null ? 0 : Integer.parseInt(request.getParameter("b_RemoteLockSet")));
 
                 if (request.getParameter("password") == null || !"*********".equals(request.getParameter("password"))) {
-                    s.setPassword(sbTemp.toString());
+    		s.setPassword(securityManager.encodePassword(request.getParameter("password")));
                     s.setPasswordUpdateDate(new java.util.Date());
                 }
 
@@ -102,6 +100,12 @@
                 } else {
                     s.setForcePasswordReset(Boolean.FALSE);
                 }
+
+		if (request.getParameter("enableMfa") != null && request.getParameter("enableMfa").equals("1")) {
+			s.setUsingMfa(Boolean.TRUE);
+		} else {
+			s.setUsingMfa(Boolean.FALSE);
+		}
 
                 s.setLastUpdateDate(new java.util.Date());
 

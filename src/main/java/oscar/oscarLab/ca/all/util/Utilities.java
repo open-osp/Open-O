@@ -35,6 +35,7 @@
 
 package oscar.oscarLab.ca.all.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,6 +45,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -117,10 +121,8 @@ public class Utilities {
     public static String saveFile(InputStream stream, String filename) {
         String retVal = null;
 
-
         try {
             OscarProperties props = OscarProperties.getInstance();
-            //properties must exist
             String place = props.getProperty("DOCUMENT_DIR");
 
             File safeDir = new File(place).getCanonicalFile(); // Canonicalize safe base
@@ -140,24 +142,20 @@ public class Utilities {
             retVal = targetFile.getParent() + File.separator + "LabUpload." + targetFile.getName().replaceAll(".enc", "") + "." + (new Date()).getTime();
 
             logger.debug("saveFile place=" + place + ", retVal=" + retVal);
-            //write the  file to the file specified
-            OutputStream os = new FileOutputStream(retVal);
 
-            int bytesRead = 0;
-            while ((bytesRead = stream.read()) != -1) {
-                os.write(bytesRead);
+            try (OutputStream os = Files.newOutputStream(Paths.get(retVal));
+                BufferedInputStream bis = new BufferedInputStream(stream)) {
+
+                byte[] buffer = new byte[8192]; // 8KB buffer
+                int bytesRead;
+                while ((bytesRead = bis.read(buffer)) != -1) {
+                    os.write(buffer, 0, bytesRead);
+                }
             }
-            os.close();
-
-            //close the stream
-            stream.close();
         } catch (FileNotFoundException fnfe) {
-            logger.error("Error", fnfe);
-            return retVal;
-
+            logger.error("Unable to create or write to file: " + filename, fnfe);
         } catch (IOException ioe) {
-            logger.error("Error", ioe);
-            return retVal;
+            logger.error("Error processing file: " + filename, ioe);
         }
         return retVal;
     }

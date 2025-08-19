@@ -72,6 +72,7 @@
     String userlastname = loggedInInfo.getLoggedInProvider().getLastName();
 %>
 
+<input type="hidden" value="${pageContext.servletContext.contextPath}" id="contextPath" />
 <table id="firstTable" class="noprint">
     <tr>
         <td class="icon-container">
@@ -170,47 +171,18 @@
                                 <security:oscarSec roleName="<%=roleName$%>" objectName="_appointment.doctorLink"
                                                    rights="r">
                                     <li>
-                                        <a HREF="#"
-                                           ONCLICK="popupInboxManager('../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>', 'Lab');return false;"
+                                        <a HREF="#" id="inboxLink"
                                            TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>
                                             <span id="oscar_new_lab"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.lab"/></span>
                                         </a>
                                         <oscar:newUnclaimedLab>
                                             <a id="unclaimedLabLink" class="tabalert" HREF="javascript:void(0)"
-                                               onclick="popupInboxManager('../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=0&searchProviderNo=0&status=N&lname=&fname=&hnum=&pageNum=1&startIndex=0', 'Lab');return false;"
                                                title='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>U</a>
                                         </oscar:newUnclaimedLab>
                                     </li>
                                 </security:oscarSec>
                             </oscar:oscarPropertiesCheck>
-
                         </caisi:isModuleLoad>
-
-                        <%--                        <%if(appManager.isK2AEnabled()){ %>--%>
-                        <%--                        <li>--%>
-                        <%--                        	<a href="javascript:void(0);" id="K2ALink">K2A<span><sup id="k2a_new_notifications"></sup></span></a>--%>
-                        <%--                        	<script type="text/javascript">--%>
-                        <%--                        		function getK2AStatus(){--%>
-                        <%--                        			jQuery.get( "../ws/rs/resources/notifications/number", function( data ) {--%>
-                        <%--                        				  if(data === "-"){ //If user is not logged in--%>
-                        <%--                        					  jQuery("#K2ALink").click(function() {--%>
-                        <%--                        						const win = window.open('../apps/oauth1.jsp?id=K2A','appAuth','width=700,height=450,scrollbars=1');--%>
-                        <%--                        						win.focus();--%>
-                        <%--                        					  });--%>
-                        <%--                        				   }else{--%>
-                        <%--                        					  jQuery("#k2a_new_notifications").text(data);--%>
-                        <%--                        					  jQuery("#K2ALink").click(function() {--%>
-                        <%--                        						const win = window.open('../apps/notifications.jsp','appAuth','width=450,height=700,scrollbars=1');--%>
-                        <%--                        						win.focus();--%>
-                        <%--                        					  });--%>
-                        <%--                        				   }--%>
-                        <%--                        			});--%>
-                        <%--                        		}--%>
-                        <%--                        		getK2AStatus();--%>
-                        <%--                        	</script>--%>
-                        <%--                        </li>--%>
-                        <%--                        <%}%>--%>
-
                         <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="r">
                                 <li>
@@ -249,24 +221,6 @@
                                 <span>ClinicalConnect</span></a>
                         </li>
                         <%}%>
-                        <%--                        <security:oscarSec roleName="<%=roleName$%>" objectName="_pref" rights="r">--%>
-                        <%--                            <li>    <!-- remove this and let providerpreference check -->--%>
-                        <%--                                <caisi:isModuleLoad moduleName="ticklerplus">--%>
-                        <%--                                    <a href=#--%>
-                        <%--                                       onClick="popupPage(715,680,'providerpreference.jsp?provider_no=<%=curUser_no%>&start_hour=<%=startHour%>&end_hour=<%=endHour%>&every_min=<%=everyMin%>&mygroup_no=<%=mygroupno%>&new_tickler_warning_window=<%=newticklerwarningwindow%>&default_pmm=<%=default_pmm%>&caisiBillingPreferenceNotDelete=<%=caisiBillingPreferenceNotDelete%>&tklerproviderno=<%=tklerProviderNo%>');return false;"--%>
-                        <%--                                       TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.msgSettings"/>'--%>
-                        <%--                                       OnMouseOver="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.msgSettings"/>' ; return true"><fmt:message--%>
-                        <%--                                            key="global.pref"/></a>--%>
-                        <%--                                </caisi:isModuleLoad>--%>
-                        <%--                                <caisi:isModuleLoad moduleName="ticklerplus" reverse="true">--%>
-                        <%--                                    <a href=#--%>
-                        <%--                                       onClick="popupPage(715,680,'providerpreference.jsp?provider_no=<%=curUser_no%>&start_hour=<%=startHour%>&end_hour=<%=endHour%>&every_min=<%=everyMin%>&mygroup_no=<%=mygroupno%>');return false;"--%>
-                        <%--                                       TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.msgSettings"/>'--%>
-                        <%--                                       OnMouseOver="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.msgSettings"/>' ; return true"><fmt:message--%>
-                        <%--                                            key="global.pref"/></a>--%>
-                        <%--                                </caisi:isModuleLoad>--%>
-                        <%--                            </li>--%>
-                        <%--                        </security:oscarSec>--%>
                         <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r">
                                 <li>
@@ -278,18 +232,10 @@
                         </caisi:isModuleLoad>
                         <security:oscarSec roleName="<%=roleName$%>" objectName="_tickler" rights="r">
                             <li>
-                                    <%--                                <caisi:isModuleLoad moduleName="ticklerplus" reverse="true">--%>
                                 <a HREF="#"
                                    ONCLICK="popupPage2('../tickler/ticklerMain.jsp','<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>');return false;"
                                    TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>'>
                                     <span id="oscar_new_tickler"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btntickler"/></span></a>
-                                    <%--                                </caisi:isModuleLoad>--%>
-                                    <%--                                <caisi:isModuleLoad moduleName="ticklerplus">--%>
-                                    <%--                                    <a HREF="#"--%>
-                                    <%--                                       ONCLICK="popupPage2('../Tickler.do?filter.assignee=<%=curUser_no%>&filter.demographic_no=&filter.demographic_webName=','<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>');return false;"--%>
-                                    <%--                                       TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>' +'+'>--%>
-                                    <%--                                    <span id="oscar_new_tickler"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btntickler"/></span></a>--%>
-                                    <%--                                </caisi:isModuleLoad>--%>
                             </li>
                         </security:oscarSec>
                         <oscar:oscarPropertiesCheck property="OSCAR_LEARNING" value="yes">
@@ -437,8 +383,30 @@
         src="${pageContext.servletContext.contextPath}/library/jquery/jquery-1.12.0.min.js"></script>
 <script type="text/javascript"
         src="${pageContext.servletContext.contextPath}/library/jquery/jquery-ui-1.12.1.min.js"></script>
-<%-- TODO: new dialog window for the user preferences --%>
 <script>
+    const contextPath = document.getElementById("contextPath").value;
+    const originalInboxLinkClickEvent = "popupInboxManager('" + contextPath + "/documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>');return false;";
+    const newInboxLinkClickEvent = "popupInboxManager('" + contextPath + "/web/inboxhub/Inboxhub.do?method=displayInboxForm', 800);return false;";
+
+    const originalUnclaimedLabLinkClickEvent = "popupInboxManager('" + contextPath + "/documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=0&searchProviderNo=0&status=N&lname=&fname=&hnum=&pageNum=1&startIndex=0');return false;";
+    const newUnclaimedLabLinkClickEvent = "popupInboxManager('" + contextPath + "/web/inboxhub/Inboxhub.do?method=displayInboxForm&unclaimed=1', 800);return false;";
+
+     document.getElementById("inboxLink").addEventListener("mouseup", function(event) {
+        if(event.altKey) {
+            document.getElementById("inboxLink").setAttribute("onclick", newInboxLinkClickEvent);
+        } else {
+            document.getElementById("inboxLink").setAttribute("onclick", originalInboxLinkClickEvent);
+        }
+    });
+
+    document.getElementById("unclaimedLabLink").addEventListener("mouseup", function(event) {
+        if(event.altKey) {
+            document.getElementById("unclaimedLabLink").setAttribute("onclick", newUnclaimedLabLinkClickEvent);
+        } else {
+            document.getElementById("unclaimedLabLink").setAttribute("onclick", originalUnclaimedLabLinkClickEvent);
+        }
+    });
+
     function openPreferences(providerNumber) {
         const $div = jQuery('<div />').appendTo('body');
         const dialogContainer = $div.attr('id', 'preference-dialog');

@@ -121,7 +121,9 @@
             <result name="forcepasswordreset">/forcepasswordreset.jsp</result>
             <result name="programLocation">/location.jsp</result>
             <result name="ssoLogin">/ssoLogin.do</result>
+            <result name="mfaHandler">/mfa/mfa_handler.jsp</result>
         </action>
+        <action name="securityRecord/mfa" class="org.oscarehr.security.MfaActions2Action"/>
         <action name="ssoLogin" class="oscar.login.SSOLogin2Action">
             <result name="provider">/provider/providercontrol.jsp</result>
             <result name="failure">/logout.jsp?login=failed</result>

@@ -193,5 +193,7 @@ Whenever you update, add, or remove a library ensure that the changes are reflec
 When updating a library, the integrity value needs to be updated to correspond with the change. 
 
 Keeping these locks in sync ensures reproducible builds and guards against tampered artifacts.
+Only update when you trust the signature of the libraries. 
+mvn se.vandmo:dependency-lock-maven-plugin:lock
 
 ## Enjoy developing with Open-OSP!

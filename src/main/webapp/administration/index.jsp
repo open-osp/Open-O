@@ -83,7 +83,7 @@
     <link href="<%=request.getContextPath() %>/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath() %>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/helpdetails.css" type="text/css">
+
 
     <style>
         body {
@@ -101,7 +101,7 @@
 
         div.navbar div.dropdown:hover ul.dropdown-menu {
             display: block;
-            margin: 0px;
+	margin: 0px;
         }
 
         .navbar .dropdown-menu {

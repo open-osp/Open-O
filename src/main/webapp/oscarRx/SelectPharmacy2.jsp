@@ -53,6 +53,8 @@
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <jsp:include page="../images/spinner.jsp" flush="true"/>
 
+		<script src="${pageContext.request.contextPath}/csrfguard"></script>
+
         <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"
                 type="text/javascript"></script>
         <script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js"
@@ -93,7 +95,8 @@
             (function ($) {
                 $(function () {
                     var demo = $("#demographicNo").val();
-                    $.get("<%=request.getContextPath() + "/oscarRx/managePharmacy.do?method=getPharmacyFromDemographic&demographicNo="%>" + demo,
+					if(demo != null && demo !== "") {
+						$.post("<%=request.getContextPath() + "/oscarRx/managePharmacy.do?method=getPharmacyFromDemographic&demographicNo="%>" + demo,
                         function (data) {
                             if (data && data.length && data.length > 0) {
                                 $("#preferredList").html("");
@@ -189,7 +192,7 @@
                             }
                             HideSpin(true);
                         }, "json");
-
+					}
                     var pharmacyNameKey = new RegExp($("#pharmacySearch").val(), "i");
                     var pharmacyCityKey = new RegExp($("#pharmacyCitySearch").val(), "i");
                     var pharmacyPostalCodeKey = new RegExp($("#pharmacyPostalCodeSearch").val(), "i");

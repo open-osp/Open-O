@@ -23,12 +23,12 @@
  * Ontario, Canada
  */
 
-
 package oscar.oscarRx.pageUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.casemgmt.service.CaseManagementManager;
 import org.oscarehr.common.model.Drug;
+import org.oscarehr.managers.PrescriptionManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -215,6 +216,68 @@ public final class RxRePrescribe2Action extends ActionSupport {
         return SUCCESS;
     }
 
+/**
+ * Saves or updates a digital signature association with a prescription.
+ * 
+ * This method associates a digital signature with an existing prescription script,
+ * allowing prescriptions to be digitally signed by providers. The signature ID
+ * can be null to remove an existing signature association.
+ * 
+ * @return null - indicating no specific view forward (Ajax-style call)
+ * @throws IOException if there's an error redirecting to the error page
+ * @throws RuntimeException if the user lacks read privileges for prescriptions
+ * 
+ * Expected request parameters:
+ * - digitalSignatureId: Integer ID of the digital signature (optional, can be null)
+ * - scriptId: String ID of the prescription script (required)
+ */
+public String saveDigitalSignature() throws IOException {
+    
+    // Validate user session and privileges
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    checkPrivilege(loggedInInfo, PRIVILEGE_READ);
+    
+    // Retrieve and validate the prescription session bean
+    oscar.oscarRx.pageUtil.RxSessionBean sessionBeanRX = 
+        (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+    if (sessionBeanRX == null) {
+        response.sendRedirect("error.html");
+        return null;
+    }
+    
+    // Create a new session bean with current demographic and provider info
+    // This ensures we're working with the correct patient/provider context
+    oscar.oscarRx.pageUtil.RxSessionBean beanRX = new oscar.oscarRx.pageUtil.RxSessionBean();
+    beanRX.setDemographicNo(sessionBeanRX.getDemographicNo());
+    beanRX.setProviderNo(sessionBeanRX.getProviderNo());
+    
+    // Extract digital signature ID from request (can be null to remove signature)
+    Integer digitalSignatureId = Objects.isNull(request.getParameter("digitalSignatureId"))
+            ? null : Integer.valueOf(request.getParameter("digitalSignatureId"));
+    
+    // Extract required script ID parameter
+    String scriptId = request.getParameter("scriptId");
+    
+    // Capture client IP for audit logging
+    String ip = request.getRemoteAddr();
+    
+    // Update the prescription with the digital signature
+    PrescriptionManager prescriptionManager = SpringUtils.getBean(PrescriptionManager.class);
+    prescriptionManager.setPrescriptionSignature(loggedInInfo, Integer.parseInt(scriptId), digitalSignatureId);
+    
+    // Log the action for audit trail
+    // Note: Using REPRINT constant as this is related to prescription printing/signing workflow
+    LogAction.addLog((String) request.getSession().getAttribute("user"), 
+                      LogConst.REPRINT, 
+                      LogConst.CON_PRESCRIPTION, 
+                      scriptId, 
+                      ip, 
+                      "" + beanRX.getDemographicNo());
+    
+    // Return null for Ajax-style calls that don't require a view forward
+    return null;
+}
+
     public String saveReRxDrugIdToStash() throws IOException {
         MiscUtils.getLogger().debug("================in saveReRxDrugIdToStash  of RxRePrescribe2Action.java=================");
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -285,21 +348,24 @@ public final class RxRePrescribe2Action extends ActionSupport {
             response.sendRedirect("error.html");
             return null;
         }
-        StringBuilder auditStr = new StringBuilder();
 
+        StringBuilder auditStr = new StringBuilder();
         RxPrescriptionData rxData = new RxPrescriptionData();
 
-        // String strId = (request.getParameter("drugId").split("_"))[1];
         String strId = request.getParameter("drugId");
-        // p("!!!!!!!!!s", strId);
         try {
-
             int drugId = Integer.parseInt(strId);
             // get original drug
             RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
             // create copy of Prescription
             RxPrescriptionData.Prescription rx = rxData.newPrescription(beanRX.getProviderNo(), beanRX.getDemographicNo(), oldRx); // set writtendate, rxdate ,enddate=null.
-            Long rand = Math.round(Math.random() * 1000000);
+
+            Long rand;
+            try {
+              	 rand = Long.parseLong(request.getParameter("rand"));
+	    }  catch (NumberFormatException e) {
+		rand = Math.round(Math.random() * 10001);
+            }
             rx.setRandomId(rand);
 
             request.setAttribute("BoxNoFillFirstLoad", "true");

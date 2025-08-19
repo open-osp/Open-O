@@ -35,15 +35,7 @@
 
 package oscar.oscarLab.ca.all.upload;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
@@ -57,12 +49,18 @@ import org.oscarehr.util.DbConnectionFilter;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.OscarProperties;
 import oscar.oscarDemographic.data.DemographicMerged;
 import oscar.oscarLab.ca.all.Hl7textResultsData;
 import oscar.oscarLab.ca.all.parsers.*;
 import oscar.util.UtilDateUtilities;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public final class MessageUploader {
 
@@ -269,9 +267,8 @@ public final class MessageUploader {
             demProviderNo = patientRouteReport(loggedInInfo, type, insertID, lastName, firstName, sex, dob, hin, connection);
         }
 
-        if (type.equals("OLIS_HL7") && demProviderNo.equals("0")) {
-            OLISSystemPreferencesDao olisPrefDao = (OLISSystemPreferencesDao) SpringUtils.getBean(OLISSystemPreferencesDao.class);
-            ;
+		if("OLIS_HL7".equals(type) && "0".equals(demProviderNo)) {
+			OLISSystemPreferencesDao olisPrefDao = (OLISSystemPreferencesDao)SpringUtils.getBean("OLISSystemPreferencesDao");
             OLISSystemPreferences olisPreferences = olisPrefDao.getPreferences();
 
             try (Connection connection = DbConnectionFilter.getThreadLocalDbConnection()) {
@@ -286,14 +283,14 @@ public final class MessageUploader {
             Integer limit = null;
             boolean orderByLength = false;
             String search = null;
-            if (type.equals("Spire")) {
+			if ("Spire".equals(type)) {
                 limit = new Integer(1);
                 orderByLength = true;
                 search = "provider_no";
             }
 
-            if ("MEDITECH".equals(type)) {
-                search = "practitionerNo";
+			if( "MEDITECH".equals(type) || "ExcellerisON".equals(type) ) {
+				search = "practitionerNo"; // ie the college number <oscarDB>.Provider.practitionerNo
             }
 
             if ("IHAPOI".equals(type)) {
@@ -656,7 +653,7 @@ public final class MessageUploader {
         String dobDay = "%";
         String hinMod = null;
 
-			
+
 			try {
 				if (hin.equalsIgnoreCase("UNKNOWN")) { hin = ""; }
 				if (hin != null) {
@@ -672,13 +669,13 @@ public final class MessageUploader {
 					dobMonth = dobArray[1];
 					dobDay = dobArray[2];
 				}
-	
+
 				// only the first letter of names
 				if (!firstName.equals("")) firstName = firstName.substring(0, 1);
 				if (!lastName.equals("")) lastName = lastName.substring(0, 1);
-				
-	
-				// HIN is ALWAYS required for lab matching. Please do not revert this code. Previous iterations have caused fatal patient miss-matches.				
+
+
+				// HIN is ALWAYS required for lab matching. Please do not revert this code. Previous iterations have caused fatal patient miss-matches.
 				if( hinMod != null ) {
 					if (OscarProperties.getInstance().getBooleanProperty("LAB_NOMATCH_NAMES", "yes")) {
 						sql = "select demographic_no, provider_no from demographic where hin='" + hinMod + "' and " + " year_of_birth like '" + dobYear + "' and " + " month_of_birth like '" + dobMonth + "' and " + " date_of_birth like '" + dobDay + "' and " + " sex like '" + sex + "%' ";
@@ -686,13 +683,13 @@ public final class MessageUploader {
 						sql = "select demographic_no, provider_no from demographic where hin='" + hinMod + "' and " + " last_name like '" + lastName + "%' and " + " first_name like '" + firstName + "%' and " + " year_of_birth like '" + dobYear + "' and " + " month_of_birth like '" + dobMonth + "' and " + " date_of_birth like '" + dobDay + "' and " + " sex like '" + sex + "%' ";
 					}
 				}
-				
+
 				if( sql != null ) {
 					logger.debug(sql);
 					PreparedStatement pstmt = conn.prepareStatement(sql);
 					ResultSet rs = pstmt.executeQuery();
 					int count = 0;
-					
+
 					while (rs.next()) {
 						result = new PatientLabRoutingResult();
 						demo = oscar.Misc.getString(rs, "demographic_no");

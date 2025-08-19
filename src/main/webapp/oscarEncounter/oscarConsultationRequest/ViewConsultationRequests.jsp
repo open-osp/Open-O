@@ -155,7 +155,7 @@
             startDate = (Date) startDateObj;
             formattedStartDate = sdf.format(startDateObj);
         }
-    
+
         // Getting endDate attribute of the consultation request and ensuring that it is of type "Date" before casting
         Object endDateObj = request.getAttribute("endDate");
         Date endDate = null;
@@ -223,6 +223,9 @@
             td.stat4 {
                 background-color: #eeeeff;
             }
+td.stat5 {
+background-color:rgb(212, 212, 254);
+}
 
             th.VCRheads {
                 background-color: #ddddff;
@@ -477,6 +480,7 @@
                                         String patient = theRequests.patient.elementAt(i);
                                         String provide = theRequests.provider.elementAt(i);
                                         String service = theRequests.service.elementAt(i);
+                            boolean eReferral = theRequests.eReferral.get(i);
                                         String date = theRequests.date.elementAt(i);
                                         String demo = theRequests.demographicNo.elementAt(i);
                                         String appt = theRequests.apptDate.elementAt(i);
@@ -532,7 +536,9 @@
                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgPR"/>
                                         <% } else if (status.equals("4")) { %>
                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgDONE"/>
-                                        <% } %>
+                                        <% }else if(status.equals("5")) { %>
+                                        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgBC"/>
+                                        <%}%>
                                     </td>
                                     <td class="stat<%=status%>">
                                         <% if (urgency.equals("1")) { %>
@@ -568,7 +574,9 @@
                                         <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
                                             <%=specialist%>
                                         </a>
-
+                                    <% if (eReferral) { %>
+                                    <span>(via OCEAN)</span>
+                                    <%} %>
                                     </td>
                                     <td class="stat<%=status%>">
                                         <%=date%>

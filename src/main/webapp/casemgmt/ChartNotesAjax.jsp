@@ -65,6 +65,8 @@
 <%@page import="org.oscarehr.common.model.CasemgmtNoteLock" %>
 <%@page import="org.oscarehr.common.model.EmailLog" %>
 <%@page import="org.oscarehr.managers.EmailManager" %>
+<%@page import="org.oscarehr.managers.EmailComposeManager"%>
+<%@page import="org.oscarehr.managers.SecurityInfoManager"%>
 
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -88,6 +90,7 @@
     ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
 
     EmailManager emailManager = SpringUtils.getBean(EmailManager.class);
+EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManager.class);
 
     String pId = (String) session.getAttribute("case_program_id");
     Program program = null;
@@ -136,7 +139,7 @@
     if (request.getParameter("caseManagementEntryForm") == null) {
         if (cform != null) {
             request.setAttribute("caseManagementEntryForm", cform);
-        } 
+        }
     }
 
     Integer offset = Integer.parseInt(request.getParameter("offset"));
@@ -204,8 +207,9 @@
                 continue;
             }
 
-            if (cmNote.isEmailNote()) {
-                fullTxtFormat.add(Boolean.FALSE);
+			if (cmNote.isEmailNote())
+			{
+				fullTxtFormat.add(Boolean.TRUE);
                 continue;
             }
 
@@ -262,7 +266,7 @@
             String dispFilename = "";
             String dispStatus = " ";
             String globalNoteId = "";
-            
+
             if (note.getRemoteFacilityId() != null) {
                 globalNoteId = "UUID" + note.getUuid();
             }
@@ -290,6 +294,7 @@
                 } else if (note.isInvoice()) {
                     globalNoteId = "INV" + note.getNoteId();
                 } else if (note.isEmailNote()) {
+					if (!emailComposeManager.hasEmailPrivilege(loggedInInfo, SecurityInfoManager.READ)) { continue; }
                     EmailLog emailLog = emailManager.getEmailLogByCaseManagementNoteId(loggedInInfo, Long.valueOf(noteId));
                     if (emailLog == null) {
                         continue;
@@ -351,12 +356,15 @@
             //String metaDisplay = (hideMetaData)?"none":"block";
 
             String noteIdAttribute = new StringBuilder("nc").append(offset > 0 ? offset : "").append(idx + 1).toString();
-            boolean isMagicNote = note.isDocument() || note.isCpp() || note.isEformData() || note.isEncounterForm() || note.isInvoice() || note.isEmailNote();
+			boolean isMagicNote = note.isDocument() || note.isCpp() || note.isEformData() || note.isEncounterForm() || note.isInvoice();
             String noteClassAttribute = new StringBuilder("note").append(isMagicNote ? "" : " noteRounded encounter-note").toString();
     %>
 
+		<%
+			String cursorStyle = (note.isCpp()) ? "cursor: pointer;" : "";
+		%>
     <div id="<%=noteIdAttribute%>"
-         style="display:<%=noteDisplay%>"
+			 style="display: <%= noteDisplay %>; <%= cursorStyle %>"
          class="<%=noteClassAttribute%>">
 
         <input type="hidden" id="signed<%=globalNoteId%>" value="<%=note.isSigned()%>"/>
@@ -364,6 +372,13 @@
                value="<%=fulltxt || (note.getNoteId() !=null && note.getNoteId().equals(savedId))%>"/>
         <input type="hidden" id="bgColour<%=globalNoteId%>" value="<%=bgColour%>"/>
         <input type="hidden" id="editWarn<%=globalNoteId%>" value="<%=editWarn%>"/>
+			<%
+			if (note.isEmailNote()) {
+			%>
+				<input type="hidden" id="emailNote<%=globalNoteId%>" value="true" />
+			<%
+			}
+			%>
 
         <div id="n<%=globalNoteId%>" class="note-contents">
             <%
@@ -522,9 +537,11 @@
 
                 String winName = "docs" + demographicNo;
                 int hash = Math.abs(winName.hashCode());
-                
+
                 url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
                 url = url + "return false;";
+
+							String editUrl = "window.open('/oscar/annotation/annotation.jsp?display=Documents&amp;table_id=" + dispDocNo + "&amp;demo=" + demographicNo + "','anwin','width=400,height=500');";
 
                 if (note.getRemoteFacilityId() == null) // only allow editing for local notes
                 {
@@ -536,7 +553,6 @@
                    style="float: right; margin-right: 5px;">
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.edit.msgEdit"/>
                 </a>
-            </div>
             <%
                     }
                 }
@@ -544,7 +560,7 @@
             <div class="view-links"
                  style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""%>">
                 <a class="links" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.view.docView"/>" id="view<%=globalNoteId%>"
-                   href="javascript:void(0)" onclick="<%=url%>" style="float: right; margin-right: 5px;"> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.view"/> </a>
+                   href="javascript:void(0)" onclick="<%=url%>" style="float: right; "> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.view"/> </a>
             </div>
             <%
             } else { //document note
@@ -620,7 +636,18 @@
             <%
             } else if (note.isEmailNote()) {
                 String url = "viewEmailByLogId(1100,1000,'" + request.getContextPath() + "/admin/ManageEmails.do?method=resendEmail&logId=" + dispDocNo + "');" + "return false;";
-            %>
+							if (fulltxt) {
+								%>
+									<img title='Minimize Display' id='quitImg<%=globalNoteId%>' style='float: right;' alt='Minimize Display' onclick='minNonEditableNoteView(<%=globalNoteId%>)' src='<%=ctx %>/oscarEncounter/graphics/triangle_up.gif'>
+								<%
+							} else {
+                                // STRUTS2 TODO - below image MaxDisplay.title might need further setup to be available to the fmt bundle below
+                                // moved over from commit by Italiya 2025-02-10 as part of merging changes during STRUTS2 migration
+                               %>
+                                    <img title="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.MaxDisplay.title"/>" id='fullImg<%=globalNoteId%>' alt="Maximize Display" onclick="fullView(event)" style='float: right;' src='<%=ctx %>/oscarEncounter/graphics/triangle_down.gif' />
+                               <%
+                            }
+                            %>
             <div class="view-links" style="<%=(isMagicNote)?(bgColour):""%>">
                 <a class="links" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.view.docView"/>" id="view<%=globalNoteId%>"
                    href="javascript:void(0);" onclick="<%=url%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.view"/> </a>
@@ -639,15 +666,15 @@
                 }
             %>
 
-            <div id="wrapper<%=globalNoteId%>"
-                 style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice()||note.isEmailNote())?(bgColour):""%>">
+							<div id="wrapper<%=globalNoteId%>" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""%>">
                     <%-- render the note contents here --%>
-                <div id="txt<%=globalNoteId%>">
+			  				<div id="txt<%=globalNoteId%>" name="<%=(note.isCpp()||note.isEmailNote())?"expandableReadonlyNoteText":""%>">
 
                     <%=noteStr%>
                 </div> <!-- end of txt<%=globalNoteId%> -->
                 <%
-                    if (note.isCpp() || note.isEformData() || note.isEncounterForm() || note.isInvoice() || note.isEmailNote()) {
+		  							if (note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())
+		  							{
                 %>
                 <div id="observation<%=globalNoteId%>" style="display:ruby;">
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.encounterDate.title"/>:&nbsp;
@@ -696,7 +723,8 @@
             <%
                 }
 
-                if (!note.isDocument() && !note.isCpp() && !note.isEformData() && !note.isEncounterForm() && !note.isInvoice() && !note.isEmailNote()) {
+						if (!note.isDocument() && !note.isCpp() && !note.isEformData() && !note.isEncounterForm() && !note.isInvoice())
+						{
 
                     if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", "true")) {
             %>
@@ -707,12 +735,13 @@
             <%
                 }
             %>
-            <div id="sig<%=globalNoteId%>" class="sig">
-                <div id="summary<%=globalNoteId%>">
+							<div id="sig<%=globalNoteId%>" class="sig" style="<%=note.isEmailNote()?(bgColour):""%>">
+								<div id="sumary<%=globalNoteId%>" style="<%=note.isEmailNote()?"color: #FFF !important":""%>">
                     <div id="observation<%=globalNoteId%>" style="float: right; margin-right: 3px;">
                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.encounterDate.title"/>:&nbsp;
                         <span id="obs<%=globalNoteId%>"><%=DateUtils.getDate(note.getObservationDate(), dateFormat, request.getLocale())%></span>&nbsp;
-                        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.noteRev.title"/>
+                        <%if (!note.isEmailNote()) {%>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.noteRev.title"/>
                         <%
                             if (rev != null) {
                         %>
@@ -725,9 +754,12 @@
                         <%
                             }
                         %>
+											<%}%>
                     </div>
 
 
+
+									<%if (!note.isEmailNote()) {%>
                     <div>
                         <span style="float: left;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.editors.title"/>:</span>
                         <ul style="list-style: none inside none; margin: 0;">
@@ -750,6 +782,7 @@
                             %>
                         </ul>
                     </div>
+									<%}%>
 
 
                     <%
@@ -769,11 +802,11 @@
                     </div>
                     <% } %>
 
+									<%if (!note.isEmailNote()) {%>
                     <div style="clear: right; margin-right: 3px; float: right;">
                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.encType.title"/>:&nbsp;
                         <span id="encType<%=globalNoteId%>"><%=note.getEncounterType().equals("") ? "" : "&quot;" + note.getEncounterType() + "&quot;"%></span>
                     </div>
-
 
                     <div>
                         <span style="float: left;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.assignedIssues.title"/></span>
@@ -797,6 +830,13 @@
                         %>
                         <br style="clear: both;"/>
                     </div> <!-- end of assigned title -->
+									<%}%>
+
+									<%if (note.isEmailNote()) {%>
+									<div>
+										Email Note
+									</div>
+									<%}%>
                 </div> <!-- end of div summary<%=globalNoteId%> -->
             </div> <!-- end of div sig<%=globalNoteId%> -->
             <%
@@ -821,10 +861,10 @@
         if (note.getNoteId() != null && note.getNoteId() != savedId) {
             if (false) {
                 lockedNotes.add(note.getNoteId());
-            } else if (!fulltxt && !note.isDocument() && !note.isEformData() && !note.isEncounterForm() && !note.isRxAnnotation() && !note.isInvoice()) {
-    %>
-    <script> Element.observe('n<%=note.getNoteId()%>', 'click', fullView); </script>
-    <%
+			}
+			else if (!fulltxt && !note.isDocument() && !note.isEformData() && !note.isEncounterForm() && !note.isRxAnnotation() && !note.isInvoice() && !note.isEmailNote())
+			{
+				%><script> Element.observe('n<%=note.getNoteId()%>', 'click', fullView); </script><%
                     unLockedNotes.add(note.getNoteId());
                 }
             }
@@ -880,7 +920,9 @@
 <script type="text/javascript">
     caseNote = "caseNote_note" + "<%=savedId%>";
     //save initial note to determine whether save is necessary
-    origCaseNote = $F(caseNote);
+	if (document.getElementById(caseNote)) {
+		origCaseNote = document.getElementById(caseNote).value;
+	}
     <%
 
         if( casemgmtNoteLock.isLocked() ) {
@@ -967,7 +1009,12 @@
     document.forms["caseManagementEntryForm"].note_edit.value = "existing";
     <%}%>
     setupNotes();
-    Element.observe(caseNote, "keyup", monitorCaseNote);
+	jQuery('#' + caseNote).on('keyup', monitorCaseNote);
+	jQuery('#' + caseNote).on('paste', function(e) {
+		// Let the paste happen first, then resize
+		setTimeout(adjustCaseNote, 0);
+	});
+
     Element.observe(caseNote, 'click', getActiveText);
     <%Integer num;
 			Iterator<Integer> iterator = lockedNotes.iterator();
@@ -1010,10 +1057,14 @@
     changeIssueFunc;  //set in changeDiagnosis function above
     addIssueFunc = updateIssues.bindAsEventListener(obj, makeIssue, defaultDiv);
     Element.observe('asgnIssues', 'click', addIssueFunc);
-    new Autocompleter.Local('enTemplate', 'enTemplate_list', autoCompList, {
-        colours: itemColours,
-        afterUpdateElement: menuAction
-    });
+    try {
+         new Autocompleter.Local('enTemplate', 'enTemplate_list', autoCompList, {
+             colours: itemColours,
+             afterUpdateElement: menuAction
+         });
+    } catch (error) {
+        console.error("Failed to initialize Autocompleter.Local:", error);
+    }
 
     //start timer for autosave
     setTimer();

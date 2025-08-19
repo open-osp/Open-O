@@ -13,12 +13,7 @@ package org.oscarehr.caseload;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -568,7 +563,8 @@ public class CaseloadContent2Action extends ActionSupport {
                 if ((!lapptResult.isEmpty()) && lapptResult.get(0).get("max(appointment_date)") != null && !lapptResult.get(0).get("max(appointment_date)").toString().equals("")) {
                     String clLappt = lapptResult.get(0).get("max(appointment_date)").toString();
 
-                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=" + demographic_no + "&last_name=" + URLEncoder.encode(clLastName) + "&first_name=" + URLEncoder.encode(clFirstName) + "&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25'); return false;\">" + clLappt + "</a>");
+
+                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '" + request.getContextPath() + "/demographic/demographiccontrol.jsp?demographic_no=" + demographic_no + "&last_name=" + URLEncoder.encode(clLastName) + "&first_name=" + URLEncoder.encode(clFirstName) + "&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25'); return false;\">" + clLappt + "</a>");
                 } else {
                     entry.add("&nbsp;");
                 }
@@ -580,7 +576,7 @@ public class CaseloadContent2Action extends ActionSupport {
                 List<Map<String, Object>> napptResult = caseloadDao.getCaseloadDemographicData(napptQuery, demographicParam);
                 if (!napptResult.isEmpty() && napptResult.get(0).get("min(appointment_date)") != null && !napptResult.get(0).get("min(appointment_date)").toString().equals("")) {
                     String clNappt = napptResult.get(0).get("min(appointment_date)").toString();
-                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=" + demographic_no + "&last_name=" + URLEncoder.encode(clLastName) + "&first_name=" + URLEncoder.encode(clFirstName) + "&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25'); return false;\">" + clNappt + "</a>");
+                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '" + request.getContextPath() + "/demographic/demographiccontrol.jsp?demographic_no=" + demographic_no + "&last_name=" + URLEncoder.encode(clLastName) + "&first_name=" + URLEncoder.encode(clFirstName) + "&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25'); return false;\">" + clNappt + "</a>");
                 } else {
                     entry.add("&nbsp;");
                 }
@@ -633,7 +629,7 @@ public class CaseloadContent2Action extends ActionSupport {
                 List<Map<String, Object>> newTicklerResult = caseloadDao.getCaseloadDemographicData(newTicklerQuery, demographicParam);
                 if (!newTicklerResult.isEmpty() && newTicklerResult.get(0).get("count(*)") != null && !newTicklerResult.get(0).get("count(*)").toString().equals("") && !newTicklerResult.get(0).get("count(*)").toString().equals("0")) {
                     String clNewTickler = newTicklerResult.get(0).get("count(*)").toString();
-                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '" + contextPath + "/tickler/ticklerDemoMain.jsp?demoview=" + demographic_no + "'); return false;\">" + clNewTickler + "</a>");
+                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '" + contextPath + "/tickler/ticklerMain.jsp?demoview=" + demographic_no + "'); return false;\">" + clNewTickler + "</a>");
                 } else {
                     entry.add("&nbsp;");
                 }

@@ -89,6 +89,7 @@
 <%@ page import="org.oscarehr.documentManager.EDocUtil" %>
 <%@ page import="org.oscarehr.documentManager.EDoc" %>
 <%@ page import="oscar.util.StringUtils" %>
+<%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
 
 
 <jsp:useBean id="displayServiceUtil" scope="request"
@@ -1551,7 +1552,7 @@ if (userAgent != null) {
     <body topmargin="0" leftmargin="0" vlink="#0000FF"
           onload="window.focus();disableDateFields();disableEditing();showSignatureImage();">
     <jsp:include page="../../images/spinner.jsp" flush="true"/>
-    <% 
+    <%
     java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
     if (actionErrors != null && !actionErrors.isEmpty()) {
 %>
@@ -1613,7 +1614,7 @@ if (userAgent != null) {
                         thisForm.setSiteName(defaultSiteName);
                     }
                 }
-            }   
+            }
 
             if (thisForm.iseReferral()) {
         %>
@@ -2694,7 +2695,7 @@ if (userAgent != null) {
                                 </div>
 
                                 <iframe style="width:500px; height:132px;" id="signatureFrame"
-                                        src="<%= request.getContextPath() %>/signature_pad/tabletSignature.jsp?inWindow=true&<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>=<%=signatureRequestId%>"></iframe>
+							src="<%= request.getContextPath() %>/signature_pad/tabletSignature.jsp?inWindow=true&<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>=<%=signatureRequestId%>&<%=ModuleType.class.getSimpleName()%>=<%=ModuleType.CONSULTATION%>" ></iframe>
 
                             </td>
                         </tr>
@@ -2981,7 +2982,7 @@ if (userAgent != null) {
              DOCUMENT ATTACHMENT MANAGER JAVASCRIPT
              **/
             jQuery(document).on('click', '*[data-poload]', function () {
-                const $mainForm = jQuery('#EctConsultationFormRequest2Form');  
+                const $mainForm = jQuery('#EctConsultationFormRequest2Form');
 
                 var trigger = jQuery(this);
                 trigger.off('click');

@@ -37,11 +37,12 @@
 %>
 <html>
     <head>
+    <title>E-Form Manager</title>
 
         <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery*"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
-    </head>
+
     <script language="javascript">
         function checkFormAndDisable() {
             if (document.forms[0].formHtml.value == "") {
@@ -107,6 +108,15 @@
 
     </script>
 
+    <style>
+        div#eformTbl_wrapper table tr td a,
+        div#eformTbl_wrapper table tr td:nth-child(3){
+            text-wrap: auto;
+            word-wrap: anywhere;
+            word-break: break-word;
+        }
+    </style>
+</head>
     <body>
 
 

@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.model.Security;
+import org.oscarehr.managers.SecurityManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -55,7 +56,7 @@ public final class WsUtils {
                 return (false);
             }
 
-            if (checkToken(security, securityToken) || security.checkPassword(securityToken)) {
+			if (checkToken(security, securityToken) || validatePassword(securityToken, security)) {
                 LoggedInInfo loggedInInfo = new LoggedInInfo();
                 loggedInInfo.setLoggedInSecurity(security);
                 if (security.getProviderNo() != null) {
@@ -70,6 +71,30 @@ public final class WsUtils {
         logger.debug("security was null");
         return (false);
     }
+
+	/**
+	 * Validates the provided password against the password stored in the given Security object.
+	 * If the password is not valid, it introduces a short delay to throttle potential brute-force attacks.
+	 *
+	 * @param password the password to validate.
+	 * @param security the Security object containing the stored password.
+	 * @return true if the password is valid, false otherwise.
+	 */
+	private static boolean validatePassword(String password, Security security) {
+		SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
+		boolean isValid = securityManager.validatePassword(password, security);
+
+		if(!isValid) {
+			// sleep to throttle anyone trying to brute force hack passwords
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+		return isValid;
+	}
 
     private static boolean checkToken(Security security, String securityToken) {
         return (securityToken.equals(generateSecurityToken(security)));

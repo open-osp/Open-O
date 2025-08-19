@@ -31,3 +31,4 @@ tmp/
 /release
 *.venv
 .env
+/.smarttomcat/

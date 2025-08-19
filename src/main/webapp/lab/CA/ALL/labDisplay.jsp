@@ -39,6 +39,7 @@
 <%@ page import="org.w3c.dom.Document" %>
 <%@ page import="org.oscarehr.caisi_integrator.ws.CachedDemographicLabResult" %>
 <%@ page import="oscar.oscarLab.ca.all.web.LabDisplayHelper" %>
+<%@ page import="oscar.oscarLab.ca.all.util.LabVersionComparator"%>
 
 <%@ page import="java.util.*,
                  oscar.util.UtilDateUtilities,
@@ -93,6 +94,8 @@
     String demographicID = request.getParameter("demographicId");
     String showAllstr = request.getParameter("all");
 
+String showLatest = request.getParameter("showLatest");
+
     List<String> allLicenseNames = new ArrayList<String>();
     String lastLicenseNo = null, currentLicenseNo = null;
 
@@ -125,11 +128,12 @@
         }
     }
 
-
-//Need date lab was received by OSCAR
-    Hl7TextMessageDao hl7TxtMsgDao = (Hl7TextMessageDao) SpringUtils.getBean(Hl7TextMessageDao.class);
-    MeasurementMapDao measurementMapDao = (MeasurementMapDao) SpringUtils.getBean(MeasurementMapDao.class);
-    Hl7TextMessage hl7TextMessage = hl7TxtMsgDao.find(Integer.parseInt(segmentID));
+    Hl7TextMessageDao hl7TxtMsgDao = SpringUtils.getBean(Hl7TextMessageDao.class);
+    MeasurementMapDao measurementMapDao = SpringUtils.getBean(MeasurementMapDao.class);
+Hl7TextMessage hl7TextMessage = null;
+    if (StringUtils.isNotBlank(segmentID) && StringUtils.isNumeric(segmentID)) {
+        hl7TextMessage = hl7TxtMsgDao.find(Integer.parseInt(segmentID));
+    }
 
     String dateLabReceived = "n/a";
     if (hl7TextMessage != null) {
@@ -155,6 +159,9 @@
     List<MessageHandler> handlers = new ArrayList<MessageHandler>();
     String[] segmentIDs = null;
     Boolean showAll = showAllstr != null && !"null".equalsIgnoreCase(showAllstr);
+
+String duplicateOfLab = null;
+Map<String, ExcellerisOntarioHandler.OrderStatus> missingTests = new HashMap<>();
 
     if (remoteFacilityIdString == null) // local lab
     {
@@ -194,9 +201,21 @@
             multiLabId = Hl7textResultsData.getMatchingLabs(segmentID);
             segmentIDs = multiLabId.split(",");
 
+		int totalMatchingLabs = segmentIDs.length;
+		if (showLatest != null && "true".equals(showLatest) && totalMatchingLabs > 1) {
+			segmentID = segmentIDs[totalMatchingLabs - 1];
+		}
+
             List<String> segmentIdList = new ArrayList<String>();
             handler = Factory.getHandler(segmentID);
             handlers.add(handler);
+
+        if ("ExcellerisON".equals(handler.getMsgType()) && segmentIDs.length > 1) {
+            LabVersionComparator labVersionComparator = new LabVersionComparator(Arrays.asList(segmentIDs));
+            duplicateOfLab = labVersionComparator.isLabDuplicate(segmentID);
+            missingTests = labVersionComparator.findMissingTests(segmentID, true);
+        }
+
             segmentIdList.add(segmentID);
 
             //this is where it gets weird. We want to show all messages with different filler order num but same accession in a single report
@@ -232,6 +251,9 @@
             MiscUtils.getLogger().error("Error", e);
         }
     }
+
+request.setAttribute("duplicateOfLab", duplicateOfLab);
+request.setAttribute("missingTests", missingTests);
 
 /********************** Converted to this sport *****************************/
 
@@ -771,9 +793,36 @@
         }
 
         /* Change the background color of the dropdown button when the dropdown content is shown */
-        .dropdown:hover .dropbtn {
-            background-color: #3e8e41;
-        }
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+#labVersionInfoModal .modal-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+#labVersionInfoModal .info-section {
+    margin-bottom: 20px;
+}
+
+#labVersionInfoModal .info-section p {
+    margin: 5px 0;
+    color: #555;
+}
+
+#labVersionInfoModal .test-list {
+    margin-left: 10px;
+}
+
+#labVersionInfoModal .test-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+#labVersionInfoModal .status {
+    font-weight: bold;
+}
     </style>
 
     <script language="JavaScript">
@@ -1084,6 +1133,52 @@
 </script>
 
 <div id="lab_<%= Encode.forHtmlAttribute(segmentID) %>">
+
+        <c:set var="hasDuplicateInfo" value="${not empty duplicateOfLab}" />
+        <c:set var="hasMissingTests" value="${not empty missingTests}" />
+        <c:set var="showModal" value="${hasDuplicateInfo or hasMissingTests}" />
+
+        <c:if test="${showModal}">
+            <!-- Modal -->
+            <div id="labVersionInfoModal" title="Lab Version Information" style="display:none;">
+                <div class="lab-version-modal">
+                    <c:if test="${hasDuplicateInfo}">
+                        <!-- Duplicate Information Section -->
+                        <div class="info-section">
+                            <div class="modal-title">Duplicate Lab Version Alert</div>
+                            <p>Warning: You are viewing a version of a lab result that appears to be a duplicate of previously received version <c:out value="${duplicateOfLab}" />.</p>
+                            <p style="margin-top: 5px">There is likely no new data in this version, but please double check regardless.</p>
+                        </div>
+                    </c:if>
+
+                    <c:if test="${hasMissingTests}">
+                        <!-- Missing Tests Information Section -->
+                        <div class="info-section">
+                            <div class="modal-title">Missing Test Results</div>
+                            <p>Warning: At least the following tests were not included in this version of the lab results:</p>
+                            <div class="test-list">
+                                <c:forEach var="entry" items="${missingTests}">
+                                    <div class="test-item">
+                                        <span>${entry.key}</span>
+                                        <span class="status">${entry.value.description}</span>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </c:if>
+                </div>
+            </div>
+
+            <script>
+                // Include a short delay before showing modal to improve user experience
+                setTimeout(function () {
+                    jQuery(document).ready(function () {
+                        jQuery("#labVersionInfoModal").dialog({ modal: true, width: 500 });
+                    });
+                }, 300);
+            </script>
+        </c:if>
+
     <form name="reassignForm_<%= Encode.forHtmlAttribute(segmentID) %>" method="post" action="Forward.do">
         <input type="hidden" name="flaggedLabs" value="<%= Encode.forHtmlAttribute(segmentID) %>"/>
         <input type="hidden" name="selectedProviders" value=""/>
@@ -2206,11 +2301,11 @@
                 </a>
                         <%}%>
                         <%if(isVIHARtf){
-												
+
 											    //create bytes from the rtf string
 										    	byte[] rtfBytes = handler.getOBXResult(j, k).getBytes();
 										    	ByteArrayInputStream rtfStream = new ByteArrayInputStream(rtfBytes);
-										    	
+
 										    	//Use RTFEditor Kit to get plaintext from RTF
 										    	RTFEditorKit rtfParser = new RTFEditorKit();
 										    	javax.swing.text.Document doc = rtfParser.createDefaultDocument();
@@ -2231,7 +2326,7 @@
                 <td align="center"><%= handler.getTimeStamp(j, k) %>
                 </td>
                     <%}
-                                       		
+
                                        		} else {//if it isn't a PATHL7 doc %>
 
             <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
@@ -2240,7 +2335,7 @@
                 <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
                         href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"></a><%
                                    			} else {
-                               				
+
 
                                					if(handler instanceof AlphaHandler && lastObxSetId.equals(((AlphaHandler)handler).getObxSetId(j, k))) {
 								%>
@@ -2257,8 +2352,8 @@
 
                 </td>
                     <% }
-                                   		
-                               					
+
+
                                				}%>
 
 
@@ -2268,8 +2363,8 @@
                 </td>
                     <%
                                        			lastObxSetId = ((AlphaHandler)handler).getObxSetId(j,k);
-                                    	  
-                                           } else if(handler instanceof PATHL7Handler && "FT".equals(handler.getOBXValueType(j, k)) && (handler.getOBXReferenceRange(j,k).isEmpty() && handler.getOBXUnits(j,k).isEmpty())){ 
+
+                                           } else if(handler instanceof PATHL7Handler && "FT".equals(handler.getOBXValueType(j, k)) && (handler.getOBXReferenceRange(j,k).isEmpty() && handler.getOBXUnits(j,k).isEmpty())){
                                         	  %>
                 <td colspan="4">
                     <%= handler.getOBXResult(j, k) %>
@@ -2298,7 +2393,7 @@
                 </td>
 
                     <%
-                                           		} 
+                                           		}
 
                                            		else if(handler.getMsgType().equals("MEDITECH")  && isUnstructuredDoc ) {
                                            	%>

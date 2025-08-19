@@ -34,6 +34,7 @@ import org.oscarehr.documentManager.EDocUtil;
 import org.oscarehr.documentManager.EDocUtil.EDocSort;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
+import org.owasp.encoder.Encode;
 import oscar.util.DateUtils;
 import oscar.util.StringUtils;
 
@@ -132,6 +133,7 @@ public class EctDisplayDocs2Action extends EctDisplayAction {
 
                 String dispDocNo = curDoc.getDocId();
                 title = StringUtils.maxLenString(curDoc.getDescription(), MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
+                title = Encode.forHtml(title);
 
                 if (EDocUtil.getDocUrgentFlag(dispDocNo))
                     title = StringUtils.maxLenString("!" + curDoc.getDescription(), MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
@@ -154,7 +156,7 @@ public class EctDisplayDocs2Action extends EctDisplayAction {
 
                 if (inboxflag) {
                     String path = oscar.util.plugin.IsPropertiesOn.getProperty("DOCUMENT_DIR");
-                    url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/mod/docmgmtComp/FillARForm.do?method=showInboxDocDetails&path=" + path + "&demoNo=" + bean.demographicNo + "&name=" + StringEscapeUtils.escapeHtml(dispFilename) + "'); return false;";
+ 		    url = "popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/mod/docmgmtComp/FillARForm.do?method=showInboxDocDetails&path=" + path + "&demoNo=" + bean.demographicNo + "&name=" + Encode.forJavaScript(dispFilename) + "'); return false;";
                     isURLjavaScript = true;
                 } else if (curDoc.getRemoteFacilityId() == null && curDoc.isPDF()) {
                     url = "popupPage(window.screen.width,window.screen.height,'" + hash + "','" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + user + "&searchProviderNo=" + user + "&status=A'); return false;";
@@ -166,8 +168,7 @@ public class EctDisplayDocs2Action extends EctDisplayAction {
                 item.setLinkTitle(title + serviceDateStr);
                 item.setTitle(title);
                 key = StringUtils.maxLenString(curDoc.getDescription(), MAX_LEN_KEY, CROP_LEN_KEY, ELLIPSES) + "(" + serviceDateStr + ")";
-                key = StringEscapeUtils.escapeJavaScript(key);
-
+                key = Encode.forJavaScript(key);
                 if (inboxflag) {
                     if (!EDocUtil.getDocReviewFlag(dispDocNo)) item.setColour("FF0000");
                 }

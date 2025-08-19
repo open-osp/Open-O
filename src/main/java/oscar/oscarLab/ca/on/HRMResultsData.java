@@ -72,7 +72,9 @@ public class HRMResultsData {
         }
 
         List<Integer> demographicNumbers = new ArrayList<>();
+		boolean patientSearch = false;
         if (demographicNumber == null && (!firstNameSearch.isEmpty() || !lastNameSearch.isEmpty() || !hinSearch.isEmpty())) {
+			patientSearch = true;
             List<Demographic> matchedDemographics = demographicManager.searchDemographicsByAttributes(loggedInInfo, hin, firstName, lastName,
                     null, null, null, null, null, null, null, 0, 100);
             for (Demographic matchedDemographic : matchedDemographics) {
@@ -84,7 +86,7 @@ public class HRMResultsData {
             demographicNumbers.add(Integer.valueOf(demographicNumber));
         }
 
-        List<HRMDocumentToProvider> hrmDocResultsProvider = hrmDocumentToProviderDao.findByProviderNoLimit(providerNo, demographicNumbers, newestDate, oldestDate, viewed, signedOff,
+		List<HRMDocumentToProvider> hrmDocResultsProvider = hrmDocumentToProviderDao.findByProviderNoLimit(providerNo, demographicNumbers, patientSearch, newestDate, oldestDate, viewed, signedOff,
                 isPaged, page, pageSize);
 
         // the key = SendingFacility+':'+ReportNumber+':'+DeliverToUserID as per HRM spec can be used to signify duplicate report

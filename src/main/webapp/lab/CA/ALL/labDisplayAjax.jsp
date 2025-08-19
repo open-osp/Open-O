@@ -53,6 +53,7 @@
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProperties" %>
 <%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
@@ -652,6 +653,20 @@
                                             </div>
                                         </td>
                                     </tr>
+                                        <% if ("ExcellerisON".equals(handler.getMsgType())) { %>
+                                            <tr>
+                                                <td>
+                                                    <div class="FieldData">
+                                                        <strong>Reported on:</strong>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="FieldData" nowrap="nowrap">
+                                                        <%= ((ExcellerisOntarioHandler) handler).getReportStatusChangeDate() %>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% } %>
                                     <tr>
                                         <td>
                                             <div class="FieldData">
@@ -992,6 +1007,23 @@
                         boolean obrFlag = false;
                         int obxCount = handler.getOBXCount(j);
 
+                               if (handler.getMsgType().equals("ExcellerisON") && handler.getObservationHeader(j, 0).equals(headers.get(i))) {
+                                    String orderRequestStatus = ((ExcellerisOntarioHandler) handler).getOrderStatus(j);
+                                    int obrCommentCount = handler.getOBRCommentCount(j);
+                                    if (orderRequestStatus.equals(ExcellerisOntarioHandler.OrderStatus.DELETED.getDescription())) { continue; }
+
+                                    if (obxCount > 0 || !orderRequestStatus.isEmpty() || obrCommentCount > 0) {
+                                        obrFlag = true;
+                                    %>
+                                    <tr style="<%=(linenum % 2 == 1 ? "background-color:"+highlight : "")%>" >
+                                        <td style="text-align:left; vertical-align:top"><span style="font-size:16px;font-weight: bold;"><%=handler.getOBRName(j)%></span></td>
+                                        <td colspan="1"><%=orderRequestStatus%></td>
+                                    </tr>
+                                    <%
+                                    }
+                               }
+
+
                         for (k = 0; k < obxCount; k++) {
                             String obxName = handler.getOBXName(j, k);
                             boolean isAllowedDuplicate = false;
@@ -1013,8 +1045,7 @@
 
                             if (!handler.getOBXResultStatus(j, k).equals("DNS") && b2 && b3) { // <<--  DNS only needed for MDS messages
                                 String obrName = handler.getOBRName(j);
-                                if (!obrFlag && !obrName.equals("") && !(obxName.contains(obrName) && obxCount < 2)) {
-                %>
+                                        if(!obrFlag && !obrName.equals("") && !(obxName.contains(obrName) && obxCount < 2) && !handler.getMsgType().equals("ExcellerisON")){%>
                 <%--  <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" >
                      <td valign="top" align="left"><%=obrName%></td>
                      <td colspan="6">&nbsp;</td>
@@ -1184,9 +1215,13 @@
                     <%
                     } else {
                     %>
-                    <td align="right"><%= handler.getOBXResult(j, k) %>
-                    </td>
-                    <%}%>
+	                                            <td align="right">
+                                                   <% if (handler.getMsgType().equals("ExcellerisON") && !((ExcellerisOntarioHandler) handler).getOBXSubId(j, k).isEmpty()) { %>
+                                                    <em><%= ((ExcellerisOntarioHandler) handler).getOBXSubIdWithObservationValue( j, k) %></em>
+                                                    <% } else { %>
+                                                    <%= handler.getOBXResult( j, k) %>
+                                                    <% } %>
+                                                </td><%}%>
                     <% } %>
                     <td align="center">
                         <%= handler.getOBXAbnormalFlag(j, k)%>

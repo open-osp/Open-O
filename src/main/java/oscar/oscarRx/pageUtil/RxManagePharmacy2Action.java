@@ -153,6 +153,10 @@ public final class RxManagePharmacy2Action extends ActionSupport {
 
         String demographicNo = request.getParameter("demographicNo");
 
+        if (demographicNo == null || demographicNo.isEmpty() || !demographicNo.matches("\\d+")) {
+            return null;
+	}
+
         RxPharmacyData pharmacyData = new RxPharmacyData();
         List<PharmacyInfo> pharmacyList;
         pharmacyList = pharmacyData.getPharmacyFromDemographic(demographicNo);

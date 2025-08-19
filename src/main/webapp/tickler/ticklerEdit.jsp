@@ -52,6 +52,7 @@
 %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib prefix="e" uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
@@ -287,7 +288,8 @@
         <form name="serviceform" action="${pageContext.request.contextPath}/tickler/EditTickler.do" method="post">
             <input type="hidden" name="method" value="editTickler"/>
             <input type="hidden" name="ticklerNo" value="<%=ticklerNo%>"/>
-            <h2><fmt:setBundle basename="oscarResources"/><fmt:message key="tickler.ticklerEdit.title"/></h2>
+            <input type="hidden" name="parentAjaxId" value="<e:forHtml value='${param.parentAjaxId}' />"/>
+    <h2><bean:message key="tickler.ticklerEdit.title"/></h2>
             <div id="error" class="alert alert-error" style="display:none;"></div>
 
             <table class="table table-condensed">

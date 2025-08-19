@@ -49,6 +49,7 @@
 <%@ page import="org.oscarehr.common.model.*" %>
 <%@ page import="oscar.oscarProvider.data.ProviderData" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
 
 <%
     OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
@@ -565,10 +566,29 @@
                     if (hasFaxNumber) {
                         e.target.onbeforeunload = unloadMess;
                     }
+		<% }
+
+		if (bean.getStashSize() > 0) {
+		%>
+		try {
+			let signId = new URLSearchParams(e.storedImageUrl.split('?')[1]).get('digitalSignatureId')
+			this.setDigitalSignatureToRx(signId, <%=bean.getStashItem(0).getScript_no() %>);
+		} catch (e) {
+			console.error(e);
+		}
                     <% } %>
+
                     refreshImage();
                 }
             }
+
+function setDigitalSignatureToRx(digitalSignatureId, scriptId) {
+	new Ajax.Request('<%=request.getContextPath() %>/oscarRx/saveDigitalSignature.do?method=saveDigitalSignature'
+			+ '&digitalSignatureId=' + digitalSignatureId
+			+ "&scriptId=" + scriptId, {
+		method: 'get'
+	});
+}
 
             function toggleFaxButtons(disabled) {
                 document.getElementById("faxButton").disabled = disabled;
@@ -685,12 +705,13 @@
                                width="100%" height="100%">
 
                             <tr>
-                                <td width=420px>
+				<td>
                                     <div class="DivContentPadding"><!-- src modified by vic, hsfo -->
+					<% if (bean.getStashSize() > 0) { %>
                                         <iframe id='preview' name='preview' width=420px height=890px
-                                                src="${pageContext.request.contextPath}/oscarRx/<%= dx<0?"Preview2.jsp?scriptId="+request.getParameter("scriptId")+"&rePrint="+reprint+"&pharmacyId="+request.getParameter("pharmacyId"):dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
-                                                align=center border=0 frameborder=0></iframe>
-                                    </div>
+							src="<%= dx<0?"oscarRx/Preview2.jsp?scriptId="+bean.getStashItem(0).getScript_no()+"&rePrint="+reprint+"&pharmacyId="+request.getParameter("pharmacyId"):dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
+							align=center border=0 frameborder=0></iframe></div>
+					<% } %>
                                 </td>
 
                                 <td valign=top><form action="${pageContext.request.contextPath}/oscarRx/clearPending.do" method="post">
@@ -749,13 +770,10 @@
 
                                         function expandPreview(text) {
                                             parent.document.getElementById('lightwindow_container').style.width = "1140px";
-                                            parent.document.getElementById('lightwindow_container').style.left = "-600px";
                                             parent.document.getElementById('lightwindow_contents').style.width = "1120px";
                                             document.getElementById('preview').style.width = "600px";
                                             frames['preview'].document.getElementById('pharmInfo').innerHTML = text;
-                                            //frames['preview'].document.getElementById('removePharm').show();
                                             $("selectedPharmacy").innerHTML = '<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.printPharmacyInfo.paperSizeWarning"/>';
-
                                         }
 
                                         function reducePreview() {
@@ -812,17 +830,7 @@
                                                 </select>
                                             </td>
                                         </tr>
-                                            <%--					<tr>--%>
-                                            <%--						<!--td width=10px></td-->--%>
-                                            <%--						<td>--%>
-                                            <%--						<span>--%>
-                                            <%--							<input type=button value="Print PDF" class="ControlPushButton" style="width: 150px" onClick="<%=reprint.equalsIgnoreCase("true") ? "javascript:return onPrint2('rePrint', "+request.getParameter("scriptId")+");" : "javascript:return onPrint2('print', "+request.getParameter("scriptId")+");" %>" />--%>
-                                            <%--						</span>--%>
-                                            <%--						</td>--%>
-                                            <%--					</tr>--%>
-
                                         <tr>
-                                            <!--td width=10px></td-->
                                             <td style="padding-bottom: 0"><span><input type=button
                                                                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="ViewScript.msgPrint"/>"
                                                                                        class="ControlPushButton"
@@ -859,31 +867,27 @@
                                                 </select>
                                             </td>
                                         </tr>
+
+					<%
+						String isFaxDisabled = (bean.getStashSize() == 0 || Objects.isNull(bean.getStashItem(0).getDigitalSignatureId()))
+								? "disabled" : "";
+					%>
                                         <tr>
-                                            <td style="padding-top: 0; padding-bottom: 0"><span><input type=button
-                                                                                                       value="Fax"
-                                                                                                       class="ControlPushButton"
-                                                                                                       id="faxButton"
-                                                                                                       style="width: 210px"
-                                                                                                       onClick="sendFax();"
-                                                                                                       disabled/></span>
+						<td style="padding-top: 0; padding-bottom: 0"><span><input type=button value="Fax"
+										 class="ControlPushButton" id="faxButton" style="width: 210px"
+										 onClick="sendFax();" <%=isFaxDisabled%>/></span>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td style="padding-top: 0"><span><input type=button
-                                                                                    value="Fax &amp; Add to encounter note"
-                                                                                    class="ControlPushButton"
-                                                                                    id="faxPasteButton"
-                                                                                    style="width: 210px"
-                                                                                    onClick="printPaste2Parent(false, true, true);sendFax();"
-                                                                                    disabled/></span>
+                            <td style="padding-top: 0"><span><input type=button value="Fax &amp; Add to encounter note"
+                                    class="ControlPushButton" id="faxPasteButton" style="width: 210px"
+                                    onClick="printPaste2Parent(false, true, true);sendFax();" <%=isFaxDisabled%>/></span>
 
                                             </td>
                                         </tr>
 
                                         <% } %>
                                         <tr>
-                                            <!--td width=10px></td-->
                                             <td><span><input type=button
                                                              value="<fmt:setBundle basename="oscarResources"/><fmt:message key="ViewScript.msgCreateNewRx"/>"
                                                              class="ControlPushButton"
@@ -892,26 +896,12 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <!--td width=10px></td-->
                                             <td><span><input type=button
                                                              value="<fmt:setBundle basename="oscarResources"/><fmt:message key="ViewScript.msgBackToOscar"/>"
                                                              class="ControlPushButton" style="width: 210px"
                                                              onClick="javascript:clearPending('close');parent.window.close();"/></span>
                                             </td>
                                         </tr>
-                                            <%--                                       <%if(prefPharmacy.length()>0 && prefPharmacyId.length()>0){   %>--%>
-                                            <%--                                           <tr><td><span><input id="selectPharmacyButton" type=button value="<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.printPharmacyInfo.addPharmacyButton'/>" class="ControlPushButton" style="width:150px;"--%>
-                                            <%--                                                             onclick="printPharmacy('<%=prefPharmacyId%>','<%=prefPharmacy%>');"/>--%>
-                                            <%--                                                </span>--%>
-
-                                            <%--                                            </td>--%>
-                                            <%--                                        </tr><%}%>--%>
-                                            <%--                                        <tr>--%>
-                                            <%--                                            <td>--%>
-                                            <%--                                                <a id="selectedPharmacy" style="color:red"></a>--%>
-                                            <%--                                            </td>--%>
-                                            <%--                                        </tr>--%>
-
                                         <%
                                             if (request.getSession().getAttribute("rePrint") == null) {%>
 
@@ -930,19 +920,19 @@
 
                                         <%}%>
                                         <% if (OscarProperties.getInstance().isRxSignatureEnabled() && !OscarProperties.getInstance().getBooleanProperty("signature_tablet", "yes")) { %>
-
+						<% if (bean.getStashSize() == 0 || Objects.isNull(bean.getStashItem(0).getDigitalSignatureId())) { %>
                                         <tr>
                                             <td colspan=2 style="font-weight: bold"><span>Signature</span></td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <input type="hidden"
-                                                       name="<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>"
-                                                       value="<%=signatureRequestId%>"/>
-                                                <iframe style="width:500px; height:132px;" id="signatureFrame"
-                                                        src="<%= request.getContextPath() %>/signature_pad/tabletSignature.jsp?inWindow=true&<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>=<%=signatureRequestId%>"></iframe>
+									<input type="hidden" name="<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>"
+										   value="<%=signatureRequestId%>"/>
+									<iframe style="width:500px; height:132px;" id="signatureFrame"
+											src="<%= request.getContextPath() %>/signature_pad/tabletSignature.jsp?inWindow=true&<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>=<%=signatureRequestId%>&saveToDB=true&demographicNo=<%=bean.getDemographicNo()%>&<%=ModuleType.class.getSimpleName()%>=<%=ModuleType.PRESCRIPTION%>"></iframe>
                                             </td>
                                         </tr>
+						<% } %>
                                         <%}%>
                                         <tr>
                                             <td colspan=2 style="font-weight: bold"><span><fmt:setBundle basename="oscarResources"/><fmt:message key="ViewScript.msgDrugInfo"/></span></td>

@@ -87,4 +87,5 @@ public interface PrescriptionManager {
 
     public boolean print(LoggedInInfo loggedInInfo, int scriptNo);
 
+    boolean setPrescriptionSignature(LoggedInInfo loggedInInfo, int scriptNo, Integer digitalSignatureId);
 }

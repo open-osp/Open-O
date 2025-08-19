@@ -1,1 +1,0 @@
-The source for repository_cleaner_plugin is located on sourceforge under the oscar project.

@@ -28,8 +28,10 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.oscarehr.billing.CA.BC.model.Hl7Msh;
+import org.oscarehr.billing.CA.BC.util.PathNetLabResults;
 import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
 
@@ -41,8 +43,12 @@ public class Hl7MshDao extends AbstractDaoImpl<Hl7Msh> {
         super(Hl7Msh.class);
     }
 
-    public List<Object[]> findPathnetResultsDataByPatientNameHinStatusAndProvider(String patientName, String patientHealthNumber, String status, String providerNo, String labType) {
-        String sql = "SELECT msh, pid, orc, obr, providerLabRouting, MIN(obr.resultStatus) " +
+    public List<PathNetLabResults> findPathnetResultsDataByPatientNameHinStatusAndProvider(String patientName, String patientHealthNumber, String status, String providerNo, String labType) {
+		/*
+		 * Below query use a constructor expression (SELECT new org.oscarehr.billing.CA.BC.model.PathNetLabResults(Hl7Msh, Hl7Pid, Hl7Orc, Hl7Obr, ProviderLabRoutingModel, String))
+		 * and TypedQuery<PathNetLabResults> to directly create instances of PathNetLabResults from the database results
+		 * */
+        String sql = "SELECT new org.oscarehr.billing.CA.BC.util.PathNetLabResults( msh, pid, orc, obr, providerLabRouting, MIN(obr.resultStatus) )" +
                 "FROM Hl7Msh msh, Hl7Pid pid, Hl7Orc orc, Hl7Obr obr, ProviderLabRoutingModel providerLabRouting " +
                 "WHERE providerLabRouting.labNo = pid.messageId " +
                 "AND pid.messageId = msh.messageId " +
@@ -55,7 +61,7 @@ public class Hl7MshDao extends AbstractDaoImpl<Hl7Msh> {
                 "AND pid.externalId like :patientHealthNumber " +
                 "GROUP BY pid.id";
 
-        Query query = entityManager.createQuery(sql);
+		TypedQuery<PathNetLabResults> query = entityManager.createQuery(sql, PathNetLabResults.class);
         query.setParameter("status", status);
         query.setParameter("providerNo", providerNo);
         query.setParameter("labType", labType);
@@ -64,8 +70,12 @@ public class Hl7MshDao extends AbstractDaoImpl<Hl7Msh> {
         return query.getResultList();
     }
 
-    public List<Object[]> findPathnetResultsByLabNo(Integer labNo) {
-        String sql = "SELECT msh, pid, orc, obr, providerLabRouting, MIN(obr.resultStatus) " +
+    public List<PathNetLabResults> findPathnetResultsByLabNo(Integer labNo) {
+		/*
+		 * Below query use a constructor expression (SELECT new org.oscarehr.billing.CA.BC.model.PathNetLabResults(Hl7Msh, Hl7Pid, Hl7Orc, Hl7Obr, ProviderLabRoutingModel, String))
+		 * and TypedQuery<PathNetLabResults> to directly create instances of PathNetLabResults from the database results
+		 * */
+        String sql = "SELECT new org.oscarehr.billing.CA.BC.util.PathNetLabResults( msh, pid, orc, obr, providerLabRouting, MIN(obr.resultStatus) )" +
                 "FROM Hl7Msh msh, Hl7Pid pid, Hl7Orc orc, Hl7Obr obr, ProviderLabRoutingModel providerLabRouting " +
                 "WHERE providerLabRouting.labNo = pid.messageId " +
                 "AND pid.messageId = msh.messageId " +
@@ -74,13 +84,17 @@ public class Hl7MshDao extends AbstractDaoImpl<Hl7Msh> {
                 "AND pid.messageId= :labNo " +
                 "GROUP BY pid.id";
 
-        Query query = entityManager.createQuery(sql);
+		TypedQuery<PathNetLabResults> query = entityManager.createQuery(sql, PathNetLabResults.class);
         query.setParameter("labNo", labNo);
         return query.getResultList();
     }
 
-    public List<Object[]> findPathnetResultsDeomgraphicNo(Integer demographicNo, String labType) {
-        String sql = "SELECT msh, pid, orc, obr, patientLabRouting, MIN(obr.resultStatus) " +
+	public List<PathNetLabResults> findPathnetResultsDeomgraphicNo(Integer demographicNo, String labType) {
+		/*
+		 * Below query use a constructor expression (SELECT new org.oscarehr.billing.CA.BC.model.PathNetLabResults(Hl7Msh, Hl7Pid, Hl7Orc, Hl7Obr, PatientLabRouting, String))
+		 * and TypedQuery<PathNetLabResults> to directly create instances of PathNetLabResults from the database results
+		 * */
+	    String sql =  "SELECT new org.oscarehr.billing.CA.BC.util.PathNetLabResults( msh, pid, orc, obr, patientLabRouting, MIN(obr.resultStatus) )" +
                 "FROM Hl7Msh msh, Hl7Pid pid, Hl7Orc orc, Hl7Obr obr, PatientLabRouting patientLabRouting " +
                 "WHERE patientLabRouting.labNo = pid.id " +
                 "AND pid.id = orc.pidId " +
@@ -90,7 +104,7 @@ public class Hl7MshDao extends AbstractDaoImpl<Hl7Msh> {
                 "AND patientLabRouting.demographicNo = :demographicNo " +
                 "GROUP BY pid.id";
 
-        Query query = entityManager.createQuery(sql);
+		TypedQuery<PathNetLabResults> query = entityManager.createQuery(sql, PathNetLabResults.class);
         query.setParameter("demographicNo", demographicNo);
         query.setParameter("labType", labType);
         return query.getResultList();

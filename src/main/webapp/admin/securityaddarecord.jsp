@@ -64,6 +64,7 @@
 <%@page import="org.oscarehr.common.model.Security" %>
 <%@page import="org.oscarehr.common.dao.SecurityDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="org.oscarehr.managers.MfaManager" %>
 <%
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
@@ -179,6 +180,34 @@
                 return true;
             }
 
+
+	/**
+	 * Handles the change event of the MFA checkbox.
+	 * Shows or hides the MFA note based on the checkbox state.
+	 * @param {HTMLInputElement} checkbox - The MFA checkbox element.
+	 */
+	function handleMfaChange(checkbox) {
+		let mfaNote = document.getElementById('mfaNote');
+
+		if (checkbox.checked) {
+			mfaNote.style.display = 'inline';
+		} else {
+			mfaNote.style.display = 'none';
+		}
+	}
+
+	function updatePinComponentsAccess(checked) {
+		let pinCheckbox = document.getElementsByName('b_RemoteLockSet')
+		let pinConfCheckbox = document.getElementsByName('b_LocalLockSet')
+		let pinInput = document.getElementsByName('pin')
+		let pinConfInput = document.getElementsByName('conPin')
+
+		pinCheckbox[0].disabled = checked;
+		pinConfCheckbox[0].disabled = checked;
+		pinInput[0].disabled = checked;
+		pinConfInput[0].disabled = checked;
+	}
+
             //-->
         </script>
     </head>
@@ -259,6 +288,7 @@
                             id="date_ExpireDate_cal"/></td>
                 </tr>
                 <%
+	if (MfaManager.isOscarLegacyPinEnabled()) {
                     if (op.getBooleanProperty("NEW_USER_PIN_CONTROL", "yes")) {
                 %>
                 <input type="hidden" name="pinIsRequired" value="0"/>
@@ -300,6 +330,7 @@
                 </tr>
 
                 <%
+		}
                     if (!OscarProperties.getInstance().getBooleanProperty("mandatory_password_reset", "false")) {
                 %>
                 <tr>
@@ -314,9 +345,36 @@
                 </tr>
                 <%} %>
 
-                <tr>
-                    <td colspan="2">
-                        <div align="center">
+		<%--	MFA Setting   --%>
+	<% if (MfaManager.isOscarMfaEnabled()) { %>
+	<tr>
+		<td style="text-align: right">
+			<bean:message key="admin.securityAddRecord.mfa.title"/>:
+		</td>
+		<td style="">
+			<label>
+				<input type="checkbox" name="enableMfa" value="1"
+					   onchange="handleMfaChange(this);
+							   <%if (MfaManager.isOscarLegacyPinEnabled()) { %>
+							   updatePinComponentsAccess(this.checked);
+							   <% } %>"
+				/>
+				<bean:message key="admin.securityAddRecord.mfa.description"/>
+			</label>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td style="padding-left: 8px;">
+			<span id="mfaNote" style="font-size: x-small; color: darkslategray; vertical-align: top; display: none"><bean:message
+					key="admin.securityAddRecord.mfa.note"/></span>
+		</td>
+	</tr>
+	<% } %>
+
+	<tr>
+		<td colspan="2">
+		<div align="center">
 
                             <input type="submit" name="subbutton"
                                    value='<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityaddarecord.btnSubmit"/>'>

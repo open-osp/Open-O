@@ -26,46 +26,46 @@
 
 package oscar.oscarEncounter.oscarConsultationRequest.pageUtil;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.ConsultationRequestDao;
 import org.oscarehr.common.dao.ConsultationRequestExtDao;
 import org.oscarehr.common.dao.ConsultationServiceDao;
-import org.oscarehr.common.model.ConsultationRequest;
-import org.oscarehr.common.model.ConsultationServices;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.ProfessionalSpecialist;
-import org.oscarehr.common.model.Provider;
+import org.oscarehr.common.model.*;
 import org.oscarehr.common.model.enumerator.ConsultationRequestExtKey;
+import org.oscarehr.managers.ConsultationManager;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-public class EctViewConsultationRequestsUtil {         
-   
-   public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo,String team) {   
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+public class EctViewConsultationRequestsUtil {
+
+   public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo,String team) {
       return estConsultationVecByTeam(loggedInInfo,team,false,null,null);
    }
-   public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo,String team,boolean showCompleted) {   
+   public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo,String team,boolean showCompleted) {
       return estConsultationVecByTeam(loggedInInfo,team,showCompleted,null,null);
-   }   
+   }
    public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo, String team,boolean showCompleted,Date startDate, Date endDate) {
       return estConsultationVecByTeam(loggedInInfo,team,showCompleted,null,null,null);
-   }   
-   public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo, String team,boolean showCompleted,Date startDate, Date endDate,String orderby) {   
+   }
+   public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo, String team,boolean showCompleted,Date startDate, Date endDate,String orderby) {
       return estConsultationVecByTeam(loggedInInfo,team,showCompleted,null,null,null,null);
-   }   
-   public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo, String team,boolean showCompleted,Date startDate, Date endDate,String orderby,String desc) { 
+   }
+   public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo, String team,boolean showCompleted,Date startDate, Date endDate,String orderby,String desc) {
       return estConsultationVecByTeam(loggedInInfo,team,showCompleted,null,null,null,null,null,null,null);
-   }  
-            
-   public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo, String team,boolean showCompleted,Date startDate, Date endDate,String orderby,String desc,String searchDate, Integer offset, Integer limit) {       
+   }
+
+   public boolean estConsultationVecByTeam(LoggedInInfo loggedInInfo, String team,boolean showCompleted,Date startDate, Date endDate,String orderby,String desc,String searchDate, Integer offset, Integer limit) {
       ids = new Vector<String>();
       status = new Vector<String>();
       patient = new Vector<String>();
@@ -83,11 +83,13 @@ public class EctViewConsultationRequestsUtil {
       followUpDate = new Vector<String>();
       boolean verdict = true;
       consultProvider = new Vector();
-      
+      eReferral = Collections.synchronizedList(new ArrayList<>());
+
       try {
           ConsultationRequestDao consultReqDao = (ConsultationRequestDao) SpringUtils.getBean(ConsultationRequestDao.class);
           ConsultationRequestExtDao consultationRequestExtDao = SpringUtils.getBean(ConsultationRequestExtDao.class);
           DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+          ConsultationManager consultationManager = SpringUtils.getBean(ConsultationManager.class);
           ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
           ConsultationServiceDao serviceDao = (ConsultationServiceDao) SpringUtils.getBean(ConsultationServiceDao.class);
           ConsultationRequest consult;
@@ -104,10 +106,13 @@ public class EctViewConsultationRequestsUtil {
               consult = (ConsultationRequest)consultList.get(idx);
               demo = demographicManager.getDemographic(loggedInInfo, consult.getDemographicId());
 
+              List<ConsultationRequestExt> extras = consultationRequestExtDao.getConsultationRequestExts(consult.getId());
+              Map<String, String> extraMap = consultationManager.getExtValuesAsMap(extras);
+
               String serviceDescription = "";
               // If service id is 0, check the extensions table
               if (consult.getServiceId() == 0) {
-                 serviceDescription = consultationRequestExtDao.getConsultationRequestExtsByKey(consult.getId(), ConsultationRequestExtKey.EREFERRAL_SERVICE.getKey());
+                 serviceDescription = extraMap.getOrDefault(ConsultationRequestExtKey.EREFERRAL_SERVICE.getKey(), "");
               } else {
                  services = serviceDao.find(consult.getServiceId());
                  if (services != null) {
@@ -127,10 +132,16 @@ public class EctViewConsultationRequestsUtil {
 
                 if (consult.getProfessionalSpecialist() == null) {
                     specialistName = "N/A";
-                } else {
+                  if (consult.getServiceId() == 0) {
+                     specialistName = extraMap.getOrDefault(ConsultationRequestExtKey.EREFERRAL_DOCTOR.getKey(), "N/A");
+                  }
+              }
+              else {
                     specialist = consult.getProfessionalSpecialist();
                     specialistName = specialist.getLastName() + ", " + specialist.getFirstName();
                 }
+
+              boolean isEReferral = extraMap.containsKey(ConsultationRequestExtKey.EREFERRAL_REF.getKey());
 
               demographicNo.add(consult.getDemographicId().toString());
               date.add(DateFormatUtils.ISO_DATE_FORMAT.format(consult.getReferralDate()));
@@ -143,10 +154,11 @@ public class EctViewConsultationRequestsUtil {
               urgency.add(consult.getUrgency());
               siteName.add(consult.getSiteName());
               teams.add(consult.getSendTo());
-              
+              eReferral.add(isEReferral);
+
               date1 = consult.getAppointmentDate();
               date2 = consult.getAppointmentTime();
-              
+
               String apptDateStr = "";
               if( date1 == null ) {
             	  apptDateStr = "N/A";
@@ -155,10 +167,10 @@ public class EctViewConsultationRequestsUtil {
               } else {
             	  apptDateStr = DateFormatUtils.ISO_DATE_FORMAT.format(date1) + " " +  DateFormatUtils.ISO_TIME_FORMAT.format(date2);
               }
-              
+
               apptDate.add(apptDateStr);
               patientWillBook.add(""+consult.isPatientWillBook());
-              
+
               date1 = consult.getFollowUpDate();
               if( date1 == null ) {
                   followUpDate.add("N/A");
@@ -166,19 +178,19 @@ public class EctViewConsultationRequestsUtil {
               else {
                 followUpDate.add(DateFormatUtils.ISO_DATE_FORMAT.format(date1));
               }
-              
+
               Provider cProv = providerDao.getProvider(consult.getProviderNo());
               consultProvider.add(cProv);
           }
-      } catch(Exception e) {            
-         MiscUtils.getLogger().error("Error", e);            
-         verdict = false;            
-      }                     
-      return verdict;      
-   }      
-   
-      
-   public boolean estConsultationVecByDemographic(LoggedInInfo loggedInInfo, String demoNo) {      
+      } catch(Exception e) {
+         MiscUtils.getLogger().error("Error", e);
+         verdict = false;
+      }
+      return verdict;
+   }
+
+
+   public boolean estConsultationVecByDemographic(LoggedInInfo loggedInInfo, String demoNo) {
       ids = new Vector<String>();
       status = new Vector<String>();
       patient = new Vector<String>();
@@ -189,9 +201,9 @@ public class EctViewConsultationRequestsUtil {
       urgency = new Vector<String>();
       apptDate = new Vector<String>();
       consultProvider = new Vector();
-      
-      boolean verdict = true;      
-      try {                           
+
+      boolean verdict = true;
+      try {
 
           ConsultationRequestDao consultReqDao = (ConsultationRequestDao) SpringUtils.getBean(ConsultationRequestDao.class);
           ConsultationRequestExtDao consultationRequestExtDao = SpringUtils.getBean(ConsultationRequestExtDao.class);
@@ -201,7 +213,7 @@ public class EctViewConsultationRequestsUtil {
 
           List <ConsultationRequest> consultList = consultReqDao.getConsults(Integer.parseInt(demoNo));
           for( ConsultationRequest consult : consultList ) {
-              String serviceDescription = "";
+              String serviceDescription = "unknown";
               // If service id is 0, check the extensions table
               if (consult.getServiceId() == 0) {
                  serviceDescription = consultationRequestExtDao.getConsultationRequestExtsByKey(consult.getId(), ConsultationRequestExtKey.EREFERRAL_SERVICE.getKey());
@@ -224,18 +236,18 @@ public class EctViewConsultationRequestsUtil {
               urgency.add(consult.getUrgency());
               patientWillBook.add(""+consult.isPatientWillBook());
               date.add(DateFormatUtils.ISO_DATE_FORMAT.format(consult.getReferralDate()));
-              
+
               Provider cProv = providerDao.getProvider(consult.getProviderNo());
               consultProvider.add(cProv);
           }
-      } catch(Exception e) {         
-         MiscUtils.getLogger().error("Error", e);         
-         verdict = false;         
-      }      
-      return verdict;      
+      } catch(Exception e) {
+         MiscUtils.getLogger().error("Error", e);
+         verdict = false;
+      }
+      return verdict;
    }
-   
-      
+
+
    public Vector<String> ids;
    public Vector<String> status;
    public Vector<String> patient;
@@ -249,7 +261,8 @@ public class EctViewConsultationRequestsUtil {
    public Vector<String> patientWillBook;
    public Vector<String> urgency;
    public Vector<String> followUpDate;
-   public Vector<String> providerNo;   
+   public Vector<String> providerNo;
    public Vector<String> siteName;
+   public List<Boolean> eReferral;
    public Vector consultProvider;
 }

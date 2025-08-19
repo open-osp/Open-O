@@ -32,6 +32,7 @@
 <%@page import="oscar.oscarRx.data.*" %>
 <%@page import="oscar.oscarRx.util.*" %>
 <%@page import="oscar.OscarProperties" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -89,7 +90,7 @@
             String eTreatmentType = rx.getETreatmentType() != null ? rx.getETreatmentType() : "";
             String rxStatus = rx.getRxStatus() != null ? rx.getRxStatus() : "";
             String protocol = rx.getProtocol() != null ? rx.getProtocol() : "";
-		/*  Field not required. Commented out because it may be reactivated in the future. 
+		/*  Field not required. Commented out because it may be reactivated in the future.
          String priorRxProtocol	= rx.getPriorRxProtocol()!=null ? rx.getPriorRxProtocol() : "";
          */
             String drugForm = rx.getDrugForm();
@@ -172,18 +173,17 @@
             drugName = drugName.replace("\"", "\\\"");
             byte[] drugNameBytes = drugName.getBytes("ISO-8859-1");
             drugName = new String(drugNameBytes, "UTF-8");
-
+                String fieldSetId = "set_" + rand;
 %>
 
-<fieldset style="margin-top:2px;width:640px;" id="set_<%=rand%>">
-    <a tabindex="-1" href="javascript:void(0);" style="float:right;margin-left:5px;margin-top:0px;padding-top:0px;"
-       onclick="$('set_<%=rand%>').remove();deletePrescribe('<%=rand%>');removeReRxDrugId('<%=DrugReferenceId%>')"><img
-            src='<c:out value="${ctx}/images/close.png"/>' border="0"></a>
-    <a tabindex="-1" href="javascript:void(0);" style="float:right;;margin-left:5px;margin-top:0px;padding-top:0px;"
-       title="Add to Favorites" onclick="addFav('<%=rand%>','<%=drugName%>')">F</a>
-    <a tabindex="-1" href="javascript:void(0);" style="float:right;margin-top:0px;padding-top:0px;"
-       onclick="$('rx_more_<%=rand%>').toggle();"> <span id="moreLessWord_<%=rand%>"
-                                                         onclick="updateMoreLess(id)">more</span> </a>
+<fieldset style="margin-top:2px;width:640px;" id="<%=fieldSetId%>">
+    <a tabindex="-1" href="javascript:void(0);"  
+        style="float:right;margin-left:5px;margin-top:0px;padding-top:0px;"
+        onclick="removePrescribingDrug('<%= Encode.forJavaScript(fieldSetId) %>', <%= DrugReferenceId %>);">
+        <img src='<c:out value="${ctx}/images/close.png"/>' border="0">
+    </a>
+    <a tabindex="-1" href="javascript:void(0);"  style="float:right;;margin-left:5px;margin-top:0px;padding-top:0px;" title="Add to Favorites" onclick="addFav('<%=rand%>','<%=drugName%>')">F</a>
+    <a tabindex="-1" href="javascript:void(0);" style="float:right;margin-top:0px;padding-top:0px;" onclick="$('rx_more_<%=rand%>').toggle();">  <span id="moreLessWord_<%=rand%>" onclick="updateMoreLess(id)" >more</span> </a>
 
     <label style="float:left;width:80px;" title="<%=ATC%>">Name:</label>
     <input type="hidden" name="atcCode" value="<%=ATCcode%>"/>
@@ -266,12 +266,12 @@
 			  	<input type="radio" id="longTermY_<%=rand%>" name="longTerm_<%=rand%>" value="yes"
                        class="med-term" <%if (longTerm != null && longTerm) {%> checked="checked" <%}%>
                        onChange="updateShortTerm('<%=rand%>',false)"/>
-			  	
+
 			  	<label for="longTermN_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgNo"/> </label>
 			  	<input type="radio" id="longTermN_<%=rand%>" name="longTerm_<%=rand%>" value="no"
                        class="med-term" <%if (longTerm != null && !longTerm) {%> checked="checked" <%}%>
                        onChange="updateShortTerm('<%=rand%>',true)"/>
-			  	
+
 			  	<label for="longTermE_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgUnset"/> </label>
 			  	<input type="radio" id="longTermE_<%=rand%>" name="longTerm_<%=rand%>" value="unset"
                        class="med-term" <%if (longTerm == null) {%> checked="checked" <%}%>
@@ -379,15 +379,15 @@
             <label for="pastMedSelection" title="Medications taken at home that were previously ordered."><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPastMedication"/></label>
 
             <span id="pastMedSelection">
-        	<label for="pastMedY_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgYes"/></label> 
+        	<label for="pastMedY_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgYes"/></label>
             <input type="radio" value="yes" name="pastMed_<%=rand%>"
                    id="pastMedY_<%=rand%>" <%if (pastMed != null && pastMed) {%> checked="checked" <%}%>  />
-            
-            <label for="pastMedN_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgNo"/></label> 
+
+            <label for="pastMedN_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgNo"/></label>
             <input type="radio" value="no" name="pastMed_<%=rand%>"
                    id="pastMedN_<%=rand%>" <%if (pastMed != null && !pastMed) {%> checked="checked" <%}%>  />
-            
-            <label for="pastMedE_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgUnknown"/></label> 
+
+            <label for="pastMedE_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgUnknown"/></label>
             <input type="radio" value="unset" name="pastMed_<%=rand%>"
                    id="pastMedE_<%=rand%>" <%if (pastMed == null) {%> checked="checked" <%}%>  />
          </span>
@@ -396,7 +396,7 @@
 
             <label for="patientCompliantSelection"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPatientCompliance"/>:</label>
             <span id="patientCompliantSelection">
-         <label for="patientComplianceY_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgYes"/></label> 
+         <label for="patientComplianceY_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgYes"/></label>
             <input type="radio" value="yes" name="patientCompliance_<%=rand%>"
                    id="patientComplianceY_<%=rand%>" <%if (patientCompliance != null && patientCompliance) {%>
                    checked="checked" <%}%> />
@@ -405,7 +405,7 @@
             <input type="radio" value="no" name="patientCompliance_<%=rand%>"
                    id="patientComplianceN_<%=rand%>" <%if (patientCompliance != null && !patientCompliance) {%>
                    checked="checked" <%}%> />
-	
+
 		<label for="patientComplianceE_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgUnset"/></label>
             <input type="radio" value="unset" name="patientCompliance_<%=rand%>"
                    id="patientComplianceE_<%=rand%>" <%if (patientCompliance == null) {%> checked="checked" <%}%> />
@@ -754,8 +754,9 @@
 
         if (confirm('This drug was discontinued on <%=archivedDate%> because of <%=archivedReason%> are you sure you want to continue it?') == true) {
             //do nothing
-        } else {
-            $('set_<%=rand%>').remove();
+                    }
+                    else{
+                        $('#<%=fieldSetId%>').remove();
             //call java class to delete it from stash pool.
             var randId = '<%=rand%>';
             deletePrescribe(randId);

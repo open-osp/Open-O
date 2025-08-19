@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import org.oscarehr.managers.SecurityManager;
 import java.security.MessageDigest;
 import java.util.*;
 
@@ -59,6 +60,8 @@ public class UserPreference2Action extends ActionSupport {
     protected Map<String, String> siteDefaults = new HashMap<String, String>();
     private boolean inited = false;
 
+    private final SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
+	
     static {
         defaults.put("pref." + UserProperty.SCHEDULE_START_HOUR, "8");
         defaults.put("pref." + UserProperty.SCHEDULE_END_HOUR, "18");
@@ -183,31 +186,18 @@ public class UserPreference2Action extends ActionSupport {
             sbTemp = sbTemp.append(btOldPasswd[i]);
         String stroldpasswd = sbTemp.toString();
 
-        //get password from db
-        Security secRecord = securityDao.getByProviderNo(providerNo);
-        String strDBpasswd = secRecord.getPassword();
-        if (strDBpasswd.length() < 20) {
-            sbTemp = new StringBuilder();
-            byte[] btDBPasswd = md.digest(secRecord.getPassword().getBytes());
-            for (int i = 0; i < btDBPasswd.length; i++)
-                sbTemp = sbTemp.append(btDBPasswd[i]);
-            strDBpasswd = sbTemp.toString();
-        }
+	//get password from db
+	Security secRecord = securityDao.getByProviderNo(providerNo);
 
-        if (stroldpasswd.equals(strDBpasswd)) {
-            sbTemp = new StringBuilder();
-            byte[] btNewPasswd = md.digest(newPassword.getBytes());
-            for (int i = 0; i < btNewPasswd.length; i++)
-                sbTemp = sbTemp.append(btNewPasswd[i]);
+	if (Objects.nonNull(secRecord) && this.securityManager.matchesPassword(currentPassword, secRecord.getPassword())) {
 
-            secRecord.setPassword(sbTemp.toString());
-            securityDao.merge(secRecord);
+		secRecord.setPassword(this.securityManager.encodePassword(newPassword));
+		securityDao.merge(secRecord);
 
-            logger.info("password changed for provider");
-        } else {
-            throw new Exception("Current password did not match.");
-        }
-
+		logger.info("password changed for provider");
+	} else {					
+		throw new Exception("Current password did not match.");   
+	}
     }
 
     public static String getTextData(Map<String, String> prefs, String key) {

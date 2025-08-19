@@ -277,9 +277,10 @@
     function setupNotes() {
         //need to set focus after rounded is called
         adjustCaseNote();
-        setCaretPosition($(caseNote), $(caseNote).value.length);
+    const $caseNoteElement = jQuery("#" + caseNote);
+    setCaretPosition($caseNoteElement, $caseNoteElement.val().length);
 
-        $(caseNote).focus();
+    $caseNoteElement.focus();
     }
 
     <%--var minDelta =  0.93;--%>
@@ -1213,10 +1214,14 @@ function updateCPPNote() {
     }
 
     function pasteToEncounterNote(txt) {
-        $(caseNote).value += "\n" + txt;
-        adjustCaseNote();
-        setCaretPosition($(caseNote), $(caseNote).value.length);
-
+        let caseNoteElement = document.getElementById(caseNote);
+        if (caseNoteElement) {
+            caseNoteElement.value += "\n" + txt;
+            adjustCaseNote();
+            setCaretPosition(caseNoteElement, caseNoteElement.value.length);
+        } else {
+            console.error('Element with ID caseNote element not found.');
+        }
     }
 
     function writeToEncounterNote(request) {
@@ -1401,7 +1406,8 @@ function updateCPPNote() {
             Element.remove("notePasswd");
         }
 
-        Element.stopObserving(id, 'keyup', monitorCaseNote);
+    jQuery('#' + id).off('keyup', monitorCaseNote);
+    jQuery('#' + caseNote).off('paste');
         Element.stopObserving(id, 'click', getActiveText);
 
         Element.remove(id);
@@ -1681,10 +1687,7 @@ function updateCPPNote() {
     }
 
     function toggleFullViewForAll() {
-        jQuery('[name="fullViewTrigger"]').each(function () {
-            $(this).click();
-        });
-        jQuery('[name="expandViewTrigger"]').each(function () {
+    jQuery('[name="fullViewTrigger"], [name="expandViewTrigger"], [name="expandableReadonlyNoteText"]').each(function(){
             $(this).click();
         });
     }
@@ -1738,13 +1741,13 @@ function updateCPPNote() {
         var imgTag1 = "<img title='Minimize Display' id='quitImg" + nId + "' onclick='minNonEditableNoteView(" + nId + ")' style='float:right; margin-right:5px; margin-top: 2px;' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
         const imgTag2 = "<img title='Minimize Display' id='quitImg" + nId + "' alt='Minimize Display' onclick='minNonEditableNoteView(" + nId + ")' src='" + ctx + "/oscarEncounter/graphics/triangle_up.gif'>";
 
-
         document.getElementById(img)?.remove();
 
+    const isEmailNote = document.getElementById("emailNote" + nId) !== null;
 
         $(txt).style.height = 'auto';
         const observationDivId = "#observation" + nId;
-        if (jQuery(observationDivId).length > 0) {
+    if (jQuery(observationDivId).length > 0 && !isEmailNote) {
             jQuery(observationDivId).append(imgTag2);
             jQuery(observationDivId).css('font-size', '10px');
         } else {
@@ -1760,8 +1763,16 @@ function updateCPPNote() {
         const line = $(noteTxtId).innerHTML.substr(0, 50).replace(/<br>/g, " ");
         $(noteTxtId).update(line);
         document.getElementById(quitImgId)?.remove();
+
+    const isEmailNote = document.getElementById("emailNote" + id) !== null;
+    const observationDivId = "#observation" + id;
+    if (isEmailNote) {
+        const maxDisplayImg = "<img title='Maximize Display' id='fullImg" + id + "' alt='Maximize Display' onclick='fullView(event)' style='float: right;' src='" + ctx + "/oscarEncounter/graphics/triangle_down.gif' />";
+        new Insertion.Top("n" + id, maxDisplayImg);
+    } else {
         Element.observe(noteTxtId, 'click', fullView);
     }
+}
 
     function resetEdit(e) {
         var txt = Event.element(e).id;
@@ -1997,7 +2008,11 @@ function updateCPPNote() {
             Element.stopObserving(txt, 'click', fullView);
         }
 
-        Element.observe(caseNote, 'keyup', monitorCaseNote);
+    jQuery('#' + caseNote).on('keyup', monitorCaseNote);
+    jQuery('#' + caseNote).on('paste', function(e) {
+		// Let the paste happen first, then resize
+		setTimeout(adjustCaseNote, 0);
+	});
         Element.observe(caseNote, 'click', getActiveText);
 
         if (passwordEnabled) {
@@ -2916,7 +2931,11 @@ function updateCPPNote() {
             if (reason.length > 0)
                 setCaretPosition($(caseNote), $(caseNote).value.length);
 
-            Element.observe(caseNote, 'keyup', monitorCaseNote);
+        jQuery('#' + caseNote).on('keyup', monitorCaseNote);
+        jQuery('#' + caseNote).on('paste', function(e) {
+            // Let the paste happen first, then resize
+            setTimeout(adjustCaseNote, 0);
+        });
             Element.observe(caseNote, 'click', getActiveText);
 
             origCaseNote = $F(caseNote);
@@ -3076,7 +3095,7 @@ function autoSave(async) {
 
         var MAXCHARS = 78;
         var MINCHARS = -10;
-        var newChars = $(caseNote).value.length - numChars;
+    var newChars = jQuery('#' + caseNote).val().length - numChars;
         var newline = false;
 
         if (e.keyCode == 13)
@@ -3095,10 +3114,13 @@ function autoSave(async) {
 //resize case note text area to contain all text
     function adjustCaseNote() {
         var MAXCHARS = 78;
-        var payload = $(caseNote).value;
+    var payload = jQuery("#" + caseNote).val();
         var numLines = 0;
-        var lHeight = $(caseNote).getStyle('line-height');
-        var lineHeight = lHeight.substr(0, lHeight.indexOf('e'));
+
+    // Use jQuery to get the computed line-height of the element
+    var lineHeightCSS = jQuery("#" + caseNote).css('line-height'); // e.g., "20px"
+    var lineHeight = parseFloat(lineHeightCSS); // Extract numeric value (handles px, em, etc.)
+
         var arrLines = payload.split("\n");
 
         //we count each new line char and add a line for lines longer than max length
@@ -3112,11 +3134,15 @@ function autoSave(async) {
         }
         //add a buffer
         numLines += 2;
-        var noteHeight = Math.ceil(lineHeight * numLines);
-        noteHeight += 'em';
-        $(caseNote).style.height = noteHeight;
 
-        numChars = $(caseNote).value.length;
+    // Calculate the total height in pixels
+    var noteHeight = Math.ceil(lineHeight * numLines) + 'px';
+
+    // Use jQuery to set the height of the element
+    jQuery("#" + caseNote).css('height', noteHeight);
+
+    // Use jQuery to calculate the total number of characters in the payload
+    numChars = jQuery("#" + caseNote).val().length;
     }
 
     function autoCompleteHideMenu(element, update) {
@@ -3592,7 +3618,8 @@ function autoSave(async) {
                 Element.remove("notePasswd");
             }
 
-            Element.stopObserving(caseNote, 'keyup', monitorCaseNote);
+                jQuery('#' + caseNote).off('keyup', monitorCaseNote);
+                jQuery('#' + caseNote).off('paste');
             Element.stopObserving(caseNote, 'click', getActiveText);
 
             Element.remove(caseNote);
@@ -3873,6 +3900,6 @@ function autoSave(async) {
     });
     <%
 	}
-	
+
 %>
 

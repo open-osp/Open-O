@@ -42,6 +42,9 @@
     <%@page import="org.oscarehr.util.LoggedInInfo" %>
     <%@page import="org.apache.commons.codec.binary.Base64" %>
     <%@ page import="org.oscarehr.common.model.DigitalSignature" %>
+    <%@ page import="org.oscarehr.managers.DigitalSignatureManager" %>
+    <%@ page import="org.oscarehr.util.SpringUtils" %>
+    <%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
     <%
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -52,6 +55,7 @@
         String demographic = request.getParameter("demographicNo");
         boolean saveToDB = "true".equals(request.getParameter("saveToDB"));
         String signatureKey = request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY);
+		ModuleType moduleType = ModuleType.getByName(request.getParameter(ModuleType.class.getSimpleName()));
 
         if (signatureKey != null) {
             String filename = DigitalSignatureUtils.getTempFilePath(signatureKey);
@@ -103,10 +107,10 @@
                     demographicNo = Integer.parseInt(demographic);
                 }
 
-                DigitalSignature signature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(
-                        loggedInInfo,
+                DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
+                DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo,
                         request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY),
-                        demographicNo);
+						demographicNo, moduleType);
                 if (signature != null) {
                     signatureId = "" + signature.getId();
                 }

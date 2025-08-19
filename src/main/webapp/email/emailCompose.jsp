@@ -459,8 +459,7 @@
                                     <label>Chart options</label>
                                     <div class="form-check">
                                         <div class="form-check-label">
-                                            <input class="form-check-input" type="radio" name="patientChartOption"
-                                                   id="doNotAddAsNoteOption" value="doNotAddAsNote">
+											<input class="form-check-input" type="radio" name="patientChartOption" id="doNotAddAsNoteOption" value="doNotAddAsNote" onClick="toggleInternalTextArea()">
                                             <label class="form-check-label" for="doNotAddAsNoteOption">
                                                 Do not add to patient chart
                                             </label>
@@ -468,11 +467,13 @@
                                     </div>
                                     <div class="form-check">
                                         <div class="form-check-label">
-                                            <input class="form-check-input" type="radio" name="patientChartOption"
-                                                   id="addFullNoteOption" value="addFullNote" checked>
+											<input class="form-check-input" type="radio" name="patientChartOption" id="addFullNoteOption" value="addFullNote" checked onClick="toggleInternalTextArea()">
                                             <label class="form-check-label" for="addFullNoteOption">
                                                 Chart as new note in patient's chart
                                             </label>
+										</div>
+										<div id="internalCommentContainer" class="d-none">
+											<textarea class="form-control" id="internalComment" name="internalComment" placeholder="Internal comment to include" rows="3"><c:out value="${ not empty param.internalComment ? param.internalComment : internalComment }" /></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -562,10 +563,10 @@
         <c:if test="${ not empty isEmailSuccessful }">
             <c:choose>
                 <c:when test="${ emailLog.status eq 'SUCCESS' }">
-                    <div class="alert alert-success" role="alert">
-                        <p>Your email to <b><c:out value="${fn:join(emailLog.toEmail, ', ')}"/></b> was successfully
-                            sent.</p>
+				<div class="alert alert-success" role="alert" id="successMessage">
+					<p>Your email to <b><c:out value="${fn:join(emailLog.toEmail, ', ')}" /></b> was successfully sent.</p>
                     </div>
+				<p class="mt-1" id="windowCloseMessage">This window will close in <b>3</b> seconds...</p>
                 </c:when>
                 <c:otherwise>
                     <div class="alert alert-danger" role="alert">
@@ -594,6 +595,13 @@
         if (document.getElementById('isEmailSuccessful').value === 'true' || document.getElementById('isEmailSuccessful').value === 'false') {
             // Open EForm again on sent
             openEFormAfterSend();
+
+		if (document.getElementById('isEmailSuccessful').value === 'true') {
+			// Close the window after 3 seconds
+			setTimeout(() => {
+				window.close();
+			}, 3000);
+		}
             return;
         }
 
@@ -614,6 +622,9 @@
 
         // Show additional field option if API type sender is selected
         showAdditionalParamOption();
+
+	// Toggle internal note text area
+	toggleInternalTextArea();
     });
 
     document.addEventListener("keydown", function (event) {
@@ -838,6 +849,17 @@
         alert(errorMessage);
         window.close();
     }
+
+function toggleInternalTextArea() {
+	const addFullNoteOption = document.getElementById('addFullNoteOption');
+	const internalCommentContainer = document.getElementById('internalCommentContainer');
+
+	if (addFullNoteOption.checked) {
+		internalCommentContainer.classList.remove('d-none'); // Show the textarea
+	} else {
+		internalCommentContainer.classList.add('d-none'); // Hide the textarea
+	}
+}
 
 </script>
 </body>

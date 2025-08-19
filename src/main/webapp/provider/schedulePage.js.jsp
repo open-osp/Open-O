@@ -186,10 +186,10 @@ window.open("changePassword.jsp","changePassword","resizable=yes,scrollbars=yes,
 changePassword.moveTo(0,0);
 <%}%>
 }
-function popupInboxManager(varpage){
+function popupInboxManager(varpage, height = 700, width = 1215) {
 var page = "" + varpage;
 var windowname="apptProviderInbox";
-windowprops = "height=700,width=1215,location=no,"
+    windowprops = "height=" + height + ",width=" + width + ",location=no,"
 + "scrollbars=yes,menubars=no,toolbars=no,resizable=yes,top=10,left=0";
 var popup = window.open(page, windowname, windowprops);
 if (popup != null) {

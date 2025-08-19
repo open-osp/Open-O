@@ -43,10 +43,12 @@ import org.oscarehr.common.hl7.v2.oscar_to_oscar.RefI12;
 import org.oscarehr.common.hl7.v2.oscar_to_oscar.SendingUtils;
 import org.oscarehr.common.model.*;
 import org.oscarehr.common.model.enumerator.DocumentType;
+import org.oscarehr.common.model.enumerator.ModuleType;
 import org.oscarehr.documentManager.DocumentAttachmentManager;
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
 import org.oscarehr.fax.core.FaxRecipient;
+import org.oscarehr.managers.*;
 import org.oscarehr.managers.ConsultationManager;
 import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.managers.FaxManager;
@@ -85,6 +87,8 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
     private ConsultationManager consultationManager = SpringUtils.getBean(ConsultationManager.class);
     private final DocumentAttachmentManager documentAttachmentManager = SpringUtils.getBean(DocumentAttachmentManager.class);
     private FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
+
+    private final DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
 
     @Override
     public String execute() throws ServletException, IOException {
@@ -139,8 +143,8 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
 
             try {
                 if (newSignature) {
-                    DigitalSignature signature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(loggedInInfo, signatureImg, Integer.parseInt(demographicNo));
-                    if (signature != null) {
+		   DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo, signatureImg, Integer.parseInt(demographicNo), ModuleType.CONSULTATION);
+                   if (signature != null) {
                         signatureId = "" + signature.getId();
                     }
                 }
@@ -266,21 +270,17 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
             } catch (ParseException e) {
                 MiscUtils.getLogger().error("Invalid Date", e);
             }
-
             request.setAttribute("reqId", requestId);
             request.setAttribute("transType", "2");
 
         } else if (submission.startsWith("Update")) {
-
-
             requestId = this.getRequestId();
-
             consultationManager.archiveConsultationRequest(Integer.parseInt(requestId));
 
             try {
-
                 if (newSignature) {
-                    DigitalSignature signature = DigitalSignatureUtils.storeDigitalSignatureFromTempFileToDB(loggedInInfo, signatureImg, Integer.parseInt(demographicNo));
+		    DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
+		    DigitalSignature signature = digitalSignatureManager.processAndSaveDigitalSignature(loggedInInfo, signatureImg, Integer.parseInt(demographicNo), ModuleType.CONSULTATION);
                     if (signature != null) {
                         signatureId = "" + signature.getId();
                     } else {

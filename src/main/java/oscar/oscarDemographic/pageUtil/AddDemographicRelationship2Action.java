@@ -38,8 +38,10 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SessionConstants;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.oscarDemographic.data.DemographicRelationship;
+// TODO STRUTS2 - not sure if we need the servlet, thinking it is still needed so left it with the merge. Review if issues.
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Jay Gallagher
@@ -72,11 +74,13 @@ public class AddDemographicRelationship2Action extends ActionSupport {
         String emergContact = request.getParameter("emergContact");
         String notes = request.getParameter("notes");
 
+	    if (origDemo != null && origDemo.matches("[a-zA-Z0-9]+")) {
         request.setAttribute("demographicNo", origDemo);
+	    }
+
         if (request.getParameter("pmmClient") != null && request.getParameter("pmmClient").equals("Finished")) {
             return "pmmClient";
         }
-
 
         String providerNo = (String) request.getSession().getAttribute("user");
 
@@ -97,17 +101,19 @@ public class AddDemographicRelationship2Action extends ActionSupport {
         DemographicRelationship demo = new DemographicRelationship();
         demo.addDemographicRelationship(origDemo, linkingDemo, relation, sdmBool, eBool, notes, providerNo, facilityId);
 
-        request.setAttribute("demo", origDemo);
+	    if (origDemo != null && origDemo.matches("[a-zA-Z0-9]+")) {
+		    request.setAttribute("demo", origDemo);
+	    }
         // ***** NEW CODE *****
         // Now link in the opposite direction
         // First work out which pairs match up
         // From AddAlternateConcact.jsp
 
         // Relations for the dropdowns should be stored in a table in the database and not hardcoded
-        
+
          /*
          This is better:
-          
+
                 Parent
                 StepParent
                 Child
@@ -117,7 +123,7 @@ public class AddDemographicRelationship2Action extends ActionSupport {
                 Grandparent
                 Other Relative
                 Other
-          
+
          Sex will determine whether it is a brother,
         grandfather, wife, husband or spouse of the same sex
           */

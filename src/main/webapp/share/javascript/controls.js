@@ -7,18 +7,18 @@
 //  Richard Livsey
 //  Rahul Bhargava
 //  Rob Wills
-// 
+//
 // script.aculo.us is freely distributable under the terms of an MIT-style license.
 // For details, see the script.aculo.us web site: http://script.aculo.us/
 
-// Autocompleter.Base handles all the autocompletion functionality 
+// Autocompleter.Base handles all the autocompletion functionality
 // that's independent of the data source for autocompletion. This
 // includes drawing the autocompletion menu, observing keyboard
 // and mouse events, and similar.
 //
-// Specific autocompleters need to provide, at the very least, 
+// Specific autocompleters need to provide, at the very least,
 // a getUpdatedChoices function that will be invoked every time
-// the text inside the monitored textbox changes. This method 
+// the text inside the monitored textbox changes. This method
 // should get the text for which to provide autocompletion by
 // invoking this.getToken(), NOT by directly accessing
 // this.element.value. This is to allow incremental tokenized
@@ -32,8 +32,8 @@
 // will incrementally autocomplete with a comma as the token.
 // Additionally, ',' in the above example can be replaced with
 // a token array, e.g. { tokens: [',', '\n'] } which
-// enables autocompletion on multiple tokens. This is most 
-// useful when one of the tokens is \n (a newline), as it 
+// enables autocompletion on multiple tokens. This is most
+// useful when one of the tokens is \n (a newline), as it
 // allows smart autocompletion after linebreaks.
 
 if (typeof Effect == 'undefined')
@@ -44,9 +44,10 @@ Autocompleter.Base = function () {
 };
 Autocompleter.Base.prototype = {
     baseInitialize: function (element, update, options) {
-        element = $(element)
-        this.element = element;
-        this.update = $(update);
+    const elementInput          = document.getElementById(element);
+
+    this.element     = document.getElementById(element);
+    this.update      = document.getElementById(update);
         this.hasFocus = false;
         this.changed = false;
         this.active = false;
@@ -58,42 +59,42 @@ Autocompleter.Base.prototype = {
         else
             this.options = options || {};
 
-        this.options.paramName = this.options.paramName || this.element.name;
+    this.options.paramName    = this.options.paramName || elementInput.name;
         this.options.tokens = this.options.tokens || [];
         this.options.frequency = this.options.frequency || 0.4;
         this.options.minChars = this.options.minChars || 1;
         this.options.onShow = this.options.onShow ||
-            function (element, update) {
+      function(elementInput, update){
                 if (!update.style.position || update.style.position == 'absolute') {
                     update.style.position = 'absolute';
-                    Position.clone(element, update, {
+          Position.clone(elementInput, update, {
                         setHeight: false,
-                        offsetTop: element.offsetHeight
+            offsetTop: elementInput.offsetHeight
                     });
                 }
                 Effect.Appear(update, {duration: 0.15});
             };
         this.options.onHide = this.options.onHide ||
-            function (element, update) {
-                new Effect.Fade(update, {duration: 0.15})
-            };
+      function(elementInput, update){ new Effect.Fade(update,{duration:0.15}) };
 
         if (typeof (this.options.tokens) == 'string')
             this.options.tokens = new Array(this.options.tokens);
 
         this.observer = null;
 
-        this.element.setAttribute('autocomplete', 'off');
+    elementInput.setAttribute('autocomplete','off');
 
-        Element.hide(this.update);
+    if (this.update && this.update.style) {
+      this.update.style.display = "none";
+    }
 
-        Event.observe(this.element, 'blur', this.onBlur.bindAsEventListener(this));
-        Event.observe(this.element, 'keypress', this.onKeyPress.bindAsEventListener(this));
+    elementInput.addEventListener('blur', this.onBlur.bind(this));
+    elementInput.addEventListener('keypress', this.onKeyPress.bind(this));
 
         // Turn autocomplete back on when the user leaves the page, so that the
         // field's value will be remembered on Mozilla-based browsers.
-        Event.observe(window, 'beforeunload', function () {
-            element.setAttribute('autocomplete', 'on');
+    window.addEventListener('beforeunload', function() {
+      elementInput.setAttribute('autocomplete', 'on');
         });
     },
 
@@ -378,7 +379,7 @@ Object.extend(Object.extend(Ajax.Autocompleter.prototype, Autocompleter.Base.pro
 // - choices - How many autocompletion choices to offer
 //
 // - partialSearch - If false, the autocompleter will match entered
-//                    text only at the beginning of strings in the 
+//                    text only at the beginning of strings in the
 //                    autocomplete array. Defaults to true, which will
 //                    match text at the beginning of any *word* in the
 //                    strings in the autocomplete array. If you want to
@@ -395,7 +396,7 @@ Object.extend(Object.extend(Ajax.Autocompleter.prototype, Autocompleter.Base.pro
 // - ignoreCase - Whether to ignore case when autocompleting.
 //                 Defaults to true.
 //
-// It's possible to pass in a custom function as the 'selector' 
+// It's possible to pass in a custom function as the 'selector'
 // option, if you prefer to write your own autocompletion logic.
 // In that case, the other options above will not apply unless
 // you support them.
@@ -858,7 +859,7 @@ Object.extend(Ajax.InPlaceCollectionEditor.prototype, {
     }
 });
 
-// Delayed observer, like Form.Element.Observer, 
+// Delayed observer, like Form.Element.Observer,
 // but waits for delay after last key input
 // Ideal for live-search fields
 

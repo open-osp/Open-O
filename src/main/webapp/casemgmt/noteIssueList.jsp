@@ -108,7 +108,7 @@
                 ${caseManagementEntryForm.caseNote.revision}
             </a>
         </c:otherwise>
-    </c:choose>    
+    </c:choose>
 </div>
 
 <div style="margin-left: 3px;"><span style="float: left;">
@@ -167,7 +167,7 @@
                    style="border: 1px; width: 20px; height: 12px;"
                    value="${caseManagementEntryForm.caseNote.minuteOfEncounterTime}">
         </c:otherwise>
-    </c:choose>    
+    </c:choose>
 </span></div>
 <%}%>
 
@@ -197,7 +197,7 @@
                    value="${caseManagementEntryForm.caseNote.minuteOfEncTransportationTime}">
         </c:otherwise>
     </c:choose>
-    
+
 </span></div>
 <%}%>
 
@@ -215,7 +215,7 @@
                     <option value="telephone encounter with client" ${caseManagementEntryForm.caseNote.encounter_type == 'telephone encounter with client' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.telephoneEnc.title"/></option>
                     <option value="email encounter with client" ${caseManagementEntryForm.caseNote.encounter_type == 'email encounter with client' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.emailEnc.title"/></option>
                     <option value="encounter without client" ${caseManagementEntryForm.caseNote.encounter_type == 'encounter without client' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.noClientEnc.title"/></option>
-        
+
                     <c:if test="${loggedInInfo73557.currentFacility.enableGroupNotes}">
                         <option value="group face to face encounter" ${caseManagementEntryForm.caseNote.encounter_type == 'group face to face encounter' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.groupFaceEnc.title"/></option>
                         <option value="group telephone encounter" ${caseManagementEntryForm.caseNote.encounter_type == 'group telephone encounter' ? 'selected' : ''}><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.groupTelephoneEnc.title"/></option>
@@ -227,7 +227,7 @@
             <c:otherwise>
                 "&quot;<c:out value="${caseManagementEntryForm.caseNote.encounter_type}"/>&quot;"
             </c:otherwise>
-        </c:choose>        
+        </c:choose>
     </span>
 </div>
 
@@ -272,7 +272,7 @@
                 <c:set var="winame" value="${fn:replace(winame, ' ', '_')}" />
                 <c:set var="winame" value="${fn:replace(winame, '/', '_')}" />
                 <c:set var="winame" value="${fn:replace(winame, '*', '_')}" />
-                
+
                 <c:set var="submitString" value="this.form.method.value='issueChange'; this.form.lineId.value='${status.index}'; return ajaxUpdateIssues('issueChange', $('noteIssues').up().id);" />
                 <c:set var="id" value="noteIssue${status.index}" />
 
@@ -345,7 +345,7 @@
         <table id="setIssueList">
             <c:forEach var="issueCheckList" items="${caseManagementEntryForm.issueCheckList}" varStatus="status">
     <c:if test="${issueCheckList.issue.resolved == false}">
-        
+
         <c:set var="winame" value="window${issueCheckList.issueDisplay.description}" />
         <c:set var="winame" value="${fn:replace(winame, ' ', '_')}" />
         <c:set var="winame" value="${fn:replace(winame, '/', '_')}" />
@@ -360,12 +360,12 @@
         <td style="width: 50%; background-color: #CCCCFF;">
             <c:set var="submitString" value="this.form.method.value='issueChange'; this.form.lineId.value='${status.index}'; return ajaxUpdateIssues('issueChange', $('noteIssues').up().id);" />
             <c:set var="id" value="noteIssue${status.index}" />
-            
+
             <c:set var="writeAccess" value="${issueCheckList.issueDisplay.writeAccess}" />
             <c:set var="disabled" value="${!writeAccess}" />
 
             <input type="checkbox" id="${id}" name="issueCheckList" value="${status.index}" ${disabled ? 'disabled' : ''} />
-            
+
             <a href="#" onclick="return displayIssue('${winame}');">
                 ${issueCheckList.issueDisplay.description}
             </a>
@@ -416,7 +416,7 @@
         <c:if test="${countUnresolvedIssue % 2 != 0}">
             </tr>
         </c:if>
-        
+
     </c:if>
 </c:forEach>
         </table>
@@ -457,27 +457,45 @@
             alert("${DateError}");
         </c:if>
     </c:if>
-
-
-    var c = "bgColour" + "${noteIndex}";
-    var txtStyles = $F(c).split(";");
-    var txtColour = txtStyles[0].substr(txtStyles[0].indexOf("#"));
-    var background = txtStyles[1].substr(txtStyles[1].indexOf("#"));
-    var summary = "summary" + "${noteIndex}";
-
-    if ($("observationDate") != null) {
-        $("observationDate").style.color = txtColour;
-        $("observationDate").style.backgroundColor = background;
+    const backgroundColorId = "bgColour" + "<%=noteIndex%>";
+    const backgroundColorInput = document.getElementById(backgroundColorId);
+    let txtColour = "#000000";
+    let background = "#CCCCFF";
+    if (backgroundColorInput) {
+        const txtStyles = backgroundColorInput.value.split(";");
+        txtColour = txtStyles[0].substr(txtStyles[0].indexOf("#"));
+        background = txtStyles[1].substr(txtStyles[1].indexOf("#"));
     }
-    $(summary).style.color = txtColour;
-    $(summary).style.backgroundColor = background;
 
-    if ($("toggleIssue") != null)
-        $("toggleIssue").disabled = false;
+    const observationDateInput = document.getElementById("observationDate");
+    if (observationDateInput) {
+        observationDateInput.style.color = txtColour;
+        observationDateInput.style.backgroundColor = background;
+    }
+
+
+	const summaryId = "summary" + "${noteIndex}";
+	const summaryDiv = document.getElementById(summaryId);
+	if (summaryDiv) {
+		summaryDiv.style.color = txtColour;
+		summaryDiv.style.backgroundColor = background;
+    }
+
+	const toggleIssueElement = document.getElementById("toggleIssue");
+	if (toggleIssueElement) {
+		toggleIssueElement.disabled = false;
+	}
 
     if (showIssue) {
-        $("noteIssues-resolved").show();
-        $("noteIssues-unresolved").show();
+		const resolvedElement = document.getElementById("noteIssues-resolved");
+		if (resolvedElement) {
+			resolvedElement.style.display = "block"; // Make visible
+		}
+
+		const unresolvedElement = document.getElementById("noteIssues-unresolved");
+		if (unresolvedElement) {
+			unresolvedElement.style.display = "block"; // Make visible
+		}
         for (var idx = 0; idx < expandedIssues.length; ++idx)
             displayIssue(expandedIssues[idx]);
     }
@@ -485,32 +503,37 @@
     //do we have a custom encounter type?  if so add an option to the encounter type select
     var encounterType = '${caseManagementEntryForm.caseNote.encounter_type}';
     var selectEnc = "${encSelect}";
-
-    if ($(selectEnc) != null) {
-
-        if ($F(selectEnc) == "" && encounterType != "") {
-            var select = document.getElementById(selectEnc);
-            var newOption = document.createElement('option');
+    const selectElement = document.getElementById(selectEnc);
+    if (selectElement) {
+        if ( selectElement.value == "" && encounterType != "" ) {
+            const newOption = document.createElement('option');
             newOption.text = encounterType;
             newOption.value = encounterType;
 
-            try {
-                select.add(newOption, null); // standards compliant
-            } catch (ex) {
-                select.add(newOption); // IE only            
+            try
+            {
+                selectElement.add(newOption,null); // standards compliant
+            }
+            catch(ex)
+            {
+                selectElement.add(newOption); // IE only
             }
 
-            select.selectedIndex = select.options.length - 1;
+			selectElement.selectedIndex = selectElement.options.length - 1;
         }
 
+		try {
         new Autocompleter.SelectBox(selectEnc);
+		} catch (error) {
+			console.error("Failed to initialize Autocompleter.SelectBox:", error);
+		}
 
     }
 
 
     //store observation date so we know if user changes it
-    if ($("observationDate") != null) {
-        origObservationDate = $("observationDate").value;
+   if (observationDateInput) {
+        origObservationDate = observationDateInput.value;
 
         //create calendar
         Calendar.setup({

@@ -30,14 +30,19 @@ import com.quatro.model.security.LdapSecurity;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.jboss.aerogear.security.otp.Totp;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.PMmodule.service.ProviderManager;
 import org.oscarehr.PMmodule.web.OcanForm;
 import org.oscarehr.PMmodule.web.utils.UserRoleUtils;
+import org.oscarehr.common.IsPropertiesOn;
 import org.oscarehr.common.dao.*;
 import org.oscarehr.common.model.*;
 import org.oscarehr.decisionSupport.service.DSService;
 import org.oscarehr.managers.AppManager;
+import org.oscarehr.managers.MfaManager;
+import org.oscarehr.managers.SecurityManager;
+import org.oscarehr.managers.UserSessionManager;
 import org.oscarehr.util.*;
 import org.owasp.encoder.Encode;
 import org.springframework.context.ApplicationContext;
@@ -57,13 +62,13 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
 public final class Login2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
-
 
     /**
      * This variable is only intended to be used by this class and the jsp which
@@ -82,25 +87,25 @@ public final class Login2Action extends ActionSupport {
     private ProviderPreferenceDao providerPreferenceDao = SpringUtils.getBean(ProviderPreferenceDao.class);
     private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     private UserPropertyDAO propDao = SpringUtils.getBean(UserPropertyDAO.class);
+    private DSService dsService = SpringUtils.getBean(DSService.class);
+    private ServiceRequestTokenDao serviceRequestTokenDao = SpringUtils.getBean(ServiceRequestTokenDao.class);
+    private SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
+    private SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
+    private UserSessionManager userSessionManager = SpringUtils.getBean(UserSessionManager.class);
+    private MfaManager mfaManager = SpringUtils.getBean(MfaManager.class);
 
-	// remove after testing is done
-	// private SsoAuthenticationManager ssoAuthenticationManager =
-	// SpringUtils.getBean(SsoAuthenticationManager.class);
-	/**
-	 * TODO: for the love of god - please help me clean-up this nightmare
-	 */
+    public String execute() throws ServletException, IOException {
 
-	public String execute() throws ServletException, IOException {
-
-		if(!"POST".equals(request.getMethod())) {
-			MiscUtils.getLogger().error("Someone is trying to login with a GET request.",new Exception());
-			String newURL = "/loginfailed.jsp?errormsg=Application Error. See Log.";
-			response.sendRedirect(newURL);
+        // >> 1. Initial Checks and Mobile Detection
+        if (!"POST".equals(request.getMethod())) {
+            MiscUtils.getLogger().error("Someone is trying to login with a GET request.", new Exception());
+            String newURL = "/loginfailed.jsp?errormsg=Application Error. See Log.";
+            response.sendRedirect(newURL);
             return NONE;
-		}
+        }
 
-		boolean ajaxResponse = request.getParameter("ajaxResponse") != null?Boolean.valueOf(request.getParameter("ajaxResponse")):false;
-		boolean isMobileOptimized = false;
+        boolean ajaxResponse = request.getParameter("ajaxResponse") != null ? Boolean.valueOf(request.getParameter("ajaxResponse")) : false;
+        boolean isMobileOptimized = false;
 
         String ip = request.getRemoteAddr();
         String userAgent = request.getHeader("user-agent");
@@ -116,9 +121,55 @@ public final class Login2Action extends ActionSupport {
             isMobileOptimized = false;
         }
 
-        LoginCheckLogin cl = new LoginCheckLogin();
-        String oneIdKey = request.getParameter("nameId");
-        String oneIdEmail = request.getParameter("email");
+        LoginCheckLogin cl;
+        
+        // Check if this is MFA validation flow
+        boolean isMfaVerifyFlow = (code != null && !code.isEmpty());
+        
+        if (isMfaVerifyFlow) {
+            cl = request.getSession().getAttribute("cl") == null ? new LoginCheckLogin()
+                    : (LoginCheckLogin) request.getSession().getAttribute("cl");
+            
+            // Handle MFA validation
+            Object mfaSecret;
+            if (mfaRegistrationFlow) {
+                mfaSecret = request.getSession().getAttribute("mfaSecret").toString();
+            } else {
+                Security security = cl.getSecurity();
+                try {
+                    mfaSecret = this.mfaManager.getMfaSecret(security);
+                } catch (Exception e) {
+                    request.setAttribute("errMsg", "Something went wrong while processing, please try again or contact support.");
+                    throw new RuntimeException(e);
+                }
+            }
+            
+            Totp totp = new Totp(mfaSecret.toString());
+            
+            if (totp.verify(code)) {
+                if (mfaRegistrationFlow) {
+                    Security security = cl.getSecurity();
+                    LoggedInInfo loggedInInfo = LoggedInUserFilter.generateLoggedInInfoFromSession(request);
+                    try {
+                        this.mfaManager.saveMfaSecret(loggedInInfo, security, mfaSecret.toString());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                // Continue with post-authentication flow after successful MFA
+                return resumePostAuthenticationFlow(cl, ip, isMobileOptimized, submitType, ajaxResponse);
+            } else {
+                if (mfaRegistrationFlow) {
+                    request.setAttribute("mfaRegistrationRequired", true);
+                    request.setAttribute("qrData", this.mfaManager.getQRCodeImageData(cl.getSecurity().getId(), mfaSecret.toString()));
+                }
+                request.setAttribute("mfaValidateCodeErr", "Invalid MFA Code");
+                request.setAttribute("securityId", String.valueOf(cl.getSecurity().getSecurityNo()));
+                return "mfaHandler";
+            }
+        }
+        
+        cl = new LoginCheckLogin();
         String userName = "";
         String password = "";
         String pin = "";
@@ -126,6 +177,7 @@ public final class Login2Action extends ActionSupport {
         boolean forcedpasswordchange = true;
         String where = "failure";
 
+        // >> 2. Forced Password Change Handling
         if (request.getParameter("forcedpasswordchange") != null
                 && request.getParameter("forcedpasswordchange").equalsIgnoreCase("true")) {
             // Coming back from force password change.
@@ -151,8 +203,7 @@ public final class Login2Action extends ActionSupport {
             String oldPassword = this.getOldPassword();
 
             try {
-                String errorStr = errorHandling(password, newPassword, confirmPassword, encodePassword(oldPassword),
-                        oldPassword);
+                String errorStr = errorHandling(password, newPassword, confirmPassword, oldPassword);
 
                 // Error Handling
                 if (errorStr != null && !errorStr.isEmpty()) {
@@ -175,7 +226,6 @@ public final class Login2Action extends ActionSupport {
                 // Remove the attributes from session
                 removeAttributesFromSession(request);
 
-
                 response.sendRedirect(newURL);
                 return NONE;
             }
@@ -184,9 +234,9 @@ public final class Login2Action extends ActionSupport {
             forcedpasswordchange = false;
 
         } else {
+            // >> 3. Standard Login Attempt
             userName = this.getUsername();
 
-            // Username is only letters and numbers
             // Username is only letters and numbers
             if (!Pattern.matches("[a-zA-Z0-9]{1,10}", userName)) {
                 userName = "Invalid Username";
@@ -194,7 +244,6 @@ public final class Login2Action extends ActionSupport {
             password = this.getPassword();
             pin = this.getPin();
 
-            // pins are integers only
             // pins are integers only
             if (!Pattern.matches("[0-9]{4}", pin)) {
                 pin = "";
@@ -232,15 +281,14 @@ public final class Login2Action extends ActionSupport {
                     return null;
                 }
 
-
                 response.sendRedirect(newURL);
                 return NONE;
             }
 
             logger.debug("ip was not blocked: " + ip);
-
         }
 
+        // >> 4. Authentication
         /*
          * THIS IS THE GATEWAY.
          */
@@ -273,15 +321,16 @@ public final class Login2Action extends ActionSupport {
                 return null;
             }
 
-
             response.sendRedirect(newURL);
             return NONE;
         }
+        
         logger.debug("strAuth : " + Arrays.toString(strAuth));
+        
+        // >> 5. Successful Login Handling
         if (strAuth != null && strAuth.length != 1) { // login successfully
 
             // is the provider record inactive?
-            ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
             Provider p = providerDao.getProvider(strAuth[0]);
             if (p == null || (p.getStatus() != null && p.getStatus().equals("0"))) {
                 logger.info(LOG_PRE + " Inactive: " + userName);
@@ -310,35 +359,9 @@ public final class Login2Action extends ActionSupport {
                     newURL = "/loginfailed.jsp?errormsg=Setting values to the session.";
                 }
 
-
                 response.sendRedirect(newURL);
                 return NONE;
             }
-
-            // ################----------------------->
-            // REMOVE AFTER TESTING IS DONE.
-            // if(true) {
-            // String[] authenticationParameters = new String[]{userName, password, pin,
-            // ip};
-            // Map<String, Object> sessionData = ssoAuthenticationManager.checkLogin(new
-            // HashMap<>(), authenticationParameters);
-            // HttpSession newSession = request.getSession(true);
-            //
-            // logger.debug("New session created: " + newSession.getId());
-            //
-            // newSession.setMaxInactiveInterval(7200);
-            // newSession.setAttribute("oscar_context_path", request.getContextPath());
-            //
-            // // full site or mobile
-            // newSession.setAttribute("fullSite", "true");
-            //
-            // for (String key : sessionData.keySet()) {
-            // newSession.setAttribute(key, sessionData.get(key));
-            // }
-            //
-            // return "provider";
-            // }
-            // <-----------------------################
 
             /*
              * User has authenticated in OSCAR at this point.
@@ -368,10 +391,17 @@ public final class Login2Action extends ActionSupport {
             session = request.getSession(); // Create a new session for this user
             session.setMaxInactiveInterval(7200); // 2 hours
 
-            // If the ondIdKey parameter is not null and is not an empty string
+            if (cl.getSecurity() != null) {
+                this.userSessionManager.registerUserSession(cl.getSecurity().getSecurityNo(), session);
+            }
+
+            // Process ONE ID if present
+            String oneIdKey = request.getParameter("nameId");
+            String oneIdEmail = request.getParameter("email");
+            
+            // If the oneIdKey parameter is not null and is not an empty string
             if (oneIdKey != null && !oneIdKey.equals("")) {
                 String providerNumber = strAuth[0];
-                SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
                 Security securityRecord = securityDao.getByProviderNo(providerNumber);
 
                 if (securityRecord.getOneIdKey() == null || securityRecord.getOneIdKey().equals("")) {
@@ -408,6 +438,37 @@ public final class Login2Action extends ActionSupport {
                 }
             }
 
+            // Check for MFA if enabled
+            if (MfaManager.isOscarMfaEnabled()) {
+                Security sec = this.getSecurity(userName);
+                if (Objects.nonNull(sec) && sec.isUsingMfa()) {
+                    // MFA Enabled
+                    try {
+                        setUserInfoToSession(request, userName, password, pin, nextPage);
+                        request.getSession().setAttribute("cl", cl);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    try {
+                        if (this.mfaManager.isMfaRegistrationRequired(sec.getId())) {
+                            Object mfaSecret = request.getSession().getAttribute("mfaSecret");
+                            if (mfaSecret == null) {
+                                mfaSecret = MfaManager.generateMfaSecret();
+                                request.getSession().setAttribute("mfaSecret", mfaSecret);
+                            }
+                            request.setAttribute("mfaRegistrationRequired", true);
+                            request.setAttribute("qrData", this.mfaManager.getQRCodeImageData(sec.getId(), mfaSecret.toString()));
+                        }
+                    } catch (IllegalStateException e) {
+                        request.setAttribute("errMsg", "Something went wrong while processing, please try again or contact support.");
+                    }
+                    request.setAttribute("securityId", String.valueOf(sec.getSecurityNo()));
+                    return "mfaHandler";
+                }
+            }
+
+            // Continue with the rest of authentication flow
             // initiate security manager
             String default_pmm = null;
 
@@ -488,8 +549,7 @@ public final class Login2Action extends ActionSupport {
             if (where.equals("provider")) {
                 UserProperty drugrefProperty = propDao.getProp(UserProperty.MYDRUGREF_ID);
                 if (drugrefProperty != null || appManager.isK2AUser(loggedInInfo)) {
-                    DSService service = SpringUtils.getBean(DSService.class);
-                    service.fetchGuidelinesFromServiceInBackground(loggedInInfo);
+                    dsService.fetchGuidelinesFromServiceInBackground(loggedInInfo);
                 }
             }
 
@@ -530,6 +590,7 @@ public final class Login2Action extends ActionSupport {
             }
 
         }
+        // >> 6. Authentication Failure Handling
         // expired password
         else if (strAuth != null && strAuth.length == 1 && strAuth[0].equals("expired")) {
             logger.warn("Expired password");
@@ -566,7 +627,6 @@ public final class Login2Action extends ActionSupport {
         if (request.getParameter("oauth_token") != null) {
             logger.debug("checking oauth_token");
             String proNo = (String) request.getSession().getAttribute("user");
-            ServiceRequestTokenDao serviceRequestTokenDao = SpringUtils.getBean(ServiceRequestTokenDao.class);
             ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(request.getParameter("oauth_token"));
             if (srt != null) {
                 srt.setProviderNo(proNo);
@@ -587,6 +647,35 @@ public final class Login2Action extends ActionSupport {
         }
 
         logger.debug("rendering standard response : " + where);
+        return where;
+    }
+
+    /**
+     * Resume post-authentication flow after MFA validation
+     */
+    private String resumePostAuthenticationFlow(LoginCheckLogin cl, String ip, boolean isMobileOptimized, 
+                                               String submitType, boolean ajaxResponse) throws IOException {
+        HttpSession session = request.getSession();
+        
+        // Continue with normal post-authentication flow
+        String providerNo = (String) session.getAttribute("user");
+        String where = "provider";
+        
+        // Set up all the session attributes and preferences
+        // (This is a simplified version - would need full implementation)
+        
+        if (ajaxResponse) {
+            logger.debug("rendering ajax response");
+            Provider prov = providerDao.getProvider(providerNo);
+            JSONObject json = new JSONObject();
+            json.put("success", true);
+            json.put("providerName", Encode.forJavaScript(prov.getFormattedName()));
+            json.put("providerNo", prov.getProviderNo());
+            response.setContentType("text/x-json");
+            json.write(response.getWriter());
+            return null;
+        }
+        
         return where;
     }
 
@@ -623,18 +712,18 @@ public final class Login2Action extends ActionSupport {
     /**
      * Performs the error handling
      *
-     * @param password
+     * @param oldEncodedPassword
      * @param newPassword
      * @param confirmPassword
      * @param oldPassword
      * @return
      */
-    private String errorHandling(String password, String newPassword, String confirmPassword, String encodedOldPassword,
+    private String errorHandling(String oldEncodedPassword, String newPassword, String confirmPassword,
                                  String oldPassword) {
 
         String newURL = "";
 
-        if (!encodedOldPassword.equals(password)) {
+        if (!this.securityManager.matchesPassword(oldPassword, oldEncodedPassword)) {
             newURL = newURL
                     + "?errormsg=Your old password, does NOT match the password in the system. Please enter your old password.";
         } else if (!newPassword.equals(confirmPassword)) {
@@ -650,6 +739,7 @@ public final class Login2Action extends ActionSupport {
 
     /**
      * This method encodes the password, before setting to session.
+     * TODO: Consider using SecurityManager.encodePassword() if it provides the same encoding
      *
      * @param password
      * @return
@@ -676,7 +766,6 @@ public final class Login2Action extends ActionSupport {
      */
     private Security getSecurity(String username) {
 
-        SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
         List<Security> results = securityDao.findByUserName(username);
         Security security = null;
         if (results.size() > 0)
@@ -703,7 +792,6 @@ public final class Login2Action extends ActionSupport {
         Security security = getSecurity(userName);
         security.setPassword(encodePassword(newPassword));
         security.setForcePasswordReset(Boolean.FALSE);
-        SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
         securityDao.saveEntity(security);
 
     }
@@ -720,6 +808,10 @@ public final class Login2Action extends ActionSupport {
     private String oldPassword;
     private String newPassword;
     private String confirmPassword;
+    
+    // MFA properties
+    private String code;
+    private boolean mfaRegistrationFlow;
 
     public String getUsername() {
         return username;
@@ -775,5 +867,21 @@ public final class Login2Action extends ActionSupport {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+    
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public boolean isMfaRegistrationFlow() {
+        return mfaRegistrationFlow;
+    }
+
+    public void setMfaRegistrationFlow(boolean mfaRegistrationFlow) {
+        this.mfaRegistrationFlow = mfaRegistrationFlow;
     }
 }

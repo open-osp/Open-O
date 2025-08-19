@@ -32,16 +32,16 @@
 
 package oscar.oscarRx.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.oscarehr.common.dao.DemographicPharmacyDao;
 import org.oscarehr.common.dao.PharmacyInfoDao;
 import org.oscarehr.common.model.DemographicPharmacy;
 import org.oscarehr.common.model.PharmacyInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Jay Gallagher
@@ -166,6 +166,12 @@ public class RxPharmacyData {
      * @return Pharmacy data object
      */
     public List<PharmacyInfo> getPharmacyFromDemographic(String demographicNo) {
+
+		if (demographicNo == null || demographicNo.isEmpty() || !demographicNo.matches("\\d+")) {
+			return null;
+		}
+
+
         List<DemographicPharmacy> dpList = demographicPharmacyDao.findByDemographicId(Integer.parseInt(demographicNo));
         if (dpList.isEmpty()) {
             return null;

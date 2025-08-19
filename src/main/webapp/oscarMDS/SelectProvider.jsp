@@ -47,11 +47,6 @@
     <script type="text/javascript"
             src="${pageContext.request.contextPath}/js/demographicProviderAutocomplete.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/share/yui/css/fonts-min.css"/>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/share/yui/css/autocomplete.css"/>
-    <link rel="stylesheet" type="text/css" media="all"
-          href="${pageContext.request.contextPath}/share/css/demographicProviderAutocomplete.css"/>
-
 </head>
 
 <script type="text/javascript">
@@ -113,28 +108,30 @@
 </head>
 <body>
 <input type="hidden" id="forwardList" value="<c:out value="${ param.forwardList }" />"/>
-<form name="providerSelectForm">
+<form name="providerSelectForm" class="mx-1">
     <p style="font-weight:bold;">
         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.forward.msgInstruction1"/>
     </p>
+
     <div>
-        <input id="autocompleteprov" type="text" style="width:100%;">
+		<input id="autocompleteprov" class="form-control" type="text" style="width:100%;" placeholder="lastname, firstname">
         <div id="autocomplete_choicesprov" class="autocomplete"></div>
     </div>
-    <div id="transferDialog">
-        <div style="float:right;">
-            Forward List<br>
-            <select id="fwdProviders" size="5" style="width:250px;height:100px;overflow:scroll;" multiple="multiple"
-                    ondblclick="removeProvider(this);"></select>
+
+	<div id="transferDialog" style="display: flex; justify-content: space-between; margin-top: 20px;">
+		<div>
+			<label for="fwdProviders">Forward List</label><br>
+			<select id="fwdProviders" class="form-select" size="5" style="width:250px;height:100px;overflow:auto;" multiple="multiple" ondblclick="removeProvider(this);"></select>
         </div>
-        <div style="float:right; margin:30px 30px 30px 30px;">
-            <input type="button" value=">>" onclick="copyProvider('fwdProviders','favorites');"><br>
-            <input type="button" value="<<" onclick="copyProvider('favorites','fwdProviders');">
+
+		<div style="margin: 30px;">
+			<input type="button" class="btn btn-secondary btn-sm" value=">>" onclick="copyProvider('favorites','fwdProviders');"><br><br>
+			<input type="button" class="btn btn-secondary btn-sm" value="<<" onclick="copyProvider('fwdProviders','favorites');">
         </div>
+
         <div>
-            Favorites<br>
-            <select id="favorites" size="5" style="width:250px;height:100px;overflow:scroll;" multiple="multiple"
-                    ondblclick="removeProvider(this);">
+			<label for="favorites">Favorites</label><br>
+			<select id="favorites" class="form-select" size="5" style="width: 250px; height: 100px; overflow: auto;" multiple="multiple" ondblclick="removeProvider(this);">
                 <%
                     ProviderLabRoutingFavoritesDao favDao = (ProviderLabRoutingFavoritesDao) SpringUtils.getBean(ProviderLabRoutingFavoritesDao.class);
                     String user = (String) request.getSession().getAttribute("user");
@@ -149,7 +146,6 @@
                 <%
                     }
                 %>
-
             </select>
         </div>
     </div>

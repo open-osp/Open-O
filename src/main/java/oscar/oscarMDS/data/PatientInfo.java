@@ -32,6 +32,7 @@ public class PatientInfo implements Comparable<PatientInfo> {
     private int id;
     private int docCount = 0;
     private int labCount = 0;
+	private int hrmCount = 0;
 
     @Override
     public String toString() {
@@ -90,7 +91,12 @@ public class PatientInfo implements Comparable<PatientInfo> {
     public void setLabCount(int labCount) {
         this.labCount += labCount;
     }
-
+	public int getHrmCount() {
+		return hrmCount;
+	}
+	public void setHrmCount(int hrmCount) {
+		this.hrmCount += hrmCount;
+	}
     @Override
     public int compareTo(PatientInfo that) {
         return this.lastName.equals(that.lastName) ? this.firstName.compareTo(that.firstName) : this.lastName.compareTo(that.lastName);

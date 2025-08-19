@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.Logger;
-import org.oscarehr.common.dao.DigitalSignatureDao;
 import org.oscarehr.common.model.DigitalSignature;
+import org.oscarehr.managers.DigitalSignatureManager;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
@@ -29,7 +29,6 @@ import org.oscarehr.util.SpringUtils;
 public final class EFormSignatureViewForPdfGenerationServlet extends HttpServlet {
 
     private static final Logger logger = MiscUtils.getLogger();
-    private static DigitalSignatureDao digitalSignatureDao = (DigitalSignatureDao) SpringUtils.getBean(DigitalSignatureDao.class);
 
     @Override
     public final void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -46,7 +45,9 @@ public final class EFormSignatureViewForPdfGenerationServlet extends HttpServlet
         // https://127.0.0.1:8443/oscar/eform/efmshowform_data.jsp?fdid=2&parentAjaxId=eforms
         try {
             // get image
-            DigitalSignature digitalSignature = digitalSignatureDao.find(Integer.parseInt(request.getParameter("digitalSignatureId")));
+			DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
+			DigitalSignature digitalSignature = digitalSignatureManager
+					.getDigitalSignature(Integer.parseInt(request.getParameter("digitalSignatureId")));
             if (digitalSignature != null) {
                 //renderImage(response, digitalSignature.getSignatureImage(), "jpeg");
 

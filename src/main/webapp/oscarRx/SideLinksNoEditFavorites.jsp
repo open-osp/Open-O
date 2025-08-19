@@ -56,7 +56,7 @@
             <%=allergies[j].getShortDesc(13, 8, "...")%>
         </a></p>
         <%}%>
-        </p>
+
 
     </security:oscarSec>
 
@@ -72,7 +72,7 @@
         <%= favorites[j].getFavoriteName().substring(0, 10) + "..." %> <%} else {%>
         <%= favorites[j].getFavoriteName() %> <%}%></a></p>
     <%}%>
-    </p>
+
 </div>
 
 <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"/>

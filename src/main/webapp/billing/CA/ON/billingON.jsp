@@ -23,7 +23,7 @@
 
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ page errorPage="/errorpage.jsp" %>
+<%@ page errorPage="errorpage.jsp"%>
 
 <%@page import="java.util.*,java.net.*,java.sql.*,oscar.*,oscar.util.*,oscar.appt.*" %>
 <%@page import="oscar.oscarBilling.ca.on.data.*" %>
@@ -50,7 +50,7 @@
 <%@page import="org.oscarehr.managers.DemographicManager,org.oscarehr.billing.CA.filters.CodeFilterManager" %>
 
 <%
-    ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
+	ProfessionalSpecialistDao professionalSpecialistDao = SpringUtils.getBean(ProfessionalSpecialistDao.class);
     DxresearchDAO dxresearchDao = SpringUtils.getBean(DxresearchDAO.class);
     UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -138,68 +138,9 @@
         MiscUtils.getLogger().error("Error", e);
     }
 
-    ProviderPreferenceDao preferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
+    ProviderPreferenceDao preferenceDao = SpringUtils.getBean(ProviderPreferenceDao.class);
     ProviderPreference preference = null;
     preference = ProviderPreferencesUIBean.getProviderPreferenceByProviderNo(provider_no);
-
-
-    if (curBillForm != null) {
-        // user picks a bill form from browser
-        ctlBillForm = curBillForm;
-    } else {
-        //check if patient's roster status determines which billing form to display (this superceeds provider preference)
-        String rosterStatus = demo.getRosterStatus();
-
-        CtlBillingServiceDao ctlBillingServiceDao = (CtlBillingServiceDao) SpringUtils.getBean(CtlBillingServiceDao.class);
-        List<CtlBillingService> ctlBillSrvList = ctlBillingServiceDao.findByServiceTypeId(rosterStatus);
-
-        if (!ctlBillSrvList.isEmpty() && !rosterStatus.isEmpty()) {
-            ctlBillForm = ctlBillSrvList.get(0).getServiceType();
-        } else {
-            // check user preference to show a bill form
-            ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
-            ProviderPreference providerPreference = null;
-
-            //use the appointment provider's preferences first if we can
-            //otherwise, use the preferences of the logged in user
-            if (apptProvider_no.equalsIgnoreCase("none")) {
-                providerPreference = providerPreferenceDao.find(user_no);
-            } else {
-                providerPreference = providerPreferenceDao.find(apptProvider_no);
-            }
-
-            String defaultServiceType = "";
-            if (providerPreference != null) {
-                defaultServiceType = providerPreference.getDefaultServiceType();
-            }
-
-            if (defaultServiceType != null && !defaultServiceType.isEmpty() && !defaultServiceType.equals("no")) {
-                ctlBillForm = providerPreference.getDefaultServiceType();
-            } else {
-                //check if there is a group preference for default billing
-                MyGroupDao myGroupDao = (MyGroupDao) SpringUtils.getBean(MyGroupDao.class);
-                List<MyGroup> myGroups = myGroupDao.getProviderGroups(provider_no);
-                String groupBillForm = "";
-                for (MyGroup group : myGroups) {
-                    groupBillForm = group.getDefaultBillingForm();
-                    if (groupBillForm != null && !groupBillForm.isEmpty()) {
-                        ctlBillForm = groupBillForm;
-                        break;
-                    }
-                }
-
-                if (ctlBillForm == null || ctlBillForm.isEmpty()) {
-                    // check oscar.properties to show a default bill form
-                    String dv = OscarProperties.getInstance().getProperty("default_view");
-                    if (dv != null) ctlBillForm = dv;
-                }
-            }
-        }
-    }
-
-    if (ctlBillForm == null) {
-        ctlBillForm = "";
-    }
 
     GregorianCalendar now = new GregorianCalendar();
     int curYear = now.get(Calendar.YEAR);
@@ -274,6 +215,10 @@
     }
     //}
 
+
+
+
+
     // get patient's billing history
     boolean bFirst = true;
     JdbcBillingReviewImpl hdbObj = new JdbcBillingReviewImpl();
@@ -340,6 +285,75 @@
         visitType = visitType == null ? "" : visitType;
     }
 
+            String defaultServiceType = "";
+
+			if (curBillForm!=null) {
+			    // user picks a bill form from browser
+			    ctlBillForm = curBillForm;
+			} else {
+                            //check if patient's roster status determines which billing form to display (this superceeds provider preference)
+                            String rosterStatus = demo.getRosterStatus();
+
+                            CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
+                            List<CtlBillingService> ctlBillSrvList = ctlBillingServiceDao.findByServiceTypeId(rosterStatus);
+
+                            if (!ctlBillSrvList.isEmpty() && !rosterStatus.isEmpty()) {
+                                ctlBillForm = ctlBillSrvList.get(0).getServiceType();
+                            }
+                            else {
+                                // check user preference to show a bill form
+                                ProviderPreferenceDao providerPreferenceDao=SpringUtils.getBean(ProviderPreferenceDao.class);
+                                ProviderPreference providerPreference=null;
+
+                                //use the appointment provider's preferences first if we can
+                                //otherwise, use the preferences of the logged in user
+                                if( apptProvider_no.equalsIgnoreCase("none") ) {
+                                    providerPreference = providerPreferenceDao.find(user_no);
+                                } else {
+                                    providerPreference = providerPreferenceDao.find(apptProvider_no);
+                                }
+
+
+                                if (providerPreference!=null) {
+                                    defaultServiceType = providerPreference.getDefaultServiceType();
+                                }
+
+                                if ((roster_status.equals("QU - Quebec")||roster_status.equals("FS")) && !defaultServiceType.equals("RN")) { defaultServiceType = "PRI"; }
+                                if (defaultServiceType != null && !defaultServiceType.isEmpty() && !defaultServiceType.equals("no")) {
+									ctlBillForm = providerPreference.getDefaultServiceType();
+                                } else {
+                                        //check if there is a group preference for default billing
+                                        MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
+                                        List<MyGroup> myGroups = myGroupDao.getProviderGroups(provider_no);
+                                        String groupBillForm = "";
+                                        for (MyGroup group : myGroups) {
+                                            groupBillForm = group.getDefaultBillingForm();
+                                            if (groupBillForm != null && !groupBillForm.isEmpty()) {
+                                                ctlBillForm = groupBillForm;
+                                                break;
+                                            }
+                                        }
+
+                                        if (ctlBillForm == null || ctlBillForm.isEmpty()) {
+                                            // check oscar.properties to show a default bill form
+                                            String dv = OscarProperties.getInstance().getProperty("default_view");
+                                            if (dv!=null) ctlBillForm = dv;
+                                        }
+                                }
+                            }
+			}
+
+			if( ctlBillForm == null ) {
+				ctlBillForm = "";
+			}
+
+			if((visitType.startsWith("02") || visitType.startsWith("04")) && !defaultServiceType.equals("RN")){
+				ctlBillForm = "MIP"; // This is a reference to the "MIP" ctl_billingservice.servicetype, blank service type if not exist
+            }
+            if ((roster_status.equals("QU - Quebec")||roster_status.equals("FS")) && !defaultServiceType.equals("RN")) {
+                ctlBillForm = "PRI";
+            } // "PRI" ctl_billingservice.servicetype, blank if not exist
+
     paraName = request.getParameter("xml_location");
     String xml_location = getDefaultValue(paraName, vecHist, "clinic_ref_code");
     xml_location = paraName != null && !"".equals(paraName) ? paraName : "0000";
@@ -371,7 +385,7 @@
     String serviceCode, serviceDesc, serviceValue, servicePercentage, serviceType, displayStyle, serviceDisp = "";
     String headerTitle1 = "", headerTitle2 = "", headerTitle3 = "";
 
-    CSSStylesDAO cssStylesDao = (CSSStylesDAO) SpringUtils.getBean(CSSStylesDAO.class);
+            CSSStylesDAO cssStylesDao = SpringUtils.getBean(CSSStylesDAO.class);
     CssStyle cssStyle;
     String styleId;
 
@@ -532,6 +546,7 @@
         defaultBillType = t.getBillType();
     }
 
+
     // create msg
     msg += errorMsg + warningMsg;
 %>
@@ -544,9 +559,9 @@
 <%@page import="org.oscarehr.util.MiscUtils" %>
 <%@page import="org.oscarehr.common.dao.ProviderPreferenceDao" %>
 <%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
-<html>
+<%@page import="org.oscarehr.common.model.ProviderPreference"%>
 <%@ page import="org.owasp.encoder.Encode" %>
+<html>
 <head>
     <title>Ontario Billing</title>
 
@@ -775,7 +790,8 @@
                 bWrongDate = true;
             }
             if (bWrongDate) {
-                return confirm("Warning: the inputted service or admission date is in the future.\r\n\r\nClick OK to continue, Cancel to edit.");
+		alert("You may have a wrong Service/admission Date!" + " Wrong " + sMsg);
+		return false;
             } else {
                 return true;
             }
@@ -1083,7 +1099,8 @@
         }
 
         //this function will show the content within the <div> tag of billing codes
-        function toggleDiv(selectedBillForm, selectedBillFormName, billType) {
+function toggleDiv(selectedBillForm, selectedBillFormName,billType)
+{
             document.getElementById("billForm").value = selectedBillForm;
             document.getElementById("billFormName").value = selectedBillFormName;
 
@@ -1125,7 +1142,7 @@
     </script>
 </head>
 
-<body onload="prepareBack();changeCodeDesc();">
+<body onload="prepareBack();changeCodeDesc();getDays();">
 <div id="Instrdiv" class="demo1">
 
     <table style="width: 99%;">
@@ -1275,8 +1292,7 @@
     <table style="width: 100%; border-spacing:2px;">
         <tr>
             <td>
-                <table style="width: 100%;"
-                >
+					<table  style="width: 100%;">
                     <tr>
                         <td style="white-space:nowrap; width: 10%; text-align: center"><b>&nbsp;<oscar:nameage
                                 demographicNo="<%=demo_no%>"/> <%=roster_status%>
@@ -1289,8 +1305,8 @@
                                 <img src="${ pageContext.request.contextPath }/images/cal.gif" id="service_date_cal"
                                      style="height:14px;  vertical-align: bottom;" class="add-on" alt="cal"></span>
                             <%} else {%>
-                            <input type="text" name="service_date"
-                                   readonly value="<%=request.getParameter("appointment_date")%>"
+                                <input type="text" id="service_date" name="service_date" readonly
+								value="<%=request.getParameter("appointment_date")%>"
                                    maxlength="10" style="width: 80px;"> <%}%></td>
                         <%
                             String warningClass = "";
@@ -1425,10 +1441,10 @@
                                     <td style="white-space:nowrap; width: 30%"><b>Billing
                                         Physician</b></td>
                                     <td style="width: 20%">
-                                        <% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) { // multisite start ==========================================
-                                            SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
+                                        <% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
+                                            // multisite start ==========================================
+                                            SiteDao siteDao = SpringUtils.getBean(SiteDao.class);
                                             List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
-
                                         %>
                                         <script>
                                             var _providers = [];
@@ -1546,9 +1562,9 @@
                                             if (OscarProperties.getInstance().getBooleanProperty("rma_enabled", "true")) {
                                         %>
                                         <%
-                                            ClinicNbrDao cnDao = (ClinicNbrDao) SpringUtils.getBean(ClinicNbrDao.class);
+													ClinicNbrDao cnDao = SpringUtils.getBean(ClinicNbrDao.class);
                                             ArrayList<ClinicNbr> nbrs = cnDao.findAll();
-                                            ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
+													            ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
                                             String providerSearch = apptProvider_no.equalsIgnoreCase("none") ? user_no : apptProvider_no;
                                             Provider p = providerDao.getProvider(providerSearch);
                                             String providerNbr = SxmlMisc.getXmlContent(p.getComments(), "xml_p_nbr");
@@ -1595,6 +1611,9 @@
                                     <td style="width: 30%"><b>Billing Type</b></td>
                                     <td style="width: 20%">
                                         <%
+												if ((roster_status.equals("QU - Quebec")||roster_status.equals("FS")) && !defaultServiceType.equals("RN")) {
+												    defaultBillType = "PAT";
+												}
                                             String srtBillType = request.getParameter("xml_billtype") != null ? request.getParameter("xml_billtype") : defaultBillType;
                                         %> <select name="xml_billtype" onchange="onChangePrivate();">
                                         <option value="ODP | Bill OHIP"
@@ -1702,7 +1721,7 @@
                                 </tr>
                                 <tr>
                                     <td><b>Admission Date</b></td>
-                                    <td class="input-append">
+										<td>
                                         <%
                                             String admDate = "";
                                             String inPatient = oscarVariables.getProperty("inPatient");
@@ -1718,17 +1737,18 @@
                                             if (visitType.startsWith("02") || visitType.startsWith("04"))
                                                 admDate = getDefaultValue(request.getParameter("visitdate"), vecHist, "visitdate");
                                         %>
-                                        <input type="text" name="xml_vdate" id="xml_vdate"
+											<span class="input-append">
+											    <input type="text" name="xml_vdate" id="xml_vdate" onchange="getDays();"
                                                value="<%=request.getParameter("xml_vdate")!=null? request.getParameter("xml_vdate"):admDate%>"
-                                               class="input-small" style="height: 14px; margin-top:4px;" readonly> <img
-                                            alt="cal" class="add-on" style="height:14px;  margin-top:4px;"
-                                            src="${ pageContext.request.contextPath }/images/cal.gif"
-                                            id="xml_vdate_cal"/>
+											class="input-small" style="height: 14px; margin-top:4px;" readonly> <img alt="cal" class="add-on" style="height:14px;  margin-top:4px;"
+											src="${ pageContext.request.contextPath }/images/cal.gif" id="xml_vdate_cal">
+											</span>
+                                            <span id="duration_display"></span>
                                     </td>
                                     <td colspan="2"><a href="javascript:void(0);"
                                                        onclick="showHideLayers('Layer1','','show');return false;">
                                         Billing form</a>: <input type="text" name="billFormName" class="input-large"
-                                                                 id="billFormName" size="30" readonly
+											id="billFormName" readonly
                                                                  value="<%=currentFormName.length() < 40 ? currentFormName : currentFormName.substring(0, 40)%>"/>
                                         <input type="hidden" name="billForm" id="billForm"
                                                value="<%=ctlBillForm%>"/></td>
@@ -2122,7 +2142,7 @@
     </tr>
 </table>
 
-<script type="text/javascript">
+	<script>
 
     Calendar.setup({
         inputField: "xml_vdate",
@@ -2142,6 +2162,38 @@
         step: 1
     });
     <%}%>
+
+function getDays() {
+    if (!document.getElementById("xml_vdate") || !document.getElementById("service_date")) { return; }
+    if (document.getElementById("xml_vdate").value == "" || document.getElementById("service_date").value == "" ) { return; }
+
+    let date_xml_vdate = new Date(document.getElementById("xml_vdate").value);
+    let date_service_date = new Date(document.getElementById("service_date").value);
+
+    // Convert dates to UTC timestamps
+    let utc1 =
+        Date.UTC(date_xml_vdate.getFullYear(), date_xml_vdate.getMonth(), date_xml_vdate.getDate());
+    let utc2 =
+        Date.UTC(date_service_date.getFullYear(), date_service_date.getMonth(), date_service_date.getDate());
+
+    // Calculate the time difference in milliseconds
+    let timeDiff = Math.abs(utc2 - utc1);
+
+    // Convert milliseconds to days
+    let daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+	let display = " "+daysDiff+"d";
+
+    if (daysDiff > 34){
+        let weeksDiff = Math.floor(daysDiff/7);
+        let remainder = daysDiff - (weeksDiff*7);
+        display = " "+weeksDiff+"w "+remainder+"d";
+    }
+
+    // Display the result
+    document.getElementById("duration_display").textContent = display;
+}
+
 </script>
 
 <%!

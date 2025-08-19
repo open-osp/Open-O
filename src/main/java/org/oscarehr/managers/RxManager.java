@@ -28,23 +28,12 @@
 
 package org.oscarehr.managers;
 
-import org.apache.logging.log4j.Logger;
-import org.oscarehr.common.dao.DrugDao;
-import org.oscarehr.common.dao.FavoriteDao;
-import org.oscarehr.common.exception.AccessDeniedException;
 import org.oscarehr.common.model.Drug;
 import org.oscarehr.common.model.Favorite;
 import org.oscarehr.common.model.Prescription;
 import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
 import org.oscarehr.ws.rest.to.model.RxStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import oscar.log.LogAction;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 
@@ -73,6 +62,17 @@ public interface RxManager {
     public List<Favorite> getFavorites(String pid);
 
     public Boolean addFavorite(Favorite f);
+
+    /**
+     * Archives a drug. This will remove the drug from the current list. The drug can still be found under the 'All' section.
+     *
+     * @param info          Logged-in user information.
+     * @param drugId        The ID of the drug to archive.
+     * @param demographicId The demographic ID.
+     * @param reason        The reason for archiving the drug.
+     * @return True if the drug was successfully archived, false otherwise.
+     */
+    boolean archiveDrug(LoggedInInfo info, int drugId, int demographicId, String reason);
 
     public List<Drug> getLongTermDrugs(LoggedInInfo info, int demographicNo);
 

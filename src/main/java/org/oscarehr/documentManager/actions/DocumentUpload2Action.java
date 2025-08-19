@@ -107,7 +107,7 @@ public class DocumentUpload2Action extends ActionSupport {
             }
         } else {
             int numberOfPages = 0;
-            String fileName = docFile.getName();
+            String fileName = MiscUtils.sanitizeFileName(docFile.getName());
             String user = (String) request.getSession().getAttribute("user");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             EDoc newDoc = new EDoc("", "", fileName, "", user, user, this.getSource(), 'A',

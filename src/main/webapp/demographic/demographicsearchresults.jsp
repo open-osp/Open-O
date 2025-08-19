@@ -59,7 +59,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
 <%
-    Boolean isMobileOptimized = session.getAttribute("mobileOptimized") != null;
+//     Boolean isMobileOptimized = session.getAttribute("mobileOptimized") != null;
 
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
@@ -287,10 +287,14 @@
                             href="demographiccontrol.jsp?fromMessenger=<%=fromMessenger%>&keyword=<%=StringEscapeUtils.escapeHtml(request.getParameter("keyword"))%>&displaymode=<%=request.getParameter("displaymode")%>&search_mode=<%=request.getParameter("search_mode")%>&dboperation=<%=request.getParameter("dboperation")%>&orderby=phone&limit1=0&limit2=<%=strLimit%>&ptstatus=<%=ptStatus%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicsearchresults.btnPhone"/></a>
                     </th>
                 </tr>
+
+<%!
+	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+        OscarLogDao oscarLogDao = SpringUtils.getBean(OscarLogDao.class);
+	CaseManagementManager caseManagementManager = SpringUtils.getBean(CaseManagementManager.class);
+
+%>
                 <%
-                    DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
-                    OscarLogDao oscarLogDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
-                    CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
                     String providerNo = loggedInInfo.getLoggedInProviderNo();
                     boolean outOfDomain = true;
                     if (OscarProperties.getInstance().getProperty("ModuleNames", "").indexOf("Caisi") != -1) {
@@ -450,9 +454,15 @@
                                    value="${ctx}"/>/oscarEncounter/IncomingEncounter.do?providerNo=<%=curProvider_no%>&appointmentNo=&demographicNo=<%=dem_no%>&curProviderNo=&reason=<%=URLEncoder.encode(noteReason)%>&encType=&curDate=<%=""+curYear%>-<%=""+curMonth%>-<%=""+curDay%>&appointmentDate=&startTime=&status=');return false;">E</a>
                     </security:oscarSec> <!-- Rights --> <security:oscarSec roleName="<%=roleName$%>"
                                                                             objectName="_rx" rights="r">
-                        <a class="rxBtn" title="Prescriptions" href="javascript:void(0)"
-                           onclick="popup(700,1027,'../oscarRx/choosePatient.do?providerNo=<%=demo.getProviderNo()%>&demographicNo=<%=dem_no%>')">Rx</a>
-                    </security:oscarSec></td>
+			<a class="rxBtn" title="Prescriptions"  href="javascript:void(0)" onclick="popup(700,1027,'<c:out value="${ctx}"/>/oscarRx/choosePatient.do?providerNo=<%=demo.getProviderNo()%>&demographicNo=<%=dem_no%>')">Rx</a>
+			</security:oscarSec>
+			<security:oscarSec roleName="<%=roleName$%>" objectName="_tickler" rights="r">
+			<a class="ticklerBtn" title="Tickler"  href="javascript:void(0)" onclick="popup(700,1027,'<c:out value="${ctx}"/>/tickler/ticklerMain.jsp?demoview=<%=dem_no%>')">T</a>
+			</security:oscarSec>
+			<security:oscarSec roleName="<%=roleName$%>" objectName="_con" rights="r">
+			<a class="consultBtn" title="Consultation"  href="javascript:void(0)" onclick="popup(700,1027,'<c:out value="${ctx}"/>/oscarEncounter/oscarConsultationRequest/DisplayDemographicConsultationRequests.jsp?de=<%=dem_no%>')">C</a>
+			</security:oscarSec>
+		</td>
 
                     <%
                         }
@@ -610,7 +620,8 @@
             }
         }
 
-        return new ArrayList<Demographic>(new HashSet<Demographic>(demoList));
+	return new ArrayList<>(new HashSet<>(demoList != null ? demoList : Collections.emptyList()));
+
     }
 
     String getDemographicNumberWithBandNumber(String bandNumber) {

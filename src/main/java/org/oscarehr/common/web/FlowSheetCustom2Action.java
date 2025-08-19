@@ -25,15 +25,6 @@
 
 package org.oscarehr.common.web;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.logging.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.output.Format;
@@ -46,7 +37,6 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.oscarEncounter.oscarMeasurements.FlowSheetItem;
 import oscar.oscarEncounter.oscarMeasurements.MeasurementFlowSheet;
 import oscar.oscarEncounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig;
@@ -57,6 +47,10 @@ import oscar.oscarEncounter.oscarMeasurements.util.TargetCondition;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
+import java.util.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 public class FlowSheetCustom2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
@@ -82,7 +76,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
             return archiveMod();
         } else if ("createNewFlowSheet".equals(method)) {
             return createNewFlowSheet();
-        } 
+        }
         return SUCCESS;
     }
 
@@ -153,7 +147,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
                 cust.setPayload(outp.outputString(va));
                 cust.setFlowsheet(flowsheet);
                 cust.setMeasurement(prevItem);//THIS THE MEASUREMENT TO SET THIS AFTER!
-                cust.setProviderNo("clinic".equals(scope) ? "" : (String) request.getSession().getAttribute("user"));
+                cust.setProviderNo("clinic".equals(scope) ? "" : LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo());
                 cust.setDemographicNo(demographicNo);
                 cust.setCreateDate(new Date());
 
@@ -286,28 +280,6 @@ public class FlowSheetCustom2Action extends ActionSupport {
             item.setTargetColour(targets);
             item.setRecommendations(recommendations);
 
-
-            //DEALING WITH TARGET DATA//////////
-
-          /*
-            <select name="type<%=targetCount%>c1">
-               <option value="-1">Not Set</option>
-                <option value="getDataAsDouble"       >Number Value</option>
-                <option value="isMale"              > Is Male </option>
-                <option value="isFemale"            > Is Female </option>
-                <option value="getNumberFromSplit"  > Number Split </option>
-                <option value="isDataEqualTo"       >  String </option>
-           </select>
-
-           Param: <input type="text" name="param<%=targetCount%>c1" value="" />
-           Value: <input type="text" name="value<%=targetCount%>c1" value="" />
-
-             */
-
-
-            ////////////
-
-
             Element va = templateConfig.getItemFromObject(item);
 
             XMLOutputter outp = new XMLOutputter();
@@ -321,7 +293,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
                 cust.setDemographicNo(demographicNo);
             }
             cust.setMeasurement(item.getItemName());//THIS THE MEASUREMENT TO SET THIS AFTER!
-            cust.setProviderNo("clinic".equals(scope) ? "" : (String) request.getSession().getAttribute("user"));
+            cust.setProviderNo("clinic".equals(scope) ? "" : LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo());
 
             logger.debug("UPDATE " + cust);
 
@@ -351,7 +323,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
         cust.setAction(FlowSheetCustomization.DELETE);
         cust.setFlowsheet(flowsheet);
         cust.setMeasurement(measurement);
-        cust.setProviderNo("clinic".equals(scope) || demographicNo != null ? "" : (String) request.getSession().getAttribute("user"));
+        cust.setProviderNo("clinic".equals(scope) || demographicNo != null ? "" : LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo());
         cust.setDemographicNo(demographicNo);
 
         flowSheetCustomizationDao.persist(cust);
@@ -449,16 +421,6 @@ public class FlowSheetCustom2Action extends ActionSupport {
         m.setWarningColour(warningColour);
         m.setRecommendationColour(recommendationColour);
 
-        //Im not sure if adding an initializing measurement is required yet
-        /*
-        Map<String,String> h = new HashMap<String,String>();
-        h.put("measurement_type","WT");
-        h.put("display_name","WT");
-        h.put("value_name","WT");
-
-        FlowSheetItem fsi = new FlowSheetItem( h);
-        m.addListItem(fsi);
-*/
         MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
         String name = templateConfig.addFlowsheet(m);
         m.loadRuleBase();
@@ -474,6 +436,8 @@ public class FlowSheetCustom2Action extends ActionSupport {
         fsuc.setCreatedDate(new Date());
         flowSheetUserCreatedDao.persist(fsuc);
 
-        return "newflowsheet";
+        request.setAttribute("flowsheet", fsuc.getName());
+        request.setAttribute("displayName", fsuc.getDisplayName());
+        return SUCCESS;
     }
 }

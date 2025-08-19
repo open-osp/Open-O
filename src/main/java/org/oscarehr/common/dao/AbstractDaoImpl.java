@@ -28,7 +28,9 @@
 package org.oscarehr.common.dao;
 
 import java.util.List;
+import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -65,6 +67,14 @@ public abstract class AbstractDaoImpl<T extends AbstractModel<?>> implements Abs
     public void merge(AbstractModel<?> o) {
         entityManager.merge(o);
     }
+
+	/**
+	 * Flushes the persistence context.
+	 * This forces any pending changes to be synchronized with the database immediately.
+	 */
+	public void flush() {
+		entityManager.flush();
+	}
 
     /**
      * aka create
@@ -177,6 +187,37 @@ public abstract class AbstractDaoImpl<T extends AbstractModel<?>> implements Abs
     public T find(int id) {
         return (entityManager.find(modelClass, id));
     }
+
+	/**
+	 * Finds an entity by its primary key and detaches it from the persistence context.
+	 * <p>
+	 * This method retrieves an entity from the database based on the provided `id`.  After retrieval,
+	 * the entity is detached from the persistence context. This means that subsequent changes to the entity
+	 * will not be tracked or automatically persisted to the database. It is useful when you need to work with
+	 * an entity outside the scope of a transaction without affecting the database state.
+	 *
+	 * @param id The primary key of the entity to retrieve.
+	 * @return The detached entity, or `null` if no entity with the given `id` exists.
+	 */
+	@Override
+	public T findDetached(Object id) {
+		T t = this.entityManager.find(this.modelClass, id);
+
+		if (Objects.nonNull(t))
+			this.detach(t);
+
+		return t;
+	}
+
+	/**
+	 * Detaches the given entity from the persistence context.
+	 *  Changes made to the entity after detachment will not be synchronized with the database.
+	 * @param t the entity to detach
+	 */
+	@Override
+	public void detach(@Nonnull T t) {
+		this.entityManager.detach(t);
+	}
 
     /**
      * Check if entity exists in the current transaction context.

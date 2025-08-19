@@ -45,6 +45,7 @@
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%@page import="oscar.OscarProperties"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%
 	if(session.getValue("user") == null) response.sendRedirect("${ pageContext.request.contextPath }/logout.jsp");
@@ -1003,7 +1004,7 @@ if(temp.equals("diab2") || temp.equals("chf")) {
         <% for (int i = 0; i < comments.size(); i++){
             String str = (String) comments.get(i);
         %>
-        <li><%=str%></li>
+        <li><%=Encode.forHtmlContent(str)%></li>
         <% }%>
     </ol>
 </div>

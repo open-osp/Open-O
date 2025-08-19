@@ -231,24 +231,63 @@
     <head>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.editappointment.title"/></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="${ pageContext.request.contextPath }/css/bootstrap.css" rel="stylesheet" type="text/css">
-        <!-- Bootstrap 2.3.1 -->
 
-        <link href="${ pageContext.request.contextPath }/css/datepicker.css" rel="stylesheet">
-        <link href="${ pageContext.request.contextPath }/css/bootstrap-responsive.css" rel="stylesheet">
-        <link href="${ pageContext.request.contextPath }/css/font-awesome.min.css" rel="stylesheet">
-        <link href="${ pageContext.request.contextPath }/css/helpdetails.css" rel="stylesheet">
-        <link href="${ pageContext.request.contextPath }/library/jquery/jquery-ui.theme-1.12.1.min.css"
-              rel="stylesheet">
-        <link href="${ pageContext.request.contextPath }/library/jquery/jquery-ui.structure-1.12.1.min.css"
-              rel="stylesheet">
 
-        <script src="${ pageContext.request.contextPath }/js/global.js"></script>
+    <link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <%--<link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">--%>
+    <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css" rel="stylesheet">
         <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
-        <script src="${pageContext.request.contextPath}/library/jquery/jquery-migrate-3.4.0.js"></script>
         <script src="${ pageContext.request.contextPath }/library/jquery/jquery-ui-1.12.1.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script>
+
+    <script src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script src="<%= request.getContextPath() %>/js/checkDate.js"></script>
+    <script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
         <style>
+
+    :root *:not(h2):not(h4):not(.input-group-btn .btn) {
+        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+        font-size: 12px;
+        overscroll-behavior: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        line-height: 1 !important;
+    }
+
+    .form-wrapper {
+        display:flex;
+    }
+
+    * table tr td, * table {
+        border:none !important;
+    }
+
+    .panel {
+       margin: 0 !important;
+    }
+
+    .panel-body {
+        padding: 10px !important;
+    }
+
+    .ui-selectmenu-button.ui-button {
+        width: 100% !important;
+    }
+
+    .ui-button {
+        padding:10px !important;
+    }
+
+    .ui-icon {
+        width: 12px !important;
+        height: 12px !important;
+    }
+
+    textarea {
+        width: 100%;
+    }
+
             body, html {
                 --color: #945;
                 --size: 2rem;
@@ -271,32 +310,6 @@
                 padding: var(--margin) var(--margin) var(--margin) var(--marginLeft);
                 transition: backgroundImage 0.25s;
             }
-
-        </style>
-        <!-- override styles for ui select menu -->
-        <style>
-            .ui-selectmenu-button.ui-button {
-                background-color: white;
-                width: 190px;
-                margin-bottom: 10px;
-
-            }
-
-            .ui-icon-triangle-1-s {
-                border-style: solid;
-                border-width: 0.142em 0.142em 0 0;
-                content: '';
-                display: inline-block;
-                height: 0.33em;
-                left: 0.6em;
-                position: relative;
-                top: 0.17em;
-                transform: rotate(135deg);
-                vertical-align: top;
-                width: 0.34em;
-
-            }
-
         </style>
 
         <% if (bMultisites) { %>
@@ -336,14 +349,8 @@
                 }
             }
 
-        </script>
 
-        <link rel="stylesheet" href="appointmentstyle.css" type="text/css">
-        <script>
             jQuery.noConflict();
-        </script>
-        <oscar:customInterface section="editappt"/>
-        <script>
 
             function toggleView() {
                 showHideItem('editAppointment');
@@ -619,9 +626,6 @@
                 }
             }
 
-        </script>
-
-        <script>
             function parseSearch() {
                 // sane defaults
                 document.getElementById("search_mode").value = 'search_name';
@@ -676,10 +680,6 @@
                 }
             }
 
-
-        </script>
-        <script>
-
             jQuery(document).ready(function () {
                 var belowTbl = jQuery("#belowTbl");
                 if (belowTbl != null && belowTbl.length > 0 && belowTbl.find("tr").length === 2) {
@@ -687,7 +687,6 @@
                 }
             });
             jQuery(document).ready(function () {
-                jQuery(document).tooltip();
 
                 var url = "<%= request.getContextPath() %>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=true";
 
@@ -777,14 +776,13 @@
         </script>
     </head>
     <body onload="setfocus();updateTime();locale()">
-    <!-- The mobile optimized page is split into two sections: viewing and editing an appointment
-         In the mobile version, we only display the edit section first if we are returning from a search -->
-    <div id="editAppointment" style="display:<%= (false && bFirstDisp) ? "none":"block"%>;">
-        <form name="EDITAPPT" METHOD="post" ACTION="appointmentcontrol.jsp"
-              onSubmit="return(onSub())"><input type="hidden"
-                                                name="displaymode" value="">
+
+<div id="editAppointment" >
+    <div class="container" >
+<form name="EDITAPPT" METHOD="post" class="form-inline" ACTION="appointmentcontrol.jsp" onSubmit="return(onSub())">
+    <input type="hidden" name="displaymode" value="">
             <div class="header deep">
-                <div class="time" id="header"><H4>
+        <div class="time" id="header"><h4>
                     <!-- We display a shortened title for the mobile version -->
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.editappointment.msgMainLabel"/>
 
@@ -803,11 +801,9 @@
                     <% }
                     }
                     %>
-                </H4>
+</h4>
                 </div>
-                <a href="javascript:toggleView();" id="viewButton" class="leftButton top">
-                    <fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.editappointment.btnView"/>
-                </a>
+
             </div>
 
                     <%
@@ -820,7 +816,7 @@
 	} else {
 
 %>
-            </H4>
+</h4>
     </div>
 
     </div>
@@ -868,18 +864,27 @@
         } else if (!request.getParameter("doctor_no").equals("")) {
             doctorNo = request.getParameter("doctor_no");
         }
+
+	/* null check because demo.getProvider and/or request.getParameter("doctor_no") can
+     * BOTH return a null value that will cause the entire page to crash
+     */
+	if (doctorNo == null) {
+		doctorNo = "";
+    }
     %>
 
 
-    <div class="container-fluid well">
-        <div class="span6">
-            <table>
+
+
+    <div class="well">
+        <div class="form-wrapper">
+    <table class="table table-condensed table-responsive">
                 <tr>
                     <td>
                         <label for="date"><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formDate"/>:</label>
                     </td>
                     <td>
-                        <input type="date" name="appointment_date" id="date"
+                <input type="date" class="form-control" name="appointment_date" id="date"
                                value="<%=bFirstDisp?ConversionUtils.toDateString(appt.getAppointmentDate()):strApptDate%>"
                         >
                     </td>
@@ -889,7 +894,7 @@
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formStartTime"/>:</label>
                     </td>
                     <td>
-                        <input type="time" name="start_time"
+                <input type="time" name="start_time" class="form-control"
                                value="<%=bFirstDisp?ConversionUtils.toTimeStringNoSeconds(appt.getStartTime()):request.getParameter("start_time")%>"
                                onChange="checkTimeTypeIn(this);updateTime();">
                     </td>
@@ -925,7 +930,7 @@
                                   value="<%=bFirstDisp?ConversionUtils.toTimeStringNoSeconds(appt.getEndTime()):request.getParameter("end_time")%>"
                     >
 
-                        <input type="number" name="duration" id="duration"
+				<input type="number" name="duration" id="duration" class="form-control"
                                value="<%=request.getParameter("duration")!=null?(request.getParameter("duration").equals(" ")||request.getParameter("duration").equals("")||request.getParameter("duration").equals("null")?(""+everyMin) :request.getParameter("duration")):(""+everyMin)%>"
                                onblur="calculateEndTime();">
                     </td>
@@ -950,7 +955,7 @@
                                value="<fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.editappointment.btnSearch"/>">
                     </td>
                     <td>
-                        <input type="text" name="keyword" id="keyword"
+            	<input type="text" name="keyword" id="keyword" class="form-control"
                                value="<%=Encode.forHtmlAttribute(bFirstDisp?nameSb.toString():request.getParameter("name"))%>"
                                placeholder="<fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formName"/>">
                     </td>
@@ -960,7 +965,7 @@
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formReason"/>:</label>
                     </td>
                     <td>
-                        <select name="reasonCode">
+				<select name="reasonCode" class="form-control">
                             <%
                                 String rCode = bFirstDisp && appt.getReasonCode() != null ? appt.getReasonCode().toString() : request.getParameter("reasonCode");
                                 pageContext.setAttribute("rCode", rCode);
@@ -985,11 +990,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td>
-                        <textarea id="reason" name="reason" maxlength="80" rows="8"
-                                  oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
-                                  onfocus='this.style.height = "";this.style.height = this.scrollHeight + "px"'><%=Encode.forHtmlContent(bFirstDisp ? appt.getReason() : request.getParameter("reason"))%></textarea>
+            <td></td><td>
+				<textarea id="reason" class="form-control" name="reason" maxlength="80" rows="8" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' onfocus='this.style.height = "";this.style.height = this.scrollHeight + "px"'><%=Encode.forHtmlContent(bFirstDisp?appt.getReason():request.getParameter("reason"))%></textarea>
 
                     </td>
                 </tr>
@@ -1009,8 +1011,7 @@
                                     : bMoreAddr ? ApptUtil.getColorFromLocation(props.getProperty("scheduleSiteID", ""), props.getProperty("scheduleSiteColor", ""), loc) : "white";
 
                             if (bMultisites) { %>
-                        <select tabindex="4" name="location" style="background-color: <%=colo%>"
-                                onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
+				        <select tabindex="4" name="location" class="form-control" style="background-color: <%=colo%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
                             <%
                                 StringBuilder sb = new StringBuilder();
                                 for (Site s : sites) {
@@ -1029,7 +1030,7 @@
                             isSiteSelected = true;
                             if (locationEnabled) {
                         %>
-                        <select name="location">
+		<select name="location" class="form-control">
                             <%
                                 String location = Encode.forJava(bFirstDisp ? (appt.getLocation()) : request.getParameter("location"));
                                 if (programs != null && !programs.isEmpty()) {
@@ -1044,8 +1045,8 @@
                             %>
                         </select>
                         <% } else { %>
-                        <input type="text" name="location" tabindex="4"
-                               value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getLocation():request.getParameter("location"))%>">
+		        <input type="text" class="form-control" name="location" tabindex="4"
+                       value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getLocation():request.getParameter("location"))%>" >
                         <% } %>
                         <% } %>
                     </td>
@@ -1056,7 +1057,7 @@
                     </td>
                     <td>
                         <% String lastCreatorNo = bFirstDisp ? (appt.getCreator()) : request.getParameter("user_id"); %>
-                        <input type="text" name="user_id" value="<%=Encode.forHtmlAttribute(lastCreatorNo)%>" readonly>
+                <input type="text" class="form-control" name="user_id" value="<%=Encode.forHtmlAttribute(lastCreatorNo)%>" readonly >
                     </td>
                 </tr>
                 <%
@@ -1091,8 +1092,12 @@
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.CreateDate"/>:</label>
                     </td>
                     <td>
-                        <input type="hidden" name="createDate" value="<%=origDate%>">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <input type="hidden" class="form-control" name="createDate" value="<%=origDate%>">
                         <%=dateString1%>
+                    </div>
+                </div>
                     </td>
                 </tr>
                 <% if (pros.isPropertyActive("mc_number")) {
@@ -1102,17 +1107,14 @@
                         <label for="appt_mc_number"><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formMC"/>:</label>
                     </td>
                     <td>
-                        <input type="text" name="appt_mc_number" id="appt_mc_number"
-                               value="<%=bFirstDisp?mcNumber:Encode.forHtmlAttribute(request.getParameter("appt_mc_number"))%>"/>
+                <input type="text" class="form-control" name="appt_mc_number" id="appt_mc_number" value="<%=bFirstDisp?mcNumber:Encode.forHtmlAttribute(request.getParameter("appt_mc_number"))%>" />
                     </td>
                 </tr>
                 <% } %>
 
             </table>
-        </div>
 
-        <div class="span6">
-            <table>
+    <table class="table table-condensed table-responsive">
                 <tr>
                     <td>
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formStatus"/>:</label>
@@ -1122,9 +1124,7 @@
 
                             if (strEditable != null && strEditable.equalsIgnoreCase("yes")) { %>
 
-                        <select name="status"
-                                style="background-color:<%=((AppointmentStatus)allStatus.get(curSelect)).getColor()%>"
-                                onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor'>
+                <select name="status" class="form-control" style="background-color:<%=((AppointmentStatus)allStatus.get(curSelect)).getColor()%>" onchange='this.style.backgroundColor=this.options[this.selectedIndex].style.backgroundColor' >
                             <% for (int i = 0; i < allStatus.size(); i++) { %>
                             <option class="<%=((AppointmentStatus)allStatus.get(i)).getStatus()%>"
                                     style="background-color:<%=((AppointmentStatus)allStatus.get(i)).getColor()%>"
@@ -1135,10 +1135,10 @@
                         </select> <%
                     } else {
                         if (importedStatus == null || importedStatus.trim().equals("")) { %>
-                        <input type="text" name="status" value="<%=statusCode%>"> <%
+              	<input type="text" class="form-control" name="status" value="<%=statusCode%>" > <%
                     } else { %>
-                        <input type="text" name="status" value="<%=statusCode%>">
-                        <input type="text" TITLE="Imported Status" value="<%=importedStatus%>" readonly> <%
+                <input type="text" class="form-control" name="status" value="<%=statusCode%>" >
+                <input type="text"  class="form-control" TITLE="Imported Status" value="<%=importedStatus%>" readonly> <%
                             }
                         }
                     %>
@@ -1147,25 +1147,23 @@
                 <tr>
                     <td>
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formType"/>:</label>
-                        <!-- <input type="button" class="btn" name="typeButton" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formType"/>" style="margin-bottom:10px;"  onClick="openTypePopup();"> -->
                     </td>
                     <td>
-                        <!--<input type="text" name="type"
-                    value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getType():request.getParameter("type").equals("")?"":request.getParameter("type"))%>" >-->
-                        <select name="type" id="type"
+                        <select name="type" class="form-control" id="type"
                                 title="<fmt:setBundle basename="oscarResources"/><fmt:message key="billing.billingCorrection.msgSelectVisitType"/>">
-                            <option data-dur="" data-reason=""></option><!-- important leave a blank top entry  -->
+                        <option data-dur="" data-reason=""></option><!-- important leave a blank top entry  -->
 
-                            <% AppointmentTypeDao appDao = (AppointmentTypeDao) SpringUtils.getBean(AppointmentTypeDao.class);
+        <% AppointmentTypeDao appDao = SpringUtils.getBean(AppointmentTypeDao.class);
                                 List<AppointmentType> types = appDao.listAll();
-                                for (int j = 0; j < types.size(); j++) {
+                for(AppointmentType type : types) {
                             %>
-                            <option data-dur="<%= types.get(j).getDuration() %>"
-                                    data-reason="<%= Encode.forHtmlAttribute(types.get(j).getReason()) %>"
-                                    data-loc="<%= Encode.forHtmlAttribute(types.get(j).getLocation()) %>"
-                                    data-notes="<%= Encode.forHtmlAttribute(types.get(j).getNotes()) %>"
-                                    data-resources="<%= Encode.forHtmlAttribute(types.get(j).getResources()) %>">
-                                <%=Encode.forHtml(types.get(j).getName()) %>
+                    <option data-dur="<%= type.getDuration() %>"
+                            data-reason="<%= Encode.forHtmlAttribute(type.getReason()) %>"
+                            data-loc="<%= Encode.forHtmlAttribute(type.getLocation()) %>"
+                            data-notes="<%= Encode.forHtmlAttribute(type.getNotes()) %>"
+                            data-resources="<%= Encode.forHtmlAttribute(type.getResources()) %>"
+                            <%= type.getName().equalsIgnoreCase(appt.getType()) ? "selected" : ""%>>
+                        <%=Encode.forHtml(type.getName())%>
                             </option>
                             <% } %>
                         </select>
@@ -1176,7 +1174,7 @@
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formDoctor"/>:</label>
                     </td>
                     <td>
-                        <input type="text" readonly name="doctorNo" id="mrp"
+                <input type="text" readonly name="doctorNo" id="mrp" class="form-control"
                                value="<%=StringEscapeUtils.escapeHtml(providerBean.getProperty(doctorNo,""))%>">
                     </td>
                 </tr>
@@ -1187,7 +1185,7 @@
                             <fmt:setBundle basename="oscarResources"/><fmt:message key="global.master"/></a></label>
                     </td>
                     <td>
-                        <input type="text" name="demographic_no" id="demographic_no"
+                <input type="text" name="demographic_no" id="demographic_no" class="form-control"
                                ONFOCUS="onBlockFieldFocus(this)" readonly
                                value="<%=bFirstDisp?( (appt.getDemographicNo())==0?"":(""+appt.getDemographicNo()) ):request.getParameter("demographic_no")%>">
                     </td>
@@ -1197,9 +1195,8 @@
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formChartNo"/>:</label>
                     </td>
                     <td>
-                        <input type="text" name="chart_no"
-                               readonly
-                               value="<%=bFirstDisp?StringUtils.trimToEmpty(chartno):request.getParameter("chart_no")%>"
+                <input type="text" name="chart_no" class="form-control"
+                    readonly value="<%=bFirstDisp?StringUtils.trimToEmpty(chartno):request.getParameter("chart_no")%>"
                         >
                     </td>
                 </tr>
@@ -1208,9 +1205,7 @@
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formNotes"/>:</label>
                     </td>
                     <td>
-                        <textarea name="notes" maxlength="255" rows="9"
-                                  oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
-                                  onfocus='this.style.height = "";this.style.height = this.scrollHeight + "px"'><%=Encode.forHtmlContent(bFirstDisp ? appt.getNotes() : request.getParameter("notes"))%></textarea>
+				<textarea name="notes" class="form-control" maxlength="255" rows="9" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' onfocus='this.style.height = "";this.style.height = this.scrollHeight + "px"'><%=Encode.forHtmlContent(bFirstDisp?appt.getNotes():request.getParameter("notes"))%></textarea>
                     </td>
                 </tr>
                 <tr>
@@ -1218,7 +1213,7 @@
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formResources"/>:</label>
                     </td>
                     <td>
-                        <input type="text" name="resources" tabindex="5"
+                <input type="text" name="resources" tabindex="5" class="form-control"
                                value="<%=Encode.forHtmlAttribute(bFirstDisp?appt.getResources():request.getParameter("resources"))%>">
                     </td>
                 </tr>
@@ -1239,8 +1234,7 @@
                                 }
                             }
                         %>
-                        <input type="text" readonly
-                               value="<%=lastCreatorNo%>">
+                <input type="text" readonly class="form-control" value="<%=lastCreatorNo%>" >
                     </td>
                 </tr>
                 <tr>
@@ -1248,6 +1242,8 @@
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formLastTime"/>:</label>
                     </td>
                     <td>
+                <div class="panel panel-default">
+                    <div class="panel-body">
                         <input type="hidden" name="lastcreatedatetime"
                                value="<%=Encode.forHtmlContent(bFirstDisp?lastDateTime:request.getParameter("lastcreatedatetime"))%>"
                         > <%=Encode.forHtmlContent(dateString2)%>
@@ -1258,6 +1254,8 @@
                                value="<%=Encode.forHtmlAttribute(userlastname+", "+userfirstname)%>">
                         <input type="hidden" name="remarks" value="<%=Encode.forHtmlAttribute(remarks)%>">
                         <input type="hidden" name="appointment_no" value="<%=appointment_no%>">
+                    </div>
+                </div>
                     </td>
                 </tr>
                 <tr>
@@ -1280,7 +1278,7 @@
                                 }
                             }
                         %>
-                        <input type="checkbox" name="urgency" id="urgency" value="critical" <%=urgencyChecked%> >
+            	<input type="checkbox" class="checkbox-inline" name="urgency" id="urgency" value="critical" <%=urgencyChecked%> >
                     </td>
                 </tr>
                 <% String emailReminder = pros.getProperty("emailApptReminder");
@@ -1290,7 +1288,7 @@
                         <label><fmt:setBundle basename="oscarResources"/><fmt:message key="Appointment.formEmailReminder"/>:</label>
                     </td>
                     <td>
-                        <input type="checkbox" name="emailPt" value="email reminder">
+                <input type="checkbox" class="checkbox-inline" name="emailPt" value="email reminder">
                     </td>
                 </tr>
                 <% } else { %>
@@ -1301,8 +1299,6 @@
                 <% }%>
             </table>
         </div>
-
-
         <% if (isSiteSelected) { %>
         <table class="buttonBar deep">
             <tr>
@@ -1360,7 +1356,9 @@
         </table>
         <% } %>
 
+
     </div>
+
     <div id="bottomInfo">
         <table style="width:95%;">
             <tr>
@@ -1374,7 +1372,6 @@
                 <% } %>
             </tr>
         </table>
-        <hr>
 
         <% if (isSiteSelected) { %>
         <table style="width:95%; padding:3px;" id="belowTbl">
@@ -1437,8 +1434,7 @@
 
 
     </div>
-    </FORM>
-    </div> <!-- end of edit appointment screen -->
+
 
     <%
         String formTblProp = props.getProperty("appt_formTbl");
@@ -1566,6 +1562,8 @@
         <%--    </div>--%>
         <%--</div>--%>
 
+</div> <!-- end of edit appointment screen -->
+</form>
     </body>
 
 </html>

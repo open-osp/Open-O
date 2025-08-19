@@ -427,4 +427,15 @@ public class PrescriptionManagerImpl implements PrescriptionManager {
 
     }
 
+    @Override
+    public boolean setPrescriptionSignature(LoggedInInfo loggedInInfo, int scriptNo, Integer digitalSignatureId) {
+
+        Prescription prescription = prescriptionDao.find(scriptNo);
+        prescription.setDigitalSignatureId(digitalSignatureId);
+
+        prescriptionDao.merge(prescription);
+
+        return true;
+}
+
 }

@@ -24,15 +24,17 @@
  */
 package org.oscarehr.web;
 
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-
 import org.oscarehr.common.dao.CasemgmtNoteLockDao;
+import org.oscarehr.common.exception.UserSessionNotFoundException;
 import org.oscarehr.common.model.CasemgmtNoteLock;
+import org.oscarehr.managers.UserSessionManager;
+import org.oscarehr.managers.UserSessionManagerImpl;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import java.util.Enumeration;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
 public class OscarSessionListener implements HttpSessionListener {
 
@@ -54,6 +56,17 @@ public class OscarSessionListener implements HttpSessionListener {
 
             casemgmtNoteLockDao.remove(lock.getId());
         }
+
+		HttpSession session = se.getSession();
+		Integer userSecurityCode = (Integer) session.getAttribute(UserSessionManagerImpl.KEY_USER_SECURITY_CODE);
+		if (userSecurityCode != null) {
+			try {
+				UserSessionManager userSessionManager = SpringUtils.getBean(UserSessionManager.class);
+				userSessionManager.unregisterUserSession(userSecurityCode);
+			} catch (UserSessionNotFoundException e) {
+				MiscUtils.getLogger().warn("Failed to unregister session on destroy: {}", e.getMessage());
+			}
+		}
     }
 
 }

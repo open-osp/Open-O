@@ -46,10 +46,8 @@ import oscar.oscarDemographic.data.RxInformation;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
 
 /**
  * Manager class to access data regarding prescriptions.
@@ -77,6 +75,7 @@ public class RxManagerImpl implements RxManager {
      * @param info          details regarding the current user
      * @param demographicNo the demographic to get current drugs for.
      * @param status        the status to filter on the meds, one of {ALL, CURRENT, ARCHIVED}
+      * @param status        the status to filter on the meds, one of {ALL, CURRENT, ARCHIVED}
      * @return a list of the drugs that are marked as current in the demographics record.
      * @throws UnsupportedOperationException when a status that is not supported is requested.
      */
@@ -656,8 +655,38 @@ public class RxManagerImpl implements RxManager {
 
     }
 
+    @Override
+    public boolean archiveDrug(LoggedInInfo info, int drugId, int demographicId, String reason) {
+        // Check that this user is allowed to write to the demographic's
+        // prescribing information.
+        this.writeCheck(info, demographicId);
+
+        Drug drug = this.drugDao.find(drugId);
+
+        if (Objects.isNull(drug)) {
+            logger.info("No drug with drugId: {} found, failed to archive.", drugId);
+            return false;
+        } else if (drug.getDemographicId() != demographicId) { //check to make sure demographic matches drug.
+            logger.info("Drug demographic ({}) does not match input demographic ({}), failed to archive.",
+                    drug.getDemographicId(), demographicId);
+            return false;
+        }
+
+        drug.setArchived(true);
+        drug.setArchivedReason(reason);
+        drug.setArchivedDate(new Date());
+
+        // persist the change to the database.
+        this.drugDao.merge(drug);
+
+        LogAction.addLogSynchronous(info, "RxManager.archiveDrug",
+                "providerNo=" + info.getLoggedInProviderNo()
+                        + " drug.brandName=" + drug.getBrandName()
+                        + " demographicNo=" + drug.getDemographicId());
+
+        return true;
+    }
 
     // statuses for drugs
 
 }
- 

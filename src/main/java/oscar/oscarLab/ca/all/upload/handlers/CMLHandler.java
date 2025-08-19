@@ -57,6 +57,7 @@ public class CMLHandler implements MessageHandler {
 
     private Integer labNo = null;
 
+	@Override
     public Integer getLastLabNo() {
         return labNo;
     }

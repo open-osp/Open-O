@@ -352,6 +352,11 @@
             a {
                 color: blue;
             }
+            .panel-body table tr td a {
+	            text-wrap: auto;
+	            word-wrap: anywhere;
+	            word-break: break-word;
+            }
 
         </style>
 

@@ -11,6 +11,7 @@ import java.util.List;
 import org.oscarehr.common.model.EFormData;
 import org.oscarehr.common.model.EmailAttachment;
 import org.oscarehr.common.model.EmailLog;
+import org.oscarehr.common.model.EmailLog.ChartDisplayOption;
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
 import org.oscarehr.hospitalReportManager.HRMUtil;
@@ -54,6 +55,7 @@ public class EmailNoteUtil {
         addAttachments(emailLog, noteBuilder);
         addEncryptedBody(emailLog, noteBuilder);
         addTechnicalInformation(emailLog, noteBuilder);
+        addInternalComment(emailLog, noteBuilder);
         return noteBuilder.toString();
     }
 
@@ -217,6 +219,13 @@ public class EmailNoteUtil {
         noteBuilder.append("To: ").append(getRecipientEmail()).append("\n");
         noteBuilder.append("Sent: ").append(getEmailTime()).append(" on ").append(getEmailDate()).append("\n");
         noteBuilder.append("Unique Email Log ID: ").append(emailLog.getId());
+    }
+
+    private void addInternalComment(EmailLog emailLog, StringBuilder noteBuilder) {
+        if (emailLog.getChartDisplayOption().equals(ChartDisplayOption.WITHOUT_NOTE)) { return; }
+
+        noteBuilder.append("\n\n").append("***Internal Comment***").append("\n\n");
+        noteBuilder.append(emailLog.getInternalComment());
     }
 
     private String getRecipientEmail() {

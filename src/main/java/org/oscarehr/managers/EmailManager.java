@@ -113,6 +113,7 @@ public class EmailManager {
         emailLog.setIsEncrypted(emailData.getIsEncrypted());
         emailLog.setIsAttachmentEncrypted(emailData.getIsAttachmentEncrypted());
         emailLog.setChartDisplayOption(emailData.getChartDisplayOption());
+        emailLog.setInternalComment(emailData.getInternalComment());
         emailLog.setTransactionType(emailData.getTransactionType());
         emailLog.setErrorMessage("Email was not sent successfully for unknown reasons.");
         emailLog.setAdditionalParams(emailData.getAdditionalParams());
@@ -238,6 +239,10 @@ public class EmailManager {
             emailData.setIsAttachmentEncrypted(false);
             emailData.setPassword("");
             emailData.setPasswordClue("");
+        }
+
+        if (emailData.getChartDisplayOption().equals(ChartDisplayOption.WITHOUT_NOTE)) {
+            emailData.setInternalComment("");
         }
     }
 

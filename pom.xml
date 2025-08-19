@@ -63,6 +63,22 @@
 
     <dependencyManagement>
         <dependencies>
+        <!-- JAXB dependencies for Java 21 compatibility -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.3.0.1</version>
+        </dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -70,6 +86,18 @@
                 <version>5.3.39</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Force Gson version to prevent any transitive 2.8.0 -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.10.1</version>
+            </dependency>
+            <!-- Force secure version of mina-core to fix CVE -->
+            <dependency>
+                <groupId>org.apache.mina</groupId>
+                <artifactId>mina-core</artifactId>
+                <version>2.1.10</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -261,7 +289,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>6.2.9</version>
+            <version>5.3.39</version>
         </dependency>
         <!-- throws an compilation error when removed/commented -->
         <dependency>
@@ -313,7 +341,7 @@
             and 'hcv-stubs' as they are currently utilizing xmlsec version 1.5.6.
             Thus, we need to update all dependencies together.
 
-            The GitHub Dependabot suggested to upgrade to 2.2.6 or later version, but due to the 
+            The GitHub Dependabot suggested to upgrade to 2.2.6 or later version, but due to the
             compatible issues with other dependencies as mentioned above, we are staying at 2.1.8 for now.
         -->
         <dependency>
@@ -467,7 +495,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <!-- Jackson dependencies for JSON processing -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -520,7 +548,7 @@
             <artifactId>krysalis-jCharts</artifactId>
             <version>0.7.5</version>
         </dependency>
-        
+
         <!-- cds: can be found in the local_repo folder -->
         <dependency>
             <groupId>cds</groupId>
@@ -638,6 +666,12 @@
             <groupId>org.oscarehr.ar2005</groupId>
             <artifactId>ar2005</artifactId>
             <version>1.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlbeans</groupId>
+                    <artifactId>xmlbeans</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- FOR BORN18MWBV Project - Rourke, NDDS, 18M Summary in XML format -->
@@ -664,6 +698,12 @@
             <groupId>org.oscarehr.ckd</groupId>
             <artifactId>ckd</artifactId>
             <version>1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlbeans</groupId>
+                    <artifactId>xmlbeans</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- patientSiteVisit.jar , suspect this is generated classes and should be removed as a jar in the future -->
@@ -682,8 +722,13 @@
             <version>0.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- jaxm api ... why do we need this? -->
-        <!-- can be found in the local_repo folder -->
+        <!-- JAXM API - deprecated since 2003, replaced by SAAJ -->
+        <!-- TODO: Migrate the 3 files using javax.xml.messaging.URLEndpoint to use SAAJ instead:
+             - oscar/form/study/HSFO/pageUtil/XMLTransferUtil.java
+             - oscar/form/study/FrmStudyXMLClientSend.java  
+             - org/oscarehr/oscarRx/erx/controller/ERxCommunicator.java
+             Then remove this dependency as we already have SAAJ (saaj-impl:1.3.18)
+             NOTE: Currently using old JAR from local_repo as no Maven Central version exists -->
         <dependency>
             <groupId>javax.xml</groupId>
             <artifactId>jaxm-api</artifactId>
@@ -839,10 +884,17 @@
             <version>1.78.1</version>
         </dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>5.8.16</version>
+		</dependency>
+
         <!-- AXIS2 (for OLIS) -->
-        <!-- 
-            Suggestted to upgrade to 1.8.0 or later by GitHub Dependabot, but got 
-            100+ compliation errors after upgrading, will stay at 1.5.4 now 
+        <!--
+            Suggestted to upgrade to 1.8.0 or later by GitHub Dependabot, but got
+            100+ compliation errors after upgrading, will stay at 1.5.4 now
         -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
@@ -948,6 +1000,10 @@
                 <exclusion>
                     <groupId>com.fasterxml.woodstox</groupId>
                     <artifactId>woodstox-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-transports-udp</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1175,7 +1231,7 @@
             <artifactId>PatientService</artifactId>
             <version>20161213</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt</artifactId>
@@ -1276,7 +1332,7 @@
             <artifactId>flowsheets</artifactId>
             <version>1.0</version>
         </dependency>
-        
+
         <!-- Detected as "Unused dependency" but don't remove it, it's using actually -->
         <dependency>
            <groupId>com.sun.xml.ws</groupId>
@@ -1285,28 +1341,16 @@
            <type>pom</type>
         </dependency>
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
             <version>1.3.2</version>
-        </dependency>
-        
-        <!-- Added for Tomcat 9.0.97 -->
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.3.3</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-core</artifactId>
@@ -1317,6 +1361,14 @@
             <artifactId>struts2-spring-plugin</artifactId>
             <version>2.5.33</version>
         </dependency>
+		<!-- https://mvnrepository.com/artifact/org.jboss.aerogear/aerogear-otp-java -->
+		<dependency>
+			<groupId>org.jboss.aerogear</groupId>
+			<artifactId>aerogear-otp-java</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+
     </dependencies>
 
     <build>
@@ -1453,7 +1505,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -1529,13 +1581,51 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.21.2</version>
+                <version>3.27.0</version>
                 <configuration>
-                    <targetJdk>1.8</targetJdk>
+                    <!-- Target JDK version -->
+                    <targetJdk>21</targetJdk>
+                    
+                    <!-- Custom ruleset -->
                     <rulesets>
                         <ruleset>utils/pmd_rules.xml</ruleset>
                     </rulesets>
+                    
+                    <!-- Analysis configuration -->
+                    <includeTests>false</includeTests>
+                    <minimumTokens>100</minimumTokens>
+                    <printFailingErrors>true</printFailingErrors>
+                    <linkXRef>false</linkXRef>
+                    
+                    <!-- Performance settings -->
+                    <analysisCache>true</analysisCache>
+                    <analysisCacheLocation>${project.build.directory}/pmd/pmd.cache</analysisCacheLocation>
+                    
+                    <!-- Output formats -->
+                    <format>html</format>
+                    <outputDirectory>${project.build.directory}/pmd</outputDirectory>
+                    
+                    <!-- Exclude generated code and known legacy files -->
+                    <excludeRoots>
+                        <excludeRoot>target/generated-sources</excludeRoot>
+                    </excludeRoots>
+                    <excludes>
+                        <exclude>**/generated/**</exclude>
+                        <exclude>**/*_.java</exclude>
+                    </excludes>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sourceforge.pmd</groupId>
+                        <artifactId>pmd-core</artifactId>
+                        <version>7.7.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>net.sourceforge.pmd</groupId>
+                        <artifactId>pmd-java</artifactId>
+                        <version>7.7.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -1557,6 +1647,15 @@
                         <oscar.dbinit.skip>${oscar.dbinit.skip}</oscar.dbinit.skip>
                         <buildDirectory>${project.build.directory}</buildDirectory>
                     </systemPropertyVariables>
+                    <!-- Java 21 compatibility flags for JAXB -->
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                        --add-opens java.base/sun.reflect=ALL-UNNAMED
+                        --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                        --add-opens java.base/java.io=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                    </argLine>
                 </configuration>
             </plugin>
 
