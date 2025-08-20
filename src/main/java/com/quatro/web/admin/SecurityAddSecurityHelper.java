@@ -91,6 +91,8 @@ public class SecurityAddSecurityHelper {
 
 		if (request.getParameter("enableMfa") != null && request.getParameter("enableMfa").equals("1")) {
 			s.setUsingMfa(Boolean.TRUE);
+			s.setBLocallockset(0);
+			s.setBRemotelockset(0);
 		} else {
 			s.setUsingMfa(Boolean.FALSE);
 		}

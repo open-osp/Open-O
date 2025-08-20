@@ -72,7 +72,13 @@ public class ConsultationRequestDaoImpl extends AbstractDaoImpl<ConsultationRequ
         
         public List<ConsultationRequest> getConsults(String team, boolean showCompleted, Date startDate, Date endDate, String orderby, String desc, String searchDate, Integer offset, Integer limit) {
 
-        	StringBuilder sql = new StringBuilder("select cr from ConsultationRequest cr left outer join cr.professionalSpecialist specialist, ConsultationServices service, Demographic d left outer join d.provider p where d.DemographicNo = cr.demographicId and service.id = cr.serviceId ");
+        	StringBuilder sql = new StringBuilder("SELECT cr " +
+					"FROM ConsultationRequest cr " +
+                    "LEFT JOIN cr.professionalSpecialist specialist " +
+                    "LEFT JOIN ConsultationServices service ON cr.serviceId = service.serviceId " +
+                    "LEFT JOIN ConsultationRequestExt ext ON cr.id = ext.requestId AND ext.key = 'ereferral_service' " +
+					"LEFT JOIN Demographic d on cr.demographicId = d.DemographicNo " +
+					"LEFT JOIN Provider p on d.ProviderNo = p.ProviderNo WHERE 1=1 ");
 
             if( !showCompleted ) {
                sql.append("and cr.status != 4 ");
