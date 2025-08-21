@@ -370,8 +370,7 @@ public class Download2Action extends ActionSupport {
 
             }
             //----------end of saving file
-            String errorMessage = McedtMessageCreator.downloadResultToString(downloadResult);
-            addActionError(getText("resourceAction.submit.success", new String[]{errorMessage}));
+            addActionMessage(getText("resourceAction.submit.success", new String[]{McedtMessageCreator.downloadResultToString(downloadResult)}));
 
         } catch (Exception e) {
             logger.error("Unable to load resource list ", e);

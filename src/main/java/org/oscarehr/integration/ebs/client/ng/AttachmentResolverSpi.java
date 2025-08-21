@@ -53,7 +53,6 @@ public class AttachmentResolverSpi extends ResourceResolverSpi {
 	 * 
 	 * @return false, indicating this resolver is not thread-safe.
 	 */
-    @Override
     public boolean engineIsThreadSafe() {
         return false;
     }

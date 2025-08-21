@@ -188,7 +188,7 @@
     <div id="first"
          class="greyBox" <%=((tab == null || tab.equals("first")) ? "style='display:block;'" : "style='display:none;'") %> >
         <div class="center">
-            <form action="${pageContext.request.contextPath}/mcedt/kaimcedt.do" method="post" styleId="form">
+            <form action="${pageContext.request.contextPath}/mcedt/kaimcedt.do" method="post" id="form">
                 <table>
                     <tr>
                         <input id="method" name="method" type="hidden" value=""/>

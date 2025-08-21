@@ -116,7 +116,7 @@
         </div>
 
         <div class="center" style="width:45%">
-            <form action="${pageContext.request.contextPath}/mcedt/kaichpass.do" method="post" styleId="form">
+            <form action="${pageContext.request.contextPath}/mcedt/kaichpass.do" method="post" id="form">
                 <input id="method" name="method" type="hidden" value=""/>
                 <table class="password">
                     <tr>

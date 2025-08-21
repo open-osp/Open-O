@@ -250,7 +250,7 @@
 <c:set var="resourceListSent" value="${sessionScope.resourceListSent}"/>
 <c:set var="resultSize" value="${sessionScope.resultSize}"/>
 
-<form action="${pageContext.request.contextPath}/mcedt/resourceInfo" method="post" styleId="formSent">
+<form action="${pageContext.request.contextPath}/mcedt/resourceInfo.do" method="post" id="formSent">
     <jsp:include page="../messages.jsp"/>
     <input id="methodSent" name="method" type="hidden" value=""/>
     <div>
@@ -258,20 +258,19 @@
         <div>
 
             Billing Number:
-            <select name="serviceIdSent" id="serviceIdSent"
-                         class="serviceIdSent">
+            <select name="serviceIdSent" id="serviceIdSent" class="serviceIdSent">
                 <c:forEach var="r" items="${serviceIds}">
-                    <option value="${r}">
+                    <option value="${r}" ${r == serviceIdSent ? 'selected="selected"' : ''}>
                         <c:out value="${r}"/>
                     </option>
                 </c:forEach>
             </select>
+
             Resource Type:
-            <select name="resourceType" id="resourceType"
-                         class="input-xxlarge">
-                <option value=""> - All - </option>
+            <select name="resourceType" id="resourceType" class="input-xxlarge">
+                <option value="" ${resourceType == '' ? 'selected="selected"' : ''}> - All - </option>
                 <c:forEach var="r" items="${mcedtTypeList.data}">
-                    <option value="${r.resourceType}">
+                    <option value="${r.resourceType}" ${r.resourceType == resourceType ? 'selected="selected"' : ''}>
                         <c:out value="${r.resourceType}"/> -
                         <c:out value="${r.access}"/> -
                         <c:out value="${r.descriptionEn}"/>
@@ -281,21 +280,21 @@
 
             Status:
             <select name="status" id="status"> <!-- onchange="setPageNumber(1)" -->
-                <option value=""> - All - </option>
-                <c:forEach var="i" items="${mcedtResourceForm.resourceStatusValues}">
-                    <option value="${i}"></option>
+                <option value="" ${status == '' ? 'selected="selected"' : ''}> - All - </option>
+                <c:forEach var="i" items="${resourceStatusValues}">
+                    <option value="${i}" ${i == status ? 'selected="selected"' : ''}>${i}</option>
                 </c:forEach>
             </select>
 
             Page #:
             <select name="pageNo" id="pageNo">
-                <c:forEach var="i" begin="1"
-                           end="${resultSize}">
-                    <option value="${i}">
+                <c:forEach var="i" begin="1" end="${resultSize}">
+                    <option value="${i}" ${i == pageNo ? 'selected="selected"' : ''}>
                         <c:out value="${i}"/>
                     </option>
                 </c:forEach>
             </select>
+            
             <button class="noBorder blackBox flatLink font12 small" onclick="ShowSpin(true); return changeDisplay();">
                 Load Page
             </button>

@@ -84,7 +84,7 @@ public class ContextStartupListener implements javax.servlet.ServletContextListe
             WaitListEmailThread.startTaskIfEnabled();
 
             if (oscarProperties.isPropertyActive("encrypted_xml.remove_cid_prefix")) {
-                ResourceResolver.register(CidPrefixResourceResolver.class, true);
+                ResourceResolver.register(new CidPrefixResourceResolver(), true);
             }
 
             //Run some optimizations

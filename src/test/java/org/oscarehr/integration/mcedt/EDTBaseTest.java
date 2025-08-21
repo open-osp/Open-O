@@ -132,7 +132,7 @@ public abstract class EDTBaseTest {
     @BeforeClass
     public static void setUpBeforeClass() {
         Init.init();
-        ResourceResolver.register(CidPrefixResourceResolver.class, true);
+        ResourceResolver.register(new CidPrefixResourceResolver(), true);
         // Check if the Spring context (bean factory) has been initialized yet
         // Set up the context if it's null
         if(SpringUtils.getBeanFactory() == null) {

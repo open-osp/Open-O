@@ -132,7 +132,7 @@
 
             <h2>MCEDT Resources</h2>
 
-            <form action="${pageContext.request.contextPath}/mcedt/mcedt" method="post" styleId="form">
+            <form action="${pageContext.request.contextPath}/mcedt/mcedt.do" method="post" id="form">
 
                 <jsp:include page="messages.jsp"/>
 
@@ -143,33 +143,35 @@
                          style="vertical-align: middle !important;">
 
                         Resource Type:
-                        <select name="resourceType" id="resourceType"
-                                     class="input-xxlarge">
-                            <option value=""> - All - </option>
+                        <select id="resourceType" name="resourceType" class="input-xxlarge">
+                            <option value="" ${empty pageContext.request.getParameter('resourceType') ? 'selected' : ''}> - All - </option>
                             <c:forEach var="r" items="${mcedtTypeList.data}">
-                                <option value="${r.resourceType}">
-                                    <c:out value="${r.resourceType}"/> -
-                                    <c:out value="${r.access}"/> -
-                                    <c:out value="${r.descriptionEn}"/>
+                                <option value="${r.resourceType}"
+                                    ${r.resourceType == pageContext.request.getParameter('resourceType') ? 'selected' : ''}>
+                                    <c:out value="${r.resourceType}" /> -
+                                    <c:out value="${r.access}" /> -
+                                    <c:out value="${r.descriptionEn}" />
                                 </option>
                             </c:forEach>
                         </select>
 
                         Status:
-                        <select name="status" id="status">
-                            <option value=""> - All - </option>
-                            <c:forEach var="i"
-                                       items="${mcedtResourceForm.resourceStatusValues}">
-                                <option value="${i}"/>
+                        <select id="status" name="status">
+                            <option value="" ${empty pageContext.request.getParameter('status') ? 'selected' : ''}> - All - </option>
+                            <c:forEach var="i" items="${resourceStatusValues}">
+                                <option value="${i}"
+                                    ${i == pageContext.request.getParameter('status') ? 'selected' : ''}>
+                                    ${i}
+                                </option>
                             </c:forEach>
                         </select>
 
                         Page #:
-                        <select name="pageNo" id="pageNo">
-                            <c:forEach var="i" begin="1"
-                                       end="${mcedtResourceForm.detail.resultSize}">
-                                <option value="${i}">
-                                    <c:out value="${i}"/>
+                        <select id="pageNo" name="pageNo">
+                            <c:forEach var="i" begin="1" end="${detail.resultSize}">
+                                <option value="${i}"
+                                    ${i == pageContext.request.getParameter('pageNo') ? 'selected' : ''}>
+                                    ${i}
                                 </option>
                             </c:forEach>
                         </select>
@@ -192,7 +194,7 @@
                         <th></th>
                     </tr>
                     </thead>
-                    <c:forEach var="r" items="${mcedtResourceForm.detail.data}">
+                    <c:forEach var="r" items="${detail.data}">
                         <tr>
                             <td><input type="checkbox" value="${r.resourceID}"
                                        name="resourceId"/></td>

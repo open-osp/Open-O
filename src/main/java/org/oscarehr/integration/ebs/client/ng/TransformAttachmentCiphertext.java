@@ -6,6 +6,7 @@ import java.io.OutputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.Element;
 import org.apache.xml.security.c14n.CanonicalizationException;
 import org.apache.xml.security.c14n.InvalidCanonicalizerException;
 import org.apache.xml.security.exceptions.Base64DecodingException;
@@ -43,11 +44,11 @@ public class TransformAttachmentCiphertext extends TransformSpi {
 
 	/**
 	 * @see org.apache.xml.security.transforms.TransformSpi#enginePerformTransform(org.apache.xml.security.signature.XMLSignatureInput,
-	 *      java.io.OutputStream, org.apache.xml.security.transforms.Transform)
+	 *      java.io.OutputStream, Element, String, boolean)
 	 */
 	@Override
 	protected XMLSignatureInput enginePerformTransform(XMLSignatureInput input,
-			OutputStream os, Transform transformObject) throws IOException,
+			OutputStream os, Element transformObject, String baseURI, boolean secureValidation) throws IOException,
 			CanonicalizationException, InvalidCanonicalizerException,
 			TransformationException, ParserConfigurationException, SAXException {
 		

@@ -1,10 +1,13 @@
 package org.oscarehr.integration.ebs.client.ng;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.X509TrustManager;
@@ -29,6 +32,7 @@ import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.apache.xml.security.exceptions.AlgorithmAlreadyRegisteredException;
 import org.apache.xml.security.transforms.Transform;
+import org.apache.xml.security.transforms.InvalidTransformException;
 import org.apache.xml.security.utils.resolver.ResourceResolver;
 
 import ca.ontario.health.ebs.idp.IdpHeader;
@@ -236,14 +240,15 @@ public class EdtClientBuilder {
     protected void configureInInterceptor(Client client) {
         if (getConfig().isLoggingRequired()) {
             client.getEndpoint().getInInterceptors().add(new LoggingInInterceptor());
+            client.getEndpoint().getInInterceptors().add(new DownloadInInterceptor());
         }
+
         // Cache attachments for later processing
         client.getEndpoint().getInInterceptors().add(new AttachmentCachingInterceptor());
+
         // Apply WS-Security in interceptor
-        client.getEndpoint().getInInterceptors().add(
-            new WSS4JInInterceptor(newWSSInInterceptorConfiguration())
-        );
-        client.getEndpoint().getInInterceptors().add(new DownloadInInterceptor());
+        client.getEndpoint().getInInterceptors().add(new DynamicWSS4JInInterceptor(this));
+
         client.getEndpoint().getInInterceptors().add(new AttachmentCleanupInterceptor());
     }
 
@@ -252,15 +257,23 @@ public class EdtClientBuilder {
      */
     protected Map<String,Object> newWSSInInterceptorConfiguration() {
         Map<String,Object> props = new HashMap<>();
-        // Specify which security actions to perform
-        props.put(WSHandlerConstants.ACTION, getCxfOutHandlerDirectives());
-        // Callback for password retrieval
+        props.put(WSHandlerConstants.ACTION, getCxfInHandlerDirectives());
         props.put(WSHandlerConstants.PW_CALLBACK_REF, newCallback());
-        // Keystore for decryption
+        
+        // Decryption properties - more explicit in CXF 3.5+
         props.put(WSHandlerConstants.DEC_PROP_FILE, clientKeystore);
+        props.put(WSHandlerConstants.DEC_PROP_REF_ID, "decryptionProperties");
+        props.put("decryptionProperties", loadKeystoreProperties());
+        
+        // Algorithm support
         props.put(WSHandlerConstants.ALLOW_RSA15_KEY_TRANSPORT_ALGORITHM, "true");
+        props.put(WSHandlerConstants.ENC_SYM_ALGO, "http://www.w3.org/2001/04/xmlenc#aes128-cbc");
+        props.put(WSHandlerConstants.ENC_KEY_TRANSPORT, "http://www.w3.org/2001/04/xmlenc#rsa-1_5");
+        
+        // MTOM settings
         props.put(WSHandlerConstants.STORE_BYTES_IN_ATTACHMENT, "false");
         props.put(WSHandlerConstants.EXPAND_XOP_INCLUDE, "false");
+        
         return props;
     }
 
@@ -295,18 +308,16 @@ public class EdtClientBuilder {
         return props;
     }
 
-    /**
-     * @return concatenated WS-Security directives including encryption
-     */
-    protected String getCxfOutHandlerDirectives() {
-         return getCxfOutHandlerDirectivesBase() + " " + WSHandlerConstants.ENCRYPT;
+    protected String getCxfInHandlerDirectives() {
+        return WSHandlerConstants.TIMESTAMP + " "
+             + WSHandlerConstants.SIGNATURE + " "
+             + WSHandlerConstants.ENCRYPTION;  // This means "decrypt incoming encrypted content"
     }
- 
 
     /**
      * @return WS-Security directives for username token, timestamp, and signature
      */
-    protected String getCxfOutHandlerDirectivesBase() {
+    protected String getCxfOutHandlerDirectives() {
         return WSHandlerConstants.USERNAME_TOKEN + " "
              + WSHandlerConstants.TIMESTAMP     + " "
              + WSHandlerConstants.SIGNATURE;
@@ -369,15 +380,43 @@ public class EdtClientBuilder {
      */
     private static void registerAttachmentResolver() {
         if (isInitialized.compareAndSet(false, true)) {
-            ResourceResolver.register(AttachmentResolverSpi.class, true);
+            ResourceResolver.register(new AttachmentResolverSpi(), true);
             try {
                 Transform.register(
                     TransformAttachmentCiphertext.TRANSFORM_ATTACHMENT_CIPHERTEXT,
                     TransformAttachmentCiphertext.class
                 );
-            } catch (AlgorithmAlreadyRegisteredException e) {
-                // ignore if already registered
+            } catch (AlgorithmAlreadyRegisteredException | InvalidTransformException e) {
+                // ignore if already registered or invalid transform
             }
+        }
+    }
+
+    private Properties loadKeystoreProperties() {
+        Properties props = new Properties();
+
+        // Normalize path if it starts with "file:" to strip that prefix
+        String normalizedPath = clientKeystore;
+        if (normalizedPath != null && normalizedPath.startsWith("file:")) {
+            normalizedPath = normalizedPath.substring("file:".length());
+        }
+
+        // First try as classpath resource
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(clientKeystore)) {
+            if (is != null) {
+                props.load(is);
+                return props;
+            }
+        } catch (Exception e) {
+            // Log or ignore this because we will try filesystem next
+        }
+
+        // If classpath resource not found, try filesystem
+        try (InputStream is = new FileInputStream(normalizedPath)) {
+            props.load(is);
+            return props;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load keystore properties from either classpath or file system: " + clientKeystore, e);
         }
     }
 }

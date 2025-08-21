@@ -287,8 +287,8 @@ public class CategoryData {
                 + " RIGHT JOIN hl7TextInfo info ON plr.lab_no = info.lab_no"
                 + (dateSearchType.equals("receivedCreated") ? " RIGHT JOIN hl7TextMessage message ON plr.lab_no = message.lab_id" : "")
                 + " WHERE plr.lab_type = 'HL7' "
-                + (providerSearch ? " AND plr.provider_no = '" + searchProviderNo + "' " : "")
-                + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                + (providerSearch ? " AND plr.provider_no = ? " : "")
+                + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = ? ")
                 + labAbnormalSql
                 + labDateSql
                 + " AND (plr2.demographic_no IS NULL"
@@ -297,7 +297,12 @@ public class CategoryData {
 
         Connection c = DbConnectionFilter.getThreadLocalDbConnection();
         PreparedStatement ps = c.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery(sql);
+        
+        int paramIndex = 1;
+        if (providerSearch) ps.setString(paramIndex++, searchProviderNo);
+        if (!"".equals(status)) ps.setString(paramIndex++, status);
+
+        ResultSet rs = ps.executeQuery();
 
         return (rs.next() ? rs.getInt("count") : 0);
     }
@@ -305,36 +310,50 @@ public class CategoryData {
     public int getAbnormalCount(boolean isAbnormal) throws SQLException {
         ResultSet rs;
         String sql;
+        PreparedStatement ps = null;
+        Connection c = DbConnectionFilter.getThreadLocalDbConnection();
         if (patientSearch) {
             sql = " SELECT HIGH_PRIORITY COUNT(1) as count "
                     + " FROM patientLabRouting cd, demographic d, providerLabRouting plr, hl7TextInfo info "
-                    + " WHERE d.last_name" + (StringUtils.isEmpty(patientLastName) ? " IS NOT NULL " : " like '%" + patientLastName + "%'  ")
-                    + " 	AND d.first_name" + (StringUtils.isEmpty(patientFirstName) ? " IS NOT NULL " : " like '%" + patientFirstName + "%' ")
-                    + " 	AND d.hin" + (StringUtils.isEmpty(patientHealthNumber) ? " IS NOT NULL " : " like '%" + patientHealthNumber + "%' ")
-                    + " 	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                    + (providerSearch ? "AND plr.provider_no = '" + searchProviderNo + "' " : "")
+                    + " WHERE d.last_name" + (StringUtils.isEmpty(patientLastName) ? " IS NOT NULL " : " like ?  ")
+                    + " 	AND d.first_name" + (StringUtils.isEmpty(patientFirstName) ? " IS NOT NULL " : " like ? ")
+                    + " 	AND d.hin" + (StringUtils.isEmpty(patientHealthNumber) ? " IS NOT NULL " : " like ? ")
+                    + " 	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = ? ")
+                    + (providerSearch ? "AND plr.provider_no = ? " : "")
                     + " 	AND plr.lab_type = 'HL7' "
                     + " 	AND cd.lab_type = 'HL7' "
                     + " 	AND cd.lab_no = plr.lab_no "
                     + " 	AND cd.demographic_no = d.demographic_no "
                     + " 	AND info.lab_no = plr.lab_no "
                     + " 	AND result_status " + (isAbnormal ? "" : "!") + "= 'A' ";
+            ps = c.prepareStatement(sql);
+
+            int paramIndex = 1;
+            if (!StringUtils.isEmpty(patientLastName)) ps.setString(paramIndex++, "%" + patientLastName + "%");
+            if (!StringUtils.isEmpty(patientFirstName)) ps.setString(paramIndex++, "%" + patientFirstName + "%");
+            if (!StringUtils.isEmpty(patientHealthNumber)) ps.setString(paramIndex++, "%" + patientHealthNumber + "%");
+            if (!"".equals(status)) ps.setString(paramIndex++, status);
+            if (providerSearch) ps.setString(paramIndex++, searchProviderNo);
         } else if (providerSearch || !"".equals(status)) { // providerSearch
             sql = "SELECT HIGH_PRIORITY COUNT(1) as count "
                     + " FROM providerLabRouting plr, hl7TextInfo info "
-                    + " WHERE plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                    + (providerSearch ? " AND plr.provider_no = '" + searchProviderNo + "' " : " ")
+                    + " WHERE plr.status " + ("".equals(status) ? " IS NOT NULL " : " = ?")
+                    + (providerSearch ? " AND plr.provider_no = ? " : " ")
                     + " AND plr.lab_type = 'HL7'  "
                     + " AND info.lab_no = plr.lab_no"
                     + " AND result_status " + (isAbnormal ? "" : "!") + "= 'A' ";
+            ps = c.prepareStatement(sql);
+
+            int paramIndex = 1;
+            if (!"".equals(status)) ps.setString(paramIndex++, status);
+            if (providerSearch) ps.setString(paramIndex++, searchProviderNo);
         } else {
             sql = " SELECT HIGH_PRIORITY COUNT(1) as count "
                     + " FROM hl7TextInfo info "
                     + " WHERE result_status " + (isAbnormal ? "" : "!") + "= 'A' ";
+            ps = c.prepareStatement(sql);
         }
-        Connection c = DbConnectionFilter.getThreadLocalDbConnection();
-        PreparedStatement ps = c.prepareStatement(sql);
-        rs = ps.executeQuery(sql);
+        rs = ps.executeQuery();
         return (rs.next() ? rs.getInt("count") : 0);
     }
 
@@ -345,14 +364,19 @@ public class CategoryData {
                 + "LEFT JOIN providerLabRouting plr ON plr.lab_no = cd.document_no"
                 + documentJoinSql
                 + " WHERE plr.lab_type = 'DOC' "
-                + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                + (providerSearch ? " AND plr.provider_no ='" + searchProviderNo + "' " : "")
+                + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = ? ")
+                + (providerSearch ? " AND plr.provider_no = ? " : "")
                 + " AND 	cd.module_id = -1 "
                 + documentAbnormalSql
                 + documentDateSql;
         Connection c = DbConnectionFilter.getThreadLocalDbConnection();
         PreparedStatement ps = c.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery(sql);
+
+        int paramIndex = 1;
+        if (!"".equals(status)) ps.setString(paramIndex++, status);
+        if (providerSearch) ps.setString(paramIndex++, searchProviderNo);
+        ResultSet rs = ps.executeQuery();
+
         return (rs.next() ? rs.getInt("count") : 0);
     }
 
@@ -365,21 +389,29 @@ public class CategoryData {
                 + " LEFT JOIN providerLabRouting plr ON cd.lab_no = plr.lab_no"
                 + " LEFT JOIN hl7TextInfo info ON cd.lab_no = info.lab_no"
                 + (dateSearchType.equals("receivedCreated") ? " LEFT JOIN hl7TextMessage message ON cd.lab_no = message.lab_id" : "")
-                + " WHERE   d.last_name" + (StringUtils.isEmpty(patientLastName) ? " IS NOT NULL " : "  like '%" + patientLastName + "%' ")
-                + " 	AND d.first_name" + (StringUtils.isEmpty(patientFirstName) ? " IS NOT NULL " : " like '%" + patientFirstName + "%' ")
-                + " 	AND d.hin" + (StringUtils.isEmpty(patientHealthNumber) ? " IS NOT NULL " : " like '%" + patientHealthNumber + "%' ")
+                + " WHERE   d.last_name" + (StringUtils.isEmpty(patientLastName) ? " IS NOT NULL " : "  like ? ")
+                + " 	AND d.first_name" + (StringUtils.isEmpty(patientFirstName) ? " IS NOT NULL " : " like ? ")
+                + " 	AND d.hin" + (StringUtils.isEmpty(patientHealthNumber) ? " IS NOT NULL " : " like ? ")
                 + " 	AND plr.lab_type = 'HL7' "
                 + " 	AND cd.lab_type = 'HL7' "
-                + " 	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                + " 	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = ? ")
                 + (dateSearchType.equals("receivedCreated") ? " AND message.lab_id IS NOT NULL " : " AND info.lab_no IS NOT NULL ")
-                + (providerSearch ? " AND plr.provider_no = '" + searchProviderNo + "' " : "")
+                + (providerSearch ? " AND plr.provider_no = ? " : "")
                 + labAbnormalSql
                 + labDateSql
                 + " GROUP BY demographic_no, info.accessionNum ";
 
         Connection c = DbConnectionFilter.getThreadLocalDbConnection();
         PreparedStatement ps = c.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery(sql);
+
+        int paramIndex = 1;
+        if (!StringUtils.isEmpty(patientLastName)) ps.setString(paramIndex++, "%" + patientLastName + "%");
+        if (!StringUtils.isEmpty(patientFirstName)) ps.setString(paramIndex++, "%" + patientFirstName + "%");
+        if (!StringUtils.isEmpty(patientHealthNumber)) ps.setString(paramIndex++, "%" + patientHealthNumber + "%");
+        if (!"".equals(status)) ps.setString(paramIndex++, status);
+        if (providerSearch) ps.setString(paramIndex++, searchProviderNo);
+        ResultSet rs = ps.executeQuery();
+
         int totalCount = 0;
         while (rs.next()) {
             int id = rs.getInt("demographic_no");
@@ -431,18 +463,27 @@ public class CategoryData {
                 + "LEFT JOIN demographic d  ON cd.module_id = d.demographic_no "
                 + "LEFT JOIN providerLabRouting plr ON cd.document_no = plr.lab_no "
                 + documentJoinSql
-                + " WHERE   d.last_name" + (StringUtils.isEmpty(patientLastName) ? " IS NOT NULL " : " like '%" + patientLastName + "%'  ")
-                + " 	AND d.hin" + (StringUtils.isEmpty(patientHealthNumber) ? " IS NOT NULL " : " like '%" + patientHealthNumber + "%' ")
-                + " 	AND d.first_name" + (StringUtils.isEmpty(patientFirstName) ? " IS NOT NULL " : " like '%" + patientFirstName + "%' ")
+                + " WHERE   d.last_name" + (StringUtils.isEmpty(patientLastName) ? " IS NOT NULL " : " like ?  ")
+                + " 	AND d.hin" + (StringUtils.isEmpty(patientHealthNumber) ? " IS NOT NULL " : " like ? ")
+                + " 	AND d.first_name" + (StringUtils.isEmpty(patientFirstName) ? " IS NOT NULL " : " like ? ")
                 + " 	AND plr.lab_type = 'DOC' "
-                + " 	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                + (providerSearch ? "AND plr.provider_no = '" + searchProviderNo + "' " : "")
+                + " 	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = ? ")
+                + (providerSearch ? "AND plr.provider_no = ? " : "")
                 + documentAbnormalSql
                 + documentDateSql
                 + " GROUP BY demographic_no ";
         Connection c = DbConnectionFilter.getThreadLocalDbConnection();
         PreparedStatement ps = c.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery(sql);
+
+        int paramIndex = 1;
+        if (!StringUtils.isEmpty(patientLastName)) ps.setString(paramIndex++, "%" + patientLastName + "%");
+        if (!StringUtils.isEmpty(patientHealthNumber)) ps.setString(paramIndex++, "%" + patientHealthNumber + "%");
+        if (!StringUtils.isEmpty(patientFirstName)) ps.setString(paramIndex++, "%" + patientFirstName + "%");
+        if (!"".equals(status)) ps.setString(paramIndex++, status);
+        if (providerSearch) ps.setString(paramIndex++, searchProviderNo);
+
+        ResultSet rs = ps.executeQuery();
+
         int count = 0;
         while (rs.next()) {
             info = new PatientInfo(rs.getInt("demographic_no"), rs.getString("first_name"), rs.getString("last_name"));

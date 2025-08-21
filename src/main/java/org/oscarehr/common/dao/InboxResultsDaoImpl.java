@@ -191,17 +191,18 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
         //Check if the startDate is null, if a date exists then creates the SQL for the startDate
         if (startDate != null) {
             if (dateSearchType.equals("receivedCreated")) {
-                dateSql += " AND doc.contentdatetime >= '" + dateSqlFormatter.format(startDate) + "'";
+                dateSql += " AND doc.contentdatetime >= :startDate";
             } else {
-                dateSql += " AND doc.observationdate >= '" + dateSqlFormatter.format(startDate) + "'";
+                dateSql += " AND doc.observationdate >= :startDate";
             }
         }
-        //Check if the startDate is null, if a date exists then creates the SQL for the startDate
+
+        //Check if the endDate is null, if a date exists then creates the SQL for the endDate
         if (endDate != null) {
             if (dateSearchType.equals("receivedCreated")) {
-                dateSql += " AND doc.contentdatetime <= '" + dateSqlFormatter.format(endDate) + "'";
+                dateSql += " AND doc.contentdatetime <= :endDate";
             } else {
-                dateSql += " AND doc.observationdate <= '" + dateSqlFormatter.format(endDate) + "'";
+                dateSql += " AND doc.observationdate <= :endDate";
             }
         }
         String isDocAbnormalSql = "";
@@ -248,8 +249,8 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + " (SELECT plr.id, plr.lab_type, plr.lab_no, plr.status "
                         + "  FROM patientLabRouting plr2, providerLabRouting plr, hl7TextInfo info "
                         + "  WHERE plr.lab_no = plr2.lab_no "
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
-                        + "    AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
+                        + "    AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
                         + "    AND plr.lab_type = 'HL7'   "
                         + "    AND plr2.lab_type = 'HL7' "
                         + "    AND plr2.demographic_no = '0' "
@@ -260,10 +261,10 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + " SELECT plr.id, plr.lab_type, plr.lab_no, plr.status "
                         + " FROM providerLabRouting plr, ctl_document cd  "
                         + " WHERE plr.lab_type = 'DOC' "
-                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
                         + " AND cd.document_no  = plr.lab_no "
                         + " AND cd.module_id = -1 "
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
                         + " ORDER BY id DESC "
                         + " ) AS X "
                         + " LEFT JOIN demographic d "
@@ -292,29 +293,24 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + " FROM demographic d, providerLabRouting plr, document doc, "
                         + " (SELECT * FROM "
                         + " (SELECT DISTINCT plr.id, plr.lab_type  FROM providerLabRouting plr, ctl_document cd "
-                        + " WHERE 	" + " (cd.module_id = '"
-                        + demographicNo
-                        + "' "
+                        + " WHERE 	" + " (cd.module_id = :demographicNo "
                         + "	AND cd.document_no = plr.lab_no"
                         + "	AND plr.lab_type = 'DOC'  	"
-                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' )" : " )")
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : " )")
                         + " ORDER BY id DESC) AS Y"
                         + " UNION"
                         + " SELECT * FROM"
                         + " (SELECT DISTINCT plr.id, plr.lab_type  FROM providerLabRouting plr, patientLabRouting plr2"
                         + " WHERE"
                         + "	plr.lab_type = 'HL7' AND plr2.lab_type = 'HL7'"
-                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
-                        + " 	AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = '"
-                        + demographicNo
-                        + "'"
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
+                        + " 	AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = :demographicNo "
                         + " ORDER BY id DESC) AS Z"
                         + " ORDER BY id DESC "
                         + " ) AS X "
-                        + " WHERE X.lab_type = 'DOC' and X.id = plr.id and doc.document_no = plr.lab_no and d.demographic_no = '"
-                        + demographicNo + "' "
+                        + " WHERE X.lab_type = 'DOC' and X.id = plr.id and doc.document_no = plr.lab_no and d.demographic_no = :demographicNo "
                         + isDocAbnormalSql
                         + dateSql
                         + " GROUP BY doc.document_no"
@@ -340,34 +336,22 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + "		(SELECT DISTINCT plr.id, plr.lab_type, d.demographic_no "
                         + "			FROM providerLabRouting plr, ctl_document cd, demographic d "
                         + "			WHERE 	 "
-                        + "			(d.first_name like '%"
-                        + patientFirstName
-                        + "%' AND d.last_name like '%"
-                        + patientLastName
-                        + "%' AND d.hin like '%"
-                        + patientHealthNumber
-                        + "%' "
+                        + "			(d.first_name like :patientFirstName AND d.last_name like :patientLastName AND d.hin like :patientHealthNumber "
                         + "		AND cd.module_id = d.demographic_no 	AND cd.document_no = plr.lab_no	AND plr.lab_type = 'DOC' "
-                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
                         + "		) ORDER BY id DESC) AS Y "
                         + " 	UNION "
                         + "	SELECT * FROM "
                         + "		(SELECT DISTINCT plr.id, plr.lab_type, d.demographic_no "
                         + "		FROM providerLabRouting plr, patientLabRouting plr2, demographic d"
                         + (isAbnormal != null ? ", hl7TextInfo info " : " ")
-                        + "		WHERE d.first_name like '%"
-                        + patientFirstName
-                        + "%' AND d.last_name like '%"
-                        + patientLastName
-                        + "%' AND d.hin like '%"
-                        + patientHealthNumber
-                        + "%' "
+                        + "		WHERE d.first_name like :patientFirstName AND d.last_name like :patientLastName AND d.hin like :patientHealthNumber "
                         + "		AND	plr.lab_type = 'HL7' AND plr2.lab_type = 'HL7' "
                         + (isAbnormal != null ? " AND plr.lab_no = info.lab_no AND (info.result_status IS NULL OR info.result_status != 'A') "
                         : " ")
-                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
                         + " 	AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = d.demographic_no ORDER BY id DESC) AS Z "
                         + " 			ORDER BY id DESC) AS X "
                         + " 	  ) AS Z  "
@@ -399,8 +383,8 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + "LEFT JOIN ctl_document cd ON cd.document_no = doc.document_no "
                         + "LEFT JOIN demographic d ON cd.module_id = d.demographic_no "
                         + "WHERE plr.lab_type = 'DOC' "
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
-                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
+                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
                         + isDocAbnormalSql
                         + dateSql
                         + " GROUP BY doc.document_no "
@@ -427,8 +411,8 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + " RIGHT JOIN ctl_document cd ON cd.document_no = plr.lab_no AND cd.module_id = -1"
                         + " LEFT JOIN demographic d ON d.demographic_no = -1"
                         + " WHERE plr.lab_type = 'DOC' "
-                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : "")
                         + isDocAbnormalSql
                         + dateSql
                         + " GROUP BY doc.document_no"
@@ -449,14 +433,12 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     sql = "SELECT plr.id, doc.document_no, plr.status, last_name, first_name, hin, sex, module_id,"
                         + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, doc.doctype as description, date(doc.updatedatetime) "
                         + "FROM ctl_document cd, demographic d, providerLabRouting plr, document doc "
-                        + "WHERE d.demographic_no = '"
-                        + demographicNo
-                        + "' "
+                        + "WHERE d.demographic_no = :demographicNo "
                         + "	AND cd.module_id = d.demographic_no "
                         + "	AND cd.document_no = plr.lab_no "
                         + "	AND plr.lab_type = 'DOC' "
-                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : "")
                         + "	AND doc.document_no = cd.document_no "
                         + isDocAbnormalSql
                         + dateSql
@@ -478,18 +460,12 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                     sql = "SELECT plr.id, doc.document_no, plr.status, last_name, first_name, hin, sex, module_id,"
                         + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime" : "doc.observationdate") + ", plr.lab_type as doctype, doc.doctype as description, date(doc.updatedatetime) "
                         + "FROM ctl_document cd, demographic d, providerLabRouting plr, document doc "
-                        + "WHERE d.first_name like '%"
-                        + patientFirstName
-                        + "%' AND d.last_name like '%"
-                        + patientLastName
-                        + "%' AND d.hin like '%"
-                        + patientHealthNumber
-                        + "%' "
+                        + "WHERE d.first_name like :patientFirstName AND d.last_name like :patientLastName AND d.hin like :patientHealthNumber "
                         + "	AND cd.module_id = d.demographic_no "
                         + "	AND cd.document_no = plr.lab_no "
                         + "	AND plr.lab_type = 'DOC' "
-                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : "")
                         + "	AND doc.document_no = cd.document_no "
                         + isDocAbnormalSql
                         + dateSql
@@ -515,8 +491,8 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + " WHERE (cd.module_id = d.demographic_no) "
                         + " 	AND cd.document_no = plr.lab_no "
                         + " 	AND plr.lab_type = 'DOC' "
-                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : "")
                         + " 	AND doc.document_no = cd.document_no  "
                         + isDocAbnormalSql
                         + dateSql
@@ -527,8 +503,8 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + (dateSearchType.equals("receivedCreated") ? "contentdatetime" : "observationdate") + ", docdesc, updatedatetime "
                         + " FROM ctl_document cd, providerLabRouting plr, document d "
                         + " WHERE plr.lab_type = 'DOC' "
-                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : "")
                         + " AND plr.lab_no = cd.document_no " + " AND cd.module_id = -1 "
                         + " AND d.document_no = cd.document_no "
                         + isDocAbnormalSql.replaceAll("doc.", "d.")
@@ -544,9 +520,19 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
 
             logger.debug(sql);
 
-            Query q = entityManager.createNativeQuery(sql);
+            Query query = entityManager.createNativeQuery(sql);
 
-            List<Object[]> result = q.getResultList();
+            // Setting parameters for the query based on the presence of placeholders in the SQL string
+            if (startDate != null && sql.contains(":startDate")) query.setParameter("startDate", dateSqlFormatter.format(startDate));
+            if (endDate != null && sql.contains(":endDate")) query.setParameter("endDate", dateSqlFormatter.format(endDate));
+            if (providerNo != null && sql.contains(":providerNo")) query.setParameter("providerNo", providerNo);
+            if (status != null && sql.contains(":status")) query.setParameter("status", status);
+            if (demographicNo != null && sql.contains(":demographicNo")) query.setParameter("demographicNo", demographicNo);
+            if (patientFirstName != null && sql.contains(":patientFirstName")) query.setParameter("patientFirstName", "%" + patientFirstName + "%");
+            if (patientLastName != null && sql.contains(":patientLastName")) query.setParameter("patientLastName", "%" + patientLastName + "%");
+            if (patientHealthNumber != null && sql.contains(":patientHealthNumber")) query.setParameter("patientHealthNumber", "%" + patientHealthNumber + "%");
+
+            List<Object[]> result = query.getResultList();
             for (Object[] r : result) {
                 LabResultData lbData = new LabResultData(LabResultData.DOCUMENT);
                 lbData.labType = LabResultData.DOCUMENT;

@@ -37,20 +37,13 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.soap.SOAPFaultException;
 
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.message.Message;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.integration.ebs.client.ng.EdtClientBuilder;
 import org.oscarehr.integration.ebs.client.ng.EdtClientBuilderConfig;
-import org.oscarehr.integration.ebs.client.ng.DownloadInInterceptor;
 import org.oscarehr.util.MiscUtils;
 
 import oscar.OscarProperties;
@@ -76,8 +69,6 @@ public class OnlineHCValidator implements HCValidator {
         setBuilder(new EdtClientBuilder(config));
         setExternalClientKeystoreFilename(properties.getProperty("hcv.service.clientKeystore.properties"));
         validation = builder.build(HCValidation.class);
-
-        if (!config.isLoggingRequired()) { removeDownloadInInterceptor(validation); }
     }
 
     @Override
@@ -152,33 +143,4 @@ public class OnlineHCValidator implements HCValidator {
             }
         }
     }
-
-    /**
-	 * Removes the DownloadInInterceptor from the in interceptors of the given proxy.
-	 *
-	 * Note: This prevents SOAP response logs. Comment this out if logs are needed for
-	 * 		 conformance testing or debugging.
-	 */
-	public static void removeDownloadInInterceptor(HCValidation validation) {
-		// Retrieve the client from the proxy
-		Client client = ClientProxy.getClient(validation);
-
-		// Retrieve the list of in interceptors
-		List<Interceptor<? extends Message>> inInterceptors = client.getEndpoint().getInInterceptors();
-
-		// Create a new list to hold interceptors without DownloadInInterceptor
-		List<Interceptor<? extends Message>> newInterceptors = new ArrayList<Interceptor<? extends Message>>();
-
-		// Iterate through the interceptors and exclude DownloadInInterceptor
-		for (Interceptor<? extends Message> interceptor : inInterceptors) {
-			if (!(interceptor instanceof DownloadInInterceptor)) {
-				newInterceptors.add(interceptor);
-			}
-		}
-
-		// Replace the old list with the new one
-		client.getEndpoint().getInInterceptors().clear();
-		client.getEndpoint().getInInterceptors().addAll(newInterceptors);
-	}
-
 }

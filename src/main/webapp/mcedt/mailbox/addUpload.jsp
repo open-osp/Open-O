@@ -76,7 +76,7 @@
         <div class="center">
             <h1>Upload Details</h1>
 
-            <form action="${pageContext.request.contextPath}/mcedt/addUpload.do" method="post" styleId="formAddUpload"
+            <form action="${pageContext.request.contextPath}/mcedt/addUpload.do" method="post" id="formAddUpload"
                        enctype="multipart/form-data">
 
                 <jsp:include page="../messages.jsp"/>

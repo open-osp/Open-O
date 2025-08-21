@@ -115,7 +115,7 @@ public class Update2Action extends ActionSupport {
             EDTDelegate delegate = DelegateFactory.getEDTDelegateInstance();
             ResourceResult result = delegate.update(updates);
             clearUpdateList(request);
-            addActionError(getText("updateAction.sendUpdateRequest.success", new String[]{McedtMessageCreator.resourceResultToString(result)}));
+            addActionMessage(getText("updateAction.sendUpdateRequest.success", new String[]{McedtMessageCreator.resourceResultToString(result)}));
 
             cancel();
         } catch (Exception e) {

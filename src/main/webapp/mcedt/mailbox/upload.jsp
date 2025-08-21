@@ -125,7 +125,7 @@
     </script>
 </head>
 <body>
-<form action="${pageContext.request.contextPath}/mcedt/upload.do" method="post" styleId="formUpload">
+<form action="${pageContext.request.contextPath}/mcedt/upload.do" method="post" id="formUpload">
     <jsp:include page="../messages.jsp"/>
 
     <input id="methodUpload" name="method" type="hidden" value=""/>

@@ -130,7 +130,7 @@
             <h1>MCEDT Documents to Download</h1>
 
             <div>
-                <form action="${pageContext.request.contextPath}/mcedt/kaiautodl.do" method="post" styleId="form">
+                <form action="${pageContext.request.contextPath}/mcedt/kaiautodl.do" method="post" id="form">
 
                     <input id="method" name="method" type="hidden" value=""/>
 

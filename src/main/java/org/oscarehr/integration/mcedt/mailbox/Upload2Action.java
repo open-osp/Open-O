@@ -276,7 +276,7 @@ public class Upload2Action extends ActionSupport {
             // we don't need to find out if upload is successful, we rather get info about submit status of that file
             //if ( successUploads!=null && successUploads.size()>0 ) messages = ActionUtils.addMoreMessage(messages, "uploadAction.upload.success", McedtMessageCreator.stringListToString(successUploads));
             if (successSubmits != null && successSubmits.size() > 0) {
-                addActionMessage(getText("uploadAction.submit.success", McedtMessageCreator.stringListToString(successSubmits)));
+                addActionMessage(getText("uploadAction.submit.success", new String[]{McedtMessageCreator.stringListToString(successSubmits)}));
             }
 
             String key = "";
@@ -328,7 +328,7 @@ public class Upload2Action extends ActionSupport {
             try (FileOutputStream outputStream = new FileOutputStream(myFile)) {
                 outputStream.write(Files.readAllBytes(this.getAddUploadFile().toPath()));
                 outputStream.close();
-                addActionError(getText("uploadAction.upload.add.success", new String[]{this.getFileName() + " is succesfully added to the uploads list!"}));
+                addActionMessage(getText("uploadAction.upload.add.success", new String[]{this.getFileName() + " is succesfully added to the uploads list!"}));
             } catch (IOException e) {
                 logger.error("An error has occured with the addUpload file at " + new Date(), e);
 
@@ -399,6 +399,8 @@ public class Upload2Action extends ActionSupport {
     private String fileName;
     private BigInteger resourceId;
     private File addUploadFile;
+    private String addUploadFileFileName;
+    private String addUploadFileContentType;
 
     public String getDescription() {
         return description;
@@ -438,5 +440,21 @@ public class Upload2Action extends ActionSupport {
 
     public void setAddUploadFile(File addUploadFile) {
         this.addUploadFile = addUploadFile;
+    }
+
+    public String getAddUploadFileFileName() {
+        return addUploadFileFileName;
+    }
+    public void setAddUploadFileFileName(String addUploadFileFileName) {
+        this.addUploadFileFileName = addUploadFileFileName;
+        this.setFileName(addUploadFileFileName); // set the file name to the upload file name
+    }
+
+    public String getAddUploadFileContentType() {
+        return addUploadFileContentType;
+    }
+    public void setAddUploadFileContentType(String addUploadFileContentType) {
+        this.addUploadFileContentType = addUploadFileContentType;
+        this.setResourceType(addUploadFileContentType); // set the resource type to the upload file content type
     }
 }

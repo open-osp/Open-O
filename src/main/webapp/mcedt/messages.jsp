@@ -23,29 +23,38 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="java.util.List" %>
 
-<%
-    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
-    if (actionErrors != null && !actionErrors.isEmpty()) {
-%>
-<div class="action-errors">
-    <ul>
-        <% for (String error : actionErrors) { %>
-        <li><%= error %></li>
-        <% } %>
-    </ul>
-</div>
-<% } %>
-<c:if test="${not empty savedMessage}">
-    <div class="alert alert-info">
-        <p>
-            ${savedMessage}
-        </p>
-    </div>
-</c:if>
+<%@ taglib uri="/struts-tags" prefix="s"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%> 
+<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i"%> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+
+<!-- Display field errors -->
+<s:if test="hasFieldErrors()">
+    <s:iterator value="fieldErrors">
+        <s:iterator value="value">
+            <div class="alert alert-danger">
+                <p><s:property escapeHtml="false" /></p>
+            </div>
+        </s:iterator>
+    </s:iterator>
+</s:if>
+
+<!-- Display action errors -->
+<s:if test="hasActionErrors()">
+    <s:iterator value="actionErrors">
+        <div class="alert alert-danger">
+            <p><s:property escapeHtml="false" /></p>
+        </div>
+    </s:iterator>
+</s:if>
+
+<!-- Display action messages -->
+<s:if test="hasActionMessages()">
+    <s:iterator value="actionMessages">
+        <div class="alert alert-info">
+            <p><s:property escapeHtml="false" /></p>
+        </div>
+    </s:iterator>
+</s:if>

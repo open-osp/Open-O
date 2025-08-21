@@ -30,7 +30,6 @@
 package org.oscarehr.common.dao;
 
 import java.io.UnsupportedEncodingException;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -337,18 +336,18 @@ public class Hl7TextInfoDaoImpl extends AbstractDaoImpl<Hl7TextInfo> implements 
         //Checks if the startDate is null, if it isn't then creates the dateSQL for the startDate
         if (startDate != null) {
             if (dateSearchType.equals("receivedCreated")) {
-                dateSql += " AND message.created >= '" + dateSqlFormatter.format(startDate) + "'";
+                dateSql += " AND message.created >= :startDate";
             } else {
-                dateSql += " AND info.obr_date >= '" + dateSqlFormatter.format(startDate) + "'";
+                dateSql += " AND info.obr_date >= :startDate";
             }
         }
 
         //Checks if the endDate is null, if it isn't then creates the dateSQL for the endDate
         if (endDate != null) {
             if (dateSearchType.equals("receivedCreated")) {
-                dateSql += " AND message.created <= '" + dateSqlFormatter.format(endDate) + "'";
+                dateSql += " AND message.created <= :endDate";
             } else {
-                dateSql += " AND info.obr_date <= '" + dateSqlFormatter.format(endDate) + "'";
+                dateSql += " AND info.obr_date <= :endDate";
             }
         }
 
@@ -362,8 +361,8 @@ public class Hl7TextInfoDaoImpl extends AbstractDaoImpl<Hl7TextInfo> implements 
                         + " RIGHT JOIN hl7TextInfo info ON plr.lab_no = info.lab_no "
                         + (dateSearchType.equals("receivedCreated") ? " RIGHT JOIN hl7TextMessage message ON plr.lab_no = message.lab_id" : "")
                         + " WHERE plr.lab_type = 'HL7'"
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
-                        + " AND plr.status" + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : "")
+                        + " AND plr.status" + ("".equals(status) ? " IS NOT NULL " : " = :status ")
                         + ((isAbnormal != null && isAbnormal) ? "AND info.result_status = 'A'" :
                         (isAbnormal != null && !isAbnormal) ? "AND (info.result_status IS NULL OR info.result_status != 'A')" : "")
                         + dateSql
@@ -378,20 +377,20 @@ public class Hl7TextInfoDaoImpl extends AbstractDaoImpl<Hl7TextInfo> implements 
                         + " (SELECT * FROM "
                         + " (SELECT DISTINCT plr.id, plr.lab_type, plr.lab_no, plr.status FROM providerLabRouting plr, ctl_document cd "
                         + " WHERE 	"
-                        + " (cd.module_id = '" + demographicNo + "' "
+                        + " (cd.module_id = :demographicNo "
                         + "	AND cd.document_no = plr.lab_no"
                         + "	AND plr.lab_type = 'DOC'  	"
-                        + " AND plr.status" + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' )" : " )")
+                        + " AND plr.status" + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo )" : " )")
                         + " ORDER BY id DESC) AS Y"
                         + " UNION"
                         + " SELECT * FROM"
                         + " (SELECT DISTINCT plr.id, plr.lab_type, plr.lab_no, plr.status  FROM providerLabRouting plr, patientLabRouting plr2"
                         + " WHERE"
                         + "	plr.lab_type = 'HL7' AND plr2.lab_type = 'HL7'"
-                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
-                        + " 	AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = '" + demographicNo + "'"
+                        + "	AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
+                        + " 	AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = :demographicNo "
                         + " ORDER BY id DESC) AS Z"
                         + " ORDER BY id DESC"
                         + " ) AS X "
@@ -408,26 +407,26 @@ public class Hl7TextInfoDaoImpl extends AbstractDaoImpl<Hl7TextInfo> implements 
                         + "			(SELECT DISTINCT plr.id, plr.lab_type, plr.lab_no, plr.status, d.demographic_no "
                         + "				FROM providerLabRouting plr, ctl_document cd, demographic d "
                         + "				WHERE "
-                        + "					d.first_name like '%" + patientFirstName + "%' AND d.last_name like '%" + patientLastName + "%' AND d.hin like '%" + patientHealthNumber + "%' "
+                        + "					d.first_name like :patientFirstName AND d.last_name like :patientLastName AND d.hin like :patientHealthNumber "
                         + "					AND cd.module_id = d.demographic_no 	AND cd.document_no = plr.lab_no	AND plr.lab_type = 'DOC' "
-                        + "					AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ") + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + "					AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ") + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
                         + " 		) AS X "
                         + " 		UNION "
                         + "			(SELECT DISTINCT plr.id, plr.lab_type, plr.lab_no, plr.status, d.demographic_no "
                         + "				FROM providerLabRouting plr, patientLabRouting plr2, demographic d" + (isAbnormal != null ? ", hl7TextInfo info " : " ")
-                        + "				WHERE d.first_name like '%" + patientFirstName + "%' AND d.last_name like '%" + patientLastName + "%' AND d.hin like '%" + patientHealthNumber + "%' "
+                        + "				WHERE d.first_name like :patientFirstName AND d.last_name like :patientLastName AND d.hin like :patientHealthNumber "
                         + "					AND	plr.lab_type = 'HL7' AND plr2.lab_type = 'HL7' "
                          + 					(isAbnormal != null ? " AND plr.lab_no = info.lab_no AND "+(!isAbnormal? "(info.result_status IS NULL OR info.result_status != 'A')": "(info.result_status = 'A')")+" " : " " )
-                        + "					AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ") + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + "					AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status + ") + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
                         + " 				AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = d.demographic_no "
                         + " 		) "
                         + " 		UNION "
                         + " 		(SELECT DISTINCT plr.id, plr.lab_type, plr.lab_no, plr.status, NULL AS demographic_no "
                         + " 			FROM providerLabRouting plr, hl7TextInfo info "
-                        + " 			WHERE info.first_name like '%" + patientFirstName + "%' AND info.last_name like '%" + patientLastName + "%' AND info.health_no like '%" + patientHealthNumber + "%' "
+                        + " 			WHERE info.first_name like :patientFirstName AND info.last_name like :patientLastName AND info.health_no like :patientHealthNumber "
                         + " 				AND plr.lab_type = 'HL7' AND plr.lab_no = info.lab_no "
                          +					(isAbnormal != null ? " AND "+(isAbnormal? "info.result_status = 'A'": "(info.result_status IS NULL OR info.result_status != 'A')")+"" : " ")
-                        + " 				AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ") + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + " 				AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ") + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
                         + " 				AND plr.lab_no NOT IN (SELECT DISTINCT lab_no FROM patientLabRouting WHERE lab_type = 'HL7' AND demographic_no != 0) "
                         + " 		) "
                         + " 		ORDER BY id DESC "
@@ -443,8 +442,8 @@ public class Hl7TextInfoDaoImpl extends AbstractDaoImpl<Hl7TextInfo> implements 
                         + " FROM hl7TextInfo info "
                         + " LEFT JOIN providerLabRouting plr ON plr.lab_no = info.lab_no "
                         + (dateSearchType.equals("receivedCreated") ? " LEFT JOIN hl7TextMessage message ON message.lab_id = info.lab_no" : "")
-                        + (!status.equals("") ? " WHERE plr.status = '" + status + "' AND plr.lab_type = 'HL7' " : " WHERE plr.lab_type = 'HL7'")
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "") + " AND plr.lab_no = info.lab_no "
+                        + (!status.equals("") ? " WHERE plr.status = :status AND plr.lab_type = 'HL7' " : " WHERE plr.lab_type = 'HL7'")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : "") + " AND plr.lab_no = info.lab_no "
                         + (isAbnormal != null ? " AND (" + (!isAbnormal ? "info.result_status IS NULL OR" : "") + " info.result_status " + (isAbnormal ? "" : "!") + "= 'A') " : " ")
                         + dateSql
                         + " GROUP BY info.lab_no "
@@ -460,8 +459,8 @@ public class Hl7TextInfoDaoImpl extends AbstractDaoImpl<Hl7TextInfo> implements 
                         + " RIGHT JOIN hl7TextInfo info ON plr.lab_no = info.lab_no"
                         + (dateSearchType.equals("receivedCreated") ? " RIGHT JOIN hl7TextMessage message ON plr.lab_no = message.lab_id" : "")
                         + " WHERE plr.lab_type = 'HL7'"
-                        + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
-                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ")
+                        + (searchProvider ? " AND plr.provider_no = :providerNo " : "")
+                        + " AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ")
                         + (isAbnormal != null && isAbnormal ? "AND info.result_status = 'A'" :
                         isAbnormal != null && !isAbnormal ? "AND (info.result_status IS NULL OR info.result_status != 'A')" : "")
                         + dateSql
@@ -474,10 +473,10 @@ public class Hl7TextInfoDaoImpl extends AbstractDaoImpl<Hl7TextInfo> implements 
                         + " FROM hl7TextInfo info, " + (dateSearchType.equals("receivedCreated") ? " hl7TextMessage message, " : "")
                         + " (SELECT DISTINCT plr.id,plr.lab_no, plr.lab_type,  plr.status, d.demographic_no "
                         + " FROM providerLabRouting plr, patientLabRouting plr2, demographic d "
-                        + " WHERE 	(d.demographic_no = '" + demographicNo + "' "
+                        + " WHERE 	(d.demographic_no = :demographicNo "
                         + " 		AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = d.demographic_no "
                         + " 		AND plr.lab_type = 'HL7' AND plr2.lab_type = 'HL7' "
-                        + " 		AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ") + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + " 		AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ") + (searchProvider ? " AND plr.provider_no = :providerNo " : "")
                         + " 		) "
                         + " ORDER BY plr.id DESC "
                         + " ) AS X "
@@ -493,17 +492,17 @@ public class Hl7TextInfoDaoImpl extends AbstractDaoImpl<Hl7TextInfo> implements 
                         + " 	(SELECT * FROM "
                         + " 		(SELECT DISTINCT plr.id, plr.lab_type, plr.status, plr.lab_no, d.demographic_no "
                         + " 			FROM providerLabRouting plr, patientLabRouting plr2, demographic d "
-                        + " 			WHERE d.first_name like '%" + patientFirstName + "%' AND d.last_name like '%" + patientLastName + "%' AND d.hin like '%" + patientHealthNumber + "%' "
+                        + " 			WHERE d.first_name like :patientFirstName AND d.last_name like :patientLastName AND d.hin like :patientHealthNumber "
                         + " 				AND plr.lab_no = plr2.lab_no AND plr2.demographic_no = d.demographic_no "
                         + " 				AND plr.lab_type = 'HL7' AND plr2.lab_type = 'HL7' "
-                        + " 				AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ") + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + " 				AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ") + (searchProvider ? " AND plr.provider_no = :providerNo " : "")
                         + " 		) AS X "
                         + " 		UNION "
                         + " 		(SELECT DISTINCT plr.id, plr.lab_type, plr.status, plr.lab_no, NULL AS demographic_no "
                         + " 			FROM providerLabRouting plr, hl7TextInfo info "
-                        + " 			WHERE info.first_name like '%" + patientFirstName + "%' AND info.last_name like '%" + patientLastName + "%' AND info.health_no like '%" + patientHealthNumber + "%' "
+                        + " 			WHERE info.first_name like :patientFirstName AND info.last_name like :patientLastName AND info.health_no like :patientHealthNumber "
                         + " 				AND plr.lab_type = 'HL7' AND plr.lab_no = info.lab_no "
-                        + " 				AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ") + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : " ")
+                        + " 				AND plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ") + (searchProvider ? " AND plr.provider_no = :providerNo " : " ")
                         + " 				AND plr.lab_no NOT IN (SELECT DISTINCT lab_no FROM patientLabRouting WHERE lab_type = 'HL7' AND demographic_no != 0) "
                         + " 		) "
                         + " 		ORDER BY id DESC "
@@ -518,7 +517,7 @@ public class Hl7TextInfoDaoImpl extends AbstractDaoImpl<Hl7TextInfo> implements 
                 sql = " SELECT info.label, info.lab_no, info.sex, info.health_no, info.result_status," + (dateSearchType.equals("receivedCreated") ? " message.created" : "info.obr_date") + ", info.priority, " +
                         "info.requesting_client, info.discipline, info.last_name, info.first_name, info.report_status,  info.accessionNum, info.final_result_count, plr.status "
                         + " FROM providerLabRouting plr, hl7TextInfo info " + (dateSearchType.equals("receivedCreated") ? ", hl7TextMessage message " : "")
-                        + " WHERE plr.status " + ("".equals(status) ? " IS NOT NULL " : " = '" + status + "' ") + (searchProvider ? " AND plr.provider_no = '" + providerNo + "' " : "")
+                        + " WHERE plr.status " + ("".equals(status) ? " IS NOT NULL " : " = :status ") + (searchProvider ? " AND plr.provider_no = :providerNo " : "")
                         + "   AND lab_type = 'HL7' and info.lab_no = plr.lab_no " + (dateSearchType.equals("receivedCreated") ? " AND message.lab_id = info.lab_no " : "")
                         + dateSql
                         + (isAbnormal != null ? " AND (" + (!isAbnormal ? "info.result_status IS NULL OR" : "") + " info.result_status " + (isAbnormal ? "" : "!") + "= 'A') " : " ")
@@ -527,7 +526,19 @@ public class Hl7TextInfoDaoImpl extends AbstractDaoImpl<Hl7TextInfo> implements 
                         + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
             }
         }
+
         Query query = entityManager.createNativeQuery(sql);
+
+        // Setting parameters for the query based on the presence of placeholders in the SQL string
+        if (startDate != null && sql.contains(":startDate")) query.setParameter("startDate", dateSqlFormatter.format(startDate));
+        if (endDate != null && sql.contains(":endDate")) query.setParameter("endDate", dateSqlFormatter.format(endDate));
+        if (providerNo != null && sql.contains(":providerNo")) query.setParameter("providerNo", providerNo);
+        if (status != null && sql.contains(":status")) query.setParameter("status", status);
+        if (demographicNo != null && sql.contains(":demographicNo")) query.setParameter("demographicNo", demographicNo);
+        if (patientFirstName != null && sql.contains(":patientFirstName")) query.setParameter("patientFirstName", "%" + patientFirstName + "%");
+        if (patientLastName != null && sql.contains(":patientLastName")) query.setParameter("patientLastName", "%" + patientLastName + "%");
+        if (patientHealthNumber != null && sql.contains(":patientHealthNumber")) query.setParameter("patientHealthNumber", "%" + patientHealthNumber + "%");
+
         return query.getResultList();
     }
 

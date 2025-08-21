@@ -1,11 +1,14 @@
 package org.oscarehr.integration.ebs.client.ng;
 
 import java.io.IOException;
-import java.util.Map;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 import org.apache.cxf.attachment.LazyAttachmentCollection;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
@@ -51,22 +54,41 @@ public class DownloadInInterceptor extends AbstractPhaseInterceptor<Message> {
 	 */
 	@Override
 	public void handleMessage(Message message) throws Fault {
-		LazyAttachmentCollection attachments = (LazyAttachmentCollection) 
-				message.get(org.apache.cxf.message.Message.ATTACHMENTS);
-		if (attachments != null) {
-			for(Attachment a : attachments.getLoadedAttachments()) {
-				System.out.println(a.getId());
-				try {
-					System.out.println(IOUtils.readStringFromStream(a.getDataHandler().getInputStream()));
-				} catch (IOException e) {
-					// swallow
-				}
-			}
-		}
-		
-		for(Map.Entry<String, Object> entry : message.entrySet()) {
-			System.out.println(entry.getKey() + " - " + entry.getValue());
-		}
+		// ---- Handle attachments safely ----
+        Object attObj = message.get(Message.ATTACHMENTS);
+        if (attObj instanceof Collection) {
+            @SuppressWarnings("unchecked")
+            Collection<Attachment> attachments = (Collection<Attachment>) attObj;
+            for (Attachment a : attachments) {
+                System.out.println("Attachment ID: " + a.getId());
+                try (InputStream attIs = a.getDataHandler().getInputStream()) {
+                    System.out.println(IOUtils.readStringFromStream(attIs));
+                } catch (IOException e) {
+                    // swallow or log
+                }
+            }
+        }
+
+        // ---- Copy the message input stream so we can read it multiple times ----
+        try {
+            InputStream is = message.getContent(InputStream.class);
+            if (is != null) {
+                CachedOutputStream cos = new CachedOutputStream();
+                IOUtils.copy(is, cos);
+                cos.flush();
+
+                // Put the stream back so CXF and later interceptors can still use it
+                message.setContent(InputStream.class, cos.getInputStream());
+
+                // Get message as String (once)
+                String soapText = IOUtils.toString(cos.getInputStream(), StandardCharsets.UTF_8.name());
+                System.out.println("Decrypted SOAP Response Message:\n" + soapText);
+            } else {
+                System.out.println("No InputStream found in the message content.");
+            }
+        } catch (Exception e) {
+            throw new Fault(e);
+        }
 	}
 
 }

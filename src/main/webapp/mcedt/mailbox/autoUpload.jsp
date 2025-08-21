@@ -210,11 +210,11 @@
         <h1>Uploading Claims from Oscar to MCEDT</h1>
         <div>
             <%-- <form action="<%=request.getContextPath() %>/mcedt/kaichpass.do" method="POST"> --%>
-            <%-- <form action="<%=request.getContextPath() %>/mcedt/kaichpass.do" method="post" styleId="form">
+            <%-- <form action="<%=request.getContextPath() %>/mcedt/kaichpass.do" method="post" id="form">
             <input id="method" name="method" type="hidden" value="" />
             </form> --%>
             <div>
-                <form action="${pageContext.request.contextPath}/mcedt/autoUpload.do" method="post" styleId="form">
+                <form action="${pageContext.request.contextPath}/mcedt/autoUpload.do" method="post" id="form">
                     <jsp:include page="../messages.jsp"/>
                     <jsp:include page="spinner.jsp" flush="true"/>
                     <input id="method" name="method" type="hidden" value=""/>

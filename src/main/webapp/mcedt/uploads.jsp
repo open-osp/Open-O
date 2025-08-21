@@ -82,7 +82,7 @@
 
             <h2>Create New Upload</h2>
 
-            <form action="${pageContext.request.contextPath}/mcedt/uploads.do" method="post" styleId="form">
+            <form action="${pageContext.request.contextPath}/mcedt/uploads.do" method="post" id="form">
 
                 <jsp:include page="messages.jsp"/>
 

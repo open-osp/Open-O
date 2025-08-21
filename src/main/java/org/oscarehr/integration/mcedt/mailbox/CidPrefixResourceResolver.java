@@ -30,7 +30,6 @@ public class CidPrefixResourceResolver extends ResourceResolverSpi {
 
     private Collection<Attachment> attachments;
 
-    @Override
     public boolean engineIsThreadSafe() {
         return false;
     }
