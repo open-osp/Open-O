@@ -32,6 +32,8 @@
 <%@page import="oscar.oscarRx.data.*" %>
 <%@page import="oscar.oscarRx.util.*" %>
 <%@page import="oscar.OscarProperties"%>
+<%@ page import="org.oscarehr.managers.CodingSystemManager" %>
+<%@ page import="org.oscarehr.util.SpringUtils" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
@@ -197,8 +199,8 @@ if(listRxDrugs!=null){
                     if(rx.getUnitName()!=null && !rx.getUnitName().equalsIgnoreCase("null"))
                         unitNameStr=rx.getUnitName();
                     String prnStr="";
-                    if(prn)
-                        prnStr="prn";
+                    if(prn) { prnStr="prn"; }
+
                 drugName=drugName.replace("'", "\\'");
                 drugName=drugName.replace("\"","\\\"");
                 byte[] drugNameBytes = drugName.getBytes("ISO-8859-1");
@@ -206,7 +208,7 @@ if(listRxDrugs!=null){
                 String fieldSetId = "set_" + rand;
 %>
 
-<fieldset style="margin-top:2px;width:640px;" id="<%=fieldSetId%>">
+<fieldset style="margin-top:2px;" id="<%=fieldSetId%>">
     <a tabindex="-1" href="javascript:void(0);"  style="float:right;margin-left:5px;margin-top:0px;padding-top:0px;" onclick="removePrescribingDrug(<%=fieldSetId%>, <%=DrugReferenceId%>);"><img src='<c:out value="${ctx}/images/close.png"/>' border="0"></a>
     <a tabindex="-1" href="javascript:void(0);"  style="float:right;;margin-left:5px;margin-top:0px;padding-top:0px;" title="Add to Favorites" onclick="addFav('<%=rand%>','<%=drugName%>')">F</a>
     <a tabindex="-1" href="javascript:void(0);" style="float:right;margin-top:0px;padding-top:0px;" onclick="$('rx_more_<%=rand%>').toggle();">  <span id="moreLessWord_<%=rand%>" onclick="updateMoreLess(id)" >more</span> </a>
@@ -532,11 +534,8 @@ if(listRxDrugs!=null){
 <script type="text/javascript">
        jQuery("document").ready(function() {
     	   
-               if ( jQuery.browser.msie ) {
-                       jQuery('#rx_save_updates_<%=rand%>').show();
-               } else {
-                       jQuery('#rx_save_updates_<%=rand%>').hide();
-               }
+
+                jQuery('#rx_save_updates_<%=rand%>').hide();
 
 				var idindex = "";
                jQuery( "input[id*='jsonDxSearch']" ).autocomplete({	
@@ -674,8 +673,8 @@ if(listRxDrugs!=null){
             //oscarLog("listRxDrugsSize="+listRxDrugSize);
             counterRx++;
             //oscarLog("counterRx="+counterRx);
-           var gcn_val=<%=gcnCode%>;
-           if(gcn_val==0){
+           var gcn_val="<%=gcnCode%>";
+           if(gcn_val === "0"){
                $('drugName_<%=rand%>').focus();
            } else if(counterRx==listRxDrugSize){
                //oscarLog("counterRx="+counterRx+"--listRxDrugSize="+listRxDrugSize);
@@ -686,8 +685,9 @@ if(listRxDrugs!=null){
 <script type="text/javascript">
 counterRx=0;
 
-if(skipParseInstr)
-skipParseInstr=false;
+if(skipParseInstr) {
+	skipParseInstr = false;
+}
 </script>
 <%}%>
 

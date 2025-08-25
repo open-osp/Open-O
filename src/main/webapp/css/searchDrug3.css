@@ -1,9 +1,10 @@
 
-BODY {
-	margin:0 !important;
-	padding: 0 !important;
-	font-size: 12px !important;
-	font-family: Arial, Verdana, Tahoma, Helvetica, sans-serif;
+:root * {
+	font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+	font-size: 12px;
+	overscroll-behavior: none;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 #medicationsHeadingRow {
@@ -20,16 +21,41 @@ br {
 }
 
 form {
-	margin: 0px !important;
-	padding: 0px !important;
+	margin: 0 !important;
+	padding: 0 !important;
 	border: none !important;
+}
+
+
+.floatingWindow {
+	position: fixed;
+	top: 70%;
+	right: 2px;
+	border-radius: 10px;
+	padding: 12px 24px;
+	font-size: 16px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+	z-index: 5000;
+	background-color: #ccf5ff;
+	max-width: 25%;
+	opacity: 0;
+	transform: translateX(50px);
+	visibility: hidden;
+	transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* Active state for showing */
+.floatingWindow.show {
+	opacity: 0.95;
+	transform: translateX(0);
+	visibility: visible;
 }
 
 
 * table {
 	border-collapse: collapse;
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 	width:100%;
 }
 
@@ -75,46 +101,46 @@ table td,table th {
 }
 
 /* workarounds */
-* html .ui-autocomplete {
-	width: 1px;
-} /* without this, the menu expands to 100% in IE6 */
-.ui-autocomplete-loading {
-	background: white url('../images/ui-anim_basic_16x16.gif') right center
-		no-repeat;
-}
+/** html .ui-autocomplete {*/
+/*	width: 1px;*/
+/*} !* without this, the menu expands to 100% in IE6 *!*/
+/*.ui-autocomplete-loading {*/
+/*	background: white url('../images/ui-anim_basic_16x16.gif') right center*/
+/*		no-repeat;*/
+/*}*/
 
-.ui-autocomplete {
-	max-height: 300px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	background-color: whitesmoke;
-	border: #ccc thin solid;
-}
+/*.ui-autocomplete {*/
+/*	max-height: 300px;*/
+/*	overflow-y: auto;*/
+/*	overflow-x: hidden;*/
+/*	background-color: whitesmoke;*/
+/*	border: #ccc thin solid;*/
+/*}*/
 
-.ui-menu .ui-menu {
-	background-color: whitesmoke;
-}
+/*.ui-menu .ui-menu {*/
+/*	background-color: whitesmoke;*/
+/*}*/
 
-.ui-menu .ui-menu-item a {
-	border-bottom: white thin solid;
-}
+/*.ui-menu .ui-menu-item a {*/
+/*	border-bottom: white thin solid;*/
+/*}*/
 
-.ui-menu .ui-menu-item a.ui-state-hover,.ui-menu .ui-menu-item a.ui-state-active
-	{
-	background-color: yellow;
-}
+/*.ui-menu .ui-menu-item a.ui-state-hover,.ui-menu .ui-menu-item a.ui-state-active*/
+/*	{*/
+/*	background-color: yellow;*/
+/*}*/
 
-.ui-menu-item a.inactiveDrug.drugitem:hover {
-	color: blue !important;;
-}
+/*.ui-menu-item a.inactiveDrug.drugitem:hover {*/
+/*	color: blue !important;;*/
+/*}*/
 
-.ui-menu-item a.inactiveDrug.drugitem {
-	color: #AAAAAA !important;
-}
+/*.ui-menu-item a.inactiveDrug.drugitem {*/
+/*	color: #AAAAAA !important;*/
+/*}*/
 
-.ui-menu-item span.drugKeyword {
-	font-weight: bold !important;
-}
+/*.ui-menu-item span.drugKeyword {*/
+/*	font-weight: bold !important;*/
+/*}*/
 
 
 table tr#medicationMainTableFooter td {
@@ -187,7 +213,8 @@ input#searchString {
 }
 
 #rxText fieldset {
-	border: none;
+	border: grey thin solid;
+	margin:10px;
 }
 
 fieldset#advanceSearchParameters fieldset {
@@ -222,27 +249,27 @@ fieldset#advanceSearchParameters {
 	border: none;
 }
 
-#rxText div.row span,#rxText div.row label,#rxText div.row input {
-	display: inline-block;
-}
+/*#rxText div.row span,#rxText div.row label,#rxText div.row input {*/
+/*	display: inline-block;*/
+/*}*/
 
-#rxText label.left {
-	text-align: left;
-	vertical-align: top;
+/*#rxText label.left {*/
+/*	text-align: left;*/
+/*	vertical-align: top;*/
 
-	padding: 0px !important;
-	margin: 0px !important;
-}
+/*	padding: 0px !important;*/
+/*	margin: 0px !important;*/
+/*}*/
 
-#rxText div.row {
-	margin-top: 3px !important;
-	padding-left: 5px !important;
-}
+/*#rxText div.row {*/
+/*	margin-top: 3px !important;*/
+/*	padding-left: 5px !important;*/
+/*}*/
 
-#rxText div.rxStr a.label {
-	margin-left: 2px;
-	font-weight: bold;
-}
+/*#rxText div.rxStr a.label {*/
+/*	margin-left: 2px;*/
+/*	font-weight: bold;*/
+/*}*/
 
 fieldset.stagedMedication {
 	background-color: aliceblue;

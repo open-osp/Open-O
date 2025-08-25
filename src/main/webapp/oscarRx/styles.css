@@ -875,10 +875,8 @@ div#rxText {
 	gap:5px;
 	align-content: flex-start;
 	padding:10px 0;
-}
-
-div#rxText fieldset {
 	background-color: #ffffff;
 	box-shadow: 0 2px 4px 0 rgba(38,40,42,0.3);
 	border-radius: 4px;
+	margin: 10px auto;
 }

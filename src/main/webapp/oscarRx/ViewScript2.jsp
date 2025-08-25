@@ -307,7 +307,7 @@ function addNotes(){
     var url = "AddRxComment.jsp";
     var ran_number=Math.round(Math.random()*1000000);
     var comment = encodeURIComponent(document.getElementById('additionalNotes').value);
-    var params = "scriptNo=<%=request.getAttribute("scriptId")%>&comment="+comment+"&rand="+ran_number;  //]
+    var params = "scriptNo=<%=Encode.forJavaScript((String)request.getAttribute("scriptId"))%>&comment="+comment+"&rand="+ran_number;  //]
     new Ajax.Request(url, {method: 'post',parameters:params});        
     frames['preview'].document.getElementById('additNotes').innerHTML =  document.getElementById('additionalNotes').value.replace(/\n/g, "<br>");
     frames['preview'].document.getElementsByName('additNotes')[0].value=  document.getElementById('additionalNotes').value.replace(/\n/g, "\r\n");

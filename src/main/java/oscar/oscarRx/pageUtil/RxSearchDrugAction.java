@@ -25,19 +25,8 @@
 
 package oscar.oscarRx.pageUtil;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -48,10 +37,18 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.OscarProperties;
 import oscar.oscarRx.data.RxDrugData;
 import oscar.oscarRx.util.RxDrugRef;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Vector;
 
 public final class RxSearchDrugAction extends DispatchAction {
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
@@ -93,7 +90,7 @@ public final class RxSearchDrugAction extends DispatchAction {
     		else if (!searchRoute.equals("")){
     			drugSearch = drugData.listDrugByRoute(searchString, searchRoute);
     		} else {
-    			drugSearch = drugData.listDrug(searchString);
+    			drugSearch = drugData.listDrug2(searchString);
     		}
     	}catch(Exception connEx){
     		MiscUtils.getLogger().error("Error", connEx);
@@ -271,13 +268,11 @@ public final class RxSearchDrugAction extends DispatchAction {
     }
     
     private static class Parameter {
-    	
-    	//public static String DRUG_STATUS;
+
     	public static String WILDCARD;
     	public static String SEARCH_STRING;
     	
     	private static void reset() {
-    		//DRUG_STATUS = ""; 
         	WILDCARD = "";
         	SEARCH_STRING = "";
     	}
@@ -285,18 +280,18 @@ public final class RxSearchDrugAction extends DispatchAction {
     	public static void setParameters(Map<String, String[]> parameters) {
     		reset();
     		
-//    		if(parameters.containsKey("drugStatus")) {
-//    			Parameter.DRUG_STATUS = parameters.get("drugStatus")[0];
-//    		}
+    		if(parameters.containsKey("name")) {
+    			Parameter.SEARCH_STRING = parameters.get("name")[0];
+    		} else if(parameters.containsKey("query")) {
+    			Parameter.SEARCH_STRING = parameters.get("query")[0];
+    		} else if(parameters.containsKey("searchString")) {
+    			Parameter.SEARCH_STRING = parameters.get("searchString")[0];
+    		}
     		
     		if(parameters.containsKey("wildcard")) {
     			Parameter.WILDCARD = parameters.get("wildcard")[0];
     		}
-    		
-    		if(parameters.containsKey("searchString")) {
-    			Parameter.SEARCH_STRING = parameters.get("searchString")[0];
-    		}
-    		
+
     	}
     	 
     }
