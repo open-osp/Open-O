@@ -881,11 +881,34 @@ body {
                                     <input type="hidden" id="rxPharmacyId" name="rxPharmacyId" value="" />
                                     
                                     <html:hidden property="demographicNo" value="<%=new Integer(patient.getDemographicNo()).toString()%>" />
-                                    <table border="0">
-                                        <tr valign="top">
+                                    <table>
+                                        <tr>
                                             <td style="width:330px">
+                                                <div>
                                             	<label for="searchString" ><bean:message key="SearchDrug.drugSearchTextBox"  /></label>
                                                 <html:text styleId="searchString" property="searchString" onfocus="changeContainerHeight();" onblur="changeContainerHeight();" onclick="changeContainerHeight();" onkeydown="changeContainerHeight();" style="width:248px;\" autocomplete=\"off"  />
+                                                </div>
+
+                                                <div>
+
+                                                <input type="radio" id="allCategories" name="method"
+                                                       value="searchAllCategories" class="trigger"
+                                                       checked="checked"/>
+                                                <label for="allCategories">All</label>
+
+                                                <input type="radio" id="brandName" name="method"
+                                                       value="searchBrandName" class="trigger" disabled/>
+                                                <label for="brandName">Brand</label>
+
+                                                <input type="radio" id="genericName" name="method"
+                                                       value="searchGenericName" class="trigger" disabled/>
+                                                <label for="genericName">Ingredient</label>
+
+                                                <input type="radio" id="naturalRemedy" name="method"
+                                                       disabled="disabled"
+                                                       value="searchNaturalRemedy" class="trigger" />
+                                                <label for="naturalRemedy">Natural</label>
+                                                </div>
                                                 <div id="autocomplete_choices" style="overflow:auto;width:600px"></div>
                                                 <span id="indicator1" style="display: none"> <!--img src="/images/spinner.gif" alt="Working..." --></span>
                                             </td>
@@ -916,6 +939,7 @@ body {
 													<a href="<%=eRx_SSO_URL%>User=<%=eRxUsername%>&Password=<%=eRxPassword%>&Clinic=<%=eRxFacility%>&PatientIdPMIS=<%=patient.getDemographicNo()%>&IsTraining=<%=eRxTrainingMode%>"><bean:message key="SearchDrug.eRx.msgExternalPrescriber"/></a>
                                                 <% } %>
                                             </td>
+
                                         </tr>
                                         <tr>
                                             <td colspan="3">
@@ -1252,7 +1276,7 @@ body {
 
   .hiddenLayer {
     width: 100%;
-    padding: 2 10px 10px 10px;
+    padding: 2px 10px 10px 10px;
     box-sizing: border-box;
   }
 

@@ -25,20 +25,6 @@
 
 package org.oscarehr.phr.model;
 
-import java.io.StringReader;
-import java.math.BigInteger;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.apache.logging.log4j.Logger;
 import org.indivo.IndivoException;
 import org.indivo.xml.JAXBUtils;
@@ -63,10 +49,22 @@ import org.oscarehr.myoscar.commons.MedicalDataType;
 import org.oscarehr.myoscar_server.ws.MedicalDataTransfer4;
 import org.oscarehr.util.MiscUtils;
 import org.w3c.dom.Element;
-
 import oscar.oscarEncounter.data.EctProviderData;
 import oscar.oscarRx.data.RxPrescriptionData;
 import oscar.oscarRx.util.RxUtil;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.StringReader;
+import java.math.BigInteger;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * @author apavel
@@ -258,7 +256,7 @@ public class PHRMedication extends PHRDocument {
 			if (sys.getShortDescription().equals(PHRDocument.CODE_ATC)) {
 				drug.setAtc(cs);
 			} else if (sys.getShortDescription().equals(PHRDocument.CODE_GCN_SEQNO)) {
-				drug.setGcnSeqNo(Integer.parseInt(cs));
+				drug.setGcnSeqNo(cs);
 			} else if (sys.getShortDescription().equals(PHRDocument.CODE_REGIONALIDENTIFIER)) {
 				drug.setRegionalIdentifier(cs);
 			}

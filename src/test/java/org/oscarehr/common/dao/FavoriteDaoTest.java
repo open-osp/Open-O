@@ -23,14 +23,14 @@
  */
 package org.oscarehr.common.dao;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
 import org.oscarehr.common.model.Favorite;
 import org.oscarehr.util.SpringUtils;
+
+import static org.junit.Assert.assertNotNull;
 
 public class FavoriteDaoTest extends DaoTestFixtures {
 
@@ -53,7 +53,7 @@ public class FavoriteDaoTest extends DaoTestFixtures {
 	@Test
 	public void testAll() {
 		dao.findByProviderNo("999");
-		dao.findByEverything(null, null, null, 0, null, 0, 0, null, null, null, null, 0, false, false, null, null, null, false);
+		dao.findByEverything(null, null, null, "0", null, 0, 0, null, null, null, null, 0, false, false, null, null, null, false);
 	}
 	
 	

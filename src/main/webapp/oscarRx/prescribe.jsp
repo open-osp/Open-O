@@ -64,7 +64,7 @@ if(listRxDrugs!=null){
          String startDate       = RxUtil.DateToString(rx.getRxDate(), "yyyy-MM-dd");
          String writtenDate     = RxUtil.DateToString(rx.getWrittenDate(), "yyyy-MM-dd");
          String lastRefillDate  = RxUtil.DateToString(rx.getLastRefillDate(), "yyyy-MM-dd");
-         int gcnCode         = rx.getGCN_SEQNO();//if gcn is 0, rx is customed drug.
+         String gcnCode         = rx.getGCN_SEQNO();//if gcn is 0, rx is customed drug.
          String customName      = rx.getCustomName();
          Boolean patientCompliance  = rx.getPatientCompliance();
          String frequency       = rx.getFrequencyCode();
@@ -130,18 +130,20 @@ if(listRxDrugs!=null){
          if(ATC != null && ATC.trim().length()>0)
              ATC="ATC: "+ATC;
          String drugName;
-         boolean isSpecInstPresent=false;
-         if(0 == gcnCode){//it's a custom drug
-            drugName=customName;
-         }else{
-            drugName=brandName;
+
+         if("0".equals(gcnCode)){//it's a custom drug
+             drugName=customName;
+         }else if ( drugPrescribed != null && ! drugPrescribed.isEmpty() ){
+             drugName = drugPrescribed;
+         } else {
+			 drugName = brandName;
          }
-         if(specialInstruction!=null&&!specialInstruction.equalsIgnoreCase("null")&&specialInstruction.trim().length()>0){
-            isSpecInstPresent=true;
-         }
+	     boolean isSpecInstPresent = (specialInstruction != null && ! "null".equalsIgnoreCase(specialInstruction)&&specialInstruction.trim().length() > 0);
+
          //for display
-         if(drugName==null || drugName.equalsIgnoreCase("null"))
-             drugName="" ;
+         if(drugName==null || "null".equalsIgnoreCase(drugName)) {
+	         drugName = "";
+         }
 
          String comment  = rx.getComment();
          if(rx.getComment() == null) {
@@ -211,7 +213,7 @@ if(listRxDrugs!=null){
 
     <label style="float:left;width:80px;" title="<%=ATC%>" >Name:</label>
     <input type="hidden" name="atcCode" value="<%=ATCcode%>" />
-    <input tabindex="-1" type="text" id="drugName_<%=rand%>"  name="drugName_<%=rand%>"  size="30" <%if(0 == gcnCode){%> onkeyup="saveCustomName(this);" value="<%=drugName%>"<%} else{%> value='<%=drugName%>'  onchange="changeDrugName('<%=rand%>','<%=drugName%>');" <%}%> TITLE="<%=drugName%>"/>&nbsp;<span id="inactive_<%=rand%>" style="color:red;"></span>
+    <input tabindex="-1" type="text" id="drugName_<%=rand%>"  name="drugName_<%=rand%>"  size="30" <%if("0".equals(gcnCode)){%> onkeyup="saveCustomName(this);" value="<%=drugName%>"<%} else{%> value='<%=drugName%>'  onchange="changeDrugName('<%=rand%>','<%=drugName%>');" <%}%> TITLE="<%=drugName%>"/>&nbsp;<span id="inactive_<%=rand%>" style="color:red;"></span>
 
 	<!-- Allergy Alert Table-->
 

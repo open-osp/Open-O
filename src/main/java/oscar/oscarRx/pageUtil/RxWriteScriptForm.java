@@ -25,12 +25,12 @@
 
 package oscar.oscarRx.pageUtil;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.oscarehr.util.MiscUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 public final class RxWriteScriptForm extends ActionForm {
     String action = "";
@@ -41,7 +41,7 @@ public final class RxWriteScriptForm extends ActionForm {
     String writtenDate = null;	//cnv to Date
     String GN = null;
     String BN = null;
-    int GCN_SEQNO = 0;
+    String GCN_SEQNO = "0";
     String customName = null;
     String takeMin = null;
     String takeMax = null;
@@ -135,11 +135,11 @@ public final class RxWriteScriptForm extends ActionForm {
         this.BN = RHS;
     }
     
-    public int getGCN_SEQNO() {
+    public String getGCN_SEQNO() {
         return this.GCN_SEQNO;
     }
     
-    public void setGCN_SEQNO(int RHS) {
+    public void setGCN_SEQNO(String RHS) {
         this.GCN_SEQNO = RHS;
     }
     
@@ -327,7 +327,7 @@ public final class RxWriteScriptForm extends ActionForm {
         this.endDate = null;
 	this.writtenDate = null;
         this.BN = null;
-        this.GCN_SEQNO = 0;
+        this.GCN_SEQNO = "0";
         this.customName = null;
         this.takeMin = null;
         this.takeMax = null;

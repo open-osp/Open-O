@@ -24,14 +24,6 @@
 
 package oscar.oscarRx.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Vector;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -45,11 +37,12 @@ import org.oscarehr.common.model.IndivoDocs;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.oscarProvider.data.ProSignatureData;
 import oscar.oscarRx.util.RxUtil;
 import oscar.util.ConversionUtils;
 import oscar.util.DateUtils;
+
+import java.util.*;
 
 public class RxPrescriptionData {
 
@@ -458,7 +451,7 @@ public class RxPrescriptionData {
 
 			for (Prescription p : result) {
 				if (p.getGCN_SEQNO() == drug.getGcnSeqNo()) {
-					if (p.getGCN_SEQNO() != 0) // not custom - safe GCN
+					if (p.getGCN_SEQNO() != "0") // not custom - safe GCN
 					isCustomName = false;
 					else if (p.getCustomName() != null && drug.getCustomName() != null) // custom
 					    isCustomName = !p.getCustomName().equals(drug.getCustomName());
@@ -496,8 +489,7 @@ public class RxPrescriptionData {
 	}
 
 	private Favorite toFavorite(org.oscarehr.common.model.Favorite f) {
-		Favorite result = new Favorite(f.getId(), f.getProviderNo(), f.getName(), f.getBn(), (int) f.getGcnSeqno(), f.getCustomName(), f.getTakeMin(), f.getTakeMax(), f.getFrequencyCode(), f.getDuration(), f.getDurationUnit(), f.getQuantity(), f.getRepeat(), f.isNosubs(), f.isPrn(), f.getSpecial(), f.getGn(), f.getAtc(), f.getRegionalIdentifier(), f.getUnit(), f.getUnitName(), f.getMethod(), f.getRoute(), f.getDrugForm(), f.isCustomInstructions(), f.getDosage());
-		return result;
+		return new Favorite(f.getId(), f.getProviderNo(), f.getName(), f.getBn(), f.getGcnSeqno(), f.getCustomName(), f.getTakeMin(), f.getTakeMax(), f.getFrequencyCode(), f.getDuration(), f.getDurationUnit(), f.getQuantity(), f.getRepeat(), f.isNosubs(), f.isPrn(), f.getSpecial(), f.getGn(), f.getAtc(), f.getRegionalIdentifier(), f.getUnit(), f.getUnitName(), f.getMethod(), f.getRoute(), f.getDrugForm(), f.isCustomInstructions(), f.getDosage());
 	}
 
 	public Favorite getFavorite(int favoriteId) {
@@ -619,7 +611,7 @@ public class RxPrescriptionData {
 		java.util.Date printDate = null;
 		int numPrints = 0;
 		String BN = null; // regular
-		int GCN_SEQNO = 0; // regular
+		String GCN_SEQNO; // regular
 		String customName = null; // custom
 		float takeMin = 0;
 		float takeMax = 0;
@@ -1128,13 +1120,12 @@ public class RxPrescriptionData {
 			// this.gcn=null;
 		}
 
-		public int getGCN_SEQNO() {
+		public String getGCN_SEQNO() {
 			return this.GCN_SEQNO;
 		}
 
-		public void setGCN_SEQNO(int RHS) {
+		public void setGCN_SEQNO(String RHS) {
 			this.GCN_SEQNO = RHS;
-			// this.gcn=null;
 		}
 
 		/*
@@ -1143,14 +1134,7 @@ public class RxPrescriptionData {
 		 * return gcn; }
 		 */
 		public boolean isCustom() {
-			boolean b = false;
-
-			if (this.customName != null) {
-				b = true;
-			} else if (this.GCN_SEQNO == 0) {
-				b = true;
-			}
-			return b;
+			return this.customName != null;
 		}
 
 		public String getCustomName() {
@@ -1945,7 +1929,7 @@ public class RxPrescriptionData {
 		String providerNo;
 		String favoriteName;
 		String BN;
-		int GCN_SEQNO;
+		String GCN_SEQNO;
 		String customName;
 		float takeMin;
 		float takeMax;
@@ -1969,7 +1953,7 @@ public class RxPrescriptionData {
 		String dosage;
 		Boolean dispenseInternal;
 
-		public Favorite(int favoriteId, String providerNo, String favoriteName, String BN, int GCN_SEQNO, String customName, float takeMin, float takeMax, String frequencyCode, String duration, String durationUnit, String quantity, int repeat, int nosubs, int prn, String special, String GN, String atc, String regionalIdentifier, String unit, String unitName, String method, String route, String drugForm, boolean customInstr, String dosage) {
+		public Favorite(int favoriteId, String providerNo, String favoriteName, String BN, String GCN_SEQNO, String customName, float takeMin, float takeMax, String frequencyCode, String duration, String durationUnit, String quantity, int repeat, int nosubs, int prn, String special, String GN, String atc, String regionalIdentifier, String unit, String unitName, String method, String route, String drugForm, boolean customInstr, String dosage) {
 			this.favoriteId = favoriteId;
 			this.providerNo = providerNo;
 			this.favoriteName = favoriteName;
@@ -1998,7 +1982,7 @@ public class RxPrescriptionData {
 			this.dosage = dosage;
 		}
 
-		public Favorite(int favoriteId, String providerNo, String favoriteName, String BN, int GCN_SEQNO, String customName, float takeMin, float takeMax, String frequencyCode, String duration, String durationUnit, String quantity, int repeat, boolean nosubs, boolean prn, String special, String GN, String atc, String regionalIdentifier, String unit, String unitName, String method, String route, String drugForm, boolean customInstr, String dosage) {
+		public Favorite(int favoriteId, String providerNo, String favoriteName, String BN, String GCN_SEQNO, String customName, float takeMin, float takeMax, String frequencyCode, String duration, String durationUnit, String quantity, int repeat, boolean nosubs, boolean prn, String special, String GN, String atc, String regionalIdentifier, String unit, String unitName, String method, String route, String drugForm, boolean customInstr, String dosage) {
 			this.favoriteId = favoriteId;
 			this.providerNo = providerNo;
 			this.favoriteName = favoriteName;
@@ -2059,11 +2043,11 @@ public class RxPrescriptionData {
 			this.BN = RHS;
 		}
 
-		public int getGCN_SEQNO() {
+		public String getGCN_SEQNO() {
 			return this.GCN_SEQNO;
 		}
 
-		public void setGCN_SEQNO(int RHS) {
+		public void setGCN_SEQNO(String RHS) {
 			this.GCN_SEQNO = RHS;
 		}
 

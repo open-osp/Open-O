@@ -47,6 +47,7 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+import org.owasp.encoder.Encode;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import oscar.log.LogAction;
@@ -106,7 +107,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			RxPrescriptionData.Prescription rx = bean.getStashItem(bean.getStashIndex());
 			RxPrescriptionData prescription = new RxPrescriptionData();
 
-			if (frm.getGCN_SEQNO() != 0) { // not custom
+			if (frm.getGCN_SEQNO() != "0") { // not custom
 				if (frm.getBrandName().equals(rx.getBrandName()) == false) {
 					rx.setBrandName(frm.getBrandName());
 				} else {
@@ -114,7 +115,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 				}
 			} else { // custom
 				rx.setBrandName(null);
-				rx.setGCN_SEQNO(0);
+				rx.setGCN_SEQNO("0");
 				rx.setCustomName(frm.getCustomName());
 			}
 
@@ -337,7 +338,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			rx.setRoute("");
 			rx.setDosage("");
 			rx.setUnit("");
-			rx.setGCN_SEQNO(0);
+			rx.setGCN_SEQNO("0");
 			rx.setRegionalIdentifier("");
 			rx.setAtcCode("");
 			RxUtil.setDefaultSpecialQuantityRepeat(rx);
@@ -431,7 +432,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			rx.setRoute("");
 			rx.setDosage("");
 			rx.setUnit("");
-			rx.setGCN_SEQNO(0);
+			rx.setGCN_SEQNO("0");
 			rx.setRegionalIdentifier("");
 			rx.setAtcCode("");
 			RxUtil.setDefaultSpecialQuantityRepeat(rx);// 1 OD, 20, 0;
@@ -491,7 +492,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 				customRx.setRoute("");
 				customRx.setDosage("");
 				customRx.setUnit("");
-				customRx.setGCN_SEQNO(0);
+				customRx.setGCN_SEQNO("0");
 				customRx.setRegionalIdentifier("");
 				customRx.setAtcCode("");
 				bean.setStashItem(bean.getIndexFromRx(Integer.parseInt(randomId)), customRx);
@@ -534,46 +535,94 @@ public final class RxWriteScriptAction extends DispatchAction {
 			RxPrescriptionData.Prescription rx = rxData.newPrescription(bean.getProviderNo(), bean.getDemographicNo());
 
 			String ra = request.getParameter("randomId");
-			int randomId = Integer.parseInt(ra);
+			int randomId = 0;
+			if(ra != null && !ra.isEmpty()) {
+				randomId = Integer.parseInt(ra);
+			}
+
 			rx.setRandomId(randomId);
 			String drugId = request.getParameter("drugId");
 			String text = request.getParameter("text");
 
-			// TODO: Is this to slow to do here? It's possible to do this in ajax, as in when this comes back launch an ajax request to fill in.
-			logger.debug("requesting drug from drugref id="+drugId);
-			RxDrugData.DrugMonograph dmono = drugData.getDrug2(drugId);
-
-			String brandName = null;
-			ArrayList<DrugComponent> drugComponents = dmono.getDrugComponentList();	
-			
-			if(StringUtils.isNullOrEmpty(brandName)) {
-				brandName = text;
+			if(text != null) {
+				text = Encode.forJava(text);
 			}
 
+			if(drugId != null) {
+				drugId = Encode.forJava(drugId);
+			}
+
+			logger.debug("requesting drug from drugref id="+drugId);
+
+			RxDrugData.DrugMonograph dmono = drugData.getDrug2(drugId);
+//			drugId = dmono.drugId+"";
+
+//			if(drugId == null || ! StringUtils.isInteger(drugId)) {
+//				drugId = "-1";
+//			}
+
+			// this is the drug name the user selected from the autocomplete interface
+			rx.setDrugPrescribed(text);
+
+			ArrayList<DrugComponent> drugComponents = dmono.getDrugComponentList();
 			if( drugComponents != null && drugComponents.size() > 0 ) {
 
 				StringBuilder stringBuilder = new StringBuilder();
 				int count = 0;
 				for( RxDrugData.DrugMonograph.DrugComponent drugComponent : drugComponents ) {
-					
-					stringBuilder.append( drugComponent.getName() );
-					stringBuilder.append(" ");
-					stringBuilder.append( drugComponent.getStrength() );
-					stringBuilder.append( drugComponent.getUnit() );
-					
+
+					String strength = drugComponent.getStrength();
+					String unit = drugComponent.getUnit();
+					String drugName = drugComponent.getName();
+					String drugForm = dmono.drugForm;
+
+					if(strength == null) {
+						strength = "";
+					}
+
+					if(unit == null) {
+						unit = "";
+					}
+
+					if (drugName == null) {
+						drugName = "";
+					}
+
+					if(drugForm == null) {
+						drugForm = "";
+					}
+
+					if(! strength.contains("/")) {
+						strength = strength.toLowerCase().replaceAll(unit.toLowerCase(), "");
+						strength += unit.toLowerCase();
+					}
+
+					stringBuilder.append(drugName.trim());
+
+					if( ! stringBuilder.toString().toLowerCase().contains(strength.toLowerCase())) {
+						stringBuilder.append( " " + strength.toLowerCase() );
+					}
+
+					if(! stringBuilder.toString().toLowerCase().endsWith(drugForm.toLowerCase())) {
+						stringBuilder.append(" " + drugForm.toLowerCase());
+					}
+
 					count++;
 					if( count > 0 && count != drugComponents.size() ) {
 						stringBuilder.append( " / " );
 					}
 				}
 				
-				rx.setGenericName(stringBuilder.toString()); 
+				rx.setGenericName(stringBuilder.toString().trim());
 			} else {
 				rx.setGenericName(dmono.name); 
 			}
 
-			rx.setBrandName(brandName);
-			
+			if(dmono.getProduct() != null && ! dmono.getProduct().isEmpty()) {
+				rx.setBrandName(dmono.getProduct());
+			} else {
+				rx.setBrandName(text);
+			}
 
 			//there's a change there's multiple forms. Select the first one by default
 			//save the list in a separate variable to make a drop down in the interface.
@@ -591,7 +640,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			// for now, check to see if ORAL present, if yes use that, if not use the first one.
 			boolean oral = false;
 			for (int i = 0; i < dmono.route.size(); i++) {
-				if (((String) dmono.route.get(i)).equalsIgnoreCase("ORAL")) {
+				if ("ORAL".equalsIgnoreCase(((String) dmono.route.get(i)))) {
 					oral = true;
 				}
 			}
@@ -610,11 +659,26 @@ public final class RxWriteScriptAction extends DispatchAction {
 				RxDrugData.DrugMonograph.DrugComponent drugComp = (RxDrugData.DrugMonograph.DrugComponent) comps.get(i);
 				String strength = drugComp.strength;
 				unit = drugComp.unit;
-				dosage = dosage + " " + strength + " " + unit;// get drug dosage from strength and unit.
+
+				if(strength == null) {
+					strength = "";
+				}
+
+				if(unit == null) {
+					unit = "";
+				}
+
+				// covers all cases when unit is missing -or- included with the strength.
+				if(! strength.contains("/")) {
+					strength = strength.toLowerCase().trim().replaceAll(unit.toLowerCase().trim(), "");
+					strength += unit.toLowerCase().trim();
+				}
+
+				dosage += (" " + strength.toLowerCase());
 			}
 			rx.setDosage(removeExtraChars(dosage));
 			rx.setUnit(removeExtraChars(unit));
-			rx.setGCN_SEQNO(Integer.parseInt(drugId));
+			rx.setGCN_SEQNO(dmono.gcnCode);
 			rx.setRegionalIdentifier(dmono.regionalIdentifier);
 			String atcCode = dmono.atc;
 			rx.setAtcCode(atcCode);
@@ -624,7 +688,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 			if (RxUtil.isRxUniqueInStash(bean, rx)) {
 				listRxDrugs.add(rx);
 			}
-			bean.addAttributeName(rx.getAtcCode() + "-" + String.valueOf(bean.getStashIndex()));
+			bean.addAttributeName(rx.getAtcCode() + "-" + bean.getStashIndex());
 			int rxStashIndex = bean.addStashItem(loggedInInfo, rx);
 			bean.setStashIndex(rxStashIndex);
 			String today = null;

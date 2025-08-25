@@ -51,7 +51,7 @@ public class Favorite extends AbstractModel<Integer> {
 	private String bn;
 
 	@Column(name="GCN_SEQNO")
-	private double gcnSeqno;
+	private String gcnSeqno;
 
 	private String customName;
 
@@ -139,11 +139,11 @@ public class Favorite extends AbstractModel<Integer> {
     	this.bn = bn;
     }
 
-	public double getGcnSeqno() {
+	public String getGcnSeqno() {
     	return gcnSeqno;
     }
 
-	public void setGcnSeqno(double gcnSeqno) {
+	public void setGcnSeqno(String gcnSeqno) {
     	this.gcnSeqno = gcnSeqno;
     }
 

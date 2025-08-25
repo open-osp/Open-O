@@ -25,13 +25,6 @@
 
 package org.oscarehr.common.service.myoscar;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +45,12 @@ import org.oscarehr.util.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 
 public final class PrescriptionMedicationManager {
 	private static final Logger logger = MiscUtils.getLogger();
@@ -181,7 +180,7 @@ public final class PrescriptionMedicationManager {
 		XmlUtils.appendChildToRootIgnoreNull(doc, "Reason", drug.getComment());
 		XmlUtils.appendChildToRootIgnoreNull(doc, "Name", drug.getDrugName());
 
-		if (drug.getGcnSeqNo() != 0) {
+		if (! "0".equals(drug.getGcnSeqNo())) {
 			Element outterCode = doc.createElement("Code");
 			rootNode.appendChild(outterCode);
 

@@ -2248,8 +2248,8 @@ public class ImportDemographicDataAction4 extends Action {
 	                    	DrugMonograph dm = rxDrugData.getDrugByDIN(drug.getRegionalIdentifier());
 	                    	if(dm != null) {
 	                    		drug.setAtc(dm.getAtc());
-	                    		if(dm.drugCode != null) {
-	                    			drug.setGcnSeqNo(Integer.parseInt(dm.drugCode));
+	                    		if(dm.drugId != null) {
+	                    			drug.setGcnSeqNo(dm.drugId + "");
 	                    		}
 	                    	}
                     	}catch(Exception e) {

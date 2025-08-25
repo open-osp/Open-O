@@ -25,12 +25,6 @@
 
 package oscar.oscarRx.pageUtil;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -39,9 +33,13 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-
 import oscar.oscarRx.data.RxDrugData;
 import oscar.oscarRx.data.RxPrescriptionData;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 
@@ -80,8 +78,9 @@ public final class RxChooseDrugAction extends Action {
                 String drugId = request.getParameter("drugId");
                     rx.setBrandName(BN);
                 try{
-                    rx.setGCN_SEQNO(Integer.parseInt(drugId));
-                    RxDrugData.DrugMonograph f = drugData.getDrug(drugId);               
+
+                    RxDrugData.DrugMonograph f = drugData.getDrug(drugId);
+                    rx.setGCN_SEQNO(f.gcnCode);
                     String genName = "";
                     genName = f.name;
                     rx.setAtcCode(f.atc);
@@ -118,7 +117,7 @@ public final class RxChooseDrugAction extends Action {
                 }catch(java.lang.NumberFormatException numEx){          // Custom                
                     rx.setBrandName(null);
                     rx.setCustomName("");
-                    rx.setGCN_SEQNO(0);
+                    rx.setGCN_SEQNO("0");
                 }
 
                 rx.setRxDate(oscar.oscarRx.util.RxUtil.Today());
