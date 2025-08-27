@@ -2645,7 +2645,12 @@ function updateQty(element){
             onSuccess:function(transport){
             	
                 callReplacementWebService("ListDrugs.jsp",'drugProfile');
-                popForm2(null);
+                const hasDrugs = jQuery("[id^='drugName_']").length > 0;
+                if (hasDrugs) {
+                    popForm2(null);
+                } else {
+                    alert("Please add at least one drug first");
+                }
                 resetReRxDrugList();
             }});
         return false;
