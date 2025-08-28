@@ -502,16 +502,16 @@
             <table class="ele" width="90%">
                 <tr>
                     <td>&nbsp;</td>
-                    <td style="10%;">Total patients: <%=list.size()%><br/>Ineligible:<%=ineligible%>
+                    <td>Total patients: <%=list.size()%><br/>Ineligible:<%=ineligible%>
                     </td>
-                    <td style="10%;">Up to Date: <%=done%> = <%=percentage %> %
+                    <td>Up to Date: <%=done%> = <%=percentage %> %
                         <%if (percentageWithGrace != null) { %>
                             <%-- <br/> With Grace <%=percentageWithGrace%> %
                             --%>
                         <%}%>
                     </td>
 
-                    <td style="40%;">&nbsp;<%=request.getAttribute("patientSet")%>
+                    <td>&nbsp;<%=request.getAttribute("patientSet")%>
                     </td>
                     <td>
                         <select onchange="setNextContactMethod(this)">
@@ -526,7 +526,7 @@
                         &nbsp;&nbsp;
                         <input type="button" value="Save Contacts" onclick="return saveContacts();">
                     </td>
-                    <td style="10%;"><input style="float: right" type="button" value="Bill"
+                    <td><input style="float: right" type="button" value="Bill"
                                             onclick="return batchBill();"></td>
                 </tr>
             </table>
@@ -574,7 +574,7 @@
                     for (int i = 0; i < list.size(); i++) {
                         setBill = false;
                         PreventionReportDisplay dis = (PreventionReportDisplay) list.get(i);
-                        Hashtable h = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());
+                        Map<String, String> h = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());
                         org.oscarehr.common.model.Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());
 
                         if (dis.nextSuggestedProcedure != null) {
@@ -586,119 +586,127 @@
                                 phoneCall.add(dis.demographicNo);
                                 setBill = true;
                             }
+                        }
 
-                            if (dis.state != null && dis.state.equals("Overdue")){
-                               overDueList.add(dis.demographicNo);
-                            }
+                        if (dis.state != null && dis.state.equals("Refused")) {
+                            refusedLetter.add(dis.demographicNo);
+                            setBill = true;
+                        }
 
-                            if( dis.state != null && dis.billStatus.equals("Y")) {
-                              setBill = true;
-                            }
-                            %>
-                       <tr>
-                          <td><%=i+1%></td>
-                          <td>
-                              <a href="javascript: return false;" onClick="popup(724,964,'../demographic/demographiccontrol.jsp?demographic_no=<%=dis.demographicNo%>&amp;displaymode=edit&amp;dboperation=search_detail','MasterDemographic')"><%=dis.demographicNo%></a>
-                          </td>
-                          <td><%=DemographicData.getDob(demo,"-")%></td>
+                        if (dis.state != null && dis.state.equals("Overdue")) {
+                            overDueList.add(dis.demographicNo);
+                        }
 
-                          <%if (type == null ){ %>
-                          <td><%=demo.getAgeAsOf(asDate)%></td>
-                          <td><%=Encode.forHtmlContent(h.get("sex"))%></td>
-                          <td><%=Encode.forHtmlContent(h.get("lastName"))%></td>
-                          <td><%=Encode.forHtmlContent(h.get("firstName"))%></td>
-                          <td><%=Encode.forHtmlContent(demo.getHin())+Encode.forHtmlContent(demo.getVer())%></td>
-                          <td><%=Encode.forHtmlContent(demo.getPhone())%> </td>
-                          <td><%=Encode.forHtmlContent(demo.getEmail()) %></td>
-                          <td><%=Encode.forHtmlContent(demo.getAddress())+" "+Encode.forHtmlContent(demo.getCity())+" "+Encode.forHtmlContent(demo.getProvince())+" "+Encode.forHtmlContent(demo.getPostal())%> </td>
-                          <td><oscar:nextAppt demographicNo="<%=demo.getDemographicNo().toString()%>"/></td>
-                          <td bgcolor="<%=dis.color%>"><%=dis.state%></td>                          
-                          <td bgcolor="<%=dis.color%>"><%=dis.bonusStatus%></td>
-                          <td bgcolor="<%=dis.color%>"><%=dis.numMonths%></td>
-                          <td bgcolor="<%=dis.color%>"><%=dis.lastDate%></td>
+                        if (dis.state != null && dis.billStatus.equals("Y")) {
+                            setBill = true;
+                        }
+                %>
+                <tr>
+                    <td><%=i + 1%>
+                    </td>
+                    <td>
+                        <a href="javascript: return false;"
+                           onClick="popup(724,964,'../demographic/demographiccontrol.jsp?demographic_no=<%=dis.demographicNo%>&amp;displaymode=edit&amp;dboperation=search_detail','MasterDemographic')"><%=dis.demographicNo%>
+                        </a>
+                    </td>
+                    <td><%=DemographicData.getDob(demo, "-")%>
+                    </td>
+
+                    <%if (type == null) { %>
+                    <td><%=demo.getAgeAsOf(asDate)%>
+                    </td>
+                    <td><%=Encode.forHtmlContent(h.get("sex"))%>
+                    </td>
+                    <td><%=Encode.forHtmlContent(h.get("lastName"))%>
+                    </td>
+                    <td><%=Encode.forHtmlContent(h.get("firstName"))%>
+                    </td>
+                    <td><%=Encode.forHtmlContent(demo.getHin()) + Encode.forHtmlContent(demo.getVer())%>
+                    </td>
+                    <td><%=Encode.forHtmlContent(demo.getPhone())%>
+                    </td>
+                    <td><%=Encode.forHtmlContent(demo.getEmail()) %>
+                    </td>
+                    <td><%=Encode.forHtmlContent(demo.getAddress()) + " " + Encode.forHtmlContent(demo.getCity()) + " " + Encode.forHtmlContent(demo.getProvince()) + " " + Encode.forHtmlContent(demo.getPostal())%>
+                    </td>
+                    <td><oscar:nextAppt demographicNo="<%=demo.getDemographicNo().toString()%>"/></td>
+                    <td bgcolor="<%=dis.color%>"><%=dis.state%>
+                    </td>
+                    <td bgcolor="<%=dis.color%>"><%=dis.bonusStatus%>
+                    </td>
+                    <td bgcolor="<%=dis.color%>"><%=dis.numMonths%>
+                    </td>
+                    <td bgcolor="<%=dis.color%>"><%=dis.lastDate%>
+                    </td>
 
 
-                          <% }else {
-                              org.oscarehr.common.model.Demographic demoSDM = demoData.getSubstituteDecisionMaker(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());%>
-                          <td><%=demo.getAgeAsOf(asDate)%></td>
-                          <td><%=Encode.forHtmlContent(h.get("sex"))%></td>
-                          <td><%=Encode.forHtmlContent(h.get("lastName"))%></td>
-                          <td><%=Encode.forHtmlContent(h.get("firstName"))%></td>
-                          <td><%=Encode.forHtmlContent(demo.getHin())+Encode.forHtmlContent(demo.getVer())%></td>
-                          <td><%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getLastName())%><%=demoSDM==null?"":","%> <%= demoSDM==null?"":Encode.forHtmlContent(demoSDM.getFirstName()) %>&nbsp;</td>
-                          <td><%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getPhone())%> &nbsp;</td>
-                          <td><%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getEmail())%> &nbsp;</td>
-                          <td><%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getAddress())%> <%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getCity())%> <%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getProvince())%> <%=demoSDM==null?"":Encode.forHtmlContent(demoSDM.getPostal())%> &nbsp;</td>
-                          <td><oscar:nextAppt demographicNo="<%=demo.getDemographicNo().toString()%>"/></td>
-                          <td bgcolor="<%=dis.color%>"><%=dis.state%></td>
-                          <td bgcolor="<%=dis.color%>"><%=dis.numShots%></td>                          
-                          <td bgcolor="<%=dis.color%>"><%=dis.bonusStatus%></td>
-                          <td bgcolor="<%=dis.color%>"><%=dis.numMonths%></td>
-                          <td bgcolor="<%=dis.color%>"><%=dis.lastDate%></td>
+                    <% } else {
+                        org.oscarehr.common.model.Demographic demoSDM = demoData.getSubstituteDecisionMaker(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());%>
+                    <td><%=demo.getAgeAsOf(asDate)%>
+                    </td>
+                    <td><%=Encode.forHtmlContent(h.get("sex"))%>
+                    </td>
+                    <td><%=Encode.forHtmlContent(h.get("lastName"))%>
+                    </td>
+                    <td><%=Encode.forHtmlContent(h.get("firstName"))%>
+                    </td>
+                    <td><%=Encode.forHtmlContent(demo.getHin()) + Encode.forHtmlContent(demo.getVer())%>
+                    </td>
+                    <td><%=demoSDM == null ? "" : Encode.forHtmlContent(demoSDM.getLastName())%><%=demoSDM == null ? "" : ","%> <%= demoSDM == null ? "" : Encode.forHtmlContent(demoSDM.getFirstName()) %>&nbsp;</td>
+                    <td><%=demoSDM == null ? "" : Encode.forHtmlContent(demoSDM.getPhone())%> &nbsp;</td>
+                    <td><%=demoSDM == null ? "" : Encode.forHtmlContent(demoSDM.getEmail())%> &nbsp;</td>
+                    <td><%=demoSDM == null ? "" : Encode.forHtmlContent(demoSDM.getAddress())%> <%=demoSDM == null ? "" : Encode.forHtmlContent(demoSDM.getCity())%> <%=demoSDM == null ? "" : Encode.forHtmlContent(demoSDM.getProvince())%> <%=demoSDM == null ? "" : Encode.forHtmlContent(demoSDM.getPostal())%>
+                        &nbsp;
+                    </td>
+                    <td><oscar:nextAppt demographicNo="<%=demo.getDemographicNo().toString()%>"/></td>
+                    <td bgcolor="<%=dis.color%>"><%=dis.state%>
+                    </td>
+                    <td bgcolor="<%=dis.color%>"><%=dis.numShots%>
+                    </td>
+                    <td bgcolor="<%=dis.color%>"><%=dis.bonusStatus%>
+                    </td>
+                    <td bgcolor="<%=dis.color%>"><%=dis.numMonths%>
+                    </td>
+                    <td bgcolor="<%=dis.color%>"><%=dis.lastDate%>
+                    </td>
 
-                          <%}%>
-                          <td bgcolor="<%=dis.color%>" id="lastFollowup<%=i+1%>">
-                             <% if (dis.lastFollowup != null ){ %>
-                                 <%=dis.lastFollupProcedure%>
-                                 <%=UtilDateUtilities.DateToString(dis.lastFollowup)%>
-                                 <%=UtilDateUtilities.getNumMonths(dis.lastFollowup,new Date())%>M
-                             <% }else{ %>
-                                ----
-                             <% } %>
-                          </td>
-                          <td bgcolor="<%=dis.color%>" id="nextSuggestedProcedure<%=i+1%>">
-                              <%if ( dis.nextSuggestedProcedure != null && dis.nextSuggestedProcedure.equals("P1")){ %>
-                                 <a href="javascript: return false;" onclick="return completedProcedure('<%=i+1%>','<%=followUpType%>','<%=dis.nextSuggestedProcedure%>','<%=dis.demographicNo%>');"><%=dis.nextSuggestedProcedure%></a>                              
-                              <%}else{%>
-                                    <%=(dis.nextSuggestedProcedure != null)?dis.nextSuggestedProcedure:"&nbsp;"%>
-                              <%}%>
-                          </td>
-                          <td bgcolor="<%=dis.color%>">		
-                          	<%if( !setBill ) {%>					                          
-                          		<input type="checkbox"  id="selectnsp<%=i+1%>" name="nsp" value="<%=dis.demographicNo%>">
-                          	<%} else { %>
-                          		&nbsp;
-                          	<%} %>
-                          </td>
-                          <%
-                          	String providerName=providerBean.getProperty(demo.getProviderNo());
-                          	providerName=StringUtils.trimToEmpty(providerName);
-                          %>
-                          <td bgcolor="<%=dis.color%>"><%=providerName%></td>
-                          <td bgcolor="<%=dis.color%>">
-                              <% if( billCode != null && setBill ) {
-                                  numDays = bCh1Dao.getDaysSinceBilled(billCode, dis.demographicNo);
-                                  //we only want to enable billing if it has been a year since the last invoice was created
-                                  enabled = numDays >= 0 && numDays < 365 ? "disabled" : "checked";
-                              %>
-                              <input type="checkbox" name="bill" <%=enabled%> value="<%=billCode + ";" + dis.demographicNo + ";" + demo.getProviderNo()%>">
-                              <%}%>
-                          </td>
-
-                       </tr>
-                      <%}%>
-                    	</tbody>
-                    </table>
-                    <table class="ele" style="width:80%;">
-                      <tr>
-                          <td style="text-align:right;"><input type="button" value="Bill" onclick="return batchBill();"></td>
-
-                      </tr>
-                    </table>
-
-                    </form>
-
-                  <%}%>
-                  <%--
-                  <% if ( overDueList.size() > 0 ) {
-                        String queryStr = getUrlParamList(overDueList, "demo");
-                        %>
-                        <a target="_blank" href="../report/GenerateEnvelopes.do?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode(request.getAttribute("prevType")+" is due","UTF-8")%>">Add Tickler for Overdue</a>
-                  <%}%>
-                  --%>
-
-                 <%-- if ( firstLetter.size() > 0 ) {
-                        String queryStr = getUrlParamList(firstLetter, "demo");
+                    <%}%>
+                    <td bgcolor="<%=dis.color%>" id="lastFollowup<%=i+1%>">
+                        <% if (dis.lastFollowup != null) { %>
+                        <%=dis.lastFollupProcedure%>
+                        <%=UtilDateUtilities.DateToString(dis.lastFollowup)%>
+                        <%=UtilDateUtilities.getNumMonths(dis.lastFollowup, new Date())%>M
+                        <% } else { %>
+                        ----
+                        <% } %>
+                    </td>
+                    <td bgcolor="<%=dis.color%>" id="nextSuggestedProcedure<%=i+1%>">
+                        <%if (dis.nextSuggestedProcedure != null && dis.nextSuggestedProcedure.equals("P1")) { %>
+                        <a href="javascript: return false;"
+                           onclick="return completedProcedure('<%=i+1%>','<%=followUpType%>','<%=dis.nextSuggestedProcedure%>','<%=dis.demographicNo%>');"><%=dis.nextSuggestedProcedure%>
+                        </a>
+                        <%} else {%>
+                        <%=(dis.nextSuggestedProcedure != null) ? dis.nextSuggestedProcedure : "&nbsp;"%>
+                        <%}%>
+                    </td>
+                    <td bgcolor="<%=dis.color%>">
+                        <%if (!setBill) {%>
+                        <input type="checkbox" id="selectnsp<%=i+1%>" name="nsp" value="<%=dis.demographicNo%>">
+                        <%} else { %>
+                        &nbsp;
+                        <%} %>
+                    </td>
+                    <%
+                        String providerName = providerBean.getProperty(demo.getProviderNo());
+                        providerName = StringUtils.trimToEmpty(providerName);
+                    %>
+                    <td bgcolor="<%=dis.color%>"><%=providerName%>
+                    </td>
+                    <td bgcolor="<%=dis.color%>">
+                        <% if (billCode != null && setBill) {
+                            numDays = bCh1Dao.getDaysSinceBilled(billCode, dis.demographicNo);
+                            //we only want to enable billing if it has been a year since the last invoice was created
+                            enabled = numDays >= 0 && numDays < 365 ? "disabled" : "checked";
                         %>
                         <input type="checkbox" name="bill" <%=enabled%>
                                value="<%=billCode + ";" + dis.demographicNo + ";" + demo.getProviderNo()%>">
