@@ -72,6 +72,7 @@ public final class MessageUploader {
 	private static MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
 	private static MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
 	private static FileUploadCheckDao fileUploadCheckDao = SpringUtils.getBean(FileUploadCheckDao.class);
+	private static PropertyDao propertyDao = SpringUtils.getBean(PropertyDao.class);
 	private static DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 
 	private MessageUploader() {
@@ -429,6 +430,13 @@ public final class MessageUploader {
 		
 		
 		ProviderLabRouting routing = new ProviderLabRouting();
+
+		// Link the lab result to the MRP
+		boolean autoLinkToMrp = propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.auto_link_to_mrp);
+		if (autoLinkToMrp && altProviderNo != null && !altProviderNo.equals("0")) {
+			routing.route(labId, altProviderNo, conn, "HL7");
+		}
+
 		if (providerNums.size() > 0) {
 			for (String provider_no : providerNums) {
 				routing.route(labId, provider_no, conn, "HL7");

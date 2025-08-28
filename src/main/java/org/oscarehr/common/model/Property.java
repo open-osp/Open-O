@@ -35,7 +35,7 @@ import java.io.Serializable;
 public class Property extends AbstractModel<Integer> implements Serializable {
 
 	public enum PROPERTY_KEY {invoice_payee_display_clinic, invoice_payee_info, default_billing_provider, default_billing_form,
-		bc_default_service_location, auto_populate_refer}
+		bc_default_service_location, auto_populate_refer, auto_link_to_mrp}
 
 	public enum PROPERTY_VALUE {clinicdefault}
 
