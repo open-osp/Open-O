@@ -671,7 +671,7 @@
 			<forward name="ajax" path="/web/dashboard/admin/DashboardManager.do" />
 		</action>
 
-		<action path="/autoLinkToMrp" validate="false" parameter="method" type="org.oscarehr.dashboard.admin.AutoLinkToMrpAction" scope="request">
+		<action path="/providerLinkingRules" validate="false" parameter="method" type="org.oscarehr.dashboard.admin.ProviderLinkingRulesAction" scope="request">
 		</action>
 		
 		<action name="FrmForm" path="/web/dashboard/display/DashboardDisplay" 

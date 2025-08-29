@@ -261,6 +261,11 @@ String curProvider_no = (String)session.getAttribute("user");
 					<li><a href="${ctx}/admin/labforwardingrules.jsp" class="contentLink"><bean:message key="admin.admin.labFwdRules" /></a></li>
 					
 					<li><a href="${ctx}/admin/addQueue.jsp" class="contentLink"><bean:message key="admin.admin.AddNewQueue"/></a></li>
+
+					<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_lab" rights="r" reverse="<%=false%>">				
+					<li><a href='javascript:void(0);'
+						class="xlink" rel="${ctx}/admin/providerLinkingRules.jsp"><bean:message key="admin.admin.ProviderLinkingRules"/></a></li>		
+					</security:oscarSec>
 				</ul>
 				</div>
 				</div>
@@ -629,13 +634,7 @@ String curProvider_no = (String)session.getAttribute("user");
                                                 
 					<li><a href='javascript:void(0);'
 						class="xlink" rel="${ctx}/admin/displayDocumentDescriptionTemplate.jsp?setDefault=true"><bean:message key="admin.admin.DocumentDescriptionTemplate"/></a></li>		
-				</security:oscarSec>
-
-				<security:oscarSec roleName="<%=roleName$%>" objectName="_admin.hrm,_admin.lab" rights="r" reverse="<%=false%>">				
-					<li><a href='javascript:void(0);'
-						class="xlink" rel="${ctx}/admin/flaggingOfMrp.jsp"><bean:message key="admin.admin.FlaggingOfMrp"/></a></li>		
-				</security:oscarSec>		
-						
+				</security:oscarSec>						
 						
 				<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">			
 				<li><a href='javascript:void(0);'

@@ -18,21 +18,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.PrintWriter;
 
-public class AutoLinkToMrpAction extends DispatchAction {
+public class ProviderLinkingRulesAction extends DispatchAction {
     private static final Logger logger = MiscUtils.getLogger();
 
     private ProviderManager2 providerManager2 = SpringUtils.getBean(ProviderManager2.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    public ActionForward updateAutoLinkToMrpProperty(ActionMapping actionmapping,ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward updateProviderLinkingRulesProperty(ActionMapping actionmapping,ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin.lab", SecurityInfoManager.WRITE, null) &&
-            !securityInfoManager.hasPrivilege(loggedInInfo, "_admin.hrm", SecurityInfoManager.WRITE, null)) {
-			throw new RuntimeException("missing required security object (_admin.hrm or _admin.lab)");
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin", SecurityInfoManager.WRITE, null) &&
+            !securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+			throw new RuntimeException("missing required security object (_admin or _lab)");
 		}
 
         String value = request.getParameter("status");
-        boolean status = providerManager2.updateAutoLinkToMrpProperty(loggedInInfo, value);
+        boolean status = providerManager2.updateProviderLinkingRulesProperty(loggedInInfo, value);
         
         JSONObject json = new JSONObject();
 		json.put("status", status);
@@ -40,14 +40,14 @@ public class AutoLinkToMrpAction extends DispatchAction {
         return null;
     }
 
-    public ActionForward viewAutoLinkToMrpPropertyStatus(ActionMapping actionmapping,ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward viewProviderLinkingRulesPropertyStatus(ActionMapping actionmapping,ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin.lab", SecurityInfoManager.READ, null) &&
-            !securityInfoManager.hasPrivilege(loggedInInfo, "_admin.hrm", SecurityInfoManager.READ, null)) {
-			throw new RuntimeException("missing required security object (_admin.hrm or _admin.lab)");
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin", SecurityInfoManager.READ, null) &&
+            !securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.READ, null)) {
+			throw new RuntimeException("missing required security object (_admin or _lab)");
 		}
 
-        boolean status = providerManager2.viewAutoLinkToMrpPropertyStatus(loggedInInfo);
+        boolean status = providerManager2.viewProviderLinkingRulesPropertyStatus(loggedInInfo);
         
         JSONObject json = new JSONObject();
 		json.put("status", status);

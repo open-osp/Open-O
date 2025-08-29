@@ -240,8 +240,8 @@ public class HRMReportParser {
 				PropertyDao propertyDao = SpringUtils.getBean(PropertyDao.class);
 
 				// Link the HRM to the MRP
-				boolean autoLinkToMrp = propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.auto_link_to_mrp);
-				if (autoLinkToMrp && demProviderNo != null && !demProviderNo.equals("0")) {
+				boolean providerLinkingRules = propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.provider_linking_rules);
+				if (providerLinkingRules && demProviderNo != null && !demProviderNo.equals("0")) {
 					routeReportToProvider(document.getId(), demProviderNo);
 				}
 
@@ -605,8 +605,14 @@ public class HRMReportParser {
 
 	public static void routeReportToProvider(Integer reportId, String providerNo) {
 		HRMDocumentToProviderDao hrmDocumentToProviderDao = (HRMDocumentToProviderDao) SpringUtils.getBean(HRMDocumentToProviderDao.class);
+		
+		// Check if routing already exists
+		HRMDocumentToProvider existing = hrmDocumentToProviderDao.findByHrmDocumentIdAndProviderNo(reportId, providerNo);
+		if (existing != null) {
+			return; // Don't create duplicate
+		}
+		
 		HRMDocumentToProvider providerRouting = new HRMDocumentToProvider();
-
 		providerRouting.setHrmDocumentId(reportId);
 		providerRouting.setProviderNo(providerNo);
 
