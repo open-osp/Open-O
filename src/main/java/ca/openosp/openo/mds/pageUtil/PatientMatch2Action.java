@@ -32,11 +32,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ca.openosp.openo.managers.ProviderManager2;
+import ca.openosp.openo.managers.DemographicManager;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
-
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.lab.ca.all.upload.ProviderLabRouting;
 import ca.openosp.openo.lab.ca.on.CommonLabResultData;
 
 
@@ -49,6 +52,8 @@ public class PatientMatch2Action extends ActionSupport {
 
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    private ProviderManager2 providerManager2 = SpringUtils.getBean(ProviderManager2.class);
+    private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 
     public PatientMatch2Action() {
     }
@@ -63,13 +68,27 @@ public class PatientMatch2Action extends ActionSupport {
         String demographicNo = request.getParameter("demographicNo");
         String labNo = request.getParameter("labNo");
         String labType = request.getParameter("labType");
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
         String newURL = "";
 
         try {
             CommonLabResultData.updatePatientLabRouting(labNo, demographicNo, labType);
+            boolean mrpAttached = false;
+
+            // Check if provider linking rules are enabled
+            if (providerManager2.viewProviderLinkingRulesPropertyStatus(loggedInInfo)) {
+                // Get the demographic's MRP
+                Provider mrp = demographicManager.getMRP(loggedInInfo, Integer.parseInt(demographicNo));
+                if (mrp != null) {
+                    mrpAttached = true;
+                    ProviderLabRouting routing = new ProviderLabRouting();
+                    routing.route(labNo, mrp.getProviderNo(), null, labType);
+                }
+            }
+
             newURL = request.getContextPath() + "/oscarMDS/OpenEChart.jsp";
-            newURL = newURL + "?demographicNo=" + demographicNo;
+            newURL = newURL + "?demographicNo="+demographicNo + "&mrpAttached=" + mrpAttached;
         } catch (Exception e) {
             MiscUtils.getLogger().debug("exception in ReportReassign2Action:" + e);
             newURL = "/errorpage.jsp";
