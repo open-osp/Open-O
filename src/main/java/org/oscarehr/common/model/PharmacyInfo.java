@@ -74,6 +74,9 @@ public class PharmacyInfo extends AbstractModel<Integer> implements Comparable<P
 	@Transient
 	private Integer preferredOrder;
 
+	@Transient
+	private Date demoAddDate;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date addDate;
 
@@ -207,6 +210,15 @@ public class PharmacyInfo extends AbstractModel<Integer> implements Comparable<P
 	public void setPreferredOrder(Integer preferredOrder) {
 		this.preferredOrder = preferredOrder;
 	}
+
+	public Date getDemoAddDate() {
+		return demoAddDate;
+	}
+	
+	public void setDemoAddDate(Date demoAddDate) {
+		this.demoAddDate = demoAddDate;
+	}
+	
 
 	@Override
     public int compareTo(PharmacyInfo o) {
