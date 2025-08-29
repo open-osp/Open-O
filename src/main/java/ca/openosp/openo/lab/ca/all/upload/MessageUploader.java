@@ -433,8 +433,8 @@ public final class MessageUploader {
         ProviderLabRouting routing = new ProviderLabRouting();
 
         // Link the lab result to the MRP
-        boolean autoLinkToMrp = propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.auto_link_to_mrp);
-        if (autoLinkToMrp && altProviderNo != null && !altProviderNo.equals("0")) {
+        boolean providerLinkingRules = propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.provider_linking_rules);
+        if (providerLinkingRules && altProviderNo != null && !altProviderNo.equals("0")) {
             routing.route(labId, altProviderNo, conn, "HL7");
         }
 

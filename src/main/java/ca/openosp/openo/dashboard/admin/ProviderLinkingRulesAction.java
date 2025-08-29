@@ -46,7 +46,7 @@ import ca.openosp.openo.utility.SpringUtils;
  *
  * @since 2025-01-20
  */
-public class AutoLinkToMrpAction extends ActionSupport {
+public class ProviderLinkingRulesAction extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
@@ -64,10 +64,10 @@ public class AutoLinkToMrpAction extends ActionSupport {
     public String execute() {
         String method = request.getParameter("method");
 
-        if ("updateAutoLinkToMrpProperty".equals(method)) {
-            return updateAutoLinkToMrpProperty();
-        } else if ("viewAutoLinkToMrpPropertyStatus".equals(method)) {
-            return viewAutoLinkToMrpPropertyStatus();
+        if ("updateProviderLinkingRulesProperty".equals(method)) {
+            return updateProviderLinkingRulesProperty();
+        } else if ("viewProviderLinkingRulesPropertyStatus".equals(method)) {
+            return viewProviderLinkingRulesPropertyStatus();
         }
 
         return null;
@@ -79,16 +79,16 @@ public class AutoLinkToMrpAction extends ActionSupport {
      *
      * @return String result code (null for JSON response)
      */
-    public String updateAutoLinkToMrpProperty() {
+    public String updateProviderLinkingRulesProperty() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin.lab", SecurityInfoManager.WRITE, null) &&
-            !securityInfoManager.hasPrivilege(loggedInInfo, "_admin.hrm", SecurityInfoManager.WRITE, null)) {
-            throw new RuntimeException("missing required security object (_admin.hrm or _admin.lab)");
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin", SecurityInfoManager.WRITE, null) &&
+            !securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+            throw new RuntimeException("missing required security object (_admin or _lab)");
         }
 
         String value = request.getParameter("status");
-        boolean status = providerManager2.updateAutoLinkToMrpProperty(loggedInInfo, value);
+        boolean status = providerManager2.updateProviderLinkingRulesProperty(loggedInInfo, value);
 
         ObjectNode json = objectMapper.createObjectNode();
         json.put("status", status);
@@ -103,15 +103,15 @@ public class AutoLinkToMrpAction extends ActionSupport {
      *
      * @return String result code (null for JSON response)
      */
-    public String viewAutoLinkToMrpPropertyStatus() {
+    public String viewProviderLinkingRulesPropertyStatus() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin.lab", SecurityInfoManager.READ, null) &&
-            !securityInfoManager.hasPrivilege(loggedInInfo, "_admin.hrm", SecurityInfoManager.READ, null)) {
-            throw new RuntimeException("missing required security object (_admin.hrm or _admin.lab)");
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin", SecurityInfoManager.READ, null) &&
+            !securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.READ, null)) {
+            throw new RuntimeException("missing required security object (_admin or _lab)");
         }
 
-        boolean status = providerManager2.viewAutoLinkToMrpPropertyStatus(loggedInInfo);
+        boolean status = providerManager2.viewProviderLinkingRulesPropertyStatus(loggedInInfo);
 
         ObjectNode json = objectMapper.createObjectNode();
         json.put("status", status);
